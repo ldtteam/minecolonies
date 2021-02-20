@@ -12,8 +12,8 @@ import java.util.Objects;
  */
 public class Tuple<A, B>
 {
-    private A a;
-    private B b;
+    private final A a;
+    private final B b;
 
     public Tuple(@Nullable final A aIn, @Nullable final B bIn)
     {

@@ -44,12 +44,12 @@ public final class CreativeRaiderStructureHandler extends CreativeStructureHandl
     /**
      * The raid event associated to this.
      */
-    private IColonyRaidEvent event;
+    private final IColonyRaidEvent event;
 
     /**
      * The colony id.
      */
-    private int colonyId;
+    private final int colonyId;
 
     /**
      * The minecolonies specific creative structure placer.

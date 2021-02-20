@@ -12,14 +12,14 @@ public final class Log
     /**
      * Mod logger.
      */
-    private static Logger logger = LogManager.getLogger(Constants.MOD_ID);
+    private static final Logger logger = LogManager.getLogger(Constants.MOD_ID);
 
     /**
      * Private constructor to hide the public one.
      */
     private Log()
     {
-        /*
+        /**
          * Intentionally left empty.
          */
     }

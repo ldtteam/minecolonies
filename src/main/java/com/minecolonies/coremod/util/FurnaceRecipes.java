@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.util;
 
 import com.google.common.collect.ImmutableList;
-
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.compatibility.IFurnaceRecipes;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -9,21 +8,15 @@ import com.minecolonies.api.crafting.RecipeStorage;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.network.messages.client.UpdateClientWithRecipesMessage;
 import net.minecraft.block.Blocks;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.NonNullList;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
-import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
 import net.minecraftforge.registries.ObjectHolder;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -78,13 +71,6 @@ public class FurnaceRecipes implements IFurnaceRecipes
         });
     }
 
-    @SubscribeEvent
-    public static void onServerStarting(final FMLServerStartedEvent event)
-    {
-        instance.loadRecipes(event.getServer());
-        loadUtilityPredicates();
-    }
-
     /**
      * Load all the utility predicates.
      */
@@ -95,22 +81,6 @@ public class FurnaceRecipes implements IFurnaceRecipes
         ItemStackUtils.CAN_EAT =
           itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem().isFood() && !ItemStackUtils.ISFOOD.test(instance.getSmeltingResult(itemStack));
         ItemStackUtils.ISCOOKABLE = itemStack -> ItemStackUtils.ISFOOD.test(instance.getSmeltingResult(itemStack));
-    }
-
-    @SubscribeEvent
-    public static void onServerStarting(final FMLServerAboutToStartEvent event)
-    {
-        instance = new FurnaceRecipes();
-        loadUtilityPredicates();
-    }
-
-    @SubscribeEvent
-    public static void onPlayerLogin(final PlayerEvent.PlayerLoggedInEvent event)
-    {
-        if (!event.getPlayer().world.isRemote)
-        {
-            Network.getNetwork().sendToPlayer(new UpdateClientWithRecipesMessage(instance.recipes), (ServerPlayerEntity) event.getPlayer());
-        }
     }
 
     /**

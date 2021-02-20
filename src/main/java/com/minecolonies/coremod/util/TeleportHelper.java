@@ -7,7 +7,6 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.EntityUtils;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.RegistryKey;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
@@ -104,25 +103,6 @@ public final class TeleportHelper
         }
 
         player.teleport(world, position.getX(), position.getY() + 2.0, position.getZ(), player.rotationYaw, player.rotationPitch);
-    }
-
-    /**
-     * Teleports the player to his home colony.
-     *
-     * @param dimension the dimension the colony is in.
-     * @param player    the player to teleport.
-     * @param id        the colony id.
-     */
-    public static void colonyTeleportByID(@NotNull final ServerPlayerEntity player, final int id, final RegistryKey<World> dimension)
-    {
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(id, dimension);
-        if (colony == null)
-        {
-            LanguageHandler.sendPlayerMessage(player, "com.minecolonies.command.colonyidnotfound");
-            return;
-        }
-
-        colonyTeleport(player, colony);
     }
 
     /**

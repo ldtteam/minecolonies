@@ -28,11 +28,6 @@ public class MultimapCollector<T, K, V> implements Collector<T, Multimap<K, V>, 
         return new MultimapCollector<>(keyGetter, valueGetter);
     }
 
-    public static <T, K, V> MultimapCollector<T, K, T> toMultimap(final Function<T, K> keyGetter)
-    {
-        return new MultimapCollector<>(keyGetter, v -> v);
-    }
-
     @Override
     public Supplier<Multimap<K, V>> supplier()
     {

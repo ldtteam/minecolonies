@@ -5,7 +5,6 @@ import com.ldtteam.structurize.util.BlockInfo;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.entity.ai.Status;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.Tuple;
@@ -25,7 +24,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.ToolItem;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.tileentity.SignTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -134,23 +132,11 @@ public final class WorkerUtil
     }
 
     /**
-     * Attempt to move to XYZ. True when found and destination is set.
-     *
-     * @param citizen     Citizen to move to XYZ.
-     * @param destination Chunk coordinate of the distance.
-     * @return True when found, and destination is set, otherwise false.
-     */
-    public static PathResult moveLivingToXYZ(@NotNull final AbstractEntityCitizen citizen, @NotNull final BlockPos destination)
-    {
-        return citizen.getNavigator().moveToXYZ(destination.getX(), destination.getY(), destination.getZ(), 1.0);
-    }
-
-    /**
      * Recalls the citizen, notifies player if not successful.
      *
      * @param spawnPoint the spawnPoint.
      * @param citizen    the citizen.
-     * @return true if succesful.
+     * @return true if successful.
      */
     public static boolean setSpawnPoint(@Nullable final BlockPos spawnPoint, @NotNull final AbstractEntityCitizen citizen)
     {
@@ -233,20 +219,6 @@ public final class WorkerUtil
             return 0;
         }
         return required;
-    }
-
-    /**
-     * Returns whether or not a citizen is heading to a specific location.
-     *
-     * @param citizen Citizen you want to check
-     * @param x       X-coordinate
-     * @param z       Z-coordinate
-     * @return True if citizen heads to (x, z), otherwise false
-     */
-    public static boolean isPathingTo(@NotNull final AbstractEntityCitizen citizen, final int x, final int z)
-    {
-        final PathPoint pathpoint = citizen.getNavigator().getPath().getFinalPathPoint();
-        return pathpoint != null && pathpoint.x == x && pathpoint.z == z;
     }
 
     /**

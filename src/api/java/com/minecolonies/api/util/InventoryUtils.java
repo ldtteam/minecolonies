@@ -1,6 +1,5 @@
 package com.minecolonies.api.util;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -49,23 +48,9 @@ public class InventoryUtils
      */
     private InventoryUtils()
     {
-        /*
+        /**
          * Intentionally left empty.
          */
-    }
-
-    /**
-     * Filters a list of items, matches the stack using {@link #compareItems(ItemStack, Item)}, in an {@link IItemHandler}. Uses the MetaData and {@link #getItemFromBlock(Block)}
-     * as parameters for the Predicate.
-     *
-     * @param itemHandler Inventory to filter in
-     * @param block       Block to filter
-     * @return List of item stacks
-     */
-    @NotNull
-    public static List<ItemStack> filterItemHandler(@NotNull final IItemHandler itemHandler, @NotNull final Block block)
-    {
-        return filterItemHandler(itemHandler, (ItemStack stack) -> compareItems(stack, getItemFromBlock(block)));
     }
 
     /**
@@ -112,19 +97,6 @@ public class InventoryUtils
     public static Item getItemFromBlock(final Block block)
     {
         return Item.getItemFromBlock(block);
-    }
-
-    /**
-     * Filters a list of items, matches the stack using {@link #compareItems(ItemStack, Item)}, with targetItem and itemDamage as parameters, in an {@link IItemHandler}.
-     *
-     * @param itemHandler Inventory to get items from
-     * @param targetItem  Item to look for
-     * @return List of item stacks with the given item in inventory
-     */
-    @NotNull
-    public static List<ItemStack> filterItemHandler(@NotNull final IItemHandler itemHandler, @NotNull final Item targetItem)
-    {
-        return filterItemHandler(itemHandler, (ItemStack stack) -> compareItems(stack, targetItem));
     }
 
     /**
@@ -449,20 +421,6 @@ public class InventoryUtils
     }
 
     /**
-     * Filters a list of items, matches the stack using {@link #compareItems(ItemStack, Item)}, in an {@link ICapabilityProvider}. Uses the MetaData and {@link
-     * #getItemFromBlock(Block)} as parameters for the Predicate.
-     *
-     * @param provider Provider to filter in
-     * @param block    Block to filter
-     * @return List of item stacks
-     */
-    @NotNull
-    public static List<ItemStack> filterProvider(@NotNull final ICapabilityProvider provider, final Block block)
-    {
-        return filterProvider(provider, (ItemStack stack) -> compareItems(stack, getItemFromBlock(block)));
-    }
-
-    /**
      * Filters a list of items, that match the given predicate, in an {@link ICapabilityProvider}.
      *
      * @param provider                    The ICapabilityProvider to get items from.
@@ -524,31 +482,6 @@ public class InventoryUtils
 
         handlerList.removeIf(Objects::isNull);
         return handlerList;
-    }
-
-    /**
-     * Filters a list of items, matches the stack using {@link #compareItems(ItemStack, Item)}, with targetItem and itemDamage as parameters, in an {@link ICapabilityProvider}.
-     *
-     * @param provider   Provider to get items from
-     * @param targetItem Item to look for
-     * @return List of item stacks with the given item in inventory
-     */
-    @NotNull
-    public static List<ItemStack> filterProvider(@NotNull final ICapabilityProvider provider, @Nullable final Item targetItem)
-    {
-        return filterProvider(provider, (ItemStack stack) -> compareItems(stack, targetItem));
-    }
-
-    /**
-     * Returns the index of the first occurrence of the block in the {@link ICapabilityProvider}.
-     *
-     * @param provider {@link ICapabilityProvider} to check.
-     * @param block    Block to find.
-     * @return Index of the first occurrence.
-     */
-    public static int findFirstSlotInProviderWith(@NotNull final ICapabilityProvider provider, final Block block)
-    {
-        return findFirstSlotInProviderWith(provider, getItemFromBlock(block));
     }
 
     /**
@@ -880,20 +813,6 @@ public class InventoryUtils
     }
 
     /**
-     * Checks if the {@link ICapabilityProvider} contains the following toolName with the given minimal Level.
-     *
-     * @param provider     The {@link ICapabilityProvider} to scan.
-     * @param toolType     The toolTypeName of the tool to find.
-     * @param minimalLevel The minimal level to find.
-     * @param maximumLevel The maximum level to find.
-     * @return True if a Tool with the given toolTypeName was found in the given {@link ICapabilityProvider}, false when not.
-     */
-    public static boolean isToolInProvider(@NotNull final ICapabilityProvider provider, @NotNull final IToolType toolType, final int minimalLevel, final int maximumLevel)
-    {
-        return hasItemInProvider(provider, (ItemStack stack) -> ItemStackUtils.hasToolLevel(stack, toolType, minimalLevel, maximumLevel));
-    }
-
-    /**
      * Adapted from {@link net.minecraft.entity.player.PlayerInventory#addItemStackToInventory(ItemStack)}.
      *
      * @param provider  {@link ICapabilityProvider} to add itemstack to.
@@ -1107,102 +1026,6 @@ public class InventoryUtils
     }
 
     /**
-     * Method used to check if a {@link ICapabilityProvider} has any {@link IItemHandler}
-     *
-     * @param provider The provider to check.
-     * @return True when the provider has any {@link IItemHandler}, false when not.
-     */
-    @NotNull
-    public static boolean hasProviderIItemHandler(@NotNull final ICapabilityProvider provider)
-    {
-        return !getItemHandlersFromProvider(provider).isEmpty();
-    }
-
-    /**
-     * Method used to check if this provider is sided.
-     *
-     * @param provider The provider to check for.
-     * @return True when the provider has multiple distinct IItemHandler of different sides, false when not
-     */
-    @NotNull
-    public static boolean isProviderSided(@NotNull final ICapabilityProvider provider)
-    {
-        return getItemHandlersFromProvider(provider).size() > 1;
-    }
-
-    /**
-     * Returns an {@link IItemHandler} as list of item stacks.
-     *
-     * @param provider The {@link ICapabilityProvider} that holds the {@link IItemHandler} for the given {@link Direction}
-     * @param facing   The facing to get the {@link IItemHandler} from. Can be null for the internal one
-     * @return List of item stacks.
-     */
-    @NotNull
-    public static List<ItemStack> getInventoryAsListFromProviderForSide(@NotNull final ICapabilityProvider provider, @Nullable final Direction facing)
-    {
-        return filterItemHandler(provider.getCapability(ITEM_HANDLER_CAPABILITY, facing).orElse(null), (ItemStack stack) -> true);
-    }
-
-    /**
-     * Filters a list of items, matches the stack using {@link #compareItems(ItemStack, Item)}, in an {@link IItemHandler}. Uses the MetaData and {@link #getItemFromBlock(Block)}
-     * as parameters for the Predicate.
-     *
-     * @param provider The {@link ICapabilityProvider} that holds the {@link IItemHandler} for the given {@link Direction}
-     * @param facing   The facing to get the {@link IItemHandler} from. Can be null for the internal one
-     * @param block    Block to filter
-     * @return List of item stacks
-     */
-    @NotNull
-    public static List<ItemStack> filterItemHandlerFromProviderForSide(
-      @NotNull final ICapabilityProvider provider,
-      @Nullable final Direction facing,
-      @NotNull final Block block)
-    {
-        return filterItemHandler(provider.getCapability(ITEM_HANDLER_CAPABILITY, facing).orElse(null), (ItemStack stack) -> compareItems(stack, getItemFromBlock(block)));
-    }
-
-    /**
-     * Filters a list of items, matches the stack using {@link #compareItems(ItemStack, Item)}, with targetItem and itemDamage as parameters, in an {@link IItemHandler}.
-     *
-     * @param provider   The {@link ICapabilityProvider} that holds the {@link IItemHandler} for the given {@link Direction}
-     * @param facing     The facing to get the {@link IItemHandler} from. Can be null for the internal one
-     * @param targetItem Item to look for
-     * @param itemDamage the damage value.
-     * @return List of item stacks with the given item in inventory
-     */
-    @NotNull
-    public static List<ItemStack> filterItemHandlerFromProviderForSide(
-      @NotNull final ICapabilityProvider provider,
-      @Nullable final Direction facing,
-      @NotNull final Item targetItem,
-      final int itemDamage)
-    {
-        return filterItemHandler(provider.getCapability(ITEM_HANDLER_CAPABILITY, facing).orElse(null), (ItemStack stack) -> compareItems(stack, targetItem));
-    }
-
-    /**
-     * Filters a list of items, that match the given predicate, in an {@link IItemHandler}.
-     *
-     * @param provider                    The {@link ICapabilityProvider} that holds the {@link IItemHandler} for the given {@link Direction}
-     * @param facing                      The facing to get the {@link IItemHandler} from. Can be null for the internal one
-     * @param itemStackSelectionPredicate The predicate to match the stack to.
-     * @return List of item stacks that match the given predicate.
-     */
-    @NotNull
-    public static List<ItemStack> filterItemHandlerFromProviderForSide(
-      @NotNull final ICapabilityProvider provider,
-      @Nullable final Direction facing,
-      @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
-    {
-        if (!provider.getCapability(ITEM_HANDLER_CAPABILITY, facing).isPresent())
-        {
-            return Collections.emptyList();
-        }
-
-        return filterItemHandler(provider.getCapability(ITEM_HANDLER_CAPABILITY, facing).orElse(null), itemStackSelectionPredicate);
-    }
-
-    /**
      * Returns the index of the first occurrence of the block in the {@link ICapabilityProvider} for a given {@link Direction}.
      *
      * @param provider   {@link ICapabilityProvider} to check.
@@ -1394,28 +1217,6 @@ public class InventoryUtils
     }
 
     /**
-     * Checks if the {@link ICapabilityProvider} contains the following toolName with the given minimal Level, for a given {@link Direction}.
-     *
-     * @param provider     The {@link ICapabilityProvider} to scan.
-     * @param facing       The side to check for.
-     * @param toolType     The tool type to find.
-     * @param minimalLevel The minimal level to find.
-     * @param maximumLevel The maximum level to find.
-     * @return True if a Tool with the given toolTypeName was found in the given {@link ICapabilityProvider}, false when not.
-     */
-    public static boolean isToolInProviderForSide(
-      @NotNull final ICapabilityProvider provider, @Nullable final Direction facing, @NotNull final IToolType toolType,
-      final int minimalLevel, final int maximumLevel)
-    {
-        if (!provider.getCapability(ITEM_HANDLER_CAPABILITY, facing).isPresent())
-        {
-            return false;
-        }
-
-        return isToolInItemHandler(provider.getCapability(ITEM_HANDLER_CAPABILITY, facing).orElse(null), toolType, minimalLevel, maximumLevel);
-    }
-
-    /**
      * Checks if the {@link IItemHandler} contains the following toolName with the given minimal Level.
      *
      * @param itemHandler  The {@link IItemHandler} to scan.
@@ -1428,19 +1229,6 @@ public class InventoryUtils
     {
         return hasItemInItemHandler(itemHandler, (ItemStack stack) ->
                                                    ItemStackUtils.hasToolLevel(stack, toolType, minimalLevel, maximumLevel));
-    }
-
-    /**
-     * Clears an entire {@link IItemHandler}.
-     *
-     * @param itemHandler {@link IItemHandler} to clear.
-     */
-    public static void clearItemHandler(@NotNull final IItemHandler itemHandler)
-    {
-        for (int slotIndex = 0; slotIndex < itemHandler.getSlots(); slotIndex++)
-        {
-            itemHandler.extractItem(slotIndex, Integer.MAX_VALUE, false);
-        }
     }
 
     /**
@@ -1713,43 +1501,6 @@ public class InventoryUtils
      * Method to merge the ItemStacks from the given source {@link IItemHandler} to the given target {@link IItemHandler}. Trying to merge itemStacks or returning stack if not
      * possible.
      *
-     * @param sourceHandler The {@link IItemHandler} that works as Source.
-     * @param sourceIndex   The index of the slot that is being extracted from.
-     * @param targetHandler The {@link IItemHandler} that works as Target.
-     */
-    public static void mergeItemStackIntoNextBestSlotInItemHandlers(
-      @NotNull final IItemHandler sourceHandler,
-      final int sourceIndex,
-      @NotNull final IItemHandler targetHandler)
-    {
-        ItemStack sourceStack = sourceHandler.extractItem(sourceIndex, Integer.MAX_VALUE, true);
-        int amount = sourceStack.getCount();
-
-        if (ItemStackUtils.isEmpty(sourceStack))
-        {
-            return;
-        }
-
-        for (int i = 0; i < targetHandler.getSlots(); i++)
-        {
-            if (!ItemStackUtils.isEmpty(targetHandler.getStackInSlot(i)) && targetHandler.getStackInSlot(i).isItemEqual(sourceStack))
-            {
-                sourceStack = targetHandler.insertItem(i, sourceStack, false);
-                if (ItemStackUtils.isEmpty(sourceStack))
-                {
-                    sourceHandler.extractItem(sourceIndex, Integer.MAX_VALUE, false);
-                    return;
-                }
-            }
-        }
-
-        sourceHandler.extractItem(sourceIndex, amount - sourceStack.getCount(), false);
-    }
-
-    /**
-     * Method to merge the ItemStacks from the given source {@link IItemHandler} to the given target {@link IItemHandler}. Trying to merge itemStacks or returning stack if not
-     * possible.
-     *
      * @param stack         the stack to add.
      * @param targetHandler The {@link IItemHandler} that works as Target.
      * @return True when the swap was successful, false when not.
@@ -1776,14 +1527,6 @@ public class InventoryUtils
             }
         }
         return sourceStack;
-    }
-
-    public static boolean transferXOfFirstSlotInProviderWithIntoNextFreeSlotInProvider(
-      @NotNull final ICapabilityProvider sourceProvider,
-      @NotNull final Predicate<ItemStack> itemStackSelectionPredicate,
-      @NotNull final int amount, @NotNull final ICapabilityProvider targetProvider)
-    {
-        return transferXOfFirstSlotInProviderWithIntoNextFreeSlotInProviderWithResult(sourceProvider, itemStackSelectionPredicate, amount, targetProvider) == 0;
     }
 
     public static int transferXOfFirstSlotInProviderWithIntoNextFreeSlotInProviderWithResult(
@@ -2024,109 +1767,6 @@ public class InventoryUtils
     }
 
     /**
-     * Method to swap the ItemStacks from the given source {@link IItemHandler} to the given target {@link IItemHandler}.
-     *
-     * @param sourceHandler The {@link IItemHandler} that works as Source.
-     * @param sourceIndex   The index of the slot that is being extracted from.
-     * @param targetHandler The {@link IItemHandler} that works as Target.
-     * @param targetIndex   The index of the slot that is being inserted into.
-     * @return True when the swap was successful, false when not.
-     */
-    public static boolean swapItemStacksInItemHandlers(
-      @NotNull final IItemHandler sourceHandler,
-      @NotNull final int sourceIndex,
-      @NotNull final IItemHandler targetHandler,
-      @NotNull final int targetIndex)
-    {
-        final ItemStack targetStack = targetHandler.extractItem(targetIndex, Integer.MAX_VALUE, false);
-        final ItemStack sourceStack = sourceHandler.extractItem(sourceIndex, Integer.MAX_VALUE, true);
-
-        final ItemStack resultSourceSimulationInsertion = targetHandler.insertItem(targetIndex, sourceStack, true);
-        if (ItemStackUtils.isEmpty(resultSourceSimulationInsertion) || ItemStackUtils.isEmpty(targetStack))
-        {
-            targetHandler.insertItem(targetIndex, sourceStack, false);
-            sourceHandler.extractItem(sourceIndex, Integer.MAX_VALUE, false);
-            sourceHandler.insertItem(sourceIndex, targetStack, false);
-
-            return true;
-        }
-        else
-        {
-            targetHandler.insertItem(targetIndex, targetStack, false);
-
-            return false;
-        }
-    }
-
-    /**
-     * Remove a list of stacks from a given provider
-     *
-     * @param provider the provider.
-     * @param input    the list of stacks.
-     * @return true if succesful.
-     */
-    public static boolean removeStacksFromProvider(final ICapabilityProvider provider, final List<ItemStack> input)
-    {
-        for (final IItemHandler handler : getItemHandlersFromProvider(provider))
-        {
-            if (!removeStacksFromItemHandler(handler, input))
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * Remove a list of stacks from a given Itemhandler
-     *
-     * @param handler the itemHandler.
-     * @param input   the list of stacks.
-     * @return true if succesful.
-     */
-    public static boolean removeStacksFromItemHandler(final IItemHandler handler, final List<ItemStack> input)
-    {
-        final List<ItemStack> list = new ArrayList<>();
-        int maxTries = 0;
-        for (final ItemStack stack : input)
-        {
-            maxTries += ItemStackUtils.getSize(stack);
-            list.add(stack.copy());
-        }
-
-        boolean success = true;
-        int i = 0;
-        int tries = 0;
-        while (i < list.size() && tries < maxTries)
-        {
-            final ItemStack stack = list.get(i);
-            final int slot = findFirstSlotInItemHandlerNotEmptyWith(handler, stack::isItemEqual);
-
-            if (slot == -1)
-            {
-                success = false;
-                i++;
-                continue;
-            }
-
-            final int removedSize = ItemStackUtils.getSize(handler.extractItem(slot, ItemStackUtils.getSize(stack), false));
-
-            if (removedSize == ItemStackUtils.getSize(stack))
-            {
-                i++;
-            }
-            else
-            {
-                ItemStackUtils.changeSize(stack, -removedSize);
-            }
-            tries++;
-        }
-
-        return success && i >= list.size();
-    }
-
-    /**
      * Tries to remove a stack with its size from a given Itemhandler. Only removes sth if the whole size can be removed.
      *
      * @param handler the itemHandler.
@@ -2188,29 +1828,6 @@ public class InventoryUtils
             }
             tries++;
         }
-    }
-
-    /**
-     * Check if a certain item is in the provider but without the provider being full.
-     *
-     * @param provider the provider to check.
-     * @param item     the item.
-     * @param amount   stack size to be considered.
-     * @return the slot or -1.
-     */
-    public static int findSlotInProviderNotFullWithItem(final ICapabilityProvider provider, final Item item, final int amount)
-    {
-        for (final IItemHandler handler : getItemHandlersFromProvider(provider))
-        {
-            final int foundSlot = findSlotInItemHandlerNotFullWithItem(handler, (ItemStack stack) -> compareItems(stack, item), amount);
-            //TODO: When contract is hardened later: Replace this -1 check with a try-catch block.
-            if (foundSlot > -1)
-            {
-                return foundSlot;
-            }
-        }
-
-        return -1;
     }
 
     /**
@@ -2346,42 +1963,6 @@ public class InventoryUtils
             ItemEntity.setMotion(random.nextGaussian() * MOTION_MULTIPLIER, random.nextGaussian() * MOTION_MULTIPLIER + MOTION_Y_MIN, random.nextGaussian() * MOTION_MULTIPLIER);
             worldIn.addEntity(ItemEntity);
         }
-    }
-
-    /**
-     * Calculates howmany items match the given predicate that are in the list.
-     *
-     * @param stacks         the stacks to count in.
-     * @param stackPredicate the condition to count for.
-     * @return The sum of the itemstack sizes that match the predicate
-     */
-    public static int getItemCountInStackLick(@NotNull final List<ItemStack> stacks, @NotNull final Predicate<ItemStack> stackPredicate)
-    {
-        return stacks.stream().filter(ItemStackUtils::isNotEmpty).filter(stackPredicate).mapToInt(ItemStackUtils::getSize).sum();
-    }
-
-    /**
-     * Checks if all stacks given in the list are in the itemhandler given
-     *
-     * @param stacks  The stacks that should be in the itemhandler
-     * @param handler The itemhandler to check in
-     * @return True when all stacks are in the handler, false when not
-     */
-    public static boolean areAllItemsInItemHandler(@NotNull final List<ItemStack> stacks, @NotNull final IItemHandler handler)
-    {
-        return areAllItemsInItemHandlerList(stacks, ImmutableList.of(handler));
-    }
-
-    /**
-     * Checks if all stacks given in the list are in the capability provider given
-     *
-     * @param stacks   The stacks that should be in the itemhandler
-     * @param provider The provider to check in
-     * @return True when all stacks are in the handler, false when not
-     */
-    public static boolean areAllItemsInProvider(@NotNull final List<ItemStack> stacks, @NotNull final ICapabilityProvider provider)
-    {
-        return areAllItemsInItemHandlerList(stacks, getItemHandlersFromProvider(provider));
     }
 
     /**

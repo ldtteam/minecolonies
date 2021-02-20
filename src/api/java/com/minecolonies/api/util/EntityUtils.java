@@ -1,7 +1,6 @@
 package com.minecolonies.api.util;
 
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
@@ -19,8 +18,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * Entity related utilities.
@@ -67,32 +64,6 @@ public final class EntityUtils
             }
         }
         return player;
-    }
-
-    /**
-     * Returns the loaded Entity with the given UUID.
-     *
-     * @param world world the entity is in
-     * @param id    the entity's UUID
-     * @return the Entity
-     */
-    public static Entity getPlayerByUUID(@NotNull final World world, @NotNull final UUID id)
-    {
-        return world.getPlayerByUuid(id);
-    }
-
-    /**
-     * Returns a list of loaded entities whose id's match the ones provided.
-     *
-     * @param world the world the entities are in.
-     * @param ids   List of Entity id's
-     * @return list of Entity's
-     */
-    public static List<Entity> getEntitiesFromID(@NotNull final World world, @NotNull final List<Integer> ids)
-    {
-        return ids.stream()
-                 .map(world::getEntityByID)
-                 .collect(Collectors.toList());
     }
 
     /**
@@ -287,16 +258,6 @@ public final class EntityUtils
                  .stream()
                  .anyMatch(ent -> ent.getPosX() == entity.getPosX() && ent.getPosY() == entity.getPosY() && ent.getPosZ() == entity.getPosZ() && ItemStackUtils.getListOfStackForEntity(entity, placer)
                                                                                                                      .equals(existingReq));
-    }
-
-    public static boolean isEntityAtPosition(final Entity entity, final World world, final AbstractEntityCitizen entityCitizen)
-    {
-        if (entity != null)
-        {
-            return EntityUtils.isEntityAtPosition(entity, world, (Entity) entityCitizen);
-        }
-
-        return false;
     }
 
     /**

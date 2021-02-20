@@ -59,7 +59,7 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
     protected static final VoxelShape AABB_WEST  = VoxelShapes.create(0.0D, 0.375D, 0.4125D, 0.050D, 0.625D, 0.5875D);
 
     /**
-     * Constructor for the placerholder.
+     * Constructor for the decoration controller.
      */
     public BlockDecorationController()
     {

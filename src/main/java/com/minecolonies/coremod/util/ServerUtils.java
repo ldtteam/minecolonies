@@ -47,40 +47,6 @@ public final class ServerUtils
     }
 
     /**
-     * Returns a list of online players whose UUID's match the ones provided.
-     *
-     * @param world the world the players are in.
-     * @param ids   List of UUIDs
-     * @return list of PlayerEntitys
-     */
-    @NotNull
-    public static List<PlayerEntity> getPlayersFromUUID(@Nullable final World world, @NotNull final Collection<UUID> ids)
-    {
-        if (world == null)
-        {
-            return Collections.emptyList();
-        }
-        @NotNull final List<PlayerEntity> players = new ArrayList<>();
-
-        for (final Object o : world.getPlayers())
-        {
-            if (o instanceof PlayerEntity)
-            {
-                @NotNull final PlayerEntity player = (PlayerEntity) o;
-                if (ids.contains(player.getGameProfile().getId()))
-                {
-                    players.add(player);
-                    if (players.size() == ids.size())
-                    {
-                        return players;
-                    }
-                }
-            }
-        }
-        return players;
-    }
-
-    /**
      * Returns a list of players from a list of {@link Player}.
      * <p>
      * The {@link Player} is a wrapper around a {@link UUID} of minecraft players. The List will simply be converted into an {@link PlayerEntity} type.

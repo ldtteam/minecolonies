@@ -23,7 +23,7 @@ public final class ExperienceUtils
     }
 
     /**
-     * Calculates how much percent of the current level have been completed.
+     * Calculates how much percent of the current level has been completed.
      *
      * @param experience the current amount of xp.
      * @param level      the current level.
@@ -76,19 +76,4 @@ public final class ExperienceUtils
                                  5 * currentLevel + 0.005 * (currentLevel * currentLevel * currentLevel));
     }
 
-    /**
-     * Calculate level depending on the experience.
-     *
-     * @param xp the experience to calculate it for.
-     * @return the correct level.
-     */
-    public static int calculateLevel(final double xp)
-    {
-        int startLevel = 0;
-        while (getXPNeededForNextLevel(startLevel) < xp)
-        {
-            startLevel++;
-        }
-        return startLevel;
-    }
 }

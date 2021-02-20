@@ -77,23 +77,6 @@ public final class InventoryFunctions
     }
 
     /**
-     * Topmost matchFirst function, will stop after it finds the first
-     * itemstack.
-     *
-     * @param provider the provider to search in
-     * @param tester   the function to use for testing slots
-     * @return true if it found a stack
-     */
-    /*
-    private static boolean matchFirstInProvider(
-                                                 final ICapabilityProvider provider,
-                                                 @NotNull final Function<ICapabilityProvider, Function<Integer, Predicate<ItemStack>>> tester)
-    {
-        return matchInProvider(provider, tester, true);
-    }
-    */
-
-    /**
      * Search for a stack in an Inventory matching the predicate.
      *
      * @param provider the provider to search in
@@ -201,18 +184,6 @@ public final class InventoryFunctions
               return false;
           },
           true);
-    }
-
-    /**
-     * Search for a stack in an Inventory matching the predicate. (IInventory, Integer) -&gt; Boolean
-     *
-     * @param inventory the inventory to search in
-     * @param tester    the function to use for testing slots
-     * @return true if it found a stack
-     */
-    public static boolean matchFirstInProvider(final ICapabilityProvider inventory, @NotNull final BiPredicate<Integer, ItemStack> tester)
-    {
-        return matchInProvider(inventory, inv -> slot -> stack -> tester.test(slot, stack), true);
     }
 
     /**

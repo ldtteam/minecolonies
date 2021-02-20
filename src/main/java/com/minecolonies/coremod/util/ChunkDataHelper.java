@@ -37,7 +37,7 @@ public final class ChunkDataHelper
      */
     private ChunkDataHelper()
     {
-        /*
+        /**
          * Intentionally left empty.
          */
     }
@@ -357,39 +357,6 @@ public final class ChunkDataHelper
                 final boolean owning = i >= chunkX - range && j >= chunkZ - range && i <= chunkX + range && j <= chunkZ + range;
                 @NotNull final ChunkLoadStorage newStorage = new ChunkLoadStorage(colonyId, ChunkPos.asLong(i, j), add, dimension.getLocation(), owning);
                 chunkManager.addChunkStorage(i, j, newStorage);
-            }
-        }
-    }
-
-    /**
-     * This is a utility methods to detect chunks which are claimed in a certain range.
-     *
-     * @param chunkX the chunkX starter position.
-     * @param chunkZ the chunkZ starter position.
-     * @param range  the range.
-     * @param buffer the buffer.
-     * @param world  the world.
-     */
-    public static void debugChunksInRange(final int chunkX, final int chunkZ, final int range, final int buffer, final World world)
-    {
-        final IChunkmanagerCapability chunkManager = world.getCapability(CHUNK_STORAGE_UPDATE_CAP, null).resolve().orElse(null);
-        if (chunkManager == null)
-        {
-            Log.getLogger().error(UNABLE_TO_FIND_WORLD_CAP_TEXT, new Exception());
-            return;
-        }
-
-        final int maxRange = range * 2 + buffer;
-        for (int i = chunkX - maxRange; i <= chunkX + maxRange; i++)
-        {
-            for (int j = chunkZ - maxRange; j <= chunkZ + maxRange; j++)
-            {
-                final BlockPos pos = new BlockPos(i * BLOCKS_PER_CHUNK, 0, j * BLOCKS_PER_CHUNK);
-                final Chunk chunk = world.getChunkAt(pos);
-                if (chunk.getCapability(CLOSE_COLONY_CAP, null).map(IColonyTagCapability::getOwningColony).orElse(0) != 0)
-                {
-                    Log.getLogger().warn("Has owner: " + pos.toString());
-                }
             }
         }
     }

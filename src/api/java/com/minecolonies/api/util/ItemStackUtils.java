@@ -8,7 +8,6 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
-import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.item.ArmorStandEntity;
@@ -107,7 +106,7 @@ public final class ItemStackUtils
      */
     private ItemStackUtils()
     {
-        /*
+        /**
          * Intentionally left empty.
          */
     }
@@ -259,11 +258,6 @@ public final class ItemStackUtils
         return stack == null || stack.isEmpty();
     }
 
-    public static Boolean isNotEmpty(@Nullable final ItemStack stack)
-    {
-        return !isEmpty(stack);
-    }
-
     /**
      * Calculate the mining level an item has as a tool of certain type.
      *
@@ -412,44 +406,6 @@ public final class ItemStackUtils
         }
         return (toolLevel + getMaxEnchantmentLevel(itemStack) <= maximumLevel);
     }
-
-    /**
-     * Check if an itemStack is a decorative item for the decoration step of the structure placement.
-     *
-     * @param stack the itemStack to test.
-     * @return true if so.
-     */
-    public static boolean isDecoration(final ItemStack stack)
-    {
-        final Item item = stack.getItem();
-        return item == Items.ITEM_FRAME
-                 || item == Items.ARMOR_STAND
-                 || !Block.getBlockFromItem(item).getDefaultState().getMaterial().isSolid();
-    }
-
-    /*
-    private static int getToolLevel(final String material)
-    {
-        if ("WOOD".equals(material)
-              || "GOLD".equals(material))
-        {
-            return 0;
-        }
-        else if ("STONE".equals(material))
-        {
-            return 1;
-        }
-        else if ("IRON".equals(material))
-        {
-            return 2;
-        }
-        else if ("DIAMOND".equals(material))
-        {
-            return 3;
-        }
-        return -1;
-    }
-    */
 
     /**
      * This routine converts the material type of armor into a numerical value for the request system.
@@ -651,24 +607,6 @@ public final class ItemStackUtils
             default:
                 return "Better than Diamond";
         }
-    }
-
-    /**
-     * Method to check if two ItemStacks can be merged together.
-     *
-     * @param existingStack The existing stack.
-     * @param mergingStack  The merging stack
-     * @return True when they can be merged, false when not.
-     */
-    @NotNull
-    public static Boolean areItemStacksMergable(final ItemStack existingStack, final ItemStack mergingStack)
-    {
-        if (!compareItemStacksIgnoreStackSize(existingStack, mergingStack))
-        {
-            return false;
-        }
-
-        return existingStack.getMaxStackSize() >= (getSize(existingStack) + getSize(mergingStack));
     }
 
     /**

@@ -6,11 +6,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import java.io.File;
+
+import java.util.Map.Entry;
 import java.util.NavigableMap;
 import java.util.Objects;
 import java.util.TreeMap;
-import java.util.Map.Entry;
 
 /**
  * General purpose utilities class. todo: split up into logically distinct parts
@@ -219,19 +219,6 @@ public final class Utils
         return data ^ flag;
     }
 
-    /**
-     * Checks if directory exists, else creates it.
-     *
-     * @param directory the directory to check.
-     */
-    public static void checkDirectory(@NotNull final File directory)
-    {
-        if (!directory.exists() && !directory.mkdirs())
-        {
-            Log.getLogger().error("Directory doesn't exist and failed to be created: " + directory.toString());
-        }
-    }
-    
     /**
      * Formats a long value into a abbreviated string, ie: 1000->1k, 1200->1.2k, 13000->13k
      * @param value to format

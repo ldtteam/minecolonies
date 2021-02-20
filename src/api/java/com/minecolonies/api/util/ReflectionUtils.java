@@ -1,10 +1,11 @@
 package com.minecolonies.api.util;
 
 import com.google.common.reflect.TypeToken;
-import org.apache.logging.log4j.core.config.AppenderControl;
 
-import java.lang.reflect.Field;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Utility class with methods regarding reflection.
@@ -51,11 +52,4 @@ public final class ReflectionUtils
         return resultingSet;
     }
 
-    public static void setFMLLoggingLevelOnConsoleToDebug(final AppenderControl control)
-      throws NoSuchFieldException, IllegalAccessException
-    {
-        final Field levelField = control.getClass().getField("level");
-        levelField.setAccessible(true);
-        levelField.set(control, Integer.MAX_VALUE);
-    }
 }

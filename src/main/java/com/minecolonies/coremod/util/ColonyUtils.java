@@ -17,7 +17,7 @@ public final class ColonyUtils
      */
     private ColonyUtils()
     {
-        /*
+        /**
          * Intentionally left empty.
          */
     }
