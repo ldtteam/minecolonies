@@ -354,7 +354,7 @@ public final class ModBuildingsInitializer
                 .setBuildingBlock(ModBlocks.blockHutWonder)
                 .setBuildingProducer(BuildingWonder::new)
                 .setBuildingViewProducer(() -> BuildingWonder.View::new)
-                .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.WONDER_ID)) //TODO TG
+                .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.WONDER_ID))
                 .createBuildingEntry();
 
         reg.register(ModBuildings.archery);
