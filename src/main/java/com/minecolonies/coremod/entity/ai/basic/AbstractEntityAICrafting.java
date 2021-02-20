@@ -21,8 +21,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.loot.LootContext;
 import net.minecraft.loot.LootParameterSet;
 import net.minecraft.loot.LootParameters;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.common.util.FakePlayerFactory;
+
 import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.function.Predicate;
@@ -67,7 +71,16 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
     /**
      * The loot parameter set definition
      */
-    private static final LootParameterSet recipeLootParameters = (new LootParameterSet.Builder()).required(LootParameters.field_237457_g_).required(LootParameters.THIS_ENTITY).required(LootParameters.TOOL).build();
+    private static final LootParameterSet recipeLootParameters = (new LootParameterSet.Builder())
+                .required(LootParameters.field_237457_g_)
+                .required(LootParameters.THIS_ENTITY)
+                .required(LootParameters.TOOL)
+                .optional(LootParameters.DAMAGE_SOURCE)
+                .optional(LootParameters.KILLER_ENTITY)
+                .optional(LootParameters.DIRECT_KILLER_ENTITY)
+                .build();
+
+    private DamageSource playerDamageSource; 
 
     /**
      * The number of actions a crafting "success" is worth. By default, that's 1 action for 1 crafting success. Override this in your subclass to make crafting recipes worth more
@@ -448,11 +461,37 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
      */
     protected LootContext getLootContext()
     {
-        return (new LootContext.Builder((ServerWorld) this.world))
+        return getLootContext(false);
+    }
+
+    /**
+     * get the LootContextBuilder for 
+     * @param includekiller true for killer-based parameters
+     * @return the LootContext to use for crafting
+     */
+    protected LootContext getLootContext(boolean includeKiller)
+    {
+        if(playerDamageSource == null)
+        {
+            FakePlayer fp = FakePlayerFactory.getMinecraft((ServerWorld) this.world);
+            playerDamageSource = DamageSource.causePlayerDamage(fp);
+        }
+
+        LootContext.Builder builder =  (new LootContext.Builder((ServerWorld) this.world))
         .withParameter(LootParameters.field_237457_g_, worker.getPositionVec())
         .withParameter(LootParameters.THIS_ENTITY, worker)
         .withParameter(LootParameters.TOOL, worker.getHeldItemMainhand())
         .withRandom(worker.getRandom())
-        .withLuck((float) getEffectiveSkillLevel(getPrimarySkillLevel())).build(recipeLootParameters);
+        .withLuck((float) getEffectiveSkillLevel(getPrimarySkillLevel()));
+
+        if(includeKiller)
+        {
+            builder = builder
+                .withParameter(LootParameters.DAMAGE_SOURCE, playerDamageSource)
+                .withParameter(LootParameters.KILLER_ENTITY, playerDamageSource.getTrueSource())
+                .withParameter(LootParameters.DIRECT_KILLER_ENTITY, playerDamageSource.getImmediateSource());
+            }
+        
+        return builder.build(recipeLootParameters);
     }
 }
