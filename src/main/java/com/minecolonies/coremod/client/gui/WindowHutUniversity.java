@@ -72,12 +72,6 @@ public class WindowHutUniversity extends AbstractWindowWorkerBuilding<BuildingUn
                 gradient.setPosition(x + INITITAL_X_OFFSET, y + offset + INITITAL_Y_OFFSET);
                 gradient.setGradientStart(239, 230, 215, 255);
                 gradient.setGradientEnd(239, 230, 215, 255);
-                final AbstractTextBuilder.TooltipBuilder reqBuilder = PaneBuilders.tooltipBuilder();
-                for(IFormattableTextComponent req : requirements)
-                {
-                    reqBuilder.append(req).paragraphBreak();
-                }
-                gradient.setHoverPane(reqBuilder.build());
                 view.addChild(gradient);
                 final ButtonImage button = new ButtonImage();
                 button.setImage(new ResourceLocation(Constants.MOD_ID, MEDIUM_SIZED_BUTTON_RES));
@@ -86,6 +80,11 @@ public class WindowHutUniversity extends AbstractWindowWorkerBuilding<BuildingUn
                 button.setTextColor(SLIGHTLY_BLUE);
                 button.setPosition(x + INITITAL_X_OFFSET, y + offset + INITITAL_Y_OFFSET);
                 view.addChild(button);
+                final AbstractTextBuilder.TooltipBuilder reqBuilder = PaneBuilders.tooltipBuilder().hoverPane(button);
+                for(IFormattableTextComponent req : requirements)
+                {
+                    reqBuilder.append(req).paragraphBreak();
+                }
             }
             offset += BUTTON_HEIGHT + BUTTON_PADDING;
         }

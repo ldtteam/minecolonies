@@ -572,8 +572,8 @@ public class WindowResearchTree extends AbstractWindowSkeleton
      */
     private void generateResearchTooltips(final Button tipItem, final IGlobalResearch research, final ResearchButtonState state)
     {
-        // have to use a copy of getName, or the TranslationText will also retain and apply the formatting in other contexts.
-        final AbstractTextBuilder.TooltipBuilder hoverPaneBuilder = PaneBuilders.tooltipBuilder().hoverPane(tipItem).append(research.getName().deepCopy()).style(Style.EMPTY.setBold(true).setFormatting(TextFormatting.GOLD));
+        // have to use a deep copy of getName, or the TranslationText will also retain and apply the formatting in other contexts.
+        final AbstractTextBuilder.TooltipBuilder hoverPaneBuilder = PaneBuilders.tooltipBuilder().hoverPane(tipItem).append(research.getName().deepCopy()).bold().color(COLOR_TEXT_NAME);
         if (!research.getSubtitle().getKey().isEmpty())
         {
             hoverPaneBuilder.paragraphBreak().style(Style.EMPTY.setItalic(true).setFormatting(TextFormatting.GRAY)).append(research.getSubtitle());
@@ -592,12 +592,12 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             {
                 if (research.getResearchRequirement().get(txt).isFulfilled(this.building.getColony()))
                 {
-                    hoverPaneBuilder.paragraphBreak().append(new TranslationTextComponent(" - ")).style(Style.EMPTY.setFormatting(TextFormatting.AQUA))
+                    hoverPaneBuilder.paragraphBreak().append(new TranslationTextComponent(" - ")).color(COLOR_TEXT_FULFILLED)
                       .append(research.getResearchRequirement().get(txt).getDesc());
                 }
                 else
                 {
-                    hoverPaneBuilder.paragraphBreak().append(new TranslationTextComponent(" - ")).style(Style.EMPTY.setFormatting(TextFormatting.RED))
+                    hoverPaneBuilder.paragraphBreak().append(new TranslationTextComponent(" - ")).color(COLOR_TEXT_UNFULFILLED)
                       .append(research.getResearchRequirement().get(txt).getDesc());
                 }
             }
@@ -609,19 +609,19 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             {
                 if (hasMax)
                 {
-                    hoverPaneBuilder.paragraphBreak().append(new TranslationTextComponent("com.minecolonies.coremod.research.limit.onemaxperbranch")).style(Style.EMPTY.setFormatting(TextFormatting.GOLD));
+                    hoverPaneBuilder.paragraphBreak().append(new TranslationTextComponent("com.minecolonies.coremod.research.limit.onemaxperbranch")).color(COLOR_TEXT_FULFILLED);
                 }
                 else
                 {
-                    hoverPaneBuilder.paragraphBreak().append(new TranslationTextComponent("com.minecolonies.coremod.research.limit.onemaxperbranch")).style(Style.EMPTY.setFormatting(TextFormatting.RED));
+                    hoverPaneBuilder.paragraphBreak().append(new TranslationTextComponent("com.minecolonies.coremod.research.limit.onemaxperbranch")).color(COLOR_TEXT_UNFULFILLED);
                 }
             }
         }
         if (research.isImmutable())
         {
-            hoverPaneBuilder.paragraphBreak().append(new TranslationTextComponent("com.minecolonies.coremod.research.limit.immutable").setStyle(Style.EMPTY.setFormatting(TextFormatting.RED)));
+            hoverPaneBuilder.paragraphBreak().append(new TranslationTextComponent("com.minecolonies.coremod.research.limit.immutable")).color(COLOR_TEXT_UNFULFILLED);
         }
-        tipItem.setHoverPane(hoverPaneBuilder.build());
+        hoverPaneBuilder.build();
     }
 
     /**
@@ -697,11 +697,10 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         undoButton.setSize(BUTTON_LENGTH, BUTTON_HEIGHT);
         undoButton.setPosition(parent.getX() + (GRADIENT_WIDTH - BUTTON_LENGTH) / 2, parent.getY() + (GRADIENT_HEIGHT - BUTTON_HEIGHT) / 2);
         undoButton.setID("undo:" + parent.getID());
+        parent.getParent().addChild(undoButton);
         displacedButton = parent;
         displacedHoverPane = parent.getHoverPane();
-        parent.setHoverPane(PaneBuilders.tooltipBuilder().hoverPane(parent).append(new TranslationTextComponent("com.minecolonies.coremod.research.undo.progress.tooltip").setStyle(Style.EMPTY.setFormatting(TextFormatting.BOLD)
-                                                                                                                                                                    .setFormatting(TextFormatting.RED))).build());
-        parent.getParent().addChild(undoButton);
+        parent.setHoverPane(PaneBuilders.tooltipBuilder().hoverPane(parent).append(new TranslationTextComponent("com.minecolonies.coremod.research.undo.progress.tooltip")).color(COLOR_TEXT_UNFULFILLED).bold().build());
     }
 
     /**
@@ -755,7 +754,6 @@ public class WindowResearchTree extends AbstractWindowSkeleton
 
         displacedButton = parent;
         displacedHoverPane = parent.getHoverPane();
-        parent.setHoverPane(undoTipBuilder.build());
         parent.getParent().addChild(undoButton);
     }
 
