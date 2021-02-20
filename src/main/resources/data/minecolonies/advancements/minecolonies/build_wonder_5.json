@@ -5,10 +5,10 @@
       "item": "minecolonies:blockhutwonder"
     },
     "title": {
-      "translate": "advancements.minecolonies.build.wonder.title"
+      "translate": "advancements.minecolonies.build.wonder_5.title"
     },
     "description": {
-      "translate": "advancements.minecolonies.build.wonder.description"
+      "translate": "advancements.minecolonies.build.wonder_5.description"
     },
     "show_toast": true,
     "announce_to_chat": true
