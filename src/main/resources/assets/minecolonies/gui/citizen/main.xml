@@ -8,14 +8,14 @@
     <view id="healthBar" size="120 11" pos="35 42">
         <label id="healthLabel" size="30 11" color="black" pos="115 10" text="44"/>
     </view>
-    <view id="saturationBar" size="120 11" pos="35 54"/>
-    <view id="happinessBar" size="120 11" pos="35 64"/>
-    <label id="happinessLabel" size="30 11" color="black" pos="150 73"/>
+    <view id="saturationBar" size="120 22" pos="35 54"/>
+    <view id="happinessBar" size="120 11" pos="35 75"/>
+    <label id="happinessLabel" size="30 11" color="black" pos="150 84"/>
 
-    <label id="title" pos="13 92" size="69 11" color="black" textalign="MIDDLE_RIGHT"
+    <label id="title" pos="13 104" size="69 11" color="black" textalign="MIDDLE_RIGHT"
            label="§l$(com.minecolonies.coremod.gui.citizen.skills)"/>
 
-    <scrollgroup pos="13 105" size="105 100">
+    <scrollgroup pos="13 117" size="105 100">
         <view size="100% 13">
             <label pos="0 1" size="68 12" color="black" textalign="MIDDLE_RIGHT" label="$(com.minecolonies.coremod.gui.citizen.skills.athletics)"/>
             <image pos="70 2" size="9 9" onHoverId="athletics_bts" source="minecolonies:textures/entity/skills/small/athletics.png"/>
@@ -117,7 +117,7 @@
         </view>
     </scrollgroup>
 
-    <image id="statusicon" size="30 30" pos="138 99"/>
+    <image id="statusicon" size="30 30" pos="138 110"/>
     <image id="deco4" size="15 49" pos="137 194"
            source="minecolonies:textures/gui/citizen/colonist_decor_up_ribbon_smaller.png"/>
     <image id="gender" size="30 30" pos="130 189"

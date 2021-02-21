@@ -2,14 +2,19 @@ package com.minecolonies.api.colony.requestsystem.requestable;
 
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -27,9 +32,12 @@ public class Food implements IDeliverable
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
     private static final String NBT_COUNT  = "Count";
     private static final String NBT_RESULT = "Result";
+    private static final String NBT_EXCLUSION = "Exclusion";
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
 
     private final int count;
+
+    private List<ItemStorage> exclusionList = new ArrayList<>();
 
     @NotNull
     private ItemStack result = ItemStackUtils.EMPTY;
@@ -40,6 +48,18 @@ public class Food implements IDeliverable
     {
         this.count = count;
         this.result = result;
+    }
+
+    public Food(final int count, @NotNull final ItemStack result, List<ItemStorage> exclusionList)
+    {
+        this.count = count;
+        this.result = result;
+        this.exclusionList = exclusionList;
+    }
+
+    public Food(final int count, List<ItemStorage> exclusionList)
+    {
+        this(count, ItemStackUtils.EMPTY, exclusionList);
     }
 
     /**
@@ -58,7 +78,17 @@ public class Food implements IDeliverable
         {
             compound.put(NBT_RESULT, food.result.serializeNBT());
         }
-
+        if (!food.exclusionList.isEmpty())
+        {
+            @NotNull final ListNBT items = new ListNBT();
+            for (@NotNull final ItemStorage item : food.exclusionList)
+            {
+                @NotNull final CompoundNBT itemCompound = new CompoundNBT();
+                item.getItemStack().write(itemCompound);
+                items.add(itemCompound);
+            }
+            compound.put(NBT_EXCLUSION, items);
+        }
         return compound;
     }
 
@@ -73,8 +103,18 @@ public class Food implements IDeliverable
     {
         final int count = compound.getInt(NBT_COUNT);
         final ItemStack result = compound.keySet().contains(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_RESULT)) : ItemStackUtils.EMPTY;
+        final List<ItemStorage> items = new ArrayList<>();
 
-        return new Food(count, result);
+        if (compound.contains(NBT_EXCLUSION))
+        {
+            final ListNBT filterableItems = compound.getList(NBT_EXCLUSION, Constants.NBT.TAG_COMPOUND);
+            for (int i = 0; i < filterableItems.size(); ++i)
+            {
+                items.add(new ItemStorage(ItemStack.read(filterableItems.getCompound(i))));
+            }
+        }
+
+        return new Food(count, result, items);
     }
 
     /**
@@ -93,6 +133,12 @@ public class Food implements IDeliverable
         {
             buffer.writeItemStack(input.result);
         }
+
+        buffer.writeInt(input.exclusionList.size());
+        for (ItemStorage item : input.exclusionList)
+        {
+            buffer.writeItemStack(item.getItemStack());
+        }
     }
 
     /**
@@ -102,18 +148,28 @@ public class Food implements IDeliverable
      * @param buffer     the buffer to read.
      * @return the deliverable.
      */
-    public static Food deserialize(final IFactoryController controller, final PacketBuffer buffer)
-    {
+    public static Food deserialize(final IFactoryController controller, final PacketBuffer buffer) {
         final int count = buffer.readInt();
         final ItemStack result = buffer.readBoolean() ? buffer.readItemStack() : ItemStack.EMPTY;
 
+        List<ItemStorage> items = new ArrayList<>();
+        final int itemsCount = buffer.readInt();
+        for (int i = 0; i < itemsCount; ++i)
+        {
+            items.add(new ItemStorage(buffer.readItemStack()));
+        }
+
+        if (!items.isEmpty())
+        {
+            return new Food(count, result, items);
+        }
         return new Food(count, result);
     }
 
     @Override
     public boolean matches(@NotNull final ItemStack stack)
     {
-        return stack.getItem().isFood();
+        return stack.getItem().isFood() && !exclusionList.contains(new ItemStorage(stack));
     }
 
     @Override
@@ -145,6 +201,11 @@ public class Food implements IDeliverable
     public ItemStack getResult()
     {
         return result;
+    }
+
+    public List<ItemStorage> getExclusionList()
+    {
+        return exclusionList;
     }
 
     @Override
