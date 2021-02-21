@@ -8,6 +8,9 @@
         <view id="fuel" size="100% 100%">
             <layout source="minecolonies:gui/layouthuts/layoutfilterablelist.xml"/>
         </view>
+        <view id="food" size="100% 100%">
+            <layout source="minecolonies:gui/layouthuts/layoutfilterablelist.xml"/>
+        </view>
         <view>
             <image source="minecolonies:textures/gui/builderhut/builder_papper.png" size="190 244"/>
             <label size="130 11" pos="30 14" textalign="MIDDLE" color="black"
