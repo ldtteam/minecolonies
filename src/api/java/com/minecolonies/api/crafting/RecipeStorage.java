@@ -220,7 +220,7 @@ public class RecipeStorage implements IRecipeStorage
         {
             for(ItemStack result: getSecondaryOutputs())
             {
-                if(ItemStackUtils.compareItemStacksIgnoreStackSize(item.getItemStack(), result, false, true))
+                if(ItemStackUtils.compareItemStacksIgnoreStackSize(item.getItemStack(), result, false, true) && result.isDamageable())
                 {
                     secondaryOutputs.remove(result);
                     tools.add(result);
