@@ -62,10 +62,17 @@ public class RecipeStorage implements IRecipeStorage
     private final List<ItemStack> alternateOutputs;
 
     /**
-     * Alternate output generated for the recipe.
+     * Secondary outputs generated for the recipe.
      */
     @NotNull
     private final List<ItemStack> secondaryOutputs;
+
+    /**
+     * Tools not consumed but damanged for the recipe.
+     */
+    @NotNull
+    private final List<ItemStack> tools;
+
 
     /**
      * The intermediate required for the recipe (e.g furnace).
@@ -129,6 +136,7 @@ public class RecipeStorage implements IRecipeStorage
         }
 
         this.lootTable = lootTable;
+        this.calculateTools();
     }
 
     @Override
@@ -200,6 +208,25 @@ public class RecipeStorage implements IRecipeStorage
             }
         }
         return ImmutableList.copyOf(secondaryStacks);
+    }
+
+    /**
+     * Calculate tools from comparing inputs and outputs. 
+     */
+    private void calculateTools()
+    {
+        for(ItemStorage item : getCleanedInput())
+        {
+            for(ItemStack result: getSecondaryOutputs())
+            {
+                if(ItemStackUtils.compareItemStacksIgnoreStackSize(item.getItemStack(), result, false, true))
+                {
+                    secondaryOutputs.remove(result);
+                    tools.add(result);
+                    break;
+                }
+            }
+        }
     }
 
     @NotNull
@@ -401,7 +428,7 @@ public class RecipeStorage implements IRecipeStorage
             return false;
         }
 
-        final List<ItemStack> extracted = new ArrayList<>();
+        final Random rand = context.getRandom();
 
         for (final ItemStorage storage : getCleanedInput())
         {
@@ -420,24 +447,31 @@ public class RecipeStorage implements IRecipeStorage
 
                 while (slotOfStack != -1 && amountNeeded > 0)
                 {
-                    final int count = ItemStackUtils.getSize(handler.getStackInSlot(slotOfStack));
-                    final ItemStack extractedStack = handler.extractItem(slotOfStack, amountNeeded, false).copy();
-
-                    //This prevents the AI and for that matter the server from getting stuck in case of an emergency.
-                    //Deletes some items, but hey.
-                    if (ItemStackUtils.isEmpty(extractedStack))
+                    if(ItemStackUtils.compareItemStackListIgnoreStackSize(tools, stack, false, true))
                     {
-                        handler.insertItem(slotOfStack, extractedStack, false);
-                        return false;
+                        final ItemStack damageStack = handler.getStackInSlot(slotOfStack);
+                        damageStack.attemptDamageItem(1, rand, null);
                     }
-
-                    amountNeeded -= count;
-                    if (amountNeeded > 0)
+                    else
                     {
-                        slotOfStack = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(handler,
-                          itemStack -> !ItemStackUtils.isEmpty(itemStack) && ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, false, true));
+                        final int count = ItemStackUtils.getSize(handler.getStackInSlot(slotOfStack));
+                        final ItemStack extractedStack = handler.extractItem(slotOfStack, amountNeeded, false).copy();
+
+                        //This prevents the AI and for that matter the server from getting stuck in case of an emergency.
+                        //Deletes some items, but hey.
+                        if (ItemStackUtils.isEmpty(extractedStack))
+                        {
+                            handler.insertItem(slotOfStack, extractedStack, false);
+                            return false;
+                        }
+
+                        amountNeeded -= count;
+                        if (amountNeeded > 0)
+                        {
+                            slotOfStack = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(handler,
+                            itemStack -> !ItemStackUtils.isEmpty(itemStack) && ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, false, true));
+                        }
                     }
-                    extracted.add(extractedStack);
                 }
 
                 // stop looping handlers if we have what we need
@@ -453,7 +487,7 @@ public class RecipeStorage implements IRecipeStorage
             }
         }
 
-        insertCraftedItems(handlers, getPrimaryOutput(), context, extracted);
+        insertCraftedItems(handlers, getPrimaryOutput(), context);
         return true;
     }
 
@@ -468,7 +502,7 @@ public class RecipeStorage implements IRecipeStorage
      *
      * @param handlers the handlers.
      */
-    private void insertCraftedItems(final List<IItemHandler> handlers, ItemStack outputStack, LootContext context, List<ItemStack> extractedItems)
+    private void insertCraftedItems(final List<IItemHandler> handlers, ItemStack outputStack, LootContext context)
     {
         if(!ItemStackUtils.isEmpty(outputStack))
         {
@@ -493,34 +527,7 @@ public class RecipeStorage implements IRecipeStorage
             secondaryStacks.addAll(loot.generate(context));
         }
 
-        // Propagate and damage tools, rather than recreate them. 
-        Random rand = new Random();
-        for(final ItemStack stack : secondaryOutputs)
-        {
-            if(stack.isDamageable())
-            {
-                boolean found = false;
-                for(ItemStack extracted : extractedItems)
-                {
-                    if(ItemStackUtils.compareItemStacksIgnoreStackSize(extracted, stack, false, true))
-                    {
-                        final ItemStack damaged = extracted.copy();
-                        damaged.attemptDamageItem(1, rand, null);
-                        secondaryStacks.add(damaged);
-                        break;
-                    }
-                }
-                if(!found)
-                {
-                    secondaryStacks.add(stack);
-                }
-            }
-            else
-            {
-                secondaryStacks.add(stack);
-            }
-        }
-        
+        secondaryStacks.addAll(secondaryOutputs);
         for (final ItemStack stack : secondaryStacks)
         {
             for (final IItemHandler handler : handlers)
