@@ -39,7 +39,6 @@ public class DefaultBlockLootTableProvider implements IDataProvider
         saveBlocks(Arrays.asList(ModBlocks.getHuts()), cache);
 
         saveBlock(ModBlocks.blockHutWareHouse, cache);
-        saveBlock(ModBlocks.blockPostBox, cache);
         saveBlock(ModBlocks.blockStash, cache);
 
         saveBlock(ModBlocks.blockConstructionTape, cache);
