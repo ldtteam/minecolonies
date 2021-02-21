@@ -136,6 +136,7 @@ public class RecipeStorage implements IRecipeStorage
         }
 
         this.lootTable = lootTable;
+        this.tools = new ArrayList<>();
         this.calculateTools();
     }
 
