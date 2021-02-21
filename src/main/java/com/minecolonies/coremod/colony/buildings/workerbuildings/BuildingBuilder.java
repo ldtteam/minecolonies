@@ -424,7 +424,7 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
         }
 
         @Override
-        public void deserialize(PacketBuffer buf)
+        public void deserialize(@NotNull PacketBuffer buf)
         {
             super.deserialize(buf);
             manualMode = buf.readBoolean();
