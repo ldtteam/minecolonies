@@ -197,7 +197,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
                 trainingPartner.attackEntityFrom(new NamedDamageSource(worker.getName().getString(), worker), 0.0F);
                 worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, 1);
             }
-            worker.getNavigator().moveAwayFromXYZ(trainingPartner.getPosition(), 4.0, worker.getAIMoveSpeed());
+            worker.getNavigator().moveAwayFromXYZ(trainingPartner.getPosition(), 4.0, 1.0);
             targetCounter++;
 
             if (targetCounter > getOwnBuilding().getBuildingLevel() * ACTIONS_PER_BUILDING_LEVEL)
