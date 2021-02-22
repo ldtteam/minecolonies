@@ -1,0 +1,15 @@
+{
+  "type" : "recipe",
+  "crafter": "blacksmith",
+  "inputs": [
+    {
+      "item" : "minecraft:iron_ingot",
+      "count": 8
+    }
+  ],
+  "result": "minecolonies:plate_armor_chest",
+  "count": 1,
+  "min-building-level" : 2
+}
+
+
