@@ -211,7 +211,8 @@ public final class ColonyView implements IColonyView
     /**
      * Whether spies are active and highlight enemy positions.
      */
-    private boolean spiesEnabled;
+    private boolean   spiesEnabled;
+    private Set<Long> ticketedChunks = new HashSet<>();
 
     /**
      * Base constructor for a colony.
@@ -372,6 +373,19 @@ public final class ColonyView implements IColonyView
         final CompoundNBT treeTag = new CompoundNBT();
         colony.getResearchManager().writeToNBT(treeTag);
         buf.writeCompoundTag(treeTag);
+
+        if (hasNewSubscribers || colony.isTicketedChunksDirty())
+        {
+            buf.writeInt(colony.getTicketedChunks().size());
+            for (final long pos : colony.getTicketedChunks())
+            {
+                buf.writeLong(pos);
+            }
+        }
+        else
+        {
+            buf.writeInt(-1);
+        }
     }
 
     /**
@@ -554,7 +568,7 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public void addLoadedChunk(final long chunkPos)
+    public void addLoadedChunk(final long chunkPos, final Chunk chunk)
     {
 
     }
@@ -581,6 +595,12 @@ public final class ColonyView implements IColonyView
     public boolean isActive()
     {
         return true;
+    }
+
+    @Override
+    public Set<Long> getTicketedChunks()
+    {
+        return ticketedChunks;
     }
 
     /**
@@ -842,6 +862,16 @@ public final class ColonyView implements IColonyView
         if (isCoordInColony(world, Minecraft.getInstance().player.getPosition()))
         {
             ItemBlockHut.checkResearch(this);
+        }
+
+        final int ticketChunkCount = buf.readInt();
+        if (ticketChunkCount != -1)
+        {
+            ticketedChunks = new HashSet<>(ticketChunkCount);
+            for (int i = 0; i < ticketChunkCount; i++)
+            {
+                ticketedChunks.add(buf.readLong());
+            }
         }
         return null;
     }

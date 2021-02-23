@@ -517,7 +517,7 @@ public class EntityAIInteractToggleAble extends Goal
         {
             // Same logic as doorblock, using our own setblockstate
             final boolean isOpening = !state.get(BlockStateProperties.OPEN);
-            WorldUtil.setBlockState(world, pos, state.with(OPEN, !state.get(BlockStateProperties.OPEN)), 10);
+            WorldUtil.setBlockState(world, pos, state.with(OPEN, isOpening), 10);
             ((DoorBlock) state.getBlock()).playSound(world, pos, isOpening);
         }
 

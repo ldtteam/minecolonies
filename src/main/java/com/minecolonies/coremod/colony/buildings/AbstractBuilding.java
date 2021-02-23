@@ -1081,6 +1081,12 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     {
         final WorkOrderBuildBuilding workOrder = new WorkOrderBuildBuilding(this, Math.max(1, getBuildingLevel()));
         final LoadOnlyStructureHandler wrapper = new LoadOnlyStructureHandler(colony.getWorld(), getPosition(), workOrder.getStructureName(), new PlacementSettings(), true);
+        if (!wrapper.hasBluePrint())
+        {
+            setCorners(getPosition(), getPosition());
+            return;
+        }
+
         final Tuple<BlockPos, BlockPos> corners
           = ColonyUtils.calculateCorners(this.getPosition(),
           colony.getWorld(),

@@ -11,9 +11,11 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.util.InputMappings;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
@@ -32,7 +34,8 @@ public class DebugRendererChunkBorder
 
     private static Tuple<Integer, Integer> center = new Tuple<>(0, 0);
 
-    private static Map<Tuple<Integer, Integer>, Integer> colonies = new HashMap<>();
+    private static Map<Tuple<Integer, Integer>, Integer> colonies     = new HashMap<>();
+    private static Map<Tuple<Integer, Integer>, Integer> chunktickets = new HashMap<>();
 
     @SubscribeEvent
     public static void renderWorldLastEvent(@NotNull final RenderWorldLastEvent event)
@@ -56,6 +59,7 @@ public class DebugRendererChunkBorder
         {
             center = new Tuple<>(player.chunkCoordX, player.chunkCoordZ);
             colonies.clear();
+            chunktickets.clear();
             final int range = MineColonies.getConfig().getServer().maxColonySize.get();
             for (int incX = -range; incX <= range; incX += 1)
             {
@@ -66,6 +70,15 @@ public class DebugRendererChunkBorder
                     if (cap != null)
                     {
                         colonies.put(new Tuple<>(incX, incZ), cap.getOwningColony());
+                    }
+
+                    if (view.getTicketedChunks().contains(ChunkPos.asLong(player.chunkCoordX + incX, player.chunkCoordZ + incZ)))
+                    {
+                        chunktickets.put(new Tuple<>(incX, incZ), view.getID());
+                    }
+                    else
+                    {
+                        chunktickets.put(new Tuple<>(incX, incZ), 0);
                     }
                 }
             }
@@ -87,7 +100,12 @@ public class DebugRendererChunkBorder
         stack.push();
         final Matrix4f matrix = stack.getLast().getMatrix();
 
-        for (final Map.Entry<Tuple<Integer, Integer>, Integer> c : colonies.entrySet())
+        // check control key pressed
+        boolean debugRenderChunkLoads = true || InputMappings.isKeyDown(Minecraft.getInstance().getMainWindow().getHandle(), 341);
+        Map<Tuple<Integer, Integer>, Integer> renderChunks = debugRenderChunkLoads ? chunktickets : colonies;
+
+
+        for (final Map.Entry<Tuple<Integer, Integer>, Integer> c : renderChunks.entrySet())
         {
             final int x = c.getKey().getA();
             final int z = c.getKey().getB();
@@ -101,19 +119,19 @@ public class DebugRendererChunkBorder
                 boolean east = false;
                 boolean west = false;
 
-                if (!c.getValue().equals(colonies.get(new Tuple<>(x, z - 1))) && colonies.containsKey(new Tuple<>(x, z - 1)))
+                if (!c.getValue().equals(renderChunks.get(new Tuple<>(x, z - 1))) && renderChunks.containsKey(new Tuple<>(x, z - 1)))
                 {
                     north = true;
                 }
-                if (!c.getValue().equals(colonies.get(new Tuple<>(x, z + 1))) && colonies.containsKey(new Tuple<>(x, z + 1)))
+                if (!c.getValue().equals(renderChunks.get(new Tuple<>(x, z + 1))) && renderChunks.containsKey(new Tuple<>(x, z + 1)))
                 {
                     south = true;
                 }
-                if (!c.getValue().equals(colonies.get(new Tuple<>(x + 1, z))) && colonies.containsKey(new Tuple<>(x + 1, z)))
+                if (!c.getValue().equals(renderChunks.get(new Tuple<>(x + 1, z))) && renderChunks.containsKey(new Tuple<>(x + 1, z)))
                 {
                     east = true;
                 }
-                if (!c.getValue().equals(colonies.get(new Tuple<>(x - 1, z))) && colonies.containsKey(new Tuple<>(x - 1, z)))
+                if (!c.getValue().equals(renderChunks.get(new Tuple<>(x - 1, z))) && renderChunks.containsKey(new Tuple<>(x - 1, z)))
                 {
                     west = true;
                 }
