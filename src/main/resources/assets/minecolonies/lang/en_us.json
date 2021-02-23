@@ -31,8 +31,8 @@
   "minecolonies.config.configliststudyitems": "List of Study Items",
   "minecolonies.config.configliststudyitems.comment": "Items consumed by citizens in the Library.",
 
-  "minecolonies.config.generatesupplyloot": "Supply loot",
-  "minecolonies.config.generatesupplyloot.comment": "Whether to generate supply ship/camps in chests occasionally.",
+  "minecolonies.config.generatesupplyloot": "Supply Loot",
+  "minecolonies.config.generatesupplyloot.comment": "Whether to generate supply ships and camps in loot chests.",
 
   "minecolonies.config.forceloadcolony": "Force Load Colony",
   "minecolonies.config.forceloadcolony.comment": "If part of the colony is loaded by an owner/officer, the entire colony should be kept loaded.",

@@ -1,10 +1,12 @@
 package com.minecolonies.api.configuration;
 
+import com.minecolonies.api.util.constant.NameConstants;
+import net.minecraftforge.common.ForgeConfigSpec;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import com.minecolonies.api.util.constant.NameConstants;
-import net.minecraftforge.common.ForgeConfigSpec;
+
 import static com.minecolonies.api.util.constant.Constants.*;
 
 /**
@@ -57,6 +59,7 @@ public class ServerConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.IntValue     diseaseModifier;
     public final ForgeConfigSpec.BooleanValue forceLoadColony;
     public final ForgeConfigSpec.IntValue     badVisitorsChance;
+    public final ForgeConfigSpec.BooleanValue generateSupplyLoot;
 
     /*  --------------------------------------------------------------------------- *
      *  ------------------- ######## Command settings ######## ------------------- *
@@ -410,6 +413,7 @@ public class ServerConfiguration extends AbstractConfiguration
         diseaseModifier = defineInteger(builder, "diseasemodifier", 5, 1, 100);
         forceLoadColony = defineBoolean(builder, "forceloadcolony", false);
         badVisitorsChance = defineInteger(builder, "badvisitorchance", 2, 1, 100);
+        generateSupplyLoot = defineBoolean(builder, "generatesupplyloot", true);
 
         swapToCategory(builder, "commands");
         
