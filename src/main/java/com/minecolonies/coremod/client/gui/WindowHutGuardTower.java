@@ -43,6 +43,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
     private final Button buttonTaskPatrol;
     private final Button buttonTaskFollow;
     private final Button buttonTaskGuard;
+    private final Button buttonTaskMine;
     private final Button buttonSetTarget;
 
     /**
@@ -116,6 +117,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
         registerButton(GUI_SWITCH_TASK_PATROL, this::switchTask);
         registerButton(GUI_SWITCH_TASK_FOLLOW, this::switchTask);
         registerButton(GUI_SWITCH_TASK_GUARD, this::switchTask);
+        registerButton(GUI_SWITCH_TASK_MINE, this::switchTask);
 
         registerButton(GUI_LIST_BUTTON_SWITCH, this::switchAttackMode);
         registerButton(GUI_LIST_BUTTON_UP, this::updatePriority);
@@ -124,6 +126,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
         buttonTaskPatrol = this.findPaneOfTypeByID(GUI_SWITCH_TASK_PATROL, Button.class);
         buttonTaskFollow = this.findPaneOfTypeByID(GUI_SWITCH_TASK_FOLLOW, Button.class);
         buttonTaskGuard = this.findPaneOfTypeByID(GUI_SWITCH_TASK_GUARD, Button.class);
+        buttonTaskMine = this.findPaneOfTypeByID(GUI_SWITCH_TASK_MINE, Button.class);
         buttonSetTarget = this.findPaneOfTypeByID(GUI_BUTTON_SET_TARGET, Button.class);
     }
 
@@ -310,6 +313,10 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
             buttonSetTarget.setText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.targetGuard"));
             buttonTaskGuard.setEnabled(false);
         }
+        else if (task.equals(GuardTask.MINE))
+        {
+            buttonTaskMine.setEnabled(false);
+        }
     }
 
     /**
@@ -450,6 +457,15 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
             buttonTaskGuard.setEnabled(true);
             buttonSetTarget.setEnabled(true);
             buttonSetTarget.show();
+        }
+        else if (button.getID().contains(GUI_SWITCH_TASK_MINE))
+        {
+            building.setTask(GuardTask.MINE);
+
+            buttonTaskPatrol.setEnabled(true);
+            buttonTaskFollow.setEnabled(true);
+            buttonTaskGuard.setEnabled(true);
+            buttonTaskMine.setEnabled(false);
         }
         else
         {
