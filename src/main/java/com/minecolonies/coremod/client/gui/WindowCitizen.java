@@ -267,6 +267,28 @@ public class WindowCitizen extends AbstractWindowRequestTree
     }
 
     /**
+     * Get vertical offset for the saturation icon based on the iteration
+     * If i >= 10, move the icons down another line
+     * @param i the current iteration
+     * @return the y offset
+     */
+    private static int getYOffset(final int i)
+    {
+        return (i >= 10 ? SATURATION_ICON_POS_Y : 0);
+    }
+
+    /**
+     * Get horizontal offset modifier for the saturation icon based on the iteration
+     * if i >= 10, decrease i by 10 to start the line from the beginning
+     * @param i the current iteration
+     * @return the x offset modifier
+     */
+    private static int getXOffsetModifier(final int i)
+    {
+        return (i >= 10 ? i - 10 : i);
+    }
+
+    /**
      * Creates an health bar according to the citizen maxHealth and currentHealth.
      *
      * @param citizen the citizen.
@@ -287,7 +309,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
               SATURATION_ICON_HEIGHT_WIDTH,
               false);
 
-            saturation.setPosition(i * SATURATION_ICON_POS_X + SATURATION_ICON_OFFSET_X, SATURATION_ICON_POS_Y);
+            saturation.setPosition(getXOffsetModifier(i) * SATURATION_ICON_POS_X + SATURATION_ICON_OFFSET_X, SATURATION_ICON_POS_Y + getYOffset(i));
             view.findPaneOfTypeByID(WINDOW_ID_SATURATION_BAR, View.class).addChild(saturation);
         }
 
@@ -297,7 +319,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
         {
             @NotNull final Image saturation = new Image();
             saturation.setImage(Screen.GUI_ICONS_LOCATION, FULL_SATURATION_ITEM_ROW_POS, SATURATION_ICON_COLUMN, SATURATION_ICON_HEIGHT_WIDTH, SATURATION_ICON_HEIGHT_WIDTH, false);
-            saturation.setPosition(saturationPos * SATURATION_ICON_POS_X + SATURATION_ICON_OFFSET_X, SATURATION_ICON_POS_Y);
+            saturation.setPosition(getXOffsetModifier(saturationPos) * SATURATION_ICON_POS_X + SATURATION_ICON_OFFSET_X, SATURATION_ICON_POS_Y + getYOffset(saturationPos));
             view.findPaneOfTypeByID(WINDOW_ID_SATURATION_BAR, View.class).addChild(saturation);
         }
 
@@ -306,7 +328,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
         {
             @NotNull final Image saturation = new Image();
             saturation.setImage(Screen.GUI_ICONS_LOCATION, HALF_SATURATION_ITEM_ROW_POS, SATURATION_ICON_COLUMN, SATURATION_ICON_HEIGHT_WIDTH, SATURATION_ICON_HEIGHT_WIDTH, false);
-            saturation.setPosition(saturationPos * SATURATION_ICON_POS_X + SATURATION_ICON_OFFSET_X, SATURATION_ICON_POS_Y);
+            saturation.setPosition(getXOffsetModifier(saturationPos) * SATURATION_ICON_POS_X + SATURATION_ICON_OFFSET_X, SATURATION_ICON_POS_Y + getYOffset(saturationPos));
             view.findPaneOfTypeByID(WINDOW_ID_SATURATION_BAR, View.class).addChild(saturation);
         }
     }

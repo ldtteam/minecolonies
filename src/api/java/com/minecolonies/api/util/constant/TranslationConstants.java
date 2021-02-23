@@ -344,6 +344,8 @@ public final class TranslationConstants
     @NonNls
     public static final String FURNACE_USER_NO_ORE                                                  = "com.minecolonies.coremod.furnaceuser.noore";
     @NonNls
+    public static final String FURNACE_USER_NO_FOOD                                                 = "com.minecolonies.coremod.furnaceuser.nofood";
+    @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GENERAL_ONBIG                               = "com.minecolonies.coremod.general.onbig";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GENERAL_OFFBIG                              = "com.minecolonies.coremod.general.offbig";
@@ -385,6 +387,10 @@ public final class TranslationConstants
     public static final String NEEDS_BETTER_HUT                                                     = "entity.miner.messagerequiresbetterhut";
     @NonNls
     public static final String RAW_FOOD                                                             = "com.minecolonies.coremod.ai.wrongfood";
+    @NonNls
+    public static final String BETTER_FOOD                                                          = "com.minecolonies.coremod.ai.betterfood";
+    @NonNls
+    public static final String BETTER_FOOD_CHILDREN                                                 = "com.minecolonies.coremod.ai.betterfood.children";
     @NonNls
     public static final String NO_RESTAURANT                                                        = "com.minecolonies.coremod.ai.norestaurant";
     @NonNls

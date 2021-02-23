@@ -454,18 +454,18 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public int getMaxInhabitants()
     {
-        if (modules.isEmpty())
-        {
-            return super.getMaxInhabitants();
-        }
-
-        int current = 0;
+        int current = -1;
         for (final IBuildingModule module : modules.values())
         {
             if (module instanceof IDefinesCoreBuildingStatsModule)
             {
                 current = ((IDefinesCoreBuildingStatsModule) module).getMaxInhabitants().apply(current);
             }
+        }
+
+        if (current == -1)
+        {
+            return super.getMaxInhabitants();
         }
         return Math.max(0, current);
     }
@@ -1408,7 +1408,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
      * @param requestToken The {@link IToken} that is used to represent the request.
      * @param requested    The class of the type that has been requested eg. {@code ItemStack.class}
      */
-    private void addRequestToMaps(@NotNull final Integer citizenId, @NotNull final IToken<?> requestToken, @NotNull final TypeToken<?> requested)
+    private void addRequestToMaps(final int citizenId, @NotNull final IToken<?> requestToken, @NotNull final TypeToken<?> requested)
     {
         if (!getOpenRequestsByRequestableType().containsKey(requested))
         {
@@ -1898,7 +1898,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
-        final Integer citizenThatRequested = getCitizensByRequest().remove(request.getId());
+        final int citizenThatRequested = getCitizensByRequest().remove(request.getId());
 
         if (getOpenRequestsByCitizen().containsKey(citizenThatRequested))
         {
@@ -1969,7 +1969,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             return new StringTextComponent("<UNKNOWN>");
         }
 
-        final Integer citizenId = getCitizensByRequest().get(request.getId());
+        final int citizenId = getCitizensByRequest().get(request.getId());
         final ICitizenData citizenData = getColony().getCitizenManager().getCivilian(citizenId);
         final IFormattableTextComponent jobName =  new TranslationTextComponent(citizenData.getJob().getName().toLowerCase());
         return jobName.append(new StringTextComponent(" " + citizenData.getName()));

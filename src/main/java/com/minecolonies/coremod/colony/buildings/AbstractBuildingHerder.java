@@ -8,6 +8,7 @@ import com.minecolonies.coremod.network.messages.server.colony.building.herder.H
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
+import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BREEDING;
 
@@ -109,7 +110,7 @@ public abstract class AbstractBuildingHerder extends AbstractBuildingWorker
         }
 
         @Override
-        public void deserialize(PacketBuffer buf)
+        public void deserialize(@NotNull PacketBuffer buf)
         {
             super.deserialize(buf);
             breeding = buf.readBoolean();

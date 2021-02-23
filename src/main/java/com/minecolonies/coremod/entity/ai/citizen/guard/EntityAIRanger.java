@@ -416,12 +416,6 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
                     worker.world.addEntity(arrow);
                 }
 
-                final double xDiff = target.getPosX() - worker.getPosX();
-                final double zDiff = target.getPosZ() - worker.getPosZ();
-                final double goToX = xDiff > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
-                final double goToZ = zDiff > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
-                worker.move(MoverType.SELF, new Vector3d(goToX, 0, goToZ));
-
                 timeCanSee = 0;
                 target.setRevengeTarget(worker);
                 currentAttackDelay = getAttackDelay();
