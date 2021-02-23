@@ -2,7 +2,6 @@ package com.minecolonies.coremod.colony.buildings.views;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
-import com.google.common.reflect.TypeToken;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
@@ -15,7 +14,6 @@ import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.Network;
@@ -98,7 +96,6 @@ public abstract class AbstractBuildingView implements IBuildingView
     /**
      * The data store id for request system related data.
      */
-    @NotNull
     private IToken<?> rsDataStoreToken;
 
     /**
@@ -533,7 +530,6 @@ public abstract class AbstractBuildingView implements IBuildingView
         return requesterId;
     }
 
-    @NotNull
     @Override
     public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
@@ -546,7 +542,6 @@ public abstract class AbstractBuildingView implements IBuildingView
         }
     }
 
-    @NotNull
     @Override
     public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
