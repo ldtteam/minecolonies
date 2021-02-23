@@ -407,5 +407,10 @@ public interface IColony
      */
     boolean isActive();
 
+    /**
+     * Get the set of chunk positions which the colony is loading through tickets
+     *
+     * @return set of positions
+     */
     Set<Long> getTicketedChunks();
 }

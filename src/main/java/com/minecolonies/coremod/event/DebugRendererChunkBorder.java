@@ -101,7 +101,7 @@ public class DebugRendererChunkBorder
         final Matrix4f matrix = stack.getLast().getMatrix();
 
         // check control key pressed
-        boolean debugRenderChunkLoads = true || InputMappings.isKeyDown(Minecraft.getInstance().getMainWindow().getHandle(), 341);
+        boolean debugRenderChunkLoads = InputMappings.isKeyDown(Minecraft.getInstance().getMainWindow().getHandle(), 341);
         Map<Tuple<Integer, Integer>, Integer> renderChunks = debugRenderChunkLoads ? chunktickets : colonies;
 
 
