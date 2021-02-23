@@ -53,10 +53,10 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
     /**
      * The bounding boxes.
      */
-    protected static final VoxelShape AABB_SOUTH = VoxelShapes.create(0.4125D, 0.375D, 0.950D, 0.5875D, 0.625D, 1.0D);
-    protected static final VoxelShape AABB_NORTH = VoxelShapes.create(0.4125D, 0.375D, 0.0D, 0.5875D, 0.625D, 0.050D);
-    protected static final VoxelShape AABB_EAST  = VoxelShapes.create(0.950D, 0.375D, 0.4125D, 1.0D, 0.625D, 0.5875D);
-    protected static final VoxelShape AABB_WEST  = VoxelShapes.create(0.0D, 0.375D, 0.4125D, 0.050D, 0.625D, 0.5875D);
+    protected static final VoxelShape AABB_SOUTH = VoxelShapes.create(0.25D, 0.314D, 0.97D, 0.75D, 0.86D, 1.0D);
+    protected static final VoxelShape AABB_NORTH = VoxelShapes.create(0.25D, 0.314D, 0.0D, 0.75D, 0.86D, 0.3D);
+    protected static final VoxelShape AABB_EAST  = VoxelShapes.create(0.97D, 0.314D, 0.25D, 1.0D, 0.86D, 0.75D);
+    protected static final VoxelShape AABB_WEST  = VoxelShapes.create(0.0D, 0.314D, 0.25D, 0.3D, 0.86D, 0.75D);
 
     /**
      * Constructor for the placerholder.
