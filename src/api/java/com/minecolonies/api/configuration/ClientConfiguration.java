@@ -9,6 +9,7 @@ public class ClientConfiguration extends AbstractConfiguration
 {
     public final ForgeConfigSpec.BooleanValue citizenVoices;
     public final ForgeConfigSpec.BooleanValue pathfindingDebugDraw;
+    public final ForgeConfigSpec.BooleanValue blueprintRender;
 
     /**
      * Builds client configuration.
@@ -19,6 +20,7 @@ public class ClientConfiguration extends AbstractConfiguration
     {
         createCategory(builder, "gameplay");
         citizenVoices = defineBoolean(builder, "disablecitizenvoices", true);
+        blueprintRender = defineBoolean(builder, "blueprintrender", true);
 
         swapToCategory(builder, "pathfinding");
         pathfindingDebugDraw = defineBoolean(builder, "pathfindingdebugdraw", false);
