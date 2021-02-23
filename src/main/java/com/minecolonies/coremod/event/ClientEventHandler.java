@@ -183,7 +183,7 @@ public class ClientEventHandler
         for (final IBuildingView buildingView : colony.getBuildings())
 
         {
-            if (MinecoloniesAPIProxy.getInstance().getConfig().getClient().blueprintRender.get())
+            if (MinecoloniesAPIProxy.getInstance().getConfig().getClient().neighborbuildingrendering.get())
             {
                 if (buildingView instanceof PostBox.View || buildingView instanceof EmptyView)
                 {
