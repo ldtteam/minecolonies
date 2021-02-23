@@ -1174,10 +1174,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
     {
         final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep = new HashMap<>(keepX);
-        if (keepFood())
-        {
-            toKeep.put(stack -> ItemStackUtils.CAN_EAT.test(stack) && (this instanceof AbstractBuildingWorker ? ((AbstractBuildingWorker) this).canEat(stack) : true), new Tuple<>(getBuildingLevel() * 2, true));
-        }
 
         final Map<ItemStorage, Tuple<Integer, Boolean>> requiredItems = new HashMap<>();
         final Collection<IRequestResolver<?>> resolvers = getResolvers();
