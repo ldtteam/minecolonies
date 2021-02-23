@@ -133,6 +133,7 @@ public final class ModBlocks
           blockHutRabbitHutch,
           blockHutConcreteMixer,
           blockHutBeekeeper,
-          blockHutFlorist};
+          blockHutFlorist,
+          blockPostBox};
     }
 }
