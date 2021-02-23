@@ -20,7 +20,7 @@ public interface ICitizenData extends ICivilianData
     /**
      * Maximum saturation of a citizen.
      */
-    int MAX_SATURATION = 10;
+    int MAX_SATURATION = 20;
 
     /**
      * When a building is destroyed, inform the citizen so it can do any cleanup of associations that the building's. own IBuilding.onDestroyed did not do.

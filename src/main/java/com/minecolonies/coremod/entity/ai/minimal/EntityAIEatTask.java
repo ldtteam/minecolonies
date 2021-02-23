@@ -41,8 +41,7 @@ import static com.minecolonies.api.util.ItemStackUtils.ISCOOKABLE;
 import static com.minecolonies.api.util.constant.Constants.SECONDS_A_MINUTE;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.GuardConstants.BASIC_VOLUME;
-import static com.minecolonies.api.util.constant.TranslationConstants.NO_RESTAURANT;
-import static com.minecolonies.api.util.constant.TranslationConstants.RAW_FOOD;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.entity.ai.minimal.EntityAIEatTask.EatingState.*;
 
 /**
@@ -456,6 +455,17 @@ public class EntityAIEatTask extends Goal
         if (InventoryUtils.hasItemInItemHandler(citizen.getInventoryCitizen(), ISCOOKABLE))
         {
             citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(RAW_FOOD), ChatPriority.PENDING));
+        }
+        else if (InventoryUtils.hasItemInItemHandler(citizen.getInventoryCitizen(), stack -> CAN_EAT.test(stack) && !canEat(citizenData, stack)))
+        {
+            if (citizenData.isChild())
+            {
+                citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(BETTER_FOOD_CHILDREN), ChatPriority.BLOCKING));
+            }
+            else
+            {
+                citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(BETTER_FOOD), ChatPriority.BLOCKING));
+            }
         }
 
         final IJob<?> job = citizen.getCitizenJobHandler().getColonyJob();

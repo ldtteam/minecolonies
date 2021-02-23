@@ -135,6 +135,7 @@ public final class ModBlocks
           blockHutConcreteMixer,
           blockHutBeekeeper,
           blockHutWonder,
-          blockHutFlorist};
+          blockHutFlorist,
+          blockPostBox};
     }
 }
