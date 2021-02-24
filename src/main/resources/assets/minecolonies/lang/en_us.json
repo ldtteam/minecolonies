@@ -24,6 +24,9 @@
   "minecolonies.config.disablecitizenvoices": "Citizen Sounds",
   "minecolonies.config.disablecitizenvoices.comment": "Disable citizen voices.",
 
+  "minecolonies.config.neighborbuildingrendering": "Neighbor Building Rendering",
+  "minecolonies.config.neighborbuildingrendering.comment": "By default, when placing a schematic near other buildings, the already-placed buildings will show as if they were at level 5 and have a blue outline around them. You can disable that by setting this to false.",
+
   "minecolonies.config.diseasemodifier": "Disease Modifier",
   "minecolonies.config.diseasemodifier.comment": "How common diseases are. 1 = Very common, 100 = extremely rare.",
   "minecolonies.config.diseases": "Diseases",
