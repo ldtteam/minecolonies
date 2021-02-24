@@ -102,6 +102,13 @@ public class Colony implements IColony
     private Set<Long> loadedChunks = new HashSet<>();
 
     /**
+     * List of loaded chunks for the colony.
+     */
+    public Set<Long> ticketedChunks = new HashSet<>();
+
+    private boolean ticketedChunksDirty = true;
+
+    /**
      * List of chunks that have to be be force loaded.
      */
     private Set<Long> pendingChunks = new HashSet<>();
@@ -268,8 +275,8 @@ public class Colony implements IColony
      * The colony flag, as a list of patterns.
      */
     private ListNBT colonyFlag = new BannerPattern.Builder()
-            .setPatternWithColor(BannerPattern.BASE, DyeColor.WHITE)
-            .buildNBT();
+                                   .setPatternWithColor(BannerPattern.BASE, DyeColor.WHITE)
+                                   .buildNBT();
 
     /**
      * The last time the mercenaries were used.
@@ -448,17 +455,10 @@ public class Colony implements IColony
                     this.forceLoadTimer = CHUNK_UNLOAD_DELAY;
                     for (final long pending : pendingChunks)
                     {
-                        final int chunkX = ChunkPos.getX(pending);
-                        final int chunkZ = ChunkPos.getZ(pending);
-                        if (world instanceof ServerWorld)
-                        {
-                            if (buildingManager.isWithinBuildingZone(chunkX, chunkZ))
-                            {
-                                final ChunkPos pos = new ChunkPos(chunkX, chunkZ);
-                                ((ServerChunkProvider) world.getChunkProvider()).registerTicket(KEEP_LOADED_TYPE, pos, 2, pos);
-                            }
-                        }
+                        checkChunkAndRegisterTicket(pending, world.getChunk(ChunkPos.getX(pending), ChunkPos.getZ(pending)));
                     }
+
+                    pendingChunks.clear();
                     return;
                 }
             }
@@ -468,7 +468,7 @@ public class Colony implements IColony
                 this.forceLoadTimer -= MAX_TICKRATE;
                 if (this.forceLoadTimer <= 0)
                 {
-                    for (final long chunkPos : this.loadedChunks)
+                    for (final long chunkPos : this.ticketedChunks)
                     {
                         final int chunkX = ChunkPos.getX(chunkPos);
                         final int chunkZ = ChunkPos.getZ(chunkPos);
@@ -478,7 +478,27 @@ public class Colony implements IColony
                             ((ServerChunkProvider) world.getChunkProvider()).releaseTicket(KEEP_LOADED_TYPE, pos, 2, pos);
                         }
                     }
+                    ticketedChunks.clear();
+                    ticketedChunksDirty = true;
                 }
+            }
+        }
+    }
+
+    /**
+     * Checks the chunk and registers a ticket for it if needed
+     *
+     * @param chunkPos chunk position to check
+     */
+    private void checkChunkAndRegisterTicket(final long chunkPos, final Chunk chunk)
+    {
+        if (forceLoadTimer > 0 && world instanceof ServerWorld)
+        {
+            if (!ticketedChunks.contains(chunkPos) && buildingManager.isWithinBuildingZone(chunk))
+            {
+                ticketedChunks.add(chunkPos);
+                ticketedChunksDirty = true;
+                ((ServerChunkProvider) world.getChunkProvider()).registerTicket(KEEP_LOADED_TYPE, chunk.getPos(), 2, chunk.getPos());
             }
         }
     }
@@ -1538,24 +1558,6 @@ public class Colony implements IColony
             LanguageHandler.sendPlayerMessage(player, ENTERING_COLONY_MESSAGE, this.getPermissions().getOwnerName());
             LanguageHandler.sendPlayersMessage(getImportantMessageEntityPlayers(), ENTERING_COLONY_MESSAGE_NOTIFY, player.getName().getString(), this.getName());
         }
-
-        if (getPermissions().hasPermission(rank, Action.CAN_KEEP_COLONY_ACTIVE_WHILE_AWAY) && this.forceLoadTimer <= 0 && getConfig().getServer().forceLoadColony.get())
-        {
-            for (final long chunkPos : this.loadedChunks)
-            {
-                final int chunkX = ChunkPos.getX(chunkPos);
-                final int chunkZ = ChunkPos.getZ(chunkPos);
-                if (world instanceof ServerWorld)
-                {
-                    if (buildingManager.isWithinBuildingZone(chunkX, chunkZ))
-                    {
-                        final ChunkPos pos = new ChunkPos(chunkX, chunkZ);
-                        ((ServerChunkProvider) world.getChunkProvider()).registerTicket(KEEP_LOADED_TYPE, pos, 2, pos);
-                    }
-                }
-            }
-            this.forceLoadTimer = CHUNK_UNLOAD_DELAY;
-        }
     }
 
     @Override
@@ -1791,13 +1793,19 @@ public class Colony implements IColony
     }
 
     @Override
-    public void addLoadedChunk(final long chunkPos)
+    public void addLoadedChunk(final long chunkPos, final Chunk chunk)
     {
-        if (this.forceLoadTimer > 0
-              && world instanceof ServerWorld
+        if (world instanceof ServerWorld
               && getConfig().getServer().forceLoadColony.get())
         {
-            this.pendingChunks.add(chunkPos);
+            if (this.forceLoadTimer > 0)
+            {
+                checkChunkAndRegisterTicket(chunkPos, chunk);
+            }
+            else
+            {
+                this.pendingChunks.add(chunkPos);
+            }
         }
         this.loadedChunks.add(chunkPos);
     }
@@ -1830,5 +1838,21 @@ public class Colony implements IColony
     public boolean isDay()
     {
         return isDay;
+    }
+
+    @Override
+    public Set<Long> getTicketedChunks()
+    {
+        return ticketedChunks;
+    }
+
+    /**
+     * Check if we need to update the view's chunk ticket info
+     *
+     * @return
+     */
+    public boolean isTicketedChunksDirty()
+    {
+        return ticketedChunksDirty;
     }
 }

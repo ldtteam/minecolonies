@@ -5,6 +5,7 @@ import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenItemHandler;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.client.BlockParticleEffectMessage;
 import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
@@ -202,7 +203,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
               SoundCategory.BLOCKS,
               block.getSoundType(blockState, CompatibilityUtils.getWorldFromCitizen(citizen), blockPos, citizen).getVolume(),
               block.getSoundType(blockState, CompatibilityUtils.getWorldFromCitizen(citizen), blockPos, citizen).getPitch());
-            CompatibilityUtils.getWorldFromCitizen(citizen).removeBlock(blockPos, false);
+            WorldUtil.removeBlock(CompatibilityUtils.getWorldFromCitizen(citizen), blockPos, false);
 
             damageItemInHand(citizen.getActiveHand(), 1);
         }
