@@ -325,9 +325,19 @@ public class BuildingManager implements IBuildingManager
     }
 
     @Override
-    public boolean isWithinBuildingZone(final int chunkX, final int chunkZ)
+    public boolean isWithinBuildingZone(final Chunk chunk)
     {
-        return chunkX <= maxChunkX && chunkX >= minChunkX && chunkZ <= maxChunkZ && chunkZ >= minChunkZ;
+        final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
+        if (cap != null)
+        {
+            final Set<BlockPos> capList = cap.getAllClaimingBuildings().get(colony.getID());
+            if (capList != null && capList.size() >= MineColonies.getConfig().getServer().colonyLoadStrictness.get())
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @NotNull

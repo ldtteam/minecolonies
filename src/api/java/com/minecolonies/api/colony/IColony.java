@@ -18,14 +18,12 @@ import net.minecraft.util.RegistryKey;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.event.TickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.minecolonies.api.util.constant.ColonyConstants.TEAM_COLONY_NAME;
 
@@ -379,7 +377,7 @@ public interface IColony
      *
      * @param chunkPos chunk to add
      */
-    void addLoadedChunk(long chunkPos);
+    void addLoadedChunk(long chunkPos, final Chunk chunk);
 
     /**
      * Adds a chunk from the colony list
@@ -408,4 +406,11 @@ public interface IColony
      * @return true if so.
      */
     boolean isActive();
+
+    /**
+     * Get the set of chunk positions which the colony is loading through tickets
+     *
+     * @return set of positions
+     */
+    Set<Long> getTicketedChunks();
 }

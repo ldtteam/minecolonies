@@ -14,6 +14,7 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -281,9 +282,8 @@ public interface IBuildingManager
 
     /**
      * Check if the chunk position it within of the building zone of the colony.
-     * @param chunkX the x chunk pos.
-     * @param chunkZ the z chunk pos.
+     * @param chunk the chunk to check
      * @return true if within.
      */
-    boolean isWithinBuildingZone(int chunkX, int chunkZ);
+    boolean isWithinBuildingZone(final Chunk chunk);
 }

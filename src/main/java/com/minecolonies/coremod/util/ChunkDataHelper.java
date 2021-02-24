@@ -20,9 +20,9 @@ import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import org.jetbrains.annotations.NotNull;
 
-
-import static com.ldtteam.structurize.util.LanguageHandler.*;
-import static com.minecolonies.api.util.constant.ColonyManagerConstants.*;
+import static com.ldtteam.structurize.util.LanguageHandler.sendPlayersMessage;
+import static com.minecolonies.api.util.constant.ColonyManagerConstants.DISTANCE_TO_LOAD_IMMEDIATELY;
+import static com.minecolonies.api.util.constant.ColonyManagerConstants.UNABLE_TO_FIND_WORLD_CAP_TEXT;
 import static com.minecolonies.api.util.constant.Constants.BLOCKS_PER_CHUNK;
 import static com.minecolonies.api.util.constant.TranslationConstants.COLONY_SIZE_CHANGE;
 import static com.minecolonies.coremod.MineColonies.*;
@@ -107,7 +107,7 @@ public final class ChunkDataHelper
             final IColony colony = IColonyManager.getInstance().getColonyByDimension(closeColony, world.getDimensionKey());
             if (colony != null)
             {
-                colony.addLoadedChunk(ChunkPos.asLong(chunk.getPos().x, chunk.getPos().z));
+                colony.addLoadedChunk(ChunkPos.asLong(chunk.getPos().x, chunk.getPos().z), chunk);
             }
         }
     }
@@ -435,7 +435,7 @@ public final class ChunkDataHelper
             final IColony colony = IColonyManager.getInstance().getColonyByDimension(id, world.getDimensionKey());
             if (colony != null)
             {
-                colony.addLoadedChunk(ChunkPos.asLong(chunk.getPos().x, chunk.getPos().z));
+                colony.addLoadedChunk(ChunkPos.asLong(chunk.getPos().x, chunk.getPos().z), chunk);
             }
             cap.setOwningColony(id, chunk);
             cap.addColony(id, chunk);
