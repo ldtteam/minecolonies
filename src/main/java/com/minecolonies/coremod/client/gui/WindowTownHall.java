@@ -9,7 +9,6 @@ import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.blockout.views.SwitchView;
 import com.ldtteam.blockout.views.View;
 import com.ldtteam.structurize.util.LanguageHandler;
-import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.CompactColonyReference;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
@@ -22,6 +21,7 @@ import com.minecolonies.api.colony.permissions.PermissionEvent;
 import com.minecolonies.api.colony.permissions.Player;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.colony.workorders.WorkOrderView;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Tuple;
@@ -48,12 +48,14 @@ import net.minecraft.util.ResourceLocationException;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.*;
 import net.minecraft.util.text.event.ClickEvent;
+import net.minecraft.world.World;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.research.util.ResearchConstants.CAP;
@@ -89,6 +91,16 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
      */
     @NotNull
     private final List<ICitizenDataView> citizens = new ArrayList<>();
+
+    /**
+     * The sortDescriptor so how we want to sort
+     */
+    private int sortDescriptor = 0;
+
+    /**
+     * The filter for the citizens list.
+     */
+    private final String filter = "";
 
     /**
      * Map of the pages.
@@ -137,6 +149,11 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
     private final ScrollingList feudsList;
 
     /**
+     * Citizen scrolling list.
+     */
+    private final ScrollingList citizensList;
+
+    /**
      * Whether the event list should display permission events, or colony events.
      */
     private boolean permissionEvents;
@@ -157,14 +174,17 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
     {
         super(townHall, Constants.MOD_ID + TOWNHALL_RESOURCE_SUFFIX);
         this.townHall = townHall;
+        registerButton(BUTTON_SORT, this::setSortFlag);
 
         alliesList = findPaneOfTypeByID(LIST_ALLIES, ScrollingList.class);
         feudsList = findPaneOfTypeByID(LIST_FEUDS, ScrollingList.class);
+        citizensList = findPaneOfTypeByID(LIST_CITIZENS, ScrollingList.class);
 
         initColorPicker();
         updateUsers();
         updateCitizens();
         updateWorkOrders();
+        sortCitizens();
 
         tabsToPages.put(BUTTON_ACTIONS, PAGE_ACTIONS);
         tabsToPages.put(BUTTON_INFOPAGE, PAGE_INFO);
@@ -365,7 +385,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
     }
 
     /**
-     * Clears and resets all citizens.
+     * Clears and resets all work orders.
      */
     private void updateWorkOrders()
     {
@@ -405,6 +425,123 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
             }
             fillFreeBlockList();
         }
+    }
+
+    /**
+     * For sorting the citizen list
+     * Increments the sortDescriptor and sets the GUI Button accordingly Valid Stages
+     * 0 - 4 NO_SORT
+     * 0   No Sorting, like wysiwyg ASC_SORT
+     * 1   Name Ascending DESC_SORT
+     * 2   Name Descending COUNT_ASC_SORT
+     * 3   Itemcount Ascending COUNT_DESC_SORT
+     * 4   Itemcount Descending
+     **/
+    private void setSortFlag()
+    {
+        sortDescriptor++;
+        if (sortDescriptor > 4)
+        {
+            sortDescriptor = NO_SORT;
+        }
+        switch (sortDescriptor)
+        {
+            case NO_SORT:
+                findPaneOfTypeByID(BUTTON_SORT, ButtonImage.class).setText("v^");
+                break;
+            case ASC_SORT:
+                findPaneOfTypeByID(BUTTON_SORT, ButtonImage.class).setText("A^");
+                break;
+            case DESC_SORT:
+                findPaneOfTypeByID(BUTTON_SORT, ButtonImage.class).setText("Av");
+                break;
+            case COUNT_ASC_SORT:
+                findPaneOfTypeByID(BUTTON_SORT, ButtonImage.class).setText("1^");
+                break;
+            case COUNT_DESC_SORT:
+                findPaneOfTypeByID(BUTTON_SORT, ButtonImage.class).setText("1v");
+                break;
+            default:
+                break;
+        }
+
+        sortCitizens();
+    }
+
+    /**
+     * Update the citizen list.
+     */
+    private void sortCitizens()
+    {
+        citizensList.enable();
+
+        final List<ICitizenDataView> filterItems = new ArrayList<>();
+        final Predicate<ICitizenDataView> filterPredicate = stack -> filter.isEmpty()
+                || citizen.getDisplayName() || citizen.getDisplayName();
+
+        citizens.clear();
+        if (filter.isEmpty())
+        {
+            citizens.addAll(filterItems);
+        }
+        else
+        {
+            citizens.addAll(filterItems.stream().filter(filterPredicate).collect(Collectors.toList()));
+        }
+
+        final Comparator<ICitizenDataView> compareByName = Comparator.comparing((ICitizenDataView o) -> o.citizen.getDisplayName);
+        switch (sortDescriptor)
+        {
+            case NO_SORT:
+                break;
+            case ASC_SORT:
+                citizens.sort(compareByName);
+                break;
+            case DESC_SORT:
+                citizens.sort(compareByName.reversed());
+                break;
+            default:
+                break;
+        }
+
+        sortCitizensList();
+    }
+
+    /**
+     * Updates the citizens list in the GUI with the info we need.
+     */
+    private void sortCitizensList()
+    {
+        citizensList.enable();
+
+        //Creates a dataProvider for the unemployed stackList.
+        citizensList.setDataProvider(new ScrollingList.DataProvider()
+        {
+            /**
+             * The number of rows of the list.
+             * @return the number.
+             */
+            @Override
+            public int getElementCount()
+            {
+                return citizens.size();
+            }
+
+            /**
+             * Inserts the elements into each row.
+             * @param index the index of the row/list element.
+             * @param rowPane the parent Pane for the row, containing the elements to update.
+             */
+            @Override
+            public void updateElement(final int index, @NotNull final Pane rowPane)
+            {
+                final ICitizenDataView resource = citizens.get(index);
+                final Text resourceLabel = rowPane.findPaneOfTypeByID("ressourceStackName", Text.class);
+                final String name = citizen.getDisplayName;
+                resourceLabel.setText(name.substring(0, Math.min(17, name.length())));
+                final Text qtys = rowPane.findPaneOfTypeByID("quantities", Text.class);
+            }
+        });
     }
 
     /**
