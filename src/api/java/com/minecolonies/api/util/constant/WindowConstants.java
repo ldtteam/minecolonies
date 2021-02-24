@@ -564,7 +564,7 @@ public final class WindowConstants
     public static final String  GUI_SWITCH_TASK_PATROL     = "patrolling";
     public static final String  GUI_SWITCH_TASK_FOLLOW     = "following";
     public static final String  GUI_SWITCH_TASK_GUARD      = "guarding";
-    public static final String  GUI_SWITCH_TASK_MINE       = "patrollingMine";
+    public static final String  GUI_SWITCH_TASK_MINE       = "mine";
     public static final String  GUI_SWITCH_AUTO            = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_MODE_AUTO);
     public static final String  GUI_SWITCH_MANUAL          = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_MODE_MANUAL);
     public static final String  GUI_SWITCH_ON              = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON);

@@ -87,6 +87,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     private static final String NBT_MOBS           = "mobs";
     private static final String NBT_MOB_VIEW       = "mobview";
     private static final String NBT_RECRUIT        = "recruitTrainees";
+    private static final String NBT_MINE_POS       = "minePos";
 
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
 
@@ -181,6 +182,11 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
      * Pathing future for the next patrol target.
      */
     private Future<Path> pathingFuture;
+
+    /**
+     * The location of the assigned mine
+     */
+    private BlockPos minePos;
 
     /**
      * The abstract constructor of the building.
@@ -331,6 +337,10 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         }
 
         guardPos = NBTUtil.readBlockPos(compound.getCompound(NBT_GUARD));
+        if (compound.contains(NBT_MINE_POS))
+        {
+            minePos = NBTUtil.readBlockPos(compound.getCompound(NBT_MINE_POS));
+        }
     }
 
     @Override
@@ -366,6 +376,10 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         compound.put(NBT_MOBS, mobsTagList);
 
         compound.put(NBT_GUARD, NBTUtil.writeBlockPos(guardPos));
+        if (minePos != null)
+        {
+            compound.put(NBT_MINE_POS, NBTUtil.writeBlockPos(minePos));
+        }
 
         return compound;
     }
@@ -426,6 +440,16 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         for (final ICitizenData citizen : this.getAssignedCitizen())
         {
             buf.writeInt(citizen.getId());
+        }
+
+        if (minePos != null)
+        {
+            buf.writeBoolean(true);
+            buf.writeBlockPos(minePos);
+        }
+        else
+        {
+            buf.writeBoolean(false);
         }
     }
 
@@ -715,6 +739,11 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         private final List<Integer> guards = new ArrayList<>();
 
         /**
+         * Location of the assigned mine
+         */
+        private BlockPos minePos;
+
+        /**
          * The client view constructor for the AbstractGuardBuilding.
          *
          * @param c the colony.
@@ -786,6 +815,11 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             for (int i = 0; i < numResidents; ++i)
             {
                 guards.add(buf.readInt());
+            }
+
+            if (buf.readBoolean())
+            {
+                minePos = buf.readBlockPos();
             }
         }
 
@@ -910,6 +944,8 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         {
             return new ArrayList<>(mobsToAttack);
         }
+
+        public BlockPos getMinePos() { return minePos; }
     }
 
     @Override

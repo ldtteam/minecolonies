@@ -20,6 +20,7 @@ import com.minecolonies.coremod.network.messages.server.colony.building.guard.Mo
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -182,6 +183,10 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
                 }
             });
         }
+        else if (task.equals(GuardTask.MINE))
+        {
+            setMinePosLabel();
+        }
 
         final ScrollingList mobsList = findPaneOfTypeByID(GUI_ELEMENT_LIST_MOBS, ScrollingList.class);
         mobsList.setDataProvider(new ScrollingList.DataProvider()
@@ -316,6 +321,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
         else if (task.equals(GuardTask.MINE))
         {
             buttonTaskMine.setEnabled(false);
+            buttonSetTarget.hide();
         }
     }
 
@@ -445,6 +451,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
             buttonTaskPatrol.setEnabled(false);
             buttonTaskFollow.setEnabled(true);
             buttonTaskGuard.setEnabled(true);
+            buttonTaskMine.setEnabled(true);
 
             buttonSetTarget.show();
         }
@@ -456,6 +463,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
             buttonTaskFollow.setEnabled(false);
             buttonTaskGuard.setEnabled(true);
             buttonSetTarget.setEnabled(true);
+            buttonTaskMine.setEnabled(true);
             buttonSetTarget.show();
         }
         else if (button.getID().contains(GUI_SWITCH_TASK_MINE))
@@ -466,6 +474,8 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
             buttonTaskFollow.setEnabled(true);
             buttonTaskGuard.setEnabled(true);
             buttonTaskMine.setEnabled(false);
+            buttonSetTarget.hide();
+
         }
         else
         {
@@ -474,11 +484,13 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
             buttonTaskPatrol.setEnabled(true);
             buttonTaskFollow.setEnabled(true);
             buttonTaskGuard.setEnabled(false);
+            buttonTaskMine.setEnabled(true);
 
             buttonSetTarget.show();
         }
         pullInfoFromHut();
         sendChangesToServer();
+        setMinePosLabel();
     }
 
     /**
@@ -584,5 +596,25 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
     {
         final ResourceLocation resourceName = building.getGuardType() == null ? new ResourceLocation("") : building.getGuardType().getRegistryName();
         Network.getNetwork().sendToServer(new GuardTaskMessage(building, resourceName, assignManually, patrolManually, retrieveOnLowHealth, task.ordinal(), tightGrouping, hireTrainees));
+    }
+
+    private void setMinePosLabel()
+    {
+        final Text minePosLabel = window.findPaneOfTypeByID("minePos", Text.class);
+        if (task.equals(GuardTask.MINE))
+        {
+            if (building.getMinePos() != null)
+            {
+                minePosLabel.setText(building.getMinePos().getCoordinatesAsString());
+            }
+            else
+            {
+                minePosLabel.setText(new TranslationTextComponent("com.minecolonies.coremod.job.guard.assignmine"));
+            }
+        }
+        else
+        {
+            minePosLabel.clearText();
+        }
     }
 }
