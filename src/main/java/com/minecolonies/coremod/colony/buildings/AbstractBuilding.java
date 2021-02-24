@@ -1081,6 +1081,12 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     {
         final WorkOrderBuildBuilding workOrder = new WorkOrderBuildBuilding(this, Math.max(1, getBuildingLevel()));
         final LoadOnlyStructureHandler wrapper = new LoadOnlyStructureHandler(colony.getWorld(), getPosition(), workOrder.getStructureName(), new PlacementSettings(), true);
+        if (!wrapper.hasBluePrint())
+        {
+            setCorners(getPosition(), getPosition());
+            return;
+        }
+
         final Tuple<BlockPos, BlockPos> corners
           = ColonyUtils.calculateCorners(this.getPosition(),
           colony.getWorld(),
@@ -1174,10 +1180,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
     {
         final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep = new HashMap<>(keepX);
-        if (keepFood())
-        {
-            toKeep.put(ItemStackUtils.CAN_EAT, new Tuple<>(getBuildingLevel() * 2, true));
-        }
 
         final Map<ItemStorage, Tuple<Integer, Boolean>> requiredItems = new HashMap<>();
         final Collection<IRequestResolver<?>> resolvers = getResolvers();

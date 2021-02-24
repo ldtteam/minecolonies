@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.requestsystem.requestable.Food;
@@ -20,6 +21,7 @@ import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.JobCook;
@@ -36,6 +38,7 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
@@ -196,7 +199,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
         {
             if (!citizenToServe.isEmpty())
             {
-                final int foodSlot = InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), ItemStackUtils.CAN_EAT);
+                final int foodSlot = InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), stack -> ItemStackUtils.CAN_EAT.test(stack) && canEat(stack));
                 if (foodSlot != -1)
                 {
                     final ItemStack stack = worker.getInventoryCitizen().extractItem(foodSlot, 1, false);
@@ -210,13 +213,13 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
             removeFromQueue();
             return getState();
         }
-        else if (InventoryUtils.hasItemInItemHandler(handler, CAN_EAT))
+        else if (InventoryUtils.hasItemInItemHandler(handler, stack -> CAN_EAT.test(stack) && canEat(stack)))
         {
             removeFromQueue();
             return getState();
         }
 
-        InventoryUtils.transferFoodUpToSaturation(worker, handler, getOwnBuilding().getBuildingLevel() * SATURATION_TO_SERVE, stack -> CAN_EAT.test(stack));
+        InventoryUtils.transferFoodUpToSaturation(worker, handler, getOwnBuilding().getBuildingLevel() * SATURATION_TO_SERVE, stack -> CAN_EAT.test(stack) && canEat(stack));
 
         if (!citizenToServe.isEmpty() && citizenToServe.get(0).getCitizenData() != null)
         {
@@ -232,6 +235,24 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
         worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
         this.incrementActionsDoneAndDecSaturation();
         return START_WORKING;
+    }
+
+    /**
+     * Check if the entity to serve can eat the given stack
+     * @param stack the stack to check
+     * @return true if the stack can be eaten
+     */
+    private boolean canEat(final ItemStack stack)
+    {
+        if (!citizenToServe.isEmpty())
+        {
+            final IBuildingWorker building = citizenToServe.get(0).getCitizenData().getWorkBuilding();
+            if (building != null)
+            {
+                return building.canEat(stack);
+            }
+        }
+        return true;
     }
 
     /**
