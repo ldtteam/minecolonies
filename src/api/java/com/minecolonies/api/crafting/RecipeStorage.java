@@ -505,6 +505,8 @@ public class RecipeStorage implements IRecipeStorage
      */
     private void insertCraftedItems(final List<IItemHandler> handlers, ItemStack outputStack, LootContext context)
     {
+        final List<ItemStack> secondaryStacks = new ArrayList<>();
+
         if(!ItemStackUtils.isEmpty(outputStack))
         {
             for (final IItemHandler handler : handlers)
@@ -514,21 +516,19 @@ public class RecipeStorage implements IRecipeStorage
                     break;
                 }
             }
+            secondaryStacks.addAll(secondaryOutputs);
         }
 
         if (loot == null && lootTable != null)
         {
             loot = context.getWorld().getServer().getLootTableManager().getLootTableFromLocation(lootTable);
         }
-        
-        final List<ItemStack> secondaryStacks = new ArrayList<>();
 
         if(loot != null && context != null)
         {
             secondaryStacks.addAll(loot.generate(context));
         }
 
-        secondaryStacks.addAll(secondaryOutputs);
         for (final ItemStack stack : secondaryStacks)
         {
             for (final IItemHandler handler : handlers)
