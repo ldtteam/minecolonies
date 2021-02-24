@@ -350,8 +350,9 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
                 return getState();
             }
             //Get ladder orientation
-            final BlockState metadata = getBlockState(safeStand);
-
+            final BlockState metadata = Blocks.LADDER.getDefaultState()
+                                          .with(HorizontalBlock.HORIZONTAL_FACING,
+                                            Direction.getFacingFromVector(nextLadder.getX() - nextCobble.getX(), 0, nextLadder.getZ() - nextCobble.getZ()));
             setBlockFromInventory(nextLadder, Blocks.LADDER, metadata);
             return getState();
         }
@@ -773,10 +774,9 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         }
 
         final Node parentNode = currentLevel.getNode(workingNode.getParent());
-        if (parentNode != null && parentNode.getStyle() != Node.NodeType.SHAFT && (parentNode.getStatus() != Node.NodeStatus.COMPLETED || !(world.getBlockState(new BlockPos(
-          parentNode.getX(),
-          currentLevel.getDepth() + 2,
-          parentNode.getZ())).getBlock() instanceof AirBlock)))
+        final BlockPos newPos = new BlockPos(parentNode.getX(), currentLevel.getDepth() + 2, parentNode.getZ());
+        if (parentNode != null && parentNode.getStyle() != Node.NodeType.SHAFT && (parentNode.getStatus() != Node.NodeStatus.COMPLETED || (WorldUtil.isBlockLoaded(world, newPos) &&
+                                                                                                                                             !((world.getBlockState(newPos)).getBlock() instanceof AirBlock))))
         {
             workingNode = parentNode;
             workingNode.setStatus(Node.NodeStatus.AVAILABLE);
@@ -975,7 +975,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         {
             getInventory().extractItem(slot, 1, false);
             //Flag 1+2 is needed for updates
-            world.setBlockState(location, metadata, 0x03);
+            WorldUtil.setBlockState(world, location, metadata);
         }
     }
 

@@ -12,7 +12,10 @@
 *.ipr
 *.iws
 *.iml
-/.idea
+/.idea/*
+!/.idea
+!/.idea/inspectionProfiles/
+!/.idea/gradle.xml
 /classes
 
 # gradle
@@ -45,3 +48,5 @@ tools/fix_model_angle/*.class
 src/main/generated/resources/.cache/cache
 
 logs/
+!/.idea/inspectionProfiles
+!/.idea/gradle.xml

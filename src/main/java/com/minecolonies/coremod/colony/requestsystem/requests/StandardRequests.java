@@ -602,6 +602,13 @@ public final class StandardRequests
                                                       .collect(Collectors.toList()));
             }
 
+            if (!this.getRequest().getExclusionList().isEmpty())
+            {
+                return ImmutableList.copyOf(foodExamples.stream()
+                        .filter(item -> this.getRequest().matches(item))
+                        .collect(Collectors.toList()));
+            }
+
             return foodExamples;
         }
     }

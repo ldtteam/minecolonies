@@ -24,6 +24,9 @@
   "minecolonies.config.disablecitizenvoices": "Citizen Sounds",
   "minecolonies.config.disablecitizenvoices.comment": "Disable citizen voices.",
 
+  "minecolonies.config.neighborbuildingrendering": "Neighbor Building Rendering",
+  "minecolonies.config.neighborbuildingrendering.comment": "By default, when placing a schematic near other buildings, the already-placed buildings will show as if they were at level 5 and have a blue outline around them. You can disable that by setting this to false.",
+
   "minecolonies.config.diseasemodifier": "Disease Modifier",
   "minecolonies.config.diseasemodifier.comment": "How common diseases are. 1 = Very common, 100 = extremely rare.",
   "minecolonies.config.diseases": "Diseases",
@@ -31,11 +34,14 @@
   "minecolonies.config.configliststudyitems": "List of Study Items",
   "minecolonies.config.configliststudyitems.comment": "Items consumed by citizens in the Library.",
 
-  "minecolonies.config.generatesupplyloot": "Supply loot",
-  "minecolonies.config.generatesupplyloot.comment": "Whether to generate supply ship/camps in chests occasionally.",
+  "minecolonies.config.generatesupplyloot": "Supply Loot",
+  "minecolonies.config.generatesupplyloot.comment": "Whether to generate supply ships and camps in loot chests.",
 
-  "minecolonies.config.forceloadcolony": "Force Load Colony",
-  "minecolonies.config.forceloadcolony.comment": "If part of the colony is loaded by an owner/officer, the entire colony should be kept loaded.",
+  "minecolonies.config.forceloadcolony": "Chunk Load Colony",
+  "minecolonies.config.forceloadcolony.comment": "If part of the colony is loaded by an owner/officer, should the colony be kept loaded? (Set how many chunks are loaded with the \"Colony Chunk Loading Strictness\" option.)",
+
+  "minecolonies.config.colonyLoadStrictness": "Colony Chunk Loading Strictness",
+  "minecolonies.config.colonyLoadStrictness.comment": "This controls how many chunks are loaded with the \"Chunk Load Colony\" option. The higher this value, the less chunks will be loaded. (The innermost chunks will be loaded first.) 1 = load all claimed chunks.",
 
   "minecolonies.config.badvisitorchance": "Bad Recruitment Chance",
   "minecolonies.config.badvisitorchance.comment": "Chance to get an evil Tavern visitor that will run off with the resources you give them. This is a %.",
@@ -1055,6 +1061,8 @@
   "com.minecolonies.coremod.gui.workerhuts.stonesmelter": "Stone Smeltery",
 
   "com.minecolonies.coremod.ai.wrongfood": "The food I have is too raw to eat!",
+  "com.minecolonies.coremod.ai.betterfood": "Can I have better food please?",
+  "com.minecolonies.coremod.ai.betterfood.children": "Ew! I don't want to eat that!",
 
   "com.minecolonies.coremod.gui.homehut.current": "Current home: %d %d %d",
   "com.minecolonies.coremod.gui.homehut.currently": "Currently: %d blocks",
@@ -1079,6 +1087,7 @@
 
   "com.minecolonies.coremod.gui.workerhuts.siftersettings": "Daily limit",
   "com.minecolonies.coremod.gui.workerhuts.sifterinfo": "of %d allowed",
+  "com.minecolonies.coremod.gui.workerhuts.sifterinfo.unlimited": "of Unlimited",
 
   "com.minecolonies.coremod.gui.workerhuts.sifter": "Sifter",
   "com.minecolonies.coremod.sifter.meshbroke": "My current mesh broke and I started to work with the default mesh again!",
@@ -1303,6 +1312,7 @@
   "entity.fisherman.messagewatertoofar": "My hut seems to be too far away from water, and I can't find any water to fish in! It should be an area of at least 7x7 blocks, and the same height as my hut.",
   "com.minecolonies.coremod.furnaceuser.nofuel": "Please tell me what kind of fuel I should use in my furnace!",
   "com.minecolonies.coremod.furnaceuser.noore": "Please tell me what kind of ore I should smelt in my furnace!",
+  "com.minecolonies.coremod.furnaceuser.nofood": "Please tell me what kind of food I should hand out!",
   "com.minecolonies.coremod.florist.noplantground": "I don't have any composted dirt to plant on! Please repair my Flower Shop!",
   "com.minecolonies.coremod.florist.nocompost": "I need compost to plant my flowers!",
   "com.minecolonies.coremod.florist.noflowers": "I can't work, all my flowers are disabled!",

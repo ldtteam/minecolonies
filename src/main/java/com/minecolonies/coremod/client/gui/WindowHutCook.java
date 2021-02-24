@@ -28,6 +28,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_REQUESTS_BURNABLE;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_REQUESTS_FOOD;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
@@ -51,6 +52,11 @@ public class WindowHutCook extends AbstractHutFilterableLists
     private static final String PAGE_ITEMS_VIEW = "fuel";
 
     /**
+     * View containing the food list.
+     */
+    private static final String PAGE_FOOD_VIEW = "food";
+
+    /**
      * Resource scrolling list.
      */
     private final ScrollingList resourceList;
@@ -70,6 +76,13 @@ public class WindowHutCook extends AbstractHutFilterableLists
           PAGE_ITEMS_VIEW,
           false);
         views.put(PAGE_ITEMS_VIEW, win);
+        final ViewFilterableList wel = new ViewFilterableList(findPaneOfTypeByID(PAGE_FOOD_VIEW, View.class),
+                this,
+                building,
+                LanguageHandler.format(COM_MINECOLONIES_REQUESTS_FOOD),
+                PAGE_FOOD_VIEW,
+                true);
+        views.put(PAGE_FOOD_VIEW, wel);
         resourceList = this.window.findPaneOfTypeByID("resourcesstock", ScrollingList.class);
 
         registerButton(STOCK_ADD, this::addStock);
@@ -92,12 +105,24 @@ public class WindowHutCook extends AbstractHutFilterableLists
      */
     public List<? extends ItemStorage> getBlockList(final Predicate<ItemStack> filterPredicate, final String id)
     {
-        return ImmutableList.copyOf(IColonyManager.getInstance()
-                                      .getCompatibilityManager()
-                                      .getFuel()
-                                      .stream()
-                                      .filter(item -> filterPredicate.test(item.getItemStack()))
-                                      .collect(Collectors.toList()));
+        if (id.equals(PAGE_FOOD_VIEW))
+        {
+            return ImmutableList.copyOf(IColonyManager.getInstance()
+                    .getCompatibilityManager()
+                    .getFood()
+                    .stream()
+                    .filter(item -> filterPredicate.test(item.getItemStack()))
+                    .collect(Collectors.toList()));
+        }
+        else
+        {
+            return ImmutableList.copyOf(IColonyManager.getInstance()
+                    .getCompatibilityManager()
+                    .getFuel()
+                    .stream()
+                    .filter(item -> filterPredicate.test(item.getItemStack()))
+                    .collect(Collectors.toList()));
+        }
     }
 
     /**

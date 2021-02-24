@@ -162,7 +162,10 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
     {
         final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep = new HashMap<>(super.getRequiredItemsAndAmount());
-        toKeep.put(ItemStackUtils.CAN_EAT, new Tuple<>(getBuildingLevel() * 2, true));
+        if (keepFood())
+        {
+            toKeep.put(stack -> ItemStackUtils.CAN_EAT.test(stack) && canEat(stack), new Tuple<>(getBuildingLevel() * 2, true));
+        }
         return toKeep;
     }
 
@@ -799,7 +802,11 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     @Override
     public boolean canEat(final ItemStack stack)
     {
-        return true;
+        if (stack.getItem().getFood().getHealing() >= getBuildingLevel())
+        {
+            return true;
+        }
+        return false;
     }
 
     /**
