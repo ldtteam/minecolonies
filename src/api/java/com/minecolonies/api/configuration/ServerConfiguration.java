@@ -60,6 +60,7 @@ public class ServerConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.BooleanValue forceLoadColony;
     public final ForgeConfigSpec.IntValue     colonyLoadStrictness;
     public final ForgeConfigSpec.IntValue     badVisitorsChance;
+    public final ForgeConfigSpec.BooleanValue generateSupplyLoot;
 
     /*  --------------------------------------------------------------------------- *
      *  ------------------- ######## Command settings ######## ------------------- *
@@ -414,6 +415,7 @@ public class ServerConfiguration extends AbstractConfiguration
         forceLoadColony = defineBoolean(builder, "forceloadcolony", false);
         colonyLoadStrictness = defineInteger(builder, "colonyloadstrictness", 3, 1, 15);
         badVisitorsChance = defineInteger(builder, "badvisitorchance", 2, 1, 100);
+        generateSupplyLoot = defineBoolean(builder, "generatesupplyloot", true);
 
         swapToCategory(builder, "commands");
         
