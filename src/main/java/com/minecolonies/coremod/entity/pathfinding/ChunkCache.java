@@ -60,7 +60,7 @@ public class ChunkCache implements IWorldReader
             {
                 if (WorldUtil.isEntityChunkLoaded(world, new ChunkPos(k, l)))
                 {
-                    this.chunkArray[k - this.chunkX][l - this.chunkZ] = worldIn.getChunk(k, l);
+                    this.chunkArray[k - this.chunkX][l - this.chunkZ] = (Chunk) worldIn.getChunk(k, l, ChunkStatus.FULL, false);
                 }
             }
         }

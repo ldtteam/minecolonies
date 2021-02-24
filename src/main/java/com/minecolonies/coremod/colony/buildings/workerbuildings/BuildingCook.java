@@ -472,7 +472,7 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
             return stack.getCount();
         }
 
-        if (ISFOOD.test(stack) && (localAlreadyKept.stream().filter(storage -> ISFOOD.test(storage.getItemStack())).mapToInt(ItemStorage::getAmount).sum() < STACKSIZE || !inventory))
+        if (ISFOOD.test(stack) && !isAllowedItem("food", new ItemStorage(stack)) && (localAlreadyKept.stream().filter(storage -> ISFOOD.test(storage.getItemStack())).mapToInt(ItemStorage::getAmount).sum() < STACKSIZE || !inventory))
         {
             final ItemStorage kept = new ItemStorage(stack);
             if (localAlreadyKept.contains(kept))

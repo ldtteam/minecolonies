@@ -17,6 +17,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
+import static net.minecraft.block.DoorBlock.OPEN;
+
 /**
  * AI Task for toggling blocks open/closed when collided
  */
@@ -513,7 +515,10 @@ public class EntityAIInteractToggleAble extends Goal
         @Override
         public void toggleBlock(final BlockState state, final World world, final BlockPos pos)
         {
-            ((DoorBlock) state.getBlock()).openDoor(world, state, pos, !state.get(BlockStateProperties.OPEN));
+            // Same logic as doorblock, using our own setblockstate
+            final boolean isOpening = !state.get(BlockStateProperties.OPEN);
+            WorldUtil.setBlockState(world, pos, state.with(OPEN, isOpening), 10);
+            ((DoorBlock) state.getBlock()).playSound(world, pos, isOpening);
         }
 
         @Override
