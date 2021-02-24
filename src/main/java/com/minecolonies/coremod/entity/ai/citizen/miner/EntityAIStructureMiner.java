@@ -773,10 +773,9 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         }
 
         final Node parentNode = currentLevel.getNode(workingNode.getParent());
-        if (parentNode != null && parentNode.getStyle() != Node.NodeType.SHAFT && (parentNode.getStatus() != Node.NodeStatus.COMPLETED || !(world.getBlockState(new BlockPos(
-          parentNode.getX(),
-          currentLevel.getDepth() + 2,
-          parentNode.getZ())).getBlock() instanceof AirBlock)))
+        final BlockPos newPos = new BlockPos(parentNode.getX(), currentLevel.getDepth() + 2, parentNode.getZ());
+        if (parentNode != null && parentNode.getStyle() != Node.NodeType.SHAFT && (parentNode.getStatus() != Node.NodeStatus.COMPLETED || (WorldUtil.isBlockLoaded(world, newPos) &&
+                                                                                                                                             !((world.getBlockState(newPos)).getBlock() instanceof AirBlock))))
         {
             workingNode = parentNode;
             workingNode.setStatus(Node.NodeStatus.AVAILABLE);

@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandl
 import com.minecolonies.api.colony.interactionhandling.InteractionValidatorRegistry;
 import com.minecolonies.api.colony.interactionhandling.ModInteractionResponseHandlers;
 import com.minecolonies.api.util.Tuple;
+import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -99,6 +100,14 @@ public class PosBasedInteraction extends ServerCitizenInteraction
     @Override
     public boolean isValid(final ICitizenData citizen)
     {
+        if (pos != null)
+        {
+            if (!WorldUtil.isBlockLoaded(citizen.getColony().getWorld(), pos))
+            {
+                return true;
+            }
+        }
+
         return (validator == null && !this.parents.isEmpty()) || (validator != null && validator.test(citizen, pos));
     }
 

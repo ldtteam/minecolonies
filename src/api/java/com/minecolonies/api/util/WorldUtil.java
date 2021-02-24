@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
@@ -256,6 +257,20 @@ public class WorldUtil
         {
             return world.setBlockState(pos, state, flags);
         }
+    }
+
+    /**
+     * See World#removeBLock
+     *
+     * @param world    world to remove a block
+     * @param pos      position the block is removed at
+     * @param isMoving moving flag
+     * @return true if success
+     */
+    public static boolean removeBlock(final IWorld world, BlockPos pos, boolean isMoving)
+    {
+        final FluidState fluidstate = world.getFluidState(pos);
+        return setBlockState(world, pos, fluidstate.getBlockState(), 3 | (isMoving ? 64 : 0));
     }
 
     /**
