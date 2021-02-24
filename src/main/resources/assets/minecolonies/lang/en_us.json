@@ -35,7 +35,7 @@
   "minecolonies.config.generatesupplyloot.comment": "Whether to generate supply ship/camps in chests occasionally.",
 
   "minecolonies.config.forceloadcolony": "Chunk Load Colony",
-  "minecolonies.config.forceloadcolony.comment": "If part of the colony is loaded by an owner/officer, the colony should be kept loaded.",
+  "minecolonies.config.forceloadcolony.comment": "If part of the colony is loaded by an owner/officer, should the colony be kept loaded? (Set how many chunks are loaded with the \"Colony Chunk Loading Strictness\" option.),
 
   "minecolonies.config.colonyLoadStrictness": "Colony Chunk Loading Strictness",
   "minecolonies.config.colonyLoadStrictness.comment": "This controls how many chunks are loaded with the \"Chunk Load Colony\" option. The higher this value, the less chunks will be loaded. (The innermost chunks will be loaded first.) 1 = load all claimed chunks.",
