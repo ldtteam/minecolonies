@@ -10,12 +10,12 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Class handling the Pirate Gear.
+ * Class handling the Plate Armor.
  */
 public class ItemPlateArmor extends ArmorItem
 {
     public static final IArmorMaterial PLATE_ARMOR =
-      new MineColoniesArmorMaterial("minecolonies:plate_armor", 33, new int[] {4, 7, 9, 4}, 6, SoundEvents.ITEM_ARMOR_EQUIP_IRON, 2F, Ingredient.fromItems(Items.DIAMOND));
+      new MineColoniesArmorMaterial("minecolonies:plate_armor", 33, new int[] {4, 7, 9, 4}, 6, SoundEvents.ITEM_ARMOR_EQUIP_IRON, 2F, Ingredient.fromItems(Items.IRON_INGOT));
 
     /**
      * Constructor method for the Plate Armor
@@ -36,12 +36,4 @@ public class ItemPlateArmor extends ArmorItem
         super(materialIn, equipmentSlotIn, properties.group(tab));
         setRegistryName(Constants.MOD_ID.toLowerCase() + ":" + name);
     }
-
-    /** TODOTG
-     * Called when item is crafted/smelted. Used only by maps so far.
-     @Override
-     public void onCreated(ItemStack stack, World worldIn, PlayerEntity playerIn) {
-
-     }
-     */
 }
