@@ -38,7 +38,7 @@
   "minecolonies.config.forceloadcolony.comment": "If part of the colony is loaded by an owner/officer, the colony should be kept loaded.",
 
   "minecolonies.config.colonyLoadStrictness": "Colony Chunk Loading Strictness",
-  "minecolonies.config.colonyLoadStrictness.comment": "This controls how many chunks are loaded with the "Chunk Load Colony" option. The higher this value, the less chunks will be loaded. (The innermost chunks will be loaded first.) 1 = load all claimed chunks.",
+  "minecolonies.config.colonyLoadStrictness.comment": "This controls how many chunks are loaded with the \"Chunk Load Colony\" option. The higher this value, the less chunks will be loaded. (The innermost chunks will be loaded first.) 1 = load all claimed chunks.",
 
   "minecolonies.config.badvisitorchance": "Bad Recruitment Chance",
   "minecolonies.config.badvisitorchance.comment": "Chance to get an evil Tavern visitor that will run off with the resources you give them. This is a %.",
