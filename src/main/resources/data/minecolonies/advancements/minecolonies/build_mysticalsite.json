@@ -2,13 +2,13 @@
   "parent": "minecolonies:minecolonies/build_builder",
   "display": {
     "icon": {
-      "item": "minecolonies:blockhutwonder"
+      "item": "minecolonies:blockhutmysticalsite"
     },
     "title": {
-      "translate": "advancements.minecolonies.build.wonder.title"
+      "translate": "advancements.minecolonies.build.mysticalsite.title"
     },
     "description": {
-      "translate": "advancements.minecolonies.build.wonder.description"
+      "translate": "advancements.minecolonies.build.mysticalsite.description"
     },
     "show_toast": true,
     "announce_to_chat": true
@@ -17,7 +17,7 @@
     "warehouse": {
       "trigger": "minecolonies:complete_build_request",
       "conditions": {
-        "hut_name": "wonder",
+        "hut_name": "mysticalsite",
         "level": 1
       }
     }

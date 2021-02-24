@@ -44,7 +44,7 @@ public final class HappinessConstants
     public static final String HEALTH           = "health";
     public static final String IDLEATJOB        = "idleatjob";
     public static final String SCHOOL           = "school";
-    public static final String WONDER           = "wonder";
+    public static final String MYSTICAL_SITE    = "mysticalsite";
     public static final String SECURITY         = "security";
     public static final String SOCIAL           = "social";
     public static final String SATURATION       = "saturation";

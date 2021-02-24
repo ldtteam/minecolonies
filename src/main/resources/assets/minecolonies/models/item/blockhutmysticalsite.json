@@ -1,5 +1,5 @@
 {
-  "parent": "minecolonies:block/blockhutwonder",
+  "parent": "minecolonies:block/blockhutmysticalsite",
   "display": {
     "thirdperson_righthand": {
       "rotation": [

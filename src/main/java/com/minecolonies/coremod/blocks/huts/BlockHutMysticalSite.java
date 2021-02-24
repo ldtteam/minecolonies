@@ -9,9 +9,9 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 /**
- * Hut for the wonder. No different from {@link AbstractBlockHut}
+ * Hut for the mystical site. No different from {@link AbstractBlockHut}
  */
-public class BlockHutWonder extends AbstractBlockHut<BlockHutWonder>
+public class BlockHutMysticalSite extends AbstractBlockHut<BlockHutMysticalSite>
 {
     /**
      * Method to return the name of the block.
@@ -21,7 +21,7 @@ public class BlockHutWonder extends AbstractBlockHut<BlockHutWonder>
     @Override
     public String getName()
     {
-        return "blockhutwonder";
+        return "blockhutmysticalsite";
     }
 
     /**
@@ -32,13 +32,13 @@ public class BlockHutWonder extends AbstractBlockHut<BlockHutWonder>
     @Override
     public BuildingEntry getBuildingEntry()
     {
-        return ModBuildings.wonder;
+        return ModBuildings.mysticalSite;
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
     public void checkResearch(final IColonyView colony)
     {
-        checkResearch(colony, ResearchInitializer.WONDER_RESEARCH);
+        checkResearch(colony, ResearchInitializer.MYSTICAL_SITE_RESEARCH);
     }
 }

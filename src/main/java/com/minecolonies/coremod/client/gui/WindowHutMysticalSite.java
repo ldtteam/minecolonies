@@ -1,23 +1,22 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.colony.buildings.BuildingWonder;
-import org.jetbrains.annotations.NotNull;
+import com.minecolonies.coremod.colony.buildings.BuildingMysticalSite;
 
 /**
  * Window for the home building.
  */
-public class WindowHutWonder extends AbstractWindowBuilding<BuildingWonder.View>
+public class WindowHutMysticalSite extends AbstractWindowBuilding<BuildingMysticalSite.View>
 {
     /**
      * Suffix describing the window xml.
      */
-    private static final String WONDER_BUILDING_RESOURCE_SUFFIX = ":gui/windowhutwonder.xml";
+    private static final String MYSTICAL_SITE_BUILDING_RESOURCE_SUFFIX = ":gui/windowhutmysticalsite.xml";
 
     /**
      * The building the view is relates to.
      */
-    private final BuildingWonder.View wonder;
+    private final BuildingMysticalSite.View mysticalSite;
 
     /**
      * The name of the specific one.
@@ -29,10 +28,10 @@ public class WindowHutWonder extends AbstractWindowBuilding<BuildingWonder.View>
      *
      * @param building View of the home building.
      */
-    public WindowHutWonder(final BuildingWonder.View building, final String name)
+    public WindowHutMysticalSite(final BuildingMysticalSite.View building, final String name)
     {
-        super(building, Constants.MOD_ID + WONDER_BUILDING_RESOURCE_SUFFIX);
-        this.wonder = building;
+        super(building, Constants.MOD_ID + MYSTICAL_SITE_BUILDING_RESOURCE_SUFFIX);
+        this.mysticalSite = building;
         this.name = name;
     }
 

@@ -9,6 +9,6 @@ import net.minecraft.world.World;
 
 import java.util.Set;
 
-public interface IWonder extends IBuilding
+public interface IMysticalSite extends IBuilding
 {
 }

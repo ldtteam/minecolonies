@@ -3,9 +3,9 @@
 	"ambientocclusion": false,
 	"textures": {
 		"0": "minecolonies:blocks/woodgrain-full",
-		"1": "minecolonies:blocks/wonder/blueprint",
-		"3": "minecolonies:blocks/wonder/andersite_pol",
-		"11": "minecolonies:blocks/wonder/sketchbook",
+		"1": "minecolonies:blocks/mysticalsite/blueprint",
+		"3": "minecolonies:blocks/mysticalsite/andersite_pol",
+		"11": "minecolonies:blocks/mysticalsite/sketchbook",
 		"particle": "minecolonies:blocks/woodgrain-full"
 	},
 	"elements": [

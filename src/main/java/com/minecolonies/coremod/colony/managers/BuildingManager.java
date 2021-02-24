@@ -1,13 +1,12 @@
 package com.minecolonies.coremod.colony.managers;
 
 import com.ldtteam.structurize.util.LanguageHandler;
-import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IRSComponent;
-import com.minecolonies.api.colony.buildings.IWonder;
+import com.minecolonies.api.colony.buildings.IMysticalSite;
 import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
@@ -25,7 +24,7 @@ import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
 import com.minecolonies.coremod.blocks.huts.BlockHutWareHouse;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
-import com.minecolonies.coremod.colony.buildings.BuildingWonder;
+import com.minecolonies.coremod.colony.buildings.BuildingMysticalSite;
 import com.minecolonies.coremod.colony.buildings.modules.TavernBuildingModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
@@ -72,7 +71,7 @@ public class BuildingManager implements IBuildingManager
     /**
      * The warehouse building position. Initially null.
      */
-    private final List<IWonder> wonders = new ArrayList<>();
+    private final List<IMysticalSite> mysticalSites = new ArrayList<>();
 
     /**
      * The townhall of the colony.
@@ -346,16 +345,16 @@ public class BuildingManager implements IBuildingManager
     }
 
     @Override
-    public int getWonderMaxBuildingLevel()
+    public int getMysticalSiteMaxBuildingLevel()
     {
         int maxLevel = 0;
-        if(hasWonder())
+        if(hasMysticalSite())
         {
-            for(final IWonder wonder : wonders)
+            for(final IMysticalSite mysticalSite : mysticalSites)
             {
-                if(wonder.getBuildingLevel() > maxLevel)
+                if(mysticalSite.getBuildingLevel() > maxLevel)
                 {
-                    maxLevel = wonder.getBuildingLevel();
+                    maxLevel = mysticalSite.getBuildingLevel();
                 }
             }
         }
@@ -369,9 +368,9 @@ public class BuildingManager implements IBuildingManager
     }
 
     @Override
-    public boolean hasWonder()
+    public boolean hasMysticalSite()
     {
-        return !wonders.isEmpty();
+        return !mysticalSites.isEmpty();
     }
 
     @Override
@@ -500,9 +499,9 @@ public class BuildingManager implements IBuildingManager
         {
             wareHouses.remove(building);
         }
-        else if (building instanceof BuildingWonder)
+        else if (building instanceof BuildingMysticalSite)
         {
-            wonders.remove(building);
+            mysticalSites.remove(building);
         }
 
         //Allow Citizens to fix up any data that wasn't fixed up by the AbstractBuilding's own onDestroyed
@@ -658,15 +657,15 @@ public class BuildingManager implements IBuildingManager
     }
 
     @Override
-    public List<IWonder> getWonders()
+    public List<IMysticalSite> getMysticalSites()
     {
-        return wonders;
+        return mysticalSites;
     }
 
     @Override
-    public void removeWonder(final IWonder wonder)
+    public void removeMysticalSite(final IMysticalSite mysticalSite)
     {
-        wonders.remove(wonder);
+        mysticalSites.remove(mysticalSite);
     }
 
     /**
@@ -697,9 +696,9 @@ public class BuildingManager implements IBuildingManager
         {
             wareHouses.add((IWareHouse) building);
         }
-        else if (building instanceof BuildingWonder)
+        else if (building instanceof BuildingMysticalSite)
         {
-            wonders.add((IWonder) building);
+            mysticalSites.add((IMysticalSite) building);
         }
     }
 
