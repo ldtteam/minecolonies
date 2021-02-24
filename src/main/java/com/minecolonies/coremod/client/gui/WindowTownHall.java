@@ -434,8 +434,6 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
      * 0   No Sorting, like wysiwyg ASC_SORT
      * 1   Name Ascending DESC_SORT
      * 2   Name Descending COUNT_ASC_SORT
-     * 3   Itemcount Ascending COUNT_DESC_SORT
-     * 4   Itemcount Descending
      **/
     private void setSortFlag()
     {
@@ -455,12 +453,6 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
             case DESC_SORT:
                 findPaneOfTypeByID(BUTTON_SORT, ButtonImage.class).setText("Av");
                 break;
-            case COUNT_ASC_SORT:
-                findPaneOfTypeByID(BUTTON_SORT, ButtonImage.class).setText("1^");
-                break;
-            case COUNT_DESC_SORT:
-                findPaneOfTypeByID(BUTTON_SORT, ButtonImage.class).setText("1v");
-                break;
             default:
                 break;
         }
@@ -476,8 +468,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         citizensList.enable();
 
         final List<ICitizenDataView> filterItems = new ArrayList<>();
-        final Predicate<ICitizenDataView> filterPredicate = stack -> filter.isEmpty()
-                || citizen.getDisplayName() || citizen.getDisplayName();
+        final Predicate<ICitizenDataView> filterPredicate = citizen -> Boolean.parseBoolean(citizen.getName());
 
         citizens.clear();
         if (filter.isEmpty())
@@ -489,11 +480,9 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
             citizens.addAll(filterItems.stream().filter(filterPredicate).collect(Collectors.toList()));
         }
 
-        final Comparator<ICitizenDataView> compareByName = Comparator.comparing((ICitizenDataView o) -> o.citizen.getDisplayName);
+        final Comparator<ICitizenDataView> compareByName = Comparator.comparing((ICitizenDataView o) -> o.citizen.getName);
         switch (sortDescriptor)
         {
-            case NO_SORT:
-                break;
             case ASC_SORT:
                 citizens.sort(compareByName);
                 break;
@@ -537,7 +526,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
             {
                 final ICitizenDataView resource = citizens.get(index);
                 final Text resourceLabel = rowPane.findPaneOfTypeByID("ressourceStackName", Text.class);
-                final String name = citizen.getDisplayName;
+                final String name = citizen.getName;
                 resourceLabel.setText(name.substring(0, Math.min(17, name.length())));
                 final Text qtys = rowPane.findPaneOfTypeByID("quantities", Text.class);
             }
