@@ -229,8 +229,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         }
 
         final int amount = workerRequiresItem(building, stack, alreadyKept);
-        if (amount <= 0
-              || (building instanceof BuildingCook && CAN_EAT.test(stack)))
+        if (amount <= 0)
         {
             return false;
         }
