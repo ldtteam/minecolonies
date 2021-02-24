@@ -4,12 +4,20 @@
   "inputs": [
     {
       "item" : "minecraft:iron_ingot",
-      "count": 7
+      "count": 6
+    },
+    {
+      "item" : "minecraft:leather",
+      "count": 1
+    },
+    {
+      "item" : "minecraft:coal",
+      "count": 4
     }
   ],
   "result": "minecolonies:plate_armor_legs",
   "count": 1,
-  "min-building-level" : 2
+  "min-building-level" : 4
 }
 
 
