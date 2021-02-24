@@ -3,7 +3,7 @@ package com.minecolonies.coremod.client.gui;
 import com.ldtteam.blockout.Color;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Button;
-import com.ldtteam.blockout.controls.Label;
+import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.blockout.views.SwitchView;
 import com.ldtteam.structurize.util.LanguageHandler;
@@ -71,14 +71,14 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
             {
                 if (index == miner.current)
                 {
-                    rowPane.findPaneOfTypeByID("lvl", Label.class).setColor(Color.getByName("red", 0));
+                    rowPane.findPaneOfTypeByID("lvl", Text.class).setColors(Color.getByName("red", 0));
                 }
 
-                rowPane.findPaneOfTypeByID("lvl", Label.class).setLabelText(Integer.toString(index));
-                rowPane.findPaneOfTypeByID("nONodes", Label.class)
-                  .setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.minerNode") + ": " + levelsInfo.get(index).getA());
-                rowPane.findPaneOfTypeByID("yLevel", Label.class)
-                  .setLabelText("Y: " + (levelsInfo.get(index).getB() + 1));
+                rowPane.findPaneOfTypeByID("lvl", Text.class).setText(Integer.toString(index));
+                rowPane.findPaneOfTypeByID("nONodes", Text.class)
+                  .setText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.minerNode") + ": " + levelsInfo.get(index).getA());
+                rowPane.findPaneOfTypeByID("yLevel", Text.class)
+                  .setText("Y: " + (levelsInfo.get(index).getB() + 1));
                 // ^^ 1 is for Y depth fix
             }
         });

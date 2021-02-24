@@ -4,7 +4,7 @@ import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.ButtonImage;
 import com.ldtteam.blockout.controls.ItemIcon;
-import com.ldtteam.blockout.controls.Label;
+import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColonyView;
@@ -135,7 +135,7 @@ public class WindowBarracksBuilding extends AbstractWindowBuilding<BuildingBarra
 
             if (view.isRaiding())
             {
-                findPaneOfTypeByID(LABEL_CURRENNT, Label.class).setLabelText(mountDistanceString(spawnPoints.get(spawnPoints.size() - 1)));
+                findPaneOfTypeByID(LABEL_CURRENNT, Text.class).setText(mountDistanceString(spawnPoints.get(spawnPoints.size() - 1)));
             }
             positionsList.setDataProvider(new ScrollingList.DataProvider()
             {
@@ -151,7 +151,7 @@ public class WindowBarracksBuilding extends AbstractWindowBuilding<BuildingBarra
                     final BlockPos pos = spawnPoints.get(index);
                     if (!(view.isRaiding() && index == spawnPoints.size() - 1))
                     {
-                        rowPane.findPaneOfTypeByID(LABEL_POS, Label.class).setLabelText((index + 1) + ": " + mountDistanceString(pos));
+                        rowPane.findPaneOfTypeByID(LABEL_POS, Text.class).setText((index + 1) + ": " + mountDistanceString(pos));
                     }
                 }
             });

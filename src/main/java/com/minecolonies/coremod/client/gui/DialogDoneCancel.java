@@ -3,13 +3,13 @@ package com.minecolonies.coremod.client.gui;
 import com.ldtteam.blockout.Loader;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.ButtonHandler;
-import com.ldtteam.blockout.controls.Label;
 import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.OverlayView;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
-
+import net.minecraft.util.text.IFormattableTextComponent;
+import java.util.List;
 import java.util.function.ObjIntConsumer;
 
 /**
@@ -35,7 +35,7 @@ public class DialogDoneCancel extends OverlayView implements ButtonHandler
     /**
      * Label for the title of the dialog.
      */
-    protected final Label titleLabel;
+    protected final Text titleLabel;
 
     /**
      * Text for the text content of the dialog.
@@ -66,7 +66,7 @@ public class DialogDoneCancel extends OverlayView implements ButtonHandler
     {
         super();
         Loader.createFromXMLFile(Constants.MOD_ID + DIALOG_OK_CANCEL_SUFFIX, this);
-        titleLabel = findPaneOfTypeByID("title", Label.class);
+        titleLabel = findPaneOfTypeByID("title", Text.class);
         contentText = findPaneOfTypeByID("textcontent", Text.class);
         doneButton = findPaneOfTypeByID("done", Button.class);
         cancelButton = findPaneOfTypeByID("cancel", Button.class);
@@ -82,7 +82,7 @@ public class DialogDoneCancel extends OverlayView implements ButtonHandler
      */
     public String getTitle()
     {
-        return titleLabel.getLabelText();
+        return titleLabel.getTextAsString();
     }
 
     /**
@@ -92,7 +92,7 @@ public class DialogDoneCancel extends OverlayView implements ButtonHandler
      */
     public void setTitle(final String title)
     {
-        titleLabel.setLabelText(title);
+        titleLabel.setText(title);
     }
 
     /**
@@ -100,9 +100,9 @@ public class DialogDoneCancel extends OverlayView implements ButtonHandler
      *
      * @return The textual content displayed in the dialog
      */
-    public String getTextContent()
+    public List<IFormattableTextComponent> getTextContent()
     {
-        return contentText.getTextContent();
+        return contentText.getTextAsList();
     }
 
     /**
@@ -112,7 +112,7 @@ public class DialogDoneCancel extends OverlayView implements ButtonHandler
      */
     public void setTextContent(final String content)
     {
-        contentText.setTextContent(content);
+        contentText.setText(content);
     }
 
     /**

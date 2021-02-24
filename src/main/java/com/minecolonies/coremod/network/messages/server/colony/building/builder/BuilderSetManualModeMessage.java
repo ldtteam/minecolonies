@@ -52,7 +52,7 @@ public class BuilderSetManualModeMessage extends AbstractBuildingServerMessage<B
     protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final BuildingBuilder building)
     {
         building.setManualMode(manualMode);
-        if (manualMode)
+        if (manualMode && building.getMainCitizen() != null)
         {
             ctxIn.getSender().sendMessage(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_BUILDER_MANUAL_MODE, building.getMainCitizen().getName()), ctxIn.getSender().getUniqueID());
         }

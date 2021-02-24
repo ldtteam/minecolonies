@@ -2,7 +2,7 @@ package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.ButtonHandler;
-import com.ldtteam.blockout.controls.Label;
+import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.SwitchView;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.coremod.Network;
@@ -27,7 +27,7 @@ public abstract class AbstractWindowSkeleton extends Window implements ButtonHan
     /**
      * Panes used by the generic page handler
      */
-    protected final Label      pageNum;
+    protected final Text       pageNum;
     protected final Button     buttonPrevPage;
     protected final Button     buttonNextPage;
     protected       SwitchView switchView;
@@ -66,10 +66,21 @@ public abstract class AbstractWindowSkeleton extends Window implements ButtonHan
 
         buttons = new HashMap<>();
 
-        buttonNextPage = findPaneOfTypeByID(BUTTON_NEXTPAGE, Button.class);
-        buttonPrevPage = findPaneOfTypeByID(BUTTON_PREVPAGE, Button.class);
-        pageNum = findPaneOfTypeByID(LABEL_PAGE_NUMBER, Label.class);
         switchView = findPaneOfTypeByID(VIEW_PAGES, SwitchView.class);
+        if (switchView != null)
+        {
+            buttonNextPage = findPaneOfTypeByID(BUTTON_NEXTPAGE, Button.class);
+            buttonPrevPage = findPaneOfTypeByID(BUTTON_PREVPAGE, Button.class);
+            pageNum = findPaneOfTypeByID(LABEL_PAGE_NUMBER, Text.class);
+            registerButton(BUTTON_NEXTPAGE, () -> setPage(true, 1));
+            registerButton(BUTTON_PREVPAGE, () -> setPage(true, -1));
+        }
+        else
+        {
+            buttonNextPage = null;
+            buttonPrevPage = null;
+            pageNum = null;
+        }
 
         Network.getNetwork().sendToServer(new OpenGuiWindowTriggerMessage(this.resource));
     }
@@ -106,18 +117,6 @@ public abstract class AbstractWindowSkeleton extends Window implements ButtonHan
     @Override
     public void onButtonClicked(@NotNull final Button button)
     {
-        switch (button.getID())
-        {
-            case BUTTON_PREVPAGE:
-                setPage(BUTTON_PREVPAGE);
-                return;
-            case BUTTON_NEXTPAGE:
-                setPage(BUTTON_NEXTPAGE);
-                return;
-            default:
-                break;
-        }
-
         if (buttons.containsKey(button.getID()))
         {
             buttons.get(button.getID()).accept(button);
@@ -138,33 +137,27 @@ public abstract class AbstractWindowSkeleton extends Window implements ButtonHan
     /**
      * Generic page handler, uses common ids
      *
-     * @param button Button pressed in a GUI
+     * @param relative whether page param is relative or absolute
+     * @param page if relative turn x pages forward/backward, if absolute turn to x-th page
      */
-    public void setPage(@NotNull final String button)
+    public void setPage(final boolean relative, final int page)
     {
-        final int switchPagesSize = switchView.getChildrenSize();
-        int curPage = pageNum.getLabelText().isEmpty() ? 1 : Integer.parseInt(pageNum.getLabelText().substring(0, pageNum.getLabelText().indexOf("/")));
-
-        switch (button)
+        if (switchView == null)
         {
-            case BUTTON_PREVPAGE:
-                switchView.previousView();
-                curPage--;
-                break;
-            case BUTTON_NEXTPAGE:
-                switchView.nextView();
-                curPage++;
-                break;
-            default:
-                if (switchPagesSize == 1)
-                {
-                    buttonPrevPage.off();
-                    buttonNextPage.off();
-                    pageNum.off();
-                    return;
-                }
-                break;
+            return;
         }
+
+        final int switchPagesSize = switchView.getChildrenSize();
+    
+        if (switchPagesSize <= 1)
+        {
+            buttonPrevPage.off();
+            buttonNextPage.off();
+            pageNum.off();
+            return;
+        }
+
+        final int curPage = switchView.setView(relative, page) + 1;
 
         buttonNextPage.on();
         buttonPrevPage.on();
@@ -176,7 +169,7 @@ public abstract class AbstractWindowSkeleton extends Window implements ButtonHan
         {
             buttonNextPage.off();
         }
-        pageNum.setLabelText(curPage + "/" + switchPagesSize);
+        pageNum.setText(curPage + "/" + switchPagesSize);
     }
 
     @Override

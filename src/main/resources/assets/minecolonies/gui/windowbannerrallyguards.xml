@@ -11,8 +11,8 @@
                 <!--Item icon -->
                 <itemicon id="guardicon" size="16 16" pos="1 3"/>
                 <!--Request name-->
-                <label id="guardtype" size="50 12" pos="20 1" color="black"/>
-                <label id="position" size="50 12" pos="20 13" color="black"/>
+                <label id="guardtype" size="130 12" pos="20 1" color="black"/>
+                <label id="position" size="130 12" pos="20 13" color="black"/>
                 <!-- button to cancel the request-->
                 <buttonimage id="remove" size="74 16" pos="74 25" textcolor="black"
                              label="$(com.minecolonies.coremod.item.bannerrallyguards.gui.remove)" source="minecolonies:textures/gui/citizen/colonist_button_medium.png"/>

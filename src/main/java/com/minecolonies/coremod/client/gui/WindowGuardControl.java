@@ -2,7 +2,7 @@ package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Button;
-import com.ldtteam.blockout.controls.Label;
+import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.blockout.views.View;
 import com.ldtteam.structurize.util.LanguageHandler;
@@ -131,7 +131,7 @@ public class WindowGuardControl extends AbstractWindowSkeleton
                 public void updateElement(final int index, @NotNull final Pane rowPane)
                 {
                     final BlockPos pos = patrolTargets.get(index);
-                    rowPane.findPaneOfTypeByID("position", Label.class).setLabelText(pos.getX() + " " + pos.getY() + " " + pos.getZ());
+                    rowPane.findPaneOfTypeByID("position", Text.class).setText(pos.getX() + " " + pos.getY() + " " + pos.getZ());
                 }
             });
         }
@@ -149,7 +149,7 @@ public class WindowGuardControl extends AbstractWindowSkeleton
                 public void updateElement(final int index, @NotNull final Pane rowPane)
                 {
                     final BlockPos pos = building.getGuardPos();
-                    rowPane.findPaneOfTypeByID("position", Label.class).setLabelText(pos.getX() + " " + pos.getY() + " " + pos.getZ());
+                    rowPane.findPaneOfTypeByID("position", Text.class).setText(pos.getX() + " " + pos.getY() + " " + pos.getZ());
                 }
             });
         }
@@ -170,9 +170,9 @@ public class WindowGuardControl extends AbstractWindowSkeleton
                 if (citizenDataView != null)
                 {
                     final BlockPos pos = citizenDataView.getPosition();
-                    rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(citizenDataView.getName());
-                    rowPane.findPaneOfTypeByID(POSITION_LABEL, Label.class).setLabelText(pos.getX() + " " + pos.getY() + " " + pos.getZ());
-                    rowPane.findPaneOfTypeByID(LEVEL_LABEL, Label.class).setLabelText("Level: " + citizenDataView.getCitizenSkillHandler().getJobModifier(building));
+                    rowPane.findPaneOfTypeByID(NAME_LABEL, Text.class).setText(citizenDataView.getName());
+                    rowPane.findPaneOfTypeByID(POSITION_LABEL, Text.class).setText(pos.getX() + " " + pos.getY() + " " + pos.getZ());
+                    rowPane.findPaneOfTypeByID(LEVEL_LABEL, Text.class).setText("Level: " + citizenDataView.getCitizenSkillHandler().getJobModifier(building));
                     WindowCitizen.createHealthBar(citizenDataView, rowPane.findPaneOfTypeByID(WINDOW_ID_HEALTHBAR, View.class));
                 }
             }
@@ -232,8 +232,8 @@ public class WindowGuardControl extends AbstractWindowSkeleton
      */
     private void handleButtons()
     {
-        this.findPaneOfTypeByID(GUI_BUTTON_PATROL_MODE, Button.class).setLabel(patrolManually ? GUI_SWITCH_MANUAL : GUI_SWITCH_AUTO);
-        this.findPaneOfTypeByID(GUI_BUTTON_RETRIEVAL_MODE, Button.class).setLabel(retrieveOnLowHealth ? GUI_SWITCH_ON : GUI_SWITCH_OFF);
+        this.findPaneOfTypeByID(GUI_BUTTON_PATROL_MODE, Button.class).setText(patrolManually ? GUI_SWITCH_MANUAL : GUI_SWITCH_AUTO);
+        this.findPaneOfTypeByID(GUI_BUTTON_RETRIEVAL_MODE, Button.class).setText(retrieveOnLowHealth ? GUI_SWITCH_ON : GUI_SWITCH_OFF);
 
         if (task.equals(GuardTask.PATROL))
         {
@@ -241,11 +241,11 @@ public class WindowGuardControl extends AbstractWindowSkeleton
 
             if (patrolManually)
             {
-                buttonSetTarget.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.targetPatrol"));
+                buttonSetTarget.setText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.targetPatrol"));
             }
             else
             {
-                buttonSetTarget.setLabel("");
+                buttonSetTarget.clearText();
             }
             buttonTaskPatrol.setEnabled(false);
         }
@@ -254,16 +254,16 @@ public class WindowGuardControl extends AbstractWindowSkeleton
             buttonTaskFollow.setEnabled(false);
             if (tightGrouping)
             {
-                buttonSetTarget.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.followTight"));
+                buttonSetTarget.setText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.followTight"));
             }
             else
             {
-                buttonSetTarget.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.followLoose"));
+                buttonSetTarget.setText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.followLoose"));
             }
         }
         else if (task.equals(GuardTask.GUARD))
         {
-            buttonSetTarget.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.targetGuard"));
+            buttonSetTarget.setText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.targetGuard"));
             buttonTaskGuard.setEnabled(false);
         }
     }
@@ -371,7 +371,7 @@ public class WindowGuardControl extends AbstractWindowSkeleton
         building.setRetrieveOnLowHealth(!building.isRetrieveOnLowHealth());
         pullInfoFromHut();
         sendChangesToServer();
-        this.findPaneOfTypeByID(GUI_BUTTON_RETRIEVAL_MODE, Button.class).setLabel(retrieveOnLowHealth ? GUI_SWITCH_ON : GUI_SWITCH_OFF);
+        this.findPaneOfTypeByID(GUI_BUTTON_RETRIEVAL_MODE, Button.class).setText(retrieveOnLowHealth ? GUI_SWITCH_ON : GUI_SWITCH_OFF);
     }
 
     /**
@@ -382,7 +382,7 @@ public class WindowGuardControl extends AbstractWindowSkeleton
         building.setHireTrainees(!building.isHireTrainees());
         pullInfoFromHut();
         sendChangesToServer();
-        this.findPaneOfTypeByID(GUI_BUTTON_TRAINEE_MODE, Button.class).setLabel(hireTrainees ? GUI_SWITCH_ON : GUI_SWITCH_OFF);
+        this.findPaneOfTypeByID(GUI_BUTTON_TRAINEE_MODE, Button.class).setText(hireTrainees ? GUI_SWITCH_ON : GUI_SWITCH_OFF);
     }
 
     /**

@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Image;
 import com.ldtteam.blockout.controls.ItemIcon;
-import com.ldtteam.blockout.controls.Label;
+import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
@@ -187,9 +187,9 @@ public class WindowResourceList extends AbstractWindowSkeleton
         //Make sure we have a fresh view
         Network.getNetwork().sendToServer(new MarkBuildingDirtyMessage(builder));
 
-        findPaneOfTypeByID(LABEL_WORKERNAME, Label.class).setLabelText(builder.getWorkerName());
-        findPaneOfTypeByID(LABEL_CONSTRUCTION_NAME, Label.class).setLabelText(builder.getConstructionName());
-        findPaneOfTypeByID(LABEL_PROGRESS, Label.class).setLabelText(builder.getProgress());
+        findPaneOfTypeByID(LABEL_WORKERNAME, Text.class).setText(builder.getWorkerName());
+        findPaneOfTypeByID(LABEL_CONSTRUCTION_NAME, Text.class).setText(builder.getConstructionName());
+        findPaneOfTypeByID(LABEL_PROGRESS, Text.class).setText(builder.getProgress());
     }
 
     /**
@@ -201,55 +201,55 @@ public class WindowResourceList extends AbstractWindowSkeleton
     private void updateResourcePane(final int index, @NotNull final Pane rowPane)
     {
         final BuildingBuilderResource resource = resources.get(index);
-        final Label resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Label.class);
-        final Label resourceMissingLabel = rowPane.findPaneOfTypeByID(RESOURCE_MISSING, Label.class);
-        final Label neededLabel = rowPane.findPaneOfTypeByID(RESOURCE_AVAILABLE_NEEDED, Label.class);
+        final Text resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Text.class);
+        final Text resourceMissingLabel = rowPane.findPaneOfTypeByID(RESOURCE_MISSING, Text.class);
+        final Text neededLabel = rowPane.findPaneOfTypeByID(RESOURCE_AVAILABLE_NEEDED, Text.class);
 
         if (resource.getAmountInDelivery() > 0)
         {
             rowPane.findPaneOfTypeByID(IN_DELIVERY_ICON, Image.class).setVisible(true);
-            rowPane.findPaneOfTypeByID(IN_DELIVERY_AMOUNT, Label.class).setLabelText("" + resource.getAmountInDelivery());
+            rowPane.findPaneOfTypeByID(IN_DELIVERY_AMOUNT, Text.class).setText("" + resource.getAmountInDelivery());
         }
 
         switch (resource.getAvailabilityStatus())
         {
             case DONT_HAVE:
-                resourceLabel.setColor(RED, RED);
-                resourceMissingLabel.setColor(RED, RED);
-                neededLabel.setColor(RED, RED);
+                resourceLabel.setColors(RED);
+                resourceMissingLabel.setColors(RED);
+                neededLabel.setColors(RED);
                 break;
             case NEED_MORE:
-                resourceLabel.setColor(ORANGE, ORANGE);
-                resourceMissingLabel.setColor(ORANGE, ORANGE);
-                neededLabel.setColor(ORANGE, ORANGE);
+                resourceLabel.setColors(ORANGE);
+                resourceMissingLabel.setColors(ORANGE);
+                neededLabel.setColors(ORANGE);
                 break;
             case HAVE_ENOUGH:
-                resourceLabel.setColor(DARKGREEN, DARKGREEN);
-                resourceMissingLabel.setColor(DARKGREEN, DARKGREEN);
-                neededLabel.setColor(DARKGREEN, DARKGREEN);
+                resourceLabel.setColors(DARKGREEN);
+                resourceMissingLabel.setColors(DARKGREEN);
+                neededLabel.setColors(DARKGREEN);
                 break;
             case NOT_NEEDED:
             default:
-                resourceLabel.setColor(BLACK, BLACK);
-                resourceMissingLabel.setColor(BLACK, BLACK);
-                neededLabel.setColor(BLACK, BLACK);
+                resourceLabel.setColors(BLACK);
+                resourceMissingLabel.setColors(BLACK);
+                neededLabel.setColors(BLACK);
                 break;
         }
 
-        resourceLabel.setLabelText(resource.getName());
+        resourceLabel.setText(resource.getName());
         final int missing = resource.getMissingFromPlayer();
         if (missing < 0)
         {
-            resourceMissingLabel.setLabelText(Integer.toString(missing));
+            resourceMissingLabel.setText(Integer.toString(missing));
         }
         else
         {
-            resourceMissingLabel.setLabelText("");
+            resourceMissingLabel.clearText();
         }
 
-        neededLabel.setLabelText(resource.getAvailable() + " / " + resource.getAmount());
-        rowPane.findPaneOfTypeByID(RESOURCE_ID, Label.class).setLabelText(Integer.toString(index));
-        rowPane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Label.class).setLabelText(Integer.toString(resource.getAmount() - resource.getAvailable()));
+        neededLabel.setText(resource.getAvailable() + " / " + resource.getAmount());
+        rowPane.findPaneOfTypeByID(RESOURCE_ID, Text.class).setText(Integer.toString(index));
+        rowPane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Text.class).setText(Integer.toString(resource.getAmount() - resource.getAvailable()));
 
         final ItemStack stack = new ItemStack(resource.getItem(), 1);
         stack.setTag(resource.getItemStack().getTag());

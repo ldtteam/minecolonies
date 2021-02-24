@@ -12,6 +12,6 @@
     <button id="done" size="200 20" pos="110 170" label="$(com.minecolonies.coremod.gui.townHall.mercenaryHire)"/>
     <button id="cancel" size="200 20" pos="110 194" label="$(gui.cancel)"/>
 
-    <text id="text" size="145 90" pos="10 55" color="white"/>
+    <text id="text" size="145 90" pos="10 55" color="white" text="$(com.minecolonies.coremod.gui.townHall.mercenaryStory)"/>
 
 </window>

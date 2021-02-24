@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.fisherman;
 
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
-import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
@@ -426,7 +425,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
         {
             playCaughtFishSound();
 
-            if(getOwnBuilding().getBuildingLevel() > LEVEL_FOR_BONUS)
+            if(getOwnBuilding().getBuildingLevel() >= LEVEL_FOR_BONUS)
             {
                 final double primarySkillFactor = worker.getCitizenData().getCitizenSkillHandler().getSkills().get(getOwnBuilding().getPrimarySkill()).getB() / 10;
                 final double rollResult = worker.getRandom().nextDouble() * ONE_HUNDRED_PERCENT;

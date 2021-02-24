@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.interactionhandling;
 
+import com.ldtteam.blockout.PaneBuilders;
 import com.ldtteam.blockout.controls.ButtonImage;
 import com.ldtteam.blockout.controls.ItemIcon;
 import com.ldtteam.blockout.controls.Text;
@@ -19,6 +20,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -93,13 +95,17 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
         {
             final ItemStack recruitCost = ((IVisitorViewData) dataView).getRecruitCost();
             final IColonyView colony = ((IVisitorViewData) dataView).getColonyView();
-            String message =
-              colony.getCitizens().size() < colony.getCitizenCountLimit() ? "com.minecolonies.coremod.gui.chat.recruitcost" : "com.minecolonies.coremod.gui.chat.nospacerecruit";
-            window.findPaneOfTypeByID(CHAT_LABEL_ID, Text.class).setTextContent(dataView.getName() + ": " + this.getInquiry().getString()
-                                                                                  + "\n\n" + new TranslationTextComponent(message,
-              dataView.getName().split(" ")[0],
-              recruitCost.getCount()
-                + " " + recruitCost.getDisplayName().getString()).getString());
+
+            window.findPaneOfTypeByID(CHAT_LABEL_ID, Text.class).setText(PaneBuilders.textBuilder()
+                .append(new StringTextComponent(dataView.getName() + ": "))
+                .append(this.getInquiry())
+                .emptyLines(1)
+                .append(new TranslationTextComponent(
+                    colony.getCitizens().size() < colony.getCitizenCountLimit() ? "com.minecolonies.coremod.gui.chat.recruitcost"
+                        : "com.minecolonies.coremod.gui.chat.nospacerecruit",
+                    dataView.getName().split(" ")[0],
+                    recruitCost.getCount() + " " + recruitCost.getDisplayName().getString()))
+                .getText());
 
             int iconPosX = recruitButton.getX() + recruitButton.getWidth() - 28;
             int iconPosY = recruitButton.getY() + recruitButton.getHeight() - 18;

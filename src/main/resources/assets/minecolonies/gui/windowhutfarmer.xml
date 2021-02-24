@@ -15,22 +15,20 @@
                     label="$(com.minecolonies.coremod.gui.hiring.off)"/>
 
             <list id="fields" size="164 154" pos="13 60">
-                <view size="100% 30">
-                    <box size="100% 30" linewidth="2">
-                        <button id="assignFarm" pos="95 10" size="40 15"/>
-                        <itemicon id="icon" size="16 16" pos="0 0"/>
-                        <label id="worker" color="black" pos="20 5"/>
-                        <label id="dist" color="black" pos="15 15"/>
-                        <label id="dir" color="black" pos="35 15"/>
-                    </box>
-                </view>
+                <box size="100% 34" linewidth="2">
+                    <itemicon id="icon" size="16 16" pos="1 1"/>
+                    <label id="worker" color="black" pos="20 2" size="130 9"/>
+                    <label id="dist" color="black" pos="20 12" size="65 9"/>
+                    <label id="dir" color="black" pos="20 22" size="65 9"/>
+                    <button id="assignFarm" pos="100 16" size="50 15"/>
+                </box>
             </list>
         </view>
-        <view>com.minecolonies.coremod.gui.workerhuts.farmerhut.requestfertilizer
+        <view>
             <image source="minecolonies:textures/gui/builderhut/builder_papper.png" size="190 244"/>
-            <label id="RequestFertilizerLabel" size="164 11" pos="13 29" color="black" textalign="MIDDLE"
+            <label id="RequestFertilizerLabel" size="164 18" pos="13 29" color="black" textalign="MIDDLE"
                    label="$(com.minecolonies.coremod.gui.workerhuts.farmerhut.requestfertilizer)"/>
-            <button id="requestFert" size="60 15" pos="65 42"
+            <button id="requestFert" size="60 15" pos="65 50"
                     label="$(com.minecolonies.coremod.gui.requestfert.on)"/>
         </view>
     </switch>
