@@ -9,6 +9,7 @@ import net.minecraft.pathfinding.GroundPathNavigator;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.state.properties.DoubleBlockHalf;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.VoxelShape;
@@ -517,7 +518,9 @@ public class EntityAIInteractToggleAble extends Goal
         {
             // Same logic as doorblock, using our own setblockstate
             final boolean isOpening = !state.get(BlockStateProperties.OPEN);
+            final BlockPos otherPos = state.get(BlockStateProperties.DOUBLE_BLOCK_HALF) == DoubleBlockHalf.LOWER ? pos.up() : pos.down();
             WorldUtil.setBlockState(world, pos, state.with(OPEN, isOpening), 10);
+            WorldUtil.setBlockState(world, otherPos, world.getBlockState(otherPos).with(OPEN, isOpening), 10);
             ((DoorBlock) state.getBlock()).playSound(world, pos, isOpening);
         }
 
