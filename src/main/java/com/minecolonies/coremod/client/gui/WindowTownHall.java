@@ -54,7 +54,6 @@ import org.jetbrains.annotations.NotNull;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.*;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.research.util.ResearchConstants.CAP;
@@ -433,17 +432,9 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         citizensList.enable();
 
         final List<ICitizenDataView> filterItems = new ArrayList<>();
-        final Predicate<ICitizenDataView> filterPredicate = citizen -> Boolean.parseBoolean(citizen.getName());
 
         citizens.clear();
-        if (filter.isEmpty())
-        {
-            citizens.addAll(filterItems);
-        }
-        else
-        {
-            citizens.addAll(filterItems.stream().filter(filterPredicate).collect(Collectors.toList()));
-        }
+        citizens.addAll(filterItems);
 
         final Comparator<ICitizenDataView> compareByName = Comparator.comparing(ICitizen::getName);
         citizens.sort(compareByName);
@@ -482,7 +473,6 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
                 final Text resourceLabel = rowPane.findPaneOfTypeByID("citizenName", Text.class);
                 final String name = citizensList.getID();
                 resourceLabel.setText(name.substring(0, Math.min(17, name.length())));
-                final Text qtys = rowPane.findPaneOfTypeByID("quantities", Text.class);
             }
         });
     }
