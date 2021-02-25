@@ -10,6 +10,7 @@ import com.ldtteam.blockout.views.SwitchView;
 import com.ldtteam.blockout.views.View;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.CompactColonyReference;
+import com.minecolonies.api.colony.ICitizen;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
@@ -21,7 +22,6 @@ import com.minecolonies.api.colony.permissions.PermissionEvent;
 import com.minecolonies.api.colony.permissions.Player;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.colony.workorders.WorkOrderView;
-import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Tuple;
@@ -48,13 +48,13 @@ import net.minecraft.util.ResourceLocationException;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.*;
 import net.minecraft.util.text.event.ClickEvent;
-import net.minecraft.world.World;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.*;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -480,7 +480,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
             citizens.addAll(filterItems.stream().filter(filterPredicate).collect(Collectors.toList()));
         }
 
-        final Comparator<ICitizenDataView> compareByName = Comparator.comparing((ICitizenDataView o) -> o.citizen.getName);
+        final Comparator<ICitizenDataView> compareByName = Comparator.comparing((Function<ICitizenDataView, String>) ICitizen::getName);
         switch (sortDescriptor)
         {
             case ASC_SORT:
@@ -525,7 +525,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
                 final ICitizenDataView resource = citizens.get(index);
-                final Text resourceLabel = rowPane.findPaneOfTypeByID("ressourceStackName", Text.class);
+                final Text resourceLabel = rowPane.findPaneOfTypeByID("citizenName", Text.class);
                 final String name = citizen.getName;
                 resourceLabel.setText(name.substring(0, Math.min(17, name.length())));
                 final Text qtys = rowPane.findPaneOfTypeByID("quantities", Text.class);

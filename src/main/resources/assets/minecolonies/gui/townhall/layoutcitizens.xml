@@ -85,6 +85,14 @@
                     <buttonimage id="name" pos="9 0" size="129 17" textcolor="black"
                                  source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"/>
                 </view>
+                <box size="100% 18" linewidth="2">
+                    <itemicon id="resourceIcon" size="17 17" pos="0 0"/>
+                    <label id="citizenName" size="100 12" pos="20 3" color="black"/>
+                    <label id="quantities" size="25 18" pos="117 1" color="black"/>
+                    <buttonimage id="locate" size="14 15" pos="141 1" textcolor="black"
+                                 source="minecolonies:textures/gui/builderhut/builder_button_mini.png"
+                                 label="?"/>
+                </box>
             </list>
         </view>
     </switch>
