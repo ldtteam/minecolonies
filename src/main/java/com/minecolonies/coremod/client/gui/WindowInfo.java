@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.function.Supplier;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_INFO_PREFIX;
-import static com.minecolonies.api.util.constant.WindowConstants.*;
+import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_EXIT;
 
 public class WindowInfo extends AbstractWindowSkeleton
 {

@@ -4,7 +4,10 @@ import com.google.common.reflect.TypeToken;
 import org.apache.logging.log4j.core.config.AppenderControl;
 
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Utility class with methods regarding reflection.

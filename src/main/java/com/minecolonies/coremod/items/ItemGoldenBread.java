@@ -3,19 +3,21 @@ package com.minecolonies.coremod.items;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.util.constant.TranslationConstants;
-import net.minecraft.util.text.IFormattableTextComponent;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Food;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
+
+import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 
 /**
  * Golden Bread, made by the Baker. Heals 2 hearts 

@@ -26,8 +26,8 @@ import net.minecraft.util.Hand;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.FakePlayerFactory;
-
 import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 import java.util.function.Predicate;
 
