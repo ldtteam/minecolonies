@@ -54,7 +54,6 @@ import org.jetbrains.annotations.NotNull;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.*;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -481,7 +480,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
                 final Text resourceLabel = rowPane.findPaneOfTypeByID("citizenName", Text.class);
-                final String name = citizen.getName;
+                final String name = citizensList.getID();
                 resourceLabel.setText(name.substring(0, Math.min(17, name.length())));
                 final Text qtys = rowPane.findPaneOfTypeByID("quantities", Text.class);
             }
