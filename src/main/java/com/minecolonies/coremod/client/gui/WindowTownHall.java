@@ -174,7 +174,6 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
     {
         super(townHall, Constants.MOD_ID + TOWNHALL_RESOURCE_SUFFIX);
         this.townHall = townHall;
-        registerButton(BUTTON_SORT, this::setSortFlag);
 
         alliesList = findPaneOfTypeByID(LIST_ALLIES, ScrollingList.class);
         feudsList = findPaneOfTypeByID(LIST_FEUDS, ScrollingList.class);
@@ -428,39 +427,6 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
     }
 
     /**
-     * For sorting the citizen list
-     * Increments the sortDescriptor and sets the GUI Button accordingly Valid Stages
-     * 0 - 4 NO_SORT
-     * 0   No Sorting, like wysiwyg ASC_SORT
-     * 1   Name Ascending DESC_SORT
-     * 2   Name Descending COUNT_ASC_SORT
-     **/
-    private void setSortFlag()
-    {
-        sortDescriptor++;
-        if (sortDescriptor > 4)
-        {
-            sortDescriptor = NO_SORT;
-        }
-        switch (sortDescriptor)
-        {
-            case NO_SORT:
-                findPaneOfTypeByID(BUTTON_SORT, ButtonImage.class).setText("v^");
-                break;
-            case ASC_SORT:
-                findPaneOfTypeByID(BUTTON_SORT, ButtonImage.class).setText("A^");
-                break;
-            case DESC_SORT:
-                findPaneOfTypeByID(BUTTON_SORT, ButtonImage.class).setText("Av");
-                break;
-            default:
-                break;
-        }
-
-        sortCitizens();
-    }
-
-    /**
      * Update the citizen list.
      */
     private void sortCitizens()
@@ -480,18 +446,8 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
             citizens.addAll(filterItems.stream().filter(filterPredicate).collect(Collectors.toList()));
         }
 
-        final Comparator<ICitizenDataView> compareByName = Comparator.comparing((Function<ICitizenDataView, String>) ICitizen::getName);
-        switch (sortDescriptor)
-        {
-            case ASC_SORT:
-                citizens.sort(compareByName);
-                break;
-            case DESC_SORT:
-                citizens.sort(compareByName.reversed());
-                break;
-            default:
-                break;
-        }
+        final Comparator<ICitizenDataView> compareByName = Comparator.comparing(ICitizen::getName);
+        citizens.sort(compareByName);
 
         sortCitizensList();
     }
@@ -507,7 +463,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         citizensList.setDataProvider(new ScrollingList.DataProvider()
         {
             /**
-             * The number of rows of the list.
+             * The number of rows in the list.
              * @return the number.
              */
             @Override
@@ -518,13 +474,12 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
 
             /**
              * Inserts the elements into each row.
-             * @param index the index of the row/list element.
-             * @param rowPane the parent Pane for the row, containing the elements to update.
+             * @param index   the index of the row/list element.
+             * @param rowPane the parent pane for the row, containing the elements to update.
              */
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                final ICitizenDataView resource = citizens.get(index);
                 final Text resourceLabel = rowPane.findPaneOfTypeByID("citizenName", Text.class);
                 final String name = citizen.getName;
                 resourceLabel.setText(name.substring(0, Math.min(17, name.length())));
