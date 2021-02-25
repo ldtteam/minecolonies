@@ -17,7 +17,8 @@
   ],
   "result": "minecolonies:plate_armor_legs",
   "count": 1,
-  "min-building-level" : 4
+  "min-building-level" : 4,
+  "research-id" : "platearmor"
 }
 
 
