@@ -142,6 +142,22 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     }
 
     @Nullable
+    public RandomPathResult moveToRandomPos(final int range, final double speedFactor, final BlockPos pos)
+    {
+        if (pathResult instanceof RandomPathResult && pathResult.isComputing())
+        {
+            return (RandomPathResult) pathResult;
+        }
+
+        return (RandomPathResult) setPathJob(new PathJobRandomPos(CompatibilityUtils.getWorldFromEntity(ourEntity),
+          AbstractPathJob.prepareStart(ourEntity),
+          1,
+          (int) ourEntity.getAttribute(Attributes.FOLLOW_RANGE).getValue(),
+          range,
+          ourEntity, pos), pos, speedFactor);
+    }
+
+    @Nullable
     public PathResult setPathJob(
       @NotNull final AbstractPathJob job,
       final BlockPos dest,
