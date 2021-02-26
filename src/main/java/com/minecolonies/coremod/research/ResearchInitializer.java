@@ -35,6 +35,7 @@ public class ResearchInitializer
     public static final String BARRACKS_RESEARCH       = "Barracks";
     public static final String COMBAT_ACADEMY_RESEARCH = "Combat Academy";
     public static final String ARCHERY_RESEARCH        = "Archery";
+    public static final String MYSTICAL_SITE_RESEARCH  = "Mystical Site";
 
     /**
      * Method to fill the research tree with the elements.
@@ -650,6 +651,10 @@ public class ResearchInitializer
         researchTree.addResearch(bachelor.getBranch(), bachelor);
         researchTree.addResearch(master.getBranch(), master);
         researchTree.addResearch(phd.getBranch(), phd);
+
+        final GlobalResearch ambition = new GlobalResearch("ambition", "civilian", "Ambition", 1, new UnlockBuildingResearchEffect(MYSTICAL_SITE_RESEARCH, true));
+        ambition.setOnlyChild(true);
+        researchTree.addResearch(ambition.getBranch(), ambition);
     }
 
     private static void buildCombatTree(final IGlobalResearchTree researchTree)

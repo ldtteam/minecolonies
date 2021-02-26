@@ -2,6 +2,7 @@ package com.minecolonies.api.colony.managers.interfaces;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.IMysticalSite;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -100,11 +101,25 @@ public interface IBuildingManager
     ITownHall getTownHall();
 
     /**
+     * Get the maximum level among built mystical sites
+     *
+     * @return the max level among all mystical sites or zero if no mystical site built
+     */
+    int getMysticalSiteMaxBuildingLevel();
+
+    /**
      * Check if the colony has a placed warehouse.
      *
      * @return true if so.
      */
     boolean hasWarehouse();
+
+    /**
+     * Check if the colony has a placed mystical site.
+     *
+     * @return true if so.
+     */
+    boolean hasMysticalSite();
 
     /**
      * Check if the colony has a placed townhall.
@@ -240,6 +255,20 @@ public interface IBuildingManager
      * @return the warehouse.
      */
     List<IWareHouse> getWareHouses();
+
+    /**
+     * Removes a warehouse from the BuildingManager
+     *
+     * @param mysticalSite the warehouse to remove.
+     */
+    void removeMysticalSite(final IMysticalSite mysticalSite);
+
+    /**
+     * Get a list of the mystical sites in this colony.
+     *
+     * @return the list of mistical sites.
+     */
+    List<IMysticalSite> getMysticalSites();
 
     /**
      * Checks whether we're allowed to place the block for a new building
