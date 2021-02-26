@@ -258,6 +258,7 @@ public class ServerConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> athlete;
 
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> stamina;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> ambition;
 
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> resistance;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> resilience;
@@ -1098,6 +1099,10 @@ public class ServerConfiguration extends AbstractConfiguration
         this.stamina = defineList(builder, "stamina",
           Collections.singletonList("minecraft:carrot*1"),
           s -> s instanceof String);
+
+        this.ambition = defineList(builder, "ambition",
+                Collections.singletonList("minecraft:diamond*1"),
+                s -> s instanceof String);
 
         this.resistance = defineList(builder, "resistance",
           Collections.singletonList("minecraft:golden_apple*1"),
