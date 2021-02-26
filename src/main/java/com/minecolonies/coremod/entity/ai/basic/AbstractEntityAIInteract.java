@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
 import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
+import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.entity.pathfinding.RandomPathResult;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
@@ -91,6 +92,11 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
      * The current path to the random position
      */
     private RandomPathResult pathResult;
+
+    /**
+     * The backup factor of the path.
+     */
+    private int pathBackupFactor = 1;
 
     /**
      * Creates the abstract part of the AI. Always use this constructor!
@@ -407,18 +413,32 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
     }
 
     /**
-     * Search for a random position to go to.
+     * Search for a random position to go to, anchored around the citizen.
      * @param range the max range
      * @return null until position was found.
      */
     protected BlockPos findRandomPositionToWalkTo(final int range)
     {
-        if (pathResult == null || pathResult.failedToReachDestination())
-        {
-            pathResult = worker.getNavigator()
-                               .moveToRandomPos(range,
-                                 1.0D);
+        return findRandomPositionToWalkTo(range, worker.getPosition());
+    }
 
+    /**
+     * Search for a random position to go to.
+     * @param range the max range
+     * @param pos anchor position.
+     * @return null until position was found.
+     */
+    protected BlockPos findRandomPositionToWalkTo(final int range, final BlockPos pos)
+    {
+        if (pathResult == null)
+        {
+            pathBackupFactor = 1;
+            pathResult = getRandomNavigationPath(range, pos);
+        }
+        else if ( pathResult.failedToReachDestination())
+        {
+            pathBackupFactor++;
+            pathResult = getRandomNavigationPath(range * pathBackupFactor, pos);
         }
 
         if (pathResult.isPathReachingDestination())
@@ -435,6 +455,17 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
         }
 
         return null;
+    }
+
+    /**
+     * Get a navigator to find a certain position.
+     * @param range the max range.
+     * @param pos the position to
+     * @return the navigator.
+     */
+    protected RandomPathResult getRandomNavigationPath(final int range, final BlockPos pos)
+    {
+        return worker.getNavigator().moveToRandomPos(range, 1.0D);
     }
 
     /**
