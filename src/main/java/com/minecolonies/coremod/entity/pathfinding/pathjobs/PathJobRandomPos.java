@@ -73,22 +73,22 @@ public class PathJobRandomPos extends AbstractPathJob
      *
      * @param world         world the entity is in.
      * @param start         starting location.
-     * @param minDistFromSpawn how far to move away.
+     * @param minDistFromStart how far to move away.
      * @param range         max range to search.
      * @param entity        the entity.
      */
     public PathJobRandomPos(
       final World world,
       @NotNull final BlockPos start,
-      final int minDistFromSpawn,
+      final int minDistFromStart,
       final int range,
-      final int minDistToDest,
+      final int maxDistToDest,
       final LivingEntity entity,
       @NotNull final BlockPos dest)
     {
         super(world, start, start, range, new RandomPathResult(), entity);
-        this.distance = minDistFromSpawn;
-        this.minDistance = minDistToDest;
+        this.distance = minDistFromStart;
+        this.minDistance = maxDistToDest;
         this.destination = dest;
     }
 
