@@ -130,7 +130,17 @@ public interface IRecipeStorage
      * Get the secondary (leave behind in grid) outputs
      * @return list of items that weren't consumed during crafting
      */
-    List<ItemStack> getSecondaryOutputs();
+    default List<ItemStack> getSecondaryOutputs()
+    {
+        return getSecondaryOutputs(true);
+    }
+
+    /**
+     * Get the secondary (leave behind in grid) outputs
+     * @param includeTools Whether or not to consider tools as secondary outputs
+     * @return list of items that weren't consumed during crafting
+     */
+    List<ItemStack> getSecondaryOutputs(boolean includeTools);
 
     /** 
      * Get the location/id of the Loot table used for optional outputs

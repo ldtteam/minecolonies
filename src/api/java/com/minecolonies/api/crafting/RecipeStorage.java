@@ -9,6 +9,7 @@ import com.minecolonies.api.crafting.registry.RecipeTypeEntry;
 import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
@@ -72,7 +73,6 @@ public class RecipeStorage implements IRecipeStorage
      */
     @NotNull
     private final List<ItemStack> tools;
-
 
     /**
      * The intermediate required for the recipe (e.g furnace).
@@ -216,14 +216,17 @@ public class RecipeStorage implements IRecipeStorage
      */
     private void calculateTools()
     {
+        Log.getLogger().info("Calculating tools for: " + getPrimaryOutput().getDisplayName().getString());
         for(ItemStorage item : getCleanedInput())
         {
-            for(ItemStack result: getSecondaryOutputs())
+            for(ItemStack result: getSecondaryOutputs(false))
             {
+                Log.getLogger().info("Checking " + result.getDisplayName().getString() + " and it is damageable:" + result.isDamageable());
                 if(ItemStackUtils.compareItemStacksIgnoreStackSize(item.getItemStack(), result, false, true) && result.isDamageable())
                 {
-                    secondaryOutputs.remove(result);
+                    Log.getLogger().info("Adding Tool: " + result.getDisplayName().getString() + " to " + getPrimaryOutput().getDisplayName().getString());
                     tools.add(result);
+                    secondaryOutputs.remove(result);
                     break;
                 }
             }
@@ -314,6 +317,7 @@ public class RecipeStorage implements IRecipeStorage
               || cleanedInput.size() != that.cleanedInput.size()
               || alternateOutputs.size() != that.alternateOutputs.size()
               || secondaryOutputs.size() != that.secondaryOutputs.size()
+              || tools.size() != that.tools.size()
               || !Objects.equals(this.recipeSource, that.recipeSource)
               || !Objects.equals(this.lootTable, that.lootTable)
               || !this.recipeType.getId().equals(that.recipeType.getId())
@@ -344,6 +348,16 @@ public class RecipeStorage implements IRecipeStorage
         {
             final ItemStack left = secondaryOutputs.get(i);
             final ItemStack right = that.secondaryOutputs.get(i);
+            if (!ItemStackUtils.compareItemStacksIgnoreStackSize(left, right, false, true) || left.getCount() != right.getCount())
+            {
+                return false;
+            }
+        }
+
+        for (int i = 0; i < tools.size(); i++)
+        {
+            final ItemStack left = tools.get(i);
+            final ItemStack right = that.tools.get(i);
             if (!ItemStackUtils.compareItemStacksIgnoreStackSize(left, right, false, true) || left.getCount() != right.getCount())
             {
                 return false;
@@ -599,9 +613,16 @@ public class RecipeStorage implements IRecipeStorage
 
     @NotNull
     @Override
-    public List<ItemStack> getSecondaryOutputs()
+    public List<ItemStack> getSecondaryOutputs(boolean includeTools)
     {
-        return secondaryOutputs;
+        final List<ItemStack> results = new ArrayList<>();
+        if(includeTools && tools.size() > 0)
+        {
+            Log.getLogger().info("Adding tools: " + tools.size() + " for " + getPrimaryOutput().getDisplayName().getString());
+            results.addAll(tools);
+        }
+        results.addAll(secondaryOutputs);
+        return results;
     }
 
     @Override

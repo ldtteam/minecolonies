@@ -144,7 +144,7 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
                 final ItemStack craftingHelperStack = ingredient.getItemStack().copy();
                 final ItemStack container = ingredient.getItem().getContainerItem(ingredient.getItemStack());
                 //if recipe secondary produces craftinghelperstack, don't add it by count, add it once. Or get fancy and calculate durability and add appropriately
-                if(!storage.getSecondaryOutputs().isEmpty() && ItemStackUtils.compareItemStackListIgnoreStackSize(storage.getSecondaryOutputs(), craftingHelperStack, false, true))
+                if(!storage.getSecondaryOutputs(true).isEmpty() && ItemStackUtils.compareItemStackListIgnoreStackSize(storage.getSecondaryOutputs(true), craftingHelperStack, false, true))
                 {
                     materialRequests.add(createNewRequestForStack(manager, craftingHelperStack, ingredient.getAmount(), ingredient.getAmount()));
                 }

@@ -136,7 +136,7 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
         compound.put(ALTOUTPUT_TAG, altOutputTagList);
 
         @NotNull final ListNBT secOutputTagList = new ListNBT();
-        for (@NotNull final ItemStack stack : recipeStorage.getSecondaryOutputs())
+        for (@NotNull final ItemStack stack : recipeStorage.getSecondaryOutputs(true))
         {
             @NotNull final CompoundNBT neededRes = new CompoundNBT();
             stack.write(neededRes);
@@ -216,8 +216,8 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
         packetBuffer.writeInt(input.getAlternateOutputs().size());
         input.getAlternateOutputs().forEach(stack -> packetBuffer.writeItemStack(stack));
 
-        packetBuffer.writeInt(input.getSecondaryOutputs().size());
-        input.getSecondaryOutputs().forEach(stack -> packetBuffer.writeItemStack(stack));
+        packetBuffer.writeInt(input.getSecondaryOutputs(true).size());
+        input.getSecondaryOutputs(true).forEach(stack -> packetBuffer.writeItemStack(stack));
 
         packetBuffer.writeBoolean(input.getLootTable() != null);
         if(input.getLootTable() != null)
