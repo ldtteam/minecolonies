@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 public class ItemPlateArmor extends ArmorItem
 {
     public static final IArmorMaterial PLATE_ARMOR =
-      new MineColoniesArmorMaterial("minecolonies:plate_armor", 33, new int[] {4, 7, 9, 4}, 6, SoundEvents.ITEM_ARMOR_EQUIP_IRON, 2F, Ingredient.fromItems(Items.IRON_INGOT));
+      new MineColoniesArmorMaterial("minecolonies:plate_armor", 20, new int[] {4, 7, 9, 4}, 6, SoundEvents.ITEM_ARMOR_EQUIP_IRON, 2F, Ingredient.fromItems(Items.IRON_INGOT));
 
     /**
      * Constructor method for the Plate Armor
