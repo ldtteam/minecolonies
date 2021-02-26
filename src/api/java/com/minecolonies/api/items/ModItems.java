@@ -37,6 +37,11 @@ public final class ModItems
     public static Item pirateLegs_2;
     public static Item pirateBoots_2;
 
+    public static Item plateArmorHelmet;
+    public static Item plateArmorChest;
+    public static Item plateArmorLegs;
+    public static Item plateArmorBoots;
+
     public static Item santaHat;
 
     public static Item flagBanner;

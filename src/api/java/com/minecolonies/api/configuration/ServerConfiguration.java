@@ -199,6 +199,7 @@ public class ServerConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> ironarmour;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> steelarmour;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> diamondskin;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> platearmor;
 
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> regeneration;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> avoid;
@@ -939,6 +940,10 @@ public class ServerConfiguration extends AbstractConfiguration
         this.diamondskin = defineList(builder, "diamondskin",
           Collections.singletonList("minecraft:diamond*64"),
           s -> s instanceof String);
+
+        this.platearmor = defineList(builder, "platearmor",
+            Collections.singletonList("minecraft:iron_ingot*32"),
+            s -> s instanceof String);
 
         this.regeneration = defineList(builder, "regeneration",
           Collections.singletonList("minecraft:emerald*1"),

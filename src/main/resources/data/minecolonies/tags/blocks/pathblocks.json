@@ -45,14 +45,14 @@
     "minecraft:polished_blackstone_brick_stairs",
     "minecraft:chiseled_sandstone",
     "minecraft:chiseled_red_sandstone",
-    "structurize:cream_bricks",
-    "structurize:brown_bricks",
-    "structurize:beige_bricks",
-    "structurize:cream_brick_stairs",
-    "structurize:brown_brick_stairs",
-    "structurize:beige_brick_stairs",
-    "structurize:cream_brick_slab",
-    "structurize:brown_brick_slab",
-    "structurize:beige_brick_slab"
+    "structurize:blockcreambricks",
+    "structurize:blockbrownbricks",
+    "structurize:blockbeigebricks",
+    "structurize:blockcreambrickstairs",
+    "structurize:blockbrownbrickstairs",
+    "structurize:blockbeigebrickstairs",
+    "structurize:blockcreambrickslab",
+    "structurize:blockbrownbrickslab",
+    "structurize:blockbeigebrickslab"
   ]
 }
