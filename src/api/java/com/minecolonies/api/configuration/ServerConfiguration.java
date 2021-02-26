@@ -199,6 +199,7 @@ public class ServerConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> ironarmour;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> steelarmour;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> diamondskin;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> platearmor;
 
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> regeneration;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> avoid;
@@ -257,6 +258,7 @@ public class ServerConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> athlete;
 
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> stamina;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> ambition;
 
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> resistance;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> resilience;
@@ -940,6 +942,10 @@ public class ServerConfiguration extends AbstractConfiguration
           Collections.singletonList("minecraft:diamond*64"),
           s -> s instanceof String);
 
+        this.platearmor = defineList(builder, "platearmor",
+            Collections.singletonList("minecraft:iron_ingot*32"),
+            s -> s instanceof String);
+
         this.regeneration = defineList(builder, "regeneration",
           Collections.singletonList("minecraft:emerald*1"),
           s -> s instanceof String);
@@ -1093,6 +1099,10 @@ public class ServerConfiguration extends AbstractConfiguration
         this.stamina = defineList(builder, "stamina",
           Collections.singletonList("minecraft:carrot*1"),
           s -> s instanceof String);
+
+        this.ambition = defineList(builder, "ambition",
+                Collections.singletonList("minecraft:diamond*1"),
+                s -> s instanceof String);
 
         this.resistance = defineList(builder, "resistance",
           Collections.singletonList("minecraft:golden_apple*1"),
