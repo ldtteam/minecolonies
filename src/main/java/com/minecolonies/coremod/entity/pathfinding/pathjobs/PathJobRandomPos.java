@@ -40,6 +40,11 @@ public class PathJobRandomPos extends AbstractPathJob
     private static Random random = new Random();
 
     /**
+     * Minimum distance to the goal.
+     */
+    private final int minDistance;
+
+    /**
      * Prepares the PathJob for the path finding system.
      *
      * @param world         world the entity is in.
@@ -57,9 +62,34 @@ public class PathJobRandomPos extends AbstractPathJob
     {
         super(world, start, start, range, new RandomPathResult(), entity);
         this.distance = distance;
+        this.minDistance = range;
 
         final Tuple<Direction, Direction> dir = BlockPosUtil.getRandomDirectionTuple(random);
         this.destination = start.offset(dir.getA(), distance).offset(dir.getB(), distance);
+    }
+
+    /**
+     * Prepares the PathJob for the path finding system.
+     *
+     * @param world         world the entity is in.
+     * @param start         starting location.
+     * @param minDistFromStart how far to move away.
+     * @param range         max range to search.
+     * @param entity        the entity.
+     */
+    public PathJobRandomPos(
+      final World world,
+      @NotNull final BlockPos start,
+      final int minDistFromStart,
+      final int range,
+      final int maxDistToDest,
+      final LivingEntity entity,
+      @NotNull final BlockPos dest)
+    {
+        super(world, start, start, range, new RandomPathResult(), entity);
+        this.distance = minDistFromStart;
+        this.minDistance = maxDistToDest;
+        this.destination = dest;
     }
 
     @Nullable
@@ -91,7 +121,7 @@ public class PathJobRandomPos extends AbstractPathJob
     @Override
     protected boolean isAtDestination(@NotNull final Node n)
     {
-        if (Math.sqrt(start.distanceSq(n.pos)) > distance && isWalkableSurface(world.getBlockState(n.pos.down()), n.pos.down()) == SurfaceType.WALKABLE)
+        if (start.distanceSq(n.pos) > distance * distance && isWalkableSurface(world.getBlockState(n.pos.down()), n.pos.down()) == SurfaceType.WALKABLE && destination.distanceSq(n.pos) < this.minDistance * this.minDistance)
         {
             getResult().randomPos = n.pos;
             return true;
