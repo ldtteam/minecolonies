@@ -37,7 +37,7 @@ public final class ChunkDataHelper
      */
     private ChunkDataHelper()
     {
-        /*
+        /**
          * Intentionally left empty.
          */
     }
