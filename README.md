@@ -124,7 +124,7 @@ If you decide to go with a GUI client like GitKraken:
     * If you see `BUILD FAILED`, check the error output (it should be right around `BUILD FAILED`), fix everything (if possible), and try again.
 3. Go to `basefolder\MineColonies\build\libs`.
     * You should see a `.jar` file named `MineColonies-universal-null.jar`.
-4. Copy the jar into your Minecraft `mods` folder and you are done! (`~/.minecraft/mods` on Linux)
+4. Copy the jar into your Minecraft `mods` folder, and you are done! (`~/.minecraft/mods` on Linux)
 5. Alternatively, you can also run `./gradlew runClient` to start Minecraft with this jar.
 
 #### Compile MineColonies (Intellij)

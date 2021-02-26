@@ -35,6 +35,7 @@ public class ResearchInitializer
     public static final String BARRACKS_RESEARCH       = "Barracks";
     public static final String COMBAT_ACADEMY_RESEARCH = "Combat Academy";
     public static final String ARCHERY_RESEARCH        = "Archery";
+    public static final String MYSTICAL_SITE_RESEARCH  = "Mystical Site";
 
     /**
      * Method to fill the research tree with the elements.
@@ -650,6 +651,10 @@ public class ResearchInitializer
         researchTree.addResearch(bachelor.getBranch(), bachelor);
         researchTree.addResearch(master.getBranch(), master);
         researchTree.addResearch(phd.getBranch(), phd);
+
+        final GlobalResearch ambition = new GlobalResearch("ambition", "civilian", "Ambition", 1, new UnlockBuildingResearchEffect(MYSTICAL_SITE_RESEARCH, true));
+        ambition.setOnlyChild(true);
+        researchTree.addResearch(ambition.getBranch(), ambition);
     }
 
     private static void buildCombatTree(final IGlobalResearchTree researchTree)
@@ -775,10 +780,14 @@ public class ResearchInitializer
 
         final GlobalResearch diamondSkin = new GlobalResearch("diamondskin", "combat", "Diamond Skin", 6, new MultiplierModifierResearchEffect(ARMOR_DURABILITY, 1.0));
 
+        final GlobalResearch plateArmour = new GlobalResearch("platearmor", "combat", "Plate Armor", 5, new UnlockAbilityResearchEffect(PLATE_ARMOR, true));
+        plateArmour.setRequirement(new BuildingResearchRequirement(4, "blacksmith"));
+
         improvedLeather.addChild(boiledLeather);
         boiledLeather.addChild(ironSkin);
         ironSkin.addChild(ironArmour);
         ironArmour.addChild(steelArmour);
+        ironArmour.addChild(plateArmour);
         steelArmour.addChild(diamondSkin);
 
         final GlobalResearch regeneration = new GlobalResearch("regeneration", "combat", "Regeneration", 2, new UnlockAbilityResearchEffect(RETREAT, true));
@@ -899,6 +908,7 @@ public class ResearchInitializer
         researchTree.addResearch(ironSkin.getBranch(), ironSkin);
         researchTree.addResearch(ironArmour.getBranch(), ironArmour);
         researchTree.addResearch(steelArmour.getBranch(), steelArmour);
+        researchTree.addResearch(plateArmour.getBranch(), plateArmour);
         researchTree.addResearch(diamondSkin.getBranch(), diamondSkin);
 
         researchTree.addResearch(regeneration.getBranch(), regeneration);

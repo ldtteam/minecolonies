@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IRSComponent;
+import com.minecolonies.api.colony.buildings.IMysticalSite;
 import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
@@ -23,6 +24,7 @@ import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
 import com.minecolonies.coremod.blocks.huts.BlockHutWareHouse;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
+import com.minecolonies.coremod.colony.buildings.BuildingMysticalSite;
 import com.minecolonies.coremod.colony.buildings.modules.TavernBuildingModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
@@ -65,6 +67,11 @@ public class BuildingManager implements IBuildingManager
      * The warehouse building position. Initially null.
      */
     private final List<IWareHouse> wareHouses = new ArrayList<>();
+
+    /**
+     * The warehouse building position. Initially null.
+     */
+    private final List<IMysticalSite> mysticalSites = new ArrayList<>();
 
     /**
      * The townhall of the colony.
@@ -348,9 +355,32 @@ public class BuildingManager implements IBuildingManager
     }
 
     @Override
+    public int getMysticalSiteMaxBuildingLevel()
+    {
+        int maxLevel = 0;
+        if(hasMysticalSite())
+        {
+            for(final IMysticalSite mysticalSite : mysticalSites)
+            {
+                if(mysticalSite.getBuildingLevel() > maxLevel)
+                {
+                    maxLevel = mysticalSite.getBuildingLevel();
+                }
+            }
+        }
+        return maxLevel;
+    }
+
+    @Override
     public boolean hasWarehouse()
     {
         return !wareHouses.isEmpty();
+    }
+
+    @Override
+    public boolean hasMysticalSite()
+    {
+        return !mysticalSites.isEmpty();
     }
 
     @Override
@@ -478,6 +508,10 @@ public class BuildingManager implements IBuildingManager
         else if (building instanceof BuildingWareHouse)
         {
             wareHouses.remove(building);
+        }
+        else if (building instanceof BuildingMysticalSite)
+        {
+            mysticalSites.remove(building);
         }
 
         //Allow Citizens to fix up any data that wasn't fixed up by the AbstractBuilding's own onDestroyed
@@ -632,6 +666,18 @@ public class BuildingManager implements IBuildingManager
         wareHouses.remove(wareHouse);
     }
 
+    @Override
+    public List<IMysticalSite> getMysticalSites()
+    {
+        return mysticalSites;
+    }
+
+    @Override
+    public void removeMysticalSite(final IMysticalSite mysticalSite)
+    {
+        mysticalSites.remove(mysticalSite);
+    }
+
     /**
      * Updates all subscribers of fields etc.
      */
@@ -659,6 +705,10 @@ public class BuildingManager implements IBuildingManager
         if (building instanceof BuildingWareHouse)
         {
             wareHouses.add((IWareHouse) building);
+        }
+        else if (building instanceof BuildingMysticalSite)
+        {
+            mysticalSites.add((IMysticalSite) building);
         }
     }
 
