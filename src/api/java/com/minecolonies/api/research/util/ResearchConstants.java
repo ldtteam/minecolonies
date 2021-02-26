@@ -105,6 +105,7 @@ public final class ResearchConstants
 
     public static final String END_KNOWLEGE = "Knowledge of The End";
     public static final String MORE_SCROLLS = "More Scroll Recipes";
+    public static final String PLATE_ARMOR = "Plate Armor Recipes";
 
     /**
      * Private constructor to hide implicit public one.
