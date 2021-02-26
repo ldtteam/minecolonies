@@ -56,7 +56,7 @@ public final class PathingConstants
      */
     private PathingConstants()
     {
-        /**
+        /*
          * Intentionally left empty.
          */
     }

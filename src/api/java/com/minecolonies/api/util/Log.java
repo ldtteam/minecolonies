@@ -19,7 +19,7 @@ public final class Log
      */
     private Log()
     {
-        /**
+        /*
          * Intentionally left empty.
          */
     }

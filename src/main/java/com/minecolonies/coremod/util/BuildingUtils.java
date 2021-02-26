@@ -24,7 +24,7 @@ public final class BuildingUtils
      */
     private BuildingUtils()
     {
-        /**
+        /*
          * Intentionally left empty.
          */
     }

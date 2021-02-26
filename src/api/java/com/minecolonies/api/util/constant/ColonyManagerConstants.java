@@ -67,7 +67,7 @@ public final class ColonyManagerConstants
      */
     private ColonyManagerConstants()
     {
-        /**
+        /*
          * Intentionally left empty.
          */
     }

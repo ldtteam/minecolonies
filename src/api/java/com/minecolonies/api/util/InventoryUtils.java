@@ -49,7 +49,7 @@ public class InventoryUtils
      */
     private InventoryUtils()
     {
-        /**
+        /*
          * Intentionally left empty.
          */
     }

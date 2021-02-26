@@ -25,7 +25,7 @@ public final class SortingUtils
      */
     private SortingUtils()
     {
-        /**
+        /*
          * Intentionally left empty.
          */
     }

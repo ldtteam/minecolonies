@@ -1139,7 +1139,7 @@ public final class WindowConstants
      */
     private WindowConstants()
     {
-        /**
+        /*
          * Intentionally left empty.
          */
     }

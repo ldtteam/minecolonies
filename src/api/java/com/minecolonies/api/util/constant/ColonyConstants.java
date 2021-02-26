@@ -94,7 +94,7 @@ public final class ColonyConstants
      */
     private ColonyConstants()
     {
-        /**
+        /*
          * Intentionally left empty.
          */
     }

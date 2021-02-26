@@ -89,7 +89,7 @@ public final class RaiderConstants
      */
     private RaiderConstants()
     {
-        /**
+        /*
          * Intentionally left empty.
          */
     }

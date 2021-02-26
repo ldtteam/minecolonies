@@ -57,7 +57,7 @@ public final class HappinessConstants
      */
     private HappinessConstants()
     {
-        /**
+        /*
          * Intentionally left empty.
          */
     }

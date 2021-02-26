@@ -566,7 +566,7 @@ public final class NbtTagConstants
      */
     private NbtTagConstants()
     {
-        /**
+        /*
          * Intentionally left empty.
          */
     }

@@ -169,7 +169,7 @@ public final class GuardConstants
      */
     private GuardConstants()
     {
-        /**
+        /*
          * Intentionally left empty.
          */
     }

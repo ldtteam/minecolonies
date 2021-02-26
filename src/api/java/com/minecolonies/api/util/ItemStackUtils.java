@@ -108,7 +108,7 @@ public final class ItemStackUtils
      */
     private ItemStackUtils()
     {
-        /**
+        /*
          * Intentionally left empty.
          */
     }

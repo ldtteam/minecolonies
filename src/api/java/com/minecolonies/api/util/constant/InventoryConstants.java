@@ -120,7 +120,7 @@ public final class InventoryConstants
      */
     private InventoryConstants()
     {
-        /**
+        /*
          * Intentionally left empty.
          */
     }
