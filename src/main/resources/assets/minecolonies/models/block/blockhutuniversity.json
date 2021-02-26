@@ -12,7 +12,7 @@
     "solid": {
       "textures": {
         "0": "minecolonies:blocks/university/booktexture",
-        "8": "minecolonies:blocks/university/universitytableside",
+        "8": "minecolonies:blocks/university/tableside",
         "9": "minecolonies:blocks/university/table",
         "10": "minecolonies:blocks/university/drawerside",
         "12": "minecolonies:blocks/university/booktexture2",

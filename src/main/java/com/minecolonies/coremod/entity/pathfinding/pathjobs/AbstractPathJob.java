@@ -52,14 +52,39 @@ public abstract class AbstractPathJob implements Callable<Path>
     public static Set<Node> lastDebugNodesNotVisited;
     @Nullable
     public static Set<Node>          lastDebugNodesPath;
+
+    /**
+     * Start position to path from.
+     */
     @NotNull
-    protected final  BlockPos           start;
+    protected final BlockPos start;
+
+    /**
+     * The pathing cache.
+     */
     @NotNull
-    protected final  IWorldReader       world;
-    protected final  PathResult         result;
-    private final    int                maxRange;
-    private final    Queue<Node>        nodesOpen            = new PriorityQueue<>(500);
-    private final    Map<Integer, Node> nodesVisited         = new HashMap<>();
+    protected final IWorldReader world;
+
+    /**
+     * The result of the path calculation.
+     */
+    protected final PathResult result;
+
+    /**
+     * Max range used to calculate the number of nodes we visit (square of maxrange).
+     */
+    protected final int maxRange;
+
+    /**
+     * Queue of all open nodes.
+     */
+    private final Queue<Node> nodesOpen = new PriorityQueue<>(500);
+
+    /**
+     * Queue of all the visited nodes.
+     */
+    private final Map<Integer, Node> nodesVisited = new HashMap<>();
+
     //  Debug Rendering
     protected        boolean            debugDrawEnabled     = false;
     @Nullable
