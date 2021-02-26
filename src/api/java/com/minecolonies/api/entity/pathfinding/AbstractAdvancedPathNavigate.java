@@ -116,7 +116,7 @@ public abstract class AbstractAdvancedPathNavigate extends GroundPathNavigator
      * @param speed the speed to run at.
      * @return the result of the pathing.
      */
-    public abstract RandomPathResult moveToRandomPos(final int range, final double speed, final BlockPos pos);
+    public abstract RandomPathResult moveToRandomPosAroundX(final int range, final double speed, final BlockPos pos);
 
     /**
      * Used to find a tree.

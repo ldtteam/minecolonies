@@ -308,7 +308,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     @Override
     protected RandomPathResult getRandomNavigationPath(final int range, final BlockPos pos)
     {
-        return worker.getNavigator().moveToRandomPos(range, 1.0D, pos);
+        return worker.getNavigator().moveToRandomPosAroundX(range, 1.0D, pos);
     }
 
     @Override

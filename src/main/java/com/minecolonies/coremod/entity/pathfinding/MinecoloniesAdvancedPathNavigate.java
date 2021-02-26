@@ -142,7 +142,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     }
 
     @Nullable
-    public RandomPathResult moveToRandomPos(final int range, final double speedFactor, final BlockPos pos)
+    public RandomPathResult moveToRandomPosAroundX(final int range, final double speedFactor, final BlockPos pos)
     {
         if (pathResult instanceof RandomPathResult && pathResult.isComputing())
         {
