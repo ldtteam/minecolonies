@@ -4,7 +4,6 @@ import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
-import com.minecolonies.coremod.research.ResearchInitializer;
 
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -27,12 +26,5 @@ public class BlockHutSifter extends AbstractBlockHut<BlockHutSifter>
     public BuildingEntry getBuildingEntry()
     {
         return ModBuildings.sifter;
-    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public void checkResearch(final IColonyView colony)
-    {
-        checkResearch(colony, ResearchInitializer.SIFTER_RESEARCH);
     }
 }

@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.ldtteam.blockout.views.Window;
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -17,8 +18,6 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.client.gui.WindowHutGlassblower;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
 import com.minecolonies.coremod.colony.jobs.JobGlassblower;
-import com.minecolonies.coremod.research.ResearchInitializer;
-import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
 import com.minecolonies.coremod.util.FurnaceRecipes;
 import io.netty.buffer.Unpooled;
 import net.minecraft.block.Blocks;
@@ -202,19 +201,6 @@ public class BuildingGlassblower extends AbstractBuildingSmelterCrafter
     public BuildingEntry getBuildingRegistryEntry()
     {
         return ModBuildings.glassblower;
-    }
-
-    @Override
-    public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
-    {
-        super.requestUpgrade(player, builder);
-        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect(ResearchInitializer.GLASSBLOWER_RESEARCH, UnlockBuildingResearchEffect.class);
-        if (effect == null)
-        {
-            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"), player.getUniqueID());
-            return;
-        }
-        super.requestUpgrade(player, builder);
     }
 
     /**

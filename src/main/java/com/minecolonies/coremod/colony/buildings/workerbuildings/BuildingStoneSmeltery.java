@@ -14,12 +14,8 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.coremod.client.gui.WindowHutStoneSmelter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
 import com.minecolonies.coremod.colony.jobs.JobStoneSmeltery;
-import com.minecolonies.coremod.research.ResearchInitializer;
-import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
 import net.minecraft.block.Blocks;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -118,18 +114,6 @@ public class BuildingStoneSmeltery extends AbstractBuildingSmelterCrafter
     public BuildingEntry getBuildingRegistryEntry()
     {
         return ModBuildings.stoneSmelter;
-    }
-
-    @Override
-    public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
-    {
-        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect(ResearchInitializer.STONESMELTERY_RESEARCH, UnlockBuildingResearchEffect.class);
-        if (effect == null)
-        {
-            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"), player.getUniqueID());
-            return;
-        }
-        super.requestUpgrade(player, builder);
     }
 
     /**

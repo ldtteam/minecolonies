@@ -451,6 +451,10 @@ public final class TranslationConstants
     public static final String DIST                                                                 = "com.minecolonies.coremod.dist.blocks";
     @NonNls
     public static final String RACK                                                                 = "block.minecolonies.blockminecoloniesrack";
+    @NonNls
+    public static final String RESEARCH_AVAILABLE                                                   = "com.minecolonies.coremod.research.available";
+    @NonNls
+    public static final String RESEARCH_REQUIRES                                                    = "com.minecolonies.coremod.research.requirement.research";
 
     private TranslationConstants()
     {

@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.requestsystem.factory.FactoryVoidInput;
 import com.minecolonies.api.colony.requestsystem.factory.IFactory;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.research.ILocalResearch;
+import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.Constants.PARAMS_LOCAL_RESEARCH;
@@ -22,12 +23,12 @@ public interface ILocalResearchFactory extends IFactory<FactoryVoidInput, ILocal
             throw new IllegalArgumentException("Unsupported context - Not correct number of parameters. Only " + PARAMS_LOCAL_RESEARCH + " are allowed!");
         }
 
-        if (!(context[0] instanceof String))
+        if (!(context[0] instanceof ResourceLocation))
         {
-            throw new IllegalArgumentException("First parameter is supposed to be the String ID!");
+            throw new IllegalArgumentException("First parameter is supposed to be the Research ID!");
         }
 
-        if (!(context[2] instanceof String))
+        if (!(context[2] instanceof ResourceLocation))
         {
             throw new IllegalArgumentException("Third parameter is supposed to be the Branch (String)!");
         }
@@ -37,8 +38,8 @@ public interface ILocalResearchFactory extends IFactory<FactoryVoidInput, ILocal
             throw new IllegalArgumentException("Fifth parameter is supposed to be the Depth (int)!");
         }
 
-        final String id = (String) context[0];
-        final String branch = (String) context[2];
+        final ResourceLocation id = (ResourceLocation) context[0];
+        final ResourceLocation branch = (ResourceLocation) context[2];
         final int depth = (int) context[4];
         return getNewInstance(id, branch, depth);
     }
@@ -52,6 +53,5 @@ public interface ILocalResearchFactory extends IFactory<FactoryVoidInput, ILocal
      * @return a new Instance of Research.
      */
     @NotNull
-    ILocalResearch getNewInstance(final String id, final String branch, final int depth);
+    ILocalResearch getNewInstance(final ResourceLocation id, final ResourceLocation branch, final int depth);
 }
-

@@ -14,5 +14,5 @@
   "result": "minecraft:end_stone",
   "count": 8,
   "intermediate" : "minecraft:air",
-  "research-id" : "knowtheend"
+  "research-id" : "minecolonies:technology/knowtheend"
 }

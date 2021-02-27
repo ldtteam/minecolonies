@@ -1,0 +1,27 @@
+{
+  "comment": "name: Hot Boots * subtitle: Warmer on the outside.",
+  "branch": "minecolonies:technology",
+  "researchLevel": 3,
+  "parentResearch": "minecolonies:technology/stringwork",
+  "subtitle": "com.minecolonies.research.technology.hotboots.subtitle",
+  "icon": "minecraft:campfire:1",
+  "requirements": [
+    {
+      "building": "fletcher",
+      "level": 1
+    },
+    {
+      "item": "minecraft:leather",
+      "quantity": 32
+    },
+    {
+      "item": "minecraft:iron_ingot",
+      "quantity": 16
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/minerfireresunlock": 1
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "comment": "name: Cheat Sheet * subtitle: So THAT's what I should be making!",
+  "branch": "minecolonies:technology",
+  "researchLevel": 3,
+  "parentResearch": "minecolonies:technology/memoryaid",
+  "subtitle": "com.minecolonies.research.technology.cheatsheet.subtitle",
+  "icon": "minecraft:book:1",
+  "requirements": [
+    {
+      "building": "sawmill",
+      "level": 2
+    },
+    {
+      "item": "minecraft:paper",
+      "quantity": 64
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/recipesmultiplier": 2
+    }
+  ]
+}

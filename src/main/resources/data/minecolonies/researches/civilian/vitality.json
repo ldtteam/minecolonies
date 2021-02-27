@@ -1,0 +1,22 @@
+{
+  "comment": "name: Vitality * subtitle: ",
+  "branch": "minecolonies:civilian",
+  "researchLevel": 4,
+  "parentResearch": "minecolonies:civilian/resilience",
+  "icon": "minecraft:splash_potion:1",
+  "requirements": [
+    {
+      "building": "cook",
+      "level": 4
+    },
+    {
+      "item": "minecraft:golden_apple",
+      "quantity": 16
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/healingsaturationlimitaddition": 3
+    }
+  ]
+}
