@@ -280,7 +280,7 @@ public class ResearchListener extends JsonReloadListener
             if (entry.getValue().getParent().getPath().isEmpty() && entry.getValue().getDepth() > 1)
             {
                 //For now, log and re-graft entries with no parent and depth to the root of their branch.
-                entry.setValue(new GlobalResearch(entry.getValue().getId(), entry.getValue().getBranch(), 0, entry.getValue().getEffects(),
+                entry.setValue(new GlobalResearch(entry.getValue().getId(), entry.getValue().getBranch(), 1, entry.getValue().getEffects(),
                   entry.getValue().getIconTextureResourceLocation(), entry.getValue().getIconItemStack(), entry.getValue().isImmutable()));
                 Log.getLogger()
                   .error(entry.getValue().getBranch() + "/" + entry.getKey() + "could not be attached to tree: inconsistent depth for parentage.");
@@ -296,7 +296,7 @@ public class ResearchListener extends JsonReloadListener
                     else
                     {
                         //For now, log and re-graft entries with inconsistent parent-child relationships to a separate branch.
-                        entry.setValue(new GlobalResearch(entry.getValue().getId(), entry.getValue().getBranch(), 0, entry.getValue().getEffects(),
+                        entry.setValue(new GlobalResearch(entry.getValue().getId(), entry.getValue().getBranch(), 1, entry.getValue().getEffects(),
                           entry.getValue().getIconTextureResourceLocation(), entry.getValue().getIconItemStack(), entry.getValue().isImmutable()));
                         Log.getLogger()
                           .error(entry.getValue().getBranch() + "/" + entry.getKey() + "could not be attached to " + entry.getValue().getParent() + " on "
@@ -306,7 +306,7 @@ public class ResearchListener extends JsonReloadListener
                 else
                 {
                     //For now, log and re-graft entries with inconsistent parent-child relationships to a separate branch.
-                    entry.setValue(new GlobalResearch(entry.getValue().getId(), entry.getValue().getBranch(), 0, entry.getValue().getEffects(),
+                    entry.setValue(new GlobalResearch(entry.getValue().getId(), entry.getValue().getBranch(), 1, entry.getValue().getEffects(),
                       entry.getValue().getIconTextureResourceLocation(), entry.getValue().getIconItemStack(), entry.getValue().isImmutable()));
                     Log.getLogger().error(entry.getValue().getBranch() + "/" + entry.getKey() + " could not find parent " + entry.getValue().getParent());
                 }

@@ -157,7 +157,7 @@ public abstract class AbstractResearchProvider implements IDataProvider
          */
         public Research setParentResearch(Research parent)
         {
-            this.json.addProperty("parent", parent.id.toString());
+            this.json.addProperty("parentResearch", parent.id.toString());
             this.json.remove("researchLevel");
             this.researchLevel = parent.researchLevel + 1;
             this.json.addProperty("researchLevel", this.researchLevel);

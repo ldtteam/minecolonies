@@ -124,6 +124,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         effects.add(new ResearchEffect(ModBuildings.hospital.getBuildingBlock()).setTranslatedName("Unlocks Hospital"));
         effects.add(new ResearchEffect(ModBuildings.library.getBuildingBlock()).setTranslatedName("Unlocks Library"));
         effects.add(new ResearchEffect(ModBuildings.mechanic.getBuildingBlock()).setTranslatedName("Unlocks Mechanic"));
+        effects.add(new ResearchEffect(ModBuildings.mysticalSite.getBuildingBlock()).setTranslatedName("Unlocks Mystical Site"));
         effects.add(new ResearchEffect(ModBuildings.plantation.getBuildingBlock()).setTranslatedName("Unlocks Plantation"));
         effects.add(new ResearchEffect(ModBuildings.sawmill.getBuildingBlock()).setTranslatedName("Unlocks Sawmill"));
         effects.add(new ResearchEffect(ModBuildings.school.getBuildingBlock()).setTranslatedName("Unlocks School"));
@@ -132,11 +133,13 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         effects.add(new ResearchEffect(ModBuildings.stoneMason.getBuildingBlock()).setTranslatedName("Unlocks Stonemason"));
         effects.add(new ResearchEffect(ModBuildings.stoneSmelter.getBuildingBlock()).setTranslatedName("Unlocks Stonesmeltery"));
 
-        // Crafter-recipe-only unlocks do not require static resource locations; they check against the crafter recipe json.
+        // Crafter-recipe-only unlocks do not require static effect resource locations; the crafter recipe json checks against the research id resource locaiton itself.
+        // Assigning them for now to handle text cleanly, and to allow researches with both recipe and non-recipe effects.
         effects.add(new ResearchEffect(new ResourceLocation(Constants.MOD_ID, "effects/knowledgeoftheendunlock")).setTranslatedName(
           "Stonemasons Learn Endstone Recipe and Bakers Learn Chorus Bread Recipe"));
         effects.add(new ResearchEffect(new ResourceLocation(Constants.MOD_ID, "effects/morescrollsunlock")).setTranslatedName(
           "Enchanter Learns Scroll Recipes to Locate Workers and Summon Guards"));
+        effects.add(new ResearchEffect(new ResourceLocation(Constants.MOD_ID, "effects/platearmorunlock")).setTranslatedName("Blacksmith Learns Plate Armor Recipes"));
 
         return effects;
     }
@@ -589,6 +592,13 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .addEffect(GROWTH, 5)
           .addToList(r);
 
+        // Primary Research #5
+        new Research(new ResourceLocation(Constants.MOD_ID, "civilian/ambition"), CIVIL).setTranslatedName("Ambition")
+          .setSortOrder(5)
+          .setIcon(ModBlocks.blockHutMysticalSite.asItem())
+          .addItemCost(Items.DIAMOND, 1)
+          .addEffect(ModBuildings.mysticalSite.getBuildingBlock(), 1)
+          .addToList(r);
         return r;
     }
 
@@ -877,11 +887,20 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                      .addToList(r);
         final Research steelArmor = new Research(new ResourceLocation(Constants.MOD_ID, "combat/steelarmor"), COMBAT).setParentResearch(ironArmor)
                                       .setTranslatedName("Steel Armor")
+                                      .setSortOrder(1)
                                       .setIcon(Items.GOLDEN_HELMET)
                                       .addBuildingRequirement(ModBuildings.TOWNHALL_ID, 5)
                                       .addItemCost(Items.IRON_INGOT, 64)
                                       .addEffect(ARMOR_DURABILITY, 4)
                                       .addToList(r);
+        new Research(new ResourceLocation(Constants.MOD_ID, "combat/platearmor"), COMBAT).setParentResearch(ironArmor)
+                                     .setTranslatedName("Plate Armor")
+                                     .setSortOrder(2)
+                                     .setIcon(ModItems.plateArmorHelmet)
+                                     .addBuildingRequirement(ModBuildings.BLACKSMITH_ID, 4)
+                                     .addItemCost(Items.IRON_INGOT, 32)
+                                     .addEffect(PLATE_ARMOR, 1)
+                                     .addToList(r);
         new Research(new ResourceLocation(Constants.MOD_ID, "combat/diamondskin"), COMBAT).setParentResearch(steelArmor)
           .setTranslatedName("Diamond Skin")
           .setIcon(Items.DIAMOND_HELMET)
