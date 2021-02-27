@@ -348,13 +348,17 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
 
                 Stack<ItemStack> stack = new Stack();
 
-                if (ModList.get().isLoaded("resourcefulbees")){
+                if (ModList.get().isLoaded("resourcefulbees"))
+                {
                     stack = ResourcefulBeesCompat.getCombsFromHive(hive, world, getHoneycombsPerHarvest()); //If resourceful bees is loaded go collect the custom items
-                } else {
+                } 
+                else 
+                {
                     stack.add(new ItemStack(Items.HONEYCOMB, getHoneycombsPerHarvest())); //If resourceful bees is not loaded behave normally
                 }
 
-                for (ItemStack stackItem : stack) {
+                for (ItemStack stackItem : stack) 
+                {
                     InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(stackItem, worker.getItemHandlerCitizen());
                 }
                 world.setBlockState(hive, world.getBlockState(hive).with(BlockStateProperties.HONEY_LEVEL, 0));
