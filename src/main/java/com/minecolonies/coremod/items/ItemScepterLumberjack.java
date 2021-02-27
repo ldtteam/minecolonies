@@ -17,6 +17,7 @@ import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
@@ -41,35 +42,36 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies
         super("scepterlumberjack", properties.maxStackSize(1));
     }
 
+    @NotNull
     @Override
-    public ActionResultType onItemUse(final ItemUseContext useContext)
+    public ActionResultType onItemUse(final ItemUseContext context)
     {
         // if server world, do nothing
-        if (useContext.getWorld().isRemote)
+        if (context.getWorld().isRemote)
         {
             return ActionResultType.FAIL;
         }
 
-        final ItemStack scepter = useContext.getPlayer().getHeldItem(useContext.getHand());
+        final ItemStack scepter = context.getPlayer().getHeldItem(context.getHand());
         if (!scepter.hasTag())
         {
             scepter.setTag(new CompoundNBT());
         }
         final CompoundNBT compound = scepter.getTag();
 
-        if (!hasSetFirstPosition)
+        if (hasSetFirstPosition)
         {
-            LanguageHandler.sendPlayerMessage(useContext.getPlayer(), "item.minecolonies.scepterlumberjack.usedstart");
-            setPosition(compound, NBT_START_POS, useContext.getPos());
+            LanguageHandler.sendPlayerMessage(context.getPlayer(), "item.minecolonies.scepterlumberjack.usedend");
+            setPosition(compound, NBT_END_POS, context.getPos());
+            storeRestrictedArea(context.getPlayer(), context.getHand(), context.getWorld());
         }
         else
         {
-            LanguageHandler.sendPlayerMessage(useContext.getPlayer(), "item.minecolonies.scepterlumberjack.usedend");
-            setPosition(compound, NBT_END_POS, useContext.getPos());
-            storeRestrictedArea(useContext.getPlayer(), useContext.getHand(), useContext.getWorld());
+            LanguageHandler.sendPlayerMessage(context.getPlayer(), "item.minecolonies.scepterlumberjack.usedstart");
+            setPosition(compound, NBT_START_POS, context.getPos());
         }
 
-        return super.onItemUse(useContext);
+        return super.onItemUse(context);
     }
 
     private void storeRestrictedArea(final PlayerEntity player, final Hand hand, final World worldIn)
