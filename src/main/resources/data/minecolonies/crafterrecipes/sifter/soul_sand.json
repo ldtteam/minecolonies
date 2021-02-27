@@ -7,7 +7,7 @@
         "count": "1"
     }
   ],
-  "additional-outputs": [
+  "additional-output": [
     {
         "item" : "minecraft:nether_wart"
     },
