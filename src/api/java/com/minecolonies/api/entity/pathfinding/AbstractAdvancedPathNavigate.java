@@ -110,6 +110,15 @@ public abstract class AbstractAdvancedPathNavigate extends GroundPathNavigator
     public abstract RandomPathResult moveToRandomPos(final double range, final double speed);
 
     /**
+     * Used to path towards a random pos.
+     *
+     * @param range the range he should move out of.
+     * @param speed the speed to run at.
+     * @return the result of the pathing.
+     */
+    public abstract RandomPathResult moveToRandomPosAroundX(final int range, final double speed, final BlockPos pos);
+
+    /**
      * Used to find a tree.
      *
      * @param startRestriction the start of the restricted area.

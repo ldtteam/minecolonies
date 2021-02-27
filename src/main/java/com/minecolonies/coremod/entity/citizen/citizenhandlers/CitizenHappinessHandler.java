@@ -66,6 +66,7 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
         add(new StaticHappinessModifier(SECURITY, 4.0, () -> getGuardFactor(data.getColony())));
         add(new StaticHappinessModifier(SOCIAL, 2.0, () -> getSocialModifier(data.getColony())));
         add(new StaticHappinessModifier(SATURATION, 2.0, () -> (data.getSaturation() + 5.0) / 10.0));
+        add(new StaticHappinessModifier(MYSTICAL_SITE, 1.0, () -> getMysticalSiteFactor(data.getColony())));
 
         add(new ExpirationBasedHappinessModifier(DAMAGE, 2.0, () -> 0.0, 1));
         add(new ExpirationBasedHappinessModifier(DEATH, 3.0, () -> 0.0, 3));
@@ -87,6 +88,7 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
         add(new ClientHappinessModifier(SECURITY, 2.0));
         add(new ClientHappinessModifier(SOCIAL, 2.0));
         add(new ClientHappinessModifier(SATURATION, 1.0));
+        add(new ClientHappinessModifier(MYSTICAL_SITE, 1.0));
 
         add(new ClientHappinessModifier(DAMAGE, 1.0));
         add(new ClientHappinessModifier(DEATH, 2.0));
@@ -254,5 +256,18 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
             }
         }
         return Math.min(guards / (workers * 2 / 3), 2);
+    }
+
+    /**
+     *  Get the mystical site happiness modifier from the colony.
+     *      Mystical site happiness is never negative :
+     *      Supply vary from 1 to 3.5 max (1 + (Mystical site lvl 5 / 2))
+     *
+     * @param colony the colony.
+     * @return double supply factor.
+     */
+    private double getMysticalSiteFactor(final IColony colony)
+    {
+        return 1 + ((double)colony.getBuildingManager().getMysticalSiteMaxBuildingLevel()/2.0);
     }
 }

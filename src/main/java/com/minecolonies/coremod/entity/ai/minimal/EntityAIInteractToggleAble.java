@@ -9,6 +9,7 @@ import net.minecraft.pathfinding.GroundPathNavigator;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.state.properties.DoubleBlockHalf;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.VoxelShape;
@@ -515,10 +516,25 @@ public class EntityAIInteractToggleAble extends Goal
         @Override
         public void toggleBlock(final BlockState state, final World world, final BlockPos pos)
         {
-            // Same logic as doorblock, using our own setblockstate
-            final boolean isOpening = !state.get(BlockStateProperties.OPEN);
-            WorldUtil.setBlockState(world, pos, state.with(OPEN, isOpening), 10);
-            ((DoorBlock) state.getBlock()).playSound(world, pos, isOpening);
+            // Custom vanilla doors opening logic
+            if (state.getBlock().getClass() == DoorBlock.class)
+            {
+                final boolean isOpening = !state.get(BlockStateProperties.OPEN);
+                WorldUtil.setBlockState(world, pos, state.with(OPEN, isOpening), 10);
+
+                final BlockPos otherPos = state.get(BlockStateProperties.DOUBLE_BLOCK_HALF) == DoubleBlockHalf.LOWER ? pos.up() : pos.down();
+                final BlockState otherState = world.getBlockState(otherPos);
+                if (otherState.getBlock().getClass() == DoorBlock.class)
+                {
+                    WorldUtil.setBlockState(world, otherPos, otherState.with(OPEN, isOpening), 10);
+                }
+
+                ((DoorBlock) state.getBlock()).playSound(world, pos, isOpening);
+            }
+            else
+            {
+                ((DoorBlock) state.getBlock()).openDoor(world, state, pos, !state.get(BlockStateProperties.OPEN));
+            }
         }
 
         @Override

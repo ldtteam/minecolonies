@@ -499,6 +499,8 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             colony.getProgressManager()
               .progressEmploy(colony.getCitizenManager().getCitizens().stream().filter(citizenData -> citizenData.getJob() != null).collect(Collectors.toList()).size());
         }
+
+        updateWorkerAvailableForRecipes();
         return true;
     }
 
@@ -593,6 +595,12 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         {
             addRecipeToList(token);
             markDirty();
+
+            if (getAssignedCitizen().isEmpty())
+            {
+                return true;
+            }
+
             final IRecipeStorage recipeStorage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
             if (recipeStorage != null)
             {
@@ -602,6 +610,22 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             return true;
         }
         return false;
+    }
+
+    /**
+     * Updates existing requests, if they match the recipes available at this worker
+     */
+    private void updateWorkerAvailableForRecipes()
+    {
+        for (final IToken<?> token : recipes)
+        {
+            final IRecipeStorage recipeStorage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
+            if (recipeStorage != null)
+            {
+                colony.getRequestManager()
+                  .onColonyUpdate(request -> request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).matches(recipeStorage.getPrimaryOutput()));
+            }
+        }
     }
 
     /**
