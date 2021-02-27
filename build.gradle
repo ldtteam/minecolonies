@@ -35,7 +35,7 @@ repositories {
         dirs 'libs'
     }
     maven {
-        url = "https://www.cursemaven.com"
+        url "https://www.cursemaven.com"
     }
 }
 
@@ -99,6 +99,7 @@ dependencies {
     compile "com.ldtteam:datagenerators:0.1.38-ALPHA"
     
     implementation fg.deobf("mezz.jei:jei-1.16.4:${config.jei_version}")
+    compileOnly fg.deobf("curse.maven:resourcefulbees-384508:3206649")
 
     testImplementation  'junit:junit:4.12'
     testImplementation  "org.mockito:mockito-core:1.+"
@@ -142,6 +143,7 @@ minecraft {
 
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'info'
+            properties 'mixin.env.disableRefMap': 'true'
 
             // OPTIFINE GUIDE
             // find and download/compile latest OptiFineDevTweaker, classifier "all"
@@ -165,6 +167,7 @@ minecraft {
 
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'info'
+            property 'mixin.env.disableRefMap', 'true'
 
             mods {
                 minecolonies {
