@@ -1,27 +1,26 @@
-package com.minecolonies.coremod.colony.buildings;
+package com.minecolonies.coremod.colony.buildings.modules;
 
-import com.minecolonies.api.colony.IColony;
+import com.google.common.collect.ImmutableList;
+import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModule;
+import com.minecolonies.api.colony.buildings.modules.IGroupedItemListModule;
+import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.Log;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 
 /**
  * Abstract class for all buildings which require a filterable list of allowed items.
  */
-public abstract class AbstractFilterableListBuilding extends AbstractBuildingWorker
+public class GroupedItemListModule extends AbstractBuildingModule implements IGroupedItemListModule, IPersistentModule
 {
     /**
      * Tag to store the item list.
@@ -33,21 +32,9 @@ public abstract class AbstractFilterableListBuilding extends AbstractBuildingWor
      */
     private final Map<String, List<ItemStorage>> itemsAllowed = new HashMap<>();
 
-    /**
-     * The constructor of the building.
-     *
-     * @param c the colony
-     * @param l the position
-     */
-    public AbstractFilterableListBuilding(@NotNull final IColony c, final BlockPos l)
-    {
-        super(c, l);
-    }
-
     @Override
     public void deserializeNBT(final CompoundNBT compound)
     {
-        super.deserializeNBT(compound);
         final ListNBT filterableList = compound.getList(TAG_ITEMLIST, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < filterableList.size(); ++i)
         {
@@ -74,9 +61,8 @@ public abstract class AbstractFilterableListBuilding extends AbstractBuildingWor
     }
 
     @Override
-    public CompoundNBT serializeNBT()
+    public void serializeNBT(final CompoundNBT compound)
     {
-        final CompoundNBT compound = super.serializeNBT();
         @NotNull final ListNBT filterableListCompound = new ListNBT();
         for (@NotNull final Map.Entry<String, List<ItemStorage>> entry : itemsAllowed.entrySet())
         {
@@ -93,15 +79,9 @@ public abstract class AbstractFilterableListBuilding extends AbstractBuildingWor
             filterableListCompound.add(listCompound);
         }
         compound.put(TAG_ITEMLIST, filterableListCompound);
-        return compound;
     }
 
-    /**
-     * Add a compostable item to the list.
-     *
-     * @param id   the string id of the item type.
-     * @param item the item to add.
-     */
+    @Override
     public void addItem(final String id, final ItemStorage item)
     {
         if (itemsAllowed.containsKey(id))
@@ -122,24 +102,13 @@ public abstract class AbstractFilterableListBuilding extends AbstractBuildingWor
         markDirty();
     }
 
-    /**
-     * Check if the item is an allowed item.
-     *
-     * @param item the item to check.
-     * @param id   the string id of the item type.
-     * @return true if so.
-     */
-    public boolean isAllowedItem(final String id, final ItemStorage item)
+    @Override
+    public boolean isItemInList(final String id, final ItemStorage item)
     {
         return itemsAllowed.containsKey(id) && itemsAllowed.get(id).contains(item);
     }
 
-    /**
-     * Remove a compostable item from the list.
-     *
-     * @param id   the string id of the item type.
-     * @param item the item to remove.
-     */
+    @Override
     public void removeItem(final String id, final ItemStorage item)
     {
         if (itemsAllowed.containsKey(id) && itemsAllowed.get(id).contains(item))
@@ -151,20 +120,15 @@ public abstract class AbstractFilterableListBuilding extends AbstractBuildingWor
         markDirty();
     }
 
-    /**
-     * Getter of copy of all allowed items.
-     *
-     * @return a copy.
-     */
-    public Map<String, List<ItemStorage>> getCopyOfAllowedItems()
+    @Override
+    public ImmutableList<ItemStorage> getList(final String id)
     {
-        return new HashMap<>(itemsAllowed);
+        return ImmutableList.copyOf(itemsAllowed.getOrDefault(id, Collections.emptyList()));
     }
 
     @Override
     public void serializeToView(@NotNull final PacketBuffer buf)
     {
-        super.serializeToView(buf);
         buf.writeInt(itemsAllowed.size());
         for (final Map.Entry<String, List<ItemStorage>> entry : itemsAllowed.entrySet())
         {

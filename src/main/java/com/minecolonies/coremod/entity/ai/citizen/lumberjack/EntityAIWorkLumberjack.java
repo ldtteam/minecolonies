@@ -12,6 +12,7 @@ import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.colony.buildings.modules.GroupedItemListModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLumberjack;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
@@ -329,9 +330,8 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
 
         if (pathResult == null || pathResult.treeLocation == null)
         {
-
             final BuildingLumberjack buildingLumberjack = (BuildingLumberjack) building;
-            final Map<String, List<ItemStorage>> copy = buildingLumberjack.getCopyOfAllowedItems();
+            final List<ItemStorage> copy = buildingLumberjack.getModule(GroupedItemListModule.class).get().getList(SAPLINGS_LIST);
             if (buildingLumberjack.shouldRestrict())
             {
                 final BlockPos startPos = buildingLumberjack.getStartRestriction();
@@ -340,7 +340,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
                 pathResult = worker.getNavigator().moveToTree(
                   startPos, endPos,
                   1.0D,
-                  copy.getOrDefault(SAPLINGS_LIST, Collections.emptyList()),
+                  copy,
                   worker.getCitizenColonyHandler().getColony()
                 );
             }
@@ -349,7 +349,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
                 pathResult = worker.getNavigator()
                                .moveToTree(SEARCH_RANGE + searchIncrement,
                                  1.0D,
-                                 copy.getOrDefault(SAPLINGS_LIST, Collections.emptyList()),
+                                 copy,
                                  worker.getCitizenColonyHandler().getColony());
             }
         }

@@ -12,7 +12,8 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.coremod.client.gui.WindowHutComposter;
-import com.minecolonies.coremod.colony.buildings.AbstractFilterableListBuilding;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.modules.GroupedItemListModule;
 import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
 import com.minecolonies.coremod.colony.jobs.JobComposter;
 import com.minecolonies.coremod.research.ResearchInitializer;
@@ -33,7 +34,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BuildingComposter extends AbstractFilterableListBuilding
+public class BuildingComposter extends AbstractBuildingWorker
 {
     /**
      * Description of the job for this building
@@ -79,7 +80,7 @@ public class BuildingComposter extends AbstractFilterableListBuilding
     public BuildingComposter(@NotNull final IColony c, final BlockPos l)
     {
         super(c, l);
-        keepX.put((stack) -> isAllowedItem("compostables", new ItemStorage(stack)), new Tuple<>(Integer.MAX_VALUE, true));
+        keepX.put((stack) -> this.hasModule(GroupedItemListModule.class) && this.getModule(GroupedItemListModule.class).get().isItemInList("compostables", new ItemStorage(stack)), new Tuple<>(Integer.MAX_VALUE, true));
     }
 
     /**

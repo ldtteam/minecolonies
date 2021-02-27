@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.entity.ai.citizen.composter;
 
+import com.google.common.collect.ImmutableList;
+import com.minecolonies.api.colony.buildings.modules.IGroupedItemListModule;
 import com.minecolonies.api.colony.requestsystem.requestable.StackList;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AIEventTarget;
@@ -12,6 +14,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.colony.buildings.modules.GroupedItemListModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingComposter;
 import com.minecolonies.coremod.colony.jobs.JobComposter;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
@@ -28,6 +31,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
@@ -138,22 +142,26 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
             setDelay(2);
             return getState();
         }
-        if (getOwnBuilding().getCopyOfAllowedItems().isEmpty())
+
+        final IGroupedItemListModule groupedItemListModule = getOwnBuilding().getModule(GroupedItemListModule.class).get();
+        final List<ItemStorage> list = groupedItemListModule.getList(COMPOSTABLE_LIST);
+        if (list.isEmpty())
         {
             complain();
             return getState();
         }
-        if (InventoryUtils.hasItemInProvider(getOwnBuilding(), stack -> getOwnBuilding().isAllowedItem(COMPOSTABLE_LIST, new ItemStorage(stack))))
+
+        if (InventoryUtils.hasItemInProvider(getOwnBuilding(), stack -> groupedItemListModule.isItemInList(COMPOSTABLE_LIST, new ItemStorage(stack))))
         {
             InventoryUtils.transferItemStackIntoNextFreeSlotFromProvider(
               getOwnBuilding(),
-              InventoryUtils.findFirstSlotInProviderNotEmptyWith(getOwnBuilding(), stack -> getOwnBuilding().isAllowedItem(COMPOSTABLE_LIST, new ItemStorage(stack))),
+              InventoryUtils.findFirstSlotInProviderNotEmptyWith(getOwnBuilding(), stack -> groupedItemListModule.isItemInList(COMPOSTABLE_LIST, new ItemStorage(stack))),
               worker.getInventoryCitizen());
         }
 
         final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(
           worker.getInventoryCitizen(),
-          stack -> getOwnBuilding().isAllowedItem(COMPOSTABLE_LIST, new ItemStorage(stack))
+          stack -> groupedItemListModule.isItemInList(COMPOSTABLE_LIST, new ItemStorage(stack))
         );
         if (slot >= 0)
         {
@@ -166,7 +174,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
         if (!getOwnBuilding().hasWorkerOpenRequests(worker.getCitizenData()))
         {
             final ArrayList<ItemStack> itemList = new ArrayList<>();
-            for (final ItemStorage item : getOwnBuilding().getCopyOfAllowedItems().get(COMPOSTABLE_LIST))
+            for (final ItemStorage item : list)
             {
                 final ItemStack itemStack = item.getItemStack();
                 itemStack.setCount(itemStack.getMaxStackSize());
@@ -244,7 +252,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
         if (worker.getHeldItem(Hand.MAIN_HAND) == ItemStack.EMPTY)
         {
             final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(
-              worker.getInventoryCitizen(), stack -> getOwnBuilding().isAllowedItem(COMPOSTABLE_LIST, new ItemStorage(stack)));
+              worker.getInventoryCitizen(), stack -> getOwnBuilding().getModule(GroupedItemListModule.class).get().isItemInList(COMPOSTABLE_LIST, new ItemStorage(stack)));
 
             if (slot >= 0)
             {

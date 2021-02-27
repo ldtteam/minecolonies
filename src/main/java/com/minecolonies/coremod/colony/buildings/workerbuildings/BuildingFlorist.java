@@ -8,13 +8,15 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.modules.IGroupedItemListModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.coremod.client.gui.WindowHutFlorist;
-import com.minecolonies.coremod.colony.buildings.AbstractFilterableListBuilding;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.modules.GroupedItemListModule;
 import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
 import com.minecolonies.coremod.colony.jobs.JobFlorist;
 import com.minecolonies.coremod.research.ResearchInitializer;
@@ -48,7 +50,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 /**
  * The florist building.
  */
-public class BuildingFlorist extends AbstractFilterableListBuilding
+public class BuildingFlorist extends AbstractBuildingWorker
 {
     /**
      * Florist.
@@ -189,17 +191,22 @@ public class BuildingFlorist extends AbstractFilterableListBuilding
     @Nullable
     public ItemStack getFlowerToGrow()
     {
-        final List<ItemStorage> stacks = getPlantablesForBuildingLevel(getBuildingLevel()).stream()
-                                           .filter(stack -> !isAllowedItem(FLORIST_FLOWER_LIST, stack))
-                                           .collect(Collectors.toList());
-
-        if (stacks.isEmpty())
+        if (hasModule(GroupedItemListModule.class))
         {
-            return null;
+            final IGroupedItemListModule module = getModule(GroupedItemListModule.class).get();
+            final List<ItemStorage> stacks = getPlantablesForBuildingLevel(getBuildingLevel()).stream()
+                                               .filter(stack -> !module.isItemInList(FLORIST_FLOWER_LIST, stack))
+                                               .collect(Collectors.toList());
+            if (stacks.isEmpty())
+            {
+                return null;
+            }
+
+            Collections.shuffle(stacks);
+            return stacks.get(0).getItemStack();
         }
 
-        Collections.shuffle(stacks);
-        return stacks.get(0).getItemStack();
+        return null;
     }
 
     /**

@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony.buildings;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.coremod.colony.buildings.modules.GroupedItemListModule;
 import net.minecraft.block.Block;
 import net.minecraft.block.FurnaceBlock;
 import net.minecraft.item.ItemStack;
@@ -24,7 +25,7 @@ import static com.minecolonies.api.util.constant.Suppression.OVERRIDE_EQUALS;
  * Abstract Class for all furnace users.
  */
 @SuppressWarnings(OVERRIDE_EQUALS)
-public abstract class AbstractBuildingFurnaceUser extends AbstractFilterableListBuilding
+public abstract class AbstractBuildingFurnaceUser extends AbstractBuildingWorker
 {
     /**
      * Tag to store the furnace position.
@@ -135,11 +136,14 @@ public abstract class AbstractBuildingFurnaceUser extends AbstractFilterableList
      */
     public List<ItemStack> getAllowedFuel()
     {
-        return getCopyOfAllowedItems().containsKey(FUEL_LIST) ? getCopyOfAllowedItems().get(FUEL_LIST)
-                                                                  .stream()
-                                                                  .map(ItemStorage::getItemStack)
-                                                                  .peek(stack -> stack.setCount(stack.getMaxStackSize()))
-                                                                  .collect(Collectors.toList()) : Collections.emptyList();
+        if (hasModule(GroupedItemListModule.class))
+        {
+            return getModule(GroupedItemListModule.class).get().getList(FUEL_LIST).stream()
+                     .map(ItemStorage::getItemStack)
+                     .peek(stack -> stack.setCount(stack.getMaxStackSize()))
+                     .collect(Collectors.toList());
+        }
+        return Collections.emptyList();
     }
 
     /**
@@ -150,6 +154,10 @@ public abstract class AbstractBuildingFurnaceUser extends AbstractFilterableList
      */
     public boolean isAllowedFuel(final ItemStack stack)
     {
-        return getCopyOfAllowedItems().get(FUEL_LIST).stream().anyMatch(itemStack -> stack.isItemEqual(itemStack.getItemStack()));
+        if (hasModule(GroupedItemListModule.class))
+        {
+            return getModule(GroupedItemListModule.class).get().getList(FUEL_LIST).stream().anyMatch(itemStack -> stack.isItemEqual(itemStack.getItemStack()));
+        }
+        return false;
     }
 }

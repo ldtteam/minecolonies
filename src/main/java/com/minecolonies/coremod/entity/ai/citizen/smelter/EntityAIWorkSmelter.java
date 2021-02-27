@@ -12,6 +12,7 @@ import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.coremod.colony.buildings.modules.GroupedItemListModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingSmeltery;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.JobSmelter;
@@ -335,8 +336,8 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
         {
             return false;
         }
-        final Map<String, List<ItemStorage>> allowedItems = getOwnBuilding().getCopyOfAllowedItems();
-        return !allowedItems.containsKey(ORE_LIST) || !allowedItems.get(ORE_LIST).contains(new ItemStorage(stack));
+        final List<ItemStorage> allowedItems = getOwnBuilding().getModule(GroupedItemListModule.class).get().getList(ORE_LIST);
+        return !allowedItems.contains(new ItemStorage(stack));
     }
 
     @Override
@@ -346,11 +347,15 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
               !getOwnBuilding().hasWorkerOpenRequestsFiltered(worker.getCitizenData(),
                 req -> req.getShortDisplayString().getSiblings().contains(new TranslationTextComponent(COM_MINECOLONIES_REQUESTS_SMELTABLE_ORE))))
         {
-            final Map<String, List<ItemStorage>> allowedItems = getOwnBuilding().getCopyOfAllowedItems();
-            if (allowedItems.containsKey(ORE_LIST))
+            final List<ItemStorage> allowedItems = getOwnBuilding().getModule(GroupedItemListModule.class).get().getList(ORE_LIST);
+            if (allowedItems.isEmpty())
+            {
+                worker.getCitizenData().createRequestAsync(getSmeltAbleClass());
+            }
+            else
             {
                 final List<ItemStack> requests = IColonyManager.getInstance().getCompatibilityManager().getSmeltableOres().stream()
-                                                   .filter(storage -> !allowedItems.get(ORE_LIST).contains(storage))
+                                                   .filter(storage -> !allowedItems.contains(storage))
                                                    .map(ItemStorage::getItemStack)
                                                    .collect(Collectors.toList());
 
@@ -366,10 +371,6 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
                 {
                     worker.getCitizenData().createRequestAsync(new StackList(requests, COM_MINECOLONIES_REQUESTS_SMELTABLE_ORE, STACKSIZE * getOwnBuilding().getFurnaces().size(),1));
                 }
-            }
-            else
-            {
-                worker.getCitizenData().createRequestAsync(getSmeltAbleClass());
             }
         }
     }
