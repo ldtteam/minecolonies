@@ -1,0 +1,24 @@
+{
+  "comment": "name: Bonemeal * subtitle: And to think this stuff feeds our plants...",
+  "branch": "minecolonies:technology",
+  "researchLevel": 2,
+  "sortOrder": 3,
+  "parentResearch": "minecolonies:technology/biodegradable",
+  "subtitle": "com.minecolonies.research.technology.bonemeal.subtitle",
+  "icon": "minecraft:wheat_seeds:1",
+  "requirements": [
+    {
+      "building": "miner",
+      "level": 3
+    },
+    {
+      "item": "minecraft:wheat_seeds",
+      "quantity": 64
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/farmingmultiplier": 1
+    }
+  ]
+}

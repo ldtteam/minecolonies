@@ -1,0 +1,24 @@
+{
+  "comment": "name: Night Owl * subtitle: Overtime penalty rates need not apply.",
+  "branch": "minecolonies:civilian",
+  "researchLevel": 3,
+  "sortOrder": 2,
+  "parentResearch": "minecolonies:civilian/circus",
+  "subtitle": "com.minecolonies.research.civilian.nightowl.subtitle",
+  "icon": "minecraft:clock:1",
+  "requirements": [
+    {
+      "building": "library",
+      "level": 2
+    },
+    {
+      "item": "minecraft:golden_carrot",
+      "quantity": 25
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/workingdayhaddition": 1
+    }
+  ]
+}

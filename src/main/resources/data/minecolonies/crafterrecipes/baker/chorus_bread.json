@@ -14,5 +14,5 @@
   "result": "minecolonies:chorus_bread",
   "count": 4,
   "intermediate" : "minecraft:air",
-  "research-id" : "knowtheend"
+  "research-id" : "minecolonies:technology/knowtheend"
 }

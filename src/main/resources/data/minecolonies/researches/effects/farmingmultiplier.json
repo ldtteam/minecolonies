@@ -1,0 +1,11 @@
+{
+  "comment": "name: Farming * description : Farmers Harvest +%d%% Crops",
+  "effect": true,
+  "levels": [
+    0.1,
+    0.25,
+    0.5,
+    0.75,
+    2
+  ]
+}

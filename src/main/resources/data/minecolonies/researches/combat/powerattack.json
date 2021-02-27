@@ -1,0 +1,22 @@
+{
+  "comment": "name: Power Attack * subtitle: ",
+  "branch": "minecolonies:combat",
+  "researchLevel": 3,
+  "parentResearch": "minecolonies:combat/quickdraw",
+  "icon": "minecraft:stone_sword:1",
+  "requirements": [
+    {
+      "building": "combatacademy",
+      "level": 3
+    },
+    {
+      "item": "minecraft:iron_block",
+      "quantity": 4
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/meleedamageaddition": 2
+    }
+  ]
+}

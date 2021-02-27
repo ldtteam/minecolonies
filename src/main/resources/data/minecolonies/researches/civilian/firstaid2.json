@@ -1,0 +1,23 @@
+{
+  "comment": "name: First Aid II * subtitle: Second Aid?",
+  "branch": "minecolonies:civilian",
+  "researchLevel": 2,
+  "parentResearch": "minecolonies:civilian/firstaid",
+  "subtitle": "com.minecolonies.research.civilian.firstaid2.subtitle",
+  "icon": "minecolonies:textures/icons/research/hp2.png",
+  "requirements": [
+    {
+      "building": "townhall",
+      "level": 2
+    },
+    {
+      "item": "minecraft:hay_block",
+      "quantity": 16
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/healthaddition": 2
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "comment": "name: Hormones * subtitle: These are safe, right?",
+  "branch": "minecolonies:civilian",
+  "researchLevel": 3,
+  "parentResearch": "minecolonies:civilian/nurture",
+  "subtitle": "com.minecolonies.research.civilian.hormones.subtitle",
+  "icon": "minecolonies:textures/icons/research/childgrowth2.png",
+  "requirements": [
+    {
+      "building": "school",
+      "level": 3
+    },
+    {
+      "item": "minecraft:cooked_chicken",
+      "quantity": 64
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/growthmultiplier": 2
+    }
+  ]
+}
