@@ -1,0 +1,10 @@
+{
+  "comment": "name: Fleeing Damage * description : Guards Gain +%d%% Damage When Fleeing",
+  "effect": true,
+  "levels": [
+    0.2,
+    0.3,
+    0.4,
+    1
+  ]
+}

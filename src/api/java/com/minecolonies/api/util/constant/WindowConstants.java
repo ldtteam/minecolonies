@@ -1112,6 +1112,7 @@ public final class WindowConstants
     public static final int    BUTTON_BUFFER           = 3;
     public static final String RESPONSE_BOX_ID         = "responseOptions";
     public static final String MEDIUM_SIZED_BUTTON_RES = "textures/gui/builderhut/builder_button_medium_large.png";
+    public static final String MEDIUM_SIZED_BUTTON_DIS = "textures/gui/builderhut/builder_button_medium_large_disabled.png";
 
     /**
      * The resource string.

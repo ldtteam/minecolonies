@@ -1,0 +1,22 @@
+{
+  "comment": "name: Hardened * subtitle: ",
+  "branch": "minecolonies:technology",
+  "researchLevel": 3,
+  "parentResearch": "minecolonies:technology/strong",
+  "icon": "minecraft:stone_pickaxe:1",
+  "requirements": [
+    {
+      "building": "blacksmith",
+      "level": 2
+    },
+    {
+      "item": "minecraft:diamond",
+      "quantity": 16
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/tooldurabilitymultiplier": 2
+    }
+  ]
+}

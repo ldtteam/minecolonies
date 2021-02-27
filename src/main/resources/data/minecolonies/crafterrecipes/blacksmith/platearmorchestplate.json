@@ -18,7 +18,7 @@
   "result": "minecolonies:plate_armor_chest",
   "count": 1,
   "min-building-level" : 4,
-  "research-id" : "platearmor"
+  "research-id" : "minecolonies:combat/platearmor"
 }
 
 

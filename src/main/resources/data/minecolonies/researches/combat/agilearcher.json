@@ -1,0 +1,19 @@
+{
+  "comment": "name: Agile Archer * subtitle: Dodge... Again!",
+  "branch": "minecolonies:combat",
+  "researchLevel": 6,
+  "parentResearch": "minecolonies:combat/improvedevasion",
+  "subtitle": "com.minecolonies.research.combat.agilearcher.subtitle",
+  "icon": "minecraft:diamond_boots:1",
+  "requirements": [
+    {
+      "item": "minecraft:diamond",
+      "quantity": 64
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/archerarmormultiplier": 5
+    }
+  ]
+}

@@ -8,6 +8,7 @@
         <view id="pageBranches" size="100% 100%">
             <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
             <label id="title" size="130 11" pos="30 13" color="black" textalign="MIDDLE" label="$(com.minecolonies.coremod.gui.research.title)"/>
+            <label id="maxresearchwarn" size="180 10" pos="10 28" color="black" textalign="MIDDLE"/>
 
         </view>
     </switch>

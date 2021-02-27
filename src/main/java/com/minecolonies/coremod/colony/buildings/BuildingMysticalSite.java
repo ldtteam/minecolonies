@@ -8,8 +8,6 @@ import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.coremod.client.gui.WindowHutMysticalSite;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import com.minecolonies.coremod.research.ResearchInitializer;
-import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -76,17 +74,5 @@ public class BuildingMysticalSite extends AbstractBuilding implements IMysticalS
         {
             return new WindowHutMysticalSite(this, MYSTICAL_SITE);
         }
-    }
-
-    @Override
-    public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
-    {
-        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect(ResearchInitializer.MYSTICAL_SITE_RESEARCH, UnlockBuildingResearchEffect.class);
-        if (effect == null)
-        {
-            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"), player.getUniqueID());
-            return;
-        }
-        super.requestUpgrade(player, builder);
     }
 }

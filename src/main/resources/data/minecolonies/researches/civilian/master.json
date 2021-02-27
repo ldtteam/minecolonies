@@ -1,0 +1,23 @@
+{
+  "comment": "name: Master * subtitle: At least they get a fancy title this time.",
+  "branch": "minecolonies:civilian",
+  "researchLevel": 5,
+  "parentResearch": "minecolonies:civilian/bachelor",
+  "subtitle": "com.minecolonies.research.civilian.master.subtitle",
+  "icon": "minecolonies:textures/icons/research/xpgain4.png",
+  "requirements": [
+    {
+      "building": "library",
+      "level": 5
+    },
+    {
+      "item": "minecraft:bookshelf",
+      "quantity": 32
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/teachingmultiplier": 4
+    }
+  ]
+}

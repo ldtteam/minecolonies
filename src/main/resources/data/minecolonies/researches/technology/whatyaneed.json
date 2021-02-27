@@ -1,0 +1,23 @@
+{
+  "comment": "name: What ya Need? * subtitle: It's not a rhetorical question...",
+  "branch": "minecolonies:technology",
+  "researchLevel": 2,
+  "parentResearch": "minecolonies:technology/hittingiron",
+  "subtitle": "com.minecolonies.research.technology.whatyaneed.subtitle",
+  "icon": "minecolonies:blockhutmechanic:1",
+  "requirements": [
+    {
+      "building": "blacksmith",
+      "level": 3
+    },
+    {
+      "item": "minecraft:redstone",
+      "quantity": 64
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/blockhutmechanic": 1
+    }
+  ]
+}

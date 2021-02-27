@@ -1,0 +1,22 @@
+{
+  "comment": "name: Hot! * subtitle: ",
+  "branch": "minecolonies:technology",
+  "researchLevel": 1,
+  "sortOrder": 5,
+  "icon": "minecolonies:blockhutsmeltery:1",
+  "requirements": [
+    {
+      "building": "miner",
+      "level": 2
+    },
+    {
+      "item": "minecraft:lava_bucket",
+      "quantity": 4
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/blockhutsmeltery": 1
+    }
+  ]
+}

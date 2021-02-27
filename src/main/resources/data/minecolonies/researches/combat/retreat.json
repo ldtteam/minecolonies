@@ -1,0 +1,23 @@
+{
+  "comment": "name: Retreat * subtitle: For strategic purposes, I assure you.",
+  "branch": "minecolonies:combat",
+  "researchLevel": 5,
+  "parentResearch": "minecolonies:combat/fear",
+  "subtitle": "com.minecolonies.research.combat.retreat.subtitle",
+  "icon": "minecraft:golden_boots:1",
+  "requirements": [
+    {
+      "building": "guardtower",
+      "level": 12
+    },
+    {
+      "item": "minecraft:emerald",
+      "quantity": 32
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/fleeingdamagemultiplier": 3
+    }
+  ]
+}
