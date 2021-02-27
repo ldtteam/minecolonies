@@ -183,6 +183,8 @@ public class ResearchCompatMap
       {"improveddodge", "minecolonies:combat/improveddodge"},
       {"penetratingshot", "minecolonies:combat/penetratingshot"},
       {"bandages", "minecolonies:civilian/bandages"},
-      {"tactictraining", "minecolonies:combat/tactictraining"}
+      {"tactictraining", "minecolonies:combat/tactictraining"},
+      {"ambition", "minecolonies:civilian/ambition"},
+      {"platearmor", "minecolonies:combat/platearmor"}
     }).collect(Collectors.toMap(data -> data[0], data -> new ResourceLocation(data[1])));
 }
