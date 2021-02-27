@@ -10,6 +10,7 @@ import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBeekeeper;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.JobBeekeeper;
+import com.minecolonies.coremod.compatibility.resourcefulbees.ResourcefulBeesCompat;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import net.minecraft.block.BeehiveBlock;
 import net.minecraft.entity.Entity;
@@ -27,6 +28,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.ModList;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -343,7 +345,18 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
             if (ItemStackUtils.isTool(itemStack, ToolType.SHEARS))
             {
                 worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, 1);
-                InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(new ItemStack(Items.HONEYCOMB, getHoneycombsPerHarvest()), worker.getItemHandlerCitizen());
+
+                Stack<ItemStack> stack = new Stack();
+
+                if (ModList.get().isLoaded("resourcefulbees")){
+                    stack = ResourcefulBeesCompat.getCombsFromHive(hive, world, getHoneycombsPerHarvest()); //If resourceful bees is loaded go collect the custom items
+                } else {
+                    stack.add(new ItemStack(Items.HONEYCOMB, getHoneycombsPerHarvest())); //If resourceful bees is not loaded behave normally
+                }
+
+                for (ItemStack stackItem : stack) {
+                    InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(stackItem, worker.getItemHandlerCitizen());
+                }
                 world.setBlockState(hive, world.getBlockState(hive).with(BlockStateProperties.HONEY_LEVEL, 0));
                 worker.getCitizenExperienceHandler().addExperience(EXP_PER_HARVEST);
             }
