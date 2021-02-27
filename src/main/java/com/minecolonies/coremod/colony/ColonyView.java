@@ -206,7 +206,7 @@ public final class ColonyView implements IColonyView
     /**
      * The research effects of the colony.
      */
-    private final IResearchManager manager = new ResearchManager();
+    private final IResearchManager manager;
 
     /**
      * Whether spies are active and highlight enemy positions.
@@ -222,6 +222,7 @@ public final class ColonyView implements IColonyView
     private ColonyView(final int id)
     {
         this.id = id;
+        this.manager = new ResearchManager(this);
     }
 
     /**

@@ -17,7 +17,6 @@ import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructureWithWorkOrder;
-import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import com.minecolonies.coremod.util.AdvancementUtils;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.*;
@@ -1096,13 +1095,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     {
         super.triggerMinedBlock(blockToMine);
 
-        double chance = 1;
-        final MultiplierModifierResearchEffect
-          effect = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(MORE_ORES, MultiplierModifierResearchEffect.class);
-        if (effect != null)
-        {
-            chance += effect.getEffect();
-        }
+        final double chance = 1 + worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(MORE_ORES);
 
         if (IColonyManager.getInstance().getCompatibilityManager().isLuckyBlock(blockToMine.getBlock()))
         {

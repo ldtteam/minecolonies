@@ -5,7 +5,6 @@ import com.ldtteam.blockout.controls.Text;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingPlantation;
-import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -43,8 +42,7 @@ public class WindowHutPlantation extends AbstractWindowWorkerBuilding<BuildingPl
         final Button plantSettingsButton = findPaneOfTypeByID(BLOCK_BUTTON, Button.class);
         final Text plantHintLabel = findPaneOfTypeByID(HINT_LABEL, Text.class);
 
-        final UnlockAbilityResearchEffect effect = building.getColony().getResearchManager().getResearchEffects().getEffect(PLANT_2, UnlockAbilityResearchEffect.class);
-        if (effect != null && effect.getEffect())
+        if (building.getColony().getResearchManager().getResearchEffects().getEffectStrength(PLANT_2) > 0)
         {
             plantHintLabel.setText(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_PLANTATION_NOT_PLANT));
         }

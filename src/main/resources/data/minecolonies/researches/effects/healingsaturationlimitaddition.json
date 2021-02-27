@@ -1,0 +1,11 @@
+{
+  "comment": "name: Healing Saturation Limit * description : Healing Saturation Min +%d",
+  "effect": true,
+  "levels": [
+    -0.5,
+    -1,
+    -1.5,
+    -2,
+    -5
+  ]
+}

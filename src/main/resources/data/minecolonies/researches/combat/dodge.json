@@ -1,0 +1,24 @@
+{
+  "comment": "name: Dodge * subtitle: If you can dodge a hammer...",
+  "branch": "minecolonies:combat",
+  "researchLevel": 2,
+  "sortOrder": 2,
+  "parentResearch": "minecolonies:combat/avoidance",
+  "subtitle": "com.minecolonies.research.combat.dodge.subtitle",
+  "icon": "minecolonies:pirate_boots:1",
+  "requirements": [
+    {
+      "building": "smeltery",
+      "level": 1
+    },
+    {
+      "item": "minecraft:leather",
+      "quantity": 16
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/archerarmormultiplier": 1
+    }
+  ]
+}

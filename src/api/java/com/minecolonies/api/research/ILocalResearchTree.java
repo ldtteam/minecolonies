@@ -1,8 +1,12 @@
 package com.minecolonies.api.research;
 
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.research.effects.IResearchEffectManager;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 
+import net.minecraft.util.ResourceLocation;
+import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 /**
@@ -17,7 +21,7 @@ public interface ILocalResearchTree
      * @param branch the branch of the research.
      * @return the IResearch object.
      */
-    ILocalResearch getResearch(final String branch, final String id);
+    ILocalResearch getResearch(final ResourceLocation branch, final ResourceLocation id);
 
     /**
      * Add a research to the tree.
@@ -25,7 +29,7 @@ public interface ILocalResearchTree
      * @param research the research to add.
      * @param branch   the branch of the research.
      */
-    void addResearch(final String branch, final ILocalResearch research);
+    void addResearch(final ResourceLocation branch, final ILocalResearch research);
 
     /**
      * Check if a branch already researched a level 6 research. This is important since only 1 of these can be researched for each branch.
@@ -33,7 +37,7 @@ public interface ILocalResearchTree
      * @param branch the branch to check.
      * @return true if so.
      */
-    boolean branchFinishedHighestLevel(final String branch);
+    boolean branchFinishedHighestLevel(final ResourceLocation branch);
 
     /**
      * Get a list of all research in progress.
@@ -43,11 +47,35 @@ public interface ILocalResearchTree
     List<ILocalResearch> getResearchInProgress();
 
     /**
+     * Checks if a given research is complete.
+     *
+     * @return true if complete or if no such research is loaded, false if not completed.
+     */
+     boolean hasCompletedResearch(final ResourceLocation researchId);
+
+    /**
      * Finish a research and remove it from the inProgress list.
      *
-     * @param id the id of the research to remove.
+     * @param id the id of the research to finish.
      */
-    void finishResearch(final String id);
+    void finishResearch(final ResourceLocation id);
+
+    /**
+     * Attempt to begin a research.
+     * @param player     the player(s) making the request (and to apply costs toward)
+     * @param colony     the colony doing the research
+     * @param research   the research.
+     */
+    void attemptBeginResearch(final PlayerEntity player, final IColony colony, final IGlobalResearch research);
+
+    /**
+     * Reset a research, and optionally undo its effects.  If the research is begun but incomplete, cancel it.
+     *
+     * @param player     the player to notify of research cancellation results.
+     * @param colony     the colony to remove effects from, or null if no effect reset is desired.
+     * @param research   the local research descriptor.
+     */
+    void attemptResetResearch(PlayerEntity player, @Nullable final IColony colony, ILocalResearch research);
 
     /**
      * Write the research tree to NBT.

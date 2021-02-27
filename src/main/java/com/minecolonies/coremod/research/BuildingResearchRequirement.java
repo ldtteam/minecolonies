@@ -1,8 +1,13 @@
 package com.minecolonies.coremod.research;
 
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.research.IResearchRequirement;
+import com.minecolonies.api.research.ModResearchRequirements;
+import com.minecolonies.api.research.registry.ResearchRequirementEntry;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.text.TranslationTextComponent;
 
 /**
@@ -10,6 +15,16 @@ import net.minecraft.util.text.TranslationTextComponent;
  */
 public class BuildingResearchRequirement implements IResearchRequirement
 {
+    /**
+     * The NBT tag for an individual building's name.
+     */
+    private static final String TAG_BUILDING_NAME = "building-name";
+
+    /**
+     * The NBT tag for an individual building's required level.
+     */
+    private static final String TAG_BUILDING_LVL = "building-lvl";
+
     /**
      * The building level.
      */
@@ -32,6 +47,17 @@ public class BuildingResearchRequirement implements IResearchRequirement
     }
 
     /**
+     * Create a building-based research requirement.
+     *
+     * @param nbt           the nbt containing the relevant tags.
+     */
+    public BuildingResearchRequirement(CompoundNBT nbt)
+    {
+        this.buildingLevel = nbt.getInt(TAG_BUILDING_LVL);
+        this.building = nbt.getString(TAG_BUILDING_NAME);
+    }
+
+    /**
      * @return the building description
      */
     public String getBuilding()
@@ -51,15 +77,33 @@ public class BuildingResearchRequirement implements IResearchRequirement
     public boolean isFulfilled(final IColony colony)
     {
         int sum = 0;
-        for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
+        if(colony instanceof IColonyView)
         {
-            if (building.getSchematicName().equalsIgnoreCase(this.building))
+            for (final IBuildingView building : ((IColonyView) colony).getBuildings())
             {
-                sum += building.getBuildingLevel();
-
-                if (sum >= this.buildingLevel)
+                if (building.getSchematicName().equals(this.getBuilding()))
                 {
-                    return true;
+                    sum += building.getBuildingLevel();
+
+                    if(sum >= this.buildingLevel)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        else if(colony instanceof IColony)
+        {
+            for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
+            {
+                if (building.getSchematicName().equalsIgnoreCase(this.building))
+                {
+                    sum += building.getBuildingLevel();
+
+                    if (sum >= this.buildingLevel)
+                    {
+                        return true;
+                    }
                 }
             }
         }
@@ -69,6 +113,18 @@ public class BuildingResearchRequirement implements IResearchRequirement
     @Override
     public TranslationTextComponent getDesc()
     {
-        return new TranslationTextComponent("com.minecolonies.coremod.research.requirement.building.level", this.building, this.buildingLevel);
+        return new TranslationTextComponent("com.minecolonies.coremod.research.requirement.building.level", new TranslationTextComponent("block.minecolonies.blockhut" + this.building), this.buildingLevel);
+    }
+
+    @Override
+    public ResearchRequirementEntry getRegistryEntry() {return ModResearchRequirements.buildingResearchRequirement;}
+
+    @Override
+    public CompoundNBT writeToNBT()
+    {
+        CompoundNBT nbt = new CompoundNBT();
+        nbt.putString(TAG_BUILDING_NAME, building);
+        nbt.putInt(TAG_BUILDING_LVL, buildingLevel);
+        return nbt;
     }
 }

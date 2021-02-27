@@ -1,0 +1,10 @@
+{
+  "comment": "name: CitizenCap * description : Increase Max Citizens +%d",
+  "effect": true,
+  "levels": [
+    25,
+    50,
+    75,
+    175
+  ]
+}
