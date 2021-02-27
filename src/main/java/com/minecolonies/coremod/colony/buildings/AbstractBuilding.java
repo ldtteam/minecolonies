@@ -156,7 +156,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     /**
      * Set of building modules this building has.
      */
-    protected Map<Class<? extends IBuildingModule>, IBuildingModule> modules = new LinkedHashMap<>();
+    protected List<IBuildingModule> modules = new ArrayList<>();
 
     /**
      * Constructor for a AbstractBuilding.
@@ -175,20 +175,30 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public boolean hasModule(final Class<? extends IBuildingModule> clazz)
     {
-        return modules.containsKey(clazz);
+        return getModule(clazz).isPresent();
     }
 
     @NotNull
     @Override
     public <T extends IBuildingModule> Optional<T> getModule(final Class<T> clazz)
     {
-        return Optional.ofNullable((T) modules.get(clazz));
+        return getModules(clazz).stream().findFirst();
+    }
+
+    @NotNull
+    @Override
+    public <T extends IBuildingModule> List<T> getModules(final Class<T> clazz)
+    {
+        return this.modules.stream()
+                .filter(clazz::isInstance)
+                .map(c -> (T) c)
+                .collect(Collectors.toList());
     }
 
     @Override
     public void registerModule(@NotNull final IBuildingModule module)
     {
-        this.modules.put(module.getClass(), module);
+        this.modules.add(module);
     }
 
     /**
@@ -209,13 +219,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public void onWakeUp()
     {
-        for (final IBuildingModule module : modules.values())
-        {
-            if (module instanceof IBuildingEventsModule)
-            {
-                ((IBuildingEventsModule) module).onWakeUp();
-            }
-        }
+        getModules(IBuildingEventsModule.class).forEach(IBuildingEventsModule::onWakeUp);
     }
 
     /**
@@ -245,25 +249,13 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public void onBuildingMove(final IBuilding oldBuilding)
     {
-        for (final IBuildingModule module : modules.values())
-        {
-            if (module instanceof IBuildingEventsModule)
-            {
-                ((IBuildingEventsModule) module).onBuildingMove(oldBuilding);
-            }
-        }
+        getModules(IBuildingEventsModule.class).forEach(module -> module.onBuildingMove(oldBuilding));
     }
 
     @Override
     public void onPlayerEnterBuilding(final PlayerEntity player)
     {
-        for (final IBuildingModule module : modules.values())
-        {
-            if (module instanceof IBuildingEventsModule)
-            {
-                ((IBuildingEventsModule) module).onPlayerEnterBuilding(player);
-            }
-        }
+        getModules(IBuildingEventsModule.class).forEach(module -> module.onPlayerEnterBuilding(player));
     }
 
     @Override
@@ -336,13 +328,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             minimumStock.put(new ItemStorage(ItemStack.read(compoundNBT)), compoundNBT.getInt(TAG_QUANTITY));
         }
 
-        for (final IBuildingModule module : modules.values())
-        {
-            if (module instanceof IPersistentModule)
-            {
-                ((IPersistentModule) module).deserializeNBT(compound);
-            }
-        }
+        getModules(IPersistentModule.class).forEach(module -> module.deserializeNBT(compound));
     }
 
     @Override
@@ -371,13 +357,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         }
         compound.put(TAG_MINIMUM_STOCK, minimumStockTagList);
 
-        for (final IBuildingModule module : modules.values())
-        {
-            if (module instanceof IPersistentModule)
-            {
-                ((IPersistentModule) module).serializeNBT(compound);
-            }
-        }
+        getModules(IPersistentModule.class).forEach(module -> module.serializeNBT(compound));
         return compound;
     }
 
@@ -413,39 +393,24 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         ChunkDataHelper.claimColonyChunks(colony, false, this.getID(), getClaimRadius(getBuildingLevel()));
         ConstructionTapeHelper.removeConstructionTape(getCorners(), world);
 
-        for (final IBuildingModule module : modules.values())
-        {
-            if (module instanceof IBuildingEventsModule)
-            {
-                ((IBuildingEventsModule) module).onDestroyed();
-            }
-        }
+        getModules(IBuildingEventsModule.class).forEach(IBuildingEventsModule::onDestroyed);
     }
 
     @Override
     public void removeCitizen(final ICitizenData citizen)
     {
-        for (final IBuildingModule module : modules.values())
-        {
-            if (module instanceof IAssignsCitizen)
-            {
-                ((IAssignsCitizen) module).removeCitizen(citizen);
-            }
-        }
+        getModules(IAssignsCitizen.class).forEach(module -> module.removeCitizen(citizen));
         super.removeCitizen(citizen);
     }
 
     @Override
     public boolean assignCitizen(final ICitizenData citizen)
     {
-        for (final IBuildingModule module : modules.values())
+        for (final IAssignsCitizen module : getModules(IAssignsCitizen.class))
         {
-            if (module instanceof IAssignsCitizen)
+            if (module.assignCitizen(citizen))
             {
-                if (((IAssignsCitizen) module).assignCitizen(citizen))
-                {
-                    return true;
-                }
+                return true;
             }
         }
         return super.assignCitizen(citizen);
@@ -455,12 +420,9 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     public int getMaxInhabitants()
     {
         int current = -1;
-        for (final IBuildingModule module : modules.values())
+        for (final IDefinesCoreBuildingStatsModule module : getModules(IDefinesCoreBuildingStatsModule.class))
         {
-            if (module instanceof IDefinesCoreBuildingStatsModule)
-            {
-                current = ((IDefinesCoreBuildingStatsModule) module).getMaxInhabitants().apply(current);
-            }
+            current = module.getMaxInhabitants().apply(current);
         }
 
         if (current == -1)
@@ -587,7 +549,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public final boolean isDirty()
     {
-        for (final IBuildingModule module : modules.values())
+        for (final IBuildingModule module : modules)
         {
             if (module.checkDirty())
             {
@@ -601,7 +563,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     public final void clearDirty()
     {
         dirty = false;
-        for (final IBuildingModule module : modules.values())
+        for (final IBuildingModule module : modules)
         {
             module.clearDirty();
         }
@@ -746,13 +708,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         buf.writeBoolean(minimumStock.size() >= minimumStockSize());
         buf.writeBoolean(isDeconstructed());
 
-        for (final IBuildingModule module : modules.values())
-        {
-            if (module instanceof IPersistentModule)
-            {
-                ((IPersistentModule) module).serializeToView(buf);
-            }
-        }
+        getModules(IPersistentModule.class).forEach(module -> module.serializeToView(buf));
     }
 
     /**
@@ -845,13 +801,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             }
         }
 
-        for (final IBuildingModule module : modules.values())
-        {
-            if (module instanceof ITickingModule)
-            {
-                ((ITickingModule) module).onColonyTick(colony);
-            }
-        }
+        getModules(ITickingModule.class).forEach(module -> module.onColonyTick(colony));
     }
 
     /**
@@ -1067,13 +1017,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             FireworkUtils.spawnFireworksAtAABBCorners(getCorners(), colony.getWorld(), newLevel);
         }
 
-        for (final IBuildingModule module : modules.values())
-        {
-            if (module instanceof IBuildingEventsModule)
-            {
-                ((IBuildingEventsModule) module).onUpgradeComplete(newLevel);
-            }
-        }
+        getModules(IBuildingEventsModule.class).forEach(module -> module.onUpgradeComplete(newLevel));
     }
 
     @Override
@@ -1081,6 +1025,12 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     {
         final WorkOrderBuildBuilding workOrder = new WorkOrderBuildBuilding(this, Math.max(1, getBuildingLevel()));
         final LoadOnlyStructureHandler wrapper = new LoadOnlyStructureHandler(colony.getWorld(), getPosition(), workOrder.getStructureName(), new PlacementSettings(), true);
+        if (!wrapper.hasBluePrint())
+        {
+            setCorners(getPosition(), getPosition());
+            return;
+        }
+
         final Tuple<BlockPos, BlockPos> corners
           = ColonyUtils.calculateCorners(this.getPosition(),
           colony.getWorld(),
@@ -1174,10 +1124,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
     {
         final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep = new HashMap<>(keepX);
-        if (keepFood())
-        {
-            toKeep.put(ItemStackUtils.CAN_EAT, new Tuple<>(getBuildingLevel() * 2, true));
-        }
 
         final Map<ItemStorage, Tuple<Integer, Boolean>> requiredItems = new HashMap<>();
         final Collection<IRequestResolver<?>> resolvers = getResolvers();
@@ -1392,13 +1338,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     public void registerBlockPosition(@NotNull final BlockState blockState, @NotNull final BlockPos pos, @NotNull final World world)
     {
         super.registerBlockPosition(blockState, pos, world);
-        for (final IBuildingModule module : modules.values())
-        {
-            if (module instanceof IModuleWithExternalBlocks)
-            {
-                ((IModuleWithExternalBlocks) module).onBlockPlacedInBuilding(blockState, pos, world);
-            }
-        }
+        getModules(IModuleWithExternalBlocks.class).forEach(module -> module.onBlockPlacedInBuilding(blockState, pos, world));
     }
 
     /**

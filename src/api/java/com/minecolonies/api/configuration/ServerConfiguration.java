@@ -1,10 +1,12 @@
 package com.minecolonies.api.configuration;
 
+import com.minecolonies.api.util.constant.NameConstants;
+import net.minecraftforge.common.ForgeConfigSpec;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import com.minecolonies.api.util.constant.NameConstants;
-import net.minecraftforge.common.ForgeConfigSpec;
+
 import static com.minecolonies.api.util.constant.Constants.*;
 
 /**
@@ -56,7 +58,9 @@ public class ServerConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.DoubleValue  foodModifier;
     public final ForgeConfigSpec.IntValue     diseaseModifier;
     public final ForgeConfigSpec.BooleanValue forceLoadColony;
+    public final ForgeConfigSpec.IntValue     colonyLoadStrictness;
     public final ForgeConfigSpec.IntValue     badVisitorsChance;
+    public final ForgeConfigSpec.BooleanValue generateSupplyLoot;
 
     /*  --------------------------------------------------------------------------- *
      *  ------------------- ######## Command settings ######## ------------------- *
@@ -195,6 +199,7 @@ public class ServerConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> ironarmour;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> steelarmour;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> diamondskin;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> platearmor;
 
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> regeneration;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> avoid;
@@ -253,6 +258,7 @@ public class ServerConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> athlete;
 
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> stamina;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> ambition;
 
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> resistance;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> resilience;
@@ -409,7 +415,9 @@ public class ServerConfiguration extends AbstractConfiguration
         foodModifier = defineDouble(builder, "foodmodifier", 1.0, 0.1, 100);
         diseaseModifier = defineInteger(builder, "diseasemodifier", 5, 1, 100);
         forceLoadColony = defineBoolean(builder, "forceloadcolony", false);
+        colonyLoadStrictness = defineInteger(builder, "colonyloadstrictness", 3, 1, 15);
         badVisitorsChance = defineInteger(builder, "badvisitorchance", 2, 1, 100);
+        generateSupplyLoot = defineBoolean(builder, "generatesupplyloot", true);
 
         swapToCategory(builder, "commands");
         
@@ -934,6 +942,10 @@ public class ServerConfiguration extends AbstractConfiguration
           Collections.singletonList("minecraft:diamond*64"),
           s -> s instanceof String);
 
+        this.platearmor = defineList(builder, "platearmor",
+            Collections.singletonList("minecraft:iron_ingot*32"),
+            s -> s instanceof String);
+
         this.regeneration = defineList(builder, "regeneration",
           Collections.singletonList("minecraft:emerald*1"),
           s -> s instanceof String);
@@ -1087,6 +1099,10 @@ public class ServerConfiguration extends AbstractConfiguration
         this.stamina = defineList(builder, "stamina",
           Collections.singletonList("minecraft:carrot*1"),
           s -> s instanceof String);
+
+        this.ambition = defineList(builder, "ambition",
+                Collections.singletonList("minecraft:diamond*1"),
+                s -> s instanceof String);
 
         this.resistance = defineList(builder, "resistance",
           Collections.singletonList("minecraft:golden_apple*1"),

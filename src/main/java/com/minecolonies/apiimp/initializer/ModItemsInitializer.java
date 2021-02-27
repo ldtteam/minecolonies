@@ -112,6 +112,11 @@ public final class ModItemsInitializer
         ModItems.pirateLegs_2 = new ItemPirateGear("pirate_legs", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_2, EquipmentSlotType.LEGS, new Item.Properties());
         ModItems.pirateBoots_2 = new ItemPirateGear("pirate_shoes", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_2, EquipmentSlotType.FEET, new Item.Properties());
 
+        ModItems.plateArmorHelmet = new ItemPlateArmor("plate_armor_helmet", ModCreativeTabs.MINECOLONIES, ItemPlateArmor.PLATE_ARMOR, EquipmentSlotType.HEAD, new Item.Properties());
+        ModItems.plateArmorChest = new ItemPlateArmor("plate_armor_chest", ModCreativeTabs.MINECOLONIES, ItemPlateArmor.PLATE_ARMOR, EquipmentSlotType.CHEST, new Item.Properties());
+        ModItems.plateArmorLegs = new ItemPlateArmor("plate_armor_legs", ModCreativeTabs.MINECOLONIES, ItemPlateArmor.PLATE_ARMOR, EquipmentSlotType.LEGS, new Item.Properties());
+        ModItems.plateArmorBoots = new ItemPlateArmor("plate_armor_boots", ModCreativeTabs.MINECOLONIES, ItemPlateArmor.PLATE_ARMOR, EquipmentSlotType.FEET, new Item.Properties());
+
         registry.register(ModItems.supplyChest);
         registry.register(ModItems.permTool);
         registry.register(ModItems.scepterGuard);
@@ -147,6 +152,11 @@ public final class ModItemsInitializer
         registry.register(ModItems.pirateChest_2);
         registry.register(ModItems.pirateLegs_2);
         registry.register(ModItems.pirateBoots_2);
+
+        registry.register(ModItems.plateArmorHelmet);
+        registry.register(ModItems.plateArmorChest);
+        registry.register(ModItems.plateArmorLegs);
+        registry.register(ModItems.plateArmorBoots);
 
         registry.register(ModItems.santaHat);
         registry.register(ModItems.irongate);

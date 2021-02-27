@@ -24,6 +24,9 @@
   "minecolonies.config.disablecitizenvoices": "Citizen Sounds",
   "minecolonies.config.disablecitizenvoices.comment": "Disable citizen voices.",
 
+  "minecolonies.config.neighborbuildingrendering": "Neighbor Building Rendering",
+  "minecolonies.config.neighborbuildingrendering.comment": "By default, when placing a schematic near other buildings, the already-placed buildings will show as if they were at level 5 and have a blue outline around them. You can disable that by setting this to false.",
+
   "minecolonies.config.diseasemodifier": "Disease Modifier",
   "minecolonies.config.diseasemodifier.comment": "How common diseases are. 1 = Very common, 100 = extremely rare.",
   "minecolonies.config.diseases": "Diseases",
@@ -31,11 +34,14 @@
   "minecolonies.config.configliststudyitems": "List of Study Items",
   "minecolonies.config.configliststudyitems.comment": "Items consumed by citizens in the Library.",
 
-  "minecolonies.config.generatesupplyloot": "Supply loot",
-  "minecolonies.config.generatesupplyloot.comment": "Whether to generate supply ship/camps in chests occasionally.",
+  "minecolonies.config.generatesupplyloot": "Supply Loot",
+  "minecolonies.config.generatesupplyloot.comment": "Whether to generate supply ships and camps in loot chests.",
 
-  "minecolonies.config.forceloadcolony": "Force Load Colony",
-  "minecolonies.config.forceloadcolony.comment": "If part of the colony is loaded by an owner/officer, the entire colony should be kept loaded.",
+  "minecolonies.config.forceloadcolony": "Chunk Load Colony",
+  "minecolonies.config.forceloadcolony.comment": "If part of the colony is loaded by an owner/officer, should the colony be kept loaded? (Set how many chunks are loaded with the \"Colony Chunk Loading Strictness\" option.)",
+
+  "minecolonies.config.colonyLoadStrictness": "Colony Chunk Loading Strictness",
+  "minecolonies.config.colonyLoadStrictness.comment": "This controls how many chunks are loaded with the \"Chunk Load Colony\" option. The higher this value, the less chunks will be loaded. (The innermost chunks will be loaded first.) 1 = load all claimed chunks.",
 
   "minecolonies.config.badvisitorchance": "Bad Recruitment Chance",
   "minecolonies.config.badvisitorchance.comment": "Chance to get an evil Tavern visitor that will run off with the resources you give them. This is a %.",
@@ -460,6 +466,7 @@
   "com.minecolonies.coremod.gui.workerhuts.tavern": "Tavern",
   "com.minecolonies.coremod.gui.workerhuts.buildershut": "Builder's Hut",
   "com.minecolonies.coremod.gui.workerhuts.lumberjackhut": "Forester's Hut",
+  "com.minecolonies.coremod.gui.workerhuts.mysticalsite": "Mystical Site",
 
   "com.minecolonies.coremod.gui.workerhuts.minerminenode": "Mine Level",
   "com.minecolonies.coremod.gui.workerhuts.minerguards": "Guards",
@@ -468,7 +475,7 @@
 
   "com.minecolonies.coremod.gui.buildtool.wrongcolony": "The building was picked up in colony %d. You can only place it in that colony now!",
   "com.minecolonies.coremod.gui.buildtool.nohutininventory": "The hut block was not found in your inventory.",
-    "com.minecolonies.coremod.buildtool.indestructible": "Failed to place the hut block! The block at its intended position is indestructible!",
+  "com.minecolonies.coremod.buildtool.indestructible": "Failed to place the hut block! The block at its intended position is indestructible!",
 
   "com.minecolonies.coremod.job.lumberjack": "Forester",
   "com.minecolonies.coremod.job.swineherder": "Swineherd",
@@ -1024,6 +1031,11 @@
   "item.minecolonies.pirate_leggins": "Pirate Leggings",
   "item.minecolonies.pirate_shoes": "Pirate Shoes",
 
+  "item.minecolonies.plate_armor_chest": "Plate Armor Chestplate",
+  "item.minecolonies.plate_armor_legs": "Plate Armor Pants",
+  "item.minecolonies.plate_armor_boots": "Plate Armor Boots",
+  "item.minecolonies.plate_armor_helmet": "Plate Armor Helmet",
+
   "item.minecolonies.barbarianegg": "Barbarian Spawn Egg",
   "item.minecolonies.barbarcheregg": "Archer Barbarian Spawn Egg",
   "item.minecolonies.barbchiefegg": "Chief Barbarian Spawn Egg",
@@ -1254,6 +1266,10 @@
   "advancements.minecolonies.check_out_guide.description": "Right-click the Builder's Hut to see how things work",
   "advancements.minecolonies.build.herders.title": "Unherd Of",
   "advancements.minecolonies.build.herders.description": "Build one of every herder hut. Remember to bring animals to their huts!",
+  "advancements.minecolonies.build.mysticalsite.title": "Candy for your eyes",
+  "advancements.minecolonies.build.mysticalsite.description": "A mystical site may be pointless. It will only make your citizen proud. But you want one, so you should research and build one!",
+  "advancements.minecolonies.build.mysticalsite_5.title": "I can see my house from here!",
+  "advancements.minecolonies.build.mysticalsite_5.description": "Upgrade your mystical site to the max level. Become the envy of the whole world!",
 
   "advancements.minecolonies.max_fields.title": "Green Thumbs",
   "advancements.minecolonies.max_fields.description": "Assign the maximum number of fields to a single Farmer",
@@ -1558,6 +1574,7 @@
   "com.minecolonies.coremod.gui.townhall.happiness.security": "Guards in the Colony",
   "com.minecolonies.coremod.gui.townhall.happiness.social": "Social Factor",
   "com.minecolonies.coremod.gui.townhall.happiness.saturation": "Hunger",
+  "com.minecolonies.coremod.gui.townhall.happiness.mysticalsite": "Mystical Sites",
 
   "com.minecolonies.coremod.gui.townhall.happiness.damage": "Injuries",
   "com.minecolonies.coremod.gui.townhall.happiness.death": "Deaths",
@@ -1822,6 +1839,8 @@
   "block.minecolonies.blockhutuniversity.name": "University",
   "block.minecolonies.blockhutwarehouse": "Warehouse",
   "block.minecolonies.blockhutwarehouse.name": "Warehouse",
+  "block.minecolonies.blockhutmysticalsite": "Mystical Site",
+  "block.minecolonies.blockhutmysticalsite.name": "Mystical Site",
   "block.minecolonies.blockpostbox": "Postbox",
   "block.minecolonies.blockstash": "Stash",
   "block.minecolonies.blockstash.name": "Stash",

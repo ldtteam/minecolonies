@@ -112,8 +112,8 @@ public class RecipeStorage implements IRecipeStorage
         this.cleanedInput = new ArrayList<>();
         this.cleanedInput.addAll(this.calculateCleanedInput());
         this.primaryOutput = primaryOutput;
-        this.alternateOutputs = altOutputs != null ? altOutputs : ImmutableList.of();
-        this.secondaryOutputs = secOutputs != null ? secOutputs.stream().filter(i -> i.getItem() != ModItems.buildTool).collect(Collectors.toList()): this.calculateSecondaryOutputs();
+        this.alternateOutputs = altOutputs != null && !altOutputs.isEmpty() ? altOutputs : ImmutableList.of();
+        this.secondaryOutputs = secOutputs != null && !secOutputs.isEmpty() ? secOutputs.stream().filter(i -> i.getItem() != ModItems.buildTool).collect(Collectors.toList()): this.calculateSecondaryOutputs();
         this.gridSize = gridSize;
         this.intermediate = intermediate;
         this.token = token;
