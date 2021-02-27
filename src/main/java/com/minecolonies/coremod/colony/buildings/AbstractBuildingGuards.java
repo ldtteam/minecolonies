@@ -679,6 +679,11 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         tempNextPatrolPoint = pos;
     }
 
+    public BlockPos getMinePos()
+    {
+        return minePos;
+    }
+
     /**
      * The client view for the Guard building.
      */

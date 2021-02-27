@@ -1,18 +1,19 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.ldtteam.blockout.views.Window;
-import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.*;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.client.gui.WindowHutMiner;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
@@ -32,7 +33,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.*;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
@@ -333,6 +336,13 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         {
             buf.writeInt(level.getNumberOfBuiltNodes());
             buf.writeInt(level.getDepth());
+        }
+
+        List<ICitizenData> guards = this.getGuards();
+        buf.writeInt(guards.size());
+        for (ICitizenData guard : guards)
+        {
+            buf.writeInt(guard.getId());
         }
     }
 
@@ -647,6 +657,27 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         }
     }
 
+    public List<ICitizenData> getGuards()
+    {
+        final List<ICitizenData> guards = new ArrayList<>();
+        final Collection<IBuilding> buildings = colony.getBuildingManager().getBuildings().values();
+        for (final IBuilding building : buildings)
+        {
+            if (building instanceof AbstractBuildingGuards)
+            {
+                final AbstractBuildingGuards guardbuilding = (AbstractBuildingGuards) building;
+                if (guardbuilding.getTask() == GuardTask.MINE)
+                {
+                    for (final ICitizenData guard : guardbuilding.getAssignedCitizen())
+                    {
+                        guards.add(guard);
+                    }
+                }
+            }
+        }
+        return guards;
+    }
+
     /**
      * Provides a view of the miner building class.
      */
@@ -660,6 +691,8 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
          * The level the miner currently works on.
          */
         public int                           current;
+
+        public List<ICitizenDataView> guards;
 
         /**
          * Public constructor of the view, creates an instance of it.
@@ -690,6 +723,14 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
             for (int i = 0; i < size; i++)
             {
                 levelsInfo.add(i, new Tuple<>(buf.readInt(), buf.readInt()));
+            }
+            guards = new ArrayList<>();
+            final int guardsSize = buf.readInt();
+            for (int i = 0; i < guardsSize; i++)
+            {
+                final Integer citizenId = buf.readInt();
+                final ICitizenDataView citizen = getColony().getCitizen(citizenId);
+                guards.add(citizen);
             }
         }
     }

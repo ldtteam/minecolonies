@@ -462,6 +462,7 @@
   "com.minecolonies.coremod.gui.workerhuts.lumberjackhut": "Forester's Hut",
 
   "com.minecolonies.coremod.gui.workerhuts.minerminenode": "Mine Level",
+  "com.minecolonies.coremod.gui.workerhuts.minerguards": "Guards",
   "com.minecolonies.coremod.gui.workerhuts.buildtype": "Building Style:",
   "com.minecolonies.coremod.gui.workerhuts.workerlevel": "Worker Level: %s",
 
