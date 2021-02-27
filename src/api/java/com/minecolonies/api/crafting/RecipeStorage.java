@@ -9,7 +9,6 @@ import com.minecolonies.api.crafting.registry.RecipeTypeEntry;
 import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
@@ -216,15 +215,12 @@ public class RecipeStorage implements IRecipeStorage
      */
     private void calculateTools()
     {
-        Log.getLogger().info("Calculating tools for: " + getPrimaryOutput().getDisplayName().getString());
         for(ItemStorage item : getCleanedInput())
         {
             for(ItemStack result: getSecondaryOutputs(false))
             {
-                Log.getLogger().info("Checking " + result.getDisplayName().getString() + " and it is damageable:" + result.isDamageable());
                 if(ItemStackUtils.compareItemStacksIgnoreStackSize(item.getItemStack(), result, false, true) && result.isDamageable())
                 {
-                    Log.getLogger().info("Adding Tool: " + result.getDisplayName().getString() + " to " + getPrimaryOutput().getDisplayName().getString());
                     tools.add(result);
                     secondaryOutputs.remove(result);
                     break;
@@ -618,7 +614,6 @@ public class RecipeStorage implements IRecipeStorage
         final List<ItemStack> results = new ArrayList<>();
         if(includeTools && tools.size() > 0)
         {
-            Log.getLogger().info("Adding tools: " + tools.size() + " for " + getPrimaryOutput().getDisplayName().getString());
             results.addAll(tools);
         }
         results.addAll(secondaryOutputs);
