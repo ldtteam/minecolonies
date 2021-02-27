@@ -11,6 +11,7 @@ import com.ldtteam.blockout.views.View;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.CompactColonyReference;
+import com.minecolonies.api.colony.ICitizen;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
@@ -68,6 +69,11 @@ import static com.minecolonies.coremod.client.gui.WindowHutBuilder.BLACK;
 @SuppressWarnings("PMD.ExcessiveClassLength")
 public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
 {
+    /**
+     * Citizen name comparator.
+     */
+    private static final Comparator<ICitizenDataView> COMPARE_BY_NAME = Comparator.comparing(ICitizen::getName);
+
     /**
      * List of workOrders.
      */
@@ -362,6 +368,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
     {
         citizens.clear();
         citizens.addAll(townHall.getColony().getCitizens().values());
+        citizens.sort(COMPARE_BY_NAME);
     }
 
     /**
