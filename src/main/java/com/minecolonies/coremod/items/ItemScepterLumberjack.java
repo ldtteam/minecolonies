@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLumberjack;
 import com.minecolonies.coremod.entity.ai.citizen.lumberjack.EntityAIWorkLumberjack;
 import net.minecraft.entity.player.PlayerEntity;
@@ -110,12 +111,10 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies
         final BlockPos hutPos = BlockPosUtil.read(compound, TAG_POS);
         final IBuilding hut = colony.getBuildingManager().getBuilding(hutPos);
 
-        final AbstractFilterableListBuilding abstractBuilding = (AbstractFilterableListBuilding) hut;
+        final AbstractBuildingWorker abstractBuilding = (AbstractBuildingWorker) hut;
 
         final BuildingLumberjack lumberjackBuilding = (BuildingLumberjack) abstractBuilding;
-
         lumberjackBuilding.setRestrictedArea(startRestriction, endRestriction);
-
         player.inventory.removeStackFromSlot(player.inventory.currentItem);
     }
 

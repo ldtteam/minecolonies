@@ -332,8 +332,6 @@ public final class TranslationConstants
     @NonNls
     public static final String UNABLE_TO_ADD_RECIPE_MESSAGE                                         = "com.minecolonies.coremod.recipe.unable";
     @NonNls
-    public static final String BAKER_HAS_NO_RECIPES                                                 = "com.minecolonies.coremod.bakery.norecipe";
-    @NonNls
     public static final String FERTLIZER                                                            = "com.minecolonies.coremod.request.fertilizer";
     @NonNls
     public static final String FURNACE_USER_NO_FUEL                                                 = "com.minecolonies.coremod.furnaceuser.nofuel";
