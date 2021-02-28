@@ -95,7 +95,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
     /**
      * The backup factor of the path.
      */
-    private int pathBackupFactor = 1;
+    protected int pathBackupFactor = 1;
 
     /**
      * Creates the abstract part of the AI. Always use this constructor!
