@@ -5,6 +5,7 @@ import com.ldtteam.blockout.controls.*;
 import com.ldtteam.blockout.views.ZoomDragView;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
+import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.research.*;
 import com.minecolonies.api.research.util.ResearchState;
@@ -825,7 +826,12 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             if (requirement instanceof BuildingResearchRequirement)
             {
                 final Item item;
-                if (IMinecoloniesAPI.getInstance().getBuildingRegistry().containsKey(
+                //TODO Houses use 'citizen' for schematics, but 'home' for ForgeRegistry purposes.  Consider fixing for 1.17
+                if(((BuildingResearchRequirement) requirement).getBuilding().equals("citizen"))
+                {
+                    item = ModBuildings.home.getBuildingBlock().asItem();
+                }
+                else if (IMinecoloniesAPI.getInstance().getBuildingRegistry().containsKey(
                   new ResourceLocation(Constants.MOD_ID, ((BuildingResearchRequirement) requirement).getBuilding())))
                 {
                     item = IMinecoloniesAPI.getInstance().getBuildingRegistry().getValue(

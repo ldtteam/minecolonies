@@ -106,15 +106,15 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         effects.add(new ResearchEffect(RETREAT).setTranslatedName("Guards Flee Under 20% HP"));
         effects.add(new ResearchEffect(SHIELD_USAGE).setTranslatedName("Knights Unlock Shield Use"));
         effects.add(new ResearchEffect(SLEEP_LESS).setTranslatedName("Guards Need %3$s%% Less Sleep"));
-        effects.add(new ResearchEffect(KNIGHT_WHIRLWIND).setTranslatedName("Knights Learn Special Attack Which Damages and Knocks Back Nearby Enemies"));
-        effects.add(new ResearchEffect(WORKING_IN_RAIN).setTranslatedName("Citizens Work In Rain"));
+        effects.add(new ResearchEffect(KNIGHT_WHIRLWIND).setTranslatedName("Knights Learn Special Attack That Damages and Knocks Back Nearby Enemies"));
+        effects.add(new ResearchEffect(WORKING_IN_RAIN).setTranslatedName("Citizens Work in Rain"));
 
         // Building-focused unlocks are derived from the block hut name.  Do not manually add ResourceLocations as a string, as some building blocks have surprising names.
         effects.add(new ResearchEffect(ModBuildings.archery.getBuildingBlock()).setTranslatedName("Unlocks Archery"));
         effects.add(new ResearchEffect(ModBuildings.barracks.getBuildingBlock()).setTranslatedName("Unlocks Barracks"));
         effects.add(new ResearchEffect(ModBuildings.blacksmith.getBuildingBlock()).setTranslatedName("Unlocks Blacksmith"));
         effects.add(new ResearchEffect(ModBuildings.combatAcademy.getBuildingBlock()).setTranslatedName("Unlocks Combat Academy"));
-        effects.add(new ResearchEffect(ModBuildings.composter.getBuildingBlock()).setTranslatedName("Unlocks Composter"));
+        effects.add(new ResearchEffect(ModBuildings.composter.getBuildingBlock()).setTranslatedName("Unlocks Composter's Hut"));
         effects.add(new ResearchEffect(ModBuildings.concreteMixer.getBuildingBlock()).setTranslatedName("Unlocks Concrete Mixer"));
         effects.add(new ResearchEffect(ModBuildings.crusher.getBuildingBlock()).setTranslatedName("Unlocks Crusher"));
         effects.add(new ResearchEffect(ModBuildings.dyer.getBuildingBlock()).setTranslatedName("Unlocks Dyer"));
@@ -322,7 +322,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
 
         final Research rails = new Research(new ResourceLocation(Constants.MOD_ID, "civilian/rails"), CIVIL).setParentResearch(keen)
                                  .setTranslatedName("Rails")
-                                 .setTranslatedSubtitle("final Research is progressing right on track.")
+                                 .setTranslatedSubtitle("Research is progressing right on track.")
                                  .setSortOrder(3)
                                  .setIcon(Items.DETECTOR_RAIL)
                                  .addBuildingRequirement(ModBuildings.DELIVERYMAN_ID, 3)
