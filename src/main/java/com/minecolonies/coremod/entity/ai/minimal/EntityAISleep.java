@@ -3,7 +3,6 @@ package com.minecolonies.coremod.entity.ai.minimal;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.IBuildingBedProvider;
 import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.entity.ai.Status;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
@@ -17,7 +16,6 @@ import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.modules.BedHandlingModule;
-import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.client.SleepingParticleMessage;
 import net.minecraft.block.BedBlock;
@@ -358,7 +356,7 @@ public class EntityAISleep extends Goal
                 if (colony != null && colony.getBuildingManager().getBuilding(citizen.getHomePosition()) != null)
                 {
                     final IBuilding hut = colony.getBuildingManager().getBuilding(citizen.getHomePosition());
-                    if (hut.hasModule(LivingBuildingModule.class) || hut instanceof IBuildingBedProvider)
+                    if (hut.hasModule(BedHandlingModule.class))
                     {
                         setBedOccupied(false);
                     }

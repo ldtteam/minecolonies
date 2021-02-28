@@ -19,16 +19,12 @@ import com.minecolonies.coremod.client.gui.WindowHutCrusher;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.jobs.JobCrusher;
 import com.minecolonies.coremod.network.messages.server.colony.building.crusher.CrusherSetModeMessage;
-import com.minecolonies.coremod.research.ResearchInitializer;
-import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
-import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
-import net.minecraft.entity.player.PlayerEntity;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -99,9 +95,8 @@ public class BuildingCrusher extends AbstractBuildingCrafter
     private void loadCrusherMode()
     {
         this.crusherRecipes.clear();
-        final UnlockAbilityResearchEffect researchEffect = getColony().getResearchManager().getResearchEffects().getEffect(CRUSHING_11, UnlockAbilityResearchEffect.class);
-        final boolean oneOne = researchEffect != null && researchEffect.getEffect();
 
+        oneByOne = getColony().getResearchManager().getResearchEffects().getEffectStrength(CRUSHING_11) > 0;
         for (final Map.Entry<ItemStorage, ItemStorage> mode : IColonyManager.getInstance().getCompatibilityManager().getCrusherModes().entrySet())
         {
             if (this.crusherMode == null)
@@ -109,7 +104,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
                 this.crusherMode = mode.getKey();
             }
             final ItemStack input = mode.getKey().getItemStack();
-            if (oneOne)
+            if (oneByOne)
             {
                 input.setCount(1);
             }
@@ -254,7 +249,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
             this.crusherMode = new ItemStorage(ItemStack.read(compound.getCompound(TAG_CRUSHER_MODE)));
         }
 
-        this.oneByOne = compound.getBoolean(CRUSHING_11);
+        this.oneByOne = compound.getBoolean(TAG_CRUSHER_RATIO);
     }
 
     @Override
@@ -270,7 +265,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
             compound.put(TAG_CRUSHER_MODE, crusherModeNBT);
         }
 
-        compound.putBoolean(CRUSHING_11, oneByOne);
+        compound.putBoolean(TAG_CRUSHER_RATIO, oneByOne);
         return compound;
     }
 
@@ -278,10 +273,8 @@ public class BuildingCrusher extends AbstractBuildingCrafter
     public void serializeToView(@NotNull final PacketBuffer buf)
     {
         super.serializeToView(buf);
-        final UnlockAbilityResearchEffect researchEffect = getColony().getResearchManager().getResearchEffects().getEffect(CRUSHING_11, UnlockAbilityResearchEffect.class);
-        final boolean oneOne = researchEffect != null && researchEffect.getEffect();
 
-        if (crusherRecipes.isEmpty() || oneOne && !oneByOne)
+        if (crusherRecipes.isEmpty() || !oneByOne && getColony().getResearchManager().getResearchEffects().getEffectStrength(CRUSHING_11) > 0)
         {
             loadCrusherMode();
         }
@@ -308,18 +301,6 @@ public class BuildingCrusher extends AbstractBuildingCrafter
     public BuildingEntry getBuildingRegistryEntry()
     {
         return ModBuildings.crusher;
-    }
-
-    @Override
-    public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
-    {
-        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect(ResearchInitializer.CRUSHER_RESEARCH, UnlockBuildingResearchEffect.class);
-        if (effect == null)
-        {
-            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"), player.getUniqueID());
-            return;
-        }
-        super.requestUpgrade(player, builder);
     }
 
     /**

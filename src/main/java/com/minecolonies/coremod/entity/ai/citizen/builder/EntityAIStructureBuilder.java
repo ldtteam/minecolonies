@@ -4,6 +4,7 @@ import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.entity.pathfinding.RandomPathResult;
 import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.utils.BuilderBucket;
@@ -21,7 +22,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -283,50 +283,32 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     }
 
     @Override
-    public boolean walkToConstructionSite(final BlockPos targetPos)
+    public boolean walkToConstructionSite(final BlockPos currentBlock)
     {
-        if (workFrom == null || MathUtils.twoDimDistance(targetPos, workFrom) < MIN_DISTANCE || MathUtils.twoDimDistance(targetPos, workFrom) > ACCEPTANCE_DISTANCE)
+        if (workFrom == null)
         {
-            workFrom = getWorkingPosition(targetPos);
+            workFrom = findRandomPositionToWalkTo(5, currentBlock);
+            return false;
         }
 
-        return worker.isWorkerAtSiteWithMove(workFrom, MAX_DISTANCE) || MathUtils.twoDimDistance(worker.getPosition(), workFrom) <= ACCEPTANCE_DISTANCE;
+        if (walkToBlock(workFrom))
+        {
+            return false;
+        }
+
+        if (BlockPosUtil.getDistance2D(currentBlock, workFrom) > 10)
+        {
+            workFrom = null;
+            return false;
+        }
+
+        return true;
     }
 
-    /**
-     * Calculates the working position.
-     * <p>
-     * Takes a min distance from width and length.
-     * <p>
-     * Then finds the floor level at that distance and then check if it does contain two air levels.
-     *
-     * @param targetPosition the position to work at.
-     * @return BlockPos position to work from.
-     */
     @Override
-    public BlockPos getWorkingPosition(final BlockPos targetPosition)
+    protected RandomPathResult getRandomNavigationPath(final int range, final BlockPos pos)
     {
-        if (job.getWorkOrder() != null)
-        {
-            final BlockPos schemPos = job.getWorkOrder().getBuildingLocation();
-            final int yStart = targetPosition.getY() > schemPos.getY() ? targetPosition.getY() : schemPos.getY();
-            final int yEnd = targetPosition.getY() < schemPos.getY() ? Math.max(targetPosition.getY(), schemPos.getY() - MAX_DEPTH_DIFFERENCE) : schemPos.getY();
-            final Direction direction = BlockPosUtil.getXZFacing(worker.getPosition(), targetPosition).getOpposite();
-            for (int i = MIN_DISTANCE + 1; i < MAX_DISTANCE; i++)
-            {
-                for (int y = yStart; y >= yEnd; y--)
-                {
-                    final BlockPos pos = targetPosition.offset(direction, i);
-                    final BlockPos basePos = new BlockPos(pos.getX(), y, pos.getZ());
-                    if (EntityUtils.checkForFreeSpace(world, basePos))
-                    {
-                        return basePos;
-                    }
-                }
-            }
-            return schemPos.up();
-        }
-        return targetPosition;
+        return worker.getNavigator().moveToRandomPosAroundX(range, 1.0D, pos);
     }
 
     @Override

@@ -5,9 +5,9 @@ import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenItemHandler;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.client.BlockParticleEffectMessage;
-import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -202,7 +202,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
               SoundCategory.BLOCKS,
               block.getSoundType(blockState, CompatibilityUtils.getWorldFromCitizen(citizen), blockPos, citizen).getVolume(),
               block.getSoundType(blockState, CompatibilityUtils.getWorldFromCitizen(citizen), blockPos, citizen).getPitch());
-            CompatibilityUtils.getWorldFromCitizen(citizen).removeBlock(blockPos, false);
+            WorldUtil.removeBlock(CompatibilityUtils.getWorldFromCitizen(citizen), blockPos, false);
 
             damageItemInHand(citizen.getActiveHand(), 1);
         }
@@ -242,11 +242,10 @@ public class CitizenItemHandler implements ICitizenItemHandler
             return;
         }
 
-        final MultiplierModifierResearchEffect effect =
-          citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(TOOL_DURABILITY, MultiplierModifierResearchEffect.class);
-        if (effect != null)
+        //Check if the effect exists first, to avoid unnecessary calls to random number generator.
+        if(citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(TOOL_DURABILITY) > 0)
         {
-            if (citizen.getRandom().nextDouble() > (1 / (1 + effect.getEffect())))
+            if (citizen.getRandom().nextDouble() > (1 / (1 + citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(TOOL_DURABILITY))))
             {
                 return;
             }
@@ -330,12 +329,9 @@ public class CitizenItemHandler implements ICitizenItemHandler
                 continue;
             }
 
-            final MultiplierModifierResearchEffect
-              effect = citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(ARMOR_DURABILITY, MultiplierModifierResearchEffect.class);
-
-            if(effect != null)
+            if(citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(ARMOR_DURABILITY) > 0)
             {
-                if (citizen.getRandom().nextDouble() > (1 / (1 + effect.getEffect())))
+                if (citizen.getRandom().nextDouble() > (1 / (1 + citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(ARMOR_DURABILITY))))
                 {
                     return;
                 }

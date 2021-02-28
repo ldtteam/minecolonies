@@ -14,11 +14,7 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.coremod.client.gui.WindowHutCrafter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.jobs.JobStonemason;
-import com.minecolonies.coremod.research.ResearchInitializer;
-import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -124,18 +120,6 @@ public class BuildingStonemason extends AbstractBuildingCrafter
     public BuildingEntry getBuildingRegistryEntry()
     {
         return ModBuildings.stoneMason;
-    }
-
-    @Override
-    public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
-    {
-        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect(ResearchInitializer.STONEMASON_RESEARCH, UnlockBuildingResearchEffect.class);
-        if (effect == null)
-        {
-            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"), player.getUniqueID());
-            return;
-        }
-        super.requestUpgrade(player, builder);
     }
 
     /**

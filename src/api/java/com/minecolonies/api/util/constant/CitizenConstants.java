@@ -13,22 +13,22 @@ public final class CitizenConstants
     /**
      * The middle saturation point. smaller than this = bad and bigger than this = good.
      */
-    public static final int AVERAGE_SATURATION = 5;
+    public static final int AVERAGE_SATURATION = 10;
 
     /**
      * Lower than this is low saturation.
      */
-    public static final int LOW_SATURATION = 3;
+    public static final int LOW_SATURATION = 6;
 
     /**
      * Higher than this is high saturation.
      */
-    public static final int HIGH_SATURATION = 7;
+    public static final int HIGH_SATURATION = 14;
 
     /**
      * Full saturation amount.
      */
-    public static final double FULL_SATURATION = 10;
+    public static final double FULL_SATURATION = 20;
 
     /**
      * The movement speed for the citizen to run away.

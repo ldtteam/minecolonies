@@ -19,10 +19,11 @@ import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.fluid.Fluids;
 import net.minecraft.fluid.FluidState;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathPoint;
+import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.state.properties.Half;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -51,14 +52,39 @@ public abstract class AbstractPathJob implements Callable<Path>
     public static Set<Node> lastDebugNodesNotVisited;
     @Nullable
     public static Set<Node>          lastDebugNodesPath;
+
+    /**
+     * Start position to path from.
+     */
     @NotNull
-    protected final  BlockPos           start;
+    protected final BlockPos start;
+
+    /**
+     * The pathing cache.
+     */
     @NotNull
-    protected final  IWorldReader       world;
-    protected final  PathResult         result;
-    private final    int                maxRange;
-    private final    Queue<Node>        nodesOpen            = new PriorityQueue<>(500);
-    private final    Map<Integer, Node> nodesVisited         = new HashMap<>();
+    protected final IWorldReader world;
+
+    /**
+     * The result of the path calculation.
+     */
+    protected final PathResult result;
+
+    /**
+     * Max range used to calculate the number of nodes we visit (square of maxrange).
+     */
+    protected final int maxRange;
+
+    /**
+     * Queue of all open nodes.
+     */
+    private final Queue<Node> nodesOpen = new PriorityQueue<>(500);
+
+    /**
+     * Queue of all the visited nodes.
+     */
+    private final Map<Integer, Node> nodesVisited = new HashMap<>();
+
     //  Debug Rendering
     protected        boolean            debugDrawEnabled     = false;
     @Nullable
@@ -361,6 +387,11 @@ public abstract class AbstractPathJob implements Callable<Path>
         {
             //  Tax the cost for jumping, dropping
             cost *= pathingOptions.jumpDropCost * Math.abs(dPos.getY());
+        }
+
+        if (world.getBlockState(blockPos).hasProperty(BlockStateProperties.OPEN))
+        {
+            cost *= pathingOptions.traverseToggleAbleCost;
         }
 
         if (onPath)
@@ -986,7 +1017,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         for (int i = 2; i <= 10; i++)
         {
             final BlockState below = world.getBlockState(pos.down(i));
-            if (isWalkableSurface(below, pos) == SurfaceType.WALKABLE && i <= 4 || below.getMaterial().isLiquid())
+            if (isWalkableSurface(below, pos) == SurfaceType.WALKABLE && i <= 3 || below.getMaterial().isLiquid())
             {
                 //  Level path
                 return pos.getY() - i + 1;

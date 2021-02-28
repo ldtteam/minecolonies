@@ -9,8 +9,9 @@ import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.blockout.views.SwitchView;
 import com.ldtteam.blockout.views.View;
 import com.ldtteam.structurize.util.LanguageHandler;
-import com.minecolonies.api.IMinecoloniesAPI;
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.CompactColonyReference;
+import com.minecolonies.api.colony.ICitizen;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
@@ -39,7 +40,6 @@ import com.minecolonies.coremod.commands.ClickEventWithExecutable;
 import com.minecolonies.coremod.network.messages.PermissionsMessage;
 import com.minecolonies.coremod.network.messages.server.colony.*;
 import com.minecolonies.coremod.network.messages.server.colony.citizen.RecallSingleCitizenMessage;
-import com.minecolonies.coremod.research.AdditionModifierResearchEffect;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
@@ -56,7 +56,7 @@ import java.text.DecimalFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.minecolonies.api.research.util.ResearchConstants.CAP;
+import static com.minecolonies.api.research.util.ResearchConstants.CITIZEN_CAP;
 import static com.minecolonies.api.util.constant.Constants.TICKS_FOURTY_MIN;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
@@ -68,6 +68,11 @@ import static com.minecolonies.coremod.client.gui.WindowHutBuilder.BLACK;
 @SuppressWarnings("PMD.ExcessiveClassLength")
 public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
 {
+    /**
+     * Citizen name comparator.
+     */
+    private static final Comparator<ICitizenDataView> COMPARE_BY_NAME = Comparator.comparing(ICitizen::getName);
+
     /**
      * List of workOrders.
      */
@@ -362,6 +367,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
     {
         citizens.clear();
         citizens.addAll(townHall.getColony().getCitizens().values());
+        citizens.sort(COMPARE_BY_NAME);
     }
 
     /**
@@ -594,8 +600,17 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
 
         findPaneOfTypeByID(HAPPINESS_LABEL, Text.class).setText(roundedHappiness);
         final int citizensSize = townHall.getColony().getCitizens().size();
-        final AdditionModifierResearchEffect citizenCapBoost = this.building.getColony().getResearchManager().getResearchEffects().getEffect(CAP, AdditionModifierResearchEffect.class);
-        final int citizensCap = (int)(Math.min(MineColonies.getConfig().getServer().maxCitizenPerColony.get(), citizenCapBoost != null ? 25 + citizenCapBoost.getEffect() : 25));
+        final int citizensCap;
+
+        if(MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().hasResearchEffect(CITIZEN_CAP))
+        {
+            citizensCap = (int) (Math.min(MineColonies.getConfig().getServer().maxCitizenPerColony.get(),
+              25 + this.building.getColony().getResearchManager().getResearchEffects().getEffectStrength(CITIZEN_CAP)));
+        }
+        else
+        {
+              citizensCap = MineColonies.getConfig().getServer().maxCitizenPerColony.get();
+        }
 
         final Text totalCitizenLabel = findPaneOfTypeByID(TOTAL_CITIZENS_LABEL, Text.class);
         totalCitizenLabel.setText(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_TOTALCITIZENS_COUNT,

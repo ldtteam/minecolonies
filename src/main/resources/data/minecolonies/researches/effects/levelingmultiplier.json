@@ -1,0 +1,11 @@
+{
+  "comment": "name: Leveling * description : Citizen XP Growth +%d%%",
+  "effect": true,
+  "levels": [
+    0.05,
+    0.1,
+    0.25,
+    0.5,
+    1
+  ]
+}

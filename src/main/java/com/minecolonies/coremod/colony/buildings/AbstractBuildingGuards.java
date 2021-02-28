@@ -9,7 +9,6 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.HiringMode;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
-import com.minecolonies.api.colony.buildings.IWorkerLivingBuilding;
 import com.minecolonies.api.colony.buildings.views.MobEntryView;
 import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.colony.guardtype.registry.IGuardTypeDataManager;
@@ -38,7 +37,6 @@ import com.minecolonies.coremod.entity.pathfinding.Pathfinding;
 import com.minecolonies.coremod.entity.pathfinding.pathjobs.PathJobRandomPos;
 import com.minecolonies.coremod.items.ItemBannerRallyGuards;
 import com.minecolonies.coremod.network.messages.client.colony.building.guard.GuardMobAttackListMessage;
-import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
 import com.minecolonies.coremod.util.AttributeModifierUtils;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
@@ -65,7 +63,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.concurrent.Future;
 
-import static com.minecolonies.api.research.util.ResearchConstants.ARROW_ITEMS;
+import static com.minecolonies.api.research.util.ResearchConstants.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
@@ -73,7 +71,7 @@ import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_W
  * Abstract class for Guard huts.
  */
 @SuppressWarnings({"squid:MaximumInheritanceDepth", "squid:S1448"})
-public abstract class AbstractBuildingGuards extends AbstractBuildingWorker implements IGuardBuilding, IWorkerLivingBuilding
+public abstract class AbstractBuildingGuards extends AbstractBuildingWorker implements IGuardBuilding
 {
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
     private static final String NBT_TASK           = "TASK";
@@ -215,10 +213,8 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
                 return false;
             }
 
-            final UnlockAbilityResearchEffect arrowItemEffect =
-              getColony().getResearchManager().getResearchEffects().getEffect(ARROW_ITEMS, UnlockAbilityResearchEffect.class);
-
-            return arrowItemEffect != null && arrowItemEffect.getEffect() && getGuardType() == ModGuardTypes.ranger;
+            return getColony().getResearchManager().getResearchEffects().getEffectStrength(ARCHER_USE_ARROWS) > 0
+                     && getGuardType() == ModGuardTypes.ranger;
         }, new Tuple<>(128, true));
 
         calculateMobs();

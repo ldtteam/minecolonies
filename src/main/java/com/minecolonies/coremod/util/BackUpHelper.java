@@ -10,6 +10,7 @@ import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.util.RegistryKey;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.server.ServerWorld;
@@ -62,31 +63,31 @@ public final class BackUpHelper
               new File(ServerLifecycleHooks.getCurrentServer().func_240776_a_(FolderName.DOT).toFile(), FILENAME_MINECOLONIES_PATH);
             final ZipOutputStream zos = new ZipOutputStream(fos);
 
-
-            ServerLifecycleHooks.getCurrentServer().worlds.keySet().forEach(dimensionType -> {
+            for (final RegistryKey<World> dimensionType : ServerLifecycleHooks.getCurrentServer().worlds.keySet())
+            {
                 for (int i = 1; i <= IColonyManager.getInstance().getTopColonyId() + 1; i++)
                 {
-                    @NotNull final File file = new File(saveDir, String.format(FILENAME_COLONY, i, dimensionType.getLocation()));
-                    @NotNull final File fileDeleted = new File(saveDir, String.format(FILENAME_COLONY_DELETED, i, dimensionType.getLocation()));
+                    @NotNull final File file = new File(saveDir, getFolderForDimension(dimensionType.getLocation()) + String.format(FILENAME_COLONY, i));
+                    @NotNull final File fileDeleted = new File(saveDir, getFolderForDimension(dimensionType.getLocation()) + String.format(FILENAME_COLONY_DELETED, i));
                     if (file.exists())
                     {
                         // mark existing files
                         if (IColonyManager.getInstance().getColonyByDimension(i, dimensionType) == null)
                         {
                             markColonyDeleted(i, dimensionType);
-                            addToZipFile(String.format(FILENAME_COLONY_DELETED, i, dimensionType.getLocation()), zos, saveDir);
+                            addToZipFile(getFolderForDimension(dimensionType.getLocation()) + String.format(FILENAME_COLONY_DELETED, i), zos, saveDir);
                         }
                         else
                         {
-                            addToZipFile(String.format(FILENAME_COLONY, i, dimensionType.getLocation()), zos, saveDir);
+                            addToZipFile(getFolderForDimension(dimensionType.getLocation()) + String.format(FILENAME_COLONY, i), zos, saveDir);
                         }
                     }
                     else if (fileDeleted.exists())
                     {
-                        addToZipFile(String.format(FILENAME_COLONY_DELETED, i, dimensionType.getLocation()), zos, saveDir);
+                        addToZipFile(getFolderForDimension(dimensionType.getLocation()) + String.format(FILENAME_COLONY_DELETED, i), zos, saveDir);
                     }
                 }
-            });
+            }
             addToZipFile(getSaveLocation().getName(), zos, saveDir);
             zos.close();
         }
@@ -109,12 +110,13 @@ public final class BackUpHelper
     {
         @NotNull final File saveDir = new File(ServerLifecycleHooks.getCurrentServer().func_240776_a_(FolderName.DOT).toFile(), FILENAME_MINECOLONIES_PATH);
 
-        ServerLifecycleHooks.getCurrentServer().worlds.keySet().forEach(dimensionType -> {
+        for (final RegistryKey<World> dimensionType : ServerLifecycleHooks.getCurrentServer().worlds.keySet())
+        {
             int missingFilesInRow = 0;
             for (int i = 1; i <= MAX_COLONY_LOAD && missingFilesInRow < 5; i++)
             {
                 // Check non-deleted files for colony id + dim
-                @NotNull final File file = new File(saveDir, String.format(FILENAME_COLONY, i, dimensionType.getLocation()));
+                @NotNull final File file = new File(saveDir, getFolderForDimension(dimensionType.getLocation()) + String.format(FILENAME_COLONY, i));
                 if (file.exists())
                 {
                     missingFilesInRow = 0;
@@ -129,7 +131,7 @@ public final class BackUpHelper
                     missingFilesInRow++;
                 }
             }
-        });
+        }
     }
 
     /**
@@ -207,7 +209,7 @@ public final class BackUpHelper
         {
             if (file != null)
             {
-                file.getParentFile().mkdir();
+                file.getParentFile().mkdirs();
                 CompressedStreamTools.write(compound, file);
             }
         }
@@ -254,7 +256,7 @@ public final class BackUpHelper
         {
             final CompoundNBT colonyCompound = new CompoundNBT();
             colony.write(colonyCompound);
-            saveNBTToPath(new File(saveDir, String.format(FILENAME_COLONY, colony.getID(), colony.getDimension().getLocation())), colonyCompound);
+            saveNBTToPath(new File(saveDir, getFolderForDimension(colony.getDimension().getLocation()) + String.format(FILENAME_COLONY, colony.getID())), colonyCompound);
         }
     }
 
@@ -268,10 +270,10 @@ public final class BackUpHelper
     {
         @NotNull final File saveDir =
           new File(ServerLifecycleHooks.getCurrentServer().func_240776_a_(FolderName.DOT).toFile(), FILENAME_MINECOLONIES_PATH);
-        final File toDelete = new File(saveDir, String.format(FILENAME_COLONY, colonyID, dimensionID.getLocation()));
+        final File toDelete = new File(saveDir, getFolderForDimension(dimensionID.getLocation()) + String.format(FILENAME_COLONY, colonyID));
         if (toDelete.exists())
         {
-            final String fileName =  String.format(FILENAME_COLONY_DELETED, colonyID, dimensionID.getLocation());
+            final String fileName = getFolderForDimension(dimensionID.getLocation()) + String.format(FILENAME_COLONY_DELETED, colonyID);
             new File(saveDir, fileName).delete();
             toDelete.renameTo(new File(saveDir, fileName));
         }
@@ -287,13 +289,24 @@ public final class BackUpHelper
         ServerLifecycleHooks.getCurrentServer().worlds.keySet().forEach(dimensionType -> {
             for (int i = 1; i <= IColonyManager.getInstance().getTopColonyId() + 1; i++)
             {
-                @NotNull final File file = new File(saveDir, String.format(FILENAME_COLONY, i, dimensionType.getLocation()));
+                @NotNull final File file = new File(saveDir, getFolderForDimension(dimensionType.getLocation()) + String.format(FILENAME_COLONY, i));
                 if (file.exists())
                 {
                     loadColonyBackup(i, dimensionType, false, false);
                 }
             }
         });
+    }
+
+    /**
+     * Resource location name to file name
+     *
+     * @param location resource location
+     * @return file name to look for
+     */
+    private static String getFolderForDimension(final ResourceLocation location)
+    {
+        return location.getNamespace() + File.separator + location.getPath() + File.separator;
     }
 
     /**
@@ -307,13 +320,13 @@ public final class BackUpHelper
     public static void loadColonyBackup(final int colonyId, final RegistryKey<World> dimension, boolean loadDeleted, boolean claimChunks)
     {
         @NotNull final File saveDir = new File(ServerLifecycleHooks.getCurrentServer().func_240776_a_(FolderName.DOT).toFile(), FILENAME_MINECOLONIES_PATH);
-        @NotNull final File backupFile = new File(saveDir, String.format(FILENAME_COLONY, colonyId, dimension.getLocation()));
+        @NotNull final File backupFile = new File(saveDir, getFolderForDimension(dimension.getLocation()) + String.format(FILENAME_COLONY, colonyId));
         CompoundNBT compound = loadNBTFromPath(backupFile);
         if (compound == null)
         {
             if (loadDeleted)
             {
-                compound = loadNBTFromPath(new File(saveDir, String.format(FILENAME_COLONY_DELETED, colonyId, dimension.getLocation())));
+                compound = loadNBTFromPath(new File(saveDir, String.format(FILENAME_COLONY_DELETED, colonyId, getFolderForDimension(dimension.getLocation()))));
             }
             if (compound == null)
             {

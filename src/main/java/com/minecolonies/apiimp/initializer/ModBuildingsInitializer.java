@@ -4,6 +4,7 @@ import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.coremod.colony.buildings.BuildingMysticalSite;
 import com.minecolonies.coremod.colony.buildings.DefaultBuildingInstance;
 import com.minecolonies.coremod.colony.buildings.modules.BedHandlingModule;
 import com.minecolonies.coremod.colony.buildings.modules.HomeBuildingModule;
@@ -33,6 +34,7 @@ public final class ModBuildingsInitializer
                                  .setBuildingProducer(BuildingArchery::new)
                                  .setBuildingViewProducer(() -> BuildingArchery.View::new)
                                  .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.ARCHERY_ID))
+                                 .addBuildingModuleProducer(BedHandlingModule::new)
                                  .createBuildingEntry();
 
         ModBuildings.bakery = new BuildingEntry.Builder()
@@ -54,6 +56,7 @@ public final class ModBuildingsInitializer
                                        .setBuildingProducer(BuildingBarracksTower::new)
                                        .setBuildingViewProducer(() -> BuildingBarracksTower.View::new)
                                        .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.BARRACKS_TOWER_ID))
+                                       .addBuildingModuleProducer(BedHandlingModule::new)
                                        .createBuildingEntry();
 
         ModBuildings.blacksmith = new BuildingEntry.Builder()
@@ -82,6 +85,7 @@ public final class ModBuildingsInitializer
                                        .setBuildingProducer(BuildingCombatAcademy::new)
                                        .setBuildingViewProducer(() -> BuildingCombatAcademy.View::new)
                                        .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.COMBAT_ACADEMY_ID))
+                                       .addBuildingModuleProducer(BedHandlingModule::new)
                                        .createBuildingEntry();
 
         ModBuildings.composter = new BuildingEntry.Builder()
@@ -138,6 +142,7 @@ public final class ModBuildingsInitializer
                                     .setBuildingProducer(BuildingGuardTower::new)
                                     .setBuildingViewProducer(() -> BuildingGuardTower.View::new)
                                     .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.GUARD_TOWER_ID))
+                                    .addBuildingModuleProducer(BedHandlingModule::new)
                                     .createBuildingEntry();
 
         ModBuildings.home = new BuildingEntry.Builder()
@@ -349,6 +354,13 @@ public final class ModBuildingsInitializer
                                    .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.BEEKEEPER_ID))
                                    .createBuildingEntry();
 
+        ModBuildings.mysticalSite = new BuildingEntry.Builder()
+                .setBuildingBlock(ModBlocks.blockHutMysticalSite)
+                .setBuildingProducer(BuildingMysticalSite::new)
+                .setBuildingViewProducer(() -> BuildingMysticalSite.View::new)
+                .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.MYSTICAL_SITE_ID))
+                .createBuildingEntry();
+
         reg.register(ModBuildings.archery);
         reg.register(ModBuildings.bakery);
         reg.register(ModBuildings.barracks);
@@ -394,5 +406,6 @@ public final class ModBuildingsInitializer
         reg.register(ModBuildings.rabbitHutch);
         reg.register(ModBuildings.concreteMixer);
         reg.register(ModBuildings.beekeeper);
+        reg.register(ModBuildings.mysticalSite);
     }
 }

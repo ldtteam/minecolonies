@@ -1,0 +1,23 @@
+{
+  "comment": "name: Avoid * subtitle: ",
+  "branch": "minecolonies:combat",
+  "researchLevel": 3,
+  "sortOrder": 2,
+  "parentResearch": "minecolonies:combat/regeneration",
+  "icon": "minecraft:feather:1",
+  "requirements": [
+    {
+      "building": "guardtower",
+      "level": 4
+    },
+    {
+      "item": "minecraft:emerald",
+      "quantity": 8
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/fleeingspeedaddition": 1
+    }
+  ]
+}

@@ -6,6 +6,7 @@ import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
@@ -47,7 +48,6 @@ import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildRemoval;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
-import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import com.minecolonies.coremod.util.ChunkDataHelper;
 import com.minecolonies.coremod.util.ColonyUtils;
 import io.netty.buffer.Unpooled;
@@ -65,6 +65,7 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.IFormattableTextComponent;
@@ -156,7 +157,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     /**
      * Set of building modules this building has.
      */
-    protected Map<Class<? extends IBuildingModule>, IBuildingModule> modules = new LinkedHashMap<>();
+    protected List<IBuildingModule> modules = new ArrayList<>();
 
     /**
      * Constructor for a AbstractBuilding.
@@ -175,20 +176,30 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public boolean hasModule(final Class<? extends IBuildingModule> clazz)
     {
-        return modules.containsKey(clazz);
+        return getModule(clazz).isPresent();
     }
 
     @NotNull
     @Override
     public <T extends IBuildingModule> Optional<T> getModule(final Class<T> clazz)
     {
-        return Optional.ofNullable((T) modules.get(clazz));
+        return getModules(clazz).stream().findFirst();
+    }
+
+    @NotNull
+    @Override
+    public <T extends IBuildingModule> List<T> getModules(final Class<T> clazz)
+    {
+        return this.modules.stream()
+                .filter(clazz::isInstance)
+                .map(c -> (T) c)
+                .collect(Collectors.toList());
     }
 
     @Override
     public void registerModule(@NotNull final IBuildingModule module)
     {
-        this.modules.put(module.getClass(), module);
+        this.modules.add(module);
     }
 
     /**
@@ -209,13 +220,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public void onWakeUp()
     {
-        for (final IBuildingModule module : modules.values())
-        {
-            if (module instanceof IBuildingEventsModule)
-            {
-                ((IBuildingEventsModule) module).onWakeUp();
-            }
-        }
+        getModules(IBuildingEventsModule.class).forEach(IBuildingEventsModule::onWakeUp);
     }
 
     /**
@@ -245,25 +250,13 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public void onBuildingMove(final IBuilding oldBuilding)
     {
-        for (final IBuildingModule module : modules.values())
-        {
-            if (module instanceof IBuildingEventsModule)
-            {
-                ((IBuildingEventsModule) module).onBuildingMove(oldBuilding);
-            }
-        }
+        getModules(IBuildingEventsModule.class).forEach(module -> module.onBuildingMove(oldBuilding));
     }
 
     @Override
     public void onPlayerEnterBuilding(final PlayerEntity player)
     {
-        for (final IBuildingModule module : modules.values())
-        {
-            if (module instanceof IBuildingEventsModule)
-            {
-                ((IBuildingEventsModule) module).onPlayerEnterBuilding(player);
-            }
-        }
+        getModules(IBuildingEventsModule.class).forEach(module -> module.onPlayerEnterBuilding(player));
     }
 
     @Override
@@ -336,13 +329,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             minimumStock.put(new ItemStorage(ItemStack.read(compoundNBT)), compoundNBT.getInt(TAG_QUANTITY));
         }
 
-        for (final IBuildingModule module : modules.values())
-        {
-            if (module instanceof IPersistentModule)
-            {
-                ((IPersistentModule) module).deserializeNBT(compound);
-            }
-        }
+        getModules(IPersistentModule.class).forEach(module -> module.deserializeNBT(compound));
     }
 
     @Override
@@ -371,13 +358,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         }
         compound.put(TAG_MINIMUM_STOCK, minimumStockTagList);
 
-        for (final IBuildingModule module : modules.values())
-        {
-            if (module instanceof IPersistentModule)
-            {
-                ((IPersistentModule) module).serializeNBT(compound);
-            }
-        }
+        getModules(IPersistentModule.class).forEach(module -> module.serializeNBT(compound));
         return compound;
     }
 
@@ -413,39 +394,24 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         ChunkDataHelper.claimColonyChunks(colony, false, this.getID(), getClaimRadius(getBuildingLevel()));
         ConstructionTapeHelper.removeConstructionTape(getCorners(), world);
 
-        for (final IBuildingModule module : modules.values())
-        {
-            if (module instanceof IBuildingEventsModule)
-            {
-                ((IBuildingEventsModule) module).onDestroyed();
-            }
-        }
+        getModules(IBuildingEventsModule.class).forEach(IBuildingEventsModule::onDestroyed);
     }
 
     @Override
     public void removeCitizen(final ICitizenData citizen)
     {
-        for (final IBuildingModule module : modules.values())
-        {
-            if (module instanceof IAssignsCitizen)
-            {
-                ((IAssignsCitizen) module).removeCitizen(citizen);
-            }
-        }
+        getModules(IAssignsCitizen.class).forEach(module -> module.removeCitizen(citizen));
         super.removeCitizen(citizen);
     }
 
     @Override
     public boolean assignCitizen(final ICitizenData citizen)
     {
-        for (final IBuildingModule module : modules.values())
+        for (final IAssignsCitizen module : getModules(IAssignsCitizen.class))
         {
-            if (module instanceof IAssignsCitizen)
+            if (module.assignCitizen(citizen))
             {
-                if (((IAssignsCitizen) module).assignCitizen(citizen))
-                {
-                    return true;
-                }
+                return true;
             }
         }
         return super.assignCitizen(citizen);
@@ -454,18 +420,15 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public int getMaxInhabitants()
     {
-        if (modules.isEmpty())
+        int current = -1;
+        for (final IDefinesCoreBuildingStatsModule module : getModules(IDefinesCoreBuildingStatsModule.class))
         {
-            return super.getMaxInhabitants();
+            current = module.getMaxInhabitants().apply(current);
         }
 
-        int current = 0;
-        for (final IBuildingModule module : modules.values())
+        if (current == -1)
         {
-            if (module instanceof IDefinesCoreBuildingStatsModule)
-            {
-                current = ((IDefinesCoreBuildingStatsModule) module).getMaxInhabitants().apply(current);
-            }
+            return super.getMaxInhabitants();
         }
         return Math.max(0, current);
     }
@@ -587,7 +550,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public final boolean isDirty()
     {
-        for (final IBuildingModule module : modules.values())
+        for (final IBuildingModule module : modules)
         {
             if (module.checkDirty())
             {
@@ -601,7 +564,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     public final void clearDirty()
     {
         dirty = false;
-        for (final IBuildingModule module : modules.values())
+        for (final IBuildingModule module : modules)
         {
             module.clearDirty();
         }
@@ -746,13 +709,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         buf.writeBoolean(minimumStock.size() >= minimumStockSize());
         buf.writeBoolean(isDeconstructed());
 
-        for (final IBuildingModule module : modules.values())
-        {
-            if (module instanceof IPersistentModule)
-            {
-                ((IPersistentModule) module).serializeToView(buf);
-            }
-        }
+        getModules(IPersistentModule.class).forEach(module -> module.serializeToView(buf));
     }
 
     /**
@@ -762,12 +719,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
      */
     private int minimumStockSize()
     {
-        double increase = 1;
-        final MultiplierModifierResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect(MINIMUM_STOCK, MultiplierModifierResearchEffect.class);
-        if (effect != null)
-        {
-            increase = 1 + effect.getEffect();
-        }
+        final double increase = 1 + colony.getResearchManager().getResearchEffects().getEffectStrength(MINIMUM_STOCK);
 
         return (int) (getBuildingLevel() * STOCK_PER_LEVEL * increase);
     }
@@ -845,13 +797,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             }
         }
 
-        for (final IBuildingModule module : modules.values())
-        {
-            if (module instanceof ITickingModule)
-            {
-                ((ITickingModule) module).onColonyTick(colony);
-            }
-        }
+        getModules(ITickingModule.class).forEach(module -> module.onColonyTick(colony));
     }
 
     /**
@@ -925,6 +871,18 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
     {
+        final ResourceLocation hutResearch = colony.getResearchManager().getResearchEffectIdFrom(getBuildingRegistryEntry().getBuildingBlock());
+
+        if (MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().hasResearchEffect(hutResearch) && colony.getResearchManager().getResearchEffects().getEffectStrength(hutResearch) < 1)
+        {
+            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"), player.getUniqueID());
+            return;
+        }
+        if(MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().hasResearchEffect(hutResearch) && (colony.getResearchManager().getResearchEffects().getEffectStrength(hutResearch) <= getBuildingLevel()))
+        {
+            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.unlocktoupgrade"), player.getUniqueID());
+            return;
+        }
         if (getBuildingLevel() < getMaxBuildingLevel())
         {
             requestWorkOrder(getBuildingLevel() + 1, builder, false);
@@ -1067,13 +1025,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             FireworkUtils.spawnFireworksAtAABBCorners(getCorners(), colony.getWorld(), newLevel);
         }
 
-        for (final IBuildingModule module : modules.values())
-        {
-            if (module instanceof IBuildingEventsModule)
-            {
-                ((IBuildingEventsModule) module).onUpgradeComplete(newLevel);
-            }
-        }
+        getModules(IBuildingEventsModule.class).forEach(module -> module.onUpgradeComplete(newLevel));
     }
 
     @Override
@@ -1081,6 +1033,12 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     {
         final WorkOrderBuildBuilding workOrder = new WorkOrderBuildBuilding(this, Math.max(1, getBuildingLevel()));
         final LoadOnlyStructureHandler wrapper = new LoadOnlyStructureHandler(colony.getWorld(), getPosition(), workOrder.getStructureName(), new PlacementSettings(), true);
+        if (!wrapper.hasBluePrint())
+        {
+            setCorners(getPosition(), getPosition());
+            return;
+        }
+
         final Tuple<BlockPos, BlockPos> corners
           = ColonyUtils.calculateCorners(this.getPosition(),
           colony.getWorld(),
@@ -1174,10 +1132,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
     {
         final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep = new HashMap<>(keepX);
-        if (keepFood())
-        {
-            toKeep.put(ItemStackUtils.CAN_EAT, new Tuple<>(getBuildingLevel() * 2, true));
-        }
 
         final Map<ItemStorage, Tuple<Integer, Boolean>> requiredItems = new HashMap<>();
         final Collection<IRequestResolver<?>> resolvers = getResolvers();
@@ -1392,13 +1346,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     public void registerBlockPosition(@NotNull final BlockState blockState, @NotNull final BlockPos pos, @NotNull final World world)
     {
         super.registerBlockPosition(blockState, pos, world);
-        for (final IBuildingModule module : modules.values())
-        {
-            if (module instanceof IModuleWithExternalBlocks)
-            {
-                ((IModuleWithExternalBlocks) module).onBlockPlacedInBuilding(blockState, pos, world);
-            }
-        }
+        getModules(IModuleWithExternalBlocks.class).forEach(module -> module.onBlockPlacedInBuilding(blockState, pos, world));
     }
 
     /**
@@ -1408,7 +1356,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
      * @param requestToken The {@link IToken} that is used to represent the request.
      * @param requested    The class of the type that has been requested eg. {@code ItemStack.class}
      */
-    private void addRequestToMaps(@NotNull final Integer citizenId, @NotNull final IToken<?> requestToken, @NotNull final TypeToken<?> requested)
+    private void addRequestToMaps(final int citizenId, @NotNull final IToken<?> requestToken, @NotNull final TypeToken<?> requested)
     {
         if (!getOpenRequestsByRequestableType().containsKey(requested))
         {
@@ -1898,7 +1846,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
-        final Integer citizenThatRequested = getCitizensByRequest().remove(request.getId());
+        final int citizenThatRequested = getCitizensByRequest().remove(request.getId());
 
         if (getOpenRequestsByCitizen().containsKey(citizenThatRequested))
         {
@@ -1969,7 +1917,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             return new StringTextComponent("<UNKNOWN>");
         }
 
-        final Integer citizenId = getCitizensByRequest().get(request.getId());
+        final int citizenId = getCitizensByRequest().get(request.getId());
         final ICitizenData citizenData = getColony().getCitizenManager().getCivilian(citizenId);
         final IFormattableTextComponent jobName =  new TranslationTextComponent(citizenData.getJob().getName().toLowerCase());
         return jobName.append(new StringTextComponent(" " + citizenData.getName()));

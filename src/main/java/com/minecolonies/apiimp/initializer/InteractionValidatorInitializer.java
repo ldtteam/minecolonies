@@ -12,11 +12,13 @@ import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestResolver;
 import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequestResolver;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
+import com.minecolonies.coremod.colony.buildings.AbstractFilterableListBuilding;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
 import com.minecolonies.coremod.colony.jobs.*;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIBasic;
@@ -28,6 +30,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandler;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.ItemStackUtils.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.LOW_SATURATION;
@@ -53,10 +56,15 @@ public class InteractionValidatorInitializer
                                                                                               .isEmpty());
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(BAKER_HAS_NO_FURNACES_MESSAGE),
           citizen -> citizen.getWorkBuilding() instanceof AbstractBuildingSmelterCrafter && ((AbstractBuildingSmelterCrafter) citizen.getWorkBuilding()).getFurnaces().isEmpty());
-
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(RAW_FOOD),
           citizen -> InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(citizen.getInventory(), ISCOOKABLE) > 0
                        && InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(citizen.getInventory(), ISFOOD) == 0);
+        InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(BETTER_FOOD),
+          citizen -> InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(citizen.getInventory(),
+                  stack -> CAN_EAT.test(stack) && !(citizen.getWorkBuilding() == null || citizen.getWorkBuilding().canEat(stack))) == 0 && !citizen.isChild());
+        InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(BETTER_FOOD_CHILDREN),
+          citizen -> InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(citizen.getInventory(),
+                  stack -> CAN_EAT.test(stack) && !(citizen.getWorkBuilding() == null || citizen.getWorkBuilding().canEat(stack))) == 0 && citizen.isChild());
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(NO_RESTAURANT),
           citizen -> citizen.getColony() != null && citizen.getSaturation() <= LOW_SATURATION && citizen.getEntity().isPresent()
                        && citizen.getColony().getBuildingManager().getBestRestaurant(citizen.getEntity().get()) == null
@@ -187,6 +195,11 @@ public class InteractionValidatorInitializer
 
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(FURNACE_USER_NO_FUEL),
           citizen -> citizen.getWorkBuilding() instanceof AbstractBuildingFurnaceUser && ((AbstractBuildingFurnaceUser) citizen.getWorkBuilding()).getAllowedFuel().isEmpty());
+        InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(FURNACE_USER_NO_FOOD),
+          citizen -> citizen.getWorkBuilding() instanceof BuildingCook && (IColonyManager.getInstance().getCompatibilityManager().getFood().stream()
+                  .filter(storage -> !((AbstractFilterableListBuilding) citizen.getWorkBuilding()).getCopyOfAllowedItems().get("food").contains(storage))
+                  .map(ItemStorage::getItemStack)
+                  .collect(Collectors.toList())).isEmpty());
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(BAKER_HAS_NO_FURNACES_MESSAGE),
           citizen -> citizen.getWorkBuilding() instanceof BuildingBaker && ((BuildingBaker) citizen.getWorkBuilding()).getFurnaces().isEmpty());
 

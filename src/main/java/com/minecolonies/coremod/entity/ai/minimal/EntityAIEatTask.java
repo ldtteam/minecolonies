@@ -23,7 +23,6 @@ import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.entity.SittingEntity;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.client.ItemParticleEffectMessage;
-import com.minecolonies.coremod.research.AdditionModifierResearchEffect;
 import com.minecolonies.coremod.util.AdvancementUtils;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.item.Food;
@@ -41,8 +40,7 @@ import static com.minecolonies.api.util.ItemStackUtils.ISCOOKABLE;
 import static com.minecolonies.api.util.constant.Constants.SECONDS_A_MINUTE;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.GuardConstants.BASIC_VOLUME;
-import static com.minecolonies.api.util.constant.TranslationConstants.NO_RESTAURANT;
-import static com.minecolonies.api.util.constant.TranslationConstants.RAW_FOOD;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.entity.ai.minimal.EntityAIEatTask.EatingState.*;
 
 /**
@@ -59,11 +57,6 @@ public class EntityAIEatTask extends Goal
      * Min distance in blocks to placeToPath block.
      */
     private static final int MIN_DISTANCE_TO_RESTAURANT = 10;
-
-    /**
-     * Max distance from the restaurant block the citizen should eat in x/z.
-     */
-    private static final int PLACE_TO_EAT_DISTANCE = 5;
 
     /**
      * Time required to eat in seconds.
@@ -262,13 +255,7 @@ public class EntityAIEatTask extends Goal
 
         final Food itemFood = stack.getItem().getFood();
 
-        double satIncrease = itemFood.getHealing();
-        final AdditionModifierResearchEffect satLimitDecrease =
-          citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(SATURATION, AdditionModifierResearchEffect.class);
-        if (satLimitDecrease != null)
-        {
-            satIncrease *= (1.0 + satLimitDecrease.getEffect());
-        }
+        final double satIncrease = itemFood.getHealing() * (1.0 + citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SATURATION));
 
         citizenData.increaseSaturation(satIncrease / 2.0);
         citizenData.getInventory().extractItem(foodSlot, 1, false);
@@ -461,6 +448,17 @@ public class EntityAIEatTask extends Goal
         if (InventoryUtils.hasItemInItemHandler(citizen.getInventoryCitizen(), ISCOOKABLE))
         {
             citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(RAW_FOOD), ChatPriority.PENDING));
+        }
+        else if (InventoryUtils.hasItemInItemHandler(citizen.getInventoryCitizen(), stack -> CAN_EAT.test(stack) && !canEat(citizenData, stack)))
+        {
+            if (citizenData.isChild())
+            {
+                citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(BETTER_FOOD_CHILDREN), ChatPriority.BLOCKING));
+            }
+            else
+            {
+                citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(BETTER_FOOD), ChatPriority.BLOCKING));
+            }
         }
 
         final IJob<?> job = citizen.getCitizenJobHandler().getColonyJob();

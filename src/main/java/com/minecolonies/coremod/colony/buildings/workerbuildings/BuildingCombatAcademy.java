@@ -16,16 +16,11 @@ import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobCombatTraining;
-import com.minecolonies.coremod.research.ResearchInitializer;
-import com.minecolonies.coremod.research.UnlockBuildingResearchEffect;
 import net.minecraft.block.*;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.NBTUtil;
 import net.minecraft.state.properties.BedPart;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
@@ -41,7 +36,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 /**
  * Building class for the Combat Academy.
  */
-public class BuildingCombatAcademy extends AbstractBuildingWorker implements IBuildingBedProvider, IWorkerLivingBuilding
+public class BuildingCombatAcademy extends AbstractBuildingWorker
 {
     /**
      * The Schematic name.
@@ -64,12 +59,6 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker implements IBu
     private final BiMap<Integer, Integer> trainingPartners = HashBiMap.create();
 
     /**
-     * List of all beds.
-     */
-    @NotNull
-    private final List<BlockPos> bedList = new ArrayList<>();
-
-    /**
      * The abstract constructor of the building.
      *
      * @param c the colony
@@ -85,13 +74,6 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker implements IBu
     public IJob<?> createJob(final ICitizenData citizen)
     {
         return new JobCombatTraining(citizen);
-    }
-
-    @NotNull
-    @Override
-    public List<BlockPos> getBedList()
-    {
-        return new ArrayList<>(bedList);
     }
     
     @Override
@@ -122,18 +104,6 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker implements IBu
     }
 
     @Override
-    public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
-    {
-        final UnlockBuildingResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect(ResearchInitializer.COMBAT_ACADEMY_RESEARCH, UnlockBuildingResearchEffect.class);
-        if (effect == null)
-        {
-            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"), player.getUniqueID());
-            return;
-        }
-        super.requestUpgrade(player, builder);
-    }
-
-    @Override
     public void deserializeNBT(final CompoundNBT compound)
     {
         super.deserializeNBT(compound);
@@ -146,17 +116,6 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker implements IBu
         final ListNBT partnersTagList = compound.getList(TAG_COMBAT_PARTNER, Constants.NBT.TAG_COMPOUND);
         trainingPartners.putAll(NBTUtils.streamCompound(partnersTagList)
                                   .collect(Collectors.toMap(targetCompound -> targetCompound.getInt(TAG_PARTNER1), targetCompound -> targetCompound.getInt(TAG_PARTNER2))));
-        
-        final ListNBT bedTagList = compound.getList(TAG_BEDS, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < bedTagList.size(); ++i)
-        {
-            final CompoundNBT bedCompound = bedTagList.getCompound(i);
-            final BlockPos bedPos = NBTUtil.readBlockPos(bedCompound);
-            if (!bedList.contains(bedPos))
-            {
-                bedList.add(bedPos);
-            }
-        }
     }
 
     @Override
@@ -170,16 +129,6 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker implements IBu
         final ListNBT partnersTagList = trainingPartners.entrySet().stream().map(BuildingCombatAcademy::writePartnerTupleToNBT).collect(NBTUtils.toListNBT());
         compound.put(TAG_COMBAT_PARTNER, partnersTagList);
 
-        if (!bedList.isEmpty())
-        {
-            @NotNull final ListNBT bedTagList = new ListNBT();
-            for (@NotNull final BlockPos pos : bedList)
-            {
-                bedTagList.add(NBTUtil.writeBlockPos(pos));
-            }
-            compound.put(TAG_BEDS, bedTagList);
-        }
-        
         return compound;
     }
 
@@ -348,53 +297,10 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker implements IBu
     }
 
     @Override
-    public void registerBlockPosition(@NotNull final BlockState blockState, @NotNull final BlockPos pos, @NotNull final World world)
-    {
-        super.registerBlockPosition(blockState, pos, world);
-
-        BlockPos registrationPosition = pos;
-        if (blockState.getBlock() instanceof BedBlock)
-        {
-            if (blockState.get(BedBlock.PART) == BedPart.FOOT)
-            {
-                registrationPosition = registrationPosition.offset(blockState.get(BedBlock.HORIZONTAL_FACING));
-            }
-
-            if (!bedList.contains(registrationPosition))
-            {
-                bedList.add(registrationPosition);
-            }
-        }
-    }    
-
-    @Override
     public BuildingEntry getBuildingRegistryEntry()
     {
         return ModBuildings.combatAcademy;
     }
-
-    @Override
-    public void onWakeUp()
-    {
-        super.onWakeUp();
-        
-        final World world = getColony().getWorld();
-        if (world == null)
-        {
-            return;
-        }
-
-        for (final BlockPos pos : bedList)
-        {
-            final BlockState state = world.getBlockState(pos);
-            if (state.getBlock() instanceof BedBlock
-                  && state.get(BedBlock.OCCUPIED)
-                  && state.get(BedBlock.PART).equals(BedPart.HEAD))
-            {
-                world.setBlockState(pos, state.with(BedBlock.OCCUPIED, false), 0x03);
-            }
-        }
-    }    
 
     /**
      * The client view for the bakery building.

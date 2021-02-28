@@ -1,12 +1,12 @@
 package com.minecolonies.coremod.colony.managers;
 
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.ICitizenDataManager;
 import com.minecolonies.api.colony.ICivilianData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.IWorkerLivingBuilding;
 import com.minecolonies.api.colony.managers.interfaces.ICitizenManager;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractCivilianEntity;
@@ -19,13 +19,14 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.modules.BedHandlingModule;
 import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
 import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenSpawnedEvent;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewCitizenViewMessage;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewRemoveCitizenMessage;
-import com.minecolonies.coremod.research.AdditionModifierResearchEffect;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -39,7 +40,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static com.minecolonies.api.research.util.ResearchConstants.CAP;
+import static com.minecolonies.api.research.util.ResearchConstants.CITIZEN_CAP;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CITIZENS;
 import static com.minecolonies.api.util.constant.TranslationConstants.ALL_CITIZENS_ARE_SLEEPING;
@@ -354,6 +355,7 @@ public class CitizenManager implements ICitizenManager
         }
 
         calculateMaxCitizens();
+        markDirty();
         colony.markDirty();
     }
 
@@ -381,7 +383,7 @@ public class CitizenManager implements ICitizenManager
         {
             if (b.getBuildingLevel() > 0)
             {
-                if (b instanceof IWorkerLivingBuilding)
+                if (b.hasModule(BedHandlingModule.class) && b instanceof AbstractBuildingWorker)
                 {
                     newMaxCitizens += b.getAssignedCitizen().size();
                     if ((b instanceof AbstractBuildingGuards) && b.getAssignedCitizen().size() == 0 && b.getBuildingLevel() > 0)
@@ -463,18 +465,15 @@ public class CitizenManager implements ICitizenManager
      */
     private double maxCitizensFromResearch()
     {
-        double max = 25;
-        final AdditionModifierResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect(CAP, AdditionModifierResearchEffect.class);
-        if (effect != null)
+        if(MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().hasResearchEffect(CITIZEN_CAP))
         {
-            max += effect.getEffect();
-            // TODO research data rework
-            if (max >= MineColonies.getConfig().getServer().maxCitizenPerColony.get())
-            {
-                return MineColonies.getConfig().getServer().maxCitizenPerColony.get();
-            }
+            final double max = 25 + colony.getResearchManager().getResearchEffects().getEffectStrength(CITIZEN_CAP);
+            return Math.min(max, MineColonies.getConfig().getServer().maxCitizenPerColony.get());
         }
-        return max;
+        else
+        {
+            return MineColonies.getConfig().getServer().maxCitizenPerColony.get();
+        }
     }
 
     /**

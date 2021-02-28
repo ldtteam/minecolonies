@@ -21,6 +21,8 @@ import com.minecolonies.api.crafting.registry.RecipeTypeEntry;
 import com.minecolonies.api.entity.ai.registry.IMobAIRegistry;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.research.IGlobalResearchTree;
+import com.minecolonies.api.research.effects.registry.ResearchEffectEntry;
+import com.minecolonies.api.research.registry.ResearchRequirementEntry;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenDataManager;
@@ -37,6 +39,9 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryBuilder;
 import org.jetbrains.annotations.NotNull;
+
+import static com.minecolonies.api.research.ModResearchRequirements.RESEARCH_RESEARCH_REQ_ID;
+import static com.minecolonies.api.research.effects.ModResearchEffects.GLOBAL_EFFECT_ID;
 
 public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
 {
@@ -55,6 +60,8 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     private        IForgeRegistry<ColonyEventTypeRegistryEntry>            colonyEventRegistry;
     private        IForgeRegistry<ColonyEventDescriptionTypeRegistryEntry> colonyEventDescriptionRegistry;
     private static IGlobalResearchTree                                     globalResearchTree     = new GlobalResearchTree();
+    private        IForgeRegistry<ResearchRequirementEntry>                researchRequirementRegistry;
+    private        IForgeRegistry<ResearchEffectEntry>                     researchEffectRegistry;
     private        IForgeRegistry<RecipeTypeEntry>                         recipeTypeEntryRegistry;
 
     @Override
@@ -159,6 +166,12 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
         return globalResearchTree;
     }
 
+    @Override
+    public IForgeRegistry<ResearchRequirementEntry> getResearchRequirementRegistry() { return researchRequirementRegistry;}
+
+    @Override
+    public IForgeRegistry<ResearchEffectEntry> getResearchEffectRegistry() { return researchEffectRegistry;}
+
     public void onRegistryNewRegistry(final RegistryEvent.NewRegistry event)
     {
         buildingRegistry = new RegistryBuilder<BuildingEntry>()
@@ -215,6 +228,18 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
                                     .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "classic"))
                                     .disableSaving().allowModification().setType(RecipeTypeEntry.class)
                                     .setIDRange(0, Integer.MAX_VALUE - 1).create();
+
+        researchRequirementRegistry = new RegistryBuilder<ResearchRequirementEntry>()
+                                        .setName(new ResourceLocation(Constants.MOD_ID, "researchrequirementtypes"))
+                                        .setDefaultKey(RESEARCH_RESEARCH_REQ_ID)
+                                        .disableSaving().allowModification().setType(ResearchRequirementEntry.class)
+                                        .setIDRange(0, Integer.MAX_VALUE - 1).create();
+
+        researchEffectRegistry = new RegistryBuilder<ResearchEffectEntry>()
+                                        .setName(new ResourceLocation(Constants.MOD_ID, "researcheffecttypes"))
+                                        .setDefaultKey(GLOBAL_EFFECT_ID)
+                                        .disableSaving().allowModification().setType(ResearchEffectEntry.class)
+                                        .setIDRange(0, Integer.MAX_VALUE - 1).create();
     }
 
     @Override

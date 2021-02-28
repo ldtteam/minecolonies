@@ -1,0 +1,24 @@
+{
+  "comment": "name: Sieving * subtitle: How did that get in there?",
+  "branch": "minecolonies:technology",
+  "researchLevel": 2,
+  "sortOrder": 2,
+  "parentResearch": "minecolonies:technology/woodwork",
+  "subtitle": "com.minecolonies.research.technology.sieving.subtitle",
+  "icon": "minecolonies:blockhutsifter:1",
+  "requirements": [
+    {
+      "building": "fisherman",
+      "level": 3
+    },
+    {
+      "item": "minecraft:string",
+      "quantity": 64
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/blockhutsifter": 1
+    }
+  ]
+}

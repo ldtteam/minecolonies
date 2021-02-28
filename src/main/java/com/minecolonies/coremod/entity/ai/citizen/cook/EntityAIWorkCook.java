@@ -1,10 +1,16 @@
 package com.minecolonies.coremod.entity.ai.citizen.cook;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.buildings.IBuildingWorker;
+import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.requestsystem.requestable.Food;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
+import com.minecolonies.api.colony.requestsystem.requestable.StackList;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -15,7 +21,9 @@ import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
+import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.JobCook;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIUsesFurnace;
 import net.minecraft.entity.Entity;
@@ -30,11 +38,13 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.ItemStackUtils.CAN_EAT;
 import static com.minecolonies.api.util.constant.Constants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
  * Cook AI class.
@@ -76,6 +86,11 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
      * The list of items needed for the assistant
      */
     private Set<ItemStack> assistantTests = new HashSet<>();
+
+    /**
+     * Value to identify the list of valid food
+     */
+    private final String FOOD_LIST = "food";
 
     /**
      * Constructor for the Cook. Defines the tasks the cook executes.
@@ -136,7 +151,9 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
     @Override
     public void requestSmeltable()
     {
-        if (!getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(getSmeltAbleClass().getClass())))
+        if (!getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(getSmeltAbleClass().getClass()))
+        && !getOwnBuilding().hasWorkerOpenRequestsFiltered(worker.getCitizenData(),
+                req -> req.getShortDisplayString().getSiblings().contains(new TranslationTextComponent(COM_MINECOLONIES_REQUESTS_FOOD))))
         {
             worker.getCitizenData().createRequestAsync(getSmeltAbleClass());
         }
@@ -182,7 +199,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
         {
             if (!citizenToServe.isEmpty())
             {
-                final int foodSlot = InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), ItemStackUtils.CAN_EAT);
+                final int foodSlot = InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), stack -> ItemStackUtils.CAN_EAT.test(stack) && canEat(stack));
                 if (foodSlot != -1)
                 {
                     final ItemStack stack = worker.getInventoryCitizen().extractItem(foodSlot, 1, false);
@@ -196,13 +213,13 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
             removeFromQueue();
             return getState();
         }
-        else if (InventoryUtils.hasItemInItemHandler(handler, CAN_EAT))
+        else if (InventoryUtils.hasItemInItemHandler(handler, stack -> CAN_EAT.test(stack) && canEat(stack)))
         {
             removeFromQueue();
             return getState();
         }
 
-        InventoryUtils.transferFoodUpToSaturation(worker, handler, getOwnBuilding().getBuildingLevel() * SATURATION_TO_SERVE, stack -> CAN_EAT.test(stack));
+        InventoryUtils.transferFoodUpToSaturation(worker, handler, getOwnBuilding().getBuildingLevel() * SATURATION_TO_SERVE, stack -> CAN_EAT.test(stack) && canEat(stack));
 
         if (!citizenToServe.isEmpty() && citizenToServe.get(0).getCitizenData() != null)
         {
@@ -218,6 +235,24 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
         worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
         this.incrementActionsDoneAndDecSaturation();
         return START_WORKING;
+    }
+
+    /**
+     * Check if the entity to serve can eat the given stack
+     * @param stack the stack to check
+     * @return true if the stack can be eaten
+     */
+    private boolean canEat(final ItemStack stack)
+    {
+        if (!citizenToServe.isEmpty())
+        {
+            final IBuildingWorker building = citizenToServe.get(0).getCitizenData().getWorkBuilding();
+            if (building != null)
+            {
+                return building.canEat(stack);
+            }
+        }
+        return true;
     }
 
     /**
@@ -306,6 +341,19 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
     @Override
     protected IRequestable getSmeltAbleClass()
     {
+        final Map<String, List<ItemStorage>> allowedItems = getOwnBuilding().getCopyOfAllowedItems();
+        if (allowedItems.containsKey(FOOD_LIST))
+        {
+            if (IColonyManager.getInstance().getCompatibilityManager().getFood().size() == allowedItems.get(FOOD_LIST).size())
+            {
+                if (worker.getCitizenData() != null)
+                {
+                    worker.getCitizenData()
+                            .triggerInteraction(new StandardInteraction(new TranslationTextComponent(FURNACE_USER_NO_FOOD), ChatPriority.BLOCKING));
+                }
+            }
+            return new Food(STACKSIZE, allowedItems.get(FOOD_LIST));
+        }
         return new Food(STACKSIZE);
     }
 

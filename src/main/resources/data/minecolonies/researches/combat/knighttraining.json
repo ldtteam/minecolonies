@@ -1,0 +1,22 @@
+{
+  "comment": "name: Knight Training * subtitle: ",
+  "branch": "minecolonies:combat",
+  "researchLevel": 4,
+  "parentResearch": "minecolonies:combat/squiretraining",
+  "icon": "minecraft:barrel:1",
+  "requirements": [
+    {
+      "building": "combatacademy",
+      "level": 4
+    },
+    {
+      "item": "minecraft:shield",
+      "quantity": 8
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/blockattacksmultiplier": 2
+    }
+  ]
+}

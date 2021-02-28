@@ -46,6 +46,7 @@ import com.minecolonies.coremod.network.messages.server.colony.building.worker.C
 import com.minecolonies.coremod.network.messages.server.colony.building.worker.RecallCitizenMessage;
 import com.minecolonies.coremod.network.messages.server.colony.citizen.*;
 import com.minecolonies.coremod.network.messages.splitting.SplitPacketMessage;
+import com.minecolonies.coremod.research.GlobalResearchTreeMessage;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.Entity;
@@ -250,6 +251,9 @@ public class NetworkChannel
         // Colony-Independent items
         registerMessage(++idx, RemoveFromRallyingListMessage.class, RemoveFromRallyingListMessage::new);
         registerMessage(++idx, ToggleBannerRallyGuardsMessage.class, ToggleBannerRallyGuardsMessage::new);
+
+        // Research-related messages.
+        registerMessage(++idx, GlobalResearchTreeMessage.class, GlobalResearchTreeMessage::new);
     }
 
     private void setupInternalMessages()

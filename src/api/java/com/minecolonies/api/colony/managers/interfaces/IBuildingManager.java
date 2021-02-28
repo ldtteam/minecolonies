@@ -2,6 +2,7 @@ package com.minecolonies.api.colony.managers.interfaces;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.IMysticalSite;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -13,6 +14,7 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -99,11 +101,25 @@ public interface IBuildingManager
     ITownHall getTownHall();
 
     /**
+     * Get the maximum level among built mystical sites
+     *
+     * @return the max level among all mystical sites or zero if no mystical site built
+     */
+    int getMysticalSiteMaxBuildingLevel();
+
+    /**
      * Check if the colony has a placed warehouse.
      *
      * @return true if so.
      */
     boolean hasWarehouse();
+
+    /**
+     * Check if the colony has a placed mystical site.
+     *
+     * @return true if so.
+     */
+    boolean hasMysticalSite();
 
     /**
      * Check if the colony has a placed townhall.
@@ -241,6 +257,20 @@ public interface IBuildingManager
     List<IWareHouse> getWareHouses();
 
     /**
+     * Removes a warehouse from the BuildingManager
+     *
+     * @param mysticalSite the warehouse to remove.
+     */
+    void removeMysticalSite(final IMysticalSite mysticalSite);
+
+    /**
+     * Get a list of the mystical sites in this colony.
+     *
+     * @return the list of mistical sites.
+     */
+    List<IMysticalSite> getMysticalSites();
+
+    /**
      * Checks whether we're allowed to place the block for a new building
      *
      * @param block  Block to check
@@ -252,9 +282,8 @@ public interface IBuildingManager
 
     /**
      * Check if the chunk position it within of the building zone of the colony.
-     * @param chunkX the x chunk pos.
-     * @param chunkZ the z chunk pos.
+     * @param chunk the chunk to check
      * @return true if within.
      */
-    boolean isWithinBuildingZone(int chunkX, int chunkZ);
+    boolean isWithinBuildingZone(final Chunk chunk);
 }
