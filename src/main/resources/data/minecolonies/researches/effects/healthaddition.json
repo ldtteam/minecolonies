@@ -1,0 +1,12 @@
+{
+  "comment": "name: Health * description : Citizen HP +%d",
+  "effect": true,
+  "levels": [
+    2,
+    4,
+    6,
+    8,
+    10,
+    20
+  ]
+}

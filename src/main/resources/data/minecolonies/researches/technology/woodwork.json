@@ -1,0 +1,23 @@
+{
+  "comment": "name: Woodwork * subtitle: Where oh where would a wood worker work if a wood worker would work wood?",
+  "branch": "minecolonies:technology",
+  "researchLevel": 1,
+  "sortOrder": 4,
+  "subtitle": "com.minecolonies.research.technology.woodwork.subtitle",
+  "icon": "minecolonies:blockhutsawmill:1",
+  "requirements": [
+    {
+      "building": "lumberjack",
+      "level": 3
+    },
+    {
+      "item": "minecraft:oak_planks",
+      "quantity": 64
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/blockhutsawmill": 1
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "comment": "name: Those Lungs! * subtitle: You'll definitely be needing those in some form.",
+  "branch": "minecolonies:technology",
+  "researchLevel": 2,
+  "parentResearch": "minecolonies:technology/hot",
+  "subtitle": "com.minecolonies.research.technology.thoselungs.subtitle",
+  "icon": "minecolonies:blockhutglassblower:1",
+  "requirements": [
+    {
+      "building": "smeltery",
+      "level": 3
+    },
+    {
+      "item": "minecraft:glass",
+      "quantity": 64
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/blockhutglassblower": 1
+    }
+  ]
+}

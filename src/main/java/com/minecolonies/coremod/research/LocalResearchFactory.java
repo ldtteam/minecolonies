@@ -9,6 +9,7 @@ import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.research.util.ResearchConstants.*;
@@ -34,7 +35,7 @@ public class LocalResearchFactory implements ILocalResearchFactory
 
     @NotNull
     @Override
-    public ILocalResearch getNewInstance(final String id, final String branch, final int depth)
+    public ILocalResearch getNewInstance(final ResourceLocation id, final ResourceLocation branch, final int depth)
     {
         return new LocalResearch(id, branch, depth);
     }
@@ -45,10 +46,10 @@ public class LocalResearchFactory implements ILocalResearchFactory
     {
         final CompoundNBT compound = new CompoundNBT();
         compound.putInt(TAG_STATE, research.getState().ordinal());
-        compound.putString(TAG_ID, research.getId());
-        compound.putString(TAG_BRANCH, research.getBranch());
+        compound.putString(TAG_ID, research.getId().toString());
+        compound.putString(TAG_BRANCH, research.getBranch().toString());
         compound.putInt(TAG_PROGRESS, research.getProgress());
-        compound.putInt(TAG_DEPTH, research.getDepth());
+        compound.putInt(TAG_RESEARCH_LVL, research.getDepth());
 
         return compound;
     }
@@ -58,9 +59,9 @@ public class LocalResearchFactory implements ILocalResearchFactory
     public ILocalResearch deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
     {
         final int state = nbt.getInt(TAG_STATE);
-        final String id = nbt.getString(TAG_ID);
-        final String branch = nbt.getString(TAG_BRANCH);
-        final int depth = nbt.getInt(TAG_DEPTH);
+        final ResourceLocation id = new ResourceLocation(nbt.getString(TAG_ID));
+        final ResourceLocation branch = new ResourceLocation(nbt.getString(TAG_BRANCH));
+        final int depth = nbt.getInt(TAG_RESEARCH_LVL);
         final int progress = nbt.getInt(TAG_PROGRESS);
 
         final ILocalResearch research = getNewInstance(id, branch, depth);
@@ -73,8 +74,8 @@ public class LocalResearchFactory implements ILocalResearchFactory
     public void serialize(IFactoryController controller, ILocalResearch input, PacketBuffer packetBuffer)
     {
         packetBuffer.writeInt(input.getState().ordinal());
-        packetBuffer.writeString(input.getId());
-        packetBuffer.writeString(input.getBranch());
+        packetBuffer.writeString(input.getId().toString());
+        packetBuffer.writeResourceLocation(input.getBranch());
         packetBuffer.writeInt(input.getProgress());
         packetBuffer.writeInt(input.getDepth());
     }
@@ -83,8 +84,8 @@ public class LocalResearchFactory implements ILocalResearchFactory
     public ILocalResearch deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
     {
         final int state = buffer.readInt();
-        final String id = buffer.readString(32767);
-        final String branch = buffer.readString(32767);
+        final ResourceLocation id = buffer.readResourceLocation();
+        final ResourceLocation branch = buffer.readResourceLocation();
         final int progress = buffer.readInt();
         final int depth = buffer.readInt();
 

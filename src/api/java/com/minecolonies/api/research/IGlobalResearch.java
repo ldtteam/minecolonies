@@ -1,9 +1,10 @@
 package com.minecolonies.api.research;
 
-import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.research.effects.IResearchEffect;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,11 +33,6 @@ public interface IGlobalResearch
     boolean canDisplay(int uni_level);
 
     /**
-     * Load the cost for the research from the configuration file.
-     */
-    void loadCostFromConfig();
-
-    /**
      * Check whether all resources are available to execute the research.
      *
      * @param inventory the inventory to check in.
@@ -53,39 +49,54 @@ public interface IGlobalResearch
 
     /**
      * Start the research.
-     *
-     * @param player            the player starting it.
      * @param localResearchTree the local research tree to store in the colony.
      */
-    void startResearch(@NotNull final PlayerEntity player, @NotNull final ILocalResearchTree localResearchTree);
+    void startResearch(@NotNull final ILocalResearchTree localResearchTree);
 
     /**
-     * Human readable description of research.
-     *
+     * Human readable description of research, in human-readable text or as a translation key.
      * @return the description.
      */
-    String getDesc();
+    TranslationTextComponent getName();
+
+    /**
+     * Subtitle description of research, in human-readable text or as a translation key.
+     * @return the optional subtitle name.
+     */
+    TranslationTextComponent getSubtitle();
 
     /**
      * Getter of the id of the research.
-     *
-     * @return the String id.
+     * @return the research id, as a ResourceLocation
      */
-    String getId();
+    ResourceLocation getId();
+
+    /**
+     * Getter of the research icon's resource location.
+     * On the client, this texture file's presence has already been validated.
+     * @return the ResourceLocation of the icon.
+     */
+    ResourceLocation getIconTextureResourceLocation();
+
+    /**
+     * Getter of the research icon's item stack.
+     * @return the ItemStack for the icon.
+     */
+    ItemStack getIconItemStack();
 
     /**
      * Get the id of the parent IResearch.
      *
-     * @return the string id.
+     * @return the parent id, as a ResourceLocation
      */
-    String getParent();
+    ResourceLocation getParent();
 
     /**
-     * Get the string name of the branch.
+     * Get the id of the branch.
      *
-     * @return the branch name.
+     * @return the branch id, as a ResourceLocation
      */
-    String getBranch();
+    ResourceLocation getBranch();
 
     /**
      * Get the depth in the research tree.
@@ -95,7 +106,42 @@ public interface IGlobalResearch
     int getDepth();
 
     /**
-     * Check if this research is an only child research. This means, after researching one child no other childs can be researched.
+     * Get the sort order for relative display position.
+     *
+     * @return the depth.
+     */
+    int getSortOrder();
+
+    /**
+     * Check if this research is an instant research.  If so, it will attempt to start when its requirements are complete, and prompt the player.
+     *
+     * @return true if so.
+     */
+    boolean isInstant();
+
+    /**
+     * Check if this research should automatically start when requirements are complete.
+     * This can temporarily exceed normal limits of the max number of concurrent researches.
+     * @return true if so.
+     */
+    boolean isAutostart();
+
+    /**
+     * Check if this research is a hidden research.  If so, it (and its children) should only be visible if all requirements are met.
+     *
+     * @return true if so.
+     */
+    boolean isHidden();
+
+    /**
+     * Check if this research is an immutable research.  If so, it (and ancestor research unlocking it) can not be reset once completed.
+     *
+     * @return true if so.
+     */
+    boolean isImmutable();
+
+    /**
+     * Check if this research is an only child research. This means, after researching one child no other children can be researched.
      *
      * @return true if so.
      */
@@ -124,37 +170,54 @@ public interface IGlobalResearch
     void addChild(IGlobalResearch child);
 
     /**
+     * Add a child to a research, without setting parentage.
+     * @param child the child to add
+     */
+    void addChild(final ResourceLocation child);
+
+    /**
+     * Add an individual cost.
+     * @param cost the individual item to add to the cost list, as an ItemStorage.
+     */
+    void addCost(final ItemStorage cost);
+
+    /**
+     * Add an individual effect.
+     * @param effect the individual effect to add to the research, as a IResearchEffect.
+     */
+    void addEffect(final IResearchEffect<?> effect);
+
+    /**
+     * Add an individual requirement
+     * @param requirement the individual requirement to add to the research, as an IResearchRequirement.
+     */
+    void addRequirement(final IResearchRequirement requirement);
+
+    /**
      * Get the list of children of the research.
      *
      * @return a copy of the list of child identifiers.
      */
-    ImmutableList<String> getChilds();
+    List<ResourceLocation> getChildren();
 
     /**
      * Set the parent of a research.
      *
      * @param id the id of the parent.
      */
-    void setParent(String id);
-
-    /**
-     * Set the research requirement.
-     *
-     * @param requirement the requirement.
-     */
-    void setRequirement(final IResearchRequirement requirement);
+    void setParent(ResourceLocation id);
 
     /**
      * Getter for the research requirement.
      *
      * @return the requirement.
      */
-    IResearchRequirement getResearchRequirement();
+    List<IResearchRequirement> getResearchRequirement();
 
     /**
      * Get the effect of the research.
      *
      * @return the effect.
      */
-    IResearchEffect<?> getEffect();
+    List<IResearchEffect<?>> getEffects();
 }

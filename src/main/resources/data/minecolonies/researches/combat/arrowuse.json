@@ -1,0 +1,23 @@
+{
+  "comment": "name: Consume Arrows * subtitle: They work better with ammo.",
+  "branch": "minecolonies:combat",
+  "researchLevel": 2,
+  "parentResearch": "minecolonies:combat/taunt",
+  "subtitle": "com.minecolonies.research.combat.arrowuse.subtitle",
+  "icon": "minecraft:arrow:1",
+  "requirements": [
+    {
+      "building": "guardtower",
+      "level": 2
+    },
+    {
+      "item": "minecraft:arrow",
+      "quantity": 64
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/consumearrowsunlock": 1
+    }
+  ]
+}

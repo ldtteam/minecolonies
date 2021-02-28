@@ -1,0 +1,23 @@
+{
+  "comment": "name: Improved Evasion * subtitle: Dive",
+  "branch": "minecolonies:combat",
+  "researchLevel": 5,
+  "parentResearch": "minecolonies:combat/evasion",
+  "subtitle": "com.minecolonies.research.combat.improvedevasion.subtitle",
+  "icon": "minecraft:golden_boots:1",
+  "requirements": [
+    {
+      "building": "archery",
+      "level": 5
+    },
+    {
+      "item": "minecraft:diamond",
+      "quantity": 16
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/archerarmormultiplier": 4
+    }
+  ]
+}

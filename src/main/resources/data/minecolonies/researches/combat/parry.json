@@ -1,0 +1,22 @@
+{
+  "comment": "name: Parry * subtitle: ",
+  "branch": "minecolonies:combat",
+  "researchLevel": 2,
+  "parentResearch": "minecolonies:combat/avoidance",
+  "icon": "minecraft:leather_chestplate:1",
+  "requirements": [
+    {
+      "building": "smeltery",
+      "level": 1
+    },
+    {
+      "item": "minecraft:iron_ingot",
+      "quantity": 16
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/meleearmormultiplier": 1
+    }
+  ]
+}

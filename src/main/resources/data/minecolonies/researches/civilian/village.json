@@ -1,0 +1,22 @@
+{
+  "comment": "name: Village * subtitle: ",
+  "branch": "minecolonies:civilian",
+  "researchLevel": 4,
+  "parentResearch": "minecolonies:civilian/hamlet",
+  "icon": "minecolonies:blockhutcitizen:100",
+  "requirements": [
+    {
+      "building": "townhall",
+      "level": 4
+    },
+    {
+      "item": "minecraft:cooked_beef",
+      "quantity": 256
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/citizencapaddition": 3
+    }
+  ]
+}

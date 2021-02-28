@@ -1,0 +1,23 @@
+{
+  "comment": "name: Precise Shot * subtitle: ",
+  "branch": "minecolonies:combat",
+  "researchLevel": 2,
+  "sortOrder": 2,
+  "parentResearch": "minecolonies:combat/accuracy",
+  "icon": "minecraft:arrow:1",
+  "requirements": [
+    {
+      "building": "barracks",
+      "level": 3
+    },
+    {
+      "item": "minecraft:flint",
+      "quantity": 16
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/archerdamageaddition": 1
+    }
+  ]
+}

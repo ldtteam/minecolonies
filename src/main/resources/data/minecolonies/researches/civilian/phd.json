@@ -1,0 +1,19 @@
+{
+  "comment": "name: PhD * subtitle: Not that sort of doctor.",
+  "branch": "minecolonies:civilian",
+  "researchLevel": 6,
+  "parentResearch": "minecolonies:civilian/master",
+  "subtitle": "com.minecolonies.research.civilian.phd.subtitle",
+  "icon": "minecolonies:textures/icons/research/xpgain5.png",
+  "requirements": [
+    {
+      "item": "minecraft:bookshelf",
+      "quantity": 64
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/teachingmultiplier": 5
+    }
+  ]
+}

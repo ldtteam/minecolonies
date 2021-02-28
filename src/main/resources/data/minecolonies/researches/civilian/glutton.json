@@ -1,0 +1,19 @@
+{
+  "comment": "name: Glutton * subtitle: I think I'm finally satisfied... so what's for next course?",
+  "branch": "minecolonies:civilian",
+  "researchLevel": 6,
+  "parentResearch": "minecolonies:civilian/epicure",
+  "subtitle": "com.minecolonies.research.civilian.glutton.subtitle",
+  "icon": "minecolonies:textures/icons/research/saturation5.png",
+  "requirements": [
+    {
+      "item": "minecraft:cookie",
+      "quantity": 512
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/saturationmultiplier": 5
+    }
+  ]
+}
