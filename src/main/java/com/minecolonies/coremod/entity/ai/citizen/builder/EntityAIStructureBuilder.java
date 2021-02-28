@@ -296,10 +296,15 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
             return false;
         }
 
-        if (BlockPosUtil.getDistance2D(currentBlock, workFrom) > 10 * Math.max(1, pathBackupFactor - 1))
+        if (BlockPosUtil.getDistance2D(currentBlock, workFrom) > 10 * Math.max(1, pathBackupFactor - 1) )
         {
             workFrom = null;
             return false;
+        }
+
+        if (pathBackupFactor > 0)
+        {
+            pathBackupFactor--;
         }
 
         return true;
