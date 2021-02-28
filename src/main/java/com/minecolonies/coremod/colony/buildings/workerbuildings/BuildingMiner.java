@@ -119,6 +119,10 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
     @Nullable
     private Node oldNode = null;
 
+    private List<ICitizenData> guards = new ArrayList<>();
+
+    private Integer assignedGuards = 0;
+
     /**
      * Required constructor.
      *
@@ -329,6 +333,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
     public void serializeToView(@NotNull final PacketBuffer buf)
     {
         super.serializeToView(buf);
+        this.pullGuards();
         buf.writeInt(currentLevel);
         buf.writeInt(levels.size());
 
@@ -338,12 +343,12 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
             buf.writeInt(level.getDepth());
         }
 
-        List<ICitizenData> guards = this.getGuards();
         buf.writeInt(guards.size());
-        for (ICitizenData guard : guards)
+        for (final ICitizenData guard : guards)
         {
             buf.writeInt(guard.getId());
         }
+        buf.writeInt(assignedGuards);
     }
 
     /**
@@ -657,9 +662,10 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         }
     }
 
-    public List<ICitizenData> getGuards()
+    public void pullGuards()
     {
-        final List<ICitizenData> guards = new ArrayList<>();
+        guards.clear();
+        assignedGuards = 0;
         final Collection<IBuilding> buildings = colony.getBuildingManager().getBuildings().values();
         for (final IBuilding building : buildings)
         {
@@ -672,9 +678,17 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
                     {
                         guards.add(guard);
                     }
+                    if (guardbuilding.getMinePos() != null && guardbuilding.getMinePos().equals(this.getPosition()))
+                    {
+                        assignedGuards++;
+                    }
                 }
             }
         }
+    }
+
+    public List<ICitizenData> getGuards()
+    {
         return guards;
     }
 
@@ -692,7 +706,9 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
          */
         public int                           current;
 
-        public List<ICitizenDataView> guards;
+        public List<ICitizenDataView>        guards;
+
+        public int                           assignedGuards;
 
         /**
          * Public constructor of the view, creates an instance of it.
@@ -731,6 +747,24 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
                 final Integer citizenId = buf.readInt();
                 final ICitizenDataView citizen = getColony().getCitizen(citizenId);
                 guards.add(citizen);
+            }
+            assignedGuards = buf.readInt();
+        }
+
+        public int getMaxGuards()
+        {
+            switch (this.getBuildingLevel())
+            {
+                case 1:
+                case 2:
+                    return 1;
+                case 3:
+                case 4:
+                    return 2;
+                case 5:
+                    return 3;
+                default:
+                    return 0;
             }
         }
     }

@@ -9,16 +9,22 @@ import com.ldtteam.blockout.views.SwitchView;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.ICitizenDataView;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
+import com.minecolonies.coremod.network.messages.server.colony.building.guard.GuardSetMinePosMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.miner.MinerSetLevelMessage;
 import net.minecraft.util.Tuple;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Window for the miner hut.
@@ -30,6 +36,7 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
     private static final String                        PAGE_LEVELS               = "levelActions";
     private static final String                        PAGE_GUARDS               = "guardActions";
     private static final String                        BUTTON_CURRENTLEVEL       = "changeToLevel";
+    private static final String                        BUTTON_ASSIGNGUARD        = "assignGuard";
     private static final String                        VIEW_PAGES                = "pages";
     private static final String                        HUT_MINER_RESOURCE_SUFFIX = ":gui/windowhutminer.xml";
     private final        BuildingMiner.View            miner;
@@ -109,20 +116,23 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
                 {
                     final AbstractBuildingGuards.View guardbuilding = (AbstractBuildingGuards.View) building;
                     final Button button = pane.findPaneOfTypeByID("assignGuard", Button.class);
-                    if (guardbuilding.getMinePos() == miner.getPosition())
+                    if (guardbuilding.getMinePos() == null)
                     {
-                        button.setText("Unassign");
+                        button.setText(new TranslationTextComponent("com.minecolonies.coremod.gui.hiring.buttonassign"));
+                        if (miner.assignedGuards >= miner.getMaxGuards())
+                        {
+                            button.setEnabled(false);
+                        }
                     }
-                    else if (guardbuilding.getMinePos() == null)
+                    else if (guardbuilding.getMinePos().equals(miner.getPosition()))
                     {
-                        button.setText("Assign");
+                        button.setText(new TranslationTextComponent("com.minecolonies.coremod.gui.hiring.buttonunassign"));
                     }
                     else
                     {
-                        button.setText("Assign");
+                        button.setText(new TranslationTextComponent("com.minecolonies.coremod.gui.hiring.buttonassign"));
                         button.setEnabled(false);
                     }
-
                 }
             }
         });
@@ -164,6 +174,29 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
                     miner.current = row;
                     Network.getNetwork().sendToServer(new MinerSetLevelMessage(miner, row));
                 }
+                break;
+            case BUTTON_ASSIGNGUARD:
+                final int guard_row = guardsList.getListElementIndexByPane(button);
+                final ICitizenDataView guard = guardsInfo.get(guard_row);
+                final AbstractBuildingGuards.View guardbuilding = (AbstractBuildingGuards.View) miner.getColony().getBuilding(guard.getWorkBuilding());
+                if (guardbuilding.getMinePos() == null)
+                {
+                    if (miner.assignedGuards < miner.getMaxGuards())
+                    {
+                        Network.getNetwork().sendToServer(new GuardSetMinePosMessage(guardbuilding, miner.getPosition()));
+                        button.setText(new TranslationTextComponent("com.minecolonies.coremod.gui.hiring.buttonunassign"));
+                        guardbuilding.setMinePos(miner.getPosition());
+                        miner.assignedGuards++;
+                    }
+                }
+                else if (guardbuilding.getMinePos().equals(miner.getPosition()))
+                {
+                    Network.getNetwork().sendToServer(new GuardSetMinePosMessage(guardbuilding));
+                    button.setText(new TranslationTextComponent("com.minecolonies.coremod.gui.hiring.buttonassign"));
+                    guardbuilding.setMinePos(null);
+                    miner.assignedGuards--;
+                }
+                pullLevelsFromHut();
                 break;
             default:
                 super.onButtonClicked(button);

@@ -22,9 +22,12 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.SittingEntity;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIFight;
+import com.minecolonies.coremod.entity.ai.citizen.miner.Level;
+import com.minecolonies.coremod.entity.ai.citizen.miner.Node;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.client.SleepingParticleMessage;
 import com.minecolonies.coremod.research.AdditionModifierResearchEffect;
@@ -600,6 +603,33 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         return GUARD_PATROL;
     }
 
+    public IAIState patrolMine()
+    {
+        if (buildingGuards.getMinePos() == null)
+        {
+            return PREPARING;
+        }
+        if (currentPatrolPoint == null ||  worker.isWorkerAtSiteWithMove(currentPatrolPoint, 2))
+        {
+            final IBuilding building = buildingGuards.getColony().getBuildingManager().getBuilding(buildingGuards.getMinePos());
+            if (building instanceof BuildingMiner)
+            {
+                final BuildingMiner miner = (BuildingMiner) building;
+                final Level level = miner.getCurrentLevel();
+                if (level == null || level.getNodes().isEmpty())
+                {
+                    setNextPatrolTarget(miner.getPosition());
+                }
+                else
+                {
+                    final Node node = level.getRandomNode(level.getLadderNode());
+                    setNextPatrolTarget(new BlockPos(node.getX(), level.getDepth(), node.getZ()));
+                }
+            }
+        }
+        return GUARD_PATROL;
+    }
+
     /**
      * Sets the next patrol target, and moves to it if patrolling
      *
@@ -738,6 +768,8 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
                 return guard();
             case FOLLOW:
                 return follow();
+            case MINE:
+                return patrolMine();
             default:
                 return PREPARING;
         }

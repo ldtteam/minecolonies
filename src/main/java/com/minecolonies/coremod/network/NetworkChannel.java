@@ -25,6 +25,7 @@ import com.minecolonies.coremod.network.messages.server.colony.building.farmer.A
 import com.minecolonies.coremod.network.messages.server.colony.building.farmer.AssignmentModeMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.farmer.RequestFertilizerMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.guard.GuardRecalculateMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.guard.GuardSetMinePosMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.guard.GuardTaskMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.guard.MobEntryChangeMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.herder.HerderSetBreedingMessage;
@@ -161,6 +162,7 @@ public class NetworkChannel
         registerMessage(++idx, AssignmentModeMessage.class, AssignmentModeMessage::new);
         registerMessage(++idx, RequestFertilizerMessage.class, RequestFertilizerMessage::new);
         registerMessage(++idx, GuardTaskMessage.class, GuardTaskMessage::new);
+        registerMessage(++idx, GuardSetMinePosMessage.class, GuardSetMinePosMessage::new);
         registerMessage(++idx, GuardRecalculateMessage.class, GuardRecalculateMessage::new);
         registerMessage(++idx, MobEntryChangeMessage.class, MobEntryChangeMessage::new);
         registerMessage(++idx, GuardScepterMessage.class, GuardScepterMessage::new);

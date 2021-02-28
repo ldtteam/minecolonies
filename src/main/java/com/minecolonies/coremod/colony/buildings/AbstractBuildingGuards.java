@@ -28,6 +28,7 @@ import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.WindowHutGuardTower;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.colony.jobs.JobArcherTraining;
 import com.minecolonies.coremod.colony.jobs.JobCombatTraining;
@@ -684,6 +685,18 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         return minePos;
     }
 
+    public void setMinePos(BlockPos pos)
+    {
+        if (pos == null)
+        {
+            this.minePos = null;
+        }
+        else if (colony.getBuildingManager().getBuilding(pos) instanceof BuildingMiner)
+        {
+            this.minePos = pos;
+        }
+    }
+
     /**
      * The client view for the Guard building.
      */
@@ -951,6 +964,8 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         }
 
         public BlockPos getMinePos() { return minePos; }
+
+        public void setMinePos(BlockPos pos) { this.minePos = pos; }
     }
 
     @Override

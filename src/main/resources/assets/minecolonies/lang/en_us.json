@@ -585,6 +585,7 @@
 
   "com.minecolonies.coremod.gui.hiring.buttonhire": "Hire",
   "com.minecolonies.coremod.gui.hiring.buttonassign": "Assign",
+  "com.minecolonies.coremod.gui.hiring.buttonunassign": "Unassign",
   "com.minecolonies.coremod.gui.workerhuts.repair": "Repair",
   "com.minecolonies.coremod.gui.nobuilding": "This block is missing its respective building, try restarting or loading a backup!",
   "com.minecolonies.coremod.gui.nocolony": "This block's building is missing its colony, try restarting or loading a backup!",
