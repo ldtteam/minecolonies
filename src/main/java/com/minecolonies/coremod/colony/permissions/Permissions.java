@@ -35,13 +35,13 @@ public class Permissions implements IPermissions
     /**
      * All tags to store and retrieve data from nbt.
      */
-    private static final String TAG_OWNERS      = "owners";
-    private static final String TAG_ID          = "id";
-    private static final String TAG_RANK        = "rank";
-    private static final String TAG_PERMISSIONS = "permissionMap";
-    private static final String TAG_FLAGS       = "flags";
-    private static final String TAG_OWNER       = "owner";
-    private static final String TAG_OWNER_ID    = "ownerid";
+    private static final String TAG_OWNERS          = "owners";
+    private static final String TAG_ID              = "id";
+    private static final String TAG_RANK            = "rank";
+    private static final String TAG_PERMISSIONS     = "permissionMap";
+    private static final String TAG_FLAGS           = "flags";
+    private static final String TAG_OWNER           = "owner";
+    private static final String TAG_OWNER_ID        = "ownerid";
     private static final String TAG_FULLY_ABANDONED = "fully_abandoned";
 
     /**
