@@ -264,9 +264,9 @@ public class RecipeStorage implements IRecipeStorage
                              && ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, false, true));
 
             final int neededCount;
-            if(!secondaryOutputs.isEmpty())
+            if(!secondaryOutputs.isEmpty() || !tools.isEmpty())
             {
-                if(!ItemStackUtils.compareItemStackListIgnoreStackSize(secondaryOutputs, stack, false, true))
+                if(!ItemStackUtils.compareItemStackListIgnoreStackSize(this.getSecondaryOutputs(true), stack, false, true))
                 {
                     neededCount = storage.getAmount() * neededMultiplier;
                 }
