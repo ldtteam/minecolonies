@@ -13,6 +13,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.CraftingUtils;
+import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
@@ -121,7 +122,7 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
             return null;
         }
 
-        return createRequestsForRecipe(manager, count, minCount, craftableCrafting);
+        return createRequestsForRecipe(manager, building, count, minCount, craftableCrafting);
     }
 
     protected boolean canBuildingCraftStack(@NotNull final IRequestManager manager, @NotNull final AbstractBuildingWorker building, @NotNull final ItemStack stack)
@@ -132,6 +133,7 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
     @Nullable
     protected List<IToken<?>> createRequestsForRecipe(
       @NotNull final IRequestManager manager,
+      @NotNull final AbstractBuildingWorker building,
       final int count,
       final int minCount,
       @NotNull final IRecipeStorage storage)
@@ -143,10 +145,18 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
             {
                 final ItemStack craftingHelperStack = ingredient.getItemStack().copy();
                 final ItemStack container = ingredient.getItem().getContainerItem(ingredient.getItemStack());
-                //if recipe secondary produces craftinghelperstack, don't add it by count, add it once. Or get fancy and calculate durability and add appropriately
-                if(!storage.getSecondaryOutputs(true).isEmpty() && ItemStackUtils.compareItemStackListIgnoreStackSize(storage.getSecondaryOutputs(true), craftingHelperStack, false, true))
+                //if recipe secondary produces craftinghelperstack, don't add it by count, add it once. If it's in the tools list, check to see if we need it first. 
+                if(!storage.getSecondaryOutputs(false).isEmpty() && ItemStackUtils.compareItemStackListIgnoreStackSize(storage.getSecondaryOutputs(false), craftingHelperStack, false, true))
                 {
                     materialRequests.add(createNewRequestForStack(manager, craftingHelperStack, ingredient.getAmount(), ingredient.getAmount()));
+                }
+                else if(!storage.getCraftingTools().isEmpty() && ItemStackUtils.compareItemStackListIgnoreStackSize(storage.getCraftingTools(), craftingHelperStack, false, true))
+                {
+                    if(InventoryUtils.getItemCountInProvider(building, item -> ItemStackUtils.compareItemStacksIgnoreStackSize(item, craftingHelperStack, false, true)) <= ingredient.getAmount())
+                    {
+                        int requiredForDurability = (int) Math.ceil((double) count / ingredient.getRemainingDurablityValue());
+                        materialRequests.add(createNewRequestForStack(manager, craftingHelperStack, requiredForDurability , requiredForDurability));
+                    }
                 }
                 else if (!ItemStackUtils.isEmpty(container) && ItemStackUtils.compareItemStacksIgnoreStackSize(container, craftingHelperStack, false, true))
                 {
@@ -164,7 +174,7 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
     @Nullable
     protected IToken<?> createNewRequestForStack(@NotNull final IRequestManager manager, final ItemStack stack, final int count, final int minCount)
     {
-        final Stack stackRequest = new Stack(stack, count, minCount);
+        final Stack stackRequest = new Stack(stack, false, true, false, ItemStack.EMPTY, count, minCount);
         return manager.createRequest(this, stackRequest);
     }
 
