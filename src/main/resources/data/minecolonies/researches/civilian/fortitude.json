@@ -1,0 +1,22 @@
+{
+  "comment": "name: Fortitude * subtitle: ",
+  "branch": "minecolonies:civilian",
+  "researchLevel": 5,
+  "parentResearch": "minecolonies:civilian/vitality",
+  "icon": "minecraft:honey_bottle:1",
+  "requirements": [
+    {
+      "building": "cook",
+      "level": 5
+    },
+    {
+      "item": "minecraft:golden_apple",
+      "quantity": 32
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/healingsaturationlimitaddition": 4
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "comment": "name: Accuracy * subtitle: ",
+  "branch": "minecolonies:combat",
+  "researchLevel": 1,
+  "exclusiveChildResearch": true,
+  "icon": "minecraft:lime_bed:1",
+  "requirements": [
+    {
+      "building": "guardtower",
+      "level": 1
+    },
+    {
+      "item": "minecraft:iron_ingot",
+      "quantity": 16
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/sleeplessmultiplier": 1
+    }
+  ]
+}

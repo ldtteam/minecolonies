@@ -1,0 +1,22 @@
+{
+  "comment": "name: Mighty Cleave * subtitle: ",
+  "branch": "minecolonies:combat",
+  "researchLevel": 5,
+  "parentResearch": "minecolonies:combat/cleave",
+  "icon": "minecraft:golden_sword:1",
+  "requirements": [
+    {
+      "building": "barracks",
+      "level": 5
+    },
+    {
+      "item": "minecraft:iron_block",
+      "quantity": 16
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/meleedamageaddition": 4
+    }
+  ]
+}

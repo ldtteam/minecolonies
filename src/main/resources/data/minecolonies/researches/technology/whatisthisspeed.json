@@ -1,0 +1,19 @@
+{
+  "comment": "name: What Is This Speed? * subtitle: We stopped trying to calculate it after a while.",
+  "branch": "minecolonies:technology",
+  "researchLevel": 5,
+  "parentResearch": "minecolonies:technology/heavymachinery",
+  "subtitle": "com.minecolonies.research.technology.whatisthisspeed.subtitle",
+  "icon": "minecraft:comparator:1",
+  "requirements": [
+    {
+      "item": "minecraft:redstone",
+      "quantity": 1024
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/blockbreakspeedmultiplier": 4
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "comment": "name: Let It Grow * subtitle: Just one tiny seed is all we really need.",
+  "branch": "minecolonies:technology",
+  "researchLevel": 2,
+  "sortOrder": 2,
+  "parentResearch": "minecolonies:technology/biodegradable",
+  "subtitle": "com.minecolonies.research.technology.letitgrow.subtitle",
+  "icon": "minecolonies:blockhutplantation:1",
+  "requirements": [
+    {
+      "building": "farmer",
+      "level": 3
+    },
+    {
+      "item": "minecolonies:compost",
+      "quantity": 16
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/blockhutplantation": 1
+    }
+  ]
+}

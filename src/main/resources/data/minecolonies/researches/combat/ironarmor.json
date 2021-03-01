@@ -1,0 +1,22 @@
+{
+  "comment": "name: Iron Armor * subtitle: ",
+  "branch": "minecolonies:combat",
+  "researchLevel": 4,
+  "parentResearch": "minecolonies:combat/ironskin",
+  "icon": "minecraft:iron_helmet:1",
+  "requirements": [
+    {
+      "building": "townhall",
+      "level": 4
+    },
+    {
+      "item": "minecraft:iron_ingot",
+      "quantity": 32
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/armordurabilitymultiplier": 4
+    }
+  ]
+}

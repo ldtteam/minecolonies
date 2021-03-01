@@ -12,7 +12,6 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
 import com.minecolonies.api.items.ItemBlockHut;
-import com.minecolonies.api.research.effects.AbstractResearchEffect;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
@@ -29,10 +28,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.Rotation;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.shapes.ISelectionContext;
@@ -89,6 +85,11 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     protected boolean needsResearch = false;
 
     /**
+     * The hut's lower-case building-registry-compatible name.
+     */
+    private final String name;
+
+    /**
      * Constructor for a hut block.
      * <p>
      * Registers the block, sets the creative tab, as well as the resistance and the hardness.
@@ -98,6 +99,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
         super(Properties.create(Material.WOOD).hardnessAndResistance(HARDNESS, RESISTANCE).notSolid());
         setRegistryName(getName());
         this.setDefaultState(this.getDefaultState().with(FACING, Direction.NORTH));
+        this.name = getName();
     }
 
     @Override
@@ -118,6 +120,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
         super(properties.notSolid());
         setRegistryName(getName());
         this.setDefaultState(this.getDefaultState().with(FACING, Direction.NORTH));
+        this.name = getName();
     }
 
     /**
@@ -289,32 +292,30 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     }
 
     /**
-     * Checks whether this block is yet to be researched.
-     * 
-     * @param colony a view of the colony this is crafted in.
-     * @return true if this block needs to be researched before building its hut.
+     * Checks whether the research for this hut block is already researched in the given colony.
+     *
+     * @param colony     the colony to check.
      */
     @OnlyIn(Dist.CLIENT)
     public void checkResearch(final IColonyView colony)
-    {
-        needsResearch = false;
-    }
-
-    /**
-     * Checks whether the research with the given id is already researched in the given colony.
-     * 
-     * @param colony     the colony to check.
-     * @param researchId the id of the research to look for.
-     */
-    @OnlyIn(Dist.CLIENT)
-    protected void checkResearch(final IColonyView colony, final String researchId)
     {
         if (colony == null)
         {
             needsResearch = false;
             return;
         }
-        needsResearch = colony.getResearchManager().getResearchEffects().getEffect(researchId, AbstractResearchEffect.class) == null;
+        final ResourceLocation effectId = colony.getResearchManager().getResearchEffectIdFrom(this);
+        if(colony.getResearchManager().getResearchEffects().getEffectStrength(effectId) > 0)
+        {
+            needsResearch = false;
+            return;
+        }
+        if(MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().hasResearchEffect(effectId))
+        {
+            needsResearch = true;
+            return;
+        }
+        needsResearch = false;
     }
 
     @Override

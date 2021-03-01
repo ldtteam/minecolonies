@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.managers;
 
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.ICitizenDataManager;
 import com.minecolonies.api.colony.ICivilianData;
@@ -26,7 +27,6 @@ import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewCitizenViewMessage;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewRemoveCitizenMessage;
-import com.minecolonies.coremod.research.AdditionModifierResearchEffect;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -40,7 +40,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static com.minecolonies.api.research.util.ResearchConstants.CAP;
+import static com.minecolonies.api.research.util.ResearchConstants.CITIZEN_CAP;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CITIZENS;
 import static com.minecolonies.api.util.constant.TranslationConstants.ALL_CITIZENS_ARE_SLEEPING;
@@ -465,18 +465,15 @@ public class CitizenManager implements ICitizenManager
      */
     private double maxCitizensFromResearch()
     {
-        double max = 25;
-        final AdditionModifierResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect(CAP, AdditionModifierResearchEffect.class);
-        if (effect != null)
+        if(MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().hasResearchEffect(CITIZEN_CAP))
         {
-            max += effect.getEffect();
-            // TODO research data rework
-            if (max >= MineColonies.getConfig().getServer().maxCitizenPerColony.get())
-            {
-                return MineColonies.getConfig().getServer().maxCitizenPerColony.get();
-            }
+            final double max = 25 + colony.getResearchManager().getResearchEffects().getEffectStrength(CITIZEN_CAP);
+            return Math.min(max, MineColonies.getConfig().getServer().maxCitizenPerColony.get());
         }
-        return max;
+        else
+        {
+            return MineColonies.getConfig().getServer().maxCitizenPerColony.get();
+        }
     }
 
     /**
