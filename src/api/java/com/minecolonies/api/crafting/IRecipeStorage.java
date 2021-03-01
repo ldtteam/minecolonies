@@ -142,6 +142,12 @@ public interface IRecipeStorage
      */
     List<ItemStack> getSecondaryOutputs(boolean includeTools);
 
+    /**
+     * Get the tools (leave behind in grid)
+     * @return list of items that weren't consumed during crafting
+     */
+    List<ItemStack> getCraftingTools();
+
     /** 
      * Get the location/id of the Loot table used for optional outputs
      * @return the resource location for the table

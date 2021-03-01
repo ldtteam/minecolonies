@@ -15,6 +15,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.loot.LootContext;
 import net.minecraft.loot.LootTable;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
@@ -461,7 +462,8 @@ public class RecipeStorage implements IRecipeStorage
                     if(ItemStackUtils.compareItemStackListIgnoreStackSize(tools, stack, false, true))
                     {
                         final ItemStack damageStack = handler.getStackInSlot(slotOfStack);
-                        damageStack.attemptDamageItem(1, rand, null);
+                        damageStack.damageItem(1, FakePlayerFactory.getMinecraft(context.getWorld()), x -> {});
+                        amountNeeded -= ItemStackUtils.getSize(damageStack);
                     }
                     else
                     {
@@ -624,5 +626,11 @@ public class RecipeStorage implements IRecipeStorage
     public ResourceLocation getLootTable()
     {
         return lootTable;
+    }
+
+    @Override
+    public List<ItemStack> getCraftingTools()
+    {
+        return ImmutableList.copyOf(tools);
     }
 }
