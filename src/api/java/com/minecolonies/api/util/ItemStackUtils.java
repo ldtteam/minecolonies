@@ -692,7 +692,7 @@ public final class ItemStackUtils
      * @return the size of the stack
      */
     @NotNull
-    public static int getSize(final ItemStack stack)
+    public static int getSize(@NotNull final ItemStack stack)
     {
         if (ItemStackUtils.isEmpty(stack))
         {
@@ -701,6 +701,24 @@ public final class ItemStackUtils
 
         return stack.getCount();
     }
+
+    /**
+     * get the Durability of the stack.
+     *
+     * @param stack to get the size from
+     * @return the size of the stack
+     */
+    @NotNull
+    public static int getDurability(@NotNull final ItemStack stack)
+    {
+        if (ItemStackUtils.isEmpty(stack))
+        {
+            return 0;
+        }
+
+        return stack.getMaxDamage() - stack.getDamage();
+    }
+
 
     /**
      * Method to compare to stacks, ignoring their stacksize.
@@ -757,8 +775,22 @@ public final class ItemStackUtils
             // Then sort on NBT
             if (itemStack1.hasTag() && itemStack2.hasTag())
             {
-                // Then sort on stack size
-                return ItemStack.areItemStackTagsEqual(itemStack1, itemStack2);
+                CompoundNBT nbt1 = itemStack1.getTag();
+                CompoundNBT nbt2 = itemStack2.getTag();
+
+                for(String key :nbt1.keySet())
+                {
+                    if(!matchDamage && key.equals("Damage"))
+                    {
+                        continue;
+                    }
+                    if(!nbt2.contains(key) || !nbt1.get(key).equals(nbt2.get(key)))
+                    {
+                        return false;
+                    }
+                }
+                
+                return nbt1.keySet().size() == nbt2.keySet().size();
             }
             else
             {
