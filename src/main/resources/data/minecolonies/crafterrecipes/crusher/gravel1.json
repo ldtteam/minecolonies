@@ -5,15 +5,6 @@
     {
         "item" : "minecraft:cobblestone",
         "count": "2"
-    },
-    {
-        "item" : "minecraft:stone_pickaxe",
-        "count": "1"
-    }
-  ],
-  "additional-output": [
-    {
-        "item" : "minecraft:stone_pickaxe"
     }
   ],
   "result": "minecraft:gravel",
