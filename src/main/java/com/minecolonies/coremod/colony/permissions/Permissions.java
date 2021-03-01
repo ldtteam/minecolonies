@@ -831,7 +831,7 @@ public class Permissions implements IPermissions
         final Player player = players.get(id);
         if (player != null && player.getRank() != Rank.OWNER && players.remove(id) != null)
         {
-        	checkFullyAbandoned();
+            checkFullyAbandoned();
             markDirty();
             return true;
         }
@@ -938,7 +938,8 @@ public class Permissions implements IPermissions
      * Checks whether this colony is fully abandoned, meaning it can be destroyed.
      * A colony is fully abandoned when it has the owner "[abandoned]" and has no officers left.
      */
-    private void checkFullyAbandoned() {
+    private void checkFullyAbandoned()
+    {
         if (getOwnerName().equals("[abandoned]") && getPlayersByRank(Rank.OFFICER).isEmpty())
         {
             fullyAbandoned = true;
