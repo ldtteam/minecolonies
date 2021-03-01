@@ -392,9 +392,9 @@ public class Permissions implements IPermissions
             {
                 fullyAbandoned = compound.getBoolean(TAG_FULLY_ABANDONED);
             }
-            else if (getOwnerName().equals("[abandoned]") && getPlayersByRank(Rank.OFFICER).isEmpty())
+            else
             {
-                fullyAbandoned = true;
+                checkFullyAbandoned();
             }
         }
 
@@ -474,11 +474,7 @@ public class Permissions implements IPermissions
 
         players.put(ownerUUID, new Player(ownerUUID, ownerName, Rank.OWNER));
 
-        if (getPlayersByRank(Rank.OFFICER).isEmpty())
-        {
-            fullyAbandoned = true;
-        }
-
+        checkFullyAbandoned();
         markDirty();
     }
 
@@ -690,10 +686,7 @@ public class Permissions implements IPermissions
             }
             else
             {
-                if (getOwnerName().equals("[abandoned]") && getPlayersByRank(Rank.OFFICER).isEmpty())
-                {
-                    fullyAbandoned = true;
-                }
+                checkFullyAbandoned();
             }
 
             markDirty();
@@ -838,13 +831,8 @@ public class Permissions implements IPermissions
         final Player player = players.get(id);
         if (player != null && player.getRank() != Rank.OWNER && players.remove(id) != null)
         {
+        	checkFullyAbandoned();
             markDirty();
-
-            if (getOwnerName().equals("[abandoned]") && getPlayersByRank(Rank.OFFICER).isEmpty())
-            {
-                fullyAbandoned = true;
-            }
-
             return true;
         }
 
@@ -944,6 +932,17 @@ public class Permissions implements IPermissions
     public boolean isColonyMember(@NotNull final PlayerEntity player)
     {
         return players.containsKey(player.getGameProfile().getId());
+    }
+
+    /**
+     * Checks whether this colony is fully abandoned, meaning it can be destroyed.
+     * A colony is fully abandoned when it has the owner "[abandoned]" and has no officers left.
+     */
+    private void checkFullyAbandoned() {
+        if (getOwnerName().equals("[abandoned]") && getPlayersByRank(Rank.OFFICER).isEmpty())
+        {
+            fullyAbandoned = true;
+        }
     }
 
     private static class RankPair
