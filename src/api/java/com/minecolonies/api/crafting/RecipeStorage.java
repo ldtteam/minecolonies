@@ -6,6 +6,7 @@ import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.registry.RecipeTypeEntry;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -13,9 +14,10 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.LootContext;
+import net.minecraft.loot.LootParameters;
 import net.minecraft.loot.LootTable;
+import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
@@ -440,7 +442,7 @@ public class RecipeStorage implements IRecipeStorage
             return false;
         }
 
-        final Random rand = context.getRandom();
+        final AbstractEntityCitizen citizen = (AbstractEntityCitizen) context.get(LootParameters.THIS_ENTITY);
 
         for (final ItemStorage storage : getCleanedInput())
         {
@@ -459,11 +461,10 @@ public class RecipeStorage implements IRecipeStorage
 
                 while (slotOfStack != -1 && amountNeeded > 0)
                 {
-                    if(ItemStackUtils.compareItemStackListIgnoreStackSize(tools, stack, false, true))
+                    if(citizen != null && ItemStackUtils.compareItemStackListIgnoreStackSize(tools, stack, false, true) && ItemStackUtils.getDurability(handler.getStackInSlot(slotOfStack)) > 0 )
                     {
-                        final ItemStack damageStack = handler.getStackInSlot(slotOfStack);
-                        damageStack.damageItem(1, FakePlayerFactory.getMinecraft(context.getWorld()), x -> {});
-                        amountNeeded -= ItemStackUtils.getSize(damageStack);
+                        citizen.getInventoryCitizen().damageInventoryItem(slotOfStack, 1, citizen, item -> item.sendBreakAnimation(Hand.MAIN_HAND));
+                        amountNeeded -= stack.getCount();
                     }
                     else
                     {

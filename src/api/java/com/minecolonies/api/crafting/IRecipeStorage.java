@@ -73,6 +73,11 @@ public interface IRecipeStorage
         return fullfillRecipe(world, Arrays.asList(inventories));
     }
 
+    default boolean fullFillRecipe(@NotNull final LootContext context, @NotNull final IItemHandler... inventories)
+    {
+        return fullfillRecipe(context, Arrays.asList(inventories));
+    }
+
     /**
      * Check for space, remove items, and insert crafted items.
      *
