@@ -1,0 +1,22 @@
+{
+  "branch": "minecolonies:combat",
+  "researchLevel": 1,
+  "sortOrder": 3,
+  "exclusiveChildResearch": true,
+  "icon": "minecraft:shield",
+  "requirements": [
+    {
+      "building": "guardtower",
+      "level": 3
+    },
+    {
+      "item": "minecraft:iron_block",
+      "quantity": 3
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/shieldusageunlock": 1
+    }
+  ]
+}

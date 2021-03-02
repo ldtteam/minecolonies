@@ -1,0 +1,18 @@
+{
+  "comment": "name: Diamond Skin * subtitle: ",
+  "branch": "minecolonies:combat",
+  "researchLevel": 6,
+  "parentResearch": "minecolonies:combat/steelarmor",
+  "icon": "minecraft:diamond_helmet:1",
+  "requirements": [
+    {
+      "item": "minecraft:diamond",
+      "quantity": 64
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/armordurabilitymultiplier": 6
+    }
+  ]
+}

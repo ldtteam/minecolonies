@@ -376,6 +376,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                 else
                 {
                     building.setBuildingLevel(((WorkOrderBuildBuilding) wo).getUpgradeLevel());
+                    job.getColony().getResearchManager().checkAutoStartResearch();
                 }
             }
             else if (wo instanceof WorkOrderBuildRemoval)

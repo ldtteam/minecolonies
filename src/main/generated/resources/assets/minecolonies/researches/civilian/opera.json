@@ -1,0 +1,22 @@
+{
+  "branch": "minecolonies:civilian",
+  "parentResearch": "minecolonies:civilian/spectacle",
+  "researchLevel": 5,
+  "subtitle": "com.minecolonies.research.civilian.opera.subtitle",
+  "icon": "minecolonies:textures/icons/research/happy4.png",
+  "requirements": [
+    {
+      "building": "cook",
+      "level": 5
+    },
+    {
+      "item": "minecraft:cake",
+      "quantity": 27
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/happinessmultiplier": 4
+    }
+  ]
+}

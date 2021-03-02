@@ -13,7 +13,6 @@ import com.minecolonies.coremod.entity.SittingEntity;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.client.CircleParticleEffectMessage;
-import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -190,13 +189,7 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil, Buildi
         if (slot != -1)
         {
             InventoryUtils.reduceStackInItemHandler(worker.getInventoryCitizen(), new ItemStack(Items.PAPER), 1);
-            double bonus = 50.0;
-            final MultiplierModifierResearchEffect effect =
-              worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(TEACHING, MultiplierModifierResearchEffect.class);
-            if (effect != null)
-            {
-                bonus *= (1 + effect.getEffect());
-            }
+            final double bonus = 50.0 * (1 + worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(TEACHING));
 
             worker.getCitizenData().getCitizenSkillHandler().addXpToSkill(Skill.Intelligence, bonus, worker.getCitizenData());
         }

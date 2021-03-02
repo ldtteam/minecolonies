@@ -1,0 +1,22 @@
+{
+  "comment": "name: Ability * subtitle: ",
+  "branch": "minecolonies:technology",
+  "researchLevel": 2,
+  "parentResearch": "minecolonies:technology/hittingiron",
+  "icon": "minecraft:glowstone_dust:1",
+  "requirements": [
+    {
+      "building": "miner",
+      "level": 1
+    },
+    {
+      "item": "minecraft:iron_ingot",
+      "quantity": 64
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/blockplacespeedmultiplier": 1
+    }
+  ]
+}

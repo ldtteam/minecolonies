@@ -1,0 +1,12 @@
+{
+  "comment": "name: Armor Durability * description : Citizen Armor Durability +%d%%",
+  "effect": true,
+  "levels": [
+    0.1,
+    0.2,
+    0.3,
+    0.4,
+    0.5,
+    1
+  ]
+}

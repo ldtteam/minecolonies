@@ -1,0 +1,22 @@
+{
+  "comment": "name: Compost * subtitle: ",
+  "branch": "minecolonies:technology",
+  "researchLevel": 4,
+  "parentResearch": "minecolonies:technology/dung",
+  "icon": "minecraft:bone:1",
+  "requirements": [
+    {
+      "building": "miner",
+      "level": 5
+    },
+    {
+      "item": "minecraft:wheat_seeds",
+      "quantity": 256
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/farmingmultiplier": 3
+    }
+  ]
+}

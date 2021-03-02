@@ -11,7 +11,6 @@ import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ModRecipeTypes;
 import com.minecolonies.api.crafting.RecipeStorage;
 import com.minecolonies.api.research.IGlobalResearchTree;
-import com.minecolonies.api.research.effects.AbstractResearchEffect;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.TypeConstants;
@@ -172,12 +171,12 @@ public class CustomRecipe
     /**
      * ID of the required research. Null if none required
      */
-    private String researchId = null;
+    private ResourceLocation researchId = null;
 
     /**
      * ID of the exclusionary research. Null if nothing excludes this recipe
      */
-    private String excludedResearchId = null;
+    private ResourceLocation excludedResearchId = null;
 
     /**
      * The Minimum Level the building has to be for this recipe to be valid
@@ -258,7 +257,7 @@ public class CustomRecipe
 
     /**
      * Parse a Json object into a Custom recipe
-     * 
+     *
      * @param recipeJson the json representing the recipe
      * @return new instance of CustomRecipe
      */
@@ -363,11 +362,11 @@ public class CustomRecipe
         }
         if (recipeJson.has(RECIPE_RESEARCHID_PROP))
         {
-            recipe.researchId = recipeJson.get(RECIPE_RESEARCHID_PROP).getAsString();
+            recipe.researchId = new ResourceLocation(recipeJson.get(RECIPE_RESEARCHID_PROP).getAsString());
         }
         if (recipeJson.has(RECIPE_EXCLUDED_RESEARCHID_PROP))
         {
-            recipe.excludedResearchId = recipeJson.get(RECIPE_EXCLUDED_RESEARCHID_PROP).getAsString();
+            recipe.excludedResearchId = new ResourceLocation(recipeJson.get(RECIPE_EXCLUDED_RESEARCHID_PROP).getAsString());
         }
         if(recipeJson.has(RECIPE_BUILDING_MIN_LEVEL_PROP))
         {
@@ -396,7 +395,7 @@ public class CustomRecipe
 
     /**
      * Get the ID for this recipe
-     * @return
+     * @return Recipe Resource Location
      */
     public ResourceLocation getRecipeId()
     {
@@ -410,58 +409,108 @@ public class CustomRecipe
     {
         this.recipeId = recipeId;
     }
- 
+
     /**
      * Check to see if the recipe is currently valid for the building
      * This does research checks, to verify that the appropriate researches are in the correct states
+     * @param building      Building to check recipe against.
      */
     public boolean isValidForBuilding(IBuildingWorker building)
     {
-        AbstractResearchEffect<?> requiredEffect = null;
-        AbstractResearchEffect<?> excludedEffect = null;
         final IColony colony = building.getColony();
-        final int bldgLevel = building.getBuildingLevel();
-
-        IGlobalResearchTree gr = IGlobalResearchTree.getInstance();
+        final boolean requiredEffectPresent;
         if (researchId != null)
         {
-            requiredEffect = colony.getResearchManager().getResearchEffects().getEffect(gr.getEffectIdForResearch(researchId), AbstractResearchEffect.class);
+            requiredEffectPresent = isUnlockEffectResearched(researchId, colony);
         }
-
+        else
+        {
+            requiredEffectPresent = false;
+        }
+        final boolean excludedEffectPresent;
         if (excludedResearchId != null)
         {
-            excludedEffect = colony.getResearchManager().getResearchEffects().getEffect(gr.getEffectIdForResearch(excludedResearchId), AbstractResearchEffect.class);
+            excludedEffectPresent = isUnlockEffectResearched(excludedResearchId, colony);
+        }
+        else
+        {
+            excludedEffectPresent = false;
+        }
+        if (isPrecursorRecipeMissing(building))
+        {
+            return false;
         }
 
+        final int bldgLevel = building.getBuildingLevel();
+
+        return (researchId == null || requiredEffectPresent)
+                 && (excludedResearchId == null || !excludedEffectPresent)
+                 && (bldgLevel >= minBldgLevel)
+                 && (bldgLevel <= maxBldgLevel);
+    }
+
+    /**
+     * Check if a given researchId has been completed and has an unlock ability effect.
+     * @param researchId    The id of the research to check for.
+     * @param colony        The colony being checked against.
+     */
+    private boolean isUnlockEffectResearched(ResourceLocation researchId, IColony colony)
+    {
+        //Check first if the research effect exists.
+        if (!IGlobalResearchTree.getInstance().hasResearchEffect(researchId) && !IGlobalResearchTree.getInstance().hasResearch(researchId))
+        {
+            // If there's nothing registered with this effect, and no research with this key, we'll default to acting as if research was completed.
+            return true;
+        }
+        else
+        {
+            if (colony.getResearchManager().getResearchEffects().getEffectStrength(researchId) > 0)
+            {
+                // Research effect queried, present, and set to true.
+                return true;
+            }
+            if (colony.getResearchManager().getResearchTree().hasCompletedResearch(researchId))
+            {
+                // Research ID queried and present.
+                // This will allow simple Recipe-style unlocks to exist without needing an extra effect category.
+                return true;
+            }
+        }
+        // Research ID queried and present or present as an effect, but not completed or does not have an unlock effect.
+        return false;
+    }
+
+    /**
+     * Check if a precursor recipe is missing from the building.
+     * @param building      The building which would contain the precursor recipe.
+     * @return              True if a precusor recipe was required and not present.
+     */
+    private boolean isPrecursorRecipeMissing(IBuildingWorker building)
+    {
         if(mustExist)
         {
-            boolean found = false;
             final IRecipeStorage compareStorage = this.getRecipeStorage();
             final ResourceLocation recipeSource = this.getRecipeId();
-            for(IToken<?> recipeToken: building.getRecipes())
+            for (IToken<?> recipeToken : building.getRecipes())
             {
                 final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(recipeToken);
-                if((storage.getRecipeSource() != null && storage.getRecipeSource().equals(recipeSource)) || (storage.getCleanedInput().containsAll(compareStorage.getCleanedInput()) && compareStorage.getCleanedInput().containsAll(storage.getCleanedInput())))
+                if ((storage.getRecipeSource() != null && storage.getRecipeSource().equals(recipeSource)) || (
+                  storage.getCleanedInput().containsAll(compareStorage.getCleanedInput())
+                    && compareStorage.getCleanedInput()
+                         .containsAll(storage.getCleanedInput())))
                 {
-                    found = true;
-                    break;
+                    return false;
                 }
             }
-            if(!found)
-            {
-                return false; 
-            }
+            return true;
         }
-
-        return (researchId == null || requiredEffect != null) 
-            && (excludedResearchId == null || excludedEffect == null)
-            && (bldgLevel >= minBldgLevel)
-            && (bldgLevel <= maxBldgLevel);
+        // if no precursor needed.
+        return false;
     }
 
     /**
      * Get a the recipe storage represented by this recipe
-     * @return
+     * @return Recipe Storage
      */
     public IRecipeStorage getRecipeStorage()
     {

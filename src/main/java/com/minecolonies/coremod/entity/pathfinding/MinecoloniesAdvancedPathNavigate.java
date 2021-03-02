@@ -163,7 +163,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
       final BlockPos dest,
       final double speedFactor)
     {
-        if (dest != null && dest.equals(desiredPos) && calculationFuture != null && pathResult != null)
+        if (dest != null && dest.equals(desiredPos) && calculationFuture != null && pathResult != null && job.getResult().getClass().equals(pathResult.getClass()))
         {
             return pathResult;
         }

@@ -19,6 +19,8 @@ import com.minecolonies.api.crafting.registry.RecipeTypeEntry;
 import com.minecolonies.api.entity.ai.registry.IMobAIRegistry;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.research.IGlobalResearchTree;
+import com.minecolonies.api.research.effects.registry.ResearchEffectEntry;
+import com.minecolonies.api.research.registry.ResearchRequirementEntry;
 import net.minecraftforge.registries.IForgeRegistry;
 
 public final class MinecoloniesAPIProxy implements IMinecoloniesAPI
@@ -136,6 +138,12 @@ public final class MinecoloniesAPIProxy implements IMinecoloniesAPI
     {
         return apiInstance.getGlobalResearchTree();
     }
+
+    @Override
+    public IForgeRegistry<ResearchRequirementEntry> getResearchRequirementRegistry() {return apiInstance.getResearchRequirementRegistry();}
+
+    @Override
+    public IForgeRegistry<ResearchEffectEntry> getResearchEffectRegistry() {return apiInstance.getResearchEffectRegistry();}
 
     @Override
     public IForgeRegistry<ColonyEventTypeRegistryEntry> getColonyEventRegistry()
