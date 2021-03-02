@@ -670,7 +670,7 @@
   "com.minecolonies.coremod.gui.workerhuts.followtight": "Tight grouping",
   "com.minecolonies.coremod.gui.workerhuts.followloose": "Loose grouping",
   "com.minecolonies.coremod.gui.workerhuts.settarget": "Disabled",
-  "com.minecolonies.coremod.gui.worherhuts.patrollingmine": "Patrolling mine at %s.",
+  "com.minecolonies.coremod.gui.worherhuts.patrollingmine": "Patrolling Mine at %s.",
 
   "com.minecolonies.coremod.gui.workerhuts.nospace": "Please make space in your inventory to use this functionality.",
   "com.minecolonies.coremod.job.guard.tool.taskpatrol": "Right-click on a block to add it as a patrol target. Double-click to close the tool.",
