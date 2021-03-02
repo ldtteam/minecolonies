@@ -153,7 +153,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         // Undo just the selected research.
         else if (button.getID().contains("undo:"))
         {
-            final String undoName = button.getID().substring(button.getID().indexOf(':'));
+            final String undoName = button.getID().substring(button.getID().indexOf(':') + 1);
             if(!ResourceLocation.isResouceNameValid(undoName))
             {
                 return;
