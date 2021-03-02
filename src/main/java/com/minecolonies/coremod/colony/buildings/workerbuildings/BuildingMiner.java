@@ -2,7 +2,6 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.*;
-import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
@@ -34,9 +33,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.*;
@@ -120,10 +117,6 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
      */
     @Nullable
     private Node oldNode = null;
-
-    private List<ICitizenData> guards = new ArrayList<>();
-
-    private Integer assignedGuards = 0;
 
     /**
      * Required constructor.
@@ -335,7 +328,6 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
     public void serializeToView(@NotNull final PacketBuffer buf)
     {
         super.serializeToView(buf);
-        this.pullGuards();
         buf.writeInt(currentLevel);
         buf.writeInt(levels.size());
 
@@ -344,13 +336,6 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
             buf.writeInt(level.getNumberOfBuiltNodes());
             buf.writeInt(level.getDepth());
         }
-
-        buf.writeInt(guards.size());
-        for (final ICitizenData guard : guards)
-        {
-            buf.writeInt(guard.getId());
-        }
-        buf.writeInt(assignedGuards);
     }
 
     /**
@@ -664,36 +649,6 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         }
     }
 
-    public void pullGuards()
-    {
-        guards.clear();
-        assignedGuards = 0;
-        final Collection<IBuilding> buildings = colony.getBuildingManager().getBuildings().values();
-        for (final IBuilding building : buildings)
-        {
-            if (building instanceof AbstractBuildingGuards)
-            {
-                final AbstractBuildingGuards guardbuilding = (AbstractBuildingGuards) building;
-                if (guardbuilding.getTask() == GuardTask.MINE)
-                {
-                    for (final ICitizenData guard : guardbuilding.getAssignedCitizen())
-                    {
-                        guards.add(guard);
-                    }
-                    if (guardbuilding.getMinePos() != null && guardbuilding.getMinePos().equals(this.getPosition()))
-                    {
-                        assignedGuards++;
-                    }
-                }
-            }
-        }
-    }
-
-    public List<ICitizenData> getGuards()
-    {
-        return guards;
-    }
-
     /**
      * Provides a view of the miner building class.
      */
@@ -708,6 +663,9 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
          */
         public int                           current;
 
+        /**
+         * The number of guards assigned to this mine
+         */
         public int                           assignedGuards;
 
         /**
@@ -742,6 +700,10 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
             }
         }
 
+        /**
+         * Retrieve a list of guards working at buildings with the task to patrol the mine
+         * @return list of guards
+         */
         public List<ICitizenDataView> pullGuards()
         {
             assignedGuards = 0;
@@ -762,6 +724,13 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
             return guards;
         }
 
+        /**
+         * Get the maximum of allowed guards for the mine
+         * 1 guard for mine level 1 and 2
+         * 2 guards for mine level 3 and 4
+         * 3 guards for mine level 5
+         * @return maximum number of guards
+         */
         public int getMaxGuards()
         {
             switch (this.getBuildingLevel())

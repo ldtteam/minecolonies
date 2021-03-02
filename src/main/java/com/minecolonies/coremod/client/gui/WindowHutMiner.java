@@ -7,9 +7,7 @@ import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.blockout.views.SwitchView;
 import com.ldtteam.structurize.util.LanguageHandler;
-import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.ICitizenDataView;
-import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
@@ -18,13 +16,10 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.network.messages.server.colony.building.guard.GuardSetMinePosMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.miner.MinerSetLevelMessage;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Window for the miner hut.
@@ -55,6 +50,7 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
         super(building, Constants.MOD_ID + HUT_MINER_RESOURCE_SUFFIX);
         this.miner = building;
         pullLevelsFromHut();
+        pullGuardsFromHut();
     }
 
     /**
@@ -65,6 +61,16 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
         if (miner.getColony().getBuilding(miner.getID()) != null)
         {
             levelsInfo = miner.levelsInfo;
+        }
+    }
+
+    /**
+     * Retrieve guards from the building to display in GUI.
+     */
+    private void pullGuardsFromHut()
+    {
+        if (miner.getColony().getBuilding(miner.getID()) != null)
+        {
             guardsInfo = miner.pullGuards();
         }
     }
@@ -162,7 +168,7 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
         }
         else if (currentPage.equals(PAGE_GUARDS))
         {
-            pullLevelsFromHut();
+            pullGuardsFromHut();
             window.findPaneOfTypeByID(LIST_GUARDS, ScrollingList.class).refreshElementPanes();
         }
     }
@@ -201,7 +207,7 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
                     guardbuilding.setMinePos(null);
                     miner.assignedGuards--;
                 }
-                pullLevelsFromHut();
+                pullGuardsFromHut();
                 break;
             default:
                 super.onButtonClicked(button);

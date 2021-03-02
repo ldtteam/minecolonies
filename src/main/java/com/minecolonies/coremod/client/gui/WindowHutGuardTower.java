@@ -189,7 +189,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
         }
 
 
-        if (!building.getCanGuardMine())
+        if (!building.canGuardMine())
         {
             buttonTaskMine.hide();
         }
@@ -324,7 +324,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
             buttonSetTarget.setText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.targetGuard"));
             buttonTaskGuard.setEnabled(false);
         }
-        else if (task.equals(GuardTask.MINE) && building.getCanGuardMine())
+        else if (task.equals(GuardTask.MINE) && building.canGuardMine())
         {
             buttonTaskMine.setEnabled(false);
             buttonSetTarget.hide();
@@ -472,7 +472,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
             buttonTaskMine.setEnabled(true);
             buttonSetTarget.show();
         }
-        else if (button.getID().contains(GUI_SWITCH_TASK_MINE) && building.getCanGuardMine())
+        else if (button.getID().contains(GUI_SWITCH_TASK_MINE) && building.canGuardMine())
         {
             building.setTask(GuardTask.MINE);
 
@@ -604,6 +604,10 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
         Network.getNetwork().sendToServer(new GuardTaskMessage(building, resourceName, assignManually, patrolManually, retrieveOnLowHealth, task.ordinal(), tightGrouping, hireTrainees));
     }
 
+    /**
+     * Sets the label for mine position if task is set to patrol mine
+     * Set to info text if mine position is null
+     */
     private void setMinePosLabel()
     {
         final Text minePosLabel = window.findPaneOfTypeByID("minePos", Text.class);
@@ -611,7 +615,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
         {
             if (building.getMinePos() != null)
             {
-                minePosLabel.setText(new TranslationTextComponent("com.minecolonies.coremod.gui.workerhuts.patrollingmine", building.getMinePos().getCoordinatesAsString()));
+                minePosLabel.setText(new TranslationTextComponent("com.minecolonies.coremod.gui.worherhuts.patrollingmine", building.getMinePos().getCoordinatesAsString()));
             }
             else
             {

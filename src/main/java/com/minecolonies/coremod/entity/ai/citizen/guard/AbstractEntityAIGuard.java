@@ -595,6 +595,10 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         return GUARD_PATROL;
     }
 
+    /**
+     * Patrol between all completed nodes in the assigned mine
+     * @return the next point to patrol to
+     */
     public IAIState patrolMine()
     {
         if (buildingGuards.getMinePos() == null)
@@ -604,7 +608,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         if (currentPatrolPoint == null ||  worker.isWorkerAtSiteWithMove(currentPatrolPoint, 2))
         {
             final IBuilding building = buildingGuards.getColony().getBuildingManager().getBuilding(buildingGuards.getMinePos());
-            if (building instanceof BuildingMiner)
+            if (building != null && building instanceof BuildingMiner)
             {
                 final BuildingMiner miner = (BuildingMiner) building;
                 final Level level = miner.getCurrentLevel();
@@ -618,16 +622,20 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
                             .stream()
                             .filter(entry -> entry.getValue().getStatus() == Node.NodeStatus.COMPLETED && entry.getValue().getStyle() != Node.NodeType.LADDER_BACK)
                             .collect(Collectors.toList());
-                    final Node node = filteredNodes.get(worker.getRandom().nextInt(filteredNodes.size())).getValue();
-                    if (node.equals(level.getLadderNode()))
+                    if (filteredNodes.isEmpty())
                     {
-                        setNextPatrolTarget(new BlockPos(node.getX() + miner.getVectorX()*6, level.getDepth()+1, node.getZ() + miner.getVectorZ()*6));
+                        setNextPatrolTarget(miner.getPosition());
                     }
                     else
                     {
+                        final Node node = filteredNodes.get(worker.getRandom().nextInt(filteredNodes.size())).getValue();
                         setNextPatrolTarget(new BlockPos(node.getX(), level.getDepth()+1, node.getZ()));
                     }
                 }
+            }
+            else
+            {
+                return PREPARING;
             }
         }
         return GUARD_PATROL;

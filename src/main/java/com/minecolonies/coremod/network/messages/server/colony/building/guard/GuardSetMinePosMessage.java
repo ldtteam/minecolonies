@@ -55,7 +55,7 @@ public class GuardSetMinePosMessage extends AbstractBuildingServerMessage<Abstra
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final AbstractBuildingGuards building)
     {
-        IBuilding miner;
+        final IBuilding miner;
         if (this.minePos == null)
         {
             miner = building.getColony().getBuildingManager().getBuilding(building.getMinePos());
@@ -67,7 +67,6 @@ public class GuardSetMinePosMessage extends AbstractBuildingServerMessage<Abstra
         if (miner instanceof BuildingMiner)
         {
             building.setMinePos(this.minePos);
-            ((BuildingMiner) miner).pullGuards();
         }
     }
 }

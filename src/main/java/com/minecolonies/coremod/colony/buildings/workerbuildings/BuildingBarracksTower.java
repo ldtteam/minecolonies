@@ -242,7 +242,7 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
         }
 
         @Override
-        public Boolean getCanGuardMine()
+        public Boolean canGuardMine()
         {
             return canGuardMine;
         }

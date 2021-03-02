@@ -761,6 +761,9 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
          */
         private BlockPos minePos;
 
+        /**
+         * If the building can guard mines
+         */
         protected boolean canGuardMine;
 
         /**
@@ -971,7 +974,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
 
         public void setMinePos(BlockPos pos) { this.minePos = pos; }
 
-        public Boolean getCanGuardMine()
+        public Boolean canGuardMine()
         {
             return canGuardMine;
         }
