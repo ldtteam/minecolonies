@@ -1,0 +1,25 @@
+{
+  "branch": "minecolonies:technology",
+  "parentResearch": "minecolonies:technology/whatyaneed",
+  "researchLevel": 3,
+  "icon": "minecolonies:gate_wood",
+  "requirements": [
+    {
+      "item": "minecolonies:gate_wood",
+      "quantity": 64
+    },
+    {
+      "item": "minecolonies:ancienttome",
+      "quantity": 2
+    },
+    {
+      "item": "minecraft:iron_block",
+      "quantity": 5
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/enhancesgatedurabilityaddition": 1
+    }
+  ]
+}

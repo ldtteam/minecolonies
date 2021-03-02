@@ -1,0 +1,22 @@
+{
+  "branch": "minecolonies:combat",
+  "parentResearch": "minecolonies:combat/accuracy",
+  "researchLevel": 2,
+  "sortOrder": 2,
+  "icon": "minecraft:arrow",
+  "requirements": [
+    {
+      "building": "barracks",
+      "level": 3
+    },
+    {
+      "item": "minecraft:flint",
+      "quantity": 16
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/archerdamageaddition": 1
+    }
+  ]
+}

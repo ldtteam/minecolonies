@@ -1,0 +1,22 @@
+{
+  "branch": "minecolonies:technology",
+  "parentResearch": "minecolonies:technology/hot",
+  "researchLevel": 2,
+  "subtitle": "com.minecolonies.research.technology.theflintstones.subtitle",
+  "icon": "minecolonies:blockhutstonesmeltery",
+  "requirements": [
+    {
+      "building": "smeltery",
+      "level": 3
+    },
+    {
+      "item": "minecraft:stone_bricks",
+      "quantity": 64
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/blockhutstonesmeltery": 1
+    }
+  ]
+}

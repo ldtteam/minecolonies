@@ -1,0 +1,23 @@
+{
+  "branch": "minecolonies:civilian",
+  "parentResearch": "minecolonies:civilian/keen",
+  "researchLevel": 2,
+  "subtitle": "com.minecolonies.research.civilian.rails.subtitle",
+  "sortOrder": 3,
+  "icon": "minecraft:detector_rail",
+  "requirements": [
+    {
+      "building": "deliveryman",
+      "level": 3
+    },
+    {
+      "item": "minecraft:rail",
+      "quantity": 64
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/railsunlock": 1
+    }
+  ]
+}
