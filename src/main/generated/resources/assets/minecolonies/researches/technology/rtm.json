@@ -1,0 +1,22 @@
+{
+  "branch": "minecolonies:technology",
+  "parentResearch": "minecolonies:technology/recipebook",
+  "researchLevel": 5,
+  "subtitle": "com.minecolonies.research.technology.rtm.subtitle",
+  "icon": "minecraft:bookshelf",
+  "requirements": [
+    {
+      "building": "sawmill",
+      "level": 4
+    },
+    {
+      "item": "minecraft:paper",
+      "quantity": 256
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/recipesmultiplier": 4
+    }
+  ]
+}

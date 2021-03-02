@@ -1,0 +1,21 @@
+{
+  "branch": "minecolonies:combat",
+  "parentResearch": "minecolonies:combat/penetratingshot",
+  "researchLevel": 4,
+  "icon": "minecraft:crossbow",
+  "requirements": [
+    {
+      "building": "guardtower",
+      "level": 10
+    },
+    {
+      "item": "minecraft:flint",
+      "quantity": 64
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/archerdamageaddition": 3
+    }
+  ]
+}
