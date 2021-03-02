@@ -1,12 +1,10 @@
-package com.minecolonies.coremod.colony.buildings.views;
+package com.minecolonies.coremod.colony.buildings.modules;
 
-import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.modules.*;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.network.messages.server.colony.building.AssignFilterableItemMessage;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -15,25 +13,14 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Client side representation of the filterable list window GUI.
+ * Abstract class for all buildings which require a filterable list of allowed items.
  */
-public abstract class AbstractFilterableListsView extends AbstractBuildingWorker.View
+public class GroupedItemListModuleView extends AbstractBuildingModuleView implements IBuildingModuleView
 {
     /**
      * The list of items.
      */
     private final Map<String, List<ItemStorage>> listsOfItems = new HashMap<>();
-
-    /**
-     * Creates the view representation of the building.
-     *
-     * @param c the colony.
-     * @param l the location.
-     */
-    public AbstractFilterableListsView(final IColonyView c, @NotNull final BlockPos l)
-    {
-        super(c, l);
-    }
 
     /**
      * Add item to the view and notify the server side.
@@ -43,7 +30,7 @@ public abstract class AbstractFilterableListsView extends AbstractBuildingWorker
      */
     public void addItem(final String id, final ItemStorage item)
     {
-        Network.getNetwork().sendToServer(new AssignFilterableItemMessage(this, id, item, true));
+        Network.getNetwork().sendToServer(new AssignFilterableItemMessage(this.buildingView, id, item, true));
         if (listsOfItems.containsKey(id))
         {
             if (!listsOfItems.get(id).contains(item))
@@ -92,7 +79,7 @@ public abstract class AbstractFilterableListsView extends AbstractBuildingWorker
      */
     public void removeItem(final String id, final ItemStorage item)
     {
-        Network.getNetwork().sendToServer(new AssignFilterableItemMessage(this, id, item, false));
+        Network.getNetwork().sendToServer(new AssignFilterableItemMessage(this.buildingView, id, item, false));
         if (listsOfItems.containsKey(id) && listsOfItems.get(id).contains(item))
         {
             final List<ItemStorage> list = listsOfItems.get(id);
@@ -104,8 +91,6 @@ public abstract class AbstractFilterableListsView extends AbstractBuildingWorker
     @Override
     public void deserialize(@NotNull final PacketBuffer buf)
     {
-        super.deserialize(buf);
-
         final int ids = buf.readInt();
         for (int i = 0; i < ids; i++)
         {

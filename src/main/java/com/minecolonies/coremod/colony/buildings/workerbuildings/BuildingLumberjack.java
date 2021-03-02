@@ -16,7 +16,6 @@ import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.client.gui.WindowHutLumberjack;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
 import com.minecolonies.coremod.util.AttributeModifierUtils;
 import net.minecraft.block.Block;
@@ -497,7 +496,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
     /**
      * Provides a view of the lumberjack building class.
      */
-    public static class View extends AbstractFilterableListsView
+    public static class View extends AbstractBuildingWorker.View
     {
         /**
          * Whether or not the LJ should replant saplings

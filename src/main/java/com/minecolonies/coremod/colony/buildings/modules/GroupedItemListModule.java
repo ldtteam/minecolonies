@@ -1,9 +1,7 @@
 package com.minecolonies.coremod.colony.buildings.modules;
 
 import com.google.common.collect.ImmutableList;
-import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModule;
-import com.minecolonies.api.colony.buildings.modules.IGroupedItemListModule;
-import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
+import com.minecolonies.api.colony.buildings.modules.*;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.Log;
 import net.minecraft.item.ItemStack;

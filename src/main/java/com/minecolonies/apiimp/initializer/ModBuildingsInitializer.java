@@ -39,7 +39,7 @@ public final class ModBuildingsInitializer
                                 .setBuildingProducer(BuildingBaker::new)
                                 .setBuildingViewProducer(() -> BuildingBaker.View::new)
                                 .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.BAKERY_ID))
-                                .addBuildingModuleProducer(GroupedItemListModule::new)
+                                .addBuildingModuleProducer(GroupedItemListModule::new, GroupedItemListModuleView::new)
                                 .createBuildingEntry();
 
         ModBuildings.barracks = new BuildingEntry.Builder()
@@ -91,7 +91,7 @@ public final class ModBuildingsInitializer
                                    .setBuildingProducer(BuildingComposter::new)
                                    .setBuildingViewProducer(() -> BuildingComposter.View::new)
                                    .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.COMPOSTER_ID))
-                                   .addBuildingModuleProducer(GroupedItemListModule::new)
+                                   .addBuildingModuleProducer(GroupedItemListModule::new, GroupedItemListModuleView::new)
                                    .createBuildingEntry();
 
         ModBuildings.cook = new BuildingEntry.Builder()
@@ -99,7 +99,7 @@ public final class ModBuildingsInitializer
                               .setBuildingProducer(BuildingCook::new)
                               .setBuildingViewProducer(() -> BuildingCook.View::new)
                               .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.COOK_ID))
-                              .addBuildingModuleProducer(GroupedItemListModule::new)
+                              .addBuildingModuleProducer(GroupedItemListModule::new, GroupedItemListModuleView::new)
                               .createBuildingEntry();
 
         ModBuildings.cowboy = new BuildingEntry.Builder()
@@ -167,7 +167,7 @@ public final class ModBuildingsInitializer
                                     .setBuildingProducer(BuildingLumberjack::new)
                                     .setBuildingViewProducer(() -> BuildingLumberjack.View::new)
                                     .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.LUMBERJACK_ID))
-                                    .addBuildingModuleProducer(GroupedItemListModule::new)
+                                    .addBuildingModuleProducer(GroupedItemListModule::new, GroupedItemListModuleView::new)
                                     .createBuildingEntry();
 
         ModBuildings.miner = new BuildingEntry.Builder()
@@ -203,7 +203,7 @@ public final class ModBuildingsInitializer
                                   .setBuildingProducer(BuildingSmeltery::new)
                                   .setBuildingViewProducer(() -> BuildingSmeltery.View::new)
                                   .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.SMELTERY_ID))
-                                  .addBuildingModuleProducer(GroupedItemListModule::new)
+                                  .addBuildingModuleProducer(GroupedItemListModule::new, GroupedItemListModuleView::new)
                                   .createBuildingEntry();
 
         ModBuildings.stoneMason = new BuildingEntry.Builder()
@@ -218,7 +218,7 @@ public final class ModBuildingsInitializer
                                       .setBuildingProducer(BuildingStoneSmeltery::new)
                                       .setBuildingViewProducer(() -> BuildingStoneSmeltery.View::new)
                                       .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.STONE_SMELTERY_ID))
-                                      .addBuildingModuleProducer(GroupedItemListModule::new)
+                                      .addBuildingModuleProducer(GroupedItemListModule::new, GroupedItemListModuleView::new)
                                       .createBuildingEntry();
 
         ModBuildings.swineHerder = new BuildingEntry.Builder()
@@ -254,7 +254,7 @@ public final class ModBuildingsInitializer
                                  .setBuildingProducer(BuildingFlorist::new)
                                  .setBuildingViewProducer(() -> BuildingFlorist.View::new)
                                  .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.FLORIST_ID))
-                                 .addBuildingModuleProducer(GroupedItemListModule::new)
+                                 .addBuildingModuleProducer(GroupedItemListModule::new, GroupedItemListModuleView::new)
                                  .createBuildingEntry();
 
         ModBuildings.enchanter = new BuildingEntry.Builder()
@@ -276,7 +276,7 @@ public final class ModBuildingsInitializer
                                   .setBuildingProducer(BuildingHospital::new)
                                   .setBuildingViewProducer(() -> BuildingHospital.View::new)
                                   .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.HOSPITAL_ID))
-                                  .addBuildingModuleProducer(GroupedItemListModule::new)
+                                  .addBuildingModuleProducer(GroupedItemListModule::new, GroupedItemListModuleView::new)
                                   .createBuildingEntry();
 
         ModBuildings.stash = new BuildingEntry.Builder()
@@ -298,7 +298,7 @@ public final class ModBuildingsInitializer
                                      .setBuildingProducer(BuildingGlassblower::new)
                                      .setBuildingViewProducer(() -> BuildingGlassblower.View::new)
                                      .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.GLASSBLOWER_ID))
-                                     .addBuildingModuleProducer(GroupedItemListModule::new)
+                                     .addBuildingModuleProducer(GroupedItemListModule::new, GroupedItemListModuleView::new)
                                      .createBuildingEntry();
 
         ModBuildings.dyer = new BuildingEntry.Builder()
@@ -306,7 +306,7 @@ public final class ModBuildingsInitializer
                               .setBuildingProducer(BuildingDyer::new)
                               .setBuildingViewProducer(() -> BuildingDyer.View::new)
                               .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.DYER_ID))
-                              .addBuildingModuleProducer(GroupedItemListModule::new)
+                              .addBuildingModuleProducer(GroupedItemListModule::new, GroupedItemListModuleView::new)
                               .createBuildingEntry();
 
         ModBuildings.fletcher = new BuildingEntry.Builder()

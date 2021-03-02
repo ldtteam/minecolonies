@@ -14,7 +14,6 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.coremod.client.gui.WindowHutComposter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.modules.GroupedItemListModule;
-import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
 import com.minecolonies.coremod.colony.jobs.JobComposter;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.CompoundNBT;
@@ -209,7 +208,7 @@ public class BuildingComposter extends AbstractBuildingWorker
     /**
      * The client side representation of the building.
      */
-    public static class View extends AbstractFilterableListsView
+    public static class View extends AbstractBuildingWorker.View
     {
         /**
          * If the composter should retrieve dirt from his compost bin.

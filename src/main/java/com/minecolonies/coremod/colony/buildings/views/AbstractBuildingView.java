@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.modules.IBuildingModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.data.IRequestSystemBuildingDataStore;
@@ -30,6 +31,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.NO_WORK_ORDER;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_RS_BUILDING_DATASTORE;
@@ -138,6 +140,11 @@ public abstract class AbstractBuildingView implements IBuildingView
      * If building is deconstructed.
      */
     private boolean isDeconstructed;
+
+    /**
+     * Set of building modules this building has.
+     */
+    protected List<IBuildingModuleView> moduleViews = new ArrayList<>();
 
     /**
      * Creates a building view.
@@ -411,6 +418,11 @@ public abstract class AbstractBuildingView implements IBuildingView
         }
         reachedLimit = buf.readBoolean();
         isDeconstructed = buf.readBoolean();
+
+        for (final IBuildingModuleView module: moduleViews)
+        {
+            module.deserialize(buf);
+        }
     }
 
     /**
@@ -610,5 +622,33 @@ public abstract class AbstractBuildingView implements IBuildingView
     public boolean isDeconstructed()
     {
         return isDeconstructed;
+    }
+
+    @NotNull
+    @Override
+    public <T extends IBuildingModuleView> Optional<T> getModuleView(final Class<T> clazz)
+    {
+        final List<T> list = getModuleViews(clazz);
+        if (list.isEmpty())
+        {
+            return Optional.empty();
+        }
+        return Optional.of(list.get(0));
+    }
+
+    @NotNull
+    @Override
+    public <T extends IBuildingModuleView> List<T> getModuleViews(final Class<T> clazz)
+    {
+        return this.moduleViews.stream()
+                 .filter(clazz::isInstance)
+                 .map(c -> (T) c)
+                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void registerModule(final IBuildingModuleView iModuleView)
+    {
+        this.moduleViews.add(iModuleView);
     }
 }

@@ -9,7 +9,9 @@ import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.blockout.views.View;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.modules.GroupedItemListModuleView;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -65,7 +67,7 @@ public class ViewFilterableList
     /**
      * The building this belongs to.
      */
-    protected final AbstractFilterableListsView building;
+    protected final AbstractBuildingView building;
 
     /**
      * The parent window.
@@ -103,7 +105,7 @@ public class ViewFilterableList
     public ViewFilterableList(
       final View window,
       final AbstractHutFilterableLists parent,
-      final AbstractFilterableListsView building,
+      final AbstractBuildingWorker.View building,
       final String desc,
       final String id,
       final boolean isInverted)
@@ -139,16 +141,18 @@ public class ViewFilterableList
     private void switchClicked(@NotNull final Button button)
     {
         final int row = resourceList.getListElementIndexByPane(button);
+        final GroupedItemListModuleView moduleView = building.getModuleView(GroupedItemListModuleView.class).get();
+
         if (button.getTextAsString().equals(ON))
         {
             button.setText(OFF);
             if (isInverted)
             {
-                building.addItem(id, allItems.get(row));
+                moduleView.addItem(id, allItems.get(row));
             }
             else
             {
-                building.removeItem(id, allItems.get(row));
+                moduleView.removeItem(id, allItems.get(row));
             }
         }
         else
@@ -156,11 +160,11 @@ public class ViewFilterableList
             button.setText(ON);
             if (isInverted)
             {
-                building.removeItem(id, allItems.get(row));
+                moduleView.removeItem(id, allItems.get(row));
             }
             else
             {
-                building.addItem(id, allItems.get(row));
+                moduleView.addItem(id, allItems.get(row));
             }
         }
         resourceList.refreshElementPanes();
@@ -253,10 +257,10 @@ public class ViewFilterableList
                 resourceLabel.setText(resource.getDisplayName());
                 resourceLabel.setColors(WHITE);
                 rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(resource);
-
+                final GroupedItemListModuleView moduleView = building.getModuleView(GroupedItemListModuleView.class).get();
                 final Button switchButton = rowPane.findPaneOfTypeByID(BUTTON_SWITCH, Button.class);
 
-                if ((isInverted && !building.isAllowedItem(id, new ItemStorage(resource))) || (!isInverted && building.isAllowedItem(id, new ItemStorage(resource))))
+                if ((isInverted && !moduleView.isAllowedItem(id, new ItemStorage(resource))) || (!isInverted && moduleView.isAllowedItem(id, new ItemStorage(resource))))
                 {
                     switchButton.setText(ON);
                 }

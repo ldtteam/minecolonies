@@ -17,7 +17,6 @@ import com.minecolonies.api.items.ModItems;
 import com.minecolonies.coremod.client.gui.WindowHutFlorist;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.modules.GroupedItemListModule;
-import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
 import com.minecolonies.coremod.colony.jobs.JobFlorist;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
@@ -236,7 +235,7 @@ public class BuildingFlorist extends AbstractBuildingWorker
     /**
      * The client side representation of the building.
      */
-    public static class View extends AbstractFilterableListsView
+    public static class View extends AbstractBuildingWorker.View
     {
         /**
          * Instantiates the view of the building.

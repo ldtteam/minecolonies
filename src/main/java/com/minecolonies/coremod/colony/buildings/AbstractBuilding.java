@@ -694,9 +694,9 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         }
         buf.writeCompoundTag(StandardFactoryController.getInstance().serialize(getId()));
         buf.writeInt(containerList.size());
-        for (int i = 0; i < containerList.size(); i++)
+        for (BlockPos blockPos : containerList)
         {
-            buf.writeBlockPos(containerList.get(i));
+            buf.writeBlockPos(blockPos);
         }
         buf.writeCompoundTag(requestSystemCompound);
 

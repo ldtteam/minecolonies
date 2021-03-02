@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.modules.IBuildingModuleView;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
@@ -16,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Suppression.GENERIC_WILDCARD;
@@ -209,4 +211,28 @@ public interface IBuildingView extends IRequester
      * @return true if so.
      */
     boolean isDeconstructed();
+
+    /**
+     * Get the first module view matching the class.
+     * @param clazz the class to match.
+     * @param <T> the type of module returned.
+     * @return the module or an empty optional.
+     */
+    @NotNull
+    <T extends IBuildingModuleView> Optional<T> getModuleView(Class<T> clazz);
+
+    /**
+     * Get a list of all modules matching a specific class.
+     * @param clazz the class to match.
+     * @param <T> the type of module.
+     * @return the list or empty if doesn't exist.
+     */
+    @NotNull
+    <T extends IBuildingModuleView> List<T> getModuleViews(Class<T> clazz);
+
+    /**
+     * Register a view module with the building.
+     * @param iModuleView the view.
+     */
+    void registerModule(IBuildingModuleView iModuleView);
 }

@@ -23,8 +23,8 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.client.gui.WindowHutCook;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.modules.GroupedItemListModule;
-import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.coremod.colony.jobs.JobCook;
 import com.minecolonies.coremod.colony.jobs.JobCookAssistant;
@@ -549,7 +549,7 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
     /**
      * BuildingCook View.
      */
-    public static class View extends AbstractFilterableListsView
+    public static class View extends AbstractBuildingWorker.View
     {
         /**
          * Instantiate the cook view.

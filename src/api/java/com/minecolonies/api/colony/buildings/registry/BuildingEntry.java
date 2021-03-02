@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
+import com.minecolonies.api.colony.buildings.modules.IBuildingModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -28,6 +29,7 @@ public class BuildingEntry extends ForgeRegistryEntry<BuildingEntry>
     private final BiFunction<IColony, BlockPos, IBuilding> buildingProducer;
 
     private List<Supplier<IBuildingModule>> buildingModules;
+    private List<Supplier<IBuildingModuleView>> buildingModuleViews;
 
     /**
      * A builder class for {@link BuildingEntry}.
@@ -37,8 +39,9 @@ public class BuildingEntry extends ForgeRegistryEntry<BuildingEntry>
         private AbstractBlockHut<?>                                        buildingBlock;
         private BiFunction<IColony, BlockPos, IBuilding>                   buildingProducer;
         private Supplier<BiFunction<IColonyView, BlockPos, IBuildingView>> buildingViewProducer;
-        private List<Supplier<IBuildingModule>>                            buildingModules = new ArrayList<>();
-        private ResourceLocation                                           registryName;
+        private List<Supplier<IBuildingModule>>     buildingModules     = new ArrayList<>();
+        private List<Supplier<IBuildingModuleView>> buildingModuleViews = new ArrayList<>();
+        private ResourceLocation                    registryName;
 
         /**
          * Sets the block that represents this building.
@@ -101,7 +104,7 @@ public class BuildingEntry extends ForgeRegistryEntry<BuildingEntry>
             Validate.notNull(buildingViewProducer);
             Validate.notNull(registryName);
 
-            return new BuildingEntry(buildingBlock, buildingProducer, buildingViewProducer, buildingModules).setRegistryName(registryName);
+            return new BuildingEntry(buildingBlock, buildingProducer, buildingViewProducer, buildingModules, buildingModuleViews).setRegistryName(registryName);
         }
 
         /**
@@ -112,6 +115,18 @@ public class BuildingEntry extends ForgeRegistryEntry<BuildingEntry>
         public Builder addBuildingModuleProducer(final Supplier<IBuildingModule> moduleProducer)
         {
             buildingModules.add(moduleProducer);
+            return this;
+        }
+
+        /**
+         * Add a building module producer.
+         * @param moduleProducer the module producer.
+         * @return the builder again.
+         */
+        public Builder addBuildingModuleProducer(final Supplier<IBuildingModule> moduleProducer, final Supplier<IBuildingModuleView> moduleViewProducer)
+        {
+            buildingModules.add(moduleProducer);
+            buildingModuleViews.add(moduleViewProducer);
             return this;
         }
     }
@@ -133,23 +148,32 @@ public class BuildingEntry extends ForgeRegistryEntry<BuildingEntry>
         return building;
     }
 
+    public IBuildingView produceBuildingView(final BlockPos position, final IColonyView colony)
+    {
+        final IBuildingView buildingView = buildingViewProducer.get().apply(colony, position);
+        for (final Supplier<IBuildingModuleView> module : buildingModuleViews)
+        {
+            buildingView.registerModule(module.get());
+        }
+        return buildingView;
+    }
+
     public List<Supplier<IBuildingModule>> getModuleProducers() { return buildingModules; }
+
+    public List<Supplier<IBuildingModuleView>> getModuleViewProducers() { return buildingModuleViews; }
 
     private BuildingEntry(
       final AbstractBlockHut<?> buildingBlock,
       final BiFunction<IColony, BlockPos, IBuilding> buildingProducer,
       final Supplier<BiFunction<IColonyView, BlockPos, IBuildingView>> buildingViewProducer,
-      List<Supplier<IBuildingModule>> buildingModules)
+      List<Supplier<IBuildingModule>> buildingModules,
+      List<Supplier<IBuildingModuleView>> buildingModuleViews)
     {
         super();
         this.buildingBlock = buildingBlock;
         this.buildingProducer = buildingProducer;
         this.buildingViewProducer = buildingViewProducer;
         this.buildingModules = buildingModules;
-    }
-
-    public Supplier<BiFunction<IColonyView, BlockPos, IBuildingView>> getBuildingViewProducer()
-    {
-        return buildingViewProducer;
+        this.buildingModuleViews = buildingModuleViews;
     }
 }
