@@ -32,7 +32,7 @@
                          source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
                          label="$(com.minecolonies.coremod.gui.workerhuts.retrieveOff)"/>
 
-            <label size="164 11" pos="13 138" color="black" textalign="MIDDLE"
+            <label size="174 11" pos="9 138" color="black" textalign="MIDDLE"
                    label="$(com.minecolonies.coremod.gui.workerhuts.trainees)"/>
             <buttonimage id="trainees" size="86 17" pos="52 149" textcolor="black"
                          source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
@@ -62,7 +62,7 @@
                    label="$(com.minecolonies.coremod.gui.workerhuts.mobsList)"/>
             <button id="recalculate" size="100 14" pos="45 29"
                     label="$(com.minecolonies.coremod.gui.workerhuts.calculate)"/>
-            <list id="mobs" size="164 135" pos="13 48">
+            <list id="mobs" size="164 165" pos="13 48">
                 <box size="100% 30" linewidth="2">
                     <button id="prioUp" size="15 15" label="↥" pos="0 0"/>
                     <button id="prioDown" size="15 15" label="↧" pos="0 15"/>
@@ -70,9 +70,6 @@
                     <button id="switch" size="100 13" pos="5 1" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerhuts.retrieveOn)"/>
                 </box>
             </list>
-            <buttonimage id="getTool" size="129 17" pos="30 200" textcolor="black"
-                         source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
-                         label="$(com.minecolonies.coremod.gui.workerhuts.getTool)"/>
         </view>
     </switch>
     <buttonimage id="prevPage" size="18 10" pos="13 13" source="minecolonies:textures/gui/builderhut/turn_page_left.png"/>

@@ -958,7 +958,6 @@
   "item.minecolonies.resourcescroll": "Resource Scroll",
 
   "com.minecolonies.coremod.gui.workerhuts.baker.recipes": "Recipes",
-  "com.minecolonies.coremod.gui.workerhuts.gettool": "Get Guard Tool",
 
   "com.minecolonies.coremod.progress.supplies_placed": "§6 Welcome to MineColonies. Now that you have your supplies, how about searching a nice location to place your Town Hall to create your colony?",
   "com.minecolonies.coremod.progress.colony_founded": "§6 Word is out about a newly founded colony. Soon the first settlers will join your colony, if there is enough space around the Town Hall. (Experienced governors can turn off these helpful messages in the Town Hall block.)",

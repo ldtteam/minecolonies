@@ -1015,8 +1015,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         final ICitizenDataView view = citizens.get(row);
         WindowCitizen.createHappinessBar(view, this);
         WindowCitizen.createSkillContent(view, this);
-        findPaneOfTypeByID(JOB_LABEL, Text.class).setText(
-          "§l" + LanguageHandler.format(view.getJob().trim().isEmpty() ? COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_CITIZEN_UNEMPLOYED : view.getJob()));
+        findPaneOfTypeByID(JOB_LABEL, Text.class).setText(LanguageHandler.format(view.getJob().trim().isEmpty() ? COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_CITIZEN_UNEMPLOYED : view.getJob()));
         findPaneOfTypeByID(HIDDEN_CITIZEN_ID, Text.class).setText(String.valueOf(view.getId()));
     }
 
