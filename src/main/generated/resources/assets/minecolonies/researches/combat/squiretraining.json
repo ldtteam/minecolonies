@@ -1,0 +1,22 @@
+{
+  "branch": "minecolonies:combat",
+  "parentResearch": "minecolonies:combat/improvedswords",
+  "researchLevel": 3,
+  "subtitle": "com.minecolonies.research.combat.squiretraining.subtitle",
+  "icon": "minecraft:iron_ingot",
+  "requirements": [
+    {
+      "building": "combatacademy",
+      "level": 3
+    },
+    {
+      "item": "minecraft:shield",
+      "quantity": 4
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/blockattacksmultiplier": 2
+    }
+  ]
+}

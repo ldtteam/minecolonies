@@ -1,0 +1,22 @@
+{
+  "branch": "minecolonies:civilian",
+  "parentResearch": "minecolonies:civilian/nurture",
+  "researchLevel": 3,
+  "subtitle": "com.minecolonies.research.civilian.hormones.subtitle",
+  "icon": "minecolonies:textures/icons/research/childgrowth2.png",
+  "requirements": [
+    {
+      "building": "school",
+      "level": 3
+    },
+    {
+      "item": "minecraft:cooked_chicken",
+      "quantity": 64
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/growthmultiplier": 2
+    }
+  ]
+}

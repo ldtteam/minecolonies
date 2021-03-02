@@ -1,0 +1,22 @@
+{
+  "branch": "minecolonies:technology",
+  "parentResearch": "minecolonies:technology/hot",
+  "researchLevel": 2,
+  "subtitle": "com.minecolonies.research.technology.thoselungs.subtitle",
+  "icon": "minecolonies:blockhutglassblower",
+  "requirements": [
+    {
+      "building": "smeltery",
+      "level": 3
+    },
+    {
+      "item": "minecraft:glass",
+      "quantity": 64
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/blockhutglassblower": 1
+    }
+  ]
+}

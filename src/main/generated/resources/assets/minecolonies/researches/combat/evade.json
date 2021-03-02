@@ -1,0 +1,21 @@
+{
+  "branch": "minecolonies:combat",
+  "parentResearch": "minecolonies:combat/avoid",
+  "researchLevel": 4,
+  "icon": "minecraft:feather:2",
+  "requirements": [
+    {
+      "building": "guardtower",
+      "level": 8
+    },
+    {
+      "item": "minecraft:emerald",
+      "quantity": 16
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/fleeingspeedaddition": 2
+    }
+  ]
+}
