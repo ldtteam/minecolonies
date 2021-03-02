@@ -679,7 +679,7 @@
   "com.minecolonies.coremod.job.guard.toolclickpatrol": "Added position %s as a new patrolling target for Guard %s.",
   "com.minecolonies.coremod.job.guard.toolclickguard": "Added position %s as a new guarding target for Guard %s.",
   "com.minecolonies.coremod.job.guard.tooldoubleclick": "Finished adding new patrol targets.",
-  "com.minecolonies.coremod.job.guard.assignmine": "Please assign this guard to a mine through the mine GUI.",
+  "com.minecolonies.coremod.job.guard.assignmine": "Please assign this Guard to a Mine in the Mine GUI.",
   "com.minecolonies.coremod.workerhuts.recallfail": "Recall failed. Please make more space around the location.",
   "com.minecolonies.coremod.warehouse.full": "The Warehouse is full, please upgrade it!",
   "com.minecolonies.coremod.warehouse.full.max": "The Warehouse is full, please use an emerald block to make more space in the racks!",
