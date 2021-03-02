@@ -1,5 +1,8 @@
 package com.minecolonies.coremod.generation.defaults;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.items.ModItems;
@@ -9,6 +12,8 @@ import net.minecraft.data.DataGenerator;
 import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -161,6 +166,22 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         researches.addAll(getTechnologyResearch(researches));
 
         return researches;
+    }
+
+    @Override
+    public JsonElement getBaseLanguageJson()
+    {
+        JsonElement langJson;
+        try
+        {
+            langJson =
+              new JsonParser().parse(new FileReader(this.generator.getInputFolders().stream().findFirst().orElse(null).resolve("assets/minecolonies/lang/en_us.json").toFile()));
+        }
+        catch (final FileNotFoundException exception)
+        {
+            langJson = new JsonObject();
+        }
+        return langJson;
     }
 
     public Collection<Research> getCivilResearch(Collection<Research> r)
@@ -897,7 +918,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                      .setTranslatedName("Plate Armor")
                                      .setSortOrder(2)
                                      .setIcon(ModItems.plateArmorHelmet)
-                                     .addBuildingRequirement(ModBuildings.BLACKSMITH_ID, 4)
+                                     .addMandatoryBuildingRequirement(ModBuildings.BLACKSMITH_ID, 4)
                                      .addItemCost(Items.IRON_INGOT, 32)
                                      .addEffect(PLATE_ARMOR, 1)
                                      .addToList(r);
@@ -978,7 +999,9 @@ public class DefaultResearchProvider extends AbstractResearchProvider
 
         // Primary Research #5
         final Research taunt =
-          new Research(new ResourceLocation(Constants.MOD_ID, "combat/taunt"), COMBAT).setTranslatedSubtitle("Your mother was a hamster and your father smelt of elderberries!")
+          new Research(new ResourceLocation(Constants.MOD_ID, "combat/taunt"), COMBAT)
+            .setTranslatedName("Taunt")
+            .setTranslatedSubtitle("Your mother was a hamster and your father smelt of elderberries!")
             .setSortOrder(5)
             .setIcon(Items.CHAIN)
             .addBuildingRequirement(ModBuildings.GUARD_TOWER_ID, 1)

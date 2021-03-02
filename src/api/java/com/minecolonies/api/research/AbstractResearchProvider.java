@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.Locale;
 
 /**
  * A class for creating the Research-related JSONs, including Research, ResearchEffects, and (optional) Branches.
@@ -26,8 +27,8 @@ import java.util.Collection;
  */
 public abstract class AbstractResearchProvider implements IDataProvider
 {
-    public static final String ASSETS_DIR = "assets/" + Constants.MOD_ID + "/researches";
-    private final DataGenerator generator;
+    public static final String ASSETS_DIR = "data/" + Constants.MOD_ID + "/researches";
+    protected final DataGenerator generator;
 
     /**
      * The abstract variant of a ResearchProvider, to register to fires during runData.
@@ -62,50 +63,72 @@ public abstract class AbstractResearchProvider implements IDataProvider
      */
     protected abstract Collection<Research> getResearchCollection();
 
+    /**
+     * Get an base language file to add new keys onto.
+     * @return  A container which new translationkeys will be added into.
+     */
+    protected JsonElement getBaseLanguageJson()
+    {
+        return new JsonObject();
+    }
+
     @Override
     public void act(@NotNull final DirectoryCache cache) throws IOException
     {
         final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
-        final JsonObject langJson = new JsonObject();
+        final JsonElement langJson = getBaseLanguageJson();
 
         for(final ResearchBranch branch : getResearchBranchCollection())
         {
-            final Path savePath = generator.getOutputFolder().resolve("assets").resolve(branch.id.getNamespace()).resolve("researches").resolve(branch.id.getPath() + ".json");
+            final Path savePath = generator.getOutputFolder().resolve("data").resolve(branch.id.getNamespace()).resolve("researches").resolve(branch.id.getPath() + ".json");
             IDataProvider.save(GSON, cache, branch.json, savePath);
             if(branch.translatedName != null && !branch.translatedName.isEmpty())
             {
-                langJson.addProperty("com." +branch.id.getNamespace() + ".research." + branch.id.getPath().replaceAll("[/]",".") + ".name", branch.translatedName);
+                addLanguageKeySafe(langJson, "com." + branch.id.getNamespace() + ".research." + branch.id.getPath().replaceAll("[/]",".") + ".name", branch.translatedName);
             }
         }
         for(final ResearchEffect effect : getResearchEffectCollection())
         {
-            final Path savePath = generator.getOutputFolder().resolve("assets").resolve(effect.id.getNamespace()).resolve("researches").resolve(effect.id.getPath() + ".json");
+            final Path savePath = generator.getOutputFolder().resolve("data").resolve(effect.id.getNamespace()).resolve("researches").resolve(effect.id.getPath() + ".json");
             IDataProvider.save(GSON, cache, effect.json, savePath);
             if(effect.translatedName != null && !effect.translatedName.isEmpty())
             {
-                langJson.addProperty("com." +effect.id.getNamespace() + ".research." + effect.id.getPath().replaceAll("[/]",".") + ".description", effect.translatedName);
+                addLanguageKeySafe(langJson, "com." + effect.id.getNamespace() + ".research." + effect.id.getPath().replaceAll("[/]",".") + ".description", effect.translatedName);
             }
             if(effect.translatedSubtitle != null && !effect.translatedSubtitle.isEmpty())
             {
-                langJson.addProperty("com." + effect.id.getNamespace() + ".research." + effect.id.getPath().replaceAll("[/]",".") + ".subtitle", effect.translatedSubtitle);
+                addLanguageKeySafe(langJson, "com." + effect.id.getNamespace() + ".research." + effect.id.getPath().replaceAll("[/]",".") + ".subtitle", effect.translatedSubtitle);
             }
         }
         for(final Research research : getResearchCollection())
         {
-            final Path savePath = generator.getOutputFolder().resolve("assets").resolve(research.id.getNamespace()).resolve("researches").resolve(research.id.getPath() + ".json");
+            final Path savePath = generator.getOutputFolder().resolve("data").resolve(research.id.getNamespace()).resolve("researches").resolve(research.id.getPath() + ".json");
             IDataProvider.save(GSON, cache, research.json, savePath);
             if(research.translatedName != null && !research.translatedName.isEmpty())
             {
-                langJson.addProperty("com." +research.id.getNamespace() + ".research." + research.id.getPath().replaceAll("[/]",".") + ".name", research.translatedName);
+                addLanguageKeySafe(langJson, "com." + research.id.getNamespace() + ".research." + research.id.getPath().replaceAll("[/]",".") + ".name", research.translatedName);
             }
             if(research.translatedSubtitle != null && !research.translatedSubtitle.isEmpty())
             {
-                langJson.addProperty("com." +research.id.getNamespace() + ".research." + research.id.getPath().replaceAll("[/]",".") + ".subtitle", research.translatedSubtitle);
-
+                addLanguageKeySafe(langJson, "com." + research.id.getNamespace() + ".research." + research.id.getPath().replaceAll("[/]",".") + ".subtitle", research.translatedSubtitle);
             }
         }
-        final Path langPath = generator.getOutputFolder().resolve("assets").resolve(Constants.MOD_ID).resolve("research_lang.json");
-        IDataProvider.save(DataGeneratorConstants.GSONLang, cache, langJson, langPath);
+        IDataProvider.save(DataGeneratorConstants.GSONLang, cache, langJson, this.generator.getInputFolders().stream().findFirst().orElse(null).resolve("assets/" + Constants.MOD_ID + "/lang/" + Locale.US + ".json"));
+    }
+
+    /**
+     * Safely add a language key, removing any previous instances if already present.
+     * @param langJson      The json to add the key onto.
+     * @param key           The tag, generally a translation key.
+     * @param property      The property, generally translated text.
+     */
+    private void addLanguageKeySafe(final JsonElement langJson, final String key, final String property)
+    {
+        if(langJson.getAsJsonObject().has(key))
+        {
+            langJson.getAsJsonObject().remove(key);
+        }
+        langJson.getAsJsonObject().addProperty(key, property);
     }
 
     @NotNull
@@ -341,7 +364,7 @@ public abstract class AbstractResearchProvider implements IDataProvider
         /**
          * Adds a building research requirement.  The colony must have at least as many levels of this building to begin the research
          * cumulative across all buildings of that type.  (ie, guardtower 8 is fulfilled by eight level-1 guard towers, four level-2 guard towers, two level-3 and a level-2 guard tower, etc)
-         * See ModBuildings for a list of supported buildings.  Whenever possible, use the public static String <BUILDINGNAME>_ID constants from ModBuildings.
+         * See ModBuildings for a list of supported buildings.  Whenever possible, use the public static String BUILDINGNAME_ID constants from ModBuildings.
          * Multiple different buildings can be added as different BuildingRequirements, and all must be fulfilled to begin research.
          * @param buildingName  The name of the building to require.  Derived from SchematicName.
          * @param level         The required sum of levels across the colony.
@@ -360,7 +383,54 @@ public abstract class AbstractResearchProvider implements IDataProvider
                 reqArray = new JsonArray();
             }
             JsonObject req = new JsonObject();
-            req.addProperty("building", buildingName);
+            // Temporary workaround for the discrepancy between schematic ID and modBuildings ID.
+            // TODO: consider fixing in 1.17.
+            if(buildingName.equals("home"))
+            {
+                req.addProperty("building", "citizen");
+            }
+            else
+            {
+                req.addProperty("building", buildingName);
+            }
+            req.addProperty("level", level);
+            reqArray.add(req);
+            this.json.add("requirements", reqArray);
+            return this;
+        }
+
+        /**
+         * Adds a mandatory building research requirement.  The colony must have one building at this specific level or greater.
+         * (ie, guardtower 3 is fulfilled by one level-3 to level-5 guard tower, but no number of lower-level guard towers.)
+         * This does not test whether the result is possible (eg, tavern-4 will not throw an exception, but can never be achieved in-game)
+         * See ModBuildings for a list of supported buildings.  Whenever possible, use the public static String BUILDINGNAME_ID constants from ModBuildings.
+         * Multiple different buildings can be added as different BuildingRequirements, and all must be fulfilled to begin research.
+         * @param buildingName  The name of the building to require.  Derived from SchematicName.
+         * @param level         The required sum of levels across the colony.
+         * @return this
+         */
+        public Research addMandatoryBuildingRequirement(final String buildingName, final int level)
+        {
+            final JsonArray reqArray;
+            if(this.json.has("requirements") && this.json.get("requirements").isJsonArray())
+            {
+                reqArray = this.json.getAsJsonArray("requirements");
+                this.json.remove("requirements");
+            }
+            else
+            {
+                reqArray = new JsonArray();
+            }
+            JsonObject req = new JsonObject();
+            // Temporary workaround for the discrepancy between schematic ID and modBuildings ID.
+            if(buildingName.equals("home"))
+            {
+                req.addProperty("mandatory-building", "citizen");
+            }
+            else
+            {
+                req.addProperty("mandatory-building", buildingName);
+            }
             req.addProperty("level", level);
             reqArray.add(req);
             this.json.add("requirements", reqArray);
@@ -372,7 +442,7 @@ public abstract class AbstractResearchProvider implements IDataProvider
          * The colony must have at least as many levels of at least one alternate building to begin the research,
          * cumulative across all buildings of that type.  Ie, AlternateBuildingRequirement of Tavern 3 / CitizenHouse 2 / University 2
          * would be fulfilled by any one of those buildings level 3, or by two citizen houses.
-         * See ModBuildings for a list of supported buildings.  Whenever possible, use the public static String <BUILDINGNAME>_ID constants from ModBuildings.
+         * See ModBuildings for a list of supported buildings.  Whenever possible, use the public static String BUILDINGNAME_ID constants from ModBuildings.
          * Only one of all added Alternate Buildings is required.  AlternateBuildingRequirements do not bypass normal BuildingRequirements.
          * @param buildingName          The required building.
          * @param level                 The required sum of levels across the colony.
@@ -391,7 +461,15 @@ public abstract class AbstractResearchProvider implements IDataProvider
                 reqArray = new JsonArray();
             }
             JsonObject req = new JsonObject();
-            req.addProperty("alternate-building", buildingName);
+            // Temporary workaround for the discrepancy between schematic ID and modBuildings ID.
+            if(buildingName.equals("home"))
+            {
+                req.addProperty("alternate-building", "citizen");
+            }
+            else
+            {
+                req.addProperty("alternate-building", buildingName);
+            }
             req.addProperty("level", level);
             reqArray.add(req);
             this.json.add("requirements", reqArray);
@@ -537,7 +615,7 @@ public abstract class AbstractResearchProvider implements IDataProvider
         /**
          * Add an unlock building effect to the research.  Research Effects are applied on completion,
          * and remain unless the colony is destroyed or the research is undone.
-         * See ModBuildings for a list of supported buildings.  Whenever possible, use the public static String <BUILDINGNAME>_ID constants from ModBuildings
+         * See ModBuildings for a list of supported buildings.  Whenever possible, use the public static String BUILDINGNAME_ID constants from ModBuildings
          * Buildings with no applicable research effects loaded default to unlocked.
          * Multiple Effects are supported.
          * @param buildingBlock    the building block to lock behind this research.

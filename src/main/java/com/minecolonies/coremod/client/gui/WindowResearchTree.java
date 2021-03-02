@@ -361,8 +361,8 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         {
             return ResearchButtonState.IN_PROGRESS;
         }
-        // If the University too low-level for the research, or if this research is max-level and another max-level research is completed.
-        else if (research.getDepth() > building.getBuildingLevel() || (research.getDepth() > building.getBuildingMaxLevel() && !hasMax
+        // If the University too low-level for the research, or if this research is max-level, the building is max level, and another max-level research is completed.
+        else if (research.getDepth() > building.getBuildingLevel() && !(research.getDepth() > building.getBuildingMaxLevel() && !hasMax
                     && building.getBuildingLevel() == building.getBuildingMaxLevel()))
         {
             return ResearchButtonState.TOO_LOW_UNIVERSITY;
@@ -786,7 +786,12 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                 for (Map.Entry<String, Integer> building : ((AlternateBuildingResearchRequirement) requirement).getBuildings().entrySet())
                 {
                     final Item item;
-                    if (IMinecoloniesAPI.getInstance().getBuildingRegistry().containsKey(
+                    //TODO Houses use 'citizen' for schematics, but 'home' for ForgeRegistry purposes.  Consider fixing for 1.17
+                    if(((BuildingResearchRequirement) requirement).getBuilding().equals("citizen"))
+                    {
+                        item = ModBuildings.home.getBuildingBlock().asItem();
+                    }
+                    else if (IMinecoloniesAPI.getInstance().getBuildingRegistry().containsKey(
                       new ResourceLocation(Constants.MOD_ID, building.getKey())))
                     {
                         item = IMinecoloniesAPI.getInstance().getBuildingRegistry().getValue(

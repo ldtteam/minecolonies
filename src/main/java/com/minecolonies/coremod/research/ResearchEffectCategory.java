@@ -81,7 +81,7 @@ public class ResearchEffectCategory
     public ResearchEffectCategory(final String effectId)
     {
         this.effectId = new ResourceLocation(effectId);
-        this.effectName = new TranslationTextComponent("com." + this.effectId.getNamespace() + ".research." + this.effectId.getPath().replaceAll("[ /]","."));
+        this.effectName = new TranslationTextComponent("com." + this.effectId.getNamespace() + ".research." + this.effectId.getPath().replaceAll("[ /]",".") + ".description");
         this.subtitle = new TranslationTextComponent("");
         levelsAbsolute.add(0d);
         levelsRelative.add(0d);

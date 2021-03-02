@@ -356,8 +356,6 @@ public class LocalResearchTree implements ILocalResearchTree
 
               if (research.getState() == ResearchState.FINISHED)
               {
-
-
                   // Even after correction, we do still need to check for presence; it's possible for someone to have old save data and remove the research,
                   // or to have a different research that was in a now-removed data pack.  But those will get just thrown away.
                   if (MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().hasResearch(research.getBranch(), research.getId()))

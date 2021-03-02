@@ -1,9 +1,0 @@
-{
-  "comment": "name: Citizen Inv Slots * description : Citizen Inventory +%d Slots",
-  "effect": true,
-  "levels": [
-    9,
-    18,
-    27
-  ]
-}
