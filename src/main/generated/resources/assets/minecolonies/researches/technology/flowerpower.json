@@ -1,0 +1,21 @@
+{
+  "branch": "minecolonies:technology",
+  "parentResearch": "minecolonies:technology/biodegradable",
+  "researchLevel": 2,
+  "icon": "minecolonies:blockhutflorist",
+  "requirements": [
+    {
+      "building": "composter",
+      "level": 3
+    },
+    {
+      "item": "minecolonies:compost",
+      "quantity": 64
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/blockhutflorist": 1
+    }
+  ]
+}

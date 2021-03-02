@@ -1,0 +1,21 @@
+{
+  "branch": "minecolonies:civilian",
+  "parentResearch": "minecolonies:civilian/stamina",
+  "researchLevel": 2,
+  "icon": "minecolonies:textures/icons/research/regeneration1.png",
+  "requirements": [
+    {
+      "building": "library",
+      "level": 2
+    },
+    {
+      "item": "minecraft:golden_carrot",
+      "quantity": 1
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/regenerationmultiplier": 1
+    }
+  ]
+}

@@ -49,11 +49,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     private static final int DEPTH_LEVEL_1 = 30;
 
     /**
-     * Max depth difference.
-     */
-    private static final int MAX_DEPTH_DIFFERENCE = 5;
-
-    /**
      * At this y level the builder will be way slower..
      */
     private static final int DEPTH_LEVEL_2 = 15;
@@ -77,21 +72,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
      * After how many actions should the builder dump his inventory.
      */
     private static final int ACTIONS_UNTIL_DUMP = 4096;
-
-    /**
-     * Min distance from placing block.
-     */
-    private static final int MIN_DISTANCE = 3;
-
-    /**
-     * Max distance to placing block.
-     */
-    private static final int MAX_DISTANCE = 10;
-
-    /**
-     * After which distance the builder has to recalculate his position.
-     */
-    private static final double ACCEPTANCE_DISTANCE = 20;
 
     /**
      * Building level to purge mobs at the build site.

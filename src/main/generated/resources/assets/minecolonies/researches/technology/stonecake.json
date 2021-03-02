@@ -1,0 +1,22 @@
+{
+  "branch": "minecolonies:technology",
+  "researchLevel": 1,
+  "subtitle": "com.minecolonies.research.technology.stonecake.subtitle",
+  "sortOrder": 3,
+  "icon": "minecolonies:blockhutstonemason",
+  "requirements": [
+    {
+      "building": "miner",
+      "level": 3
+    },
+    {
+      "item": "minecraft:chiseled_stone_bricks",
+      "quantity": 64
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/blockhutstonemason": 1
+    }
+  ]
+}

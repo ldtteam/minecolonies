@@ -1,0 +1,30 @@
+{
+  "branch": "minecolonies:technology",
+  "parentResearch": "minecolonies:technology/letitgrow",
+  "researchLevel": 3,
+  "subtitle": "com.minecolonies.research.technology.doubletrouble.subtitle",
+  "icon": "minecraft:green_dye",
+  "requirements": [
+    {
+      "building": "plantation",
+      "level": 3
+    },
+    {
+      "item": "minecraft:bamboo",
+      "quantity": 64
+    },
+    {
+      "item": "minecraft:sugar_cane",
+      "quantity": 64
+    },
+    {
+      "item": "minecraft:cactus",
+      "quantity": 64
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/plant2unlock": 1
+    }
+  ]
+}

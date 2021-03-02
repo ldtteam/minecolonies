@@ -1,0 +1,21 @@
+{
+  "branch": "minecolonies:technology",
+  "researchLevel": 1,
+  "subtitle": "com.minecolonies.research.technology.biodegradable.subtitle",
+  "icon": "minecolonies:blockhutcomposter",
+  "requirements": [
+    {
+      "building": "farmer",
+      "level": 3
+    },
+    {
+      "item": "minecraft:bone_meal",
+      "quantity": 64
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/blockhutcomposter": 1
+    }
+  ]
+}
