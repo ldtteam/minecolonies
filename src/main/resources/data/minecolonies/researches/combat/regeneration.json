@@ -1,0 +1,24 @@
+{
+  "comment": "name: Regeneration * subtitle: ",
+  "branch": "minecolonies:combat",
+  "researchLevel": 2,
+  "sortOrder": 2,
+  "exclusiveChildResearch": true,
+  "parentResearch": "minecolonies:combat/improvedleather",
+  "icon": "minecraft:glistering_melon_slice:1",
+  "requirements": [
+    {
+      "building": "guardtower",
+      "level": 2
+    },
+    {
+      "item": "minecraft:emerald",
+      "quantity": 1
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/retreatunlock": 1
+    }
+  ]
+}

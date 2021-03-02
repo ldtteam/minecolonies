@@ -1,0 +1,23 @@
+{
+  "comment": "name: Rainbow Heaven * subtitle: Now in color! And 3D!",
+  "branch": "minecolonies:technology",
+  "researchLevel": 3,
+  "parentResearch": "minecolonies:technology/flowerpower",
+  "subtitle": "com.minecolonies.research.technology.rainbowheaven.subtitle",
+  "icon": "minecolonies:blockhutdyer:1",
+  "requirements": [
+    {
+      "building": "florist",
+      "level": 3
+    },
+    {
+      "item": "minecraft:poppy",
+      "quantity": 64
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/blockhutdyer": 1
+    }
+  ]
+}

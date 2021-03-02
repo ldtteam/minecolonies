@@ -209,7 +209,7 @@ public final class BackUpHelper
         {
             if (file != null)
             {
-                file.getParentFile().mkdir();
+                file.getParentFile().mkdirs();
                 CompressedStreamTools.write(compound, file);
             }
         }
@@ -306,7 +306,7 @@ public final class BackUpHelper
      */
     private static String getFolderForDimension(final ResourceLocation location)
     {
-        return location.getNamespace() + "\\" + location.getPath() + "\\";
+        return location.getNamespace() + File.separator + location.getPath() + File.separator;
     }
 
     /**

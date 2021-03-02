@@ -43,7 +43,6 @@ import com.minecolonies.coremod.proxy.ClientProxy;
 import com.minecolonies.coremod.proxy.CommonProxy;
 import com.minecolonies.coremod.proxy.IProxy;
 import com.minecolonies.coremod.proxy.ServerProxy;
-import com.minecolonies.coremod.research.ResearchInitializer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.renderer.entity.MinecartRenderer;
@@ -184,8 +183,6 @@ public class MineColonies
         AdvancementTriggers.preInit();
 
         StandardFactoryControllerInitializer.onPreInit();
-
-        ResearchInitializer.fillResearchTree(MinecoloniesAPIProxy.getInstance().getGlobalResearchTree());
     }
 
     @SubscribeEvent
@@ -206,7 +203,6 @@ public class MineColonies
         Log.getLogger().warn("FMLLoadCompleteEvent");
         PlacementHandlerInitializer.initHandlers();
         RequestSystemInitializer.onPostInit();
-        MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().loadCost();
     }
 
     @OnlyIn(Dist.CLIENT)

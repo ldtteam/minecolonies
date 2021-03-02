@@ -1,0 +1,23 @@
+{
+  "branch": "minecolonies:civilian",
+  "researchLevel": 1,
+  "subtitle": "com.minecolonies.research.civilian.higherlearning.subtitle",
+  "sortOrder": 4,
+  "exclusiveChildResearch": true,
+  "icon": "minecolonies:blockhutschool",
+  "requirements": [
+    {
+      "building": "citizen",
+      "level": 3
+    },
+    {
+      "item": "minecraft:book",
+      "quantity": 3
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/blockhutschool": 1
+    }
+  ]
+}

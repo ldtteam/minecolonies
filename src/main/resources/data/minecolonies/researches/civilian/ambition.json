@@ -1,0 +1,17 @@
+{
+  "branch": "minecolonies:civilian",
+  "researchLevel": 1,
+  "sortOrder": 5,
+  "icon": "minecolonies:blockhutmysticalsite",
+  "requirements": [
+    {
+      "item": "minecraft:diamond",
+      "quantity": 1
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/blockhutmysticalsite": 1
+    }
+  ]
+}

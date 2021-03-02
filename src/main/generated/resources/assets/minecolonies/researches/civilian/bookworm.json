@@ -1,0 +1,22 @@
+{
+  "branch": "minecolonies:civilian",
+  "parentResearch": "minecolonies:civilian/morebooks",
+  "researchLevel": 3,
+  "subtitle": "com.minecolonies.research.civilian.bookworm.subtitle",
+  "icon": "minecolonies:textures/icons/research/xpgain2.png",
+  "requirements": [
+    {
+      "building": "school",
+      "level": 3
+    },
+    {
+      "item": "minecraft:bookshelf",
+      "quantity": 6
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/teachingmultiplier": 2
+    }
+  ]
+}

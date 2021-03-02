@@ -1,5 +1,9 @@
 package com.minecolonies.api.research.util;
 
+import com.ldtteam.blockout.Color;
+import com.minecolonies.api.util.constant.Constants;
+import net.minecraft.util.ResourceLocation;
+
 /**
  * Class for research constants.
  */
@@ -22,89 +26,121 @@ public final class ResearchConstants
     public static final String TAG_STATE          = "state";
     public static final String TAG_ID             = "id";
     public static final String TAG_BRANCH         = "branch";
-    public static final String TAG_DESC           = "desc";
-    public static final String TAG_EFFECT         = "effect";
-    public static final String TAG_DEPTH          = "depth";
+    public static final String TAG_NAME           = "name";
+    public static final String TAG_COSTS          = "cost";
+    public static final String TAG_COST_ITEM      = "cost-item";
+    public static final String TAG_REQS           = "requirements";
+    public static final String TAG_REQ_TYPE       = "requirement-type";
+    public static final String TAG_REQ_ITEM       = "requirement-item";
+    public static final String TAG_EFFECTS        = "effects";
+    public static final String TAG_EFFECT_TYPE    = "effect-type";
+    public static final String TAG_EFFECT_ITEM    = "effect-item";
+    public static final String TAG_RESEARCH_LVL   = "depth";
+    public static final String TAG_RESEARCH_SORT  = "sort";
     public static final String TAG_PROGRESS       = "progress";
     public static final String TAG_CHILDS         = "hasResearchedChild";
     public static final String TAG_ONLY_CHILD     = "onlyChild";
+    public static final String TAG_ICON_TEXTURE   = "icon_tex";
+    public static final String TAG_ICON_ITEM_STACK= "icon_is";
+    public static final String TAG_SUBTITLE_NAME  = "subtitle";
+    public static final String TAG_INSTANT        = "instant";
+    public static final String TAG_AUTOSTART      = "autostart";
+    public static final String TAG_IMMUTABLE      = "immutable";
+    public static final String TAG_HIDDEN         = "hidden";
     public static final String TAG_RESEARCH_CHILD = "child";
 
     /**
      * Research constants for window.
      */
     public static final String DRAG_VIEW_ID         = "dragView";
+    public static final int    RESEARCH_WIDTH       = 175;
     public static final int    GRADIENT_WIDTH       = 175;
     public static final int    X_SPACING            = 40;
+    public static final int    RESEARCH_HEIGHT      = 50;
     public static final int    GRADIENT_HEIGHT      = 50;
+    public static final int    NAME_LABEL_WIDTH     = 175;
+    public static final int    NAME_LABEL_HEIGHT    = 18;
     public static final int    Y_SPACING            = 20;
     public static final int    COST_OFFSET          = 20;
     public static final int    TIMELABEL_Y_POSITION = 10;
     public static final int    MAX_DEPTH            = 6;
     public static final int    INITIAL_X_OFFSET     = 10;
-    public static final int    NAME_OFFSET          = 50;
+    public static final int    NAME_OFFSET          = 30;
     public static final int    INITIAL_Y_OFFSET     = 10;
     public static final int    TEXT_X_OFFSET        = 5;
-    public static final int    XPBAR_Y_OFFSET       = 30;
-    public static final int    XPBAR_LENGTH         = 90;
-    public static final int    TEXT_Y_OFFSET        = 10;
+    public static final int    ICON_X_OFFSET        = 3;
+    public static final int    ICON_Y_OFFSET        = 4;
+    public static final int    ICON_WIDTH           = 15;
+    public static final int    ICON_HEIGHT          = 17;
+    public static final int    TEXT_Y_OFFSET        = 6;
     public static final int    DEFAULT_COST_SIZE    = 16;
-    public static final int    LOCK_WIDTH           = 15;
-    public static final int    LOCK_HEIGHT          = 17;
+    public static final int    RESEARCH_ICON_WIDTH  = 30;
+    public static final int    RESEARCH_ICON_HEIGHT = 32;
     public static final int    OR_X_OFFSET          = 14;
-    public static final int    OR_Y_OFFSET          = 7;
+    public static final int    OR_Y_OFFSET          = 10;
+    public static final int    OR_HEIGHT            = 16;
+    public static final int    OR_WIDTH             = 16;
+    public static final int    TIME_HEIGHT          = 12;
+    public static final int    TIME_WIDTH           = 95;
+    public static final boolean DRAW_ICONS = false;
+
+    public static final int    COLOR_TEXT_NEGATIVE   = Color.rgbaToInt(218, 10, 10, 255);
+    public static final int    COLOR_TEXT_LABEL      = Color.rgbaToInt(218, 202, 171, 255);
+    public static final int    COLOR_TEXT_DARK       = Color.rgbaToInt(60, 60, 60, 255);
+    public static final int    COLOR_TEXT_NAME       = Color.rgbaToInt(255,170,0, 255);
+    public static final int    COLOR_TEXT_UNFULFILLED= Color.rgbaToInt(170,0,0,255);
+    public static final int    COLOR_TEXT_FULFILLED  = Color.rgbaToInt(85,255,255,255);
 
     /**
-     * Research effects.
+     * Research Effect Name strings, used for ResearchEffectManager and ResearchRegistry lookups.
      */
-    public static final String ARCHER_ARMOR     = "Archer Armour";
-    public static final String MELEE_ARMOR      = "Melee Armour";
-    public static final String ARMOR_DURABILITY = "Armor Durability";
-    public static final String FLEEING_DAMAGE   = "Fleeing Damage";
-    public static final String FLEEING_SPEED    = "Fleeing Speed";
-    public static final String MELEE_DAMAGE     = "Melee Damage";
-    public static final String ARCHER_DAMAGE    = "Archer Damage";
-    public static final String RETREAT          = "Retreat";
-    public static final String NONE             = "None";
-    public static final String SHIELD_USAGE     = "Shield Usage";
-    public static final String KNIGHT_TAUNT     = "Knights Taunt Mobs";
-    public static final String DOUBLE_ARROWS    = "Double Arrows";
-    public static final String ARROW_ITEMS      = "Consume Arrows";
-    public static final String ARROW_PIERCE     = "Piercing Arrows";
-    public static final String KNIGHT_WHIRLWIND = "Whirlwind Ability";
-    public static final String BLOCK_ATTACKS    = "Block Attacks";
-    public static final String SLEEP_LESS       = "Sleep Less";
-    public static final String WORK_LONGER      = "Working Day h";
+    //Addition Multipliers
+    public static final ResourceLocation ARCHER_DAMAGE                = new ResourceLocation(Constants.MOD_ID, "effects/archerdamageaddition");
+    public static final ResourceLocation CITIZEN_INV_SLOTS            = new ResourceLocation(Constants.MOD_ID, "effects/citizeninvslotsaddition");
+    public static final ResourceLocation CITIZEN_CAP                  = new ResourceLocation(Constants.MOD_ID, "effects/citizencapaddition");
+    public static final ResourceLocation MECHANIC_ENHANCED_GATES      = new ResourceLocation(Constants.MOD_ID, "effects/enhancesgatedurabilityaddition");
+    public static final ResourceLocation FLEEING_SPEED                = new ResourceLocation(Constants.MOD_ID, "effects/fleeingspeedaddition");
+    public static final ResourceLocation SATLIMIT                     = new ResourceLocation(Constants.MOD_ID, "effects/healingsaturationlimitaddition");
+    public static final ResourceLocation HEALTH_BOOST                 = new ResourceLocation(Constants.MOD_ID, "effects/healthaddition");
+    public static final ResourceLocation MELEE_DAMAGE                 = new ResourceLocation(Constants.MOD_ID, "effects/meleedamageaddition");
+    public static final ResourceLocation WORK_LONGER                  = new ResourceLocation(Constants.MOD_ID, "effects/workingdayhaddition");
 
-    public static final String TEACHING = "Teaching";
-    public static final String GROWTH   = "Growth";
-    public static final String CAP      = "Citizen-Cap";
-    public static final String RAILS    = "Rails";
-    public static final String WALKING  = "Walking";
-    public static final String LEVELING  = "Leveling";
+    //Multiplier Modifiers
+    public static final ResourceLocation ARCHER_ARMOR      = new ResourceLocation(Constants.MOD_ID, "effects/archerarmormultiplier");
+    public static final ResourceLocation ARMOR_DURABILITY  = new ResourceLocation(Constants.MOD_ID, "effects/armordurabilitymultiplier");
+    public static final ResourceLocation BLOCK_ATTACKS     = new ResourceLocation(Constants.MOD_ID, "effects/blockattacksmultiplier");
+    public static final ResourceLocation BLOCK_BREAK_SPEED = new ResourceLocation(Constants.MOD_ID, "effects/blockbreakspeedmultiplier");
+    public static final ResourceLocation BLOCK_PLACE_SPEED = new ResourceLocation(Constants.MOD_ID, "effects/blockplacespeedmultiplier");
+    public static final ResourceLocation DOUBLE_ARROWS     = new ResourceLocation(Constants.MOD_ID, "effects/doublearrowsmultiplier");
+    public static final ResourceLocation FARMING           = new ResourceLocation(Constants.MOD_ID, "effects/farmingmultiplier");
+    public static final ResourceLocation FLEEING_DAMAGE    = new ResourceLocation(Constants.MOD_ID, "effects/fleeingdamagemultiplier");
+    public static final ResourceLocation GROWTH            = new ResourceLocation(Constants.MOD_ID, "effects/growthmultiplier");
+    public static final ResourceLocation HAPPINESS         = new ResourceLocation(Constants.MOD_ID, "effects/happinessmultiplier");
+    public static final ResourceLocation LEVELING          = new ResourceLocation(Constants.MOD_ID, "effects/levelingmultiplier");
+    public static final ResourceLocation MELEE_ARMOR       = new ResourceLocation(Constants.MOD_ID, "effects/meleearmormultiplier");
+    public static final ResourceLocation MINIMUM_STOCK     = new ResourceLocation(Constants.MOD_ID, "effects/minimumstockmultiplier");
+    public static final ResourceLocation MORE_ORES         = new ResourceLocation(Constants.MOD_ID, "effects/moreoresmultiplier");
+    public static final ResourceLocation RECIPES           = new ResourceLocation(Constants.MOD_ID, "effects/recipesmultiplier");
+    public static final ResourceLocation REGENERATION      = new ResourceLocation(Constants.MOD_ID, "effects/regenerationmultiplier");
+    public static final ResourceLocation SATURATION        = new ResourceLocation(Constants.MOD_ID, "effects/saturationmultiplier");
+    public static final ResourceLocation SLEEP_LESS        = new ResourceLocation(Constants.MOD_ID, "effects/sleeplessmultiplier");
+    public static final ResourceLocation TEACHING          = new ResourceLocation(Constants.MOD_ID, "effects/teachingmultiplier");
+    public static final ResourceLocation TOOL_DURABILITY   = new ResourceLocation(Constants.MOD_ID, "effects/tooldurabilitymultiplier");
+    public static final ResourceLocation WALKING           = new ResourceLocation(Constants.MOD_ID, "effects/walkingmultiplier");
 
-    public static final String HEALTH       = "Health";
-    public static final String REGENERATION = "Regeneration";
-    public static final String SATLIMIT     = "Healing Saturation Limit";
-    public static final String HAPPINESS    = "Happiness";
-    public static final String SATURATION   = "Saturation";
-
-    public static final String FARMING           = "Farming";
-    public static final String BLOCK_BREAK_SPEED = "Block Break Speed";
-    public static final String MINIMUM_STOCK     = "Minimum Stock";
-    public static final String RECIPES           = "Recipes";
-    public static final String BLOCK_PLACE_SPEED = "Block Place Speed";
-    public static final String MORE_ORES         = "More Ores";
-    public static final String WORKING_IN_RAIN   = "Working in Rain";
-    public static final String TOOL_DURABILITY   = "Tool Durability";
-    public static final String INV_SLOTS         = "Citizen Inv Slots";
-
-    public static final String PLANT_2     = "Plant 2";
-    public static final String CRUSHING_11 = "1:1 Crushing";
-    public static final String FIRE_RES    = "Miner Fire Res";
-
-    public static final String END_KNOWLEGE = "Knowledge of The End";
-    public static final String MORE_SCROLLS = "More Scroll Recipes";
+    //Unlock Ability modifiers.
+    public static final ResourceLocation CRUSHING_11       = new ResourceLocation(Constants.MOD_ID, "effects/crushing11unlock");
+    public static final ResourceLocation ARCHER_USE_ARROWS = new ResourceLocation(Constants.MOD_ID, "effects/consumearrowsunlock");
+    public static final ResourceLocation KNIGHT_TAUNT      = new ResourceLocation(Constants.MOD_ID, "effects/knighttauntmobsunlock");
+    public static final ResourceLocation FIRE_RES          = new ResourceLocation(Constants.MOD_ID, "effects/minerfireresunlock");
+    public static final ResourceLocation ARROW_PIERCE      = new ResourceLocation(Constants.MOD_ID, "effects/piercingarrowsunlock");
+    public static final ResourceLocation PLANT_2           = new ResourceLocation(Constants.MOD_ID, "effects/plant2unlock");
+    public static final ResourceLocation PLATE_ARMOR       = new ResourceLocation(Constants.MOD_ID, "effects/platearmorunlock");
+    public static final ResourceLocation RAILS             = new ResourceLocation(Constants.MOD_ID, "effects/railsunlock");
+    public static final ResourceLocation RETREAT           = new ResourceLocation(Constants.MOD_ID, "effects/retreatunlock");
+    public static final ResourceLocation SHIELD_USAGE      = new ResourceLocation(Constants.MOD_ID, "effects/shieldusageunlock");
+    public static final ResourceLocation KNIGHT_WHIRLWIND  = new ResourceLocation(Constants.MOD_ID, "effects/whirlwindabilityunlock");
+    public static final ResourceLocation WORKING_IN_RAIN   = new ResourceLocation(Constants.MOD_ID, "effects/workinginrainunlock");
 
     /**
      * Private constructor to hide implicit public one.

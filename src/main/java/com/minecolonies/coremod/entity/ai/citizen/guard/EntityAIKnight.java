@@ -14,8 +14,6 @@ import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.jobs.JobKnight;
-import com.minecolonies.coremod.research.AdditionModifierResearchEffect;
-import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
 import com.minecolonies.coremod.util.NamedDamageSource;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
@@ -161,9 +159,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight, AbstractBui
 
         if (target != null && target.isAlive())
         {
-            final UnlockAbilityResearchEffect
-              effect = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(SHIELD_USAGE, UnlockAbilityResearchEffect.class);
-            if (effect != null && shieldSlot != -1)
+            if (worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SHIELD_USAGE) > 0 && shieldSlot != -1)
             {
                 worker.getCitizenItemHandler().setHeldItem(Hand.OFF_HAND, shieldSlot);
                 worker.setActiveHand(Hand.OFF_HAND);
@@ -240,9 +236,8 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight, AbstractBui
 
             if (knockbackAoeCooldown <= 0)
             {
-                final UnlockAbilityResearchEffect knockBackEnabled =
-                  worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(KNIGHT_WHIRLWIND, UnlockAbilityResearchEffect.class);
-                if (knockBackEnabled != null && knockBackEnabled.getEffect() && worker.getRandom().nextInt(KNOCKBACK_CHANCE) == 0)
+                if (worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(KNIGHT_WHIRLWIND) > 0
+                      && worker.getRandom().nextInt(KNOCKBACK_CHANCE) == 0)
                 {
                     List<LivingEntity> entities = this.world.getLoadedEntitiesWithinAABB(LivingEntity.class, worker.getBoundingBox().grow(2.0D, 0.5D, 2.0D));
                     for (LivingEntity livingentity : entities)
@@ -290,12 +285,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight, AbstractBui
             target.setRevengeTarget(worker);
             if (target instanceof MobEntity)
             {
-                UnlockAbilityResearchEffect effect = worker.getCitizenColonyHandler()
-                                                       .getColony()
-                                                       .getResearchManager()
-                                                       .getResearchEffects()
-                                                       .getEffect(KNIGHT_TAUNT, UnlockAbilityResearchEffect.class);
-                if (effect != null && effect.getEffect())
+                if (worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(KNIGHT_TAUNT) > 0)
                 {
                     ((MobEntity) target).setAttackTarget(worker);
                 }
@@ -329,12 +319,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight, AbstractBui
                 addDmg += EnchantmentHelper.getModifierForCreature(heldItem, target.getCreatureAttribute()) / 2.5;
             }
 
-            final AdditionModifierResearchEffect
-              effect = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(MELEE_DAMAGE, AdditionModifierResearchEffect.class);
-            if (effect != null)
-            {
-                addDmg += effect.getEffect();
-            }
+            addDmg += worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(MELEE_DAMAGE);
 
             return (int) ((addDmg) * MineColonies.getConfig().getServer().knightDamageMult.get());
         }

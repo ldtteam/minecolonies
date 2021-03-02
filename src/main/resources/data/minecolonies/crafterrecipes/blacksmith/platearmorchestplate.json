@@ -1,0 +1,24 @@
+{
+  "type" : "recipe",
+  "crafter": "blacksmith",
+  "inputs": [
+    {
+      "item" : "minecraft:iron_ingot",
+      "count": 7
+    },
+    {
+      "item" : "minecraft:leather",
+      "count": 1
+    },
+    {
+      "item" : "minecraft:coal",
+      "count": 3
+    }
+  ],
+  "result": "minecolonies:plate_armor_chest",
+  "count": 1,
+  "min-building-level" : 4,
+  "research-id" : "minecolonies:combat/platearmor"
+}
+
+

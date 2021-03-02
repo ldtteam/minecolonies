@@ -34,7 +34,6 @@ import com.minecolonies.coremod.colony.requestsystem.resolvers.BuildingRequestRe
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingProductionResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingRequestResolver;
 import com.minecolonies.coremod.network.messages.server.colony.building.worker.BuildingHiringModeMessage;
-import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import io.netty.buffer.Unpooled;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
@@ -433,22 +432,17 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
      */
     protected int getMaxRecipes()
     {
-        double increase = 1;
-        final MultiplierModifierResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect(RECIPES, MultiplierModifierResearchEffect.class);
-        if (effect != null)
-        {
-            increase = 1 + effect.getEffect();
-        }
+        final double increase;
         if(canCraftComplexRecipes())
         {
-            increase*=EXTRA_RECIPE_MULTIPLIER;
+            increase = (1 + colony.getResearchManager().getResearchEffects().getEffectStrength(RECIPES)) * EXTRA_RECIPE_MULTIPLIER;
+        }
+        else
+        {
+            increase = 1 + colony.getResearchManager().getResearchEffects().getEffectStrength(RECIPES);
         }
         return (int) (Math.pow(2, getBuildingLevel()) * increase);
     }
-
-    /**
-     *
-     */
 
     @Override
     public List<IToken<?>> getRecipes()
@@ -505,6 +499,8 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             colony.getProgressManager()
               .progressEmploy(colony.getCitizenManager().getCitizens().stream().filter(citizenData -> citizenData.getJob() != null).collect(Collectors.toList()).size());
         }
+
+        updateWorkerAvailableForRecipes();
         return true;
     }
 
@@ -599,6 +595,12 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         {
             addRecipeToList(token);
             markDirty();
+
+            if (getAssignedCitizen().isEmpty())
+            {
+                return true;
+            }
+
             final IRecipeStorage recipeStorage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
             if (recipeStorage != null)
             {
@@ -608,6 +610,22 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             return true;
         }
         return false;
+    }
+
+    /**
+     * Updates existing requests, if they match the recipes available at this worker
+     */
+    private void updateWorkerAvailableForRecipes()
+    {
+        for (final IToken<?> token : recipes)
+        {
+            final IRecipeStorage recipeStorage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
+            if (recipeStorage != null)
+            {
+                colony.getRequestManager()
+                  .onColonyUpdate(request -> request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).matches(recipeStorage.getPrimaryOutput()));
+            }
+        }
     }
 
     /**

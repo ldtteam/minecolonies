@@ -1,0 +1,22 @@
+{
+  "comment": "name: Steel Bracing * subtitle: ",
+  "branch": "minecolonies:technology",
+  "researchLevel": 5,
+  "parentResearch": "minecolonies:technology/reinforced",
+  "icon": "minecraft:golden_pickaxe:1",
+  "requirements": [
+    {
+      "building": "blacksmith",
+      "level": 5
+    },
+    {
+      "item": "minecraft:diamond",
+      "quantity": 64
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/tooldurabilitymultiplier": 4
+    }
+  ]
+}

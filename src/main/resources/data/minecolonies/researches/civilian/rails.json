@@ -1,0 +1,24 @@
+{
+  "comment": "name: Rails * subtitle: Research is progressing right on track.",
+  "branch": "minecolonies:civilian",
+  "researchLevel": 2,
+  "sortOrder": 3,
+  "parentResearch": "minecolonies:civilian/keen",
+  "subtitle": "com.minecolonies.research.civilian.rails.subtitle",
+  "icon": "minecraft:detector_rail:1",
+  "requirements": [
+    {
+      "building": "deliveryman",
+      "level": 3
+    },
+    {
+      "item": "minecraft:rail",
+      "quantity": 64
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/railsunlock": 1
+    }
+  ]
+}

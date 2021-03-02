@@ -1,0 +1,23 @@
+{
+  "branch": "minecolonies:combat",
+  "parentResearch": "minecolonies:combat/avoidance",
+  "researchLevel": 2,
+  "subtitle": "com.minecolonies.research.combat.dodge.subtitle",
+  "sortOrder": 2,
+  "icon": "minecolonies:pirate_shoes",
+  "requirements": [
+    {
+      "building": "smeltery",
+      "level": 1
+    },
+    {
+      "item": "minecraft:leather",
+      "quantity": 16
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/archerarmormultiplier": 1
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "branch": "minecolonies:combat",
+  "parentResearch": "minecolonies:combat/dodge",
+  "researchLevel": 3,
+  "subtitle": "com.minecolonies.research.combat.improveddodge.subtitle",
+  "icon": "minecolonies:pirate_boots",
+  "requirements": [
+    {
+      "building": "archery",
+      "level": 1
+    },
+    {
+      "item": "minecraft:leather",
+      "quantity": 32
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/archerarmormultiplier": 2
+    }
+  ]
+}

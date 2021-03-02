@@ -3,6 +3,7 @@ package com.minecolonies.coremod.event;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.datalistener.CrafterRecipeListener;
+import com.minecolonies.coremod.datalistener.ResearchListener;
 import com.minecolonies.coremod.entity.pathfinding.Pathfinding;
 import com.minecolonies.coremod.network.messages.client.ColonyStylesMessage;
 import com.minecolonies.coremod.network.messages.client.ServerUUIDMessage;
@@ -55,6 +56,7 @@ public class FMLEventHandler
     public static void onServerAboutToStart(@NotNull final AddReloadListenerEvent event)
     {
         event.addListener(new CrafterRecipeListener());
+        event.addListener(new ResearchListener());
     }
 
     public static void onServerStopped(final FMLServerStoppingEvent event)

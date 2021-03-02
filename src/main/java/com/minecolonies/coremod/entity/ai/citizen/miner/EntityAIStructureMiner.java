@@ -17,7 +17,6 @@ import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructureWithWorkOrder;
-import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import com.minecolonies.coremod.util.AdvancementUtils;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.*;
@@ -361,6 +360,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
 
     /**
      * Get the main fill block. Cobble for overworld, netherrack for nether.
+     *
      * @return the main fill block.
      */
     private Block getMainFillBlock()
@@ -768,24 +768,26 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         }
 
 
-        if(workingNode.getRot().isPresent() && workingNode.getRot().get() != rotation)
+        if (workingNode.getRot().isPresent() && workingNode.getRot().get() != rotation)
         {
             Log.getLogger().warn("Calculated rotation doesn't match recorded: x:" + workingNodeX + " z:" + workingNodeZ);
         }
 
         final Node parentNode = currentLevel.getNode(workingNode.getParent());
-        final BlockPos newPos = new BlockPos(parentNode.getX(), currentLevel.getDepth() + 2, parentNode.getZ());
-        if (parentNode != null && parentNode.getStyle() != Node.NodeType.SHAFT && (parentNode.getStatus() != Node.NodeStatus.COMPLETED || (WorldUtil.isBlockLoaded(world, newPos) &&
-                                                                                                                                             !((world.getBlockState(newPos)).getBlock() instanceof AirBlock))))
-        {
-            workingNode = parentNode;
-            workingNode.setStatus(Node.NodeStatus.AVAILABLE);
-            buildingMiner.setActiveNode(parentNode);
-            buildingMiner.markDirty();
-            //We need to make sure to walk back to the last valid parent
-            return MINER_CHECK_MINESHAFT;
-        }
 
+        if (parentNode != null && parentNode.getStyle() != Node.NodeType.SHAFT)
+        {
+            final BlockPos newPos = new BlockPos(parentNode.getX(), currentLevel.getDepth() + 2, parentNode.getZ());
+            if (parentNode.getStatus() != Node.NodeStatus.COMPLETED || (WorldUtil.isBlockLoaded(world, newPos) && !((world.getBlockState(newPos)).getBlock() instanceof AirBlock)))
+            {
+                workingNode = parentNode;
+                workingNode.setStatus(Node.NodeStatus.AVAILABLE);
+                buildingMiner.setActiveNode(parentNode);
+                buildingMiner.markDirty();
+                //We need to make sure to walk back to the last valid parent
+                return MINER_CHECK_MINESHAFT;
+            }
+        }
         @NotNull final BlockPos standingPosition = new BlockPos(workingNode.getParent().getX(), currentLevel.getDepth(), workingNode.getParent().getZ());
         currentStandingPosition = standingPosition;
         if ((workingNode.getStatus() == Node.NodeStatus.AVAILABLE || workingNode.getStatus() == Node.NodeStatus.IN_PROGRESS) && !walkToBlock(standingPosition))
@@ -1093,13 +1095,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     {
         super.triggerMinedBlock(blockToMine);
 
-        double chance = 1;
-        final MultiplierModifierResearchEffect
-          effect = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(MORE_ORES, MultiplierModifierResearchEffect.class);
-        if (effect != null)
-        {
-            chance += effect.getEffect();
-        }
+        final double chance = 1 + worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(MORE_ORES);
 
         if (IColonyManager.getInstance().getCompatibilityManager().isLuckyBlock(blockToMine.getBlock()))
         {

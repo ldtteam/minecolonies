@@ -1,0 +1,7 @@
+{
+  "comment": "name: Sleep Less * description : Guards Need %d%% Less Sleep",
+  "effect": true,
+  "levels": [
+    0.5
+  ]
+}
