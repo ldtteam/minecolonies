@@ -1,0 +1,22 @@
+{
+  "branch": "minecolonies:combat",
+  "parentResearch": "minecolonies:combat/multishot",
+  "researchLevel": 5,
+  "subtitle": "com.minecolonies.research.combat.rapidshot.subtitle",
+  "icon": "minecolonies:firearrow",
+  "requirements": [
+    {
+      "building": "archery",
+      "level": 5
+    },
+    {
+      "item": "minecraft:bow",
+      "quantity": 18
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/doublearrowsmultiplier": 3
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "branch": "minecolonies:technology",
+  "parentResearch": "minecolonies:technology/compost",
+  "researchLevel": 5,
+  "subtitle": "com.minecolonies.research.technology.fertilizer.subtitle",
+  "icon": "minecraft:bone_block",
+  "requirements": [
+    {
+      "building": "smeltery",
+      "level": 3
+    },
+    {
+      "item": "minecraft:wheat_seeds",
+      "quantity": 512
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/farmingmultiplier": 4
+    }
+  ]
+}

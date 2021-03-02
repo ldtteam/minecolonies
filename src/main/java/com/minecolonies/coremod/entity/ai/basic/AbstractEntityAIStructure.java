@@ -72,6 +72,11 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
     protected Tuple<StructurePlacer, BuildingStructureHandler<J, B>> structurePlacer;
 
     /**
+     * If the structure state is currently reached limit rather than block placement.
+     */
+    private boolean limitReached = false;
+
+    /**
      * Different item check result possibilities.
      */
     public enum ItemCheckResult
@@ -279,10 +284,13 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
         {
             structurePlacer.getB().setStage(getProgressPos().getB());
         }
-        if (!walkToConstructionSite(worldPos))
+
+        if (!limitReached && !walkToConstructionSite(worldPos))
         {
             return getState();
         }
+
+        limitReached = false;
 
         final StructurePhasePlacementResult result;
         final StructurePlacer placer = structurePlacer.getA();
@@ -377,6 +385,11 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                 getOwnBuilding().setProgressPos(null, null);
                 return COMPLETE_BUILD;
             }
+
+        }
+        else if (result.getBlockResult().getResult() == BlockPlacementResult.Result.LIMIT_REACHED)
+        {
+            this.limitReached = true;
         }
         this.storeProgressPos(result.getIteratorPos(), structurePlacer.getB().getStage());
 
