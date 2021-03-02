@@ -19,6 +19,7 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.Vec2i;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
@@ -47,6 +48,7 @@ import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.research.util.ResearchConstants.*;
@@ -612,8 +614,19 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
                 }
                 else
                 {
-                    final Node node = level.getRandomNode(level.getLadderNode());
-                    setNextPatrolTarget(new BlockPos(node.getX(), level.getDepth(), node.getZ()));
+                    final List<Map.Entry<Vec2i, Node>> filteredNodes = level.getNodes().entrySet()
+                            .stream()
+                            .filter(entry -> entry.getValue().getStatus() == Node.NodeStatus.COMPLETED && entry.getValue().getStyle() != Node.NodeType.LADDER_BACK)
+                            .collect(Collectors.toList());
+                    final Node node = filteredNodes.get(worker.getRandom().nextInt(filteredNodes.size())).getValue();
+                    if (node.equals(level.getLadderNode()))
+                    {
+                        setNextPatrolTarget(new BlockPos(node.getX() + miner.getVectorX()*6, level.getDepth()+1, node.getZ() + miner.getVectorZ()*6));
+                    }
+                    else
+                    {
+                        setNextPatrolTarget(new BlockPos(node.getX(), level.getDepth()+1, node.getZ()));
+                    }
                 }
             }
         }

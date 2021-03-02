@@ -65,7 +65,7 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
         if (miner.getColony().getBuilding(miner.getID()) != null)
         {
             levelsInfo = miner.levelsInfo;
-            guardsInfo = miner.guards;
+            guardsInfo = miner.pullGuards();
         }
     }
 
@@ -123,6 +123,10 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
                         {
                             button.setEnabled(false);
                         }
+                        else
+                        {
+                            button.setEnabled(true);
+                        }
                     }
                     else if (guardbuilding.getMinePos().equals(miner.getPosition()))
                     {
@@ -158,6 +162,7 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
         }
         else if (currentPage.equals(PAGE_GUARDS))
         {
+            pullLevelsFromHut();
             window.findPaneOfTypeByID(LIST_GUARDS, ScrollingList.class).refreshElementPanes();
         }
     }
@@ -176,8 +181,8 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
                 }
                 break;
             case BUTTON_ASSIGNGUARD:
-                final int guard_row = guardsList.getListElementIndexByPane(button);
-                final ICitizenDataView guard = guardsInfo.get(guard_row);
+                final int guardRow = guardsList.getListElementIndexByPane(button);
+                final ICitizenDataView guard = guardsInfo.get(guardRow);
                 final AbstractBuildingGuards.View guardbuilding = (AbstractBuildingGuards.View) miner.getColony().getBuilding(guard.getWorkBuilding());
                 if (guardbuilding.getMinePos() == null)
                 {

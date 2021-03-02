@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.entity.citizen.Skill;
@@ -36,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.*;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
@@ -706,8 +708,6 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
          */
         public int                           current;
 
-        public List<ICitizenDataView>        guards;
-
         public int                           assignedGuards;
 
         /**
@@ -740,15 +740,26 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
             {
                 levelsInfo.add(i, new Tuple<>(buf.readInt(), buf.readInt()));
             }
-            guards = new ArrayList<>();
-            final int guardsSize = buf.readInt();
-            for (int i = 0; i < guardsSize; i++)
+        }
+
+        public List<ICitizenDataView> pullGuards()
+        {
+            assignedGuards = 0;
+            final List<ICitizenDataView> guards = new ArrayList<>();
+            final List<IBuildingView> buildings = this.getColony().getBuildings().stream().filter(entry -> entry instanceof AbstractBuildingGuards.View && ((AbstractBuildingGuards.View) entry).getTask() == GuardTask.MINE).collect(Collectors.toList());
+            for (final IBuildingView building : buildings)
             {
-                final Integer citizenId = buf.readInt();
-                final ICitizenDataView citizen = getColony().getCitizen(citizenId);
-                guards.add(citizen);
+                final AbstractBuildingGuards.View guardbuilding = (AbstractBuildingGuards.View) building;
+                if (guardbuilding.getMinePos() != null && guardbuilding.getMinePos().equals(this.getPosition()))
+                {
+                    assignedGuards++;
+                }
+                for (final Integer citizenId : guardbuilding.getGuards())
+                {
+                    guards.add(this.getColony().getCitizen(citizenId));
+                }
             }
-            assignedGuards = buf.readInt();
+            return guards;
         }
 
         public int getMaxGuards()

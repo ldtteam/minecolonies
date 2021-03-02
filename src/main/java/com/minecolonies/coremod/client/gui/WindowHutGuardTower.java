@@ -188,6 +188,12 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
             setMinePosLabel();
         }
 
+
+        if (!building.getCanGuardMine())
+        {
+            buttonTaskMine.hide();
+        }
+
         final ScrollingList mobsList = findPaneOfTypeByID(GUI_ELEMENT_LIST_MOBS, ScrollingList.class);
         mobsList.setDataProvider(new ScrollingList.DataProvider()
         {
@@ -318,7 +324,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
             buttonSetTarget.setText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.targetGuard"));
             buttonTaskGuard.setEnabled(false);
         }
-        else if (task.equals(GuardTask.MINE))
+        else if (task.equals(GuardTask.MINE) && building.getCanGuardMine())
         {
             buttonTaskMine.setEnabled(false);
             buttonSetTarget.hide();
@@ -466,7 +472,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
             buttonTaskMine.setEnabled(true);
             buttonSetTarget.show();
         }
-        else if (button.getID().contains(GUI_SWITCH_TASK_MINE))
+        else if (button.getID().contains(GUI_SWITCH_TASK_MINE) && building.getCanGuardMine())
         {
             building.setTask(GuardTask.MINE);
 
@@ -605,7 +611,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
         {
             if (building.getMinePos() != null)
             {
-                minePosLabel.setText(building.getMinePos().getCoordinatesAsString());
+                minePosLabel.setText(new TranslationTextComponent("com.minecolonies.coremod.gui.workerhuts.patrollingmine", building.getMinePos().getCoordinatesAsString()));
             }
             else
             {

@@ -128,6 +128,8 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
      */
     protected boolean patrolManually = false;
 
+    protected static final Boolean canGuardMine = true;
+
     /**
      * The task of the guard, following the {@link GuardTask} enum.
      */
@@ -449,6 +451,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         {
             buf.writeBoolean(false);
         }
+        buf.writeBoolean(canGuardMine);
     }
 
     /**
@@ -758,6 +761,8 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
          */
         private BlockPos minePos;
 
+        protected boolean canGuardMine;
+
         /**
          * The client view constructor for the AbstractGuardBuilding.
          *
@@ -836,6 +841,8 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             {
                 minePos = buf.readBlockPos();
             }
+
+            canGuardMine = buf.readBoolean();
         }
 
         @NotNull
@@ -963,6 +970,11 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         public BlockPos getMinePos() { return minePos; }
 
         public void setMinePos(BlockPos pos) { this.minePos = pos; }
+
+        public Boolean getCanGuardMine()
+        {
+            return canGuardMine;
+        }
     }
 
     @Override
