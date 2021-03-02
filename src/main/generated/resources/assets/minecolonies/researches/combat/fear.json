@@ -1,0 +1,21 @@
+{
+  "branch": "minecolonies:combat",
+  "parentResearch": "minecolonies:combat/feint",
+  "researchLevel": 4,
+  "icon": "minecraft:iron_boots",
+  "requirements": [
+    {
+      "building": "guardtower",
+      "level": 8
+    },
+    {
+      "item": "minecraft:emerald",
+      "quantity": 16
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/fleeingdamagemultiplier": 2
+    }
+  ]
+}

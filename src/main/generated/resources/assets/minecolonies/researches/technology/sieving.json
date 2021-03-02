@@ -1,0 +1,23 @@
+{
+  "branch": "minecolonies:technology",
+  "parentResearch": "minecolonies:technology/woodwork",
+  "researchLevel": 2,
+  "subtitle": "com.minecolonies.research.technology.sieving.subtitle",
+  "sortOrder": 2,
+  "icon": "minecolonies:blockhutsifter",
+  "requirements": [
+    {
+      "building": "fisherman",
+      "level": 3
+    },
+    {
+      "item": "minecraft:string",
+      "quantity": 64
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/blockhutsifter": 1
+    }
+  ]
+}
