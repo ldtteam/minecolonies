@@ -1,0 +1,21 @@
+{
+  "branch": "minecolonies:civilian",
+  "parentResearch": "minecolonies:civilian/resilience",
+  "researchLevel": 4,
+  "icon": "minecraft:splash_potion",
+  "requirements": [
+    {
+      "building": "cook",
+      "level": 4
+    },
+    {
+      "item": "minecraft:golden_apple",
+      "quantity": 16
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/healingsaturationlimitaddition": 3
+    }
+  ]
+}

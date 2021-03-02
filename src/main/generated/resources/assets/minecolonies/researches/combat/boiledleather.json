@@ -1,0 +1,22 @@
+{
+  "branch": "minecolonies:combat",
+  "parentResearch": "minecolonies:combat/improvedleather",
+  "researchLevel": 2,
+  "subtitle": "com.minecolonies.research.combat.boiledleather.subtitle",
+  "icon": "minecraft:turtle_helmet",
+  "requirements": [
+    {
+      "building": "townhall",
+      "level": 2
+    },
+    {
+      "item": "minecraft:leather",
+      "quantity": 64
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/armordurabilitymultiplier": 1
+    }
+  ]
+}

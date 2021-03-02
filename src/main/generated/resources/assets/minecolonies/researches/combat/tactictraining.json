@@ -1,0 +1,21 @@
+{
+  "branch": "minecolonies:combat",
+  "researchLevel": 1,
+  "sortOrder": 2,
+  "icon": "minecolonies:blockhutbarrackstower",
+  "requirements": [
+    {
+      "building": "guardtower",
+      "level": 3
+    },
+    {
+      "item": "minecraft:iron_block",
+      "quantity": 3
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/blockhutbarracks": 1
+    }
+  ]
+}
