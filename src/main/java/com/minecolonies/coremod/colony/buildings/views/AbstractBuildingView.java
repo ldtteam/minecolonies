@@ -649,6 +649,7 @@ public abstract class AbstractBuildingView implements IBuildingView
     @Override
     public void registerModule(final IBuildingModuleView iModuleView)
     {
+        iModuleView.setBuildingView(this);
         this.moduleViews.add(iModuleView);
     }
 }
