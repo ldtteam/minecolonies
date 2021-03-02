@@ -1,0 +1,21 @@
+{
+  "branch": "minecolonies:combat",
+  "parentResearch": "minecolonies:combat/powerattack",
+  "researchLevel": 4,
+  "icon": "minecraft:iron_sword",
+  "requirements": [
+    {
+      "building": "guardtower",
+      "level": 10
+    },
+    {
+      "item": "minecraft:iron_block",
+      "quantity": 8
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/meleedamageaddition": 3
+    }
+  ]
+}

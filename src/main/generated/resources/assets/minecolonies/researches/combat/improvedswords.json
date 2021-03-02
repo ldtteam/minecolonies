@@ -1,0 +1,22 @@
+{
+  "branch": "minecolonies:combat",
+  "parentResearch": "minecolonies:combat/tactictraining",
+  "researchLevel": 2,
+  "subtitle": "com.minecolonies.research.combat.improvedswords.subtitle",
+  "icon": "minecolonies:blockhutcombatacademy",
+  "requirements": [
+    {
+      "building": "barracks",
+      "level": 3
+    },
+    {
+      "item": "minecraft:iron_block",
+      "quantity": 6
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/blockhutcombatacademy": 1
+    }
+  ]
+}
