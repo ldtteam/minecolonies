@@ -65,6 +65,12 @@ public interface ICompatibilityManager
     Set<ItemStorage> getFood();
 
     /**
+     * Get a set of all edibles for citizens.
+     * @return list of edible food.
+     */
+    Set<ItemStorage> getEdibles();
+
+    /**
      * Get a set of all smeltable ores.
      *
      * @return an immutable set.

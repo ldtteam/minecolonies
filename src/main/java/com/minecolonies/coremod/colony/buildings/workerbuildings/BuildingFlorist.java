@@ -188,9 +188,8 @@ public class BuildingFlorist extends AbstractBuildingWorker
     {
         if (hasModule(GroupedItemListModule.class))
         {
-            final IGroupedItemListModule module = getModule(GroupedItemListModule.class).get();
             final List<ItemStorage> stacks = getPlantablesForBuildingLevel(getBuildingLevel()).stream()
-                                               .filter(stack -> !module.isItemInList(FLORIST_FLOWER_LIST, stack))
+                                               .filter(stack -> !getModule(GroupedItemListModule.class).map(module -> module.isItemInList(FLORIST_FLOWER_LIST, stack)).orElse(false))
                                                .collect(Collectors.toList());
             if (stacks.isEmpty())
             {

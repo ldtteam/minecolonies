@@ -95,6 +95,11 @@ public class CompatibilityManager implements ICompatibilityManager
     private final Set<ItemStorage> food = new HashSet<>();
 
     /**
+     * List of all the items that can be used as food
+     */
+    private final Set<ItemStorage> edibles = new HashSet<>();
+
+    /**
      * Set of all possible diseases.
      */
     private final Map<String, Disease> diseases = new HashMap<>();
@@ -301,6 +306,12 @@ public class CompatibilityManager implements ICompatibilityManager
     public Set<ItemStorage> getFood()
     {
         return food;
+    }
+
+    @Override
+    public Set<ItemStorage> getEdibles()
+    {
+        return edibles;
     }
 
     @Override
@@ -571,6 +582,10 @@ public class CompatibilityManager implements ICompatibilityManager
         if (food.isEmpty())
         {
             food.addAll(ImmutableList.copyOf(allItems.stream().filter(ISFOOD.or(ISCOOKABLE)).map(ItemStorage::new).collect(Collectors.toList())));
+        }
+        if (edibles.isEmpty())
+        {
+            edibles.addAll(ImmutableList.copyOf(food.stream().filter(storage -> CAN_EAT.test(storage.getItemStack())).collect(Collectors.toList())));
         }
         Log.getLogger().info("Finished discovering food");
     }

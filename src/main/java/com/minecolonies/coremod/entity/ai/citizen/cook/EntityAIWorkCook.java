@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.cook;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColonyManager;
@@ -334,10 +335,10 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
     @Override
     protected IRequestable getSmeltAbleClass()
     {
-        final List<ItemStorage> allowedItems = getOwnBuilding().getModule(GroupedItemListModule.class).get().getList(FOOD_EXCLUSION_LIST);
+        final List<ItemStorage> allowedItems = getOwnBuilding().getModule(GroupedItemListModule.class).map(m -> m.getList(FOOD_EXCLUSION_LIST)).orElse(ImmutableList.of());
         if (!allowedItems.isEmpty())
         {
-            if (IColonyManager.getInstance().getCompatibilityManager().getFood().size() == allowedItems.size())
+            if (IColonyManager.getInstance().getCompatibilityManager().getEdibles().size() <= allowedItems.size())
             {
                 if (worker.getCitizenData() != null)
                 {

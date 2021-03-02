@@ -74,7 +74,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
     /**
      * Id in compostable map for list.
      */
-    private static final String COMPOSTABLE_LIST = "compostables";
+    public static final String COMPOSTABLE_LIST = "compostables";
 
     /**
      * Composting icon
@@ -143,25 +143,24 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
             return getState();
         }
 
-        final IGroupedItemListModule groupedItemListModule = getOwnBuilding().getModule(GroupedItemListModule.class).get();
-        final List<ItemStorage> list = groupedItemListModule.getList(COMPOSTABLE_LIST);
+        final List<ItemStorage> list = getOwnBuilding().getModule(GroupedItemListModule.class).map(m -> m.getList(COMPOSTABLE_LIST)).orElse(ImmutableList.of());
         if (list.isEmpty())
         {
             complain();
             return getState();
         }
 
-        if (InventoryUtils.hasItemInProvider(getOwnBuilding(), stack -> groupedItemListModule.isItemInList(COMPOSTABLE_LIST, new ItemStorage(stack))))
+        if (InventoryUtils.hasItemInProvider(getOwnBuilding(), stack -> list.contains(new ItemStorage(stack))))
         {
             InventoryUtils.transferItemStackIntoNextFreeSlotFromProvider(
               getOwnBuilding(),
-              InventoryUtils.findFirstSlotInProviderNotEmptyWith(getOwnBuilding(), stack -> groupedItemListModule.isItemInList(COMPOSTABLE_LIST, new ItemStorage(stack))),
+              InventoryUtils.findFirstSlotInProviderNotEmptyWith(getOwnBuilding(), stack -> list.contains(new ItemStorage(stack))),
               worker.getInventoryCitizen());
         }
 
         final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(
           worker.getInventoryCitizen(),
-          stack -> groupedItemListModule.isItemInList(COMPOSTABLE_LIST, new ItemStorage(stack))
+          stack -> list.contains(new ItemStorage(stack))
         );
         if (slot >= 0)
         {
@@ -252,7 +251,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
         if (worker.getHeldItem(Hand.MAIN_HAND) == ItemStack.EMPTY)
         {
             final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(
-              worker.getInventoryCitizen(), stack -> getOwnBuilding().getModule(GroupedItemListModule.class).get().isItemInList(COMPOSTABLE_LIST, new ItemStorage(stack)));
+              worker.getInventoryCitizen(), stack -> getOwnBuilding().getModule(GroupedItemListModule.class).map(m -> m.isItemInList(COMPOSTABLE_LIST, new ItemStorage(stack))).orElse(false));
 
             if (slot >= 0)
             {

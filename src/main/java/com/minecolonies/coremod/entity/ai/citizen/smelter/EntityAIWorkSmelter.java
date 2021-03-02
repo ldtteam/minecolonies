@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.smelter;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
@@ -336,7 +337,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
         {
             return false;
         }
-        final List<ItemStorage> allowedItems = getOwnBuilding().getModule(GroupedItemListModule.class).get().getList(ORE_LIST);
+        final List<ItemStorage> allowedItems = getOwnBuilding().getModule(GroupedItemListModule.class).map(m -> m.getList(ORE_LIST)).orElse(ImmutableList.of());
         return !allowedItems.contains(new ItemStorage(stack));
     }
 
@@ -347,7 +348,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
               !getOwnBuilding().hasWorkerOpenRequestsFiltered(worker.getCitizenData(),
                 req -> req.getShortDisplayString().getSiblings().contains(new TranslationTextComponent(COM_MINECOLONIES_REQUESTS_SMELTABLE_ORE))))
         {
-            final List<ItemStorage> allowedItems = getOwnBuilding().getModule(GroupedItemListModule.class).get().getList(ORE_LIST);
+            final List<ItemStorage> allowedItems = getOwnBuilding().getModule(GroupedItemListModule.class).map(m -> m.getList(ORE_LIST)).orElse(ImmutableList.of());
             if (allowedItems.isEmpty())
             {
                 worker.getCitizenData().createRequestAsync(getSmeltAbleClass());

@@ -29,6 +29,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.minecolonies.coremod.entity.ai.citizen.composter.EntityAIWorkComposter.COMPOSTABLE_LIST;
+
 public class BuildingComposter extends AbstractBuildingWorker
 {
     /**
@@ -75,7 +77,8 @@ public class BuildingComposter extends AbstractBuildingWorker
     public BuildingComposter(@NotNull final IColony c, final BlockPos l)
     {
         super(c, l);
-        keepX.put((stack) -> this.hasModule(GroupedItemListModule.class) && this.getModule(GroupedItemListModule.class).get().isItemInList("compostables", new ItemStorage(stack)), new Tuple<>(Integer.MAX_VALUE, true));
+
+        keepX.put((stack) -> this.hasModule(GroupedItemListModule.class) && this.getModule(GroupedItemListModule.class).map(m -> m.isItemInList(COMPOSTABLE_LIST, new ItemStorage(stack))).orElse(false), new Tuple<>(Integer.MAX_VALUE, true));
     }
 
     /**

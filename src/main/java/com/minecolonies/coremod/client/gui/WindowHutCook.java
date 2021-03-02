@@ -109,7 +109,7 @@ public class WindowHutCook extends AbstractHutFilterableLists
         {
             return ImmutableList.copyOf(IColonyManager.getInstance()
                     .getCompatibilityManager()
-                    .getFood()
+                    .getEdibles()
                     .stream()
                     .filter(item -> filterPredicate.test(item.getItemStack()))
                     .collect(Collectors.toList()));
