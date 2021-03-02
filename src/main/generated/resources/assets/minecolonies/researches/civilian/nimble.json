@@ -1,0 +1,22 @@
+{
+  "branch": "minecolonies:civilian",
+  "parentResearch": "minecolonies:civilian/rails",
+  "researchLevel": 3,
+  "subtitle": "com.minecolonies.research.civilian.nimble.subtitle",
+  "icon": "minecolonies:textures/icons/research/speed1.png",
+  "requirements": [
+    {
+      "building": "townhall",
+      "level": 3
+    },
+    {
+      "item": "minecraft:rabbit_foot",
+      "quantity": 1
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/walkingmultiplier": 1
+    }
+  ]
+}

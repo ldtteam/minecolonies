@@ -1,0 +1,30 @@
+{
+  "branch": "minecolonies:combat",
+  "researchLevel": 1,
+  "subtitle": "com.minecolonies.research.combat.taunt.subtitle",
+  "sortOrder": 5,
+  "icon": "minecraft:chain",
+  "requirements": [
+    {
+      "building": "guardtower",
+      "level": 1
+    },
+    {
+      "item": "minecraft:rotten_flesh",
+      "quantity": 8
+    },
+    {
+      "item": "minecraft:bone",
+      "quantity": 8
+    },
+    {
+      "item": "minecraft:spider_eye",
+      "quantity": 8
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/knighttauntmobsunlock": 1
+    }
+  ]
+}

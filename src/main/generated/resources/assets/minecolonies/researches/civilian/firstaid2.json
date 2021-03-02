@@ -1,0 +1,22 @@
+{
+  "branch": "minecolonies:civilian",
+  "parentResearch": "minecolonies:civilian/firstaid",
+  "researchLevel": 2,
+  "subtitle": "com.minecolonies.research.civilian.firstaid2.subtitle",
+  "icon": "minecolonies:textures/icons/research/hp2.png",
+  "requirements": [
+    {
+      "building": "townhall",
+      "level": 2
+    },
+    {
+      "item": "minecraft:hay_block",
+      "quantity": 16
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/healthaddition": 2
+    }
+  ]
+}
