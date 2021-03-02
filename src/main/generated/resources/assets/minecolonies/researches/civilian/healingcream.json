@@ -1,0 +1,22 @@
+{
+  "branch": "minecolonies:civilian",
+  "parentResearch": "minecolonies:civilian/bandaid",
+  "researchLevel": 3,
+  "subtitle": "com.minecolonies.research.civilian.healingcream.subtitle",
+  "icon": "minecolonies:textures/icons/research/regeneration2.png",
+  "requirements": [
+    {
+      "building": "library",
+      "level": 3
+    },
+    {
+      "item": "minecraft:golden_carrot",
+      "quantity": 1
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/regenerationmultiplier": 2
+    }
+  ]
+}

@@ -40,9 +40,6 @@ import com.minecolonies.coremod.entity.ai.minimal.*;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.*;
 import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMessage;
-import com.minecolonies.coremod.research.AdditionModifierResearchEffect;
-import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
-import com.minecolonies.coremod.research.UnlockAbilityResearchEffect;
 import com.minecolonies.coremod.util.TeleportHelper;
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.*;
@@ -66,6 +63,7 @@ import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.scoreboard.Team;
 import net.minecraft.util.*;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ITextComponent;
@@ -574,21 +572,11 @@ public class EntityCitizen extends AbstractEntityCitizen
             final IColonyView colonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), world.getDimensionKey());
             if (colonyView != null)
             {
-                final UnlockAbilityResearchEffect effect = colonyView.getResearchManager().getResearchEffects().getEffect(RAILS, UnlockAbilityResearchEffect.class);
-                if (effect != null)
-                {
-                    return effect.getEffect();
-                }
+                 return colonyView.getResearchManager().getResearchEffects().getEffectStrength(RAILS) > 0;
             }
             return false;
         }
-        final UnlockAbilityResearchEffect effect =
-          getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(RAILS, UnlockAbilityResearchEffect.class);
-        if (effect != null)
-        {
-            return effect.getEffect();
-        }
-        return false;
+        return getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(RAILS) > 0;
     }
 
     /**
@@ -610,30 +598,20 @@ public class EntityCitizen extends AbstractEntityCitizen
     {
         if (getHealth() < getMaxHealth())
         {
-            double limitDecrease = 0;
-            final AdditionModifierResearchEffect satLimitDecrease =
-              getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(SATLIMIT, AdditionModifierResearchEffect.class);
-            if (satLimitDecrease != null)
-            {
-                limitDecrease = satLimitDecrease.getEffect();
-            }
+            final double limitDecrease = getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SATLIMIT);
 
-            double healAmount = 1;
+            final double healAmount;
             if (citizenData.getSaturation() >= FULL_SATURATION + limitDecrease)
             {
-                healAmount += 1;
+                healAmount = 2 * (1.0 + getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(REGENERATION));
             }
             else if (citizenData.getSaturation() < LOW_SATURATION)
             {
-                healAmount = 0;
                 return;
             }
-
-            final AdditionModifierResearchEffect healEffect =
-              getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(REGENERATION, AdditionModifierResearchEffect.class);
-            if (healEffect != null)
+            else
             {
-                healAmount *= (1.0 + healEffect.getEffect());
+                healAmount = 1 * (1.0 + getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(REGENERATION));;
             }
 
             heal((float) healAmount);
@@ -1142,14 +1120,9 @@ public class EntityCitizen extends AbstractEntityCitizen
      */
     private boolean shouldWorkWhileRaining()
     {
-        final UnlockAbilityResearchEffect effect =
-          getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffect(WORKING_IN_RAIN, UnlockAbilityResearchEffect.class);
-        if (effect != null)
-        {
-            return effect.getEffect();
-        }
 
         return MineColonies.getConfig().getServer().workersAlwaysWorkInRain.get() ||
+                 getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(WORKING_IN_RAIN) > 0 ||
                  (citizenColonyHandler.getWorkBuilding() != null && citizenColonyHandler.getWorkBuilding().canWorkDuringTheRain());
     }
 
@@ -1333,11 +1306,9 @@ public class EntityCitizen extends AbstractEntityCitizen
             {
                 if (citizenJobHandler.getColonyJob() instanceof JobKnight)
                 {
-                    final MultiplierModifierResearchEffect effect =
-                      citizenColonyHandler.getColony().getResearchManager().getResearchEffects().getEffect(BLOCK_ATTACKS, MultiplierModifierResearchEffect.class);
-                    if (effect != null)
+                    if(citizenColonyHandler.getColony().getResearchManager().getResearchEffects().getEffectStrength(BLOCK_ATTACKS) > 0)
                     {
-                        if (getRandom().nextDouble() < effect.getEffect())
+                        if (getRandom().nextDouble() < citizenColonyHandler.getColony().getResearchManager().getResearchEffects().getEffectStrength(BLOCK_ATTACKS))
                         {
                             return false;
                         }
@@ -1347,12 +1318,7 @@ public class EntityCitizen extends AbstractEntityCitizen
                 if (citizenData.getWorkBuilding() instanceof AbstractBuildingGuards && ((AbstractBuildingGuards) citizenData.getWorkBuilding()).shallRetrieveOnLowHealth()
                       && getHealth() < ((int) getMaxHealth() * 0.2D))
                 {
-                    final MultiplierModifierResearchEffect effect =
-                      citizenColonyHandler.getColony().getResearchManager().getResearchEffects().getEffect(FLEEING_DAMAGE, MultiplierModifierResearchEffect.class);
-                    if (effect != null)
-                    {
-                        damageInc *= 1 - effect.getEffect();
-                    }
+                    damageInc *= 1 - citizenColonyHandler.getColony().getResearchManager().getResearchEffects().getEffectStrength(FLEEING_DAMAGE);
                 }
             }
         }
@@ -1538,21 +1504,11 @@ public class EntityCitizen extends AbstractEntityCitizen
     {
         if (citizenJobHandler.getColonyJob() instanceof JobKnight)
         {
-            final MultiplierModifierResearchEffect
-              effect = citizenColonyHandler.getColony().getResearchManager().getResearchEffects().getEffect(MELEE_ARMOR, MultiplierModifierResearchEffect.class);
-            if (effect != null)
-            {
-                return (int) (super.getTotalArmorValue() * (1 + effect.getEffect()));
-            }
+            return (int) (super.getTotalArmorValue() * (1 + citizenColonyHandler.getColony().getResearchManager().getResearchEffects().getEffectStrength(MELEE_ARMOR)));
         }
         else if (citizenJobHandler.getColonyJob() instanceof JobRanger)
         {
-            final MultiplierModifierResearchEffect
-              effect = citizenColonyHandler.getColony().getResearchManager().getResearchEffects().getEffect(ARCHER_ARMOR, MultiplierModifierResearchEffect.class);
-            if (effect != null)
-            {
-                return (int) (super.getTotalArmorValue() * (1 + effect.getEffect()));
-            }
+            return (int) (super.getTotalArmorValue() * (1 + citizenColonyHandler.getColony().getResearchManager().getResearchEffects().getEffectStrength(ARCHER_ARMOR)));
         }
         return super.getTotalArmorValue();
     }
@@ -1772,6 +1728,44 @@ public class EntityCitizen extends AbstractEntityCitizen
     public void updatePose(final Pose pose)
     {
         setPose(pose);
+    }
+
+    @Override
+    public void recalculateSize()
+    {
+        final EntitySize oldSize = this.size;
+        final Pose pose = this.getPose();
+        final EntitySize newSize = this.getSize(pose);
+        final net.minecraftforge.event.entity.EntityEvent.Size sizeEvent =
+          net.minecraftforge.event.ForgeEventFactory.getEntitySizeForge(this, pose, newSize, this.getEyeHeight(pose, newSize));
+        final EntitySize afterEventSize = sizeEvent.getNewSize();
+        this.size = afterEventSize;
+        this.eyeHeight = sizeEvent.getNewEyeHeight();
+        if (afterEventSize.width < oldSize.width)
+        {
+            double d0 = (double) afterEventSize.width / 2.0D;
+            this.setBoundingBox(new AxisAlignedBB(this.getPosX() - d0,
+              this.getPosY(),
+              this.getPosZ() - d0,
+              this.getPosX() + d0,
+              this.getPosY() + (double) afterEventSize.height,
+              this.getPosZ() + d0));
+        }
+        else
+        {
+            final AxisAlignedBB axisalignedbb = this.getBoundingBox();
+            this.setBoundingBox(new AxisAlignedBB(axisalignedbb.minX,
+              axisalignedbb.minY,
+              axisalignedbb.minZ,
+              axisalignedbb.minX + (double) afterEventSize.width,
+              axisalignedbb.minY + (double) afterEventSize.height,
+              axisalignedbb.minZ + (double) afterEventSize.width));
+            if (afterEventSize.width > oldSize.width && !this.firstUpdate && !this.world.isRemote)
+            {
+                final float f = oldSize.width - afterEventSize.width;
+                this.move(MoverType.SELF, new Vector3d((double) f, 0.0D, (double) f));
+            }
+        }
     }
 
     /**

@@ -16,21 +16,6 @@ public final class WindowConstants
     public static final String BUTTON_EXIT = "exit";
 
     /**
-     * Id of the info label in the GUI.
-     */
-    public static final String LABEL_INFO = "info";
-
-    /**
-     * Id of the next page button in the info GUI.
-     */
-    public static final String BUTTON_INFO_NEXT_PAGE = "infoNextPage";
-
-    /**
-     * Id of the prev page button in the info GUI.
-     */
-    public static final String BUTTON_INFO_PREV_PAGE = "infoPrevPage";
-
-    /**
      * Id of the info button in the GUI.
      */
     public static final String BUTTON_INFO = "info";
@@ -116,17 +101,17 @@ public final class WindowConstants
     public static final String BUTTON_TOGGLE_PRINT_PROGRESS = "togglePrintProgress";
 
     /**
-     * Id of the remove player button in the GUI..
+     * Id of the remove player button in the GUI.
      */
     public static final String BUTTON_REMOVE_PLAYER = "removePlayer";
 
     /**
-     * Id of the promote player button in the GUI..
+     * Id of the promote player button in the GUI.
      */
     public static final String BUTTON_PROMOTE = "promote";
 
     /**
-     * Id of the demote player button in the GUI..
+     * Id of the demote player button in the GUI.
      */
     public static final String BUTTON_DEMOTE = "demote";
 
@@ -294,11 +279,6 @@ public final class WindowConstants
      * Id of the hidden workorder id in the GUI.
      */
     public static final String HIDDEN_WORKORDER_ID = "hiddenId";
-
-    /**
-     * The position of the hidden id in the workOrder window.
-     */
-    public static final int HIDDEN_ID_POSITION = 5;
 
     /**
      * Link to the xml file of the window.
@@ -573,12 +553,10 @@ public final class WindowConstants
     public static final String  GUI_PAGE_MOB_ACTIONS       = "mobActions";
     //GUI Resource
     public static final String  GUI_RESOURCE               = ":gui/windowhutguardtower.xml";
-    //GUI Other
-    public static final Integer GUI_LIST_ELEMENT_NAME_POS  = 2;
     //Get GuardTool GUI
     public static final String  BUTTON_GET_TOOL            = "getTool";
 
-    /*
+    /**
      * GuardControl GUI
      */
     public static final String GUARD_CONTROL  = ":gui/windowguardcontrol.xml";
@@ -945,16 +923,6 @@ public final class WindowConstants
     public static final String REQUESTER = "requester";
 
     /**
-     * Delivery origin.
-     */
-    public static final String FROM = "com.minecolonies.coremod.from";
-
-    /**
-     * Number in queue.
-     */
-    public static final String IN_QUEUE = "com.minecolonies.coremod.listentry";
-
-    /**
      * Id of the order label.
      */
     public static final String ORDER = "order";
@@ -1039,11 +1007,6 @@ public final class WindowConstants
     public static final String ATTRIBUTES_LABEL = "attributes";
 
     /**
-     * Id of the attributes label in the GUI.
-     */
-    public static final String ATTRIBUTES_LABEL2 = "attributes2";
-
-    /**
      * Link to the xml file of the window.
      */
     public static final String HIRE_WORKER_SUFFIX = ":gui/windowhireworker.xml";
@@ -1112,6 +1075,7 @@ public final class WindowConstants
     public static final int    BUTTON_BUFFER           = 3;
     public static final String RESPONSE_BOX_ID         = "responseOptions";
     public static final String MEDIUM_SIZED_BUTTON_RES = "textures/gui/builderhut/builder_button_medium_large.png";
+    public static final String MEDIUM_SIZED_BUTTON_DIS = "textures/gui/builderhut/builder_button_medium_large_disabled.png";
 
     /**
      * The resource string.
@@ -1172,7 +1136,7 @@ public final class WindowConstants
     public static final String UPGRADE_PROGRESS_LABEL = "upgradeProgress";
 
     /**
-     * public constructor to hide implicit public one.
+     * Private constructor to hide implicit public one.
      */
     private WindowConstants()
     {

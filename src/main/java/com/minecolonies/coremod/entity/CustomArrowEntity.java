@@ -27,7 +27,7 @@ public class CustomArrowEntity extends ArrowEntity
     @Override
     protected void arrowHit(LivingEntity target)
     {
-        // TODO add enderman damage hit research here not that this is also used by mobs so check the shooter
+        // TODO add enderman damage hit research here. Note that this is also used by mobs, so check the shooter first.
         super.arrowHit(target);
     }
 

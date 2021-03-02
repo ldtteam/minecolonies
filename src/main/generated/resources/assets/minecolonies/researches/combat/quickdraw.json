@@ -1,0 +1,21 @@
+{
+  "branch": "minecolonies:combat",
+  "parentResearch": "minecolonies:combat/accuracy",
+  "researchLevel": 2,
+  "icon": "minecraft:wooden_sword",
+  "requirements": [
+    {
+      "building": "barracks",
+      "level": 3
+    },
+    {
+      "item": "minecraft:iron_block",
+      "quantity": 2
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/meleedamageaddition": 1
+    }
+  ]
+}

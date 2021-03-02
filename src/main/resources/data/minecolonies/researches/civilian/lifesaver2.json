@@ -1,0 +1,22 @@
+{
+  "comment": "name: Lifesaver II * subtitle: ",
+  "branch": "minecolonies:civilian",
+  "researchLevel": 4,
+  "parentResearch": "minecolonies:civilian/lifesaver",
+  "icon": "minecolonies:textures/icons/research/hp4.png",
+  "requirements": [
+    {
+      "building": "townhall",
+      "level": 4
+    },
+    {
+      "item": "minecraft:hay_block",
+      "quantity": 64
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/healthaddition": 4
+    }
+  ]
+}

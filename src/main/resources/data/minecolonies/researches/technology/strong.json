@@ -1,0 +1,22 @@
+{
+  "comment": "name: Strong * subtitle: ",
+  "branch": "minecolonies:technology",
+  "researchLevel": 2,
+  "parentResearch": "minecolonies:technology/hittingiron",
+  "icon": "minecraft:wooden_pickaxe:1",
+  "requirements": [
+    {
+      "building": "blacksmith",
+      "level": 1
+    },
+    {
+      "item": "minecraft:diamond",
+      "quantity": 8
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/tooldurabilitymultiplier": 1
+    }
+  ]
+}

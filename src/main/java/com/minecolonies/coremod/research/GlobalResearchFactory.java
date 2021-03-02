@@ -1,25 +1,33 @@
 package com.minecolonies.coremod.research;
 
 import com.google.common.reflect.TypeToken;
-import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.factory.FactoryVoidInput;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.research.IGlobalResearch;
-import com.minecolonies.api.research.IGlobalResearchTree;
+import com.minecolonies.api.research.IResearchRequirement;
 import com.minecolonies.api.research.effects.IResearchEffect;
+import com.minecolonies.api.research.effects.registry.IResearchEffectRegistry;
 import com.minecolonies.api.research.factories.IGlobalResearchFactory;
+import com.minecolonies.api.research.registry.IResearchRequirementRegistry;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 import static com.minecolonies.api.research.util.ResearchConstants.*;
 
 /**
- * Factory implementation taking care of creating new instances, serializing and deserializing GloblaResearch.
+ * Factory implementation taking care of creating new instances, serializing and deserializing GlobalResearch.
  */
 public class GlobalResearchFactory implements IGlobalResearchFactory
 {
@@ -39,28 +47,61 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
 
     @NotNull
     @Override
-    public IGlobalResearch getNewInstance(final String id, final String parent, final String branch, @NotNull final String desc, final int depth, final IResearchEffect<?> effect)
+    public IGlobalResearch getNewInstance(final ResourceLocation id, final ResourceLocation branch, final ResourceLocation parent, final TranslationTextComponent desc, final int universityLevel, final int sortOrder,
+      final ResourceLocation iconTexture, final ItemStack iconStack, final TranslationTextComponent subtitle, final boolean onlyChild, final boolean hidden, final boolean autostart, final boolean instant, final boolean immutable)
     {
-        return new GlobalResearch(id, branch, desc, depth, effect);
+        return new GlobalResearch(id, branch, parent, desc, universityLevel, sortOrder, iconTexture, iconStack, subtitle, onlyChild, hidden, autostart, instant, immutable);
     }
 
     @NotNull
     @Override
-    public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final IGlobalResearch effect)
+    public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final IGlobalResearch research)
     {
         final CompoundNBT compound = new CompoundNBT();
-        compound.putString(TAG_PARENT, effect.getParent());
-        compound.putString(TAG_ID, effect.getId());
-        compound.putString(TAG_BRANCH, effect.getBranch());
-        compound.putString(TAG_DESC, effect.getDesc());
-        compound.put(TAG_EFFECT, StandardFactoryController.getInstance().serialize(effect));
-        compound.putInt(TAG_DEPTH, effect.getDepth());
-        compound.putBoolean(TAG_ONLY_CHILD, effect.hasOnlyChild());
+        compound.putString(TAG_PARENT, research.getParent().toString());
+        compound.putString(TAG_ID, research.getId().toString());
+        compound.putString(TAG_BRANCH, research.getBranch().toString());
+        compound.putString(TAG_NAME, research.getName().getKey());
+        compound.putInt(TAG_RESEARCH_LVL, research.getDepth());
+        compound.putInt(TAG_RESEARCH_SORT, research.getSortOrder());
+        compound.putBoolean(TAG_ONLY_CHILD, research.hasOnlyChild());
+        compound.putString(TAG_ICON_TEXTURE, research.getIconTextureResourceLocation().toString());
+        compound.putString(TAG_ICON_ITEM_STACK, research.getIconItemStack().getItem().getRegistryName() + ":" + research.getIconItemStack().getCount());
+        compound.putString(TAG_SUBTITLE_NAME, research.getSubtitle().getKey());
+        compound.putBoolean(TAG_INSTANT, research.isInstant());
+        compound.putBoolean(TAG_AUTOSTART, research.isAutostart());
+        compound.putBoolean(TAG_IMMUTABLE, research.isImmutable());
+        compound.putBoolean(TAG_HIDDEN, research.isHidden());
+        @NotNull final ListNBT costTagList = research.getCostList().stream().map(is ->
+        {
+            final CompoundNBT costCompound = new CompoundNBT();
+            costCompound.putString(TAG_COST_ITEM, Objects.requireNonNull(is.getItem().getRegistryName()).toString() + ":" + is.getItemStack().getCount());
+            return costCompound;
+        }).collect(NBTUtils.toListNBT());
+        compound.put(TAG_COSTS, costTagList);
 
-        @NotNull final ListNBT childTagList = effect.getChilds().stream().map(child ->
+        @NotNull final ListNBT reqTagList = research.getResearchRequirement().stream().map(req ->
+        {
+            final CompoundNBT reqCompound = new CompoundNBT();
+            reqCompound.putString(TAG_REQ_TYPE, req.getRegistryEntry().getRegistryName().toString());
+            reqCompound.put(TAG_REQ_ITEM, req.writeToNBT());
+            return reqCompound;
+        }).collect(NBTUtils.toListNBT());
+        compound.put(TAG_REQS, reqTagList);
+
+        @NotNull final ListNBT effectTagList = research.getEffects().stream().map(eff ->
+        {
+            final CompoundNBT effectCompound = new CompoundNBT();
+            effectCompound.putString(TAG_EFFECT_TYPE, eff.getRegistryEntry().getRegistryName().toString());
+            effectCompound.put(TAG_EFFECT_ITEM, eff.writeToNBT());
+            return effectCompound;
+        }).collect(NBTUtils.toListNBT());
+        compound.put(TAG_EFFECTS, effectTagList);
+
+        @NotNull final ListNBT childTagList = research.getChildren().stream().map(child ->
         {
             final CompoundNBT childCompound = new CompoundNBT();
-            childCompound.putString(TAG_RESEARCH_CHILD, child);
+            childCompound.putString(TAG_RESEARCH_CHILD, child.toString());
             return childCompound;
         }).collect(NBTUtils.toListNBT());
         compound.put(TAG_CHILDS, childTagList);
@@ -72,59 +113,139 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
     @Override
     public IGlobalResearch deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
     {
-        final String parent = nbt.getString(TAG_PARENT);
-        final String id = nbt.getString(TAG_ID);
-        final String branch = nbt.getString(TAG_BRANCH);
-        final String desc = nbt.getString(TAG_DESC);
-        final CompoundNBT effect = nbt.getCompound(TAG_EFFECT);
-        final int depth = nbt.getInt(TAG_DEPTH);
+        final ResourceLocation parent = new ResourceLocation(nbt.getString(TAG_PARENT));
+        final ResourceLocation id = new ResourceLocation(nbt.getString(TAG_ID));
+        final ResourceLocation branch = new ResourceLocation(nbt.getString(TAG_BRANCH));
+        final TranslationTextComponent desc = new TranslationTextComponent(nbt.getString(TAG_NAME));
+        final int depth = nbt.getInt(TAG_RESEARCH_LVL);
+        final int sortOrder =  nbt.getInt(TAG_RESEARCH_SORT);
         final boolean onlyChild = nbt.getBoolean(TAG_ONLY_CHILD);
+        final ResourceLocation iconTexture = new ResourceLocation(nbt.getString(TAG_ICON_TEXTURE));
+        final String[] iconStackParts =  nbt.getString(TAG_ICON_ITEM_STACK).split(":");
+        final ItemStack iconStack = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(iconStackParts[0], iconStackParts[1])));
+        iconStack.setCount(Integer.parseInt(iconStackParts[2]));
+        final TranslationTextComponent subtitle = new TranslationTextComponent(nbt.getString(TAG_SUBTITLE_NAME));
+        final boolean instant = nbt.getBoolean(TAG_INSTANT);
+        final boolean autostart = nbt.getBoolean(TAG_AUTOSTART);
+        final boolean immutable = nbt.getBoolean(TAG_IMMUTABLE);
+        final boolean hidden = nbt.getBoolean(TAG_HIDDEN);
 
-        final IGlobalResearch research = getNewInstance(id, parent, branch, desc, depth, StandardFactoryController.getInstance().deserialize(effect));
-        research.loadCostFromConfig();
-        research.setOnlyChild(onlyChild);
+        final IGlobalResearch research = getNewInstance(id, branch, parent, desc, depth, sortOrder, iconTexture, iconStack, subtitle, onlyChild, hidden, autostart, instant, immutable);
 
-        NBTUtils.streamCompound(nbt.getList(TAG_CHILDS, Constants.NBT.TAG_COMPOUND)).forEach(compound -> IGlobalResearchTree.getInstance().getResearch(branch, compound.getString(
-          TAG_RESEARCH_CHILD)));
+        NBTUtils.streamCompound(nbt.getList(TAG_COSTS, Constants.NBT.TAG_COMPOUND)).forEach(compound ->
+        {
+            String[] costParts = compound.getString(TAG_COST_ITEM).split(":");
+            if(costParts.length == 3)
+            {
+                ItemStack is = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(costParts[0], costParts[1])));
+                is.setCount(Integer.parseInt(costParts[2]));
+                research.addCost(new ItemStorage(is));
+            }
+        });
+        NBTUtils.streamCompound(nbt.getList(TAG_REQS, Constants.NBT.TAG_COMPOUND)).
+             forEach(compound ->
+                     research.addRequirement(Objects.requireNonNull(IResearchRequirementRegistry.getInstance()
+                                                                      .getValue(ResourceLocation.tryCreate(compound.getString(TAG_REQ_TYPE)))).readFromNBT(compound.getCompound(TAG_REQ_ITEM))));
+
+        NBTUtils.streamCompound(nbt.getList(TAG_EFFECTS, Constants.NBT.TAG_COMPOUND)).forEach(compound ->
+            research.addEffect(Objects.requireNonNull(IResearchEffectRegistry.getInstance()
+                                                        .getValue(ResourceLocation.tryCreate(compound.getString(TAG_EFFECT_TYPE)))).readFromNBT(compound.getCompound(TAG_EFFECT_ITEM))));
+
+        NBTUtils.streamCompound(nbt.getList(TAG_CHILDS, Constants.NBT.TAG_COMPOUND)).forEach(compound -> research.addChild(new ResourceLocation(compound.getString(TAG_RESEARCH_CHILD))));
         return research;
     }
 
     @Override
-    public void serialize(IFactoryController controller, IGlobalResearch input, PacketBuffer packetBuffer)
+    public void serialize(@NotNull IFactoryController controller, IGlobalResearch input, PacketBuffer packetBuffer)
     {
-        packetBuffer.writeString(input.getParent());
-        packetBuffer.writeString(input.getId());
-        packetBuffer.writeString(input.getBranch());
-        packetBuffer.writeString(input.getDesc());
-        controller.serialize(packetBuffer, input);
+        packetBuffer.writeResourceLocation(input.getParent());
+        packetBuffer.writeResourceLocation(input.getId());
+        packetBuffer.writeResourceLocation(input.getBranch());
+        packetBuffer.writeString(input.getName().getKey());
         packetBuffer.writeInt(input.getDepth());
+        packetBuffer.writeInt(input.getSortOrder());
         packetBuffer.writeBoolean(input.hasOnlyChild());
-        packetBuffer.writeInt(input.getChilds().size());
-        input.getChilds().forEach(child -> packetBuffer.writeString(child));
+        packetBuffer.writeString(input.getIconItemStack().getItem().getRegistryName() + ":" + input.getIconItemStack().getCount());
+        packetBuffer.writeResourceLocation(input.getIconTextureResourceLocation());
+        packetBuffer.writeString(input.getSubtitle().getKey());
+        packetBuffer.writeBoolean(input.isInstant());
+        packetBuffer.writeBoolean(input.isAutostart());
+        packetBuffer.writeBoolean(input.isImmutable());
+        packetBuffer.writeBoolean(input.isHidden());
+        packetBuffer.writeInt(input.getCostList().size());
+        for(ItemStorage is : input.getCostList())
+        {
+            packetBuffer.writeItemStack(is.getItemStack());
+        }
+        packetBuffer.writeInt(input.getResearchRequirement().size());
+        for(IResearchRequirement req : input.getResearchRequirement())
+        {
+            packetBuffer.writeString(req.getClass().getName());
+            packetBuffer.writeCompoundTag(req.writeToNBT());
+        }
+        packetBuffer.writeInt(input.getEffects().size());
+        for(IResearchEffect<?> effect : input.getEffects())
+        {
+            packetBuffer.writeString(effect.getClass().getName());
+            packetBuffer.writeCompoundTag(effect.writeToNBT());
+        }
+        packetBuffer.writeInt(input.getChildren().size());
+        for (ResourceLocation child : input.getChildren())
+        {
+            packetBuffer.writeResourceLocation(child);
+        }
     }
 
+    @NotNull
     @Override
-    public IGlobalResearch deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
+    public IGlobalResearch deserialize(@NotNull IFactoryController controller, PacketBuffer buffer) throws Throwable
     {
-        final String parent = buffer.readString(32767);
-        final String id = buffer.readString(32767);
-        final String branch = buffer.readString(32767);
-        final String desc = buffer.readString(32767);
-        // This is a IGlobalResearch before serialization
-        final IResearchEffect<?> effect = controller.deserialize(buffer);
+        final ResourceLocation parent = buffer.readResourceLocation();
+        final ResourceLocation id = buffer.readResourceLocation();
+        final ResourceLocation branch = buffer.readResourceLocation();
+        final TranslationTextComponent desc = new TranslationTextComponent(buffer.readString(32767));
         final int depth = buffer.readInt();
-        final boolean onlyChild = buffer.readBoolean();
+        final int sortOrder = buffer.readInt();
+        final boolean hasOnlyChild = buffer.readBoolean();
+        final String[] iconStackParts  = buffer.readString(32767).split(":");
+        final ItemStack iconStack = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(iconStackParts[0], iconStackParts[1])));
+        iconStack.setCount(Integer.parseInt(iconStackParts[2]));
+        final ResourceLocation iconTexture = buffer.readResourceLocation();
+        final TranslationTextComponent subtitle = new TranslationTextComponent(buffer.readString(32767));
+        final boolean instant = buffer.readBoolean();
+        final boolean autostart = buffer.readBoolean();
+        final boolean immutable = buffer.readBoolean();
+        final boolean hidden = buffer.readBoolean();
 
-        final IGlobalResearch research = getNewInstance(id, parent, branch, desc, depth, effect);
-        research.loadCostFromConfig();
-        research.setOnlyChild(onlyChild);
+        final IGlobalResearch research = getNewInstance(id, branch, parent, desc, depth, sortOrder,iconTexture, iconStack, subtitle, hasOnlyChild, hidden, autostart, instant, immutable);
 
-        final int childsSize = buffer.readInt();
-        for (int i = 0; i < childsSize; ++i)
+        final int costSize = buffer.readInt();
+        for(int i = 0; i < costSize; i++)
         {
-            IGlobalResearchTree.getInstance().getResearch(branch, buffer.readString(32767));
+            research.addCost(new ItemStorage(buffer.readItemStack()));
         }
 
+        final int reqCount = buffer.readInt();
+        for(int i = 0; i < reqCount; i++)
+        {
+            CompoundNBT nbt = buffer.readCompoundTag();
+            research.addRequirement(Objects.requireNonNull(IResearchRequirementRegistry.getInstance().getValue(new ResourceLocation(Objects.requireNonNull(nbt).getString(TAG_REQ_TYPE)))).readFromNBT(nbt.getCompound(TAG_REQ_TYPE)));
+            //research.addRequirement((IResearchRequirement) Class.forName(Objects.requireNonNull(nbt).getString(TAG_REQ_TYPE)).getConstructor(CompoundNBT.class).newInstance(nbt.getCompound(TAG_REQ_ITEM)));
+        }
+
+        final int effectCount = buffer.readInt();
+        for(int i = 0; i < effectCount; i++)
+        {
+            CompoundNBT nbt = buffer.readCompoundTag();
+            research.addEffect(Objects.requireNonNull(IResearchEffectRegistry.getInstance().getValue(new ResourceLocation(Objects.requireNonNull(nbt).getString(TAG_EFFECT_TYPE)))).readFromNBT(nbt.getCompound(TAG_EFFECT_ITEM)));
+            //research.addEffect((IResearchEffect<?>) Class.forName(Objects.requireNonNull(nbt).getString(TAG_EFFECT_TYPE)).getConstructor(CompoundNBT.class).newInstance(nbt.getCompound(TAG_EFFECT_ITEM)));
+        }
+
+        final int childCount = buffer.readInt();
+        for(int i = 0; i < childCount; i++)
+        {
+            research.addChild(buffer.readResourceLocation());
+        }
         return research;
     }
 

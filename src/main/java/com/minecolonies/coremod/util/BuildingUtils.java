@@ -24,7 +24,7 @@ public final class BuildingUtils
      */
     private BuildingUtils()
     {
-        /**
+        /*
          * Intentionally left empty.
          */
     }
@@ -40,9 +40,9 @@ public final class BuildingUtils
     {
         final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(inventory.player,
           item -> item.getItem() instanceof BlockItem && ((BlockItem) item.getItem()).getBlock() instanceof AbstractBlockHut && ((BlockItem) item.getItem()).getBlock()
-                                                                                                                                  .getRegistryName()
-                                                                                                                                  .getPath()
-                                                                                                                                  .endsWith(hut));
+                  .getRegistryName()
+                  .getPath()
+                  .endsWith(hut));
 
         if (slot != -1)
         {

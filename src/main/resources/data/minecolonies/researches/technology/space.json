@@ -1,0 +1,23 @@
+{
+  "comment": "name: Space * subtitle: Antidisinterdimensionalitarianism!",
+  "branch": "minecolonies:technology",
+  "researchLevel": 3,
+  "parentResearch": "minecolonies:technology/sieving",
+  "subtitle": "com.minecolonies.research.technology.space.subtitle",
+  "icon": "minecraft:chest:1",
+  "requirements": [
+    {
+      "building": "miner",
+      "level": 3
+    },
+    {
+      "item": "minecolonies:blockminecoloniesrack",
+      "quantity": 16
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/minimumstockmultiplier": 1
+    }
+  ]
+}

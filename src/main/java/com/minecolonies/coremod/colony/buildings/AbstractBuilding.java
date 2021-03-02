@@ -6,6 +6,7 @@ import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
@@ -47,7 +48,6 @@ import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildRemoval;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
-import com.minecolonies.coremod.research.MultiplierModifierResearchEffect;
 import com.minecolonies.coremod.util.ChunkDataHelper;
 import com.minecolonies.coremod.util.ColonyUtils;
 import io.netty.buffer.Unpooled;
@@ -65,6 +65,7 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.IFormattableTextComponent;
@@ -718,12 +719,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
      */
     private int minimumStockSize()
     {
-        double increase = 1;
-        final MultiplierModifierResearchEffect effect = colony.getResearchManager().getResearchEffects().getEffect(MINIMUM_STOCK, MultiplierModifierResearchEffect.class);
-        if (effect != null)
-        {
-            increase = 1 + effect.getEffect();
-        }
+        final double increase = 1 + colony.getResearchManager().getResearchEffects().getEffectStrength(MINIMUM_STOCK);
 
         return (int) (getBuildingLevel() * STOCK_PER_LEVEL * increase);
     }
@@ -875,6 +871,18 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
     {
+        final ResourceLocation hutResearch = colony.getResearchManager().getResearchEffectIdFrom(getBuildingRegistryEntry().getBuildingBlock());
+
+        if (MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().hasResearchEffect(hutResearch) && colony.getResearchManager().getResearchEffects().getEffectStrength(hutResearch) < 1)
+        {
+            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"), player.getUniqueID());
+            return;
+        }
+        if(MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().hasResearchEffect(hutResearch) && (colony.getResearchManager().getResearchEffects().getEffectStrength(hutResearch) <= getBuildingLevel()))
+        {
+            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.unlocktoupgrade"), player.getUniqueID());
+            return;
+        }
         if (getBuildingLevel() < getMaxBuildingLevel())
         {
             requestWorkOrder(getBuildingLevel() + 1, builder, false);

@@ -23,8 +23,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import static com.minecolonies.api.util.constant.ColonyConstants.MAX_COLONY_EVENTS;
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
