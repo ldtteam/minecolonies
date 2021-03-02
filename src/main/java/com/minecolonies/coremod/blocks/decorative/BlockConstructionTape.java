@@ -46,13 +46,13 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
         this.shapes = makeShapes(2, 2, 16, 0, 16);
 
         this.setDefaultState(this.getDefaultState()
-                               .with(NORTH, false)
-                               .with(EAST, false)
-                               .with(SOUTH, false)
-                               .with(WEST, false)
-                               .with(FACING, Direction.NORTH)
-                               .with(WATERLOGGED, false)
-                               .with(CORNER, false)
+                .with(NORTH, false)
+                .with(EAST, false)
+                .with(SOUTH, false)
+                .with(WEST, false)
+                .with(FACING, Direction.NORTH)
+                .with(WATERLOGGED, false)
+                .with(CORNER, false)
         );
     }
 
