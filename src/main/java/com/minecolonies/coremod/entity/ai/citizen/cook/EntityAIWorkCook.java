@@ -145,11 +145,12 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
     @Override
     public void requestSmeltable()
     {
-        if (!getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(getSmeltAbleClass().getClass()))
+        final IRequestable smeltable = getSmeltAbleClass();
+        if (smeltable != null && !getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(smeltable.getClass()))
         && !getOwnBuilding().hasWorkerOpenRequestsFiltered(worker.getCitizenData(),
                 req -> req.getShortDisplayString().getSiblings().contains(new TranslationTextComponent(COM_MINECOLONIES_REQUESTS_FOOD))))
         {
-            worker.getCitizenData().createRequestAsync(getSmeltAbleClass());
+            worker.getCitizenData().createRequestAsync(smeltable);
         }
     }
 
@@ -344,6 +345,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
                 {
                     worker.getCitizenData()
                             .triggerInteraction(new StandardInteraction(new TranslationTextComponent(FURNACE_USER_NO_FOOD), ChatPriority.BLOCKING));
+                    return null;
                 }
             }
             return new Food(STACKSIZE, allowedItems);
