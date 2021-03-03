@@ -620,7 +620,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
                 {
                     final List<Map.Entry<Vec2i, Node>> filteredNodes = level.getNodes().entrySet()
                             .stream()
-                            .filter(entry -> entry.getValue().getStatus() == Node.NodeStatus.COMPLETED && entry.getValue().getStyle() != Node.NodeType.LADDER_BACK)
+                            .filter(entry -> entry.getValue().getStatus() == Node.NodeStatus.COMPLETED && entry.getValue().getStyle() != Node.NodeType.LADDER_BACK && entry.getValue().getStyle() != Node.NodeType.SHAFT)
                             .collect(Collectors.toList());
                     if (filteredNodes.isEmpty())
                     {
