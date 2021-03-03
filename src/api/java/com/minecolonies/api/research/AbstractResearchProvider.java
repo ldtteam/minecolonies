@@ -4,7 +4,6 @@ import com.google.gson.*;
 import com.ldtteam.structurize.generation.DataGeneratorConstants;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DirectoryCache;
 import net.minecraft.data.IDataProvider;
 import net.minecraft.item.Item;

@@ -15,8 +15,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -185,7 +183,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         }
         catch (final IOException exception)
         {
-            langJson = new JsonObject();
+            throw new IllegalStateException("Unable to read existing language file. This may require a gradle refresh and genIntellijRun rerun, or may reflect deeper issues.");
         }
         return langJson;
     }
