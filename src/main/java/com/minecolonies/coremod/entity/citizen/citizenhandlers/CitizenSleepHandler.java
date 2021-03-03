@@ -168,7 +168,8 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
         if (!isAsleep())
         {
             return;
-        }citizen.updatePose(Pose.STANDING);
+        }
+        citizen.updatePose(Pose.STANDING);
         citizen.clearBedPosition();
         spawnCitizenFromBed();
     }
