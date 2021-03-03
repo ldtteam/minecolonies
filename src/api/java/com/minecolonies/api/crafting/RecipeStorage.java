@@ -220,7 +220,7 @@ public class RecipeStorage implements IRecipeStorage
     {
         for(ItemStorage item : getCleanedInput())
         {
-            for(ItemStack result: getSecondaryOutputs(false))
+            for(ItemStack result: getSecondaryOutputs())
             {
                 if(ItemStackUtils.compareItemStacksIgnoreStackSize(item.getItemStack(), result, false, true) && result.isDamageable())
                 {
@@ -268,7 +268,7 @@ public class RecipeStorage implements IRecipeStorage
             final int neededCount;
             if(!secondaryOutputs.isEmpty() || !tools.isEmpty())
             {
-                if(!ItemStackUtils.compareItemStackListIgnoreStackSize(this.getSecondaryOutputs(true), stack, false, true))
+                if(!ItemStackUtils.compareItemStackListIgnoreStackSize(this.getCraftingToolsAndSecondaryOutputs(), stack, false, true))
                 {
                     neededCount = storage.getAmount() * neededMultiplier;
                 }
@@ -612,13 +612,10 @@ public class RecipeStorage implements IRecipeStorage
 
     @NotNull
     @Override
-    public List<ItemStack> getSecondaryOutputs(boolean includeTools)
+    public List<ItemStack> getCraftingToolsAndSecondaryOutputs()
     {
         final List<ItemStack> results = new ArrayList<>();
-        if(includeTools && tools.size() > 0)
-        {
-            results.addAll(tools);
-        }
+        results.addAll(tools);
         results.addAll(secondaryOutputs);
         return results;
     }
@@ -629,9 +626,17 @@ public class RecipeStorage implements IRecipeStorage
         return lootTable;
     }
 
+    @NotNull
     @Override
     public List<ItemStack> getCraftingTools()
     {
         return ImmutableList.copyOf(tools);
+    }
+
+    @NotNull
+    @Override
+    public List<ItemStack> getSecondaryOutputs()
+    {
+        return ImmutableList.copyOf(secondaryOutputs);
     }
 }

@@ -32,11 +32,11 @@ public class ClassicRecipe extends AbstractRecipeType<IRecipeStorage>
     {
         if(outputDisplayStacks.isEmpty())
         {
-            if(!ItemStackUtils.isEmpty(recipe.getPrimaryOutput()) || recipe.getSecondaryOutputs(false).isEmpty())
+            if(!ItemStackUtils.isEmpty(recipe.getPrimaryOutput()) || recipe.getSecondaryOutputs().isEmpty())
             {
                 outputDisplayStacks.addAll(super.getOutputDisplayStacks());
             }
-            outputDisplayStacks.addAll(recipe.getSecondaryOutputs(false));
+            outputDisplayStacks.addAll(recipe.getSecondaryOutputs());
         }
         return ImmutableList.copyOf(outputDisplayStacks);
     }
