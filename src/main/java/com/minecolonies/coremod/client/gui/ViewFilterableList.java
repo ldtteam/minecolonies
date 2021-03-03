@@ -141,18 +141,16 @@ public class ViewFilterableList
     private void switchClicked(@NotNull final Button button)
     {
         final int row = resourceList.getListElementIndexByPane(button);
-        final GroupedItemListModuleView moduleView = building.getModuleView(GroupedItemListModuleView.class).get();
-
         if (button.getTextAsString().equals(ON))
         {
             button.setText(OFF);
             if (isInverted)
             {
-                moduleView.addItem(id, allItems.get(row));
+                building.getModuleView(GroupedItemListModuleView.class).ifPresent(m -> m.addItem(id, allItems.get(row)));
             }
             else
             {
-                moduleView.removeItem(id, allItems.get(row));
+                building.getModuleView(GroupedItemListModuleView.class).ifPresent(m -> m.removeItem(id, allItems.get(row)));
             }
         }
         else
@@ -160,11 +158,11 @@ public class ViewFilterableList
             button.setText(ON);
             if (isInverted)
             {
-                moduleView.removeItem(id, allItems.get(row));
+                building.getModuleView(GroupedItemListModuleView.class).ifPresent(m -> m.removeItem(id, allItems.get(row)));
             }
             else
             {
-                moduleView.addItem(id, allItems.get(row));
+                building.getModuleView(GroupedItemListModuleView.class).ifPresent(m -> m.addItem(id, allItems.get(row)));
             }
         }
         resourceList.refreshElementPanes();
@@ -257,10 +255,10 @@ public class ViewFilterableList
                 resourceLabel.setText(resource.getDisplayName());
                 resourceLabel.setColors(WHITE);
                 rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(resource);
-                final GroupedItemListModuleView moduleView = building.getModuleView(GroupedItemListModuleView.class).get();
+                final boolean isAllowedItem  = building.getModuleView(GroupedItemListModuleView.class).map(m -> m.isAllowedItem(id, new ItemStorage(resource))).orElse(!isInverted);
                 final Button switchButton = rowPane.findPaneOfTypeByID(BUTTON_SWITCH, Button.class);
 
-                if ((isInverted && !moduleView.isAllowedItem(id, new ItemStorage(resource))) || (!isInverted && moduleView.isAllowedItem(id, new ItemStorage(resource))))
+                if ((isInverted && !isAllowedItem) || (!isInverted && isAllowedItem))
                 {
                     switchButton.setText(ON);
                 }

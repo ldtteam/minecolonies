@@ -207,9 +207,10 @@ public class InteractionValidatorInitializer
                 return false;
             }
 
+            final ImmutableList<ItemStorage> exclusionList = citizen.getWorkBuilding().getModule(GroupedItemListModule.class).map(m -> m.getList(FOOD_EXCLUSION_LIST)).orElse(ImmutableList.of());
             for (final ItemStorage storage : IColonyManager.getInstance().getCompatibilityManager().getEdibles())
             {
-                if (!citizen.getWorkBuilding().getModule(GroupedItemListModule.class).map(m -> m.getList(FOOD_EXCLUSION_LIST).contains(storage)).orElse(false))
+                if (!exclusionList.contains(storage))
                 {
                     return false;
                 }

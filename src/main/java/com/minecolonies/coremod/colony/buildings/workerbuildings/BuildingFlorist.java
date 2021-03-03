@@ -186,21 +186,16 @@ public class BuildingFlorist extends AbstractBuildingWorker
     @Nullable
     public ItemStack getFlowerToGrow()
     {
-        if (hasModule(GroupedItemListModule.class))
+        final List<ItemStorage> stacks = getPlantablesForBuildingLevel(getBuildingLevel()).stream()
+                                           .filter(stack -> !getModule(GroupedItemListModule.class).map(module -> module.isItemInList(FLORIST_FLOWER_LIST, stack)).orElse(false))
+                                           .collect(Collectors.toList());
+        if (stacks.isEmpty())
         {
-            final List<ItemStorage> stacks = getPlantablesForBuildingLevel(getBuildingLevel()).stream()
-                                               .filter(stack -> !getModule(GroupedItemListModule.class).map(module -> module.isItemInList(FLORIST_FLOWER_LIST, stack)).orElse(false))
-                                               .collect(Collectors.toList());
-            if (stacks.isEmpty())
-            {
-                return null;
-            }
-
-            Collections.shuffle(stacks);
-            return stacks.get(0).getItemStack();
+            return null;
         }
 
-        return null;
+        Collections.shuffle(stacks);
+        return stacks.get(0).getItemStack();
     }
 
     /**

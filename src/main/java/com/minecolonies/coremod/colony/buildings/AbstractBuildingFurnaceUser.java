@@ -151,10 +151,6 @@ public abstract class AbstractBuildingFurnaceUser extends AbstractBuildingWorker
      */
     public boolean isAllowedFuel(final ItemStack stack)
     {
-        if (hasModule(GroupedItemListModule.class))
-        {
-            return getModule(GroupedItemListModule.class).map(m -> m.getList(FUEL_LIST)).orElse(ImmutableList.of()).stream().anyMatch(itemStack -> stack.isItemEqual(itemStack.getItemStack()));
-        }
-        return false;
+        return getModule(GroupedItemListModule.class).map(m -> m.getList(FUEL_LIST)).orElse(ImmutableList.of()).stream().anyMatch(itemStack -> stack.isItemEqual(itemStack.getItemStack()));
     }
 }

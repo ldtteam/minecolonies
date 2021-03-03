@@ -75,14 +75,14 @@ public class WindowHutFlorist extends AbstractHutFilterableLists
                 return;
             }
 
-            final GroupedItemListModuleView module = building.getModuleView(GroupedItemListModuleView.class).get();
-            if (ownBuilding.getBuildingLevel() <= MAX_LEVEL_BEFORE_SORTING && button.getTextAsString().equals(ON) && module.getSize(PAGE_ITEMS_VIEW) >= 1)
+            final int size = building.getModuleView(GroupedItemListModuleView.class).map(m -> m.getSize(PAGE_ITEMS_VIEW)).orElse(0);
+            if (ownBuilding.getBuildingLevel() <= MAX_LEVEL_BEFORE_SORTING && button.getTextAsString().equals(ON) && size >= 1)
             {
                 LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, TOO_MANY_FILTERED_BELOW_LVL4_FLORIST);
                 return;
             }
 
-            if (ownBuilding.getBuildingLevel() < MAX_BUILDING_LEVEL && button.getTextAsString().equals(ON) && module.getSize(PAGE_ITEMS_VIEW) >= MAX_BUILDING_LEVEL)
+            if (ownBuilding.getBuildingLevel() < MAX_BUILDING_LEVEL && button.getTextAsString().equals(ON) && size >= MAX_BUILDING_LEVEL)
             {
                 LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, TOO_MANY_FILTERED_FLORIST);
                 return;

@@ -183,7 +183,14 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public <T extends IBuildingModule> Optional<T> getModule(final Class<T> clazz)
     {
-        return getModules(clazz).stream().findFirst();
+        for (final IBuildingModule module : modules)
+        {
+            if (clazz.isInstance(module.getClass()))
+            {
+                return Optional.of((T) module);
+            }
+        }
+        return Optional.empty();
     }
 
     @NotNull

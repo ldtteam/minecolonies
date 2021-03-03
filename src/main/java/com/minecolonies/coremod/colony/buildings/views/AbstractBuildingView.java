@@ -628,12 +628,14 @@ public abstract class AbstractBuildingView implements IBuildingView
     @Override
     public <T extends IBuildingModuleView> Optional<T> getModuleView(final Class<T> clazz)
     {
-        final List<T> list = getModuleViews(clazz);
-        if (list.isEmpty())
+        for (final IBuildingModuleView view : moduleViews)
         {
-            return Optional.empty();
+            if (clazz.isInstance(view.getClass()))
+            {
+                return Optional.of((T) view);
+            }
         }
-        return Optional.of(list.get(0));
+        return Optional.empty();
     }
 
     @NotNull
