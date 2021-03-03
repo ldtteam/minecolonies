@@ -474,6 +474,10 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     public void setTask(final GuardTask task)
     {
         this.task = task;
+        if (task != GuardTask.MINE)
+        {
+            this.setMinePos(null);
+        }
         this.markDirty();
     }
 
@@ -685,6 +689,11 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         return minePos;
     }
 
+    /**
+     * Set the position of the mine the guard is patrolling
+     * Check whether the given position is actually a mine
+     * @param pos the position of the mine
+     */
     public void setMinePos(BlockPos pos)
     {
         if (pos == null)
@@ -844,6 +853,10 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             {
                 minePos = buf.readBlockPos();
             }
+            else
+            {
+                minePos = null;
+            }
 
             canGuardMine = buf.readBoolean();
         }
@@ -937,6 +950,10 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         public void setTask(final GuardTask task)
         {
             this.task = task;
+            if (task != GuardTask.MINE)
+            {
+                this.setMinePos(null);
+            }
             this.getColony().markDirty();
         }
 
@@ -970,8 +987,16 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             return new ArrayList<>(mobsToAttack);
         }
 
+        /**
+         * Return the position of the mine the guard is patrolling
+         * @return the position of the mine
+         */
         public BlockPos getMinePos() { return minePos; }
 
+        /**
+         * Set the position of the mine the guard is patrolling
+         * @param pos the position of the mine
+         */
         public void setMinePos(BlockPos pos) { this.minePos = pos; }
 
         public Boolean canGuardMine()

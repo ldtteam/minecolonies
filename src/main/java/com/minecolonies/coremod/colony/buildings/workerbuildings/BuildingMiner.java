@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.*;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
@@ -34,6 +35,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.*;
@@ -649,6 +651,30 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         }
     }
 
+    @Override
+    public void onDestroyed()
+    {
+        super.onDestroyed();
+        final List <Map.Entry<BlockPos, IBuilding>> guardbuildings = this.colony.getBuildingManager().getBuildings().entrySet()
+          .stream()
+          .filter(entry ->
+            {
+                if (entry.getValue() instanceof AbstractBuildingGuards)
+                {
+                    AbstractBuildingGuards guardbuilding = (AbstractBuildingGuards) entry.getValue();
+                    return guardbuilding.getTask() == GuardTask.MINE && guardbuilding.getMinePos() != null && guardbuilding.getMinePos().equals(this.getPosition());
+                }
+                return false;
+            })
+          .collect(Collectors.toList());
+        for (final Map.Entry<BlockPos, IBuilding> entry : guardbuildings)
+        {
+            final AbstractBuildingGuards guardbuilding = (AbstractBuildingGuards) entry.getValue();
+            guardbuilding.setMinePos(null);
+        }
+        this.colony.markDirty();
+    }
+
     /**
      * Provides a view of the miner building class.
      */
@@ -666,7 +692,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         /**
          * The number of guards assigned to this mine
          */
-        public int                           assignedGuards;
+        public int assignedGuards;
 
         /**
          * Public constructor of the view, creates an instance of it.
