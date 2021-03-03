@@ -13,11 +13,6 @@ public final class RaiderConstants
      */
     public static final int BARBARIAN_EXP_DROP = 5;
 
-    /**
-     * The range for the barb to move away.
-     */
-    public static final int MOVE_AWAY_RANGE = 4;
-
     public static final int BARBARIAN_HORDE_DIFFICULTY_FIVE = 5;
 
     /**
@@ -36,11 +31,6 @@ public final class RaiderConstants
     public static final int    SPEED_EFFECT_DISTANCE       = 7;
     public static final int    SPEED_EFFECT_DURATION       = 60;
     public static final int    SPEED_EFFECT_MULTIPLIER     = 1;
-
-    /**
-     * Amount of ladders to place before destroying blocks.
-     */
-    public static final int LADDERS_TO_PLACE = 10;
 
     /**
      * Amount of ticks to despawn the barbarian.
@@ -93,7 +83,6 @@ public final class RaiderConstants
     public static final double CHIEF_BONUS_ARMOR           = 2D;
     public static final double BARBARIAN_BASE_HEALTH       = 10;
     public static final double BARBARIAN_HEALTH_MULTIPLIER = 0.025;
-    public static final double ATTACK_SPEED_DIVIDER        = 3;
 
     /**
      * Private constructor to hide implicit one.

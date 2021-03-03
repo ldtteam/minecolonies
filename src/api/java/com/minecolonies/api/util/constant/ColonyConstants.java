@@ -6,8 +6,6 @@ import net.minecraft.world.server.TicketType;
 
 import java.util.Comparator;
 
-import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
-
 /**
  * Colony wide constants.
  */
@@ -24,39 +22,11 @@ public final class ColonyConstants
     public static final TicketType<ChunkPos> KEEP_LOADED_TYPE = TicketType.create(TICKET_ID, Comparator.comparingLong(ChunkPos::asLong));
 
     //  Settings
-    public static final int CLEANUP_TICK_INCREMENT = 5 * TICKS_SECOND;
 
     /**
      * The colony name prefix. Use {@link IColony#getTeamName()} to access the full name.
      */
     public static final String TEAM_COLONY_NAME = "c";
-
-    /**
-     * Default average randomization for onWorldTick() methods
-     */
-    public static final int ONWORLD_TICK_AVERAGE = TICKS_SECOND;
-
-    public static final int NUM_ACHIEVEMENT_FIRST = 1;
-
-    /**
-     * The default spawn radius required for barbarians.
-     */
-    public static final int DEFAULT_SPAWN_RADIUS = 10;
-
-    /**
-     * Max spawn radius of the barbarians.
-     */
-    public static final int MAX_SPAWN_RADIUS = 75;
-
-    /**
-     * Bonus happiness each factor added.
-     */
-    public static final double HAPPINESS_FACTOR = 0.1;
-
-    /**
-     * Saturation at which a citizen starts being happy.
-     */
-    public static final int WELL_SATURATED_LIMIT = 5;
 
     /**
      * Amount of ticks to wait until checking if a waypoint is still valid.
@@ -82,11 +52,6 @@ public final class ColonyConstants
     public static final int UPDATE_DAYTIME_INTERVAL = 20;
 
     /**
-     * Size of a chunk.
-     */
-    public static final int CONST_CHUNKSIZE = 16;
-
-    /**
      * Max amount of permission/colony events to store in the colony.
      */
     public static final int MAX_COLONY_EVENTS = 100;
@@ -96,8 +61,6 @@ public final class ColonyConstants
      */
     public static final double           ARCHER_BARBARIANS_MULTIPLIER = 0.30;
     public static final double           CHIEF_BARBARIANS_MULTIPLIER  = 0.1;
-    public static final int              MIN_CITIZENS_FOR_RAID        = 5;
-    public static final int              NUMBER_OF_CITIZENS_NEEDED    = 7;
 
     /**
      * Different horde ids and their sizes.

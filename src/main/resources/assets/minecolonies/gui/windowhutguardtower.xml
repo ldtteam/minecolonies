@@ -76,7 +76,7 @@
             </list>
             <buttonimage id="getTool" size="129 17" pos="30 200" textcolor="black"
                          source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
-                         label="$(com.minecolonies.coremod.gui.workerhuts.getTool)"/>
+                         label="$(com.minecolonies.coremod.gui.guardtower.getTool)"/>
         </view>
     </switch>
     <buttonimage id="prevPage" size="18 10" pos="13 13" source="minecolonies:textures/gui/builderhut/turn_page_left.png"/>

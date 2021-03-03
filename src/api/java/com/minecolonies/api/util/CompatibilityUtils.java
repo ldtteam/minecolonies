@@ -26,7 +26,7 @@ public final class CompatibilityUtils
      * <p>
      * This method is aiming to hide the difference between 1.10.2 and 1.11.2
      *
-     * @param entity to which we get the wolrd from
+     * @param entity to which we get the world from
      * @return the world
      */
     public static World getWorldFromEntity(final Entity entity)
@@ -42,7 +42,7 @@ public final class CompatibilityUtils
     /**
      * spawn an entity in the world
      * <p>
-     * This method is aiming to hide the differnece between 1.10.2 and 1.11.2
+     * This method is aiming to hide the difference between 1.10.2 and 1.11.2
      *
      * @param world         The world which we are spawning the entity in.
      * @param entityToSpawn The entity which we are spawning.
