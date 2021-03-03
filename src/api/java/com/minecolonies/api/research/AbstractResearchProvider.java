@@ -10,6 +10,7 @@ import net.minecraft.data.IDataProvider;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -28,15 +29,15 @@ import java.util.Locale;
 public abstract class AbstractResearchProvider implements IDataProvider
 {
     public static final String ASSETS_DIR = "data/" + Constants.MOD_ID + "/researches";
-    protected final DataGenerator generator;
+    protected final GatherDataEvent event;
 
     /**
      * The abstract variant of a ResearchProvider, to register to fires during runData.
-     * @param generator  The DataGenerator to store the files.
+     * @param event  The GatherDataEvent to store the files.
      */
-    public AbstractResearchProvider(final DataGenerator generator)
+    public AbstractResearchProvider(final GatherDataEvent event)
     {
-        this.generator = generator;
+        this.event = event;
     }
 
     /**
@@ -80,7 +81,7 @@ public abstract class AbstractResearchProvider implements IDataProvider
 
         for(final ResearchBranch branch : getResearchBranchCollection())
         {
-            final Path savePath = generator.getOutputFolder().resolve("data").resolve(branch.id.getNamespace()).resolve("researches").resolve(branch.id.getPath() + ".json");
+            final Path savePath = event.getGenerator().getOutputFolder().resolve("data").resolve(branch.id.getNamespace()).resolve("researches").resolve(branch.id.getPath() + ".json");
             IDataProvider.save(GSON, cache, branch.json, savePath);
             if(branch.translatedName != null && !branch.translatedName.isEmpty())
             {
@@ -89,7 +90,7 @@ public abstract class AbstractResearchProvider implements IDataProvider
         }
         for(final ResearchEffect effect : getResearchEffectCollection())
         {
-            final Path savePath = generator.getOutputFolder().resolve("data").resolve(effect.id.getNamespace()).resolve("researches").resolve(effect.id.getPath() + ".json");
+            final Path savePath = event.getGenerator().getOutputFolder().resolve("data").resolve(effect.id.getNamespace()).resolve("researches").resolve(effect.id.getPath() + ".json");
             IDataProvider.save(GSON, cache, effect.json, savePath);
             if(effect.translatedName != null && !effect.translatedName.isEmpty())
             {
@@ -102,7 +103,7 @@ public abstract class AbstractResearchProvider implements IDataProvider
         }
         for(final Research research : getResearchCollection())
         {
-            final Path savePath = generator.getOutputFolder().resolve("data").resolve(research.id.getNamespace()).resolve("researches").resolve(research.id.getPath() + ".json");
+            final Path savePath = event.getGenerator().getOutputFolder().resolve("data").resolve(research.id.getNamespace()).resolve("researches").resolve(research.id.getPath() + ".json");
             IDataProvider.save(GSON, cache, research.json, savePath);
             if(research.translatedName != null && !research.translatedName.isEmpty())
             {
@@ -113,7 +114,7 @@ public abstract class AbstractResearchProvider implements IDataProvider
                 addLanguageKeySafe(langJson, "com." + research.id.getNamespace() + ".research." + research.id.getPath().replaceAll("[/]",".") + ".subtitle", research.translatedSubtitle);
             }
         }
-        IDataProvider.save(DataGeneratorConstants.GSONLang, cache, langJson, this.generator.getInputFolders().stream().findFirst().orElse(null).resolve("assets/" + Constants.MOD_ID + "/lang/" + Locale.US + ".json"));
+        IDataProvider.save(DataGeneratorConstants.GSONLang, cache, langJson, event.getGenerator().getInputFolders().stream().findFirst().orElse(null).resolve("assets/" + Constants.MOD_ID + "/lang/" + Locale.US + ".json"));
     }
 
     /**

@@ -10,10 +10,15 @@ import com.minecolonies.api.research.AbstractResearchProvider;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.item.Items;
+import net.minecraft.resources.ResourcePackType;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -33,9 +38,9 @@ import static com.minecolonies.api.research.util.ResearchConstants.*;
  */
 public class DefaultResearchProvider extends AbstractResearchProvider
 {
-    public DefaultResearchProvider(final DataGenerator generator)
+    public DefaultResearchProvider(final GatherDataEvent event)
     {
-        super(generator);
+        super(event);
     }
 
     private static final ResourceLocation CIVIL  = new ResourceLocation(Constants.MOD_ID, "civilian");
@@ -174,10 +179,11 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         JsonElement langJson;
         try
         {
+            ExistingFileHelper helper = event.getExistingFileHelper();
             langJson =
-              new JsonParser().parse(new FileReader(this.generator.getInputFolders().stream().findFirst().orElse(null).resolve("assets/minecolonies/lang/en_us.json").toFile()));
+              new JsonParser().parse(new InputStreamReader(helper.getResource(new ResourceLocation(Constants.MOD_ID, "lang/en_us.json"), ResourcePackType.CLIENT_RESOURCES).getInputStream()));
         }
-        catch (final FileNotFoundException exception)
+        catch (final IOException exception)
         {
             langJson = new JsonObject();
         }

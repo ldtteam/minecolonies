@@ -17,7 +17,7 @@ public class GatherDataHandler
     {
         event.getGenerator().addProvider(new DefaultBlockLootTableProvider(event.getGenerator()));
         event.getGenerator().addProvider(new DefaultSoundProvider(event.getGenerator()));
-        event.getGenerator().addProvider(new DefaultResearchProvider(event.getGenerator()));
+        event.getGenerator().addProvider(new DefaultResearchProvider(event));
         event.getGenerator().addProvider(new SawmillTimberFrameRecipeProvider(event.getGenerator()));
     }
 }
