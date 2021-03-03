@@ -130,8 +130,7 @@ public class WindowHutLumberjack extends AbstractHutFilterableLists
      */
     private void setupGiveToolButton(final Button button)
     {
-        // TODO: Use localisation when this has proper UI
-        button.setText(LanguageHandler.format("Give tool"));
+        button.setText(LanguageHandler.format("com.minecolonies.coremod.gui.lumberjack.gettool"));
     }
 
     /**

@@ -150,7 +150,7 @@ public final class WorkerUtil
      *
      * @param spawnPoint the spawnPoint.
      * @param citizen    the citizen.
-     * @return true if succesful.
+     * @return true if successful.
      */
     public static boolean setSpawnPoint(@Nullable final BlockPos spawnPoint, @NotNull final AbstractEntityCitizen citizen)
     {

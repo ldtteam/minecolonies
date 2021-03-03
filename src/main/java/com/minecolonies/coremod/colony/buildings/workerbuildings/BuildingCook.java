@@ -514,7 +514,7 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
     @Override
     public void onColonyTick(final IColony colony)
     {
-        // TODO: Request on tick if no food, so that foo gets distributed from the warehouse even when there is currently no cook
+        // TODO: Request on tick if no food, so that food gets distributed from the warehouse even when there is currently no cook
         super.onColonyTick(colony);
         if(isCookingTimeout > 0)
         {
