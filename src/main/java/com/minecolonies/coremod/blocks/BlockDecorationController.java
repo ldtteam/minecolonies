@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 
 /**
- * Creates a decoration placerholder block.
+ * Creates a decoration controller block.
  */
 public class BlockDecorationController extends AbstractBlockMinecoloniesHorizontal<BlockDecorationController> implements IBuilderUndestroyable, IAnchorBlock
 {
@@ -59,7 +59,7 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
     protected static final VoxelShape AABB_WEST  = VoxelShapes.create(0.0D, 0.314D, 0.25D, 0.3D, 0.86D, 0.75D);
 
     /**
-     * Constructor for the placerholder.
+     * Constructor for the deco controller.
      */
     public BlockDecorationController()
     {

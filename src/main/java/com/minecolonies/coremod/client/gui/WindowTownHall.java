@@ -912,8 +912,6 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
             }
         }
 
-        //todo citizen own happiness GUI
-
         final View pane = findPaneOfTypeByID("happinesspage", View.class);
         int yPos = 62;
         for (final Map.Entry<String, Double> entry : happinessMap.entrySet())
