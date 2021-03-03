@@ -102,7 +102,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         effects.add(new ResearchEffect(FIRE_RES).setTranslatedName("Miners Have Fire and Lava Immunity"));
         effects.add(new ResearchEffect(ARROW_PIERCE).setTranslatedName("Archers Gain Piercing II"));
         effects.add(new ResearchEffect(PLANT_2).setTranslatedName("Plantations Grow Two Crops at Once"));
-        effects.add(new ResearchEffect(RAILS).setTranslatedName("Citizens Use Rails"));
+        effects.add(new ResearchEffect(RAILS).setTranslatedName("Citizens use Rails"));
         effects.add(new ResearchEffect(RETREAT).setTranslatedName("Guards Flee Under 20% HP"));
         effects.add(new ResearchEffect(SHIELD_USAGE).setTranslatedName("Knights Unlock Shield Use"));
         effects.add(new ResearchEffect(SLEEP_LESS).setTranslatedName("Guards Need %3$s%% Less Sleep"));
@@ -112,25 +112,25 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         // Building-focused unlocks are derived from the block hut name.  Do not manually add ResourceLocations as a string, as some building blocks have surprising names.
         effects.add(new ResearchEffect(ModBuildings.archery.getBuildingBlock()).setTranslatedName("Unlocks Archery"));
         effects.add(new ResearchEffect(ModBuildings.barracks.getBuildingBlock()).setTranslatedName("Unlocks Barracks"));
-        effects.add(new ResearchEffect(ModBuildings.blacksmith.getBuildingBlock()).setTranslatedName("Unlocks Blacksmith"));
+        effects.add(new ResearchEffect(ModBuildings.blacksmith.getBuildingBlock()).setTranslatedName("Unlocks Blacksmith's Hut"));
         effects.add(new ResearchEffect(ModBuildings.combatAcademy.getBuildingBlock()).setTranslatedName("Unlocks Combat Academy"));
         effects.add(new ResearchEffect(ModBuildings.composter.getBuildingBlock()).setTranslatedName("Unlocks Composter's Hut"));
-        effects.add(new ResearchEffect(ModBuildings.concreteMixer.getBuildingBlock()).setTranslatedName("Unlocks Concrete Mixer"));
-        effects.add(new ResearchEffect(ModBuildings.crusher.getBuildingBlock()).setTranslatedName("Unlocks Crusher"));
-        effects.add(new ResearchEffect(ModBuildings.dyer.getBuildingBlock()).setTranslatedName("Unlocks Dyer"));
-        effects.add(new ResearchEffect(ModBuildings.fletcher.getBuildingBlock()).setTranslatedName("Unlocks Fletcher"));
-        effects.add(new ResearchEffect(ModBuildings.florist.getBuildingBlock()).setTranslatedName("Unlocks Florist"));
-        effects.add(new ResearchEffect(ModBuildings.glassblower.getBuildingBlock()).setTranslatedName("Unlocks Glassblower"));
+        effects.add(new ResearchEffect(ModBuildings.concreteMixer.getBuildingBlock()).setTranslatedName("Unlocks Concrete Mixer's Hut"));
+        effects.add(new ResearchEffect(ModBuildings.crusher.getBuildingBlock()).setTranslatedName("Unlocks Crusher's Hut"));
+        effects.add(new ResearchEffect(ModBuildings.dyer.getBuildingBlock()).setTranslatedName("Unlocks Dyer's Hut"));
+        effects.add(new ResearchEffect(ModBuildings.fletcher.getBuildingBlock()).setTranslatedName("Unlocks Fletcher's Hut"));
+        effects.add(new ResearchEffect(ModBuildings.florist.getBuildingBlock()).setTranslatedName("Unlocks Flower Shop"));
+        effects.add(new ResearchEffect(ModBuildings.glassblower.getBuildingBlock()).setTranslatedName("Unlocks Glassblower's Hut"));
         effects.add(new ResearchEffect(ModBuildings.hospital.getBuildingBlock()).setTranslatedName("Unlocks Hospital"));
         effects.add(new ResearchEffect(ModBuildings.library.getBuildingBlock()).setTranslatedName("Unlocks Library"));
-        effects.add(new ResearchEffect(ModBuildings.mechanic.getBuildingBlock()).setTranslatedName("Unlocks Mechanic"));
+        effects.add(new ResearchEffect(ModBuildings.mechanic.getBuildingBlock()).setTranslatedName("Unlocks Mechanic's Hut"));
         effects.add(new ResearchEffect(ModBuildings.mysticalSite.getBuildingBlock()).setTranslatedName("Unlocks Mystical Site"));
         effects.add(new ResearchEffect(ModBuildings.plantation.getBuildingBlock()).setTranslatedName("Unlocks Plantation"));
         effects.add(new ResearchEffect(ModBuildings.sawmill.getBuildingBlock()).setTranslatedName("Unlocks Sawmill"));
         effects.add(new ResearchEffect(ModBuildings.school.getBuildingBlock()).setTranslatedName("Unlocks School"));
-        effects.add(new ResearchEffect(ModBuildings.sifter.getBuildingBlock()).setTranslatedName("Unlocks Sifter"));
+        effects.add(new ResearchEffect(ModBuildings.sifter.getBuildingBlock()).setTranslatedName("Unlocks Sifter's Hut"));
         effects.add(new ResearchEffect(ModBuildings.smeltery.getBuildingBlock()).setTranslatedName("Unlocks Smeltery"));
-        effects.add(new ResearchEffect(ModBuildings.stoneMason.getBuildingBlock()).setTranslatedName("Unlocks Stonemason"));
+        effects.add(new ResearchEffect(ModBuildings.stoneMason.getBuildingBlock()).setTranslatedName("Unlocks Stonemason's Hut"));
         effects.add(new ResearchEffect(ModBuildings.stoneSmelter.getBuildingBlock()).setTranslatedName("Unlocks Stone Smeltery"));
 
         // Crafter-recipe-only unlocks do not require static effect resource locations; the crafter recipe json checks against the research id resource locaiton itself.
@@ -145,7 +145,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
     }
 
     /**
-     * Get a lit of all researches. Conventions: group research by branch first.  Inside each branch, follow conventional English reading order: from left-to-right from a primary
+     * Get a list of all researches. Conventions: group research by branch first.  Inside each branch, follow conventional English reading order: from left-to-right from a primary
      * research until its first descendants are complete, then to any splits from that subbranch, by sortOrder, then to the next primary research. Set local (final) variables for
      * any research with descendants, and reference that variable for parent and parent research level.
      *
@@ -298,7 +298,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                     .addToList(r);
         final Research scholarly = new Research(new ResourceLocation(Constants.MOD_ID, "civilian/scholarly"), CIVIL).setParentResearch(studious)
                                      .setTranslatedName("Scholarly")
-                                     .setTranslatedSubtitle("Homework for the next decade... check!")
+                                     .setTranslatedSubtitle("Homework for the next decade...check!")
                                      .setIcon(Items.EXPERIENCE_BOTTLE, 3)
                                      .addBuildingRequirement(ModBuildings.LIBRARY_ID, 4)
                                      .addItemCost(Items.BOOK, 24)

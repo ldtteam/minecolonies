@@ -9,16 +9,7 @@ import net.minecraft.potion.Effects;
 public final class Constants
 {
     public static final String MOD_ID                           = "minecolonies";
-    public static final String MOD_NAME                         = "MineColonies";
-    public static final String VERSION                          = "@VERSION@";
-    public static final String FORGE_VERSION                    = "required-after:Forge@[14.22.0.2459,)";
-    public static final String MC_VERSION                       = "[1.12,1.13,1.14,1.15]";
-    public static final String CLIENT_PROXY_LOCATION            = "com.minecolonies.coremod.proxy.ClientProxy";
-    public static final String SERVER_PROXY_LOCATION            = "com.minecolonies.coremod.proxy.ServerProxy";
-    public static final String CONFIG_GUI_LOCATION              = "com.minecolonies.coremod.client.gui.GuiFactory";
-    public static final String PLAYER_PROPERTY_NAME             = MOD_ID + ".PlayerProperties";
     public static final String HARVESTCRAFTMODID                = "harvestcraft";
-    public static final int    YELLOW                           = 4;
     public static final int    ROTATE_0_TIMES                   = 0;
     public static final int    ROTATE_ONCE                      = 1;
     public static final int    ROTATE_TWICE                     = 2;
@@ -28,7 +19,6 @@ public final class Constants
     public static final int    MAX_BUILDING_LEVEL               = 5;
     public static final int    TICKS_SECOND                     = 20;
     public static final int    SECONDS_A_MINUTE                 = 60;
-    public static final int    MINUTES_A_DAY                    = 20;
     public static final int    TWENTYFIVESEC                    = 25;
     public static final int    STACKSIZE                        = 64;
     public static final int    MAX_BARBARIAN_HORDE_SIZE         = 400;
@@ -41,9 +31,6 @@ public final class Constants
     public static final int    ENTITY_TRACKING_RANGE            = 256;
     public static final int    ENTITY_UPDATE_FREQUENCY          = 2;
     public static final int    ENTITY_UPDATE_FREQUENCY_FISHHOOK = 5;
-    public static final int    MAX_ROTATIONS                    = 4;
-    public static final double WHOLE_CIRCLE                     = 360.0;
-    public static final double HALF_A_CIRCLE                    = 180;
     public static final int    UPDATE_FLAG                      = 0x03;
     public static final int    TICKS_HOUR                       = TICKS_SECOND * SECONDS_A_MINUTE * 60;
     public static final int    TICKS_FOURTY_MIN                 = TICKS_SECOND * SECONDS_A_MINUTE * 40;
@@ -55,7 +42,6 @@ public final class Constants
     public static final int    PARAMS_GLOBAL_RESEARCH           = 5;
     public static final int    PARAMS_LOCAL_RESEARCH            = 3;
     public static final String DEFAULT_STYLE                    = "wooden";
-    public static final String SAPLINGS                         = "treeSapling";
     public static final String ORES                             = "ores";
     public static final double HALF_BLOCK                       = 0.5D;
     public static final double SLIGHTLY_UP                      = 0.1D;
@@ -68,7 +54,6 @@ public final class Constants
     public static final int    NINETY_DEGREE                    = 90;
     public static final int    HALF_ROTATION                    = 180;
     public static final int    THREE_QUARTERS                   = 270;
-    public static final float  BED_HEIGHT                       = 0.6875F;
     public static final float  SLEEPING_RENDER_OFFSET           = -1.5F;
     public static final double DEFAULT_VOLUME                   = 0.2;
     public static final double DEFAULT_PITCH_MULTIPLIER         = 0.7D;
@@ -137,21 +122,6 @@ public final class Constants
     public static final int FUEL_SLOT = 1;
 
     /**
-     * Maximum message size from client to server (Leaving some extra space).
-     */
-    public static final int MAX_MESSAGE_SIZE = 30_000;
-
-    /**
-     * Maximum amount of pieces from client to server (Leaving some extra space).
-     */
-    public static final int MAX_AMOUNT_OF_PIECES = 20;
-
-    /**
-     * Max schematic size to create.
-     */
-    public static final int MAX_SCHEMATIC_SIZE = 100_000;
-
-    /**
      * Tag compound of forge.
      */
     public static final int TAG_COMPOUND = 10;
@@ -174,13 +144,6 @@ public final class Constants
     public static final int GLOW_EFFECT_DURATION   = 20 * 30;
     public static final int GLOW_EFFECT_MULTIPLIER = 20;
     public static final int GLOW_EFFECT_DISTANCE   = 60;
-
-    public static final int GLOW_EFFECT_DURATION_TEAM = 20 * 60 * 10;
-
-    /**
-     * The length range one patrolling operation can have on x or z.
-     */
-    public static final int LENGTH_RANGE = 10;
 
     /**
      * The length range one patrolling operation can have on y.

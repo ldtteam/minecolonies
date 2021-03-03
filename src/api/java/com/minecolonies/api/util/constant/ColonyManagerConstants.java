@@ -13,24 +13,9 @@ public final class ColonyManagerConstants
     public static final String TAG_DISTANCE = "dist";
 
     /**
-     * Tag storing the amount of colonies to NBT.
-     */
-    public static final String TAG_NEW_COLONIES = "amountOfColonies";
-
-    /**
-     * TAG to check if the colony cap has been enabled.
-     */
-    public static final String TAG_CAP_COLONIES = "colonycap";
-
-    /**
      * The file name of the minecolonies path.
      */
     public static final String FILENAME_MINECOLONIES_PATH = "minecolonies";
-
-    /**
-     * The file name of the minecolonies path.
-     */
-    public static final String CHUNK_INFO_PATH = FILENAME_MINECOLONIES_PATH + "/chunkInfo";
 
     /**
      * The file name of the minecolonies.
@@ -61,11 +46,6 @@ public final class ColonyManagerConstants
      * Colony filename deleted.
      */
     public static final String FILENAME_COLONY_DELETED = "colony%d.dat.deleted";
-
-    /**
-     * Colony filename.
-     */
-    public static final String FILENAME_COLONY_OLD = "colony%d.dat";
 
     /**
      * Distance in chunks to load immediately after creating the colony.
