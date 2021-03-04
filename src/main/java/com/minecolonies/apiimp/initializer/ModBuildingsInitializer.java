@@ -415,5 +415,6 @@ public final class ModBuildingsInitializer
         reg.register(ModBuildings.concreteMixer);
         reg.register(ModBuildings.beekeeper);
         reg.register(ModBuildings.mysticalSite);
+        reg.register(ModBuildings.graveyard);
     }
 }
