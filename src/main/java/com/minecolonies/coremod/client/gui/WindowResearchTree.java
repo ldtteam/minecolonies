@@ -787,7 +787,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                 {
                     final Item item;
                     //TODO Houses use 'citizen' for schematics, but 'home' for ForgeRegistry purposes.  Consider fixing for 1.17
-                    if(((BuildingResearchRequirement) requirement).getBuilding().equals("citizen"))
+                    if(building.equals("citizen"))
                     {
                         item = ModBuildings.home.getBuildingBlock().asItem();
                     }
