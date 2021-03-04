@@ -35,7 +35,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Minecolonies async PathNavigate.
@@ -51,7 +50,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     public static final  double MIN_SPEED_ALLOWED        = 0.1;
 
     @Nullable
-    private PathResult pathResult;
+    private PathResult<AbstractPathJob> pathResult;
 
     /**
      * The world time when a path was added.
@@ -124,17 +123,17 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     }
 
     @Nullable
-    public RandomPathResult moveToRandomPos(final double range, final double speedFactor)
+    public PathResult moveToRandomPos(final double range, final double speedFactor)
     {
-        if (pathResult instanceof RandomPathResult && pathResult.isComputing())
+        if (pathResult != null && pathResult.getJob() instanceof PathJobRandomPos)
         {
-            return (RandomPathResult) pathResult;
+            return pathResult;
         }
 
         final int theRange = (int) (entity.getRNG().nextInt((int) range) + range / 2);
         @NotNull final BlockPos start = AbstractPathJob.prepareStart(ourEntity);
 
-        return (RandomPathResult) setPathJob(new PathJobRandomPos(CompatibilityUtils.getWorldFromEntity(ourEntity),
+        return setPathJob(new PathJobRandomPos(CompatibilityUtils.getWorldFromEntity(ourEntity),
           start,
           theRange,
           (int) ourEntity.getAttribute(Attributes.FOLLOW_RANGE).getValue(),
@@ -142,14 +141,16 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     }
 
     @Nullable
-    public RandomPathResult moveToRandomPosAroundX(final int range, final double speedFactor, final BlockPos pos)
+    public PathResult moveToRandomPosAroundX(final int range, final double speedFactor, final BlockPos pos)
     {
-        if (pathResult instanceof RandomPathResult && pathResult.isComputing())
+        if (pathResult != null
+              && pathResult.getJob() instanceof PathJobRandomPos
+              && ((((PathJobRandomPos) pathResult.getJob()).posAndRangeMatch(range, pos))))
         {
-            return (RandomPathResult) pathResult;
+            return pathResult;
         }
 
-        return (RandomPathResult) setPathJob(new PathJobRandomPos(CompatibilityUtils.getWorldFromEntity(ourEntity),
+        return setPathJob(new PathJobRandomPos(CompatibilityUtils.getWorldFromEntity(ourEntity),
           AbstractPathJob.prepareStart(ourEntity),
           1,
           (int) ourEntity.getAttribute(Attributes.FOLLOW_RANGE).getValue(),
@@ -163,11 +164,6 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
       final BlockPos dest,
       final double speedFactor)
     {
-        if (dest != null && dest.equals(desiredPos) && calculationFuture != null && pathResult != null && job.getResult().getClass().equals(pathResult.getClass()))
-        {
-            return pathResult;
-        }
-
         clearPath();
 
         this.destination = dest;
@@ -186,15 +182,15 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         }
 
         job.setPathingOptions(getPathingOptions());
-        calculationFuture = Pathfinding.enqueue(job);
         pathResult = job.getResult();
+        pathResult.startJob(Pathfinding.getExecutor());
         return pathResult;
     }
 
     @Override
     public boolean noPath()
     {
-        return calculationFuture == null && super.noPath();
+        return (pathResult == null || pathResult.isDone() && pathResult.getStatus() != PathFindingStatus.CALCULATION_COMPLETE) && super.noPath();
     }
 
     @Override
@@ -208,26 +204,16 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             }
         }
 
-        if (calculationFuture != null)
+        if (pathResult != null)
         {
-            if (!calculationFuture.isDone())
+            if (!pathResult.isDone())
             {
                 return;
             }
-
-            try
+            else if (pathResult.getStatus() == PathFindingStatus.CALCULATION_COMPLETE)
             {
-                if (processCompletedCalculationResult())
-                {
-                    return;
-                }
+                processCompletedCalculationResult();
             }
-            catch (@NotNull InterruptedException | ExecutionException e)
-            {
-                Log.getLogger().catching(e);
-            }
-
-            calculationFuture = null;
         }
 
         int oldIndex = this.noPath() ? 0 : this.getPath().getCurrentPathIndex();
@@ -265,7 +251,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         final int newY = (int) y;
         final int newZ = MathHelper.floor(z);
 
-        if (pathResult != null &&
+        if (pathResult != null && pathResult.getJob() instanceof PathJobMoveToLocation &&
               (
                 pathResult.isComputing()
                   || (destination != null && BlockPosUtil.isEqual(destination, newX, newY, newZ))
@@ -466,27 +452,10 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         return tempPath == null ? path : tempPath;
     }
 
-    private boolean processCompletedCalculationResult() throws InterruptedException, ExecutionException
+    private boolean processCompletedCalculationResult()
     {
-        if (calculationFuture.get() == null)
-        {
-            calculationFuture = null;
-            return true;
-        }
-
-        setPath(calculationFuture.get(), getSpeedFactor());
-
-        pathResult.setPathLength(getPath().getCurrentPathLength());
+        setPath(pathResult.getPath(), getSpeedFactor());
         pathResult.setStatus(PathFindingStatus.IN_PROGRESS_FOLLOWING);
-
-        final PathPoint p = getPath().getFinalPathPoint();
-        if (p != null && destination == null)
-        {
-            destination = new BlockPos(p.x, p.y, p.z);
-
-            //  AbstractPathJob with no destination, did reach it's destination
-            pathResult.setPathReachesDestination(true);
-        }
         return false;
     }
 
@@ -547,9 +516,9 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
      */
     private BlockPos findBlockUnderEntity(@NotNull final Entity parEntity)
     {
-        int blockX = (int)Math.round(parEntity.getPosX());
-        int blockY = MathHelper.floor(parEntity.getPosY()-0.2D);
-        int blockZ = (int)Math.round(parEntity.getPosZ());
+        int blockX = (int) Math.round(parEntity.getPosX());
+        int blockY = MathHelper.floor(parEntity.getPosY() - 0.2D);
+        int blockZ = (int) Math.round(parEntity.getPosZ());
         return new BlockPos(blockX, blockY, blockZ);
     }
 
@@ -815,6 +784,12 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             }
         }
 
+        if (currentPath.isFinished())
+        {
+            onPathFinish();
+            return;
+        }
+
         if (wentAhead)
         {
             return;
@@ -860,6 +835,14 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         }
     }
 
+    /**
+     * Called upon reaching the path end, reset values
+     */
+    private void onPathFinish()
+    {
+        clearPath();
+    }
+
     public void updatePath() {}
 
     /**
@@ -874,14 +857,9 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     @Override
     public void clearPath()
     {
-        if (calculationFuture != null)
-        {
-            calculationFuture.cancel(true);
-            calculationFuture = null;
-        }
-
         if (pathResult != null)
         {
+            pathResult.cancel();
             pathResult.setStatus(PathFindingStatus.CANCELLED);
             pathResult = null;
         }

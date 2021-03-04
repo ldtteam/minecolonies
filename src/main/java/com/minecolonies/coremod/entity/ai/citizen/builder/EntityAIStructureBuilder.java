@@ -4,7 +4,6 @@ import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
-import com.minecolonies.api.entity.pathfinding.RandomPathResult;
 import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.utils.BuilderBucket;
@@ -276,24 +275,18 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
             return false;
         }
 
-        if (BlockPosUtil.getDistance2D(currentBlock, workFrom) > 10 * Math.max(1, pathBackupFactor - 1) )
+        if (BlockPosUtil.getDistance2D(currentBlock, workFrom) > 5 + 5 * pathBackupFactor)
         {
             workFrom = null;
             return false;
         }
 
-        if (pathBackupFactor > 0)
+        if (pathBackupFactor > 1)
         {
             pathBackupFactor--;
         }
 
         return true;
-    }
-
-    @Override
-    protected RandomPathResult getRandomNavigationPath(final int range, final BlockPos pos)
-    {
-        return worker.getNavigator().moveToRandomPosAroundX(range, 1.0D, pos);
     }
 
     @Override
