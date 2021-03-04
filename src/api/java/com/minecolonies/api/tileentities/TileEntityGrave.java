@@ -1,13 +1,10 @@
 package com.minecolonies.api.tileentities;
 
 import com.minecolonies.api.MinecoloniesAPIProxy;
-import com.minecolonies.api.blocks.AbstractBlockMinecoloniesRack;
-import com.minecolonies.api.blocks.types.RackType;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.inventory.api.CombinedItemHandler;
-import com.minecolonies.api.inventory.container.ContainerRack;
+import com.minecolonies.api.inventory.container.ContainerGrave;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.WorldUtil;
 import io.netty.buffer.Unpooled;
 import net.minecraft.block.BlockState;
@@ -20,12 +17,9 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Rotation;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.common.capabilities.Capability;
@@ -43,7 +37,7 @@ import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
-import static com.minecolonies.api.util.constant.TranslationConstants.RACK;
+import static com.minecolonies.api.util.constant.TranslationConstants.GRAVE;
 
 /**
  * Tile entity for the graves.
@@ -123,7 +117,7 @@ public class TileEntityGrave extends AbstractTileEntityGrave
     }
 
     /**
-     * Gets the content of the Rack
+     * Gets the content of the gave
      *
      * @return the map of content.
      */
@@ -173,6 +167,10 @@ public class TileEntityGrave extends AbstractTileEntityGrave
                 inventory.setStackInSlot(i, stack);
             }
         }
+        if (compound.contains(TAG_POS))
+        {
+             this.setPos(BlockPosUtil.read(compound, TAG_POS));
+        }
         invalidateCap();
     }
 
@@ -198,6 +196,7 @@ public class TileEntityGrave extends AbstractTileEntityGrave
             inventoryTagList.add(inventoryCompound);
         }
         compound.put(TAG_INVENTORY, inventoryTagList);
+        BlockPosUtil.write(compound, TAG_POS, getPos());
         return compound;
     }
 
@@ -245,7 +244,7 @@ public class TileEntityGrave extends AbstractTileEntityGrave
                     return new GraveInventory(0);
                 }
 
-                return new CombinedItemHandler(RACK, getInventory());
+                return new CombinedItemHandler(GRAVE, getInventory());
             });
             return lastOptional.cast();
         }
@@ -265,7 +264,7 @@ public class TileEntityGrave extends AbstractTileEntityGrave
         final PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
         buffer.writeBlockPos(this.getPos());
 
-        return new ContainerRack(id, inv, buffer);
+        return new ContainerGrave(id, inv, buffer);
     }
 
     @NotNull

@@ -4,7 +4,7 @@
     "thirdperson_righthand": {
       "rotation": [
         45,
-        45,
+        -45,
         0
       ],
       "translation": [
@@ -13,15 +13,15 @@
         0
       ],
       "scale": [
-        0.375,
-        0.375,
-        0.375
+        0.3,
+        0.3,
+        0.3
       ]
     },
     "thirdperson_lefthand": {
       "rotation": [
         45,
-        45,
+        -45,
         0
       ],
       "translation": [
@@ -30,43 +30,33 @@
         0
       ],
       "scale": [
-        0.375,
-        0.375,
-        0.375
+        0.3,
+        0.3,
+        0.3
       ]
     },
     "firstperson_righthand": {
       "rotation": [
         0,
-        111,
-        0
-      ],
-      "translation": [
-        0,
-        2.25,
+        -70,
         0
       ],
       "scale": [
-        0.4,
-        0.4,
-        0.4
+        0.36,
+        0.36,
+        0.36
       ]
     },
     "firstperson_lefthand": {
       "rotation": [
         0,
-        111,
-        0
-      ],
-      "translation": [
-        0,
-        2.25,
+        -70,
         0
       ],
       "scale": [
-        0.4,
-        0.4,
-        0.4
+        0.36,
+        0.36,
+        0.36
       ]
     },
     "ground": {
@@ -83,33 +73,48 @@
     },
     "gui": {
       "rotation": [
-        30,
-        225,
+        20,
+        -45,
         0
       ],
       "translation": [
         0,
-        -0.5,
+        -2.5,
         0
       ],
       "scale": [
-        0.65,
-        0.65,
-        0.65
+        0.42,
+        0.42,
+        0.42
       ]
     },
     "head": {
-      "translation": [
+      "rotation": [
         0,
-        14.25,
+        180,
         0
+      ],
+      "scale": [
+        0.91,
+        0.91,
+        0.91
       ]
     },
     "fixed": {
+      "rotation": [
+        0,
+        180,
+        0
+      ],
+      "translation": [
+        0,
+        -4,
+        -4
+      ],
       "scale": [
-        0.55,
-        0.55,
-        0.55
+        0.5,
+        0.5,
+        0.5
       ]
     }
   }

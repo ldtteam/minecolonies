@@ -60,6 +60,7 @@ public class TileEntityInitializer
           MinecoloniesTileEntities.BUILDING,
           MinecoloniesTileEntities.DECO_CONTROLLER,
           MinecoloniesTileEntities.RACK,
+          MinecoloniesTileEntities.GRAVE,
           MinecoloniesTileEntities.WAREHOUSE,
           MinecoloniesTileEntities.COMPOSTED_DIRT,
           MinecoloniesTileEntities.ENCHANTER,

@@ -58,6 +58,13 @@ public final class ModJobsInitializer
                            .setRegistryName(ModJobs.FARMER_ID)
                            .createJobEntry();
 
+        //TODO TG
+        //ModJobs.gravedigger = new JobEntry.Builder()
+         //       .setJobProducer(JobGravedigger::new)
+           //     .setJobViewProducer(() -> CrafterJobView::new)
+             //   .setRegistryName(ModJobs.GRAVEDIGGER_ID)
+               // .createJobEntry();
+
         ModJobs.fisherman = new JobEntry.Builder()
                               .setJobProducer(JobFisherman::new)
                               .setJobViewProducer(() -> DefaultJobView::new)
