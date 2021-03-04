@@ -84,9 +84,9 @@ public class WindowHutGraveyard extends AbstractWindowBuilding<BuildingGraveyard
     private final ClientWorld world = Minecraft.getInstance().world;
 
     /**
-     * Constructor for the window of the farmer.
+     * Constructor for the window of the graveyard.
      *
-     * @param building {@link BuildingFarmer.View}.
+     * @param building {@link BuildingGraveyard.View}.
      */
     public WindowHutGraveyard(final BuildingGraveyard.View building)
     {
@@ -106,7 +106,7 @@ public class WindowHutGraveyard extends AbstractWindowBuilding<BuildingGraveyard
     {
         super.onOpened();
 
-        graveList = findPaneOfTypeByID(LIST_GRAVES, ScrollingList.class);
+      /*  graveList = findPaneOfTypeByID(LIST_GRAVES, ScrollingList.class);
         graveList.setDataProvider(new ScrollingList.DataProvider()
         {
             @Override
@@ -128,6 +128,8 @@ public class WindowHutGraveyard extends AbstractWindowBuilding<BuildingGraveyard
                 }
             }
         });
+
+       */
     }
 
     @NotNull
@@ -142,11 +144,13 @@ public class WindowHutGraveyard extends AbstractWindowBuilding<BuildingGraveyard
     {
         super.onUpdate();
 
-        final String currentPage = findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).getCurrentView().getID();
+       /* final String currentPage = findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).getCurrentView().getID();
         if (currentPage.equals(PAGE_GRAVES))
         {
             pullLevelsFromHut();
             window.findPaneOfTypeByID(PAGE_GRAVES, ScrollingList.class).refreshElementPanes();
         }
+
+        */
     }
 }
