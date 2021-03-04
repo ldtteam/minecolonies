@@ -20,26 +20,17 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
-import static com.minecolonies.api.util.constant.TranslationConstants.GRAVE;
 
 /**
  * Tile entity for the graves.
@@ -51,11 +42,6 @@ public class TileEntityGrave extends AbstractTileEntityGrave
      */
     private final Map<ItemStorage, Integer> content = new HashMap<>();
 
-    /**
-     * Last optional we created.
-     */
-    private LazyOptional<IItemHandler> lastOptional;
-
     public TileEntityGrave(final TileEntityType<? extends TileEntityGrave> type)
     {
         super(type);
@@ -66,58 +52,6 @@ public class TileEntityGrave extends AbstractTileEntityGrave
         super(MinecoloniesTileEntities.GRAVE);
     }
 
-    @Override
-    public boolean hasItemStack(final ItemStack stack, final int count, final boolean ignoreDamageValue)
-    {
-        final ItemStorage checkItem = new ItemStorage(stack, ignoreDamageValue);
-
-        return content.getOrDefault(checkItem, 0) >= count;
-    }
-
-    @Override
-    public int getCount(final ItemStack stack, final boolean ignoreDamageValue, final boolean ignoreNBT)
-    {
-        final ItemStorage checkItem = new ItemStorage(stack, ignoreDamageValue, ignoreNBT);
-        return content.getOrDefault(checkItem, 0);
-    }
-
-    @Override
-    public boolean hasItemStack(@NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
-    {
-        for (final Map.Entry<ItemStorage, Integer> entry : content.entrySet())
-        {
-            if (itemStackSelectionPredicate.test(entry.getKey().getItemStack()))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public boolean hasSimilarStack(@NotNull final ItemStack stack)
-    {
-        final ItemStorage checkItem = new ItemStorage(stack, true);
-        if (content.containsKey(checkItem))
-        {
-            return true;
-        }
-
-        for (final ItemStorage storage : content.keySet())
-        {
-            for (final ResourceLocation tag : stack.getItem().getTags())
-            {
-                if (MinecoloniesAPIProxy.getInstance().getConfig().getServer().enabledModTags.get().contains(tag.toString())
-                      && storage.getItemStack().getItem().getTags().contains(tag))
-                {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
     /**
      * Gets the content of the gave
      *
@@ -126,34 +60,6 @@ public class TileEntityGrave extends AbstractTileEntityGrave
     public Map<ItemStorage, Integer> getAllContent()
     {
         return content;
-    }
-
-    @Override
-    public void upgradeItemStorage()
-    {
-        final AbstractTileEntityGrave.GraveInventory tempInventory = new AbstractTileEntityGrave.GraveInventory(DEFAULT_SIZE);
-        for (int slot = 0; slot < inventory.getSlots(); slot++)
-        {
-            tempInventory.setStackInSlot(slot, inventory.getStackInSlot(slot));
-        }
-
-        inventory = tempInventory;
-        final BlockState state = world.getBlockState(pos);
-        world.notifyBlockUpdate(pos, state, state, 0x03);
-        invalidateCap();
-    }
-
-    @Override
-    public int getItemCount(final Predicate<ItemStack> predicate)
-    {
-        for (final Map.Entry<ItemStorage, Integer> entry : content.entrySet())
-        {
-            if (predicate.test(entry.getKey().getItemStack()))
-            {
-                return entry.getValue();
-            }
-        }
-        return 0;
     }
 
     @Override
@@ -238,11 +144,6 @@ public class TileEntityGrave extends AbstractTileEntityGrave
                 inventory.setStackInSlot(i, stack);
             }
         }
-        if (compound.contains(TAG_POS))
-        {
-             this.setPos(BlockPosUtil.read(compound, TAG_POS));
-        }
-        invalidateCap();
     }
 
     @NotNull
@@ -267,7 +168,6 @@ public class TileEntityGrave extends AbstractTileEntityGrave
             inventoryTagList.add(inventoryCompound);
         }
         compound.put(TAG_INVENTORY, inventoryTagList);
-        BlockPosUtil.write(compound, TAG_POS, getPos());
         return compound;
     }
 
@@ -297,31 +197,6 @@ public class TileEntityGrave extends AbstractTileEntityGrave
         this.read(state, tag);
     }
 
-    @Nonnull
-    @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull final Capability<T> capability, final Direction dir)
-    {
-        if (!removed && capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
-        {
-            if (lastOptional != null && lastOptional.isPresent())
-            {
-                return lastOptional.cast();
-            }
-
-            lastOptional = LazyOptional.of(() ->
-            {
-                if (this.isRemoved())
-                {
-                    return new GraveInventory(0);
-                }
-
-                return new CombinedItemHandler(GRAVE, getInventory());
-            });
-            return lastOptional.cast();
-        }
-        return super.getCapability(capability, dir);
-    }
-
     @Override
     public void markDirty()
     {
@@ -343,32 +218,5 @@ public class TileEntityGrave extends AbstractTileEntityGrave
     public ITextComponent getDisplayName()
     {
         return new StringTextComponent("Grave");
-    }
-
-    @Override
-    public void remove()
-    {
-        super.remove();
-        invalidateCap();
-    }
-
-    @Override
-    public void updateContainingBlockInfo()
-    {
-        super.updateContainingBlockInfo();
-        invalidateCap();
-    }
-
-    /**
-     * Invalidates the cap
-     */
-    private void invalidateCap()
-    {
-        if (lastOptional != null && lastOptional.isPresent())
-        {
-            lastOptional.invalidate();
-        }
-
-        lastOptional = null;
     }
 }

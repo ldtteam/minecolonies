@@ -14,6 +14,7 @@ import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.entity.CustomGoalSelector;
+import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.entity.ai.Status;
 import com.minecolonies.api.entity.ai.pathfinding.IWalkToProxy;
@@ -36,10 +37,12 @@ import com.minecolonies.apiimp.initializer.ModBlocksInitializer;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesGrave;
+import com.minecolonies.coremod.blocks.decorative.BlockConstructionTape;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenDiedEvent;
 import com.minecolonies.coremod.colony.jobs.*;
 import com.minecolonies.coremod.entity.SittingEntity;
+import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard;
 import com.minecolonies.coremod.entity.ai.minimal.*;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.*;
@@ -1474,7 +1477,6 @@ public class EntityCitizen extends AbstractEntityCitizen
 
             if(citizenColonyHandler.getColony().isCoordInColony(world, getPosition()))
             {
-                citizenChatHandler.sendLocalizedChat("   debug.creategrave.test 0", (int) getPosX(), (int) getPosY(), (int) getPosZ());
                 createCitizenGrave();
             }
             else
@@ -1490,17 +1492,18 @@ public class EntityCitizen extends AbstractEntityCitizen
 
     private void createCitizenGrave()
     {
-        citizenChatHandler.sendLocalizedChat("   debug.creategrave.test 1", (int) getPosX(), (int) getPosY(), (int) getPosZ());
-        world.setBlockState(getHomePosition(), new BlockMinecoloniesGrave().getDefaultState());
+        final BlockPos firstValidPosition = ConstructionTapeHelper.firstValidPosition(getPosition(), world, 10);
+        if (firstValidPosition != null)
+        {
+           world.setBlockState(firstValidPosition, BlockMinecoloniesGrave.getPlacementState(ModBlocks.blockGrave.getDefaultState(), new TileEntityGrave(), firstValidPosition));
 
-        citizenChatHandler.sendLocalizedChat("   debug.creategrave.test 2", (int) getPosX(), (int) getPosY(), (int) getPosZ());
-        TileEntity TileEntity = world.getTileEntity(getPosition());
-
-        //final TileEntity newTile = TileEntity.readTileEntity(world.getBlockState(getPosition()), new CompoundNBT());
-        //world.setTileEntity(getPosition(), newTile);
-        citizenChatHandler.sendLocalizedChat("   debug.creategrave.test 3", (int) getPosX(), (int) getPosY(), (int) getPosZ());
-        final TileEntityGrave graveEntity = (TileEntityGrave) TileEntity;
-        InventoryUtils.transferAllItemHandler(citizenData.getInventory(), graveEntity.getInventory(), world, (int) getPosX(), (int) getPosY(), (int) getPosZ());
+           final TileEntityGrave graveEntity = (TileEntityGrave) world.getTileEntity(firstValidPosition);
+           InventoryUtils.transferAllItemHandler(citizenData.getInventory(), graveEntity.getInventory(), world, (int) firstValidPosition.getX(), (int) firstValidPosition.getY(), (int) firstValidPosition.getZ());
+        }
+        else
+        {
+            InventoryUtils.dropItemHandler(citizenData.getInventory(), world, (int) getPosX(), (int) getPosY(), (int) getPosZ());
+        }
     }
 
     /**
