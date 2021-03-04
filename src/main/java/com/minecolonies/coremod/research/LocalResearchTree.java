@@ -347,6 +347,15 @@ public class LocalResearchTree implements ILocalResearchTree
                       research.setProgress(progress);
                       Log.getLogger().warn("Research " + research.getId().getPath() + " was in colony save file, and was updated to " + research.getId());
                   }
+                  else if(research.getBranch().getNamespace().contains("minecraft"))
+                  {
+                      final ResearchState currentState = research.getState();
+                      final int progress = research.getProgress();
+                      research = new LocalResearch(new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, research.getId().getPath()),
+                        new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, research.getBranch().getPath()), research.getDepth());
+                      research.setState(currentState);
+                      research.setProgress(progress);
+                  }
                   else
                   {
                       Log.getLogger().warn("Research " + research.getId() + " was in colony save file, but was not in CompatMap.");
