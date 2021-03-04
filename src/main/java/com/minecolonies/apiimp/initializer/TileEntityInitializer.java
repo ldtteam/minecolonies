@@ -34,7 +34,7 @@ public class TileEntityInitializer
         MinecoloniesTileEntities.RACK = TileEntityType.Builder.create(TileEntityRack::new, ModBlocks.blockRack).build(null);
         MinecoloniesTileEntities.RACK.setRegistryName(Constants.MOD_ID, "rack");
 
-        MinecoloniesTileEntities.GRAVE = TileEntityType.Builder.create(TileEntityRack::new, ModBlocks.blockGrave).build(null);
+        MinecoloniesTileEntities.GRAVE = TileEntityType.Builder.create(TileEntityGrave::new, ModBlocks.blockGrave).build(null);
         MinecoloniesTileEntities.GRAVE.setRegistryName(Constants.MOD_ID, "grave");
 
         MinecoloniesTileEntities.WAREHOUSE = TileEntityType.Builder.create(TileEntityWareHouse::new, ModBlocks.blockHutWareHouse).build(null);
