@@ -563,6 +563,11 @@ public final class NbtTagConstants
     public static final String TAG_RESPAWN_POS   = "nextrespawnpos";
 
     /**
+     * Tags to store grave information
+     */
+    public static final String TAG_DECAY_TIMER = "decaytimer";
+
+    /**
      * Private constructor to hide the implicit one.
      */
     private NbtTagConstants()

@@ -60,11 +60,6 @@ public class BlockMinecoloniesGrave extends AbstractBlockMinecoloniesGrave<Block
     private static final float RESISTANCE = 5F;
 
     /**
-     * duration of the countdown before the grave disapear, in ticks = 10 seconds
-     */
-    private static final int TIMER_COUNTDOWN_TICKS = 20 * 10;
-
-    /**
      * Smaller shape.
      */
     private static final VoxelShape SHAPE = VoxelShapes.create(0.1, 0.1, 0.1, 0.9, 0.9, 0.9);
@@ -192,12 +187,6 @@ public class BlockMinecoloniesGrave extends AbstractBlockMinecoloniesGrave<Block
         }
 
         worldIn.setBlockState(pos, tempState, 2);
-
-        TileEntity tileentity = worldIn.getTileEntity(pos);
-        if (tileentity instanceof TileEntityGrave) { // prevent a crash if not the right type, or is null
-            TileEntityGrave tileEntityData = (TileEntityGrave)tileentity;
-            //tileEntityData.setTicksLeftTillDisappear(TIMER_COUNTDOWN_TICKS); //TODO TG https://github.com/TheGreyGhost/MinecraftByExample/blob/master/src/main/java/minecraftbyexample/mbe20_tileentity_data/TileEntityData.java
-        }
     }
 
     @Override

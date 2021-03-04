@@ -1,15 +1,14 @@
 package com.minecolonies.api.tileentities;
 
-import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesGrave;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.inventory.api.CombinedItemHandler;
 import com.minecolonies.api.inventory.container.ContainerGrave;
-import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.WorldUtil;
 import io.netty.buffer.Unpooled;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -129,6 +128,11 @@ public class TileEntityGrave extends AbstractTileEntityGrave
     }
 
     @Override
+    public void setDecayTimer(int decayCountdownTicks) {
+        this.decay_timer = decayCountdownTicks;
+    }
+
+    @Override
     public void read(final BlockState state, final CompoundNBT compound)
     {
         super.read(state, compound);
@@ -143,6 +147,15 @@ public class TileEntityGrave extends AbstractTileEntityGrave
                 final ItemStack stack = ItemStack.read(inventoryCompound);
                 inventory.setStackInSlot(i, stack);
             }
+        }
+
+        if(compound.contains(TAG_DECAY_TIMER))
+        {
+            decay_timer = compound.getInt(TAG_DECAY_TIMER);
+        }
+        else
+        {
+            decay_timer = DEFAULT_DECAY_TIMER;
         }
     }
 
@@ -168,6 +181,7 @@ public class TileEntityGrave extends AbstractTileEntityGrave
             inventoryTagList.add(inventoryCompound);
         }
         compound.put(TAG_INVENTORY, inventoryTagList);
+        compound.putInt(TAG_DECAY_TIMER, decay_timer);
         return compound;
     }
 
@@ -218,5 +232,23 @@ public class TileEntityGrave extends AbstractTileEntityGrave
     public ITextComponent getDisplayName()
     {
         return new StringTextComponent("Grave");
+    }
+
+    /**
+     * Since the TileEntity implements ITickableTileEntity, we get an update method which is called once per tick (20 times / second)
+     * When the timer elapses, decay the grave.
+     **/
+    @Override
+    public void tick()
+    {
+        if (this.hasWorld() && !world.isRemote && decay_timer != -1)
+        {
+            --decay_timer;
+            if (decay_timer <= 0)
+            {
+                InventoryUtils.dropItemHandler(inventory, world, this.pos.getX(), this.pos.getY(), this.pos.getZ());
+                world.setBlockState(this.pos, Blocks.AIR.getDefaultState());
+            }
+        }
     }
 }

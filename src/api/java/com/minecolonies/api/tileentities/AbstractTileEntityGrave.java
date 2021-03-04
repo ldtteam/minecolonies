@@ -2,6 +2,7 @@ package com.minecolonies.api.tileentities;
 
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -11,17 +12,33 @@ import javax.annotation.Nonnull;
 
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_SIZE;
 
-public abstract class AbstractTileEntityGrave extends TileEntity implements INamedContainerProvider
+public abstract class AbstractTileEntityGrave extends TileEntity implements INamedContainerProvider, ITickableTileEntity
 {
     /**
      * The inventory of the tileEntity.
      */
     protected ItemStackHandler inventory;
 
+    protected static final int TICK = 1;
+    protected static final int SECOND = 20 * TICK;
+    protected static final int MINUTE = 60 * SECOND;
+
+    /**
+     * default duration of the countdown before the grave disapear, in ticks (20 ticks / seconds)
+     */
+    //TODO TG have 2 variant for this block, one full prestine, one half broken. Go 5m Full Prestine -> half broken + 5m half Broken -> disapear
+    protected static final int DEFAULT_DECAY_TIMER = 5 * MINUTE;
+
+    /**
+     * The decay timer counting down before the grave disapear
+     */
+    protected int decay_timer;
+
     public AbstractTileEntityGrave(final TileEntityType<?> tileEntityTypeIn)
     {
         super(tileEntityTypeIn);
         inventory = createInventory(DEFAULT_SIZE);
+        setDecayTimer(DEFAULT_DECAY_TIMER);
     }
 
     /**
@@ -90,4 +107,6 @@ public abstract class AbstractTileEntityGrave extends TileEntity implements INam
     {
         return inventory;
     }
+
+    public abstract void setDecayTimer(int decayCountdownTicks);
 }
