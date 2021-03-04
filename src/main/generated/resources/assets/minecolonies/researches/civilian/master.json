@@ -1,0 +1,22 @@
+{
+  "branch": "minecolonies:civilian",
+  "parentResearch": "minecolonies:civilian/bachelor",
+  "researchLevel": 5,
+  "subtitle": "com.minecolonies.research.civilian.master.subtitle",
+  "icon": "minecolonies:textures/icons/research/xpgain4.png",
+  "requirements": [
+    {
+      "building": "library",
+      "level": 5
+    },
+    {
+      "item": "minecraft:bookshelf",
+      "quantity": 32
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/teachingmultiplier": 4
+    }
+  ]
+}

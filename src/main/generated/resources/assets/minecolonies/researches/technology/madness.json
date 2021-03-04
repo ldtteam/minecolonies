@@ -1,0 +1,17 @@
+{
+  "branch": "minecolonies:technology",
+  "parentResearch": "minecolonies:technology/seemsautomatic",
+  "researchLevel": 6,
+  "icon": "minecraft:spectral_arrow",
+  "requirements": [
+    {
+      "item": "minecraft:iron_ingot",
+      "quantity": 1024
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/blockplacespeedmultiplier": 5
+    }
+  ]
+}

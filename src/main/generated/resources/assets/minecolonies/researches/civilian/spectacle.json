@@ -1,0 +1,21 @@
+{
+  "branch": "minecolonies:civilian",
+  "parentResearch": "minecolonies:civilian/festival",
+  "researchLevel": 4,
+  "icon": "minecolonies:textures/icons/research/happy3.png",
+  "requirements": [
+    {
+      "building": "cook",
+      "level": 4
+    },
+    {
+      "item": "minecraft:cake",
+      "quantity": 18
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/happinessmultiplier": 3
+    }
+  ]
+}

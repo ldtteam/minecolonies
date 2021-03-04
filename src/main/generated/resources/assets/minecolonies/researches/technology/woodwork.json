@@ -1,0 +1,22 @@
+{
+  "branch": "minecolonies:technology",
+  "researchLevel": 1,
+  "subtitle": "com.minecolonies.research.technology.woodwork.subtitle",
+  "sortOrder": 4,
+  "icon": "minecolonies:blockhutsawmill",
+  "requirements": [
+    {
+      "building": "lumberjack",
+      "level": 3
+    },
+    {
+      "item": "minecraft:oak_planks",
+      "quantity": 64
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/blockhutsawmill": 1
+    }
+  ]
+}

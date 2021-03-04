@@ -1,0 +1,18 @@
+{
+  "branch": "minecolonies:technology",
+  "parentResearch": "minecolonies:technology/rtm",
+  "researchLevel": 6,
+  "subtitle": "com.minecolonies.research.technology.rainman.subtitle",
+  "icon": "minecraft:splash_potion",
+  "requirements": [
+    {
+      "item": "minecraft:salmon_bucket",
+      "quantity": 27
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/workinginrainunlock": 1
+    }
+  ]
+}

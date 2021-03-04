@@ -1,0 +1,23 @@
+{
+  "branch": "minecolonies:combat",
+  "parentResearch": "minecolonies:combat/tactictraining",
+  "researchLevel": 2,
+  "subtitle": "com.minecolonies.research.combat.improvedbows.subtitle",
+  "sortOrder": 2,
+  "icon": "minecolonies:blockhutarchery",
+  "requirements": [
+    {
+      "building": "barracks",
+      "level": 3
+    },
+    {
+      "item": "minecraft:iron_block",
+      "quantity": 6
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/blockhutarchery": 1
+    }
+  ]
+}
