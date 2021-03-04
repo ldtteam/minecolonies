@@ -9,12 +9,9 @@ import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.tileentities.TileEntityGrave;
 import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesGrave;
-import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -50,11 +47,16 @@ public class GravePlacementHandler implements IPlacementHandler
             return ActionProcessingResult.SUCCESS;
         }
 
-        TileEntity entity = world.getTileEntity(pos);
         world.setBlockState(pos, blockState, UPDATE_FLAG);
         if (tileEntityData != null)
         {
             handleTileEntityPlacement(tileEntityData, world, pos, settings);
+        }
+
+        TileEntity entity = world.getTileEntity(pos);
+        if (entity instanceof TileEntityGrave)
+        {
+            ((TileEntityGrave) entity).updateBlockState();
         }
 
         return ActionProcessingResult.SUCCESS;

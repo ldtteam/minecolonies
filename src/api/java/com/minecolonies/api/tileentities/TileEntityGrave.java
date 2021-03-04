@@ -1,10 +1,12 @@
 package com.minecolonies.api.tileentities;
 
 import com.minecolonies.api.MinecoloniesAPIProxy;
+import com.minecolonies.api.blocks.AbstractBlockMinecoloniesGrave;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.inventory.api.CombinedItemHandler;
 import com.minecolonies.api.inventory.container.ContainerGrave;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.WorldUtil;
 import io.netty.buffer.Unpooled;
 import net.minecraft.block.BlockState;
@@ -127,6 +129,21 @@ public class TileEntityGrave extends AbstractTileEntityGrave
     }
 
     @Override
+    public void upgradeItemStorage()
+    {
+        final AbstractTileEntityGrave.GraveInventory tempInventory = new AbstractTileEntityGrave.GraveInventory(DEFAULT_SIZE);
+        for (int slot = 0; slot < inventory.getSlots(); slot++)
+        {
+            tempInventory.setStackInSlot(slot, inventory.getStackInSlot(slot));
+        }
+
+        inventory = tempInventory;
+        final BlockState state = world.getBlockState(pos);
+        world.notifyBlockUpdate(pos, state, state, 0x03);
+        invalidateCap();
+    }
+
+    @Override
     public int getItemCount(final Predicate<ItemStack> predicate)
     {
         for (final Map.Entry<ItemStorage, Integer> entry : content.entrySet())
@@ -137,6 +154,60 @@ public class TileEntityGrave extends AbstractTileEntityGrave
             }
         }
         return 0;
+    }
+
+    @Override
+    public void updateItemStorage()
+    {
+        if (world != null && !world.isRemote)
+        {
+            final boolean empty = content.isEmpty();
+            updateContent();
+
+            if ((empty && !content.isEmpty()) || !empty && content.isEmpty())
+            {
+                updateBlockState();
+            }
+            markDirty();
+        }
+    }
+
+    /**
+     * Just do the content update.
+     */
+    private void updateContent()
+    {
+        content.clear();
+        for (int slot = 0; slot < inventory.getSlots(); slot++)
+        {
+            final ItemStack stack = inventory.getStackInSlot(slot);
+
+            if (ItemStackUtils.isEmpty(stack))
+            {
+                continue;
+            }
+
+            final ItemStorage storage = new ItemStorage(stack.copy());
+            int amount = ItemStackUtils.getSize(stack);
+            if (content.containsKey(storage))
+            {
+                amount += content.remove(storage);
+            }
+            content.put(storage, amount);
+        }
+    }
+
+    @Override
+    public void updateBlockState()
+    {
+        if (world != null && world.getBlockState(pos).getBlock() instanceof AbstractBlockMinecoloniesGrave)
+        {
+            final BlockState typeHere = world.getBlockState(pos);
+            if (!world.getBlockState(pos).equals(typeHere))
+            {
+                world.setBlockState(pos, typeHere);
+            }
+        }
     }
 
     @Override

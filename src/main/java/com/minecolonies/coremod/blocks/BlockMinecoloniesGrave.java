@@ -5,7 +5,9 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.tileentities.AbstractTileEntityGrave;
+import com.minecolonies.api.tileentities.AbstractTileEntityRack;
 import com.minecolonies.api.tileentities.TileEntityGrave;
+import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.block.Block;
@@ -55,7 +57,12 @@ public class BlockMinecoloniesGrave extends AbstractBlockMinecoloniesGrave<Block
     /**
      * The resistance this block has.
      */
-    private static final float RESISTANCE = Float.POSITIVE_INFINITY;
+    private static final float RESISTANCE = 5F;
+
+    /**
+     * duration of the countdown before the grave disapear, in ticks = 10 seconds
+     */
+    private static final int TIMER_COUNTDOWN_TICKS = 20 * 10;
 
     /**
      * Smaller shape.
@@ -136,7 +143,6 @@ public class BlockMinecoloniesGrave extends AbstractBlockMinecoloniesGrave<Block
         return state.rotate(mirrorIn.toRotation(state.get(FACING)));
     }
 
-
     @Override
     public void spawnAdditionalDrops(final BlockState state, final ServerWorld worldIn, final BlockPos pos, final ItemStack stack)
     {
@@ -186,6 +192,12 @@ public class BlockMinecoloniesGrave extends AbstractBlockMinecoloniesGrave<Block
         }
 
         worldIn.setBlockState(pos, tempState, 2);
+
+        TileEntity tileentity = worldIn.getTileEntity(pos);
+        if (tileentity instanceof TileEntityGrave) { // prevent a crash if not the right type, or is null
+            TileEntityGrave tileEntityData = (TileEntityGrave)tileentity;
+            //tileEntityData.setTicksLeftTillDisappear(TIMER_COUNTDOWN_TICKS); //TODO TG https://github.com/TheGreyGhost/MinecraftByExample/blob/master/src/main/java/minecraftbyexample/mbe20_tileentity_data/TileEntityData.java
+        }
     }
 
     @Override

@@ -1,6 +1,8 @@
 package com.minecolonies.coremod.entity.citizen;
 
+import com.ldtteam.structurize.util.BlockUtils;
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
@@ -27,10 +29,13 @@ import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.inventory.container.ContainerCitizenInventory;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.sounds.EventType;
+import com.minecolonies.api.tileentities.TileEntityGrave;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
+import com.minecolonies.apiimp.initializer.ModBlocksInitializer;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.blocks.BlockMinecoloniesGrave;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenDiedEvent;
 import com.minecolonies.coremod.colony.jobs.*;
@@ -40,8 +45,11 @@ import com.minecolonies.coremod.entity.ai.minimal.*;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.*;
 import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMessage;
+import com.minecolonies.coremod.placementhandlers.GravePlacementHandler;
 import com.minecolonies.coremod.util.TeleportHelper;
 import io.netty.buffer.Unpooled;
+import net.minecraft.block.AbstractBlock;
+import net.minecraft.block.GravelBlock;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.LookAtGoal;
@@ -53,6 +61,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.NameTagItem;
@@ -62,6 +71,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.scoreboard.Team;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -1461,13 +1471,36 @@ public class EntityCitizen extends AbstractEntityCitizen
                 citizenData.getJob().onRemoval();
             }
             citizenColonyHandler.getColony().getCitizenManager().removeCivilian(getCitizenData());
-            InventoryUtils.dropItemHandler(citizenData.getInventory(), world, (int) getPosX(), (int) getPosY(), (int) getPosZ());
 
-            final String deathCause =
-              new StringTextComponent(damageSource.getDeathMessage(this).getString()).getString().replaceFirst(this.getDisplayName().getString(), "Citizen");
+            if(citizenColonyHandler.getColony().isCoordInColony(world, getPosition()))
+            {
+                citizenChatHandler.sendLocalizedChat("   debug.creategrave.test 0", (int) getPosX(), (int) getPosY(), (int) getPosZ());
+                createCitizenGrave();
+            }
+            else
+            {
+                InventoryUtils.dropItemHandler(citizenData.getInventory(), world, (int) getPosX(), (int) getPosY(), (int) getPosZ());
+            }
+
+            final String deathCause = new StringTextComponent(damageSource.getDeathMessage(this).getString()).getString().replaceFirst(this.getDisplayName().getString(), "Citizen");
             citizenColonyHandler.getColony().getEventDescriptionManager().addEventDescription(new CitizenDiedEvent(getPosition(), citizenData.getName(), deathCause));
         }
         super.onDeath(damageSource);
+    }
+
+    private void createCitizenGrave()
+    {
+        citizenChatHandler.sendLocalizedChat("   debug.creategrave.test 1", (int) getPosX(), (int) getPosY(), (int) getPosZ());
+        world.setBlockState(getHomePosition(), new BlockMinecoloniesGrave().getDefaultState());
+
+        citizenChatHandler.sendLocalizedChat("   debug.creategrave.test 2", (int) getPosX(), (int) getPosY(), (int) getPosZ());
+        TileEntity TileEntity = world.getTileEntity(getPosition());
+
+        //final TileEntity newTile = TileEntity.readTileEntity(world.getBlockState(getPosition()), new CompoundNBT());
+        //world.setTileEntity(getPosition(), newTile);
+        citizenChatHandler.sendLocalizedChat("   debug.creategrave.test 3", (int) getPosX(), (int) getPosY(), (int) getPosZ());
+        final TileEntityGrave graveEntity = (TileEntityGrave) TileEntity;
+        InventoryUtils.transferAllItemHandler(citizenData.getInventory(), graveEntity.getInventory(), world, (int) getPosX(), (int) getPosY(), (int) getPosZ());
     }
 
     /**

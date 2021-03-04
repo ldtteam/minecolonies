@@ -30,6 +30,11 @@ public abstract class AbstractTileEntityGrave extends TileEntity implements INam
      */
     protected ItemStackHandler inventory;
 
+    /**
+     * Pos of the owning building.
+     */
+    protected BlockPos buildingPos = BlockPos.ZERO;
+
     public AbstractTileEntityGrave(final TileEntityType<?> tileEntityTypeIn)
     {
         super(tileEntityTypeIn);
@@ -44,6 +49,33 @@ public abstract class AbstractTileEntityGrave extends TileEntity implements INam
         public GraveInventory(final int defaultSize)
         {
             super(defaultSize);
+        }
+
+        @Override
+        protected void onContentsChanged(final int slot)
+        {
+            updateItemStorage();
+            super.onContentsChanged(slot);
+        }
+
+        @Override
+        public void setStackInSlot(final int slot, final @Nonnull ItemStack stack)
+        {
+            validateSlotIndex(slot);
+            final boolean changed = !ItemStack.areItemStacksEqual(stack, this.stacks.get(slot));
+            this.stacks.set(slot, stack);
+            if (changed)
+            {
+                onContentsChanged(slot);
+            }
+        }
+
+        @Nonnull
+        @Override
+        public ItemStack insertItem(final int slot, @Nonnull final ItemStack stack, final boolean simulate)
+        {
+            final ItemStack result = super.insertItem(slot, stack, simulate);
+            return result;
         }
     }
 
@@ -90,6 +122,25 @@ public abstract class AbstractTileEntityGrave extends TileEntity implements INam
      */
     public abstract boolean hasSimilarStack(@NotNull ItemStack stack);
 
+    /**
+     * Upgrade the rack by 1. This adds 9 more slots and copies the inventory to the new one.
+     */
+    public abstract void upgradeItemStorage();
+
+    /**
+     * Set the building pos it belongs to.
+     *
+     * @param pos the pos of the building.
+     */
+    public void setBuildingPos(final BlockPos pos)
+    {
+        if (world != null && (buildingPos == null || !buildingPos.equals(pos)))
+        {
+            markDirty();
+        }
+        this.buildingPos = pos;
+    }
+
     /* Get the amount of items matching a predicate in the inventory.
      * @param predicate the predicate.
      * @return the total count.
@@ -97,11 +148,14 @@ public abstract class AbstractTileEntityGrave extends TileEntity implements INam
     public abstract int getItemCount(Predicate<ItemStack> predicate);
 
     /**
-     * Get all the content stack  in the grave.
-     *
-     * @return the map of content.
+     * Scans through the whole storage and updates it.
      */
-    public abstract Map<ItemStorage, Integer> getAllContent();
+    public abstract void updateItemStorage();
+
+    /**
+     * Update the blockState of the rack. Switch between connected, single, full and empty texture.
+     */
+    protected abstract void updateBlockState();
 
     /**
      * Checks if the chest is empty. This method checks the content list, it is therefore extremely fast.

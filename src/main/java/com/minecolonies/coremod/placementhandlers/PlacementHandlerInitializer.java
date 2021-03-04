@@ -24,6 +24,7 @@ public final class PlacementHandlerInitializer
         PlacementHandlers.add(new BuildingBarracksTowerSub());
         PlacementHandlers.add(new BuildingSubstitutionBlock());
         PlacementHandlers.add(new RackPlacementHandler());
+        PlacementHandlers.add(new GravePlacementHandler());
         PlacementHandlers.add(new WayPointBlockPlacementHandler());
         PlacementHandlers.add(new ChestPlacementHandler());
         PlacementHandlers.add(new FencePlacementHandler());
