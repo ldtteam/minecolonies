@@ -23,6 +23,9 @@ public class MinecoloniesTileEntities
     @ObjectHolder("rack")
     public static TileEntityType<TileEntityRack> RACK;
 
+    @ObjectHolder("grave")
+    public static TileEntityType<TileEntityRack> GRAVE;
+
     @ObjectHolder("warehouse")
     public static TileEntityType<? extends AbstractTileEntityWareHouse> WAREHOUSE;
 

@@ -96,6 +96,7 @@ public final class ModBlocksInitializer
         ModBlocks.blockConstructionTape = new BlockConstructionTape().registerBlock(registry);
         ModBlocks.blockBarracksTowerSubstitution = new BlockBarracksTowerSubstitution().registerBlock(registry);
         ModBlocks.blockRack = new BlockMinecoloniesRack().registerBlock(registry);
+        ModBlocks.blockGrave = new BlockMinecoloniesGrave().registerBlock(registry);
         ModBlocks.blockWayPoint = new BlockWaypoint().registerBlock(registry);
         ModBlocks.blockPostBox = new BlockPostBox().registerBlock(registry);
         ModBlocks.blockStash = new BlockStash().registerBlock(registry);
@@ -173,6 +174,7 @@ public final class ModBlocksInitializer
         ModBlocks.blockConstructionTape.registerBlockItem(registry, properties);
         ModBlocks.blockBarracksTowerSubstitution.registerBlockItem(registry, properties);
         ModBlocks.blockRack.registerBlockItem(registry, properties);
+        ModBlocks.blockGrave.registerBlockItem(registry, properties);
         ModBlocks.blockWayPoint.registerBlockItem(registry, properties);
         ModBlocks.blockBarrel.registerBlockItem(registry, properties);
         ModBlocks.blockPostBox.registerBlockItem(registry, properties);

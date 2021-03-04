@@ -71,6 +71,7 @@ public final class ModBlocks
      */
     public static AbstractBlockMinecoloniesConstructionTape<? extends AbstractBlockMinecoloniesConstructionTape<?>> blockConstructionTape;
     public static AbstractBlockMinecoloniesRack<? extends AbstractBlockMinecoloniesRack<?>>             blockRack;
+    public static AbstractBlockMinecoloniesGrave<? extends AbstractBlockMinecoloniesGrave<?>>           blockGrave;
     public static AbstractBlockMinecolonies<? extends AbstractBlockMinecolonies<?>>                     blockWayPoint;
     public static AbstractBlockBarrel<? extends AbstractBlockBarrel<?>>                                 blockBarrel;
     public static AbstractBlockMinecoloniesHorizontal<? extends AbstractBlockMinecoloniesHorizontal<?>> blockDecorationPlaceholder;

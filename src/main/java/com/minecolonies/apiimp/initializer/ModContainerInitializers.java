@@ -22,11 +22,12 @@ public class ModContainerInitializers
         ModContainers.buildingInv = (ContainerType<ContainerBuildingInventory>) IForgeContainerType.create(ContainerBuildingInventory::new).setRegistryName("bulding_inv");
         ModContainers.citizenInv = (ContainerType<ContainerCitizenInventory>) IForgeContainerType.create(ContainerCitizenInventory::new).setRegistryName("citizen_inv");
         ModContainers.rackInv = (ContainerType<ContainerRack>) IForgeContainerType.create(ContainerRack::new).setRegistryName("rack_inv");
+        ModContainers.graveInv = (ContainerType<ContainerGrave>) IForgeContainerType.create(ContainerGrave::new).setRegistryName("grave_inv");
         ModContainers.craftingGrid = (ContainerType<ContainerCrafting>) IForgeContainerType.create(ContainerCrafting::new).setRegistryName("crafting_building");
         ModContainers.field = (ContainerType<ContainerField>) IForgeContainerType.create(ContainerField::new).setRegistryName("field");
 
         event.getRegistry()
-          .registerAll(ModContainers.craftingFurnace, ModContainers.buildingInv, ModContainers.citizenInv, ModContainers.rackInv, ModContainers.craftingGrid, ModContainers.field);
+          .registerAll(ModContainers.craftingFurnace, ModContainers.buildingInv, ModContainers.citizenInv, ModContainers.rackInv, ModContainers.graveInv, ModContainers.craftingGrid, ModContainers.field);
     }
 
     @SubscribeEvent
@@ -38,6 +39,7 @@ public class ModContainerInitializers
         ScreenManager.registerFactory(ModContainers.buildingInv, WindowBuildingInventory::new);
         ScreenManager.registerFactory(ModContainers.citizenInv, WindowCitizenInventory::new);
         ScreenManager.registerFactory(ModContainers.rackInv, WindowRack::new);
+        ScreenManager.registerFactory(ModContainers.graveInv, WindowGrave::new);
         ScreenManager.registerFactory(ModContainers.field, WindowField::new);
     }
 }

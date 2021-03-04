@@ -20,6 +20,9 @@ public class ModContainers
     @ObjectHolder("rack_inv")
     public static ContainerType<ContainerRack> rackInv;
 
+    @ObjectHolder("grave_inv")
+    public static ContainerType<ContainerGrave> graveInv;
+
     @ObjectHolder("crafting_building")
     public static ContainerType<ContainerCrafting> craftingGrid;
 
