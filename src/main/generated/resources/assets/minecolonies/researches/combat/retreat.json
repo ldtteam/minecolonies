@@ -1,0 +1,22 @@
+{
+  "branch": "minecolonies:combat",
+  "parentResearch": "minecolonies:combat/fear",
+  "researchLevel": 5,
+  "subtitle": "com.minecolonies.research.combat.retreat.subtitle",
+  "icon": "minecraft:golden_boots",
+  "requirements": [
+    {
+      "building": "guardtower",
+      "level": 12
+    },
+    {
+      "item": "minecraft:emerald",
+      "quantity": 32
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/fleeingdamagemultiplier": 3
+    }
+  ]
+}

@@ -8,8 +8,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class MathUtils
 {
-    private static final int NANO_TIME_DIVIDER = 1000 * 1000 * 1000;
-
     /**
      * Private constructor to hide the public one.
      */
@@ -26,17 +24,6 @@ public final class MathUtils
     public static double square(final double number)
     {
         return number * number;
-    }
-
-    /**
-     * Reduces nanosecond time to seconds.
-     *
-     * @param nanoSeconds as input.
-     * @return nanoSeconds to seconds.
-     */
-    public static long nanoSecondsToSeconds(final long nanoSeconds)
-    {
-        return nanoSeconds / NANO_TIME_DIVIDER;
     }
 
     /**

@@ -1,0 +1,22 @@
+{
+  "branch": "minecolonies:combat",
+  "researchLevel": 1,
+  "subtitle": "com.minecolonies.research.combat.improvedleather.subtitle",
+  "sortOrder": 4,
+  "icon": "minecraft:leather_helmet",
+  "requirements": [
+    {
+      "building": "townhall",
+      "level": 1
+    },
+    {
+      "item": "minecraft:leather",
+      "quantity": 32
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/armordurabilitymultiplier": 1
+    }
+  ]
+}

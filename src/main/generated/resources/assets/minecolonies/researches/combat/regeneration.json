@@ -1,0 +1,23 @@
+{
+  "branch": "minecolonies:combat",
+  "parentResearch": "minecolonies:combat/improvedleather",
+  "researchLevel": 2,
+  "sortOrder": 2,
+  "exclusiveChildResearch": true,
+  "icon": "minecraft:glistering_melon_slice",
+  "requirements": [
+    {
+      "building": "guardtower",
+      "level": 2
+    },
+    {
+      "item": "minecraft:emerald",
+      "quantity": 1
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/retreatunlock": 1
+    }
+  ]
+}

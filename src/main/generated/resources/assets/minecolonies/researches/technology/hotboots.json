@@ -1,0 +1,26 @@
+{
+  "branch": "minecolonies:technology",
+  "parentResearch": "minecolonies:technology/stringwork",
+  "researchLevel": 3,
+  "subtitle": "com.minecolonies.research.technology.hotboots.subtitle",
+  "icon": "minecraft:campfire",
+  "requirements": [
+    {
+      "building": "fletcher",
+      "level": 1
+    },
+    {
+      "item": "minecraft:leather",
+      "quantity": 32
+    },
+    {
+      "item": "minecraft:iron_ingot",
+      "quantity": 16
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/minerfireresunlock": 1
+    }
+  ]
+}

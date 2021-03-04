@@ -1,0 +1,22 @@
+{
+  "branch": "minecolonies:technology",
+  "parentResearch": "minecolonies:technology/bonemeal",
+  "researchLevel": 3,
+  "subtitle": "com.minecolonies.research.technology.dung.subtitle",
+  "icon": "minecraft:bone_meal",
+  "requirements": [
+    {
+      "building": "miner",
+      "level": 4
+    },
+    {
+      "item": "minecraft:wheat_seeds",
+      "quantity": 128
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/farmingmultiplier": 2
+    }
+  ]
+}

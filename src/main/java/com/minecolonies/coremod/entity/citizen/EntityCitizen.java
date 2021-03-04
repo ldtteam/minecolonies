@@ -63,6 +63,7 @@ import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.scoreboard.Team;
 import net.minecraft.util.*;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ITextComponent;
@@ -1727,6 +1728,44 @@ public class EntityCitizen extends AbstractEntityCitizen
     public void updatePose(final Pose pose)
     {
         setPose(pose);
+    }
+
+    @Override
+    public void recalculateSize()
+    {
+        final EntitySize oldSize = this.size;
+        final Pose pose = this.getPose();
+        final EntitySize newSize = this.getSize(pose);
+        final net.minecraftforge.event.entity.EntityEvent.Size sizeEvent =
+          net.minecraftforge.event.ForgeEventFactory.getEntitySizeForge(this, pose, newSize, this.getEyeHeight(pose, newSize));
+        final EntitySize afterEventSize = sizeEvent.getNewSize();
+        this.size = afterEventSize;
+        this.eyeHeight = sizeEvent.getNewEyeHeight();
+        if (afterEventSize.width < oldSize.width)
+        {
+            double d0 = (double) afterEventSize.width / 2.0D;
+            this.setBoundingBox(new AxisAlignedBB(this.getPosX() - d0,
+              this.getPosY(),
+              this.getPosZ() - d0,
+              this.getPosX() + d0,
+              this.getPosY() + (double) afterEventSize.height,
+              this.getPosZ() + d0));
+        }
+        else
+        {
+            final AxisAlignedBB axisalignedbb = this.getBoundingBox();
+            this.setBoundingBox(new AxisAlignedBB(axisalignedbb.minX,
+              axisalignedbb.minY,
+              axisalignedbb.minZ,
+              axisalignedbb.minX + (double) afterEventSize.width,
+              axisalignedbb.minY + (double) afterEventSize.height,
+              axisalignedbb.minZ + (double) afterEventSize.width));
+            if (afterEventSize.width > oldSize.width && !this.firstUpdate && !this.world.isRemote)
+            {
+                final float f = oldSize.width - afterEventSize.width;
+                this.move(MoverType.SELF, new Vector3d((double) f, 0.0D, (double) f));
+            }
+        }
     }
 
     /**
