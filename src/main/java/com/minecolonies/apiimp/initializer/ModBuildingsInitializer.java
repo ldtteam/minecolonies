@@ -355,11 +355,19 @@ public final class ModBuildingsInitializer
                                    .createBuildingEntry();
 
         ModBuildings.mysticalSite = new BuildingEntry.Builder()
-                .setBuildingBlock(ModBlocks.blockHutMysticalSite)
-                .setBuildingProducer(BuildingMysticalSite::new)
-                .setBuildingViewProducer(() -> BuildingMysticalSite.View::new)
-                .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.MYSTICAL_SITE_ID))
-                .createBuildingEntry();
+                                    .setBuildingBlock(ModBlocks.blockHutMysticalSite)
+                                    .setBuildingProducer(BuildingMysticalSite::new)
+                                    .setBuildingViewProducer(() -> BuildingMysticalSite.View::new)
+                                    .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.MYSTICAL_SITE_ID))
+                                    .createBuildingEntry();
+
+
+        ModBuildings.graveyard = new BuildingEntry.Builder()
+                                    .setBuildingBlock(ModBlocks.blockHutGraveyard)
+                                    .setBuildingProducer(BuildingGraveyard::new)
+                                    .setBuildingViewProducer(() -> BuildingGraveyard.View::new)
+                                    .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.GRAVEYARD_ID))
+                                    .createBuildingEntry();
 
         reg.register(ModBuildings.archery);
         reg.register(ModBuildings.bakery);

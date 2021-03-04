@@ -91,6 +91,7 @@ public final class ModBlocksInitializer
         ModBlocks.blockHutConcreteMixer = new BlockHutConcreteMixer().registerBlock(registry);
         ModBlocks.blockHutBeekeeper = new BlockHutBeekeeper().registerBlock(registry);
         ModBlocks.blockHutMysticalSite = new BlockHutMysticalSite().registerBlock(registry);
+        ModBlocks.blockHutGraveyard = new BlockHutGraveyard().registerBlock(registry);
 
         ModBlocks.blockConstructionTape = new BlockConstructionTape().registerBlock(registry);
         ModBlocks.blockBarracksTowerSubstitution = new BlockBarracksTowerSubstitution().registerBlock(registry);
@@ -167,6 +168,7 @@ public final class ModBlocksInitializer
         ModBlocks.blockHutConcreteMixer.registerBlockItem(registry, properties);
         ModBlocks.blockHutBeekeeper.registerBlockItem(registry, properties);
         ModBlocks.blockHutMysticalSite.registerBlockItem(registry, properties);
+        ModBlocks.blockHutGraveyard.registerBlockItem(registry, properties);
 
         ModBlocks.blockConstructionTape.registerBlockItem(registry, properties);
         ModBlocks.blockBarracksTowerSubstitution.registerBlockItem(registry, properties);
