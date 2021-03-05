@@ -29,11 +29,15 @@ public abstract class AbstractTileEntityGrave extends TileEntity implements INam
     /**
      * default duration of the countdown before the grave disapear, in ticks (20 ticks / seconds)
      */
-    //TODO TG have 2 variant for this block, one full prestine, one half broken. Go 5m Full Prestine -> half broken + 5m half Broken -> disapear
     protected static final int DEFAULT_DECAY_TIMER = 5 * MINUTE;
 
     /**
-     * The decay timer counting down before the grave disapear
+     * Is this grave decayed or not
+     */
+    protected boolean decayed;
+
+    /**
+     * The decay timer counting down before the grave decay and then disapear
      */
     protected int decay_timer;
 
@@ -41,7 +45,8 @@ public abstract class AbstractTileEntityGrave extends TileEntity implements INam
     {
         super(tileEntityTypeIn);
         inventory = createInventory(DEFAULT_SIZE);
-        setDecayTimer(DEFAULT_DECAY_TIMER);
+        decay_timer = DEFAULT_DECAY_TIMER;
+        decayed = false;
     }
 
     /**
@@ -110,6 +115,4 @@ public abstract class AbstractTileEntityGrave extends TileEntity implements INam
     {
         return inventory;
     }
-
-    public abstract void setDecayTimer(int decayCountdownTicks);
 }

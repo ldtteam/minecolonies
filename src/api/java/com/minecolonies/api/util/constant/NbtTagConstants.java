@@ -566,6 +566,7 @@ public final class NbtTagConstants
      * Tags to store grave information
      */
     public static final String TAG_DECAY_TIMER = "decaytimer";
+    public static final String TAG_DECAYED = "decayed";
 
     /**
      * Private constructor to hide the implicit one.

@@ -108,10 +108,10 @@ public class TileEntityGrave extends AbstractTileEntityGrave
     {
         if (world != null && world.getBlockState(pos).getBlock() instanceof AbstractBlockMinecoloniesGrave)
         {
-            final BlockState typeHere = world.getBlockState(pos);
-            if (!world.getBlockState(pos).equals(typeHere))
+            final BlockState state = world.getBlockState(pos).with(AbstractBlockMinecoloniesGrave.VARIANT, decayed ? GraveType.DECAYED : GraveType.DEFAULT);
+            if (!world.getBlockState(pos).equals(state))
             {
-                world.setBlockState(pos, typeHere);
+                world.setBlockState(pos, state);
             }
         }
     }
@@ -126,11 +126,6 @@ public class TileEntityGrave extends AbstractTileEntityGrave
     public boolean isEmpty()
     {
         return content.isEmpty();
-    }
-
-    @Override
-    public void setDecayTimer(int decayCountdownTicks) {
-        this.decay_timer = decayCountdownTicks;
     }
 
     @Override
@@ -150,14 +145,8 @@ public class TileEntityGrave extends AbstractTileEntityGrave
             }
         }
 
-        if(compound.contains(TAG_DECAY_TIMER))
-        {
-            decay_timer = compound.getInt(TAG_DECAY_TIMER);
-        }
-        else
-        {
-            decay_timer = DEFAULT_DECAY_TIMER;
-        }
+        decay_timer = compound.contains(TAG_DECAY_TIMER) ? compound.getInt(TAG_DECAY_TIMER) : DEFAULT_DECAY_TIMER;
+        decayed     = compound.contains(TAG_DECAYED) ? compound.getBoolean(TAG_DECAYED) :false;
     }
 
     @NotNull
@@ -183,6 +172,7 @@ public class TileEntityGrave extends AbstractTileEntityGrave
         }
         compound.put(TAG_INVENTORY, inventoryTagList);
         compound.putInt(TAG_DECAY_TIMER, decay_timer);
+        compound.putBoolean(TAG_DECAYED, decayed);
         return compound;
     }
 
@@ -247,8 +237,17 @@ public class TileEntityGrave extends AbstractTileEntityGrave
             --decay_timer;
             if (decay_timer <= 0)
             {
-                InventoryUtils.dropItemHandler(inventory, world, this.pos.getX(), this.pos.getY(), this.pos.getZ());
-                world.setBlockState(this.pos, Blocks.AIR.getDefaultState());
+                if (!decayed)
+                {
+                    decayed = true;
+                    decay_timer = DEFAULT_DECAY_TIMER;
+                    updateBlockState();
+                }
+                else
+                {
+                    InventoryUtils.dropItemHandler(inventory, world, this.pos.getX(), this.pos.getY(), this.pos.getZ());
+                    world.setBlockState(this.pos, Blocks.AIR.getDefaultState());
+                }
             }
         }
     }
