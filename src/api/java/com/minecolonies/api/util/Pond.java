@@ -7,7 +7,7 @@ import net.minecraft.world.IWorldReader;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Utility class to search for fisherman ponds.
+ * Utility class to search for fisher ponds.
  */
 public final class Pond
 {

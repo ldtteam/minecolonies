@@ -19,7 +19,7 @@ public final class InventoryFunctions
      */
     private InventoryFunctions()
     {
-        /**
+        /*
          * Intentionally left empty.
          */
     }

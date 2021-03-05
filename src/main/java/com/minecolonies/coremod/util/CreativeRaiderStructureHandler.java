@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider.TAG_BLUEPRINTDATA;
-import static com.minecolonies.api.util.constant.StructureTagConstants.*;
+import static com.minecolonies.api.util.constant.SchematicTagConstants.*;
 
 /**
  * Raider specific creative structure handler. Will correctly place spawners
