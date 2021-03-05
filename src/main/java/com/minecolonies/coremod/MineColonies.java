@@ -2,7 +2,6 @@ package com.minecolonies.coremod;
 
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.util.StructureLoadingUtils;
-import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IChunkmanagerCapability;

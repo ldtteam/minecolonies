@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
 import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
-import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.entity.pathfinding.RandomPathResult;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;

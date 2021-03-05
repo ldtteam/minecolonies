@@ -14,7 +14,9 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.coremod.client.gui.WindowHutCrafter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.jobs.JobFletcher;
-import net.minecraft.item.*;
+import net.minecraft.item.ArmorMaterial;
+import net.minecraft.item.ArrowItem;
+import net.minecraft.item.DyeableArmorItem;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
