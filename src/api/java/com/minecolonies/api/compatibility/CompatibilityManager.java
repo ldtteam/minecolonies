@@ -14,8 +14,8 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.state.BooleanProperty;
-import net.minecraft.state.Property;
 import net.minecraft.state.IntegerProperty;
+import net.minecraft.state.Property;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.util.NonNullList;
@@ -23,6 +23,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
@@ -188,6 +189,7 @@ public class CompatibilityManager implements ICompatibilityManager
         discoverFuel();
         discoverEnchantments();
         discoverFreeBlocksAndPos();
+        discoverModCompat();
 
         discoveredAlready = true;
     }
@@ -863,5 +865,13 @@ public class CompatibilityManager implements ICompatibilityManager
                 }
             }
         }
+    }
+
+    /**
+     * Inits compats
+     */
+    private void discoverModCompat()
+    {
+        ModList.get().isLoaded("resourcefulbees") ? Compatibility.beeHiveCompat = new ResourcefulBeesCompat() : Compatibility.beeHiveCompat = new IBeeHiveCompat() {};
     }
 }
