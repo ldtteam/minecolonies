@@ -1,7 +1,10 @@
 package com.minecolonies.api.tileentities;
 
+import com.minecolonies.api.blocks.types.GraveType;
+import com.minecolonies.api.blocks.types.RackType;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
+import net.minecraft.state.EnumProperty;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;

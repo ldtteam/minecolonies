@@ -1,6 +1,7 @@
 package com.minecolonies.api.tileentities;
 
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesGrave;
+import com.minecolonies.api.blocks.types.GraveType;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.inventory.container.ContainerGrave;
 import com.minecolonies.api.util.InventoryUtils;

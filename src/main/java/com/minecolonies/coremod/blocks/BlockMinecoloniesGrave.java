@@ -1,13 +1,14 @@
 package com.minecolonies.coremod.blocks;
 
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesGrave;
+import com.minecolonies.api.blocks.AbstractBlockMinecoloniesRack;
+import com.minecolonies.api.blocks.types.GraveType;
+import com.minecolonies.api.blocks.types.RackType;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.tileentities.AbstractTileEntityGrave;
-import com.minecolonies.api.tileentities.AbstractTileEntityRack;
 import com.minecolonies.api.tileentities.TileEntityGrave;
-import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.block.Block;
@@ -67,6 +68,7 @@ public class BlockMinecoloniesGrave extends AbstractBlockMinecoloniesGrave<Block
     public BlockMinecoloniesGrave()
     {
         super(Properties.create(Material.ROCK).hardnessAndResistance(BLOCK_HARDNESS, RESISTANCE));
+        //this.setDefaultState(this.getDefaultState().with(FACING, Direction.NORTH).with(VARIANT, GraveType.DEFAULT)); //TODO TG Crash on startup
         this.setDefaultState(this.getDefaultState().with(FACING, Direction.NORTH));
         setRegistryName(Constants.MOD_ID.toLowerCase() + ":" + BLOCK_NAME);
     }
@@ -111,7 +113,7 @@ public class BlockMinecoloniesGrave extends AbstractBlockMinecoloniesGrave<Block
      */
     public static BlockState getPlacementState(final BlockState state, final TileEntity entity, final BlockPos pos)
     {
-        return state;
+        return state.with(VARIANT, GraveType.DEFAULT);
     }
 
     /**
@@ -181,6 +183,7 @@ public class BlockMinecoloniesGrave extends AbstractBlockMinecoloniesGrave<Block
     public void onBlockPlacedBy(final World worldIn, final BlockPos pos, final BlockState state, @Nullable final LivingEntity placer, final ItemStack stack)
     {
         BlockState tempState = state;
+        tempState = tempState.with(VARIANT, GraveType.DEFAULT);
         if (placer != null)
         {
             tempState = tempState.with(FACING, placer.getHorizontalFacing().getOpposite());
@@ -192,7 +195,7 @@ public class BlockMinecoloniesGrave extends AbstractBlockMinecoloniesGrave<Block
     @Override
     protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder)
     {
-        builder.add(FACING);
+        builder.add(FACING, VARIANT);
     }
 
     @Override
