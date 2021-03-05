@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity.ai.citizen.beekeeper;
 
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
+import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
@@ -10,7 +11,6 @@ import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBeekeeper;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.JobBeekeeper;
-import com.minecolonies.coremod.compatibility.resourcefulbees.ResourcefulBeesCompat;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import net.minecraft.block.BeehiveBlock;
 import net.minecraft.entity.Entity;
@@ -28,7 +28,6 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.ModList;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -187,7 +186,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
 
         for (BlockPos pos : hives)
         {
-            if(!(world.getBlockState(pos).getBlock() instanceof BeehiveBlock))
+            if (!(world.getBlockState(pos).getBlock() instanceof BeehiveBlock))
             {
                 getOwnBuilding().removeHive(pos);
             }
@@ -346,18 +345,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
             {
                 worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, 1);
 
-                Stack<ItemStack> stack = new Stack();
-
-                if (ModList.get().isLoaded("resourcefulbees"))
-                {
-                    stack = ResourcefulBeesCompat.getCombsFromHive(hive, world, getHoneycombsPerHarvest()); //If resourceful bees is loaded go collect the custom items
-                } 
-                else 
-                {
-                    stack.add(new ItemStack(Items.HONEYCOMB, getHoneycombsPerHarvest())); //If resourceful bees is not loaded behave normally
-                }
-
-                for (ItemStack stackItem : stack) 
+                for (ItemStack stackItem : Compatibility.getCombsFromHive(hive, world, getHoneycombsPerHarvest()))
                 {
                     InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(stackItem, worker.getItemHandlerCitizen());
                 }
