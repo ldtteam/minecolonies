@@ -16,11 +16,6 @@ public final class BuildingConstants
     public static final int NO_WORK_ORDER = -1;
 
     /**
-     * Max priority of a building.
-     */
-    public static final int MAX_PRIO = 10;
-
-    /**
      * Min slots required to be recognized as storage.
      */
     public static final int MIN_SLOTS_FOR_RECOGNITION = 5;
@@ -127,7 +122,7 @@ public final class BuildingConstants
      */
     private BuildingConstants()
     {
-        /**
+        /*
          * Intentionally left empty.
          */
     }
