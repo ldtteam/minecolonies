@@ -1,19 +1,35 @@
 {
   "variants": {
-    "facing=east": {
+    "facing=east,variant=blockgravedefault": {
       "model": "minecolonies:block/blockgrave",
       "y": 0
     },
-    "facing=south": {
+    "facing=south,variant=blockgravedefault": {
       "model": "minecolonies:block/blockgrave",
       "y": 90
     },
-    "facing=west": {
+    "facing=west,variant=blockgravedefault": {
       "model": "minecolonies:block/blockgrave",
       "y": 180
     },
-    "facing=north": {
+    "facing=north,variant=blockgravedefault": {
       "model": "minecolonies:block/blockgrave",
+      "y": 270
+    },
+    "facing=east,variant=blockgravedecayed": {
+      "model": "minecolonies:block/blockgravedecayed",
+      "y": 0
+    },
+    "facing=south,variant=blockgravedecayed": {
+      "model": "minecolonies:block/blockgravedecayed",
+      "y": 90
+    },
+    "facing=west,variant=blockgravedecayed": {
+      "model": "minecolonies:block/blockgravedecayed",
+      "y": 180
+    },
+    "facing=north,variant=blockgravedecayed": {
+      "model": "minecolonies:block/blockgravedecayed",
       "y": 270
     }
   }

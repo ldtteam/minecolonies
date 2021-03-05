@@ -2,19 +2,19 @@
   "variants": {
     "facing=east": {
       "model": "minecolonies:block/blockhutgraveyard",
-      "y": 90
+      "y": 270
     },
     "facing=south": {
       "model": "minecolonies:block/blockhutgraveyard",
-      "y": 180
+      "y": 0
     },
     "facing=west": {
       "model": "minecolonies:block/blockhutgraveyard",
-      "y": 270
+      "y": 90
     },
     "facing=north": {
       "model": "minecolonies:block/blockhutgraveyard",
-      "y": 0
+      "y": 180
     }
   }
 }

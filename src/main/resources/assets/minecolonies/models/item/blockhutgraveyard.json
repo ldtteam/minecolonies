@@ -1,6 +1,5 @@
 {
-  "parent": "minecolonies:block/blockhutgraveyard",
-  "display": {
+  "parent": "minecolonies:block/blockhutgraveyard", "display": {
     "thirdperson_righthand": {
       "rotation": [
         45,
@@ -118,4 +117,4 @@
       ]
     }
   }
-}
+ }
