@@ -272,7 +272,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     @Override
     public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
     {
-        if (block instanceof AbstractChestBlock || block instanceof BlockMinecoloniesRack)
+        if (block instanceof BlockMinecoloniesRack)
         {
             final TileEntity entity = world.getTileEntity(pos);
             if (entity instanceof ChestTileEntity)

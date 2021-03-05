@@ -485,17 +485,20 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
                             final TileEntity te = world.getTileEntity(pos);
                             if (te != null)
                             {
-                                final LazyOptional<IItemHandler> cap = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
-                                cap.ifPresent(theCap -> {
-                                    if (theCap instanceof IItemHandlerModifiable && theCap.getSlots() >= MIN_SLOTS_FOR_RECOGNITION)
-                                    {
-                                        handlers.add((IItemHandlerModifiable) theCap);
-                                    }
-                                });
-
                                 if (te instanceof AbstractTileEntityRack)
                                 {
+                                    final LazyOptional<IItemHandler> cap = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+                                    cap.ifPresent(theCap -> {
+                                        if (theCap instanceof IItemHandlerModifiable && theCap.getSlots() >= MIN_SLOTS_FOR_RECOGNITION)
+                                        {
+                                            handlers.add((IItemHandlerModifiable) theCap);
+                                        }
+                                    });
                                     ((AbstractTileEntityRack) te).setBuildingPos(this.getPos());
+                                }
+                                else
+                                {
+                                    building.removeContainerPosition(pos);
                                 }
                             }
                         }
