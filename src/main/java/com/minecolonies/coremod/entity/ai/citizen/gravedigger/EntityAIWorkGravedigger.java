@@ -108,12 +108,6 @@ public class EntityAIWorkGravedigger extends AbstractEntityAICrafting<JobGravedi
     private boolean shouldDumpInventory = false;
 
     /**
-     * The offset to work at relative to the grave.
-     */
-    @Nullable
-    private BlockPos workingOffset;
-
-    /**
      * The previous position which has been worked at.
      */
     @Nullable
@@ -195,70 +189,91 @@ public class EntityAIWorkGravedigger extends AbstractEntityAICrafting<JobGravedi
         }
         worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
 
-        building.syncWithColony(world);
         if (building.getPendingGraves().isEmpty())
         {
-            searchAndAddGraves();
-        }
-
-        /** interaction voice
-        if (building.hasNoFields())
-        {
-            if (worker.getCitizenData() != null)
-            {
-                worker.getCitizenData().triggerInteraction(new StandardInteraction(new TranslationTextComponent(NO_FREE_FIELDS), ChatPriority.BLOCKING));
-            }
             worker.getCitizenData().setIdleAtJob(true);
-            return PREPARING;
-        }
-        **/
-        worker.getCitizenData().setIdleAtJob(false);
-
-        //If the gravedigger has no currentGrave and there is no grave which needs work, check graves.
-        if (building.getCurrentGrave() == null && building.getGraveToWorkOn(world) == null)
-        {
-            building.resetGraves();
             return IDLE;
         }
 
-        @Nullable final BlockPos currentGrave = building.getGraveToWorkOn(world);
-        final TileEntity entity = world.getTileEntity(currentGrave);
-        if (entity instanceof TileEntityGrave)
+        worker.getCitizenData().setIdleAtJob(false);
+
+        @Nullable final BlockPos currentGrave = building.getGraveToWorkOn();
+        if (currentGrave == null)
         {
-            return DIG_GRAVE;
+            return IDLE;
         }
         else
         {
-           //TODO TG getOwnBuilding().setCurrentGrave(null);
-        }
-        return PREPARING;
-    }
-
-    private IAIState workAtGrave() {
-        //TODO TG
-        return PREPARING;
-    }
-
-    /**
-     * Searches and adds a grave that has not been taken yet for the gravedigger and then adds it to the list.
-     */
-    private void searchAndAddGraves()
-    {
-        final IColony colony = worker.getCitizenColonyHandler().getColony();
-        if (colony != null)
-        {
-            //TODO TG -> find a way to register grave in the colony?
-            /**
-            @Nullable final AbstractTileEntityGrave newGrave = colony.getBuildingManager().getFreeField(worker.getCitizenData().getId(), world);
-
-            if (newGrave != null && getOwnBuilding() != null)
+            final TileEntity entity = world.getTileEntity(currentGrave);
+            if (entity != null && entity instanceof TileEntityGrave)
             {
-                newGrave.setOwner(worker.getCitizenData().getId());
-                newGrave.setTaken(true);
-                newGrave.markDirty();
-                getOwnBuilding().assignGrave(newGrave.getPosition());
-            }**/
+                return DIG_GRAVE;
+            }
+            building.ClearCurrentGrave();
         }
+
+        return PREPARING;
+    }
+
+    private IAIState workAtGrave()
+    {
+        @Nullable final BuildingGraveyard buildingGraveyard = getOwnBuilding();
+
+        if (buildingGraveyard == null || checkForToolOrWeapon(ToolType.SHOVEL) || buildingGraveyard.getGraveToWorkOn() == null)
+        {
+            return PREPARING;
+        }
+        worker.getCitizenData().setVisibleStatus(DIGGING_ICON);
+
+        @Nullable final BlockPos gravePos = buildingGraveyard.getGraveToWorkOn();
+        final TileEntity entity = world.getTileEntity(gravePos);
+        if (entity instanceof TileEntityGrave)
+        {
+            // Still moving to the block
+            worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.walking"));
+
+            if (walkToBlock(gravePos.up().south(1).east(1)))
+            {
+                return getState();
+            }
+
+            //at position
+            worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.digging"));
+            if (!digIfAble(gravePos))
+            {
+                return getState();
+            }
+
+            shouldDumpInventory = true;
+            buildingGraveyard.ClearCurrentGrave();
+            return IDLE;
+        }
+
+        return IDLE;
+
+    }
+    /**
+     * Checks if we can dig a grave, and does so if we can.
+     *
+     * @param position the grave to harvest.
+     * @return true if we harvested or not supposed to.
+     */
+    private boolean digIfAble(final BlockPos position)
+    {
+        if (!checkForToolOrWeapon(ToolType.SHOVEL))
+        {
+            if (mineBlock(position))
+            {
+                equipShovel();
+                worker.swingArm(worker.getActiveHand());
+                world.setBlockState(position, Blocks.AIR.getDefaultState());
+                worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, 1);
+                worker.decreaseSaturationForContinuousAction();
+                return true;
+            }
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -280,20 +295,9 @@ public class EntityAIWorkGravedigger extends AbstractEntityAICrafting<JobGravedi
     /**
      * Sets the shovel as held item.
      */
-    private void equipHoe()
+    private void equipShovel()
     {
         worker.getCitizenItemHandler().setHeldItem(Hand.MAIN_HAND, getShovelSlot());
-    }
-
-    /**
-     * Check if a block is a grave.
-     *
-     * @param block the block.
-     * @return true if so.
-     */
-    public boolean isCrop(final Block block)
-    {
-        return block instanceof AbstractBlockMinecoloniesGrave;
     }
 
     /**

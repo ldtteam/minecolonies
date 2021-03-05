@@ -1,17 +1,13 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.blockout.Pane;
-import com.ldtteam.blockout.controls.Button;
-import com.ldtteam.blockout.controls.ItemIcon;
 import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.blockout.views.SwitchView;
-import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.tileentities.TileEntityGrave;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFarmer;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingGraveyard;
-import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.tileentity.TileEntity;
@@ -21,12 +17,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
-
 /**
  * Window for the home building.
  */
-public class WindowHutGraveyard extends AbstractWindowBuilding<BuildingGraveyard.View>
+public class WindowHutGraveyard extends AbstractWindowWorkerBuilding<BuildingGraveyard.View>
 {
     /**
      * Tag of the pages view.
@@ -96,7 +90,7 @@ public class WindowHutGraveyard extends AbstractWindowBuilding<BuildingGraveyard
      /**
      * Retrieve levels from the building to display in GUI.
      */
-    private void pullLevelsFromHut()
+    private void pullInformationFromHut()
     {
         graves = building.getGraves();
     }
@@ -106,7 +100,7 @@ public class WindowHutGraveyard extends AbstractWindowBuilding<BuildingGraveyard
     {
         super.onOpened();
 
-      /*  graveList = findPaneOfTypeByID(LIST_GRAVES, ScrollingList.class);
+        graveList = findPaneOfTypeByID(LIST_GRAVES, ScrollingList.class);
         graveList.setDataProvider(new ScrollingList.DataProvider()
         {
             @Override
@@ -122,14 +116,13 @@ public class WindowHutGraveyard extends AbstractWindowBuilding<BuildingGraveyard
                 @NotNull final String distance = Integer.toString((int) Math.sqrt(BlockPosUtil.getDistanceSquared(field, building.getPosition())));
                 final String direction = BlockPosUtil.calcDirection(building.getPosition(), field);
                 final TileEntity entity = world.getTileEntity(field);
-                if (entity instanceof ScarecrowTileEntity) //TODO TG change from scarecrow
+                if (entity instanceof TileEntityGrave)
                 {
-
+                    rowPane.findPaneOfTypeByID(TAG_DISTANCE, Text.class).setText(distance + "m");
+                    rowPane.findPaneOfTypeByID(TAG_DIRECTION, Text.class).setText(direction);
                 }
             }
         });
-
-       */
     }
 
     @NotNull
@@ -144,13 +137,11 @@ public class WindowHutGraveyard extends AbstractWindowBuilding<BuildingGraveyard
     {
         super.onUpdate();
 
-       /* final String currentPage = findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).getCurrentView().getID();
+        final String currentPage = findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).getCurrentView().getID();
         if (currentPage.equals(PAGE_GRAVES))
         {
-            pullLevelsFromHut();
-            window.findPaneOfTypeByID(PAGE_GRAVES, ScrollingList.class).refreshElementPanes();
+            pullInformationFromHut();
+            window.findPaneOfTypeByID(LIST_GRAVES, ScrollingList.class).refreshElementPanes();
         }
-
-        */
     }
 }

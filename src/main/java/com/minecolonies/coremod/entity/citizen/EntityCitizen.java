@@ -39,6 +39,7 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesGrave;
 import com.minecolonies.coremod.blocks.decorative.BlockConstructionTape;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingGraveyard;
 import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenDiedEvent;
 import com.minecolonies.coremod.colony.jobs.*;
 import com.minecolonies.coremod.entity.SittingEntity;
@@ -1496,9 +1497,15 @@ public class EntityCitizen extends AbstractEntityCitizen
         if (firstValidPosition != null)
         {
            world.setBlockState(firstValidPosition, BlockMinecoloniesGrave.getPlacementState(ModBlocks.blockGrave.getDefaultState(), new TileEntityGrave(), firstValidPosition));
-
            final TileEntityGrave graveEntity = (TileEntityGrave) world.getTileEntity(firstValidPosition);
            InventoryUtils.transferAllItemHandler(citizenData.getInventory(), graveEntity.getInventory(), world, (int) firstValidPosition.getX(), (int) firstValidPosition.getY(), (int) firstValidPosition.getZ());
+
+           final BlockPos closestGraveyardPos = citizenColonyHandler.getColony().getBuildingManager().getClosestGraveyard(this);
+           if(closestGraveyardPos != null)
+           {
+               final BuildingGraveyard graveyard = (BuildingGraveyard)citizenColonyHandler.getColony().getBuildingManager().getBuilding(closestGraveyardPos);
+               graveyard.addGrave(firstValidPosition);
+           }
         }
         else
         {

@@ -32,6 +32,7 @@ import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.common.ToolType;
 import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -48,7 +49,7 @@ public class BlockMinecoloniesGrave extends AbstractBlockMinecoloniesGrave<Block
     /**
      * The hardness this block has.
      */
-    private static final float BLOCK_HARDNESS = 10.0F;
+    private static final float BLOCK_HARDNESS = 1.5F;
 
     /**
      * This blocks name.
@@ -67,7 +68,7 @@ public class BlockMinecoloniesGrave extends AbstractBlockMinecoloniesGrave<Block
 
     public BlockMinecoloniesGrave()
     {
-        super(Properties.create(Material.ROCK).hardnessAndResistance(BLOCK_HARDNESS, RESISTANCE));
+        super(Properties.create(Material.ROCK).hardnessAndResistance(BLOCK_HARDNESS, RESISTANCE).harvestTool(ToolType.SHOVEL));
         this.setDefaultState(this.getDefaultState().with(FACING, Direction.NORTH).with(VARIANT, GraveType.DEFAULT));
         setRegistryName(Constants.MOD_ID.toLowerCase() + ":" + BLOCK_NAME);
     }

@@ -206,6 +206,14 @@ public interface IBuildingManager
     BlockPos getBestRestaurant(final AbstractEntityCitizen citizen);
 
     /**
+     * Calculate the closest graveyard for a certain citizen.
+     *
+     * @param citizen the citizen.
+     * @return the Position of it.
+     */
+    BlockPos getClosestGraveyard(final AbstractEntityCitizen citizen);
+
+    /**
      * Calculate a good hospital for a certain citizen.
      *
      * @param citizen the citizen.

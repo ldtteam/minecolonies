@@ -11,6 +11,7 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.tileentities.TileEntityGrave;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.client.gui.WindowHutGraveyard;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
@@ -32,6 +33,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
+import static com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenDiedEvent.CITIZEN_DIED_EVENT_ID;
 
 /**
  * Class which handles the graveyard building.
@@ -103,24 +105,14 @@ public class BuildingGraveyard extends AbstractBuildingWorker
     }
 
     /**
-     * Checks if the gravedigger has any graves.
-     *
-     * @return true if he has none.
-     */
-    public boolean hasNoGraves()
-    {
-        return pendingGraves.isEmpty();
-    }
-
-    /**
      * Assigns a grave list to the pending grave list.
      *
      * @param grave the grave to add.
      */
-    public void addFarmerFields(final BlockPos grave)
+    public void addGrave(final BlockPos grave)
     {
-        final TileEntity scareCrow = getColony().getWorld().getTileEntity(grave); //TODO TG change scareCrow TileEntity
-        if (scareCrow instanceof ScarecrowTileEntity)
+        final TileEntity tileEntity = getColony().getWorld().getTileEntity(grave);
+        if (tileEntity instanceof TileEntityGrave)
         {
             pendingGraves.add(grave);
             this.markDirty();
@@ -128,24 +120,11 @@ public class BuildingGraveyard extends AbstractBuildingWorker
     }
 
     /**
-     * Getter of the current grave.
-     *
-     * @return a grave object.
+     * Clear the current grave the gravedigger is currently working on.
      */
-    @Nullable
-    public BlockPos getCurrentGrave()
+    public void ClearCurrentGrave()
     {
-        return currentGrave;
-    }
-
-    /**
-     * Sets the grave the gravedigger is currently working on.
-     *
-     * @param currentGrave the grave to work on.
-     */
-    public void setCurrentField(@Nullable final BlockPos currentGrave)
-    {
-        this.currentGrave = currentGrave;
+        this.currentGrave = null;
     }
 
     /**
@@ -155,14 +134,33 @@ public class BuildingGraveyard extends AbstractBuildingWorker
      * @return a field to work on.
      */
     @Nullable
-    public BlockPos getGraveToWorkOn(final World world) //TODO TG Gravedigger should work on the oldest grave first ? or closest?
+    public BlockPos getGraveToWorkOn() //TODO TG Gravedigger should work on the oldest grave first ?
     {
+        if(currentGrave != null)
+        {
+            final TileEntity tileEntity = getColony().getWorld().getTileEntity(currentGrave);
+            if(tileEntity == null)
+            {
+                pendingGraves.remove(currentGrave);
+                currentGrave = null;
+            }
+            else
+            {
+                return currentGrave;
+            }
+        }
+
         final List<BlockPos> graves = new ArrayList<>(pendingGraves);
         Collections.shuffle(graves);
 
         for (@NotNull final BlockPos grave : graves)
         {
             final TileEntity tileEntity = getColony().getWorld().getTileEntity(grave);
+            if(tileEntity == null)
+            {
+                pendingGraves.remove(grave);
+            }
+
             if (tileEntity instanceof TileEntityGrave)
             {
                 currentGrave = grave;
@@ -176,17 +174,6 @@ public class BuildingGraveyard extends AbstractBuildingWorker
     @Override
     public IJob<?> createJob(@Nullable final ICitizenData citizen)
     {
-        if (citizen != null && !pendingGraves.isEmpty())
-        {
-            for (@NotNull final BlockPos field : pendingGraves)
-            {
-                final TileEntity scareCrow = getColony().getWorld().getTileEntity(field); //TODO TG change scareCrow TileEntity
-                if (scareCrow instanceof ScarecrowTileEntity)
-                {
-                    ((ScarecrowTileEntity) scareCrow).setOwner(citizen.getId());
-                }
-            }
-        }
         return new JobGravedigger(citizen);
     }
 
@@ -230,28 +217,6 @@ public class BuildingGraveyard extends AbstractBuildingWorker
         return compound;
     }
 
-    @Override
-    public void onDestroyed()
-    {
-        super.onDestroyed();
-        for (@NotNull final BlockPos grave : pendingGraves)
-        {
-            final TileEntity tileentity = getColony().getWorld().getTileEntity(grave);
-            if (tileentity instanceof TileEntityGrave)
-            {
-                //TODO TG
-                // ((TileEntityGrave) tileentity).setTaken(false);
-                //((TileEntityGrave) tileentity).setOwner(0);
-                //getColony().getWorld()
-                //        .notifyBlockUpdate(tileentity.getPos(),
-                //                getColony().getWorld().getBlockState(tileentity.getPos()),
-                //                getColony().getWorld().getBlockState(tileentity.getPos()),
-                //                BLOCK_UPDATE_FLAG);
-
-            }
-        }
-    }
-
     @NotNull
     @Override
     public String getJobName()
@@ -277,12 +242,6 @@ public class BuildingGraveyard extends AbstractBuildingWorker
     public BuildingEntry getBuildingRegistryEntry()
     {
         return ModBuildings.graveyard;
-    }
-
-    @Override
-    public void onWakeUp()
-    {
-        resetGraves();
     }
 
     @NotNull
@@ -313,108 +272,40 @@ public class BuildingGraveyard extends AbstractBuildingWorker
     public void serializeToView(@NotNull final PacketBuffer buf)
     {
         super.serializeToView(buf);
-        //TODO TG
-    }
 
-    /**
-     * Resets the graves to need work again.
-     */
-    public void resetGraves()
-    {
-        for (@NotNull final BlockPos grave : pendingGraves)
+        int size = 0;
+
+        final List<BlockPos> graves = new ArrayList<>(pendingGraves);
+        final List<BlockPos> cleanList = new ArrayList<>();
+
+        for (@NotNull final BlockPos grave : graves)
         {
-            final TileEntity tileentity = getColony().getWorld().getTileEntity(grave);
-            if (tileentity instanceof TileEntityGrave)
+            if (colony.getWorld().isAreaLoaded(grave, 1))
             {
-                //TODO TG ((TileEntityGrave) tileentity).setNeedsWork(true);
-            }
-        }
-    }
-
-    /**
-     * Synchronize graves list with colony.
-     *
-     * @param world the world the building is in.
-     */
-    public void syncWithColony(@NotNull final World world)
-    {
-        if (!pendingGraves.isEmpty())
-        {
-            @NotNull final ArrayList<BlockPos> tempGraves = new ArrayList<>(pendingGraves);
-
-            for (@NotNull final BlockPos grave : tempGraves)
-            {
-                final TileEntity tileEntity = world.getTileEntity(grave);
+                final TileEntity tileEntity = getColony().getWorld().getTileEntity(grave);
                 if (tileEntity instanceof TileEntityGrave)
                 {
-                    //TODO TG
-                   /** getColony().getWorld()
-                            .notifyBlockUpdate(tileEntity.getPos(),
-                                    getColony().getWorld().getBlockState(tileEntity.getPos()),
-                                    getColony().getWorld().getBlockState(tileEntity.getPos()),
-                                    BLOCK_UPDATE_FLAG);
-                    ((TileEntityGrave) tileEntity).setTaken(true);
-                    ((TileEntityGrave) tileEntity).setOwner(getMainCitizen() != null? getMainCitizen().getId() : 0);
-                    ((TileEntityGrave) tileEntity).setColony(colony);**/
-                }
-                else
-                {
-                    pendingGraves.remove(grave);
-                    if (currentGrave != null && currentGrave.equals(grave))
-                    {
-                        currentGrave = null;
-                    }
+                    cleanList.add(grave);
+                    size++;
                 }
             }
         }
-    }
 
-    /**
-     * Method called to free a grave.
-     *
-     * @param position id of the grave.
-     */
-    public void freeField(final BlockPos position)
-    {
-        final TileEntity scarecrow = getColony().getWorld().getTileEntity(position); //TODO TG change scarecrow
-        if (scarecrow instanceof ScarecrowTileEntity)
+        buf.writeInt(size);
+        for (@NotNull final BlockPos grave : cleanList)
         {
-            pendingGraves.remove(position);
-            /*
-            ((ScarecrowTileEntity) scarecrow).setTaken(false);
-
-            ((ScarecrowTileEntity) scarecrow).setOwner(0);
-            getColony().getWorld()
-                    .notifyBlockUpdate(scarecrow.getPos(),
-                            getColony().getWorld().getBlockState(scarecrow.getPos()),
-                            getColony().getWorld().getBlockState(scarecrow.getPos()),
-                            BLOCK_UPDATE_FLAG);
-
-             */
+            buf.writeBlockPos(grave);
         }
-    }
 
-    /**
-     * Method called to assign a grave to the gravedigger.
-     *
-     * @param position id of the grave.
-     */
-    public void assignGrave(final BlockPos position)
-    {
-        final TileEntity tileEntity = getColony().getWorld().getTileEntity(position);
-        if (tileEntity instanceof TileEntityGrave)
+        for (final BlockPos pos : pendingGraves)
         {
-            //TODO TG
-            /**
-            ((TileEntityGrave) tileEntity).setTaken(true);
-
-            if (getMainCitizen() != null)
+            if (!cleanList.contains(pos))
             {
-                ((TileEntityGrave) tileEntity).setOwner(getMainCitizen().getId());
+                Log.getLogger().warn("Pending Grave not considered because not loaded: " + pos.toString());
             }
-             **/
-            pendingGraves.add(position);
         }
+
+        buf.writeInt(pendingGraves.size());
     }
 
     /**

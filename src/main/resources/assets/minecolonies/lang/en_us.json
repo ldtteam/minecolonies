@@ -630,6 +630,10 @@
   "com.minecolonies.coremod.gui.workerhuts.farmerhut.assignmentmode": "Assign Fields to Farmer:",
   "com.minecolonies.coremod.gui.workerhuts.farmerhut.requestfertilizer": "Allow Farmer to request Fertilizer",
 
+  "com.minecolonies.coremod.job.gravedigger": "Gravedigger",
+  "com.minecolonies.coremod.gui.workerhuts.graveyard": "Graveyard",
+  "com.minecolonies.coremod.gui.workerhuts.graveyard.graves": "Graves",
+
   "com.minecolonies.coremod.gui.workerhuts.farmerhut.north": "North",
   "com.minecolonies.coremod.gui.workerhuts.farmerhut.south": "South",
   "com.minecolonies.coremod.gui.workerhuts.farmerhut.east": "East",
