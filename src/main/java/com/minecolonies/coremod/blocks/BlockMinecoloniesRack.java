@@ -259,6 +259,11 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
         builder.add(FACING, VARIANT);
     }
 
+    @Override
+    public boolean hasTileEntity(final BlockState state)
+    {
+        return true;
+    }
 
     @Nullable
     @Override
