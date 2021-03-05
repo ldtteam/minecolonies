@@ -159,9 +159,18 @@ public enum AIWorkerState implements IAIState
     FARMER_PLANT(false),
 
     /**
-     * Harvest the crops.
+     * Plant the seeds.
      */
     FARMER_HARVEST(false),
+
+      /*
+###Gravedigger###
+    */
+
+    /**
+     * Harvest the crops.
+     */
+    DIG_GRAVE(false),
 
       /*
 ###Guard###

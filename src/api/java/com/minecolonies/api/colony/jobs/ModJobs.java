@@ -13,6 +13,7 @@ public final class ModJobs
     public static final ResourceLocation MINER_ID          = new ResourceLocation(Constants.MOD_ID, "miner");
     public static final ResourceLocation LUMBERJACK_ID     = new ResourceLocation(Constants.MOD_ID, "lumberjack");
     public static final ResourceLocation FARMER_ID         = new ResourceLocation(Constants.MOD_ID, "farmer");
+    public static final ResourceLocation GRAVEDIGGER_ID   = new ResourceLocation(Constants.MOD_ID, "gravedigger");
     public static final ResourceLocation FISHERMAN_ID      = new ResourceLocation(Constants.MOD_ID, "fisherman");
     public static final ResourceLocation BAKER_ID          = new ResourceLocation(Constants.MOD_ID, "baker");
     public static final ResourceLocation COOK_ID           = new ResourceLocation(Constants.MOD_ID, "cook");
@@ -55,6 +56,7 @@ public final class ModJobs
     public static JobEntry miner;
     public static JobEntry lumberjack;
     public static JobEntry farmer;
+    public static JobEntry gravedigger;
     public static JobEntry fisherman;
     public static JobEntry baker;
     public static JobEntry cook;

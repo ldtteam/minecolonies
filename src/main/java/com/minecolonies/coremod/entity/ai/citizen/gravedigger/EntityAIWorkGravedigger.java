@@ -1,0 +1,319 @@
+package com.minecolonies.coremod.entity.ai.citizen.gravedigger;
+
+import com.google.common.reflect.TypeToken;
+import com.minecolonies.api.advancements.AdvancementTriggers;
+import com.minecolonies.api.blocks.AbstractBlockMinecoloniesGrave;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.interactionhandling.ChatPriority;
+import com.minecolonies.api.colony.requestsystem.requestable.StackList;
+import com.minecolonies.api.compatibility.Compatibility;
+import com.minecolonies.api.entity.ai.statemachine.AITarget;
+import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
+import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
+import com.minecolonies.api.items.ModItems;
+import com.minecolonies.api.tileentities.AbstractScarecrowTileEntity;
+import com.minecolonies.api.tileentities.AbstractTileEntityGrave;
+import com.minecolonies.api.tileentities.ScarecrowFieldStage;
+import com.minecolonies.api.tileentities.TileEntityGrave;
+import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Tuple;
+import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.blocks.BlockScarecrow;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFarmer;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingGraveyard;
+import com.minecolonies.coremod.colony.interactionhandling.PosBasedInteraction;
+import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
+import com.minecolonies.coremod.colony.jobs.JobGravedigger;
+import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
+import com.minecolonies.coremod.network.messages.client.CompostParticleMessage;
+import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
+import com.minecolonies.coremod.util.AdvancementUtils;
+import net.minecraft.block.*;
+import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.loot.LootContext;
+import net.minecraft.loot.LootParameters;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.common.Tags;
+import net.minecraftforge.fml.network.PacketDistributor;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Predicate;
+
+import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.api.research.util.ResearchConstants.FARMING;
+import static com.minecolonies.api.util.constant.CitizenConstants.BLOCK_BREAK_SOUND_RANGE;
+import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
+import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
+
+/**
+ * Gravedigger AI class.
+ */
+public class EntityAIWorkGravedigger extends AbstractEntityAICrafting<JobGravedigger, BuildingGraveyard>
+{
+    /**
+     * Return to chest after this amount of stacks.
+     */
+    private static final int MAX_BLOCKS_MINED = 64;
+
+    /**
+     * The standard delay the gravedigger should have.
+     */
+    private static final int STANDARD_DELAY = 40;
+
+    /**
+     * The smallest delay the gravedigger should have.
+     */
+    private static final int SMALLEST_DELAY = 1;
+
+    /**
+     * The bonus the gravedigger gains each update is level/divider.
+     */
+    private static final double DELAY_DIVIDER = 1;
+
+    /**
+     * The EXP Earned per dig.
+     */
+    private static final double XP_PER_DIG = 0.5;
+
+    /**
+     * Gravedigger icon
+     */
+    private final static VisibleCitizenStatus DIGGING_ICON =
+      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/gravedigger.png"), "com.minecolonies.gui.visiblestatus.farmer");
+
+    /**
+     * Changed after finished digging in order to dump the inventory.
+     */
+    private boolean shouldDumpInventory = false;
+
+    /**
+     * The offset to work at relative to the grave.
+     */
+    @Nullable
+    private BlockPos workingOffset;
+
+    /**
+     * The previous position which has been worked at.
+     */
+    @Nullable
+    private BlockPos prevPos;
+
+    /**
+     * Constructor for the Gravedigger. Defines the tasks the Gravedigger executes.
+     *
+     * @param job a gravedigger job to use.
+     */
+    public EntityAIWorkGravedigger(@NotNull final JobGravedigger job)
+    {
+        super(job);
+        super.registerTargets(
+          new AITarget(IDLE, () -> START_WORKING, 10),
+          new AITarget(PREPARING, this::prepareForDigging, TICKS_SECOND),
+          new AITarget(DIG_GRAVE, this::workAtGrave, 5)
+        );
+        worker.setCanPickUpLoot(true);
+    }
+
+    @Override
+    public Class<BuildingGraveyard> getExpectedBuildingClass()
+    {
+        return BuildingGraveyard.class;
+    }
+
+    @Override
+    protected int getActionsDoneUntilDumping()
+    {
+        return MAX_BLOCKS_MINED;
+    }
+
+    @Override
+    protected int getActionRewardForCraftingSuccess()
+    {
+        return MAX_BLOCKS_MINED;
+    }
+
+    @Override
+    protected IAIState decide()
+    {
+        final IAIState nextState = super.decide();
+        if (nextState != START_WORKING)
+        {
+            return nextState;
+        }
+
+        if (job.getTaskQueue().isEmpty())
+        {
+            return PREPARING;
+        }
+
+        if (job.getCurrentTask() == null)
+        {
+            return PREPARING;
+        }
+
+        return GET_RECIPE;
+    }
+
+    /**
+     * Prepares the gravedigger for digging. Also requests the tools and checks if the gravedigger has queued graves.
+     *
+     * @return the next IAIState
+     */
+    @NotNull
+    private IAIState prepareForDigging()
+    {
+        @Nullable final BuildingGraveyard building = getOwnBuilding();
+        if (building == null || building.getBuildingLevel() < 1)
+        {
+            return PREPARING;
+        }
+
+        if (!job.getTaskQueue().isEmpty())
+        {
+            return START_WORKING;
+        }
+        worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
+
+        building.syncWithColony(world);
+        if (building.getPendingGraves().isEmpty())
+        {
+            searchAndAddGraves();
+        }
+
+        /** interaction voice
+        if (building.hasNoFields())
+        {
+            if (worker.getCitizenData() != null)
+            {
+                worker.getCitizenData().triggerInteraction(new StandardInteraction(new TranslationTextComponent(NO_FREE_FIELDS), ChatPriority.BLOCKING));
+            }
+            worker.getCitizenData().setIdleAtJob(true);
+            return PREPARING;
+        }
+        **/
+        worker.getCitizenData().setIdleAtJob(false);
+
+        //If the gravedigger has no currentGrave and there is no grave which needs work, check graves.
+        if (building.getCurrentGrave() == null && building.getGraveToWorkOn(world) == null)
+        {
+            building.resetGraves();
+            return IDLE;
+        }
+
+        @Nullable final BlockPos currentGrave = building.getGraveToWorkOn(world);
+        final TileEntity entity = world.getTileEntity(currentGrave);
+        if (entity instanceof TileEntityGrave)
+        {
+            return DIG_GRAVE;
+        }
+        else
+        {
+           //TODO TG getOwnBuilding().setCurrentGrave(null);
+        }
+        return PREPARING;
+    }
+
+    private IAIState workAtGrave() {
+        //TODO TG
+        return PREPARING;
+    }
+
+    /**
+     * Searches and adds a grave that has not been taken yet for the gravedigger and then adds it to the list.
+     */
+    private void searchAndAddGraves()
+    {
+        final IColony colony = worker.getCitizenColonyHandler().getColony();
+        if (colony != null)
+        {
+            //TODO TG -> find a way to register grave in the colony?
+            /**
+            @Nullable final AbstractTileEntityGrave newGrave = colony.getBuildingManager().getFreeField(worker.getCitizenData().getId(), world);
+
+            if (newGrave != null && getOwnBuilding() != null)
+            {
+                newGrave.setOwner(worker.getCitizenData().getId());
+                newGrave.setTaken(true);
+                newGrave.markDirty();
+                getOwnBuilding().assignGrave(newGrave.getPosition());
+            }**/
+        }
+    }
+
+    /**
+     * Called to check when the InventoryShouldBeDumped.
+     *
+     * @return true if the conditions are met
+     */
+    @Override
+    protected boolean wantInventoryDumped()
+    {
+        if (shouldDumpInventory)
+        {
+            shouldDumpInventory = false;
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Sets the shovel as held item.
+     */
+    private void equipHoe()
+    {
+        worker.getCitizenItemHandler().setHeldItem(Hand.MAIN_HAND, getShovelSlot());
+    }
+
+    /**
+     * Check if a block is a grave.
+     *
+     * @param block the block.
+     * @return true if so.
+     */
+    public boolean isCrop(final Block block)
+    {
+        return block instanceof AbstractBlockMinecoloniesGrave;
+    }
+
+    /**
+     * Get's the slot in which the shovel is in.
+     *
+     * @return slot number
+     */
+    private int getShovelSlot()
+    {
+        return InventoryUtils.getFirstSlotOfItemHandlerContainingTool(getInventory(), ToolType.SHOVEL, TOOL_LEVEL_WOOD_OR_GOLD, getOwnBuilding().getMaxToolLevel());
+    }
+
+    /**
+     * Returns the gravedigger's worker instance. Called from outside this class.
+     *
+     * @return citizen object
+     */
+    @Nullable
+    public AbstractEntityCitizen getCitizen()
+    {
+        return worker;
+    }
+}

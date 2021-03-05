@@ -1,10 +1,7 @@
 package com.minecolonies.api.tileentities;
 
-import com.minecolonies.api.blocks.types.GraveType;
-import com.minecolonies.api.blocks.types.RackType;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
-import net.minecraft.state.EnumProperty;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
@@ -14,6 +11,7 @@ import net.minecraftforge.items.ItemStackHandler;
 import javax.annotation.Nonnull;
 
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_SIZE;
+import static com.minecolonies.api.util.constant.Constants.TICKS_FIVE_MIN;
 
 public abstract class AbstractTileEntityGrave extends TileEntity implements INamedContainerProvider, ITickableTileEntity
 {
@@ -22,14 +20,10 @@ public abstract class AbstractTileEntityGrave extends TileEntity implements INam
      */
     protected ItemStackHandler inventory;
 
-    protected static final int TICK = 1;
-    protected static final int SECOND = 20 * TICK;
-    protected static final int MINUTE = 60 * SECOND;
-
     /**
      * default duration of the countdown before the grave disapear, in ticks (20 ticks / seconds)
      */
-    protected static final int DEFAULT_DECAY_TIMER = 5 * MINUTE;
+    protected static final int DEFAULT_DECAY_TIMER = TICKS_FIVE_MIN;
 
     /**
      * Is this grave decayed or not

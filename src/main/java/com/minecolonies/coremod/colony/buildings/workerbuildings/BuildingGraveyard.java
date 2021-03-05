@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.citizen.Skill;
+import com.minecolonies.api.tileentities.TileEntityGrave;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
@@ -15,6 +16,7 @@ import com.minecolonies.coremod.client.gui.WindowHutGraveyard;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobFarmer;
+import com.minecolonies.coremod.colony.jobs.JobGravedigger;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -160,8 +162,8 @@ public class BuildingGraveyard extends AbstractBuildingWorker
 
         for (@NotNull final BlockPos grave : graves)
         {
-            final TileEntity scareCrow = getColony().getWorld().getTileEntity(grave); //TODO TG change scareCrow TileEntity
-            if (scareCrow instanceof ScarecrowTileEntity && ((ScarecrowTileEntity) scareCrow).needsWork())
+            final TileEntity tileEntity = getColony().getWorld().getTileEntity(grave);
+            if (tileEntity instanceof TileEntityGrave)
             {
                 currentGrave = grave;
                 return grave;
@@ -185,7 +187,7 @@ public class BuildingGraveyard extends AbstractBuildingWorker
                 }
             }
         }
-        return new JobFarmer(citizen); //TODO TG change JobGraveDigger
+        return new JobGravedigger(citizen);
     }
 
     @Override
@@ -234,19 +236,18 @@ public class BuildingGraveyard extends AbstractBuildingWorker
         super.onDestroyed();
         for (@NotNull final BlockPos grave : pendingGraves)
         {
-            final TileEntity scareCrow = getColony().getWorld().getTileEntity(grave);
-            if (scareCrow instanceof ScarecrowTileEntity) //TODO TG change scareCrow TileEntity
+            final TileEntity tileentity = getColony().getWorld().getTileEntity(grave);
+            if (tileentity instanceof TileEntityGrave)
             {
-                ((ScarecrowTileEntity) scareCrow).setTaken(false);
-                ((ScarecrowTileEntity) scareCrow).setOwner(0);
-/*
-                getColony().getWorld()
-                        .notifyBlockUpdate(scareCrow.getPos(),
-                                getColony().getWorld().getBlockState(scareCrow.getPos()),
-                                getColony().getWorld().getBlockState(scareCrow.getPos()),
-                                BLOCK_UPDATE_FLAG);
+                //TODO TG
+                // ((TileEntityGrave) tileentity).setTaken(false);
+                //((TileEntityGrave) tileentity).setOwner(0);
+                //getColony().getWorld()
+                //        .notifyBlockUpdate(tileentity.getPos(),
+                //                getColony().getWorld().getBlockState(tileentity.getPos()),
+                //                getColony().getWorld().getBlockState(tileentity.getPos()),
+                //                BLOCK_UPDATE_FLAG);
 
- */
             }
         }
     }
@@ -322,10 +323,10 @@ public class BuildingGraveyard extends AbstractBuildingWorker
     {
         for (@NotNull final BlockPos grave : pendingGraves)
         {
-            final TileEntity scareCrow = getColony().getWorld().getTileEntity(grave); //TODO TG change scarecrow
-            if (scareCrow instanceof ScarecrowTileEntity)
+            final TileEntity tileentity = getColony().getWorld().getTileEntity(grave);
+            if (tileentity instanceof TileEntityGrave)
             {
-                ((ScarecrowTileEntity) scareCrow).setNeedsWork(true);
+                //TODO TG ((TileEntityGrave) tileentity).setNeedsWork(true);
             }
         }
     }
@@ -343,18 +344,18 @@ public class BuildingGraveyard extends AbstractBuildingWorker
 
             for (@NotNull final BlockPos grave : tempGraves)
             {
-                final TileEntity scarecrow = world.getTileEntity(grave); //TODO TG change scarecrow
-                if (scarecrow instanceof ScarecrowTileEntity)
+                final TileEntity tileEntity = world.getTileEntity(grave);
+                if (tileEntity instanceof TileEntityGrave)
                 {
-                    /*
-                    getColony().getWorld()
-                            .notifyBlockUpdate(scarecrow.getPos(),
-                                    getColony().getWorld().getBlockState(scarecrow.getPos()),
-                                    getColony().getWorld().getBlockState(scarecrow.getPos()),
+                    //TODO TG
+                   /** getColony().getWorld()
+                            .notifyBlockUpdate(tileEntity.getPos(),
+                                    getColony().getWorld().getBlockState(tileEntity.getPos()),
+                                    getColony().getWorld().getBlockState(tileEntity.getPos()),
                                     BLOCK_UPDATE_FLAG);
-                    ((ScarecrowTileEntity) scarecrow).setTaken(true);
-                    ((ScarecrowTileEntity) scarecrow).setOwner(getMainCitizen() != null? getMainCitizen().getId() : 0);
-                    ((ScarecrowTileEntity) scarecrow).setColony(colony);*/
+                    ((TileEntityGrave) tileEntity).setTaken(true);
+                    ((TileEntityGrave) tileEntity).setOwner(getMainCitizen() != null? getMainCitizen().getId() : 0);
+                    ((TileEntityGrave) tileEntity).setColony(colony);**/
                 }
                 else
                 {
@@ -394,21 +395,24 @@ public class BuildingGraveyard extends AbstractBuildingWorker
     }
 
     /**
-     * Method called to assign a grave to the gravediggrt.
+     * Method called to assign a grave to the gravedigger.
      *
      * @param position id of the grave.
      */
     public void assignGrave(final BlockPos position)
     {
-        final TileEntity scarecrow = getColony().getWorld().getTileEntity(position); //TODO TG change scarecrow
-        if (scarecrow instanceof ScarecrowTileEntity)
+        final TileEntity tileEntity = getColony().getWorld().getTileEntity(position);
+        if (tileEntity instanceof TileEntityGrave)
         {
-            ((ScarecrowTileEntity) scarecrow).setTaken(true);
+            //TODO TG
+            /**
+            ((TileEntityGrave) tileEntity).setTaken(true);
 
             if (getMainCitizen() != null)
             {
-                ((ScarecrowTileEntity) scarecrow).setOwner(getMainCitizen().getId());
+                ((TileEntityGrave) tileEntity).setOwner(getMainCitizen().getId());
             }
+             **/
             pendingGraves.add(position);
         }
     }
