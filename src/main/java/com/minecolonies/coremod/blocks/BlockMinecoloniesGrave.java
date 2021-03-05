@@ -69,8 +69,6 @@ public class BlockMinecoloniesGrave extends AbstractBlockMinecoloniesGrave<Block
     {
         super(Properties.create(Material.ROCK).hardnessAndResistance(BLOCK_HARDNESS, RESISTANCE));
         this.setDefaultState(this.getDefaultState().with(FACING, Direction.NORTH).with(VARIANT, GraveType.DEFAULT));
-        //this.setDefaultState(this.getDefaultState().with(FACING, Direction.NORTH).with(VARIANT, GraveType.DEFAULT)); //TODO TG Crash on startup
-        //this.setDefaultState(this.getDefaultState().with(FACING, Direction.NORTH));
         setRegistryName(Constants.MOD_ID.toLowerCase() + ":" + BLOCK_NAME);
     }
 
