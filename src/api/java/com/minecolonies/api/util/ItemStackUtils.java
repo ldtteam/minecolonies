@@ -33,7 +33,6 @@ import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.Constants.FUEL_SLOT;
 import static com.minecolonies.api.util.constant.Constants.SMELTABLE_SLOT;
-import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
 import static com.minecolonies.api.items.ModTags.fungi;
 
 /**
@@ -328,6 +327,24 @@ public final class ItemStackUtils
             return stack.getItem().getHarvestLevel(stack, net.minecraftforge.common.ToolType.get(toolType.getName()), null, null);
         }
         return -1;
+    }
+
+    /**
+     * Check if the first stack is a better tool than the second stack.
+     * @param stack1 the first stack to check.
+     * @param stack2 the second to compare with.
+     * @return true if better, false if worse or either of them is not a tool.
+     */
+    public static boolean isBetterTool(final ItemStack stack1, final ItemStack stack2)
+    {
+        for (final ToolType toolType : ToolType.values())
+        {
+            if (isTool(stack1, toolType) && isTool(stack2, toolType) && getMiningLevel(stack1, toolType) > getMiningLevel(stack2, toolType))
+            {
+                 return true;
+            }
+        }
+        return false;
     }
 
     /**
