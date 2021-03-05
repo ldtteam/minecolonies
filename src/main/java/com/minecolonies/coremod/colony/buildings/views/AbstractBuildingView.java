@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IBuildingModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
@@ -633,6 +634,20 @@ public abstract class AbstractBuildingView implements IBuildingView
             if (clazz.isInstance(view.getClass()))
             {
                 return Optional.of((T) view);
+            }
+        }
+        return Optional.empty();
+    }
+
+    @NotNull
+    @Override
+    public <T extends IBuildingModuleView> Optional<T> getModuleViewMatching(final Class<T> clazz, final Predicate<IBuildingModuleView> modulePredicate)
+    {
+        for (final IBuildingModuleView module : moduleViews)
+        {
+            if (clazz.isInstance(module.getClass()) && modulePredicate.test(module))
+            {
+                return Optional.of((T) module);
             }
         }
         return Optional.empty();

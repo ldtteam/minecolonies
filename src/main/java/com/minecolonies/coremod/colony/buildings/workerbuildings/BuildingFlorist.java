@@ -8,7 +8,6 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
-import com.minecolonies.api.colony.buildings.modules.IGroupedItemListModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -187,7 +186,8 @@ public class BuildingFlorist extends AbstractBuildingWorker
     public ItemStack getFlowerToGrow()
     {
         final List<ItemStorage> stacks = getPlantablesForBuildingLevel(getBuildingLevel()).stream()
-                                           .filter(stack -> !getModule(GroupedItemListModule.class).map(module -> module.isItemInList(FLORIST_FLOWER_LIST, stack)).orElse(false))
+                                           .filter(stack -> !getModuleMatching(GroupedItemListModule.class, m -> ((GroupedItemListModule) m).getId().equals(FLORIST_FLOWER_LIST))
+                                                               .map(module -> module.isItemInList(stack)).orElse(false))
                                            .collect(Collectors.toList());
         if (stacks.isEmpty())
         {

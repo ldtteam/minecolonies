@@ -337,7 +337,8 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
         {
             return false;
         }
-        final List<ItemStorage> allowedItems = getOwnBuilding().getModule(GroupedItemListModule.class).map(m -> m.getList(ORE_LIST)).orElse(ImmutableList.of());
+        final List<ItemStorage> allowedItems = getOwnBuilding().getModuleMatching(GroupedItemListModule.class, m -> ((GroupedItemListModule) m).getId().equals(ORE_LIST))
+                                                 .map(GroupedItemListModule::getList).orElse(ImmutableList.of());
         return !allowedItems.contains(new ItemStorage(stack));
     }
 
@@ -348,7 +349,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
               !getOwnBuilding().hasWorkerOpenRequestsFiltered(worker.getCitizenData(),
                 req -> req.getShortDisplayString().getSiblings().contains(new TranslationTextComponent(COM_MINECOLONIES_REQUESTS_SMELTABLE_ORE))))
         {
-            final List<ItemStorage> allowedItems = getOwnBuilding().getModule(GroupedItemListModule.class).map(m -> m.getList(ORE_LIST)).orElse(ImmutableList.of());
+            final List<ItemStorage> allowedItems = getOwnBuilding().getModuleMatching(GroupedItemListModule.class, m -> ((GroupedItemListModule) m).getId().equals(ORE_LIST)).map(GroupedItemListModule::getList).orElse(ImmutableList.of());
             if (allowedItems.isEmpty())
             {
                 worker.getCitizenData().createRequestAsync(getSmeltAbleClass());

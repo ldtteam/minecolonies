@@ -48,7 +48,7 @@ public interface ICompatibilityManager
      *
      * @return the list of saplings.
      */
-    List<ItemStorage> getCopyOfSaplings();
+    Set<ItemStorage> getCopyOfSaplings();
 
     /**
      * Get a set of all fuel items.
@@ -90,7 +90,7 @@ public interface ICompatibilityManager
      *
      * @return the list of compostable items.
      */
-    List<ItemStorage> getCopyOfCompostableItems();
+    Set<ItemStorage> getCopyOfCompostableItems();
 
     /**
      * Get a copy of the list of plantables.

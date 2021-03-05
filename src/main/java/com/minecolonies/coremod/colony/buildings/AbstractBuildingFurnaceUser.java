@@ -16,7 +16,6 @@ import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -137,7 +136,7 @@ public abstract class AbstractBuildingFurnaceUser extends AbstractBuildingWorker
      */
     public List<ItemStack> getAllowedFuel()
     {
-        return getModule(GroupedItemListModule.class).map(m -> m.getList(FUEL_LIST)).orElse(ImmutableList.of()).stream()
+        return getModuleMatching(GroupedItemListModule.class, m -> ((GroupedItemListModule) m).getId().equals(FUEL_LIST)).map(GroupedItemListModule::getList).orElse(ImmutableList.of()).stream()
                      .map(ItemStorage::getItemStack)
                      .peek(stack -> stack.setCount(stack.getMaxStackSize()))
                      .collect(Collectors.toList());
@@ -151,6 +150,6 @@ public abstract class AbstractBuildingFurnaceUser extends AbstractBuildingWorker
      */
     public boolean isAllowedFuel(final ItemStack stack)
     {
-        return getModule(GroupedItemListModule.class).map(m -> m.getList(FUEL_LIST)).orElse(ImmutableList.of()).stream().anyMatch(itemStack -> stack.isItemEqual(itemStack.getItemStack()));
+        return getModuleMatching(GroupedItemListModule.class, m -> ((GroupedItemListModule) m).getId().equals(FUEL_LIST)).map(GroupedItemListModule::getList).orElse(ImmutableList.of()).stream().anyMatch(itemStack -> stack.isItemEqual(itemStack.getItemStack()));
     }
 }

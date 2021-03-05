@@ -74,7 +74,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     /**
      * List of saplings.
      */
-    private static final String SAPLINGS_LIST = "saplings";
+    public static final String SAPLINGS_LIST = "saplings";
 
     /**
      * Vertical range in which the worker picks up items.
@@ -332,7 +332,8 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         if (pathResult == null || pathResult.treeLocation == null)
         {
             final BuildingLumberjack buildingLumberjack = (BuildingLumberjack) building;
-            final List<ItemStorage> copy = buildingLumberjack.getModule(GroupedItemListModule.class).map(m -> m.getList(SAPLINGS_LIST)).orElse(ImmutableList.of());
+            final List<ItemStorage> copy = buildingLumberjack.getModuleMatching(GroupedItemListModule.class, m -> ((GroupedItemListModule) m).getId().equals(SAPLINGS_LIST))
+                                             .map(GroupedItemListModule::getList).orElse(ImmutableList.of());
             if (buildingLumberjack.shouldRestrict())
             {
                 final BlockPos startPos = buildingLumberjack.getStartRestriction();

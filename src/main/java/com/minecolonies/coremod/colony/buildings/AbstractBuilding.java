@@ -35,7 +35,6 @@ import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.*;
-import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
@@ -177,16 +176,30 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public boolean hasModule(final Class<? extends IBuildingModule> clazz)
     {
-        return getModule(clazz).isPresent();
+        return getFirstModuleOccurance(clazz).isPresent();
     }
 
     @NotNull
     @Override
-    public <T extends IBuildingModule> Optional<T> getModule(final Class<T> clazz)
+    public <T extends IBuildingModule> Optional<T> getFirstModuleOccurance(final Class<T> clazz)
     {
         for (final IBuildingModule module : modules)
         {
             if (clazz.isInstance(module.getClass()))
+            {
+                return Optional.of((T) module);
+            }
+        }
+        return Optional.empty();
+    }
+
+    @NotNull
+    @Override
+    public <T extends IBuildingModule> Optional<T> getModuleMatching(final Class<T> clazz, final Predicate<IBuildingModule> modulePredicate)
+    {
+        for (final IBuildingModule module : modules)
+        {
+            if (clazz.isInstance(module.getClass()) && modulePredicate.test((T) module))
             {
                 return Optional.of((T) module);
             }

@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.composter;
 
 import com.google.common.collect.ImmutableList;
-import com.minecolonies.api.colony.buildings.modules.IGroupedItemListModule;
 import com.minecolonies.api.colony.requestsystem.requestable.StackList;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AIEventTarget;
@@ -143,7 +142,8 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
             return getState();
         }
 
-        final List<ItemStorage> list = getOwnBuilding().getModule(GroupedItemListModule.class).map(m -> m.getList(COMPOSTABLE_LIST)).orElse(ImmutableList.of());
+        final List<ItemStorage> list = getOwnBuilding().getModuleMatching(GroupedItemListModule.class, m -> ((GroupedItemListModule) m).getId().equals(COMPOSTABLE_LIST))
+                                         .map(GroupedItemListModule::getList).orElse(ImmutableList.of());
         if (list.isEmpty())
         {
             complain();
@@ -251,7 +251,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
         if (worker.getHeldItem(Hand.MAIN_HAND) == ItemStack.EMPTY)
         {
             final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(
-              worker.getInventoryCitizen(), stack -> getOwnBuilding().getModule(GroupedItemListModule.class).map(m -> m.isItemInList(COMPOSTABLE_LIST, new ItemStorage(stack))).orElse(false));
+              worker.getInventoryCitizen(), stack -> getOwnBuilding().getModuleMatching(GroupedItemListModule.class, m -> ((GroupedItemListModule) m).getId().equals(COMPOSTABLE_LIST)).map(m -> m.isItemInList(new ItemStorage(stack))).orElse(false));
 
             if (slot >= 0)
             {

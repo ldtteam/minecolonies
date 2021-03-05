@@ -80,11 +80,11 @@ public class AssignFilterableItemMessage extends AbstractBuildingServerMessage<A
         {
             if (assign)
             {
-                building.getModule(GroupedItemListModule.class).ifPresent(m -> m.addItem(id, item));
+                building.getModuleMatching(GroupedItemListModule.class, m -> ((GroupedItemListModule) m).getId().equals(id)).ifPresent(m -> m.addItem(item));
             }
             else
             {
-                building.getModule(GroupedItemListModule.class).ifPresent(m -> m.removeItem(id, item));
+                building.getModuleMatching(GroupedItemListModule.class, m -> ((GroupedItemListModule) m).getId().equals(id)).ifPresent(m -> m.removeItem(item));
             }
         }
     }

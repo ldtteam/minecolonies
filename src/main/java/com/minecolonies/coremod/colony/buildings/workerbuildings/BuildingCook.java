@@ -121,7 +121,7 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
     public BuildingCook(final IColony c, final BlockPos l)
     {
         super(c, l);
-        keepX.put((stack) -> this.hasModule(GroupedItemListModule.class) && !this.getModule(GroupedItemListModule.class).map(m -> m.isItemInList(FOOD_EXCLUSION_LIST, new ItemStorage(stack))).orElse(false), new Tuple<>(STACKSIZE, true));
+        keepX.put((stack) -> this.hasModule(GroupedItemListModule.class) && !this.getModuleMatching(GroupedItemListModule.class, m -> ((GroupedItemListModule) m).getId().equals(FOOD_EXCLUSION_LIST)).map(m -> m.isItemInList(new ItemStorage(stack))).orElse(false), new Tuple<>(STACKSIZE, true));
         keepX.put(stack -> isAllowedFuel(stack), new Tuple<>(STACKSIZE, true));
         keepX.put(stack -> !ItemStackUtils.isEmpty(stack.getContainerItem()) && !stack.getContainerItem().getItem().equals(Items.BUCKET), new Tuple<>(STACKSIZE, false));
     }
@@ -478,7 +478,8 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
             return stack.getCount();
         }
 
-        if (ISFOOD.test(stack) && this.hasModule(GroupedItemListModule.class) && !this.getModule(GroupedItemListModule.class).map(m -> m.isItemInList(FOOD_EXCLUSION_LIST, new ItemStorage(stack))).orElse(false) && (localAlreadyKept.stream().filter(storage -> ISFOOD.test(storage.getItemStack())).mapToInt(ItemStorage::getAmount).sum() < STACKSIZE || !inventory))
+        if (ISFOOD.test(stack) && this.hasModule(GroupedItemListModule.class) && !this.getModuleMatching(GroupedItemListModule.class, m -> ((GroupedItemListModule) m).getId().equals(FOOD_EXCLUSION_LIST))
+                                                                                    .map(m -> m.isItemInList(new ItemStorage(stack))).orElse(false) && (localAlreadyKept.stream().filter(storage -> ISFOOD.test(storage.getItemStack())).mapToInt(ItemStorage::getAmount).sum() < STACKSIZE || !inventory))
         {
             final ItemStorage kept = new ItemStorage(stack);
             if (localAlreadyKept.contains(kept))

@@ -336,7 +336,8 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
     @Override
     protected IRequestable getSmeltAbleClass()
     {
-        final List<ItemStorage> allowedItems = getOwnBuilding().getModule(GroupedItemListModule.class).map(m -> m.getList(FOOD_EXCLUSION_LIST)).orElse(ImmutableList.of());
+        final List<ItemStorage> allowedItems = getOwnBuilding().getModuleMatching(GroupedItemListModule.class, m -> ((GroupedItemListModule) m).getId().equals(FOOD_EXCLUSION_LIST))
+                                                 .map(GroupedItemListModule::getList).orElse(ImmutableList.of());
         if (!allowedItems.isEmpty())
         {
             if (IColonyManager.getInstance().getCompatibilityManager().getEdibles().size() <= allowedItems.size())

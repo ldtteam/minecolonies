@@ -17,6 +17,9 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_REQUESTS_COMPOSTABLE;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_REQUESTS_COMPOSTABLE_UI;
+
 /**
  * Composter window class. Specifies the extras the composter has for its list.
  */
@@ -54,7 +57,7 @@ public class WindowHutComposter extends AbstractHutFilterableLists
         final ViewFilterableList window = new ViewFilterableList(findPaneOfTypeByID(PAGE_ITEMS_VIEW, View.class),
           this,
           building,
-          LanguageHandler.format("com.minecolonies.gui.workerhuts.composter.compostables"),
+          LanguageHandler.format(COM_MINECOLONIES_REQUESTS_COMPOSTABLE_UI),
           PAGE_ITEMS_VIEW,
           false);
         views.put(PAGE_ITEMS_VIEW, window);

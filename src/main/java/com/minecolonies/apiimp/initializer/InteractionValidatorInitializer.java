@@ -55,7 +55,8 @@ public class InteractionValidatorInitializer
     {
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(FURNACE_USER_NO_FUEL),
           citizen -> citizen.getWorkBuilding() instanceof AbstractBuildingSmelterCrafter
-                       && citizen.getWorkBuilding().getModule(GroupedItemListModule.class).map(m -> m.getList(FUEL_LIST).isEmpty()).orElse(false));
+                       && ((AbstractBuildingSmelterCrafter) citizen.getWorkBuilding()).getModuleMatching(GroupedItemListModule.class, m -> ((GroupedItemListModule) m).getId().equals(FUEL_LIST))
+                            .map(m -> m.getList().isEmpty()).orElse(false));
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(BAKER_HAS_NO_FURNACES_MESSAGE),
           citizen -> citizen.getWorkBuilding() instanceof AbstractBuildingSmelterCrafter && ((AbstractBuildingSmelterCrafter) citizen.getWorkBuilding()).getFurnaces().isEmpty());
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(RAW_FOOD),
@@ -177,7 +178,8 @@ public class InteractionValidatorInitializer
           citizen -> {
             if (citizen.getWorkBuilding() instanceof BuildingSmeltery)
             {
-                final List<ItemStorage> oreList = citizen.getWorkBuilding().getModule(GroupedItemListModule.class).map(m -> m.getList(ORE_LIST)).orElse(ImmutableList.of());
+                final List<ItemStorage> oreList = ((BuildingSmeltery) citizen.getWorkBuilding()).getModuleMatching(GroupedItemListModule.class, m -> ((GroupedItemListModule) m).getId().equals(ORE_LIST))
+                                                    .map(GroupedItemListModule::getList).orElse(ImmutableList.of());
                 return IColonyManager.getInstance().getCompatibilityManager()
                   .getSmeltableOres()
                   .stream()
@@ -207,7 +209,8 @@ public class InteractionValidatorInitializer
                 return false;
             }
 
-            final ImmutableList<ItemStorage> exclusionList = citizen.getWorkBuilding().getModule(GroupedItemListModule.class).map(m -> m.getList(FOOD_EXCLUSION_LIST)).orElse(ImmutableList.of());
+            final ImmutableList<ItemStorage> exclusionList = ((BuildingCook) citizen.getWorkBuilding()).getModuleMatching(GroupedItemListModule.class, m -> ((GroupedItemListModule)m).getId().equals(FOOD_EXCLUSION_LIST)).map(
+              GroupedItemListModule::getList).orElse(ImmutableList.of());
             for (final ItemStorage storage : IColonyManager.getInstance().getCompatibilityManager().getEdibles())
             {
                 if (!exclusionList.contains(storage))

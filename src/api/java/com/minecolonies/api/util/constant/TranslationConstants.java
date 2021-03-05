@@ -82,6 +82,10 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_REQUESTS_BURNABLE                                   = "com.minecolonies.coremod.request.burnable";
     @NonNls
+    public static final String COM_MINECOLONIES_REQUESTS_COMPOSTABLE_UI                             = "com.minecolonies.gui.workerhuts.composter.compostables";
+    @NonNls
+    public static final String COM_MINECOLONIES_REQUESTS_SAPLINGS                                   = "com.minecolonies.coremod.gui.workerhuts.saplingList";
+    @NonNls
     public static final String COM_MINECOLONIES_REQUESTS_CRAFTING                                   = "com.minecolonies.coremod.request.crafting";
     @NonNls
     public static final String COM_MINECOLONIES_REQUESTS_TOOL_PRETYPE                               = "com.minecolonies.coremod.request.tool.pretype";

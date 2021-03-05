@@ -291,9 +291,9 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
-    public List<ItemStorage> getCopyOfSaplings()
+    public Set<ItemStorage> getCopyOfSaplings()
     {
-        return new ArrayList<>(saplings);
+        return new HashSet<>(saplings);
     }
 
     @Override
@@ -321,9 +321,9 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
-    public List<ItemStorage> getCopyOfCompostableItems()
+    public Set<ItemStorage> getCopyOfCompostableItems()
     {
-        return ImmutableList.copyOf(compostableItems);
+        return new HashSet<>(compostableItems);
     }
 
     @Override

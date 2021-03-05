@@ -222,6 +222,16 @@ public interface IBuildingView extends IRequester
     <T extends IBuildingModuleView> Optional<T> getModuleView(Class<T> clazz);
 
     /**
+     * Get the module view matching a certain predicate.
+     * @param clazz the class of the module.
+     * @param modulePredicate the predicate to match.
+     * @param <T> the optional type.
+     * @return an optional of the matching module (could be empty).
+     */
+    @NotNull
+    <T extends IBuildingModuleView> Optional<T> getModuleViewMatching(Class<T> clazz, Predicate<IBuildingModuleView> modulePredicate);
+
+    /**
      * Get a list of all modules matching a specific class.
      * @param clazz the class to match.
      * @param <T> the type of module.

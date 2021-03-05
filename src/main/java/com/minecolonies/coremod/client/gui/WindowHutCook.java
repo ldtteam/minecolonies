@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.ButtonImage;
@@ -9,12 +10,12 @@ import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.blockout.views.View;
 import com.ldtteam.structurize.util.LanguageHandler;
-import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.colony.buildings.modules.GroupedItemListModuleView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.coremod.network.messages.server.colony.building.RemoveMinimumStockFromBuildingMessage;
 import com.minecolonies.coremod.util.FurnaceRecipes;
@@ -28,7 +29,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_REQUESTS_BURNABLE;
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_REQUESTS_FOOD;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
@@ -69,20 +69,17 @@ public class WindowHutCook extends AbstractHutFilterableLists
     public WindowHutCook(final BuildingCook.View building)
     {
         super(building, Constants.MOD_ID + RESOURCE_STRING);
-        final ViewFilterableList win = new ViewFilterableList(findPaneOfTypeByID(PAGE_ITEMS_VIEW, View.class),
-          this,
-          building,
-          LanguageHandler.format(COM_MINECOLONIES_REQUESTS_BURNABLE),
-          PAGE_ITEMS_VIEW,
-          false);
-        views.put(PAGE_ITEMS_VIEW, win);
-        final ViewFilterableList wel = new ViewFilterableList(findPaneOfTypeByID(PAGE_FOOD_VIEW, View.class),
-                this,
-                building,
-                LanguageHandler.format(COM_MINECOLONIES_REQUESTS_FOOD),
-                PAGE_FOOD_VIEW,
-                true);
-        views.put(PAGE_FOOD_VIEW, wel);
+        for (final GroupedItemListModuleView module : building.getModuleViews(GroupedItemListModuleView.class))
+        {
+            final ViewFilterableList win = new ViewFilterableList(findPaneOfTypeByID(module.getId(), View.class),
+              this,
+              building,
+              LanguageHandler.format(COM_MINECOLONIES_REQUESTS_BURNABLE),
+              module.getId(),
+              module.isInverted());
+            views.put(module.getId(), win);
+        }
+
         resourceList = this.window.findPaneOfTypeByID("resourcesstock", ScrollingList.class);
 
         registerButton(STOCK_ADD, this::addStock);
@@ -105,24 +102,12 @@ public class WindowHutCook extends AbstractHutFilterableLists
      */
     public List<? extends ItemStorage> getBlockList(final Predicate<ItemStack> filterPredicate, final String id)
     {
-        if (id.equals(PAGE_FOOD_VIEW))
-        {
-            return ImmutableList.copyOf(IColonyManager.getInstance()
-                    .getCompatibilityManager()
-                    .getEdibles()
-                    .stream()
-                    .filter(item -> filterPredicate.test(item.getItemStack()))
-                    .collect(Collectors.toList()));
-        }
-        else
-        {
-            return ImmutableList.copyOf(IColonyManager.getInstance()
-                    .getCompatibilityManager()
-                    .getFuel()
-                    .stream()
-                    .filter(item -> filterPredicate.test(item.getItemStack()))
-                    .collect(Collectors.toList()));
-        }
+        return ImmutableList.copyOf(building.getModuleViewMatching(GroupedItemListModuleView.class, view -> ((GroupedItemListModuleView) view).getId().equals(id))
+                                      .map(m -> m.getAllItems().get())
+                                      .orElse(ImmutableSet.of())
+                                      .stream()
+                                      .filter(item -> filterPredicate.test(item.getItemStack()))
+                                      .collect(Collectors.toList()));
     }
 
     /**
@@ -133,8 +118,8 @@ public class WindowHutCook extends AbstractHutFilterableLists
     private void removeStock(final Button button)
     {
         final int row = resourceList.getListElementIndexByPane(button);
-        final Tuple<ItemStorage, Integer> tuple = ((BuildingCook.View) building).getStock().get(row);
-        ((BuildingCook.View) building).getStock().remove(row);
+        final Tuple<ItemStorage, Integer> tuple = building.getStock().get(row);
+        building.getStock().remove(row);
         Network.getNetwork().sendToServer(new RemoveMinimumStockFromBuildingMessage(building, tuple.getA().getItemStack()));
         updateStockList();
     }
@@ -144,7 +129,7 @@ public class WindowHutCook extends AbstractHutFilterableLists
      */
     private void addStock()
     {
-        if (!((BuildingCook.View) building).hasReachedLimit())
+        if (!building.hasReachedLimit())
         {
             new WindowSelectRes(this, building,
               itemStack -> ItemStackUtils.CAN_EAT.test(itemStack) || ItemStackUtils.CAN_EAT.test(FurnaceRecipes.getInstance().getSmeltingResult(itemStack))).open();
@@ -165,7 +150,7 @@ public class WindowHutCook extends AbstractHutFilterableLists
     {
         resourceList.enable();
         resourceList.show();
-        final List<Tuple<ItemStorage, Integer>> tempRes = new ArrayList<>(((BuildingCook.View) building).getStock());
+        final List<Tuple<ItemStorage, Integer>> tempRes = new ArrayList<>(building.getStock());
 
         //Creates a dataProvider for the unemployed resourceList.
         resourceList.setDataProvider(new ScrollingList.DataProvider()

@@ -8,9 +8,9 @@ import net.minecraft.network.PacketBuffer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
+import java.util.function.Supplier;
 
 /**
  * Abstract class for all buildings which require a filterable list of allowed items.
@@ -20,88 +20,131 @@ public class GroupedItemListModuleView extends AbstractBuildingModuleView implem
     /**
      * The list of items.
      */
-    private final Map<String, List<ItemStorage>> listsOfItems = new HashMap<>();
+    private final List<ItemStorage> listsOfItems = new ArrayList<>();
+
+    /**
+     * Unique string id of the module.
+     */
+    private final String                      id;
+
+    /**
+     * Supplier for the list of all items (not only the disabled/enabled ones).
+     */
+    private final Supplier<Set<ItemStorage>> allItems;
+
+    /**
+     * if the list is inverted (so list encludes the disabled ones).
+     */
+    private final boolean inverted;
+
+    /**
+     * Lang string for description.
+     */
+    private final String desc;
+
+    /**
+     * Create a nw grouped item list view for the client side.
+     * @param id the id.
+     * @param desc desc lang string.
+     * @param inverted enabling or disabling.
+     * @param allItems a supplier for all the items.
+     */
+    public GroupedItemListModuleView(final String id, final String desc, final boolean inverted, final Supplier<Set<ItemStorage>> allItems)
+    {
+        super();
+        this.id = id;
+        this.desc = desc;
+        this.inverted = inverted;
+        this.allItems = allItems;
+    }
 
     /**
      * Add item to the view and notify the server side.
      *
      * @param item the item to add.
-     * @param id   the id.
      */
-    public void addItem(final String id, final ItemStorage item)
+    public void addItem(final ItemStorage item)
     {
         Network.getNetwork().sendToServer(new AssignFilterableItemMessage(this.buildingView, id, item, true));
-        if (listsOfItems.containsKey(id))
-        {
-            if (!listsOfItems.get(id).contains(item))
-            {
-                final List<ItemStorage> list = listsOfItems.get(id);
-                list.add(item);
-                listsOfItems.put(id, list);
-            }
-        }
-        else
-        {
-            final List<ItemStorage> list = new ArrayList<>();
-            list.add(item);
-            listsOfItems.put(id, list);
-        }
+        listsOfItems.add(item);
     }
 
     /**
      * Check if an item is in the list of allowed items.
      *
      * @param item the item to check.
-     * @param id   the id.
      * @return true if so.
      */
-    public boolean isAllowedItem(final String id, final ItemStorage item)
+    public boolean isAllowedItem(final ItemStorage item)
     {
-        return listsOfItems.containsKey(id) && listsOfItems.get(id).contains(item);
+        return listsOfItems.contains(item);
     }
 
     /**
      * Get the size of allowed items.
      *
-     * @param key the key to check for.
      * @return the size.
      */
-    public int getSize(final String key)
+    public int getSize()
     {
-        return listsOfItems.getOrDefault(key, new ArrayList<>()).size();
+        return listsOfItems.size();
     }
 
     /**
      * Remove an item from the view and notify the server side.
      *
-     * @param id   the id.
      * @param item the item to remove.
      */
-    public void removeItem(final String id, final ItemStorage item)
+    public void removeItem(final ItemStorage item)
     {
         Network.getNetwork().sendToServer(new AssignFilterableItemMessage(this.buildingView, id, item, false));
-        if (listsOfItems.containsKey(id) && listsOfItems.get(id).contains(item))
-        {
-            final List<ItemStorage> list = listsOfItems.get(id);
-            list.remove(item);
-            listsOfItems.put(id, list);
-        }
+        listsOfItems.remove(item);
+    }
+
+    /**
+     * Get the unique id of this group (used to sync with server side).
+     * @return the id.
+     */
+    public String getId()
+    {
+        return id;
+    }
+
+    /**
+     * Get the supplier of the list of all items to display.
+     * @return the list.
+     */
+    public Supplier<Set<ItemStorage>> getAllItems()
+    {
+        return allItems;
+    }
+
+    /**
+     * Check if the list is enabling or disabling.
+     * @return true if enabling.
+     */
+    public boolean isInverted()
+    {
+        return inverted;
+    }
+
+    /**
+     * Get the lang string for the title.
+     * @return the lang string.
+     */
+    public String getDesc()
+    {
+        return desc;
     }
 
     @Override
     public void deserialize(@NotNull final PacketBuffer buf)
     {
-        final int ids = buf.readInt();
-        for (int i = 0; i < ids; i++)
+        final int size = buf.readInt();
+
+        for (int j = 0; j < size; j++)
         {
-            final String id = buf.readString(32767);
-            final int size = buf.readInt();
-            final List<ItemStorage> list = new ArrayList<>();
-            for (int j = 0; j < size; j++)
-            {
-                list.add(new ItemStorage(buf.readItemStack()));
-            }
-            listsOfItems.put(id, list);
+            listsOfItems.add(new ItemStorage(buf.readItemStack()));
         }
     }
 }
