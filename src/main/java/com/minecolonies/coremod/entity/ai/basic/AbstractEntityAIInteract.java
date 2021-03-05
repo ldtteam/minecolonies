@@ -2,7 +2,6 @@ package com.minecolonies.coremod.entity.ai.basic;
 
 import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
 import com.minecolonies.api.entity.pathfinding.PathResult;
-import com.minecolonies.api.entity.pathfinding.RandomPathResult;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -90,7 +89,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
     /**
      * The current path to the random position
      */
-    private RandomPathResult pathResult;
+    private PathResult pathResult;
 
     /**
      * The backup factor of the path.
@@ -418,7 +417,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
     /**
      * Search for a random position to go to.
      * @param range the max range
-     * @param pos anchor position.
+     * @param pos position we want to find a random position around in the given range
      * @return null until position was found.
      */
     protected BlockPos findRandomPositionToWalkTo(final int range, final BlockPos pos)
@@ -436,7 +435,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
 
         if (pathResult.isPathReachingDestination())
         {
-            final BlockPos resultPos = pathResult.randomPos;
+            final BlockPos resultPos = pathResult.getPath().getFinalPathPoint().func_224759_a();
             pathResult = null;
             return resultPos;
         }
@@ -462,9 +461,16 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
      * @param pos the position to
      * @return the navigator.
      */
-    protected RandomPathResult getRandomNavigationPath(final int range, final BlockPos pos)
+    protected PathResult getRandomNavigationPath(final int range, final BlockPos pos)
     {
-        return worker.getNavigator().moveToRandomPos(range, 1.0D);
+        if (pos == null || pos == worker.getPosition())
+        {
+            return worker.getNavigator().moveToRandomPos(range, 1.0D);
+        }
+        else
+        {
+            return worker.getNavigator().moveToRandomPosAroundX(range, 1.0D, pos);
+        }
     }
 
     /**
