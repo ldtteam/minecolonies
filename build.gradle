@@ -35,7 +35,7 @@ repositories {
         dirs 'libs'
     }
     maven {
-        url "https://www.cursemaven.com"
+        url 'https://nexus.resourcefulbees.com/repository/maven-public/'
     }
 }
 
@@ -99,7 +99,7 @@ dependencies {
     compile "com.ldtteam:datagenerators:0.1.38-ALPHA"
     
     implementation fg.deobf("mezz.jei:jei-1.16.4:${config.jei_version}")
-    compileOnly fg.deobf("curse.maven:resourcefulbees-384508:3206649")
+    compileOnly fg.deobf("com.resourcefulbees:ResourcefulBees:${config.rb_version}")
 
     testImplementation  'junit:junit:4.12'
     testImplementation  "org.mockito:mockito-core:1.+"
