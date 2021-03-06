@@ -15,7 +15,7 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.coremod.client.gui.WindowHutFlorist;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.modules.GroupedItemListModule;
+import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
 import com.minecolonies.coremod.colony.jobs.JobFlorist;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
@@ -187,7 +187,7 @@ public class BuildingFlorist extends AbstractBuildingWorker
     public ItemStack getFlowerToGrow()
     {
         final List<ItemStorage> stacks = getPlantablesForBuildingLevel(getBuildingLevel()).stream()
-                                           .filter(stack -> !getModuleMatching(GroupedItemListModule.class, m -> ((GroupedItemListModule) m).getId().equals(FLORIST_FLOWER_LIST))
+                                           .filter(stack -> !getModuleMatching(ItemListModule.class, m -> ((ItemListModule) m).getId().equals(FLORIST_FLOWER_LIST))
                                                                .map(module -> module.isItemInList(stack)).orElse(false))
                                            .collect(Collectors.toList());
         if (stacks.isEmpty())

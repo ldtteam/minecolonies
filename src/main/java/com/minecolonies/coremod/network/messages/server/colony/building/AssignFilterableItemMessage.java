@@ -4,7 +4,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.modules.GroupedItemListModule;
+import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
@@ -76,15 +76,15 @@ public class AssignFilterableItemMessage extends AbstractBuildingServerMessage<A
     public void onExecute(
       final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final AbstractBuildingWorker building)
     {
-        if (building.hasModule(GroupedItemListModule.class))
+        if (building.hasModule(ItemListModule.class))
         {
             if (assign)
             {
-                building.getModuleMatching(GroupedItemListModule.class, m -> ((GroupedItemListModule) m).getId().equals(id)).ifPresent(m -> m.addItem(item));
+                building.getModuleMatching(ItemListModule.class, m -> ((ItemListModule) m).getId().equals(id)).ifPresent(m -> m.addItem(item));
             }
             else
             {
-                building.getModuleMatching(GroupedItemListModule.class, m -> ((GroupedItemListModule) m).getId().equals(id)).ifPresent(m -> m.removeItem(item));
+                building.getModuleMatching(ItemListModule.class, m -> ((ItemListModule) m).getId().equals(id)).ifPresent(m -> m.removeItem(item));
             }
         }
     }

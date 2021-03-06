@@ -13,7 +13,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.buildings.modules.GroupedItemListModule;
+import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingComposter;
 import com.minecolonies.coremod.colony.jobs.JobComposter;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
@@ -142,8 +142,8 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
             return getState();
         }
 
-        final List<ItemStorage> list = getOwnBuilding().getModuleMatching(GroupedItemListModule.class, m -> ((GroupedItemListModule) m).getId().equals(COMPOSTABLE_LIST))
-                                         .map(GroupedItemListModule::getList).orElse(ImmutableList.of());
+        final List<ItemStorage> list = getOwnBuilding().getModuleMatching(ItemListModule.class, m -> ((ItemListModule) m).getId().equals(COMPOSTABLE_LIST))
+                                         .map(ItemListModule::getList).orElse(ImmutableList.of());
         if (list.isEmpty())
         {
             complain();
@@ -251,7 +251,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
         if (worker.getHeldItem(Hand.MAIN_HAND) == ItemStack.EMPTY)
         {
             final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(
-              worker.getInventoryCitizen(), stack -> getOwnBuilding().getModuleMatching(GroupedItemListModule.class, m -> ((GroupedItemListModule) m).getId().equals(COMPOSTABLE_LIST)).map(m -> m.isItemInList(new ItemStorage(stack))).orElse(false));
+              worker.getInventoryCitizen(), stack -> getOwnBuilding().getModuleMatching(ItemListModule.class, m -> ((ItemListModule) m).getId().equals(COMPOSTABLE_LIST)).map(m -> m.isItemInList(new ItemStorage(stack))).orElse(false));
 
             if (slot >= 0)
             {

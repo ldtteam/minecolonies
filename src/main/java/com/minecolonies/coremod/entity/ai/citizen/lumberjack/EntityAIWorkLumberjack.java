@@ -13,7 +13,7 @@ import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.buildings.modules.GroupedItemListModule;
+import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLumberjack;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
@@ -332,8 +332,8 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         if (pathResult == null || pathResult.treeLocation == null)
         {
             final BuildingLumberjack buildingLumberjack = (BuildingLumberjack) building;
-            final List<ItemStorage> copy = buildingLumberjack.getModuleMatching(GroupedItemListModule.class, m -> ((GroupedItemListModule) m).getId().equals(SAPLINGS_LIST))
-                                             .map(GroupedItemListModule::getList).orElse(ImmutableList.of());
+            final List<ItemStorage> copy = buildingLumberjack.getModuleMatching(ItemListModule.class, m -> ((ItemListModule) m).getId().equals(SAPLINGS_LIST))
+                                             .map(ItemListModule::getList).orElse(ImmutableList.of());
             if (buildingLumberjack.shouldRestrict())
             {
                 final BlockPos startPos = buildingLumberjack.getStartRestriction();

@@ -16,7 +16,7 @@ import java.util.function.Function;
 /**
  * Abstract class for all buildings which require a filterable list of allowed items.
  */
-public class GroupedItemListModuleView extends AbstractBuildingModuleView implements IBuildingModuleView
+public class ItemListModuleView extends AbstractBuildingModuleView implements IBuildingModuleView
 {
     /**
      * The list of items.
@@ -50,7 +50,7 @@ public class GroupedItemListModuleView extends AbstractBuildingModuleView implem
      * @param inverted enabling or disabling.
      * @param allItems a supplier for all the items.
      */
-    public GroupedItemListModuleView(final String id, final String desc, final boolean inverted, final Function<IBuildingView, Set<ItemStorage>> allItems)
+    public ItemListModuleView(final String id, final String desc, final boolean inverted, final Function<IBuildingView, Set<ItemStorage>> allItems)
     {
         super();
         this.id = id;

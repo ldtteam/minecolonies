@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Module for
  */
-public interface IGroupedItemListModule
+public interface IItemListModule
 {
     /**
      * Add an item to the list.

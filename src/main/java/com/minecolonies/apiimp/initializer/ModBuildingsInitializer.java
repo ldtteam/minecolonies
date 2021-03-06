@@ -48,7 +48,7 @@ public final class ModBuildingsInitializer
                                 .setBuildingProducer(BuildingBaker::new)
                                 .setBuildingViewProducer(() -> BuildingBaker.View::new)
                                 .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.BAKERY_ID))
-                                .addBuildingModuleProducer(() -> new GroupedItemListModule(FUEL_LIST), () -> new GroupedItemListModuleView(FUEL_LIST, COM_MINECOLONIES_REQUESTS_BURNABLE, false,
+                                .addBuildingModuleProducer(() -> new ItemListModule(FUEL_LIST), () -> new ItemListModuleView(FUEL_LIST, COM_MINECOLONIES_REQUESTS_BURNABLE, false,
                                   (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getFuel()))
                                 .createBuildingEntry();
 
@@ -101,7 +101,7 @@ public final class ModBuildingsInitializer
                                    .setBuildingProducer(BuildingComposter::new)
                                    .setBuildingViewProducer(() -> BuildingComposter.View::new)
                                    .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.COMPOSTER_ID))
-                                   .addBuildingModuleProducer(() -> new GroupedItemListModule(COMPOSTABLE_LIST), () -> new GroupedItemListModuleView(COMPOSTABLE_LIST, COM_MINECOLONIES_REQUESTS_COMPOSTABLE_UI, false,
+                                   .addBuildingModuleProducer(() -> new ItemListModule(COMPOSTABLE_LIST), () -> new ItemListModuleView(COMPOSTABLE_LIST, COM_MINECOLONIES_REQUESTS_COMPOSTABLE_UI, false,
                                      (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getCopyOfCompostableItems()))
                                    .createBuildingEntry();
 
@@ -110,9 +110,9 @@ public final class ModBuildingsInitializer
                               .setBuildingProducer(BuildingCook::new)
                               .setBuildingViewProducer(() -> BuildingCook.View::new)
                               .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.COOK_ID))
-                              .addBuildingModuleProducer(() -> new GroupedItemListModule(FUEL_LIST), () -> new GroupedItemListModuleView(FUEL_LIST, COM_MINECOLONIES_REQUESTS_BURNABLE, false,
+                              .addBuildingModuleProducer(() -> new ItemListModule(FUEL_LIST), () -> new ItemListModuleView(FUEL_LIST, COM_MINECOLONIES_REQUESTS_BURNABLE, false,
                                 (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getFuel()))
-                              .addBuildingModuleProducer(() -> new GroupedItemListModule(FOOD_EXCLUSION_LIST), () -> new GroupedItemListModuleView(FOOD_EXCLUSION_LIST, COM_MINECOLONIES_REQUESTS_FOOD, true,
+                              .addBuildingModuleProducer(() -> new ItemListModule(FOOD_EXCLUSION_LIST), () -> new ItemListModuleView(FOOD_EXCLUSION_LIST, COM_MINECOLONIES_REQUESTS_FOOD, true,
                                 (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getEdibles()))
                               .createBuildingEntry();
 
@@ -181,7 +181,7 @@ public final class ModBuildingsInitializer
                                     .setBuildingProducer(BuildingLumberjack::new)
                                     .setBuildingViewProducer(() -> BuildingLumberjack.View::new)
                                     .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.LUMBERJACK_ID))
-                                    .addBuildingModuleProducer(() -> new GroupedItemListModule(SAPLINGS_LIST), () -> new GroupedItemListModuleView(SAPLINGS_LIST, COM_MINECOLONIES_REQUESTS_SAPLINGS, true,
+                                    .addBuildingModuleProducer(() -> new ItemListModule(SAPLINGS_LIST), () -> new ItemListModuleView(SAPLINGS_LIST, COM_MINECOLONIES_REQUESTS_SAPLINGS, true,
                                       (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getCopyOfSaplings()))
                                     .createBuildingEntry();
 
@@ -218,9 +218,9 @@ public final class ModBuildingsInitializer
                                   .setBuildingProducer(BuildingSmeltery::new)
                                   .setBuildingViewProducer(() -> BuildingSmeltery.View::new)
                                   .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.SMELTERY_ID))
-                                  .addBuildingModuleProducer(() -> new GroupedItemListModule(FUEL_LIST), () -> new GroupedItemListModuleView(FUEL_LIST, COM_MINECOLONIES_REQUESTS_BURNABLE, false,
+                                  .addBuildingModuleProducer(() -> new ItemListModule(FUEL_LIST), () -> new ItemListModuleView(FUEL_LIST, COM_MINECOLONIES_REQUESTS_BURNABLE, false,
                                     (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getFuel()))
-                                  .addBuildingModuleProducer(() -> new GroupedItemListModule(ORE_LIST), () -> new GroupedItemListModuleView(ORE_LIST, COM_MINECOLONIES_REQUESTS_SMELTABLE_ORE, true,
+                                  .addBuildingModuleProducer(() -> new ItemListModule(ORE_LIST), () -> new ItemListModuleView(ORE_LIST, COM_MINECOLONIES_REQUESTS_SMELTABLE_ORE, true,
                                     (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getSmeltableOres()))
                                   .createBuildingEntry();
 
@@ -236,7 +236,7 @@ public final class ModBuildingsInitializer
                                       .setBuildingProducer(BuildingStoneSmeltery::new)
                                       .setBuildingViewProducer(() -> BuildingStoneSmeltery.View::new)
                                       .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.STONE_SMELTERY_ID))
-                                      .addBuildingModuleProducer(() -> new GroupedItemListModule(FUEL_LIST), () -> new GroupedItemListModuleView(FUEL_LIST, COM_MINECOLONIES_REQUESTS_BURNABLE, false,
+                                      .addBuildingModuleProducer(() -> new ItemListModule(FUEL_LIST), () -> new ItemListModuleView(FUEL_LIST, COM_MINECOLONIES_REQUESTS_BURNABLE, false,
                                         (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getFuel()))
                                       .createBuildingEntry();
 
@@ -273,7 +273,7 @@ public final class ModBuildingsInitializer
                                  .setBuildingProducer(BuildingFlorist::new)
                                  .setBuildingViewProducer(() -> BuildingFlorist.View::new)
                                  .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.FLORIST_ID))
-                                 .addBuildingModuleProducer(() -> new GroupedItemListModule(FLORIST_FLOWER_LIST), () -> new GroupedItemListModuleView(FLORIST_FLOWER_LIST, FLORIST_FLOWER_DESC, true,
+                                 .addBuildingModuleProducer(() -> new ItemListModule(FLORIST_FLOWER_LIST), () -> new ItemListModuleView(FLORIST_FLOWER_LIST, FLORIST_FLOWER_DESC, true,
                                    (buildingView) -> BuildingFlorist.getPlantablesForBuildingLevel(buildingView.getBuildingLevel())))
                                  .createBuildingEntry();
 
@@ -317,7 +317,7 @@ public final class ModBuildingsInitializer
                                      .setBuildingProducer(BuildingGlassblower::new)
                                      .setBuildingViewProducer(() -> BuildingGlassblower.View::new)
                                      .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.GLASSBLOWER_ID))
-                                     .addBuildingModuleProducer(() -> new GroupedItemListModule(FUEL_LIST), () -> new GroupedItemListModuleView(FUEL_LIST, COM_MINECOLONIES_REQUESTS_BURNABLE, false,
+                                     .addBuildingModuleProducer(() -> new ItemListModule(FUEL_LIST), () -> new ItemListModuleView(FUEL_LIST, COM_MINECOLONIES_REQUESTS_BURNABLE, false,
                                        (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getFuel()))
                                      .createBuildingEntry();
 
@@ -326,7 +326,7 @@ public final class ModBuildingsInitializer
                               .setBuildingProducer(BuildingDyer::new)
                               .setBuildingViewProducer(() -> BuildingDyer.View::new)
                               .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.DYER_ID))
-                              .addBuildingModuleProducer(() -> new GroupedItemListModule(FUEL_LIST), () -> new GroupedItemListModuleView(FUEL_LIST, COM_MINECOLONIES_REQUESTS_BURNABLE, false,
+                              .addBuildingModuleProducer(() -> new ItemListModule(FUEL_LIST), () -> new ItemListModuleView(FUEL_LIST, COM_MINECOLONIES_REQUESTS_BURNABLE, false,
                                 (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getFuel()))
                               .createBuildingEntry();
 

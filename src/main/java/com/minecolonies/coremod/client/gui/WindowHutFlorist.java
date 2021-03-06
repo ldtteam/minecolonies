@@ -5,7 +5,7 @@ import com.ldtteam.blockout.views.View;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.colony.buildings.modules.GroupedItemListModuleView;
+import com.minecolonies.coremod.colony.buildings.modules.ItemListModuleView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFlorist;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
@@ -76,8 +76,8 @@ public class WindowHutFlorist extends AbstractHutFilterableLists
                 return;
             }
 
-            final int size = building.getModuleViewMatching(GroupedItemListModuleView.class, view -> ((GroupedItemListModuleView) view).getId().equals(id))
-                               .map(GroupedItemListModuleView::getSize).orElse(0);
+            final int size = building.getModuleViewMatching(ItemListModuleView.class, view -> ((ItemListModuleView) view).getId().equals(id))
+                               .map(ItemListModuleView::getSize).orElse(0);
             if (ownBuilding.getBuildingLevel() <= MAX_LEVEL_BEFORE_SORTING && button.getTextAsString().equals(ON) && size >= 1)
             {
                 LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, TOO_MANY_FILTERED_BELOW_LVL4_FLORIST);

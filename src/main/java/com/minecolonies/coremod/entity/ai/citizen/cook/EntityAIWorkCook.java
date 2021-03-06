@@ -20,7 +20,7 @@ import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
-import com.minecolonies.coremod.colony.buildings.modules.GroupedItemListModule;
+import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.JobCook;
@@ -336,8 +336,8 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
     @Override
     protected IRequestable getSmeltAbleClass()
     {
-        final List<ItemStorage> allowedItems = getOwnBuilding().getModuleMatching(GroupedItemListModule.class, m -> ((GroupedItemListModule) m).getId().equals(FOOD_EXCLUSION_LIST))
-                                                 .map(GroupedItemListModule::getList).orElse(ImmutableList.of());
+        final List<ItemStorage> allowedItems = getOwnBuilding().getModuleMatching(ItemListModule.class, m -> ((ItemListModule) m).getId().equals(FOOD_EXCLUSION_LIST))
+                                                 .map(ItemListModule::getList).orElse(ImmutableList.of());
         if (!allowedItems.isEmpty())
         {
             if (IColonyManager.getInstance().getCompatibilityManager().getEdibles().size() <= allowedItems.size())

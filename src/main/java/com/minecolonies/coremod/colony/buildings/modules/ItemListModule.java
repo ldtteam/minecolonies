@@ -18,7 +18,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 /**
  * Abstract class for all buildings which require a filterable list of allowed items.
  */
-public class GroupedItemListModule extends AbstractBuildingModule implements IGroupedItemListModule, IPersistentModule
+public class ItemListModule extends AbstractBuildingModule implements IItemListModule, IPersistentModule
 {
     /**
      * Tag to store the item list.
@@ -39,7 +39,7 @@ public class GroupedItemListModule extends AbstractBuildingModule implements IGr
      * Construct a new grouped itemlist module with the unique list identifier.
      * @param id the list id.
      */
-    public GroupedItemListModule(final String id)
+    public ItemListModule(final String id)
     {
         super();
         this.id = id;
