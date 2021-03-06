@@ -128,7 +128,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
      */
     protected boolean patrolManually = false;
 
-    protected static final Boolean canGuardMine = true;
+    protected static final boolean canGuardMine = true;
 
     /**
      * The task of the guard, following the {@link GuardTask} enum.
@@ -684,6 +684,10 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         tempNextPatrolPoint = pos;
     }
 
+    /**
+     * Return the position of the mine to guard
+     * @return the position of the mine
+     */
     public BlockPos getMinePos()
     {
         return minePos;

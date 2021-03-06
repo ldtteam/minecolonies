@@ -651,30 +651,6 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         }
     }
 
-    @Override
-    public void onDestroyed()
-    {
-        super.onDestroyed();
-        final List <Map.Entry<BlockPos, IBuilding>> guardbuildings = this.colony.getBuildingManager().getBuildings().entrySet()
-          .stream()
-          .filter(entry ->
-            {
-                if (entry.getValue() instanceof AbstractBuildingGuards)
-                {
-                    AbstractBuildingGuards guardbuilding = (AbstractBuildingGuards) entry.getValue();
-                    return guardbuilding.getTask() == GuardTask.MINE && guardbuilding.getMinePos() != null && guardbuilding.getMinePos().equals(this.getPosition());
-                }
-                return false;
-            })
-          .collect(Collectors.toList());
-        for (final Map.Entry<BlockPos, IBuilding> entry : guardbuildings)
-        {
-            final AbstractBuildingGuards guardbuilding = (AbstractBuildingGuards) entry.getValue();
-            guardbuilding.setMinePos(null);
-        }
-        this.colony.markDirty();
-    }
-
     /**
      * Provides a view of the miner building class.
      */

@@ -19,7 +19,6 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.Vec2i;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
@@ -28,7 +27,6 @@ import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.SittingEntity;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIFight;
 import com.minecolonies.coremod.entity.ai.citizen.miner.Level;
-import com.minecolonies.coremod.entity.ai.citizen.miner.Node;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.client.SleepingParticleMessage;
 import com.minecolonies.coremod.util.NamedDamageSource;
@@ -48,7 +46,6 @@ import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.research.util.ResearchConstants.*;
@@ -528,7 +525,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     protected IAIState startWorkingAtOwnBuilding()
     {
         final ILocation rallyLocation = buildingGuards.getRallyLocation();
-        if (rallyLocation != null && rallyLocation.isReachableFromLocation(worker.getLocation()) || !canBeInterrupted())
+        if ((rallyLocation != null && rallyLocation.isReachableFromLocation(worker.getLocation()) || !canBeInterrupted()) || (buildingGuards.getTask() == GuardTask.MINE && buildingGuards.getMinePos() != null))
         {
             return PREPARING;
         }
@@ -608,34 +605,29 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         if (currentPatrolPoint == null ||  worker.isWorkerAtSiteWithMove(currentPatrolPoint, 2))
         {
             final IBuilding building = buildingGuards.getColony().getBuildingManager().getBuilding(buildingGuards.getMinePos());
-            if (building != null && building instanceof BuildingMiner)
+            if (building != null)
             {
-                final BuildingMiner miner = (BuildingMiner) building;
-                final Level level = miner.getCurrentLevel();
-                if (level == null || level.getNodes().isEmpty())
+                if (building instanceof BuildingMiner)
                 {
-                    setNextPatrolTarget(miner.getPosition());
-                }
-                else
-                {
-                    final List<Map.Entry<Vec2i, Node>> filteredNodes = level.getNodes().entrySet()
-                            .stream()
-                            .filter(entry -> entry.getValue().getStatus() == Node.NodeStatus.COMPLETED && entry.getValue().getStyle() != Node.NodeType.LADDER_BACK && entry.getValue().getStyle() != Node.NodeType.SHAFT)
-                            .collect(Collectors.toList());
-                    if (filteredNodes.isEmpty())
+                    final BuildingMiner buildingMiner = (BuildingMiner) building;
+                    final Level level = buildingMiner.getCurrentLevel();
+                    if (level == null)
                     {
-                        setNextPatrolTarget(miner.getPosition());
+                        setNextPatrolTarget(buildingMiner.getPosition());
                     }
                     else
                     {
-                        final Node node = filteredNodes.get(worker.getRandom().nextInt(filteredNodes.size())).getValue();
-                        setNextPatrolTarget(new BlockPos(node.getX(), level.getDepth()+1, node.getZ()));
+                        setNextPatrolTarget(level.getRandomCompletedNode(buildingMiner));
                     }
+                }
+                else
+                {
+                    buildingGuards.setTask(GuardTask.PATROL);
                 }
             }
             else
             {
-                return PREPARING;
+                buildingGuards.setTask(GuardTask.PATROL);
             }
         }
         return GUARD_PATROL;
