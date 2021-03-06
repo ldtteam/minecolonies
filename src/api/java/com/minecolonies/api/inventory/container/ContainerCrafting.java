@@ -73,19 +73,34 @@ public class ContainerCrafting extends Container
     private final BlockPos pos;
 
     /**
+     * Deserialize packet buffer to container instance.
+     *
+     * @param windowId     the id of the window.
+     * @param inv          the player inventory.
+     * @param packetBuffer network buffer
+     * @return new instance
+     */
+    public static ContainerCrafting fromPacketBuffer(final int windowId, final PlayerInventory inv, final PacketBuffer packetBuffer)
+    {
+        final boolean complete = packetBuffer.readBoolean();
+        final BlockPos tePos = packetBuffer.readBlockPos();
+        return new ContainerCrafting(windowId, inv, complete, tePos);
+    }
+
+    /**
      * Creates a crafting container.
      *
      * @param windowId the window id.
      * @param inv      the inventory.
      * @param extra    some extra data.
      */
-    public ContainerCrafting(final int windowId, final PlayerInventory inv, final PacketBuffer extra)
+    public ContainerCrafting(final int windowId, final PlayerInventory inv, final boolean complete, final BlockPos pos)
     {
         super(ModContainers.craftingGrid, windowId);
         this.world = inv.player.world;
         this.inv = inv;
-        this.complete = extra.readBoolean();
-        this.pos = extra.readBlockPos();
+        this.complete = complete;
+        this.pos = pos;
         if (complete)
         {
             craftMatrix = new CraftingInventory(this, 3, 3);

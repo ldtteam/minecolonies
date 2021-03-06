@@ -346,17 +346,27 @@ public class LocalResearchTree implements ILocalResearchTree
                       research.setProgress(progress);
                       Log.getLogger().warn("Research " + research.getId().getPath() + " was in colony save file, and was updated to " + research.getId());
                   }
+                  else if(research.getBranch().getNamespace().contains("minecraft"))
+                  {
+                      final ResearchState currentState = research.getState();
+                      final int progress = research.getProgress();
+                      research = new LocalResearch(new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, research.getId().getPath()),
+                        new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, research.getBranch().getPath()), research.getDepth());
+                      research.setState(currentState);
+                      research.setProgress(progress);
+                  }
                   else
                   {
-                      Log.getLogger().warn("Research " + research.getId() + " was in colony save file, but was not in CompatMap.");
+                      if(MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchDebugLog.get())
+                      {
+                          Log.getLogger().warn("Research " + research.getId() + " was in colony save file, but was not in CompatMap.");
+                      }
                   }
               }
               /// endregion
 
               if (research.getState() == ResearchState.FINISHED)
               {
-
-
                   // Even after correction, we do still need to check for presence; it's possible for someone to have old save data and remove the research,
                   // or to have a different research that was in a now-removed data pack.  But those will get just thrown away.
                   if (MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().hasResearch(research.getBranch(), research.getId()))
@@ -368,7 +378,11 @@ public class LocalResearchTree implements ILocalResearchTree
                   }
                   else
                   {
-                      Log.getLogger().warn("Research " + research.getId() + " was in colony save file, but not found as valid current research.  Progress on this research may be reset.");
+                      if(MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchDebugLog.get())
+                      {
+                          Log.getLogger()
+                            .warn("Research " + research.getId() + " was in colony save file, but not found as valid current research.  Progress on this research may be reset.");
+                      }
                   }
               }
               addResearch(research.getBranch(), research);

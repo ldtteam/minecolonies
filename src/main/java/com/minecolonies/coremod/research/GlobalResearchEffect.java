@@ -89,21 +89,21 @@ public class GlobalResearchEffect implements IResearchEffect<Double>
      * @param desc          the effect's description, for display.
      * @param subtitle      the effect's subtitle description.
      */
-    public GlobalResearchEffect(final ResourceLocation id, final double effect, final double displayEffect, final String desc, final String subtitle)
+    public GlobalResearchEffect(final ResourceLocation id, final double effect, final double displayEffect, final TranslationTextComponent desc, final TranslationTextComponent subtitle)
     {
         this.id = id;
         this.effect = effect;
         this.displayEffect = displayEffect;
-        if (desc.isEmpty())
+        if (desc.getKey().isEmpty())
         {
             this.desc = new TranslationTextComponent("com." + this.id.getPath() + ".research." + this.id.getNamespace().replaceAll("[ /:]", ".") + ".description",
               displayEffect, effect, Math.round(displayEffect * 100), Math.round(effect * 100));
         }
         else
         {
-            this.desc = new TranslationTextComponent(desc, displayEffect, effect, Math.round(displayEffect * 100), Math.round(effect * 100));
+            this.desc = new TranslationTextComponent(desc.getKey(), displayEffect, effect, Math.round(displayEffect * 100), Math.round(effect * 100));
         }
-        this.subtitle = new TranslationTextComponent(subtitle);
+        this.subtitle = subtitle;
     }
 
     /**
