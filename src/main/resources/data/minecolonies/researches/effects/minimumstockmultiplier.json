@@ -1,9 +1,0 @@
-{
-  "comment": "name: Minimum Stock * description : Buildings Can Stock %d%% More",
-  "effect": true,
-  "levels": [
-    0.5,
-    1,
-    2
-  ]
-}

@@ -314,9 +314,10 @@ public class BuildingPlantation extends AbstractBuildingCrafter
             while (settings.get(next) == setting);
 
             currentPhase = settings.get(next);
+            return currentPhase;
         }
 
-        return currentPhase;
+        return setting;
     }
 
     /**

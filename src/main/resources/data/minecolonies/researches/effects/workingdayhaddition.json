@@ -1,8 +1,0 @@
-{
-  "comment": "name: Working Day H * description : Citizen Work Day +%dH",
-  "effect": true,
-  "levels": [
-    1,
-    2
-  ]
-}
