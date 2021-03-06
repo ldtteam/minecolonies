@@ -19,7 +19,9 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
-import com.minecolonies.coremod.colony.buildings.modules.GroupedItemListModule;
+import com.minecolonies.coremod.colony.buildings.modules.itemlist.food.FoodExcludedItemList;
+import com.minecolonies.coremod.colony.buildings.modules.itemlist.fuel.FuelItemListModule;
+import com.minecolonies.coremod.colony.buildings.modules.itemlist.ore.OreItemListModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
 import com.minecolonies.coremod.colony.jobs.*;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIBasic;
@@ -36,9 +38,6 @@ import static com.minecolonies.api.util.ItemStackUtils.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.LOW_SATURATION;
 import static com.minecolonies.api.util.constant.HappinessConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
-import static com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser.FUEL_LIST;
-import static com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook.FOOD_EXCLUSION_LIST;
-import static com.minecolonies.coremod.entity.ai.citizen.smelter.EntityAIWorkSmelter.ORE_LIST;
 import static com.minecolonies.coremod.util.WorkerUtil.getLastLadder;
 import static com.minecolonies.coremod.util.WorkerUtil.isThereCompostedLand;
 import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
@@ -55,8 +54,7 @@ public class InteractionValidatorInitializer
     {
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(FURNACE_USER_NO_FUEL),
           citizen -> citizen.getWorkBuilding() instanceof AbstractBuildingSmelterCrafter
-                       && ((AbstractBuildingSmelterCrafter) citizen.getWorkBuilding()).getModuleMatching(GroupedItemListModule.class, m -> ((GroupedItemListModule) m).getId().equals(FUEL_LIST))
-                            .map(m -> m.getList().isEmpty()).orElse(false));
+                       && citizen.getWorkBuilding().getFirstModuleOccurance(FuelItemListModule.class).get().getList().isEmpty();
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(BAKER_HAS_NO_FURNACES_MESSAGE),
           citizen -> citizen.getWorkBuilding() instanceof AbstractBuildingSmelterCrafter && ((AbstractBuildingSmelterCrafter) citizen.getWorkBuilding()).getFurnaces().isEmpty());
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(RAW_FOOD),
@@ -178,8 +176,7 @@ public class InteractionValidatorInitializer
           citizen -> {
             if (citizen.getWorkBuilding() instanceof BuildingSmeltery)
             {
-                final List<ItemStorage> oreList = ((BuildingSmeltery) citizen.getWorkBuilding()).getModuleMatching(GroupedItemListModule.class, m -> ((GroupedItemListModule) m).getId().equals(ORE_LIST))
-                                                    .map(GroupedItemListModule::getList).orElse(ImmutableList.of());
+                final List<ItemStorage> oreList = citizen.getWorkBuilding().getFirstModuleOccurance(OreItemListModule.class).get().getList();
                 return IColonyManager.getInstance().getCompatibilityManager()
                   .getSmeltableOres()
                   .stream()
@@ -209,8 +206,7 @@ public class InteractionValidatorInitializer
                 return false;
             }
 
-            final ImmutableList<ItemStorage> exclusionList = ((BuildingCook) citizen.getWorkBuilding()).getModuleMatching(GroupedItemListModule.class, m -> ((GroupedItemListModule)m).getId().equals(FOOD_EXCLUSION_LIST)).map(
-              GroupedItemListModule::getList).orElse(ImmutableList.of());
+              final ImmutableList<ItemStorage> exclusionList = citizen.getWorkBuilding().getFirstModuleOccurance(FoodExcludedItemList.class).get().getList();
             for (final ItemStorage storage : IColonyManager.getInstance().getCompatibilityManager().getEdibles())
             {
                 if (!exclusionList.contains(storage))

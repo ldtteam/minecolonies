@@ -1,7 +1,9 @@
-package com.minecolonies.coremod.colony.buildings.modules;
+package com.minecolonies.coremod.colony.buildings.modules.itemlist;
 
 import com.google.common.collect.ImmutableList;
-import com.minecolonies.api.colony.buildings.modules.*;
+import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModule;
+import com.minecolonies.api.colony.buildings.modules.IItemListModule;
+import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.Log;
 import net.minecraft.item.ItemStack;
@@ -11,14 +13,15 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 
 /**
  * Abstract class for all buildings which require a filterable list of allowed items.
  */
-public class GroupedItemListModule extends AbstractBuildingModule implements IGroupedItemListModule, IPersistentModule
+public abstract class ItemListModule extends AbstractBuildingModule implements IItemListModule, IPersistentModule
 {
     /**
      * Tag to store the item list.
@@ -33,17 +36,7 @@ public class GroupedItemListModule extends AbstractBuildingModule implements IGr
     /**
      * Unique id of this module.
      */
-    private final String id;
-
-    /**
-     * Construct a new grouped itemlist module with the unique list identifier.
-     * @param id the list id.
-     */
-    public GroupedItemListModule(final String id)
-    {
-        super();
-        this.id = id;
-    }
+    private final String id = "";
 
     @Override
     public void deserializeNBT(final CompoundNBT compound)

@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.entity.ai.citizen.cook;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColonyManager;
@@ -20,7 +19,7 @@ import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
-import com.minecolonies.coremod.colony.buildings.modules.GroupedItemListModule;
+import com.minecolonies.coremod.colony.buildings.modules.itemlist.food.FoodExcludedItemList;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.JobCook;
@@ -42,8 +41,8 @@ import java.util.stream.Collectors;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.ItemStackUtils.CAN_EAT;
 import static com.minecolonies.api.util.constant.Constants.*;
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
-import static com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook.FOOD_EXCLUSION_LIST;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_REQUESTS_FOOD;
+import static com.minecolonies.api.util.constant.TranslationConstants.FURNACE_USER_NO_FOOD;
 
 /**
  * Cook AI class.
@@ -336,8 +335,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
     @Override
     protected IRequestable getSmeltAbleClass()
     {
-        final List<ItemStorage> allowedItems = getOwnBuilding().getModuleMatching(GroupedItemListModule.class, m -> ((GroupedItemListModule) m).getId().equals(FOOD_EXCLUSION_LIST))
-                                                 .map(GroupedItemListModule::getList).orElse(ImmutableList.of());
+        final List<ItemStorage> allowedItems = getOwnBuilding().getFirstModuleOccurance(FoodExcludedItemList.class).get().getList();
         if (!allowedItems.isEmpty())
         {
             if (IColonyManager.getInstance().getCompatibilityManager().getEdibles().size() <= allowedItems.size())

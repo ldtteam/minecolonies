@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.entity.ai.citizen.smelter;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
@@ -13,7 +12,7 @@ import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.colony.buildings.modules.GroupedItemListModule;
+import com.minecolonies.coremod.colony.buildings.modules.itemlist.ore.OreItemListModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingSmeltery;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.JobSmelter;
@@ -337,8 +336,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
         {
             return false;
         }
-        final List<ItemStorage> allowedItems = getOwnBuilding().getModuleMatching(GroupedItemListModule.class, m -> ((GroupedItemListModule) m).getId().equals(ORE_LIST))
-                                                 .map(GroupedItemListModule::getList).orElse(ImmutableList.of());
+        final List<ItemStorage> allowedItems = getOwnBuilding().getFirstModuleOccurance(OreItemListModule.class).get().getList();
         return !allowedItems.contains(new ItemStorage(stack));
     }
 
@@ -349,7 +347,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
               !getOwnBuilding().hasWorkerOpenRequestsFiltered(worker.getCitizenData(),
                 req -> req.getShortDisplayString().getSiblings().contains(new TranslationTextComponent(COM_MINECOLONIES_REQUESTS_SMELTABLE_ORE))))
         {
-            final List<ItemStorage> allowedItems = getOwnBuilding().getModuleMatching(GroupedItemListModule.class, m -> ((GroupedItemListModule) m).getId().equals(ORE_LIST)).map(GroupedItemListModule::getList).orElse(ImmutableList.of());
+            final List<ItemStorage> allowedItems = getOwnBuilding().getFirstModuleOccurance(OreItemListModule.class).get().getList();
             if (allowedItems.isEmpty())
             {
                 worker.getCitizenData().createRequestAsync(getSmeltAbleClass());

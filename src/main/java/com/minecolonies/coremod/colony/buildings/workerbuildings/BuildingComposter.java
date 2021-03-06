@@ -13,7 +13,7 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.coremod.client.gui.WindowHutComposter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.modules.GroupedItemListModule;
+import com.minecolonies.coremod.colony.buildings.modules.itemlist.compost.CompostItemListModule;
 import com.minecolonies.coremod.colony.jobs.JobComposter;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.CompoundNBT;
@@ -28,8 +28,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.minecolonies.coremod.entity.ai.citizen.composter.EntityAIWorkComposter.COMPOSTABLE_LIST;
 
 public class BuildingComposter extends AbstractBuildingWorker
 {
@@ -78,7 +76,7 @@ public class BuildingComposter extends AbstractBuildingWorker
     {
         super(c, l);
 
-        keepX.put((stack) -> this.hasModule(GroupedItemListModule.class) && this.getModuleMatching(GroupedItemListModule.class, m -> ((GroupedItemListModule) m).getId().equals(COMPOSTABLE_LIST)).map(m -> m.isItemInList(new ItemStorage(stack))).orElse(false), new Tuple<>(Integer.MAX_VALUE, true));
+        keepX.put((stack) -> this.getFirstModuleOccurance(CompostItemListModule.class).get().isItemInList((new ItemStorage(stack))), new Tuple<>(Integer.MAX_VALUE, true));
     }
 
     /**

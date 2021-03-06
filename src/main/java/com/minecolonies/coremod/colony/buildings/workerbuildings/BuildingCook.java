@@ -24,7 +24,7 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.client.gui.WindowHutCook;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.modules.GroupedItemListModule;
+import com.minecolonies.coremod.colony.buildings.modules.itemlist.food.FoodExcludedItemList;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.coremod.colony.jobs.JobCook;
 import com.minecolonies.coremod.colony.jobs.JobCookAssistant;
@@ -121,7 +121,7 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
     public BuildingCook(final IColony c, final BlockPos l)
     {
         super(c, l);
-        keepX.put((stack) -> this.hasModule(GroupedItemListModule.class) && !this.getModuleMatching(GroupedItemListModule.class, m -> ((GroupedItemListModule) m).getId().equals(FOOD_EXCLUSION_LIST)).map(m -> m.isItemInList(new ItemStorage(stack))).orElse(false), new Tuple<>(STACKSIZE, true));
+        keepX.put((stack) -> !this.getFirstModuleOccurance(FoodExcludedItemList.class).get().isItemInList(new ItemStorage(stack)), new Tuple<>(STACKSIZE, true));
         keepX.put(stack -> isAllowedFuel(stack), new Tuple<>(STACKSIZE, true));
         keepX.put(stack -> !ItemStackUtils.isEmpty(stack.getContainerItem()) && !stack.getContainerItem().getItem().equals(Items.BUCKET), new Tuple<>(STACKSIZE, false));
     }
@@ -478,8 +478,8 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
             return stack.getCount();
         }
 
-        if (ISFOOD.test(stack) && this.hasModule(GroupedItemListModule.class) && !this.getModuleMatching(GroupedItemListModule.class, m -> ((GroupedItemListModule) m).getId().equals(FOOD_EXCLUSION_LIST))
-                                                                                    .map(m -> m.isItemInList(new ItemStorage(stack))).orElse(false) && (localAlreadyKept.stream().filter(storage -> ISFOOD.test(storage.getItemStack())).mapToInt(ItemStorage::getAmount).sum() < STACKSIZE || !inventory))
+        if (ISFOOD.test(stack) && !this.getFirstModuleOccurance(FoodExcludedItemList.class).get().isItemInList(new ItemStorage(stack)) && (
+          localAlreadyKept.stream().filter(storage -> ISFOOD.test(storage.getItemStack())).mapToInt(ItemStorage::getAmount).sum() < STACKSIZE || !inventory))
         {
             final ItemStorage kept = new ItemStorage(stack);
             if (localAlreadyKept.contains(kept))

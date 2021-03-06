@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.colony.buildings;
 
-import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.coremod.colony.buildings.modules.GroupedItemListModule;
+import com.minecolonies.coremod.colony.buildings.modules.itemlist.fuel.FuelItemListModule;
+import com.minecolonies.coremod.colony.buildings.modules.itemlist.ore.OreItemListModule;
 import net.minecraft.block.Block;
 import net.minecraft.block.FurnaceBlock;
 import net.minecraft.item.ItemStack;
@@ -136,7 +136,7 @@ public abstract class AbstractBuildingFurnaceUser extends AbstractBuildingWorker
      */
     public List<ItemStack> getAllowedFuel()
     {
-        return getModuleMatching(GroupedItemListModule.class, m -> ((GroupedItemListModule) m).getId().equals(FUEL_LIST)).map(GroupedItemListModule::getList).orElse(ImmutableList.of()).stream()
+        return getFirstModuleOccurance(FuelItemListModule.class).get().getList().stream()
                      .map(ItemStorage::getItemStack)
                      .peek(stack -> stack.setCount(stack.getMaxStackSize()))
                      .collect(Collectors.toList());
@@ -150,6 +150,6 @@ public abstract class AbstractBuildingFurnaceUser extends AbstractBuildingWorker
      */
     public boolean isAllowedFuel(final ItemStack stack)
     {
-        return getModuleMatching(GroupedItemListModule.class, m -> ((GroupedItemListModule) m).getId().equals(FUEL_LIST)).map(GroupedItemListModule::getList).orElse(ImmutableList.of()).stream().anyMatch(itemStack -> stack.isItemEqual(itemStack.getItemStack()));
+        return getFirstModuleOccurance(OreItemListModule.class).get().getList().stream().anyMatch(itemStack -> stack.isItemEqual(itemStack.getItemStack()));
     }
 }

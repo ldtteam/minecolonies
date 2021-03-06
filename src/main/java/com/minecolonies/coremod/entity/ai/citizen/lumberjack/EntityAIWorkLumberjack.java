@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.entity.ai.citizen.lumberjack;
 
-import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -13,7 +12,7 @@ import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.buildings.modules.GroupedItemListModule;
+import com.minecolonies.coremod.colony.buildings.modules.itemlist.sapling.SaplingItemListModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLumberjack;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
@@ -41,7 +40,9 @@ import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.items.ModTags.fungi;
@@ -332,8 +333,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         if (pathResult == null || pathResult.treeLocation == null)
         {
             final BuildingLumberjack buildingLumberjack = (BuildingLumberjack) building;
-            final List<ItemStorage> copy = buildingLumberjack.getModuleMatching(GroupedItemListModule.class, m -> ((GroupedItemListModule) m).getId().equals(SAPLINGS_LIST))
-                                             .map(GroupedItemListModule::getList).orElse(ImmutableList.of());
+            final List<ItemStorage> copy = buildingLumberjack.getFirstModuleOccurance(SaplingItemListModule.class).get().getList();
             if (buildingLumberjack.shouldRestrict())
             {
                 final BlockPos startPos = buildingLumberjack.getStartRestriction();

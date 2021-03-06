@@ -15,7 +15,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.colony.buildings.modules.GroupedItemListModuleView;
+import com.minecolonies.coremod.colony.buildings.modules.itemlist.ItemListModuleView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.coremod.network.messages.server.colony.building.RemoveMinimumStockFromBuildingMessage;
 import com.minecolonies.coremod.util.FurnaceRecipes;
@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_REQUESTS_BURNABLE;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
@@ -69,7 +68,7 @@ public class WindowHutCook extends AbstractHutFilterableLists
     public WindowHutCook(final BuildingCook.View building)
     {
         super(building, Constants.MOD_ID + RESOURCE_STRING);
-        for (final GroupedItemListModuleView module : building.getModuleViews(GroupedItemListModuleView.class))
+        for (final ItemListModuleView module : building.getModuleViews(ItemListModuleView.class))
         {
             final ViewFilterableList win = new ViewFilterableList(findPaneOfTypeByID(module.getId(), View.class),
               this,
@@ -102,7 +101,7 @@ public class WindowHutCook extends AbstractHutFilterableLists
      */
     public List<? extends ItemStorage> getBlockList(final Predicate<ItemStack> filterPredicate, final String id)
     {
-        return ImmutableList.copyOf(building.getModuleViewMatching(GroupedItemListModuleView.class, view -> ((GroupedItemListModuleView) view).getId().equals(id))
+        return ImmutableList.copyOf(building.getModuleViewMatching(ItemListModuleView.class, view -> ((ItemListModuleView) view).getId().equals(id))
                                       .map(m -> m.getAllItems().apply(building))
                                       .orElse(ImmutableSet.of())
                                       .stream()

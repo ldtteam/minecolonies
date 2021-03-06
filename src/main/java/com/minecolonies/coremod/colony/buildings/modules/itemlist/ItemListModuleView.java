@@ -1,6 +1,7 @@
-package com.minecolonies.coremod.colony.buildings.modules;
+package com.minecolonies.coremod.colony.buildings.modules.itemlist;
 
-import com.minecolonies.api.colony.buildings.modules.*;
+import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
+import com.minecolonies.api.colony.buildings.modules.IBuildingModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.coremod.Network;
@@ -16,7 +17,7 @@ import java.util.function.Function;
 /**
  * Abstract class for all buildings which require a filterable list of allowed items.
  */
-public class GroupedItemListModuleView extends AbstractBuildingModuleView implements IBuildingModuleView
+public class ItemListModuleView extends AbstractBuildingModuleView implements IBuildingModuleView
 {
     /**
      * The list of items.
@@ -26,7 +27,7 @@ public class GroupedItemListModuleView extends AbstractBuildingModuleView implem
     /**
      * Unique string id of the module.
      */
-    private final String                      id;
+    private final String id = "";
 
     /**
      * Supplier for the list of all items (not only the disabled/enabled ones).
@@ -50,10 +51,9 @@ public class GroupedItemListModuleView extends AbstractBuildingModuleView implem
      * @param inverted enabling or disabling.
      * @param allItems a supplier for all the items.
      */
-    public GroupedItemListModuleView(final String id, final String desc, final boolean inverted, final Function<IBuildingView, Set<ItemStorage>> allItems)
+    public ItemListModuleView(final String desc, final boolean inverted, final Function<IBuildingView, Set<ItemStorage>> allItems)
     {
         super();
-        this.id = id;
         this.desc = desc;
         this.inverted = inverted;
         this.allItems = allItems;
