@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_REQUESTS_COMPOSTABLE;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_REQUESTS_COMPOSTABLE_UI;
 
 /**

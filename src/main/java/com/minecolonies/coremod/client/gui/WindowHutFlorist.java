@@ -11,6 +11,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -96,7 +97,7 @@ public class WindowHutFlorist extends AbstractHutFilterableLists
     @Override
     public List<? extends ItemStorage> getBlockList(final Predicate<ItemStack> filterPredicate, final String id)
     {
-        return BuildingFlorist.getPlantablesForBuildingLevel(building.getBuildingLevel());
+        return new ArrayList<>(BuildingFlorist.getPlantablesForBuildingLevel(building.getBuildingLevel()));
     }
 
     @Override

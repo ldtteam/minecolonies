@@ -64,7 +64,7 @@ public class GroupedItemListModule extends AbstractBuildingModule implements IGr
                         final ListNBT filterableItems = listItem.getList(TAG_ITEMLIST, Constants.NBT.TAG_COMPOUND);
                         for (int j = 0; j < filterableItems.size(); ++j)
                         {
-                            itemsAllowed.add(new ItemStorage(ItemStack.read(listItem)));
+                            itemsAllowed.add(new ItemStorage(ItemStack.read(filterableItems.getCompound(j))));
                         }
                     }
                 }

@@ -89,7 +89,7 @@ public class InteractionValidatorInitializer
                       final IBuilding building = colony.getBuildingManager().getBuilding(pos);
                       if (building != null)
                       {
-                          final IItemHandler inv = building.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null);
+                          final IItemHandler inv = building.getCapability(ITEM_HANDLER_CAPABILITY, null).resolve().orElse(null);
                           if (inv != null)
                           {
                               return InventoryUtils.openSlotCount(inv) > 0;

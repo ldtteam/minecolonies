@@ -631,7 +631,7 @@ public abstract class AbstractBuildingView implements IBuildingView
     {
         for (final IBuildingModuleView view : moduleViews)
         {
-            if (clazz.isInstance(view.getClass()))
+            if (clazz.isInstance(view))
             {
                 return Optional.of((T) view);
             }
@@ -645,7 +645,7 @@ public abstract class AbstractBuildingView implements IBuildingView
     {
         for (final IBuildingModuleView module : moduleViews)
         {
-            if (clazz.isInstance(module.getClass()) && modulePredicate.test(module))
+            if (clazz.isInstance(module) && modulePredicate.test(module))
             {
                 return Optional.of((T) module);
             }

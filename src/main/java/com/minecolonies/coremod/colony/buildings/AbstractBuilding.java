@@ -185,7 +185,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     {
         for (final IBuildingModule module : modules)
         {
-            if (clazz.isInstance(module.getClass()))
+            if (clazz.isInstance(module))
             {
                 return Optional.of((T) module);
             }
@@ -199,7 +199,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     {
         for (final IBuildingModule module : modules)
         {
-            if (clazz.isInstance(module.getClass()) && modulePredicate.test((T) module))
+            if (clazz.isInstance(module) && modulePredicate.test((T) module))
             {
                 return Optional.of((T) module);
             }

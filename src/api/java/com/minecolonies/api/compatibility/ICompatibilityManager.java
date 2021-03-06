@@ -97,7 +97,7 @@ public interface ICompatibilityManager
      *
      * @return the list of plantables.
      */
-    List<ItemStorage> getCopyOfPlantables();
+    Set<ItemStorage> getCopyOfPlantables();
 
     /**
      * Get a random disease of the compat manager.

@@ -327,9 +327,9 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
-    public List<ItemStorage> getCopyOfPlantables()
+    public Set<ItemStorage> getCopyOfPlantables()
     {
-        return ImmutableList.copyOf(plantables);
+        return new HashSet<>(plantables);
     }
 
     @Override

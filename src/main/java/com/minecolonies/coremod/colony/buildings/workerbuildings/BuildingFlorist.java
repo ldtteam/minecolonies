@@ -34,6 +34,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.FLORIST_FLOWER_LIST;
@@ -204,7 +205,7 @@ public class BuildingFlorist extends AbstractBuildingWorker
      * @param level the building level.
      * @return the restricted list.
      */
-    public static List<ItemStorage> getPlantablesForBuildingLevel(final int level)
+    public static Set<ItemStorage> getPlantablesForBuildingLevel(final int level)
     {
         switch (level)
         {
@@ -213,11 +214,11 @@ public class BuildingFlorist extends AbstractBuildingWorker
                 return IColonyManager.getInstance().getCompatibilityManager().getCopyOfPlantables().stream()
                          .filter(storage -> storage.getItem() == Items.POPPY || storage.getItem() == Items.DANDELION)
                          .filter(itemStorage -> itemStorage.getItem().isIn(ItemTags.SMALL_FLOWERS))
-                         .collect(Collectors.toList());
+                         .collect(Collectors.toSet());
             case 2:
                 return IColonyManager.getInstance().getCompatibilityManager().getCopyOfPlantables().stream()
                          .filter(itemStorage -> itemStorage.getItem().isIn(ItemTags.SMALL_FLOWERS))
-                         .collect(Collectors.toList());
+                         .collect(Collectors.toSet());
             case 3:
             case 4:
             case 5:

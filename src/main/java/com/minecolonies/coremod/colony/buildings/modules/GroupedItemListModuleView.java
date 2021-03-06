@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.buildings.modules;
 
 import com.minecolonies.api.colony.buildings.modules.*;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.server.colony.building.AssignFilterableItemMessage;
@@ -10,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Supplier;
+import java.util.function.Function;
 
 /**
  * Abstract class for all buildings which require a filterable list of allowed items.
@@ -30,7 +31,7 @@ public class GroupedItemListModuleView extends AbstractBuildingModuleView implem
     /**
      * Supplier for the list of all items (not only the disabled/enabled ones).
      */
-    private final Supplier<Set<ItemStorage>> allItems;
+    private final Function<IBuildingView, Set<ItemStorage>> allItems;
 
     /**
      * if the list is inverted (so list encludes the disabled ones).
@@ -49,7 +50,7 @@ public class GroupedItemListModuleView extends AbstractBuildingModuleView implem
      * @param inverted enabling or disabling.
      * @param allItems a supplier for all the items.
      */
-    public GroupedItemListModuleView(final String id, final String desc, final boolean inverted, final Supplier<Set<ItemStorage>> allItems)
+    public GroupedItemListModuleView(final String id, final String desc, final boolean inverted, final Function<IBuildingView, Set<ItemStorage>> allItems)
     {
         super();
         this.id = id;
@@ -114,7 +115,7 @@ public class GroupedItemListModuleView extends AbstractBuildingModuleView implem
      * Get the supplier of the list of all items to display.
      * @return the list.
      */
-    public Supplier<Set<ItemStorage>> getAllItems()
+    public Function<IBuildingView, Set<ItemStorage>> getAllItems()
     {
         return allItems;
     }
