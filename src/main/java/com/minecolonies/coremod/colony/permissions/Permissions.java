@@ -35,13 +35,14 @@ public class Permissions implements IPermissions
     /**
      * All tags to store and retrieve data from nbt.
      */
-    private static final String TAG_OWNERS      = "owners";
-    private static final String TAG_ID          = "id";
-    private static final String TAG_RANK        = "rank";
-    private static final String TAG_PERMISSIONS = "permissionMap";
-    private static final String TAG_FLAGS       = "flags";
-    private static final String TAG_OWNER       = "owner";
-    private static final String TAG_OWNER_ID    = "ownerid";
+    private static final String TAG_OWNERS          = "owners";
+    private static final String TAG_ID              = "id";
+    private static final String TAG_RANK            = "rank";
+    private static final String TAG_PERMISSIONS     = "permissionMap";
+    private static final String TAG_FLAGS           = "flags";
+    private static final String TAG_OWNER           = "owner";
+    private static final String TAG_OWNER_ID        = "ownerid";
+    private static final String TAG_FULLY_ABANDONED = "fully_abandoned";
 
     /**
      * NBTTarget for the permission version, used for updating.
@@ -54,15 +55,34 @@ public class Permissions implements IPermissions
     @NotNull
     private static final Map<Rank, RankPair> promotionRanks = new EnumMap<>(Rank.class);
 
-    /*
-     * Fill the promotion ranks.
+    /**
+     * A flag for all the permissions unlocked in a fully abandoned colony.
      */
+    private static int fullyAbandonedPermissionsFlag = 0;
+
     static
     {
+        /*
+         * Fill the promotion ranks.
+         */
         setPromotionRanks(Rank.OFFICER, Rank.OFFICER, Rank.FRIEND);
         setPromotionRanks(Rank.FRIEND, Rank.OFFICER, Rank.NEUTRAL);
         setPromotionRanks(Rank.NEUTRAL, Rank.FRIEND, Rank.HOSTILE);
         setPromotionRanks(Rank.HOSTILE, Rank.NEUTRAL, Rank.HOSTILE);
+
+        /*
+         * Generate the fully abandoned flag.
+         */
+        for (Action a:Action.values())
+        {
+            if (a != Action.GUARDS_ATTACK && a != Action.CAN_PROMOTE && a != Action.CAN_DEMOTE
+                  && a != Action.EDIT_PERMISSIONS && a != Action.MANAGE_HUTS
+                  && a != Action.TELEPORT_TO_COLONY && a != Action.EXPLODE
+                  && a != Action.CAN_KEEP_COLONY_ACTIVE_WHILE_AWAY && a != Action.RALLY_GUARDS)
+            {
+                fullyAbandonedPermissionsFlag |= a.getFlag();
+            }
+        }
     }
 
     /**
@@ -92,10 +112,16 @@ public class Permissions implements IPermissions
      * The name of the owner.
      */
     private String ownerName = "";
+
     /**
      * The UUID of the owner.
      */
     private UUID   ownerUUID = null;
+
+    /**
+     * True if this character has no owner or officer left and thus can be mined by anyone.
+     */
+    private boolean fullyAbandoned = false;
 
     /**
      * The current version of the permissions, increase upon changes to the preset permissions
@@ -344,11 +370,11 @@ public class Permissions implements IPermissions
                 permissionMap.put(rank, flags);
             }
 
-            if (compound.keySet().contains(TAG_OWNER))
+            if (compound.contains(TAG_OWNER))
             {
                 ownerName = compound.getString(TAG_OWNER);
             }
-            if (compound.keySet().contains(TAG_OWNER_ID))
+            if (compound.contains(TAG_OWNER_ID))
             {
                 try
                 {
@@ -360,6 +386,15 @@ public class Permissions implements IPermissions
                      * Intentionally left empty. Happens when the UUID hasn't been saved yet.
                      */
                 }
+            }
+
+            if (compound.contains(TAG_FULLY_ABANDONED))
+            {
+                fullyAbandoned = compound.getBoolean(TAG_FULLY_ABANDONED);
+            }
+            else
+            {
+                checkFullyAbandoned();
             }
         }
 
@@ -420,6 +455,8 @@ public class Permissions implements IPermissions
 
         players.put(ownerUUID, new Player(ownerUUID, player.getName().getString(), Rank.OWNER));
 
+        fullyAbandoned = false;
+
         markDirty();
         return true;
     }
@@ -437,6 +474,7 @@ public class Permissions implements IPermissions
 
         players.put(ownerUUID, new Player(ownerUUID, ownerName, Rank.OWNER));
 
+        checkFullyAbandoned();
         markDirty();
     }
 
@@ -513,6 +551,8 @@ public class Permissions implements IPermissions
             compound.putString(TAG_OWNER_ID, ownerUUID.toString());
         }
 
+        compound.putBoolean(TAG_FULLY_ABANDONED, fullyAbandoned);
+
         compound.putInt(TAG_VERSION, permissionsVersion);
     }
 
@@ -534,7 +574,8 @@ public class Permissions implements IPermissions
     public boolean hasPermission(final Rank rank, @NotNull final Action action)
     {
         return (rank == Rank.OWNER && action != Action.GUARDS_ATTACK)
-                 || Utils.testFlag(permissionMap.get(rank), action.getFlag());
+                 || Utils.testFlag(permissionMap.get(rank), action.getFlag())
+                 || (fullyAbandoned && Utils.testFlag(fullyAbandonedPermissionsFlag, action.getFlag()));
     }
 
     /**
@@ -638,6 +679,16 @@ public class Permissions implements IPermissions
         if (player != null)
         {
             player.setRank(rank);
+
+            if (rank == Rank.OFFICER || rank == Rank.OWNER)
+            {
+                fullyAbandoned = false;
+            }
+            else
+            {
+                checkFullyAbandoned();
+            }
+
             markDirty();
         }
         else
@@ -666,6 +717,11 @@ public class Permissions implements IPermissions
 
         players.remove(p.getID());
         players.put(p.getID(), p);
+
+        if (rank == Rank.OWNER || rank == Rank.OFFICER)
+        {
+            fullyAbandoned = false;
+        }
 
         markDirty();
         return true;
@@ -713,6 +769,11 @@ public class Permissions implements IPermissions
                 {
                     colony.getPackageManager().addImportantColonyPlayer(playerEntity);
                     colony.getPackageManager().updateSubscribers();
+                    fullyAbandoned = false;
+                }
+                else if (rank == Rank.OWNER)
+                {
+                    fullyAbandoned = false;
                 }
                 else
                 {
@@ -750,6 +811,11 @@ public class Permissions implements IPermissions
         players.remove(p.getID());
         players.put(p.getID(), p);
 
+        if (rank == Rank.OWNER || rank == Rank.OFFICER)
+        {
+            fullyAbandoned = false;
+        }
+
         markDirty();
         return true;
     }
@@ -765,6 +831,7 @@ public class Permissions implements IPermissions
         final Player player = players.get(id);
         if (player != null && player.getRank() != Rank.OWNER && players.remove(id) != null)
         {
+            checkFullyAbandoned();
             markDirty();
             return true;
         }
@@ -865,6 +932,18 @@ public class Permissions implements IPermissions
     public boolean isColonyMember(@NotNull final PlayerEntity player)
     {
         return players.containsKey(player.getGameProfile().getId());
+    }
+
+    /**
+     * Checks whether this colony is fully abandoned, meaning it can be destroyed.
+     * A colony is fully abandoned when it has the owner "[abandoned]" and has no officers left.
+     */
+    private void checkFullyAbandoned()
+    {
+        if (getOwnerName().equals("[abandoned]") && getPlayersByRank(Rank.OFFICER).isEmpty())
+        {
+            fullyAbandoned = true;
+        }
     }
 
     private static class RankPair

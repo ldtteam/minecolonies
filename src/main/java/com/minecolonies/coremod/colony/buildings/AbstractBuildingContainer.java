@@ -173,7 +173,7 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
                 }
             }
         }
-        else if (block instanceof AbstractChestBlock || block instanceof BlockMinecoloniesRack)
+        else if (block instanceof BlockMinecoloniesRack)
         {
             addContainerPosition(pos);
             if (block instanceof BlockMinecoloniesRack)

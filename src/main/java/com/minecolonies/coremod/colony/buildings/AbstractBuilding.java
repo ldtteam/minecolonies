@@ -35,6 +35,7 @@ import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
@@ -1093,7 +1094,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
                 int rest = stack.getCount() - toKeep;
                 if (kept != null)
                 {
-                    if (kept.getAmount() >= toKeep)
+                    if (kept.getAmount() >= toKeep && !ItemStackUtils.isBetterTool(stack, kept.getItemStack()))
                     {
                         return stack.getCount();
                     }
