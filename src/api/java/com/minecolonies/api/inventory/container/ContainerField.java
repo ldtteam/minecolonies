@@ -45,18 +45,31 @@ public class ContainerField extends Container
     private final AbstractScarecrowTileEntity tileEntity;
 
     /**
+     * Deserialize packet buffer to container instance.
+     *
+     * @param windowId     the id of the window.
+     * @param inv          the player inventory.
+     * @param packetBuffer network buffer
+     * @return new instance
+     */
+    public static ContainerField fromPacketBuffer(final int windowId, final PlayerInventory inv, final PacketBuffer packetBuffer)
+    {
+        final BlockPos tePos = packetBuffer.readBlockPos();
+        return new ContainerField(windowId, inv, tePos);
+    }
+
+    /**
      * Constructs the GUI with the player.
      *
      * @param windowId        the window id.
      * @param playerInventory the player inventory.
-     * @param extra           extra data.
+     * @param pos             te world pos.
      */
-    public ContainerField(final int windowId, final PlayerInventory playerInventory, final PacketBuffer extra)
+    public ContainerField(final int windowId, final PlayerInventory playerInventory, BlockPos pos)
     {
         super(ModContainers.field, windowId);
 
         final World world = playerInventory.player.world;
-        BlockPos pos = extra.readBlockPos();
 
         if (world.getBlockState(pos).get(BlockStateProperties.DOUBLE_BLOCK_HALF) == DoubleBlockHalf.UPPER)
         {

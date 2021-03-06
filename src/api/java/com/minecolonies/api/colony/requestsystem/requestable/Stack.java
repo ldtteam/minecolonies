@@ -76,8 +76,20 @@ public class Stack implements IConcreteDeliverable
      */
     public Stack(@NotNull final ItemStack stack)
     {
-        this(stack, true, true, false, ItemStackUtils.EMPTY, Math.min(stack.getCount(), stack.getMaxStackSize()), Math.min(stack.getCount(), stack.getMaxStackSize()));
+        this(stack, true);
     }
+
+    /**
+     * Create a Stack deliverable.
+     *
+     * @param stack the required stack.
+     * @param matchDurability whether or not to match Durability
+     */
+    public Stack(@NotNull final ItemStack stack, boolean matchDurability)
+    {
+        this(stack, matchDurability, true, false, ItemStackUtils.EMPTY, Math.min(stack.getCount(), stack.getMaxStackSize()), Math.min(stack.getCount(), stack.getMaxStackSize()));
+    }
+
 
     /**
      * Create a Stack deliverable.

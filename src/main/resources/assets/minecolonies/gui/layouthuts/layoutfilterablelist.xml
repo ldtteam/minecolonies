@@ -1,5 +1,5 @@
 <window size="190 244" pause="false" lightbox="false">
-    <image source="minecolonies:textures/gui/builderhut/builder_papper.png" size="190 244"/>
+    <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
     <label id="desc" size="130 11" pos="30 14" color="black" textalign="MIDDLE"/>
     <input id="input" size="150 18" pos="20 30" maxlength="25"/>
 

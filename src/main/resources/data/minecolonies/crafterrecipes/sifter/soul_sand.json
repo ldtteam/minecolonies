@@ -7,5 +7,13 @@
         "count": "1"
     }
   ],
+  "additional-output": [
+    {
+        "item" : "minecraft:nether_wart"
+    },
+    {
+        "item" : "minecraft:quartz"
+    }
+  ],
   "loot-table": "minecolonies:recipes/sifter_soul_sand"
 }

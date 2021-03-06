@@ -132,7 +132,7 @@ public abstract class AbstractPathJob implements Callable<Path>
      */
     public AbstractPathJob(final World world, @NotNull final BlockPos start, @NotNull final BlockPos end, final int range, final LivingEntity entity)
     {
-        this(world, start, end, range, new PathResult(), entity);
+        this(world, start, end, range, new PathResult<AbstractPathJob>(), entity);
     }
 
     /**
@@ -159,7 +159,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         this.maxRange = range;
 
         this.result = result;
-
+        result.setJob(this);
         allowJumpPointSearchTypeWalk = false;
 
         if (MineColonies.getConfig().getClient().pathfindingDebugDraw.get()) // this is automatically false when on server
@@ -503,7 +503,8 @@ public abstract class AbstractPathJob implements Callable<Path>
             //  If this is the closest node to our destination, treat it as our best node
             final double nodeResultScore =
               getNodeResultScore(currentNode);
-            if (nodeResultScore < bestNodeResultScore)
+            if (nodeResultScore < bestNodeResultScore && !currentNode.isCornerNode()
+                  && isWalkableSurface(world.getBlockState(currentNode.pos.down()), currentNode.pos.down()) == SurfaceType.WALKABLE)
             {
                 bestNode = currentNode;
                 bestNodeResultScore = nodeResultScore;

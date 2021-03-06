@@ -52,7 +52,7 @@ public class ResearchListener extends JsonReloadListener
 
     /**
      * Set up the core loading, with the directory in the data pack that contains this data
-     * Directory is: <namespace>/researches/<path>
+     * Directory is: namespace/researches/path
      */
     public ResearchListener()
     {

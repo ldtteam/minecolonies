@@ -34,17 +34,31 @@ public class ContainerCitizenInventory extends Container
     private       String displayName;
 
     /**
+     * Deserialize packet buffer to container instance.
+     *
+     * @param windowId     the id of the window.
+     * @param inv          the player inventory.
+     * @param packetBuffer network buffer
+     * @return new instance
+     */
+    public static ContainerCitizenInventory fromPacketBuffer(final int windowId, final PlayerInventory inv, final PacketBuffer packetBuffer)
+    {
+        final int colonyId = packetBuffer.readVarInt();
+        final int citizenId = packetBuffer.readVarInt();
+        return new ContainerCitizenInventory(windowId, inv, colonyId, citizenId);
+    }
+
+    /**
      * Creating the citizen inventory container.
      *
-     * @param windowId the window id.
-     * @param inv      the inventory.
-     * @param extra    extra data.
+     * @param windowId  the window id.
+     * @param inv       the inventory.
+     * @param colonyId  colony id
+     * @param citizenId citizen id
      */
-    public ContainerCitizenInventory(final int windowId, final PlayerInventory inv, final PacketBuffer extra)
+    public ContainerCitizenInventory(final int windowId, final PlayerInventory inv, final int colonyId, final int citizenId)
     {
         super(ModContainers.citizenInv, windowId);
-        final int colonyId = extra.readVarInt();
-        final int citizenId = extra.readVarInt();
         this.playerInventory = inv;
 
         final IColony colony;

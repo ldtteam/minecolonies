@@ -6,14 +6,12 @@ import com.minecolonies.api.util.Tuple;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.pathfinding.GroundPathNavigator;
-import net.minecraft.pathfinding.Path;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.concurrent.Future;
 
 public abstract class AbstractAdvancedPathNavigate extends GroundPathNavigator
 {
@@ -24,8 +22,6 @@ public abstract class AbstractAdvancedPathNavigate extends GroundPathNavigator
     protected       double       walkSpeedFactor = 1.0D;
     @Nullable
     protected       BlockPos     originalDestination;
-    @Nullable
-    protected       Future<Path> calculationFuture;
 
     /**
      * The navigators node costs
@@ -107,7 +103,7 @@ public abstract class AbstractAdvancedPathNavigate extends GroundPathNavigator
      * @param speed the speed to run at.
      * @return the result of the pathing.
      */
-    public abstract RandomPathResult moveToRandomPos(final double range, final double speed);
+    public abstract PathResult moveToRandomPos(final double range, final double speed);
 
     /**
      * Used to path towards a random pos.
@@ -116,7 +112,7 @@ public abstract class AbstractAdvancedPathNavigate extends GroundPathNavigator
      * @param speed the speed to run at.
      * @return the result of the pathing.
      */
-    public abstract RandomPathResult moveToRandomPosAroundX(final int range, final double speed, final BlockPos pos);
+    public abstract PathResult moveToRandomPosAroundX(final int range, final double speed, final BlockPos pos);
 
     /**
      * Used to find a tree.
