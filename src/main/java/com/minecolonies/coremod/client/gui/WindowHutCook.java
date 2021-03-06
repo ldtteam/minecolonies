@@ -74,7 +74,7 @@ public class WindowHutCook extends AbstractHutFilterableLists
             final ViewFilterableList win = new ViewFilterableList(findPaneOfTypeByID(module.getId(), View.class),
               this,
               building,
-              LanguageHandler.format(COM_MINECOLONIES_REQUESTS_BURNABLE),
+              LanguageHandler.format(module.getDesc()),
               module.getId(),
               module.isInverted());
             views.put(module.getId(), win);

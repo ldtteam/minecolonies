@@ -48,16 +48,24 @@ public class GroupedItemListModule extends AbstractBuildingModule implements IGr
     @Override
     public void deserializeNBT(final CompoundNBT compound)
     {
-        final ListNBT filterableList = compound.getList(TAG_ITEMLIST, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < filterableList.size(); ++i)
+        if (compound.contains(id))
         {
-            try
+            final ListNBT filterableList = compound.getCompound(id).getList(TAG_ITEMLIST, Constants.NBT.TAG_COMPOUND);
+            for (int i = 0; i < filterableList.size(); ++i)
             {
-                final CompoundNBT listItem = filterableList.getCompound(i);
-
-                // Backwards compatibility to only read the data which we need, TODO: Remove in 1.17
-                if (listItem.contains(TAG_ITEMLIST))
+                itemsAllowed.add(new ItemStorage(ItemStack.read(filterableList.getCompound(i))));
+            }
+        }
+        else
+        {
+            final ListNBT filterableList = compound.getList(TAG_ITEMLIST, Constants.NBT.TAG_COMPOUND);
+            for (int i = 0; i < filterableList.size(); ++i)
+            {
+                try
                 {
+                    final CompoundNBT listItem = filterableList.getCompound(i);
+
+                    // Backwards compatibility to only read the data which we need, TODO: Remove in 1.17
                     final String id = listItem.getString(TAG_ID);
                     if (this.id.equals(id))
                     {
@@ -68,14 +76,10 @@ public class GroupedItemListModule extends AbstractBuildingModule implements IGr
                         }
                     }
                 }
-                else
+                catch (Exception e)
                 {
-                    itemsAllowed.add(new ItemStorage(ItemStack.read(listItem)));
+                    Log.getLogger().info("Removing incompatible stack");
                 }
-            }
-            catch (Exception e)
-            {
-                Log.getLogger().info("Removing incompatible stack");
             }
         }
     }
@@ -83,6 +87,7 @@ public class GroupedItemListModule extends AbstractBuildingModule implements IGr
     @Override
     public void serializeNBT(final CompoundNBT compound)
     {
+        final CompoundNBT moduleCompound = new CompoundNBT();
         @NotNull final ListNBT filteredItems = new ListNBT();
         for (@NotNull final ItemStorage item : itemsAllowed)
         {
@@ -90,7 +95,8 @@ public class GroupedItemListModule extends AbstractBuildingModule implements IGr
             item.getItemStack().write(itemCompound);
             filteredItems.add(itemCompound);
         }
-        compound.put(TAG_ITEMLIST, filteredItems);
+        moduleCompound.put(TAG_ITEMLIST, filteredItems);
+        compound.put(id, moduleCompound);
     }
 
     @Override
