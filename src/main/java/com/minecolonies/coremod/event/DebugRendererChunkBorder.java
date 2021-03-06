@@ -6,7 +6,6 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.util.MutableChunkPos;
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
