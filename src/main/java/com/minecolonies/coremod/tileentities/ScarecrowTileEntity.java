@@ -9,7 +9,6 @@ import com.minecolonies.api.tileentities.AbstractScarecrowTileEntity;
 import com.minecolonies.api.tileentities.ScareCrowType;
 import com.minecolonies.api.tileentities.ScarecrowFieldStage;
 import com.minecolonies.api.util.ItemStackUtils;
-import io.netty.buffer.Unpooled;
 import net.minecraft.block.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -19,7 +18,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -506,9 +504,7 @@ public class ScarecrowTileEntity extends AbstractScarecrowTileEntity
     @Override
     public Container createMenu(final int id, @NotNull final PlayerInventory inv, @NotNull final PlayerEntity player)
     {
-        final PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
-        buffer.writeBlockPos(this.getPos());
-        return new ContainerField(id, inv, buffer);
+        return new ContainerField(id, inv, getPos());
     }
 
     @NotNull

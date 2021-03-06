@@ -44,13 +44,27 @@ public class ContainerCraftingFurnace extends Container
     public final BlockPos buildingPos;
 
     /**
+     * Deserialize packet buffer to container instance.
+     *
+     * @param windowId     the id of the window.
+     * @param inv          the player inventory.
+     * @param packetBuffer network buffer
+     * @return new instance
+     */
+    public static ContainerCraftingFurnace fromPacketBuffer(final int windowId, final PlayerInventory inv, final PacketBuffer packetBuffer)
+    {
+        final BlockPos tePos = packetBuffer.readBlockPos();
+        return new ContainerCraftingFurnace(windowId, inv, tePos);
+    }
+
+    /**
      * Constructs the GUI with the player.
      *
      * @param windowId the window id.
      * @param inv      the player inventory.
-     * @param extra    extra data.
+     * @param pos      te world pos
      */
-    public ContainerCraftingFurnace(final int windowId, final PlayerInventory inv, final PacketBuffer extra)
+    public ContainerCraftingFurnace(final int windowId, final PlayerInventory inv, final BlockPos pos)
     {
         super(ModContainers.craftingFurnace, windowId);
         this.furnaceInventory = new IItemHandlerModifiable()
@@ -138,7 +152,7 @@ public class ContainerCraftingFurnace extends Container
             }
         };
         this.playerInventory = inv;
-        buildingPos = extra.readBlockPos();
+        this.buildingPos = pos;
         this.addSlot(new SlotItemHandler(furnaceInventory, 0, 56, 17)
         {
             @Override
