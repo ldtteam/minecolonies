@@ -2,7 +2,7 @@
         lightbox="false"
         xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockout/blockOut.xsd">
 
-    <image source="minecolonies:textures/gui/builderhut/builder_papper_sketch.png" size="100% 100%"/>
+    <image source="minecolonies:textures/gui/builderhut/builder_paper_sketch.png" size="100% 100%"/>
     <image source="minecolonies:textures/gui/builderhut/builder_charcoal_chalk.png" size="19 59" pos="175 180"/>
 
     <label size="100% 11" pos="0 11" color="black" textalign="MIDDLE"
