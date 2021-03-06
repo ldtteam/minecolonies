@@ -36,9 +36,9 @@ import static com.minecolonies.api.research.util.ResearchConstants.*;
  */
 public class DefaultResearchProvider extends AbstractResearchProvider
 {
-    public DefaultResearchProvider(final DataGenerator event)
+    public DefaultResearchProvider(final DataGenerator generator)
     {
-        super(event);
+        super(generator);
     }
 
     private static final ResourceLocation CIVIL  = new ResourceLocation(Constants.MOD_ID, "civilian");
@@ -306,7 +306,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                     .addToList(r);
         final Research scholarly = new Research(new ResourceLocation(Constants.MOD_ID, "civilian/scholarly"), CIVIL).setParentResearch(studious)
                                      .setTranslatedName("Scholarly")
-                                     .setTranslatedSubtitle("Homework for the next decade...check!")
+                                     .setTranslatedSubtitle("Homework for the next decade... check!")
                                      .setIcon(Items.EXPERIENCE_BOTTLE, 3)
                                      .addBuildingRequirement(ModBuildings.LIBRARY_ID, 4)
                                      .addItemCost(Items.BOOK, 24)

@@ -1754,6 +1754,7 @@
   "com.minecolonies.coremod.gui.townhalltab.settings": "Settings",
   "com.minecolonies.coremod.gui.townhalltab.workorders": "Work Orders",
   "com.minecolonies.coremod.gui.townhalltab.happiness": "Happiness",
+
   "com.minecolonies.coremod.gui.workerhuts.archery": "Archery",
   "com.minecolonies.coremod.gui.workerhuts.combatacademy": "Combat Academy",
   "com.minecolonies.coremod.gui.workerhuts.sawmill": "Sawmill",
@@ -1764,6 +1765,7 @@
   "com.minecolonies.coremod.gui.workerhuts.school": "School",
   "com.minecolonies.coremod.gui.workerhuts.teacher": "Teacher",
   "com.minecolonies.coremod.gui.workerhuts.pupil": "Pupil",
+
   "block.minecolonies.barrel_block": "Compost Barrel",
   "block.minecolonies.blockbarrackstowersubstitution": "Barracks Tower Placeholder",
   "block.minecolonies.blockbarrackstowersubstitution.name": "Barracks Tower Placeholder",
