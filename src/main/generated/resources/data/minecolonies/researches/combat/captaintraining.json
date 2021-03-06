@@ -15,7 +15,7 @@
   ],
   "effects": [
     {
-      "minecolonies:effects/blockattacksmultiplier": 4
+      "minecolonies:effects/blockattacksmultiplier": 3
     }
   ]
 }

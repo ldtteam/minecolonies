@@ -4,6 +4,7 @@ import com.google.gson.*;
 import com.ldtteam.structurize.generation.DataGeneratorConstants;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.util.constant.Constants;
+import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DirectoryCache;
 import net.minecraft.data.IDataProvider;
 import net.minecraft.item.Item;
@@ -28,15 +29,15 @@ import java.util.Locale;
 public abstract class AbstractResearchProvider implements IDataProvider
 {
     public static final String ASSETS_DIR = "data/" + Constants.MOD_ID + "/researches";
-    protected final GatherDataEvent event;
+    protected final DataGenerator generator;
 
     /**
      * The abstract variant of a ResearchProvider, to register to fires during runData.
-     * @param event  The GatherDataEvent to store the files.
+     * @param generator  the data generator.
      */
-    public AbstractResearchProvider(final GatherDataEvent event)
+    public AbstractResearchProvider(final DataGenerator generator)
     {
-        this.event = event;
+        this.generator = generator;
     }
 
     /**
@@ -63,24 +64,15 @@ public abstract class AbstractResearchProvider implements IDataProvider
      */
     protected abstract Collection<Research> getResearchCollection();
 
-    /**
-     * Get an base language file to add new keys onto.
-     * @return  A container which new translationkeys will be added into.
-     */
-    protected JsonElement getBaseLanguageJson()
-    {
-        return new JsonObject();
-    }
-
     @Override
     public void act(@NotNull final DirectoryCache cache) throws IOException
     {
         final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
-        final JsonElement langJson = getBaseLanguageJson();
+        final JsonObject langJson = new JsonObject();
 
         for(final ResearchBranch branch : getResearchBranchCollection())
         {
-            final Path savePath = event.getGenerator().getOutputFolder().resolve("data").resolve(branch.id.getNamespace()).resolve("researches").resolve(branch.id.getPath() + ".json");
+            final Path savePath = generator.getOutputFolder().resolve("data").resolve(branch.id.getNamespace()).resolve("researches").resolve(branch.id.getPath() + ".json");
             IDataProvider.save(GSON, cache, branch.json, savePath);
             if(branch.translatedName != null && !branch.translatedName.isEmpty())
             {
@@ -89,7 +81,7 @@ public abstract class AbstractResearchProvider implements IDataProvider
         }
         for(final ResearchEffect effect : getResearchEffectCollection())
         {
-            final Path savePath = event.getGenerator().getOutputFolder().resolve("data").resolve(effect.id.getNamespace()).resolve("researches").resolve(effect.id.getPath() + ".json");
+            final Path savePath = generator.getOutputFolder().resolve("data").resolve(effect.id.getNamespace()).resolve("researches").resolve(effect.id.getPath() + ".json");
             IDataProvider.save(GSON, cache, effect.json, savePath);
             if(effect.translatedName != null && !effect.translatedName.isEmpty())
             {
@@ -102,7 +94,7 @@ public abstract class AbstractResearchProvider implements IDataProvider
         }
         for(final Research research : getResearchCollection())
         {
-            final Path savePath = event.getGenerator().getOutputFolder().resolve("data").resolve(research.id.getNamespace()).resolve("researches").resolve(research.id.getPath() + ".json");
+            final Path savePath = generator.getOutputFolder().resolve("data").resolve(research.id.getNamespace()).resolve("researches").resolve(research.id.getPath() + ".json");
             IDataProvider.save(GSON, cache, research.json, savePath);
             if(research.translatedName != null && !research.translatedName.isEmpty())
             {
@@ -113,7 +105,7 @@ public abstract class AbstractResearchProvider implements IDataProvider
                 addLanguageKeySafe(langJson, "com." + research.id.getNamespace() + ".research." + research.id.getPath().replaceAll("[/]",".") + ".subtitle", research.translatedSubtitle);
             }
         }
-        IDataProvider.save(DataGeneratorConstants.GSONLang, cache, langJson, event.getGenerator().getInputFolders().stream().findFirst().orElse(null).resolve("assets/" + Constants.MOD_ID + "/lang/" + Locale.US + ".json"));
+        IDataProvider.save(DataGeneratorConstants.GSONLang, cache, langJson, generator.getOutputFolder().resolve("assets/" + Constants.MOD_ID + "/lang/default.json"));
     }
 
     /**
@@ -362,6 +354,31 @@ public abstract class AbstractResearchProvider implements IDataProvider
         }
 
         /**
+         * Creates a Building-requirement related json property, with sanitization.
+         * Temporary workaround for discrepancies between schematic ID and modBuildings ID.
+         * @param propertyType     The type of building requirement.  Currently supports : 'building', 'mandatory-building', and 'alternate-building'
+         * @param buildingName     The schematic name for the building.
+         * @param level            The required level or sum of levels.
+         * @return The json object
+         */
+        // TODO: consider fixing underlying discrepancy in 1.17.
+        private JsonObject makeSafeBuildingProperty(final String propertyType, final String buildingName, final int level)
+        {
+            JsonObject req = new JsonObject();
+
+            if(buildingName.equals("home"))
+            {
+                req.addProperty(propertyType, "citizen");
+            }
+            else
+            {
+                req.addProperty(propertyType, buildingName);
+            }
+            req.addProperty("level", level);
+            return req;
+        }
+
+        /**
          * Adds a building research requirement.  The colony must have at least as many levels of this building to begin the research
          * cumulative across all buildings of that type.  (ie, guardtower 8 is fulfilled by eight level-1 guard towers, four level-2 guard towers, two level-3 and a level-2 guard tower, etc)
          * See ModBuildings for a list of supported buildings.  Whenever possible, use the public static String BUILDINGNAME_ID constants from ModBuildings.
@@ -382,19 +399,7 @@ public abstract class AbstractResearchProvider implements IDataProvider
             {
                 reqArray = new JsonArray();
             }
-            JsonObject req = new JsonObject();
-            // Temporary workaround for the discrepancy between schematic ID and modBuildings ID.
-            // TODO: consider fixing in 1.17.
-            if(buildingName.equals("home"))
-            {
-                req.addProperty("building", "citizen");
-            }
-            else
-            {
-                req.addProperty("building", buildingName);
-            }
-            req.addProperty("level", level);
-            reqArray.add(req);
+            reqArray.add(makeSafeBuildingProperty("building", buildingName, level));
             this.json.add("requirements", reqArray);
             return this;
         }
@@ -421,18 +426,7 @@ public abstract class AbstractResearchProvider implements IDataProvider
             {
                 reqArray = new JsonArray();
             }
-            JsonObject req = new JsonObject();
-            // Temporary workaround for the discrepancy between schematic ID and modBuildings ID.
-            if(buildingName.equals("home"))
-            {
-                req.addProperty("mandatory-building", "citizen");
-            }
-            else
-            {
-                req.addProperty("mandatory-building", buildingName);
-            }
-            req.addProperty("level", level);
-            reqArray.add(req);
+            reqArray.add(makeSafeBuildingProperty("mandatory-building", buildingName, level));
             this.json.add("requirements", reqArray);
             return this;
         }
@@ -460,18 +454,7 @@ public abstract class AbstractResearchProvider implements IDataProvider
             {
                 reqArray = new JsonArray();
             }
-            JsonObject req = new JsonObject();
-            // Temporary workaround for the discrepancy between schematic ID and modBuildings ID.
-            if(buildingName.equals("home"))
-            {
-                req.addProperty("alternate-building", "citizen");
-            }
-            else
-            {
-                req.addProperty("alternate-building", buildingName);
-            }
-            req.addProperty("level", level);
-            reqArray.add(req);
+            reqArray.add(makeSafeBuildingProperty("alternate-building", buildingName, level));
             this.json.add("requirements", reqArray);
             return this;
         }

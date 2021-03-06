@@ -16,7 +16,7 @@
   ],
   "effects": [
     {
-      "minecolonies:effects/armordurabilitymultiplier": 1
+      "minecolonies:effects/armordurabilitymultiplier": 2
     }
   ]
 }

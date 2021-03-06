@@ -358,7 +358,10 @@ public class LocalResearchTree implements ILocalResearchTree
                   }
                   else
                   {
-                      Log.getLogger().warn("Research " + research.getId() + " was in colony save file, but was not in CompatMap.");
+                      if(MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchDebugLog.get())
+                      {
+                          Log.getLogger().warn("Research " + research.getId() + " was in colony save file, but was not in CompatMap.");
+                      }
                   }
               }
               /// endregion
@@ -376,7 +379,11 @@ public class LocalResearchTree implements ILocalResearchTree
                   }
                   else
                   {
-                      Log.getLogger().warn("Research " + research.getId() + " was in colony save file, but not found as valid current research.  Progress on this research may be reset.");
+                      if(MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchDebugLog.get())
+                      {
+                          Log.getLogger()
+                            .warn("Research " + research.getId() + " was in colony save file, but not found as valid current research.  Progress on this research may be reset.");
+                      }
                   }
               }
               addResearch(research.getBranch(), research);

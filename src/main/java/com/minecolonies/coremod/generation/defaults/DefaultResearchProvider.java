@@ -36,7 +36,7 @@ import static com.minecolonies.api.research.util.ResearchConstants.*;
  */
 public class DefaultResearchProvider extends AbstractResearchProvider
 {
-    public DefaultResearchProvider(final GatherDataEvent event)
+    public DefaultResearchProvider(final DataGenerator event)
     {
         super(event);
     }
@@ -169,23 +169,6 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         researches.addAll(getTechnologyResearch(researches));
 
         return researches;
-    }
-
-    @Override
-    public JsonElement getBaseLanguageJson()
-    {
-        JsonElement langJson;
-        try
-        {
-            ExistingFileHelper helper = event.getExistingFileHelper();
-            langJson =
-              new JsonParser().parse(new InputStreamReader(helper.getResource(new ResourceLocation(Constants.MOD_ID, "lang/en_us.json"), ResourcePackType.CLIENT_RESOURCES).getInputStream()));
-        }
-        catch (final IOException exception)
-        {
-            throw new IllegalStateException("Unable to read existing language file. This may require a gradle refresh and genIntellijRun rerun, or may reflect deeper issues.");
-        }
-        return langJson;
     }
 
     public Collection<Research> getCivilResearch(Collection<Research> r)
@@ -731,27 +714,27 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                           .setIcon(Items.IRON_INGOT)
                                           .addBuildingRequirement(ModBuildings.COMBAT_ACADEMY_ID, 3)
                                           .addItemCost(Items.SHIELD, 4)
-                                          .addEffect(BLOCK_ATTACKS, 2)
+                                          .addEffect(BLOCK_ATTACKS, 1)
                                           .addToList(r);
         final Research knightTraining = new Research(new ResourceLocation(Constants.MOD_ID, "combat/knighttraining"), COMBAT).setParentResearch(squireTraining)
                                           .setTranslatedName("Knight Training")
                                           .setIcon(Items.BARREL)
                                           .addBuildingRequirement(ModBuildings.COMBAT_ACADEMY_ID, 4)
                                           .addItemCost(Items.SHIELD, 8)
-                                          .addEffect(BLOCK_ATTACKS, 3)
+                                          .addEffect(BLOCK_ATTACKS, 2)
                                           .addToList(r);
         final Research captainTraining = new Research(new ResourceLocation(Constants.MOD_ID, "combat/captaintraining"), COMBAT).setParentResearch(knightTraining)
                                            .setTranslatedName("Captain Training")
                                            .setIcon(Items.IRON_BARS)
                                            .addBuildingRequirement(ModBuildings.COMBAT_ACADEMY_ID, 5)
                                            .addItemCost(Items.SHIELD, 16)
-                                           .addEffect(BLOCK_ATTACKS, 4)
+                                           .addEffect(BLOCK_ATTACKS, 3)
                                            .addToList(r);
         new Research(new ResourceLocation(Constants.MOD_ID, "combat/captainoftheguard"), COMBAT).setParentResearch(captainTraining)
           .setTranslatedName("Captain of the Guard")
           .setIcon(Items.IRON_BLOCK)
           .addItemCost(Items.SHIELD, 27)
-          .addEffect(BLOCK_ATTACKS, 5)
+          .addEffect(BLOCK_ATTACKS, 4)
           .addToList(r);
 
         final Research improvedBows = new Research(new ResourceLocation(Constants.MOD_ID, "combat/improvedbows"), COMBAT).setParentResearch(tacticTraining)
@@ -894,21 +877,21 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                          .setIcon(Items.TURTLE_HELMET)
                                          .addBuildingRequirement(ModBuildings.TOWNHALL_ID, 2)
                                          .addItemCost(Items.LEATHER, 64)
-                                         .addEffect(ARMOR_DURABILITY, 1)
+                                         .addEffect(ARMOR_DURABILITY, 2)
                                          .addToList(r);
         final Research ironSkin = new Research(new ResourceLocation(Constants.MOD_ID, "combat/ironskin"), COMBAT).setParentResearch(boiledLeather)
                                     .setTranslatedName("Iron Skin")
                                     .setIcon(Items.CHAINMAIL_HELMET)
                                     .addBuildingRequirement(ModBuildings.TOWNHALL_ID, 3)
                                     .addItemCost(Items.IRON_INGOT, 16)
-                                    .addEffect(ARMOR_DURABILITY, 2)
+                                    .addEffect(ARMOR_DURABILITY, 3)
                                     .addToList(r);
         final Research ironArmor = new Research(new ResourceLocation(Constants.MOD_ID, "combat/ironarmor"), COMBAT).setParentResearch(ironSkin)
                                      .setTranslatedName("Iron Armor")
                                      .setIcon(Items.IRON_HELMET)
                                      .addBuildingRequirement(ModBuildings.TOWNHALL_ID, 4)
                                      .addItemCost(Items.IRON_INGOT, 32)
-                                     .addEffect(ARMOR_DURABILITY, 3)
+                                     .addEffect(ARMOR_DURABILITY, 4)
                                      .addToList(r);
         final Research steelArmor = new Research(new ResourceLocation(Constants.MOD_ID, "combat/steelarmor"), COMBAT).setParentResearch(ironArmor)
                                       .setTranslatedName("Steel Armor")
@@ -916,7 +899,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                       .setIcon(Items.GOLDEN_HELMET)
                                       .addBuildingRequirement(ModBuildings.TOWNHALL_ID, 5)
                                       .addItemCost(Items.IRON_INGOT, 64)
-                                      .addEffect(ARMOR_DURABILITY, 4)
+                                      .addEffect(ARMOR_DURABILITY, 5)
                                       .addToList(r);
         new Research(new ResourceLocation(Constants.MOD_ID, "combat/platearmor"), COMBAT).setParentResearch(ironArmor)
                                      .setTranslatedName("Plate Armor")
@@ -930,7 +913,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .setTranslatedName("Diamond Skin")
           .setIcon(Items.DIAMOND_HELMET)
           .addItemCost(Items.DIAMOND, 64)
-          .addEffect(ARMOR_DURABILITY, 5)
+          .addEffect(ARMOR_DURABILITY, 6)
           .addToList(r);
 
         final Research regeneration = new Research(new ResourceLocation(Constants.MOD_ID, "combat/regeneration"), COMBAT).setParentResearch(improvedLeather)
