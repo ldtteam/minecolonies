@@ -154,13 +154,6 @@ public interface ICompatibilityManager
     boolean isCompost(ItemStack stack);
 
     /**
-     * Get a map of all the crusher modes.
-     *
-     * @return the modes.
-     */
-    Map<ItemStorage, ItemStorage> getCrusherModes();
-
-    /**
      * Write colonies to NBT data for saving.
      *
      * @param compound NBT-Tag.

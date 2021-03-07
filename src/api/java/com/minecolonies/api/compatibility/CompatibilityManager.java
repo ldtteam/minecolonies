@@ -110,11 +110,6 @@ public class CompatibilityManager implements ICompatibilityManager
     private final List<ItemStorage> luckyOres = new ArrayList<>();
 
     /**
-     * What the crusher can work on.
-     */
-    private final Map<ItemStorage, ItemStorage> crusherModes = new HashMap<>();
-
-    /**
      * The items and weights of the recruitment.
      */
     private final List<Tuple<Item, Integer>> recruitmentCostsWeights = new ArrayList<>();
@@ -182,7 +177,6 @@ public class CompatibilityManager implements ICompatibilityManager
         discoverLuckyOres();
         discoverRecruitCosts();
         discoverDiseases();
-        discoverCrusherModes();
         discoverSifting();
         discoverFood();
         discoverFuel();
@@ -402,17 +396,6 @@ public class CompatibilityManager implements ICompatibilityManager
         }
 
         return false;
-    }
-
-    /**
-     * Getter for all the crusher modes.
-     *
-     * @return an immutable copy of the map.
-     */
-    @Override
-    public Map<ItemStorage, ItemStorage> getCrusherModes()
-    {
-        return ImmutableMap.<ItemStorage, ItemStorage>builder().putAll(this.crusherModes).build();
     }
 
     @Override
@@ -784,45 +767,6 @@ public class CompatibilityManager implements ICompatibilityManager
             catch (final NumberFormatException ex)
             {
                 Log.getLogger().warn("Invalid integer at pos 1, 3 or 4");
-            }
-        }
-    }
-
-    /**
-     * Calculate the crusher modes from the config file.
-     */
-    private void discoverCrusherModes()
-    {
-        for (final String string : MinecoloniesAPIProxy.getInstance().getConfig().getServer().crusherProduction.get())
-        {
-            final String[] split = string.split("!");
-            if (split.length != 2)
-            {
-                Log.getLogger().warn("Invalid crusher mode setting: " + string);
-                continue;
-            }
-
-            final String[] firstItem = split[0].split(":");
-            final String[] secondItem = split[1].split(":");
-
-            final Item item1 = ForgeRegistries.ITEMS.getValue(new ResourceLocation(firstItem[0], firstItem[1]));
-            final Item item2 = ForgeRegistries.ITEMS.getValue(new ResourceLocation(secondItem[0], secondItem[1]));
-
-            try
-            {
-                if (item1 == null || item2 == null)
-                {
-                    Log.getLogger().warn("Invalid crusher mode setting: " + string);
-                    continue;
-                }
-
-                final ItemStorage storage1 = new ItemStorage(new ItemStack(item1, 2));
-                final ItemStorage storage2 = new ItemStorage(new ItemStack(item2, 1));
-                crusherModes.put(storage1, storage2);
-            }
-            catch (final NumberFormatException ex)
-            {
-                Log.getLogger().warn("Error getting metaData", ex);
             }
         }
     }
