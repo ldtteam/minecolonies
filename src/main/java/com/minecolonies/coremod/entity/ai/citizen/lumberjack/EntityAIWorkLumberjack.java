@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.entity.ai.citizen.lumberjack;
 
-import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
@@ -353,7 +352,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         }
         if (pathResult.isPathReachingDestination())
         {
-            return setNewTree();
+            return setNewTree(building);
         }
         if (pathResult.isCancelled())
         {
@@ -366,16 +365,19 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         return LUMBERJACK_NO_TREES_FOUND;
     }
 
-    private IAIState setNewTree()
+    private IAIState setNewTree(final BuildingLumberjack building)
     {
         if (pathResult.treeLocation == null)
         {
             setDelay(WAIT_BEFORE_INCREMENT);
-            if (searchIncrement + SEARCH_RANGE > SEARCH_LIMIT)
+            if (!building.shouldRestrict())
             {
-                return LUMBERJACK_NO_TREES_FOUND;
+                if (searchIncrement + SEARCH_RANGE > SEARCH_LIMIT)
+                {
+                    return LUMBERJACK_NO_TREES_FOUND;
+                }
+                searchIncrement += SEARCH_INCREMENT;
             }
-            searchIncrement += SEARCH_INCREMENT;
         }
         else
         {
