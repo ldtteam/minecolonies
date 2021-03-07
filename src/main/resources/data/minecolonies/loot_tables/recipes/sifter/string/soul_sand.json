@@ -1,0 +1,24 @@
+{
+  "pools": [
+    {
+      "name": "Soulsand_String_Mesh",
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "empty",
+          "weight": 90
+        },
+        {
+          "type": "item",
+          "weight": 5,
+          "name": "minecraft:nether_wart"
+        },
+        {
+          "type": "item",
+          "weight": 5,
+          "name": "minecraft:quartz"
+        }
+      ]
+    }
+  ]
+}

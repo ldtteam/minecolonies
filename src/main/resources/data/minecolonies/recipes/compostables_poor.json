@@ -1,0 +1,7 @@
+{
+  "type": "minecolonies:composting",
+  "input": {
+    "tag": "minecolonies:compostables_poor"
+  },
+  "strength": 2
+}

@@ -1,0 +1,35 @@
+{
+  "pools": [
+    {
+      "name": "Sand_Iron_Mesh",
+      "rolls": 1,
+      "bonus_rolls": 0.025,
+      "entries": [
+        {
+          "type": "empty",
+          "weight": 60
+        },
+        {
+          "type": "item",
+          "weight": 10,
+          "name": "minecraft:cactus"
+        },
+        {
+          "type": "item",
+          "weight": 10,
+          "name": "minecraft:sugar_cane"
+        },
+        {
+          "type": "item",
+          "weight": 10,
+          "name": "minecraft:gold_nugget"
+        },
+        {
+          "type": "item",
+          "weight": 10,
+          "name": "minecraft:cocoa_beans"
+        }
+      ]
+    }
+  ]
+}

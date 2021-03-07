@@ -1,0 +1,29 @@
+{
+  "pools": [
+    {
+      "name": "Soulsand_Flint_Mesh",
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "empty",
+          "weight": 70
+        },
+        {
+          "type": "item",
+          "weight": 10,
+          "name": "minecraft:nether_wart"
+        },
+        {
+          "type": "item",
+          "weight": 10,
+          "name": "minecraft:quartz"
+        },
+        {
+          "type": "item",
+          "weight": 10,
+          "name": "minecraft:glowstone_dust"
+        }
+      ]
+    }
+  ]
+}

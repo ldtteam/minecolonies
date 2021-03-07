@@ -7,16 +7,14 @@ import com.minecolonies.api.colony.buildings.HiringMode;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.buildings.IBuildingWorkerView;
+import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import com.minecolonies.api.crafting.ClassicRecipe;
-import com.minecolonies.api.crafting.IRecipeStorage;
-import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.crafting.MultiOutputRecipe;
+import com.minecolonies.api.crafting.*;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.inventory.container.ContainerCrafting;
@@ -46,6 +44,7 @@ import net.minecraft.loot.LootContext;
 import net.minecraft.loot.LootParameterSet;
 import net.minecraft.loot.LootParameterSets;
 import net.minecraft.loot.LootParameters;
+import net.minecraft.item.crafting.RecipeManager;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.PacketBuffer;
@@ -56,6 +55,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fml.network.NetworkHooks;
@@ -307,6 +307,28 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     public boolean canRecipeBeAdded(final IToken<?> ignored)
     {
         return hasSpaceForMoreRecipes();
+    }
+
+    /**
+     * @param token the recipe token
+     * @return whether the recipe can be added according to the crafting module (or false if there's no module)
+     */
+    protected boolean isRecipeCompatibleWithCraftingModule(final IToken<?> token)
+    {
+        return this.getModules(ICraftingBuildingModule.class).stream()
+                .map(crafting -> Optional.ofNullable(GenericRecipe.of(token))
+                        .map(recipe -> isRecipeCompatibleWithCraftingModule(crafting, recipe))
+                        .orElse(false))
+                .reduce(false, (cur, next) -> cur || next);
+    }
+
+    protected static boolean isRecipeCompatibleWithCraftingModule(@NotNull final ICraftingBuildingModule crafting, @NotNull IGenericRecipe recipe)
+    {
+        if (recipe.getIntermediate() == Blocks.FURNACE)
+        {
+            return crafting.canLearnFurnaceRecipes() && crafting.isRecipeCompatible(recipe);
+        }
+        return crafting.canLearnCraftingRecipes() && crafting.isRecipeCompatible(recipe);
     }
 
     /**
@@ -853,10 +875,11 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
      */
     public void checkForWorkerSpecificRecipes()
     {
+        final IRecipeManager recipeManager = IColonyManager.getInstance().getRecipeManager();
         for(final CustomRecipe newRecipe : CustomRecipeManager.getInstance().getRecipes(getJobName()))
         {
             final IRecipeStorage recipeStorage = newRecipe.getRecipeStorage();
-            final IToken<?> recipeToken = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(recipeStorage);
+            final IToken<?> recipeToken = recipeManager.checkOrAddRecipe(recipeStorage);
 
             if(newRecipe.isValidForBuilding(this))
             {
@@ -869,7 +892,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
                         duplicateFound = token;
                         break;
                     }
-                    final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
+                    final IRecipeStorage storage = recipeManager.getRecipes().get(token);
 
                     //Let's verify that this recipe doesn't exist in an improved form
                     if(storage != null && storage.getPrimaryOutput().equals(recipeStorage.getPrimaryOutput(), true))
@@ -929,7 +952,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
                     final List<ItemStack> alternates = recipeStorage.getAlternateOutputs();
                     for(IToken<?> token : this.getRecipes())
                     {
-                        final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
+                        final IRecipeStorage storage = recipeManager.getRecipes().get(token);
                         if(storage.getRecipeType() instanceof ClassicRecipe && ItemStackUtils.compareItemStackListIgnoreStackSize(alternates, storage.getPrimaryOutput(), false, true))
                         {
                             removeRecipe(token);
@@ -946,6 +969,21 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
                 }
             }
         }
+
+        final RecipeManager vanilla = Optional.ofNullable(this.getTileEntity())
+                .map(TileEntity::getWorld)
+                .map(World::getRecipeManager).orElse(null);
+        if (vanilla != null)
+        {
+            final List<IRecipeStorage> extraRecipes = this.getModule(ICraftingBuildingModule.class)
+                    .map(crafting -> crafting.getAdditionalRecipes(vanilla))
+                    .orElse(Collections.emptyList());
+            for (final IRecipeStorage recipe : extraRecipes)
+            {
+                addRecipeToList(recipeManager.checkOrAddRecipe(recipe));
+            }
+        }
+
         markDirty();
     }
 

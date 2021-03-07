@@ -3,7 +3,6 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
@@ -11,21 +10,28 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
-import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.WindowHutSifter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.crafting.CustomRecipe;
+import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
+import com.minecolonies.coremod.colony.crafting.SifterRecipe;
 import com.minecolonies.coremod.colony.jobs.JobSifter;
 import com.minecolonies.coremod.network.messages.server.colony.building.sifter.SifterSettingsMessage;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
@@ -72,7 +78,12 @@ public class BuildingSifter extends AbstractBuildingWorker
     /**
      * The current used mesh.
      */
-    private Tuple<ItemStorage, Double> sifterMesh = null;
+    private ItemStorage sifterMesh = null;
+
+    /**
+     * The chance that the mesh will break after each crafting operation.
+     */
+    private double meshBreakPercentage = 0;
 
     /**
      * Instantiates a new sifter building.
@@ -84,10 +95,7 @@ public class BuildingSifter extends AbstractBuildingWorker
     {
         super(c, l);
 
-        if (!IColonyManager.getInstance().getCompatibilityManager().getMeshes().isEmpty())
-        {
-            this.sifterMesh = IColonyManager.getInstance().getCompatibilityManager().getMeshes().get(0);
-        }
+        resetMesh();
     }
 
     @NotNull
@@ -116,6 +124,9 @@ public class BuildingSifter extends AbstractBuildingWorker
     {
         return SIFTER_DESC;
     }
+
+    @Override
+    public boolean isRecipeAlterationAllowed() { return false; }
 
     @Override
     public boolean canCraftComplexRecipes()
@@ -153,10 +164,17 @@ public class BuildingSifter extends AbstractBuildingWorker
      *
      * @return the ItemStorage.
      */
-    public Tuple<ItemStorage, Double> getMesh()
+    public ItemStorage getMesh()
     {
         return this.sifterMesh;
     }
+
+    /**
+     * Getter for the percentage chance for the mesh to break.
+     *
+     * @return A percentage.
+     */
+    public double getMeshBreakPercentage() { return this.meshBreakPercentage; }
 
     /**
      * Set the current daily quantity.
@@ -186,33 +204,58 @@ public class BuildingSifter extends AbstractBuildingWorker
     /**
      * Reset the mesh to a default value after the other one broke.
      */
-    public void resetMesh()
+    public final void resetMesh()
     {
-        if (!IColonyManager.getInstance().getCompatibilityManager().getMeshes().isEmpty())
-        {
-            this.sifterMesh = IColonyManager.getInstance().getCompatibilityManager().getMeshes().get(0);
-        }
+        CustomRecipeManager.getInstance().getSifterRecipes().stream()
+                .min(Comparator.comparing(SifterRecipe::getPower))
+                .ifPresent(this::setMesh);
+    }
+
+    private void setMesh(@NotNull final SifterRecipe recipe)
+    {
+        this.sifterMesh = new ItemStorage(recipe.getMesh());
+        this.meshBreakPercentage = recipe.getBreakChance();
+        markDirty();
     }
 
     /**
      * Setup the settings to be used by the sifter.
      *
-     * @param block    the block to be sieved.
      * @param mesh     the mesh to be used.
      * @param quantity the daily quantity.
      */
     public void setup(final ItemStorage mesh, final int quantity)
     {
-        for (final Tuple<ItemStorage, Double> tuple : IColonyManager.getInstance().getCompatibilityManager().getMeshes())
+        for (final SifterRecipe recipe : CustomRecipeManager.getInstance().getSifterRecipes())
         {
-            if (tuple.getA().equals(mesh))
+            if (recipe.getMesh().isItemEqual(mesh.getItemStack()))
             {
-                this.sifterMesh = new Tuple<>(mesh, tuple.getB());
+                setMesh(recipe);
                 break;
             }
         }
+
         this.dailyQuantity = quantity;
         markDirty();
+    }
+
+    @Override
+    public IRecipeStorage getFirstFullFillableRecipe(final Predicate<ItemStack> stackPredicate, final int count, final boolean considerReservation)
+    {
+        final List<IRecipeStorage> storages = getValidRecipesForCurrentMesh()
+                .map(CustomRecipe::getRecipeStorage)
+                .collect(Collectors.toList());
+
+        final IItemHandler[] handlers = getHandlers().toArray(new IItemHandler[0]);
+        for (final IRecipeStorage storage : storages)
+        {
+            if (storage.canFullFillRecipe(count, Collections.emptyMap(), handlers))
+            {
+                return storage;
+            }
+        }
+
+        return null;
     }
 
     @Override
@@ -237,12 +280,12 @@ public class BuildingSifter extends AbstractBuildingWorker
     {
         super.deserializeNBT(compound);
 
+        this.recipes.clear();   // for upgrade purposes; we no longer use building recipes
         this.dailyQuantity = compound.getInt(TAG_DAILY);
         this.currentDailyQuantity = compound.getInt(TAG_CURRENT_DAILY);
 
-        final ItemStorage mesh = new ItemStorage(ItemStack.read(compound.getCompound(TAG_MESH)));
-        final double prob = compound.getDouble(TAG_MESH_PROB);
-        this.sifterMesh = new Tuple<>(mesh, prob);
+        this.sifterMesh = new ItemStorage(ItemStack.read(compound.getCompound(TAG_MESH)));
+        this.meshBreakPercentage = compound.getDouble(TAG_MESH_PROB);
     }
 
     @Override
@@ -254,9 +297,9 @@ public class BuildingSifter extends AbstractBuildingWorker
         compound.putInt(TAG_CURRENT_DAILY, currentDailyQuantity);
 
         final CompoundNBT meshTAG = new CompoundNBT();
-        sifterMesh.getA().getItemStack().write(meshTAG);
+        sifterMesh.getItemStack().write(meshTAG);
         compound.put(TAG_MESH, meshTAG);
-        compound.putDouble(TAG_MESH_PROB, sifterMesh.getB());
+        compound.putDouble(TAG_MESH_PROB, meshBreakPercentage);
 
         return compound;
     }
@@ -268,13 +311,44 @@ public class BuildingSifter extends AbstractBuildingWorker
         buf.writeInt(dailyQuantity);
         buf.writeInt(getMaxDailyQuantity());
 
-        buf.writeItemStack(sifterMesh.getA().getItemStack());
+        buf.writeItemStack(sifterMesh.getItemStack());
 
-        buf.writeInt(IColonyManager.getInstance().getCompatibilityManager().getMeshes().size());
-        for (final Tuple<ItemStorage, Double> storage : IColonyManager.getInstance().getCompatibilityManager().getMeshes())
+        final Set<SifterRecipe> sifterRecipes = CustomRecipeManager.getInstance().getSifterRecipes();
+
+        final List<ItemStack> meshes = sifterRecipes.stream()
+                .sorted(Comparator.comparing(SifterRecipe::getPower))
+                .map(SifterRecipe::getMesh)
+                .filter(distinctItem())
+                .collect(Collectors.toList());
+        buf.writeVarInt(meshes.size());
+        for (final ItemStack stack : meshes)
         {
-            buf.writeItemStack(storage.getA().getItemStack());
+            buf.writeItemStack(stack);
         }
+
+        final List<ItemStack> sievable = getValidRecipesForCurrentMesh()
+                .map(recipe -> recipe.getRecipeStorage().getCleanedInput().get(0).getItemStack())
+                .filter(distinctItem())
+                .collect(Collectors.toList());
+        buf.writeVarInt(sievable.size());
+        for (final ItemStack stack : sievable)
+        {
+            buf.writeItemStack(stack);
+        }
+    }
+
+    private Stream<CustomRecipe> getValidRecipesForCurrentMesh()
+    {
+        return CustomRecipeManager.getInstance().getSifterRecipes().stream()
+                .filter(meshRecipe -> meshRecipe.getMesh().isItemEqual(sifterMesh.getItemStack()))
+                .flatMap(meshRecipe -> meshRecipe.getInputRecipes().stream())
+                .filter(recipe -> recipe.isValidForBuilding(this));
+    }
+
+    private static Predicate<ItemStack> distinctItem()
+    {
+        final Set<Item> seen = ConcurrentHashMap.newKeySet();
+        return t -> seen.add(t.getItem());
     }
 
     @Override
@@ -334,11 +408,17 @@ public class BuildingSifter extends AbstractBuildingWorker
             this.mesh = new ItemStorage(buf.readItemStack());
 
             meshes.clear();
-
-            final int size2 = buf.readInt();
-            for (int i = 0; i < size2; i++)
+            final int size2 = buf.readVarInt();
+            for (int i = 0; i < size2; ++i)
             {
                 meshes.add(new ItemStorage(buf.readItemStack()));
+            }
+
+            sievableBlocks.clear();
+            final int size3 = buf.readVarInt();
+            for (int i = 0; i < size3; ++i)
+            {
+                sievableBlocks.add(new ItemStorage(buf.readItemStack()));
             }
         }
 
@@ -378,14 +458,6 @@ public class BuildingSifter extends AbstractBuildingWorker
          */
         public List<ItemStorage> getSievableBlocks()
         {
-            sievableBlocks.clear();
-            for(IRecipeStorage recipe : getRecipes())
-            {
-                for(ItemStorage item: recipe.getCleanedInput())
-                {
-                    sievableBlocks.add(item);
-                }
-            }
             return sievableBlocks;
         }
 
@@ -402,7 +474,6 @@ public class BuildingSifter extends AbstractBuildingWorker
         /**
          * Save the setup.
          *
-         * @param sifterBlock   the block to sift.
          * @param mesh          the mesh to use.
          * @param dailyQuantity the daily quantity.
          * @param buy           if buying the mesh is involved.

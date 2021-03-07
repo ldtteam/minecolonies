@@ -1,0 +1,50 @@
+{
+  "pools": [
+    {
+      "name": "Gravel_Diamond_Mesh",
+      "rolls": 1,
+      "bonus_rolls": 0.035,
+      "entries": [
+        {
+          "type": "empty",
+          "weight": 40
+        },
+        {
+          "type": "item",
+          "weight": 20,
+          "name": "minecraft:redstone"
+        },
+        {
+          "type": "item",
+          "weight": 20,
+          "name": "minecraft:coal"
+        },
+        {
+          "type": "item",
+          "weight": 10,
+          "name": "minecraft:lapis_lazuli"
+        },
+        {
+          "type": "item",
+          "weight": 2.5,
+          "name": "minecraft:iron_ingot"
+        },
+        {
+          "type": "item",
+          "weight": 2.5,
+          "name": "minecraft:gold_ingot"
+        },
+        {
+          "type": "item",
+          "weight": 2.5,
+          "name": "minecraft:emerald"
+        },
+        {
+          "type": "item",
+          "weight": 2.5,
+          "name": "minecraft:diamond"
+        }
+      ]
+    }
+  ]
+}

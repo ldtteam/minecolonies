@@ -4,15 +4,24 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
+import com.minecolonies.api.crafting.CompostRecipe;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.*;
 import net.minecraft.block.*;
+import net.minecraft.client.Minecraft;
 import net.minecraft.enchantment.EnchantmentData;
 import net.minecraft.item.*;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.loot.LootPredicateManager;
+import net.minecraft.loot.LootTableManager;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
+import net.minecraft.resources.IResourcePack;
+import net.minecraft.resources.ResourcePackType;
+import net.minecraft.resources.SimpleReloadableResourceManager;
+import net.minecraft.resources.VanillaPack;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.Property;
 import net.minecraft.state.IntegerProperty;
@@ -20,13 +29,21 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Unit;
+import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
+import net.minecraftforge.fml.packs.ModFileResourcePack;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -75,9 +92,9 @@ public class CompatibilityManager implements ICompatibilityManager
     private final Set<ItemStorage> smeltableOres = new HashSet<>();
 
     /**
-     * List of all the items that can be composted
+     * List of all the compost recipes
      */
-    private final Set<ItemStorage> compostableItems = new HashSet<>();
+    private final Map<Item, CompostRecipe> compostRecipes = new HashMap<>();
 
     /**
      * List of all the items that can be planted.
@@ -110,19 +127,9 @@ public class CompatibilityManager implements ICompatibilityManager
     private final List<ItemStorage> luckyOres = new ArrayList<>();
 
     /**
-     * What the crusher can work on.
-     */
-    private final Map<ItemStorage, ItemStorage> crusherModes = new HashMap<>();
-
-    /**
      * The items and weights of the recruitment.
      */
     private final List<Tuple<Item, Integer>> recruitmentCostsWeights = new ArrayList<>();
-
-    /**
-     * The meshes the sifter is going to be able to use.
-     */
-    private final List<Tuple<ItemStorage, Double>> sifterMeshes = new ArrayList<>();
 
     /**
      * Map of building level to the list of possible enchantments.
@@ -154,6 +161,8 @@ public class CompatibilityManager implements ICompatibilityManager
      */
     private Set<BlockPos> freePositions = new HashSet<>();
 
+    private LootTableManager lootTableManager;
+
     /**
      * Instantiates the compatibilityManager.
      */
@@ -165,25 +174,17 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
-    public List<Tuple<ItemStorage, Double>> getMeshes()
-    {
-        return new ArrayList<>(this.sifterMeshes);
-    }
-
-    @Override
-    public void discover(final boolean serverSide)
+    public void discover(final World world)
     {
         discoverAllItems();
 
         discoverSaplings();
         discoverOres();
-        discoverCompostableItems();
+        discoverCompostRecipes(world);
         discoverPlantables();
         discoverLuckyOres();
         discoverRecruitCosts();
         discoverDiseases();
-        discoverCrusherModes();
-        discoverSifting();
         discoverFood();
         discoverFuel();
         discoverEnchantments();
@@ -218,23 +219,6 @@ public class CompatibilityManager implements ICompatibilityManager
     public List<ItemStack> getListOfAllItems()
     {
         return allItems;
-    }
-
-    @Override
-    public boolean isCompost(final ItemStack itemStack)
-    {
-        if (itemStack.isEmpty())
-        {
-            return false;
-        }
-
-        if (itemStack.getItem().isFood() || (itemStack.getItem() instanceof BlockItem && (((BlockItem) itemStack.getItem()).getBlock() instanceof CropsBlock
-                                                                                            || ((BlockItem) itemStack.getItem()).getBlock() instanceof StemBlock)))
-        {
-            return true;
-        }
-
-        return ModTags.compostables.contains(itemStack.getItem());
     }
 
     @Override
@@ -310,9 +294,9 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
-    public List<ItemStorage> getCopyOfCompostableItems()
+    public Map<Item, CompostRecipe> getCopyOfCompostRecipes()
     {
-        return ImmutableList.copyOf(compostableItems);
+        return ImmutableMap.copyOf(compostRecipes);
     }
 
     @Override
@@ -320,6 +304,9 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         return ImmutableList.copyOf(plantables);
     }
+
+    @Override
+    public Map<Integer, List<Tuple<String, Integer>>> getCopyOfEnchantments() { return ImmutableMap.copyOf(enchantments); }
 
     @Override
     public String getRandomDisease()
@@ -402,17 +389,6 @@ public class CompatibilityManager implements ICompatibilityManager
         }
 
         return false;
-    }
-
-    /**
-     * Getter for all the crusher modes.
-     *
-     * @return an immutable copy of the map.
-     */
-    @Override
-    public Map<ItemStorage, ItemStorage> getCrusherModes()
-    {
-        return ImmutableMap.<ItemStorage, ItemStorage>builder().putAll(this.crusherModes).build();
     }
 
     @Override
@@ -525,13 +501,23 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     /**
-     * Create complete list of compostable items.
+     * Create complete list of compost recipes.
      */
-    private void discoverCompostableItems()
+    @SuppressWarnings("ConditionalExpression")
+    private void discoverCompostRecipes(final World world)
     {
-        if (compostableItems.isEmpty())
+        if (compostRecipes.isEmpty())
         {
-            compostableItems.addAll(ImmutableList.copyOf(allItems.stream().filter(this::isCompost).map(ItemStorage::new).collect(Collectors.toList())));
+            for (final IRecipe<?> r : world.getRecipeManager().getRecipes(CompostRecipe.TYPE).values())
+            {
+                final CompostRecipe recipe = (CompostRecipe) r;
+                for (final ItemStack stack : recipe.getInput().getMatchingStacks())
+                {
+                    // there can be duplicates due to overlapping tags.  weakest one wins.
+                    compostRecipes.merge(stack.getItem(), recipe,
+                            (r1, r2) -> r1.getStrength() < r2.getStrength() ? r1 : r2);
+                }
+            }
         }
         Log.getLogger().info("Finished discovering compostables");
     }
@@ -570,7 +556,10 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         if (food.isEmpty())
         {
-            food.addAll(ImmutableList.copyOf(allItems.stream().filter(ISFOOD.or(ISCOOKABLE)).map(ItemStorage::new).collect(Collectors.toList())));
+            food.addAll(ImmutableList.copyOf(allItems.stream()
+                    .filter(ISFOOD.or(ISCOOKABLE))
+                    .map(ItemStorage::new)
+                    .collect(Collectors.toList())));
         }
         Log.getLogger().info("Finished discovering food");
     }
@@ -705,46 +694,6 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     /**
-     * Method discovering and loading from the config all materials the sifter needs.
-     */
-    private void discoverSifting()
-    {
-        for (final String string : MinecoloniesAPIProxy.getInstance().getConfig().getServer().sifterMeshes.get())
-        {
-            final String[] mesh = string.split(",");
-
-            if (mesh.length != 2)
-            {
-                Log.getLogger().warn("Couldn't parse the mesh: " + string);
-                continue;
-            }
-
-            try
-            {
-                final double probability = Double.parseDouble(mesh[1]);
-
-                final String[] item = mesh[0].split(":");
-                final Item theItem = ForgeRegistries.ITEMS.getValue(new ResourceLocation(item[0], item[1]));
-
-                if (theItem == null)
-                {
-                    Log.getLogger().warn("Couldn't find item for mesh: " + string);
-                    continue;
-                }
-
-                final ItemStack stack = new ItemStack(theItem, 1);
-                sifterMeshes.add(new Tuple<>(new ItemStorage(stack), probability));
-            }
-            catch (final NumberFormatException ex)
-            {
-                Log.getLogger().warn("Couldn't retrieve probability for mesh: " + string, ex);
-            }
-        }
-
-        Log.getLogger().info("Finished initiating sifter config");
-    }
-
-    /**
      * Discover the possible enchantments from file.
      */
     private void discoverEnchantments()
@@ -784,45 +733,6 @@ public class CompatibilityManager implements ICompatibilityManager
             catch (final NumberFormatException ex)
             {
                 Log.getLogger().warn("Invalid integer at pos 1, 3 or 4");
-            }
-        }
-    }
-
-    /**
-     * Calculate the crusher modes from the config file.
-     */
-    private void discoverCrusherModes()
-    {
-        for (final String string : MinecoloniesAPIProxy.getInstance().getConfig().getServer().crusherProduction.get())
-        {
-            final String[] split = string.split("!");
-            if (split.length != 2)
-            {
-                Log.getLogger().warn("Invalid crusher mode setting: " + string);
-                continue;
-            }
-
-            final String[] firstItem = split[0].split(":");
-            final String[] secondItem = split[1].split(":");
-
-            final Item item1 = ForgeRegistries.ITEMS.getValue(new ResourceLocation(firstItem[0], firstItem[1]));
-            final Item item2 = ForgeRegistries.ITEMS.getValue(new ResourceLocation(secondItem[0], secondItem[1]));
-
-            try
-            {
-                if (item1 == null || item2 == null)
-                {
-                    Log.getLogger().warn("Invalid crusher mode setting: " + string);
-                    continue;
-                }
-
-                final ItemStorage storage1 = new ItemStorage(new ItemStack(item1, 2));
-                final ItemStorage storage2 = new ItemStorage(new ItemStack(item2, 1));
-                crusherModes.put(storage1, storage2);
-            }
-            catch (final NumberFormatException ex)
-            {
-                Log.getLogger().warn("Error getting metaData", ex);
             }
         }
     }

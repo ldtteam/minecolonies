@@ -1,5 +1,6 @@
 package com.minecolonies.api.compatibility;
 
+import com.minecolonies.api.crafting.CompostRecipe;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.Disease;
 import com.minecolonies.api.util.Tuple;
@@ -7,9 +8,12 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.loot.LootTableManager;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,18 +26,11 @@ import java.util.Set;
 public interface ICompatibilityManager
 {
     /**
-     * Getter for the different meshes the sifter is allowed to use.
-     *
-     * @return a copy of the list of tuples containing the itemStorage and the chance of it breaking.
-     */
-    List<Tuple<ItemStorage, Double>> getMeshes();
-
-    /**
      * Method called to instantiate the requirements.
      *
-     * @param serverSide if server side (true) or client side (false).
+     * @param world the current world at the time of discovery.
      */
-    void discover(final boolean serverSide);
+    void discover(final World world);
 
     /**
      * Gets the sapling matching a leave.
@@ -80,11 +77,11 @@ public interface ICompatibilityManager
     boolean isMineableOre(@NotNull ItemStack stack);
 
     /**
-     * Get a copy of the list of compostable items.
+     * Get a copy of the list of compost recipes.
      *
-     * @return the list of compostable items.
+     * @return the list of compost recipes, indexed by input item.
      */
-    List<ItemStorage> getCopyOfCompostableItems();
+    Map<Item, CompostRecipe> getCopyOfCompostRecipes();
 
     /**
      * Get a copy of the list of plantables.
@@ -92,6 +89,13 @@ public interface ICompatibilityManager
      * @return the list of plantables.
      */
     List<ItemStorage> getCopyOfPlantables();
+
+    /**
+     * Get the list of possible enchantments, ordered by enchanter building level.
+     *
+     * @return the list of enchantments.
+     */
+    Map<Integer, List<Tuple<String, Integer>>> getCopyOfEnchantments();
 
     /**
      * Get a random disease of the compat manager.
@@ -144,21 +148,6 @@ public interface ICompatibilityManager
      * @return the immutable list.
      */
     List<ItemStack> getListOfAllItems();
-
-    /**
-     * Test if an itemStack is compostable
-     *
-     * @param stack the stack to test
-     * @return true if so
-     */
-    boolean isCompost(ItemStack stack);
-
-    /**
-     * Get a map of all the crusher modes.
-     *
-     * @return the modes.
-     */
-    Map<ItemStorage, ItemStorage> getCrusherModes();
 
     /**
      * Write colonies to NBT data for saving.

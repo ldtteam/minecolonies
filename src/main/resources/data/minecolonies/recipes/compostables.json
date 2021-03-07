@@ -1,0 +1,15 @@
+{
+  "type": "minecolonies:composting",
+  "input": [
+    {
+      "type": "minecolonies:food"
+    },
+    {
+      "type": "minecolonies:plant"
+    },
+    {
+      "tag": "minecolonies:compostables"
+    }
+  ],
+  "strength": 4
+}

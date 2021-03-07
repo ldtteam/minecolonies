@@ -1,0 +1,24 @@
+{
+  "pools": [
+    {
+      "name": "Sand_String_Mesh",
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "empty",
+          "weight": 95
+        },
+        {
+          "type": "item",
+          "weight": 2.5,
+          "name": "minecraft:cactus"
+        },
+        {
+          "type": "item",
+          "weight": 2.5,
+          "name": "minecraft:sugar_cane"
+        }
+      ]
+    }
+  ]
+}

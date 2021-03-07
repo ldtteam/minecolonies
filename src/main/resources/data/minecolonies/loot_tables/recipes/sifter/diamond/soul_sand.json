@@ -1,0 +1,45 @@
+{
+  "pools": [
+    {
+      "name": "Soulsand_Diamond_Mesh",
+      "rolls": 1,
+      "bonus_rolls": 0.035,
+      "entries": [
+        {
+          "type": "empty",
+          "weight": 40
+        },
+        {
+          "type": "item",
+          "weight": 15,
+          "name": "minecraft:nether_wart"
+        },
+        {
+          "type": "item",
+          "weight": 15,
+          "name": "minecraft:quartz"
+        },
+        {
+          "type": "item",
+          "weight": 15,
+          "name": "minecraft:glowstone_dust"
+        },
+        {
+          "type": "item",
+          "weight": 5,
+          "name": "minecraft:blaze_powder"
+        },
+        {
+          "type": "item",
+          "weight": 5,
+          "name": "minecraft:magma_cream"
+        },
+        {
+          "type": "item",
+          "weight": 5,
+          "name": "minecraft:player_head"
+        }
+      ]
+    }
+  ]
+}

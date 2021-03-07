@@ -4,8 +4,13 @@ import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
+import com.minecolonies.api.crafting.IGenericRecipe;
+import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.coremod.entity.ai.citizen.smelter.EntityAIWorkSmelter;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The smelter job class.
@@ -62,5 +67,14 @@ public class JobSmelter extends AbstractJob<EntityAIWorkSmelter, JobSmelter>
     public EntityAIWorkSmelter generateAI()
     {
         return new EntityAIWorkSmelter(this);
+    }
+
+    @NotNull
+    @Override
+    public List<IGenericRecipe> getPossibleRecipesForDisplayPurposesOnly()
+    {
+        final List<IGenericRecipe> recipes = new ArrayList<>(super.getPossibleRecipesForDisplayPurposesOnly());
+        recipes.addAll(EntityAIWorkSmelter.getPossibleRecipesForDisplayPurposesOnly());
+        return recipes;
     }
 }

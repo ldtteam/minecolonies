@@ -258,12 +258,14 @@ public class CustomRecipe
     /**
      * Parse a Json object into a Custom recipe
      *
+     * @param recipeId the recipe id
      * @param recipeJson the json representing the recipe
      * @return new instance of CustomRecipe
      */
-    public static CustomRecipe parse(@NotNull final JsonObject recipeJson)
+    public static CustomRecipe parse(@NotNull final ResourceLocation recipeId, @NotNull final JsonObject recipeJson)
     {
         final CustomRecipe recipe = new CustomRecipe();
+        recipe.recipeId = recipeId;
 
         if (recipeJson.has(RECIPE_CRAFTER_PROP))
         {
@@ -402,13 +404,10 @@ public class CustomRecipe
         return recipeId;
     }
 
-    /**
-     * Set the ID for this recipe
-     */
-    public void setRecipeId(ResourceLocation recipeId)
-    {
-        this.recipeId = recipeId;
-    }
+    public ResourceLocation getRequiredResearchId() { return this.researchId; }
+    public ResourceLocation getExcludedResearchId() { return this.excludedResearchId; }
+    public int getMinBuildingLevel() { return this.minBldgLevel; }
+    public int getMaxBuildingLevel() { return this.maxBldgLevel; }
 
     /**
      * Check to see if the recipe is currently valid for the building

@@ -1,0 +1,60 @@
+{
+  "type" : "sifting",
+  "mesh" : {
+    "item": "minecraft:iron_ingot"
+  },
+  "power": 10,
+  "break-chance": 0.1,
+  "recipes": {
+    "dirt": {
+      "type": "recipe",
+      "crafter": "sifter",
+      "inputs": [
+        {
+          "item": "minecraft:dirt"
+        }
+      ],
+      "loot-table": "minecolonies:recipes/sifter/iron/dirt"
+    },
+    "gravel": {
+      "type": "recipe",
+      "crafter": "sifter",
+      "inputs": [
+        {
+          "item": "minecraft:gravel"
+        }
+      ],
+      "loot-table": "minecolonies:recipes/sifter/iron/gravel"
+    },
+    "sand": {
+      "type": "recipe",
+      "crafter": "sifter",
+      "inputs": [
+        {
+          "item": "minecraft:sand"
+        }
+      ],
+      "loot-table": "minecolonies:recipes/sifter/iron/sand"
+    },
+    "soul_sand": {
+      "type": "recipe",
+      "crafter": "sifter",
+      "inputs": [
+        {
+          "item": "minecraft:soul_sand"
+        }
+      ],
+      "loot-table": "minecolonies:recipes/sifter/iron/soul_sand"
+    },
+    "soul_soil": {
+      "type": "recipe",
+      "crafter": "sifter",
+      "inputs": [
+        {
+          "item": "minecraft:soul_soil"
+        }
+      ],
+      "loot-table": "minecolonies:recipes/sifter/iron/soul_sand"
+    }
+  }
+}

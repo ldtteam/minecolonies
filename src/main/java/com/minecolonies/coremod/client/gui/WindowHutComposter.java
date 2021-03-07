@@ -13,6 +13,7 @@ import com.minecolonies.coremod.network.messages.server.colony.building.composte
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -69,9 +70,10 @@ public class WindowHutComposter extends AbstractHutFilterableLists
     {
         return IColonyManager.getInstance()
                  .getCompatibilityManager()
-                 .getCopyOfCompostableItems()
-                 .stream()
-                 .filter(storage -> filterPredicate.test(storage.getItemStack()))
+                 .getCopyOfCompostRecipes().keySet().stream()
+                 .map(ItemStack::new)
+                 .filter(filterPredicate)
+                 .map(ItemStorage::new)
                  .collect(Collectors.toList());
     }
 

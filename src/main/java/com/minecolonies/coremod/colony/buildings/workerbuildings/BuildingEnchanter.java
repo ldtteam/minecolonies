@@ -3,26 +3,41 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.crafting.GenericRecipe;
+import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.NBTUtils;
+import com.minecolonies.api.util.constant.TranslationConstants;
+import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.WindowHutEnchanter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.coremod.colony.jobs.JobEnchanter;
 import com.minecolonies.coremod.network.messages.server.colony.building.enchanter.EnchanterWorkerSetMessage;
+import net.minecraft.block.Blocks;
+import net.minecraft.enchantment.EnchantmentData;
+import net.minecraft.item.EnchantedBookItem;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -309,6 +324,56 @@ public class BuildingEnchanter extends AbstractBuildingCrafter
         {
             buildingToGatherFrom.remove(blockPos);
             Network.getNetwork().sendToServer(new EnchanterWorkerSetMessage(this, blockPos, false));
+        }
+    }
+
+    public static class CraftingModule extends AbstractCraftingBuildingModule.Custom
+    {
+        @Nullable
+        @Override
+        public IJob<?> getCraftingJob()
+        {
+            return getMainBuildingJob().orElseGet(() -> new JobEnchanter(null));
+        }
+
+        @NotNull
+        @Override
+        public List<IGenericRecipe> getPossibleRecipesForDisplayPurposesOnly(@NotNull final IJob<?> job)
+        {
+            return IColonyManager.getInstance().getCompatibilityManager().getCopyOfEnchantments().entrySet().stream()
+                    .map(this::getEnchantedBooksForLevel)
+                    .collect(Collectors.toList());
+        }
+
+        private IGenericRecipe getEnchantedBooksForLevel(final Map.Entry<Integer, List<com.minecolonies.api.util.Tuple<String, Integer>>> levelEntry)
+        {
+            final List<ITextComponent> restrictions = new ArrayList<>();
+            restrictions.add(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_JEI_PREFIX + "levelrestriction",
+                    levelEntry.getKey(), levelEntry.getKey()));
+
+            // the input list has the same enchantment repeated multiple times in order to influence the
+            // chance that a particular item will drop, similar to a LootTable.  currently we don't have
+            // a good way to represent chance values in JEI unless we create a LootTable, which has other
+            // potential display issues due to the number of possible outputs (and we can't use an alternate
+            // view like the Sifter does because the enchanter has some traditional recipes as well).  for
+            // now we'll just not reveal the chance calculations to the player.
+            final List<ItemStack> outputs = levelEntry.getValue().stream()
+                    .distinct()
+                    .map(key -> new EnchantmentData(ForgeRegistries.ENCHANTMENTS.getValue(new ResourceLocation(key.getA())), key.getB()))
+                    .map(EnchantedBookItem::getEnchantedItemStack)
+                    .collect(Collectors.toList());
+
+            return GenericRecipe.of(StandardFactoryController.getInstance().getNewInstance(
+                    TypeConstants.RECIPE,
+                    StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+                    Collections.singletonList(new ItemStack(ModItems.ancientTome)),
+                    1,
+                    outputs.get(0),
+                    Blocks.AIR,
+                    null,
+                    null,
+                    outputs.stream().skip(1).collect(Collectors.toList())),
+                    restrictions);
         }
     }
 }

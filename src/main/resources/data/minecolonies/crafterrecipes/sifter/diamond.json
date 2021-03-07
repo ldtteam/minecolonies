@@ -1,0 +1,60 @@
+{
+  "type" : "sifting",
+  "mesh" : {
+    "item": "minecraft:diamond"
+  },
+  "power": 50,
+  "break-chance": 0.1,
+  "recipes": {
+    "dirt": {
+      "type": "recipe",
+      "crafter": "sifter",
+      "inputs": [
+        {
+          "item": "minecraft:dirt"
+        }
+      ],
+      "loot-table": "minecolonies:recipes/sifter/diamond/dirt"
+    },
+    "gravel": {
+      "type": "recipe",
+      "crafter": "sifter",
+      "inputs": [
+        {
+          "item": "minecraft:gravel"
+        }
+      ],
+      "loot-table": "minecolonies:recipes/sifter/diamond/gravel"
+    },
+    "sand": {
+      "type": "recipe",
+      "crafter": "sifter",
+      "inputs": [
+        {
+          "item": "minecraft:sand"
+        }
+      ],
+      "loot-table": "minecolonies:recipes/sifter/diamond/sand"
+    },
+    "soul_sand": {
+      "type": "recipe",
+      "crafter": "sifter",
+      "inputs": [
+        {
+          "item": "minecraft:soul_sand"
+        }
+      ],
+      "loot-table": "minecolonies:recipes/sifter/diamond/soul_sand"
+    },
+    "soul_soil": {
+      "type": "recipe",
+      "crafter": "sifter",
+      "inputs": [
+        {
+          "item": "minecraft:soul_soil"
+        }
+      ],
+      "loot-table": "minecolonies:recipes/sifter/diamond/soul_sand"
+    }
+  }
+}

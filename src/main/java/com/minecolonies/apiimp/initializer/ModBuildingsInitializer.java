@@ -6,10 +6,7 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.buildings.BuildingMysticalSite;
 import com.minecolonies.coremod.colony.buildings.DefaultBuildingInstance;
-import com.minecolonies.coremod.colony.buildings.modules.BedHandlingModule;
-import com.minecolonies.coremod.colony.buildings.modules.HomeBuildingModule;
-import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
-import com.minecolonies.coremod.colony.buildings.modules.TavernBuildingModule;
+import com.minecolonies.coremod.colony.buildings.modules.*;
 import com.minecolonies.coremod.colony.buildings.views.EmptyView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
 import net.minecraft.util.ResourceLocation;
@@ -42,6 +39,7 @@ public final class ModBuildingsInitializer
                                 .setBuildingProducer(BuildingBaker::new)
                                 .setBuildingViewProducer(() -> BuildingBaker.View::new)
                                 .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.BAKERY_ID))
+                                .addBuildingModuleProducer(BuildingBaker.CraftingModule::new)
                                 .createBuildingEntry();
 
         ModBuildings.barracks = new BuildingEntry.Builder()
@@ -64,6 +62,7 @@ public final class ModBuildingsInitializer
                                     .setBuildingProducer(BuildingBlacksmith::new)
                                     .setBuildingViewProducer(() -> BuildingBlacksmith.View::new)
                                     .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.BLACKSMITH_ID))
+                                    .addBuildingModuleProducer(BuildingBlacksmith.CraftingModule::new)
                                     .createBuildingEntry();
 
         ModBuildings.builder = new BuildingEntry.Builder()
@@ -71,6 +70,7 @@ public final class ModBuildingsInitializer
                                  .setBuildingProducer(BuildingBuilder::new)
                                  .setBuildingViewProducer(() -> BuildingBuilder.View::new)
                                  .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.BUILDER_ID))
+                                 .addBuildingModuleProducer(SimpleCraftingModule::new)
                                  .createBuildingEntry();
 
         ModBuildings.chickenHerder = new BuildingEntry.Builder()
@@ -100,6 +100,8 @@ public final class ModBuildingsInitializer
                               .setBuildingProducer(BuildingCook::new)
                               .setBuildingViewProducer(() -> BuildingCook.View::new)
                               .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.COOK_ID))
+                              .addBuildingModuleProducer(BuildingCook.CraftingModule::new)
+                              .addBuildingModuleProducer(BuildingCook.SmeltingModule::new)
                               .createBuildingEntry();
 
         ModBuildings.cowboy = new BuildingEntry.Builder()
@@ -114,6 +116,7 @@ public final class ModBuildingsInitializer
                                  .setBuildingProducer(BuildingCrusher::new)
                                  .setBuildingViewProducer(() -> BuildingCrusher.View::new)
                                  .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.CRUSHER_ID))
+                                 .addBuildingModuleProducer(BuildingCrusher.CraftingModule::new)
                                  .createBuildingEntry();
 
         ModBuildings.deliveryman = new BuildingEntry.Builder()
@@ -128,6 +131,7 @@ public final class ModBuildingsInitializer
                                 .setBuildingProducer(BuildingFarmer::new)
                                 .setBuildingViewProducer(() -> BuildingFarmer.View::new)
                                 .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.FARMER_ID))
+                                .addBuildingModuleProducer(BuildingFarmer.CraftingModule::new)
                                 .createBuildingEntry();
 
         ModBuildings.fisherman = new BuildingEntry.Builder()
@@ -167,6 +171,7 @@ public final class ModBuildingsInitializer
                                     .setBuildingProducer(BuildingLumberjack::new)
                                     .setBuildingViewProducer(() -> BuildingLumberjack.View::new)
                                     .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.LUMBERJACK_ID))
+                                    .addBuildingModuleProducer(BuildingLumberjack.CraftingModule::new)
                                     .createBuildingEntry();
 
         ModBuildings.miner = new BuildingEntry.Builder()
@@ -174,6 +179,7 @@ public final class ModBuildingsInitializer
                                .setBuildingProducer(BuildingMiner::new)
                                .setBuildingViewProducer(() -> BuildingMiner.View::new)
                                .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.MINER_ID))
+                               .addBuildingModuleProducer(SimpleCraftingModule::new)
                                .createBuildingEntry();
 
         ModBuildings.sawmill = new BuildingEntry.Builder()
@@ -181,6 +187,7 @@ public final class ModBuildingsInitializer
                                  .setBuildingProducer(BuildingSawmill::new)
                                  .setBuildingViewProducer(() -> BuildingSawmill.View::new)
                                  .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.SAWMILL_ID))
+                                 .addBuildingModuleProducer(BuildingSawmill.CraftingModule::new)
                                  .createBuildingEntry();
 
         ModBuildings.shepherd = new BuildingEntry.Builder()
@@ -202,6 +209,7 @@ public final class ModBuildingsInitializer
                                   .setBuildingProducer(BuildingSmeltery::new)
                                   .setBuildingViewProducer(() -> BuildingSmeltery.View::new)
                                   .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.SMELTERY_ID))
+                                  .addBuildingModuleProducer(BuildingSmeltery.SmeltingModule::new)
                                   .createBuildingEntry();
 
         ModBuildings.stoneMason = new BuildingEntry.Builder()
@@ -209,6 +217,7 @@ public final class ModBuildingsInitializer
                                     .setBuildingProducer(BuildingStonemason::new)
                                     .setBuildingViewProducer(() -> BuildingStonemason.View::new)
                                     .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.STONE_MASON_ID))
+                                    .addBuildingModuleProducer(BuildingStonemason.CraftingModule::new)
                                     .createBuildingEntry();
 
         ModBuildings.stoneSmelter = new BuildingEntry.Builder()
@@ -216,6 +225,7 @@ public final class ModBuildingsInitializer
                                       .setBuildingProducer(BuildingStoneSmeltery::new)
                                       .setBuildingViewProducer(() -> BuildingStoneSmeltery.View::new)
                                       .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.STONE_SMELTERY_ID))
+                                      .addBuildingModuleProducer(BuildingStoneSmeltery.SmeltingModule::new)
                                       .createBuildingEntry();
 
         ModBuildings.swineHerder = new BuildingEntry.Builder()
@@ -258,6 +268,7 @@ public final class ModBuildingsInitializer
                                    .setBuildingProducer(BuildingEnchanter::new)
                                    .setBuildingViewProducer(() -> BuildingEnchanter.View::new)
                                    .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.ENCHANTER_ID))
+                                   .addBuildingModuleProducer(BuildingEnchanter.CraftingModule::new)
                                    .createBuildingEntry();
 
         ModBuildings.university = new BuildingEntry.Builder()
@@ -293,6 +304,7 @@ public final class ModBuildingsInitializer
                                      .setBuildingProducer(BuildingGlassblower::new)
                                      .setBuildingViewProducer(() -> BuildingGlassblower.View::new)
                                      .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.GLASSBLOWER_ID))
+                                     .addBuildingModuleProducer(BuildingGlassblower.CraftingModule::new)
                                      .createBuildingEntry();
 
         ModBuildings.dyer = new BuildingEntry.Builder()
@@ -300,6 +312,7 @@ public final class ModBuildingsInitializer
                               .setBuildingProducer(BuildingDyer::new)
                               .setBuildingViewProducer(() -> BuildingDyer.View::new)
                               .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.DYER_ID))
+                              .addBuildingModuleProducer(BuildingDyer.CraftingModule::new)
                               .createBuildingEntry();
 
         ModBuildings.fletcher = new BuildingEntry.Builder()
@@ -307,6 +320,7 @@ public final class ModBuildingsInitializer
                                   .setBuildingProducer(BuildingFletcher::new)
                                   .setBuildingViewProducer(() -> BuildingFletcher.View::new)
                                   .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.FLETCHER_ID))
+                                  .addBuildingModuleProducer(BuildingFletcher.CraftingModule::new)
                                   .createBuildingEntry();
 
         ModBuildings.tavern = new BuildingEntry.Builder()
@@ -324,6 +338,7 @@ public final class ModBuildingsInitializer
                                   .setBuildingProducer(BuildingMechanic::new)
                                   .setBuildingViewProducer(() -> BuildingMechanic.View::new)
                                   .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.MECHANIC_ID))
+                                  .addBuildingModuleProducer(BuildingMechanic.CraftingModule::new)
                                   .createBuildingEntry();
 
         ModBuildings.plantation = new BuildingEntry.Builder()
@@ -331,6 +346,7 @@ public final class ModBuildingsInitializer
                                     .setBuildingProducer(BuildingPlantation::new)
                                     .setBuildingViewProducer(() -> BuildingPlantation.View::new)
                                     .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.PLANTATION_ID))
+                                    .addBuildingModuleProducer(BuildingPlantation.CraftingModule::new)
                                     .createBuildingEntry();
 
         ModBuildings.rabbitHutch = new BuildingEntry.Builder()
@@ -345,6 +361,7 @@ public final class ModBuildingsInitializer
                                        .setBuildingProducer(BuildingConcreteMixer::new)
                                        .setBuildingViewProducer(() -> BuildingConcreteMixer.View::new)
                                        .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.CONCRETE_ID))
+                                       .addBuildingModuleProducer(BuildingConcreteMixer.CraftingModule::new)
                                        .createBuildingEntry();
 
         ModBuildings.beekeeper = new BuildingEntry.Builder()

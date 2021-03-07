@@ -1,0 +1,39 @@
+{
+  "pools": [
+    {
+      "name": "Dirt_String_Mesh",
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "empty",
+          "weight": 71
+        },
+        {
+          "type": "item",
+          "weight": 25,
+          "name": "minecraft:wheat_seeds"
+        },
+        {
+          "type": "item",
+          "weight": 1,
+          "name": "minecraft:oak_sapling"
+        },
+        {
+          "type": "item",
+          "weight": 1,
+          "name": "minecraft:birch_sapling"
+        },
+        {
+          "type": "item",
+          "weight": 1,
+          "name": "minecraft:spruce_sapling"
+        },
+        {
+          "type": "item",
+          "weight": 1,
+          "name": "minecraft:jungle_sapling"
+        }
+      ]
+    }
+  ]
+}

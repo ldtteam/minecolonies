@@ -1,22 +1,24 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.google.common.collect.ImmutableMap;
 import com.ldtteam.blockout.views.Window;
-import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
-import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
-import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.WindowHutCrusher;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
+import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.coremod.colony.jobs.JobCrusher;
 import com.minecolonies.coremod.network.messages.server.colony.building.crusher.CrusherSetModeMessage;
 
@@ -26,6 +28,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -86,7 +89,17 @@ public class BuildingCrusher extends AbstractBuildingCrafter
     public BuildingCrusher(final IColony c, final BlockPos l)
     {
         super(c, l);
-        loadCrusherMode();
+    }
+
+    @Override
+    public void registerModule(@NotNull final IBuildingModule module)
+    {
+        super.registerModule(module);
+
+        if (module instanceof CraftingModule)
+        {
+            loadCrusherMode();
+        }
     }
 
     /**
@@ -94,25 +107,21 @@ public class BuildingCrusher extends AbstractBuildingCrafter
      */
     private void loadCrusherMode()
     {
+        this.recipes.clear();
+        checkForWorkerSpecificRecipes();
+
         this.crusherRecipes.clear();
 
-        oneByOne = getColony().getResearchManager().getResearchEffects().getEffectStrength(CRUSHING_11) > 0;
-        for (final Map.Entry<ItemStorage, ItemStorage> mode : IColonyManager.getInstance().getCompatibilityManager().getCrusherModes().entrySet())
+        final ImmutableMap<IToken<?>, IRecipeStorage> recipes = IColonyManager.getInstance().getRecipeManager().getRecipes();
+        for (final IToken<?> token : this.recipes)
         {
+            final IRecipeStorage storage = recipes.get(token);
+            final ItemStorage key = storage.getCleanedInput().get(0);
             if (this.crusherMode == null)
             {
-                this.crusherMode = mode.getKey();
+                this.crusherMode = key;
             }
-            final ItemStack input = mode.getKey().getItemStack();
-            if (oneByOne)
-            {
-                input.setCount(1);
-            }
-            final IRecipeStorage recipe = StandardFactoryController.getInstance().getNewInstance(
-              TypeConstants.RECIPE,
-              StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-              Collections.singletonList(input), 2, mode.getValue().getItemStack(), ModBlocks.blockHutCrusher);
-            crusherRecipes.put(mode.getKey(), recipe);
+            this.crusherRecipes.put(key, storage);
         }
     }
 
@@ -151,6 +160,13 @@ public class BuildingCrusher extends AbstractBuildingCrafter
     public String getJobName()
     {
         return CRUSHER_DESC;
+    }
+
+    @Override
+    public boolean canRecipeBeAdded(@NotNull final IToken<?> token)
+    {
+        if (!super.canRecipeBeAdded(token)) return false;
+        return isRecipeCompatibleWithCraftingModule(token);
     }
 
     @Override
@@ -274,7 +290,8 @@ public class BuildingCrusher extends AbstractBuildingCrafter
     {
         super.serializeToView(buf);
 
-        if (crusherRecipes.isEmpty() || !oneByOne && getColony().getResearchManager().getResearchEffects().getEffectStrength(CRUSHING_11) > 0)
+        final boolean oneOne = getColony().getResearchManager().getResearchEffects().getEffectStrength(CRUSHING_11) > 0;
+        if (crusherRecipes.isEmpty() || oneByOne != oneOne)
         {
             loadCrusherMode();
         }
@@ -391,6 +408,16 @@ public class BuildingCrusher extends AbstractBuildingCrafter
         public Window getWindow()
         {
             return new WindowHutCrusher(this);
+        }
+    }
+
+    public static class CraftingModule extends AbstractCraftingBuildingModule.Custom
+    {
+        @Nullable
+        @Override
+        public IJob<?> getCraftingJob()
+        {
+            return getMainBuildingJob().orElseGet(() -> new JobCrusher(null));
         }
     }
 }

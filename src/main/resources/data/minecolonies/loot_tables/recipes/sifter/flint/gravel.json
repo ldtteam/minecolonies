@@ -1,0 +1,34 @@
+{
+  "pools": [
+    {
+      "name": "Gravel_Flint_Mesh",
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "empty",
+          "weight": 60
+        },
+        {
+          "type": "item",
+          "weight": 10,
+          "name": "minecraft:iron_nugget"
+        },
+        {
+          "type": "item",
+          "weight": 10,
+          "name": "minecraft:flint"
+        },
+        {
+          "type": "item",
+          "weight": 10,
+          "name": "minecraft:coal"
+        },
+        {
+          "type": "item",
+          "weight": 10,
+          "name": "minecraft:redstone"
+        }
+      ]
+    }
+  ]
+}

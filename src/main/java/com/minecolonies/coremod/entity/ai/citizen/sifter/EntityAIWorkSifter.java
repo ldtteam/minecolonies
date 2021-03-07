@@ -107,8 +107,8 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
 
         currentRecipeStorage = sifterBuilding.getFirstFullFillableRecipe(item -> ItemStackUtils.isEmpty(item), 1, false);
 
-        ItemStack meshItem = sifterBuilding.getMesh().getA().getItemStack().copy();
-        if(ItemStackUtils.isEmpty(worker.getHeldItemMainhand()) || ItemStackUtils.compareItemStacksIgnoreStackSize(worker.getHeldItemMainhand(), meshItem))
+        ItemStack meshItem = sifterBuilding.getMesh().getItemStack().copy();
+        if(ItemStackUtils.isEmpty(worker.getHeldItemMainhand()) || !ItemStackUtils.compareItemStacksIgnoreStackSize(worker.getHeldItemMainhand(), meshItem))
         {
             worker.setHeldItem(Hand.MAIN_HAND, meshItem);
         }
@@ -132,7 +132,7 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
             currentRecipeStorage.fullfillRecipe(getLootContext(), sifterBuilding.getHandlers());
 
             //Handle mesh breaking
-            if (worker.getRandom().nextDouble() * 100 < sifterBuilding.getMesh().getB())
+            if (worker.getRandom().nextDouble() * 100 < sifterBuilding.getMeshBreakPercentage())
             {
                 sifterBuilding.resetMesh();
                 worker.getCitizenColonyHandler().getColony().getImportantMessageEntityPlayers().forEach(player -> player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.sifter.meshbroke"), player.getUniqueID()));

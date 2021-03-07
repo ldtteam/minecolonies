@@ -1,0 +1,29 @@
+{
+  "pools": [
+    {
+      "name": "Sand_Flint_Mesh",
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "empty",
+          "weight": 85
+        },
+        {
+          "type": "item",
+          "weight": 5,
+          "name": "minecraft:cactus"
+        },
+        {
+          "type": "item",
+          "weight": 5,
+          "name": "minecraft:sugar_cane"
+        },
+        {
+          "type": "item",
+          "weight": 5,
+          "name": "minecraft:gold_nugget"
+        }
+      ]
+    }
+  ]
+}

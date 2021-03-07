@@ -637,7 +637,7 @@ public final class ColonyManager implements IColonyManager
 
         if (ModTags.tagsLoaded && !compatibilityManager.isDiscoveredAlready() && ItemStackUtils.ISFOOD != null && FurnaceRecipes.getInstance().loaded())
         {
-            compatibilityManager.discover(false);
+            compatibilityManager.discover(Minecraft.getInstance().world);
         }
     }
 
@@ -651,7 +651,7 @@ public final class ColonyManager implements IColonyManager
 
         if (ModTags.tagsLoaded && !compatibilityManager.isDiscoveredAlready() && FurnaceRecipes.getInstance().loaded())
         {
-            compatibilityManager.discover(true);
+            compatibilityManager.discover(event.world);
         }
     }
 
