@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.recipes;
 
 import com.google.gson.JsonObject;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.block.CropsBlock;
 import net.minecraft.block.StemBlock;
@@ -15,16 +16,21 @@ import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public class FoodIngredient extends Ingredient
 {
     public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "food");
 
+    public static final Predicate<ItemStack> ISFOOD
+            = stack -> ItemStackUtils.isNotEmpty(stack) && stack.getItem().isFood() && stack.getItem().getFood().getHealing() > 0 && stack.getItem().getFood().getSaturation() > 0;
+
     private static final Lazy<FoodIngredient> INSTANCE
             = Lazy.of(() -> new FoodIngredient(ForgeRegistries.ITEMS.getValues().stream()
-                .filter(Item::isFood)
-                .map(item -> new SingleItemList(new ItemStack(item)))));
+                .map(ItemStack::new)
+                .filter(ISFOOD)
+                .map(SingleItemList::new)));
 
     protected FoodIngredient(final Stream<? extends IItemList> itemLists)
     {

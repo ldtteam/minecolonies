@@ -11,6 +11,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.client.UpdateClientWithRecipesMessage;
+import com.minecolonies.coremod.recipes.FoodIngredient;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -90,11 +91,11 @@ public class FurnaceRecipes implements IFurnaceRecipes
      */
     private static void loadUtilityPredicates()
     {
-        ItemStackUtils.ISFOOD = itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem().isFood();
+        ItemStackUtils.ISFOOD = FoodIngredient.ISFOOD;
         ItemStackUtils.IS_SMELTABLE = itemStack -> !ItemStackUtils.isEmpty(instance.getSmeltingResult(itemStack));
-        ItemStackUtils.CAN_EAT =
-          itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem().isFood() && !ItemStackUtils.ISFOOD.test(instance.getSmeltingResult(itemStack));
         ItemStackUtils.ISCOOKABLE = itemStack -> ItemStackUtils.ISFOOD.test(instance.getSmeltingResult(itemStack));
+        ItemStackUtils.CAN_EAT =
+          itemStack -> ItemStackUtils.ISFOOD.test(itemStack) && !ItemStackUtils.ISCOOKABLE.test(itemStack);
     }
 
     @SubscribeEvent
