@@ -1,18 +1,20 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.ldtteam.blockout.views.Window;
-import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.*;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.client.gui.WindowHutMiner;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
@@ -33,6 +35,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.*;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
@@ -662,6 +666,11 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         public int                           current;
 
         /**
+         * The number of guards assigned to this mine
+         */
+        public int assignedGuards;
+
+        /**
          * Public constructor of the view, creates an instance of it.
          *
          * @param c the colony.
@@ -690,6 +699,54 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
             for (int i = 0; i < size; i++)
             {
                 levelsInfo.add(i, new Tuple<>(buf.readInt(), buf.readInt()));
+            }
+        }
+
+        /**
+         * Retrieve a list of guards working at buildings with the task to patrol the mine
+         * @return list of guards
+         */
+        public List<ICitizenDataView> pullGuards()
+        {
+            assignedGuards = 0;
+            final List<ICitizenDataView> guards = new ArrayList<>();
+            final List<IBuildingView> buildings = this.getColony().getBuildings().stream().filter(entry -> entry instanceof AbstractBuildingGuards.View && ((AbstractBuildingGuards.View) entry).getTask() == GuardTask.MINE).collect(Collectors.toList());
+            for (final IBuildingView building : buildings)
+            {
+                final AbstractBuildingGuards.View guardbuilding = (AbstractBuildingGuards.View) building;
+                if (guardbuilding.getMinePos() != null && guardbuilding.getMinePos().equals(this.getPosition()))
+                {
+                    assignedGuards++;
+                }
+                for (final Integer citizenId : guardbuilding.getGuards())
+                {
+                    guards.add(this.getColony().getCitizen(citizenId));
+                }
+            }
+            return guards;
+        }
+
+        /**
+         * Get the maximum of allowed guards for the mine
+         * 1 guard for mine level 1 and 2
+         * 2 guards for mine level 3 and 4
+         * 3 guards for mine level 5
+         * @return maximum number of guards
+         */
+        public int getMaxGuards()
+        {
+            switch (this.getBuildingLevel())
+            {
+                case 1:
+                case 2:
+                    return 1;
+                case 3:
+                case 4:
+                    return 2;
+                case 5:
+                    return 3;
+                default:
+                    return 0;
             }
         }
     }
