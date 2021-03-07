@@ -332,7 +332,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         if (pathResult == null || pathResult.treeLocation == null)
         {
             final BuildingLumberjack buildingLumberjack = (BuildingLumberjack) building;
-            final List<ItemStorage> copy = buildingLumberjack.getModuleMatching(ItemListModule.class, m -> ((ItemListModule) m).getId().equals(SAPLINGS_LIST))
+            final List<ItemStorage> copy = buildingLumberjack.getModuleMatching(ItemListModule.class, m -> m.getId().equals(SAPLINGS_LIST))
                                              .map(ItemListModule::getList).orElse(ImmutableList.of());
             if (buildingLumberjack.shouldRestrict())
             {

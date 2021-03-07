@@ -55,7 +55,7 @@ public class InteractionValidatorInitializer
     {
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(FURNACE_USER_NO_FUEL),
           citizen -> citizen.getWorkBuilding() instanceof AbstractBuildingSmelterCrafter
-                       && ((AbstractBuildingSmelterCrafter) citizen.getWorkBuilding()).getModuleMatching(ItemListModule.class, m -> ((ItemListModule) m).getId().equals(FUEL_LIST))
+                       && ((AbstractBuildingSmelterCrafter) citizen.getWorkBuilding()).getModuleMatching(ItemListModule.class, m -> m.getId().equals(FUEL_LIST))
                             .map(m -> m.getList().isEmpty()).orElse(false));
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(BAKER_HAS_NO_FURNACES_MESSAGE),
           citizen -> citizen.getWorkBuilding() instanceof AbstractBuildingSmelterCrafter && ((AbstractBuildingSmelterCrafter) citizen.getWorkBuilding()).getFurnaces().isEmpty());
@@ -178,7 +178,7 @@ public class InteractionValidatorInitializer
           citizen -> {
             if (citizen.getWorkBuilding() instanceof BuildingSmeltery)
             {
-                final List<ItemStorage> oreList = ((BuildingSmeltery) citizen.getWorkBuilding()).getModuleMatching(ItemListModule.class, m -> ((ItemListModule) m).getId().equals(ORE_LIST))
+                final List<ItemStorage> oreList = ((BuildingSmeltery) citizen.getWorkBuilding()).getModuleMatching(ItemListModule.class, m -> m.getId().equals(ORE_LIST))
                                                     .map(ItemListModule::getList).orElse(ImmutableList.of());
                 return IColonyManager.getInstance().getCompatibilityManager()
                   .getSmeltableOres()

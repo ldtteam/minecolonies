@@ -195,7 +195,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
 
     @NotNull
     @Override
-    public <T extends IBuildingModule> Optional<T> getModuleMatching(final Class<T> clazz, final Predicate<IBuildingModule> modulePredicate)
+    public <T extends IBuildingModule> Optional<T> getModuleMatching(final Class<T> clazz, final Predicate<? super T> modulePredicate)
     {
         for (final IBuildingModule module : modules)
         {

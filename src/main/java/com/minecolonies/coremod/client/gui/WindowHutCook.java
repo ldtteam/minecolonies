@@ -101,7 +101,7 @@ public class WindowHutCook extends AbstractHutFilterableLists
      */
     public List<? extends ItemStorage> getBlockList(final Predicate<ItemStack> filterPredicate, final String id)
     {
-        return ImmutableList.copyOf(building.getModuleViewMatching(ItemListModuleView.class, view -> ((ItemListModuleView) view).getId().equals(id))
+        return ImmutableList.copyOf(building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id))
                                       .map(m -> m.getAllItems().apply(building))
                                       .orElse(ImmutableSet.of())
                                       .stream()

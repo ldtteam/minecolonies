@@ -142,7 +142,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
             return getState();
         }
 
-        final List<ItemStorage> list = getOwnBuilding().getModuleMatching(ItemListModule.class, m -> ((ItemListModule) m).getId().equals(COMPOSTABLE_LIST))
+        final List<ItemStorage> list = getOwnBuilding().getModuleMatching(ItemListModule.class, m -> m.getId().equals(COMPOSTABLE_LIST))
                                          .map(ItemListModule::getList).orElse(ImmutableList.of());
         if (list.isEmpty())
         {
@@ -251,7 +251,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
         if (worker.getHeldItem(Hand.MAIN_HAND) == ItemStack.EMPTY)
         {
             final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(
-              worker.getInventoryCitizen(), stack -> getOwnBuilding().getModuleMatching(ItemListModule.class, m -> ((ItemListModule) m).getId().equals(COMPOSTABLE_LIST)).map(m -> m.isItemInList(new ItemStorage(stack))).orElse(false));
+              worker.getInventoryCitizen(), stack -> getOwnBuilding().getModuleMatching(ItemListModule.class, m -> m.getId().equals(COMPOSTABLE_LIST)).map(m -> m.isItemInList(new ItemStorage(stack))).orElse(false));
 
             if (slot >= 0)
             {

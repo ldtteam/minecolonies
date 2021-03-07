@@ -641,11 +641,11 @@ public abstract class AbstractBuildingView implements IBuildingView
 
     @NotNull
     @Override
-    public <T extends IBuildingModuleView> Optional<T> getModuleViewMatching(final Class<T> clazz, final Predicate<IBuildingModuleView> modulePredicate)
+    public <T extends IBuildingModuleView> Optional<T> getModuleViewMatching(final Class<T> clazz, final Predicate<? super T> modulePredicate)
     {
         for (final IBuildingModuleView module : moduleViews)
         {
-            if (clazz.isInstance(module) && modulePredicate.test(module))
+            if (clazz.isInstance(module) && modulePredicate.test(clazz.cast(module)))
             {
                 return Optional.of((T) module);
             }

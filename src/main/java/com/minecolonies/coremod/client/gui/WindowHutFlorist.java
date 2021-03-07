@@ -76,7 +76,7 @@ public class WindowHutFlorist extends AbstractHutFilterableLists
                 return;
             }
 
-            final int size = building.getModuleViewMatching(ItemListModuleView.class, view -> ((ItemListModuleView) view).getId().equals(id))
+            final int size = building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id))
                                .map(ItemListModuleView::getSize).orElse(0);
             if (ownBuilding.getBuildingLevel() <= MAX_LEVEL_BEFORE_SORTING && button.getTextAsString().equals(ON) && size >= 1)
             {

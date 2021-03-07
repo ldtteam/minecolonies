@@ -136,7 +136,7 @@ public abstract class AbstractBuildingFurnaceUser extends AbstractBuildingWorker
      */
     public List<ItemStack> getAllowedFuel()
     {
-        return getModuleMatching(ItemListModule.class, m -> ((ItemListModule) m).getId().equals(FUEL_LIST)).map(ItemListModule::getList).orElse(ImmutableList.of()).stream()
+        return getModuleMatching(ItemListModule.class, m -> m.getId().equals(FUEL_LIST)).map(ItemListModule::getList).orElse(ImmutableList.of()).stream()
                      .map(ItemStorage::getItemStack)
                      .peek(stack -> stack.setCount(stack.getMaxStackSize()))
                      .collect(Collectors.toList());
@@ -150,6 +150,6 @@ public abstract class AbstractBuildingFurnaceUser extends AbstractBuildingWorker
      */
     public boolean isAllowedFuel(final ItemStack stack)
     {
-        return getModuleMatching(ItemListModule.class, m -> ((ItemListModule) m).getId().equals(FUEL_LIST)).map(ItemListModule::getList).orElse(ImmutableList.of()).stream().anyMatch(itemStack -> stack.isItemEqual(itemStack.getItemStack()));
+        return getModuleMatching(ItemListModule.class, m -> m.getId().equals(FUEL_LIST)).map(ItemListModule::getList).orElse(ImmutableList.of()).stream().anyMatch(itemStack -> stack.isItemEqual(itemStack.getItemStack()));
     }
 }

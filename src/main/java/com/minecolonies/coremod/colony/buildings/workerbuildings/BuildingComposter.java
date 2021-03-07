@@ -78,7 +78,7 @@ public class BuildingComposter extends AbstractBuildingWorker
     {
         super(c, l);
 
-        keepX.put((stack) -> this.hasModule(ItemListModule.class) && this.getModuleMatching(ItemListModule.class, m -> ((ItemListModule) m).getId().equals(COMPOSTABLE_LIST)).map(m -> m.isItemInList(new ItemStorage(stack))).orElse(false), new Tuple<>(Integer.MAX_VALUE, true));
+        keepX.put((stack) -> this.hasModule(ItemListModule.class) && this.getModuleMatching(ItemListModule.class, m -> m.getId().equals(COMPOSTABLE_LIST)).map(m -> m.isItemInList(new ItemStorage(stack))).orElse(false), new Tuple<>(Integer.MAX_VALUE, true));
     }
 
     /**

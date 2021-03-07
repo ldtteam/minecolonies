@@ -146,11 +146,11 @@ public class ViewFilterableList
             button.setText(OFF);
             if (isInverted)
             {
-                building.getModuleViewMatching(ItemListModuleView.class, view -> ((ItemListModuleView) view).getId().equals(id)).ifPresent(m -> m.addItem(allItems.get(row)));
+                building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id)).ifPresent(m -> m.addItem(allItems.get(row)));
             }
             else
             {
-                building.getModuleViewMatching(ItemListModuleView.class, view -> ((ItemListModuleView) view).getId().equals(id)).ifPresent(m -> m.removeItem(allItems.get(row)));
+                building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id)).ifPresent(m -> m.removeItem(allItems.get(row)));
             }
         }
         else
@@ -158,11 +158,11 @@ public class ViewFilterableList
             button.setText(ON);
             if (isInverted)
             {
-                building.getModuleViewMatching(ItemListModuleView.class, view -> ((ItemListModuleView) view).getId().equals(id)).ifPresent(m -> m.removeItem(allItems.get(row)));
+                building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id)).ifPresent(m -> m.removeItem(allItems.get(row)));
             }
             else
             {
-                building.getModuleViewMatching(ItemListModuleView.class, view -> ((ItemListModuleView) view).getId().equals(id)).ifPresent(m -> m.addItem(allItems.get(row)));
+                building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id)).ifPresent(m -> m.addItem(allItems.get(row)));
             }
         }
         resourceList.refreshElementPanes();
@@ -255,7 +255,7 @@ public class ViewFilterableList
                 resourceLabel.setText(resource.getDisplayName());
                 resourceLabel.setColors(WHITE);
                 rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(resource);
-                final boolean isAllowedItem  = building.getModuleViewMatching(ItemListModuleView.class, view -> ((ItemListModuleView) view).getId().equals(id))
+                final boolean isAllowedItem  = building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id))
                                                  .map(m -> m.isAllowedItem(new ItemStorage(resource))).orElse(!isInverted);
                 final Button switchButton = rowPane.findPaneOfTypeByID(BUTTON_SWITCH, Button.class);
 
