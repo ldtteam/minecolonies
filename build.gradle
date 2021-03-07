@@ -1,7 +1,7 @@
 import org.w3c.dom.Element
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
-
+import groovy.json.*
 
 buildscript {
     repositories {
@@ -46,6 +46,8 @@ apply plugin: 'idea'
 apply plugin: 'eclipse'
 apply plugin: 'maven'
 
+compileJava.options.encoding = "UTF-8"
+
 jacocoTestReport {
     reports {
         xml.enabled true
@@ -66,6 +68,7 @@ sourceSets {
         resources {
             srcDir 'src/main/resources'
             srcDir 'src/main/generated/resources'
+            exclude "assets/minecolonies/lang/default.json"
         }
         compileClasspath += compileClasspath += sourceSets.api.output
     }
@@ -179,7 +182,7 @@ minecraft {
 
             property 'forge.logging.console.level', 'info'
 
-            args '--mod', 'minecolonies', '--all', '--output', file('src/main/generated/resources'), '--input', file('src/main/resources')
+            args '--mod', 'minecolonies', '--all', '--output', file('src/main/generated/resources'), '--input', file('src/main/resources'), '--existing', file('src/main/resources')
 
             mods {
                 minecolonies {
@@ -298,6 +301,22 @@ task setupDecompWorkspace {
 task setupCIWorkspace {
     afterEvaluate {
         println "Setup"
+    }
+}
+
+processResources {
+    onlyIf {
+        // this won't exist on the first time running data gen after wiping the generated folder
+        file('src/main/generated/resources/assets/minecolonies/lang/default.json').exists()
+    }
+    doLast {
+        def slurper = new JsonSlurper()
+        def standard = slurper.parse(file('src/main/resources/assets/minecolonies/lang/en_us.json'))
+        def generated = slurper.parse(file('src/main/generated/resources/assets/minecolonies/lang/default.json'))
+
+        standard += generated
+
+        file('build/resources/main/assets/minecolonies/lang/en_us.json').write(JsonOutput.prettyPrint(JsonOutput.toJson(standard)))
     }
 }
 

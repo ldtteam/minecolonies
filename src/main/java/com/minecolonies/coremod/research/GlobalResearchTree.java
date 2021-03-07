@@ -318,7 +318,7 @@ public class GlobalResearchTree implements IGlobalResearchTree
                     final String[] tempArray ={"minecraft", split[0]};
                     split = tempArray;
                 }
-                else
+                else if(split.length > 3)
                 {
                     Log.getLogger().error("Unable to parse Research Reset Cost definition: " + itemId);
                 }

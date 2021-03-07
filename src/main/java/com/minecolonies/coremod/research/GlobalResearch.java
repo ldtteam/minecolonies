@@ -103,6 +103,12 @@ public class GlobalResearch implements IGlobalResearch
     private static final String RESEARCH_REQUIRED_BUILDING_PROP = "building";
 
     /**
+     * The property name for a mandatory non-university building requirement.
+     * Mandatory buildings require one of the building of at least the specified level.
+     */
+    private static final String RESEARCH_MANDATORY_BUILDING_PROP = "mandatory-building";
+
+    /**
      * The property name for alternate non-university building requirement.
      * Alternate buildings require only one of the alternate-building requirements to be completed for the entire requirement to be fulfilled.
      */
@@ -828,12 +834,10 @@ public class GlobalResearch implements IGlobalResearch
                     {
                         level = 1;
                     }
-                    BuildingResearchRequirement requirement = new BuildingResearchRequirement(level, reqArrayElement.getAsJsonObject().get(RESEARCH_REQUIRED_BUILDING_PROP).getAsString());
-                    this.requirements.add(requirement);
+                    this.requirements.add(new BuildingResearchRequirement(level, reqArrayElement.getAsJsonObject().get(RESEARCH_REQUIRED_BUILDING_PROP).getAsString(), false));
                 }
 
                 // Research Requirements.
-                // TODO: Only partially implemented.  Needs a GUI implementation in WindowResearchTree.
                 else if(reqArrayElement.isJsonObject() && reqArrayElement.getAsJsonObject().has(RESEARCH_REQUIRED_RESEARCH_PROP) &&
                           reqArrayElement.getAsJsonObject().get(RESEARCH_REQUIRED_RESEARCH_PROP).isJsonPrimitive() && reqArrayElement.getAsJsonObject().get(RESEARCH_REQUIRED_RESEARCH_PROP).getAsJsonPrimitive().isString())
                 {
@@ -857,6 +861,14 @@ public class GlobalResearch implements IGlobalResearch
                           reqArrayElement.getAsJsonObject().get(RESEARCH_ALTERNATE_BUILDING_PROP).isJsonPrimitive() && reqArrayElement.getAsJsonObject().get(RESEARCH_ALTERNATE_BUILDING_PROP).getAsJsonPrimitive().isString())
                 {
                     parseAndAssignAlternateBuildingRequirement(reqArrayElement.getAsJsonObject());
+                }
+
+                // Mandatory Building Requirements.  Requires that the colony have one building of at least the required level.
+                else if(reqArrayElement.isJsonObject() && reqArrayElement.getAsJsonObject().has(RESEARCH_MANDATORY_BUILDING_PROP) &&
+                          reqArrayElement.getAsJsonObject().get(RESEARCH_MANDATORY_BUILDING_PROP).isJsonPrimitive() && reqArrayElement.getAsJsonObject().get(RESEARCH_MANDATORY_BUILDING_PROP).getAsJsonPrimitive().isString() &&
+                          reqArrayElement.getAsJsonObject().has(RESEARCH_LEVEL_PROP) && reqArrayElement.getAsJsonObject().get(RESEARCH_LEVEL_PROP).isJsonPrimitive() && reqArrayElement.getAsJsonObject().get(RESEARCH_LEVEL_PROP).getAsJsonPrimitive().isNumber())
+                {
+                    this.requirements.add(new BuildingResearchRequirement(reqArrayElement.getAsJsonObject().get(RESEARCH_LEVEL_PROP).getAsNumber().intValue(), reqArrayElement.getAsJsonObject().get(RESEARCH_MANDATORY_BUILDING_PROP).getAsString(), true));
                 }
 
                 else
@@ -938,7 +950,7 @@ public class GlobalResearch implements IGlobalResearch
                                 strength = MAX_DEPTH;
                             }
                             this.effects.add(new GlobalResearchEffect(effect,
-                              effectCategories.get(effect).get(strength), effectCategories.get(effect).getDisplay(strength)));
+                              effectCategories.get(effect).get(strength), effectCategories.get(effect).getDisplay(strength), effectCategories.get(effect).getName(), effectCategories.get(effect).getSubtitle()));
                         }
                         else
                         {

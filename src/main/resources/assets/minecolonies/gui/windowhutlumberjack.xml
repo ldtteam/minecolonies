@@ -9,7 +9,7 @@
             <layout source="minecolonies:gui/layouthuts/layoutfilterablelist.xml"/>
         </view>
         <view id="settings" size="100% 100%">
-            <image source="minecolonies:textures/gui/builderhut/builder_papper.png" size="190 244"/>
+            <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
             <label id="desc" size="130 11" pos="70 15" color="black" label="$(com.minecolonies.coremod.gui.workerHuts.settings)"/>
 
             <buttonimage id="saplingReplant" textcolor="black" size="86 17" pos="50 70" source="minecolonies:textures/gui/builderhut/builder_button_medium.png"/>

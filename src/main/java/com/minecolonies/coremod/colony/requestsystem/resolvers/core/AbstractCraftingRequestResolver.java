@@ -14,7 +14,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.research.effects.AbstractResearchEffect;
-import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.requestsystem.requesters.IBuildingBasedRequester;
@@ -267,6 +267,7 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
     {
         final List<ItemStorage> inputs = recipeRequest.getCleanedInput();
         final ItemStack requestStack = recipeRequest.getPrimaryOutput();
+        final List<ItemStack> secondaryStacks = recipeRequest.getCraftingToolsAndSecondaryOutputs();
         final AbstractResearchEffect<Double> researchEffect =  manager.getColony().getResearchManager().getResearchEffects().getEffect(CITIZEN_INV_SLOTS, AbstractResearchEffect.class);
         final int extraSlots = researchEffect != null ? researchEffect.getEffect().intValue() : 0;         
         final int maxSlots = (27 + extraSlots) - (27 + extraSlots) % 8;  // retaining 1 slot per row for 'overhead'
@@ -283,7 +284,14 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
             int stacksNeeded = (int) Math.ceil((double)(requestStack.getCount() * batchSize) / requestStack.getMaxStackSize());
             for(ItemStorage ingredient : inputs)
             {
-                stacksNeeded += (int) Math.ceil((double)(ingredient.getAmount() * batchSize) / ingredient.getItemStack().getMaxStackSize());
+                if(ItemStackUtils.compareItemStackListIgnoreStackSize(secondaryStacks, ingredient.getItemStack(), false, true))
+                {
+                    stacksNeeded += 1;
+                }
+                else
+                {
+                    stacksNeeded += (int) Math.ceil((double)(ingredient.getAmount() * batchSize) / ingredient.getItemStack().getMaxStackSize());
+                }
             }
             if (stacksNeeded > maxSlots)
             {
