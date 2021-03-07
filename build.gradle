@@ -311,12 +311,12 @@ processResources {
     }
     doLast {
         def slurper = new JsonSlurper()
-        def standard = slurper.parse(file('src/main/resources/assets/minecolonies/lang/en_us.json'))
-        def generated = slurper.parse(file('src/main/generated/resources/assets/minecolonies/lang/default.json'))
+        def standard = slurper.parse(file('src/main/resources/assets/minecolonies/lang/en_us.json'), 'UTF-8')
+        def generated = slurper.parse(file('src/main/generated/resources/assets/minecolonies/lang/default.json'), 'UTF-8')
 
         standard += generated
 
-        file('build/resources/main/assets/minecolonies/lang/en_us.json').write(JsonOutput.prettyPrint(JsonOutput.toJson(standard)))
+        file('build/resources/main/assets/minecolonies/lang/en_us.json').write(JsonOutput.prettyPrint(JsonOutput.toJson(standard)), 'UTF-8')
     }
 }
 
