@@ -88,7 +88,7 @@ public class PathJobFindTree extends AbstractPathJob
       final IColony colony,
       final LivingEntity entity)
     {
-        super(world, startRestriction, endRestriction, new TreePathResult(), entity);
+        super(world, start, startRestriction, endRestriction, new TreePathResult(), entity);
         this.treesToNotCut = treesToCut;
         this.hutLocation = home;
         this.colony = colony;
