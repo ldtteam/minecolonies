@@ -156,11 +156,10 @@ public class Tree
 
             checkTree(world, topLog);
 
-            final Block bottomBlock = world.getBlockState(location).getBlock();
-            dynamicTree = Compatibility.isDynamicBlock(bottomBlock);
+            dynamicTree = Compatibility.isDynamicBlock(block);
             stumpLocations = new ArrayList<>();
             woodBlocks.clear();
-            slimeTree = Compatibility.isSlimeBlock(bottomBlock);
+            slimeTree = Compatibility.isSlimeBlock(block);
             sapling = calcSapling(world);
             if (sapling.getItem().isIn(fungi))
             {
