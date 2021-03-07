@@ -478,6 +478,7 @@
   "com.minecolonies.coremod.gui.workerhuts.mysticalsite": "Mystical Site",
 
   "com.minecolonies.coremod.gui.workerhuts.minerminenode": "Mine Level",
+  "com.minecolonies.coremod.gui.workerhuts.minerguards": "Guards",
   "com.minecolonies.coremod.gui.workerhuts.buildtype": "Building Style:",
   "com.minecolonies.coremod.gui.workerhuts.workerlevel": "Worker Level: %s",
 
@@ -593,6 +594,7 @@
 
   "com.minecolonies.coremod.gui.hiring.buttonhire": "Hire",
   "com.minecolonies.coremod.gui.hiring.buttonassign": "Assign",
+  "com.minecolonies.coremod.gui.hiring.buttonunassign": "Unassign",
   "com.minecolonies.coremod.gui.workerhuts.repair": "Repair",
   "com.minecolonies.coremod.gui.nobuilding": "This block is missing its respective building, try restarting or loading a backup!",
   "com.minecolonies.coremod.gui.nocolony": "This block's building is missing its colony, try restarting or loading a backup!",
@@ -660,6 +662,7 @@
   "com.minecolonies.coremod.gui.workerhuts.retrieveon": "On",
   "com.minecolonies.coremod.gui.workerhuts.task.guard": "Guard",
   "com.minecolonies.coremod.gui.workerhuts.task.patrol": "Patrol",
+  "com.minecolonies.coremod.gui.workerhuts.task.patrolmine": "Patrol Mine",
   "com.minecolonies.coremod.gui.workerhuts.calculate": "Recalculate List",
   "com.minecolonies.coremod.gui.workerhuts.task.follow": "Follow",
   "com.minecolonies.coremod.gui.workerhuts.targetpatrol": "Set patrol positions",
@@ -667,6 +670,7 @@
   "com.minecolonies.coremod.gui.workerhuts.followtight": "Tight grouping",
   "com.minecolonies.coremod.gui.workerhuts.followloose": "Loose grouping",
   "com.minecolonies.coremod.gui.workerhuts.settarget": "Disabled",
+  "com.minecolonies.coremod.gui.worherhuts.patrollingmine": "Patrolling Mine at %s.",
 
   "com.minecolonies.coremod.gui.workerhuts.nospace": "Please make space in your inventory to use this functionality.",
   "com.minecolonies.coremod.job.guard.tool.taskpatrol": "Right-click on a block to add it as a patrol target. Double-click to close the tool.",
@@ -675,6 +679,7 @@
   "com.minecolonies.coremod.job.guard.toolclickpatrol": "Added position %s as a new patrolling target for Guard %s.",
   "com.minecolonies.coremod.job.guard.toolclickguard": "Added position %s as a new guarding target for Guard %s.",
   "com.minecolonies.coremod.job.guard.tooldoubleclick": "Finished adding new patrol targets.",
+  "com.minecolonies.coremod.job.guard.assignmine": "Please assign this Guard to a Mine in the Mine GUI.",
   "com.minecolonies.coremod.workerhuts.recallfail": "Recall failed. Please make more space around the location.",
   "com.minecolonies.coremod.warehouse.full": "The Warehouse is full, please upgrade it!",
   "com.minecolonies.coremod.warehouse.full.max": "The Warehouse is full, please use an emerald block to make more space in the racks!",
