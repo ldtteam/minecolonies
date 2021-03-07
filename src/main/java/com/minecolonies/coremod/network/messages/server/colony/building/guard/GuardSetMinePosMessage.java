@@ -10,16 +10,33 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Message to set the position of the mine a guard should patrol
+ */
 public class GuardSetMinePosMessage extends AbstractBuildingServerMessage<AbstractBuildingGuards>
 {
+    /**
+     * the position of the mine (can be null)
+     */
     private BlockPos minePos;
+    /**
+     * Indicates whether minePos is a valid position
+     */
     private Boolean hasMinePos = false;
 
+    /**
+     * Empty standard constructor
+     */
     public GuardSetMinePosMessage()
     {
         super();
     }
 
+    /**
+     * Creates an instance of the message to set a new position
+     * @param building the building to apply the position change to
+     * @param minePos the position of the mine
+     */
     public GuardSetMinePosMessage(@NotNull AbstractBuildingGuards.View building, BlockPos minePos)
     {
         super(building);
@@ -27,6 +44,10 @@ public class GuardSetMinePosMessage extends AbstractBuildingServerMessage<Abstra
         this.hasMinePos = true;
     }
 
+    /**
+     * Creates an instance of the message to clear the position
+     * @param building the building to apply the position change to
+     */
     public GuardSetMinePosMessage(@NotNull AbstractBuildingGuards.View building)
     {
         super(building);
