@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
@@ -42,10 +43,16 @@ public class WindowGuardControl extends AbstractWindowSkeleton
      * GUI Lists.
      */
     private ScrollingList listOfPoints;
+
     /**
      * Whether to retrieve the worker on low health.
      */
     private boolean       retrieveOnLowHealth = false;
+
+    /**
+     * Rand for offset ticking.
+     */
+    private static final Random rand = new Random();
 
     /**
      * Whether to patrol manually or not.
@@ -194,14 +201,17 @@ public class WindowGuardControl extends AbstractWindowSkeleton
     {
         super.onUpdate();
 
-        pullInfoFromHut();
-
-        if (!task.equals(GuardTask.PATROL))
+        if (rand.nextInt(20) < 1)
         {
-            listOfPoints.hide();
+            pullInfoFromHut();
+
+            if (!task.equals(GuardTask.PATROL))
+            {
+                listOfPoints.hide();
+            }
+            window.findPaneOfTypeByID(GUI_ELEMENT_LIST_LEVELS, ScrollingList.class).refreshElementPanes();
+            workersListPane.refreshElementPanes();
         }
-        window.findPaneOfTypeByID(GUI_ELEMENT_LIST_LEVELS, ScrollingList.class).refreshElementPanes();
-        workersListPane.refreshElementPanes();
     }
 
     /**
