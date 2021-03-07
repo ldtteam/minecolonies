@@ -1107,6 +1107,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         switch (buildingGuards.getTask())
         {
             case PATROL:
+            case MINE:
                 return currentPatrolPoint != null ? currentPatrolPoint : worker.getPosition();
             case FOLLOW:
                 return buildingGuards.getPositionToFollow();
@@ -1129,6 +1130,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         switch (buildingGuards.getTask())
         {
             case PATROL:
+            case MINE:
                 return MAX_PATROL_DERIVATION;
             case FOLLOW:
                 return MAX_FOLLOW_DERIVATION;

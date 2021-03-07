@@ -47,11 +47,11 @@
             <button id="mine" size="40% 14" pos="93 184"
                     label="$(com.minecolonies.coremod.gui.workerhuts.task.patrolmine)"/>
 
+            <label id="minePos" size="164 24" pos="13 199" color="black" textalign="MIDDLE" />
             <buttonimage id="setTarget" size="129 17" pos="30 199" textcolor="black"
                          source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
                          label="$(com.minecolonies.coremod.gui.workerhuts.setTarget)"/>
 
-            <label id="minePos" size="164 24" pos="13 199" color="black" textalign="MIDDLE" />
 
             <list id="positions" size="134 30" pos="13 201">
                 <box size="100% 15" linewidth="2">
