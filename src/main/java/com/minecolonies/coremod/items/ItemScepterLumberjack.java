@@ -1,20 +1,16 @@
 package com.minecolonies.coremod.items;
 
+import com.ldtteam.structurize.items.AbstractItemWithPosSelector;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.colony.buildings.AbstractFilterableListBuilding;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLumberjack;
 import com.minecolonies.coremod.entity.ai.citizen.lumberjack.EntityAIWorkLumberjack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -24,13 +20,8 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 /**
  * Lumberjack Scepter Item class. Used to give tasks to Lumberjacks.
  */
-public class ItemScepterLumberjack extends AbstractItemMinecolonies
+public class ItemScepterLumberjack extends AbstractItemWithPosSelector
 {
-    private static final String NBT_START_POS = Constants.MOD_ID + ":" + "start_pos";
-    private static final String NBT_END_POS   = Constants.MOD_ID + ":" + "end_pos";
-
-    private boolean hasSetFirstPosition = false;
-
     /**
      * LumberjackScepter constructor. Sets max stack to 1, like other tools.
      *
@@ -38,91 +29,53 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies
      */
     public ItemScepterLumberjack(final Properties properties)
     {
-        super("scepterlumberjack", properties.maxStackSize(1));
+        super(properties.maxStackSize(1));
+        setRegistryName("scepterlumberjack");
     }
 
     @Override
-    public ActionResultType onItemUse(final ItemUseContext useContext)
+    public AbstractItemWithPosSelector getRegisteredItemInstance()
     {
-        // if server world, do nothing
-        if (useContext.getWorld().isRemote)
-        {
-            return ActionResultType.FAIL;
-        }
-
-        final ItemStack scepter = useContext.getPlayer().getHeldItem(useContext.getHand());
-        if (!scepter.hasTag())
-        {
-            scepter.setTag(new CompoundNBT());
-        }
-        final CompoundNBT compound = scepter.getTag();
-
-        if (!hasSetFirstPosition)
-        {
-            LanguageHandler.sendPlayerMessage(useContext.getPlayer(), "item.minecolonies.scepterlumberjack.usedstart");
-            setPosition(compound, NBT_START_POS, useContext.getPos());
-        }
-        else
-        {
-            LanguageHandler.sendPlayerMessage(useContext.getPlayer(), "item.minecolonies.scepterlumberjack.usedend");
-            setPosition(compound, NBT_END_POS, useContext.getPos());
-            storeRestrictedArea(useContext.getPlayer(), useContext.getHand(), useContext.getWorld());
-        }
-
-        return super.onItemUse(useContext);
+        return (AbstractItemWithPosSelector) ModItems.scepterLumberjack;
     }
 
-    private void storeRestrictedArea(final PlayerEntity player, final Hand hand, final World worldIn)
+    @Override
+    public ActionResultType onAirRightClick(final BlockPos start,
+        final BlockPos end,
+        final World world,
+        final PlayerEntity player,
+        final ItemStack itemStack)
     {
-        final ItemStack scepter = player.getHeldItem(hand);
-        if (!scepter.hasTag())
-        {
-            scepter.setTag(new CompoundNBT());
-        }
-
-        final CompoundNBT compound = scepter.getTag();
-
-        final BlockPos startRestriction = BlockPosUtil.read(compound, NBT_START_POS);
-        final BlockPos endRestriction = BlockPosUtil.read(compound, NBT_END_POS);
-
-        // Check restricted area isn't too large
-        final int minX = Math.min(startRestriction.getX(), endRestriction.getX());
-        final int minZ = Math.min(startRestriction.getZ(), endRestriction.getZ());
-        final int maxX = Math.max(startRestriction.getX(), endRestriction.getX());
-        final int maxZ = Math.max(startRestriction.getZ(), endRestriction.getZ());
-
-        final int distX = maxX - minX;
-        final int distZ = maxZ - minZ;
-
-        final int area = distX * distZ;
-
-        final int radius = EntityAIWorkLumberjack.SEARCH_RANGE;
-        final double maxArea = 3.14 * Math.pow(radius, 2);
+        final int minX = Math.min(start.getX(), end.getX());
+        final int minZ = Math.min(start.getZ(), end.getZ());
+        final int maxX = Math.max(start.getX(), end.getX());
+        final int maxZ = Math.max(start.getZ(), end.getZ());
+        final int area = (maxX - minX + 1) * (maxZ - minZ + 1);
+        final int maxArea = (int) Math.floor(Math.PI * Math.pow(EntityAIWorkLumberjack.SEARCH_RANGE, 2));
 
         if (area > maxArea)
         {
-            LanguageHandler.sendPlayerMessage(player, "item.minecolonies.scepterlumberjack.restrictiontoobig", area, maxArea);
-            return;
+            if (world.isRemote)
+            {
+                LanguageHandler.sendPlayerMessage(player, "item.minecolonies.scepterlumberjack.restrictiontoobig", area, maxArea);
+            }
+            return ActionResultType.FAIL;
         }
 
-        LanguageHandler.sendPlayerMessage(player, "item.minecolonies.scepterlumberjack.restrictionset", area, maxArea);
+        if (world.isRemote)
+        {
+            LanguageHandler
+                .sendPlayerMessage(player, "item.minecolonies.scepterlumberjack.restrictionset", minX, maxX, minZ, maxZ, area, maxArea);
+            return ActionResultType.CONSUME;
+        }
 
-        final IColony colony = IColonyManager.getInstance().getColonyByWorld(compound.getInt(TAG_ID), worldIn);
-        final BlockPos hutPos = BlockPosUtil.read(compound, TAG_POS);
-        final IBuilding hut = colony.getBuildingManager().getBuilding(hutPos);
+        final IColony colony = IColonyManager.getInstance().getColonyByWorld(itemStack.getTag().getInt(TAG_ID), world);
+        final BuildingLumberjack lumberjackBuilding = (BuildingLumberjack) colony.getBuildingManager()
+            .getBuilding(BlockPosUtil.read(itemStack.getTag(), TAG_POS));
 
-        final AbstractFilterableListBuilding abstractBuilding = (AbstractFilterableListBuilding) hut;
-
-        final BuildingLumberjack lumberjackBuilding = (BuildingLumberjack) abstractBuilding;
-
-        lumberjackBuilding.setRestrictedArea(startRestriction, endRestriction);
+        lumberjackBuilding.setRestrictedArea(start, end);
 
         player.inventory.removeStackFromSlot(player.inventory.currentItem);
-    }
-
-    private void setPosition(final CompoundNBT compound, final String NBT, final BlockPos pos)
-    {
-        hasSetFirstPosition = !hasSetFirstPosition;
-        BlockPosUtil.write(compound, NBT, pos);
+        return ActionResultType.CONSUME;
     }
 }

@@ -161,7 +161,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     /**
      * The current path to the tree
      */
-    private PathResult pathToTree;
+    private PathResult<?> pathToTree;
 
     @Override
     protected int getActionRewardForCraftingSuccess()
@@ -275,7 +275,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
      */
     private IAIState prepareForWoodcutting()
     {
-        if (checkForToolOrWeapon(ToolType.AXE))
+        if (checkForToolOrWeapon(ToolType.AXE) || checkForToolOrWeapon(ToolType.HOE))
         {
             // Reset everything, maybe there are new crafting requests
             return START_WORKING;
@@ -329,7 +329,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
 
         if (pathResult == null || pathResult.treeLocation == null)
         {
-
             final BuildingLumberjack buildingLumberjack = (BuildingLumberjack) building;
             final Map<String, List<ItemStorage>> copy = buildingLumberjack.getCopyOfAllowedItems();
             if (buildingLumberjack.shouldRestrict())
@@ -337,20 +336,36 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
                 final BlockPos startPos = buildingLumberjack.getStartRestriction();
                 final BlockPos endPos = buildingLumberjack.getEndRestriction();
 
-                pathResult = worker.getNavigator().moveToTree(
-                  startPos, endPos,
-                  1.0D,
-                  copy.getOrDefault(SAPLINGS_LIST, Collections.emptyList()),
-                  worker.getCitizenColonyHandler().getColony()
-                );
+                pathResult = worker.getNavigator()
+                    .moveToTree(startPos,
+                        endPos,
+                        1.0D,
+                        copy.getOrDefault(SAPLINGS_LIST, Collections.emptyList()),
+                        worker.getCitizenColonyHandler().getColony());
+                
+                if (pathResult.treeLocation == null)
+                {
+                    return LUMBERJACK_NO_TREES_FOUND;
+                }
             }
             else
             {
                 pathResult = worker.getNavigator()
-                               .moveToTree(SEARCH_RANGE + searchIncrement,
-                                 1.0D,
-                                 copy.getOrDefault(SAPLINGS_LIST, Collections.emptyList()),
-                                 worker.getCitizenColonyHandler().getColony());
+                    .moveToTree(SEARCH_RANGE + searchIncrement,
+                        1.0D,
+                        copy.getOrDefault(SAPLINGS_LIST, Collections.emptyList()),
+                        worker.getCitizenColonyHandler().getColony());
+
+                if (pathResult.treeLocation == null)
+                {
+                    if (searchIncrement + SEARCH_RANGE > SEARCH_LIMIT)
+                    {
+                        searchIncrement = 0;
+                        return LUMBERJACK_NO_TREES_FOUND;
+                    }
+                    setDelay(WAIT_BEFORE_INCREMENT);
+                    searchIncrement += SEARCH_INCREMENT;
+                }
             }
         }
         if (pathResult.isPathReachingDestination())
@@ -370,16 +385,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
 
     private IAIState setNewTree()
     {
-        if (pathResult.treeLocation == null)
-        {
-            setDelay(WAIT_BEFORE_INCREMENT);
-            if (searchIncrement + SEARCH_RANGE > SEARCH_LIMIT)
-            {
-                return LUMBERJACK_NO_TREES_FOUND;
-            }
-            searchIncrement += SEARCH_INCREMENT;
-        }
-        else
+        if (pathResult.treeLocation != null)
         {
             job.setTree(new Tree(world, pathResult.treeLocation));
 

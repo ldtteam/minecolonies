@@ -289,6 +289,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
                 final TextBuilder textBuilder = PaneBuilders.textBuilder();
                 int skillCount = citizen.getCitizenSkillHandler().getSkills().entrySet().size();
 
+                textBuilder.append(new StringTextComponent(""));
                 for (final Map.Entry<Skill, Tuple<Integer, Double>> entry : citizen.getCitizenSkillHandler().getSkills().entrySet())
                 {
                     final String skillName = entry.getKey().name().toLowerCase(Locale.US);

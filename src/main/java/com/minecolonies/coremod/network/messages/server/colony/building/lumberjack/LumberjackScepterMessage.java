@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLumberjack;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.entity.player.PlayerEntity;
@@ -46,8 +47,10 @@ public class LumberjackScepterMessage extends AbstractBuildingServerMessage<Buil
     }
 
     @Override
-    protected void onExecute(
-      final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final BuildingLumberjack building)
+    protected void onExecute(final NetworkEvent.Context ctxIn,
+        final boolean isLogicalServer,
+        final IColony colony,
+        final BuildingLumberjack building)
     {
         final PlayerEntity player = ctxIn.getSender();
         if (player == null)
@@ -55,40 +58,15 @@ public class LumberjackScepterMessage extends AbstractBuildingServerMessage<Buil
             return;
         }
 
-        final ItemStack scepter;
-        boolean giveToPlayer = true;
-        if (player.getHeldItemMainhand().getItem() == ModItems.scepterLumberjack)
-        {
-            scepter = player.getHeldItemMainhand();
-            giveToPlayer = false;
-        }
-        else
-        {
-            scepter = new ItemStack(ModItems.scepterLumberjack);
-        }
+        final ItemStack scepter = InventoryUtils.getOrCreateItemAndPutToHotbarAndSelectOrDrop(ModItems.scepterLumberjack,
+            player,
+            ModItems.scepterLumberjack::getDefaultInstance,
+            true);
 
-        if (!scepter.hasTag())
-        {
-            scepter.setTag(new CompoundNBT());
-        }
-        final CompoundNBT compound = scepter.getTag();
-
-        //Should never happen.
-        if (compound == null)
-        {
-            return;
-        }
-
-        final int emptySlot = player.inventory.getFirstEmptyStack();
+        final CompoundNBT compound = scepter.getOrCreateTag();
         BlockPosUtil.write(compound, TAG_POS, building.getID());
         compound.putInt(TAG_ID, colony.getID());
 
-        if (giveToPlayer)
-        {
-            final ItemStack item = player.inventory.getStackInSlot(player.inventory.currentItem);
-            player.inventory.setInventorySlotContents(emptySlot, item);
-            player.inventory.setInventorySlotContents(player.inventory.currentItem, scepter);
-        }
         player.inventory.markDirty();
     }
 }
