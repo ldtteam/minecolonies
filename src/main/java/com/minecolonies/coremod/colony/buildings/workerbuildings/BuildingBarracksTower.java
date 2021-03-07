@@ -16,6 +16,7 @@ import com.minecolonies.coremod.util.ChunkDataHelper;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
@@ -36,11 +37,13 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
     private static final String SCHEMATIC_NAME = "barrackstower";
     private static final int    DEFENCE_BONUS  = 0;
     private static final int    OFFENCE_BONUS  = 5;
+    protected static final Boolean canGuardMine = false;
 
     /**
      * Position of the barracks for this tower.
      */
     private BlockPos barracks = null;
+
 
     /**
      * The abstract constructor of the building.
@@ -171,6 +174,13 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
     }
 
     @Override
+    public void serializeToView(@NotNull final PacketBuffer buf)
+    {
+        super.serializeToView(buf);
+        buf.writeBoolean(canGuardMine);
+    }
+
+    @Override
     public int getMaxInhabitants()
     {
         return getBuildingLevel();
@@ -202,6 +212,13 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
             super(c, l);
         }
 
+        @Override
+        public void deserialize(@NotNull final PacketBuffer buf)
+        {
+            super.deserialize(buf);
+            canGuardMine = buf.readBoolean();
+        }
+
         /**
          * Check if it has enough workers.
          *
@@ -222,6 +239,12 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
         public Window getWindow()
         {
             return new WindowHutBarracksTower(this);
+        }
+
+        @Override
+        public Boolean canGuardMine()
+        {
+            return canGuardMine;
         }
     }
 }
