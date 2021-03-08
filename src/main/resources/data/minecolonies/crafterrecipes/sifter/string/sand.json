@@ -5,9 +5,17 @@
     {
         "item" : "minecraft:sand",
         "count": "1"
+    },
+    {
+        "item" : "minecolonies:sifter_mesh_string",
+        "count": "1"
     }
   ],
   "additional-output": [
+    {
+        "item" : "minecolonies:sifter_mesh_string",
+        "count": "1"
+    },
     {
         "item" : "minecraft:cactus"
     },
@@ -15,6 +23,5 @@
         "item" : "minecraft:sugar_cane"
     }
   ],
-  "loot-table": "minecolonies:recipes/sifter_sand",
-  "min-building-level" : 99
+  "loot-table": "minecolonies:recipes/sifter_sand"
 }

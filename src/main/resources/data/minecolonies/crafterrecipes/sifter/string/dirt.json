@@ -5,9 +5,17 @@
     {
         "item" : "minecraft:dirt",
         "count": "1"
+    },
+    {
+        "item" : "minecolonies:sifter_mesh_string",
+        "count": "1"
     }
   ],
   "additional-output": [
+    {
+        "item" : "minecolonies:sifter_mesh_string",
+        "count": "1"
+    },
     {
         "item" : "minecraft:wheat_seeds"
     },
@@ -24,6 +32,5 @@
         "item" : "minecraft:jungle_sapling"
     }
   ],
-  "loot-table": "minecolonies:recipes/dirt",
-  "min-building-level" : 99
+  "loot-table": "minecolonies:recipes/dirt"
 }

@@ -5,9 +5,17 @@
     {
         "item" : "minecraft:gravel",
         "count": "1"
+    },
+    {
+        "item" : "minecolonies:sifter_mesh_string",
+        "count": "1"
     }
   ],
   "additional-output": [
+    {
+        "item" : "minecolonies:sifter_mesh_string",
+        "count": "1"
+    },
     {
         "item" : "minecraft:iron_nugget"
     },
@@ -18,6 +26,5 @@
         "item" : "minecraft:coal"
     }
   ],
-  "loot-table": "minecolonies:recipes/sifter_gravel",
-  "min-building-level" : 99
+  "loot-table": "minecolonies:recipes/sifter_gravel"
 }
