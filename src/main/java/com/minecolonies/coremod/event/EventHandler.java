@@ -421,11 +421,7 @@ public class EventHandler
                 }
             }
 
-            MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
-            if(server instanceof DedicatedServer || (server instanceof IntegratedServer && server.getServerPort() > 0))
-            {
-                IGlobalResearchTree.getInstance().sendGlobalResearchTreePackets((ServerPlayerEntity) event.getPlayer());
-            }
+            IGlobalResearchTree.getInstance().sendGlobalResearchTreePackets((ServerPlayerEntity) event.getPlayer());
         }
     }
 
