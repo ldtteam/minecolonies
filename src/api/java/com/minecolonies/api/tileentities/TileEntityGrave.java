@@ -145,8 +145,10 @@ public class TileEntityGrave extends AbstractTileEntityGrave
             }
         }
 
-        decay_timer = compound.contains(TAG_DECAY_TIMER) ? compound.getInt(TAG_DECAY_TIMER) : DEFAULT_DECAY_TIMER;
-        decayed     = compound.contains(TAG_DECAYED) ? compound.getBoolean(TAG_DECAYED) :false;
+        decay_timer         = compound.contains(TAG_DECAY_TIMER) ? compound.getInt(TAG_DECAY_TIMER) : DEFAULT_DECAY_TIMER;
+        decayed             = compound.contains(TAG_DECAYED) ? compound.getBoolean(TAG_DECAYED) :false;
+        savedCitizenName    = compound.contains(TAG_SAVED_CITIZEN_NAME) ? compound.getString(TAG_SAVED_CITIZEN_NAME) : null;
+        savedCitizenDataNBT = compound.contains(TAG_SAVED_CITIZEN_DATA) ? compound.getCompound(TAG_SAVED_CITIZEN_DATA) : null;
     }
 
     @NotNull
@@ -173,6 +175,16 @@ public class TileEntityGrave extends AbstractTileEntityGrave
         compound.put(TAG_INVENTORY, inventoryTagList);
         compound.putInt(TAG_DECAY_TIMER, decay_timer);
         compound.putBoolean(TAG_DECAYED, decayed);
+
+        if(savedCitizenName != null)
+        {
+            compound.putString(TAG_SAVED_CITIZEN_NAME, savedCitizenName);
+        }
+
+        if(savedCitizenDataNBT != null)
+        {
+            compound.put(TAG_SAVED_CITIZEN_DATA, savedCitizenDataNBT);
+        }
         return compound;
     }
 

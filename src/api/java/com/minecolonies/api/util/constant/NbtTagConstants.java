@@ -567,6 +567,8 @@ public final class NbtTagConstants
      */
     public static final String TAG_DECAY_TIMER = "decaytimer";
     public static final String TAG_DECAYED = "decayed";
+    public static final String TAG_SAVED_CITIZEN_NAME = "savedcitizenname";
+    public static final String TAG_SAVED_CITIZEN_DATA = "savedcitizendata";
 
     /**
      * Private constructor to hide the implicit one.

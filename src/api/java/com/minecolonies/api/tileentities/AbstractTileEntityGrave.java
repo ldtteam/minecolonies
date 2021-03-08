@@ -1,7 +1,9 @@
 package com.minecolonies.api.tileentities;
 
+import com.minecolonies.api.colony.ICitizenData;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
@@ -34,6 +36,16 @@ public abstract class AbstractTileEntityGrave extends TileEntity implements INam
      * The decay timer counting down before the grave decay and then disapear
      */
     protected int decay_timer;
+
+    /**
+     * The name of the citizen that generated this grave by dying
+     */
+    protected String savedCitizenName;
+
+    /**
+     * The citizen data of the citizen that generated this grave by dying
+     */
+    protected CompoundNBT savedCitizenDataNBT;
 
     public AbstractTileEntityGrave(final TileEntityType<?> tileEntityTypeIn)
     {
@@ -108,5 +120,33 @@ public abstract class AbstractTileEntityGrave extends TileEntity implements INam
     public IItemHandlerModifiable getInventory()
     {
         return inventory;
+    }
+
+    /**
+     * Get the name of the saved citizen data
+     */
+    public String getSavedCitizenName()
+    {
+        return this.savedCitizenName == null ? "Unknown Citizen" : this.savedCitizenName;
+    }
+
+    /**
+     * Set the name of the saved citizen data
+     * @param citizenName
+     */
+    public void setSavedCitizenName(String citizenName)
+    {
+        this.savedCitizenName = citizenName;
+        markDirty();
+    }
+
+    /**
+     * Set the saved citizen data
+     * @param citizenDataNBT
+     */
+    public void setSavedCitizenDataNBT(CompoundNBT citizenDataNBT)
+    {
+        this.savedCitizenDataNBT = citizenDataNBT;
+        markDirty();
     }
 }

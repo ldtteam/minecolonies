@@ -43,9 +43,9 @@ public class WindowHutGraveyard extends AbstractWindowWorkerBuilding<BuildingGra
     private static final String LIST_GRAVES = "graves";
 
     /**
-     * Id of the the worker label inside the GUI.
+     * Id of the the name label inside the GUI.
      */
-    private static final String TAG_WORKER = "worker";
+    private static final String TAG_NAME = "name";
 
     /**
      * Id of the the distance label inside the GUI.
@@ -118,6 +118,7 @@ public class WindowHutGraveyard extends AbstractWindowWorkerBuilding<BuildingGra
                 final TileEntity entity = world.getTileEntity(field);
                 if (entity instanceof TileEntityGrave)
                 {
+                    rowPane.findPaneOfTypeByID(TAG_NAME, Text.class).setText("Grave of " + ((TileEntityGrave) entity).getSavedCitizenName());
                     rowPane.findPaneOfTypeByID(TAG_DISTANCE, Text.class).setText(distance + "m");
                     rowPane.findPaneOfTypeByID(TAG_DIRECTION, Text.class).setText(direction);
                 }

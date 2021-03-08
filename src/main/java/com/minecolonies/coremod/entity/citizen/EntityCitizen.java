@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.entity.citizen;
 
-import com.ldtteam.structurize.util.BlockUtils;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.*;
@@ -14,7 +13,6 @@ import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.entity.CustomGoalSelector;
-import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.entity.ai.Status;
 import com.minecolonies.api.entity.ai.pathfinding.IWalkToProxy;
@@ -33,11 +31,9 @@ import com.minecolonies.api.sounds.EventType;
 import com.minecolonies.api.tileentities.TileEntityGrave;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.apiimp.initializer.ModBlocksInitializer;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesGrave;
-import com.minecolonies.coremod.blocks.decorative.BlockConstructionTape;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingGraveyard;
 import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenDiedEvent;
@@ -49,11 +45,8 @@ import com.minecolonies.coremod.entity.ai.minimal.*;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.*;
 import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMessage;
-import com.minecolonies.coremod.placementhandlers.GravePlacementHandler;
 import com.minecolonies.coremod.util.TeleportHelper;
 import io.netty.buffer.Unpooled;
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.GravelBlock;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.LookAtGoal;
@@ -65,7 +58,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.NameTagItem;
@@ -75,7 +67,6 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.scoreboard.Team;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -1499,6 +1490,9 @@ public class EntityCitizen extends AbstractEntityCitizen
            world.setBlockState(firstValidPosition, BlockMinecoloniesGrave.getPlacementState(ModBlocks.blockGrave.getDefaultState(), new TileEntityGrave(), firstValidPosition));
            final TileEntityGrave graveEntity = (TileEntityGrave) world.getTileEntity(firstValidPosition);
            InventoryUtils.transferAllItemHandler(citizenData.getInventory(), graveEntity.getInventory(), world, (int) firstValidPosition.getX(), (int) firstValidPosition.getY(), (int) firstValidPosition.getZ());
+
+           graveEntity.setSavedCitizenName(citizenData.getName());
+           graveEntity.setSavedCitizenDataNBT(citizenData.serializeNBT());
 
            final BlockPos closestGraveyardPos = citizenColonyHandler.getColony().getBuildingManager().getClosestGraveyard(this);
            if(closestGraveyardPos != null)
