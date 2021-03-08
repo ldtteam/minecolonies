@@ -11,6 +11,8 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
+import com.minecolonies.api.items.ModItems;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.WindowHutSifter;
@@ -88,6 +90,10 @@ public class BuildingSifter extends AbstractBuildingWorker
         {
             this.sifterMesh = IColonyManager.getInstance().getCompatibilityManager().getMeshes().get(0);
         }
+        keepX.put(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, new ItemStack(ModItems.sifterMeshString), false, true), new net.minecraft.util.Tuple<>(1, false));
+        keepX.put(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, new ItemStack(ModItems.sifterMeshFlint), false, true), new net.minecraft.util.Tuple<>(1, false));
+        keepX.put(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, new ItemStack(ModItems.sifterMeshIron), false, true), new net.minecraft.util.Tuple<>(1, false));
+        keepX.put(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, new ItemStack(ModItems.sifterMeshDiamond), false, true), new net.minecraft.util.Tuple<>(1, false));
     }
 
     @NotNull
