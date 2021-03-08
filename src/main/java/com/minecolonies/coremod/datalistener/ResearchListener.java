@@ -16,6 +16,7 @@ import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.dedicated.DedicatedServer;
+import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
@@ -92,7 +93,7 @@ public class ResearchListener extends JsonReloadListener
         // For dedicated servers, send to any connected players.  On startup, this will be no-one.
         // But it is possible to reload data packs live, and while not supported it's something to handle.
 
-        if(server instanceof DedicatedServer)
+        if(server instanceof DedicatedServer || (server instanceof IntegratedServer && server.getServerPort() > 0))
         {
             for(ServerPlayerEntity player : server.getPlayerList().getPlayers())
             {
