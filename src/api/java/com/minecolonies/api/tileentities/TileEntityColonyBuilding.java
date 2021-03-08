@@ -11,7 +11,6 @@ import com.minecolonies.api.inventory.api.CombinedItemHandler;
 import com.minecolonies.api.inventory.container.ContainerBuildingInventory;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.WorldUtil;
-import io.netty.buffer.Unpooled;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -19,7 +18,6 @@ import net.minecraft.inventory.container.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -517,9 +515,6 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     @Override
     public Container createMenu(final int id, @NotNull final PlayerInventory inv, @NotNull final PlayerEntity player)
     {
-        final PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
-        buffer.writeVarInt(colonyId);
-        buffer.writeBlockPos(getPos());
-        return new ContainerBuildingInventory(id, inv, buffer);
+        return new ContainerBuildingInventory(id, inv, colonyId, getPos());
     }
 }

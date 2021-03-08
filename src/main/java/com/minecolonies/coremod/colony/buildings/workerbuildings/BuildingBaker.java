@@ -45,7 +45,6 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.fml.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
-import io.netty.buffer.Unpooled;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -166,10 +165,7 @@ public class BuildingBaker extends AbstractBuildingSmelterCrafter
             @Override
             public Container createMenu(final int id, @NotNull final PlayerInventory inv, @NotNull final PlayerEntity player)
             {
-                final PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
-                buffer.writeBoolean(canCraftComplexRecipes());
-                buffer.writeBlockPos(getID());
-                return new ContainerCrafting(id, inv, buffer);
+                return new ContainerCrafting(id, inv, canCraftComplexRecipes(), getID());
             }
         }, buffer -> new PacketBuffer(buffer.writeBoolean(canCraftComplexRecipes())).writeBlockPos(getID()));
     }
@@ -226,23 +222,28 @@ public class BuildingBaker extends AbstractBuildingSmelterCrafter
     @Override
     public boolean addRecipe(final IToken<?> token)
     {
-        final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
+        final boolean recipeAdded = super.addRecipe(token);
 
-        ItemStack smeltResult = FurnaceRecipes.getInstance().getSmeltingResult(storage.getPrimaryOutput());
-
-        if(smeltResult != null)
+        if(recipeAdded)
         {
-            final IRecipeStorage smeltingRecipe =  StandardFactoryController.getInstance().getNewInstance(
-                TypeConstants.RECIPE,
-                StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-                ImmutableList.of(storage.getPrimaryOutput().copy()),
-                1,
-                smeltResult,
-                Blocks.FURNACE);
-                addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(smeltingRecipe));
+            final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
+
+            ItemStack smeltResult = FurnaceRecipes.getInstance().getSmeltingResult(storage.getPrimaryOutput());
+
+            if(smeltResult != null)
+            {
+                final IRecipeStorage smeltingRecipe =  StandardFactoryController.getInstance().getNewInstance(
+                    TypeConstants.RECIPE,
+                    StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+                    ImmutableList.of(storage.getPrimaryOutput().copy()),
+                    1,
+                    smeltResult,
+                    Blocks.FURNACE);
+                    addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(smeltingRecipe));
+            }
         }
 
-        return super.addRecipe(token);
+        return recipeAdded;
     }
 
     @Override

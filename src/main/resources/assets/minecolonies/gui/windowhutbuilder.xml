@@ -7,7 +7,7 @@
             <layout source="minecolonies:gui/layouthuts/layouthutpageactionswoinv.xml"/>
         </view>
         <view id="resourceActions" size="100% 100%">
-            <image source="minecolonies:textures/gui/builderhut/builder_papper.png" size="190 244"/>
+            <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
             <label size="130 11" pos="30 14" textalign="MIDDLE" color="black"
                    label="$(com.minecolonies.coremod.gui.workerhuts.resourceList)"/>
 
@@ -30,7 +30,7 @@
             </list>
         </view>
         <view id="pageActions" size="100% 100%">
-            <image source="minecolonies:textures/gui/builderhut/builder_papper.png" size="190 244"/>
+            <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
             <buttonimage id="manualMode" size="129 17" pos="30 14" textcolor="black" label="$(com.minecolonies.coremod.gui.builder.manual)" source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"/>
             <list id="workOrders" size="164 154" pos="13 35">
                 <box size="100% 30" linewidth="2">

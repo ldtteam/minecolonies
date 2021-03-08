@@ -4,5 +4,6 @@ public enum GuardTask
 {
     FOLLOW,
     GUARD,
-    PATROL
+    PATROL,
+    MINE
 }

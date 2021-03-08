@@ -28,6 +28,7 @@ import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.WindowHutGuardTower;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.colony.jobs.JobArcherTraining;
 import com.minecolonies.coremod.colony.jobs.JobCombatTraining;
@@ -86,6 +87,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     private static final String NBT_MOBS           = "mobs";
     private static final String NBT_MOB_VIEW       = "mobview";
     private static final String NBT_RECRUIT        = "recruitTrainees";
+    private static final String NBT_MINE_POS       = "minePos";
 
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
 
@@ -125,6 +127,8 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
      * Whether to patrol manually or not.
      */
     protected boolean patrolManually = false;
+
+    protected static final boolean canGuardMine = true;
 
     /**
      * The task of the guard, following the {@link GuardTask} enum.
@@ -180,6 +184,11 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
      * Pathing future for the next patrol target.
      */
     private Future<Path> pathingFuture;
+
+    /**
+     * The location of the assigned mine
+     */
+    private BlockPos minePos;
 
     /**
      * The abstract constructor of the building.
@@ -328,6 +337,10 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         }
 
         guardPos = NBTUtil.readBlockPos(compound.getCompound(NBT_GUARD));
+        if (compound.contains(NBT_MINE_POS))
+        {
+            minePos = NBTUtil.readBlockPos(compound.getCompound(NBT_MINE_POS));
+        }
     }
 
     @Override
@@ -363,6 +376,10 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         compound.put(NBT_MOBS, mobsTagList);
 
         compound.put(NBT_GUARD, NBTUtil.writeBlockPos(guardPos));
+        if (minePos != null)
+        {
+            compound.put(NBT_MINE_POS, NBTUtil.writeBlockPos(minePos));
+        }
 
         return compound;
     }
@@ -424,6 +441,17 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         {
             buf.writeInt(citizen.getId());
         }
+
+        if (minePos != null)
+        {
+            buf.writeBoolean(true);
+            buf.writeBlockPos(minePos);
+        }
+        else
+        {
+            buf.writeBoolean(false);
+        }
+        buf.writeBoolean(canGuardMine);
     }
 
     /**
@@ -446,6 +474,10 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     public void setTask(final GuardTask task)
     {
         this.task = task;
+        if (task != GuardTask.MINE)
+        {
+            this.setMinePos(null);
+        }
         this.markDirty();
     }
 
@@ -653,6 +685,32 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     }
 
     /**
+     * Return the position of the mine to guard
+     * @return the position of the mine
+     */
+    public BlockPos getMinePos()
+    {
+        return minePos;
+    }
+
+    /**
+     * Set the position of the mine the guard is patrolling
+     * Check whether the given position is actually a mine
+     * @param pos the position of the mine
+     */
+    public void setMinePos(BlockPos pos)
+    {
+        if (pos == null)
+        {
+            this.minePos = null;
+        }
+        else if (colony.getBuildingManager().getBuilding(pos) instanceof BuildingMiner)
+        {
+            this.minePos = pos;
+        }
+    }
+
+    /**
      * The client view for the Guard building.
      */
     public static class View extends AbstractBuildingWorker.View
@@ -710,6 +768,16 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
 
         @NotNull
         private final List<Integer> guards = new ArrayList<>();
+
+        /**
+         * Location of the assigned mine
+         */
+        private BlockPos minePos;
+
+        /**
+         * If the building can guard mines
+         */
+        protected boolean canGuardMine;
 
         /**
          * The client view constructor for the AbstractGuardBuilding.
@@ -784,6 +852,17 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             {
                 guards.add(buf.readInt());
             }
+
+            if (buf.readBoolean())
+            {
+                minePos = buf.readBlockPos();
+            }
+            else
+            {
+                minePos = null;
+            }
+
+            canGuardMine = buf.readBoolean();
         }
 
         @NotNull
@@ -875,6 +954,10 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         public void setTask(final GuardTask task)
         {
             this.task = task;
+            if (task != GuardTask.MINE)
+            {
+                this.setMinePos(null);
+            }
             this.getColony().markDirty();
         }
 
@@ -906,6 +989,23 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         public List<MobEntryView> getMobsToAttack()
         {
             return new ArrayList<>(mobsToAttack);
+        }
+
+        /**
+         * Return the position of the mine the guard is patrolling
+         * @return the position of the mine
+         */
+        public BlockPos getMinePos() { return minePos; }
+
+        /**
+         * Set the position of the mine the guard is patrolling
+         * @param pos the position of the mine
+         */
+        public void setMinePos(BlockPos pos) { this.minePos = pos; }
+
+        public Boolean canGuardMine()
+        {
+            return canGuardMine;
         }
     }
 

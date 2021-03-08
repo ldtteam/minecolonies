@@ -27,7 +27,6 @@ import com.minecolonies.coremod.entity.ai.minimal.EntityAIVisitor;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.*;
 import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMessage;
-import io.netty.buffer.Unpooled;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookAtWithoutMovingGoal;
@@ -39,7 +38,6 @@ import net.minecraft.inventory.container.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.NameTagItem;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
@@ -514,10 +512,7 @@ public class VisitorCitizen extends AbstractEntityCitizen
     public Container createMenu(
       final int id, final PlayerInventory playerInventory, final PlayerEntity playerEntity)
     {
-        final PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
-        buffer.writeVarInt(citizenColonyHandler.getColonyId());
-        buffer.writeVarInt(citizenId);
-        return new ContainerCitizenInventory(id, playerInventory, buffer);
+        return new ContainerCitizenInventory(id, playerInventory, citizenColonyHandler.getColonyId(), citizenId);
     }
 
     /**
