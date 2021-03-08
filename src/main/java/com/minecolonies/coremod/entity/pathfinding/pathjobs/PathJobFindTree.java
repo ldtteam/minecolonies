@@ -8,8 +8,8 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.entity.ai.citizen.lumberjack.Tree;
 import com.minecolonies.coremod.entity.pathfinding.Node;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.material.Material;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -88,15 +88,16 @@ public class PathJobFindTree extends AbstractPathJob
       final BlockPos home,
       final BlockPos startRestriction,
       final BlockPos endRestriction,
+      final BlockPos furthestRestriction,
       final List<ItemStorage> treesToCut,
       final IColony colony,
       final LivingEntity entity)
     {
-        super(world, start, startRestriction, endRestriction, new TreePathResult(), entity);
+        super(world, start, startRestriction, endRestriction, (int) Math.sqrt(BlockPosUtil.getDistanceSquared2D(home, furthestRestriction) * 1.5d), new TreePathResult(), entity);
         this.treesToNotCut = treesToCut;
         this.hutLocation = home;
         this.colony = colony;
-        this.furthestRestriction = BlockPosUtil.getFurthestPosFromBox(home, startRestriction, endRestriction);
+        this.furthestRestriction = furthestRestriction;
     }
 
     @NotNull
@@ -109,7 +110,7 @@ public class PathJobFindTree extends AbstractPathJob
     @Override
     protected double computeHeuristic(@NotNull final BlockPos pos)
     {
-        return pos.distanceSq(hutLocation) * TIE_BREAKER;
+        return furthestRestriction == null ? pos.distanceSq(hutLocation) * TIE_BREAKER : Math.sqrt(BlockPosUtil.getDistanceSquared2D(pos, furthestRestriction));
     }
 
     @Override
@@ -152,6 +153,6 @@ public class PathJobFindTree extends AbstractPathJob
     @Override
     protected boolean isPassable(@NotNull final BlockState block, final BlockPos pos)
     {
-        return super.isPassable(block, pos) || block.getMaterial() == Material.LEAVES || Compatibility.isDynamicTrunkShell(block.getBlock());
+        return super.isPassable(block, pos) || block.isIn(BlockTags.LEAVES) || Compatibility.isDynamicTrunkShell(block.getBlock());
     }
 }

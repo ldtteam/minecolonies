@@ -182,7 +182,8 @@ public abstract class AbstractPathJob implements Callable<Path>
      * @param entity           the entity.
      * @see AbstractPathJob#AbstractPathJob(World, BlockPos, BlockPos, int, LivingEntity)
      */
-    public AbstractPathJob(final World world, @NotNull final BlockPos start, final BlockPos startRestriction, final BlockPos endRestriction, final PathResult result, final LivingEntity entity)
+    public AbstractPathJob(final World world, @NotNull final BlockPos start, final BlockPos startRestriction, final BlockPos endRestriction, 
+        final int range, final PathResult result, final LivingEntity entity)
     {
         this.minX = Math.min(startRestriction.getX(), endRestriction.getX());
         this.minZ = Math.min(startRestriction.getZ(), endRestriction.getZ());
@@ -190,8 +191,6 @@ public abstract class AbstractPathJob implements Callable<Path>
         this.maxZ = Math.max(startRestriction.getZ(), endRestriction.getZ());
 
         xzRestricted = true;
-
-        final int range = (int) Math.sqrt(Math.pow(maxX - minX, 2) + Math.pow(maxZ - minZ, 2)) * 2;
 
         this.world = new ChunkCache(world, new BlockPos(minX, MIN_Y, minZ), new BlockPos(maxX, MAX_Y, maxZ), range);
 
