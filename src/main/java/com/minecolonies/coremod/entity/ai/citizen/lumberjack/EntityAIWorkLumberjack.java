@@ -326,6 +326,10 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         final BuildingLumberjack building = getOwnBuilding();
         worker.getCitizenData().setVisibleStatus(SEARCH);
 
+        if (pathResult != null && pathResult.isComputing())
+        {
+            return getState();
+        }
         if (pathResult == null || pathResult.treeLocation == null)
         {
             final Map<String, List<ItemStorage>> copy = building.getCopyOfAllowedItems();
@@ -369,14 +373,15 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     {
         if (pathResult.treeLocation == null)
         {
-            setDelay(WAIT_BEFORE_INCREMENT);
-            if (!building.shouldRestrict())
+            if (!building.shouldRestrict() && searchIncrement + SEARCH_RANGE <= SEARCH_LIMIT)
             {
-                if (searchIncrement + SEARCH_RANGE > SEARCH_LIMIT)
-                {
-                    return LUMBERJACK_NO_TREES_FOUND;
-                }
                 searchIncrement += SEARCH_INCREMENT;
+                setDelay(WAIT_BEFORE_INCREMENT);
+            }
+            else
+            {
+                pathResult = null;
+                return LUMBERJACK_NO_TREES_FOUND;
             }
         }
         else

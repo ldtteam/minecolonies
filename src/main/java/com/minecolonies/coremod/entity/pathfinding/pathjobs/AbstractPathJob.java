@@ -51,7 +51,7 @@ public abstract class AbstractPathJob implements Callable<Path>
     @Nullable
     public static Set<Node> lastDebugNodesNotVisited;
     @Nullable
-    public static Set<Node>          lastDebugNodesPath;
+    public static Set<Node> lastDebugNodesPath;
 
     /**
      * Start position to path from.
@@ -191,7 +191,6 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         xzRestricted = true;
 
-
         final int range = (int) Math.sqrt(Math.pow(maxX - minX, 2) + Math.pow(maxZ - minZ, 2)) * 2;
 
         this.world = new ChunkCache(world, new BlockPos(minX, MIN_Y, minZ), new BlockPos(maxX, MAX_Y, maxZ), range);
@@ -200,6 +199,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         this.maxRange = range;
 
         this.result = result;
+        result.setJob(this);
 
         allowJumpPointSearchTypeWalk = false;
 
@@ -493,7 +493,8 @@ public abstract class AbstractPathJob implements Callable<Path>
             handleDebugOptions(currentNode);
             currentNode.setClosed();
 
-            if (isAtDestination(currentNode))
+            if ((!xzRestricted || (currentNode.pos.getX() >= minX && currentNode.pos.getX() <= maxX && currentNode.pos.getZ() >= minZ
+                && currentNode.pos.getZ() <= maxZ)) && isAtDestination(currentNode))
             {
                 bestNode = currentNode;
                 result.setPathReachesDestination(true);
@@ -510,10 +511,7 @@ public abstract class AbstractPathJob implements Callable<Path>
                 bestNodeResultScore = nodeResultScore;
             }
 
-            if (!xzRestricted || (currentNode.pos.getX() >= minX && currentNode.pos.getX() <= maxX && currentNode.pos.getZ() >= minZ && currentNode.pos.getZ() <= maxZ))
-            {
-                walkCurrentNode(currentNode);
-            }
+            walkCurrentNode(currentNode);
         }
 
         @NotNull final Path path = finalizePath(bestNode);

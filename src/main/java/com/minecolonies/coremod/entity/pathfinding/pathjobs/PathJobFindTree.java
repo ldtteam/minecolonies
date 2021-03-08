@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.pathfinding.TreePathResult;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.entity.ai.citizen.lumberjack.Tree;
 import com.minecolonies.coremod.entity.pathfinding.Node;
 import net.minecraft.block.BlockState;
@@ -40,6 +41,8 @@ public class PathJobFindTree extends AbstractPathJob
      */
     private final IColony colony;
 
+    private final BlockPos furthestRestriction;
+
     /**
      * AbstractPathJob constructor.
      *
@@ -64,6 +67,7 @@ public class PathJobFindTree extends AbstractPathJob
         this.treesToNotCut = treesToCut;
         this.hutLocation = home;
         this.colony = colony;
+        this.furthestRestriction = null;
     }
 
     /**
@@ -92,6 +96,7 @@ public class PathJobFindTree extends AbstractPathJob
         this.treesToNotCut = treesToCut;
         this.hutLocation = home;
         this.colony = colony;
+        this.furthestRestriction = BlockPosUtil.getFurthestPosFromBox(home, startRestriction, endRestriction);
     }
 
     @NotNull
@@ -104,12 +109,7 @@ public class PathJobFindTree extends AbstractPathJob
     @Override
     protected double computeHeuristic(@NotNull final BlockPos pos)
     {
-        final int dx = pos.getX() - hutLocation.getX();
-        final int dy = pos.getY() - hutLocation.getY();
-        final int dz = pos.getZ() - hutLocation.getZ();
-
-        //  Manhattan Distance with a 1/1000th tie-breaker - halved
-        return (Math.abs(dx) + Math.abs(dy) + Math.abs(dz)) * TIE_BREAKER;
+        return pos.distanceSq(hutLocation) * TIE_BREAKER;
     }
 
     @Override
@@ -146,7 +146,7 @@ public class PathJobFindTree extends AbstractPathJob
     @Override
     protected double getNodeResultScore(final Node n)
     {
-        return 0;
+        return furthestRestriction == null ? 0 : BlockPosUtil.getDistanceSquared2D(n.pos, furthestRestriction);
     }
 
     @Override

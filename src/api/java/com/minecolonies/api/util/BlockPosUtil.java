@@ -735,4 +735,28 @@ public final class BlockPosUtil
 
         return null;
     }
+
+    /**
+     * Returns pos furthest from zero within the box with ties going to positive infinity.
+     *
+     * @param zero     zero
+     * @param boxStart possibly unsorted box start pos
+     * @param boxEnd   possible unsorted box end pos
+     * @return furthest pos from zero within the box
+     */
+    public static BlockPos getFurthestPosFromBox(final BlockPos zero, final BlockPos boxStart, final BlockPos boxEnd)
+    {
+        final int minX = Math.min(boxStart.getX(), boxEnd.getX());
+        final int minY = Math.min(boxStart.getY(), boxEnd.getY());
+        final int minZ = Math.min(boxStart.getZ(), boxEnd.getZ());
+        final int maxX = Math.max(boxStart.getX(), boxEnd.getX());
+        final int maxY = Math.max(boxStart.getY(), boxEnd.getY());
+        final int maxZ = Math.max(boxStart.getZ(), boxEnd.getZ());
+
+        final int resX = zero.getX() <= minX + (maxX - minX) / 2.0f ? maxX : minX;
+        final int resY = zero.getY() <= minY + (maxY - minY) / 2.0f ? maxY : minY;
+        final int resZ = zero.getZ() <= minZ + (maxZ - minZ) / 2.0f ? maxZ : minZ;
+
+        return new BlockPos(resX, resY, resZ);
+    }
 }
