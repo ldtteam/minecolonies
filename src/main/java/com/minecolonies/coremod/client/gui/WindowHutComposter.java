@@ -69,9 +69,10 @@ public class WindowHutComposter extends AbstractHutFilterableLists
     {
         return IColonyManager.getInstance()
                  .getCompatibilityManager()
-                 .getCopyOfCompostableItems()
-                 .stream()
-                 .filter(storage -> filterPredicate.test(storage.getItemStack()))
+                 .getCopyOfCompostRecipes().keySet().stream()
+                 .map(ItemStack::new)
+                 .filter(filterPredicate)
+                 .map(ItemStorage::new)
                  .collect(Collectors.toList());
     }
 
