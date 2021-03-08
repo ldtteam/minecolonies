@@ -239,7 +239,7 @@ public class BuildingBaker extends AbstractBuildingSmelterCrafter
                     1,
                     smeltResult,
                     Blocks.FURNACE);
-                    addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(smeltingRecipe));
+                    addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(smeltingRecipe), false);
             }
         }
 
