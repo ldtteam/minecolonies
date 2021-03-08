@@ -123,7 +123,7 @@
       {
         "name": "Gravel_Diamond_Mesh",
         "conditions": [
-            {"condition": "minecraft:entity_properties", "entity": "this", "predicate" : { "equipment": { "mainhand": {"item" : "minecolonies:siftrer_mesh_diamond"} } }}
+            {"condition": "minecraft:entity_properties", "entity": "this", "predicate" : { "equipment": { "mainhand": {"item" : "minecolonies:sifter_mesh_diamond"} } }}
         ],
         "rolls": 1,
         "bonus_rolls": 0.035,
