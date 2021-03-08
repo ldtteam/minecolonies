@@ -1,0 +1,13 @@
+{
+  "type" : "recipe",
+  "crafter": "stonemason",
+  "inputs": [
+    {
+        "item" : "minecraft:flint",
+        "count": "1"
+    }
+  ],
+  "result": "minecolonies:sifter_mesh_flint",
+  "count": 1,
+  "research-id" : "minecolonies:effects/blockhutsifter"
+}

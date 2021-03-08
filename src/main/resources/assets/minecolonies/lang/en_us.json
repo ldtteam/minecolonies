@@ -1869,5 +1869,10 @@
   "block.minecolonies.blockstash.name": "Stash",
   "block.minecolonies.blocksubstitution": "Placeholder Block",
   "block.minecolonies.blocksubstitution.name": "Placeholder Block",
-  "block.minecolonies.blockwaypoint": "Waypoint Placeholder"
+  "block.minecolonies.blockwaypoint": "Waypoint Placeholder",
+
+  "item.minecolonies.sifter_mesh_string": "String Mesh",
+  "item.minecolonies.sifter_mesh_flint": "Flint Mesh",
+  "item.minecolonies.sifter_mesh_iron": "Iron Mesh",
+  "item.minecolonies.sifter_mesh_diamond": "Diamond Mesh"
 }
