@@ -2,6 +2,7 @@
   "com.minecolonies.research.civilian.name": "Civilian",
   "com.minecolonies.research.combat.name": "Combat",
   "com.minecolonies.research.technology.name": "Technology",
+  "com.minecolonies.research.achievment.name": "Achievement",
   "com.minecolonies.research.effects.archerarmormultiplier.description": "Archer Armor +%3$s%%",
   "com.minecolonies.research.effects.archerdamageaddition.description": "Archer Damage +%s",
   "com.minecolonies.research.effects.armordurabilitymultiplier.description": "Guard Armor +%3$s%% Durability",
@@ -68,6 +69,10 @@
   "com.minecolonies.research.effects.knowledgeoftheendunlock.description": "Stonemasons Learn Endstone Recipe and Bakers Learn Chorus Bread Recipe",
   "com.minecolonies.research.effects.morescrollsunlock.description": "Enchanter Learns Scroll Recipes to Locate Workers and Summon Guards",
   "com.minecolonies.research.effects.platearmorunlock.description": "Blacksmith Learns Plate Armor Recipes",
+  "com.minecolonies.research.effects.sifterstringunlock.description": "Fletcher learns how to make string meshes for the Sifter",
+  "com.minecolonies.research.effects.sifterflintunlock.description": "Stonemason learns how to make flint meshes for the Sifter",
+  "com.minecolonies.research.effects.sifterirongunlock.description": "Blacksmith learns how to make iron meshes for the Sifter",
+  "com.minecolonies.research.effects.sifterdiamondunlock.description": "Mechanic learns how to make diamond meshes for the Sifter",
   "com.minecolonies.research.civilian.stamina.name": "Stamina",
   "com.minecolonies.research.civilian.bandaid.name": "Band Aid",
   "com.minecolonies.research.civilian.healingcream.name": "Healing Cream",
@@ -311,5 +316,9 @@
   "com.minecolonies.research.technology.whatyaneed.name": "What ya Need?",
   "com.minecolonies.research.technology.whatyaneed.subtitle": "It's not a rhetorical question...",
   "com.minecolonies.research.technology.enhanced_gates1.name": "Enhanced Gates I",
-  "com.minecolonies.research.technology.enhanced_gates2.name": "Enhanced Gates II"
+  "com.minecolonies.research.technology.enhanced_gates2.name": "Enhanced Gates II",
+  "com.minecolonies.research.achievement.stringmesh.name": "String Mesh",
+  "com.minecolonies.research.achievement.flintmesh.name": "Flint Mesh",
+  "com.minecolonies.research.achievement.ironmesh.name": "Iron Mesh",
+  "com.minecolonies.research.achievement.diamondmesh.name": "Diamond Mesh"
 }
