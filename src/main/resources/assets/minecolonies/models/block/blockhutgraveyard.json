@@ -9,9 +9,9 @@
 	"elements": [
 		{
 			"name": "Handle",
-			"from": [11, 5, 11],
-			"to": [13, 19, 12],
-			"rotation": {"angle": 22.5, "axis": "x", "origin": [13, 11, 13]},
+			"from": [10, 5, 9],
+			"to": [12, 19, 10],
+			"rotation": {"angle": 22.5, "axis": "x", "origin": [12, 11, 11]},
 			"faces": {
 				"north": {"uv": [0, 0, 2, 14], "rotation": 180, "texture": "#2"},
 				"east": {"uv": [0, 0, 2, 14], "rotation": 180, "texture": "#2"},
@@ -23,9 +23,9 @@
 		},
 		{
 			"name": "Scoop",
-			"from": [10, -1, 12],
-			"to": [14, 4, 13],
-			"rotation": {"angle": 22.5, "axis": "x", "origin": [13, 11, 13]},
+			"from": [9, -1, 10],
+			"to": [13, 4, 11],
+			"rotation": {"angle": 22.5, "axis": "x", "origin": [12, 11, 11]},
 			"faces": {
 				"north": {"uv": [9, 8, 13, 13], "rotation": 180, "texture": "#1"},
 				"east": {"uv": [0, 0, 1, 5], "texture": "#1"},
@@ -37,9 +37,9 @@
 		},
 		{
 			"name": "S1",
-			"from": [9, -1, 11],
-			"to": [10, 4, 12],
-			"rotation": {"angle": 22.5, "axis": "x", "origin": [13, 11, 13]},
+			"from": [8, -1, 9],
+			"to": [9, 4, 10],
+			"rotation": {"angle": 22.5, "axis": "x", "origin": [12, 11, 11]},
 			"faces": {
 				"north": {"uv": [3, 6, 4, 11], "rotation": 180, "texture": "#1"},
 				"east": {"uv": [9, 5, 10, 10], "texture": "#1"},
@@ -51,9 +51,9 @@
 		},
 		{
 			"name": "Head2",
-			"from": [9, 4, 11],
-			"to": [15, 5, 12],
-			"rotation": {"angle": 22.5, "axis": "x", "origin": [13, 11, 13]},
+			"from": [8, 4, 9],
+			"to": [14, 5, 10],
+			"rotation": {"angle": 22.5, "axis": "x", "origin": [12, 11, 11]},
 			"faces": {
 				"north": {"uv": [3, 3, 7, 4], "rotation": 180, "texture": "#1"},
 				"east": {"uv": [0, 0, 1, 1], "texture": "#1"},
@@ -65,9 +65,9 @@
 		},
 		{
 			"name": "S2",
-			"from": [14, -1, 11],
-			"to": [15, 4, 12],
-			"rotation": {"angle": 22.5, "axis": "x", "origin": [13, 11, 13]},
+			"from": [13, -1, 9],
+			"to": [14, 4, 10],
+			"rotation": {"angle": 22.5, "axis": "x", "origin": [12, 11, 11]},
 			"faces": {
 				"north": {"uv": [3, 6, 4, 11], "rotation": 180, "texture": "#1"},
 				"east": {"uv": [9, 5, 10, 10], "texture": "#1"},
@@ -266,6 +266,6 @@
 		{
 			"name": "diamond_shovel",
 			"origin": [8, 8, 8],
-			"children": [0, 1, 2, 3, 4, 5]
-		}, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+			"children": [0, 1, 2, 3, 4]
+		}, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
 }

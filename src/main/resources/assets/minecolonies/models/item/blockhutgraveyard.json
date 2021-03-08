@@ -36,8 +36,8 @@
     },
     "firstperson_righthand": {
       "rotation": [
-        0,
-        -70,
+        20,
+        100,
         0
       ],
       "scale": [
@@ -48,8 +48,8 @@
     },
     "firstperson_lefthand": {
       "rotation": [
-        0,
-        -70,
+        20,
+        180,
         0
       ],
       "scale": [
@@ -72,8 +72,8 @@
     },
     "gui": {
       "rotation": [
-        20,
-        -45,
+        0,
+        155,
         0
       ],
       "translation": [
@@ -82,9 +82,9 @@
         0
       ],
       "scale": [
-        0.42,
-        0.42,
-        0.42
+        0.6,
+        0.6,
+        0.6
       ]
     },
     "head": {
