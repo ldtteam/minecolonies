@@ -326,7 +326,7 @@ public final class BackUpHelper
         {
             if (loadDeleted)
             {
-                compound = loadNBTFromPath(new File(saveDir, String.format(FILENAME_COLONY_DELETED, colonyId, getFolderForDimension(dimension.getLocation()))));
+                compound = loadNBTFromPath(new File(saveDir, String.format(getFolderForDimension(dimension.getLocation()) + String.format(FILENAME_COLONY_DELETED, colonyId))));
             }
             if (compound == null)
             {
