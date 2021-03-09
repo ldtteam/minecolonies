@@ -41,6 +41,19 @@ public class ContainerGrave extends Container
     private final int inventorySize;
 
     /**
+     * Deserialize packet buffer to container instance.
+     *
+     * @param windowId     the id of the window.
+     * @param inv          the player inventory.
+     * @param packetBuffer network buffer
+     * @return new instance
+     */
+    public static ContainerGrave fromPacketBuffer(final int windowId, final PlayerInventory inv, final PacketBuffer packetBuffer)
+    {
+        return new ContainerGrave(windowId, inv, packetBuffer);
+    }
+
+    /**
      * The container constructor.
      *
      * @param windowId the window id.

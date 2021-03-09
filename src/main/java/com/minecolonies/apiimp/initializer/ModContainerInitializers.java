@@ -21,10 +21,9 @@ public class ModContainerInitializers
         ModContainers.craftingFurnace = (ContainerType<ContainerCraftingFurnace>) IForgeContainerType.create(ContainerCraftingFurnace::fromPacketBuffer).setRegistryName("crafting_furnace");
         ModContainers.buildingInv = (ContainerType<ContainerBuildingInventory>) IForgeContainerType.create(ContainerBuildingInventory::fromPacketBuffer).setRegistryName("bulding_inv");
         ModContainers.citizenInv = (ContainerType<ContainerCitizenInventory>) IForgeContainerType.create(ContainerCitizenInventory::fromPacketBuffer).setRegistryName("citizen_inv");
-        ModContainers.rackInv = (ContainerType<ContainerRack>) IForgeContainerType.create(ContainerRack::fromPacketBuffer).setRegistryName("rack_inv");
         ModContainers.craftingGrid = (ContainerType<ContainerCrafting>) IForgeContainerType.create(ContainerCrafting::fromPacketBuffer).setRegistryName("crafting_building");
-        ModContainers.graveInv = (ContainerType<ContainerGrave>) IForgeContainerType.create(ContainerGrave::new).setRegistryName("grave_inv");
-        ModContainers.craftingGrid = (ContainerType<ContainerCrafting>) IForgeContainerType.create(ContainerCrafting::new).setRegistryName("crafting_building");
+        ModContainers.rackInv = (ContainerType<ContainerRack>) IForgeContainerType.create(ContainerRack::fromPacketBuffer).setRegistryName("rack_inv");
+        ModContainers.graveInv = (ContainerType<ContainerGrave>) IForgeContainerType.create(ContainerGrave::fromPacketBuffer).setRegistryName("grave_inv");
         ModContainers.field = (ContainerType<ContainerField>) IForgeContainerType.create(ContainerField::fromPacketBuffer).setRegistryName("field");
 
         event.getRegistry()
