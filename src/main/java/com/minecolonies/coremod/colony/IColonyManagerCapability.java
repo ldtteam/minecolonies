@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
+import com.minecolonies.coremod.util.BackUpHelper;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.util.Direction;
@@ -143,9 +144,18 @@ public interface IColonyManagerCapability
           @NotNull final Capability<IColonyManagerCapability> capability, @NotNull final IColonyManagerCapability instance,
           @Nullable final Direction side, @NotNull final INBT nbt)
         {
+            // Notify that we did load the cap for this world
+            IColonyManager.getInstance().setCapLoaded();
             if (nbt instanceof CompoundNBT)
             {
                 final CompoundNBT compound = (CompoundNBT) nbt;
+
+                if (!compound.contains(TAG_COLONIES) || !compound.contains(TAG_COLONY_MANAGER))
+                {
+                    BackUpHelper.loadMissingColonies();
+                    BackUpHelper.loadManagerBackup();
+                    return;
+                }
 
                 // Load all colonies from Nbt
                 Multimap<BlockPos, IColony> tempColonies = ArrayListMultimap.create();
@@ -158,6 +168,9 @@ public interface IColonyManagerCapability
                         instance.addColony(colony);
                     }
                 }
+
+                // Check if some colonies are missing
+                BackUpHelper.loadMissingColonies();
 
                 // Check colonies for duplicates causing issues.
                 for (final BlockPos pos : tempColonies.keySet())
@@ -183,6 +196,11 @@ public interface IColonyManagerCapability
                 {
                     IColonyManager.getInstance().read(compound.getCompound(TAG_COLONY_MANAGER));
                 }
+            }
+            else
+            {
+                BackUpHelper.loadMissingColonies();
+                BackUpHelper.loadManagerBackup();
             }
         }
     }
