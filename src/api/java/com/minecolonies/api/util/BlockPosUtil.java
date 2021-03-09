@@ -790,7 +790,7 @@ public final class BlockPosUtil
         final int absY = Math.abs(closestVecY);
         final int absZ = Math.abs(closestVecZ);
 
-        if (absX > absY && absX > absZ)
+        if ((ignoreY || absX > absY) && absX > absZ)
         {
             return Direction.byLong(closestVecX < 0 ? -1 : 1, 0, 0);
         }
