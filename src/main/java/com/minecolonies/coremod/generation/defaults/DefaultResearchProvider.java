@@ -59,7 +59,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         branches.add(new ResearchBranch(CIVIL).setTranslatedBranchName("Civilian").setBranchTimeMultiplier(1.0));
         branches.add(new ResearchBranch(COMBAT).setTranslatedBranchName("Combat").setBranchTimeMultiplier(1.0));
         branches.add(new ResearchBranch(TECH).setTranslatedBranchName("Technology").setBranchTimeMultiplier(1.0));
-        branches.add(new ResearchBranch(ACHIEVE).setTranslatedBranchName("Achievement").setBranchTimeMultiplier(0.0));
+        branches.add(new ResearchBranch(ACHIEVE).setTranslatedBranchName("Achievements").setBranchTimeMultiplier(0.0));
         return branches;
     }
 
@@ -153,13 +153,13 @@ public class DefaultResearchProvider extends AbstractResearchProvider
 
         //Sifter Mesh triggers
         effects.add(new ResearchEffect(new ResourceLocation(Constants.MOD_ID, "effects/sifterstringunlock")).setTranslatedName(
-            "Fletcher learns how to make string meshes for the Sifter"));
+            "Fletcher Learns How to Make String Meshes for the Sifter"));
         effects.add(new ResearchEffect(new ResourceLocation(Constants.MOD_ID, "effects/sifterflintunlock")).setTranslatedName(
-            "Stonemason learns how to make flint meshes for the Sifter"));
-        effects.add(new ResearchEffect(new ResourceLocation(Constants.MOD_ID, "effects/sifterirongunlock")).setTranslatedName(
-            "Blacksmith learns how to make iron meshes for the Sifter"));
+            "Stonemason Learns How to Make Flint Meshes for the Sifter"));
+        effects.add(new ResearchEffect(new ResourceLocation(Constants.MOD_ID, "effects/sifterironunlock")).setTranslatedName(
+            "Blacksmith Learns How to Make Iron Meshes for the Sifter"));
         effects.add(new ResearchEffect(new ResourceLocation(Constants.MOD_ID, "effects/sifterdiamondunlock")).setTranslatedName(
-            "Mechanic learns how to make diamond meshes for the Sifter"));
+            "Mechanic Learns How to Make Diamond Meshes for the Sifter"));
             
         return effects;
     }

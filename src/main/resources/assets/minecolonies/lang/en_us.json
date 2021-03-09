@@ -1098,9 +1098,6 @@
   "com.minecolonies.coremod.gui.workerhuts.sifterinfo.unlimited": "of Unlimited",
 
   "com.minecolonies.coremod.gui.workerhuts.sifter": "Sifter",
-  "com.minecolonies.coremod.sifter.meshbroke": "My current mesh broke and I started to work with the default mesh again!",
-  "com.minecolonies.coremod.gui.workerhuts.buy": "Buy",
-  "com.minecolonies.coremod.gui.workerhuts.meshsettings": "Mesh Settings",
   "com.minecolonies.coremod.sifter.toomuch": "Set to the current daily max of %d.",
   "com.minecolonies.coremod.gui.building.rename.title": "Rename Your Building",
 

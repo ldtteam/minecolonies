@@ -34,7 +34,7 @@ public class SifterSettingsMessage extends AbstractBuildingServerMessage<Buildin
      * @param dailyQuantity the quantity to produce.
      * @param block         the mode to set.
      */
-    public SifterSettingsMessage(@NotNull final BuildingSifter.View building,final int dailyQuantity)
+    public SifterSettingsMessage(@NotNull final BuildingSifter.View building, final int dailyQuantity)
     {
         super(building);
         this.quantity = dailyQuantity;
