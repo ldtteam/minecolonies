@@ -34,9 +34,6 @@ repositories {
     flatDir {
         dirs 'libs'
     }
-    maven {
-        url 'https://nexus.resourcefulbees.com/repository/maven-public/'
-    }
 }
 
 apply plugin: 'net.minecraftforge.gradle'
