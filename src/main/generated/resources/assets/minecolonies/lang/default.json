@@ -2,7 +2,7 @@
   "com.minecolonies.research.civilian.name": "Civilian",
   "com.minecolonies.research.combat.name": "Combat",
   "com.minecolonies.research.technology.name": "Technology",
-  "com.minecolonies.research.achievment.name": "Achievement",
+  "com.minecolonies.research.achievement.name": "Achievement",
   "com.minecolonies.research.effects.archerarmormultiplier.description": "Archer Armor +%3$s%%",
   "com.minecolonies.research.effects.archerdamageaddition.description": "Archer Damage +%s",
   "com.minecolonies.research.effects.armordurabilitymultiplier.description": "Guard Armor +%3$s%% Durability",
