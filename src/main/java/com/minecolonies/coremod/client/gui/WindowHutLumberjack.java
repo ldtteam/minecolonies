@@ -85,6 +85,7 @@ public class WindowHutLumberjack extends AbstractHutFilterableLists
     private void giveTool()
     {
         givePlayerScepter();
+        close();
     }
 
     /**

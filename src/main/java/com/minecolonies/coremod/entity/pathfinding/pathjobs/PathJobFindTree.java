@@ -27,6 +27,11 @@ public class PathJobFindTree extends AbstractPathJob
     private static final double TIE_BREAKER = 0.951D;
 
     /**
+     * How much should be restricted area shrinked because of isTree check
+     */
+    private static final BlockPos AREA_SHRINK = new BlockPos(-1, 0, -1);
+
+    /**
      * The location of the hut of the lumberjack.
      */
     private final BlockPos hutLocation;
@@ -41,6 +46,9 @@ public class PathJobFindTree extends AbstractPathJob
      */
     private final IColony colony;
 
+    /**
+     * Fake goal when using restricted area
+     */
     private final BlockPos furthestRestriction;
 
     /**
@@ -93,7 +101,7 @@ public class PathJobFindTree extends AbstractPathJob
       final IColony colony,
       final LivingEntity entity)
     {
-        super(world, start, startRestriction, endRestriction, (int) Math.sqrt(BlockPosUtil.getDistanceSquared2D(home, furthestRestriction) * 1.5d), new TreePathResult(), entity);
+        super(world, start, startRestriction, endRestriction, (int) Math.sqrt(BlockPosUtil.getDistanceSquared2D(home, furthestRestriction) * 1.5d), AREA_SHRINK, new TreePathResult(), entity);
         this.treesToNotCut = treesToCut;
         this.hutLocation = home;
         this.colony = colony;
@@ -129,7 +137,7 @@ public class PathJobFindTree extends AbstractPathJob
         else
         {
             final int dx = n.pos.getX() > n.parent.pos.getX() ? 1 : -1;
-            return isTree(n.pos.add(-dx, 0, 0)) || isTree(n.pos.add(0, 0, -1)) || isTree(n.pos.add(0, 0, +1));
+            return isTree(n.pos.add(dx, 0, 0)) || isTree(n.pos.add(0, 0, -1)) || isTree(n.pos.add(0, 0, 1));
         }
     }
 
@@ -147,7 +155,7 @@ public class PathJobFindTree extends AbstractPathJob
     @Override
     protected double getNodeResultScore(final Node n)
     {
-        return furthestRestriction == null ? 0 : BlockPosUtil.getDistanceSquared2D(n.pos, furthestRestriction);
+        return 0;
     }
 
     @Override

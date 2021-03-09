@@ -176,19 +176,22 @@ public abstract class AbstractPathJob implements Callable<Path>
      * AbstractPathJob constructor.
      *
      * @param world            the world within which to path.
+     * @param start            pathing start position
      * @param startRestriction start of restricted area.
      * @param endRestriction   end of restricted area.
+     * @param range            expected range
+     * @param grow             restriction area grow
      * @param result           path result.
      * @param entity           the entity.
      * @see AbstractPathJob#AbstractPathJob(World, BlockPos, BlockPos, int, LivingEntity)
      */
     public AbstractPathJob(final World world, @NotNull final BlockPos start, final BlockPos startRestriction, final BlockPos endRestriction, 
-        final int range, final PathResult result, final LivingEntity entity)
+        final int range, final BlockPos grow, final PathResult result, final LivingEntity entity)
     {
-        this.minX = Math.min(startRestriction.getX(), endRestriction.getX());
-        this.minZ = Math.min(startRestriction.getZ(), endRestriction.getZ());
-        this.maxX = Math.max(startRestriction.getX(), endRestriction.getX());
-        this.maxZ = Math.max(startRestriction.getZ(), endRestriction.getZ());
+        this.minX = Math.min(startRestriction.getX(), endRestriction.getX()) - grow.getX();
+        this.minZ = Math.min(startRestriction.getZ(), endRestriction.getZ()) - grow.getZ();
+        this.maxX = Math.max(startRestriction.getX(), endRestriction.getX()) + grow.getX();
+        this.maxZ = Math.max(startRestriction.getZ(), endRestriction.getZ()) + grow.getZ();
 
         xzRestricted = true;
 
@@ -676,6 +679,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         points[0] = new PathPointExtended(node.pos);
 
         @Nullable Node nextInPath = null;
+        @Nullable PathPoint next = null;
         node = targetNode;
         while (node.parent != null)
         {
@@ -728,6 +732,11 @@ public abstract class AbstractPathJob implements Callable<Path>
                 p.setOnLadder(true);
             }
 
+            if (next != null)
+            {
+                next.previous = p;
+            }
+            next = p;
             points[pathLength] = p;
 
             nextInPath = node;

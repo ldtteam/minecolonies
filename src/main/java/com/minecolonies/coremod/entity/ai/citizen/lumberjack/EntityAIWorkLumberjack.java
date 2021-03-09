@@ -86,7 +86,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     /**
      * The minimum range the lumberjack has to reach in order to construct or clear.
      */
-    private static final int MIN_WORKING_RANGE   = 3;
+    private static final int MIN_WORKING_RANGE   = 2;
     /**
      * Time in ticks to wait before placing a sapling. Is used to collect falling saplings from the ground.
      */
@@ -103,7 +103,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     /**
      * Time in ticks to wait before rechecking if there are trees in the range of the lumberjack.
      */
-    private static final int WAIT_BEFORE_SEARCH = 100;
+    private static final int WAIT_BEFORE_SEARCH = 400;
 
     /**
      * Time in ticks before incrementing the search radius.
@@ -207,6 +207,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         if (checkIfStuck())
         {
             tryUnstuck();
+            return getState();
         }
 
         if (walkToBuilding())
@@ -289,6 +290,8 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
      */
     private IAIState waitBeforeCheckingAgain()
     {
+        pathResult = null;
+
         if (hasNotDelayed(WAIT_BEFORE_SEARCH))
         {
             return getState();
@@ -330,7 +333,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         {
             return getState();
         }
-        if (pathResult == null || pathResult.treeLocation == null)
+        if (pathResult == null)
         {
             final Map<String, List<ItemStorage>> copy = building.getCopyOfAllowedItems();
             if (building.shouldRestrict())
@@ -353,16 +356,11 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
                         copy.getOrDefault(SAPLINGS_LIST, Collections.emptyList()),
                         worker.getCitizenColonyHandler().getColony());
             }
+            return getState();
         }
         if (pathResult.isPathReachingDestination())
         {
             return setNewTree(building);
-        }
-        if (pathResult.isCancelled())
-        {
-            pathResult = null;
-            setDelay(TICKS_SECOND * GATHERING_DELAY);
-            return LUMBERJACK_GATHERING;
         }
 
         // None of the above yielded a result, report no trees found.
@@ -380,7 +378,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
             }
             else
             {
-                pathResult = null;
                 return LUMBERJACK_NO_TREES_FOUND;
             }
         }
@@ -647,16 +644,29 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
             {
                 // Unstuck with path
                 final List<BlockPos> checkPositions = new ArrayList<>();
-                final PathPoint next = path.getPathPointFromIndex(path.getCurrentPathIndex());
+                PathPoint next = path.getPathPointFromIndex(Math.min(path.getCurrentPathIndex() + 1, path.getCurrentPathLength() - 1));
 
                 // Blocks in front of the worker
-                for (int i = 0; i <= 2; i++)
+                for (int i = 0; i < 2; i++)
                 {
                     checkPositions.add(new BlockPos(next.x, next.y + i, next.z));
                 }
-
-                // Block above the worker
-                checkPositions.add(new BlockPos(worker.getPosition().getX(), worker.getPosition().getY() + 2, worker.getPosition().getZ()));
+                if (next.previous != null)
+                {
+                    next = next.previous;
+                    for (int i = 0; i < 2; i++)
+                    {
+                        checkPositions.add(new BlockPos(next.x, next.y + i, next.z));
+                    }
+                    if (next.previous != null)
+                    {
+                        next = next.previous;
+                        for (int i = 0; i < 2; i++)
+                        {
+                            checkPositions.add(new BlockPos(next.x, next.y + i, next.z));
+                        }
+                    }
+                }
 
                 mineIfEqualsBlockTag(checkPositions, BlockTags.LEAVES);
                 return;
