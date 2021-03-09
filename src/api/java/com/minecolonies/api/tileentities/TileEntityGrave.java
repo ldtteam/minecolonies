@@ -125,6 +125,7 @@ public class TileEntityGrave extends AbstractTileEntityGrave
     @Override
     public boolean isEmpty()
     {
+        updateContent();
         return content.isEmpty();
     }
 

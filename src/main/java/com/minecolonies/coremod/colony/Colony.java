@@ -1652,11 +1652,15 @@ public class Colony implements IColony
      *
      * @param name        Name of citizen that died
      */
-    public void removeNeedToMourn(String name)
+    public void removeNeedToMourn(final String name, final boolean forceDirect)
     {
-        LanguageHandler.sendPlayersMessage(getImportantMessageEntityPlayers(), COM_MINECOLONIES_COREMOD_MOURN_REMOVE, name);
+        if (!forceDirect)
+        {
+            LanguageHandler.sendPlayersMessage(getImportantMessageEntityPlayers(), COM_MINECOLONIES_COREMOD_MOURN_REMOVE, name);
+        }
+
         needToMourn.remove(name);
-        if(needToMourn.isEmpty() && mourning && WorldUtil.isPastNoon(world))
+        if (needToMourn.isEmpty() && mourning && (WorldUtil.isPastNoon(world) || forceDirect))
         {
             mourning = false;
             citizenManager.updateCitizenMourn(false);

@@ -795,6 +795,11 @@
   "com.minecolonies.coremod.status.searchingtree": "Searching for trees",
   "com.minecolonies.coremod.status.chopping": "Chopping",
   "com.minecolonies.coremod.status.stuckinleaves": "Stuck in leaves!",
+  "com.minecolonies.coremod.status.digging": "Digging a grave",
+  "com.minecolonies.coremod.status.emptying": "Emptying a grave",
+  "com.minecolonies.coremod.status.burying": "Burying a citizen...",
+  "com.minecolonies.coremod.status.resurrect": "Trying to resurrect a citizen...",
+  "com.minecolonies.coremod.resurrect": "Amazing! Your gravedigger resurected %s today! Your citizen will not mourn anymore",
 
   "com.minecolonies.coremod.gui.workerhuts.buildbarracks": "Barracks",
   "com.minecolonies.coremod.gui.barracks.spieshire": "Hire",

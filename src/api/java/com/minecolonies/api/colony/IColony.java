@@ -309,7 +309,7 @@ public interface IColony
 
     void addNeedToMourn(boolean needToMourn, String name);
 
-    void removeNeedToMourn(String name);
+    void removeNeedToMourn(String name, boolean forceDirect);
 
     boolean isMourning();
 

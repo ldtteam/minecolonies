@@ -44,6 +44,7 @@ import java.util.stream.Collectors;
 import static com.minecolonies.api.research.util.ResearchConstants.CITIZEN_CAP;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CITIZENS;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 import static com.minecolonies.api.util.constant.TranslationConstants.ALL_CITIZENS_ARE_SLEEPING;
 
 public class CitizenManager implements ICitizenManager
@@ -328,6 +329,31 @@ public class CitizenManager implements ICitizenManager
         citizenData.initForNewCivilian();
         citizens.put(citizenData.getId(), citizenData);
 
+        return citizenData;
+    }
+
+    @Override
+    public ICitizenData resurrectCivilianData(@NotNull final CompoundNBT compoundNBT, final boolean resetId, @NotNull final World world, final BlockPos spawnPos)
+    {
+        //This ensures that citizen IDs are getting reused.
+        //That's needed to prevent bugs when calling IDs that are not used.
+        for (int i = 1; i <= this.getCurrentCitizenCount() + 1; i++)
+        {
+            if (this.getCivilian(i) == null)
+            {
+                topCitizenId = i;
+                break;
+            }
+        }
+
+        if(resetId)
+        {
+            compoundNBT.putInt(TAG_ID, topCitizenId);
+        }
+
+        final ICitizenData citizenData = deserializeCitizen(compoundNBT);
+        citizens.put(citizenData.getId(), citizenData);
+        spawnOrCreateCitizen(citizenData, world, spawnPos);
         return citizenData;
     }
 

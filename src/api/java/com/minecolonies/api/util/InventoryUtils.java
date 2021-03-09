@@ -2336,14 +2336,19 @@ public class InventoryUtils
         }
     }
 
-    public static void transferAllItemHandler(final IItemHandler origin, final IItemHandler target, final World world, final int x, final int y, final int z)
+    public static boolean transferAllItemHandler(final IItemHandler origin, final IItemHandler target)
     {
         for (int i = 0; i < origin.getSlots(); ++i)
         {
             final ItemStack itemstack = origin.getStackInSlot(i);
-            addItemStackToItemHandler(target, itemstack);
-            removeStackFromItemHandler(origin, itemstack, itemstack.getCount());
+            if(addItemStackToItemHandler(target, itemstack))
+            {
+                removeStackFromItemHandler(origin, itemstack, itemstack.getCount());
+            }
+            else return false;
         }
+
+        return true;
     }
 
     /**

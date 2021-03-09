@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.citizen.Skill;
+import com.minecolonies.api.tileentities.AbstractTileEntityGrave;
 import com.minecolonies.api.tileentities.TileEntityGrave;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -16,9 +17,7 @@ import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.client.gui.WindowHutGraveyard;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.jobs.JobFarmer;
 import com.minecolonies.coremod.colony.jobs.JobGravedigger;
-import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.StringNBT;
@@ -26,19 +25,14 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-import static com.minecolonies.api.util.constant.Constants.TAG_COMPOUND;
 import static com.minecolonies.api.util.constant.Constants.TAG_STRING;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_MOURNING;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_NEED_TO_MOURN_LIST;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
-import static com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenDiedEvent.CITIZEN_DIED_EVENT_ID;
 
 /**
  * Class which handles the graveyard building.
@@ -64,6 +58,16 @@ public class BuildingGraveyard extends AbstractBuildingWorker
      * NBTTag to store the grave.
      */
     private static final String TAG_GRAVES = "graves";
+
+    /**
+     * NBTTag to store the last grave owner.
+     */
+    private static final String TAG_LAST_GRAVE_OWNER = "lastGraveOwner";
+
+    /**
+     * NBTTag to store the name of the last grave owner.
+     */
+    private static final String TAG_LAST_GRAVE_OWNER_NAME = "lastGraveOwnerName";
 
     /**
      * NBTTag to store the grave BlockPos.
@@ -95,6 +99,19 @@ public class BuildingGraveyard extends AbstractBuildingWorker
      */
     @Nullable
     private BlockPos currentGrave;
+
+    /**
+     * The data of the last grave owner data.
+     */
+    @Nullable
+    private CompoundNBT lastGraveOwnerDataNBT;
+
+    /**
+     * The name of the last grave owner data.
+     */
+    @Nullable
+    private String lastGraveOwnerName;
+
 
     /**
      * Public constructor which instantiates the building.
@@ -220,6 +237,9 @@ public class BuildingGraveyard extends AbstractBuildingWorker
                 restingCitizen.add(citizenName);
             }
         }
+
+        lastGraveOwnerDataNBT = compound.keySet().contains(TAG_LAST_GRAVE_OWNER) ? compound.getCompound(TAG_LAST_GRAVE_OWNER) : null;
+        lastGraveOwnerName = compound.keySet().contains(TAG_LAST_GRAVE_OWNER_NAME) ? compound.getString(TAG_LAST_GRAVE_OWNER_NAME) : null;
     }
 
     @Override
@@ -246,6 +266,9 @@ public class BuildingGraveyard extends AbstractBuildingWorker
             ripCitizen.add(StringNBT.valueOf(citizenName));
         }
         compound.put(TAG_RIP_CITIZEN_LIST, ripCitizen);
+
+        if (lastGraveOwnerDataNBT != null) { compound.put(TAG_LAST_GRAVE_OWNER, lastGraveOwnerDataNBT); }
+        if (lastGraveOwnerName != null) { compound.put(TAG_LAST_GRAVE_OWNER_NAME,StringNBT.valueOf(lastGraveOwnerName)); }
 
         return compound;
     }
@@ -356,6 +379,23 @@ public class BuildingGraveyard extends AbstractBuildingWorker
             restingCitizen.add(citizenName);
             markDirty();
         }
+    }
+
+    public void setLastGraveOwner(final CompoundNBT citizenDataNBT, final String citizenName)
+    {
+        this.lastGraveOwnerDataNBT = citizenDataNBT;
+        this.lastGraveOwnerName = citizenName;
+        markDirty();
+    }
+
+    public CompoundNBT getLastGraveOwnerNBT()
+    {
+        return this.lastGraveOwnerDataNBT;
+    }
+
+    public String getLastGraveName()
+    {
+        return this.lastGraveOwnerName;
     }
 
     /**

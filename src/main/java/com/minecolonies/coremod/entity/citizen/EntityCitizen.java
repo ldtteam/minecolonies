@@ -1487,7 +1487,10 @@ public class EntityCitizen extends AbstractEntityCitizen
         {
            world.setBlockState(firstValidPosition, BlockMinecoloniesGrave.getPlacementState(ModBlocks.blockGrave.getDefaultState(), new TileEntityGrave(), firstValidPosition));
            final TileEntityGrave graveEntity = (TileEntityGrave) world.getTileEntity(firstValidPosition);
-           InventoryUtils.transferAllItemHandler(citizenData.getInventory(), graveEntity.getInventory(), world, (int) firstValidPosition.getX(), (int) firstValidPosition.getY(), (int) firstValidPosition.getZ());
+           if(!InventoryUtils.transferAllItemHandler(citizenData.getInventory(), graveEntity.getInventory()))
+           {
+               InventoryUtils.dropItemHandler(citizenData.getInventory(), world, (int) getPosX(), (int) getPosY(), (int) getPosZ());
+           }
 
            graveEntity.setSavedCitizenName(citizenData.getName());
            graveEntity.setSavedCitizenDataNBT(citizenData.serializeNBT());

@@ -1316,7 +1316,7 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public void removeNeedToMourn(final String name)
+    public void removeNeedToMourn(final String name, final boolean forceDirect)
     {
 
     }

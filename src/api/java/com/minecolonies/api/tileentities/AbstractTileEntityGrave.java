@@ -131,6 +131,14 @@ public abstract class AbstractTileEntityGrave extends TileEntity implements INam
     }
 
     /**
+     * Get the data of the saved citizen
+     */
+    public CompoundNBT getSavedCitizenDataNBT()
+    {
+        return this.savedCitizenDataNBT;
+    }
+
+    /**
      * Set the name of the saved citizen data
      * @param citizenName
      */
