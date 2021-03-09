@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.entity.pathfinding.pathjobs;
 
-import com.minecolonies.api.entity.pathfinding.RandomPathResult;
+import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
@@ -32,7 +32,7 @@ public class PathJobRandomPos extends AbstractPathJob
     /**
      * Required avoidDistance.
      */
-    protected final int distance;
+    protected final int minDistFromStart;
 
     /**
      * Random pathing rand.
@@ -42,53 +42,53 @@ public class PathJobRandomPos extends AbstractPathJob
     /**
      * Minimum distance to the goal.
      */
-    private final int minDistance;
+    private final int maxDistToDest;
 
     /**
      * Prepares the PathJob for the path finding system.
      *
-     * @param world         world the entity is in.
-     * @param start         starting location.
-     * @param distance how far to move away.
-     * @param range         max range to search.
-     * @param entity        the entity.
-     */
-    public PathJobRandomPos(
-      final World world,
-      @NotNull final BlockPos start,
-      final int distance,
-      final int range,
-      final LivingEntity entity)
-    {
-        super(world, start, start, range, new RandomPathResult(), entity);
-        this.distance = distance;
-        this.minDistance = range;
-
-        final Tuple<Direction, Direction> dir = BlockPosUtil.getRandomDirectionTuple(random);
-        this.destination = start.offset(dir.getA(), distance).offset(dir.getB(), distance);
-    }
-
-    /**
-     * Prepares the PathJob for the path finding system.
-     *
-     * @param world         world the entity is in.
-     * @param start         starting location.
+     * @param world    world the entity is in.
+     * @param start    starting location.
      * @param minDistFromStart how far to move away.
-     * @param range         max range to search.
-     * @param entity        the entity.
+     * @param range    max range to search.
+     * @param entity   the entity.
      */
     public PathJobRandomPos(
       final World world,
       @NotNull final BlockPos start,
       final int minDistFromStart,
       final int range,
+      final LivingEntity entity)
+    {
+        super(world, start, start, range, new PathResult<PathJobRandomPos>(), entity);
+        this.minDistFromStart = minDistFromStart;
+        this.maxDistToDest = range;
+
+        final Tuple<Direction, Direction> dir = BlockPosUtil.getRandomDirectionTuple(random);
+        this.destination = start.offset(dir.getA(), minDistFromStart).offset(dir.getB(), minDistFromStart);
+    }
+
+    /**
+     * Prepares the PathJob for the path finding system.
+     *
+     * @param world            world the entity is in.
+     * @param start            starting location.
+     * @param minDistFromStart how far to move away.
+     * @param serachRange            max range to search.
+     * @param entity           the entity.
+     */
+    public PathJobRandomPos(
+      final World world,
+      @NotNull final BlockPos start,
+      final int minDistFromStart,
+      final int serachRange,
       final int maxDistToDest,
       final LivingEntity entity,
       @NotNull final BlockPos dest)
     {
-        super(world, start, start, range, new RandomPathResult(), entity);
-        this.distance = minDistFromStart;
-        this.minDistance = maxDistToDest;
+        super(world, start, dest, serachRange, new PathResult<PathJobRandomPos>(), entity);
+        this.minDistFromStart = minDistFromStart;
+        this.maxDistToDest = maxDistToDest;
         this.destination = dest;
     }
 
@@ -105,13 +105,6 @@ public class PathJobRandomPos extends AbstractPathJob
         return super.search();
     }
 
-    @NotNull
-    @Override
-    public RandomPathResult getResult()
-    {
-        return (RandomPathResult) super.getResult();
-    }
-
     @Override
     protected double computeHeuristic(@NotNull final BlockPos pos)
     {
@@ -121,9 +114,9 @@ public class PathJobRandomPos extends AbstractPathJob
     @Override
     protected boolean isAtDestination(@NotNull final Node n)
     {
-        if (start.distanceSq(n.pos) > distance * distance && isWalkableSurface(world.getBlockState(n.pos.down()), n.pos.down()) == SurfaceType.WALKABLE && destination.distanceSq(n.pos) < this.minDistance * this.minDistance)
+        if (start.distanceSq(n.pos) > minDistFromStart * minDistFromStart && isWalkableSurface(world.getBlockState(n.pos.down()), n.pos.down()) == SurfaceType.WALKABLE
+              && destination.distanceSq(n.pos) < this.maxDistToDest * this.maxDistToDest)
         {
-            getResult().randomPos = n.pos;
             return true;
         }
         return false;
@@ -134,5 +127,17 @@ public class PathJobRandomPos extends AbstractPathJob
     {
         //  For Result Score lower is better
         return destination.distanceSq(n.pos);
+    }
+
+    /**
+     * Checks if position and range match the given parameters
+     *
+     * @param range max dist to dest range
+     * @param pos   dest to look from
+     * @return
+     */
+    public boolean posAndRangeMatch(final int range, final BlockPos pos)
+    {
+        return destination != null && pos != null && range == maxDistToDest && destination.equals(pos);
     }
 }

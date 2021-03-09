@@ -116,8 +116,6 @@ public final class Pathfinding
         final double dy = vec.getY();
         final double dz = vec.getZ();
 
-        RenderSystem.pushTextureAttributes();
-
         matrixStack.push();
         matrixStack.translate(-dx, -dy, -dz);
 
@@ -167,7 +165,9 @@ public final class Pathfinding
         }
 
         RenderSystem.disableDepthTest();
-        RenderSystem.popAttributes();
+        RenderSystem.enableTexture();
+        RenderSystem.enableBlend();
+        RenderSystem.enableLighting();
         matrixStack.pop();
     }
 

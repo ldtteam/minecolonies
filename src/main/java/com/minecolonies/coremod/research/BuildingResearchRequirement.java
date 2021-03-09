@@ -26,6 +26,11 @@ public class BuildingResearchRequirement implements IResearchRequirement
     private static final String TAG_BUILDING_LVL = "building-lvl";
 
     /**
+     * The NBT tag for if a requirement must be filled by a single building.
+     */
+    private static final String TAG_BUILDING_SINGLE = "building-single";
+
+    /**
      * The building level.
      */
     private final int    buildingLevel;
@@ -33,17 +38,24 @@ public class BuildingResearchRequirement implements IResearchRequirement
      * The building desc.
      */
     private final String building;
+    /**
+     * If true, requires that a single building meet the level requirements.
+     */
+    private final boolean singleBuilding;
 
     /**
      * Create a building based research requirement.
      *
-     * @param buildingLevel the required building level.
-     * @param building      the required building class.
+     * @param buildingLevel  the required building level.
+     * @param building       the required building class.
+     * @param singleBuilding if true, must be fulfilled by a single building in the colony.
+     *                       Otherwise, will be fulfilled if all buildings of the schematic combined meet the requirement.
      */
-    public BuildingResearchRequirement(final int buildingLevel, final String building)
+    public BuildingResearchRequirement(final int buildingLevel, final String building, final boolean singleBuilding)
     {
         this.buildingLevel = buildingLevel;
         this.building = building;
+        this.singleBuilding = singleBuilding;
     }
 
     /**
@@ -55,6 +67,7 @@ public class BuildingResearchRequirement implements IResearchRequirement
     {
         this.buildingLevel = nbt.getInt(TAG_BUILDING_LVL);
         this.building = nbt.getString(TAG_BUILDING_NAME);
+        this.singleBuilding = nbt.getBoolean(TAG_BUILDING_SINGLE);
     }
 
     /**
@@ -83,11 +96,21 @@ public class BuildingResearchRequirement implements IResearchRequirement
             {
                 if (building.getSchematicName().equals(this.getBuilding()))
                 {
-                    sum += building.getBuildingLevel();
-
-                    if(sum >= this.buildingLevel)
+                    if(singleBuilding)
                     {
-                        return true;
+                        if(building.getBuildingLevel() >= this.buildingLevel)
+                        {
+                            return true;
+                        }
+                    }
+                    else
+                    {
+                        sum += building.getBuildingLevel();
+
+                        if (sum >= this.buildingLevel)
+                        {
+                            return true;
+                        }
                     }
                 }
             }
@@ -98,11 +121,21 @@ public class BuildingResearchRequirement implements IResearchRequirement
             {
                 if (building.getSchematicName().equalsIgnoreCase(this.building))
                 {
-                    sum += building.getBuildingLevel();
-
-                    if (sum >= this.buildingLevel)
+                    if(singleBuilding)
                     {
-                        return true;
+                        if(building.getBuildingLevel() >= this.buildingLevel)
+                        {
+                            return true;
+                        }
+                    }
+                    else
+                    {
+                        sum += building.getBuildingLevel();
+
+                        if (sum >= this.buildingLevel)
+                        {
+                            return true;
+                        }
                     }
                 }
             }
@@ -113,7 +146,18 @@ public class BuildingResearchRequirement implements IResearchRequirement
     @Override
     public TranslationTextComponent getDesc()
     {
-        return new TranslationTextComponent("com.minecolonies.coremod.research.requirement.building.level", new TranslationTextComponent("block.minecolonies.blockhut" + this.building), this.buildingLevel);
+        if(singleBuilding)
+        {
+            return new TranslationTextComponent("com.minecolonies.coremod.research.requirement.building.mandatory.level",
+              new TranslationTextComponent("block.minecolonies.blockhut" + this.building),
+              this.buildingLevel);
+        }
+        else
+        {
+            return new TranslationTextComponent("com.minecolonies.coremod.research.requirement.building.level",
+              new TranslationTextComponent("block.minecolonies.blockhut" + this.building),
+              this.buildingLevel);
+        }
     }
 
     @Override
@@ -125,6 +169,7 @@ public class BuildingResearchRequirement implements IResearchRequirement
         CompoundNBT nbt = new CompoundNBT();
         nbt.putString(TAG_BUILDING_NAME, building);
         nbt.putInt(TAG_BUILDING_LVL, buildingLevel);
+        nbt.putBoolean(TAG_BUILDING_SINGLE, singleBuilding);
         return nbt;
     }
 }

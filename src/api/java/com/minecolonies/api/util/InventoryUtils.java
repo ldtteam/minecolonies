@@ -713,6 +713,20 @@ public class InventoryUtils
     }
 
     /**
+     * Returns the sum of the durability of occurrences in the {@link ICapabilityProvider}.
+     *
+     * @param provider                    {@link ICapabilityProvider} to scan.
+     * @param itemStackSelectionPredicate The predicate used to select the stacks to count.
+     * @return Amount of occurrences of stacks that match the given predicate.
+     */
+    public static int getDurabilityInProvider(@NotNull final ICapabilityProvider provider, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
+    {
+        return getItemHandlersFromProvider(provider).stream().filter(Objects::nonNull)
+                 .mapToInt(handler -> filterItemHandler(handler, itemStackSelectionPredicate).stream().mapToInt(ItemStackUtils::getDurability).sum())
+                 .sum();
+    }
+
+    /**
      * Check if a building has more than a count in stack. Return the count it has if it has less.
      *
      * @param provider building to check in.

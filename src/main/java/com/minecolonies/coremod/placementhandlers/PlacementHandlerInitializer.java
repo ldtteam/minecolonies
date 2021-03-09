@@ -26,8 +26,6 @@ public final class PlacementHandlerInitializer
         PlacementHandlers.add(new RackPlacementHandler());
         PlacementHandlers.add(new GravePlacementHandler());
         PlacementHandlers.add(new WayPointBlockPlacementHandler());
-        PlacementHandlers.add(new ChestPlacementHandler());
-        PlacementHandlers.add(new FencePlacementHandler());
         PlacementHandlers.add(new GatePlacementHandler());
         PlacementHandlers.add(new NetherrackPlacementHandler());
     }

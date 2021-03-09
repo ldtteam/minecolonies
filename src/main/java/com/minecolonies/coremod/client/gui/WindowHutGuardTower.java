@@ -20,6 +20,7 @@ import com.minecolonies.coremod.network.messages.server.colony.building.guard.Mo
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -43,6 +44,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
     private final Button buttonTaskPatrol;
     private final Button buttonTaskFollow;
     private final Button buttonTaskGuard;
+    private final Button buttonTaskMine;
     private final Button buttonSetTarget;
 
     /**
@@ -116,6 +118,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
         registerButton(GUI_SWITCH_TASK_PATROL, this::switchTask);
         registerButton(GUI_SWITCH_TASK_FOLLOW, this::switchTask);
         registerButton(GUI_SWITCH_TASK_GUARD, this::switchTask);
+        registerButton(GUI_SWITCH_TASK_MINE, this::switchTask);
 
         registerButton(GUI_LIST_BUTTON_SWITCH, this::switchAttackMode);
         registerButton(GUI_LIST_BUTTON_UP, this::updatePriority);
@@ -124,6 +127,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
         buttonTaskPatrol = this.findPaneOfTypeByID(GUI_SWITCH_TASK_PATROL, Button.class);
         buttonTaskFollow = this.findPaneOfTypeByID(GUI_SWITCH_TASK_FOLLOW, Button.class);
         buttonTaskGuard = this.findPaneOfTypeByID(GUI_SWITCH_TASK_GUARD, Button.class);
+        buttonTaskMine = this.findPaneOfTypeByID(GUI_SWITCH_TASK_MINE, Button.class);
         buttonSetTarget = this.findPaneOfTypeByID(GUI_BUTTON_SET_TARGET, Button.class);
     }
 
@@ -178,6 +182,16 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
                     rowPane.findPaneOfTypeByID("position", Text.class).setText(pos.getX() + " " + pos.getY() + " " + pos.getZ());
                 }
             });
+        }
+        else if (task.equals(GuardTask.MINE))
+        {
+            setMinePosLabel();
+        }
+
+
+        if (!building.canGuardMine())
+        {
+            buttonTaskMine.hide();
         }
 
         final ScrollingList mobsList = findPaneOfTypeByID(GUI_ELEMENT_LIST_MOBS, ScrollingList.class);
@@ -310,6 +324,11 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
             buttonSetTarget.setText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.targetGuard"));
             buttonTaskGuard.setEnabled(false);
         }
+        else if (task.equals(GuardTask.MINE) && building.canGuardMine())
+        {
+            buttonTaskMine.setEnabled(false);
+            buttonSetTarget.hide();
+        }
     }
 
     /**
@@ -438,6 +457,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
             buttonTaskPatrol.setEnabled(false);
             buttonTaskFollow.setEnabled(true);
             buttonTaskGuard.setEnabled(true);
+            buttonTaskMine.setEnabled(true);
 
             buttonSetTarget.show();
         }
@@ -449,7 +469,19 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
             buttonTaskFollow.setEnabled(false);
             buttonTaskGuard.setEnabled(true);
             buttonSetTarget.setEnabled(true);
+            buttonTaskMine.setEnabled(true);
             buttonSetTarget.show();
+        }
+        else if (button.getID().contains(GUI_SWITCH_TASK_MINE) && building.canGuardMine())
+        {
+            building.setTask(GuardTask.MINE);
+
+            buttonTaskPatrol.setEnabled(true);
+            buttonTaskFollow.setEnabled(true);
+            buttonTaskGuard.setEnabled(true);
+            buttonTaskMine.setEnabled(false);
+            buttonSetTarget.hide();
+
         }
         else
         {
@@ -458,11 +490,13 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
             buttonTaskPatrol.setEnabled(true);
             buttonTaskFollow.setEnabled(true);
             buttonTaskGuard.setEnabled(false);
+            buttonTaskMine.setEnabled(true);
 
             buttonSetTarget.show();
         }
         pullInfoFromHut();
         sendChangesToServer();
+        setMinePosLabel();
     }
 
     /**
@@ -568,5 +602,29 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
     {
         final ResourceLocation resourceName = building.getGuardType() == null ? new ResourceLocation("") : building.getGuardType().getRegistryName();
         Network.getNetwork().sendToServer(new GuardTaskMessage(building, resourceName, assignManually, patrolManually, retrieveOnLowHealth, task.ordinal(), tightGrouping, hireTrainees));
+    }
+
+    /**
+     * Sets the label for mine position if task is set to patrol mine
+     * Set to info text if mine position is null
+     */
+    private void setMinePosLabel()
+    {
+        final Text minePosLabel = window.findPaneOfTypeByID("minePos", Text.class);
+        if (task.equals(GuardTask.MINE))
+        {
+            if (building.getMinePos() != null)
+            {
+                minePosLabel.setText(new TranslationTextComponent("com.minecolonies.coremod.gui.worherhuts.patrollingmine", building.getMinePos().getCoordinatesAsString()));
+            }
+            else
+            {
+                minePosLabel.setText(new TranslationTextComponent("com.minecolonies.coremod.job.guard.assignmine"));
+            }
+        }
+        else
+        {
+            minePosLabel.clearText();
+        }
     }
 }

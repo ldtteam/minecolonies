@@ -33,7 +33,6 @@ import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.Constants.FUEL_SLOT;
 import static com.minecolonies.api.util.constant.Constants.SMELTABLE_SLOT;
-import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
 import static com.minecolonies.api.items.ModTags.fungi;
 
 /**
@@ -328,6 +327,24 @@ public final class ItemStackUtils
             return stack.getItem().getHarvestLevel(stack, net.minecraftforge.common.ToolType.get(toolType.getName()), null, null);
         }
         return -1;
+    }
+
+    /**
+     * Check if the first stack is a better tool than the second stack.
+     * @param stack1 the first stack to check.
+     * @param stack2 the second to compare with.
+     * @return true if better, false if worse or either of them is not a tool.
+     */
+    public static boolean isBetterTool(final ItemStack stack1, final ItemStack stack2)
+    {
+        for (final ToolType toolType : ToolType.values())
+        {
+            if (isTool(stack1, toolType) && isTool(stack2, toolType) && getMiningLevel(stack1, toolType) > getMiningLevel(stack2, toolType))
+            {
+                 return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -692,7 +709,7 @@ public final class ItemStackUtils
      * @return the size of the stack
      */
     @NotNull
-    public static int getSize(final ItemStack stack)
+    public static int getSize(@NotNull final ItemStack stack)
     {
         if (ItemStackUtils.isEmpty(stack))
         {
@@ -701,6 +718,24 @@ public final class ItemStackUtils
 
         return stack.getCount();
     }
+
+    /**
+     * get the Durability of the stack.
+     *
+     * @param stack to get the size from
+     * @return the size of the stack
+     */
+    @NotNull
+    public static int getDurability(@NotNull final ItemStack stack)
+    {
+        if (ItemStackUtils.isEmpty(stack))
+        {
+            return 0;
+        }
+
+        return stack.getMaxDamage() - stack.getDamage();
+    }
+
 
     /**
      * Method to compare to stacks, ignoring their stacksize.
@@ -757,8 +792,22 @@ public final class ItemStackUtils
             // Then sort on NBT
             if (itemStack1.hasTag() && itemStack2.hasTag())
             {
-                // Then sort on stack size
-                return ItemStack.areItemStackTagsEqual(itemStack1, itemStack2);
+                CompoundNBT nbt1 = itemStack1.getTag();
+                CompoundNBT nbt2 = itemStack2.getTag();
+
+                for(String key :nbt1.keySet())
+                {
+                    if(!matchDamage && key.equals("Damage"))
+                    {
+                        continue;
+                    }
+                    if(!nbt2.contains(key) || !nbt1.get(key).equals(nbt2.get(key)))
+                    {
+                        return false;
+                    }
+                }
+                
+                return nbt1.keySet().size() == nbt2.keySet().size();
             }
             else
             {
