@@ -51,7 +51,7 @@ public class ItemScepterLumberjack extends AbstractItemWithPosSelector
         final int maxX = Math.max(start.getX(), end.getX());
         final int maxZ = Math.max(start.getZ(), end.getZ());
         final int area = (maxX - minX + 1) * (maxZ - minZ + 1);
-        final int maxArea = (int) Math.floor(Math.PI * Math.pow(EntityAIWorkLumberjack.SEARCH_RANGE, 2));
+        final int maxArea = (int) Math.floor(2 * Math.pow(EntityAIWorkLumberjack.SEARCH_RANGE, 2));
 
         if (area > maxArea)
         {
