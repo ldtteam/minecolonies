@@ -12,6 +12,7 @@ import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.items.ModItems;
+import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.Network;
@@ -71,10 +72,7 @@ public class BuildingSifter extends AbstractBuildingWorker
     {
         super(c, l);
 
-        keepX.put(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, new ItemStack(ModItems.sifterMeshString), false, true), new net.minecraft.util.Tuple<>(1, false));
-        keepX.put(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, new ItemStack(ModItems.sifterMeshFlint), false, true), new net.minecraft.util.Tuple<>(1, false));
-        keepX.put(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, new ItemStack(ModItems.sifterMeshIron), false, true), new net.minecraft.util.Tuple<>(1, false));
-        keepX.put(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, new ItemStack(ModItems.sifterMeshDiamond), false, true), new net.minecraft.util.Tuple<>(1, false));
+        keepX.put(stack -> stack.getItem().isIn(ModTags.meshes), new net.minecraft.util.Tuple<>(4, false));
     }
 
     @NotNull
