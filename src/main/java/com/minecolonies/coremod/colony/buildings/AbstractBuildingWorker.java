@@ -17,6 +17,7 @@ import com.minecolonies.api.crafting.ClassicRecipe;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.MultiOutputRecipe;
+import com.minecolonies.api.crafting.RecipeStorage;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.inventory.container.ContainerCrafting;
@@ -43,7 +44,6 @@ import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.LootContext;
-import net.minecraft.loot.LootParameterSets;
 import net.minecraft.loot.LootParameters;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -288,7 +288,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         .withRandom(worker.getRandom())
         .withLuck((float) luck));
 
-        return storage.fullfillRecipe(builder.build(LootParameterSets.GIFT), handlers);
+        return storage.fullfillRecipe(builder.build(RecipeStorage.recipeLootParameters), handlers);
     }
 
     @Override

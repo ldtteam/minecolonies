@@ -13,6 +13,7 @@ import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 
@@ -201,6 +202,24 @@ public class Level
             nextNode = node.getRandomNextNode(this, 0);
         }
         return nextNode == null ? openNodes.peek() : nextNode;
+    }
+
+    public BlockPos getRandomCompletedNode(BuildingMiner buildingMiner)
+    {
+        Object[] nodeSet = nodes.keySet().toArray();
+        Node nextNode = nodes.get(nodeSet[rand.nextInt(nodeSet.length)]);
+        while (nextNode.getStatus() != Node.NodeStatus.COMPLETED || nextNode.getStyle() == LADDER_BACK)
+        {
+            nextNode = getNode(nextNode.getParent());
+        }
+        if (nextNode == null || nextNode.getStyle() == SHAFT)
+        {
+            return new BlockPos(ladderNode.getX() + 3 * buildingMiner.getVectorX(), getDepth() + 1, ladderNode.getZ() + 3 * buildingMiner.getVectorZ());
+        }
+        else
+        {
+            return new BlockPos(nextNode.getX(), getDepth() + 1, nextNode.getZ());
+        }
     }
 
     /**

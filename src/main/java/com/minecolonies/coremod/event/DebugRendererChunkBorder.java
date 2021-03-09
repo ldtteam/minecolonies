@@ -27,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
@@ -114,12 +115,11 @@ public class DebugRendererChunkBorder
         RenderSystem.disableTexture();
         RenderSystem.disableBlend();
         RenderSystem.lineWidth(1.0F);
-        
+
         RenderSystem.pushMatrix();
         RenderSystem.loadIdentity();
         RenderSystem.multMatrix(stack.getLast().getMatrix());
-        WorldVertexBufferUploader
-            .draw(buffer.getSecond(), buffer.getFirst().getDrawMode(), buffer.getFirst().getFormat(), buffer.getFirst().getVertexCount());
+        WorldVertexBufferUploader.draw(buffer.getSecond(), buffer.getFirst().getDrawMode(), buffer.getFirst().getFormat(), buffer.getFirst().getVertexCount());
         RenderSystem.popMatrix();
 
         RenderSystem.lineWidth(1.0F);
@@ -314,8 +314,8 @@ public class DebugRendererChunkBorder
         // create bytebuffer copy since buffer builder uses slice
         final Pair<DrawState, ByteBuffer> preResult = bufferbuilder.getNextBuffer();
         ByteBuffer temp = GLAllocation.createDirectByteBuffer(preResult.getSecond().capacity());
-        preResult.getSecond().clear();
-        temp.clear();
+        ((Buffer) preResult.getSecond()).clear();
+        ((Buffer) temp).clear();
         temp.put(preResult.getSecond());
         return Pair.of(preResult.getFirst(), temp);
     }

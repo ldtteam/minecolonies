@@ -459,17 +459,17 @@ public class CustomRecipe
         //Check first if the research effect exists.
         if (!IGlobalResearchTree.getInstance().hasResearchEffect(researchId) && !IGlobalResearchTree.getInstance().hasResearch(researchId))
         {
-            // If there's nothing registered with this effect, and no research with this key, we'll default to acting as if research was completed.
-            return true;
+            // If there's nothing registered with this effect, and no research with this key, we'll default to acting as if research is not yet completed.
+            return false;
         }
         else
         {
-            if (colony.getResearchManager().getResearchEffects().getEffectStrength(researchId) > 0)
+            if (IGlobalResearchTree.getInstance().hasResearchEffect(researchId) && colony.getResearchManager().getResearchEffects().getEffectStrength(researchId) > 0)
             {
                 // Research effect queried, present, and set to true.
                 return true;
             }
-            if (colony.getResearchManager().getResearchTree().hasCompletedResearch(researchId))
+            if (IGlobalResearchTree.getInstance().hasResearch(researchId) && colony.getResearchManager().getResearchTree().hasCompletedResearch(researchId))
             {
                 // Research ID queried and present.
                 // This will allow simple Recipe-style unlocks to exist without needing an extra effect category.

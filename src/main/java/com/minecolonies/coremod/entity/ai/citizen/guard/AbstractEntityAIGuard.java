@@ -22,9 +22,11 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.SittingEntity;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIFight;
+import com.minecolonies.coremod.entity.ai.citizen.miner.Level;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.client.SleepingParticleMessage;
 import com.minecolonies.coremod.util.NamedDamageSource;
@@ -523,7 +525,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     protected IAIState startWorkingAtOwnBuilding()
     {
         final ILocation rallyLocation = buildingGuards.getRallyLocation();
-        if (rallyLocation != null && rallyLocation.isReachableFromLocation(worker.getLocation()) || !canBeInterrupted())
+        if ((rallyLocation != null && rallyLocation.isReachableFromLocation(worker.getLocation()) || !canBeInterrupted()) || (buildingGuards.getTask() == GuardTask.MINE && buildingGuards.getMinePos() != null))
         {
             return PREPARING;
         }
@@ -585,6 +587,47 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
             if (currentPatrolPoint != null && (worker.isWorkerAtSiteWithMove(currentPatrolPoint, 3)))
             {
                 buildingGuards.arrivedAtPatrolPoint(worker);
+            }
+        }
+        return GUARD_PATROL;
+    }
+
+    /**
+     * Patrol between all completed nodes in the assigned mine
+     * @return the next point to patrol to
+     */
+    public IAIState patrolMine()
+    {
+        if (buildingGuards.getMinePos() == null)
+        {
+            return PREPARING;
+        }
+        if (currentPatrolPoint == null ||  worker.isWorkerAtSiteWithMove(currentPatrolPoint, 2))
+        {
+            final IBuilding building = buildingGuards.getColony().getBuildingManager().getBuilding(buildingGuards.getMinePos());
+            if (building != null)
+            {
+                if (building instanceof BuildingMiner)
+                {
+                    final BuildingMiner buildingMiner = (BuildingMiner) building;
+                    final Level level = buildingMiner.getCurrentLevel();
+                    if (level == null)
+                    {
+                        setNextPatrolTarget(buildingMiner.getPosition());
+                    }
+                    else
+                    {
+                        setNextPatrolTarget(level.getRandomCompletedNode(buildingMiner));
+                    }
+                }
+                else
+                {
+                    buildingGuards.setTask(GuardTask.PATROL);
+                }
+            }
+            else
+            {
+                buildingGuards.setTask(GuardTask.PATROL);
             }
         }
         return GUARD_PATROL;
@@ -728,6 +771,8 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
                 return guard();
             case FOLLOW:
                 return follow();
+            case MINE:
+                return patrolMine();
             default:
                 return PREPARING;
         }
@@ -1062,6 +1107,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         switch (buildingGuards.getTask())
         {
             case PATROL:
+            case MINE:
                 return currentPatrolPoint != null ? currentPatrolPoint : worker.getPosition();
             case FOLLOW:
                 return buildingGuards.getPositionToFollow();
@@ -1084,6 +1130,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         switch (buildingGuards.getTask())
         {
             case PATROL:
+            case MINE:
                 return MAX_PATROL_DERIVATION;
             case FOLLOW:
                 return MAX_FOLLOW_DERIVATION;
