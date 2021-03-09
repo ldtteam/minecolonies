@@ -275,7 +275,7 @@ public final class StandardRequests
 
             if (posInList >= 0)
             {
-                return ImmutableList.of(new TranslationTextComponent(FROM, requester), new TranslationTextComponent(IN_QUEUE, posInList));
+                return ImmutableList.of(new TranslationTextComponent(FROM, requester), new TranslationTextComponent(IN_QUEUE+1, posInList));
             }
             else
             {
@@ -399,7 +399,7 @@ public final class StandardRequests
 
                 if (posInList >= 0)
                 {
-                    return ImmutableList.of(new TranslationTextComponent(AT, requester), new TranslationTextComponent(IN_QUEUE, posInList));
+                    return ImmutableList.of(new TranslationTextComponent(AT, requester), new TranslationTextComponent(IN_QUEUE+1, posInList));
                 }
                 else if (getState() == RequestState.FOLLOWUP_IN_PROGRESS)
                 {
