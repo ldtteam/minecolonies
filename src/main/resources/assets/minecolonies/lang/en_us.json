@@ -1875,5 +1875,7 @@
   "block.minecolonies.blockstash.name": "Stash",
   "block.minecolonies.blocksubstitution": "Placeholder Block",
   "block.minecolonies.blocksubstitution.name": "Placeholder Block",
-  "block.minecolonies.blockwaypoint": "Waypoint Placeholder"
+  "block.minecolonies.blockwaypoint": "Waypoint Placeholder",
+  "block.minecolonies.blockhutgraveyard": "Graveyard",
+  "block.minecolonies.blockhutgraveyard.name": "Graveyard"
 }

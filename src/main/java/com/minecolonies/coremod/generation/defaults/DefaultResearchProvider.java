@@ -13,6 +13,7 @@ import net.minecraft.item.Items;
 import net.minecraft.resources.ResourcePackType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 
 import java.io.IOException;
@@ -128,6 +129,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         effects.add(new ResearchEffect(ModBuildings.dyer.getBuildingBlock()).setTranslatedName("Unlocks Dyer's Hut"));
         effects.add(new ResearchEffect(ModBuildings.fletcher.getBuildingBlock()).setTranslatedName("Unlocks Fletcher's Hut"));
         effects.add(new ResearchEffect(ModBuildings.florist.getBuildingBlock()).setTranslatedName("Unlocks Flower Shop"));
+        effects.add(new ResearchEffect(ModBuildings.graveyard.getBuildingBlock()).setTranslatedName("Unlocks Graveyard"));
         effects.add(new ResearchEffect(ModBuildings.glassblower.getBuildingBlock()).setTranslatedName("Unlocks Glassblower's Hut"));
         effects.add(new ResearchEffect(ModBuildings.hospital.getBuildingBlock()).setTranslatedName("Unlocks Hospital"));
         effects.add(new ResearchEffect(ModBuildings.library.getBuildingBlock()).setTranslatedName("Unlocks Library"));
@@ -607,6 +609,16 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .addItemCost(Items.DIAMOND, 1)
           .addEffect(ModBuildings.mysticalSite.getBuildingBlock(), 1)
           .addToList(r);
+
+        // Primary Research #6
+        new Research(new ResourceLocation(Constants.MOD_ID, "civilian/remembrance"), CIVIL).setTranslatedName("Remembrance")
+                .setSortOrder(6)
+                .setIcon(ModBlocks.blockHutGraveyard.asItem())
+                .addItemCost(Items.BONE, 16)
+                .addEffect(ModBuildings.graveyard.getBuildingBlock(), 1)
+                .addBuildingRequirement(ModBuildings.TOWNHALL_ID, 2)
+                .setTranslatedSubtitle("Our fallen shall not be forgotten!")
+                .addToList(r);
         return r;
     }
 
