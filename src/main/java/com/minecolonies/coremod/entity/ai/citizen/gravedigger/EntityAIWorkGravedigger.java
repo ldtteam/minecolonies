@@ -11,6 +11,7 @@ import com.minecolonies.api.tileentities.TileEntityGrave;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingGraveyard;
 import com.minecolonies.coremod.colony.jobs.JobGravedigger;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
@@ -54,6 +55,11 @@ public class EntityAIWorkGravedigger extends AbstractEntityAICrafting<JobGravedi
      * The max resurection chance cap [0.0 min -> 1.0 max]
      */
     private static final double MAX_RESURECTION_CHANCE = 0.10;
+
+    /**
+     * The bonus to max resurection chance cap per max lvl of Mystical Site in the city
+     */
+    private static final double MAX_RESURECTION_CHANCE_MYSTICAL_LVL_BONUS = 0.01;
 
     /**
      * The random variable.
@@ -333,7 +339,8 @@ public class EntityAIWorkGravedigger extends AbstractEntityAICrafting<JobGravedi
         double chance = buildingGraveyard.getBuildingLevel() * RESURECT_BUILDING_LVL_WEIGHT +
                 worker.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Mana) * RESURECT_WORKER_MANA_LVL_WEIGHT;
 
-        if (chance > MAX_RESURECTION_CHANCE) { chance = MAX_RESURECTION_CHANCE; }
+        double cap = MAX_RESURECTION_CHANCE + worker.getCitizenColonyHandler().getColony().getBuildingManager().getMysticalSiteMaxBuildingLevel() * MAX_RESURECTION_CHANCE_MYSTICAL_LVL_BONUS;
+        if (chance > cap) { chance = cap; }
 
         if (chance >= random.nextDouble())
         {
