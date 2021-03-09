@@ -1038,7 +1038,7 @@ public class EntityCitizen extends AbstractEntityCitizen
             return false;
         }
 
-        if (getCitizenColonyHandler().getColony().isMourning() && mourning)
+        if (getCitizenColonyHandler().getColony().isMourning() && mourning && !(citizenJobHandler.getColonyJob() instanceof JobGravedigger))
         {
             setVisibleStatusIfNone(MOURNING);
             desiredActivity = DesiredActivity.MOURN;
