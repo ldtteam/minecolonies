@@ -126,6 +126,8 @@ public class ClientEventHandler
             handleRenderBuildTool(event, world, player);
         }
 
+        DebugRendererChunkBorder.renderWorldLastEvent(event);
+
         renderBuffer.finish();
     }
 

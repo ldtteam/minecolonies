@@ -9,7 +9,6 @@ import com.minecolonies.api.inventory.container.ContainerRack;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.WorldUtil;
-import io.netty.buffer.Unpooled;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -18,7 +17,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
@@ -553,11 +551,7 @@ public class TileEntityRack extends AbstractTileEntityRack
     @Override
     public Container createMenu(final int id, @NotNull final PlayerInventory inv, @NotNull final PlayerEntity player)
     {
-        final PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
-        buffer.writeBlockPos(this.getPos());
-        buffer.writeBlockPos(this.getOtherChest() == null ? BlockPos.ZERO : this.getOtherChest().getPos());
-
-        return new ContainerRack(id, inv, buffer);
+        return new ContainerRack(id, inv, getPos(), getOtherChest() == null ? BlockPos.ZERO : getOtherChest().getPos());
     }
 
     @NotNull

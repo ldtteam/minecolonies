@@ -45,19 +45,34 @@ public class ContainerRack extends Container
     private final int inventorySize;
 
     /**
+     * Deserialize packet buffer to container instance.
+     *
+     * @param windowId     the id of the window.
+     * @param inv          the player inventory.
+     * @param packetBuffer network buffer
+     * @return new instance
+     */
+    public static ContainerRack fromPacketBuffer(final int windowId, final PlayerInventory inv, final PacketBuffer packetBuffer)
+    {
+        final BlockPos tePos = packetBuffer.readBlockPos();
+        final BlockPos neighborPos = packetBuffer.readBlockPos();
+        return new ContainerRack(windowId, inv, tePos, neighborPos);
+    }
+
+    /**
      * The container constructor.
      *
      * @param windowId the window id.
      * @param inv      the inventory.
-     * @param extra    some extra data.
+     * @param rack     te world pos.
+     * @param neighbor neighbor te world pos
      */
-    public ContainerRack(final int windowId, final PlayerInventory inv, final PacketBuffer extra)
+    public ContainerRack(final int windowId, final PlayerInventory inv, final BlockPos rack, final BlockPos neighbor)
     {
         super(ModContainers.rackInv, windowId);
-        final BlockPos rack = extra.readBlockPos();
-        final BlockPos neighbor = extra.readBlockPos();
 
         final AbstractTileEntityRack abstractTileEntityRack = (AbstractTileEntityRack) inv.player.world.getTileEntity(rack);
+        // TODO: bug, what if neighbor is actually bp.ZERO? (unlikely to happen)
         final AbstractTileEntityRack neighborRack = neighbor.equals(BlockPos.ZERO) ? null : (AbstractTileEntityRack) inv.player.world.getTileEntity(neighbor);
 
         if (neighborRack != null)

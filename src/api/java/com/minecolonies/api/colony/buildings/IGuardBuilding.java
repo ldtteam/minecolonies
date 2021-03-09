@@ -256,4 +256,10 @@ public interface IGuardBuilding extends IBuildingWorker
      * @return true if so.
      */
     boolean requiresManualTarget();
+
+    /**
+     * Get the position of the assigned mine
+     * @return the coords of the assigned mine
+     */
+    BlockPos getMinePos();
 }

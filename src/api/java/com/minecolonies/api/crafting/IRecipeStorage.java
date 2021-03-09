@@ -73,6 +73,11 @@ public interface IRecipeStorage
         return fullfillRecipe(world, Arrays.asList(inventories));
     }
 
+    default boolean fullFillRecipe(@NotNull final LootContext context, @NotNull final IItemHandler... inventories)
+    {
+        return fullfillRecipe(context, Arrays.asList(inventories));
+    }
+
     /**
      * Check for space, remove items, and insert crafted items.
      *
@@ -131,6 +136,18 @@ public interface IRecipeStorage
      * @return list of items that weren't consumed during crafting
      */
     List<ItemStack> getSecondaryOutputs();
+
+    /**
+     * Get the tools & Secondary Output (leave behind in grid)
+     * @return list of items that weren't consumed during crafting
+     */
+    List<ItemStack> getCraftingToolsAndSecondaryOutputs();
+
+    /**
+     * Get the tools (leave behind in grid)
+     * @return list of items that weren't consumed during crafting
+     */
+    List<ItemStack> getCraftingTools();
 
     /** 
      * Get the location/id of the Loot table used for optional outputs

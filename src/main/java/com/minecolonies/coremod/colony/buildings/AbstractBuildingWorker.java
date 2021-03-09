@@ -17,6 +17,8 @@ import com.minecolonies.api.crafting.ClassicRecipe;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.MultiOutputRecipe;
+import com.minecolonies.api.crafting.RecipeStorage;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.api.items.ModTags;
@@ -34,7 +36,6 @@ import com.minecolonies.coremod.colony.requestsystem.resolvers.BuildingRequestRe
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingProductionResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingRequestResolver;
 import com.minecolonies.coremod.network.messages.server.colony.building.worker.BuildingHiringModeMessage;
-import io.netty.buffer.Unpooled;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -42,6 +43,9 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
+import net.minecraft.loot.LootContext;
+
+import net.minecraft.loot.LootParameters;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.PacketBuffer;
@@ -51,6 +55,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fml.network.NetworkHooks;
@@ -265,7 +270,26 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     public boolean fullFillRecipe(final IRecipeStorage storage)
     {
         final List<IItemHandler> handlers = getHandlers();
-        return storage.fullfillRecipe(this.getColony().getWorld(), handlers);
+
+        final AbstractEntityCitizen worker = this.getMainCitizen().getEntity().orElse(null);
+
+        if(worker == null)
+        {
+            // we shouldn't hit this case, but just in case...
+            return storage.fullfillRecipe(this.getColony().getWorld(), handlers);
+        }
+
+        final int primarySkill =worker.getCitizenData().getCitizenSkillHandler().getLevel(this.getPrimarySkill());
+        final int luck = (int)(((primarySkill + 1) * 2) - Math.pow((primarySkill + 1 ) / 10.0, 2));
+
+        LootContext.Builder builder =  (new LootContext.Builder((ServerWorld) this.getColony().getWorld())
+        .withParameter(LootParameters.field_237457_g_, worker.getPositionVec())
+        .withParameter(LootParameters.THIS_ENTITY, worker)
+        .withParameter(LootParameters.TOOL, worker.getHeldItemMainhand())
+        .withRandom(worker.getRandom())
+        .withLuck((float) luck));
+
+        return storage.fullfillRecipe(builder.build(RecipeStorage.recipeLootParameters), handlers);
     }
 
     @Override
@@ -796,10 +820,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             @Override
             public Container createMenu(final int id, @NotNull final PlayerInventory inv, @NotNull final PlayerEntity player)
             {
-                final PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
-                buffer.writeBoolean(canCraftComplexRecipes());
-                buffer.writeBlockPos(getID());
-                return new ContainerCrafting(id, inv, buffer);
+                return new ContainerCrafting(id, inv, canCraftComplexRecipes(), getID());
             }
         }, buffer -> new PacketBuffer(buffer.writeBoolean(canCraftComplexRecipes())).writeBlockPos(getID()));
     }

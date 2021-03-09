@@ -241,4 +241,14 @@ public class ItemStorage
     {
         return stack.getDamage();
     }
+
+    /**
+     * Getter for the remaining durability value.
+     *
+     * @return the durability value.
+     */
+    public int getRemainingDurablityValue()
+    {
+        return stack.getMaxDamage() - stack.getDamage();
+    }
 }

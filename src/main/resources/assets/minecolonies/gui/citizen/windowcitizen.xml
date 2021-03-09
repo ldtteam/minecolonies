@@ -2,7 +2,7 @@
         lightbox="false"
         xsi:noNamespaceSchemaLocation="file:../../../../../../api/java/com/minecolonies/blockout/blockOut.xsd">
 
-    <image source="minecolonies:textures/gui/citizen/colonist_papper.png" size="190 244" pos="95 0"/>
+    <image source="minecolonies:textures/gui/citizen/colonist_paper.png" size="190 244" pos="95 0"/>
 
     <switch id="head" size="100% 100%" pos="0 0">
         <view>

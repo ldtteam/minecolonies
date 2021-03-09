@@ -37,17 +37,31 @@ public class ContainerBuildingInventory extends Container
     private final int inventorySize;
 
     /**
+     * Deserialize packet buffer to container instance.
+     *
+     * @param windowId     the id of the window.
+     * @param inv          the player inventory.
+     * @param packetBuffer network buffer
+     * @return new instance
+     */
+    public static ContainerBuildingInventory fromPacketBuffer(final int windowId, final PlayerInventory inv, final PacketBuffer packetBuffer)
+    {
+        final int colonyId = packetBuffer.readVarInt();
+        final BlockPos tePos = packetBuffer.readBlockPos();
+        return new ContainerBuildingInventory(windowId, inv, colonyId, tePos);
+    }
+
+    /**
      * Constructor to create an instance of this container.
      *
      * @param windowId the id of the window.
      * @param inv      the player inventory.
-     * @param extra    some extra data
+     * @param colonyId colony id
+     * @param pos      te world pos
      */
-    public ContainerBuildingInventory(final int windowId, final PlayerInventory inv, final PacketBuffer extra)
+    public ContainerBuildingInventory(final int windowId, final PlayerInventory inv, final int colonyId, final BlockPos pos)
     {
         super(ModContainers.buildingInv, windowId);
-        final int colonyId = extra.readVarInt();
-        final BlockPos pos = extra.readBlockPos();
 
         tileEntityColonyBuilding = (TileEntityColonyBuilding) inv.player.world.getTileEntity(pos);
         this.buildingInventory = tileEntityColonyBuilding.getInventory();

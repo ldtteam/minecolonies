@@ -6,7 +6,7 @@
             <layout source="minecolonies:gui/layouthuts/layouthutpageactionsmin.xml"/>
         </view>
         <view id="resourceActions" size="100% 100%">
-            <image source="minecolonies:textures/gui/builderhut/builder_papper.png" size="190 244"/>
+            <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
             <label size="130 11" pos="30 14" textalign="MIDDLE" color="black"
                    label="$(com.minecolonies.coremod.gui.warehouse.upgrade)"/>
             <box size="164 30" linewidth="2" pos="13 29">
@@ -26,7 +26,7 @@
                          label="$(com.minecolonies.coremod.gui.warehouse.sort)"/>
         </view>
         <view>
-            <image source="minecolonies:textures/gui/builderhut/builder_papper.png" size="190 244"/>
+            <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
             <label size="130 11" pos="30 14" textalign="MIDDLE" color="black"
                    label="$(com.minecolonies.coremod.gui.warehouse.stock)"/>
             <list id="resources" size="170 100" pos="13 50">

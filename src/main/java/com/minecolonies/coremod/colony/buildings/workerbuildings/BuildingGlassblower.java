@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.ldtteam.blockout.views.Window;
-import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -19,7 +18,6 @@ import com.minecolonies.coremod.client.gui.WindowHutGlassblower;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
 import com.minecolonies.coremod.colony.jobs.JobGlassblower;
 import com.minecolonies.coremod.util.FurnaceRecipes;
-import io.netty.buffer.Unpooled;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -33,7 +31,6 @@ import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.fml.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
@@ -189,10 +186,7 @@ public class BuildingGlassblower extends AbstractBuildingSmelterCrafter
             @Override
             public Container createMenu(final int id, @NotNull final PlayerInventory inv, @NotNull final PlayerEntity player)
             {
-                final PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
-                buffer.writeBoolean(canCraftComplexRecipes());
-                buffer.writeBlockPos(getID());
-                return new ContainerCrafting(id, inv, buffer);
+                return new ContainerCrafting(id, inv, canCraftComplexRecipes(), getID());
             }
         }, buffer -> new PacketBuffer(buffer.writeBoolean(canCraftComplexRecipes())).writeBlockPos(getID()));
     }
