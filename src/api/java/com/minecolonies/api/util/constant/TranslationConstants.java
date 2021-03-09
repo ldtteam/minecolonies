@@ -438,7 +438,7 @@ public final class TranslationConstants
     @NonNls
     public static final String IN_QUEUE                                                             = "com.minecolonies.coremod.listentry";
     @NonNls
-    public static final String IN_PROGRESS                                                          = "com.minecolonies.coremod.in_progrss";
+    public static final String IN_PROGRESS                                                          = "com.minecolonies.coremod.in_progress";
     @NonNls
     public static final String MISSING_DELIVERIES                                                   = "com.minecolonies.coremod.missingitems";
     @NonNls
