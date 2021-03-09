@@ -18,9 +18,9 @@ import net.minecraft.util.Tuple;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.TreeMap;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.MAX_CITIZEN_LEVEL;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
@@ -48,7 +48,7 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
     /**
      * Skill map.
      */
-    public Map<Skill, Tuple<Integer, Double>> skillMap = new HashMap<>();
+    public Map<Skill, Tuple<Integer, Double>> skillMap = new TreeMap<>((s1, s2) -> s1.toString().compareTo(s2.toString()));
 
     @Override
     public void init(final int levelCap)

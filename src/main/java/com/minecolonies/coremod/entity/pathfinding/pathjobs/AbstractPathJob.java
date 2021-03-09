@@ -30,6 +30,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.math.vector.Vector3i;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -180,13 +181,13 @@ public abstract class AbstractPathJob implements Callable<Path>
      * @param startRestriction start of restricted area.
      * @param endRestriction   end of restricted area.
      * @param range            expected range
-     * @param grow             restriction area grow
+     * @param grow             restriction area grow vector
      * @param result           path result.
      * @param entity           the entity.
      * @see AbstractPathJob#AbstractPathJob(World, BlockPos, BlockPos, int, LivingEntity)
      */
     public AbstractPathJob(final World world, @NotNull final BlockPos start, final BlockPos startRestriction, final BlockPos endRestriction, 
-        final int range, final BlockPos grow, final PathResult result, final LivingEntity entity)
+        final int range, final Vector3i grow, final PathResult result, final LivingEntity entity)
     {
         this.minX = Math.min(startRestriction.getX(), endRestriction.getX()) - grow.getX();
         this.minZ = Math.min(startRestriction.getZ(), endRestriction.getZ()) - grow.getZ();

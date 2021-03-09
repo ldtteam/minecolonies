@@ -11,6 +11,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.vector.Vector3i;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,7 +30,7 @@ public class PathJobFindTree extends AbstractPathJob
     /**
      * How much should be restricted area shrinked because of isTree check
      */
-    private static final BlockPos AREA_SHRINK = new BlockPos(-1, 0, -1);
+    private static final Vector3i AREA_SHRINK = new Vector3i(-1, 0, -1);
 
     /**
      * The location of the hut of the lumberjack.
@@ -118,7 +119,7 @@ public class PathJobFindTree extends AbstractPathJob
     @Override
     protected double computeHeuristic(@NotNull final BlockPos pos)
     {
-        return furthestRestriction == null ? pos.distanceSq(hutLocation) * TIE_BREAKER : Math.sqrt(BlockPosUtil.getDistanceSquared2D(pos, furthestRestriction));
+        return furthestRestriction == null ? pos.distanceSq(hutLocation) * TIE_BREAKER : BlockPosUtil.getDistanceSquared2D(pos, furthestRestriction);
     }
 
     @Override
