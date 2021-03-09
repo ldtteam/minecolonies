@@ -890,6 +890,7 @@
   "com.minecolonies.coremod.colonysizechange": "All land within %d chunks of %s has been claimed.",
 
   "com.minecolonies.coremod.mourning": "There has been a death in the colony. The colony will mourn %s tomorrow out of respect.",
+  "com.minecolonies.coremod.mourning.remove": "Your gravedigger recovered the grave of %s. The colony will feel a bit better after noon.",
 
   "event.minecolonies.raidmessage1": "§4Mysterious warriors have been spotted %s of %s!",
   "event.minecolonies.raidmessage2": "§4Citizens report rumors of raiders %s of %s!",

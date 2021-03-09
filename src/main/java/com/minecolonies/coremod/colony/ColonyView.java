@@ -1304,13 +1304,19 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public boolean isNeedToMourn()
+    public boolean isNeedToMournEmpty()
     {
         return false;
     }
 
     @Override
-    public void setNeedToMourn(final boolean needToMourn, final String name)
+    public void addNeedToMourn(final boolean needToMourn, final String name)
+    {
+
+    }
+
+    @Override
+    public void removeNeedToMourn(final String name)
     {
 
     }

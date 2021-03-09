@@ -39,6 +39,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.DyeColor;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
@@ -68,8 +69,7 @@ import java.util.*;
 import static com.minecolonies.api.colony.ColonyState.*;
 import static com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateConstants.MAX_TICKRATE;
 import static com.minecolonies.api.util.constant.ColonyConstants.*;
-import static com.minecolonies.api.util.constant.Constants.DEFAULT_STYLE;
-import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
+import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
@@ -258,7 +258,7 @@ public class Colony implements IColony
     /**
      * Mournign parameters.
      */
-    private boolean needToMourn = false;
+    private List<String> needToMourn = new ArrayList<>();
     private boolean mourning    = false;
 
     /**
@@ -553,6 +553,15 @@ public class Colony implements IColony
 
             if (mourning)
             {
+                needToMourn.clear();
+                mourning = false;
+                citizenManager.updateCitizenMourn(false);
+            }
+        }
+        else if (isDay && WorldUtil.isPastNoon(world))
+        {
+            if(mourning && needToMourn.isEmpty())
+            {
                 mourning = false;
                 citizenManager.updateCitizenMourn(false);
             }
@@ -560,13 +569,13 @@ public class Colony implements IColony
         else if (!isDay && WorldUtil.isDayTime(world))
         {
             isDay = true;
-            if (needToMourn)
+            if (!needToMourn.isEmpty())
             {
-                needToMourn = false;
                 mourning = true;
                 citizenManager.updateCitizenMourn(true);
             }
         }
+
         return false;
     }
 
@@ -702,14 +711,19 @@ public class Colony implements IColony
         manualHiring = compound.getBoolean(TAG_MANUAL_HIRING);
         dimensionId = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(compound.getString(TAG_DIMENSION)));
 
-        if (compound.keySet().contains(TAG_NEED_TO_MOURN))
+        needToMourn.clear();
+        if (compound.keySet().contains(TAG_NEED_TO_MOURN_LIST))
         {
-            needToMourn = compound.getBoolean(TAG_NEED_TO_MOURN);
+            final ListNBT needToMournList = compound.getList(TAG_NEED_TO_MOURN_LIST, TAG_COMPOUND);
+            for (int i = 0; i < needToMournList.size(); i++)
+            {
+                final String citizenName = needToMournList.getString(i);
+                needToMourn.add(citizenName);
+            }
             mourning = compound.getBoolean(TAG_MOURNING);
         }
         else
         {
-            needToMourn = false;
             mourning = false;
         }
 
@@ -840,7 +854,14 @@ public class Colony implements IColony
         BlockPosUtil.write(compound, TAG_CENTER, center);
 
         compound.putBoolean(TAG_MANUAL_HIRING, manualHiring);
-        compound.putBoolean(TAG_NEED_TO_MOURN, needToMourn);
+
+        // need to mourn
+        @NotNull final ListNBT needToMournTagList = new ListNBT();
+        for (@NotNull final String citizenName : needToMourn)
+        {
+            needToMournTagList.add(StringNBT.valueOf(citizenName));
+        }
+        compound.put(TAG_NEED_TO_MOURN_LIST, needToMournTagList);
         compound.putBoolean(TAG_MOURNING, mourning);
 
         compound.putLong(TAG_MERCENARY_TIME, mercenaryLastUse);
@@ -1601,24 +1622,40 @@ public class Colony implements IColony
      * @return a boolean indicating the colony needs to mourn
      */
     @Override
-    public boolean isNeedToMourn()
+    public boolean isNeedToMournEmpty()
     {
-        return needToMourn;
+        return needToMourn.isEmpty();
     }
 
     /**
-     * Call to set if the colony needs to mourn or not.
+     * Call to add a citizen to the colony needs to mourn list / or not.
      *
-     * @param needToMourn indicate if the colony needs to mourn
+     * @param need indicate if the colony needs to mourn
      * @param name        Name of citizen that died
      */
     @Override
-    public void setNeedToMourn(final boolean needToMourn, final String name)
+    public void addNeedToMourn(final boolean need, final String name)
     {
-        this.needToMourn = needToMourn;
-        if (needToMourn)
+        if (need)
         {
+            needToMourn.add(name);
             LanguageHandler.sendPlayersMessage(getImportantMessageEntityPlayers(), COM_MINECOLONIES_COREMOD_MOURN, name);
+        }
+    }
+
+    /**
+     * Call to remove a citizen from the colony needs to mourn.
+     *
+     * @param name        Name of citizen that died
+     */
+    public void removeNeedToMourn(String name)
+    {
+        LanguageHandler.sendPlayersMessage(getImportantMessageEntityPlayers(), COM_MINECOLONIES_COREMOD_MOURN_REMOVE, name);
+        needToMourn.remove(name);
+        if(needToMourn.isEmpty() && mourning && WorldUtil.isPastNoon(world))
+        {
+            mourning = false;
+            citizenManager.updateCitizenMourn(false);
         }
     }
 

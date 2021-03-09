@@ -1,70 +1,28 @@
 package com.minecolonies.coremod.entity.ai.citizen.gravedigger;
 
-import com.google.common.reflect.TypeToken;
-import com.minecolonies.api.advancements.AdvancementTriggers;
-import com.minecolonies.api.blocks.AbstractBlockMinecoloniesGrave;
-import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.interactionhandling.ChatPriority;
-import com.minecolonies.api.colony.requestsystem.requestable.StackList;
-import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
-import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
-import com.minecolonies.api.items.ModItems;
-import com.minecolonies.api.tileentities.AbstractScarecrowTileEntity;
-import com.minecolonies.api.tileentities.AbstractTileEntityGrave;
-import com.minecolonies.api.tileentities.ScarecrowFieldStage;
 import com.minecolonies.api.tileentities.TileEntityGrave;
 import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.ToolType;
-import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.blocks.BlockScarecrow;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFarmer;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingGraveyard;
-import com.minecolonies.coremod.colony.interactionhandling.PosBasedInteraction;
-import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.JobGravedigger;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
-import com.minecolonies.coremod.network.messages.client.CompostParticleMessage;
-import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
-import com.minecolonies.coremod.util.AdvancementUtils;
 import net.minecraft.block.*;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.loot.LootContext;
-import net.minecraft.loot.LootParameters;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.fml.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.function.Predicate;
-
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
-import static com.minecolonies.api.research.util.ResearchConstants.FARMING;
-import static com.minecolonies.api.util.constant.CitizenConstants.BLOCK_BREAK_SOUND_RANGE;
-import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
  * Gravedigger AI class.
@@ -124,7 +82,7 @@ public class EntityAIWorkGravedigger extends AbstractEntityAICrafting<JobGravedi
         super.registerTargets(
           new AITarget(IDLE, () -> START_WORKING, 10),
           new AITarget(PREPARING, this::prepareForDigging, TICKS_SECOND),
-          new AITarget(DIG_GRAVE, this::workAtGrave, 5)
+          new AITarget(DIG_GRAVE, this::digGrave, 5)
         );
         worker.setCanPickUpLoot(true);
     }
@@ -215,7 +173,7 @@ public class EntityAIWorkGravedigger extends AbstractEntityAICrafting<JobGravedi
         return PREPARING;
     }
 
-    private IAIState workAtGrave()
+    private IAIState digGrave()
     {
         @Nullable final BuildingGraveyard buildingGraveyard = getOwnBuilding();
 
@@ -244,6 +202,7 @@ public class EntityAIWorkGravedigger extends AbstractEntityAICrafting<JobGravedi
                 return getState();
             }
 
+            worker.getCitizenColonyHandler().getColony().removeNeedToMourn(((TileEntityGrave) entity).getSavedCitizenName());
             shouldDumpInventory = true;
             buildingGraveyard.ClearCurrentGrave();
             return IDLE;
