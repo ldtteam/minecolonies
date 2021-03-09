@@ -259,7 +259,11 @@ public class Colony implements IColony
      * Mournign parameters.
      */
     private List<String> needToMourn = new ArrayList<>();
-    private boolean mourning    = false;
+
+    /**
+     * If the colony is currently mourning
+     */
+    private boolean mourning = false;
 
     /**
      * If the colony is dirty.
@@ -714,7 +718,7 @@ public class Colony implements IColony
         needToMourn.clear();
         if (compound.keySet().contains(TAG_NEED_TO_MOURN_LIST))
         {
-            final ListNBT needToMournList = compound.getList(TAG_NEED_TO_MOURN_LIST, TAG_COMPOUND);
+            final ListNBT needToMournList = compound.getList(TAG_NEED_TO_MOURN_LIST, TAG_STRING);
             for (int i = 0; i < needToMournList.size(); i++)
             {
                 final String citizenName = needToMournList.getString(i);

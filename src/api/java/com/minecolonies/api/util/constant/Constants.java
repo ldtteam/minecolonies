@@ -122,6 +122,11 @@ public final class Constants
     public static final int FUEL_SLOT = 1;
 
     /**
+     * Tag String of forge.
+     */
+    public static final int TAG_STRING = 8;
+
+    /**
      * Tag compound of forge.
      */
     public static final int TAG_COMPOUND = 10;

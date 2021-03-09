@@ -38,14 +38,29 @@ public class WindowHutGraveyard extends AbstractWindowWorkerBuilding<BuildingGra
     private static final String PAGE_GRAVES = "pageGraves";
 
     /**
-     * Id of the the graves list inside the GUI.
+     * Id of the the RIP page inside the GUI.
+     */
+    private static final String PAGE_RIP = "pageRIP";
+
+    /**
+     * Id of the graves list inside the GUI.
      */
     private static final String LIST_GRAVES = "graves";
+
+    /**
+     * Id of the citizen list inside the GUI.
+     */
+    private static final String LIST_CITIZEN = "citizen";
 
     /**
      * Id of the the name label inside the GUI.
      */
     private static final String TAG_NAME = "name";
+
+    /**
+     * Id of the the citizenName label inside the GUI.
+     */
+    private static final String TAG_CITIZEN_NAME = "citizenName";
 
     /**
      * Id of the the distance label inside the GUI.
@@ -58,19 +73,24 @@ public class WindowHutGraveyard extends AbstractWindowWorkerBuilding<BuildingGra
     private static final String TAG_DIRECTION = "dir";
 
     /**
-     * Id of the icon inside the GUI.
-     */
-    private static final String TAG_ICON = "icon";
-
-    /**
-     * List of fields the building seeds.
+     * List of graves to collect
      */
     private List<BlockPos> graves = new ArrayList<>();
 
     /**
-     * ScrollList with the fields.
+     * List of resting citizen in this building
+     */
+    private List<String> ripCitizen = new ArrayList<>();
+
+    /**
+     * ScrollList with the graves.
      */
     private ScrollingList graveList;
+
+    /**
+     * ScrollList with the resting citizen.
+     */
+    private ScrollingList ripList;
 
     /**
      * The world.
@@ -93,6 +113,7 @@ public class WindowHutGraveyard extends AbstractWindowWorkerBuilding<BuildingGra
     private void pullInformationFromHut()
     {
         graves = building.getGraves();
+        ripCitizen = building.getRestingCitizen();
     }
 
     @Override
@@ -112,16 +133,33 @@ public class WindowHutGraveyard extends AbstractWindowWorkerBuilding<BuildingGra
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                final BlockPos field = graves.get(index);
-                @NotNull final String distance = Integer.toString((int) Math.sqrt(BlockPosUtil.getDistanceSquared(field, building.getPosition())));
-                final String direction = BlockPosUtil.calcDirection(building.getPosition(), field);
-                final TileEntity entity = world.getTileEntity(field);
+                final BlockPos grave = graves.get(index);
+                @NotNull final String distance = Integer.toString((int) Math.sqrt(BlockPosUtil.getDistanceSquared(grave, building.getPosition())));
+                final String direction = BlockPosUtil.calcDirection(building.getPosition(), grave);
+                final TileEntity entity = world.getTileEntity(grave);
                 if (entity instanceof TileEntityGrave)
                 {
                     rowPane.findPaneOfTypeByID(TAG_NAME, Text.class).setText("Grave of " + ((TileEntityGrave) entity).getSavedCitizenName());
                     rowPane.findPaneOfTypeByID(TAG_DISTANCE, Text.class).setText(distance + "m");
                     rowPane.findPaneOfTypeByID(TAG_DIRECTION, Text.class).setText(direction);
                 }
+            }
+        });
+
+        ripList = findPaneOfTypeByID(LIST_CITIZEN, ScrollingList.class);
+        ripList.setDataProvider(new ScrollingList.DataProvider()
+        {
+            @Override
+            public int getElementCount()
+            {
+                return ripCitizen.size();
+            }
+
+            @Override
+            public void updateElement(final int index, @NotNull final Pane rowPane)
+            {
+                final String citizenName = ripCitizen.get(index);
+                rowPane.findPaneOfTypeByID(TAG_CITIZEN_NAME, Text.class).setText(citizenName);
             }
         });
     }

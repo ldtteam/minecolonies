@@ -21,6 +21,7 @@ import com.minecolonies.coremod.colony.jobs.JobGravedigger;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.StringNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Tuple;
@@ -32,6 +33,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
+import static com.minecolonies.api.util.constant.Constants.TAG_COMPOUND;
+import static com.minecolonies.api.util.constant.Constants.TAG_STRING;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_MOURNING;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_NEED_TO_MOURN_LIST;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenDiedEvent.CITIZEN_DIED_EVENT_ID;
 
@@ -70,10 +75,20 @@ public class BuildingGraveyard extends AbstractBuildingWorker
      */
     private static final String TAG_CURRENT_GRAVE = "currentGRAVE";
 
+    /**
+     * The tag to store the list of resting citizen in this graveyard
+     */
+    private static final String TAG_RIP_CITIZEN_LIST = "ripCitizenList";
+
       /**
      * The list of the graves the gravedigger need to collect.
      */
     private final Set<BlockPos> pendingGraves = new HashSet<>();
+
+    /**
+     * The list of resting citizen in this graveyard.
+     */
+    private final List<String> restingCitizen = new ArrayList<>();
 
     /**
      * The field the gravedigger is currently collecting.
@@ -194,6 +209,17 @@ public class BuildingGraveyard extends AbstractBuildingWorker
             final BlockPos pos = BlockPosUtil.read(compound, TAG_CURRENT_GRAVE);
             currentGrave = pos;
         }
+
+        restingCitizen.clear();
+        if (compound.keySet().contains(TAG_RIP_CITIZEN_LIST))
+        {
+            final ListNBT ripCitizen = compound.getList(TAG_RIP_CITIZEN_LIST, TAG_STRING);
+            for (int i = 0; i < ripCitizen.size(); i++)
+            {
+                final String citizenName = ripCitizen.getString(i);
+                restingCitizen.add(citizenName);
+            }
+        }
     }
 
     @Override
@@ -214,6 +240,13 @@ public class BuildingGraveyard extends AbstractBuildingWorker
             BlockPosUtil.write(compound, TAG_CURRENT_GRAVE, currentGrave);
         }
 
+        @NotNull final ListNBT ripCitizen = new ListNBT();
+        for (@NotNull final String citizenName : restingCitizen)
+        {
+            ripCitizen.add(StringNBT.valueOf(citizenName));
+        }
+        compound.put(TAG_RIP_CITIZEN_LIST, ripCitizen);
+
         return compound;
     }
 
@@ -222,7 +255,7 @@ public class BuildingGraveyard extends AbstractBuildingWorker
     public String getJobName()
     {
         return GRAVEDIGGER;
-    }
+}
 
     @NotNull
     @Override
@@ -273,8 +306,6 @@ public class BuildingGraveyard extends AbstractBuildingWorker
     {
         super.serializeToView(buf);
 
-        int size = 0;
-
         final List<BlockPos> graves = new ArrayList<>(pendingGraves);
         final List<BlockPos> cleanList = new ArrayList<>();
 
@@ -286,15 +317,8 @@ public class BuildingGraveyard extends AbstractBuildingWorker
                 if (tileEntity instanceof TileEntityGrave)
                 {
                     cleanList.add(grave);
-                    size++;
                 }
             }
-        }
-
-        buf.writeInt(size);
-        for (@NotNull final BlockPos grave : cleanList)
-        {
-            buf.writeBlockPos(grave);
         }
 
         for (final BlockPos pos : pendingGraves)
@@ -305,7 +329,33 @@ public class BuildingGraveyard extends AbstractBuildingWorker
             }
         }
 
-        buf.writeInt(pendingGraves.size());
+        //pending grave list
+        buf.writeInt(cleanList.size());
+        for (@NotNull final BlockPos grave : cleanList)
+        {
+            buf.writeBlockPos(grave);
+        }
+
+        //resting citizen list
+        buf.writeInt(restingCitizen.size());
+        for (@NotNull final String citizenName : restingCitizen)
+        {
+            buf.writeString(citizenName);
+        }
+        buf.writeInt(restingCitizen.size());
+    }
+
+    /**
+     * Add a citizen to the list of resting citizen in this graveyard
+     * @param citizenName
+     */
+    public void BuryCitizenHere(final String citizenName)
+    {
+        if(!restingCitizen.contains(citizenName))
+        {
+            restingCitizen.add(citizenName);
+            markDirty();
+        }
     }
 
     /**
@@ -320,9 +370,10 @@ public class BuildingGraveyard extends AbstractBuildingWorker
         private List<BlockPos> graves = new ArrayList<>();
 
         /**
-         * The amount of graves the gravedigger owns.
+         * Contains a view object of all the restingCitizen in the colony.
          */
-        private int amountOfGraves;
+        @NotNull
+        private List<String> restingCitizen = new ArrayList<>();
 
         /**
          * Public constructor of the view, creates an instance of it.
@@ -345,15 +396,22 @@ public class BuildingGraveyard extends AbstractBuildingWorker
         @Override
         public void deserialize(@NotNull final PacketBuffer buf)
         {
-            graves = new ArrayList<>();
             super.deserialize(buf);
+
+            graves = new ArrayList<>();
             final int size = buf.readInt();
             for (int i = 1; i <= size; i++)
             {
                 @NotNull final BlockPos pos = buf.readBlockPos();
                 graves.add(pos);
             }
-            amountOfGraves = buf.readInt();
+
+            restingCitizen = new ArrayList<>();
+            final int sizeRIP = buf.readInt();
+            for (int i = 1; i <= sizeRIP; i++)
+            {
+                restingCitizen.add(buf.readString());
+            }
         }
 
         /**
@@ -368,13 +426,14 @@ public class BuildingGraveyard extends AbstractBuildingWorker
         }
 
         /**
-         * Getter for amount of graves.
+         * Getter of the restingCitizen list.
          *
-         * @return the amount of graves.
+         * @return an unmodifiable List.
          */
-        public int getAmountOfGraves()
+        @NotNull
+        public List<String> getRestingCitizen()
         {
-            return amountOfGraves;
+            return Collections.unmodifiableList(restingCitizen);
         }
     }
 }

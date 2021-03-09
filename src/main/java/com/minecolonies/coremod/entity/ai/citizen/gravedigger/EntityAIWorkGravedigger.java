@@ -202,7 +202,9 @@ public class EntityAIWorkGravedigger extends AbstractEntityAICrafting<JobGravedi
                 return getState();
             }
 
-            worker.getCitizenColonyHandler().getColony().removeNeedToMourn(((TileEntityGrave) entity).getSavedCitizenName());
+            final String citizenName = ((TileEntityGrave) entity).getSavedCitizenName();
+            worker.getCitizenColonyHandler().getColony().removeNeedToMourn(citizenName);
+            buildingGraveyard.BuryCitizenHere(citizenName);
             shouldDumpInventory = true;
             buildingGraveyard.ClearCurrentGrave();
             return IDLE;

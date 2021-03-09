@@ -634,7 +634,8 @@
 
   "com.minecolonies.coremod.job.gravedigger": "Gravedigger",
   "com.minecolonies.coremod.gui.workerhuts.graveyard": "Graveyard",
-  "com.minecolonies.coremod.gui.workerhuts.graveyard.graves": "Graves",
+  "com.minecolonies.coremod.gui.workerhuts.graveyard.graves": "Graves to retrieve",
+  "com.minecolonies.coremod.gui.workerhuts.graveyard.rip": "Citizen buried here",
 
   "com.minecolonies.coremod.gui.workerhuts.farmerhut.north": "North",
   "com.minecolonies.coremod.gui.workerhuts.farmerhut.south": "South",
