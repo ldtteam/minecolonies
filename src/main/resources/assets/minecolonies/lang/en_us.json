@@ -1332,6 +1332,10 @@
   "com.minecolonies.gui.visiblestatus.sawmill": "Carpentering",
   "com.minecolonies.gui.visiblestatus.smelting": "Smelting",
   "com.minecolonies.gui.visiblestatus.teacher_student": "Teaching",
+  "com.minecolonies.gui.visiblestatus.emptying": "Emptying a grave",
+  "com.minecolonies.gui.visiblestatus.digging": "Digging a grave",
+  "com.minecolonies.gui.visiblestatus.burying": "Burying a citizen...",
+  "com.minecolonies.gui.visiblestatus.resurrect": "Trying to resurrect a citizen!",
 
   "entity.fisherman.messagewatertoofar": "My hut seems to be too far away from water, and I can't find any water to fish in! It should be an area of at least 7x7 blocks, and the same height as my hut.",
   "com.minecolonies.coremod.furnaceuser.nofuel": "Please tell me what kind of fuel I should use in my furnace!",

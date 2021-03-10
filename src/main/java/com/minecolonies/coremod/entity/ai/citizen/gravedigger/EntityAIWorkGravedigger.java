@@ -11,12 +11,12 @@ import com.minecolonies.api.tileentities.TileEntityGrave;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.ToolType;
-import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.blocks.huts.BlockHutCitizen;
+import com.minecolonies.coremod.colony.buildings.BuildingMysticalSite;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingGraveyard;
 import com.minecolonies.coremod.colony.jobs.JobGravedigger;
-import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
+import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import net.minecraft.block.*;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
@@ -28,18 +28,23 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Random;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
-import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
+import static com.minecolonies.api.research.util.ResearchConstants.RESURECT_CHANCE;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
 /**
  * Gravedigger AI class.
  */
-public class EntityAIWorkGravedigger extends AbstractEntityAICrafting<JobGravedigger, BuildingGraveyard>
+public class EntityAIWorkGravedigger extends AbstractEntityAIInteract<JobGravedigger, BuildingGraveyard>
 {
     /**
      * The EXP Earned per dig.
      */
     private static final double XP_PER_DIG = 0.5;
+
+    /**
+     * The EXP Earned per wander.
+     */
+    private static final double XP_PER_WANDER = 0.01;
 
     /**
      * The weigth of each building level on the resurection chances.
@@ -70,7 +75,7 @@ public class EntityAIWorkGravedigger extends AbstractEntityAICrafting<JobGravedi
      * Gravedigger emptying icon
      */
     private final static VisibleCitizenStatus EMPTYING_ICON =
-      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/gravedigger.png"), "com.minecolonies.gui.visiblestatus.digging");
+      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/gravedigger.png"), "com.minecolonies.gui.visiblestatus.emptying");
 
     /**
      * Gravedigger digging icon
@@ -96,6 +101,11 @@ public class EntityAIWorkGravedigger extends AbstractEntityAICrafting<JobGravedi
     private boolean shouldDumpInventory = false;
 
     /**
+     * The current pos to wander at.
+     */
+    private BlockPos wanderPos = null;
+
+    /**
      * Constructor for the Gravedigger. Defines the tasks the Gravedigger executes.
      *
      * @param job a gravedigger job to use.
@@ -104,12 +114,12 @@ public class EntityAIWorkGravedigger extends AbstractEntityAICrafting<JobGravedi
     {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, () -> START_WORKING, 10),
-          new AITarget(PREPARING, this::prepareForDigging, TICKS_SECOND),
-          new AITarget(EMPTY_GRAVE, this::emptyGrave, 5),
-          new AITarget(DIG_GRAVE, this::digGrave, 5),
-          new AITarget(BURRY_CITIZEN, this::buryCitizen, 5),
-          new AITarget(TRY_RESURRECT, this::tryResurrect, 5)
+          new AITarget(IDLE, START_WORKING, REQUEST_DELAY),
+          new AITarget(START_WORKING, this::startWorking, STANDARD_DELAY),
+          new AITarget(EMPTY_GRAVE, this::emptyGrave, STANDARD_DELAY),
+          new AITarget(DIG_GRAVE, this::digGrave, STANDARD_DELAY),
+          new AITarget(BURRY_CITIZEN, this::buryCitizen, STANDARD_DELAY),
+          new AITarget(TRY_RESURRECT, this::tryResurrect, STANDARD_DELAY)
         );
         worker.setCanPickUpLoot(true);
     }
@@ -120,63 +130,32 @@ public class EntityAIWorkGravedigger extends AbstractEntityAICrafting<JobGravedi
         return BuildingGraveyard.class;
     }
 
-    @Override
-    protected IAIState decide()
-    {
-        final IAIState nextState = super.decide();
-        if (nextState != START_WORKING)
-        {
-            return nextState;
-        }
-
-        if (job.getTaskQueue().isEmpty())
-        {
-            return PREPARING;
-        }
-
-        if (job.getCurrentTask() == null)
-        {
-            return PREPARING;
-        }
-
-        return GET_RECIPE;
-    }
-
     /**
      * Prepares the gravedigger for digging. Also requests the tools and checks if the gravedigger has queued graves.
      *
      * @return the next IAIState
      */
     @NotNull
-    private IAIState prepareForDigging()
+    private IAIState startWorking()
     {
         @Nullable final BuildingGraveyard building = getOwnBuilding();
         if (building == null || building.getBuildingLevel() < 1)
         {
-            return PREPARING;
-        }
-
-        if (!job.getTaskQueue().isEmpty())
-        {
-            return START_WORKING;
-        }
-        worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
-
-        if (building.getPendingGraves().isEmpty())
-        {
-            worker.getCitizenData().setIdleAtJob(true);
+            worker.getCitizenData().setVisibleStatus(null);
             return IDLE;
         }
 
+        worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
         worker.getCitizenData().setIdleAtJob(false);
 
         @Nullable final BlockPos currentGrave = building.getGraveToWorkOn();
-        if (currentGrave == null)
+        if (currentGrave != null)
         {
-            return IDLE;
-        }
-        else
-        {
+            if (walkToBuilding())
+            {
+                return getState();
+            }
+
             final TileEntity entity = world.getTileEntity(currentGrave);
             if (entity != null && entity instanceof TileEntityGrave)
             {
@@ -185,7 +164,32 @@ public class EntityAIWorkGravedigger extends AbstractEntityAICrafting<JobGravedi
             building.ClearCurrentGrave();
         }
 
-        return PREPARING;
+        if(wanderPos == null)
+        {
+            final BlockPos newWanderPos = worker.getCitizenColonyHandler().getColony().getBuildingManager().getRandomBuilding(b -> b.getSchematicName() == "citizen" || b instanceof BuildingMysticalSite);
+            if (newWanderPos != null)
+            {
+                wanderPos = newWanderPos;
+            }
+            return getState();
+        }
+
+        if (walkToBlock(wanderPos, 1))
+        {
+            return getState();
+        }
+
+        if(wanderPos == building.getPosition())
+        {
+            wanderPos = null;
+            worker.decreaseSaturationForContinuousAction();
+            worker.getCitizenData().getCitizenSkillHandler().addXpToSkill(getOwnBuilding().getSecondarySkill(), XP_PER_WANDER, worker.getCitizenData());
+        }
+        else
+        {
+            wanderPos = building.getPosition();
+        }
+        return getState();
     }
 
     private IAIState emptyGrave()
@@ -194,7 +198,7 @@ public class EntityAIWorkGravedigger extends AbstractEntityAICrafting<JobGravedi
 
         if (buildingGraveyard == null || checkForToolOrWeapon(ToolType.SHOVEL) || buildingGraveyard.getGraveToWorkOn() == null)
         {
-            return PREPARING;
+            return IDLE;
         }
 
         worker.getCitizenData().setVisibleStatus(EMPTYING_ICON);
@@ -238,7 +242,7 @@ public class EntityAIWorkGravedigger extends AbstractEntityAICrafting<JobGravedi
 
         if (buildingGraveyard == null || checkForToolOrWeapon(ToolType.SHOVEL) || buildingGraveyard.getGraveToWorkOn() == null)
         {
-            return PREPARING;
+            return IDLE;
         }
         worker.getCitizenData().setVisibleStatus(DIGGING_ICON);
         worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.digging"));
@@ -261,6 +265,9 @@ public class EntityAIWorkGravedigger extends AbstractEntityAICrafting<JobGravedi
             {
                 return getState();
             }
+
+            worker.decreaseSaturationForContinuousAction();
+            worker.getCitizenData().getCitizenSkillHandler().addXpToSkill(getOwnBuilding().getPrimarySkill(), XP_PER_DIG, worker.getCitizenData());
             return BURRY_CITIZEN;
         }
 
@@ -298,7 +305,7 @@ public class EntityAIWorkGravedigger extends AbstractEntityAICrafting<JobGravedi
 
         if (buildingGraveyard == null || checkForToolOrWeapon(ToolType.SHOVEL) || buildingGraveyard.getLastGraveOwnerNBT() == null)
         {
-            return PREPARING;
+            return IDLE;
         }
         worker.getCitizenData().setVisibleStatus(BURYING_ICON);
         worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.burying"));
@@ -325,7 +332,7 @@ public class EntityAIWorkGravedigger extends AbstractEntityAICrafting<JobGravedi
 
         if (buildingGraveyard == null || checkForToolOrWeapon(ToolType.SHOVEL) || buildingGraveyard.getLastGraveOwnerNBT() == null)
         {
-            return PREPARING;
+            return IDLE;
         }
         worker.getCitizenData().setVisibleStatus(RESURRECT_ICON);
         worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.resurrecting"));
@@ -337,7 +344,8 @@ public class EntityAIWorkGravedigger extends AbstractEntityAICrafting<JobGravedi
         }
 
         double chance = buildingGraveyard.getBuildingLevel() * RESURECT_BUILDING_LVL_WEIGHT +
-                worker.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Mana) * RESURECT_WORKER_MANA_LVL_WEIGHT;
+                worker.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Mana) * RESURECT_WORKER_MANA_LVL_WEIGHT +
+                worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(RESURECT_CHANCE);
 
         double cap = MAX_RESURECTION_CHANCE + worker.getCitizenColonyHandler().getColony().getBuildingManager().getMysticalSiteMaxBuildingLevel() * MAX_RESURECTION_CHANCE_MYSTICAL_LVL_BONUS;
         if (chance > cap) { chance = cap; }
