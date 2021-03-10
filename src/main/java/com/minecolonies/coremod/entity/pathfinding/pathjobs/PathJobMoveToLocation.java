@@ -58,7 +58,8 @@ public class PathJobMoveToLocation extends AbstractPathJob
         }
 
         //  Compute destination slack - if the destination point cannot be stood in
-        if (getGroundHeight(null, destination) != destination.getY())
+        // destination is at restricted area
+        if (getGroundHeight(null, destination, true) != destination.getY())
         {
             destinationSlack = DESTINATION_SLACK_ADJACENT;
         }
