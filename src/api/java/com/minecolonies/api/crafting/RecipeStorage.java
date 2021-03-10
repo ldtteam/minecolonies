@@ -14,6 +14,7 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.LootContext;
+import net.minecraft.loot.LootParameterSet;
 import net.minecraft.loot.LootParameters;
 import net.minecraft.loot.LootTable;
 import net.minecraft.util.Hand;
@@ -100,6 +101,18 @@ public class RecipeStorage implements IRecipeStorage
      * The cached loot table for possible outputs
      */
     private LootTable loot;
+
+    /**
+     * The loot parameter set definition
+     */
+    public static final LootParameterSet recipeLootParameters = (new LootParameterSet.Builder())
+                .required(LootParameters.field_237457_g_)
+                .required(LootParameters.THIS_ENTITY)
+                .required(LootParameters.TOOL)
+                .optional(LootParameters.DAMAGE_SOURCE)
+                .optional(LootParameters.KILLER_ENTITY)
+                .optional(LootParameters.DIRECT_KILLER_ENTITY)
+                .build();
 
     /**
      * Create an instance of the recipe storage.
