@@ -770,6 +770,7 @@
   "com.minecolonies.coremod.gui.home.assign": "Assign %d citizens",
   "com.minecolonies.coremod.gui.workerhuts.unassign": "Remove Citizen",
   "block.minecolonies.blockminecoloniesrack": "Rack",
+  "block.minecolonies.blockminecoloniesgrave": "Grave",
 
   "com.minecolonies.coremod.status.deciding": "Deciding",
   "com.minecolonies.coremod.status.sleeping": "Let me sleep",
