@@ -1491,6 +1491,7 @@ public class EntityCitizen extends AbstractEntityCitizen
                InventoryUtils.dropItemHandler(citizenData.getInventory(), world, (int) getPosX(), (int) getPosY(), (int) getPosZ());
            }
 
+           graveEntity.delayDecayTimer(getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(GRAVE_DECAY_BONUS));
            graveEntity.setSavedCitizenName(citizenData.getName());
            graveEntity.setSavedCitizenDataNBT(citizenData.serializeNBT());
 

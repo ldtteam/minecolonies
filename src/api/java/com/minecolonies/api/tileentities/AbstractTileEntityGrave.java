@@ -12,8 +12,8 @@ import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 
-import static com.minecolonies.api.util.constant.Constants.DEFAULT_SIZE;
-import static com.minecolonies.api.util.constant.Constants.TICKS_FIVE_MIN;
+import static com.minecolonies.api.research.util.ResearchConstants.RESURECT_CHANCE;
+import static com.minecolonies.api.util.constant.Constants.*;
 
 public abstract class AbstractTileEntityGrave extends TileEntity implements INamedContainerProvider, ITickableTileEntity
 {
@@ -53,6 +53,15 @@ public abstract class AbstractTileEntityGrave extends TileEntity implements INam
         inventory = createInventory(DEFAULT_SIZE);
         decay_timer = DEFAULT_DECAY_TIMER;
         decayed = false;
+    }
+
+    /**
+     * Delay the decay timer by minutes
+     * @param minutes number of minutes to delay the time by
+     */
+    public void delayDecayTimer(final double minutes)
+    {
+        decay_timer += minutes * TICKS_SECOND * 60;
     }
 
     /**

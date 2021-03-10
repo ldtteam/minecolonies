@@ -10,12 +10,12 @@
   ],
   "requirements": [
     {
-      "item": "minecraft:bone",
-      "quantity": 16
-    },
-    {
       "building": "townhall",
       "level": 2
+    },
+    {
+      "item": "minecraft:bone",
+      "quantity": 16
     }
   ],
   "subtitle": "com.minecolonies.research.civilian.remembrance.subtitle"

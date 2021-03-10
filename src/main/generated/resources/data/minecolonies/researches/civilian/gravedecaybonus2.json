@@ -1,0 +1,23 @@
+{
+  "branch": "minecolonies:civilian",
+  "parentResearch": "minecolonies:civilian/gravedecaybonus1",
+  "researchLevel": 3,
+  "subtitle": "com.minecolonies.research.civilian.gravedecaybonus2.subtitle",
+  "sortOrder": 2,
+  "icon": "minecolonies:blockminecoloniesgrave",
+  "requirements": [
+    {
+      "building": "graveyard",
+      "level": 5
+    },
+    {
+      "item": "minecraft:zombie_head",
+      "quantity": 1
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/gravedecaybonus": 2
+    }
+  ]
+}
