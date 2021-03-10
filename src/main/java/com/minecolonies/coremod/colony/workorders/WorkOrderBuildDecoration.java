@@ -240,9 +240,16 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
             AdvancementUtils.TriggerAdvancementPlayersForColony(colony, player ->
                 AdvancementTriggers.COMPLETE_BUILD_REQUEST.trigger(player, structureName, 0));
 
+            BlockPos position = this.getBuildingLocation();
+
             if (citizen.getName().isEmpty())
             {
-                LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(), COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECOCOMPLETE, citizen.getName(), this.getName());
+                LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(), COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECOCOMPLETE,
+                        citizen.getName(),
+                        this.getName(),
+                        position.getX(),
+                        position.getY(),
+                        position.getZ());
             }
             else
             {
@@ -250,13 +257,21 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
                 {
                     LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
                           COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECOCOMPLETE_MANUAL,
-                          citizen.getName(), this.getName());
+                          citizen.getName(),
+                            this.getName(),
+                            position.getX(),
+                            position.getY(),
+                            position.getZ());
                 }
                 else
                 {
                     LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
                           COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECOCOMPLETE,
-                          citizen.getName(), this.getName());
+                          citizen.getName(),
+                            this.getName(),
+                            position.getX(),
+                            position.getY(),
+                            position.getZ());
                 }
             }
         }

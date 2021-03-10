@@ -185,6 +185,26 @@ public class ViewFilterableList
         allItems.clear();
         allItems.addAll(getBlockList(filterPredicate));
         allItems.addAll(getExceptions().stream().filter(storage -> filterPredicate.test(storage.getItemStack())).collect(Collectors.toList()));
+
+        allItems.sort((o1, o2) -> {
+
+            boolean o1Allowed = building.isAllowedItem(id, new ItemStorage(o1.getItemStack()));
+            boolean o2Allowed = building.isAllowedItem(id, new ItemStorage(o2.getItemStack()));
+
+            if(!o1Allowed && o2Allowed)
+            {
+                return 1;
+            }
+            else if(o1Allowed && !o2Allowed)
+            {
+                return -1;
+            }
+            else
+            {
+                return 0;
+            }
+        });
+
         updateResourceList();
     }
 
