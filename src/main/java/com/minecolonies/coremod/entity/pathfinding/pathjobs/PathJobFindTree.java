@@ -102,7 +102,15 @@ public class PathJobFindTree extends AbstractPathJob
       final IColony colony,
       final LivingEntity entity)
     {
-        super(world, start, startRestriction, endRestriction, (int) Math.sqrt(BlockPosUtil.getDistanceSquared2D(home, furthestRestriction) * 1.5d), AREA_SHRINK, new TreePathResult(), entity);
+        super(world,
+            start,
+            startRestriction,
+            endRestriction,
+            (int) Math.sqrt(BlockPosUtil.getDistanceSquared2D(home, furthestRestriction) * 1.5d),
+            AREA_SHRINK,
+            false,
+            new TreePathResult(),
+            entity);
         this.treesToNotCut = treesToCut;
         this.hutLocation = home;
         this.colony = colony;
@@ -160,8 +168,8 @@ public class PathJobFindTree extends AbstractPathJob
     }
 
     @Override
-    protected boolean isPassable(@NotNull final BlockState block, final BlockPos pos)
+    protected boolean isPassable(@NotNull final BlockState block, final BlockPos pos, final boolean isInRestrictedArea)
     {
-        return super.isPassable(block, pos) || block.isIn(BlockTags.LEAVES) || Compatibility.isDynamicTrunkShell(block.getBlock());
+        return super.isPassable(block, pos, isInRestrictedArea) || (isInRestrictedArea && block.isIn(BlockTags.LEAVES)) || Compatibility.isDynamicTrunkShell(block.getBlock());
     }
 }

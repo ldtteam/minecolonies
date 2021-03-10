@@ -95,14 +95,19 @@ public abstract class AbstractPathJob implements Callable<Path>
     @Nullable
     protected        Set<Node>          debugNodesPath       = null;
     //  May be faster, but can produce strange results
-    private          boolean            allowJumpPointSearchTypeWalk;
+    private final    boolean            allowJumpPointSearchTypeWalk;
     private          int                totalNodesAdded      = 0;
     private          int                totalNodesVisited    = 0;
 
     /**
-     * Are there hard xz restrictions.
+     * Are there xz restrictions.
      */
-    private boolean xzRestricted = false;
+    private final boolean xzRestricted;
+
+    /**
+     * Are xz restrictions hard or soft.
+     */
+    private final boolean hardXzRestriction;
 
     /**
      * The cost values for certain nodes.
@@ -154,6 +159,9 @@ public abstract class AbstractPathJob implements Callable<Path>
         final int maxX = Math.max(start.getX(), end.getX()) + (range / 2);
         final int maxZ = Math.max(start.getZ(), end.getZ()) + (range / 2);
 
+        this.xzRestricted = false;
+        this.hardXzRestriction = false;
+
         this.world = new ChunkCache(world, new BlockPos(minX, MIN_Y, minZ), new BlockPos(maxX, MAX_Y, maxZ), range);
 
         this.start = new BlockPos(start);
@@ -177,24 +185,61 @@ public abstract class AbstractPathJob implements Callable<Path>
      * AbstractPathJob constructor.
      *
      * @param world            the world within which to path.
-     * @param start            pathing start position
+     * @param start            the start position from which to path from.
      * @param startRestriction start of restricted area.
      * @param endRestriction   end of restricted area.
-     * @param range            expected range
-     * @param grow             restriction area grow vector
+     * @param range            range^2 is used as cap for visited node count
+     * @param hardRestriction  if <code>true</code> start has to be inside the restricted area (otherwise the search immidiately finishes) -
+     *                         node visits outside the area are not allowed, isAtDestination is called on every node, if <code>false</code>
+     *                         restricted area only applies to calling isAtDestination thus searching outside area is allowed
      * @param result           path result.
      * @param entity           the entity.
-     * @see AbstractPathJob#AbstractPathJob(World, BlockPos, BlockPos, int, LivingEntity)
      */
-    public AbstractPathJob(final World world, @NotNull final BlockPos start, final BlockPos startRestriction, final BlockPos endRestriction, 
-        final int range, final Vector3i grow, final PathResult result, final LivingEntity entity)
+    public AbstractPathJob(final World world,
+        final BlockPos start,
+        final BlockPos startRestriction,
+        final BlockPos endRestriction,
+        final int range,
+        final boolean hardRestriction,
+        final PathResult<AbstractPathJob> result,
+        final LivingEntity entity)
+    {
+        this(world, start, startRestriction, endRestriction, range, Vector3i.NULL_VECTOR, hardRestriction, result, entity);
+    }
+
+    /**
+     * AbstractPathJob constructor.
+     *
+     * @param world            the world within which to path.
+     * @param start            the start position from which to path from.
+     * @param startRestriction start of restricted area.
+     * @param endRestriction   end of restricted area.
+     * @param range            range^2 is used as cap for visited node count
+     * @param grow             adjustment for restricted area, can be either shrink or grow, is applied in both of xz directions after
+     *                         getting min/max box values
+     * @param hardRestriction  if <code>true</code> start has to be inside the restricted area (otherwise the search immidiately finishes) -
+     *                         node visits outside the area are not allowed, isAtDestination is called on every node, if <code>false</code>
+     *                         restricted area only applies to calling isAtDestination thus searching outside area is allowed
+     * @param result           path result.
+     * @param entity           the entity.
+     */
+    public AbstractPathJob(final World world,
+        final BlockPos start,
+        final BlockPos startRestriction,
+        final BlockPos endRestriction,
+        final int range,
+        final Vector3i grow,
+        final boolean hardRestriction,
+        final PathResult<AbstractPathJob> result,
+        final LivingEntity entity)
     {
         this.minX = Math.min(startRestriction.getX(), endRestriction.getX()) - grow.getX();
         this.minZ = Math.min(startRestriction.getZ(), endRestriction.getZ()) - grow.getZ();
         this.maxX = Math.max(startRestriction.getX(), endRestriction.getX()) + grow.getX();
         this.maxZ = Math.max(startRestriction.getZ(), endRestriction.getZ()) + grow.getZ();
 
-        xzRestricted = true;
+        this.xzRestricted = true;
+        this.hardXzRestriction = hardRestriction;
 
         this.world = new ChunkCache(world, new BlockPos(minX, MIN_Y, minZ), new BlockPos(maxX, MAX_Y, maxZ), range);
 
@@ -204,7 +249,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         this.result = result;
         result.setJob(this);
 
-        allowJumpPointSearchTypeWalk = false;
+        this.allowJumpPointSearchTypeWalk = false;
 
         if (MinecoloniesAPIProxy.getInstance().getConfig().getClient().pathfindingDebugDraw.get()) // this is automatically false when on server
         {
@@ -496,8 +541,11 @@ public abstract class AbstractPathJob implements Callable<Path>
             handleDebugOptions(currentNode);
             currentNode.setClosed();
 
-            if ((!xzRestricted || (currentNode.pos.getX() >= minX && currentNode.pos.getX() <= maxX && currentNode.pos.getZ() >= minZ
-                && currentNode.pos.getZ() <= maxZ)) && isAtDestination(currentNode))
+            final boolean isInRestrictedArea = currentNode.pos.getX() >= minX && currentNode.pos.getX() <= maxX
+                && currentNode.pos.getZ() >= minZ && currentNode.pos.getZ() <= maxZ;
+            final boolean isPositionOk = !xzRestricted || isInRestrictedArea;
+
+            if (isPositionOk && isAtDestination(currentNode))
             {
                 bestNode = currentNode;
                 result.setPathReachesDestination(true);
@@ -507,14 +555,18 @@ public abstract class AbstractPathJob implements Callable<Path>
             //  If this is the closest node to our destination, treat it as our best node
             final double nodeResultScore =
               getNodeResultScore(currentNode);
-            if (nodeResultScore < bestNodeResultScore && !currentNode.isCornerNode()
+            if (isPositionOk && nodeResultScore < bestNodeResultScore && !currentNode.isCornerNode()
                   && isWalkableSurface(world.getBlockState(currentNode.pos.down()), currentNode.pos.down()) == SurfaceType.WALKABLE)
             {
                 bestNode = currentNode;
                 bestNodeResultScore = nodeResultScore;
             }
 
-            walkCurrentNode(currentNode);
+            // if xz soft-restricted we can walk outside the restricted area to be able to find ways around back to the area
+            if (!hardXzRestriction || isPositionOk)
+            {
+                walkCurrentNode(currentNode, isInRestrictedArea);
+            }
         }
 
         @NotNull final Path path = finalizePath(bestNode);
@@ -550,7 +602,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         debugNodesPath.add(node);
     }
 
-    private void walkCurrentNode(@NotNull final Node currentNode)
+    private void walkCurrentNode(@NotNull final Node currentNode, final boolean isInRestrictedArea)
     {
         BlockPos dPos = BLOCKPOS_IDENTITY;
         if (currentNode.parent != null)
@@ -561,50 +613,50 @@ public abstract class AbstractPathJob implements Callable<Path>
         //  On a ladder, we can go 1 straight-up
         if (onLadderGoingUp(currentNode, dPos))
         {
-            walk(currentNode, BLOCKPOS_UP);
+            walk(currentNode, BLOCKPOS_UP, isInRestrictedArea);
         }
 
         //  We can also go down 1, if the lower block is a ladder
         if (onLadderGoingDown(currentNode, dPos))
         {
-            walk(currentNode, BLOCKPOS_DOWN);
+            walk(currentNode, BLOCKPOS_DOWN, isInRestrictedArea);
         }
 
         // Only explore downwards when dropping
         if ((currentNode.parent == null || !currentNode.parent.pos.equals(currentNode.pos.down())) && currentNode.isCornerNode())
         {
-            walk(currentNode, BLOCKPOS_DOWN);
+            walk(currentNode, BLOCKPOS_DOWN, isInRestrictedArea);
             return;
         }
 
         // Walk downwards node if passable
-        if (isPassable(currentNode.pos.down(), false))
+        if (isPassable(currentNode.pos.down(), false, isInRestrictedArea))
         {
-            walk(currentNode, BLOCKPOS_DOWN);
+            walk(currentNode, BLOCKPOS_DOWN, isInRestrictedArea);
         }
 
         // N
         if (dPos.getZ() <= 0)
         {
-            walk(currentNode, BLOCKPOS_NORTH);
+            walk(currentNode, BLOCKPOS_NORTH, isInRestrictedArea);
         }
 
         // E
         if (dPos.getX() >= 0)
         {
-            walk(currentNode, BLOCKPOS_EAST);
+            walk(currentNode, BLOCKPOS_EAST, isInRestrictedArea);
         }
 
         // S
         if (dPos.getZ() >= 0)
         {
-            walk(currentNode, BLOCKPOS_SOUTH);
+            walk(currentNode, BLOCKPOS_SOUTH, isInRestrictedArea);
         }
 
         // W
         if (dPos.getX() <= 0)
         {
-            walk(currentNode, BLOCKPOS_WEST);
+            walk(currentNode, BLOCKPOS_WEST, isInRestrictedArea);
         }
     }
 
@@ -816,12 +868,12 @@ public abstract class AbstractPathJob implements Callable<Path>
      * @param dPos   Delta from parent, expected in range of [-1..1].
      * @return true if a node was added or updated when attempting to move in the given direction.
      */
-    protected final boolean walk(@NotNull final Node parent, @NotNull BlockPos dPos)
+    protected final boolean walk(@NotNull final Node parent, @NotNull BlockPos dPos, final boolean isInRestrictedArea)
     {
         BlockPos pos = parent.pos.add(dPos);
 
         //  Can we traverse into this node?  Fix the y up
-        final int newY = getGroundHeight(parent, pos);
+        final int newY = getGroundHeight(parent, pos, isInRestrictedArea);
 
         if (newY < 0)
         {
@@ -895,16 +947,16 @@ public abstract class AbstractPathJob implements Callable<Path>
         //  Jump Point Search-ish optimization:
         // If this node was a (heuristic-based) improvement on our parent,
         // lets go another step in the same direction...
-        performJumpPointSearch(parent, dPos, node);
+        performJumpPointSearch(parent, dPos, node, isInRestrictedArea);
 
         return true;
     }
 
-    private void performJumpPointSearch(@NotNull final Node parent, @NotNull final BlockPos dPos, @NotNull final Node node)
+    private void performJumpPointSearch(@NotNull final Node parent, @NotNull final BlockPos dPos, @NotNull final Node node, final boolean isInRestrictedArea)
     {
         if (allowJumpPointSearchTypeWalk && node.getHeuristic() <= parent.getHeuristic())
         {
-            walk(node, dPos);
+            walk(node, dPos, isInRestrictedArea);
         }
     }
 
@@ -963,20 +1015,20 @@ public abstract class AbstractPathJob implements Callable<Path>
      * @param pos    coordinate of block.
      * @return y height of first open, viable block above ground, or -1 if blocked or too far a drop.
      */
-    protected int getGroundHeight(final Node parent, @NotNull final BlockPos pos)
+    protected int getGroundHeight(final Node parent, @NotNull final BlockPos pos, final boolean isInRestrictedArea)
     {
         //  Check (y+1) first, as it's always needed, either for the upper body (level),
         //  lower body (headroom drop) or lower body (jump up)
-        if (checkHeadBlock(parent, pos))
+        if (checkHeadBlock(parent, pos, isInRestrictedArea))
         {
-            return handleTargetNotPassable(parent, pos.up(), world.getBlockState(pos.up()));
+            return handleTargetNotPassable(parent, pos.up(), world.getBlockState(pos.up()), isInRestrictedArea);
         }
 
         //  Now check the block we want to move to
         final BlockState target = world.getBlockState(pos);
-        if (!isPassable(target, pos))
+        if (!isPassable(target, pos, isInRestrictedArea))
         {
-            return handleTargetNotPassable(parent, pos, target);
+            return handleTargetNotPassable(parent, pos, target, isInRestrictedArea);
         }
 
         //  Do we have something to stand on in the target space?
@@ -992,10 +1044,10 @@ public abstract class AbstractPathJob implements Callable<Path>
             return -1;
         }
 
-        return handleNotStanding(parent, pos, below);
+        return handleNotStanding(parent, pos, below, isInRestrictedArea);
     }
 
-    private int handleNotStanding(@Nullable final Node parent, @NotNull final BlockPos pos, @NotNull final BlockState below)
+    private int handleNotStanding(@Nullable final Node parent, @NotNull final BlockPos pos, @NotNull final BlockState below, final boolean isInRestrictedArea)
     {
         final boolean isSwimming = parent != null && parent.isSwimming();
 
@@ -1009,14 +1061,14 @@ public abstract class AbstractPathJob implements Callable<Path>
             return pos.getY();
         }
 
-        return checkDrop(parent, pos, isSwimming);
+        return checkDrop(parent, pos, isSwimming, isInRestrictedArea);
     }
 
-    private int checkDrop(@Nullable final Node parent, @NotNull final BlockPos pos, final boolean isSwimming)
+    private int checkDrop(@Nullable final Node parent, @NotNull final BlockPos pos, final boolean isSwimming, final boolean isInRestrictedArea)
     {
         final boolean canDrop = parent != null && !parent.isLadder();
         //  Nothing to stand on
-        if (!canDrop || isSwimming || ((parent.pos.getX() != pos.getX() || parent.pos.getZ() != pos.getZ()) && isPassable(parent.pos.down(), false)
+        if (!canDrop || isSwimming || ((parent.pos.getX() != pos.getX() || parent.pos.getZ() != pos.getZ()) && isPassable(parent.pos.down(), false, isInRestrictedArea)
                                          && isWalkableSurface(world.getBlockState(parent.pos.down()), parent.pos.down()) == SurfaceType.DROPABLE))
         {
             return -1;
@@ -1057,7 +1109,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         return -1;
     }
 
-    private int handleTargetNotPassable(@Nullable final Node parent, @NotNull final BlockPos pos, @NotNull final BlockState target)
+    private int handleTargetNotPassable(@Nullable final Node parent, @NotNull final BlockPos pos, @NotNull final BlockState target, final boolean isInRestrictedArea)
     {
         final boolean canJump = parent != null && !parent.isLadder() && !parent.isSwimming();
         //  Need to try jumping up one, if we can
@@ -1067,7 +1119,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         }
 
         //  Check for headroom in the target space
-        if (!isPassable(pos.up(2), false))
+        if (!isPassable(pos.up(2), false, isInRestrictedArea))
         {
             final VoxelShape bb1 = world.getBlockState(pos).getCollisionShape(world, pos);
             final VoxelShape bb2 = world.getBlockState(pos.up(2)).getCollisionShape(world, pos.up(2));
@@ -1078,7 +1130,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         }
 
         //  Check for jump room from the origin space
-        if (!isPassable(parent.pos.up(2), false))
+        if (!isPassable(parent.pos.up(2), false, isInRestrictedArea))
         {
             final VoxelShape bb1 = world.getBlockState(pos).getCollisionShape(world, pos);
             final VoxelShape bb2 = world.getBlockState(parent.pos.up(2)).getCollisionShape(world, parent.pos.up(2));
@@ -1108,7 +1160,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         return -1;
     }
 
-    private boolean checkHeadBlock(@Nullable final Node parent, @NotNull final BlockPos pos)
+    private boolean checkHeadBlock(@Nullable final Node parent, @NotNull final BlockPos pos, final boolean isInRestrictedArea)
     {
         BlockPos localPos = pos;
         final VoxelShape bb = world.getBlockState(localPos).getCollisionShape(world, localPos);
@@ -1117,7 +1169,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             localPos = pos.up();
         }
 
-        if (!isPassable(pos.up(), true))
+        if (!isPassable(pos.up(), true, isInRestrictedArea))
         {
             final VoxelShape bb1 = world.getBlockState(pos.down()).getCollisionShape(world, pos.down());
             final VoxelShape bb2 = world.getBlockState(pos.up()).getCollisionShape(world, pos.up());
@@ -1145,7 +1197,7 @@ public abstract class AbstractPathJob implements Callable<Path>
                 return false;
             }
 
-            return hereState.getMaterial().isLiquid() && !isPassable(pos, false);
+            return hereState.getMaterial().isLiquid() && !isPassable(pos, false, isInRestrictedArea);
         }
         return false;
     }
@@ -1176,9 +1228,10 @@ public abstract class AbstractPathJob implements Callable<Path>
      * Is the space passable.
      *
      * @param block the block we are checking.
+     * @param isInRestrictedArea whether pos is in restricted area or not
      * @return true if the block does not block movement.
      */
-    protected boolean isPassable(@NotNull final BlockState block, final BlockPos pos)
+    protected boolean isPassable(@NotNull final BlockState block, final BlockPos pos, final boolean isInRestrictedArea)
     {
         if (block.getMaterial() != Material.AIR)
         {
@@ -1211,7 +1264,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         return true;
     }
 
-    protected boolean isPassable(final BlockPos pos, final boolean head)
+    protected boolean isPassable(final BlockPos pos, final boolean head, final boolean isInRestrictedArea)
     {
         final BlockState state = world.getBlockState(pos);
         final VoxelShape shape = state.getCollisionShape(world, pos);
@@ -1221,7 +1274,7 @@ public abstract class AbstractPathJob implements Callable<Path>
                      || !(state.getBlock() instanceof CarpetBlock || state.getBlock() instanceof BlockFloatingCarpet)
                      || isLadder(state.getBlock(), pos);
         }
-        return isPassable(state, pos);
+        return isPassable(state, pos, isInRestrictedArea);
     }
 
     /**
