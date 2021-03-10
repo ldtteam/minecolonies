@@ -800,6 +800,7 @@
   "com.minecolonies.coremod.status.burying": "Burying a citizen...",
   "com.minecolonies.coremod.status.resurrect": "Trying to resurrect a citizen...",
   "com.minecolonies.coremod.resurrect": "Amazing! Your gravedigger resurected %s today! Your citizen will not mourn anymore",
+  "com.minecolonies.coremod.gravespawned": "A grave has been created for %S, collect it quick before it decay!",
 
   "com.minecolonies.coremod.gui.workerhuts.buildbarracks": "Barracks",
   "com.minecolonies.coremod.gui.barracks.spieshire": "Hire",

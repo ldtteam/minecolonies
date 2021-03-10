@@ -91,8 +91,7 @@ import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.Suppression.INCREMENT_AND_DECREMENT_OPERATORS_SHOULD_NOT_BE_USED_IN_A_METHOD_CALL_OR_MIXED_WITH_OTHER_OPERATORS_IN_AN_EXPRESSION;
-import static com.minecolonies.api.util.constant.TranslationConstants.CITIZEN_RENAME_NOT_ALLOWED;
-import static com.minecolonies.api.util.constant.TranslationConstants.CITIZEN_RENAME_SAME;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.entity.ai.minimal.EntityAIInteractToggleAble.*;
 
 /**
@@ -1465,6 +1464,9 @@ public class EntityCitizen extends AbstractEntityCitizen
             }
             citizenColonyHandler.getColony().getCitizenManager().removeCivilian(getCitizenData());
 
+            final String deathCause = new StringTextComponent(damageSource.getDeathMessage(this).getString()).getString().replaceFirst(this.getDisplayName().getString(), "Citizen");
+            citizenColonyHandler.getColony().getEventDescriptionManager().addEventDescription(new CitizenDiedEvent(getPosition(), citizenData.getName(), deathCause));
+
             if(citizenColonyHandler.getColony().isCoordInColony(world, getPosition()))
             {
                 createCitizenGrave();
@@ -1473,9 +1475,6 @@ public class EntityCitizen extends AbstractEntityCitizen
             {
                 InventoryUtils.dropItemHandler(citizenData.getInventory(), world, (int) getPosX(), (int) getPosY(), (int) getPosZ());
             }
-
-            final String deathCause = new StringTextComponent(damageSource.getDeathMessage(this).getString()).getString().replaceFirst(this.getDisplayName().getString(), "Citizen");
-            citizenColonyHandler.getColony().getEventDescriptionManager().addEventDescription(new CitizenDiedEvent(getPosition(), citizenData.getName(), deathCause));
         }
         super.onDeath(damageSource);
     }
@@ -1501,6 +1500,8 @@ public class EntityCitizen extends AbstractEntityCitizen
                final BuildingGraveyard graveyard = (BuildingGraveyard)citizenColonyHandler.getColony().getBuildingManager().getBuilding(closestGraveyardPos);
                graveyard.addGrave(firstValidPosition);
            }
+
+           citizenChatHandler.sendLocalizedChat("com.minecolonies.coremod.gravespawned", getName());
         }
         else
         {
