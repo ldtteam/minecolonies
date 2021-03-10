@@ -1552,6 +1552,11 @@
   "com.minecolonies.coremod.info.barracks.2.name": "FAQ",
   "com.minecolonies.coremod.info.barracks.2": "Now let's cover some frequently asked questions:\n\n Q 1. Can I have more than 1 Barracks?\n   A 1. Yes, but the Barracks Tower levels are based on the Barracks they are attached to. So even if you have one Barracks that is level 5, if the second Barracks is only level 1, then that Barracks can only have a single level 1 tower.",
 
+  "com.minecolonies.coremod.info.graveyard.0.name": "Introduction",
+  "com.minecolonies.coremod.info.graveyard.0": "The graveyard is the resting place of your fallen citizen.\n\nWithout it you will be able to manually collect fallen citizen's grave but your colony will mourn longer!\n\nEach graveyard hire a gravedigger that has the role of collecting the graves within the city.",
+  "com.minecolonies.coremod.info.graveyard.1.name": "Resurection",
+  "com.minecolonies.coremod.info.graveyard.1": "During its free time, the gravedigger will get to know citizen and visit mystical site\nSlowly attuning to the mana of the world.\n\nIf the its mana skill is high, your gravedigger has a small chance to resurrect a fallen citizen!\n\nYou can increase this chance a bit by upgrading the graveyard, building a Mystical Site, and researching in the university!",
+
   "com.minecolonies.coremod.movebuilding.invalid": "Can't reposition to this position, undestroyable block at destination!",
 
   "com.minecolonies.coremod.resourcescroll.nobuilder": "Please register a Builder's Hut first by sneak + right-clicking one!",
