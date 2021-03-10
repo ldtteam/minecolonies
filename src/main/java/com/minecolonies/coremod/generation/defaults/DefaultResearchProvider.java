@@ -7,6 +7,7 @@ import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.research.AbstractResearchProvider;
+import com.minecolonies.api.research.ResearchBranchType;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.item.Items;
@@ -47,7 +48,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
 
     /**
      * Get a list of all research branches. Conventions: these are not mandatory, and their inclusion simply fixes capitalization. MineColonies should fully populate new branches
-     * for clarity; other data pack makers may not want to do so.
+     * for clarity; other data pack makers may not want to do so.  Branch Sort Order should be separated by large values, to allow possible third-party insert between existing branches.
      *
      * @return a complete list of all research branches.
      */
@@ -55,9 +56,9 @@ public class DefaultResearchProvider extends AbstractResearchProvider
     public Collection<ResearchBranch> getResearchBranchCollection()
     {
         final List<ResearchBranch> branches = new ArrayList<>();
-        branches.add(new ResearchBranch(CIVIL).setTranslatedBranchName("Civilian").setBranchTimeMultiplier(1.0));
-        branches.add(new ResearchBranch(COMBAT).setTranslatedBranchName("Combat").setBranchTimeMultiplier(1.0));
-        branches.add(new ResearchBranch(TECH).setTranslatedBranchName("Technology").setBranchTimeMultiplier(1.0));
+        branches.add(new ResearchBranch(CIVIL).setTranslatedBranchName("Civilian").setBranchTimeMultiplier(1.0).setBranchSortOrder(50).setBranchType(ResearchBranchType.ACHIEVEMENT));
+        branches.add(new ResearchBranch(COMBAT).setTranslatedBranchName("Combat").setBranchTimeMultiplier(1.0).setBranchSortOrder(100));
+        branches.add(new ResearchBranch(TECH).setTranslatedBranchName("Technology").setBranchTimeMultiplier(1.0).setBranchSortOrder(150));
         return branches;
     }
 

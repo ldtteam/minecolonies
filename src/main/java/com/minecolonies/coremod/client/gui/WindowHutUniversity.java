@@ -5,19 +5,23 @@ import com.ldtteam.blockout.Alignment;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.PaneBuilders;
 import com.ldtteam.blockout.controls.*;
+import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.blockout.views.View;
+import com.minecolonies.api.research.IGlobalResearchBranch;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.research.IResearchRequirement;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingUniversity;
 import com.minecolonies.coremod.research.AlternateBuildingResearchRequirement;
 import com.minecolonies.coremod.research.BuildingResearchRequirement;
+import com.minecolonies.coremod.research.GlobalResearchBranch;
 import com.minecolonies.coremod.research.ResearchResearchRequirement;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -43,51 +47,20 @@ public class WindowHutUniversity extends AbstractWindowWorkerBuilding<BuildingUn
     {
         super(building, Constants.MOD_ID + RESOURCE_STRING);
 
-        final View view = this.findPaneOfTypeByID(BRANCH_VIEW_ID, View.class);
-        int offset = 0;
-        // For now, sort research branches by name, as they may be loaded in any order.
-        branches.addAll(IGlobalResearchTree.getInstance().getBranches());
-        branches.sort(Comparator.comparing(ResourceLocation::getPath, String.CASE_INSENSITIVE_ORDER));
-        for (final ResourceLocation branch : branches)
+        final List<ResourceLocation> inputBranches = IGlobalResearchTree.getInstance().getBranches();
+        final List<List<IFormattableTextComponent>> allReqs = new ArrayList<>();
+        inputBranches.sort((b1, b2) -> Integer.compare(IGlobalResearchTree.getInstance().getBranchData(b1).getSortOrder(), IGlobalResearchTree.getInstance().getBranchData(b2).getSortOrder()));
+        for (final ResourceLocation branch : inputBranches)
         {
-            List<IFormattableTextComponent> requirements = getHidingRequirementDesc(branch);
-            if(requirements.isEmpty())
+            final List<IFormattableTextComponent> requirements = getHidingRequirementDesc(branch);
+            if(requirements.isEmpty() || !IGlobalResearchTree.getInstance().getBranchData(branch).getHidden())
             {
-
-                final ButtonImage button = new ButtonImage();
-                button.setImage(new ResourceLocation(Constants.MOD_ID, MEDIUM_SIZED_BUTTON_RES));
-                button.setID(branch.toString());
-                button.setText(IGlobalResearchTree.getInstance().getBranchName(branch));
-                button.setSize(BUTTON_LENGTH, BUTTON_HEIGHT);
-                button.setTextRenderBox(BUTTON_LENGTH, BUTTON_HEIGHT);
-                button.setTextAlignment(Alignment.MIDDLE);
-                button.setColors(SLIGHTLY_BLUE);
-                button.setPosition(x + INITITAL_X_OFFSET, y + offset + INITITAL_Y_OFFSET);
-                view.addChild(button);
+                branches.add(branch);
+                allReqs.add(requirements);
             }
-            else
-            {
-                final Gradient gradient = new Gradient();
-                gradient.setSize(BUTTON_LENGTH, BUTTON_HEIGHT);
-                gradient.setPosition(x + INITITAL_X_OFFSET, y + offset + INITITAL_Y_OFFSET);
-                gradient.setGradientStart(239, 230, 215, 255);
-                gradient.setGradientEnd(239, 230, 215, 255);
-                view.addChild(gradient);
-                final ButtonImage button = new ButtonImage();
-                button.setImage(new ResourceLocation(Constants.MOD_ID, MEDIUM_SIZED_BUTTON_RES));
-                button.setText(new TranslationTextComponent("-----------"));
-                button.setSize(BUTTON_LENGTH, BUTTON_HEIGHT);
-                button.setTextColor(SLIGHTLY_BLUE);
-                button.setPosition(x + INITITAL_X_OFFSET, y + offset + INITITAL_Y_OFFSET);
-                view.addChild(button);
-                final AbstractTextBuilder.TooltipBuilder reqBuilder = PaneBuilders.tooltipBuilder().hoverPane(button);
-                for(IFormattableTextComponent req : requirements)
-                {
-                    reqBuilder.append(req).paragraphBreak();
-                }
-            }
-            offset += BUTTON_HEIGHT + BUTTON_PADDING;
         }
+        ScrollingList researchList = findPaneOfTypeByID("researches", ScrollingList.class);
+        researchList.setDataProvider(new ResearchListProvider(branches, allReqs));
         updateResearchCount(0);
     }
 
@@ -105,8 +78,7 @@ public class WindowHutUniversity extends AbstractWindowWorkerBuilding<BuildingUn
             if(!IGlobalResearchTree.getInstance().getResearch(branch, primary).isHidden()
                  || IGlobalResearchTree.getInstance().isResearchRequirementsFulfilled(IGlobalResearchTree.getInstance().getResearch(branch, primary).getResearchRequirement(), building.getColony()))
             {
-                requirements.clear();
-                break;
+                return Collections.EMPTY_LIST;
             }
             else
             {
@@ -116,36 +88,18 @@ public class WindowHutUniversity extends AbstractWindowWorkerBuilding<BuildingUn
                 }
                 else
                 {
-                    requirements.add(new TranslationTextComponent("Or").setStyle((Style.EMPTY).setFormatting(TextFormatting.AQUA)));
+                    requirements.add(new TranslationTextComponent("Or").setStyle((Style.EMPTY).setFormatting(TextFormatting.BLUE)));
                 }
                 for(IResearchRequirement req : IGlobalResearchTree.getInstance().getResearch(branch, primary).getResearchRequirement())
                 {
-                    if(req instanceof ResearchResearchRequirement)
+                    // We'll include even completed partial components in the requirement list.
+                    if (!req.isFulfilled(building.getColony()))
                     {
-                        if(!building.getColony().getResearchManager().getResearchTree().hasCompletedResearch(((ResearchResearchRequirement) req).getResearchId()))
-                        {
-                            requirements.add(req.getDesc().setStyle((Style.EMPTY).setFormatting(TextFormatting.RED)));
-                        }
+                        requirements.add(new StringTextComponent("-").append(req.getDesc().setStyle((Style.EMPTY).setFormatting(TextFormatting.RED))));
                     }
-                    else if(req instanceof AlternateBuildingResearchRequirement)
+                    else
                     {
-                        if(req.isFulfilled(building.getColony()))
-                        {
-                            req.getDesc();
-                        }
-                    }
-                    // We'll include even completed buildings in the requirement list, since buildings can get undone/removed.
-                    else if (req instanceof BuildingResearchRequirement)
-                    {
-
-                        if(!req.isFulfilled(building.getColony()))
-                        {
-                            requirements.add(req.getDesc().setStyle((Style.EMPTY).setFormatting(TextFormatting.RED)));
-                        }
-                        else
-                        {
-                            requirements.add(req.getDesc().setStyle((Style.EMPTY).setFormatting(TextFormatting.AQUA)));
-                        }
+                        requirements.add(new StringTextComponent("-").append(req.getDesc().setStyle((Style.EMPTY).setFormatting(TextFormatting.AQUA))));
                     }
                 }
             }
@@ -158,9 +112,9 @@ public class WindowHutUniversity extends AbstractWindowWorkerBuilding<BuildingUn
     {
         super.onButtonClicked(button);
 
-        if (ResourceLocation.isResouceNameValid(button.getID()) && branches.contains(new ResourceLocation(button.getID())))
+        if (button.getParent() != null && ResourceLocation.isResouceNameValid(button.getParent().getID()) && branches.contains(new ResourceLocation(button.getParent().getID())))
         {
-            new WindowResearchTree(new ResourceLocation(button.getID()), building, this).open();
+            new WindowResearchTree(new ResourceLocation(button.getParent().getID()), building, this).open();
         }
     }
 
@@ -193,5 +147,45 @@ public class WindowHutUniversity extends AbstractWindowWorkerBuilding<BuildingUn
     public String getBuildingName()
     {
         return COM_MINECOLONIES_COREMOD_GUI_UNIVERSITY;
+    }
+
+    private static class ResearchListProvider implements ScrollingList.DataProvider
+    {
+        private final List<ResourceLocation> branches;
+        private final List<List<IFormattableTextComponent>> requirements;
+
+        ResearchListProvider(List<ResourceLocation> branches, List<List<IFormattableTextComponent>> requirements)
+        {
+            this.branches = branches;
+            this.requirements = requirements;
+        }
+
+        @Override
+        public int getElementCount()
+        {
+            return branches.size();
+        }
+
+        @Override
+        public void updateElement(final int index, final Pane rowPane)
+        {
+            ButtonImage button = rowPane.findPaneOfTypeByID(GUI_LIST_ELEMENT_NAME, ButtonImage.class);
+            button.getParent().setID(branches.get(index).toString());
+            if(requirements.get(index).isEmpty())
+            {
+                button.setText(IGlobalResearchTree.getInstance().getBranchData(branches.get(index)).getName());
+            }
+            else
+            {
+                button.setText(new TranslationTextComponent("----------"));
+                AbstractTextBuilder.TooltipBuilder hoverText = PaneBuilders.tooltipBuilder().hoverPane(button);
+                button.disable();
+                for (IFormattableTextComponent req : requirements.get(index))
+                {
+                    hoverText.append(req).paragraphBreak();
+                }
+                hoverText.build();
+            }
+        }
     }
 }

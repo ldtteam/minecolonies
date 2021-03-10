@@ -53,6 +53,11 @@ public class WindowResearchTree extends AbstractWindowSkeleton
     private final WindowHutUniversity last;
 
     /**
+     * The styling type of the research window.
+     */
+    private final ResearchBranchType branchType;
+
+    /**
      * If has a max research for this branch already.
      */
     private boolean hasMax;
@@ -103,6 +108,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         this.building = building;
         this.last = last;
         this.hasMax = false;
+        this.branchType = IGlobalResearchTree.getInstance().getBranchData(branch).getType();
 
         final List<ResourceLocation> researchList = IGlobalResearchTree.getInstance().getPrimaryResearch(branch);
         this.hasMax = building.getColony().getResearchManager().getResearchTree().branchFinishedHighestLevel(branch);
@@ -306,13 +312,26 @@ public class WindowResearchTree extends AbstractWindowSkeleton
      */
     private void drawTreeBackground(final ZoomDragView view, final int maxHeight)
     {
+        if(branchType == ResearchBranchType.ACHIEVEMENT && IGlobalResearchTree.getInstance().getBranchData(branch).getBaseTime() < 0.01)
+        {
+            return;
+        }
         for (int i = 1; i <= MAX_DEPTH; i++)
         {
             final Text timeLabel = new Text();
             timeLabel.setSize(TIME_WIDTH, TIME_HEIGHT);
-            timeLabel.setText(new TranslationTextComponent("com.minecolonies.coremod.gui.research.tier.header",
-              (i > building.getBuildingMaxLevel()) ? building.getBuildingMaxLevel() : i,
-              (IGlobalResearchTree.getInstance().getBranchTime(branch) * Math.pow(2, i - 1))));
+            if(branchType == ResearchBranchType.ACHIEVEMENT)
+            {
+                timeLabel.setText(new TranslationTextComponent("com.minecolonies.coremod.gui.research.tier.achieveheader",
+                  (i > building.getBuildingMaxLevel()) ? building.getBuildingMaxLevel() : i,
+                  (IGlobalResearchTree.getInstance().getBranchData(branch).getBaseTime() * Math.pow(2, i - 1))));
+            }
+            else
+            {
+                timeLabel.setText(new TranslationTextComponent("com.minecolonies.coremod.gui.research.tier.header",
+                  (i > building.getBuildingMaxLevel()) ? building.getBuildingMaxLevel() : i,
+                  (IGlobalResearchTree.getInstance().getBranchData(branch).getBaseTime() * Math.pow(2, i - 1))));
+            }
             timeLabel.setPosition((i - 1) * (GRADIENT_WIDTH + X_SPACING) + GRADIENT_WIDTH / 2 - TIME_WIDTH / 4, TIMELABEL_Y_POSITION);
             if (building.getBuildingLevel() < i && (building.getBuildingLevel() != building.getBuildingMaxLevel() || hasMax))
             {
@@ -407,7 +426,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         final int progress = tree.getResearch(branch, research.getId()) == null ? 0 : tree.getResearch(branch, research.getId()).getProgress();
 
         if (mc.player.isCreative() && state == ResearchState.IN_PROGRESS && MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchCreativeCompletion.get()
-              && progress < BASE_RESEARCH_TIME * IGlobalResearchTree.getInstance().getBranchTime(branch) * Math.pow(2, research.getDepth() - 1))
+              && progress < BASE_RESEARCH_TIME * IGlobalResearchTree.getInstance().getBranchData(branch).getBaseTime() * Math.pow(2, research.getDepth() - 1))
         {
             Network.getNetwork().sendToServer(new TryResearchMessage(building, research.getId(), research.getBranch(), false));
         }
@@ -545,7 +564,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
 
         // scale down subBar to fit smaller progress text, and make gradients of scale to match progress.
         final double progressRatio = (progress + 1) / (Math.pow(2, research.getDepth() - 1)
-                                                         * (double) BASE_RESEARCH_TIME * IGlobalResearchTree.getInstance().getBranchTime(branch));
+                                                         * (double) BASE_RESEARCH_TIME * IGlobalResearchTree.getInstance().getBranchData(branch).getBaseTime());
         subBar.setSize(RESEARCH_WIDTH - ICON_X_OFFSET * 2 - TEXT_X_OFFSET, TIME_HEIGHT);
         nameGradient.setSize((int) (progressRatio * NAME_LABEL_WIDTH), NAME_LABEL_HEIGHT);
 
@@ -599,17 +618,17 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             }
             if (research.getDepth() > building.getBuildingLevel() && building.getBuildingLevel() != building.getBuildingMaxLevel())
             {
-                hoverPaneBuilder.paragraphBreak().append(new TranslationTextComponent("com.minecolonies.coremod.research.requirement.university.level", research.getDepth()));
+                hoverPaneBuilder.paragraphBreak().append(new TranslationTextComponent("com.minecolonies.coremod.research.requirement.university.level", Math.min(research.getDepth(), this.building.getBuildingMaxLevel())));
             }
             if (research.getDepth() == MAX_DEPTH)
             {
                 if (hasMax)
                 {
-                    hoverPaneBuilder.paragraphBreak().append(new TranslationTextComponent("com.minecolonies.coremod.research.limit.onemaxperbranch")).color(COLOR_TEXT_FULFILLED);
+                    hoverPaneBuilder.paragraphBreak().append(new TranslationTextComponent("com.minecolonies.coremod.research.limit.onemaxperbranch")).color(COLOR_TEXT_UNFULFILLED);
                 }
                 else
                 {
-                    hoverPaneBuilder.paragraphBreak().append(new TranslationTextComponent("com.minecolonies.coremod.research.limit.onemaxperbranch")).color(COLOR_TEXT_UNFULFILLED);
+                    hoverPaneBuilder.paragraphBreak().append(new TranslationTextComponent("com.minecolonies.coremod.research.limit.onemaxperbranch")).color(COLOR_TEXT_FULFILLED);
                 }
             }
         }
@@ -650,7 +669,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             }
             else
             {
-                progressToGo = (int) (Math.pow(2, research.getDepth() - 1) * (double) BASE_RESEARCH_TIME * IGlobalResearchTree.getInstance().getBranchTime(branch)) - progress;
+                progressToGo = (int) (Math.pow(2, research.getDepth() - 1) * (double) BASE_RESEARCH_TIME * IGlobalResearchTree.getInstance().getBranchData(branch).getBaseTime()) - progress;
             }
             // Write out the rough remaining time for the research.
             // This will necessarily be an estimate, since adjusting for

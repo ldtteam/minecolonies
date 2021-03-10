@@ -398,7 +398,7 @@ public class GlobalResearch implements IGlobalResearch
             final ILocalResearch research = new LocalResearch(this.id, this.branch, this.depth);
             if (this.instant)
             {
-                research.setProgress((int)(BASE_RESEARCH_TIME * IGlobalResearchTree.getInstance().getBranchTime(branch) * Math.pow(2, research.getDepth() - 1)));
+                research.setProgress((int)(BASE_RESEARCH_TIME * IGlobalResearchTree.getInstance().getBranchData(branch).getBaseTime() * Math.pow(2, research.getDepth() - 1)));
             }
             research.setState(ResearchState.IN_PROGRESS);
             localResearchTree.addResearch(branch, research);

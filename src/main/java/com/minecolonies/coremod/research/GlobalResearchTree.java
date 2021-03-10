@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.research.IGlobalResearch;
+import com.minecolonies.api.research.IGlobalResearchBranch;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.research.IResearchRequirement;
 import com.minecolonies.api.research.effects.IResearchEffect;
@@ -44,14 +45,9 @@ public class GlobalResearchTree implements IGlobalResearchTree
     private final Map<ResourceLocation, Map<ResourceLocation, IGlobalResearch>> researchTree = new HashMap<>();
 
     /**
-     * The map matching branch IDs to their UI-presented names, or IDs otherwise.
+     * The map matching branch IDs to their branch data.
      */
-    private final Map<ResourceLocation, TranslationTextComponent> branchNames = new HashMap<>();
-
-    /**
-     * The map matching branch IDs the base times, defaulting to 1.
-     */
-    private final Map<ResourceLocation, Double> branchTimes = new HashMap<>();
+    private final Map<ResourceLocation, IGlobalResearchBranch> branchDatas = new HashMap<>();
 
     /**
      * The list containing all resettable researches by ResourceLocation.
@@ -101,8 +97,6 @@ public class GlobalResearchTree implements IGlobalResearchTree
         else
         {
             branchMap = new HashMap<>();
-            branchNames.put(branch, new TranslationTextComponent(branch.getPath()));
-            branchTimes.put(branch, 1.0);
         }
 
         if (branchMap.containsKey(research.getId()))
@@ -128,6 +122,12 @@ public class GlobalResearchTree implements IGlobalResearchTree
     }
 
     @Override
+    public void addBranchData(final ResourceLocation branchId, final IGlobalResearchBranch branchData)
+    {
+        this.branchDatas.put(branchId, branchData);
+    }
+
+    @Override
     public boolean hasResearchEffect(final ResourceLocation id)
     {
         return researchEffectsIds.contains(id);
@@ -137,6 +137,19 @@ public class GlobalResearchTree implements IGlobalResearchTree
     public List<ResourceLocation> getBranches()
     {
         return new ArrayList<>(researchTree.keySet());
+    }
+
+    @Override
+    public IGlobalResearchBranch getBranchData(final ResourceLocation id)
+    {
+        if(branchDatas.containsKey(id))
+        {
+            return branchDatas.get(id);
+        }
+        else
+        {
+            return new GlobalResearchBranch(id);
+        }
     }
 
     @Override
@@ -164,6 +177,7 @@ public class GlobalResearchTree implements IGlobalResearchTree
         reloadableResearch.clear();
         // Autostart is only accessible as a dynamically-assigned trait, so we can reset all of it.
         autostartResearch.clear();
+        branchDatas.clear();
         final Iterator<Map.Entry<ResourceLocation, Map<ResourceLocation, IGlobalResearch>>> iterator = researchTree.entrySet().iterator();
         while (researchTree.entrySet().size() > 0 && iterator.hasNext())
         {
@@ -172,30 +186,6 @@ public class GlobalResearchTree implements IGlobalResearchTree
                 iterator.remove();
             }
         }
-    }
-
-    @Override
-    public void setBranchName(final ResourceLocation branchId, final TranslationTextComponent branchName)
-    {
-        branchNames.put(branchId, branchName);
-    }
-
-    @Override
-    public TranslationTextComponent getBranchName(final ResourceLocation branchId)
-    {
-        return branchNames.get(branchId);
-    }
-
-    @Override
-    public void setBranchTime(final ResourceLocation branchId, final double baseTime)
-    {
-        branchTimes.put(branchId, baseTime);
-    }
-
-    @Override
-    public double getBranchTime(final ResourceLocation branchId)
-    {
-        return branchTimes.get(branchId);
     }
 
     @Override
@@ -253,30 +243,21 @@ public class GlobalResearchTree implements IGlobalResearchTree
         buf.writeCompoundTag(treeNBT);
 
         // Lastly, we'll send the branch identifiers.
-        for(Map.Entry<ResourceLocation, Map<ResourceLocation, IGlobalResearch>> branch : researchTree.entrySet())
+        for(Map.Entry<ResourceLocation, IGlobalResearchBranch> branch : branchDatas.entrySet())
         {
             buf.writeResourceLocation(branch.getKey());
-            buf.writeString(branchNames.get(branch.getKey()).getKey());
-            buf.writeDouble(branchTimes.get(branch.getKey()));
+            buf.writeCompoundTag(branch.getValue().writeToNBT());
         }
     }
 
     @Override
     public IMessage handleGlobalResearchTreeMessage(final PacketBuffer buf)
     {
-        try
+        readFromNBT(buf.readCompoundTag());
+        for (int i = 0; i < researchTree.entrySet().size(); i++)
         {
-            readFromNBT(buf.readCompoundTag());
-            for(int i = 0; i < researchTree.entrySet().size(); i++)
-            {
-                ResourceLocation branchId = buf.readResourceLocation();
-                branchNames.put(branchId, new TranslationTextComponent(buf.readString()));
-                branchTimes.put(branchId, buf.readDouble());
-            }
-        }
-        catch(NullPointerException npe)
-        {
-            Log.getLogger().error("Global Research Error, please report : " + npe);
+            ResourceLocation branchId = buf.readResourceLocation();
+            branchDatas.put(branchId, new GlobalResearchBranch(buf.readCompoundTag()));
         }
         return null;
     }

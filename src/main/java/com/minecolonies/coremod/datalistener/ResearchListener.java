@@ -9,6 +9,7 @@ import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.util.Log;
 
 import com.minecolonies.coremod.research.GlobalResearch;
+import com.minecolonies.coremod.research.GlobalResearchBranch;
 import com.minecolonies.coremod.research.ResearchEffectCategory;
 import net.minecraft.client.resources.JsonReloadListener;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -17,7 +18,6 @@ import net.minecraft.resources.IResourceManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.minecolonies.coremod.research.GlobalResearch.*;
+import static com.minecolonies.coremod.research.GlobalResearchBranch.*;
 import static com.minecolonies.coremod.research.ResearchEffectCategory.*;
 
 /**
@@ -38,17 +39,6 @@ public class ResearchListener extends JsonReloadListener
      * The property name that indicates this recipe removes a research.
      */
     public static final String RESEARCH_REMOVE_PROP = "remove";
-
-    /**
-     * The property name for research branch name keys.  Only applies at the level of branch settings.
-     * May be a human-readable text, or a translation key.
-     */
-    private static final String RESEARCH_BRANCH_NAME_PROP = "branch-name";
-
-    /**
-     * The property name for branch's research time modifier.  Only applies at the level of branch settings.
-     */
-    private static final String RESEARCH_BASE_TIME_PROP = "base-time";
 
     /**
      * Set up the core loading, with the directory in the data pack that contains this data
@@ -187,8 +177,9 @@ public class ResearchListener extends JsonReloadListener
             }
 
             //And same for research-branch-specific settings, to avoid extraneous warnings.
-            if (researchJson.has(RESEARCH_BRANCH_NAME_PROP) || researchJson.has(RESEARCH_BASE_TIME_PROP))
+            if (researchJson.has(RESEARCH_BRANCH_NAME_PROP) || researchJson.has(RESEARCH_BASE_TIME_PROP) || researchJson.has(RESEARCH_BRANCH_TYPE_PROP))
             {
+                Log.getLogger().warn(entry.getKey() + " is a branch json.");
                 continue;
             }
 
@@ -324,22 +315,16 @@ public class ResearchListener extends JsonReloadListener
      */
     private void parseResearchBranches(final Map<ResourceLocation, JsonElement> object, IGlobalResearchTree researchTree)
     {
-        for (final Map.Entry<ResourceLocation, JsonElement> entry : object.entrySet())
+        // We don't need check branches that don't have loaded researches, but we do want to create these properties for all branches.
+        for (final ResourceLocation branchId : researchTree.getBranches())
         {
-            final JsonObject researchJson = entry.getValue().getAsJsonObject();
-
-            // Research branches can have the "branch-name" or "base-time" id, or both, or neither.
-            // We don't need to validate that these apply to an existing branch; if not, it simply won't have an effect.
-            if (researchJson.has(RESEARCH_BRANCH_NAME_PROP) && researchJson.get(RESEARCH_BRANCH_NAME_PROP).isJsonPrimitive()
-                  && researchJson.get(RESEARCH_BRANCH_NAME_PROP).getAsJsonPrimitive().isString())
+            if(object.containsKey(branchId))
             {
-                researchTree.setBranchName(entry.getKey(),
-                  new TranslationTextComponent(researchJson.get(RESEARCH_BRANCH_NAME_PROP).getAsJsonPrimitive().getAsString()));
+                researchTree.addBranchData(branchId, new GlobalResearchBranch(branchId, object.get(branchId).getAsJsonObject()));
             }
-            if (researchJson.has(RESEARCH_BASE_TIME_PROP) && researchJson.get(RESEARCH_BASE_TIME_PROP).isJsonPrimitive()
-                  && researchJson.get(RESEARCH_BASE_TIME_PROP).getAsJsonPrimitive().isNumber())
+            else
             {
-                researchTree.setBranchTime(entry.getKey(), researchJson.get(RESEARCH_BASE_TIME_PROP).getAsJsonPrimitive().getAsDouble());
+                researchTree.addBranchData(branchId, new GlobalResearchBranch(branchId));
             }
         }
     }

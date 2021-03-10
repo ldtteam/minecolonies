@@ -134,7 +134,7 @@ public class LocalResearchTree implements ILocalResearchTree
                     colony.getResearchManager()
                       .getResearchTree()
                       .getResearch(research.getBranch(), research.getId())
-                      .setProgress((int) (BASE_RESEARCH_TIME * IGlobalResearchTree.getInstance().getBranchTime(research.getBranch()) * Math.pow(2, research.getDepth() - 1)));
+                      .setProgress((int) (BASE_RESEARCH_TIME * IGlobalResearchTree.getInstance().getBranchData(research.getBranch()).getBaseTime() * Math.pow(2, research.getDepth() - 1)));
                 }
                 SoundUtils.playSuccessSound(player, player.getPosition());
                 return;
@@ -188,7 +188,7 @@ public class LocalResearchTree implements ILocalResearchTree
                     colony.getResearchManager()
                       .getResearchTree()
                       .getResearch(research.getBranch(), research.getId())
-                      .setProgress((int) (BASE_RESEARCH_TIME * IGlobalResearchTree.getInstance().getBranchTime(research.getBranch()) * Math.pow(2, research.getDepth() - 1)));
+                      .setProgress((int) (BASE_RESEARCH_TIME * IGlobalResearchTree.getInstance().getBranchData(research.getBranch()).getBaseTime() * Math.pow(2, research.getDepth() - 1)));
                 }
             }
             else

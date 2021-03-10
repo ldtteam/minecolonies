@@ -800,13 +800,53 @@ public abstract class AbstractResearchProvider implements IDataProvider
         /**
          * Sets the Branch Time Multiplier.  This increases or decreases the worker time required
          * to complete all research on this branch.  Larger numbers go slower, while lower numbers go faster.
-         * Very low values may have unpredictable results.
+         * Very low values may have unpredictable results.  Defaults to 1.0
          * @param branchTimeMultiplier  The multiplier to set.
          * @return this
          */
         public ResearchBranch setBranchTimeMultiplier(final double branchTimeMultiplier)
         {
             this.json.addProperty("base-time", branchTimeMultiplier);
+            return this;
+        }
+
+        /**
+         * Sets a research branch type.  This styles presentation of the branch at the university, and
+         * can have logic or colony ramifications.  See {@link com.minecolonies.api.research.ResearchBranchType} for details.
+         * Branches with no branch-type will default to ResearchBranchTyupe.DEFAULT
+         * @param type      The style of the research branch.
+         * @return this
+         */
+        public ResearchBranch setBranchType(final ResearchBranchType type)
+        {
+            this.json.addProperty("branch-type", type.tag);
+            return this;
+        }
+
+        /**
+         * The sorting order of the research branches within the Minecolonies University Window.
+         * Higher numbers will appear lower on the list.  Defaults to 0, accepts negative numbers.
+         * Builtin branches should be separated by large ranges, to allow possible inserts by third parties.
+         * @param sortOrder   The sorting order of the branches.
+         * @return this
+         */
+        public ResearchBranch setBranchSortOrder(final int sortOrder)
+        {
+            this.json.addProperty("sortOrder", sortOrder);
+            return this;
+        }
+
+        /**
+         * If true, hides a research branch within the University Window until at least one research has at least one research that isn't hidden, or with requirements met, or complete.
+         * This is mostly intended to avoid spoilers, or to prevent branches with many primary researches from showing a giant and useless tooltip.
+         * Only applies to branches where all primary researches are hidden.
+         * Defaults to false.
+         * @param hidden If true, hides the branch until at least one research is available.
+         * @return this
+         */
+        public ResearchBranch setHidden(final boolean hidden)
+        {
+            this.json.addProperty("hidden", hidden);
             return this;
         }
     }

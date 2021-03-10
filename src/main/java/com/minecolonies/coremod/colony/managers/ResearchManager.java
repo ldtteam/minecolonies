@@ -181,7 +181,7 @@ public class ResearchManager implements IResearchManager
         if(research.isInstant() || (creativePlayer && MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchCreativeCompletion.get()))
         {
             tree.getResearch(research.getBranch(), research.getId())
-              .setProgress((int) (BASE_RESEARCH_TIME * IGlobalResearchTree.getInstance().getBranchTime(research.getBranch()) * Math.pow(2, research.getDepth() - 1)));
+              .setProgress((int) (BASE_RESEARCH_TIME * IGlobalResearchTree.getInstance().getBranchData(research.getBranch()).getBaseTime() * Math.pow(2, research.getDepth() - 1)));
             tree.finishResearch(research.getId());
             for (IResearchEffect<?> effect : IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getEffects())
             {
