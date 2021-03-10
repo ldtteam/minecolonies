@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.api.research.util.ResearchConstants.SHIELD_USAGE;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.*;
@@ -149,6 +150,10 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
             for (final GuardGear item : itemList)
             {
                 if (!(building.getBuildingLevel() >= item.getMinBuildingLevelRequired() && building.getBuildingLevel() <= item.getMaxBuildingLevelRequired()))
+                {
+                    continue;
+                }
+                if (item.getItemNeeded() == ToolType.SHIELD && worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SHIELD_USAGE) <= 0)
                 {
                     continue;
                 }

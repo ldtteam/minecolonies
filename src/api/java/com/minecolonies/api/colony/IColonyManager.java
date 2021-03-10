@@ -267,6 +267,11 @@ public interface IColonyManager
     void onWorldLoad(@NotNull World world);
 
     /**
+     * Sets the cap for this world to loaded
+     */
+    void setCapLoaded();
+
+    /**
      * Get the Universal Unique ID for the server.
      *
      * @return the server Universal Unique ID for ther
