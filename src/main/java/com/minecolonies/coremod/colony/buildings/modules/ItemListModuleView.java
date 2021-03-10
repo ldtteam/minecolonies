@@ -14,7 +14,7 @@ import java.util.Set;
 import java.util.function.Function;
 
 /**
- * Abstract class for all buildings which require a filterable list of allowed items.
+ * Client side version of the abstract class for all buildings which require a filterable list of allowed items.
  */
 public class ItemListModuleView extends AbstractBuildingModuleView implements IBuildingModuleView
 {

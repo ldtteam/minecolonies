@@ -5,7 +5,7 @@ import com.minecolonies.api.crafting.ItemStorage;
 import java.util.List;
 
 /**
- * Module for
+ * Module for ignore/acceptance lists of items.
  */
 public interface IItemListModule
 {

@@ -16,7 +16,7 @@ import java.util.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 
 /**
- * Abstract class for all buildings which require a filterable list of allowed items.
+ * Abstract class for all buildings which require a filterable list of allowed/blocked items.
  */
 public class ItemListModule extends AbstractBuildingModule implements IItemListModule, IPersistentModule
 {
