@@ -5,7 +5,7 @@ import net.minecraft.network.PacketBuffer;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Default interface for all building modules.
+ * Default interface for all client side building modules.
  */
 public interface IBuildingModuleView
 {
