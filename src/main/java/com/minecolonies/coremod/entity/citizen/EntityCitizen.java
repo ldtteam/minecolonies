@@ -1501,7 +1501,7 @@ public class EntityCitizen extends AbstractEntityCitizen
                graveyard.addGrave(firstValidPosition);
            }
 
-           citizenChatHandler.sendLocalizedChat("com.minecolonies.coremod.gravespawned", getName());
+           LanguageHandler.sendPlayersMessage(getCitizenColonyHandler().getColony().getImportantMessageEntityPlayers(), "com.minecolonies.coremod.gravespawned");
         }
         else
         {
