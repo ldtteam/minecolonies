@@ -51,6 +51,7 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.dedicated.DedicatedServer;
+import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.state.properties.BedPart;
 import net.minecraft.tileentity.MobSpawnerTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -420,11 +421,7 @@ public class EventHandler
                 }
             }
 
-            MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
-            if(server instanceof DedicatedServer)
-            {
-                IGlobalResearchTree.getInstance().sendGlobalResearchTreePackets((ServerPlayerEntity) event.getPlayer());
-            }
+            IGlobalResearchTree.getInstance().sendGlobalResearchTreePackets((ServerPlayerEntity) event.getPlayer());
         }
     }
 
