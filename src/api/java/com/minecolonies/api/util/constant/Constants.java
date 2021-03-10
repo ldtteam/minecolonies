@@ -80,6 +80,8 @@ public final class Constants
     public static final String CRITERION_ALL_TOWERS             = "all_barracks_towers";
     public static final String CRITERION_DEEP_MINE              = "deep_mine";
     public static final String CRITERION_MAX_FIELDS             = "max_fields";
+    public static final String CRITERION_CITIZEN_BURY           = "citizen_bury";
+    public static final String CRITERION_CITIZEN_RESURRECT      = "citizen_resurrect";
 
     /**
      * Placement key for item nbt
