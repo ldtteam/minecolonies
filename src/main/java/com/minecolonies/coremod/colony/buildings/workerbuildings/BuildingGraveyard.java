@@ -166,7 +166,7 @@ public class BuildingGraveyard extends AbstractBuildingWorker
      * @return a field to work on.
      */
     @Nullable
-    public BlockPos getGraveToWorkOn() //TODO TG Gravedigger should work on the oldest grave first ?
+    public BlockPos getGraveToWorkOn()
     {
         if(currentGrave != null)
         {
@@ -183,8 +183,6 @@ public class BuildingGraveyard extends AbstractBuildingWorker
         }
 
         final List<BlockPos> graves = new ArrayList<>(pendingGraves);
-        Collections.shuffle(graves);
-
         for (@NotNull final BlockPos grave : graves)
         {
             final TileEntity tileEntity = getColony().getWorld().getTileEntity(grave);
@@ -196,7 +194,7 @@ public class BuildingGraveyard extends AbstractBuildingWorker
             if (tileEntity instanceof TileEntityGrave)
             {
                 currentGrave = grave;
-                return grave;
+                return currentGrave;
             }
         }
         return null;
