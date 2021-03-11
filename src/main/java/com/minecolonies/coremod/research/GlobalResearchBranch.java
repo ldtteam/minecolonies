@@ -16,6 +16,11 @@ public class GlobalResearchBranch implements IGlobalResearchBranch
     public static final String RESEARCH_BRANCH_NAME_PROP = "branch-name";
 
     /**
+     * The property name for the subtitle tag.
+     */
+    private static final String RESEARCH_SUBTITLE_PROP = "subtitle";
+
+    /**
      * The property name for the branch type tag.
      */
     public static final String RESEARCH_BRANCH_TYPE_PROP = "branch-type";
@@ -36,6 +41,7 @@ public class GlobalResearchBranch implements IGlobalResearchBranch
     private static final String RESEARCH_SORT_PROP = "sortOrder";
 
     private final TranslationTextComponent name;
+    private final TranslationTextComponent subtitle;
     private final ResearchBranchType type;
     private final double baseTime;
     private final int sortOrder;
@@ -43,6 +49,9 @@ public class GlobalResearchBranch implements IGlobalResearchBranch
 
     @Override
     public TranslationTextComponent getName(){return this.name;}
+
+    @Override
+    public TranslationTextComponent getSubtitle(){return this.subtitle;}
 
     @Override
     public double getBaseTime(){return this.baseTime;}
@@ -67,6 +76,7 @@ public class GlobalResearchBranch implements IGlobalResearchBranch
         {
             this.name = new TranslationTextComponent(id.getPath().substring(0, 1).toUpperCase() + id.getPath().substring(1));
         }
+        this.subtitle = new TranslationTextComponent("");
         this.baseTime = 1.0;
         this.type = ResearchBranchType.DEFAULT;
         this.hidden = false;
@@ -94,6 +104,15 @@ public class GlobalResearchBranch implements IGlobalResearchBranch
             {
                 this.name = new TranslationTextComponent(id.getPath().substring(0, 1).toUpperCase() + id.getPath().substring(1));
             }
+        }
+        if (researchJson.has(RESEARCH_SUBTITLE_PROP) && researchJson.get(RESEARCH_SUBTITLE_PROP).isJsonPrimitive()
+              && researchJson.get(RESEARCH_SUBTITLE_PROP).getAsJsonPrimitive().isString())
+        {
+            this.subtitle = new TranslationTextComponent(researchJson.get(RESEARCH_SUBTITLE_PROP).getAsJsonPrimitive().getAsString());
+        }
+        else
+        {
+            this.subtitle = new TranslationTextComponent("");
         }
         if (researchJson.has(RESEARCH_BASE_TIME_PROP) && researchJson.get(RESEARCH_BASE_TIME_PROP).isJsonPrimitive()
               && researchJson.get(RESEARCH_BASE_TIME_PROP).getAsJsonPrimitive().isNumber())
@@ -138,6 +157,7 @@ public class GlobalResearchBranch implements IGlobalResearchBranch
     public GlobalResearchBranch(final CompoundNBT nbt)
     {
         this.name = new TranslationTextComponent(nbt.getString(RESEARCH_BRANCH_NAME_PROP));
+        this.subtitle = new TranslationTextComponent(nbt.getString(RESEARCH_SUBTITLE_PROP));
         this.type = ResearchBranchType.valueOfTag(nbt.getString(RESEARCH_BRANCH_TYPE_PROP));
         this.baseTime = nbt.getDouble(RESEARCH_BASE_TIME_PROP);
         this.sortOrder = nbt.getInt(RESEARCH_SORT_PROP);
@@ -149,6 +169,7 @@ public class GlobalResearchBranch implements IGlobalResearchBranch
     {
         final CompoundNBT nbt = new CompoundNBT();
         nbt.putString(RESEARCH_BRANCH_NAME_PROP, this.name.getKey());
+        nbt.putString(RESEARCH_SUBTITLE_PROP, this.subtitle.getKey());
         nbt.putString(RESEARCH_BRANCH_TYPE_PROP, this.type.tag);
         nbt.putDouble(RESEARCH_BASE_TIME_PROP, this.baseTime);
         nbt.putInt(RESEARCH_SORT_PROP, this.sortOrder);

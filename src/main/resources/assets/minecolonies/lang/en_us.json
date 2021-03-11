@@ -1340,6 +1340,7 @@
   "com.minecolonies.coremod.gui.chat.fulfill": "More details please!",
   "com.minecolonies.coremod.gui.research.title": "Research Branches",
   "com.minecolonies.coremod.gui.research.tier.header": "Level %d (%d hr)",
+  "com.minecolonies.coremod.gui.research.tier.achieveheader": "%d hr",
   "com.minecolonies.coremod.gui.research.time": "%s remaining",
   "com.minecolonies.coremod.gui.research.countinprogress": "%d/%d Research in Progress",
   "com.minecolonies.coremod.research.research.toomanyinprogress.1": "Too many researches",

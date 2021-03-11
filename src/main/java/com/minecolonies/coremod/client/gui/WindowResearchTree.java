@@ -217,10 +217,12 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                 }
                 if (localResearch.getState() == ResearchState.FINISHED)
                 {
-                    if (hasMax && research.getDepth() > building.getBuildingMaxLevel() && building.getBuildingLevel() == building.getBuildingMaxLevel() && !research.isImmutable())
+                    // immutable research must never allow UndoComplete.
+                    if(!research.isImmutable())
                     {
-                        drawUndoCompleteButton(button);
+                        return;
                     }
+                    // don't allow research with completed or in-progress children to be reset.  They must be reset individually.
                     for (ResourceLocation childId : research.getChildren())
                     {
                         if (building.getColony().getResearchManager().getResearchTree().getResearch(branch, childId) != null
@@ -229,6 +231,18 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                             return;
                         }
                     }
+                    // Generally allow "achievement" branches to undo complete research.
+                    if (branchType == ResearchBranchType.ACHIEVEMENT)
+                    {
+                        drawUndoCompleteButton(button);
+                    }
+                    // above-max-level research prohibits other options, and should be resetable.
+                    if (hasMax && research.getDepth() > building.getBuildingMaxLevel() && building.getBuildingLevel() == building.getBuildingMaxLevel())
+                    {
+                        drawUndoCompleteButton(button);
+                        return;
+                    }
+                    // researches with an ancestor with OnlyChild status should be undoable, no children are complete or in-progress.
                     ResourceLocation parentId = IGlobalResearchTree.getInstance().getResearch(branch, research.getId()).getParent();
                     while (!parentId.getPath().isEmpty())
                     {
@@ -320,11 +334,15 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         {
             final Text timeLabel = new Text();
             timeLabel.setSize(TIME_WIDTH, TIME_HEIGHT);
+            timeLabel.setPosition((i - 1) * (GRADIENT_WIDTH + X_SPACING) + GRADIENT_WIDTH / 2 - TIME_WIDTH / 4, TIMELABEL_Y_POSITION);
             if(branchType == ResearchBranchType.ACHIEVEMENT)
             {
                 timeLabel.setText(new TranslationTextComponent("com.minecolonies.coremod.gui.research.tier.achieveheader",
                   (i > building.getBuildingMaxLevel()) ? building.getBuildingMaxLevel() : i,
                   (IGlobalResearchTree.getInstance().getBranchData(branch).getBaseTime() * Math.pow(2, i - 1))));
+                timeLabel.setColors(COLOR_TEXT_LABEL);
+                view.addChild(timeLabel);
+                continue;
             }
             else
             {
@@ -332,7 +350,6 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                   (i > building.getBuildingMaxLevel()) ? building.getBuildingMaxLevel() : i,
                   (IGlobalResearchTree.getInstance().getBranchData(branch).getBaseTime() * Math.pow(2, i - 1))));
             }
-            timeLabel.setPosition((i - 1) * (GRADIENT_WIDTH + X_SPACING) + GRADIENT_WIDTH / 2 - TIME_WIDTH / 4, TIMELABEL_Y_POSITION);
             if (building.getBuildingLevel() < i && (building.getBuildingLevel() != building.getBuildingMaxLevel() || hasMax))
             {
                 final Gradient gradient = new Gradient();
@@ -382,7 +399,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         }
         // If the University too low-level for the research, or if this research is max-level, the building is max level, and another max-level research is completed.
         else if (research.getDepth() > building.getBuildingLevel() && !(research.getDepth() > building.getBuildingMaxLevel() && !hasMax
-                    && building.getBuildingLevel() == building.getBuildingMaxLevel()))
+                    && building.getBuildingLevel() == building.getBuildingMaxLevel()) && branchType != ResearchBranchType.ACHIEVEMENT)
         {
             return ResearchButtonState.TOO_LOW_UNIVERSITY;
         }
@@ -616,11 +633,11 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                       .append(research.getResearchRequirement().get(txt).getDesc());
                 }
             }
-            if (research.getDepth() > building.getBuildingLevel() && building.getBuildingLevel() != building.getBuildingMaxLevel())
+            if (research.getDepth() > building.getBuildingLevel() && building.getBuildingLevel() != building.getBuildingMaxLevel() && branchType != ResearchBranchType.ACHIEVEMENT)
             {
                 hoverPaneBuilder.paragraphBreak().append(new TranslationTextComponent("com.minecolonies.coremod.research.requirement.university.level", Math.min(research.getDepth(), this.building.getBuildingMaxLevel())));
             }
-            if (research.getDepth() == MAX_DEPTH)
+            if (research.getDepth() == MAX_DEPTH && branchType != ResearchBranchType.ACHIEVEMENT)
             {
                 if (hasMax)
                 {

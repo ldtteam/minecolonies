@@ -10,13 +10,11 @@ import net.minecraft.data.IDataProvider;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
-import java.util.Locale;
 
 /**
  * A class for creating the Research-related JSONs, including Research, ResearchEffects, and (optional) Branches.
@@ -28,7 +26,6 @@ import java.util.Locale;
  */
 public abstract class AbstractResearchProvider implements IDataProvider
 {
-    public static final String ASSETS_DIR = "data/" + Constants.MOD_ID + "/researches";
     protected final DataGenerator generator;
 
     /**
@@ -77,6 +74,10 @@ public abstract class AbstractResearchProvider implements IDataProvider
             if(branch.translatedName != null && !branch.translatedName.isEmpty())
             {
                 addLanguageKeySafe(langJson, "com." + branch.id.getNamespace() + ".research." + branch.id.getPath().replaceAll("[/]",".") + ".name", branch.translatedName);
+            }
+            if(branch.translatedSubtitle != null && !branch.translatedSubtitle.isEmpty())
+            {
+                addLanguageKeySafe(langJson, "com." + branch.id.getNamespace() + ".research." + branch.id.getPath().replaceAll("[/]",".") + ".subtitle", branch.translatedSubtitle);
             }
         }
         for(final ResearchEffect effect : getResearchEffectCollection())
@@ -763,6 +764,10 @@ public abstract class AbstractResearchProvider implements IDataProvider
          *  A Translated Name to add to the output language file.
          */
         public String translatedName;
+        /**
+         *  A Translated Subtitle to add to the output language file.
+         */
+        public String translatedSubtitle;
 
         /**
          * Creates a Research Branch.
@@ -794,6 +799,30 @@ public abstract class AbstractResearchProvider implements IDataProvider
         {
             this.translatedName = translatedBranchName;
             this.json.addProperty("branch-name", "com." + id.getNamespace() + ".research." + id.getPath().replaceAll("[ /]",".") + ".name");
+            return this;
+        }
+
+        /**
+         * Set the subtitle, as a human-readable name.
+         * If using a translation key, use setTranslatedSubtitle.
+         * @param subtitle    The research's human-readable subtitle.
+         * @return this
+         */
+        public ResearchBranch setSubtitle(final String subtitle)
+        {
+            this.json.addProperty("subtitle", subtitle);
+            return this;
+        }
+
+        /**
+         * Sets a subtitle translation key.  This will use an auto-generated key, and add a matching translation text to the language output file.
+         * @param translatedSubtitle    The research's human-readable subtitle.
+         * @return this
+         */
+        public ResearchBranch setTranslatedSubtitle(final String translatedSubtitle)
+        {
+            this.translatedSubtitle = translatedSubtitle;
+            this.json.addProperty("subtitle", "com." + id.getNamespace() + ".research." + id.getPath().replaceAll("[ /]",".") + ".subtitle");
             return this;
         }
 

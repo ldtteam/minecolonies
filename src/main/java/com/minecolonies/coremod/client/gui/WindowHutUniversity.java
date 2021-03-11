@@ -1,21 +1,14 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.blockout.Color;
-import com.ldtteam.blockout.Alignment;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.PaneBuilders;
 import com.ldtteam.blockout.controls.*;
 import com.ldtteam.blockout.views.ScrollingList;
-import com.ldtteam.blockout.views.View;
-import com.minecolonies.api.research.IGlobalResearchBranch;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.research.IResearchRequirement;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingUniversity;
-import com.minecolonies.coremod.research.AlternateBuildingResearchRequirement;
-import com.minecolonies.coremod.research.BuildingResearchRequirement;
-import com.minecolonies.coremod.research.GlobalResearchBranch;
-import com.minecolonies.coremod.research.ResearchResearchRequirement;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.*;
 import org.jetbrains.annotations.NotNull;
@@ -25,6 +18,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import static com.minecolonies.api.research.util.ResearchConstants.COLOR_TEXT_UNFULFILLED;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_UNIVERSITY;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
@@ -33,11 +27,6 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
  */
 public class WindowHutUniversity extends AbstractWindowWorkerBuilding<BuildingUniversity.View>
 {
-    /**
-     * The list of branches of the tree.
-     */
-    private final List<ResourceLocation> branches = new ArrayList<>();
-
     /**
      * Constructor for the window of the lumberjack.
      *
@@ -48,19 +37,20 @@ public class WindowHutUniversity extends AbstractWindowWorkerBuilding<BuildingUn
         super(building, Constants.MOD_ID + RESOURCE_STRING);
 
         final List<ResourceLocation> inputBranches = IGlobalResearchTree.getInstance().getBranches();
+        inputBranches.sort(Comparator.comparingInt(branchId -> IGlobalResearchTree.getInstance().getBranchData(branchId).getSortOrder()));
+        final List<ResourceLocation> visibleBranches = new ArrayList<>();
         final List<List<IFormattableTextComponent>> allReqs = new ArrayList<>();
-        inputBranches.sort((b1, b2) -> Integer.compare(IGlobalResearchTree.getInstance().getBranchData(b1).getSortOrder(), IGlobalResearchTree.getInstance().getBranchData(b2).getSortOrder()));
         for (final ResourceLocation branch : inputBranches)
         {
             final List<IFormattableTextComponent> requirements = getHidingRequirementDesc(branch);
             if(requirements.isEmpty() || !IGlobalResearchTree.getInstance().getBranchData(branch).getHidden())
             {
-                branches.add(branch);
+                visibleBranches.add(branch);
                 allReqs.add(requirements);
             }
         }
         ScrollingList researchList = findPaneOfTypeByID("researches", ScrollingList.class);
-        researchList.setDataProvider(new ResearchListProvider(branches, allReqs));
+        researchList.setDataProvider(new ResearchListProvider(visibleBranches, allReqs));
         updateResearchCount(0);
     }
 
@@ -112,7 +102,7 @@ public class WindowHutUniversity extends AbstractWindowWorkerBuilding<BuildingUn
     {
         super.onButtonClicked(button);
 
-        if (button.getParent() != null && ResourceLocation.isResouceNameValid(button.getParent().getID()) && branches.contains(new ResourceLocation(button.getParent().getID())))
+        if (button.getParent() != null && ResourceLocation.isResouceNameValid(button.getParent().getID()) && IGlobalResearchTree.getInstance().getBranches().contains(new ResourceLocation(button.getParent().getID())))
         {
             new WindowResearchTree(new ResourceLocation(button.getParent().getID()), building, this).open();
         }
@@ -171,6 +161,12 @@ public class WindowHutUniversity extends AbstractWindowWorkerBuilding<BuildingUn
         {
             ButtonImage button = rowPane.findPaneOfTypeByID(GUI_LIST_ELEMENT_NAME, ButtonImage.class);
             button.getParent().setID(branches.get(index).toString());
+
+            AbstractTextBuilder.TooltipBuilder hoverText = PaneBuilders.tooltipBuilder().hoverPane(button);
+            if(!IGlobalResearchTree.getInstance().getBranchData(branches.get(index)).getSubtitle().getKey().isEmpty())
+            {
+                hoverText.append(IGlobalResearchTree.getInstance().getBranchData(branches.get(index)).getSubtitle()).colorName("GRAY").paragraphBreak();
+            }
             if(requirements.get(index).isEmpty())
             {
                 button.setText(IGlobalResearchTree.getInstance().getBranchData(branches.get(index)).getName());
@@ -178,11 +174,10 @@ public class WindowHutUniversity extends AbstractWindowWorkerBuilding<BuildingUn
             else
             {
                 button.setText(new TranslationTextComponent("----------"));
-                AbstractTextBuilder.TooltipBuilder hoverText = PaneBuilders.tooltipBuilder().hoverPane(button);
                 button.disable();
                 for (IFormattableTextComponent req : requirements.get(index))
                 {
-                    hoverText.append(req).paragraphBreak();
+                    hoverText.append(req).color(COLOR_TEXT_UNFULFILLED).paragraphBreak();
                 }
                 hoverText.build();
             }
