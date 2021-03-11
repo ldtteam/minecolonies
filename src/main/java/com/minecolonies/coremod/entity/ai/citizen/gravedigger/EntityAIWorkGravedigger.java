@@ -43,6 +43,8 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -236,7 +238,8 @@ public class EntityAIWorkGravedigger extends AbstractEntityAIInteract<JobGravedi
         {
             wanderPos = building.getPosition();
         }
-        return getState();
+
+        return IDLE;
     }
 
     private IAIState emptyGrave()
@@ -263,7 +266,17 @@ public class EntityAIWorkGravedigger extends AbstractEntityAIInteract<JobGravedi
             if (worker.getInventoryCitizen().isFull())
             {
                 // coudn't take all item --> empty inventory to building
-                shouldDumpInventory = true;
+                if (walkToBuilding())
+                {
+                    return getState();
+                }
+
+                if(!InventoryUtils.transferAllItemHandler(worker.getInventoryCitizen(), buildingGraveyard.getTileEntity().getInventory()))
+                {
+                    //Coudn't collect all item because graveyard full
+                    return DIG_GRAVE;
+                }
+
                 return IDLE;
             }
 
