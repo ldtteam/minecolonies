@@ -247,7 +247,7 @@ public class LivingBuildingModule extends AbstractBuildingModule implements IAss
             final int populationCount = building.getColony().getCitizenManager().getCurrentCitizenCount();
             AdvancementUtils.TriggerAdvancementPlayersForColony(building.getColony(), playerMP -> AdvancementTriggers.COLONY_POPULATION.trigger(playerMP, populationCount));
 
-            LanguageHandler.sendPlayersMessage(building.getColony().getImportantMessageEntityPlayers(), "com.minecolonies.coremod.progress.newChild", newCitizen.getColony());
+            LanguageHandler.sendPlayersMessage(building.getColony().getImportantMessageEntityPlayers(), "com.minecolonies.coremod.progress.newChild", building.getColony());
             building.getColony().getCitizenManager().spawnOrCreateCitizen(newCitizen, building.getColony().getWorld(), building.getPosition());
 
             building.getColony().getEventDescriptionManager().addEventDescription(new CitizenBornEvent(building.getPosition(), newCitizen.getName()));
