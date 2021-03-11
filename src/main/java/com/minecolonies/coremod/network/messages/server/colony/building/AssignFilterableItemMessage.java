@@ -3,7 +3,8 @@ package com.minecolonies.coremod.network.messages.server.colony.building;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.coremod.colony.buildings.AbstractFilterableListBuilding;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
@@ -12,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Message which handles the assignment of items to filterable item lists.
  */
-public class AssignFilterableItemMessage extends AbstractBuildingServerMessage<AbstractFilterableListBuilding>
+public class AssignFilterableItemMessage extends AbstractBuildingServerMessage<AbstractBuildingWorker>
 {
     /**
      * True if assign, false if remove.
@@ -73,15 +74,18 @@ public class AssignFilterableItemMessage extends AbstractBuildingServerMessage<A
 
     @Override
     public void onExecute(
-      final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final AbstractFilterableListBuilding building)
+      final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final AbstractBuildingWorker building)
     {
-        if (assign)
+        if (building.hasModule(ItemListModule.class))
         {
-            building.addItem(id, item);
-        }
-        else
-        {
-            building.removeItem(id, item);
+            if (assign)
+            {
+                building.getModuleMatching(ItemListModule.class, m -> m.getId().equals(id)).ifPresent(m -> m.addItem(item));
+            }
+            else
+            {
+                building.getModuleMatching(ItemListModule.class, m -> m.getId().equals(id)).ifPresent(m -> m.removeItem(item));
+            }
         }
     }
 }

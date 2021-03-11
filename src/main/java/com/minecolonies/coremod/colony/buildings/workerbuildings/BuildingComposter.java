@@ -12,8 +12,8 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.coremod.client.gui.WindowHutComposter;
-import com.minecolonies.coremod.colony.buildings.AbstractFilterableListBuilding;
-import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
 import com.minecolonies.coremod.colony.jobs.JobComposter;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.CompoundNBT;
@@ -29,7 +29,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BuildingComposter extends AbstractFilterableListBuilding
+import static com.minecolonies.coremod.entity.ai.citizen.composter.EntityAIWorkComposter.COMPOSTABLE_LIST;
+
+public class BuildingComposter extends AbstractBuildingWorker
 {
     /**
      * Description of the job for this building
@@ -75,7 +77,8 @@ public class BuildingComposter extends AbstractFilterableListBuilding
     public BuildingComposter(@NotNull final IColony c, final BlockPos l)
     {
         super(c, l);
-        keepX.put((stack) -> isAllowedItem("compostables", new ItemStorage(stack)), new Tuple<>(Integer.MAX_VALUE, true));
+
+        keepX.put((stack) -> this.hasModule(ItemListModule.class) && this.getModuleMatching(ItemListModule.class, m -> m.getId().equals(COMPOSTABLE_LIST)).map(m -> m.isItemInList(new ItemStorage(stack))).orElse(false), new Tuple<>(Integer.MAX_VALUE, true));
     }
 
     /**
@@ -208,7 +211,7 @@ public class BuildingComposter extends AbstractFilterableListBuilding
     /**
      * The client side representation of the building.
      */
-    public static class View extends AbstractFilterableListsView
+    public static class View extends AbstractBuildingWorker.View
     {
         /**
          * If the composter should retrieve dirt from his compost bin.

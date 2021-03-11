@@ -12,7 +12,7 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.client.gui.WindowHutSmelter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
-import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobSmelter;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.SwordItem;
@@ -135,7 +135,7 @@ public class BuildingSmeltery extends AbstractBuildingFurnaceUser
     /**
      * Smelter building View.
      */
-    public static class View extends AbstractFilterableListsView
+    public static class View extends AbstractBuildingWorker.View
     {
         /**
          * Instantiate the smeltery view.
