@@ -36,6 +36,7 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.StringNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
@@ -133,9 +134,9 @@ public class BuildingGraveyard extends AbstractBuildingWorker
     private boolean initTags = false;
 
     /**
-     * Sitting positions
+     * Grave positions
      */
-    private List<BlockPos> visualGravePositions;
+    private List<Tuple<BlockPos, Direction>> visualGravePositions;
 
     /**
      * Public constructor which instantiates the building.
@@ -439,7 +440,8 @@ public class BuildingGraveyard extends AbstractBuildingWorker
             {
                 if (entry.getValue().get(0).startsWith(GRAVE))
                 {
-                    visualGravePositions.add(entry.getKey());
+                    final Direction direction = Direction.NORTH;
+                    visualGravePositions.add(new Tuple<>(entry.getKey(), direction));
                 }
             }
         }
