@@ -1269,6 +1269,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         new Research(new ResourceLocation(Constants.MOD_ID, "technology/heavilyloaded"), TECH).setParentResearch(loaded)
           .setTranslatedName("Heavily Loaded")
           .setIcon(Items.BLUE_SHULKER_BOX)
+          .setNoReset()
           .addItemCost(Items.EMERALD, 256)
           .addEffect(CITIZEN_INV_SLOTS, 3)
           .addToList(r);

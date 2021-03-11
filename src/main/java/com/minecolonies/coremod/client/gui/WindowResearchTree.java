@@ -124,8 +124,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
     {
         super.onButtonClicked(button);
 
-        // drawUndoProgressButton and drawUndoCompleteButton replace a Research's normal tooltip
-        // and adds a button and icon(s) representing the cost of resetting the research.
+        // drawUndoProgressButton and drawUndoCompleteButton adds a button and icon(s) representing the cost of resetting the research.
         // See their respective functions for details on the how.
         // These branches remove those buttons from the DragTreeView, if present, on pressing any button.
         // That should occur no matter what buttons are pressed, even disabled buttons, as a "no, I don't want to".
@@ -211,14 +210,17 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             }
             else if (localResearch != null)
             {
+                // Generally allow in-progress research to be cancelled.
+                // This still costs items, so mostly only beneficial to free up a researcher slot.
                 if (localResearch.getState() == ResearchState.IN_PROGRESS)
                 {
                     drawUndoProgressButton(button);
                 }
                 if (localResearch.getState() == ResearchState.FINISHED)
                 {
-                    // immutable research must never allow UndoComplete.
-                    if(!research.isImmutable())
+                    // Immutable must never allow UndoComplete.
+                    // Autostart research should not allow undo of completed research as well, as it will attempt to restart it on colony reload.
+                    if(research.isImmutable() || research.isAutostart())
                     {
                         return;
                     }
@@ -231,7 +233,9 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                             return;
                         }
                     }
-                    // Generally allow "achievement" branches to undo complete research.
+                    // Generally allow "achievement" branches to undo complete research, if not prohibited.
+                    // This is more meant to allow "achievement"-style research's effects to be toggled on and off at a small cost.
+                    // Probably not vital most of the time, but even some beneficial effects may not be desirable in all circumstances.
                     if (branchType == ResearchBranchType.ACHIEVEMENT)
                     {
                         drawUndoCompleteButton(button);

@@ -161,12 +161,6 @@ public class WindowHutUniversity extends AbstractWindowWorkerBuilding<BuildingUn
         {
             ButtonImage button = rowPane.findPaneOfTypeByID(GUI_LIST_ELEMENT_NAME, ButtonImage.class);
             button.getParent().setID(branches.get(index).toString());
-
-            AbstractTextBuilder.TooltipBuilder hoverText = PaneBuilders.tooltipBuilder().hoverPane(button);
-            if(!IGlobalResearchTree.getInstance().getBranchData(branches.get(index)).getSubtitle().getKey().isEmpty())
-            {
-                hoverText.append(IGlobalResearchTree.getInstance().getBranchData(branches.get(index)).getSubtitle()).colorName("GRAY").paragraphBreak();
-            }
             if(requirements.get(index).isEmpty())
             {
                 button.setText(IGlobalResearchTree.getInstance().getBranchData(branches.get(index)).getName());
@@ -175,9 +169,22 @@ public class WindowHutUniversity extends AbstractWindowWorkerBuilding<BuildingUn
             {
                 button.setText(new TranslationTextComponent("----------"));
                 button.disable();
-                for (IFormattableTextComponent req : requirements.get(index))
+            }
+
+            // This null check isn't strictly required, but prevents unnecessary creation of tooltip panes, since the contents here never updates.
+            if(button.getHoverPane() == null && (!requirements.get(index).isEmpty() || !IGlobalResearchTree.getInstance().getBranchData(branches.get(index)).getSubtitle().getKey().isEmpty()))
+            {
+                AbstractTextBuilder.TooltipBuilder hoverText = PaneBuilders.tooltipBuilder().hoverPane(button);
+                if (!IGlobalResearchTree.getInstance().getBranchData(branches.get(index)).getSubtitle().getKey().isEmpty())
                 {
-                    hoverText.append(req).color(COLOR_TEXT_UNFULFILLED).paragraphBreak();
+                    hoverText.append(IGlobalResearchTree.getInstance().getBranchData(branches.get(index)).getSubtitle()).colorName("GRAY").paragraphBreak();
+                }
+                if (!requirements.get(index).isEmpty())
+                {
+                    for (IFormattableTextComponent req : requirements.get(index))
+                    {
+                        hoverText.append(req).color(COLOR_TEXT_UNFULFILLED).paragraphBreak();
+                    }
                 }
                 hoverText.build();
             }

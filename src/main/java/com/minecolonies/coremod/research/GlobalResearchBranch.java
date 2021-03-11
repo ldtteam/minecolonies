@@ -40,11 +40,35 @@ public class GlobalResearchBranch implements IGlobalResearchBranch
      */
     private static final String RESEARCH_SORT_PROP = "sortOrder";
 
+    /**
+     * The translation key or human-readable name of the branch.
+     */
     private final TranslationTextComponent name;
+
+    /**
+     * The optional subtitle translation key or human-readable subtitle for the branch.
+     */
     private final TranslationTextComponent subtitle;
+
+    /**
+     * The research branch styling type.
+     */
     private final ResearchBranchType type;
+
+    /**
+     * The branch's research time multiplier for non-instant research.
+     */
     private final double baseTime;
+
+    /**
+     * The branch's sorting order on the University GUI.  Higher numbers go toward the bottom.
+     */
     private final int sortOrder;
+
+    /**
+     * If the branch should not be listed on the University GUI if all primary research for the branch is hidden.
+     * Has no effect if any research on the branch is set to not hidden, or if any research has no requirements.
+     */
     private final boolean hidden;
 
     @Override
@@ -69,7 +93,7 @@ public class GlobalResearchBranch implements IGlobalResearchBranch
     {
         if(id.getPath().isEmpty())
         {
-            // yes, technically "/.json" is a valid file name.
+            // yes, technically "/.json" is a valid file name and "" is a valid resource location.
             this.name = new TranslationTextComponent("");
         }
         else
@@ -80,9 +104,8 @@ public class GlobalResearchBranch implements IGlobalResearchBranch
         this.baseTime = 1.0;
         this.type = ResearchBranchType.DEFAULT;
         this.hidden = false;
-        // branches without a declared sortOrder will float to the 'top'.
-        // note that this does support negative numbers.
-        this.sortOrder = 0;
+        // branches without a declared sortOrder will float to the bottom of the list.
+        this.sortOrder = 1000;
     }
 
     public GlobalResearchBranch(final ResourceLocation id, final JsonObject researchJson)
@@ -130,9 +153,8 @@ public class GlobalResearchBranch implements IGlobalResearchBranch
         }
         else
         {
-            // branches without a declared sortOrder will float to the 'top' and then be sorted by alphabetic order.
-            // note that this does support negative numbers.
-            this.sortOrder = 0;
+            // branches without a declared sortOrder will float to the bottom in most normal ranges, and then be sorted by alphabetic order.
+            this.sortOrder = 1000;
         }
         if (researchJson.has(RESEARCH_BRANCH_TYPE_PROP) && researchJson.get(RESEARCH_BRANCH_TYPE_PROP).isJsonPrimitive()
               && researchJson.get(RESEARCH_BRANCH_TYPE_PROP).getAsJsonPrimitive().isString())
