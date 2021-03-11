@@ -341,7 +341,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             timeLabel.setPosition((i - 1) * (GRADIENT_WIDTH + X_SPACING) + GRADIENT_WIDTH / 2 - TIME_WIDTH / 4, TIMELABEL_Y_POSITION);
             if(branchType == ResearchBranchType.UNRESTRICTED_TREE)
             {
-                timeLabel.setText(new TranslationTextComponent("com.minecolonies.coremod.gui.research.tier.achieveheader",
+                timeLabel.setText(new TranslationTextComponent("com.minecolonies.coremod.gui.research.tier.header.unrestricted",
                   (i > building.getBuildingMaxLevel()) ? building.getBuildingMaxLevel() : i,
                   (IGlobalResearchTree.getInstance().getBranchData(branch).getBaseTime() * Math.pow(2, i - 1))));
                 timeLabel.setColors(COLOR_TEXT_LABEL);
@@ -353,21 +353,22 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                 timeLabel.setText(new TranslationTextComponent("com.minecolonies.coremod.gui.research.tier.header",
                   (i > building.getBuildingMaxLevel()) ? building.getBuildingMaxLevel() : i,
                   (IGlobalResearchTree.getInstance().getBranchData(branch).getBaseTime() * Math.pow(2, i - 1))));
-            }
-            if (building.getBuildingLevel() < i && (building.getBuildingLevel() != building.getBuildingMaxLevel() || hasMax))
-            {
-                final Gradient gradient = new Gradient();
-                gradient.setGradientStart(80, 80, 80, 100);
-                gradient.setGradientEnd(60, 60, 60, 110);
-                // Draw the last gradient beyond the edge of the displayed area, to avoid blank spot on the right.
-                gradient.setSize(i == MAX_DEPTH ? 400 : GRADIENT_WIDTH + X_SPACING, (maxHeight + 4) * (GRADIENT_HEIGHT + Y_SPACING) + Y_SPACING + TIMELABEL_Y_POSITION);
-                gradient.setPosition((i - 1) * (GRADIENT_WIDTH + X_SPACING), 0);
-                view.getChildren().add(0,gradient);
-                timeLabel.setColors(COLOR_TEXT_NEGATIVE);
-            }
-            else
-            {
-                timeLabel.setColors(COLOR_TEXT_LABEL);
+
+                if (building.getBuildingLevel() < i && (building.getBuildingLevel() != building.getBuildingMaxLevel() || hasMax))
+                {
+                    final Gradient gradient = new Gradient();
+                    gradient.setGradientStart(80, 80, 80, 100);
+                    gradient.setGradientEnd(60, 60, 60, 110);
+                    // Draw the last gradient beyond the edge of the displayed area, to avoid blank spot on the right.
+                    gradient.setSize(i == MAX_DEPTH ? 400 : GRADIENT_WIDTH + X_SPACING, (maxHeight + 4) * (GRADIENT_HEIGHT + Y_SPACING) + Y_SPACING + TIMELABEL_Y_POSITION);
+                    gradient.setPosition((i - 1) * (GRADIENT_WIDTH + X_SPACING), 0);
+                    view.getChildren().add(0, gradient);
+                    timeLabel.setColors(COLOR_TEXT_NEGATIVE);
+                }
+                else
+                {
+                    timeLabel.setColors(COLOR_TEXT_LABEL);
+                }
             }
             view.addChild(timeLabel);
         }
