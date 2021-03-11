@@ -212,14 +212,6 @@ public class BlockMinecoloniesGrave extends AbstractBlockMinecoloniesGrave<Block
     }
 
     @Override
-    public List<ItemStack> getDrops(final BlockState state, final LootContext.Builder builder)
-    {
-        final List<ItemStack> drops = new ArrayList<>();
-        drops.add(new ItemStack(this, 1));
-        return drops;
-    }
-
-    @Override
     public void onReplaced(BlockState state, @NotNull World worldIn, @NotNull BlockPos pos, BlockState newState, boolean isMoving)
     {
         if (state.getBlock() != newState.getBlock())
