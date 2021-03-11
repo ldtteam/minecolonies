@@ -21,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
@@ -48,7 +47,7 @@ public class WindowGuardControl extends AbstractWindowSkeleton
      * Whether to retrieve the worker on low health.
      */
     private boolean       retrieveOnLowHealth = false;
-    
+
     /**
      * Whether to patrol manually or not.
      */
