@@ -182,7 +182,7 @@ public class VisitorCitizen extends AbstractEntityCitizen
                 final IBuilding home = getCitizenData().getHomeBuilding();
                 if (home.hasModule(TavernBuildingModule.class))
                 {
-                    final TavernBuildingModule module = home.getModule(TavernBuildingModule.class).get();
+                    final TavernBuildingModule module = home.getFirstModuleOccurance(TavernBuildingModule.class).get();
                     for (final Integer id : module.getExternalCitizens())
                     {
                         ICitizenData data = citizenColonyHandler.getColony().getVisitorManager().getCivilian(id);

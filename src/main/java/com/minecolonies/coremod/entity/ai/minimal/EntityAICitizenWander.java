@@ -3,7 +3,6 @@ package com.minecolonies.coremod.entity.ai.minimal;
 import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.util.math.vector.Vector3d;
 
 import java.util.EnumSet;
 
