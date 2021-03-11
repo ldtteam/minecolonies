@@ -14,6 +14,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.blocks.huts.BlockHutCitizen;
 import com.minecolonies.coremod.colony.buildings.BuildingMysticalSite;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingEnchanter;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingGraveyard;
 import com.minecolonies.coremod.colony.jobs.JobGravedigger;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
@@ -168,7 +169,8 @@ public class EntityAIWorkGravedigger extends AbstractEntityAIInteract<JobGravedi
 
         if(wanderPos == null)
         {
-            final BlockPos newWanderPos = worker.getCitizenColonyHandler().getColony().getBuildingManager().getRandomBuilding(b -> b.getSchematicName() == "citizen" || b instanceof BuildingMysticalSite);
+            final BlockPos newWanderPos = worker.getCitizenColonyHandler().getColony().getBuildingManager().
+                    getRandomBuilding(b -> b.getSchematicName() == "citizen" || b instanceof BuildingMysticalSite || b instanceof BuildingEnchanter);
             if (newWanderPos != null)
             {
                 wanderPos = newWanderPos;
