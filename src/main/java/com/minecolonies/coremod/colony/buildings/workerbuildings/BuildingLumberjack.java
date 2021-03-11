@@ -40,7 +40,7 @@ import java.util.*;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.SKILL_BONUS_ADD;
-import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_NETHER_TREE_LIST;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
 /**

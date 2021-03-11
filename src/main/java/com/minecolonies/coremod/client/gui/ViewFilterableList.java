@@ -190,8 +190,11 @@ public class ViewFilterableList
 
         allItems.sort((o1, o2) -> {
 
-            boolean o1Allowed = building.isAllowedItem(id, new ItemStorage(o1.getItemStack()));
-            boolean o2Allowed = building.isAllowedItem(id, new ItemStorage(o2.getItemStack()));
+            boolean o1Allowed = building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id))
+                                  .map(m -> m.isAllowedItem(new ItemStorage(o1.getItemStack()))).orElse(false);
+
+            boolean o2Allowed = building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id))
+                                  .map(m -> m.isAllowedItem(new ItemStorage(o2.getItemStack()))).orElse(false);
 
             if(!o1Allowed && o2Allowed)
             {

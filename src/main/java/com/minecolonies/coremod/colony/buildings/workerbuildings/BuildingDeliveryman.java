@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
-import static com.minecolonies.api.util.constant.CitizenConstants.*;
+import static com.minecolonies.api.util.constant.CitizenConstants.SKILL_BONUS_ADD;
 
 /**
  * Class of the warehouse building.

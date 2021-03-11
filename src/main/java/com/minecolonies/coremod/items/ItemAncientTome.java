@@ -5,7 +5,6 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.monster.BlazeEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;

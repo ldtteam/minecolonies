@@ -8,9 +8,7 @@ import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.coremod.client.gui.WindowHutMysticalSite;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 public class BuildingMysticalSite extends AbstractBuilding implements IMysticalSite
