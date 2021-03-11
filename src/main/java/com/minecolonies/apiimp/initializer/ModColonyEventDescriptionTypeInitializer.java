@@ -4,12 +4,7 @@ import com.minecolonies.api.colony.colonyEvents.registry.ColonyEventDescriptionT
 import com.minecolonies.coremod.colony.colonyEvents.buildingEvents.BuildingBuiltEvent;
 import com.minecolonies.coremod.colony.colonyEvents.buildingEvents.BuildingDeconstructedEvent;
 import com.minecolonies.coremod.colony.colonyEvents.buildingEvents.BuildingUpgradedEvent;
-import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenBornEvent;
-import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenDiedEvent;
-import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenGrownUpEvent;
-import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenSpawnedEvent;
-import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.VisitorSpawnedEvent;
-
+import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.*;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.registries.IForgeRegistry;
 

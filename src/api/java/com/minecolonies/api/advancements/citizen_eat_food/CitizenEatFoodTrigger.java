@@ -8,7 +8,6 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.ConditionArrayParser;
 import net.minecraft.util.ResourceLocation;
-import org.jetbrains.annotations.NotNull;
 
 public class CitizenEatFoodTrigger extends AbstractCriterionTrigger<CitizenEatFoodListeners, CitizenEatFoodCriterionInstance>
 {
