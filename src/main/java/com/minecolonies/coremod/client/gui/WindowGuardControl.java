@@ -48,12 +48,7 @@ public class WindowGuardControl extends AbstractWindowSkeleton
      * Whether to retrieve the worker on low health.
      */
     private boolean       retrieveOnLowHealth = false;
-
-    /**
-     * Rand for offset ticking.
-     */
-    private static final Random rand = new Random();
-
+    
     /**
      * Whether to patrol manually or not.
      */
@@ -200,17 +195,11 @@ public class WindowGuardControl extends AbstractWindowSkeleton
     public void onUpdate()
     {
         super.onUpdate();
+        pullInfoFromHut();
 
-        if (rand.nextInt(20) < 1)
+        if (!task.equals(GuardTask.PATROL))
         {
-            pullInfoFromHut();
-
-            if (!task.equals(GuardTask.PATROL))
-            {
-                listOfPoints.hide();
-            }
-            window.findPaneOfTypeByID(GUI_ELEMENT_LIST_LEVELS, ScrollingList.class).refreshElementPanes();
-            workersListPane.refreshElementPanes();
+            listOfPoints.hide();
         }
     }
 
