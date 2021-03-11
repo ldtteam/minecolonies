@@ -159,7 +159,7 @@ public enum AIWorkerState implements IAIState
     FARMER_PLANT(false),
 
     /**
-     * Plant the seeds.
+     * Harvest the crops.
      */
     FARMER_HARVEST(false),
 
