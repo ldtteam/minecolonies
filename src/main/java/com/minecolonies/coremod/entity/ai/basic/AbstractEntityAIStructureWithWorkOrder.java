@@ -318,13 +318,14 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
 
         if (wo instanceof WorkOrderBuildBuilding)
         {
+            BlockPos position = wo.getBuildingLocation();
             if (getOwnBuilding() instanceof BuildingBuilder && ((BuildingBuilder) getOwnBuilding()).getManualMode())
             {
-            	worker.getCitizenChatHandler().sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE_MANUAL, structureName);
+            	worker.getCitizenChatHandler().sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE_MANUAL, structureName, position.getX(), position.getY(), position.getZ());
             }
             else
             {
-                worker.getCitizenChatHandler().sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE, structureName);
+                worker.getCitizenChatHandler().sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE, structureName, position.getX(), position.getY(), position.getZ());
             }
 
             WorkOrderBuild wob = (WorkOrderBuild) wo;
