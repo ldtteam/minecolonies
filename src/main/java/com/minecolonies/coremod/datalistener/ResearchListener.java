@@ -10,12 +10,14 @@ import com.minecolonies.api.util.Log;
 
 import com.minecolonies.coremod.research.GlobalResearch;
 import com.minecolonies.coremod.research.ResearchEffectCategory;
+import net.minecraft.client.MinecraftGame;
 import net.minecraft.client.resources.JsonReloadListener;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.dedicated.DedicatedServer;
+import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
@@ -91,10 +93,11 @@ public class ResearchListener extends JsonReloadListener
 
         // For dedicated servers, send to any connected players.  On startup, this will be no-one.
         // But it is possible to reload data packs live, and while not supported it's something to handle.
-
-        if(server instanceof DedicatedServer)
+        // This event fires early enough on the server start lifecycle that server isn't initialized.
+        // We only need to send to players during a datapack reload event during live play.
+        if(server != null)
         {
-            for(ServerPlayerEntity player : server.getPlayerList().getPlayers())
+            for (ServerPlayerEntity player : server.getPlayerList().getPlayers())
             {
                 researchTree.sendGlobalResearchTreePackets(player);
             }

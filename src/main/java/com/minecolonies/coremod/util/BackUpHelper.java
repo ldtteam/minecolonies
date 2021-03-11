@@ -13,7 +13,6 @@ import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.FolderName;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
@@ -104,6 +103,28 @@ public final class BackUpHelper
     }
 
     /**
+     * Loads the colony managers backup file
+     */
+    public static void loadManagerBackup()
+    {
+        try
+        {
+            @NotNull final File file = BackUpHelper.getSaveLocation();
+            @Nullable final CompoundNBT data = BackUpHelper.loadNBTFromPath(file);
+            if (data != null)
+            {
+                Log.getLogger().info("Loading Minecolonies colony manager Backup Data");
+                IColonyManager.getInstance().read(data);
+                Log.getLogger().info("Backup Load Complete");
+            }
+        }
+        catch (Exception e)
+        {
+            Log.getLogger().error("Error during restoring colony manager:", e);
+        }
+    }
+
+    /**
      * Loads all colonies from backup files which the world cap is missing.
      */
     public static void loadMissingColonies()
@@ -181,19 +202,6 @@ public final class BackUpHelper
     public static File getSaveLocation()
     {
         @NotNull final File saveDir = new File(ServerLifecycleHooks.getCurrentServer().func_240776_a_(FolderName.DOT).toFile(), FILENAME_MINECOLONIES_PATH);
-        return new File(saveDir, FILENAME_MINECOLONIES);
-    }
-
-    /**
-     * Get save location for Minecolonies data, from the world/save directory.
-     *
-     * @param world the server world object to use.
-     * @return Save file for minecolonies.
-     */
-    @NotNull
-    public static File getSaveLocation(final ServerWorld world)
-    {
-        @NotNull final File saveDir = new File(world.getServer().func_240776_a_(FolderName.DOT).toFile(), FILENAME_MINECOLONIES_PATH);
         return new File(saveDir, FILENAME_MINECOLONIES);
     }
 
