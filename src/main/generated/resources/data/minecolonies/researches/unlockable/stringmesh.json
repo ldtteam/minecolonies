@@ -1,11 +1,11 @@
 {
-  "branch": "minecolonies:achievement",
+  "branch": "minecolonies:unlockable",
   "researchLevel": 1,
   "icon": "minecolonies:sifter_mesh_string",
   "requirements": [
     {
       "mandatory-building": "sifter",
-      "level": 4
+      "level": 1
     }
   ],
   "hidden": true,
@@ -13,7 +13,7 @@
   "instant": true,
   "effects": [
     {
-      "minecolonies:effects/sifterironunlock": 1
+      "minecolonies:effects/sifterstringunlock": 1
     }
   ]
 }

@@ -44,7 +44,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
     private static final ResourceLocation CIVIL  = new ResourceLocation(Constants.MOD_ID, "civilian");
     private static final ResourceLocation COMBAT = new ResourceLocation(Constants.MOD_ID, "combat");
     private static final ResourceLocation TECH   = new ResourceLocation(Constants.MOD_ID, "technology");
-    private static final ResourceLocation ACHIEVE= new ResourceLocation(Constants.MOD_ID, "achievement");
+    private static final ResourceLocation UNLOCK= new ResourceLocation(Constants.MOD_ID, "unlockable");
 
     /**
      * Get a list of all research branches. Conventions: these are not mandatory, and their inclusion simply fixes capitalization. MineColonies should fully populate new branches
@@ -59,7 +59,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         branches.add(new ResearchBranch(CIVIL).setTranslatedBranchName("Civilian").setBranchTimeMultiplier(1.0));
         branches.add(new ResearchBranch(COMBAT).setTranslatedBranchName("Combat").setBranchTimeMultiplier(1.0));
         branches.add(new ResearchBranch(TECH).setTranslatedBranchName("Technology").setBranchTimeMultiplier(1.0));
-        branches.add(new ResearchBranch(ACHIEVE).setTranslatedBranchName("Achievements").setBranchTimeMultiplier(0.0));
+        branches.add(new ResearchBranch(UNLOCK).setTranslatedBranchName("Unlockables").setBranchTimeMultiplier(0.0));
         return branches;
     }
 
@@ -1508,7 +1508,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
 
     public Collection<Research> getAchievementResearch(Collection<Research> r)
     {
-        new Research(new ResourceLocation(Constants.MOD_ID, "achievement/stringmesh"), ACHIEVE)
+        new Research(new ResourceLocation(Constants.MOD_ID, "unlockable/stringmesh"), UNLOCK)
             .setTranslatedName("String Mesh")
             .setIcon(ModItems.sifterMeshString)
             .addMandatoryBuildingRequirement(ModBuildings.SIFTER_ID, 1)
@@ -1518,7 +1518,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
             .addEffect(new ResourceLocation(Constants.MOD_ID, "effects/sifterstringunlock"), 1)
             .addToList(r);
 
-        new Research(new ResourceLocation(Constants.MOD_ID, "achievement/flintmesh"), ACHIEVE)
+        new Research(new ResourceLocation(Constants.MOD_ID, "unlockable/flintmesh"), UNLOCK)
             .setTranslatedName("Flint Mesh")
             .setIcon(ModItems.sifterMeshString)
             .addMandatoryBuildingRequirement(ModBuildings.SIFTER_ID, 3)
@@ -1528,7 +1528,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
             .addEffect(new ResourceLocation(Constants.MOD_ID, "effects/sifterflintunlock"), 1)
             .addToList(r);
 
-        new Research(new ResourceLocation(Constants.MOD_ID, "achievement/ironmesh"), ACHIEVE)
+        new Research(new ResourceLocation(Constants.MOD_ID, "unlockable/ironmesh"), UNLOCK)
             .setTranslatedName("Iron Mesh")
             .setIcon(ModItems.sifterMeshString)
             .addMandatoryBuildingRequirement(ModBuildings.SIFTER_ID, 4)
@@ -1538,7 +1538,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
             .addEffect(new ResourceLocation(Constants.MOD_ID, "effects/sifterironunlock"), 1)
             .addToList(r);
 
-        new Research(new ResourceLocation(Constants.MOD_ID, "achievement/diamondmesh"), ACHIEVE)
+        new Research(new ResourceLocation(Constants.MOD_ID, "unlockable/diamondmesh"), UNLOCK)
             .setTranslatedName("Diamond Mesh")
             .setIcon(ModItems.sifterMeshString)
             .addMandatoryBuildingRequirement(ModBuildings.SIFTER_ID, 5)

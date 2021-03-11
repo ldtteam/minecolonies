@@ -2,7 +2,7 @@
   "com.minecolonies.research.civilian.name": "Civilian",
   "com.minecolonies.research.combat.name": "Combat",
   "com.minecolonies.research.technology.name": "Technology",
-  "com.minecolonies.research.achievement.name": "Achievements",
+  "com.minecolonies.research.unlockable.name": "Unlockables",
   "com.minecolonies.research.effects.archerarmormultiplier.description": "Archer Armor +%3$s%%",
   "com.minecolonies.research.effects.archerdamageaddition.description": "Archer Damage +%s",
   "com.minecolonies.research.effects.armordurabilitymultiplier.description": "Guard Armor +%3$s%% Durability",
@@ -317,8 +317,8 @@
   "com.minecolonies.research.technology.whatyaneed.subtitle": "It's not a rhetorical question...",
   "com.minecolonies.research.technology.enhanced_gates1.name": "Enhanced Gates I",
   "com.minecolonies.research.technology.enhanced_gates2.name": "Enhanced Gates II",
-  "com.minecolonies.research.achievement.stringmesh.name": "String Mesh",
-  "com.minecolonies.research.achievement.flintmesh.name": "Flint Mesh",
-  "com.minecolonies.research.achievement.ironmesh.name": "Iron Mesh",
-  "com.minecolonies.research.achievement.diamondmesh.name": "Diamond Mesh"
+  "com.minecolonies.research.unlockable.stringmesh.name": "String Mesh",
+  "com.minecolonies.research.unlockable.flintmesh.name": "Flint Mesh",
+  "com.minecolonies.research.unlockable.ironmesh.name": "Iron Mesh",
+  "com.minecolonies.research.unlockable.diamondmesh.name": "Diamond Mesh"
 }
