@@ -233,10 +233,10 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                             return;
                         }
                     }
-                    // Generally allow "achievement" branches to undo complete research, if not prohibited.
-                    // This is more meant to allow "achievement"-style research's effects to be toggled on and off at a small cost.
+                    // Generally allow "unrestricted-tree" branches to undo complete research, if not prohibited.
+                    // This is more meant to allow "unrestricted-tree"-style research's effects to be toggled on and off at a small cost.
                     // Probably not vital most of the time, but even some beneficial effects may not be desirable in all circumstances.
-                    if (branchType == ResearchBranchType.ACHIEVEMENT)
+                    if (branchType == ResearchBranchType.UNRESTRICTED_TREE)
                     {
                         drawUndoCompleteButton(button);
                     }
@@ -330,7 +330,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
      */
     private void drawTreeBackground(final ZoomDragView view, final int maxHeight)
     {
-        if(branchType == ResearchBranchType.ACHIEVEMENT && IGlobalResearchTree.getInstance().getBranchData(branch).getBaseTime() < 0.01)
+        if(branchType == ResearchBranchType.UNRESTRICTED_TREE && IGlobalResearchTree.getInstance().getBranchData(branch).getBaseTime() < 0.01)
         {
             return;
         }
@@ -339,7 +339,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             final Text timeLabel = new Text();
             timeLabel.setSize(TIME_WIDTH, TIME_HEIGHT);
             timeLabel.setPosition((i - 1) * (GRADIENT_WIDTH + X_SPACING) + GRADIENT_WIDTH / 2 - TIME_WIDTH / 4, TIMELABEL_Y_POSITION);
-            if(branchType == ResearchBranchType.ACHIEVEMENT)
+            if(branchType == ResearchBranchType.UNRESTRICTED_TREE)
             {
                 timeLabel.setText(new TranslationTextComponent("com.minecolonies.coremod.gui.research.tier.achieveheader",
                   (i > building.getBuildingMaxLevel()) ? building.getBuildingMaxLevel() : i,
@@ -403,7 +403,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         }
         // If the University too low-level for the research, or if this research is max-level, the building is max level, and another max-level research is completed.
         else if (research.getDepth() > building.getBuildingLevel() && !(research.getDepth() > building.getBuildingMaxLevel() && !hasMax
-                    && building.getBuildingLevel() == building.getBuildingMaxLevel()) && branchType != ResearchBranchType.ACHIEVEMENT)
+                    && building.getBuildingLevel() == building.getBuildingMaxLevel()) && branchType != ResearchBranchType.UNRESTRICTED_TREE)
         {
             return ResearchButtonState.TOO_LOW_UNIVERSITY;
         }
@@ -637,11 +637,11 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                       .append(research.getResearchRequirement().get(txt).getDesc());
                 }
             }
-            if (research.getDepth() > building.getBuildingLevel() && building.getBuildingLevel() != building.getBuildingMaxLevel() && branchType != ResearchBranchType.ACHIEVEMENT)
+            if (research.getDepth() > building.getBuildingLevel() && building.getBuildingLevel() != building.getBuildingMaxLevel() && branchType != ResearchBranchType.UNRESTRICTED_TREE)
             {
                 hoverPaneBuilder.paragraphBreak().append(new TranslationTextComponent("com.minecolonies.coremod.research.requirement.university.level", Math.min(research.getDepth(), this.building.getBuildingMaxLevel())));
             }
-            if (research.getDepth() == MAX_DEPTH && branchType != ResearchBranchType.ACHIEVEMENT)
+            if (research.getDepth() == MAX_DEPTH && branchType != ResearchBranchType.UNRESTRICTED_TREE)
             {
                 if (hasMax)
                 {

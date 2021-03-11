@@ -89,6 +89,10 @@ public class GlobalResearchBranch implements IGlobalResearchBranch
     @Override
     public boolean getHidden(){return this.hidden;}
 
+    /**
+     * Creates a GlobalResearchBranch containing default values for a given BranchID.
+     * @param id   The Branch's ResourceID.
+     */
     public GlobalResearchBranch(final ResourceLocation id)
     {
         if(id.getPath().isEmpty())
@@ -108,6 +112,11 @@ public class GlobalResearchBranch implements IGlobalResearchBranch
         this.sortOrder = 1000;
     }
 
+    /**
+     * Creates a GlobalResearchBranch from a jsonObject.
+     * @param id            The Branch's ResourceID.
+     * @param researchJson  the Json containing research branch data.
+     */
     public GlobalResearchBranch(final ResourceLocation id, final JsonObject researchJson)
     {
         // Research branches can have all, only some, or none of these traits.
@@ -176,6 +185,10 @@ public class GlobalResearchBranch implements IGlobalResearchBranch
         }
     }
 
+    /**
+     * Reassembles a GlobalResearchBranch from its NBT transmission.
+     * @param nbt  The nbt containing the Research Branch data.
+     */
     public GlobalResearchBranch(final CompoundNBT nbt)
     {
         this.name = new TranslationTextComponent(nbt.getString(RESEARCH_BRANCH_NAME_PROP));
