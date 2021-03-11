@@ -68,7 +68,7 @@ public class BlockMinecoloniesGrave extends AbstractBlockMinecoloniesGrave<Block
 
     public BlockMinecoloniesGrave()
     {
-        super(Properties.create(Material.ROCK).hardnessAndResistance(BLOCK_HARDNESS, RESISTANCE).harvestTool(ToolType.SHOVEL));
+        super(Properties.create(Material.ROCK).hardnessAndResistance(BLOCK_HARDNESS, RESISTANCE).harvestTool(ToolType.SHOVEL).noDrops());
         this.setDefaultState(this.getDefaultState().with(FACING, Direction.NORTH).with(VARIANT, GraveType.DEFAULT));
         setRegistryName(Constants.MOD_ID.toLowerCase() + ":" + BLOCK_NAME);
     }
