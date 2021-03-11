@@ -14,12 +14,14 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.tileentities.AbstractTileEntityGrave;
 import com.minecolonies.api.tileentities.TileEntityGrave;
+import com.minecolonies.api.tileentities.TileEntityNamedGrave;
 import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.coremod.blocks.BlockMinecoloniesNamedGrave;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.client.gui.WindowHutGraveyard;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
@@ -395,7 +397,7 @@ public class BuildingGraveyard extends AbstractBuildingWorker
     {
         if(!restingCitizen.contains(citizenName))
         {
-            getColony().getWorld().setBlockState(position, BlockMinecoloniesRack.getPlacementState(ModBlocks.blockRack.getDefaultState(), new TileEntityRack(), position));
+            getColony().getWorld().setBlockState(position, ModBlocks.blockNamedGrave.getDefaultState());
             restingCitizen.add(citizenName);
             markDirty();
         }
