@@ -1,6 +1,9 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.ldtteam.blockout.views.Window;
+import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
+import com.ldtteam.structurize.management.Structures;
+import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
@@ -12,12 +15,17 @@ import com.minecolonies.api.tileentities.AbstractTileEntityGrave;
 import com.minecolonies.api.tileentities.TileEntityGrave;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.client.gui.WindowHutGraveyard;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobGravedigger;
+import com.minecolonies.coremod.colony.jobs.JobMiner;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
+import jdk.nashorn.internal.ir.Block;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.StringNBT;
@@ -32,12 +40,14 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 import static com.minecolonies.api.util.constant.Constants.TAG_STRING;
+import static com.minecolonies.api.util.constant.SchematicTagConstants.GRAVE;
+import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_SITTING;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
 /**
  * Class which handles the graveyard building.
  */
-public class BuildingGraveyard extends AbstractBuildingWorker
+public class BuildingGraveyard extends AbstractBuildingStructureBuilder
 {
     /**
      * Descriptive string of the building.
@@ -112,6 +122,15 @@ public class BuildingGraveyard extends AbstractBuildingWorker
     @Nullable
     private String lastGraveOwnerName;
 
+    /**
+     * Whether we did init tags
+     */
+    private boolean initTags = false;
+
+    /**
+     * Sitting positions
+     */
+    private List<BlockPos> visualGravePositions;
 
     /**
      * Public constructor which instantiates the building.
@@ -162,7 +181,6 @@ public class BuildingGraveyard extends AbstractBuildingWorker
     /**
      * Retrieves a random grave to work on for the gravedigger.
      *
-     * @param world the world it is in.
      * @return a field to work on.
      */
     @Nullable
@@ -366,6 +384,28 @@ public class BuildingGraveyard extends AbstractBuildingWorker
         buf.writeInt(restingCitizen.size());
     }
 
+    @Override
+    public void searchWorkOrder()
+    {
+        final ICitizenData citizen = getMainCitizen();
+        if (citizen == null)
+        {
+            return;
+        }
+
+        final List<WorkOrderBuildMiner> list = getColony().getWorkManager().getOrderedList(WorkOrderBuildMiner.class, getPosition());
+
+        for (final WorkOrderBuildMiner wo : list)
+        {
+            if (this.getID().equals(wo.getMinerBuilding()))
+            {
+                citizen.getJob(JobMiner.class).setWorkOrder(wo);
+                wo.setClaimedBy(citizen);
+                return;
+            }
+        }
+    }
+
     /**
      * Add a citizen to the list of resting citizen in this graveyard
      * @param citizenName
@@ -394,6 +434,61 @@ public class BuildingGraveyard extends AbstractBuildingWorker
     public String getLastGraveName()
     {
         return this.lastGraveOwnerName;
+    }
+
+    /**
+     * Reads the tag positions
+     */
+    public void initTagPositions()
+    {
+        if (initTags)
+        {
+            return;
+        }
+
+        final IBlueprintDataProvider tileEntity = getTileEntity();
+        if (tileEntity != null)
+        {
+            initTags = true;
+            visualGravePositions = new ArrayList<>();
+            for (final Map.Entry<BlockPos, List<String>> entry : tileEntity.getWorldTagPosMap().entrySet())
+            {
+                if (entry.getValue().get(0).startsWith(GRAVE))
+                {
+                    visualGravePositions.add(entry.getKey());
+                }
+            }
+        }
+    }
+
+    /**
+     * Return a random free visual grave position
+     */
+    public BlockPos getRandomFreeVisualGravePos()
+    {
+        initTagPositions();
+
+        if (visualGravePositions.isEmpty())
+        {
+            return null;
+        }
+
+        final List<BlockPos> availablePos = new ArrayList<BlockPos>();
+        for(final BlockPos pos : visualGravePositions)
+        {
+            if(getColony().getWorld().getBlockState(pos).isAir())
+            {
+                availablePos.add(pos);
+            }
+        }
+
+        if (availablePos.isEmpty())
+        {
+            return null;
+        }
+
+        Collections.shuffle(availablePos);
+        return availablePos.get(0);
     }
 
     /**
