@@ -175,14 +175,35 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public boolean hasModule(final Class<? extends IBuildingModule> clazz)
     {
-        return getModule(clazz).isPresent();
+        return getFirstModuleOccurance(clazz).isPresent();
     }
 
     @NotNull
     @Override
-    public <T extends IBuildingModule> Optional<T> getModule(final Class<T> clazz)
+    public <T extends IBuildingModule> Optional<T> getFirstModuleOccurance(final Class<T> clazz)
     {
-        return getModules(clazz).stream().findFirst();
+        for (final IBuildingModule module : modules)
+        {
+            if (clazz.isInstance(module))
+            {
+                return Optional.of((T) module);
+            }
+        }
+        return Optional.empty();
+    }
+
+    @NotNull
+    @Override
+    public <T extends IBuildingModule> Optional<T> getModuleMatching(final Class<T> clazz, final Predicate<? super T> modulePredicate)
+    {
+        for (final IBuildingModule module : modules)
+        {
+            if (clazz.isInstance(module) && modulePredicate.test((T) module))
+            {
+                return Optional.of((T) module);
+            }
+        }
+        return Optional.empty();
     }
 
     @NotNull
@@ -693,9 +714,9 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         }
         buf.writeCompoundTag(StandardFactoryController.getInstance().serialize(getId()));
         buf.writeInt(containerList.size());
-        for (int i = 0; i < containerList.size(); i++)
+        for (BlockPos blockPos : containerList)
         {
-            buf.writeBlockPos(containerList.get(i));
+            buf.writeBlockPos(blockPos);
         }
         buf.writeCompoundTag(requestSystemCompound);
 

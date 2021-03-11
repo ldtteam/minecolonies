@@ -5,7 +5,8 @@ import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.views.View;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Tuple;
 import org.jetbrains.annotations.NotNull;
@@ -20,7 +21,7 @@ import java.util.stream.Collectors;
 /**
  * Window for all the filterable lists.
  */
-public abstract class AbstractHutFilterableLists extends AbstractWindowWorkerBuilding<AbstractFilterableListsView>
+public abstract class AbstractHutFilterableLists extends AbstractWindowWorkerBuilding<AbstractBuildingWorker.View>
 {
     /**
      * Window filterable list views.
@@ -35,12 +36,12 @@ public abstract class AbstractHutFilterableLists extends AbstractWindowWorkerBui
     /**
      * Constructor for the window of the the filterable lists.
      *
-     * @param building   {@link AbstractFilterableListsView}.
+     * @param building   {@link AbstractBuildingView}.
      * @param res        the resource String.
      * @param predicates the restriction.
      */
     @SafeVarargs
-    public AbstractHutFilterableLists(final AbstractFilterableListsView building, final String res, final Tuple<String, Predicate<ItemStack>>... predicates)
+    public AbstractHutFilterableLists(final AbstractBuildingWorker.View building, final String res, final Tuple<String, Predicate<ItemStack>>... predicates)
     {
         super(building, res);
         for (final Tuple<String, Predicate<ItemStack>> tuple : predicates)
