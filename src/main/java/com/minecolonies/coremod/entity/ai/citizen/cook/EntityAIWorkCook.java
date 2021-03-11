@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.cook;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColonyManager;
