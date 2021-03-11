@@ -47,7 +47,7 @@ public interface ICompatibilityManager
      *
      * @return the list of saplings.
      */
-    List<ItemStorage> getCopyOfSaplings();
+    Set<ItemStorage> getCopyOfSaplings();
 
     /**
      * Get a set of all fuel items.
@@ -62,6 +62,12 @@ public interface ICompatibilityManager
      * @return an immutable set.
      */
     Set<ItemStorage> getFood();
+
+    /**
+     * Get a set of all edibles for citizens.
+     * @return list of edible food.
+     */
+    Set<ItemStorage> getEdibles();
 
     /**
      * Get a set of all smeltable ores.
@@ -83,14 +89,14 @@ public interface ICompatibilityManager
      *
      * @return the list of compostable items.
      */
-    List<ItemStorage> getCopyOfCompostableItems();
+    Set<ItemStorage> getCopyOfCompostableItems();
 
     /**
      * Get a copy of the list of plantables.
      *
      * @return the list of plantables.
      */
-    List<ItemStorage> getCopyOfPlantables();
+    Set<ItemStorage> getCopyOfPlantables();
 
     /**
      * Get a random disease of the compat manager.

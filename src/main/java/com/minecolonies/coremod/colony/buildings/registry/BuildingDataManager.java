@@ -62,8 +62,7 @@ public class BuildingDataManager implements IBuildingDataManager
     }
 
     @Override
-    public IBuildingView createViewFrom(
-      final IColonyView colony, final BlockPos position, final PacketBuffer networkBuffer)
+    public IBuildingView createViewFrom(final IColonyView colony, final BlockPos position, final PacketBuffer networkBuffer)
     {
         final ResourceLocation buildingName = new ResourceLocation(networkBuffer.readString(32767));
         final BuildingEntry entry = IBuildingRegistry.getInstance().getValue(buildingName);
@@ -74,8 +73,7 @@ public class BuildingDataManager implements IBuildingDataManager
             return null;
         }
 
-        final IBuildingView view = entry.getBuildingViewProducer().get().apply(colony, position);
-
+        final IBuildingView view = entry.produceBuildingView(position, colony);
         if (view != null)
         {
             view.deserialize(networkBuffer);
