@@ -242,6 +242,12 @@ public class WorldUtil
      */
     public static boolean setBlockState(final IWorld world, final BlockPos pos, final BlockState state, int flags)
     {
+        // To avoid infinite loops or similar we return here just true. We don't want to crash the world or anything.
+        if (pos.getY() < 3)
+        {
+            return true;
+        }
+
         if (world.isRemote())
         {
             return world.setBlockState(pos, state, flags);
