@@ -3,11 +3,11 @@
         xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockout/blockOut.xsd">
 
     <label size="100% 11" pos="0 50" textalign="TOP_MIDDLE" color="white" label="$(com.minecolonies.coremod.gui.assigning.description)"/>
-    <list id="unassigned" size="70% 120" pos="60 70" align="TOP_MIDDLE">
-        <view size="70% 40">
-            <label id="citizen" size="60 12" pos="5 4" textalign="MIDDLE_LEFT" color="yellow"/>
-            <label id="job" size="60 12" pos="5 14" textalign="MIDDLE_LEFT" color="yellow"/>
-            <label id="living" size="60 12" pos="5 24" textalign="MIDDLE_LEFT" color="yellow"/>
+    <list id="unassigned" size="200 120" pos="100 70">
+        <view size="100% 40">
+            <label id="citizen" size="100% 12" pos="5 4" textalign="MIDDLE_LEFT" color="yellow"/>
+            <label id="job" size="100% 12" pos="5 14" textalign="MIDDLE_LEFT" color="yellow"/>
+            <label id="living" size="100% 12" pos="5 24" textalign="MIDDLE_LEFT" color="yellow"/>
             <button id="done" size="45 15" pos="125 3" label="$(com.minecolonies.coremod.gui.hiring.buttonAssign)"/>
         </view>
     </list>

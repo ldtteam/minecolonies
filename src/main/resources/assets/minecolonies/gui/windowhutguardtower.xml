@@ -32,7 +32,7 @@
                          source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
                          label="$(com.minecolonies.coremod.gui.workerhuts.retrieveOff)"/>
 
-            <label size="164 11" pos="13 138" color="black" textalign="MIDDLE"
+            <label size="174 11" pos="9 138" color="black" textalign="MIDDLE"
                    label="$(com.minecolonies.coremod.gui.workerhuts.trainees)"/>
             <buttonimage id="trainees" size="86 17" pos="52 149" textcolor="black"
                          source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
