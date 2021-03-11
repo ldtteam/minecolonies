@@ -1,5 +1,6 @@
 package com.minecolonies.apiimp.initializer;
 
+import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -18,7 +19,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
-import com.minecolonies.coremod.colony.buildings.AbstractFilterableListBuilding;
+import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
 import com.minecolonies.coremod.colony.jobs.*;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIBasic;
@@ -29,13 +30,14 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandler;
 
-import java.util.ArrayList;
-import java.util.stream.Collectors;
+import java.util.List;
 
 import static com.minecolonies.api.util.ItemStackUtils.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.LOW_SATURATION;
 import static com.minecolonies.api.util.constant.HappinessConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser.FUEL_LIST;
+import static com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook.FOOD_EXCLUSION_LIST;
 import static com.minecolonies.coremod.entity.ai.citizen.smelter.EntityAIWorkSmelter.ORE_LIST;
 import static com.minecolonies.coremod.util.WorkerUtil.getLastLadder;
 import static com.minecolonies.coremod.util.WorkerUtil.isThereCompostedLand;
@@ -52,8 +54,9 @@ public class InteractionValidatorInitializer
     public static void init()
     {
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(FURNACE_USER_NO_FUEL),
-          citizen -> citizen.getWorkBuilding() instanceof AbstractBuildingSmelterCrafter && ((AbstractBuildingSmelterCrafter) citizen.getWorkBuilding()).getCopyOfAllowedItems()
-                                                                                              .isEmpty());
+          citizen -> citizen.getWorkBuilding() instanceof AbstractBuildingSmelterCrafter
+                       && ((AbstractBuildingSmelterCrafter) citizen.getWorkBuilding()).getModuleMatching(ItemListModule.class, m -> m.getId().equals(FUEL_LIST))
+                            .map(m -> m.getList().isEmpty()).orElse(false));
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(BAKER_HAS_NO_FURNACES_MESSAGE),
           citizen -> citizen.getWorkBuilding() instanceof AbstractBuildingSmelterCrafter && ((AbstractBuildingSmelterCrafter) citizen.getWorkBuilding()).getFurnaces().isEmpty());
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(RAW_FOOD),
@@ -86,7 +89,7 @@ public class InteractionValidatorInitializer
                       final IBuilding building = colony.getBuildingManager().getBuilding(pos);
                       if (building != null)
                       {
-                          final IItemHandler inv = building.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null);
+                          final IItemHandler inv = building.getCapability(ITEM_HANDLER_CAPABILITY, null).resolve().orElse(null);
                           if (inv != null)
                           {
                               return InventoryUtils.openSlotCount(inv) > 0;
@@ -136,9 +139,6 @@ public class InteractionValidatorInitializer
               return false;
           });
 
-        InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(BAKER_HAS_NO_RECIPES),
-          citizen -> citizen.getWorkBuilding() instanceof BuildingBaker && ((BuildingBaker) citizen.getWorkBuilding()).getCopyOfAllowedItems().isEmpty());
-
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST),
           citizen -> citizen.getWorkBuilding() != null && InventoryUtils.isProviderFull(citizen.getWorkBuilding()));
         InteractionValidatorRegistry.registerPosBasedPredicate(
@@ -175,12 +175,22 @@ public class InteractionValidatorInitializer
           });
 
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(FURNACE_USER_NO_ORE),
-          citizen -> citizen.getWorkBuilding() instanceof BuildingSmeltery && IColonyManager.getInstance().getCompatibilityManager()
-                                                                                .getSmeltableOres()
-                                                                                .stream()
-                                                                                .anyMatch(storage -> !((BuildingSmeltery) citizen.getWorkBuilding()).getCopyOfAllowedItems()
-                                                                                                        .getOrDefault(ORE_LIST, new ArrayList<>())
-                                                                                                        .contains(storage)));
+          citizen -> {
+            if (citizen.getWorkBuilding() instanceof BuildingSmeltery)
+            {
+                final List<ItemStorage> oreList = ((BuildingSmeltery) citizen.getWorkBuilding()).getModuleMatching(ItemListModule.class, m -> m.getId().equals(ORE_LIST))
+                                                    .map(ItemListModule::getList).orElse(ImmutableList.of());
+                for (final ItemStorage storage : IColonyManager.getInstance().getCompatibilityManager().getSmeltableOres())
+                {
+                    if (!oreList.contains(storage))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+
+          });
 
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(PATIENT_FULL_INVENTORY),
           citizen -> citizen.getEntity().isPresent() && citizen.getEntity().get().getCitizenDiseaseHandler().isSick()
@@ -196,10 +206,24 @@ public class InteractionValidatorInitializer
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(FURNACE_USER_NO_FUEL),
           citizen -> citizen.getWorkBuilding() instanceof AbstractBuildingFurnaceUser && ((AbstractBuildingFurnaceUser) citizen.getWorkBuilding()).getAllowedFuel().isEmpty());
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(FURNACE_USER_NO_FOOD),
-          citizen -> citizen.getWorkBuilding() instanceof BuildingCook && (IColonyManager.getInstance().getCompatibilityManager().getFood().stream()
-                  .filter(storage -> !((AbstractFilterableListBuilding) citizen.getWorkBuilding()).getCopyOfAllowedItems().get("food").contains(storage))
-                  .map(ItemStorage::getItemStack)
-                  .collect(Collectors.toList())).isEmpty());
+          citizen -> {
+            if (!(citizen.getWorkBuilding() instanceof BuildingCook))
+            {
+                return false;
+            }
+
+            final ImmutableList<ItemStorage> exclusionList = ((BuildingCook) citizen.getWorkBuilding()).getModuleMatching(ItemListModule.class, m -> ((ItemListModule)m).getId().equals(FOOD_EXCLUSION_LIST)).map(
+              ItemListModule::getList).orElse(ImmutableList.of());
+            for (final ItemStorage storage : IColonyManager.getInstance().getCompatibilityManager().getEdibles())
+            {
+                if (!exclusionList.contains(storage))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+          });
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(BAKER_HAS_NO_FURNACES_MESSAGE),
           citizen -> citizen.getWorkBuilding() instanceof BuildingBaker && ((BuildingBaker) citizen.getWorkBuilding()).getFurnaces().isEmpty());
 
