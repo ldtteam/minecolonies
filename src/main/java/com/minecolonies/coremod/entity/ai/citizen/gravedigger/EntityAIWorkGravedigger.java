@@ -4,6 +4,7 @@ import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.advancements.AdvancementTriggers;
+import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -14,11 +15,13 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.tileentities.TileEntityGrave;
+import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.coremod.blocks.BlockMinecoloniesGrave;
 import com.minecolonies.coremod.blocks.huts.BlockHutCitizen;
 import com.minecolonies.coremod.colony.buildings.BuildingMysticalSite;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingEnchanter;
@@ -52,7 +55,7 @@ import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_W
 /**
  * Gravedigger AI class.
  */
-public class EntityAIWorkGravedigger extends AbstractEntityAIStructureWithWorkOrder<JobGravedigger, BuildingGraveyard>
+public class EntityAIWorkGravedigger extends AbstractEntityAIInteract<JobGravedigger, BuildingGraveyard>
 {
     /**
      * The EXP Earned per dig.
@@ -124,11 +127,6 @@ public class EntityAIWorkGravedigger extends AbstractEntityAIStructureWithWorkOr
     private BlockPos wanderPos = null;
 
     /**
-     * Grave structure prefix
-     */
-    private static final String GRAVE_STRUCTURE_PREFIX = "/graveyard/grave";
-
-    /**
      * Constructor for the Gravedigger. Defines the tasks the Gravedigger executes.
      *
      * @param job a gravedigger job to use.
@@ -151,64 +149,6 @@ public class EntityAIWorkGravedigger extends AbstractEntityAIStructureWithWorkOr
     public Class<BuildingGraveyard> getExpectedBuildingClass()
     {
         return BuildingGraveyard.class;
-    }
-
-    @Override
-    public int getBreakSpeedLevel()
-    {
-        return getPrimarySkillLevel();
-    }
-
-    @Override
-    public int getPlaceSpeedLevel()
-    {
-        return getSecondarySkillLevel();
-    }
-
-    @Override
-    public boolean shallReplaceSolidSubstitutionBlock(final Block worldBlock, final BlockState worldMetadata)
-    {
-        return true;
-    }
-
-    @Override
-    public BlockState getSolidSubstitution(final BlockPos ignored)
-    {
-        return Blocks.DIRT.getDefaultState();
-    }
-
-    @Override
-    public void storeProgressPos(final BlockPos blockPos, final BuildingStructureHandler.Stage stage)
-    {
-        getOwnBuilding().setProgressPos(blockPos, stage);
-    }
-
-    @Override
-    protected boolean checkIfCanceled()
-    {
-        if (!isThereAStructureToBuild())
-        {
-            switch ((AIWorkerState) getState())
-            {
-                case BUILDING_STEP:
-                    return true;
-                default:
-                    return false;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public void executeSpecificCompleteActions()
-    {
-        getOwnBuilding().markDirty();
-    }
-
-    @Override
-    public Tuple<BlockPos, BuildingStructureHandler.Stage> getProgressPos()
-    {
-        return getOwnBuilding().getProgress();
     }
 
     /**
@@ -247,7 +187,7 @@ public class EntityAIWorkGravedigger extends AbstractEntityAIStructureWithWorkOr
 
         //TODO enable/diable for testing visual grave building
         if(false)
-            return buildVisualGrave("Fallen Citizen Name");
+            buildVisualGrave("Fallen Citizen Name");
 
         if(wanderPos == null)
         {
@@ -409,28 +349,6 @@ public class EntityAIWorkGravedigger extends AbstractEntityAIStructureWithWorkOr
     }
 
     /**
-     * Get the correct style for the grave visual. Return default back.
-     *
-     * @return the correct path.
-     */
-    private String getCorrectStyleLocation()
-    {
-        final String style = getOwnBuilding().getStyle();
-        final String desiredStructurePath = Structures.SCHEMATICS_PREFIX + "/" + style + GRAVE_STRUCTURE_PREFIX + getOwnBuilding().getBuildingLevel();
-        final LoadOnlyStructureHandler
-                wrapper = new LoadOnlyStructureHandler(world, getOwnBuilding().getPosition(), desiredStructurePath, new PlacementSettings(), true);
-        if (wrapper.hasBluePrint())
-        {
-            return desiredStructurePath;
-        }
-        else
-        {
-            //TODO TG provide default grave structures in base path
-            return Structures.SCHEMATICS_PREFIX + GRAVE_STRUCTURE_PREFIX + getOwnBuilding().getBuildingLevel();
-        }
-    }
-
-    /**
      * Attempt to resurect buried citizen from its citizen data
      *
      * Calculate chance of resurectionfrom, rool to see if resurection successfull and resurect if need be
@@ -471,7 +389,7 @@ public class EntityAIWorkGravedigger extends AbstractEntityAIStructureWithWorkOr
         else
         {
             buildingGraveyard.BuryCitizenHere(buildingGraveyard.getLastGraveName());
-            return buildVisualGrave(buildingGraveyard.getLastGraveName());
+            buildVisualGrave(buildingGraveyard.getLastGraveName());
         }
 
         return IDLE;
@@ -479,23 +397,19 @@ public class EntityAIWorkGravedigger extends AbstractEntityAIStructureWithWorkOr
 
     public IAIState buildVisualGrave(final String citizenName)
     {
-        if(structurePlacer == null)
+        final BlockPos position = getOwnBuilding().getRandomFreeVisualGravePos();
+
+        if(position != null)
         {
-            final BlockPos visualGravePos = getOwnBuilding().getRandomFreeVisualGravePos();
-            if(visualGravePos == null)
+            if(walkToBlock(position, 1))
             {
-                return IDLE;
+                //TODO TG return STATE BUILD GRAVE
             }
 
-            final String graveStucturePath = getCorrectStyleLocation();
-            if(graveStucturePath == null)
-            {
-                return IDLE;
-            }
-
-            loadStructure(graveStucturePath, 1, visualGravePos, false, false);
-            return START_BUILDING;
+            world.setBlockState(position, BlockMinecoloniesGrave.getPlacementState(ModBlocks.blockRack.getDefaultState(), new TileEntityRack(), position));
+            //TODO TG Set name in custom renderer final TileEntityRack graveEntity = (TileEntityRack) world.getTileEntity(position);
         }
+
         return IDLE;
     }
 

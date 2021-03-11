@@ -47,7 +47,7 @@ import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_W
 /**
  * Class which handles the graveyard building.
  */
-public class BuildingGraveyard extends AbstractBuildingStructureBuilder
+public class BuildingGraveyard extends AbstractBuildingWorker
 {
     /**
      * Descriptive string of the building.
@@ -382,28 +382,6 @@ public class BuildingGraveyard extends AbstractBuildingStructureBuilder
             buf.writeString(citizenName);
         }
         buf.writeInt(restingCitizen.size());
-    }
-
-    @Override
-    public void searchWorkOrder()
-    {
-        final ICitizenData citizen = getMainCitizen();
-        if (citizen == null)
-        {
-            return;
-        }
-
-        final List<WorkOrderBuildMiner> list = getColony().getWorkManager().getOrderedList(WorkOrderBuildMiner.class, getPosition());
-
-        for (final WorkOrderBuildMiner wo : list)
-        {
-            if (this.getID().equals(wo.getMinerBuilding()))
-            {
-                citizen.getJob(JobMiner.class).setWorkOrder(wo);
-                wo.setClaimedBy(citizen);
-                return;
-            }
-        }
     }
 
     /**

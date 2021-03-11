@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Job class of the gravedigger, handles the graves of dead citizen.
  */
-public class JobGravedigger extends AbstractJobStructure<EntityAIWorkGravedigger, JobGravedigger>
+public class JobGravedigger extends AbstractJobCrafter<EntityAIWorkGravedigger, JobGravedigger>
 {
     /**
      * Public constructor of the farmer job.
