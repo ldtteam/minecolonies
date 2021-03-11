@@ -180,10 +180,13 @@ public class InteractionValidatorInitializer
             {
                 final List<ItemStorage> oreList = ((BuildingSmeltery) citizen.getWorkBuilding()).getModuleMatching(ItemListModule.class, m -> m.getId().equals(ORE_LIST))
                                                     .map(ItemListModule::getList).orElse(ImmutableList.of());
-                return IColonyManager.getInstance().getCompatibilityManager()
-                  .getSmeltableOres()
-                  .stream()
-                  .anyMatch(storage -> !oreList.contains(storage));
+                for (final ItemStorage storage : IColonyManager.getInstance().getCompatibilityManager().getSmeltableOres())
+                {
+                    if (!oreList.contains(storage))
+                    {
+                        return true;
+                    }
+                }
             }
             return false;
 
