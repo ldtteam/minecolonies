@@ -1,8 +1,5 @@
 package com.minecolonies.coremod.generation.defaults;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.items.ModItems;
@@ -10,13 +7,8 @@ import com.minecolonies.api.research.AbstractResearchProvider;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.item.Items;
-import net.minecraft.resources.ResourcePackType;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -1069,10 +1061,10 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                      .setTranslatedName("Let It Grow")
                                      .setTranslatedSubtitle("Just one tiny seed is all we really need.")
                                      .setSortOrder(2)
-                                     .setIcon(ModBlocks.blockHutComposter.asItem())
+                                     .setIcon(ModBlocks.blockHutPlantation.asItem())
                                      .addBuildingRequirement(ModBuildings.FARMER_ID, 3)
                                      .addItemCost(ModItems.compost, 16)
-                                     .addEffect(ModBuildings.composter.getBuildingBlock(), 1)
+                                     .addEffect(ModBuildings.plantation.getBuildingBlock(), 1)
                                      .addToList(r);
         new Research(new ResourceLocation(Constants.MOD_ID, "technology/doubletrouble"), TECH).setParentResearch(letItGrow)
           .setTranslatedName("Double Trouble")

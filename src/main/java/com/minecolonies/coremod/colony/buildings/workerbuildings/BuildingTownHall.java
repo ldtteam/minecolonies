@@ -17,13 +17,13 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.client.gui.WindowTownHall;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
 
 import static com.minecolonies.api.util.constant.ColonyConstants.MAX_COLONY_EVENTS;
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
