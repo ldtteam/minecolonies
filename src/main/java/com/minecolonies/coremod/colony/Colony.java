@@ -1618,7 +1618,7 @@ public class Colony implements IColony
         this.needToMourn = needToMourn;
         if (needToMourn)
         {
-            LanguageHandler.sendPlayersMessage(getImportantMessageEntityPlayers(), COM_MINECOLONIES_COREMOD_MOURN, name);
+            LanguageHandler.sendPlayersMessage(getImportantMessageEntityPlayers(), COM_MINECOLONIES_COREMOD_MOURN, TAG_NAME, name);
         }
     }
 
