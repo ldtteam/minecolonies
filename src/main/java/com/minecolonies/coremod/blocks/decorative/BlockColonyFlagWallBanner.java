@@ -5,7 +5,6 @@ import com.google.common.collect.Maps;
 import com.minecolonies.api.blocks.decorative.AbstractColonyFlagBanner;
 import net.minecraft.block.*;
 import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.item.DyeColor;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.util.Direction;

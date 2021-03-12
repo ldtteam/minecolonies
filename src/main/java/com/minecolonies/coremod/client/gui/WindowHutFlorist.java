@@ -5,11 +5,13 @@ import com.ldtteam.blockout.views.View;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.coremod.colony.buildings.modules.ItemListModuleView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFlorist;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -74,13 +76,15 @@ public class WindowHutFlorist extends AbstractHutFilterableLists
                 return;
             }
 
-            if (ownBuilding.getBuildingLevel() <= MAX_LEVEL_BEFORE_SORTING && button.getTextAsString().equals(ON) && building.getSize(PAGE_ITEMS_VIEW) >= 1)
+            final int size = building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id))
+                               .map(ItemListModuleView::getSize).orElse(0);
+            if (ownBuilding.getBuildingLevel() <= MAX_LEVEL_BEFORE_SORTING && button.getTextAsString().equals(ON) && size >= 1)
             {
                 LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, TOO_MANY_FILTERED_BELOW_LVL4_FLORIST);
                 return;
             }
 
-            if (ownBuilding.getBuildingLevel() < MAX_BUILDING_LEVEL && button.getTextAsString().equals(ON) && building.getSize(PAGE_ITEMS_VIEW) >= MAX_BUILDING_LEVEL)
+            if (ownBuilding.getBuildingLevel() < MAX_BUILDING_LEVEL && button.getTextAsString().equals(ON) && size >= MAX_BUILDING_LEVEL)
             {
                 LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, TOO_MANY_FILTERED_FLORIST);
                 return;
@@ -93,7 +97,7 @@ public class WindowHutFlorist extends AbstractHutFilterableLists
     @Override
     public List<? extends ItemStorage> getBlockList(final Predicate<ItemStack> filterPredicate, final String id)
     {
-        return BuildingFlorist.getPlantablesForBuildingLevel(building.getBuildingLevel());
+        return new ArrayList<>(BuildingFlorist.getPlantablesForBuildingLevel(building.getBuildingLevel()));
     }
 
     @Override

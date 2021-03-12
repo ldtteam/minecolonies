@@ -15,10 +15,8 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.coremod.client.gui.WindowHutCrafter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.jobs.JobBlacksmith;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;

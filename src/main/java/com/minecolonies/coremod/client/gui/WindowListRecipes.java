@@ -55,12 +55,7 @@ public class WindowListRecipes extends Window implements ButtonHandler
     /**
      * The item icon of the resource.
      */
-    private static final String RESOURCE = "resource%d";
-
-    /**
-     * The item icon of the 3x3 resource.
-     */
-    private static final String RES = "res%d";
+    private static final String RESOURCE = "res%d";
 
     /**
      * Contains all the recipes.
@@ -140,22 +135,39 @@ public class WindowListRecipes extends Window implements ButtonHandler
                     }
                 }
 
-                final String name;
-                if (recipe.getInput().size() <= 4)
+                // Some special recipes might not include all necessary air blocks.
+                if (recipe.getInput().size() < 4)
                 {
-                    name = RESOURCE;
+                    for (int i = 0; i < 9; i++)
+                    {
+                        if (i < recipe.getInput().size())
+                        {
+                            rowPane.findPaneOfTypeByID(String.format(RESOURCE, i + 1), ItemIcon.class).setItem(recipe.getInput().get(i));
+                        }
+                        else
+                        {
+                            rowPane.findPaneOfTypeByID(String.format(RESOURCE, i + 1), ItemIcon.class).setItem(ItemStack.EMPTY);
+                        }
+                    }
+                }
+                else if (recipe.getInput().size() == 4)
+                {
+                    rowPane.findPaneOfTypeByID(String.format(RESOURCE, 1), ItemIcon.class).setItem(recipe.getInput().get(0));
+                    rowPane.findPaneOfTypeByID(String.format(RESOURCE, 2), ItemIcon.class).setItem(recipe.getInput().get(1));
+                    rowPane.findPaneOfTypeByID(String.format(RESOURCE, 3), ItemIcon.class).setItem(ItemStack.EMPTY);
+                    rowPane.findPaneOfTypeByID(String.format(RESOURCE, 4), ItemIcon.class).setItem(recipe.getInput().get(2));
+                    rowPane.findPaneOfTypeByID(String.format(RESOURCE, 5), ItemIcon.class).setItem(recipe.getInput().get(3));
+                    for (int i = 6; i < 9; i++)
+                    {
+                        rowPane.findPaneOfTypeByID(String.format(RESOURCE, i + 1), ItemIcon.class).setItem(ItemStack.EMPTY);
+                    }
                 }
                 else
                 {
-                    name = RES;
-                    rowPane.findPaneOfTypeByID("3x3", Box.class).setVisible(true);
-                    rowPane.findPaneOfTypeByID("2x2", Box.class).setVisible(false);
-                    icon.setPosition(80, 17);
-                }
-
-                for (int i = 0; i < recipe.getInput().size(); i++)
-                {
-                    rowPane.findPaneOfTypeByID(String.format(name, i + 1), ItemIcon.class).setItem(recipe.getInput().get(i));
+                    for (int i = 0; i < 9; i++)
+                    {
+                        rowPane.findPaneOfTypeByID(String.format(RESOURCE, i + 1), ItemIcon.class).setItem(recipe.getInput().get(i));
+                    }
                 }
             }
         });
@@ -164,6 +176,7 @@ public class WindowListRecipes extends Window implements ButtonHandler
     @Override
     public void onUpdate()
     {
+        super.onUpdate();
         updateRecipes();
         if (!Screen.hasShiftDown())
         {

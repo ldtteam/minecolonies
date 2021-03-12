@@ -4,7 +4,6 @@ import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
-import com.minecolonies.api.colony.requestsystem.requestable.Tag;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.constant.TypeConstants;

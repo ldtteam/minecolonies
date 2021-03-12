@@ -1,6 +1,5 @@
 package com.minecolonies.api.crafting;
 
-import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 /**

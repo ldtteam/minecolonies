@@ -2,6 +2,7 @@ package com.minecolonies.api.compatibility;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.crafting.CompostRecipe;
@@ -96,6 +97,11 @@ public class CompatibilityManager implements ICompatibilityManager
      * List of all the items that can be used as food
      */
     private final Set<ItemStorage> food = new HashSet<>();
+
+    /**
+     * List of all the items that can be used as food
+     */
+    private final Set<ItemStorage> edibles = new HashSet<>();
 
     /**
      * Set of all possible diseases.
@@ -271,9 +277,9 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
-    public List<ItemStorage> getCopyOfSaplings()
+    public Set<ItemStorage> getCopyOfSaplings()
     {
-        return new ArrayList<>(saplings);
+        return new HashSet<>(saplings);
     }
 
     @Override
@@ -289,6 +295,12 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
+    public Set<ItemStorage> getEdibles()
+    {
+        return edibles;
+    }
+
+    @Override
     public Set<ItemStorage> getSmeltableOres()
     {
         return smeltableOres;
@@ -301,9 +313,17 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
-    public List<ItemStorage> getCopyOfPlantables()
+    public Set<ItemStorage> getCompostInputs()
     {
-        return ImmutableList.copyOf(plantables);
+        return compostRecipes.keySet().stream()
+                .map(item -> new ItemStorage(new ItemStack(item)))
+                .collect(Collectors.toSet());
+    }
+
+    @Override
+    public Set<ItemStorage> getCopyOfPlantables()
+    {
+        return new HashSet<>(plantables);
     }
 
     @Override
@@ -577,6 +597,10 @@ public class CompatibilityManager implements ICompatibilityManager
         if (food.isEmpty())
         {
             food.addAll(ImmutableList.copyOf(allItems.stream().filter(ISFOOD.or(ISCOOKABLE)).map(ItemStorage::new).collect(Collectors.toList())));
+        }
+        if (edibles.isEmpty())
+        {
+            edibles.addAll(ImmutableList.copyOf(food.stream().filter(storage -> CAN_EAT.test(storage.getItemStack())).collect(Collectors.toList())));
         }
         Log.getLogger().info("Finished discovering food");
     }
