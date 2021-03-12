@@ -18,7 +18,6 @@ import com.minecolonies.api.tileentities.TileEntityGrave;
 import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
-import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesGrave;
@@ -39,8 +38,10 @@ import com.minecolonies.coremod.util.AdvancementUtils;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.*;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.items.IItemHandler;
@@ -132,7 +133,7 @@ public class EntityAIWorkGravedigger extends AbstractEntityAIInteract<JobGravedi
     /**
      * The current pos to grave to build.
      */
-    private BlockPos burialPos = null;
+    private Tuple<BlockPos, Direction> burialPos = null;
 
     /**
      * Constructor for the Gravedigger. Defines the tasks the Gravedigger executes.
@@ -412,7 +413,7 @@ public class EntityAIWorkGravedigger extends AbstractEntityAIInteract<JobGravedi
         worker.getCitizenData().setVisibleStatus(BURYING_ICON);
         worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.burying"));
 
-        if(burialPos == null || !world.getBlockState(burialPos).isAir())
+        if(burialPos == null || !world.getBlockState(burialPos.getA()).isAir())
         {
             burialPos = getOwnBuilding().getRandomFreeVisualGravePos();
         }
@@ -420,12 +421,11 @@ public class EntityAIWorkGravedigger extends AbstractEntityAIInteract<JobGravedi
         if(burialPos == null)
         {
             //coudn't find a place to dig a grave
-            worker.getCitizenColonyHandler().getColony().removeNeedToMourn(buildingGraveyard.getLastGraveName(),false);
-            AdvancementUtils.TriggerAdvancementPlayersForColony(worker.getCitizenColonyHandler().getColony(), playerMP -> AdvancementTriggers.CITIZEN_BURY.trigger(playerMP));
+            LanguageHandler.sendPlayersMessage(buildingGraveyard.getColony().getImportantMessageEntityPlayers(), "com.minecolonies.coremod.nospaceforgrave", buildingGraveyard.getLastGraveName());
             return IDLE;
         }
 
-        if(walkToBlock(burialPos, 1))
+        if(walkToBlock(burialPos.getA(), 1))
         {
             return getState();
         }

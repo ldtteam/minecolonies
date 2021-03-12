@@ -1495,7 +1495,13 @@ public class EntityCitizen extends AbstractEntityCitizen
            graveEntity.setSavedCitizenName(citizenData.getName());
            graveEntity.setSavedCitizenDataNBT(citizenData.serializeNBT());
 
-           final BlockPos closestGraveyardPos = citizenColonyHandler.getColony().getBuildingManager().getClosestGraveyard(this);
+           BlockPos closestGraveyardPos = citizenColonyHandler.getColony().getBuildingManager().
+                   getClosestGraveyard(this, g -> g instanceof BuildingGraveyard && ((BuildingGraveyard)g).hasSpaceForNewGraves());
+           if(closestGraveyardPos == null )
+           {
+               closestGraveyardPos =citizenColonyHandler.getColony().getBuildingManager().getClosestGraveyard(this, null);
+           }
+
            if(closestGraveyardPos != null)
            {
                final BuildingGraveyard graveyard = (BuildingGraveyard)citizenColonyHandler.getColony().getBuildingManager().getBuilding(closestGraveyardPos);

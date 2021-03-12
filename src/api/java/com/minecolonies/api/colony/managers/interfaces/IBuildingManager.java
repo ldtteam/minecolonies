@@ -9,6 +9,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.tileentities.AbstractScarecrowTileEntity;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.AbstractTileEntityGrave;
+import com.mojang.serialization.RecordBuilder;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -211,7 +212,7 @@ public interface IBuildingManager
      * @param citizen the citizen.
      * @return the Position of it.
      */
-    BlockPos getClosestGraveyard(final AbstractEntityCitizen citizen);
+    BlockPos getClosestGraveyard(AbstractEntityCitizen citizen, Predicate<Object> predicate);
 
     /**
      * Calculate a good hospital for a certain citizen.

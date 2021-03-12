@@ -802,6 +802,7 @@
   "com.minecolonies.coremod.status.resurrect": "Trying to resurrect a citizen...",
   "com.minecolonies.coremod.resurrect": "Amazing! Your gravedigger resurected %s today! Your citizen will not mourn anymore",
   "com.minecolonies.coremod.gravespawned": "A grave has been created, collect it quick before it decay!",
+  "com.minecolonies.coremod.nospaceforgrave": "Your graveyard is full and %s coudn't be buried... Upgrade it or build new ones before this happens again!",
 
   "com.minecolonies.coremod.gui.workerhuts.buildbarracks": "Barracks",
   "com.minecolonies.coremod.gui.barracks.spieshire": "Hire",

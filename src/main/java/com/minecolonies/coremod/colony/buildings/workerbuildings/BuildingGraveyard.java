@@ -4,6 +4,7 @@ import com.ldtteam.blockout.views.Window;
 import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.util.PlacementSettings;
+import com.minecolonies.api.blocks.AbstractBlockMinecoloniesNamedGrave;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
@@ -394,11 +395,13 @@ public class BuildingGraveyard extends AbstractBuildingWorker
      * Add a citizen to the list of resting citizen in this graveyard
      * @param citizenName
      */
-    public void BuryCitizenHere(final BlockPos position, final String citizenName)
+    public void BuryCitizenHere(final Tuple<BlockPos, Direction> positionAndDirection, final String citizenName)
     {
         if(!restingCitizen.contains(citizenName))
         {
-            getColony().getWorld().setBlockState(position, ModBlocks.blockNamedGrave.getDefaultState());
+            getColony().getWorld().setBlockState(positionAndDirection.getA(), ModBlocks.blockNamedGrave.getDefaultState()
+                    /*.with(AbstractBlockMinecoloniesNamedGrave.FACING, facing)*/);
+            //TODO TG rotate block
             restingCitizen.add(citizenName);
             markDirty();
         }
@@ -448,9 +451,18 @@ public class BuildingGraveyard extends AbstractBuildingWorker
     }
 
     /**
+     * Has the graveyard space for new graves
+     * @return
+     */
+    public boolean hasSpaceForNewGraves()
+    {
+        return getRandomFreeVisualGravePos() != null;
+    }
+
+    /**
      * Return a random free visual grave position
      */
-    public BlockPos getRandomFreeVisualGravePos()
+    public Tuple<BlockPos, Direction> getRandomFreeVisualGravePos()
     {
         initTagPositions();
 
@@ -459,12 +471,12 @@ public class BuildingGraveyard extends AbstractBuildingWorker
             return null;
         }
 
-        final List<BlockPos> availablePos = new ArrayList<BlockPos>();
-        for(final BlockPos pos : visualGravePositions)
+        final List<Tuple<BlockPos, Direction>> availablePos = new ArrayList<Tuple<BlockPos, Direction>>();
+        for(final Tuple<BlockPos, Direction> tuple : visualGravePositions)
         {
-            if(getColony().getWorld().getBlockState(pos).isAir())
+            if(getColony().getWorld().getBlockState(tuple.getA()).isAir())
             {
-                availablePos.add(pos);
+                availablePos.add(tuple);
             }
         }
 
