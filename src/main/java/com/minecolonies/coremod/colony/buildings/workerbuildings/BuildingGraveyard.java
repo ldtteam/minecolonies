@@ -305,10 +305,7 @@ public class BuildingGraveyard extends AbstractBuildingWorker
 
     @NotNull
     @Override
-    public Skill getPrimarySkill()
-    {
-        return Skill.Strength;
-    }
+    public Skill getPrimarySkill() { return Skill.Strength; }
 
     @NotNull
     @Override
