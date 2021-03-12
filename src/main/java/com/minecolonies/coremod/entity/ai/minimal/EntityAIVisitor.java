@@ -18,7 +18,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumSet;
@@ -109,7 +108,7 @@ public class EntityAIVisitor extends Goal
             citizen.getCitizenColonyHandler().getColony().getVisitorManager().removeCivilian(citizen.getCitizenData());
             if (tavern != null)
             {
-                tavern.getModule(TavernBuildingModule.class).ifPresent(module -> module.removeCitizen(citizen.getCivilianID()));
+                tavern.getFirstModuleOccurance(TavernBuildingModule.class).ifPresent(module -> module.removeCitizen(citizen.getCivilianID()));
             }
             return true;
         }
@@ -181,7 +180,7 @@ public class EntityAIVisitor extends Goal
         final int random = citizen.getRandom().nextInt(5);
         if (tavern != null && (random == 0 || random == 1 && !citizen.getCitizenColonyHandler().getColony().isDay()) && tavern.hasModule(TavernBuildingModule.class))
         {
-            final BlockPos pos = tavern.getModule(TavernBuildingModule.class).get().getFreeSitPosition();
+            final BlockPos pos = tavern.getFirstModuleOccurance(TavernBuildingModule.class).get().getFreeSitPosition();
             if (pos != null)
             {
                 ((VisitorData) citizen.getCitizenData()).setSittingPosition(pos);
