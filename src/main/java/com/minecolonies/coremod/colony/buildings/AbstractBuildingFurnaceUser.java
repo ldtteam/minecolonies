@@ -1,7 +1,9 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
 import net.minecraft.block.Block;
 import net.minecraft.block.FurnaceBlock;
 import net.minecraft.item.ItemStack;
@@ -14,7 +16,6 @@ import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,7 +25,7 @@ import static com.minecolonies.api.util.constant.Suppression.OVERRIDE_EQUALS;
  * Abstract Class for all furnace users.
  */
 @SuppressWarnings(OVERRIDE_EQUALS)
-public abstract class AbstractBuildingFurnaceUser extends AbstractFilterableListBuilding
+public abstract class AbstractBuildingFurnaceUser extends AbstractBuildingWorker
 {
     /**
      * Tag to store the furnace position.
@@ -135,11 +136,10 @@ public abstract class AbstractBuildingFurnaceUser extends AbstractFilterableList
      */
     public List<ItemStack> getAllowedFuel()
     {
-        return getCopyOfAllowedItems().containsKey(FUEL_LIST) ? getCopyOfAllowedItems().get(FUEL_LIST)
-                                                                  .stream()
-                                                                  .map(ItemStorage::getItemStack)
-                                                                  .peek(stack -> stack.setCount(stack.getMaxStackSize()))
-                                                                  .collect(Collectors.toList()) : Collections.emptyList();
+        return getModuleMatching(ItemListModule.class, m -> m.getId().equals(FUEL_LIST)).map(ItemListModule::getList).orElse(ImmutableList.of()).stream()
+                     .map(ItemStorage::getItemStack)
+                     .peek(stack -> stack.setCount(stack.getMaxStackSize()))
+                     .collect(Collectors.toList());
     }
 
     /**
@@ -150,6 +150,6 @@ public abstract class AbstractBuildingFurnaceUser extends AbstractFilterableList
      */
     public boolean isAllowedFuel(final ItemStack stack)
     {
-        return getCopyOfAllowedItems().get(FUEL_LIST).stream().anyMatch(itemStack -> stack.isItemEqual(itemStack.getItemStack()));
+        return getModuleMatching(ItemListModule.class, m -> m.getId().equals(FUEL_LIST)).map(ItemListModule::getList).orElse(ImmutableList.of()).stream().anyMatch(itemStack -> stack.isItemEqual(itemStack.getItemStack()));
     }
 }

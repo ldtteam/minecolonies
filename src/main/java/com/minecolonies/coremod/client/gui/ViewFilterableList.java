@@ -9,7 +9,9 @@ import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.blockout.views.View;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.modules.ItemListModuleView;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -65,7 +67,7 @@ public class ViewFilterableList
     /**
      * The building this belongs to.
      */
-    protected final AbstractFilterableListsView building;
+    protected final AbstractBuildingView building;
 
     /**
      * The parent window.
@@ -103,7 +105,7 @@ public class ViewFilterableList
     public ViewFilterableList(
       final View window,
       final AbstractHutFilterableLists parent,
-      final AbstractFilterableListsView building,
+      final AbstractBuildingWorker.View building,
       final String desc,
       final String id,
       final boolean isInverted)
@@ -144,11 +146,11 @@ public class ViewFilterableList
             button.setText(OFF);
             if (isInverted)
             {
-                building.addItem(id, allItems.get(row));
+                building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id)).ifPresent(m -> m.addItem(allItems.get(row)));
             }
             else
             {
-                building.removeItem(id, allItems.get(row));
+                building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id)).ifPresent(m -> m.removeItem(allItems.get(row)));
             }
         }
         else
@@ -156,11 +158,11 @@ public class ViewFilterableList
             button.setText(ON);
             if (isInverted)
             {
-                building.removeItem(id, allItems.get(row));
+                building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id)).ifPresent(m -> m.removeItem(allItems.get(row)));
             }
             else
             {
-                building.addItem(id, allItems.get(row));
+                building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id)).ifPresent(m -> m.addItem(allItems.get(row)));
             }
         }
         resourceList.refreshElementPanes();
@@ -188,16 +190,19 @@ public class ViewFilterableList
 
         allItems.sort((o1, o2) -> {
 
-            boolean o1Allowed = building.isAllowedItem(id, new ItemStorage(o1.getItemStack()));
-            boolean o2Allowed = building.isAllowedItem(id, new ItemStorage(o2.getItemStack()));
+            boolean o1Allowed = building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id))
+                                  .map(m -> m.isAllowedItem(new ItemStorage(o1.getItemStack()))).orElse(false);
+
+            boolean o2Allowed = building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id))
+                                  .map(m -> m.isAllowedItem(new ItemStorage(o2.getItemStack()))).orElse(false);
 
             if(!o1Allowed && o2Allowed)
             {
-                return 1;
+                return isInverted ? -1 : 1;
             }
             else if(o1Allowed && !o2Allowed)
             {
-                return -1;
+                return isInverted ? 1 : -1;
             }
             else
             {
@@ -273,10 +278,11 @@ public class ViewFilterableList
                 resourceLabel.setText(resource.getDisplayName());
                 resourceLabel.setColors(WHITE);
                 rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(resource);
-
+                final boolean isAllowedItem  = building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id))
+                                                 .map(m -> m.isAllowedItem(new ItemStorage(resource))).orElse(!isInverted);
                 final Button switchButton = rowPane.findPaneOfTypeByID(BUTTON_SWITCH, Button.class);
 
-                if ((isInverted && !building.isAllowedItem(id, new ItemStorage(resource))) || (!isInverted && building.isAllowedItem(id, new ItemStorage(resource))))
+                if ((isInverted && !isAllowedItem) || (!isInverted && isAllowedItem))
                 {
                     switchButton.setText(ON);
                 }

@@ -2,7 +2,6 @@ package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.blockout.Color;
 import com.ldtteam.blockout.Alignment;
-import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.PaneBuilders;
 import com.ldtteam.blockout.controls.*;
 import com.ldtteam.blockout.views.View;

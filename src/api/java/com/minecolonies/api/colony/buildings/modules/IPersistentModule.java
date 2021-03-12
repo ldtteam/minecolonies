@@ -25,11 +25,4 @@ public interface IPersistentModule extends IBuildingModule
      * @param buf the buffer to write it to.
      */
     default void serializeToView(PacketBuffer buf) { }
-
-    /**
-     * Deserialization method to send the module data to the client side.
-     * @param buf the buffer to write it to.
-     * todo needs future handling.
-     */
-    default void deserializeFromView(PacketBuffer buf) { }
 }
