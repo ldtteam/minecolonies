@@ -198,11 +198,11 @@ public class ViewFilterableList
 
             if(!o1Allowed && o2Allowed)
             {
-                return 1;
+                return isInverted ? -1 : 1;
             }
             else if(o1Allowed && !o2Allowed)
             {
-                return -1;
+                return isInverted ? 1 : -1;
             }
             else
             {
