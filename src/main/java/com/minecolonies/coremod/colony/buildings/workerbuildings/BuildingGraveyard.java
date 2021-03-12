@@ -340,6 +340,7 @@ public class BuildingGraveyard extends AbstractBuildingWorker
     public void onUpgradeComplete(final int newLevel)
     {
         super.onUpgradeComplete(newLevel);
+        initTags = false;
     }
 
     /**

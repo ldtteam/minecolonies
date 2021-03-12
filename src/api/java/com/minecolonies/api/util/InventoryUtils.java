@@ -2340,12 +2340,15 @@ public class InventoryUtils
     {
         for (int i = 0; i < origin.getSlots(); ++i)
         {
-            final ItemStack itemstack = origin.getStackInSlot(i);
-            if(addItemStackToItemHandler(target, itemstack))
+            final ItemStack itemStack = origin.getStackInSlot(i);
+            if(!ItemStackUtils.isEmpty(itemStack))
             {
-                removeStackFromItemHandler(origin, itemstack, itemstack.getCount());
+                if(addItemStackToItemHandler(target, itemStack))
+                {
+                    removeStackFromItemHandler(origin, itemStack, itemStack.getCount());
+                }
+                else return false;
             }
-            else return false;
         }
 
         return true;

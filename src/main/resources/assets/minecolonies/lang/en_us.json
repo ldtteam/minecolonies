@@ -771,6 +771,7 @@
   "com.minecolonies.coremod.gui.workerhuts.unassign": "Remove Citizen",
   "block.minecolonies.blockminecoloniesrack": "Rack",
   "block.minecolonies.blockminecoloniesgrave": "Grave",
+  "block.minecolonies.blockminecoloniesnamedgrave": "Named Grave",
 
   "com.minecolonies.coremod.status.deciding": "Deciding",
   "com.minecolonies.coremod.status.sleeping": "Let me sleep",
