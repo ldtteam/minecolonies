@@ -6,14 +6,8 @@
     <label size="100% 11" pos="0 70" textalign="TOP_MIDDLE" color="white" id="recipestatus" />
     <list id="recipes" size="70% 100" pos="60 90" align="TOP_MIDDLE">
         <view size="70% 50">
-            <itemicon id="output" size="16 16" pos="80 5"/>
-            <box id="2x2" size="100% 30" linewidth="2">
-                <itemicon id="resource1" size="16 16" pos="20 1"/>
-                <itemicon id="resource2" size="16 16" pos="20 15"/>
-                <itemicon id="resource3" size="16 16" pos="34 15"/>
-                <itemicon id="resource4" size="16 16" pos="34 1"/>
-            </box>
-            <box id="3x3" size="100% 50" linewidth="2" visible="false">
+            <itemicon id="output" size="16 16" pos="80 17"/>
+            <box id="3x3" size="100% 50" linewidth="2">
                 <itemicon id="res1" size="16 16" pos="20 1"/>
                 <itemicon id="res2" size="16 16" pos="34 1"/>
                 <itemicon id="res3" size="16 16" pos="48 1"/>
