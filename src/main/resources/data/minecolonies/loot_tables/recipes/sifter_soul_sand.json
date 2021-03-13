@@ -6,7 +6,7 @@
             {"condition":"alternative",
              "terms" : [
                 {"condition": "minecraft:entity_properties", "entity": "this", "predicate" : { "equipment": { "mainhand": {"item" : "minecraft:air"} } }},
-                {"condition": "minecraft:entity_properties", "entity": "this", "predicate" : { "equipment": { "mainhand": {"item" : "minecraft:string"} } }}
+                {"condition": "minecraft:entity_properties", "entity": "this", "predicate" : { "equipment": { "mainhand": {"item" : "minecolonies:sifter_mesh_string"} } }}
              ]
             }
         ],
@@ -31,7 +31,7 @@
       {
         "name": "Soulsand_Flint_Mesh",
         "conditions": [
-            {"condition": "minecraft:entity_properties", "entity": "this", "predicate" : { "equipment": { "mainhand": {"item" : "minecraft:flint"} } }}
+            {"condition": "minecraft:entity_properties", "entity": "this", "predicate" : { "equipment": { "mainhand": {"item" : "minecolonies:sifter_mesh_flint"} } }}
         ],
         "rolls": 1,
         "entries": [
@@ -59,7 +59,7 @@
       {
         "name": "Soulsand_Iron_Mesh",
         "conditions": [
-            {"condition": "minecraft:entity_properties", "entity": "this", "predicate" : { "equipment": { "mainhand": {"item" : "minecraft:iron_ingot"} } }}
+            {"condition": "minecraft:entity_properties", "entity": "this", "predicate" : { "equipment": { "mainhand": {"item" : "minecolonies:sifter_mesh_iron"} } }}
         ],
         "rolls": 1,
         "bonus_rolls": 0.025,
@@ -98,7 +98,7 @@
       {
         "name": "Soulsand_Diamond_Mesh",
         "conditions": [
-            {"condition": "minecraft:entity_properties", "entity": "this", "predicate" : { "equipment": { "mainhand": {"item" : "minecraft:diamond"} } }}
+            {"condition": "minecraft:entity_properties", "entity": "this", "predicate" : { "equipment": { "mainhand": {"item" : "minecolonies:sifter_mesh_diamond"} } }}
         ],
         "rolls": 1,
         "bonus_rolls": 0.035,

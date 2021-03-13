@@ -15,5 +15,6 @@
         "item" : "minecraft:sugar_cane"
     }
   ],
-  "loot-table": "minecolonies:recipes/sifter_sand"
+  "loot-table": "minecolonies:recipes/sifter_sand",
+  "min-building-level" : 99
 }

@@ -117,6 +117,11 @@ public final class ModItemsInitializer
         ModItems.plateArmorLegs = new ItemPlateArmor("plate_armor_legs", ModCreativeTabs.MINECOLONIES, ItemPlateArmor.PLATE_ARMOR, EquipmentSlotType.LEGS, new Item.Properties());
         ModItems.plateArmorBoots = new ItemPlateArmor("plate_armor_boots", ModCreativeTabs.MINECOLONIES, ItemPlateArmor.PLATE_ARMOR, EquipmentSlotType.FEET, new Item.Properties());
 
+        ModItems.sifterMeshString = new ItemSifterMesh("sifter_mesh_string", new Item.Properties().maxDamage(500).setNoRepair());
+        ModItems.sifterMeshFlint = new ItemSifterMesh("sifter_mesh_flint", new Item.Properties().maxDamage(1000).setNoRepair());
+        ModItems.sifterMeshIron = new ItemSifterMesh("sifter_mesh_iron", new Item.Properties().maxDamage(1500).setNoRepair());
+        ModItems.sifterMeshDiamond = new ItemSifterMesh("sifter_mesh_diamond", new Item.Properties().maxDamage(2000).setNoRepair());
+
         registry.register(ModItems.supplyChest);
         registry.register(ModItems.permTool);
         registry.register(ModItems.scepterGuard);
@@ -162,6 +167,11 @@ public final class ModItemsInitializer
         registry.register(ModItems.irongate);
         registry.register(ModItems.woodgate);
         registry.register(ModItems.flagBanner);
+
+        registry.register(ModItems.sifterMeshString);
+        registry.register(ModItems.sifterMeshFlint);
+        registry.register(ModItems.sifterMeshIron);
+        registry.register(ModItems.sifterMeshDiamond);
 
         registry.register(new SpawnEggItem(ModEntities.BARBARIAN,
           PRIMARY_COLOR_BARBARIAN,
