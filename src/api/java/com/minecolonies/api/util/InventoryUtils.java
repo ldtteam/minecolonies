@@ -2337,7 +2337,7 @@ public class InventoryUtils
     }
 
     /**
-     * Attempt to transfert as much item as possible from origin to target inventory
+     * Attempt to transfer as much item as possible from origin to target inventory
      *
      * @param origin the handler.
      * @param target   the world.
