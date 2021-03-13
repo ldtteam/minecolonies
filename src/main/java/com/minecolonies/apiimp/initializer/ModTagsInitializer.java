@@ -47,6 +47,7 @@ public class ModTagsInitializer
     private static final ResourceLocation COLONYPROTECTIONEXCEPTION = new ResourceLocation(MOD_ID, "protectionexception");
     private static final ResourceLocation FUNGI = new ResourceLocation(MOD_ID, "fungi");
     private static final ResourceLocation INDESTRUCTIBLE = new ResourceLocation(MOD_ID, "indestructible");
+    private static final ResourceLocation MESHES = new ResourceLocation(MOD_ID, "meshes");
 
     private static boolean loaded = false;
 
@@ -64,6 +65,7 @@ public class ModTagsInitializer
         ModTags.pathingBlocks = getBlockTags(PATHING_BLOCKS);
         ModTags.floristFlowersExcluded = getItemTags(FLORIST_FLOWERS_EXCLUDED);
         ModTags.fungi = getItemTags(FUNGI);
+        ModTags.meshes = getItemTags(MESHES);
         ModTags.oreChanceBlocks = getBlockTags(ORECHANCEBLOCKS);
         ModTags.colonyProtectionException = getBlockTags(COLONYPROTECTIONEXCEPTION);
         ModTags.indestructible = getBlockTags(INDESTRUCTIBLE);

@@ -18,5 +18,6 @@
         "item" : "minecraft:coal"
     }
   ],
-  "loot-table": "minecolonies:recipes/sifter_gravel"
+  "loot-table": "minecolonies:recipes/sifter_gravel",
+  "min-building-level" : 99
 }

@@ -135,7 +135,6 @@ public class ServerConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> configListStudyItems;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> configListRecruitmentItems;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> luckyOres;
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> crusherProduction;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> sifterMeshes;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> listOfPlantables;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> enchantments;
@@ -478,12 +477,6 @@ public class ServerConfiguration extends AbstractConfiguration
                      "minecraft:lapis_ore!4",
                      "minecraft:diamond_ore!2",
                      "minecraft:emerald_ore!1"),
-          s -> s instanceof String);
-        crusherProduction = defineList(builder, "crusherproduction",
-          Arrays.asList
-                   ("minecraft:cobblestone!minecraft:gravel",
-                     "minecraft:gravel!minecraft:sand",
-                     "minecraft:sand!minecraft:clay"),
           s -> s instanceof String);
         sifterMeshes = defineList(builder, "siftermeshes",
           Arrays.asList
