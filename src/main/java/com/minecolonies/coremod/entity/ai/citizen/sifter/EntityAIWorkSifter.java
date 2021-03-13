@@ -14,7 +14,7 @@ import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.items.IItemHandler;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -84,7 +84,7 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
         final BuildingSifter sifterBuilding = getOwnBuilding();
 
         // Go idle if we can't do any more today
-        if (sifterBuilding.getCurrentDailyQuantity() >= sifterBuilding.getDailyQuantity())
+        if (sifterBuilding.getCurrentDailyQuantity() >= sifterBuilding.getMaxDailyQuantity())
         {
             return IDLE;
         }
@@ -93,31 +93,36 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
         {
             return getState();
         }
-        WorkerUtil.faceBlock(getOwnBuilding().getPosition(), worker);
 
         if (InventoryUtils.isItemHandlerFull(worker.getInventoryCitizen()))
         {
             return INVENTORY_FULL;
         }
 
-        if (sifterBuilding.getCurrentDailyQuantity() >= sifterBuilding.getDailyQuantity())
-        {
-            return START_WORKING;
-        }
-
         currentRecipeStorage = sifterBuilding.getFirstFullFillableRecipe(item -> ItemStackUtils.isEmpty(item), 1, false);
-
-        ItemStack meshItem = sifterBuilding.getMesh().getA().getItemStack().copy();
-        if(ItemStackUtils.isEmpty(worker.getHeldItemMainhand()) || ItemStackUtils.compareItemStacksIgnoreStackSize(worker.getHeldItemMainhand(), meshItem))
-        {
-            worker.setHeldItem(Hand.MAIN_HAND, meshItem);
-        }
 
         if (currentRecipeStorage == null)
         {
             progress = 0;
             return START_WORKING;
         }
+
+        ItemStack meshItem = ItemStack.EMPTY;
+        for (final IItemHandler handler : InventoryUtils.getItemHandlersFromProvider(sifterBuilding))
+        {
+            final int foundSlot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(handler, item -> ItemStackUtils.compareItemStackListIgnoreStackSize(currentRecipeStorage.getCraftingTools(), item, false, true));
+            if (foundSlot > -1)
+            {
+                meshItem = handler.getStackInSlot(foundSlot).copy();
+            }
+        }
+
+        if(!meshItem.isEmpty() && (ItemStackUtils.isEmpty(worker.getHeldItemMainhand()) || ItemStackUtils.compareItemStacksIgnoreStackSize(worker.getHeldItemMainhand(), meshItem, false, true)))
+        {
+            worker.setHeldItem(Hand.MAIN_HAND, meshItem);
+        }
+
+        WorkerUtil.faceBlock(getOwnBuilding().getPosition(), worker);
 
         progress++;
        
@@ -130,13 +135,6 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
                 incrementActionsDoneAndDecSaturation();
             } 
             currentRecipeStorage.fullfillRecipe(getLootContext(), sifterBuilding.getHandlers());
-
-            //Handle mesh breaking
-            if (worker.getRandom().nextDouble() * 100 < sifterBuilding.getMesh().getB())
-            {
-                sifterBuilding.resetMesh();
-                worker.getCitizenColonyHandler().getColony().getImportantMessageEntityPlayers().forEach(player -> player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.sifter.meshbroke"), player.getUniqueID()));
-            }
 
             worker.decreaseSaturationForContinuousAction();
             worker.getCitizenExperienceHandler().addExperience(0.2);

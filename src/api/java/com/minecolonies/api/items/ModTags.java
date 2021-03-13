@@ -27,6 +27,8 @@ public class ModTags
 
     public static ITag<Item> fungi;
 
+    public static ITag<Item> meshes;
+
     public static ITag<Item>  floristFlowersExcluded;
 
 

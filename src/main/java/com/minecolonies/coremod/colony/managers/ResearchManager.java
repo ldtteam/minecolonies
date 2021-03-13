@@ -11,6 +11,7 @@ import com.minecolonies.api.research.ILocalResearch;
 import com.minecolonies.api.research.IResearchManager;
 import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.research.effects.IResearchEffectManager;
+import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.Colony;
@@ -180,8 +181,9 @@ public class ResearchManager implements IResearchManager
         tree.addResearch(research.getBranch(), new LocalResearch(research.getId(), research.getBranch(), research.getDepth()));
         if(research.isInstant() || (creativePlayer && MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchCreativeCompletion.get()))
         {
-            tree.getResearch(research.getBranch(), research.getId())
-              .setProgress((int) (BASE_RESEARCH_TIME * IGlobalResearchTree.getInstance().getBranchData(research.getBranch()).getBaseTime() * Math.pow(2, research.getDepth() - 1)));
+            ILocalResearch localResearch = tree.getResearch(research.getBranch(), research.getId());
+            localResearch.setProgress((int) (BASE_RESEARCH_TIME * IGlobalResearchTree.getInstance().getBranchTime(research.getBranch()) * Math.pow(2, research.getDepth() - 1)));
+            localResearch.setState(ResearchState.FINISHED);
             tree.finishResearch(research.getId());
             for (IResearchEffect<?> effect : IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getEffects())
             {

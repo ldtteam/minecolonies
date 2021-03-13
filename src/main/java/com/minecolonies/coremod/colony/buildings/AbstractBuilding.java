@@ -791,7 +791,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
                     continue;
                 }
 
-                final int count = InventoryUtils.hasBuildingEnoughElseCount(this, new ItemStorage(itemStack), entry.getValue() * itemStack.getMaxStackSize());
+                final int count = InventoryUtils.hasBuildingEnoughElseCount(this, new ItemStorage(itemStack, true), entry.getValue() * itemStack.getMaxStackSize());
                 final int delta = (entry.getValue() * itemStack.getMaxStackSize()) - count;
                 final IToken<?> request = getMatchingRequest(itemStack, list);
                 if (delta > 0)
@@ -799,7 +799,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
                     if (request == null)
                     {
                         itemStack.setCount(Math.min(itemStack.getMaxStackSize(), delta));
-                        final Stack stack = new Stack(itemStack);
+                        final Stack stack = new Stack(itemStack, false);
                         if (getMainCitizen() != null)
                         {
                             getMainCitizen().createRequestAsync(stack);
