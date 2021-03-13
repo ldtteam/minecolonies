@@ -621,7 +621,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                 .setIcon(ModBlocks.blockHutGraveyard.asItem())
                 .addEffect(ModBuildings.graveyard.getBuildingBlock(), 1)
                 .addBuildingRequirement(ModBuildings.TOWNHALL_ID, 2)
-                .addItemCost(Items.BONE, 16)
+                .addItemCost(Items.BONE, 8)
                 .setTranslatedSubtitle("Our fallen shall not be forgotten!")
                 .addToList(r);
 
@@ -666,7 +666,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                 .setSortOrder(2)
                 .setIcon(ModBlocks.blockGrave.asItem())
                 .addBuildingRequirement(ModBuildings.GRAVEYARD_ID, 5)
-                .addItemCost(Items.ZOMBIE_HEAD, 1)
+                .addItemCost(Items.ROTTEN_FLESH, 64)
                 .addEffect(GRAVE_DECAY_BONUS, 2)
                 .addToList(r);
 

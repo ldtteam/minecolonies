@@ -11,8 +11,8 @@
       "level": 5
     },
     {
-      "item": "minecraft:zombie_head",
-      "quantity": 1
+      "item": "minecraft:rotten_flesh",
+      "quantity": 64
     }
   ],
   "effects": [
