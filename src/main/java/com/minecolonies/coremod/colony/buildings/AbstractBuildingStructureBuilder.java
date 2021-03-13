@@ -333,7 +333,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
                 }
 
                 buf.writeString(desc);
-                buf.writeDouble(workOrderBuildDecoration.getAmountOfRes() == 0 ? 0 : (qty < workOrderBuildDecoration.getAmountOfRes() ? qty / workOrderBuildDecoration.getAmountOfRes() : 1.0));
+                buf.writeDouble(workOrderBuildDecoration.getAmountOfRes() == 0 ? 0 : qty / workOrderBuildDecoration.getAmountOfRes());
                 buf.writeInt(totalStages);
                 buf.writeInt(currentStage);
             }
