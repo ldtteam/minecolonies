@@ -24,5 +24,6 @@
         "item" : "minecraft:jungle_sapling"
     }
   ],
-  "loot-table": "minecolonies:recipes/dirt"
+  "loot-table": "minecolonies:recipes/dirt",
+  "min-building-level" : 99
 }
