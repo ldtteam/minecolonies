@@ -446,7 +446,7 @@ public class EntityAIWorkGravedigger extends AbstractEntityAIInteract<JobGravedi
         effortCounter = 0;
         unequip();
 
-        buildingGraveyard.BuryCitizenHere(burialPos);
+        buildingGraveyard.buryCitizenHere(burialPos);
         burialPos = null;
 
         worker.getCitizenColonyHandler().getColony().removeNeedToMourn(buildingGraveyard.getLastGraveName(),false);

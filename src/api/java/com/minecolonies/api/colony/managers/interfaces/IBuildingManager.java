@@ -207,9 +207,10 @@ public interface IBuildingManager
     BlockPos getBestRestaurant(final AbstractEntityCitizen citizen);
 
     /**
-     * Calculate the closest graveyard for a certain citizen.
+     * Calculate the closest graveyard that satisfy the given predicate for a certain citizen
      *
      * @param citizen the citizen.
+     * @param predicate to validate the graveyard.
      * @return the Position of it.
      */
     BlockPos getClosestGraveyard(AbstractEntityCitizen citizen, Predicate<Object> predicate);

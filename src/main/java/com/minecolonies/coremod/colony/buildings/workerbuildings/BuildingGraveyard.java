@@ -402,7 +402,7 @@ public class BuildingGraveyard extends AbstractBuildingWorker
     /**
      * Add a citizen to the list of resting citizen in this graveyard
      */
-    public void BuryCitizenHere(final Tuple<BlockPos, Direction> positionAndDirection)
+    public void buryCitizenHere(final Tuple<BlockPos, Direction> positionAndDirection)
     {
         if(!restingCitizen.contains(lastGraveOwnerName))
         {
@@ -461,12 +461,11 @@ public class BuildingGraveyard extends AbstractBuildingWorker
             return;
         }
 
-        final IBlueprintDataProvider tileEntity = getTileEntity();
-        if (tileEntity != null)
+        if (getTileEntity() != null)
         {
             initTags = true;
             visualGravePositions = new ArrayList<>();
-            for (final Map.Entry<BlockPos, List<String>> entry : tileEntity.getWorldTagPosMap().entrySet())
+            for (final Map.Entry<BlockPos, List<String>> entry : getTileEntity().getWorldTagPosMap().entrySet())
             {
                 if (entry.getValue().get(0).startsWith(GRAVE))
                 {

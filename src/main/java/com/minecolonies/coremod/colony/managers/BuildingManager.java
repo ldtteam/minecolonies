@@ -553,6 +553,7 @@ public class BuildingManager implements IBuildingManager
         return goodCook;
     }
 
+    @Override
     public BlockPos getClosestGraveyard(final AbstractEntityCitizen citizen, final Predicate<Object> predicate)
     {
         double distance = Double.MAX_VALUE;

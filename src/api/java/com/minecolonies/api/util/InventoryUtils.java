@@ -2336,6 +2336,13 @@ public class InventoryUtils
         }
     }
 
+    /**
+     * Attempt to transfert as much item as possible from origin to target inventory
+     *
+     * @param origin the handler.
+     * @param target   the world.
+     * @return true if all item transfered, false if some item remain in origin
+     */
     public static boolean transferAllItemHandler(final IItemHandler origin, final IItemHandler target)
     {
         for (int i = 0; i < origin.getSlots(); ++i)

@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Window for the home building.
+ * Window for the Graveyard building.
  */
 public class WindowHutGraveyard extends AbstractWindowWorkerBuilding<BuildingGraveyard.View>
 {
