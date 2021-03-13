@@ -36,7 +36,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
     private static final ResourceLocation CIVIL  = new ResourceLocation(Constants.MOD_ID, "civilian");
     private static final ResourceLocation COMBAT = new ResourceLocation(Constants.MOD_ID, "combat");
     private static final ResourceLocation TECH   = new ResourceLocation(Constants.MOD_ID, "technology");
-    private static final ResourceLocation UNLOCK= new ResourceLocation(Constants.MOD_ID, "unlockable");
+    private static final ResourceLocation UNLOCK = new ResourceLocation(Constants.MOD_ID, "unlockable");
 
     /**
      * Get a list of all research branches. Conventions: these are not mandatory, and their inclusion simply fixes capitalization. MineColonies should fully populate new branches
