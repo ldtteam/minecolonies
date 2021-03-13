@@ -94,7 +94,7 @@ public class BlockMinecoloniesNamedGrave extends AbstractBlockMinecoloniesNamedG
     @Override
     public VoxelShape getShape(final BlockState state, final IBlockReader worldIn, final BlockPos pos, final ISelectionContext context)
     {
-        return VoxelShapes.create(0, 0, 0, 1, 1.5, 1);
+        return VoxelShapes.create(0, 0, 0, 1, 1.1, 1);
     }
 
     @Nullable

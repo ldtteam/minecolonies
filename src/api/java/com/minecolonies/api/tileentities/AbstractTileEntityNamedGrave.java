@@ -12,8 +12,20 @@ public class AbstractTileEntityNamedGrave extends TileEntity
      */
     public static final DirectionProperty FACING       = HorizontalBlock.HORIZONTAL_FACING;
 
+    private String citizenName;
+
     public AbstractTileEntityNamedGrave(TileEntityType<?> tileEntityTypeIn)
     {
         super(tileEntityTypeIn);
+    }
+
+    public String getCitizenName()
+    {
+        return citizenName;
+    }
+
+    public void setCitizenName(final String citizenName)
+    {
+        this.citizenName = citizenName;
     }
 }
