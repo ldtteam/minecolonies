@@ -1119,10 +1119,10 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                      .setTranslatedName("Let It Grow")
                                      .setTranslatedSubtitle("Just one tiny seed is all we really need.")
                                      .setSortOrder(2)
-                                     .setIcon(ModBlocks.blockHutComposter.asItem())
+                                     .setIcon(ModBlocks.blockHutPlantation.asItem())
                                      .addBuildingRequirement(ModBuildings.FARMER_ID, 3)
                                      .addItemCost(ModItems.compost, 16)
-                                     .addEffect(ModBuildings.composter.getBuildingBlock(), 1)
+                                     .addEffect(ModBuildings.plantation.getBuildingBlock(), 1)
                                      .addToList(r);
         new Research(new ResourceLocation(Constants.MOD_ID, "technology/doubletrouble"), TECH).setParentResearch(letItGrow)
           .setTranslatedName("Double Trouble")

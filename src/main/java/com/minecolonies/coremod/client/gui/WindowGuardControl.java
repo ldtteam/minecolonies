@@ -42,6 +42,7 @@ public class WindowGuardControl extends AbstractWindowSkeleton
      * GUI Lists.
      */
     private ScrollingList listOfPoints;
+
     /**
      * Whether to retrieve the worker on low health.
      */
@@ -193,15 +194,12 @@ public class WindowGuardControl extends AbstractWindowSkeleton
     public void onUpdate()
     {
         super.onUpdate();
-
         pullInfoFromHut();
 
         if (!task.equals(GuardTask.PATROL))
         {
             listOfPoints.hide();
         }
-        window.findPaneOfTypeByID(GUI_ELEMENT_LIST_LEVELS, ScrollingList.class).refreshElementPanes();
-        workersListPane.refreshElementPanes();
     }
 
     /**
