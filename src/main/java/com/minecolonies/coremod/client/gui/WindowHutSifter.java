@@ -30,11 +30,6 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 public class WindowHutSifter extends AbstractWindowWorkerBuilding<BuildingSifter.View>
 {
     /**
-     * The mode button id.
-     */
-    private static final String MESH_BUTTON = "buyMesh";
-
-    /**
      * The save button id.
      */
     private static final String BUTTON_SAVE = "save";
@@ -55,16 +50,6 @@ public class WindowHutSifter extends AbstractWindowWorkerBuilding<BuildingSifter
     private static final String LABEL_LIMIT_REACHED = "com.minecolonies.coremod.gui.warehouse.limitreached";
 
     /**
-     * The list of meshes.
-     */
-    private final ScrollingList meshList;
-
-    /**
-     * The current sifter mesh.
-     */
-    private ItemStorage mesh;
-
-    /**
      * Resource scrolling list.
      */
     private final ScrollingList resourceList;
@@ -78,12 +63,12 @@ public class WindowHutSifter extends AbstractWindowWorkerBuilding<BuildingSifter
     {
         super(building, Constants.MOD_ID + SIFTER_RESOURCE_SUFFIX);
         final TextField sifterSettingsInput = findPaneOfTypeByID(QTY_INPUT, TextField.class);
-        meshList = findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class);
         resourceList = findPaneOfTypeByID("resourcesstock", ScrollingList.class);
 
-        registerButton(MESH_BUTTON, this::switchMesh);
         registerButton(BUTTON_SAVE, this::save);
-        mesh = building.getMesh();
+
+        final ButtonImage saveButton = findPaneOfTypeByID(BUTTON_SAVE, ButtonImage.class);
+        saveButton.setVisible(false);
 
         final Text label = findPaneOfTypeByID("maxSifted", Text.class);
         if (building.getMaxDailyQuantity() == Integer.MAX_VALUE)
@@ -95,9 +80,8 @@ public class WindowHutSifter extends AbstractWindowWorkerBuilding<BuildingSifter
             label.setText(new TranslationTextComponent("com.minecolonies.coremod.gui.workerhuts.sifterinfo", building.getMaxDailyQuantity()));
         }
 
-        sifterSettingsInput.setText(String.valueOf(building.getDailyQuantity()));
-
-        updateResourceList();
+        sifterSettingsInput.setText(String.valueOf(building.getCurrentDailyQuantity()));
+        sifterSettingsInput.setEnabled(false);
 
         registerButton(STOCK_ADD, this::addStock);
         if (building.hasReachedLimit())
@@ -112,94 +96,7 @@ public class WindowHutSifter extends AbstractWindowWorkerBuilding<BuildingSifter
     }
 
     /**
-     * Updates the resource list in the GUI with the info we need.
-     */
-    private void updateResourceList()
-    {
-        meshList.enable();
-        meshList.show();
-
-        final int size = building.getBuildingLevel() - building.getMeshes().size() + 3;
-
-        //Creates a dataProvider for the unemployed resourceList.
-        meshList.setDataProvider(new ScrollingList.DataProvider()
-        {
-            /**
-             * The number of rows of the list.
-             * @return the number.
-             */
-            @Override
-            public int getElementCount()
-            {
-                return Math.max(Math.min(size, building.getMeshes().size()), 1);
-            }
-
-            /**
-             * Inserts the elements into each row.
-             * @param index the index of the row/list element.
-             * @param rowPane the parent Pane for the row, containing the elements to update.
-             */
-            @Override
-            public void updateElement(final int index, @NotNull final Pane rowPane)
-            {
-                final ItemStack resource = building.getMeshes().get(index).getItemStack();
-                final Text resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Text.class);
-
-                boolean isSet = false;
-                if (resource.isItemEqual(mesh.getItemStack()))
-                {
-                    resourceLabel.setColors(Color.getByName("green", 0));
-                    resourceLabel.setText(resource.getDisplayName());
-                    isSet = true;
-                }
-                else
-                {
-                    resourceLabel.setColors(Color.getByName("black", 0));
-                    resourceLabel.setText(resource.getDisplayName());
-                }
-
-                rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(resource);
-
-                final Button switchButton = rowPane.findPaneOfTypeByID(MESH_BUTTON, Button.class);
-
-                final boolean isCreative = Minecraft.getInstance().player.isCreative();
-
-                if (isSet || (!isCreative && !InventoryUtils.hasItemInItemHandler(new InvWrapper(Minecraft.getInstance().player.inventory), stack -> stack.isItemEqual(resource))))
-                {
-                    switchButton.hide();
-                }
-                else
-                {
-                    switchButton.show();
-                }
-            }
-        });
-    }
-
-    /**
-     * Switch the mesh to a new one.
-     *
-     * @param button the clicked button.
-     */
-    private void switchMesh(final Button button)
-    {
-        final int row = meshList.getListElementIndexByPane(button);
-        mesh = building.getMeshes().get(row);
-
-        final TextField crushingSettingsInput = findPaneOfTypeByID(QTY_INPUT, TextField.class);
-        try
-        {
-            final int qty = Integer.parseInt(crushingSettingsInput.getText());
-            building.save(mesh, qty, true);
-        }
-        catch (final NumberFormatException ex)
-        {
-            Log.getLogger().warn("Wrong input!");
-        }
-    }
-
-    /**
-     * Save the crushing mode.
+     * Save the sifting mode.
      */
     private void save()
     {
@@ -207,7 +104,7 @@ public class WindowHutSifter extends AbstractWindowWorkerBuilding<BuildingSifter
         try
         {
             final int qty = Integer.parseInt(crushingSettingsInput.getText());
-            building.save(mesh, qty, false);
+            building.save(qty);
         }
         catch (final NumberFormatException ex)
         {

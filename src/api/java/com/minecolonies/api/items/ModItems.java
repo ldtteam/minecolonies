@@ -64,6 +64,11 @@ public final class ModItems
     public static Item scrollGuardHelp;
     public static Item scrollHighLight;
 
+    public static Item sifterMeshString;
+    public static Item sifterMeshFlint;
+    public static Item sifterMeshIron;
+    public static Item sifterMeshDiamond;
+
     /**
      * Private constructor to hide the implicit public one.
      */
