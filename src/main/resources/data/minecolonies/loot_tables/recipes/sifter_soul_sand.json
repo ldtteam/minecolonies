@@ -59,7 +59,7 @@
       {
         "name": "Soulsand_Iron_Mesh",
         "conditions": [
-            {"condition": "minecraft:entity_properties", "entity": "this", "predicate" : { "equipment": { "mainhand": {"item" : "minecolones:sifter_mesh_iron"} } }}
+            {"condition": "minecraft:entity_properties", "entity": "this", "predicate" : { "equipment": { "mainhand": {"item" : "minecolonies:sifter_mesh_iron"} } }}
         ],
         "rolls": 1,
         "bonus_rolls": 0.025,
