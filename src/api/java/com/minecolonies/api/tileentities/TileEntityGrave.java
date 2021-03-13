@@ -149,6 +149,7 @@ public class TileEntityGrave extends AbstractTileEntityGrave
         decay_timer         = compound.contains(TAG_DECAY_TIMER) ? compound.getInt(TAG_DECAY_TIMER) : DEFAULT_DECAY_TIMER;
         decayed             = compound.contains(TAG_DECAYED) ? compound.getBoolean(TAG_DECAYED) :false;
         savedCitizenName    = compound.contains(TAG_SAVED_CITIZEN_NAME) ? compound.getString(TAG_SAVED_CITIZEN_NAME) : null;
+        savedCitizenJobName = compound.contains(TAG_SAVED_CITIZEN_JOB_NAME) ? compound.getString(TAG_SAVED_CITIZEN_JOB_NAME) : null;
         savedCitizenDataNBT = compound.contains(TAG_SAVED_CITIZEN_DATA) ? compound.getCompound(TAG_SAVED_CITIZEN_DATA) : null;
     }
 
@@ -180,6 +181,11 @@ public class TileEntityGrave extends AbstractTileEntityGrave
         if(savedCitizenName != null)
         {
             compound.putString(TAG_SAVED_CITIZEN_NAME, savedCitizenName);
+        }
+
+        if(savedCitizenJobName != null)
+        {
+            compound.putString(TAG_SAVED_CITIZEN_JOB_NAME, savedCitizenJobName);
         }
 
         if(savedCitizenDataNBT != null)

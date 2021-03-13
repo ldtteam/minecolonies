@@ -306,7 +306,10 @@ public class EntityAIWorkGravedigger extends AbstractEntityAIInteract<JobGravedi
                 return getState();
             }
 
-            buildingGraveyard.setLastGraveOwner(((TileEntityGrave) entity).getSavedCitizenDataNBT(), ((TileEntityGrave) entity).getSavedCitizenName());
+            buildingGraveyard.setLastGraveOwner(
+                    ((TileEntityGrave) entity).getSavedCitizenDataNBT(),
+                    ((TileEntityGrave) entity).getSavedCitizenName(),
+                    ((TileEntityGrave) entity).getSavedCitizenJobName());
 
             //at position
             if (!digIfAble(gravePos))
@@ -443,7 +446,7 @@ public class EntityAIWorkGravedigger extends AbstractEntityAIInteract<JobGravedi
         effortCounter = 0;
         unequip();
 
-        buildingGraveyard.BuryCitizenHere(burialPos, buildingGraveyard.getLastGraveName());
+        buildingGraveyard.BuryCitizenHere(burialPos);
         burialPos = null;
 
         worker.getCitizenColonyHandler().getColony().removeNeedToMourn(buildingGraveyard.getLastGraveName(),false);

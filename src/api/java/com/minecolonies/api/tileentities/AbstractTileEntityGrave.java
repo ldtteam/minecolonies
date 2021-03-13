@@ -43,6 +43,11 @@ public abstract class AbstractTileEntityGrave extends TileEntity implements INam
     protected String savedCitizenName;
 
     /**
+     * The name of thejob of the citizen that generated this grave by dying
+     */
+    protected String savedCitizenJobName;
+
+    /**
      * The citizen data of the citizen that generated this grave by dying
      */
     protected CompoundNBT savedCitizenDataNBT;
@@ -140,6 +145,14 @@ public abstract class AbstractTileEntityGrave extends TileEntity implements INam
     }
 
     /**
+     * Get the name of job of the saved citizen data
+     */
+    public String getSavedCitizenJobName()
+    {
+        return this.savedCitizenJobName;
+    }
+
+    /**
      * Get the data of the saved citizen
      */
     public CompoundNBT getSavedCitizenDataNBT()
@@ -154,6 +167,16 @@ public abstract class AbstractTileEntityGrave extends TileEntity implements INam
     public void setSavedCitizenName(String citizenName)
     {
         this.savedCitizenName = citizenName;
+        markDirty();
+    }
+
+    /**
+     * Set the name of the saved citizen data
+     * @param citizenJobName
+     */
+    public void setSavedCitizenJobName(String citizenJobName)
+    {
+        this.savedCitizenJobName = citizenJobName;
         markDirty();
     }
 

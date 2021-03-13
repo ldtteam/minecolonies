@@ -4,6 +4,7 @@ import com.ldtteam.blockout.views.Window;
 import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.ICitizenDataManager;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
@@ -29,12 +30,14 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
 import static com.minecolonies.api.util.constant.Constants.TAG_STRING;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_NAME;
 import static com.minecolonies.api.util.constant.SchematicTagConstants.GRAVE;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
@@ -69,9 +72,14 @@ public class BuildingGraveyard extends AbstractBuildingWorker
     private static final String TAG_LAST_GRAVE_OWNER = "lastGraveOwner";
 
     /**
-     * NBTTag to store the name of the last grave owner.
+     * NBTTag to store the name of the last grave owner name.
      */
     private static final String TAG_LAST_GRAVE_OWNER_NAME = "lastGraveOwnerName";
+
+    /**
+     * NBTTag to store the name of the last grave owner job name.
+     */
+    private static final String TAG_LAST_GRAVE_OWNER_JOB_NAME = "lastGraveOwnerJobName";
 
     /**
      * NBTTag to store the grave BlockPos.
@@ -115,6 +123,12 @@ public class BuildingGraveyard extends AbstractBuildingWorker
      */
     @Nullable
     private String lastGraveOwnerName;
+
+    /**
+     * The name of the job of the last grave owner data.
+     */
+    @Nullable
+    private String lastGraveOwnerJobName;
 
     /**
      * Whether we did init tags
@@ -248,8 +262,9 @@ public class BuildingGraveyard extends AbstractBuildingWorker
             }
         }
 
-        lastGraveOwnerDataNBT = compound.keySet().contains(TAG_LAST_GRAVE_OWNER) ? compound.getCompound(TAG_LAST_GRAVE_OWNER) : null;
-        lastGraveOwnerName = compound.keySet().contains(TAG_LAST_GRAVE_OWNER_NAME) ? compound.getString(TAG_LAST_GRAVE_OWNER_NAME) : null;
+        lastGraveOwnerDataNBT  = compound.keySet().contains(TAG_LAST_GRAVE_OWNER) ? compound.getCompound(TAG_LAST_GRAVE_OWNER) : null;
+        lastGraveOwnerName     = compound.keySet().contains(TAG_LAST_GRAVE_OWNER_NAME) ? compound.getString(TAG_LAST_GRAVE_OWNER_NAME) : null;
+        lastGraveOwnerJobName  = compound.keySet().contains(TAG_LAST_GRAVE_OWNER_JOB_NAME) ? compound.getString(TAG_LAST_GRAVE_OWNER_NAME) : null;
     }
 
     @Override
@@ -279,6 +294,7 @@ public class BuildingGraveyard extends AbstractBuildingWorker
 
         if (lastGraveOwnerDataNBT != null) { compound.put(TAG_LAST_GRAVE_OWNER, lastGraveOwnerDataNBT); }
         if (lastGraveOwnerName != null) { compound.put(TAG_LAST_GRAVE_OWNER_NAME,StringNBT.valueOf(lastGraveOwnerName)); }
+        if (lastGraveOwnerJobName != null) { compound.put(TAG_LAST_GRAVE_OWNER_JOB_NAME,StringNBT.valueOf(lastGraveOwnerJobName)); }
 
         return compound;
     }
@@ -378,11 +394,10 @@ public class BuildingGraveyard extends AbstractBuildingWorker
 
     /**
      * Add a citizen to the list of resting citizen in this graveyard
-     * @param citizenName
      */
-    public void BuryCitizenHere(final Tuple<BlockPos, Direction> positionAndDirection, final String citizenName)
+    public void BuryCitizenHere(final Tuple<BlockPos, Direction> positionAndDirection)
     {
-        if(!restingCitizen.contains(citizenName))
+        if(!restingCitizen.contains(lastGraveOwnerName))
         {
             getColony().getWorld().setBlockState(positionAndDirection.getA(), ModBlocks.blockNamedGrave.getDefaultState()
                     /*.with(AbstractBlockMinecoloniesNamedGrave.FACING, facing)*/);
@@ -391,22 +406,26 @@ public class BuildingGraveyard extends AbstractBuildingWorker
             TileEntity tileEntity = getColony().getWorld().getTileEntity(positionAndDirection.getA());
             if (tileEntity instanceof TileEntityNamedGrave)
             {
+                final String firstName = StringUtils.split(lastGraveOwnerName)[0];
+                final String lastName = lastGraveOwnerName.replaceFirst(firstName,"");
+
                 final ArrayList<String> lines = new ArrayList<>();
-                lines.add(citizenName);
-                //TODO TG split first & last name
-                //TODO TG add job?
+                lines.add(firstName);
+                lines.add(lastName);
+                if (lastGraveOwnerJobName != null) { lines.add(lastGraveOwnerJobName); }
                 ((TileEntityNamedGrave) tileEntity).setTextLines(lines);
             }
 
-            restingCitizen.add(citizenName);
+            restingCitizen.add(lastGraveOwnerJobName);
             markDirty();
         }
     }
 
-    public void setLastGraveOwner(final CompoundNBT citizenDataNBT, final String citizenName)
+    public void setLastGraveOwner(final CompoundNBT citizenDataNBT, final String citizenName, final String citizenJobName)
     {
         this.lastGraveOwnerDataNBT = citizenDataNBT;
         this.lastGraveOwnerName = citizenName;
+        this.lastGraveOwnerJobName = citizenJobName;
         markDirty();
     }
 
@@ -418,6 +437,11 @@ public class BuildingGraveyard extends AbstractBuildingWorker
     public String getLastGraveName()
     {
         return this.lastGraveOwnerName;
+    }
+
+    public String getLastGraveJobName()
+    {
+        return this.lastGraveOwnerJobName;
     }
 
     /**

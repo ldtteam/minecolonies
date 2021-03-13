@@ -38,8 +38,10 @@ public class TileEntityNamedGraveRenderer extends TileEntityRenderer<TileEntityN
      */
     private static final int ROTATE_WEST = 3;
 
+    private final int textColor = NativeImage.getCombined(0, 220, 220, 220);
 
-    public TileEntityNamedGraveRenderer(TileEntityRendererDispatcher rendererDispatcher) {
+    public TileEntityNamedGraveRenderer(TileEntityRendererDispatcher rendererDispatcher)
+    {
         super(rendererDispatcher);
     }
 
@@ -77,7 +79,7 @@ public class TileEntityNamedGraveRenderer extends TileEntityRenderer<TileEntityN
                     break;
             }
 
-            if(tileEntity.getTextLines().isEmpty()) //TODO TG this is always empty?!
+            if(tileEntity.getTextLines().isEmpty())
             {
                 renderText(matrixStack, buffer, combinedLight, "Unknown Citizen", 0);
             }
@@ -107,11 +109,10 @@ public class TileEntityNamedGraveRenderer extends TileEntityRenderer<TileEntityN
         if (iReorderingProcessor != null)
         {
             final FontRenderer fontRenderer = this.renderDispatcher.getFontRenderer();
-            final int combinedColor = NativeImage.getCombined(0, 144, 128, 112);
 
             float x = (float) (-fontRenderer.func_243245_a(iReorderingProcessor) / 2); //render width of text divided by 2
             fontRenderer.func_238416_a_(iReorderingProcessor, x, line * 10f,
-                    combinedColor, false, matrixStack.getLast().getMatrix(), buffer, false, 0, combinedLight);
+                    textColor, false, matrixStack.getLast().getMatrix(), buffer, false, 0, combinedLight);
         }
     }
 
