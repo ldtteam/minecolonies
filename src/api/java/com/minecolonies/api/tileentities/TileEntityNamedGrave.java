@@ -21,6 +21,4 @@ public class TileEntityNamedGrave extends AbstractTileEntityNamedGrave
     {
         super(type);
     }
-
-    //TODO TG WRITE / READ CitizenName
 }
