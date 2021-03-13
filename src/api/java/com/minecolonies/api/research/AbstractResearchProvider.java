@@ -64,7 +64,7 @@ public abstract class AbstractResearchProvider implements IDataProvider
     @Override
     public void act(@NotNull final DirectoryCache cache) throws IOException
     {
-        final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
+        final Gson GSON = new GsonBuilder().disableHtmlEscaping().create();
         final JsonObject langJson = new JsonObject();
 
         for(final ResearchBranch branch : getResearchBranchCollection())
