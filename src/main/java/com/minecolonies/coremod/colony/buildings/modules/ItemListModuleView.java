@@ -141,6 +141,7 @@ public class ItemListModuleView extends AbstractBuildingModuleView implements IB
     @Override
     public void deserialize(@NotNull final PacketBuffer buf)
     {
+        listsOfItems.clear();
         final int size = buf.readInt();
 
         for (int j = 0; j < size; j++)

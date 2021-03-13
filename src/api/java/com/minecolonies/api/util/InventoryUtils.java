@@ -749,7 +749,7 @@ public class InventoryUtils
                 }
                 else if (entity instanceof ChestTileEntity)
                 {
-                    totalCount += getItemCountInProvider(entity, itemStack -> itemStack.isItemEqual(stack.getItemStack()));
+                    totalCount += getItemCountInProvider(entity, itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack.getItemStack(), !stack.ignoreDamageValue(), !stack.ignoreNBT() ));
                 }
 
                 if (totalCount > count)

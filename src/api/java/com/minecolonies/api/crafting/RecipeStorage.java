@@ -476,7 +476,17 @@ public class RecipeStorage implements IRecipeStorage
                 {
                     if(citizen != null && ItemStackUtils.compareItemStackListIgnoreStackSize(tools, stack, false, true) && ItemStackUtils.getDurability(handler.getStackInSlot(slotOfStack)) > 0 )
                     {
-                        citizen.getInventoryCitizen().damageInventoryItem(slotOfStack, 1, citizen, item -> item.sendBreakAnimation(Hand.MAIN_HAND));
+                        ItemStack toDamage = handler.extractItem(slotOfStack,1, false);
+                        if (!ItemStackUtils.isEmpty(toDamage))
+                        {
+                            // The 4 parameter inner call from forge is for adding a callback to alter the damage caused,
+                            // but unlike its description does not actually damage the item(despite the same function name). So used to just calculate the damage.
+                            toDamage.damageItem(toDamage.getItem().damageItem(stack, 1, citizen, item -> item.sendBreakAnimation(Hand.MAIN_HAND)), citizen, item -> item.sendBreakAnimation(Hand.MAIN_HAND));
+                        }
+                        if (!ItemStackUtils.isEmpty(toDamage))
+                        {
+                            handler.insertItem(slotOfStack, toDamage, false);
+                        }
                         amountNeeded -= stack.getCount();
                     }
                     else

@@ -36,6 +36,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
     private static final ResourceLocation CIVIL  = new ResourceLocation(Constants.MOD_ID, "civilian");
     private static final ResourceLocation COMBAT = new ResourceLocation(Constants.MOD_ID, "combat");
     private static final ResourceLocation TECH   = new ResourceLocation(Constants.MOD_ID, "technology");
+    private static final ResourceLocation UNLOCK = new ResourceLocation(Constants.MOD_ID, "unlockable");
 
     /**
      * Get a list of all research branches. Conventions: these are not mandatory, and their inclusion simply fixes capitalization. MineColonies should fully populate new branches
@@ -50,6 +51,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         branches.add(new ResearchBranch(CIVIL).setTranslatedBranchName("Civilian").setBranchTimeMultiplier(1.0));
         branches.add(new ResearchBranch(COMBAT).setTranslatedBranchName("Combat").setBranchTimeMultiplier(1.0));
         branches.add(new ResearchBranch(TECH).setTranslatedBranchName("Technology").setBranchTimeMultiplier(1.0));
+        branches.add(new ResearchBranch(UNLOCK).setTranslatedBranchName("Unlockables").setBranchTimeMultiplier(0.0));
         return branches;
     }
 
@@ -141,6 +143,16 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           "Enchanter Learns Scroll Recipes to Locate Workers and Summon Guards"));
         effects.add(new ResearchEffect(new ResourceLocation(Constants.MOD_ID, "effects/platearmorunlock")).setTranslatedName("Blacksmith Learns Plate Armor Recipes"));
 
+        //Sifter Mesh triggers
+        effects.add(new ResearchEffect(new ResourceLocation(Constants.MOD_ID, "effects/sifterstringunlock")).setTranslatedName(
+            "Fletcher Learns How to Make String Meshes for the Sifter"));
+        effects.add(new ResearchEffect(new ResourceLocation(Constants.MOD_ID, "effects/sifterflintunlock")).setTranslatedName(
+            "Stonemason Learns How to Make Flint Meshes for the Sifter"));
+        effects.add(new ResearchEffect(new ResourceLocation(Constants.MOD_ID, "effects/sifterironunlock")).setTranslatedName(
+            "Blacksmith Learns How to Make Iron Meshes for the Sifter"));
+        effects.add(new ResearchEffect(new ResourceLocation(Constants.MOD_ID, "effects/sifterdiamondunlock")).setTranslatedName(
+            "Mechanic Learns How to Make Diamond Meshes for the Sifter"));
+            
         return effects;
     }
 
@@ -159,6 +171,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         researches.addAll(getCivilResearch(researches));
         researches.addAll(getCombatResearch(researches));
         researches.addAll(getTechnologyResearch(researches));
+        researches.addAll(getAchievementResearch(researches));
 
         return researches;
     }
@@ -1481,6 +1494,51 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .addItemCost(Items.OBSIDIAN, 32)
           .addEffect(MECHANIC_ENHANCED_GATES, 2)
           .addToList(r);
+
+        return r;
+    }
+
+    public Collection<Research> getAchievementResearch(Collection<Research> r)
+    {
+        new Research(new ResourceLocation(Constants.MOD_ID, "unlockable/stringmesh"), UNLOCK)
+            .setTranslatedName("String Mesh")
+            .setIcon(ModItems.sifterMeshString)
+            .addMandatoryBuildingRequirement(ModBuildings.SIFTER_ID, 1)
+            .setHidden()
+            .setAutostart()
+            .setInstant()
+            .addEffect(new ResourceLocation(Constants.MOD_ID, "effects/sifterstringunlock"), 1)
+            .addToList(r);
+
+        new Research(new ResourceLocation(Constants.MOD_ID, "unlockable/flintmesh"), UNLOCK)
+            .setTranslatedName("Flint Mesh")
+            .setIcon(ModItems.sifterMeshString)
+            .addMandatoryBuildingRequirement(ModBuildings.SIFTER_ID, 3)
+            .setHidden()
+            .setAutostart()
+            .setInstant()
+            .addEffect(new ResourceLocation(Constants.MOD_ID, "effects/sifterflintunlock"), 1)
+            .addToList(r);
+
+        new Research(new ResourceLocation(Constants.MOD_ID, "unlockable/ironmesh"), UNLOCK)
+            .setTranslatedName("Iron Mesh")
+            .setIcon(ModItems.sifterMeshString)
+            .addMandatoryBuildingRequirement(ModBuildings.SIFTER_ID, 4)
+            .setHidden()
+            .setAutostart()
+            .setInstant()
+            .addEffect(new ResourceLocation(Constants.MOD_ID, "effects/sifterironunlock"), 1)
+            .addToList(r);
+
+        new Research(new ResourceLocation(Constants.MOD_ID, "unlockable/diamondmesh"), UNLOCK)
+            .setTranslatedName("Diamond Mesh")
+            .setIcon(ModItems.sifterMeshString)
+            .addMandatoryBuildingRequirement(ModBuildings.SIFTER_ID, 5)
+            .setHidden()
+            .setAutostart()
+            .setInstant()
+            .addEffect(new ResourceLocation(Constants.MOD_ID, "effects/sifterdiamondunlock"), 1)
+            .addToList(r);
 
         return r;
     }
