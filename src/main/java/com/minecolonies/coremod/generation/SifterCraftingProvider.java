@@ -74,7 +74,7 @@ public class SifterCraftingProvider implements IDataProvider
                         .build()),
 
                 new SifterMeshDetails(ModItems.sifterMeshDiamond, 5, new LootTableBuilder()
-                        .bonusRolls(0.025f)
+                        .bonusRolls(0.035f)
                         .empty(5)
                         .item(Items.WHEAT_SEEDS, 25)
                         .item(Items.OAK_SAPLING, 10)

@@ -3,7 +3,7 @@
   "pools": [
     {
       "rolls": 1,
-      "bonus_rolls": 0.025,
+      "bonus_rolls": 0.035,
       "entries": [
         {
           "type": "minecraft:empty",
