@@ -1,0 +1,13 @@
+{
+  "type" : "recipe",
+  "crafter": "blacksmith",
+  "inputs": [
+    {
+        "item" : "minecraft:iron_ingot",
+        "count": "1"
+    }
+  ],
+  "result": "minecolonies:sifter_mesh_iron",
+  "count": 1,
+  "research-id" : "minecolonies:effects/sifterironunlock"
+}

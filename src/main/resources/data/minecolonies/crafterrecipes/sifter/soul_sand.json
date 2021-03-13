@@ -15,5 +15,6 @@
         "item" : "minecraft:quartz"
     }
   ],
-  "loot-table": "minecolonies:recipes/sifter_soul_sand"
+  "loot-table": "minecolonies:recipes/sifter_soul_sand",
+  "min-building-level" : 99
 }
