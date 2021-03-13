@@ -1108,14 +1108,11 @@
 
   "com.minecolonies.coremod.general.canttakeequipped": "The only armor you have is what you're wearing. Put it in your inventory if you want to give it to me.",
 
-  "com.minecolonies.coremod.gui.workerhuts.siftersettings": "Daily limit",
+  "com.minecolonies.coremod.gui.workerhuts.siftersettings": "Daily limit progress",
   "com.minecolonies.coremod.gui.workerhuts.sifterinfo": "of %d allowed",
   "com.minecolonies.coremod.gui.workerhuts.sifterinfo.unlimited": "of Unlimited",
 
   "com.minecolonies.coremod.gui.workerhuts.sifter": "Sifter",
-  "com.minecolonies.coremod.sifter.meshbroke": "My current mesh broke and I started to work with the default mesh again!",
-  "com.minecolonies.coremod.gui.workerhuts.buy": "Buy",
-  "com.minecolonies.coremod.gui.workerhuts.meshsettings": "Mesh Settings",
   "com.minecolonies.coremod.sifter.toomuch": "Set to the current daily max of %d.",
   "com.minecolonies.coremod.gui.building.rename.title": "Rename Your Building",
 
@@ -1900,5 +1897,9 @@
   "block.minecolonies.blocksubstitution.name": "Placeholder Block",
   "block.minecolonies.blockwaypoint": "Waypoint Placeholder",
   "block.minecolonies.blockhutgraveyard": "Graveyard",
-  "block.minecolonies.blockhutgraveyard.name": "Graveyard"
+  "block.minecolonies.blockhutgraveyard.name": "Graveyard",
+  "item.minecolonies.sifter_mesh_string": "String Mesh",
+  "item.minecolonies.sifter_mesh_flint": "Flint Mesh",
+  "item.minecolonies.sifter_mesh_iron": "Iron Mesh",
+  "item.minecolonies.sifter_mesh_diamond": "Diamond Mesh"
 }

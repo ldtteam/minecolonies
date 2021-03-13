@@ -12,7 +12,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 
-import java.util.*;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 /**
