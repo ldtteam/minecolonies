@@ -2,9 +2,6 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.ldtteam.blockout.views.Window;
 import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
-import com.ldtteam.structurize.management.Structures;
-import com.ldtteam.structurize.util.PlacementSettings;
-import com.minecolonies.api.blocks.AbstractBlockMinecoloniesNamedGrave;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
@@ -13,25 +10,16 @@ import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.citizen.Skill;
-import com.minecolonies.api.tileentities.AbstractTileEntityGrave;
 import com.minecolonies.api.tileentities.TileEntityGrave;
 import com.minecolonies.api.tileentities.TileEntityNamedGrave;
-import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.ToolType;
-import com.minecolonies.coremod.blocks.BlockMinecoloniesNamedGrave;
-import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.client.gui.WindowHutGraveyard;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobGravedigger;
-import com.minecolonies.coremod.colony.jobs.JobMiner;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
-import jdk.nashorn.internal.ir.Block;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.StringNBT;
@@ -48,7 +36,6 @@ import java.util.*;
 
 import static com.minecolonies.api.util.constant.Constants.TAG_STRING;
 import static com.minecolonies.api.util.constant.SchematicTagConstants.GRAVE;
-import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_SITTING;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
 /**
@@ -400,6 +387,17 @@ public class BuildingGraveyard extends AbstractBuildingWorker
             getColony().getWorld().setBlockState(positionAndDirection.getA(), ModBlocks.blockNamedGrave.getDefaultState()
                     /*.with(AbstractBlockMinecoloniesNamedGrave.FACING, facing)*/);
             //TODO TG rotate block
+
+            TileEntity tileEntity = getColony().getWorld().getTileEntity(positionAndDirection.getA());
+            if (tileEntity instanceof TileEntityNamedGrave)
+            {
+                final ArrayList<String> lines = new ArrayList<>();
+                lines.add(citizenName);
+                //TODO TG split first & last name
+                //TODO TG add job?
+                ((TileEntityNamedGrave) tileEntity).setTextLines(lines);
+            }
+
             restingCitizen.add(citizenName);
             markDirty();
         }

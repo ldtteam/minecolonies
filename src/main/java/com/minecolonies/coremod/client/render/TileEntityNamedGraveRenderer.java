@@ -45,15 +45,13 @@ public class TileEntityNamedGraveRenderer extends TileEntityRenderer<TileEntityN
 
 
     @Override
-    public void render(TileEntityNamedGrave te, float partialTicks, MatrixStack matrixStack, IRenderTypeBuffer buffer, int combinedLight, int combinedOverlay)
+    public void render(TileEntityNamedGrave tileEntity, float partialTicks, MatrixStack matrixStack, IRenderTypeBuffer buffer, int combinedLight, int combinedOverlay)
     {
         matrixStack.push();
 
-        if(te != null)
+        if(tileEntity != null)
         {
-
-            final Direction facing = te.getWorld().getBlockState(te.getPos()).get(AbstractBlockMinecoloniesDefault.FACING);
-
+            final Direction facing = tileEntity.getWorld().getBlockState(tileEntity.getPos()).get(AbstractBlockMinecoloniesDefault.FACING);
             switch (facing)
             {
                 case NORTH:
@@ -77,14 +75,20 @@ public class TileEntityNamedGraveRenderer extends TileEntityRenderer<TileEntityN
                     matrixStack.scale(0.006F, -0.006F, 0.006F); //size of the text font
                     matrixStack.rotate(Vector3f.YP.rotationDegrees(BASIC_ROTATION * ROTATE_WEST));
                     break;
-                default:
-                    //don't rotate at all.
             }
 
-            final String text = te.getCitizenName() == null ? "Unknown Citizen" : te.getCitizenName();
-            renderText(matrixStack, buffer, combinedLight, text, 0);
-            renderText(matrixStack, buffer, combinedLight, "second line that is super long", 1);
-            renderText(matrixStack, buffer, combinedLight, facing.getString(), 2);
+            if(tileEntity.getTextLines().isEmpty()) //TODO TG this is always empty?!
+            {
+                renderText(matrixStack, buffer, combinedLight, "Unknown Citizen", 0);
+            }
+            else
+            {
+                for(int i = 0; i < tileEntity.getTextLines().size(); i++)
+                {
+                    renderText(matrixStack, buffer, combinedLight, tileEntity.getTextLines().get(i), i);
+                }
+            }
+            //debug oprion: renderText(matrixStack, buffer, combinedLight, facing.getString(), 2);
         }
 
         // restore the original transformation matrix + normals matrix

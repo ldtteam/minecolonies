@@ -374,7 +374,6 @@ public class EntityAIWorkGravedigger extends AbstractEntityAIInteract<JobGravedi
         if(effortCounter < EFFORT_RESURRECT)
         {
             worker.swingArm(Hand.MAIN_HAND);
-            worker.swingArm(Hand.OFF_HAND);
             effortCounter += getSecondarySkillLevel();
             return getState();
         }

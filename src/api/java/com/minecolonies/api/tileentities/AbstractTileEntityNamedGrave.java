@@ -1,9 +1,20 @@
 package com.minecolonies.api.tileentities;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.block.HorizontalBlock;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.StringNBT;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.minecolonies.api.util.constant.Constants.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 public class AbstractTileEntityNamedGrave extends TileEntity
 {
@@ -12,20 +23,54 @@ public class AbstractTileEntityNamedGrave extends TileEntity
      */
     public static final DirectionProperty FACING       = HorizontalBlock.HORIZONTAL_FACING;
 
-    private String citizenName;
+    private List<String> textLines = new ArrayList<>();
 
     public AbstractTileEntityNamedGrave(TileEntityType<?> tileEntityTypeIn)
     {
         super(tileEntityTypeIn);
     }
 
-    public String getCitizenName()
+    public List<String> getTextLines()
     {
-        return citizenName;
+        return textLines;
     }
 
-    public void setCitizenName(final String citizenName)
+    public void setTextLines(final ArrayList<String> content)
     {
-        this.citizenName = citizenName;
+        this.textLines = content;
+        markDirty();
+    }
+
+    @Override
+    public void read(final BlockState state, final CompoundNBT compound)
+    {
+        super.read(state, compound);
+
+        textLines.clear();
+        if (compound.keySet().contains(TAG_CONTENT))
+        {
+            final ListNBT lines = compound.getList(TAG_CONTENT, TAG_STRING);
+            for (int i = 0; i < lines.size(); i++)
+            {
+                final String line = lines.getString(i);
+                textLines.add(line);
+            }
+        }
+    }
+
+    @NotNull
+    @Override
+    public CompoundNBT write(final CompoundNBT compound)
+    {
+        super.write(compound);
+
+        @NotNull final ListNBT lines = new ListNBT();
+        for (@NotNull final String line : textLines)
+        {
+            lines.add(StringNBT.valueOf(line));
+        }
+        compound.put(TAG_CONTENT, lines);
+
+        return compound;
     }
 }
