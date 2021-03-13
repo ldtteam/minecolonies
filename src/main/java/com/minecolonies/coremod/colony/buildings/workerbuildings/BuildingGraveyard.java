@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.ldtteam.blockout.views.Window;
 import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
+import com.minecolonies.api.blocks.AbstractBlockMinecoloniesNamedGrave;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.ICitizenDataManager;
@@ -21,6 +22,7 @@ import com.minecolonies.coremod.client.gui.WindowHutGraveyard;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobGravedigger;
+import net.minecraft.block.HorizontalBlock;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.StringNBT;
@@ -139,6 +141,11 @@ public class BuildingGraveyard extends AbstractBuildingWorker
      * Grave positions
      */
     private List<Tuple<BlockPos, Direction>> visualGravePositions;
+
+    /**
+     * The graveyard random.
+     */
+    private Random random = new Random();
 
     /**
      * Public constructor which instantiates the building.
@@ -399,9 +406,9 @@ public class BuildingGraveyard extends AbstractBuildingWorker
     {
         if(!restingCitizen.contains(lastGraveOwnerName))
         {
-            getColony().getWorld().setBlockState(positionAndDirection.getA(), ModBlocks.blockNamedGrave.getDefaultState()
-                    /*.with(AbstractBlockMinecoloniesNamedGrave.FACING, facing)*/);
-            //TODO TG rotate block
+            //TODO: For now the facing is random - we could read it from the blueprint placeholder light block facing
+            final Direction facing = Direction.getRandomDirection(random);
+            getColony().getWorld().setBlockState(positionAndDirection.getA(), ModBlocks.blockNamedGrave.getDefaultState().with(AbstractBlockMinecoloniesNamedGrave.FACING, facing));
 
             TileEntity tileEntity = getColony().getWorld().getTileEntity(positionAndDirection.getA());
             if (tileEntity instanceof TileEntityNamedGrave)
