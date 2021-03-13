@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingPublicCrafter;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -46,7 +47,7 @@ import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_W
 /**
  * The lumberjacks building.
  */
-public class BuildingLumberjack extends AbstractBuildingWorker
+public class BuildingLumberjack extends AbstractBuildingWorker implements IBuildingPublicCrafter
 {
     /**
      * NBT tag if the lj should replant saplings
@@ -491,6 +492,12 @@ public class BuildingLumberjack extends AbstractBuildingWorker
     {
         super.onColonyTick(colony);
         bonemealFungi();
+    }
+
+    @Override
+    public Skill getCraftSpeedSkill()
+    {
+        return getPrimarySkill();
     }
 
     /**
