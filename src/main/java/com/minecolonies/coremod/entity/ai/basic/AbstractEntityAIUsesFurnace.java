@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requestable.StackList;

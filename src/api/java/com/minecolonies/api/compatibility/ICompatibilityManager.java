@@ -11,7 +11,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -48,7 +47,7 @@ public interface ICompatibilityManager
      *
      * @return the list of saplings.
      */
-    List<ItemStorage> getCopyOfSaplings();
+    Set<ItemStorage> getCopyOfSaplings();
 
     /**
      * Get a set of all fuel items.
@@ -63,6 +62,12 @@ public interface ICompatibilityManager
      * @return an immutable set.
      */
     Set<ItemStorage> getFood();
+
+    /**
+     * Get a set of all edibles for citizens.
+     * @return list of edible food.
+     */
+    Set<ItemStorage> getEdibles();
 
     /**
      * Get a set of all smeltable ores.
@@ -84,14 +89,14 @@ public interface ICompatibilityManager
      *
      * @return the list of compostable items.
      */
-    List<ItemStorage> getCopyOfCompostableItems();
+    Set<ItemStorage> getCopyOfCompostableItems();
 
     /**
      * Get a copy of the list of plantables.
      *
      * @return the list of plantables.
      */
-    List<ItemStorage> getCopyOfPlantables();
+    Set<ItemStorage> getCopyOfPlantables();
 
     /**
      * Get a random disease of the compat manager.
@@ -152,13 +157,6 @@ public interface ICompatibilityManager
      * @return true if so
      */
     boolean isCompost(ItemStack stack);
-
-    /**
-     * Get a map of all the crusher modes.
-     *
-     * @return the modes.
-     */
-    Map<ItemStorage, ItemStorage> getCrusherModes();
 
     /**
      * Write colonies to NBT data for saving.

@@ -2,7 +2,6 @@ package com.minecolonies.coremod.network.messages.client;
 
 import com.ldtteam.structurize.management.Structures;
 import com.minecolonies.api.network.IMessage;
-import com.minecolonies.coremod.MineColonies;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;

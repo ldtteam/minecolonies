@@ -21,7 +21,7 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.client.gui.WindowHutBaker;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
-import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobBaker;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingProductionResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingRequestResolver;
@@ -239,7 +239,7 @@ public class BuildingBaker extends AbstractBuildingSmelterCrafter
                     1,
                     smeltResult,
                     Blocks.FURNACE);
-                    addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(smeltingRecipe));
+                    addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(smeltingRecipe), false);
             }
         }
 
@@ -291,7 +291,7 @@ public class BuildingBaker extends AbstractBuildingSmelterCrafter
     /**
      * The client view for the bakery building.
      */
-    public static class View extends AbstractFilterableListsView
+    public static class View extends AbstractBuildingWorker.View
     {
         /**
          * The client view constructor for the bakery building.

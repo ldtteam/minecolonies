@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.buildings.HiringMode;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.buildings.IBuildingWorkerView;
+import com.minecolonies.api.colony.buildings.modules.IBuildingModuleView;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
@@ -44,7 +45,6 @@ import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.LootContext;
-
 import net.minecraft.loot.LootParameters;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -617,7 +617,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     {
         if (canRecipeBeAdded(token))
         {
-            addRecipeToList(token);
+            addRecipeToList(token, false);
             markDirty();
 
             if (getAssignedCitizen().isEmpty())
@@ -657,11 +657,18 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
      *
      * @param token the token to add.
      */
-    public void addRecipeToList(final IToken<?> token)
+    public void addRecipeToList(final IToken<?> token, boolean atTop)
     {
         if (!recipes.contains(token))
         {
-            recipes.add(token);
+            if(atTop)
+            {
+                recipes.add(0, token);
+            }
+            else
+            {
+                recipes.add(token);
+            }
         }
     }
 
@@ -916,7 +923,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
                 }
                 if(duplicateFound == null)
                 {
-                    addRecipeToList(recipeToken);
+                    addRecipeToList(recipeToken, true);
                     colony.getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).matches(recipeStorage.getPrimaryOutput()));
                 }
                 else if((forceReplace || newRecipe.getMustExist()) && !(duplicateFound.equals(recipeToken)))

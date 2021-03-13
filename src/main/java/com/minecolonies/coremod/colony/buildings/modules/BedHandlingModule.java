@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.buildings.modules;
 
-import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.modules.*;
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.BlockState;
