@@ -23,7 +23,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 /**
  * Window for the courer hut.
  */
-public class WindowHutDeliveryman extends AbstractWindowWorkerBuilding<BuildingDeliveryman.View>
+public class WindowHutDeliverymanModule extends AbstractWindowWorkerModuleBuilding<BuildingDeliveryman.View>
 {
     /**
      * Resource suffix of the GUI.
@@ -40,7 +40,7 @@ public class WindowHutDeliveryman extends AbstractWindowWorkerBuilding<BuildingD
      *
      * @param building {@link BuildingDeliveryman.View}.
      */
-    public WindowHutDeliveryman(final BuildingDeliveryman.View building)
+    public WindowHutDeliverymanModule(final BuildingDeliveryman.View building)
     {
         super(building, Constants.MOD_ID + HUT_DMAN_RESOURCE_SUFFIX);
     }

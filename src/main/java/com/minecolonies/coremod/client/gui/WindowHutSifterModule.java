@@ -1,23 +1,19 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.ldtteam.blockout.Color;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.*;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingSifter;
 import com.minecolonies.coremod.network.messages.server.colony.building.RemoveMinimumStockFromBuildingMessage;
-import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +23,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 /**
  * Window for the sifter hut.
  */
-public class WindowHutSifter extends AbstractWindowWorkerBuilding<BuildingSifter.View>
+public class WindowHutSifterModule extends AbstractWindowWorkerModuleBuilding<BuildingSifter.View>
 {
     /**
      * The save button id.
@@ -59,7 +55,7 @@ public class WindowHutSifter extends AbstractWindowWorkerBuilding<BuildingSifter
      *
      * @param building {@link BuildingSifter.View}.
      */
-    public WindowHutSifter(final BuildingSifter.View building)
+    public WindowHutSifterModule(final BuildingSifter.View building)
     {
         super(building, Constants.MOD_ID + SIFTER_RESOURCE_SUFFIX);
         final TextField sifterSettingsInput = findPaneOfTypeByID(QTY_INPUT, TextField.class);

@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @param <B> Object extending {@link com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker.View}.
  */
-public class WindowHutWorkerPlaceholder<B extends com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker.View> extends AbstractWindowWorkerBuilding<B>
+public class WindowHutWorkerModulePlaceholder<B extends com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker.View> extends AbstractWindowWorkerModuleBuilding<B>
 {
     private static final String WORKER_PLACEHOLDER_RESOURCE_SUFFIX = ":gui/windowhutworkerplaceholder.xml";
     private final        String name;
@@ -19,7 +19,7 @@ public class WindowHutWorkerPlaceholder<B extends com.minecolonies.coremod.colon
      * @param building AbstractBuilding extending {@link com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker.View}.
      * @param name     Name of the the view (resource).
      */
-    public WindowHutWorkerPlaceholder(final B building, final String name)
+    public WindowHutWorkerModulePlaceholder(final B building, final String name)
     {
         super(building, Constants.MOD_ID + WORKER_PLACEHOLDER_RESOURCE_SUFFIX);
         this.name = name;

@@ -7,14 +7,14 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Window for the fisherman hut.
  */
-public class WindowHutFisherman extends AbstractWindowWorkerBuilding<BuildingFisherman.View>
+public class WindowHutFishermanModule extends AbstractWindowWorkerModuleBuilding<BuildingFisherman.View>
 {
     /**
      * Constructor for the window of the fisherman.
      *
      * @param building {@link BuildingFisherman.View}.
      */
-    public WindowHutFisherman(final BuildingFisherman.View building)
+    public WindowHutFishermanModule(final BuildingFisherman.View building)
     {
         super(building, Constants.MOD_ID + ":gui/windowhutfisherman.xml");
     }

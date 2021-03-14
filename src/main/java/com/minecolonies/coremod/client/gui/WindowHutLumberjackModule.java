@@ -15,7 +15,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 /**
  * Window for the lumberjack hut.
  */
-public class WindowHutLumberjack extends AbstractWindowWorkerBuilding<BuildingLumberjack.View>
+public class WindowHutLumberjackModule extends AbstractWindowWorkerModuleBuilding<BuildingLumberjack.View>
 {
     /**
      * Id of the button to toggle replant of saplings
@@ -47,7 +47,7 @@ public class WindowHutLumberjack extends AbstractWindowWorkerBuilding<BuildingLu
      *FUEL_LIST
      * @param building {@link BuildingLumberjack.View}.
      */
-    public WindowHutLumberjack(final BuildingLumberjack.View building)
+    public WindowHutLumberjackModule(final BuildingLumberjack.View building)
     {
         super(building, Constants.MOD_ID + RESOURCE_STRING);
 

@@ -12,7 +12,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECO
 /**
  * Window for the shepherd hut.
  */
-public class WindowHutShepherd extends AbstractWindowHerderBuilding<BuildingShepherd.View>
+public class WindowHutShepherdModule extends AbstractWindowHerderModuleBuilding<BuildingShepherd.View>
 {
     private static final String BUTTON_DYE_SHEEPS = "dyeSheeps";
 
@@ -21,7 +21,7 @@ public class WindowHutShepherd extends AbstractWindowHerderBuilding<BuildingShep
      *
      * @param building {@link BuildingShepherd.View}.
      */
-    public WindowHutShepherd(final BuildingShepherd.View building)
+    public WindowHutShepherdModule(final BuildingShepherd.View building)
     {
         super(building, Constants.MOD_ID + ":gui/windowhutshepherd.xml");
 

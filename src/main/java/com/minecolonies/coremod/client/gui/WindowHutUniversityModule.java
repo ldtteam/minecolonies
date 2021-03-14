@@ -26,7 +26,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 /**
  * Window for the university.
  */
-public class WindowHutUniversity extends AbstractWindowWorkerBuilding<BuildingUniversity.View>
+public class WindowHutUniversityModule extends AbstractWindowWorkerModuleBuilding<BuildingUniversity.View>
 {
     /**
      * The list of branches of the tree.
@@ -38,7 +38,7 @@ public class WindowHutUniversity extends AbstractWindowWorkerBuilding<BuildingUn
      *
      * @param building {@link BuildingUniversity.View}.
      */
-    public WindowHutUniversity(final BuildingUniversity.View building)
+    public WindowHutUniversityModule(final BuildingUniversity.View building)
     {
         super(building, Constants.MOD_ID + RESOURCE_STRING);
 

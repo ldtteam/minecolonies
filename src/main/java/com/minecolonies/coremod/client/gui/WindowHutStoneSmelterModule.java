@@ -6,7 +6,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingStoneSm
 /**
  * Stone smelter window class. Specifies the extras the stone smelter has for its list.
  */
-public class WindowHutStoneSmelter extends AbstractWindowWorkerBuilding<BuildingStoneSmeltery.View>
+public class WindowHutStoneSmelterModule extends AbstractWindowWorkerModuleBuilding<BuildingStoneSmeltery.View>
 {
     /**
      * The resource string.
@@ -18,7 +18,7 @@ public class WindowHutStoneSmelter extends AbstractWindowWorkerBuilding<Building
      *
      * @param building class extending
      */
-    public WindowHutStoneSmelter(final BuildingStoneSmeltery.View building)
+    public WindowHutStoneSmelterModule(final BuildingStoneSmeltery.View building)
     {
         super(building, Constants.MOD_ID + RESOURCE_STRING);
     }

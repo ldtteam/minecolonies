@@ -12,7 +12,7 @@ import com.minecolonies.api.entity.ai.util.StudyItem;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
+import com.minecolonies.coremod.client.gui.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobStudent;
 import net.minecraft.block.Block;
@@ -268,7 +268,7 @@ public class BuildingLibrary extends AbstractBuildingWorker
         @Override
         public Window getWindow()
         {
-            return new WindowHutWorkerPlaceholder<AbstractBuildingWorker.View>(this, LIBRARY_HUT_NAME);
+            return new WindowHutWorkerModulePlaceholder<AbstractBuildingWorker.View>(this, LIBRARY_HUT_NAME);
         }
 
         /**

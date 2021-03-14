@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Window for the school hut.
  */
-public class WindowHutSchool extends WindowHutWorkerPlaceholder<BuildingSchool.View>
+public class WindowHutSchoolModule extends WindowHutWorkerModulePlaceholder<BuildingSchool.View>
 {
     /**
      * Window for worker placeholder. Used by buildings not listed above this file.
@@ -17,7 +17,7 @@ public class WindowHutSchool extends WindowHutWorkerPlaceholder<BuildingSchool.V
      * @param building AbstractBuilding extending {@link com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker.View}.
      * @param name     Name of the the view (resource).
      */
-    public WindowHutSchool(final BuildingSchool.View building, final String name)
+    public WindowHutSchoolModule(final BuildingSchool.View building, final String name)
     {
         super(building, name);
     }

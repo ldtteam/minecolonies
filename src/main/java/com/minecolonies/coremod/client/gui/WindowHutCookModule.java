@@ -26,7 +26,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 /**
  * Cook window class. Specifies the extras the composter has for its list.
  */
-public class WindowHutCook extends AbstractWindowWorkerBuilding<BuildingCook.View>
+public class WindowHutCookModule extends AbstractWindowWorkerModuleBuilding<BuildingCook.View>
 {
     /**
      * The resource string.
@@ -48,7 +48,7 @@ public class WindowHutCook extends AbstractWindowWorkerBuilding<BuildingCook.Vie
      *
      * @param building class extending
      */
-    public WindowHutCook(final BuildingCook.View building)
+    public WindowHutCookModule(final BuildingCook.View building)
     {
         super(building, Constants.MOD_ID + RESOURCE_STRING);
 

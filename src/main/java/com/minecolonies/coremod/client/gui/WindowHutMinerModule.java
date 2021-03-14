@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * Window for the miner hut.
  */
-public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.View>
+public class WindowHutMinerModule extends AbstractWindowWorkerModuleBuilding<BuildingMiner.View>
 {
     private static final String                        LIST_LEVELS               = "levels";
     private static final String                        LIST_GUARDS               = "guards";
@@ -45,7 +45,7 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
      *
      * @param building {@link BuildingMiner.View}.
      */
-    public WindowHutMiner(final BuildingMiner.View building)
+    public WindowHutMinerModule(final BuildingMiner.View building)
     {
         super(building, Constants.MOD_ID + HUT_MINER_RESOURCE_SUFFIX);
         this.miner = building;

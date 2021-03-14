@@ -25,7 +25,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 /**
  * Window for the farmer hut.
  */
-public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer.View>
+public class WindowHutFarmerModule extends AbstractWindowWorkerModuleBuilding<BuildingFarmer.View>
 {
     /**
      * Tag of the pages view.
@@ -112,7 +112,7 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
      *
      * @param building {@link BuildingFarmer.View}.
      */
-    public WindowHutFarmer(final BuildingFarmer.View building)
+    public WindowHutFarmerModule(final BuildingFarmer.View building)
     {
         super(building, Constants.MOD_ID + HUT_FARMER_RESOURCE_SUFFIX);
         registerButton(TAG_BUTTON_ASSIGNMENT_MODE, this::assignmentModeClicked);

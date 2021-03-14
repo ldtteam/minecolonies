@@ -7,14 +7,14 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Window for the chicken herder hut.
  */
-public class WindowHutChickenHerder extends AbstractWindowHerderBuilding<BuildingChickenHerder.View>
+public class WindowHutChickenHerderModule extends AbstractWindowHerderModuleBuilding<BuildingChickenHerder.View>
 {
     /**
      * Constructor for the window of the chicken herder.
      *
      * @param building {@link BuildingChickenHerder.View}.
      */
-    public WindowHutChickenHerder(final BuildingChickenHerder.View building)
+    public WindowHutChickenHerderModule(final BuildingChickenHerder.View building)
     {
         super(building, Constants.MOD_ID + ":gui/windowhutchickenherder.xml");
     }

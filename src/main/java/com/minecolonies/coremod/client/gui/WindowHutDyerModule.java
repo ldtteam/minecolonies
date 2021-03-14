@@ -6,7 +6,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingDyer;
 /**
  * Dyer window class. Specifies the extras the dyer has for its list.
  */
-public class WindowHutDyer extends AbstractWindowWorkerBuilding<BuildingDyer.View>
+public class WindowHutDyerModule extends AbstractWindowWorkerModuleBuilding<BuildingDyer.View>
 {
     /**
      * The resource string.
@@ -18,7 +18,7 @@ public class WindowHutDyer extends AbstractWindowWorkerBuilding<BuildingDyer.Vie
      *
      * @param building class extending
      */
-    public WindowHutDyer(final BuildingDyer.View building)
+    public WindowHutDyerModule(final BuildingDyer.View building)
     {
         super(building, Constants.MOD_ID + RESOURCE_STRING);
     }

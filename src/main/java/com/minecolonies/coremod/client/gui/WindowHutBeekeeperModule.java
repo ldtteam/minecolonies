@@ -11,7 +11,7 @@ import com.minecolonies.coremod.network.messages.server.colony.building.beekeepe
 /**
  * Window for the beekeeper hut.
  */
-public class WindowHutBeekeeper extends AbstractWindowWorkerBuilding<BuildingBeekeeper.View>
+public class WindowHutBeekeeperModule extends AbstractWindowWorkerModuleBuilding<BuildingBeekeeper.View>
 {
     private static final String BUTTON_HARVEST_HONEYCOMB = "harvestHoneycomb";
 
@@ -30,7 +30,7 @@ public class WindowHutBeekeeper extends AbstractWindowWorkerBuilding<BuildingBee
      *
      * @param building {@link BuildingBeekeeper.View}.
      */
-    public WindowHutBeekeeper(final BuildingBeekeeper.View building)
+    public WindowHutBeekeeperModule(final BuildingBeekeeper.View building)
     {
         super(building, Constants.MOD_ID + ":gui/windowhutbeekeeper.xml");
         registerButton(BUTTON_HARVEST_HONEYCOMB, this::harvestHoneycombClicked);

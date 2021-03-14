@@ -5,7 +5,7 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingHerder;
 
-public abstract class AbstractWindowHerderBuilding<B extends AbstractBuildingHerder.View> extends AbstractWindowWorkerBuilding<B>
+public abstract class AbstractWindowHerderModuleBuilding<B extends AbstractBuildingHerder.View> extends AbstractWindowWorkerModuleBuilding<B>
 {
     /**
      * Button for toggling animal breeding.
@@ -23,7 +23,7 @@ public abstract class AbstractWindowHerderBuilding<B extends AbstractBuildingHer
      * @param building class extending {@link AbstractBuildingHerder.View}.
      * @param resource Resource of the window.
      */
-    public AbstractWindowHerderBuilding(B building, String resource)
+    public AbstractWindowHerderModuleBuilding(B building, String resource)
     {
         super(building, resource);
 

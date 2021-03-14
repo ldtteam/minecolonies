@@ -17,7 +17,7 @@ import static com.minecolonies.api.research.util.ResearchConstants.PLANT_2;
 /**
  * Window for the plantation hut.
  */
-public class WindowHutPlantation extends AbstractWindowWorkerBuilding<BuildingPlantation.View>
+public class WindowHutPlantationModule extends AbstractWindowWorkerModuleBuilding<BuildingPlantation.View>
 {
     /**
      * The mode button id.
@@ -36,7 +36,7 @@ public class WindowHutPlantation extends AbstractWindowWorkerBuilding<BuildingPl
      *
      * @param building {@link BuildingPlantation.View}.
      */
-    public WindowHutPlantation(final BuildingPlantation.View building)
+    public WindowHutPlantationModule(final BuildingPlantation.View building)
     {
         super(building, Constants.MOD_ID + PLANTATION_RESOURCE_SUFFIX);
         final Button plantSettingsButton = findPaneOfTypeByID(BLOCK_BUTTON, Button.class);

@@ -7,7 +7,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 /**
  * Florist window class. Specifies the extras the florist has for its list.
  */
-public class WindowHutFlorist extends AbstractWindowWorkerBuilding<BuildingFlorist.View>
+public class WindowHutFloristModule extends AbstractWindowWorkerModuleBuilding<BuildingFlorist.View>
 {
     /**
      * The resource string.
@@ -19,7 +19,7 @@ public class WindowHutFlorist extends AbstractWindowWorkerBuilding<BuildingFlori
      *
      * @param building class extending
      */
-    public WindowHutFlorist(final BuildingFlorist.View building)
+    public WindowHutFloristModule(final BuildingFlorist.View building)
     {
         super(building, Constants.MOD_ID + RESOURCE_STRING);
     }

@@ -35,7 +35,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
  *
  * @author Asherslab
  */
-public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBuildingGuards.View>
+public class WindowHutGuardTowerModule extends AbstractWindowWorkerModuleBuilding<AbstractBuildingGuards.View>
 {
 
     /**
@@ -102,7 +102,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
      *
      * @param building class extending {@link AbstractBuildingGuards.View}.
      */
-    public WindowHutGuardTower(final AbstractBuildingGuards.View building)
+    public WindowHutGuardTowerModule(final AbstractBuildingGuards.View building)
     {
         super(building, Constants.MOD_ID + GUI_RESOURCE);
 

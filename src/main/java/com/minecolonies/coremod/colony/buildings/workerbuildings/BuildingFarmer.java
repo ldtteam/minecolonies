@@ -14,7 +14,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.client.gui.WindowHutFarmer;
+import com.minecolonies.coremod.client.gui.WindowHutFarmerModule;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.jobs.JobFarmer;
 import com.minecolonies.coremod.network.messages.server.colony.building.farmer.AssignFieldMessage;
@@ -655,7 +655,7 @@ public class BuildingFarmer extends AbstractBuildingCrafter
         @NotNull
         public Window getWindow()
         {
-            return new WindowHutFarmer(this);
+            return new WindowHutFarmerModule(this);
         }
 
         @Override

@@ -22,7 +22,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 /**
  * Enchanter window class.
  */
-public class WindowHutEnchanter extends AbstractWindowWorkerBuilding<BuildingEnchanter.View>
+public class WindowHutEnchanterModule extends AbstractWindowWorkerModuleBuilding<BuildingEnchanter.View>
 {
     /**
      * The resource string.
@@ -59,7 +59,7 @@ public class WindowHutEnchanter extends AbstractWindowWorkerBuilding<BuildingEnc
      *
      * @param building class extending
      */
-    public WindowHutEnchanter(final BuildingEnchanter.View building)
+    public WindowHutEnchanterModule(final BuildingEnchanter.View building)
     {
         super(building, Constants.MOD_ID + RESOURCE_STRING);
         super.registerButton(BUTTON_SWITCH, this::switchClicked);

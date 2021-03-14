@@ -33,7 +33,7 @@ import java.util.List;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.WAREHOUSE_SORTED;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
-import static com.minecolonies.coremod.client.gui.WindowHutBuilder.*;
+import static com.minecolonies.coremod.client.gui.WindowHutBuilderModule.*;
 
 /**
  * Window for the home building.

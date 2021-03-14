@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Window for the cowboy hut.
  */
-public class WindowHutCowboy extends AbstractWindowHerderBuilding<BuildingCowboy.View>
+public class WindowHutCowboyModule extends AbstractWindowHerderModuleBuilding<BuildingCowboy.View>
 {
     /**
      * Button for toggling milk collection.
@@ -27,7 +27,7 @@ public class WindowHutCowboy extends AbstractWindowHerderBuilding<BuildingCowboy
      *
      * @param building {@link BuildingCowboy.View}.
      */
-    public WindowHutCowboy(final BuildingCowboy.View building)
+    public WindowHutCowboyModule(final BuildingCowboy.View building)
     {
         super(building, Constants.MOD_ID + ":gui/windowhutcowboy.xml");
 

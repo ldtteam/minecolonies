@@ -27,7 +27,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 /**
  * Baker window class. Specifies the extras the bakery has for its list.
  */
-public class WindowHutBaker extends AbstractWindowWorkerBuilding<BuildingBaker.View>
+public class WindowHutBakerModule extends AbstractWindowWorkerModuleBuilding<BuildingBaker.View>
 {
     /**
      * The resource string.
@@ -49,7 +49,7 @@ public class WindowHutBaker extends AbstractWindowWorkerBuilding<BuildingBaker.V
      *
      * @param building {@link BuildingBaker.View}.
      */
-    public WindowHutBaker(final BuildingBaker.View building)
+    public WindowHutBakerModule(final BuildingBaker.View building)
     {
         super(building, Constants.MOD_ID + RESOURCE_STRING);
 

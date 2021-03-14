@@ -38,7 +38,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 /**
  * Window for the builder hut.
  */
-public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuilder.View>
+public class WindowHutBuilderModule extends AbstractWindowWorkerModuleBuilding<BuildingBuilder.View>
 {
     /**
      * Color constants for builder list.
@@ -79,7 +79,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
      *
      * @param building {@link BuildingBuilder.View}.
      */
-    public WindowHutBuilder(final BuildingBuilder.View building)
+    public WindowHutBuilderModule(final BuildingBuilder.View building)
     {
         this(building, true);
     }
@@ -90,7 +90,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
      * @param needGuide if the guide should be opened.
      * @param building  {@link BuildingBuilder.View}.
      */
-    public WindowHutBuilder(final BuildingBuilder.View building, final boolean needGuide)
+    public WindowHutBuilderModule(final BuildingBuilder.View building, final boolean needGuide)
     {
         super(building, Constants.MOD_ID + HUT_BUILDER_RESOURCE_SUFFIX);
         pullResourcesFromHut();

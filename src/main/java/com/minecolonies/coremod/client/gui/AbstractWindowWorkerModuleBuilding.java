@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @param <B> Class extending {@link AbstractBuildingWorker.View}
  */
-public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWorker.View> extends AbstractWindowModuleBuilding<B>
+public abstract class AbstractWindowWorkerModuleBuilding<B extends AbstractBuildingWorker.View> extends AbstractWindowModuleBuilding<B>
 {
     /**
      * Id of the hire/fire button in the GUI.
@@ -96,7 +96,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
      * @param building class extending {@link AbstractBuildingWorker.View}.
      * @param resource Resource of the window.
      */
-    AbstractWindowWorkerBuilding(final B building, final String resource)
+    AbstractWindowWorkerModuleBuilding(final B building, final String resource)
     {
         super(building, resource);
 

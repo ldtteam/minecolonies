@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Window for the crusher hut.
  */
-public class WindowHutCrusher extends AbstractWindowWorkerBuilding<BuildingCrusher.View>
+public class WindowHutCrusherModule extends AbstractWindowWorkerModuleBuilding<BuildingCrusher.View>
 {
     /**
      * The mode button id.
@@ -46,7 +46,7 @@ public class WindowHutCrusher extends AbstractWindowWorkerBuilding<BuildingCrush
      *
      * @param building {@link BuildingMiner.View}.
      */
-    public WindowHutCrusher(final BuildingCrusher.View building)
+    public WindowHutCrusherModule(final BuildingCrusher.View building)
     {
         super(building, Constants.MOD_ID + CRUSHER_RESOURCE_SUFFIX);
         final Button crushingSettingsButton = findPaneOfTypeByID(BLOCK_BUTTON, Button.class);

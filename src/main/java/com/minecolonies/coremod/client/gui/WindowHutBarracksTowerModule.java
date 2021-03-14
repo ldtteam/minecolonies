@@ -6,14 +6,14 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Our building hut view
  */
-public class WindowHutBarracksTower extends WindowHutGuardTower
+public class WindowHutBarracksTowerModule extends WindowHutGuardTowerModule
 {
     /**
      * Constructor for the window of the worker building.
      *
      * @param building class extending {@link AbstractBuildingGuards.View}.
      */
-    public WindowHutBarracksTower(AbstractBuildingGuards.View building)
+    public WindowHutBarracksTowerModule(AbstractBuildingGuards.View building)
     {
         super(building);
     }

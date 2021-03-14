@@ -6,7 +6,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingGlassbl
 /**
  * Glassblower window class. Specifies the extras the glassblower has for its list.
  */
-public class WindowHutGlassblower extends AbstractWindowWorkerBuilding<BuildingGlassblower.View>
+public class WindowHutGlassblowerModule extends AbstractWindowWorkerModuleBuilding<BuildingGlassblower.View>
 {
     /**
      * The resource string.
@@ -18,7 +18,7 @@ public class WindowHutGlassblower extends AbstractWindowWorkerBuilding<BuildingG
      *
      * @param building class extending
      */
-    public WindowHutGlassblower(final BuildingGlassblower.View building)
+    public WindowHutGlassblowerModule(final BuildingGlassblower.View building)
     {
         super(building, Constants.MOD_ID + RESOURCE_STRING);
     }

@@ -23,7 +23,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 /**
  * Window for the crafter hut.
  */
-public class WindowHutCrafter extends AbstractWindowWorkerBuilding<AbstractBuildingCrafter.View>
+public class WindowHutCrafterModule extends AbstractWindowWorkerModuleBuilding<AbstractBuildingCrafter.View>
 {
     /**
      * Resource suffix of the GUI.
@@ -45,7 +45,7 @@ public class WindowHutCrafter extends AbstractWindowWorkerBuilding<AbstractBuild
      *
      * @param building {@link com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter.View}.
      */
-    public WindowHutCrafter(final AbstractBuildingCrafter.View building, final String name)
+    public WindowHutCrafterModule(final AbstractBuildingCrafter.View building, final String name)
     {
         super(building, Constants.MOD_ID + HUT_RESOURCE_SUFFIX);
         this.name = name;

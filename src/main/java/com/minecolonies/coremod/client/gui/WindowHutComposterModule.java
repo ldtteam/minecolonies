@@ -13,7 +13,7 @@ import net.minecraft.item.ItemStack;
 /**
  * Composter window class. Specifies the extras the composter has for its list.
  */
-public class WindowHutComposter extends AbstractWindowWorkerBuilding<BuildingComposter.View>
+public class WindowHutComposterModule extends AbstractWindowWorkerModuleBuilding<BuildingComposter.View>
 {
     /**
      * Id of the button to toggle replant of saplings
@@ -35,7 +35,7 @@ public class WindowHutComposter extends AbstractWindowWorkerBuilding<BuildingCom
      *
      * @param building class extending
      */
-    public WindowHutComposter(final BuildingComposter.View building)
+    public WindowHutComposterModule(final BuildingComposter.View building)
     {
         super(building, Constants.MOD_ID + RESOURCE_STRING);
         this.ownBuilding = building;
