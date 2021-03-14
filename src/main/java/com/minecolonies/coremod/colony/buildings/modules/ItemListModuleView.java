@@ -132,10 +132,7 @@ public class ItemListModuleView extends AbstractBuildingModuleView implements IB
         return inverted;
     }
 
-    /**
-     * Get the lang string for the title.
-     * @return the lang string.
-     */
+    @Override
     public String getDesc()
     {
         return desc;

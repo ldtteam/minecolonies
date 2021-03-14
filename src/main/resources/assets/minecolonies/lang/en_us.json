@@ -1872,5 +1872,7 @@
   "item.minecolonies.sifter_mesh_string": "String Mesh",
   "item.minecolonies.sifter_mesh_flint": "Flint Mesh",
   "item.minecolonies.sifter_mesh_iron": "Iron Mesh",
-  "item.minecolonies.sifter_mesh_diamond": "Diamond Mesh"
+  "item.minecolonies.sifter_mesh_diamond": "Diamond Mesh",
+
+  "com.minecolonies.coremod.gui.maintab": "Main"
 }

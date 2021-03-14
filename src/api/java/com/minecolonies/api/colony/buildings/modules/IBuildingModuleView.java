@@ -34,4 +34,10 @@ public interface IBuildingModuleView
      * @return the icon identifier.
      */
     String getIcon();
+
+    /**
+     * Get the lang string for the title.
+     * @return the lang string.
+     */
+    String getDesc();
 }
