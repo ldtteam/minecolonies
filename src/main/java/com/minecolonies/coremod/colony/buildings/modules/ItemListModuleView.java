@@ -27,7 +27,7 @@ public class ItemListModuleView extends AbstractBuildingModuleView implements IB
     /**
      * Unique string id of the module.
      */
-    private final String                      id;
+    private final String id;
 
     /**
      * Supplier for the list of all items (not only the disabled/enabled ones).
@@ -151,10 +151,9 @@ public class ItemListModuleView extends AbstractBuildingModuleView implements IB
         }
     }
 
-
     @Override
     public IModuleWindow getWindow()
     {
-        return new ItemListModuleWindow("", buildingView, id, desc, allItems, inverted);
+        return new ItemListModuleWindow(":gui/layouthuts/layoutfilterablelist.xml", buildingView, id, desc, allItems, inverted);
     }
 }

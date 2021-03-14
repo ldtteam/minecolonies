@@ -38,7 +38,7 @@ import static com.minecolonies.coremod.client.gui.WindowHutBuilder.*;
 /**
  * Window for the home building.
  */
-public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse.View>
+public class WindowHutWareHouse extends AbstractWindowModuleBuilding<BuildingWareHouse.View>
 {
 
     /**

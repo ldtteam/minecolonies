@@ -10,13 +10,14 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingEnchanter;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.ENCHANTER_BUILDING_NAME;
-import static com.minecolonies.coremod.client.gui.ViewFilterableList.*;
+import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
  * Enchanter window class.
@@ -96,11 +97,11 @@ public class WindowHutEnchanter extends AbstractWindowWorkerBuilding<BuildingEnc
                     final Button switchButton = rowPane.findPaneOfTypeByID(BUTTON_SWITCH, Button.class);
                     if (selectedBuildings.contains(buildingView.getID()))
                     {
-                        switchButton.setText(ON);
+                        switchButton.setText(new TranslationTextComponent(ON));
                     }
                     else
                     {
-                        switchButton.setText(OFF);
+                        switchButton.setText(new TranslationTextComponent(OFF));
                     }
                 }
             }
@@ -117,7 +118,7 @@ public class WindowHutEnchanter extends AbstractWindowWorkerBuilding<BuildingEnc
         final int row = workerList.getListElementIndexByPane(button);
         if (button.getTextAsString().equals(OFF))
         {
-            button.setText(ON);
+            button.setText(new TranslationTextComponent(ON));
             building.addWorker(allBuildings.get(row).getID());
         }
         else

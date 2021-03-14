@@ -1,15 +1,12 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.ButtonImage;
 import com.ldtteam.blockout.controls.ItemIcon;
 import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.ScrollingList;
-import com.ldtteam.blockout.views.View;
 import com.ldtteam.structurize.util.LanguageHandler;
-import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
@@ -23,27 +20,19 @@ import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BAKER;
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_REQUESTS_BURNABLE;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
  * Baker window class. Specifies the extras the bakery has for its list.
  */
-public class WindowHutBaker extends ItemListModuleWindow
+public class WindowHutBaker extends AbstractWindowWorkerBuilding<BuildingBaker.View>
 {
     /**
      * The resource string.
      */
     private static final String RESOURCE_STRING = ":gui/windowhutbaker.xml";
-
-     /**
-     * View containing the fuel list.
-     */
-    private static final String PAGE_ITEMS_VIEW = "fuel";
 
     /**
      * Limit reached label.
@@ -64,14 +53,6 @@ public class WindowHutBaker extends ItemListModuleWindow
     {
         super(building, Constants.MOD_ID + RESOURCE_STRING);
 
-        final ViewFilterableList window = new ViewFilterableList(findPaneOfTypeByID(PAGE_ITEMS_VIEW, View.class),
-          this,
-          building,
-          LanguageHandler.format(COM_MINECOLONIES_REQUESTS_BURNABLE),
-          PAGE_ITEMS_VIEW,
-          false);
-        views.put(PAGE_ITEMS_VIEW, window);
-
         resourceList = this.window.findPaneOfTypeByID("resourcesstock", ScrollingList.class);
 
         registerButton(STOCK_ADD, this::addStock);
@@ -83,17 +64,6 @@ public class WindowHutBaker extends ItemListModuleWindow
         }
 
         registerButton(STOCK_REMOVE, this::removeStock);
-    }
-
-    @Override
-    public List<? extends ItemStorage> getBlockList(final Predicate<ItemStack> filterPredicate, final String id)
-    {
-        return ImmutableList.copyOf(IColonyManager.getInstance()
-                                      .getCompatibilityManager()
-                                      .getFuel()
-                                      .stream()
-                                      .filter(item -> filterPredicate.test(item.getItemStack()))
-                                      .collect(Collectors.toList()));
     }
 
     /**
@@ -116,8 +86,8 @@ public class WindowHutBaker extends ItemListModuleWindow
     private void removeStock(final Button button)
     {
         final int row = resourceList.getListElementIndexByPane(button);
-        final Tuple<ItemStorage, Integer> tuple = ((BuildingBaker.View) building).getStock().get(row);
-        ((BuildingBaker.View) building).getStock().remove(row);
+        final Tuple<ItemStorage, Integer> tuple = building.getStock().get(row);
+        building.getStock().remove(row);
         Network.getNetwork().sendToServer(new RemoveMinimumStockFromBuildingMessage(building, tuple.getA().getItemStack()));
         updateStockList();
     }
@@ -127,7 +97,7 @@ public class WindowHutBaker extends ItemListModuleWindow
      */
     private void addStock()
     {
-        if (!((BuildingBaker.View) building).hasReachedLimit())
+        if (!building.hasReachedLimit())
         {
             new WindowSelectRes(this, building,
               itemStack -> ItemStackUtils.CAN_EAT.test(itemStack) || ItemStackUtils.CAN_EAT.test(FurnaceRecipes.getInstance().getSmeltingResult(itemStack)) || building.getRecipes().stream().anyMatch(r -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, r.getPrimaryOutput()))).open();
@@ -148,7 +118,7 @@ public class WindowHutBaker extends ItemListModuleWindow
     {
         resourceList.enable();
         resourceList.show();
-        final List<Tuple<ItemStorage, Integer>> tempRes = new ArrayList<>(((BuildingBaker.View) building).getStock());
+        final List<Tuple<ItemStorage, Integer>> tempRes = new ArrayList<>(building.getStock());
 
         //Creates a dataProvider for the unemployed resourceList.
         resourceList.setDataProvider(new ScrollingList.DataProvider()

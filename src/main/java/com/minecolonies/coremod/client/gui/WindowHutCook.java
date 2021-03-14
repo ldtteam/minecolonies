@@ -1,20 +1,17 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.google.common.collect.ImmutableSet;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.ButtonImage;
 import com.ldtteam.blockout.controls.ItemIcon;
 import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.ScrollingList;
-import com.ldtteam.blockout.views.View;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.colony.buildings.modules.ItemListModuleView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.coremod.network.messages.server.colony.building.RemoveMinimumStockFromBuildingMessage;
 import com.minecolonies.coremod.util.FurnaceRecipes;
@@ -24,15 +21,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
  * Cook window class. Specifies the extras the composter has for its list.
  */
-public class WindowHutCook extends ItemListModuleWindow
+public class WindowHutCook extends AbstractWindowWorkerBuilding<BuildingCook.View>
 {
     /**
      * The resource string.
@@ -43,16 +37,6 @@ public class WindowHutCook extends ItemListModuleWindow
      * Limit reached label.
      */
     private static final String LABEL_LIMIT_REACHED = "com.minecolonies.coremod.gui.warehouse.limitreached";
-
-    /**
-     * View containing the list.
-     */
-    private static final String PAGE_ITEMS_VIEW = "fuel";
-
-    /**
-     * View containing the food list.
-     */
-    private static final String PAGE_FOOD_VIEW = "food";
 
     /**
      * Resource scrolling list.
@@ -67,16 +51,6 @@ public class WindowHutCook extends ItemListModuleWindow
     public WindowHutCook(final BuildingCook.View building)
     {
         super(building, Constants.MOD_ID + RESOURCE_STRING);
-        for (final ItemListModuleView module : building.getModuleViews(ItemListModuleView.class))
-        {
-            final ViewFilterableList win = new ViewFilterableList(findPaneOfTypeByID(module.getId(), View.class),
-              this,
-              building,
-              LanguageHandler.format(module.getDesc()),
-              module.getId(),
-              module.isInverted());
-            views.put(module.getId(), win);
-        }
 
         resourceList = this.window.findPaneOfTypeByID("resourcesstock", ScrollingList.class);
 
@@ -89,23 +63,6 @@ public class WindowHutCook extends ItemListModuleWindow
         }
 
         registerButton(STOCK_REMOVE, this::removeStock);
-    }
-
-    /**
-     * The classic block list.
-     *
-     * @param filterPredicate the predicate filter.
-     * @param id              the id of the specific predicate.
-     * @return the list of itemStorages.
-     */
-    public List<? extends ItemStorage> getBlockList(final Predicate<ItemStack> filterPredicate, final String id)
-    {
-        return building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id))
-                                      .map(m -> m.getAllItems().apply(building))
-                                      .orElse(ImmutableSet.of())
-                                      .stream()
-                                      .filter(item -> filterPredicate.test(item.getItemStack()))
-                                      .collect(Collectors.toList());
     }
 
     /**

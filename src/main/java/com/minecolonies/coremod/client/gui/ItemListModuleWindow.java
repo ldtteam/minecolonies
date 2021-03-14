@@ -1,15 +1,13 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.blockout.Pane;
-import com.ldtteam.blockout.controls.Button;
-import com.ldtteam.blockout.controls.ItemIcon;
-import com.ldtteam.blockout.controls.Text;
-import com.ldtteam.blockout.controls.TextField;
+import com.ldtteam.blockout.controls.*;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.coremod.colony.buildings.modules.ItemListModuleView;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -22,7 +20,7 @@ import static org.jline.utils.AttributedStyle.WHITE;
 /**
  * Window for all the filterable lists.
  */
-public class ItemListModuleWindow extends AbstractModuleWindow<ItemListModuleView>
+public class ItemListModuleWindow extends AbstractModuleWindow
 {
     /**
      * Resource scrolling list.
@@ -47,7 +45,7 @@ public class ItemListModuleWindow extends AbstractModuleWindow<ItemListModuleVie
     /**
      * Grouped list that can be further filtered.
      */
-    private List<ItemStorage> groupedItemList = new ArrayList<>();
+    private List<ItemStorage> groupedItemList;
 
     /**
      * Grouped list after applying the current temporary filter.
@@ -73,20 +71,20 @@ public class ItemListModuleWindow extends AbstractModuleWindow<ItemListModuleVie
         this.id = id;
 
         resourceList = window.findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class);
-        window.findPaneOfTypeByID(DESC_LABEL, Text.class).setText(desc);
+        window.findPaneOfTypeByID(DESC_LABEL, Text.class).setText(new TranslationTextComponent(desc));
         this.building = building;
         this.isInverted = isInverted;
 
         groupedItemList = new ArrayList<>(allItems.apply(building));
     }
 
-
     @Override
     public Pane getIcon()
     {
-        final ItemIcon icon = new ItemIcon();
-        icon.setItem(representativeItem);
-        return icon;
+        final Image image = new Image();
+        image.setImage("minecolonies:textures/gui/modules/" + this.id + ".png");
+        image.setID(this.id);
+        return image;
     }
 
     @Override
@@ -124,7 +122,7 @@ public class ItemListModuleWindow extends AbstractModuleWindow<ItemListModuleVie
         final int row = resourceList.getListElementIndexByPane(button);
         if (button.getTextAsString().equals(ON))
         {
-            button.setText(OFF);
+            button.setText(new TranslationTextComponent(OFF));
             if (isInverted)
             {
                 building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id)).ifPresent(m -> m.addItem(currentDisplayedList.get(row)));
@@ -136,7 +134,7 @@ public class ItemListModuleWindow extends AbstractModuleWindow<ItemListModuleVie
         }
         else
         {
-            button.setText(ON);
+            button.setText(new TranslationTextComponent(ON));
             if (isInverted)
             {
                 building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id)).ifPresent(m -> m.removeItem(currentDisplayedList.get(row)));
@@ -230,11 +228,11 @@ public class ItemListModuleWindow extends AbstractModuleWindow<ItemListModuleVie
 
                 if ((isInverted && !isAllowedItem) || (!isInverted && isAllowedItem))
                 {
-                    switchButton.setText(ON);
+                    switchButton.setText(new TranslationTextComponent(ON));
                 }
                 else
                 {
-                    switchButton.setText(OFF);
+                    switchButton.setText(new TranslationTextComponent(OFF));
                 }
             }
         });

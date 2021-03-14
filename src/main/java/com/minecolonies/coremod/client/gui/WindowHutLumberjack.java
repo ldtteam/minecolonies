@@ -1,29 +1,21 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.blockout.controls.Button;
-import com.ldtteam.blockout.views.View;
 import com.ldtteam.structurize.util.LanguageHandler;
-import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLumberjack;
 import com.minecolonies.coremod.network.messages.server.colony.building.lumberjack.LumberjackReplantSaplingToggleMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.lumberjack.LumberjackRestrictionToggleMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.lumberjack.LumberjackScepterMessage;
-import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
  * Window for the lumberjack hut.
  */
-public class WindowHutLumberjack extends ItemListModuleWindow
+public class WindowHutLumberjack extends AbstractWindowWorkerBuilding<BuildingLumberjack.View>
 {
     /**
      * Id of the button to toggle replant of saplings
@@ -39,11 +31,6 @@ public class WindowHutLumberjack extends ItemListModuleWindow
      * Id of the button to toggle restrict
      */
     private static final String BUTTON_TOGGLE_RESTRICTION = "toggleRestriction";
-
-    /**
-     * View containing the list.
-     */
-    private static final String PAGE_ITEMS_VIEW = "saplings";
 
     /**
      * The resource string.
@@ -64,13 +51,6 @@ public class WindowHutLumberjack extends ItemListModuleWindow
     {
         super(building, Constants.MOD_ID + RESOURCE_STRING);
 
-        final ViewFilterableList window = new ViewFilterableList(findPaneOfTypeByID(PAGE_ITEMS_VIEW, View.class),
-          this,
-          building,
-          LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.saplingList"),
-          PAGE_ITEMS_VIEW,
-          true);
-        views.put(PAGE_ITEMS_VIEW, window);
         this.ownBuilding = building;
 
         registerButton(BUTTON_TOGGLE_REPLANT, this::switchReplant);
@@ -93,17 +73,6 @@ public class WindowHutLumberjack extends ItemListModuleWindow
     private void givePlayerScepter()
     {
         Network.getNetwork().sendToServer(new LumberjackScepterMessage(building));
-    }
-
-    @Override
-    public List<? extends ItemStorage> getBlockList(final Predicate<ItemStack> filterPredicate, final String id)
-    {
-        return IColonyManager.getInstance()
-                 .getCompatibilityManager()
-                 .getCopyOfSaplings()
-                 .stream()
-                 .filter(storage -> filterPredicate.test(storage.getItemStack()))
-                 .collect(Collectors.toList());
     }
 
     /**

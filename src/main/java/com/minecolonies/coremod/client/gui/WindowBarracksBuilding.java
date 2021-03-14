@@ -22,7 +22,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 /**
  * Window for the barracks building.
  */
-public class WindowBarracksBuilding extends AbstractWindowBuilding<BuildingBarracks.View>
+public class WindowBarracksBuilding extends AbstractWindowModuleBuilding<BuildingBarracks.View>
 {
     /**
      * Id of the positions list.

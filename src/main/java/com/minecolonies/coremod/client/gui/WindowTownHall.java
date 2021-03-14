@@ -66,7 +66,7 @@ import static com.minecolonies.coremod.client.gui.WindowHutBuilder.BLACK;
  * Window for the town hall.
  */
 @SuppressWarnings("PMD.ExcessiveClassLength")
-public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
+public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
 {
     /**
      * Citizen name comparator.

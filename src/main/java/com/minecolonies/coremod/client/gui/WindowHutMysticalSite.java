@@ -6,7 +6,7 @@ import com.minecolonies.coremod.colony.buildings.BuildingMysticalSite;
 /**
  * Window for the home building.
  */
-public class WindowHutMysticalSite extends AbstractWindowBuilding<BuildingMysticalSite.View>
+public class WindowHutMysticalSite extends AbstractWindowModuleBuilding<BuildingMysticalSite.View>
 {
     /**
      * Suffix describing the window xml.

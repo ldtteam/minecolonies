@@ -1,10 +1,7 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.blockout.controls.Button;
-import com.ldtteam.blockout.views.View;
 import com.ldtteam.structurize.util.LanguageHandler;
-import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
@@ -13,26 +10,15 @@ import com.minecolonies.coremod.network.messages.server.colony.building.composte
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
 
-import java.util.List;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_REQUESTS_COMPOSTABLE_UI;
-
 /**
  * Composter window class. Specifies the extras the composter has for its list.
  */
-public class WindowHutComposter extends ItemListModuleWindow
+public class WindowHutComposter extends AbstractWindowWorkerBuilding<BuildingComposter.View>
 {
     /**
      * Id of the button to toggle replant of saplings
      */
     private static final String BUTTON_TOGGLE_RETRIEVE_DIRT = "retrieveDirt";
-
-    /**
-     * View containing the list.
-     */
-    private static final String PAGE_ITEMS_VIEW = "compostables";
 
     /**
      * The resource string.
@@ -52,29 +38,10 @@ public class WindowHutComposter extends ItemListModuleWindow
     public WindowHutComposter(final BuildingComposter.View building)
     {
         super(building, Constants.MOD_ID + RESOURCE_STRING);
-
-        final ViewFilterableList window = new ViewFilterableList(findPaneOfTypeByID(PAGE_ITEMS_VIEW, View.class),
-          this,
-          building,
-          LanguageHandler.format(COM_MINECOLONIES_REQUESTS_COMPOSTABLE_UI),
-          PAGE_ITEMS_VIEW,
-          false);
-        views.put(PAGE_ITEMS_VIEW, window);
         this.ownBuilding = building;
 
         setupRetrieveDirtButton(findPaneOfTypeByID(BUTTON_TOGGLE_RETRIEVE_DIRT, Button.class));
         registerButton(BUTTON_TOGGLE_RETRIEVE_DIRT, this::switchReplant);
-    }
-
-    @Override
-    public List<? extends ItemStorage> getBlockList(final Predicate<ItemStack> filterPredicate, final String id)
-    {
-        return IColonyManager.getInstance()
-                 .getCompatibilityManager()
-                 .getCopyOfCompostableItems()
-                 .stream()
-                 .filter(storage -> filterPredicate.test(storage.getItemStack()))
-                 .collect(Collectors.toList());
     }
 
     /**

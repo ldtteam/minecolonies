@@ -273,8 +273,7 @@ public final class ModBuildingsInitializer
                                  .setBuildingProducer(BuildingFlorist::new)
                                  .setBuildingViewProducer(() -> BuildingFlorist.View::new)
                                  .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.FLORIST_ID))
-                                 .addBuildingModuleProducer(() -> new ItemListModule(FLORIST_FLOWER_LIST), () -> new ItemListModuleView(FLORIST_FLOWER_LIST, FLORIST_FLOWER_DESC, true,
-                                   (buildingView) -> BuildingFlorist.getPlantablesForBuildingLevel(buildingView.getBuildingLevel())))
+                                 .addBuildingModuleProducer(() -> new ItemListModule(FLORIST_FLOWER_LIST), () -> new FloristFlowerListModuleView())
                                  .createBuildingEntry();
 
         ModBuildings.enchanter = new BuildingEntry.Builder()

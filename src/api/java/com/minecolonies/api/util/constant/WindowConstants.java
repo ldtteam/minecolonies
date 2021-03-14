@@ -1154,12 +1154,12 @@ public final class WindowConstants
     /**
      * String describing on for the gui.
      */
-    public static final String ON = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON);
+    public static final String ON = COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON;
 
     /**
      * String describing off for the gui.
      */
-    public static final String OFF = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF);
+    public static final String OFF = COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF;
 
     /**
      * Private constructor to hide implicit public one.
