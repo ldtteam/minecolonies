@@ -1,8 +1,10 @@
 package com.minecolonies.coremod.colony.buildings.modules;
 
+import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.buildings.modules.*;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.ItemListModuleWindow;
 import com.minecolonies.coremod.network.messages.server.colony.building.AssignFilterableItemMessage;
@@ -152,8 +154,14 @@ public class ItemListModuleView extends AbstractBuildingModuleView implements IB
     }
 
     @Override
-    public IModuleWindow getWindow()
+    public Window getWindow()
     {
-        return new ItemListModuleWindow(":gui/layouthuts/layoutfilterablelist.xml", buildingView, id, desc, allItems, inverted);
+        return new ItemListModuleWindow(Constants.MOD_ID + ":gui/layouthuts/layoutfilterablelist.xml", buildingView, this);
+    }
+
+    @Override
+    public String getIcon()
+    {
+        return this.getId();
     }
 }

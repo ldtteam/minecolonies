@@ -1,5 +1,6 @@
 package com.minecolonies.api.colony.buildings.modules;
 
+import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import net.minecraft.network.PacketBuffer;
 import org.jetbrains.annotations.NotNull;
@@ -26,5 +27,11 @@ public interface IBuildingModuleView
      * Get the matching window for the module.
      * @return the window.
      */
-    IModuleWindow getWindow();
+    Window getWindow();
+
+    /**
+     * Get the icon string for the module view.
+     * @return the icon identifier.
+     */
+    String getIcon();
 }

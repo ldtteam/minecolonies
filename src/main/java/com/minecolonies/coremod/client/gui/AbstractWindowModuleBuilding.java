@@ -1,8 +1,6 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Button;
-import com.ldtteam.blockout.controls.Image;
 import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
@@ -196,14 +194,5 @@ public abstract class AbstractWindowModuleBuilding<B extends IBuildingView> exte
     {
         super.onOpened();
         setPage(false, 0);
-    }
-
-    @Override
-    public Pane getIcon()
-    {
-        final Image image = new Image();
-        image.setImage("minecolonies:textures/gui/modules/main.png");
-        image.setID("main");
-        return image;
     }
 }

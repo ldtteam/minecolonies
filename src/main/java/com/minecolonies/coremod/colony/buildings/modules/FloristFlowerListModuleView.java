@@ -27,11 +27,19 @@ public class FloristFlowerListModuleView extends ItemListModuleView
         super(FLORIST_FLOWER_LIST, FLORIST_FLOWER_DESC, true, (buildingView) -> BuildingFlorist.getPlantablesForBuildingLevel(buildingView.getBuildingLevel()));
     }
 
-    /**
-     * Add item to the view and notify the server side.
-     *
-     * @param item the item to add.
-     */
+    @Override
+    public void removeItem(final ItemStorage item)
+    {
+        if (buildingView.getBuildingLevel() <= 1)
+        {
+            LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, TOO_LOW_LEVEL_TO_FILTER_FLORIST);
+            return;
+        }
+
+        super.removeItem(item);
+    }
+
+    @Override
     public void addItem(final ItemStorage item)
     {
         if (buildingView.getBuildingLevel() <= 1)

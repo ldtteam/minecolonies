@@ -1,7 +1,10 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.blockout.Pane;
+import com.ldtteam.blockout.controls.Button;
+import com.ldtteam.blockout.controls.ButtonHandler;
 import com.ldtteam.blockout.controls.ButtonImage;
+import com.ldtteam.blockout.controls.Image;
 import com.minecolonies.api.colony.buildings.modules.IBuildingModuleView;
 import com.minecolonies.api.colony.buildings.modules.IModuleWindow;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
@@ -27,28 +30,45 @@ public abstract class AbstractModuleWindow extends AbstractWindowSkeleton implem
         int offset = 0;
         if (building.getAllModuleViews().size() > 0)
         {
-            final Pane icon = getIcon();
             final ButtonImage image = new ButtonImage();
-            image.setImage("minecolonies:textures/gui/modules/tab_side" + random.nextInt(3) + ".png");
-            image.setPosition(10, 10 + offset);
-            icon.setPosition(10, 10 + offset);
+            image.setImage("minecolonies:textures/gui/modules/tab_side" + (random.nextInt(3) + 1) + ".png");
+            image.setPosition(-20, 10 + offset);
+            image.setSize(32, 26);
+            image.setHandler(button -> building.getWindow().open());
+
+            final ButtonImage iconImage = new ButtonImage();
+            iconImage.setImage("minecolonies:textures/gui/modules/main.png");
+            iconImage.setID("main");
+            iconImage.setPosition(-15, 13 + offset);
+            iconImage.setSize(20, 20);
+            iconImage.setHandler(button -> building.getWindow().open());
+
             offset += image.getHeight() + 2;
 
             this.addChild(image);
-            this.addChild(icon);
+            this.addChild(iconImage);
         }
 
         for (IBuildingModuleView view : building.getAllModuleViews())
         {
-            final Pane icon = view.getWindow().getIcon();
             final ButtonImage image = new ButtonImage();
-            image.setImage("minecolonies:textures/gui/modules/tab_side" + random.nextInt(3) + ".png");
-            image.setPosition(10, 10 + offset);
-            icon.setPosition(10, 10 + offset);
+            image.setImage("minecolonies:textures/gui/modules/tab_side" + (random.nextInt(3) + 1) + ".png");
+            image.setPosition(-20, 10 + offset);
+            image.setSize(32, 26);
+            image.setHandler(button -> view.getWindow().open());
+
+            final String icon = view.getIcon();
+            final ButtonImage iconImage = new ButtonImage();
+            iconImage.setImage("minecolonies:textures/gui/modules/" + icon + ".png");
+            iconImage.setSize(20, 20);
+            iconImage.setID(icon);
+            iconImage.setPosition(-15, 13 + offset);
+            iconImage.setHandler(button -> view.getWindow().open());
+
             offset += image.getHeight() + 2;
 
             this.addChild(image);
-            this.addChild(icon);
+            this.addChild(iconImage);
         }
     }
 }

@@ -11,7 +11,6 @@ import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
@@ -54,37 +53,23 @@ public class ItemListModuleWindow extends AbstractModuleWindow
 
     /**
      * @param building   the building it belongs to.
-     * @param id         the id of this window (page order of filterable lists).
-     * @param desc       the description on the top of the page.
-     * @param allItems   all items to display in this item list.
-     * @param isInverted if the list is inverted.
+     * @param res   the building res id.
+     * @param moduleView   the assigned module view.
      */
     public ItemListModuleWindow(
       final String res,
       final IBuildingView building,
-      final String id,
-      final String desc,
-      final Function<IBuildingView, Set<ItemStorage>> allItems,
-      final boolean isInverted)
+      final ItemListModuleView moduleView)
     {
         super(building, res);
-        this.id = id;
+        this.id = moduleView.getId();
 
         resourceList = window.findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class);
-        window.findPaneOfTypeByID(DESC_LABEL, Text.class).setText(new TranslationTextComponent(desc));
+        window.findPaneOfTypeByID(DESC_LABEL, Text.class).setText(new TranslationTextComponent(moduleView.getDesc().toLowerCase(Locale.US)));
         this.building = building;
-        this.isInverted = isInverted;
+        this.isInverted = moduleView.isInverted();
 
-        groupedItemList = new ArrayList<>(allItems.apply(building));
-    }
-
-    @Override
-    public Pane getIcon()
-    {
-        final Image image = new Image();
-        image.setImage("minecolonies:textures/gui/modules/" + this.id + ".png");
-        image.setID(this.id);
-        return image;
+        groupedItemList = new ArrayList<>(moduleView.getAllItems().apply(building));
     }
 
     @Override
@@ -120,7 +105,7 @@ public class ItemListModuleWindow extends AbstractModuleWindow
     private void switchClicked(@NotNull final Button button)
     {
         final int row = resourceList.getListElementIndexByPane(button);
-        if (button.getTextAsString().equals(ON))
+        if (button.getText().equals(new TranslationTextComponent(ON)))
         {
             button.setText(new TranslationTextComponent(OFF));
             if (isInverted)
