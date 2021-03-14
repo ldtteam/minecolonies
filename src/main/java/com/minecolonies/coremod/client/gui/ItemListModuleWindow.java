@@ -105,30 +105,20 @@ public class ItemListModuleWindow extends AbstractModuleWindow
     private void switchClicked(@NotNull final Button button)
     {
         final int row = resourceList.getListElementIndexByPane(button);
-        if (button.getText().equals(new TranslationTextComponent(ON)))
-        {
-            button.setText(new TranslationTextComponent(OFF));
-            if (isInverted)
+        final ItemStorage item = currentDisplayedList.get(row);
+        final boolean on = button.getText().equals(new TranslationTextComponent(ON));
+        final boolean add = (on && isInverted) || (!on && !isInverted);
+        building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id)).ifPresent(m -> {
+            if (add)
             {
-                building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id)).ifPresent(m -> m.addItem(currentDisplayedList.get(row)));
+                m.addItem(item);
             }
             else
             {
-                building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id)).ifPresent(m -> m.removeItem(currentDisplayedList.get(row)));
+                m.removeItem(item);
             }
-        }
-        else
-        {
-            button.setText(new TranslationTextComponent(ON));
-            if (isInverted)
-            {
-                building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id)).ifPresent(m -> m.removeItem(currentDisplayedList.get(row)));
-            }
-            else
-            {
-                building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id)).ifPresent(m -> m.addItem(currentDisplayedList.get(row)));
-            }
-        }
+        });
+
         resourceList.refreshElementPanes();
     }
 
