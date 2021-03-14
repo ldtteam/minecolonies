@@ -6,59 +6,24 @@ import com.ldtteam.blockout.controls.ItemIcon;
 import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.controls.TextField;
 import com.ldtteam.blockout.views.ScrollingList;
-import com.ldtteam.blockout.views.View;
-import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.modules.ItemListModuleView;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF;
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 import static org.jline.utils.AttributedStyle.WHITE;
 
 /**
- * GUI window for filterable lists as a list of compostable items, burnables, etc.
+ * Window for all the filterable lists.
  */
-public class ViewFilterableList
+public class ItemListModuleWindow extends AbstractModuleWindow<ItemListModuleView>
 {
-    /**
-     * The id of the "name" input field in the GUI.
-     */
-    private static final String INPUT_NAME = "input";
-
-    /**
-     * Description label Id.
-     */
-    public static final String DESC_LABEL = "desc";
-
-    /**
-     * Switch button Id.
-     */
-    public static final String BUTTON_SWITCH = "switch";
-
-    /**
-     * String describing on for the gui.
-     */
-    public static final String ON = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON);
-
-    /**
-     * String describing off for the gui.
-     */
-    public static final String OFF = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF);
-
-    /**
-     * List of all item stacks in the game.
-     */
-    private final List<ItemStorage> allItems = new ArrayList<>();
-
     /**
      * Resource scrolling list.
      */
@@ -67,12 +32,7 @@ public class ViewFilterableList
     /**
      * The building this belongs to.
      */
-    protected final AbstractBuildingView building;
-
-    /**
-     * The parent window.
-     */
-    private final AbstractHutFilterableLists parent;
+    protected final IBuildingView building;
 
     /**
      * The filter for the resource list.
@@ -85,52 +45,73 @@ public class ViewFilterableList
     private final boolean isInverted;
 
     /**
-     * The specific view of this filterable list.
+     * Grouped list that can be further filtered.
      */
-    private final View window;
+    private List<ItemStorage> groupedItemList = new ArrayList<>();
 
     /**
-     * The id of this window.
+     * Grouped list after applying the current temporary filter.
      */
-    private final String id;
+    private final List<ItemStorage> currentDisplayedList = new ArrayList<>();
 
     /**
-     * @param window     the view this belongs to.
-     * @param parent     the parent window.
      * @param building   the building it belongs to.
-     * @param desc       the description on the top of the page.
      * @param id         the id of this window (page order of filterable lists).
+     * @param desc       the description on the top of the page.
+     * @param allItems   all items to display in this item list.
      * @param isInverted if the list is inverted.
      */
-    public ViewFilterableList(
-      final View window,
-      final AbstractHutFilterableLists parent,
-      final AbstractBuildingWorker.View building,
-      final String desc,
+    public ItemListModuleWindow(
+      final String res,
+      final IBuildingView building,
       final String id,
+      final String desc,
+      final Function<IBuildingView, Set<ItemStorage>> allItems,
       final boolean isInverted)
     {
-        this.window = window;
+        super(building, res);
         this.id = id;
 
         resourceList = window.findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class);
         window.findPaneOfTypeByID(DESC_LABEL, Text.class).setText(desc);
         this.building = building;
         this.isInverted = isInverted;
-        this.parent = parent;
+
+        groupedItemList = new ArrayList<>(allItems.apply(building));
     }
 
-    /**
-     * To be called by the owning window on button click.
-     *
-     * @param button the clicked button.
-     */
-    public void onButtonClick(final Button button)
+
+    @Override
+    public Pane getIcon()
     {
+        final ItemIcon icon = new ItemIcon();
+        icon.setItem(representativeItem);
+        return icon;
+    }
+
+    @Override
+    public void onButtonClicked(@NotNull final Button button)
+    {
+        super.onButtonClicked(button);
         if (Objects.equals(button.getID(), BUTTON_SWITCH))
         {
             switchClicked(button);
         }
+    }
+
+    @Override
+    public void onOpened()
+    {
+        updateResources();
+    }
+
+    @Override
+    public boolean onKeyTyped(final char ch, final int key)
+    {
+        final boolean result = super.onKeyTyped(ch, key);
+        filter = window.findPaneOfTypeByID(INPUT_FILTER, TextField.class).getText();
+        updateResources();
+        return result;
     }
 
     /**
@@ -146,11 +127,11 @@ public class ViewFilterableList
             button.setText(OFF);
             if (isInverted)
             {
-                building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id)).ifPresent(m -> m.addItem(allItems.get(row)));
+                building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id)).ifPresent(m -> m.addItem(currentDisplayedList.get(row)));
             }
             else
             {
-                building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id)).ifPresent(m -> m.removeItem(allItems.get(row)));
+                building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id)).ifPresent(m -> m.removeItem(currentDisplayedList.get(row)));
             }
         }
         else
@@ -158,22 +139,14 @@ public class ViewFilterableList
             button.setText(ON);
             if (isInverted)
             {
-                building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id)).ifPresent(m -> m.removeItem(allItems.get(row)));
+                building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id)).ifPresent(m -> m.removeItem(currentDisplayedList.get(row)));
             }
             else
             {
-                building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id)).ifPresent(m -> m.addItem(allItems.get(row)));
+                building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id)).ifPresent(m -> m.addItem(currentDisplayedList.get(row)));
             }
         }
         resourceList.refreshElementPanes();
-    }
-
-    /**
-     * On opened, supposed to be called by the window this belongs to.
-     */
-    public void onOpened()
-    {
-        updateResources();
     }
 
     /**
@@ -184,17 +157,22 @@ public class ViewFilterableList
         final Predicate<ItemStack> filterPredicate = stack -> filter.isEmpty()
                                                                 || stack.getTranslationKey().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))
                                                                 || stack.getDisplayName().getString().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US));
-        allItems.clear();
-        allItems.addAll(getBlockList(filterPredicate));
-        allItems.addAll(getExceptions().stream().filter(storage -> filterPredicate.test(storage.getItemStack())).collect(Collectors.toList()));
+        currentDisplayedList.clear();
+        for (final ItemStorage storage : groupedItemList)
+        {
+            if (filterPredicate.test(storage.getItemStack()))
+            {
+                currentDisplayedList.add(storage);
+            }
+        }
 
-        allItems.sort((o1, o2) -> {
+        currentDisplayedList.sort((o1, o2) -> {
 
             boolean o1Allowed = building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id))
-                                  .map(m -> m.isAllowedItem(new ItemStorage(o1.getItemStack()))).orElse(false);
+                                  .map(m -> m.isAllowedItem(o1)).orElse(false);
 
             boolean o2Allowed = building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id))
-                                  .map(m -> m.isAllowedItem(new ItemStorage(o2.getItemStack()))).orElse(false);
+                                  .map(m -> m.isAllowedItem(o2)).orElse(false);
 
             if(!o1Allowed && o2Allowed)
             {
@@ -214,43 +192,12 @@ public class ViewFilterableList
     }
 
     /**
-     * Get the list of blocks which should be added.
-     *
-     * @param filterPredicate the predicate to filter all blocks for.
-     * @return an immutable list of blocks.
-     */
-    private Collection<? extends ItemStorage> getBlockList(final Predicate<ItemStack> filterPredicate)
-    {
-        return parent.getBlockList(filterPredicate, id);
-    }
-
-    /**
-     * Add exceptions which do not match the predicate after scanning.
-     *
-     * @return a list of {@link ItemStorage}s that do not match the predicate.
-     */
-    private List<ItemStorage> getExceptions()
-    {
-        return Collections.emptyList();
-    }
-
-    /**
-     * On key typed, supposed to be called by the owning window.
-     */
-    public void onKeyTyped()
-    {
-        filter = window.findPaneOfTypeByID(INPUT_NAME, TextField.class).getText();
-        updateResources();
-    }
-
-    /**
      * Updates the resource list in the GUI with the info we need.
      */
     private void updateResourceList()
     {
         resourceList.enable();
         resourceList.show();
-        final List<ItemStorage> tempRes = new ArrayList<>(allItems);
 
         //Creates a dataProvider for the unemployed resourceList.
         resourceList.setDataProvider(new ScrollingList.DataProvider()
@@ -262,7 +209,7 @@ public class ViewFilterableList
             @Override
             public int getElementCount()
             {
-                return tempRes.size();
+                return currentDisplayedList.size();
             }
 
             /**
@@ -273,13 +220,12 @@ public class ViewFilterableList
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                final ItemStack resource = tempRes.get(index).getItemStack();
+                final ItemStack resource = currentDisplayedList.get(index).getItemStack();
                 final Text resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Text.class);
                 resourceLabel.setText(resource.getDisplayName());
                 resourceLabel.setColors(WHITE);
                 rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(resource);
-                final boolean isAllowedItem  = building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id))
-                                                 .map(m -> m.isAllowedItem(new ItemStorage(resource))).orElse(!isInverted);
+                final boolean isAllowedItem  = building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id)).map(m -> m.isAllowedItem(new ItemStorage(resource))).orElse(!isInverted);
                 final Button switchButton = rowPane.findPaneOfTypeByID(BUTTON_SWITCH, Button.class);
 
                 if ((isInverted && !isAllowedItem) || (!isInverted && isAllowedItem))
@@ -294,3 +240,4 @@ public class ViewFilterableList
         });
     }
 }
+

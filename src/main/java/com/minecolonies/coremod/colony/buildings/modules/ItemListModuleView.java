@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.buildings.modules.*;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.client.gui.ItemListModuleWindow;
 import com.minecolonies.coremod.network.messages.server.colony.building.AssignFilterableItemMessage;
 import net.minecraft.network.PacketBuffer;
 import org.jetbrains.annotations.NotNull;
@@ -148,5 +149,12 @@ public class ItemListModuleView extends AbstractBuildingModuleView implements IB
         {
             listsOfItems.add(new ItemStorage(buf.readItemStack()));
         }
+    }
+
+
+    @Override
+    public IModuleWindow getWindow()
+    {
+        return new ItemListModuleWindow("", buildingView, id, desc, allItems, inverted);
     }
 }

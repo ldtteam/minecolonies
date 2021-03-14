@@ -18,7 +18,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECO
 /**
  * Dyer window class. Specifies the extras the dyer has for its list.
  */
-public class WindowHutDyer extends AbstractHutFilterableLists
+public class WindowHutDyer extends ItemListModuleWindow
 {
     /**
      * View containing the list.

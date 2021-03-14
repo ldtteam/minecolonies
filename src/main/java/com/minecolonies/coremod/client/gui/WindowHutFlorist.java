@@ -24,7 +24,7 @@ import static com.minecolonies.coremod.client.gui.ViewFilterableList.ON;
 /**
  * Florist window class. Specifies the extras the florist has for its list.
  */
-public class WindowHutFlorist extends AbstractHutFilterableLists
+public class WindowHutFlorist extends ItemListModuleWindow
 {
     /**
      * View containing the list.

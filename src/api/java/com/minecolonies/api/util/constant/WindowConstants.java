@@ -1137,6 +1137,31 @@ public final class WindowConstants
     public static final String UPGRADE_PROGRESS_LABEL = "upgradeProgress";
 
     /**
+     * Input filter id.
+     */
+    public static final String INPUT_FILTER = "input";
+
+    /**
+     * Description label Id.
+     */
+    public static final String DESC_LABEL = "desc";
+
+    /**
+     * Switch button Id.
+     */
+    public static final String BUTTON_SWITCH = "switch";
+
+    /**
+     * String describing on for the gui.
+     */
+    public static final String ON = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON);
+
+    /**
+     * String describing off for the gui.
+     */
+    public static final String OFF = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF);
+
+    /**
      * Private constructor to hide implicit public one.
      */
     private WindowConstants()

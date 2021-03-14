@@ -18,7 +18,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECO
 /**
  * Glassblower window class. Specifies the extras the glassblower has for its list.
  */
-public class WindowHutGlassblower extends AbstractHutFilterableLists
+public class WindowHutGlassblower extends ItemListModuleWindow
 {
     /**
      * View containing the list.

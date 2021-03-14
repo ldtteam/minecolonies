@@ -23,7 +23,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 /**
  * Window for the lumberjack hut.
  */
-public class WindowHutLumberjack extends AbstractHutFilterableLists
+public class WindowHutLumberjack extends ItemListModuleWindow
 {
     /**
      * Id of the button to toggle replant of saplings

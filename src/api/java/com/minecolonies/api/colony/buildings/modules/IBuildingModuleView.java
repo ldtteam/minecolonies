@@ -21,4 +21,10 @@ public interface IBuildingModuleView
      * @return this module itself.
      */
     IBuildingModuleView setBuildingView(final IBuildingView buildingView);
+
+    /**
+     * Get the matching window for the module.
+     * @return the window.
+     */
+    IModuleWindow getWindow();
 }

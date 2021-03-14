@@ -22,7 +22,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECO
 /**
  * Composter window class. Specifies the extras the composter has for its list.
  */
-public class WindowHutComposter extends AbstractHutFilterableLists
+public class WindowHutComposter extends ItemListModuleWindow
 {
     /**
      * Id of the button to toggle replant of saplings

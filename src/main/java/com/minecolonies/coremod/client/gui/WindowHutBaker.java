@@ -33,7 +33,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 /**
  * Baker window class. Specifies the extras the bakery has for its list.
  */
-public class WindowHutBaker extends AbstractHutFilterableLists
+public class WindowHutBaker extends ItemListModuleWindow
 {
     /**
      * The resource string.

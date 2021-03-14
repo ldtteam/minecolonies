@@ -18,7 +18,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECO
 /**
  * Stone smelter window class. Specifies the extras the stone smelter has for its list.
  */
-public class WindowHutStoneSmelter extends AbstractHutFilterableLists
+public class WindowHutStoneSmelter extends ItemListModuleWindow
 {
     /**
      * View containing the list.

@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Button;
@@ -33,7 +32,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 /**
  * Cook window class. Specifies the extras the composter has for its list.
  */
-public class WindowHutCook extends AbstractHutFilterableLists
+public class WindowHutCook extends ItemListModuleWindow
 {
     /**
      * The resource string.
