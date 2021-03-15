@@ -660,7 +660,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                 .setSortOrder(2)
                 .setIcon(ModBlocks.blockGrave.asItem())
                 .addBuildingRequirement(ModBuildings.GRAVEYARD_ID, 3)
-                .addItemCost(Items.NETHER_WART_BLOCK, 8)
+                .addItemCost(Items.ROTTEN_FLESH, 64)
                 .addEffect(GRAVE_DECAY_BONUS, 1)
                 .addToList(r);
 
@@ -671,7 +671,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                 .setSortOrder(2)
                 .setIcon(ModBlocks.blockGrave.asItem())
                 .addBuildingRequirement(ModBuildings.GRAVEYARD_ID, 5)
-                .addItemCost(Items.ROTTEN_FLESH, 64)
+                .addItemCost(Items.NETHER_WART_BLOCK, 8)
                 .addEffect(GRAVE_DECAY_BONUS, 2)
                 .addToList(r);
 
