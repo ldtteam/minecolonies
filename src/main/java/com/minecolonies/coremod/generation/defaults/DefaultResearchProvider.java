@@ -83,7 +83,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         effects.add(new ResearchEffect(FLEEING_DAMAGE).setTranslatedName("Guards Take -%3$s%% Damage When Fleeing").setLevels(new double[] {0.2, 0.3, 0.4, 1}));
         effects.add(new ResearchEffect(FLEEING_SPEED).setTranslatedName("Fleeing Citizens Gain Swiftness %2$s").setLevels(new double[] {1, 2, 3, 5}));
         effects.add(new ResearchEffect(GROWTH).setTranslatedName("Child Growth Rate +%3$s%%").setLevels(new double[] {0.05, 0.1, 0.25, 0.5, 1}));
-        effects.add(new ResearchEffect(HAPPINESS).setTranslatedName("Citizen Happiness +%3$s%%").setLevels(new double[] {0.05, 0.1, 0.1, 0.2, 0.5}));
+        effects.add(new ResearchEffect(HAPPINESS).setTranslatedName("Citizen Happiness +%3$s%%").setLevels(new double[] {0.05, 0.1, 0.15, 0.2, 0.5}));
         effects.add(new ResearchEffect(SATLIMIT).setTranslatedName("Healing Saturation Min %s").setLevels(new double[] {-0.5, -1, -1.5, -2, -5}));
         effects.add(new ResearchEffect(HEALTH_BOOST).setTranslatedName("Citizen HP +%s").setLevels(new double[] {2, 4, 6, 8, 10, 20}));
         effects.add(new ResearchEffect(LEVELING).setTranslatedName("Citizen XP Growth +%3$s%%").setLevels(new double[] {0.05, 0.1, 0.25, 0.5, 1}));
