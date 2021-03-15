@@ -802,7 +802,7 @@
   "com.minecolonies.coremod.status.emptying": "Emptying a grave",
   "com.minecolonies.coremod.status.burying": "Burying a citizen...",
   "com.minecolonies.coremod.status.resurrect": "Trying to resurrect a citizen...",
-  "com.minecolonies.coremod.resurrect": "Amazing! Your Undertaker resurrected %s today! Your citizens won't mourn anymore.",
+  "com.minecolonies.coremod.resurrect": "Amazing! Your Undertaker resurrected %s today!",
   "com.minecolonies.coremod.gravespawned": "A grave spawned, collect it before it decays!",
   "com.minecolonies.coremod.nospaceforgrave": "Your Graveyard is full and %s couldn't be buried. Upgrade it or build more Graveyards before this happens again!",
 
@@ -906,7 +906,6 @@
   "com.minecolonies.coremod.colonysizechange": "All land within %d chunks of %s has been claimed.",
 
   "com.minecolonies.coremod.mourning": "There has been a death in the colony. The colony will mourn %s tomorrow out of respect.",
-  "com.minecolonies.coremod.mourning.remove": "Your Undertaker recovered the grave of %s. The colony will feel a bit better after noon.",
 
   "event.minecolonies.raidmessage1": "§4Mysterious warriors have been spotted %s of %s!",
   "event.minecolonies.raidmessage2": "§4Citizens report rumors of raiders %s of %s!",

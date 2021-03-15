@@ -322,8 +322,6 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_MOURN                                       = "com.minecolonies.coremod.mourning";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_MOURN_REMOVE                                = "com.minecolonies.coremod.mourning.remove";
-    @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_HIRE_PAUSE                              = "com.minecolonies.coremod.gui.hiring.buttonpaused";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_HIRE_UNPAUSE                            = "com.minecolonies.coremod.gui.hiring.buttonunpaused";
