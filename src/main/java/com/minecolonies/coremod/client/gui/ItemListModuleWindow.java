@@ -92,8 +92,12 @@ public class ItemListModuleWindow extends AbstractModuleWindow
     public boolean onKeyTyped(final char ch, final int key)
     {
         final boolean result = super.onKeyTyped(ch, key);
-        filter = window.findPaneOfTypeByID(INPUT_FILTER, TextField.class).getText();
-        updateResources();
+        final String newFilter = window.findPaneOfTypeByID(INPUT_FILTER, TextField.class).getText();
+        if (!newFilter.equals(filter))
+        {
+            filter = newFilter;
+            updateResources();
+        }
         return result;
     }
 

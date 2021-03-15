@@ -27,6 +27,8 @@ public abstract class AbstractModuleWindow extends AbstractWindowSkeleton implem
         super(res);
         final Random random = new Random();
         int offset = 0;
+
+        //todo We have to move this to 0 as soon as we're finished with modularization and remove the switch views in favor of a sidenav xml.
         if (building.getAllModuleViews().size() > 0)
         {
             final ButtonImage image = new ButtonImage();
