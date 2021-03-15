@@ -956,7 +956,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         markDirty();
     }
 
-
     /**
      * Get the Job DisplayName
      */
