@@ -9,7 +9,7 @@ public class DataGeneratorConstants
 
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
-    private static final String DATAPACK_DIR = "data/" + Constants.MOD_ID + "/";
+    public static final String DATAPACK_DIR = "data/" + Constants.MOD_ID + "/";
 
     // DataPack Directories \\
 
