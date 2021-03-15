@@ -51,24 +51,24 @@ public class EntityAIWorkGravedigger extends AbstractEntityAIInteract<JobGravedi
     private static final double XP_PER_WANDER = 0.01;
 
     /**
-     * The weigth of each building level on the resurection chances.
+     * The weigth of each building level on the resurrection chances.
      */
-    private static final double RESURECT_BUILDING_LVL_WEIGHT = 0.005;
+    private static final double RESURRECT_BUILDING_LVL_WEIGHT = 0.005;
 
     /**
-     * The weigth of each worker level on the resurection chances.
+     * The weigth of each worker level on the resurrection chances.
      */
-    private static final double RESURECT_WORKER_MANA_LVL_WEIGHT = 0.0025;
+    private static final double RESURRECT_WORKER_MANA_LVL_WEIGHT = 0.0025;
 
     /**
-     * The max resurection chance cap [0.0 min -> 1.0 max]
+     * The max resurrection chance cap [0.0 min -> 1.0 max]
      */
-    private static final double MAX_RESURECTION_CHANCE = 0.10;
+    private static final double MAX_RESURRECTION_CHANCE = 0.10;
 
     /**
-     * The bonus to max resurection chance cap per max lvl of Mystical Site in the city
+     * The bonus to max resurrection chance cap per max lvl of Mystical Site in the city
      */
-    private static final double MAX_RESURECTION_CHANCE_MYSTICAL_LVL_BONUS = 0.01;
+    private static final double MAX_RESURRECTION_CHANCE_MYSTICAL_LVL_BONUS = 0.01;
 
     /**
      * The random variable.
@@ -351,9 +351,9 @@ public class EntityAIWorkGravedigger extends AbstractEntityAIInteract<JobGravedi
     }
 
     /**
-     * Attempt to resurect buried citizen from its citizen data
+     * Attempt to resurrect buried citizen from its citizen data
      *
-     * Calculate chance of resurectionfrom, rool to see if resurection successfull and resurect if need be
+     * Calculate chance of resurrectionfrom, rool to see if resurrection successfull and resurrect if need be
      */
     private IAIState tryResurrect()
     {
@@ -399,11 +399,11 @@ public class EntityAIWorkGravedigger extends AbstractEntityAIInteract<JobGravedi
 
     private double getResurrectChance(@NotNull final BuildingGraveyard buildingGraveyard)
     {
-        double chance = buildingGraveyard.getBuildingLevel() * RESURECT_BUILDING_LVL_WEIGHT +
-                worker.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Mana) * RESURECT_WORKER_MANA_LVL_WEIGHT +
+        double chance = buildingGraveyard.getBuildingLevel() * RESURRECT_BUILDING_LVL_WEIGHT +
+                worker.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Mana) * RESURRECT_WORKER_MANA_LVL_WEIGHT +
                 worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(RESURRECT_CHANCE);
 
-        final double cap = MAX_RESURECTION_CHANCE + worker.getCitizenColonyHandler().getColony().getBuildingManager().getMysticalSiteMaxBuildingLevel() * MAX_RESURECTION_CHANCE_MYSTICAL_LVL_BONUS;
+        final double cap = MAX_RESURRECTION_CHANCE + worker.getCitizenColonyHandler().getColony().getBuildingManager().getMysticalSiteMaxBuildingLevel() * MAX_RESURRECTION_CHANCE_MYSTICAL_LVL_BONUS;
         if (chance > cap) { chance = cap; }
         return chance;
     }
