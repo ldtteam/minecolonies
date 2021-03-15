@@ -632,7 +632,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
 
         final Research resurrectChance1 = new Research(new ResourceLocation(Constants.MOD_ID, "civilian/resurrectchance1"), CIVIL)
                 .setParentResearch(remembrance)
-                .setTranslatedName("Resurrect Change I")
+                .setTranslatedName("Resurrection Chance I")
                 .setTranslatedSubtitle("Use the right words")
                 .setSortOrder(1)
                 .setIcon(ModBlocks.blockHutGraveyard.asItem())
@@ -643,7 +643,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
 
         new Research(new ResourceLocation(Constants.MOD_ID, "civilian/resurrectchance2"), CIVIL)
                 .setParentResearch(resurrectChance1)
-                .setTranslatedName("Resurrect Change II")
+                .setTranslatedName("Resurrection Chance II")
                 .setTranslatedSubtitle("Dance around and wave your hands")
                 .setSortOrder(1)
                 .setIcon(ModBlocks.blockHutGraveyard.asItem())
