@@ -5,7 +5,7 @@ import com.minecolonies.api.advancements.army_population.ArmyPopulationTrigger;
 import com.minecolonies.api.advancements.building_add_recipe.BuildingAddRecipeTrigger;
 import com.minecolonies.api.advancements.citizen_bury.CitizenBuryTrigger;
 import com.minecolonies.api.advancements.citizen_eat_food.CitizenEatFoodTrigger;
-import com.minecolonies.api.advancements.citizen_resurrect.citizen_bury.CitizenResurrecTrigger;
+import com.minecolonies.api.advancements.citizen_resurrect.citizen_bury.CitizenResurrectTrigger;
 import com.minecolonies.api.advancements.click_gui_button.ClickGuiButtonTrigger;
 import com.minecolonies.api.advancements.colony_population.ColonyPopulationTrigger;
 import com.minecolonies.api.advancements.complete_build_request.CompleteBuildRequestTrigger;
@@ -37,7 +37,7 @@ public class AdvancementTriggers
     public static final DeepMineTrigger             DEEP_MINE              = new DeepMineTrigger();
     public static final AllTowersTrigger            ALL_TOWERS             = new AllTowersTrigger();
     public static final CitizenBuryTrigger          CITIZEN_BURY           = new CitizenBuryTrigger();
-    public static final CitizenResurrecTrigger CITIZEN_RESURRECT      = new CitizenResurrecTrigger();
+    public static final CitizenResurrectTrigger CITIZEN_RESURRECT      = new CitizenResurrectTrigger();
 
     /**
      * Registers all the triggers so they can be referenced in the advancement JSON
