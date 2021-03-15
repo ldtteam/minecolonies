@@ -12,12 +12,12 @@ public enum ResearchBranchType
      */
     DEFAULT("default"),
     /**
-     * Branch using Tree-based DragZoomView.  Does not enforce university level, allows multiple researches above the university's max level, does not show research level
+     * Branch using Tree-based DragZoomView with reduced restrictions.  Does not enforce university level, allows multiple researches above the university's max level, does not show research level
      * requirement in headers, does not show research level time headers if branch-time is under 0.01. This is not a replacement for vanilla advancements: use only where University
      * behaviors are important (eg: time, item cost, parent requirement enforcement), where requirement complexity is too broad to fit the Advancement system, where exclusive
      * branches or colony-wide announcements are required, or where requirement or reward is tied to a colony-wide behavior instead of a player-specific one.
      */
-    UNRESTRICTED_TREE("unrestricted-tree");
+    UNLOCKABLES("unlockables");
 
     /**
      * The string tag representation of the Branch-Type.  Used both in logic, and in datapack JSON.
