@@ -632,7 +632,7 @@
   "com.minecolonies.coremod.gui.workerhuts.farmerhut.assignmentmode": "Assign Fields to Farmer:",
   "com.minecolonies.coremod.gui.workerhuts.farmerhut.requestfertilizer": "Allow Farmer to request Fertilizer",
 
-  "com.minecolonies.coremod.job.gravedigger": "Gravedigger",
+  "com.minecolonies.coremod.job.undertaker": "Undertaker",
   "com.minecolonies.coremod.gui.workerhuts.graveyard": "Graveyard",
   "com.minecolonies.coremod.gui.workerhuts.graveyard.graves": "Graves to retrieve",
   "com.minecolonies.coremod.gui.workerhuts.graveyard.rip": "Citizens buried here",
@@ -801,7 +801,7 @@
   "com.minecolonies.coremod.status.emptying": "Emptying a grave",
   "com.minecolonies.coremod.status.burying": "Burying a citizen...",
   "com.minecolonies.coremod.status.resurrect": "Trying to resurrect a citizen...",
-  "com.minecolonies.coremod.resurrect": "Amazing! Your Gravedigger resurrected %s today! Your citizens won't mourn anymore.",
+  "com.minecolonies.coremod.resurrect": "Amazing! Your Undertaker resurrected %s today! Your citizens won't mourn anymore.",
   "com.minecolonies.coremod.gravespawned": "A grave spawned, collect it before it decays!",
   "com.minecolonies.coremod.nospaceforgrave": "Your Graveyard is full and %s couldn't be buried. Upgrade it or build more Graveyards before this happens again!",
 
@@ -905,7 +905,7 @@
   "com.minecolonies.coremod.colonysizechange": "All land within %d chunks of %s has been claimed.",
 
   "com.minecolonies.coremod.mourning": "There has been a death in the colony. The colony will mourn %s tomorrow out of respect.",
-  "com.minecolonies.coremod.mourning.remove": "Your Gravedigger recovered the grave of %s. The colony will feel a bit better after noon.",
+  "com.minecolonies.coremod.mourning.remove": "Your Undertaker recovered the grave of %s. The colony will feel a bit better after noon.",
 
   "event.minecolonies.raidmessage1": "§4Mysterious warriors have been spotted %s of %s!",
   "event.minecolonies.raidmessage2": "§4Citizens report rumors of raiders %s of %s!",
@@ -1209,7 +1209,7 @@
   "advancements.minecolonies.citizen.bury.title": "A Sad Day Indeed",
   "advancements.minecolonies.citizen.bury.description": "Bury your first citizen. It's a sad day for everyone, but better than letting their grave decay away.",
   "advancements.minecolonies.citizen.resurrect.title": "A Wonderful Day Indeed",
-  "advancements.minecolonies.citizen.resurrect.description": "Your Gravedigger resurrected a fallen citizen!",
+  "advancements.minecolonies.citizen.resurrect.description": "Your Undertaker resurrected a fallen citizen!",
   "advancements.minecolonies.build.tavern.title": "Any Shelter Will Do",
   "advancements.minecolonies.build.tavern.description": "Your citizens need a roof over their heads! Build a Tavern for some initial housing. You can also recruit citizens there!",
   "advancements.minecolonies.build.town_hall.title": "The Centerpiece",
@@ -1553,9 +1553,9 @@
   "com.minecolonies.coremod.info.barracks.2": "Now let's cover some frequently asked questions:\n\n Q 1. Can I have more than 1 Barracks?\n   A 1. Yes, but the Barracks Tower levels are based on the Barracks they are attached to. So even if you have one Barracks that is level 5, if the second Barracks is only level 1, then that Barracks can only have a single level 1 tower.",
 
   "com.minecolonies.coremod.info.graveyard.0.name": "Introduction",
-  "com.minecolonies.coremod.info.graveyard.0": "The Graveyard is the resting place of your fallen citizens!\n\nWithout it, you'll still be able to manually collect fallen citizens' graves, but your colony will mourn longer.\n\nEach Graveyard needs a Gravedigger, who collects graves within the city.",
+  "com.minecolonies.coremod.info.graveyard.0": "The Graveyard is the resting place of your fallen citizens!\n\nWithout it, you'll still be able to manually collect fallen citizens' graves, but your colony will mourn longer.\n\nEach Graveyard needs an Undertaker, who collects graves within the city.",
   "com.minecolonies.coremod.info.graveyard.1.name": "Resurrection",
-  "com.minecolonies.coremod.info.graveyard.1": "During their free time, the Gravedigger will get to know citizens and visit the Mystical Site, slowly attuning to the mana of the world.\n\nIf their Mana skill is high, the Gravedigger has a small chance to resurrect a fallen citizen!\n\nYou can increase this chance by upgrading the Graveyard, building a Mystical Site, and completing researches in the university.",
+  "com.minecolonies.coremod.info.graveyard.1": "During their free time, the Undertaker will get to know citizens and visit the Mystical Site, slowly attuning to the mana of the world.\n\nIf their Mana skill is high, the Undertaker has a small chance to resurrect a fallen citizen!\n\nYou can increase this chance by upgrading the Graveyard, building a Mystical Site, and completing researches in the university.",
 
   "com.minecolonies.coremod.movebuilding.invalid": "Can't reposition to this position, undestroyable block at destination!",
 

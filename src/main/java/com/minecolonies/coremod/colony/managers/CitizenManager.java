@@ -24,7 +24,7 @@ import com.minecolonies.coremod.colony.buildings.modules.BedHandlingModule;
 import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
 import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenSpawnedEvent;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
-import com.minecolonies.coremod.colony.jobs.JobGravedigger;
+import com.minecolonies.coremod.colony.jobs.JobUndertaker;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewCitizenViewMessage;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewRemoveCitizenMessage;
@@ -604,7 +604,7 @@ public class CitizenManager implements ICitizenManager
     {
         for (final ICitizenData citizen : getCitizens())
         {
-            if (citizen.getEntity().isPresent() && !(citizen.getJob() instanceof AbstractJobGuard) && !(citizen.getJob() instanceof JobGravedigger))
+            if (citizen.getEntity().isPresent() && !(citizen.getJob() instanceof AbstractJobGuard) && !(citizen.getJob() instanceof JobUndertaker))
             {
                 citizen.getEntity().get().setMourning(mourn);
             }

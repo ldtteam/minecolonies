@@ -164,7 +164,7 @@ public enum AIWorkerState implements IAIState
     FARMER_HARVEST(false),
 
       /*
-###Gravedigger###
+###Undertaker###
     */
 
     /**

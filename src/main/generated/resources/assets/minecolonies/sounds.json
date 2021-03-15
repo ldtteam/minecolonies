@@ -2719,7 +2719,7 @@
       }
     ]
   },
-  "mob.gravedigger.male.general": {
+  "mob.undertaker.male.general": {
     "category": "neutral",
     "sounds": [
       {
@@ -2736,7 +2736,7 @@
       }
     ]
   },
-  "mob.gravedigger.female.general": {
+  "mob.undertaker.female.general": {
     "category": "neutral",
     "sounds": [
       {
@@ -2753,7 +2753,7 @@
       }
     ]
   },
-  "mob.gravedigger.male.noise": {
+  "mob.undertaker.male.noise": {
     "category": "neutral",
     "sounds": [
       {
@@ -2770,7 +2770,7 @@
       }
     ]
   },
-  "mob.gravedigger.female.noise": {
+  "mob.undertaker.female.noise": {
     "category": "neutral",
     "sounds": [
       {
@@ -2787,7 +2787,7 @@
       }
     ]
   },
-  "mob.gravedigger.male.off_to_bed": {
+  "mob.undertaker.male.off_to_bed": {
     "category": "neutral",
     "sounds": [
       {
@@ -2804,7 +2804,7 @@
       }
     ]
   },
-  "mob.gravedigger.female.off_to_bed": {
+  "mob.undertaker.female.off_to_bed": {
     "category": "neutral",
     "sounds": [
       {
@@ -2821,7 +2821,7 @@
       }
     ]
   },
-  "mob.gravedigger.male.bad_weather": {
+  "mob.undertaker.male.bad_weather": {
     "category": "neutral",
     "sounds": [
       {
@@ -2838,7 +2838,7 @@
       }
     ]
   },
-  "mob.gravedigger.female.bad_weather": {
+  "mob.undertaker.female.bad_weather": {
     "category": "neutral",
     "sounds": [
       {
@@ -2855,7 +2855,7 @@
       }
     ]
   },
-  "mob.gravedigger.male.saturation_low": {
+  "mob.undertaker.male.saturation_low": {
     "category": "neutral",
     "sounds": [
       {
@@ -2872,7 +2872,7 @@
       }
     ]
   },
-  "mob.gravedigger.female.saturation_low": {
+  "mob.undertaker.female.saturation_low": {
     "category": "neutral",
     "sounds": [
       {
@@ -2889,7 +2889,7 @@
       }
     ]
   },
-  "mob.gravedigger.male.saturation_high": {
+  "mob.undertaker.male.saturation_high": {
     "category": "neutral",
     "sounds": [
       {
@@ -2906,7 +2906,7 @@
       }
     ]
   },
-  "mob.gravedigger.female.saturation_high": {
+  "mob.undertaker.female.saturation_high": {
     "category": "neutral",
     "sounds": [
       {
@@ -2923,7 +2923,7 @@
       }
     ]
   },
-  "mob.gravedigger.male.bad_housing": {
+  "mob.undertaker.male.bad_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -2940,7 +2940,7 @@
       }
     ]
   },
-  "mob.gravedigger.female.bad_housing": {
+  "mob.undertaker.female.bad_housing": {
     "category": "neutral",
     "sounds": [
       {
@@ -2957,7 +2957,7 @@
       }
     ]
   },
-  "mob.gravedigger.male.greeting": {
+  "mob.undertaker.male.greeting": {
     "category": "neutral",
     "sounds": [
       {
@@ -2974,7 +2974,7 @@
       }
     ]
   },
-  "mob.gravedigger.female.greeting": {
+  "mob.undertaker.female.greeting": {
     "category": "neutral",
     "sounds": [
       {
@@ -2991,7 +2991,7 @@
       }
     ]
   },
-  "mob.gravedigger.male.farewell": {
+  "mob.undertaker.male.farewell": {
     "category": "neutral",
     "sounds": [
       {
@@ -3008,7 +3008,7 @@
       }
     ]
   },
-  "mob.gravedigger.female.farewell": {
+  "mob.undertaker.female.farewell": {
     "category": "neutral",
     "sounds": [
       {
@@ -3025,7 +3025,7 @@
       }
     ]
   },
-  "mob.gravedigger.male.missing_equipment": {
+  "mob.undertaker.male.missing_equipment": {
     "category": "neutral",
     "sounds": [
       {
@@ -3042,7 +3042,7 @@
       }
     ]
   },
-  "mob.gravedigger.female.missing_equipment": {
+  "mob.undertaker.female.missing_equipment": {
     "category": "neutral",
     "sounds": [
       {
@@ -3059,7 +3059,7 @@
       }
     ]
   },
-  "mob.gravedigger.male.happy": {
+  "mob.undertaker.male.happy": {
     "category": "neutral",
     "sounds": [
       {
@@ -3076,7 +3076,7 @@
       }
     ]
   },
-  "mob.gravedigger.female.happy": {
+  "mob.undertaker.female.happy": {
     "category": "neutral",
     "sounds": [
       {
@@ -3093,7 +3093,7 @@
       }
     ]
   },
-  "mob.gravedigger.male.unhappy": {
+  "mob.undertaker.male.unhappy": {
     "category": "neutral",
     "sounds": [
       {
@@ -3110,7 +3110,7 @@
       }
     ]
   },
-  "mob.gravedigger.female.unhappy": {
+  "mob.undertaker.female.unhappy": {
     "category": "neutral",
     "sounds": [
       {
@@ -3127,7 +3127,7 @@
       }
     ]
   },
-  "mob.gravedigger.male.sickness": {
+  "mob.undertaker.male.sickness": {
     "category": "neutral",
     "sounds": [
       {
@@ -3144,7 +3144,7 @@
       }
     ]
   },
-  "mob.gravedigger.female.sickness": {
+  "mob.undertaker.female.sickness": {
     "category": "neutral",
     "sounds": [
       {
@@ -3161,7 +3161,7 @@
       }
     ]
   },
-  "mob.gravedigger.male.interaction": {
+  "mob.undertaker.male.interaction": {
     "category": "neutral",
     "sounds": [
       {
@@ -3178,7 +3178,7 @@
       }
     ]
   },
-  "mob.gravedigger.female.interaction": {
+  "mob.undertaker.female.interaction": {
     "category": "neutral",
     "sounds": [
       {
@@ -3195,7 +3195,7 @@
       }
     ]
   },
-  "mob.gravedigger.male.success": {
+  "mob.undertaker.male.success": {
     "category": "neutral",
     "sounds": [
       {
@@ -3212,7 +3212,7 @@
       }
     ]
   },
-  "mob.gravedigger.female.success": {
+  "mob.undertaker.female.success": {
     "category": "neutral",
     "sounds": [
       {
@@ -3229,7 +3229,7 @@
       }
     ]
   },
-  "mob.gravedigger.male.danger": {
+  "mob.undertaker.male.danger": {
     "category": "neutral",
     "sounds": [
       {
@@ -3246,7 +3246,7 @@
       }
     ]
   },
-  "mob.gravedigger.female.danger": {
+  "mob.undertaker.female.danger": {
     "category": "neutral",
     "sounds": [
       {

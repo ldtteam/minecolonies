@@ -20,8 +20,7 @@ import com.minecolonies.coremod.client.gui.WindowHutGraveyard;
 import com.minecolonies.api.colony.GraveData;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.jobs.JobGravedigger;
-import net.minecraft.block.HorizontalBlock;
+import com.minecolonies.coremod.colony.jobs.JobUndertaker;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.StringNBT;
@@ -54,7 +53,7 @@ public class BuildingGraveyard extends AbstractBuildingWorker
     /**
      * Descriptive string of the profession.
      */
-    private static final String GRAVEDIGGER = "gravedigger";
+    private static final String HUNDERTAKER = "undertaker";
 
     /**
      * The maximum building level of the hut.
@@ -87,7 +86,7 @@ public class BuildingGraveyard extends AbstractBuildingWorker
     private static final String TAG_RIP_CITIZEN_LIST = "ripCitizenList";
 
       /**
-     * The list of the graves the gravedigger need to collect.
+     * The list of the graves the undertaker need to collect.
      */
     private final Set<BlockPos> pendingGraves = new HashSet<>();
 
@@ -97,13 +96,13 @@ public class BuildingGraveyard extends AbstractBuildingWorker
     private final List<String> restingCitizen = new ArrayList<>();
 
     /**
-     * The field the gravedigger is currently collecting.
+     * The grave the undertaker is currently collecting.
      */
     @Nullable
     private BlockPos currentGrave;
 
     /**
-     * The data of the last grave dug by the gravedigger.
+     * The data of the last grave dug by the undertaker.
      */
     @Nullable
     private GraveData lastGraveData;
@@ -136,7 +135,7 @@ public class BuildingGraveyard extends AbstractBuildingWorker
     }
 
     /**
-     * Returns list of graves of the gravedigger.
+     * Returns list of graves that undertaker need to dig.
      *
      * @return a list of graves objects.
      */
@@ -162,7 +161,7 @@ public class BuildingGraveyard extends AbstractBuildingWorker
     }
 
     /**
-     * Clear the current grave the gravedigger is currently working on.
+     * Clear the current grave the undertaker is currently working on.
      */
     public void ClearCurrentGrave()
     {
@@ -170,7 +169,7 @@ public class BuildingGraveyard extends AbstractBuildingWorker
     }
 
     /**
-     * Retrieves a random grave to work on for the gravedigger.
+     * Retrieves a random grave to work on for the undertaker.
      *
      * @return a field to work on.
      */
@@ -213,7 +212,7 @@ public class BuildingGraveyard extends AbstractBuildingWorker
     @Override
     public IJob<?> createJob(@Nullable final ICitizenData citizen)
     {
-        return new JobGravedigger(citizen);
+        return new JobUndertaker(citizen);
     }
 
     @Override
@@ -290,7 +289,7 @@ public class BuildingGraveyard extends AbstractBuildingWorker
     @Override
     public String getJobName()
     {
-        return GRAVEDIGGER;
+        return HUNDERTAKER;
 }
 
     @NotNull

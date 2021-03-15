@@ -58,10 +58,10 @@ public final class ModJobsInitializer
                            .setRegistryName(ModJobs.FARMER_ID)
                            .createJobEntry();
 
-        ModJobs.gravedigger = new JobEntry.Builder()
-                           .setJobProducer(JobGravedigger::new)
+        ModJobs.undertaker = new JobEntry.Builder()
+                           .setJobProducer(JobUndertaker::new)
                            .setJobViewProducer(() -> CrafterJobView::new)
-                           .setRegistryName(ModJobs.GRAVEDIGGER_ID)
+                           .setRegistryName(ModJobs.UNDERTAKER_ID)
                            .createJobEntry();
 
         ModJobs.fisherman = new JobEntry.Builder()
@@ -280,7 +280,7 @@ public final class ModJobsInitializer
         reg.register(ModJobs.miner);
         reg.register(ModJobs.lumberjack);
         reg.register(ModJobs.farmer);
-        reg.register(ModJobs.gravedigger);
+        reg.register(ModJobs.undertaker);
         reg.register(ModJobs.fisherman);
         reg.register(ModJobs.baker);
         reg.register(ModJobs.cook);

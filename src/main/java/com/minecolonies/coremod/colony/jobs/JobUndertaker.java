@@ -4,21 +4,20 @@ import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
-import com.minecolonies.coremod.entity.ai.citizen.farmer.EntityAIWorkFarmer;
-import com.minecolonies.coremod.entity.ai.citizen.gravedigger.EntityAIWorkGravedigger;
+import com.minecolonies.coremod.entity.ai.citizen.hundertaker.EntityAIWorkUndertaker;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Job class of the gravedigger, handles the graves of dead citizen.
+ * Job class of the undertaker, handles the graves of dead citizen.
  */
-public class JobGravedigger extends AbstractJobCrafter<EntityAIWorkGravedigger, JobGravedigger>
+public class JobUndertaker extends AbstractJobCrafter<EntityAIWorkUndertaker, JobUndertaker>
 {
     /**
      * Public constructor of the farmer job.
      *
      * @param entity the entity to assign to the job.
      */
-    public JobGravedigger(final ICitizenData entity)
+    public JobUndertaker(final ICitizenData entity)
     {
         super(entity);
     }
@@ -26,21 +25,21 @@ public class JobGravedigger extends AbstractJobCrafter<EntityAIWorkGravedigger, 
     @Override
     public JobEntry getJobRegistryEntry()
     {
-        return ModJobs.gravedigger;
+        return ModJobs.undertaker;
     }
 
     @NotNull
     @Override
     public String getName()
     {
-        return "com.minecolonies.coremod.job.gravedigger";
+        return "com.minecolonies.coremod.job.undertaker";
     }
 
     @NotNull
     @Override
     public BipedModelType getModel()
     {
-        return BipedModelType.GRAVEDIGGER;
+        return BipedModelType.UNDERTAKER;
     }
 
     /**
@@ -48,8 +47,8 @@ public class JobGravedigger extends AbstractJobCrafter<EntityAIWorkGravedigger, 
      */
     @NotNull
     @Override
-    public EntityAIWorkGravedigger generateAI()
+    public EntityAIWorkUndertaker generateAI()
     {
-        return new EntityAIWorkGravedigger(this);
+        return new EntityAIWorkUndertaker(this);
     }
 }

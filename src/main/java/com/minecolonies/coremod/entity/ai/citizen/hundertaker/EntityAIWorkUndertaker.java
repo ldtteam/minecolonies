@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.entity.ai.citizen.gravedigger;
+package com.minecolonies.coremod.entity.ai.citizen.hundertaker;
 
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.advancements.AdvancementTriggers;
@@ -16,7 +16,7 @@ import com.minecolonies.api.colony.GraveData;
 import com.minecolonies.coremod.colony.buildings.BuildingMysticalSite;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingEnchanter;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingGraveyard;
-import com.minecolonies.coremod.colony.jobs.JobGravedigger;
+import com.minecolonies.coremod.colony.jobs.JobUndertaker;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.util.AdvancementUtils;
 import net.minecraft.block.*;
@@ -37,9 +37,9 @@ import static com.minecolonies.api.research.util.ResearchConstants.RESURRECT_CHA
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
 /**
- * Gravedigger AI class.
+ * Undertaker AI class.
  */
-public class EntityAIWorkGravedigger extends AbstractEntityAIInteract<JobGravedigger, BuildingGraveyard>
+public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertaker, BuildingGraveyard>
 {
     /**
      * The EXP Earned per dig.
@@ -86,28 +86,28 @@ public class EntityAIWorkGravedigger extends AbstractEntityAIInteract<JobGravedi
     private static final int EFFORT_RESURRECT = 400;
 
     /**
-     * Gravedigger emptying icon
+     * Undertaker emptying icon
      */
     private final static VisibleCitizenStatus EMPTYING_ICON =
-      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/gravedigger.png"), "com.minecolonies.gui.visiblestatus.emptying");
+      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/undertaker.png"), "com.minecolonies.gui.visiblestatus.emptying");
 
     /**
-     * Gravedigger digging icon
+     * Undertaker digging icon
      */
     private final static VisibleCitizenStatus DIGGING_ICON =
-            new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/gravedigger.png"), "com.minecolonies.gui.visiblestatus.digging");
+            new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/undertaker.png"), "com.minecolonies.gui.visiblestatus.digging");
 
     /**
-     * Gravedigger bury icon
+     * Undertaker bury icon
      */
     private final static VisibleCitizenStatus BURYING_ICON =
-            new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/gravedigger.png"), "com.minecolonies.gui.visiblestatus.burying");
+            new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/undertaker.png"), "com.minecolonies.gui.visiblestatus.burying");
 
     /**
-     * Gravedigger bury icon
+     * Undertaker resurrect icon
      */
     private final static VisibleCitizenStatus RESURRECT_ICON =
-            new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/gravedigger.png"), "com.minecolonies.gui.visiblestatus.resurrect");
+            new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/undertaker.png"), "com.minecolonies.gui.visiblestatus.resurrect");
 
     /**
      * Changed after finished digging in order to dump the inventory.
@@ -125,11 +125,11 @@ public class EntityAIWorkGravedigger extends AbstractEntityAIInteract<JobGravedi
     private Tuple<BlockPos, Direction> burialPos = null;
 
     /**
-     * Constructor for the Gravedigger. Defines the tasks the Gravedigger executes.
+     * Constructor for the Undertaker. Defines the tasks the Undertaker executes.
      *
-     * @param job a gravedigger job to use.
+     * @param job a undertaker job to use.
      */
-    public EntityAIWorkGravedigger(@NotNull final JobGravedigger job)
+    public EntityAIWorkUndertaker(@NotNull final JobUndertaker job)
     {
         super(job);
         super.registerTargets(
@@ -151,7 +151,7 @@ public class EntityAIWorkGravedigger extends AbstractEntityAIInteract<JobGravedi
     }
 
     /**
-     * Prepares the gravedigger for digging. Also requests the tools and checks if the gravedigger has queued graves.
+     * Prepares the undertaker for digging. Also requests the tools and checks if the undertaker has queued graves.
      *
      * @return the next IAIState
      */
@@ -188,7 +188,7 @@ public class EntityAIWorkGravedigger extends AbstractEntityAIInteract<JobGravedi
     }
 
     /**
-     * The gravedigger wander in the city, learning more about magic
+     * The undertaker wander in the city, learning more about magic
      *
      * @return the next IAIState
      */
@@ -500,7 +500,7 @@ public class EntityAIWorkGravedigger extends AbstractEntityAIInteract<JobGravedi
     }
 
     /**
-     * Returns the gravedigger's worker instance. Called from outside this class.
+     * Returns the undertaker's worker instance. Called from outside this class.
      *
      * @return citizen object
      */

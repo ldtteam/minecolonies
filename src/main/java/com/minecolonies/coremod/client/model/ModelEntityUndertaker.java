@@ -7,9 +7,9 @@ import com.minecolonies.api.client.render.modeltype.CitizenModel;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.client.renderer.model.ModelRenderer;
 
-public class ModelEntityGravedigger extends CitizenModel<AbstractEntityCitizen>
+public class ModelEntityUndertaker extends CitizenModel<AbstractEntityCitizen>
 {
-    public ModelEntityGravedigger()
+    public ModelEntityUndertaker()
     {
         ModelRenderer headDetail;
         ModelRenderer hatBottom;
