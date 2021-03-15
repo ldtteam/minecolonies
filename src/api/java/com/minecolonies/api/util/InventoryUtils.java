@@ -749,7 +749,7 @@ public class InventoryUtils
                 }
                 else if (entity instanceof ChestTileEntity)
                 {
-                    totalCount += getItemCountInProvider(entity, itemStack -> itemStack.isItemEqual(stack.getItemStack()));
+                    totalCount += getItemCountInProvider(entity, itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack.getItemStack(), !stack.ignoreDamageValue(), !stack.ignoreNBT() ));
                 }
 
                 if (totalCount > count)
@@ -2336,16 +2336,26 @@ public class InventoryUtils
         }
     }
 
+    /**
+     * Attempt to transfer as much item as possible from origin to target inventory
+     *
+     * @param origin the handler.
+     * @param target   the world.
+     * @return true if all item transfered, false if some item remain in origin
+     */
     public static boolean transferAllItemHandler(final IItemHandler origin, final IItemHandler target)
     {
         for (int i = 0; i < origin.getSlots(); ++i)
         {
-            final ItemStack itemstack = origin.getStackInSlot(i);
-            if(addItemStackToItemHandler(target, itemstack))
+            final ItemStack itemStack = origin.getStackInSlot(i);
+            if(!ItemStackUtils.isEmpty(itemStack))
             {
-                removeStackFromItemHandler(origin, itemstack, itemstack.getCount());
+                if(addItemStackToItemHandler(target, itemStack))
+                {
+                    removeStackFromItemHandler(origin, itemStack, itemStack.getCount());
+                }
+                else return false;
             }
-            else return false;
         }
 
         return true;

@@ -208,6 +208,11 @@ public final class NbtTagConstants
     public static final String TAG_INVENTORY = "inventory";
 
     /**
+     * Tag to store the content to nbt.
+     */
+    public static final String TAG_CONTENT = "content";
+
+    /**
      * Tag to store an empty stack to nbt.
      */
     public static final String TAG_EMPTY = "empty";
@@ -568,6 +573,7 @@ public final class NbtTagConstants
     public static final String TAG_DECAY_TIMER = "decaytimer";
     public static final String TAG_DECAYED = "decayed";
     public static final String TAG_SAVED_CITIZEN_NAME = "savedcitizenname";
+    public static final String TAG_SAVED_CITIZEN_JOB_NAME = "savedcitizenjobname";
     public static final String TAG_SAVED_CITIZEN_DATA = "savedcitizendata";
 
     /**

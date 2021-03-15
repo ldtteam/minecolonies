@@ -2,19 +2,19 @@
   "variants": {
     "facing=east": {
       "model": "minecolonies:block/blocknamedgrave",
-      "y": 0
+      "y": 90
     },
     "facing=south": {
       "model": "minecolonies:block/blocknamedgrave",
-      "y": 90
+      "y": 180
     },
     "facing=west": {
       "model": "minecolonies:block/blocknamedgrave",
-      "y": 180
+      "y": 270
     },
     "facing=north": {
       "model": "minecolonies:block/blocknamedgrave",
-      "y": 270
+      "y": 0
     }
   }
 }

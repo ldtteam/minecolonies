@@ -30,14 +30,12 @@ import net.minecraft.util.RegistryKey;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
 import java.util.*;
 
 import static com.minecolonies.api.util.constant.ColonyManagerConstants.*;
@@ -71,7 +69,7 @@ public final class ColonyManager implements IColonyManager
     /**
      * Pseudo unique id for the server
      */
-    private UUID serverUUID = null;
+    private UUID serverUUID = UUID.randomUUID();
 
     /**
      * Indicate if a schematic have just been downloaded. Client only
@@ -81,7 +79,7 @@ public final class ColonyManager implements IColonyManager
     /**
      * If the manager finished loading already.
      */
-    private boolean loaded = false;
+    private boolean capLoaded = false;
 
     @Override
     public void createColony(@NotNull final World w, final BlockPos pos, @NotNull final PlayerEntity player, @NotNull final String style)
@@ -610,6 +608,7 @@ public final class ColonyManager implements IColonyManager
         compound.put(RECIPE_MANAGER_TAG, recipeCompound);
     }
 
+    // File read for compat/recipe
     @Override
     public void read(@NotNull final CompoundNBT compound)
     {
@@ -661,35 +660,25 @@ public final class ColonyManager implements IColonyManager
         ModTagsInitializer.init();
         if (!world.isRemote)
         {
-            if (!loaded)
+            // Late-load restore if cap was not loaded
+            if (!capLoaded)
             {
-                @NotNull final File file = BackUpHelper.getSaveLocation((ServerWorld) world);
-                @Nullable final CompoundNBT data = BackUpHelper.loadNBTFromPath(file);
-                if (data != null)
-                {
-                    Log.getLogger().info("Loading Minecolonies Data");
-                    read(data);
-                    Log.getLogger().info("Load Complete");
-                }
-
-                if (serverUUID == null)
-                {
-                    serverUUID = UUID.randomUUID();
-                    Log.getLogger().info(String.format("New Server UUID %s", serverUUID));
-                }
-                else
-                {
-                    Log.getLogger().info(String.format("Server UUID %s", serverUUID));
-                }
-                loaded = true;
                 BackUpHelper.loadMissingColonies();
+                BackUpHelper.loadManagerBackup();
             }
+            capLoaded = false;
 
             for (@NotNull final IColony c : getColonies(world))
             {
                 c.onWorldLoad(world);
             }
         }
+    }
+
+    @Override
+    public void setCapLoaded()
+    {
+        this.capLoaded = true;
     }
 
     @Override
@@ -713,12 +702,7 @@ public final class ColonyManager implements IColonyManager
             {
                 c.onWorldUnload(world);
             }
-            if (loaded)
-            {
-                BackUpHelper.backupColonyData();
-                recipeManager.reset();
-                loaded = false;
-            }
+            BackUpHelper.backupColonyData();
         }
     }
 

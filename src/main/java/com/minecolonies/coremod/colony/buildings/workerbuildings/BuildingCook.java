@@ -23,7 +23,8 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.client.gui.WindowHutCook;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
-import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.coremod.colony.jobs.JobCook;
 import com.minecolonies.coremod.colony.jobs.JobCookAssistant;
@@ -70,6 +71,11 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
     private static final String COOK_DESC = "cook";
 
     /**
+     * Exclusion list id.
+     */
+    public static final String FOOD_EXCLUSION_LIST = "food";
+
+    /**
      * Max building level of the cook.
      */
     private static final int MAX_BUILDING_LEVEL = 5;
@@ -114,7 +120,7 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
     public BuildingCook(final IColony c, final BlockPos l)
     {
         super(c, l);
-        keepX.put(stack -> !isAllowedItem("food", new ItemStorage(stack)), new Tuple<> (STACKSIZE, true));
+        keepX.put((stack) -> this.hasModule(ItemListModule.class) && !this.getModuleMatching(ItemListModule.class, m -> m.getId().equals(FOOD_EXCLUSION_LIST)).map(m -> m.isItemInList(new ItemStorage(stack))).orElse(false), new Tuple<>(STACKSIZE, true));
         keepX.put(stack -> isAllowedFuel(stack), new Tuple<>(STACKSIZE, true));
         keepX.put(stack -> !ItemStackUtils.isEmpty(stack.getContainerItem()) && !stack.getContainerItem().getItem().equals(Items.BUCKET), new Tuple<>(STACKSIZE, false));
     }
@@ -471,7 +477,8 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
             return stack.getCount();
         }
 
-        if (ISFOOD.test(stack) && !isAllowedItem("food", new ItemStorage(stack)) && (localAlreadyKept.stream().filter(storage -> ISFOOD.test(storage.getItemStack())).mapToInt(ItemStorage::getAmount).sum() < STACKSIZE || !inventory))
+        if (ISFOOD.test(stack) && this.hasModule(ItemListModule.class) && !this.getModuleMatching(ItemListModule.class, m -> m.getId().equals(FOOD_EXCLUSION_LIST))
+                                                                                    .map(m -> m.isItemInList(new ItemStorage(stack))).orElse(false) && (localAlreadyKept.stream().filter(storage -> ISFOOD.test(storage.getItemStack())).mapToInt(ItemStorage::getAmount).sum() < STACKSIZE || !inventory))
         {
             final ItemStorage kept = new ItemStorage(stack);
             if (localAlreadyKept.contains(kept))
@@ -539,7 +546,7 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
     /**
      * BuildingCook View.
      */
-    public static class View extends AbstractFilterableListsView
+    public static class View extends AbstractBuildingWorker.View
     {
         /**
          * Instantiate the cook view.

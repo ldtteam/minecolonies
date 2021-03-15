@@ -103,7 +103,7 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
               new ItemStack(item, 8),
               Blocks.AIR);
 
-            addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage));
+            addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage), false);
 
             final Block block = item instanceof BlockItem ? ((BlockItem) item).getBlock() : null;
             if (block instanceof ConcretePowderBlock)
@@ -116,7 +116,7 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
                   new ItemStack(((ConcretePowderBlock) block).solidifiedState.getBlock(), 1),
                   Blocks.AIR);
 
-                addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage2));
+                addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage2), false);
             }
         }
     }

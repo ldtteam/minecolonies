@@ -69,6 +69,7 @@ import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -1458,14 +1459,6 @@ public class EntityCitizen extends AbstractEntityCitizen
             {
                 citizenColonyHandler.getColony().addNeedToMourn(true, citizenData.getName());
             }
-            if (citizenData.getJob() != null)
-            {
-                citizenData.getJob().onRemoval();
-            }
-            citizenColonyHandler.getColony().getCitizenManager().removeCivilian(getCitizenData());
-
-            final String deathCause = new StringTextComponent(damageSource.getDeathMessage(this).getString()).getString().replaceFirst(this.getDisplayName().getString(), "Citizen");
-            citizenColonyHandler.getColony().getEventDescriptionManager().addEventDescription(new CitizenDiedEvent(getPosition(), citizenData.getName(), deathCause));
 
             if(citizenColonyHandler.getColony().isCoordInColony(world, getPosition()))
             {
@@ -1475,6 +1468,15 @@ public class EntityCitizen extends AbstractEntityCitizen
             {
                 InventoryUtils.dropItemHandler(citizenData.getInventory(), world, (int) getPosX(), (int) getPosY(), (int) getPosZ());
             }
+
+            if (citizenData.getJob() != null)
+            {
+                citizenData.getJob().onRemoval();
+            }
+            citizenColonyHandler.getColony().getCitizenManager().removeCivilian(getCitizenData());
+
+            final String deathCause = new StringTextComponent(damageSource.getDeathMessage(this).getString()).getString().replaceFirst(this.getDisplayName().getString(), "Citizen");
+            citizenColonyHandler.getColony().getEventDescriptionManager().addEventDescription(new CitizenDiedEvent(getPosition(), citizenData.getName(), deathCause));
         }
         super.onDeath(damageSource);
     }
@@ -1493,9 +1495,20 @@ public class EntityCitizen extends AbstractEntityCitizen
 
            graveEntity.delayDecayTimer(getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(GRAVE_DECAY_BONUS));
            graveEntity.setSavedCitizenName(citizenData.getName());
+           if (citizenData.getJob() != null)
+           {
+               final IFormattableTextComponent jobName =  new TranslationTextComponent(citizenData.getJob().getName());
+               graveEntity.setSavedCitizenJobName(jobName.getString());
+           }
            graveEntity.setSavedCitizenDataNBT(citizenData.serializeNBT());
 
-           final BlockPos closestGraveyardPos = citizenColonyHandler.getColony().getBuildingManager().getClosestGraveyard(this);
+           BlockPos closestGraveyardPos = citizenColonyHandler.getColony().getBuildingManager().
+                   getClosestGraveyard(this, g -> g instanceof BuildingGraveyard && ((BuildingGraveyard)g).hasSpaceForNewGraves());
+           if(closestGraveyardPos == null )
+           {
+               closestGraveyardPos =citizenColonyHandler.getColony().getBuildingManager().getClosestGraveyard(this, null);
+           }
+
            if(closestGraveyardPos != null)
            {
                final BuildingGraveyard graveyard = (BuildingGraveyard)citizenColonyHandler.getColony().getBuildingManager().getBuilding(closestGraveyardPos);

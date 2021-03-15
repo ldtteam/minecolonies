@@ -14,7 +14,6 @@ import com.minecolonies.api.colony.managers.interfaces.IBuildingManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.tileentities.AbstractScarecrowTileEntity;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
-import com.minecolonies.api.tileentities.TileEntityGrave;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
@@ -555,13 +554,13 @@ public class BuildingManager implements IBuildingManager
     }
 
     @Override
-    public BlockPos getClosestGraveyard(final AbstractEntityCitizen citizen)
+    public BlockPos getClosestGraveyard(final AbstractEntityCitizen citizen, final Predicate<Object> predicate)
     {
         double distance = Double.MAX_VALUE;
         BlockPos graveyard = null;
         for (final IBuilding building : citizen.getCitizenColonyHandler().getColony().getBuildingManager().getBuildings().values())
         {
-            if (building instanceof BuildingGraveyard && building.getBuildingLevel() > 0)
+            if (building instanceof BuildingGraveyard && building.getBuildingLevel() > 0 && (predicate == null || predicate.test((BuildingGraveyard)building)))
             {
                 final double localDistance = building.getPosition().distanceSq(citizen.getPosition());
                 if (localDistance < distance)

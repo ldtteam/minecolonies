@@ -2,51 +2,45 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.ldtteam.blockout.views.Window;
 import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
-import com.ldtteam.structurize.management.Structures;
-import com.ldtteam.structurize.util.PlacementSettings;
+import com.minecolonies.api.blocks.AbstractBlockMinecoloniesNamedGrave;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.ICitizenDataManager;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.citizen.Skill;
-import com.minecolonies.api.tileentities.AbstractTileEntityGrave;
 import com.minecolonies.api.tileentities.TileEntityGrave;
 import com.minecolonies.api.tileentities.TileEntityNamedGrave;
-import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.ToolType;
-import com.minecolonies.coremod.blocks.BlockMinecoloniesNamedGrave;
-import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.client.gui.WindowHutGraveyard;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobGravedigger;
-import com.minecolonies.coremod.colony.jobs.JobMiner;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
-import jdk.nashorn.internal.ir.Block;
+import net.minecraft.block.HorizontalBlock;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.StringNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
 import static com.minecolonies.api.util.constant.Constants.TAG_STRING;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_NAME;
 import static com.minecolonies.api.util.constant.SchematicTagConstants.GRAVE;
-import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_SITTING;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
 /**
@@ -80,9 +74,14 @@ public class BuildingGraveyard extends AbstractBuildingWorker
     private static final String TAG_LAST_GRAVE_OWNER = "lastGraveOwner";
 
     /**
-     * NBTTag to store the name of the last grave owner.
+     * NBTTag to store the name of the last grave owner name.
      */
     private static final String TAG_LAST_GRAVE_OWNER_NAME = "lastGraveOwnerName";
+
+    /**
+     * NBTTag to store the name of the last grave owner job name.
+     */
+    private static final String TAG_LAST_GRAVE_OWNER_JOB_NAME = "lastGraveOwnerJobName";
 
     /**
      * NBTTag to store the grave BlockPos.
@@ -128,14 +127,25 @@ public class BuildingGraveyard extends AbstractBuildingWorker
     private String lastGraveOwnerName;
 
     /**
+     * The name of the job of the last grave owner data.
+     */
+    @Nullable
+    private String lastGraveOwnerJobName;
+
+    /**
      * Whether we did init tags
      */
     private boolean initTags = false;
 
     /**
-     * Sitting positions
+     * Grave positions
      */
-    private List<BlockPos> visualGravePositions;
+    private List<Tuple<BlockPos, Direction>> visualGravePositions;
+
+    /**
+     * The graveyard random.
+     */
+    private Random random = new Random();
 
     /**
      * Public constructor which instantiates the building.
@@ -259,8 +269,9 @@ public class BuildingGraveyard extends AbstractBuildingWorker
             }
         }
 
-        lastGraveOwnerDataNBT = compound.keySet().contains(TAG_LAST_GRAVE_OWNER) ? compound.getCompound(TAG_LAST_GRAVE_OWNER) : null;
-        lastGraveOwnerName = compound.keySet().contains(TAG_LAST_GRAVE_OWNER_NAME) ? compound.getString(TAG_LAST_GRAVE_OWNER_NAME) : null;
+        lastGraveOwnerDataNBT  = compound.keySet().contains(TAG_LAST_GRAVE_OWNER) ? compound.getCompound(TAG_LAST_GRAVE_OWNER) : null;
+        lastGraveOwnerName     = compound.keySet().contains(TAG_LAST_GRAVE_OWNER_NAME) ? compound.getString(TAG_LAST_GRAVE_OWNER_NAME) : null;
+        lastGraveOwnerJobName  = compound.keySet().contains(TAG_LAST_GRAVE_OWNER_JOB_NAME) ? compound.getString(TAG_LAST_GRAVE_OWNER_NAME) : null;
     }
 
     @Override
@@ -290,6 +301,7 @@ public class BuildingGraveyard extends AbstractBuildingWorker
 
         if (lastGraveOwnerDataNBT != null) { compound.put(TAG_LAST_GRAVE_OWNER, lastGraveOwnerDataNBT); }
         if (lastGraveOwnerName != null) { compound.put(TAG_LAST_GRAVE_OWNER_NAME,StringNBT.valueOf(lastGraveOwnerName)); }
+        if (lastGraveOwnerJobName != null) { compound.put(TAG_LAST_GRAVE_OWNER_JOB_NAME,StringNBT.valueOf(lastGraveOwnerJobName)); }
 
         return compound;
     }
@@ -303,10 +315,7 @@ public class BuildingGraveyard extends AbstractBuildingWorker
 
     @NotNull
     @Override
-    public Skill getPrimarySkill()
-    {
-        return Skill.Strength;
-    }
+    public Skill getPrimarySkill() { return Skill.Strength; }
 
     @NotNull
     @Override
@@ -338,6 +347,7 @@ public class BuildingGraveyard extends AbstractBuildingWorker
     public void onUpgradeComplete(final int newLevel)
     {
         super.onUpgradeComplete(newLevel);
+        initTags = false;
     }
 
     /**
@@ -391,22 +401,38 @@ public class BuildingGraveyard extends AbstractBuildingWorker
 
     /**
      * Add a citizen to the list of resting citizen in this graveyard
-     * @param citizenName
      */
-    public void BuryCitizenHere(final BlockPos position, final String citizenName)
+    public void buryCitizenHere(final Tuple<BlockPos, Direction> positionAndDirection)
     {
-        if(!restingCitizen.contains(citizenName))
+        if(!restingCitizen.contains(lastGraveOwnerName))
         {
-            getColony().getWorld().setBlockState(position, ModBlocks.blockNamedGrave.getDefaultState());
-            restingCitizen.add(citizenName);
+            //TODO: For now the facing is random - we could read it from the blueprint placeholder light block facing
+            final Direction facing = Direction.getRandomDirection(random);
+            getColony().getWorld().setBlockState(positionAndDirection.getA(), ModBlocks.blockNamedGrave.getDefaultState().with(AbstractBlockMinecoloniesNamedGrave.FACING, facing));
+
+            TileEntity tileEntity = getColony().getWorld().getTileEntity(positionAndDirection.getA());
+            if (tileEntity instanceof TileEntityNamedGrave)
+            {
+                final String firstName = StringUtils.split(lastGraveOwnerName)[0];
+                final String lastName = lastGraveOwnerName.replaceFirst(firstName,"");
+
+                final ArrayList<String> lines = new ArrayList<>();
+                lines.add(firstName);
+                lines.add(lastName);
+                if (lastGraveOwnerJobName != null) { lines.add(lastGraveOwnerJobName); }
+                ((TileEntityNamedGrave) tileEntity).setTextLines(lines);
+            }
+
+            restingCitizen.add(lastGraveOwnerJobName);
             markDirty();
         }
     }
 
-    public void setLastGraveOwner(final CompoundNBT citizenDataNBT, final String citizenName)
+    public void setLastGraveOwner(final CompoundNBT citizenDataNBT, final String citizenName, final String citizenJobName)
     {
         this.lastGraveOwnerDataNBT = citizenDataNBT;
         this.lastGraveOwnerName = citizenName;
+        this.lastGraveOwnerJobName = citizenJobName;
         markDirty();
     }
 
@@ -420,6 +446,11 @@ public class BuildingGraveyard extends AbstractBuildingWorker
         return this.lastGraveOwnerName;
     }
 
+    public String getLastGraveJobName()
+    {
+        return this.lastGraveOwnerJobName;
+    }
+
     /**
      * Reads the tag positions
      */
@@ -430,25 +461,34 @@ public class BuildingGraveyard extends AbstractBuildingWorker
             return;
         }
 
-        final IBlueprintDataProvider tileEntity = getTileEntity();
-        if (tileEntity != null)
+        if (getTileEntity() != null)
         {
             initTags = true;
             visualGravePositions = new ArrayList<>();
-            for (final Map.Entry<BlockPos, List<String>> entry : tileEntity.getWorldTagPosMap().entrySet())
+            for (final Map.Entry<BlockPos, List<String>> entry : getTileEntity().getWorldTagPosMap().entrySet())
             {
                 if (entry.getValue().get(0).startsWith(GRAVE))
                 {
-                    visualGravePositions.add(entry.getKey());
+                    final Direction direction = Direction.NORTH;
+                    visualGravePositions.add(new Tuple<>(entry.getKey(), direction));
                 }
             }
         }
     }
 
     /**
+     * Has the graveyard space for new graves
+     * @return
+     */
+    public boolean hasSpaceForNewGraves()
+    {
+        return getRandomFreeVisualGravePos() != null;
+    }
+
+    /**
      * Return a random free visual grave position
      */
-    public BlockPos getRandomFreeVisualGravePos()
+    public Tuple<BlockPos, Direction> getRandomFreeVisualGravePos()
     {
         initTagPositions();
 
@@ -457,12 +497,12 @@ public class BuildingGraveyard extends AbstractBuildingWorker
             return null;
         }
 
-        final List<BlockPos> availablePos = new ArrayList<BlockPos>();
-        for(final BlockPos pos : visualGravePositions)
+        final List<Tuple<BlockPos, Direction>> availablePos = new ArrayList<Tuple<BlockPos, Direction>>();
+        for(final Tuple<BlockPos, Direction> tuple : visualGravePositions)
         {
-            if(getColony().getWorld().getBlockState(pos).isAir())
+            if(getColony().getWorld().getBlockState(tuple.getA()).isAir())
             {
-                availablePos.add(pos);
+                availablePos.add(tuple);
             }
         }
 

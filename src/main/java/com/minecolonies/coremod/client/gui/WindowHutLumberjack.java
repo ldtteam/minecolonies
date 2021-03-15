@@ -57,7 +57,7 @@ public class WindowHutLumberjack extends AbstractHutFilterableLists
 
     /**
      * Constructor for the window of the lumberjack.
-     *
+     *FUEL_LIST
      * @param building {@link BuildingLumberjack.View}.
      */
     public WindowHutLumberjack(final BuildingLumberjack.View building)

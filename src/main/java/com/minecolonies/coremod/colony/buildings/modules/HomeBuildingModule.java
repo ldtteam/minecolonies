@@ -2,7 +2,6 @@ package com.minecolonies.coremod.colony.buildings.modules;
 
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IDefinesCoreBuildingStatsModule;
 import com.minecolonies.api.colony.buildings.modules.stat.IStat;

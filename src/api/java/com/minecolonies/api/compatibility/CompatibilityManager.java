@@ -95,6 +95,11 @@ public class CompatibilityManager implements ICompatibilityManager
     private final Set<ItemStorage> food = new HashSet<>();
 
     /**
+     * List of all the items that can be used as food
+     */
+    private final Set<ItemStorage> edibles = new HashSet<>();
+
+    /**
      * Set of all possible diseases.
      */
     private final Map<String, Disease> diseases = new HashMap<>();
@@ -108,11 +113,6 @@ public class CompatibilityManager implements ICompatibilityManager
      * List of lucky oreBlocks which get dropped by the miner.
      */
     private final List<ItemStorage> luckyOres = new ArrayList<>();
-
-    /**
-     * What the crusher can work on.
-     */
-    private final Map<ItemStorage, ItemStorage> crusherModes = new HashMap<>();
 
     /**
      * The items and weights of the recruitment.
@@ -182,7 +182,6 @@ public class CompatibilityManager implements ICompatibilityManager
         discoverLuckyOres();
         discoverRecruitCosts();
         discoverDiseases();
-        discoverCrusherModes();
         discoverSifting();
         discoverFood();
         discoverFuel();
@@ -286,9 +285,9 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
-    public List<ItemStorage> getCopyOfSaplings()
+    public Set<ItemStorage> getCopyOfSaplings()
     {
-        return new ArrayList<>(saplings);
+        return new HashSet<>(saplings);
     }
 
     @Override
@@ -304,21 +303,27 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
+    public Set<ItemStorage> getEdibles()
+    {
+        return edibles;
+    }
+
+    @Override
     public Set<ItemStorage> getSmeltableOres()
     {
         return smeltableOres;
     }
 
     @Override
-    public List<ItemStorage> getCopyOfCompostableItems()
+    public Set<ItemStorage> getCopyOfCompostableItems()
     {
-        return ImmutableList.copyOf(compostableItems);
+        return new HashSet<>(compostableItems);
     }
 
     @Override
-    public List<ItemStorage> getCopyOfPlantables()
+    public Set<ItemStorage> getCopyOfPlantables()
     {
-        return ImmutableList.copyOf(plantables);
+        return new HashSet<>(plantables);
     }
 
     @Override
@@ -402,17 +407,6 @@ public class CompatibilityManager implements ICompatibilityManager
         }
 
         return false;
-    }
-
-    /**
-     * Getter for all the crusher modes.
-     *
-     * @return an immutable copy of the map.
-     */
-    @Override
-    public Map<ItemStorage, ItemStorage> getCrusherModes()
-    {
-        return ImmutableMap.<ItemStorage, ItemStorage>builder().putAll(this.crusherModes).build();
     }
 
     @Override
@@ -571,6 +565,10 @@ public class CompatibilityManager implements ICompatibilityManager
         if (food.isEmpty())
         {
             food.addAll(ImmutableList.copyOf(allItems.stream().filter(ISFOOD.or(ISCOOKABLE)).map(ItemStorage::new).collect(Collectors.toList())));
+        }
+        if (edibles.isEmpty())
+        {
+            edibles.addAll(ImmutableList.copyOf(food.stream().filter(storage -> CAN_EAT.test(storage.getItemStack())).collect(Collectors.toList())));
         }
         Log.getLogger().info("Finished discovering food");
     }
@@ -784,45 +782,6 @@ public class CompatibilityManager implements ICompatibilityManager
             catch (final NumberFormatException ex)
             {
                 Log.getLogger().warn("Invalid integer at pos 1, 3 or 4");
-            }
-        }
-    }
-
-    /**
-     * Calculate the crusher modes from the config file.
-     */
-    private void discoverCrusherModes()
-    {
-        for (final String string : MinecoloniesAPIProxy.getInstance().getConfig().getServer().crusherProduction.get())
-        {
-            final String[] split = string.split("!");
-            if (split.length != 2)
-            {
-                Log.getLogger().warn("Invalid crusher mode setting: " + string);
-                continue;
-            }
-
-            final String[] firstItem = split[0].split(":");
-            final String[] secondItem = split[1].split(":");
-
-            final Item item1 = ForgeRegistries.ITEMS.getValue(new ResourceLocation(firstItem[0], firstItem[1]));
-            final Item item2 = ForgeRegistries.ITEMS.getValue(new ResourceLocation(secondItem[0], secondItem[1]));
-
-            try
-            {
-                if (item1 == null || item2 == null)
-                {
-                    Log.getLogger().warn("Invalid crusher mode setting: " + string);
-                    continue;
-                }
-
-                final ItemStorage storage1 = new ItemStorage(new ItemStack(item1, 2));
-                final ItemStorage storage2 = new ItemStorage(new ItemStack(item2, 1));
-                crusherModes.put(storage1, storage2);
-            }
-            catch (final NumberFormatException ex)
-            {
-                Log.getLogger().warn("Error getting metaData", ex);
             }
         }
     }

@@ -19,8 +19,4 @@ public class SchematicTagConstants
      * Graveyard constants.
      */
     public static final String GRAVE       = "grave";
-    public static final String GRAVE_NORTH = "grave_facing_north";
-    public static final String GRAVE_EAST  = "grave_facing_east";
-    public static final String GRAVE_SOUTH = "grave_facing_south";
-    public static final String GRAVE_WEST  = "grave_facing_west";
 }

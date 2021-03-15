@@ -61,6 +61,15 @@ public interface ICitizenManager extends IEntityManager
     @Override
     ICitizenData createAndRegisterCivilianData();
 
+    /**
+     * Resurrect a citizen from its saved NBT.
+     *
+     * @param compoundNBT the saved citizen NBT
+     * @param resetId if true, will calculate a new citizen ID
+     * @param world
+     * @param spawnPos position where to resurrect the citizen
+     * @return the citizenData of the resurrected citizen
+     */
     ICitizenData resurrectCivilianData(@NotNull final CompoundNBT compoundNBT, final boolean resetId, @NotNull final World world, final BlockPos spawnPos);
 
     /**

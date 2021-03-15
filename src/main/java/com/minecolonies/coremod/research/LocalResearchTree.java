@@ -22,7 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 import static com.minecolonies.api.research.util.ResearchConstants.*;
-import static com.minecolonies.api.research.util.ResearchConstants.BASE_RESEARCH_TIME;
 
 /**
  * The class which contains all research.

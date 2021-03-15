@@ -1,8 +1,5 @@
 package com.minecolonies.coremod.generation.defaults;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.entity.ModEntities;
@@ -12,14 +9,9 @@ import com.minecolonies.api.research.AbstractResearchProvider;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.item.Items;
-import net.minecraft.resources.ResourcePackType;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.fml.ModContainer;
-import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -47,6 +39,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
     private static final ResourceLocation CIVIL  = new ResourceLocation(Constants.MOD_ID, "civilian");
     private static final ResourceLocation COMBAT = new ResourceLocation(Constants.MOD_ID, "combat");
     private static final ResourceLocation TECH   = new ResourceLocation(Constants.MOD_ID, "technology");
+    private static final ResourceLocation UNLOCK = new ResourceLocation(Constants.MOD_ID, "unlockable");
 
     /**
      * Get a list of all research branches. Conventions: these are not mandatory, and their inclusion simply fixes capitalization. MineColonies should fully populate new branches
@@ -61,6 +54,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         branches.add(new ResearchBranch(CIVIL).setTranslatedBranchName("Civilian").setBranchTimeMultiplier(1.0));
         branches.add(new ResearchBranch(COMBAT).setTranslatedBranchName("Combat").setBranchTimeMultiplier(1.0));
         branches.add(new ResearchBranch(TECH).setTranslatedBranchName("Technology").setBranchTimeMultiplier(1.0));
+        branches.add(new ResearchBranch(UNLOCK).setTranslatedBranchName("Unlockables").setBranchTimeMultiplier(0.0));
         return branches;
     }
 
@@ -155,6 +149,16 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           "Enchanter Learns Scroll Recipes to Locate Workers and Summon Guards"));
         effects.add(new ResearchEffect(new ResourceLocation(Constants.MOD_ID, "effects/platearmorunlock")).setTranslatedName("Blacksmith Learns Plate Armor Recipes"));
 
+        //Sifter Mesh triggers
+        effects.add(new ResearchEffect(new ResourceLocation(Constants.MOD_ID, "effects/sifterstringunlock")).setTranslatedName(
+            "Fletcher Learns How to Make String Meshes for the Sifter"));
+        effects.add(new ResearchEffect(new ResourceLocation(Constants.MOD_ID, "effects/sifterflintunlock")).setTranslatedName(
+            "Stonemason Learns How to Make Flint Meshes for the Sifter"));
+        effects.add(new ResearchEffect(new ResourceLocation(Constants.MOD_ID, "effects/sifterironunlock")).setTranslatedName(
+            "Blacksmith Learns How to Make Iron Meshes for the Sifter"));
+        effects.add(new ResearchEffect(new ResourceLocation(Constants.MOD_ID, "effects/sifterdiamondunlock")).setTranslatedName(
+            "Mechanic Learns How to Make Diamond Meshes for the Sifter"));
+            
         return effects;
     }
 
@@ -173,6 +177,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         researches.addAll(getCivilResearch(researches));
         researches.addAll(getCombatResearch(researches));
         researches.addAll(getTechnologyResearch(researches));
+        researches.addAll(getAchievementResearch(researches));
 
         return researches;
     }
@@ -621,7 +626,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                 .setIcon(ModBlocks.blockHutGraveyard.asItem())
                 .addEffect(ModBuildings.graveyard.getBuildingBlock(), 1)
                 .addBuildingRequirement(ModBuildings.TOWNHALL_ID, 2)
-                .addItemCost(Items.BONE, 16)
+                .addItemCost(Items.BONE, 8)
                 .setTranslatedSubtitle("Our fallen shall not be forgotten!")
                 .addToList(r);
 
@@ -666,7 +671,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                 .setSortOrder(2)
                 .setIcon(ModBlocks.blockGrave.asItem())
                 .addBuildingRequirement(ModBuildings.GRAVEYARD_ID, 5)
-                .addItemCost(Items.ZOMBIE_HEAD, 1)
+                .addItemCost(Items.ROTTEN_FLESH, 64)
                 .addEffect(GRAVE_DECAY_BONUS, 2)
                 .addToList(r);
 
@@ -1119,10 +1124,10 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                      .setTranslatedName("Let It Grow")
                                      .setTranslatedSubtitle("Just one tiny seed is all we really need.")
                                      .setSortOrder(2)
-                                     .setIcon(ModBlocks.blockHutComposter.asItem())
+                                     .setIcon(ModBlocks.blockHutPlantation.asItem())
                                      .addBuildingRequirement(ModBuildings.FARMER_ID, 3)
                                      .addItemCost(ModItems.compost, 16)
-                                     .addEffect(ModBuildings.composter.getBuildingBlock(), 1)
+                                     .addEffect(ModBuildings.plantation.getBuildingBlock(), 1)
                                      .addToList(r);
         new Research(new ResourceLocation(Constants.MOD_ID, "technology/doubletrouble"), TECH).setParentResearch(letItGrow)
           .setTranslatedName("Double Trouble")
@@ -1552,6 +1557,51 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .addItemCost(Items.OBSIDIAN, 32)
           .addEffect(MECHANIC_ENHANCED_GATES, 2)
           .addToList(r);
+
+        return r;
+    }
+
+    public Collection<Research> getAchievementResearch(Collection<Research> r)
+    {
+        new Research(new ResourceLocation(Constants.MOD_ID, "unlockable/stringmesh"), UNLOCK)
+            .setTranslatedName("String Mesh")
+            .setIcon(ModItems.sifterMeshString)
+            .addMandatoryBuildingRequirement(ModBuildings.SIFTER_ID, 1)
+            .setHidden()
+            .setAutostart()
+            .setInstant()
+            .addEffect(new ResourceLocation(Constants.MOD_ID, "effects/sifterstringunlock"), 1)
+            .addToList(r);
+
+        new Research(new ResourceLocation(Constants.MOD_ID, "unlockable/flintmesh"), UNLOCK)
+            .setTranslatedName("Flint Mesh")
+            .setIcon(ModItems.sifterMeshString)
+            .addMandatoryBuildingRequirement(ModBuildings.SIFTER_ID, 3)
+            .setHidden()
+            .setAutostart()
+            .setInstant()
+            .addEffect(new ResourceLocation(Constants.MOD_ID, "effects/sifterflintunlock"), 1)
+            .addToList(r);
+
+        new Research(new ResourceLocation(Constants.MOD_ID, "unlockable/ironmesh"), UNLOCK)
+            .setTranslatedName("Iron Mesh")
+            .setIcon(ModItems.sifterMeshString)
+            .addMandatoryBuildingRequirement(ModBuildings.SIFTER_ID, 4)
+            .setHidden()
+            .setAutostart()
+            .setInstant()
+            .addEffect(new ResourceLocation(Constants.MOD_ID, "effects/sifterironunlock"), 1)
+            .addToList(r);
+
+        new Research(new ResourceLocation(Constants.MOD_ID, "unlockable/diamondmesh"), UNLOCK)
+            .setTranslatedName("Diamond Mesh")
+            .setIcon(ModItems.sifterMeshString)
+            .addMandatoryBuildingRequirement(ModBuildings.SIFTER_ID, 5)
+            .setHidden()
+            .setAutostart()
+            .setInstant()
+            .addEffect(new ResourceLocation(Constants.MOD_ID, "effects/sifterdiamondunlock"), 1)
+            .addToList(r);
 
         return r;
     }

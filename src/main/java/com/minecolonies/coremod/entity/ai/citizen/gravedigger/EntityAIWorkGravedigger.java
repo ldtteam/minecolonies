@@ -20,8 +20,10 @@ import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.util.AdvancementUtils;
 import net.minecraft.block.*;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
@@ -74,6 +76,15 @@ public class EntityAIWorkGravedigger extends AbstractEntityAIInteract<JobGravedi
     private Random random = new Random();
 
     /**
+     * A counter to delay some task.
+     */
+    private int effortCounter = 0;
+
+    private static final int EFFORT_EMPTY_GRAVE = 100;
+    private static final int EFFORT_BURRY = 400;
+    private static final int EFFORT_RESURRECT = 400;
+
+    /**
      * Gravedigger emptying icon
      */
     private final static VisibleCitizenStatus EMPTYING_ICON =
@@ -110,7 +121,7 @@ public class EntityAIWorkGravedigger extends AbstractEntityAIInteract<JobGravedi
     /**
      * The current pos to grave to build.
      */
-    private BlockPos burialPos = null;
+    private Tuple<BlockPos, Direction> burialPos = null;
 
     /**
      * Constructor for the Gravedigger. Defines the tasks the Gravedigger executes.
@@ -216,7 +227,8 @@ public class EntityAIWorkGravedigger extends AbstractEntityAIInteract<JobGravedi
         {
             wanderPos = building.getPosition();
         }
-        return getState();
+
+        return IDLE;
     }
 
     private IAIState emptyGrave()
@@ -230,6 +242,8 @@ public class EntityAIWorkGravedigger extends AbstractEntityAIInteract<JobGravedi
 
         worker.getCitizenData().setVisibleStatus(EMPTYING_ICON);
         worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.emptying"));
+        worker.setSprinting(true);
+        unequip();
 
         @Nullable final BlockPos gravePos = buildingGraveyard.getGraveToWorkOn();
         final TileEntity entity = world.getTileEntity(gravePos);
@@ -242,9 +256,7 @@ public class EntityAIWorkGravedigger extends AbstractEntityAIInteract<JobGravedi
 
             if (worker.getInventoryCitizen().isFull())
             {
-                // coudn't take all item --> empty inventory to building
-                shouldDumpInventory = true;
-                return IDLE;
+                return INVENTORY_FULL;
             }
 
             // Still moving to the block
@@ -252,6 +264,14 @@ public class EntityAIWorkGravedigger extends AbstractEntityAIInteract<JobGravedi
             {
                 return getState();
             }
+
+            if(effortCounter < EFFORT_EMPTY_GRAVE)
+            {
+                worker.swingArm(Hand.MAIN_HAND);
+                effortCounter += getPrimarySkillLevel();
+                return getState();
+            }
+            effortCounter = 0;
 
             //at position - try to take all item
             if (InventoryUtils.transferAllItemHandler(((TileEntityGrave) entity).getInventory(), worker.getInventoryCitizen()))
@@ -271,8 +291,10 @@ public class EntityAIWorkGravedigger extends AbstractEntityAIInteract<JobGravedi
         {
             return IDLE;
         }
+
         worker.getCitizenData().setVisibleStatus(DIGGING_ICON);
         worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.digging"));
+        worker.setSprinting(false);
 
         @Nullable final BlockPos gravePos = buildingGraveyard.getGraveToWorkOn();
         final TileEntity entity = world.getTileEntity(gravePos);
@@ -284,7 +306,10 @@ public class EntityAIWorkGravedigger extends AbstractEntityAIInteract<JobGravedi
                 return getState();
             }
 
-            buildingGraveyard.setLastGraveOwner(((TileEntityGrave) entity).getSavedCitizenDataNBT(), ((TileEntityGrave) entity).getSavedCitizenName());
+            buildingGraveyard.setLastGraveOwner(
+                    ((TileEntityGrave) entity).getSavedCitizenDataNBT(),
+                    ((TileEntityGrave) entity).getSavedCitizenName(),
+                    ((TileEntityGrave) entity).getSavedCitizenJobName());
 
             //at position
             if (!digIfAble(gravePos))
@@ -338,8 +363,10 @@ public class EntityAIWorkGravedigger extends AbstractEntityAIInteract<JobGravedi
         {
             return IDLE;
         }
+
         worker.getCitizenData().setVisibleStatus(RESURRECT_ICON);
         worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.resurrecting"));
+        unequip();
 
         //Go back to graveyard
         if (walkToBuilding())
@@ -347,14 +374,16 @@ public class EntityAIWorkGravedigger extends AbstractEntityAIInteract<JobGravedi
             return getState();
         }
 
+        if(effortCounter < EFFORT_RESURRECT)
+        {
+            worker.swingArm(Hand.MAIN_HAND);
+            effortCounter += getSecondarySkillLevel();
+            return getState();
+        }
+        effortCounter = 0;
+
         shouldDumpInventory = true;
-
-        double chance = buildingGraveyard.getBuildingLevel() * RESURECT_BUILDING_LVL_WEIGHT +
-                worker.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Mana) * RESURECT_WORKER_MANA_LVL_WEIGHT +
-                worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(RESURECT_CHANCE);
-
-        double cap = MAX_RESURECTION_CHANCE + worker.getCitizenColonyHandler().getColony().getBuildingManager().getMysticalSiteMaxBuildingLevel() * MAX_RESURECTION_CHANCE_MYSTICAL_LVL_BONUS;
-        if (chance > cap) { chance = cap; }
+        final double chance = getResurrectChance(buildingGraveyard);
 
         if (chance >= random.nextDouble())
         {
@@ -362,10 +391,21 @@ public class EntityAIWorkGravedigger extends AbstractEntityAIInteract<JobGravedi
             LanguageHandler.sendPlayersMessage(buildingGraveyard.getColony().getImportantMessageEntityPlayers(), "com.minecolonies.coremod.resurrect", citizenData.getName());
             worker.getCitizenColonyHandler().getColony().removeNeedToMourn(buildingGraveyard.getLastGraveName(), true);
             AdvancementUtils.TriggerAdvancementPlayersForColony(worker.getCitizenColonyHandler().getColony(), playerMP -> AdvancementTriggers.CITIZEN_RESURRECT.trigger(playerMP));
-            return IDLE;
+            return INVENTORY_FULL;
         }
 
         return BURY_CITIZEN;
+    }
+
+    private double getResurrectChance(@NotNull final BuildingGraveyard buildingGraveyard)
+    {
+        double chance = buildingGraveyard.getBuildingLevel() * RESURECT_BUILDING_LVL_WEIGHT +
+                worker.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Mana) * RESURECT_WORKER_MANA_LVL_WEIGHT +
+                worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(RESURECT_CHANCE);
+
+        final double cap = MAX_RESURECTION_CHANCE + worker.getCitizenColonyHandler().getColony().getBuildingManager().getMysticalSiteMaxBuildingLevel() * MAX_RESURECTION_CHANCE_MYSTICAL_LVL_BONUS;
+        if (chance > cap) { chance = cap; }
+        return chance;
     }
 
     private IAIState buryCitizen()
@@ -379,7 +419,7 @@ public class EntityAIWorkGravedigger extends AbstractEntityAIInteract<JobGravedi
         worker.getCitizenData().setVisibleStatus(BURYING_ICON);
         worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.burying"));
 
-        if(burialPos == null || !world.getBlockState(burialPos).isAir())
+        if(burialPos == null || !world.getBlockState(burialPos.getA()).isAir())
         {
             burialPos = getOwnBuilding().getRandomFreeVisualGravePos();
         }
@@ -387,23 +427,33 @@ public class EntityAIWorkGravedigger extends AbstractEntityAIInteract<JobGravedi
         if(burialPos == null)
         {
             //coudn't find a place to dig a grave
-            worker.getCitizenColonyHandler().getColony().removeNeedToMourn(buildingGraveyard.getLastGraveName(),false);
-            AdvancementUtils.TriggerAdvancementPlayersForColony(worker.getCitizenColonyHandler().getColony(), playerMP -> AdvancementTriggers.CITIZEN_BURY.trigger(playerMP));
+            LanguageHandler.sendPlayersMessage(buildingGraveyard.getColony().getImportantMessageEntityPlayers(), "com.minecolonies.coremod.nospaceforgrave", buildingGraveyard.getLastGraveName());
             return IDLE;
         }
 
-        if(walkToBlock(burialPos, 1))
+        if(walkToBlock(burialPos.getA(), 1))
         {
             return getState();
         }
 
-        buildingGraveyard.BuryCitizenHere(burialPos, buildingGraveyard.getLastGraveName());
+        if(effortCounter < EFFORT_BURRY)
+        {
+            equipShovel();
+            worker.swingArm(Hand.MAIN_HAND);
+            effortCounter += getPrimarySkillLevel();
+            return getState();
+        }
+        effortCounter = 0;
+        unequip();
+
+        buildingGraveyard.buryCitizenHere(burialPos);
         burialPos = null;
 
         worker.getCitizenColonyHandler().getColony().removeNeedToMourn(buildingGraveyard.getLastGraveName(),false);
         AdvancementUtils.TriggerAdvancementPlayersForColony(worker.getCitizenColonyHandler().getColony(), playerMP -> AdvancementTriggers.CITIZEN_BURY.trigger(playerMP));
 
-        return IDLE;
+        shouldDumpInventory = true;
+        return INVENTORY_FULL;
     }
 
     /**
@@ -428,6 +478,14 @@ public class EntityAIWorkGravedigger extends AbstractEntityAIInteract<JobGravedi
     private void equipShovel()
     {
         worker.getCitizenItemHandler().setHeldItem(Hand.MAIN_HAND, getShovelSlot());
+    }
+
+    /**
+     * Sets the nothing as held item.
+     */
+    private void unequip()
+    {
+        worker.getCitizenItemHandler().removeHeldItem();
     }
 
     /**

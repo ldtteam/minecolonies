@@ -354,11 +354,11 @@
   "entity.worker.inventoryfullchestfull": "Please make space in my chests/racks. I am not able to dump my inventory.",
 
   "entity.builder.messagebuildstart": ": I've started work on %s!",
-  "entity.builder.messagebuildcomplete": ": I've finished building %s!",
-  "entity.builder.messagebuildcomplete_manual": ": I've finished building %s. You can assign me another task now!",
+  "entity.builder.messagebuildcomplete": ": I've finished building the %s at %s %s %s!",
+  "entity.builder.messagebuildcomplete_manual": ": I've finished building the %s at %s %s %s. You can assign me another task now!",
   "entity.builder.messageremovalcomplete": ": I've finished deconstructing building %s! §6 To move the building while retaining its current level, use the 'Pick Up' button on the building's 'Build Options' GUI.",
-  "entity.builder.messagedecocomplete": "Builder %s: I've finished building %s!",
-  "entity.builder.messagedecocomplete_manual": "Builder %s: I've finished building %s. You can assign me another task now!",
+  "entity.builder.messagedecocomplete": "Builder %s: I've finished building the %s at %s %s %s!",
+  "entity.builder.messagedecocomplete_manual": "Builder %s: I've finished building the %s at %s %s %s. You can assign me another task now!",
   "entity.builder.messagebuildtoohigh": "%s is too high! Please lower the building below Y 256.",
   "entity.builder.messagebuildtoolow": "%s is too low! Please raise the building above Y 0.",
   "entity.builder.messageneedmaterial": "I need %s (amount: %d).",
@@ -771,6 +771,7 @@
   "com.minecolonies.coremod.gui.workerhuts.unassign": "Remove Citizen",
   "block.minecolonies.blockminecoloniesrack": "Rack",
   "block.minecolonies.blockminecoloniesgrave": "Grave",
+  "block.minecolonies.blockminecoloniesnamedgrave": "Named Grave",
 
   "com.minecolonies.coremod.status.deciding": "Deciding",
   "com.minecolonies.coremod.status.sleeping": "Let me sleep",
@@ -802,6 +803,7 @@
   "com.minecolonies.coremod.status.resurrect": "Trying to resurrect a citizen...",
   "com.minecolonies.coremod.resurrect": "Amazing! Your gravedigger resurected %s today! Your citizen will not mourn anymore",
   "com.minecolonies.coremod.gravespawned": "A grave has been created, collect it quick before it decay!",
+  "com.minecolonies.coremod.nospaceforgrave": "Your graveyard is full and %s coudn't be buried... Upgrade it or build new ones before this happens again!",
 
   "com.minecolonies.coremod.gui.workerhuts.buildbarracks": "Barracks",
   "com.minecolonies.coremod.gui.barracks.spieshire": "Hire",
@@ -1106,14 +1108,11 @@
 
   "com.minecolonies.coremod.general.canttakeequipped": "The only armor you have is what you're wearing. Put it in your inventory if you want to give it to me.",
 
-  "com.minecolonies.coremod.gui.workerhuts.siftersettings": "Daily limit",
+  "com.minecolonies.coremod.gui.workerhuts.siftersettings": "Daily limit progress",
   "com.minecolonies.coremod.gui.workerhuts.sifterinfo": "of %d allowed",
   "com.minecolonies.coremod.gui.workerhuts.sifterinfo.unlimited": "of Unlimited",
 
   "com.minecolonies.coremod.gui.workerhuts.sifter": "Sifter",
-  "com.minecolonies.coremod.sifter.meshbroke": "My current mesh broke and I started to work with the default mesh again!",
-  "com.minecolonies.coremod.gui.workerhuts.buy": "Buy",
-  "com.minecolonies.coremod.gui.workerhuts.meshsettings": "Mesh Settings",
   "com.minecolonies.coremod.sifter.toomuch": "Set to the current daily max of %d.",
   "com.minecolonies.coremod.gui.building.rename.title": "Rename Your Building",
 
@@ -1760,6 +1759,7 @@
   "com.minecolonies.coremod.from": "From: %s",
   "com.minecolonies.coremod.at": "At: %s",
   "com.minecolonies.coremod.listentry": "#%d in queue",
+  "com.minecolonies.coremod.in_progress": "In Progress",
   "com.minecolonies.coremod.missingitems": "Awaiting Materials",
   "com.minecolonies.coremod.finished": "Finished!",
   "com.minecolonies.coremod.dist.blocks": "%d blocks",
@@ -1897,5 +1897,9 @@
   "block.minecolonies.blocksubstitution.name": "Placeholder Block",
   "block.minecolonies.blockwaypoint": "Waypoint Placeholder",
   "block.minecolonies.blockhutgraveyard": "Graveyard",
-  "block.minecolonies.blockhutgraveyard.name": "Graveyard"
+  "block.minecolonies.blockhutgraveyard.name": "Graveyard",
+  "item.minecolonies.sifter_mesh_string": "String Mesh",
+  "item.minecolonies.sifter_mesh_flint": "Flint Mesh",
+  "item.minecolonies.sifter_mesh_iron": "Iron Mesh",
+  "item.minecolonies.sifter_mesh_diamond": "Diamond Mesh"
 }
