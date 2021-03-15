@@ -18,5 +18,5 @@ public class SchematicTagConstants
     /**
      * Graveyard constants.
      */
-    public static final String GRAVE       = "grave";
+    public static final String GRAVE        = "grave";
 }
