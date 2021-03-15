@@ -37,6 +37,11 @@ public class NamedGravePlacementHandler implements IPlacementHandler
       final BlockPos centerPos,
       final PlacementSettings settings)
     {
+        if (world.getBlockState(pos).getBlock() == ModBlocks.blockNamedGrave)
+        {
+            return ActionProcessingResult.SUCCESS;
+        }
+
         BuildingGraveyard.handleBuildingNamedGrave(world, pos, blockState);
         return ActionProcessingResult.SUCCESS;
     }

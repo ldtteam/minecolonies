@@ -483,7 +483,11 @@ public class BuildingGraveyard extends AbstractBuildingWorker
         }
 
         final Direction facing = blockState.get(AbstractBlockMinecoloniesNamedGrave.FACING);
-        ((BuildingGraveyard)building).visualGravePositions.add(new Tuple<>(pos, facing));
+
+        if(!((BuildingGraveyard)building).visualGravePositions.stream().anyMatch(t -> BlockPosUtil.isEqual(t.getA(), pos.getX(), pos.getY(), pos.getZ())))
+        {
+            ((BuildingGraveyard) building).visualGravePositions.add(new Tuple<>(pos, facing));
+        }
     }
 
     /**
