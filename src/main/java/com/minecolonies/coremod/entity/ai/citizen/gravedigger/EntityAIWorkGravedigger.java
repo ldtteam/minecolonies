@@ -81,7 +81,7 @@ public class EntityAIWorkGravedigger extends AbstractEntityAIInteract<JobGravedi
     private int effortCounter = 0;
 
     private static final int EFFORT_EMPTY_GRAVE = 100;
-    private static final int EFFORT_BURRY = 400;
+    private static final int EFFORT_BURY = 400;
     private static final int EFFORT_RESURRECT = 400;
 
     /**
@@ -97,13 +97,13 @@ public class EntityAIWorkGravedigger extends AbstractEntityAIInteract<JobGravedi
             new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/gravedigger.png"), "com.minecolonies.gui.visiblestatus.digging");
 
     /**
-     * Gravedigger burry icon
+     * Gravedigger bury icon
      */
     private final static VisibleCitizenStatus BURYING_ICON =
             new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/gravedigger.png"), "com.minecolonies.gui.visiblestatus.burying");
 
     /**
-     * Gravedigger burry icon
+     * Gravedigger bury icon
      */
     private final static VisibleCitizenStatus RESURRECT_ICON =
             new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/gravedigger.png"), "com.minecolonies.gui.visiblestatus.resurrect");
@@ -436,7 +436,7 @@ public class EntityAIWorkGravedigger extends AbstractEntityAIInteract<JobGravedi
             return getState();
         }
 
-        if(effortCounter < EFFORT_BURRY)
+        if(effortCounter < EFFORT_BURY)
         {
             equipShovel();
             worker.swingArm(Hand.MAIN_HAND);

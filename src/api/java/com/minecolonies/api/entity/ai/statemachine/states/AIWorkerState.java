@@ -178,7 +178,7 @@ public enum AIWorkerState implements IAIState
     DIG_GRAVE(false),
 
     /**
-     * Burry the citizen
+     * Bury the citizen
      */
     BURY_CITIZEN(false),
 
