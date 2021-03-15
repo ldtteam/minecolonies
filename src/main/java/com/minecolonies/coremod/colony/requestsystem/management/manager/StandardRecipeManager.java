@@ -12,8 +12,8 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
+
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 public class StandardRecipeManager implements IRecipeManager
@@ -73,14 +73,7 @@ public class StandardRecipeManager implements IRecipeManager
     @Override
     public IToken<?> getRecipeId(final IRecipeStorage storage)
     {
-        for (final Map.Entry<IToken<?>, IRecipeStorage> tempStorage : recipes.entrySet())
-        {
-            if (tempStorage.getValue().equals(storage))
-            {
-                return tempStorage.getKey();
-            }
-        }
-        return null;
+        return recipes.inverse().get(storage);
     }
 
     @Override
