@@ -630,7 +630,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                 .setTranslatedSubtitle("Our fallen shall not be forgotten!")
                 .addToList(r);
 
-        final Research resurrectchance1 = new Research(new ResourceLocation(Constants.MOD_ID, "civilian/resurrectchance1"), CIVIL)
+        final Research resurrectChance1 = new Research(new ResourceLocation(Constants.MOD_ID, "civilian/resurrectchance1"), CIVIL)
                 .setParentResearch(remembrance)
                 .setTranslatedName("Resurrect Change I")
                 .setTranslatedSubtitle("Use the right words")
@@ -642,7 +642,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                 .addToList(r);
 
         new Research(new ResourceLocation(Constants.MOD_ID, "civilian/resurrectchance2"), CIVIL)
-                .setParentResearch(resurrectchance1)
+                .setParentResearch(resurrectChance1)
                 .setTranslatedName("Resurrect Change II")
                 .setTranslatedSubtitle("Dance around and wave your hands")
                 .setSortOrder(1)
