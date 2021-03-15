@@ -33,6 +33,7 @@ public class BlockMinecoloniesNamedGrave extends AbstractBlockMinecoloniesNamedG
      * The hardness this block has.
      */
     private static final float  BLOCK_HARDNESS = 5F;
+
     /**
      * This blocks name.
      */

@@ -105,7 +105,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         effects.add(new ResearchEffect(TOOL_DURABILITY).setTranslatedName("Citizen Tools +%3$s%% Durability").setLevels(new double[] {0.05, 0.1, 0.25, 0.5, 0.9}));
         effects.add(new ResearchEffect(WALKING).setTranslatedName("Citizen Walk Speed +%3$s%%").setLevels(new double[] {0.05, 0.1, 0.15, 0.25}));
         effects.add(new ResearchEffect(WORK_LONGER).setTranslatedName("Citizen Work Day +%sH").setLevels(new double[] {1, 2}));
-        effects.add(new ResearchEffect(RESURECT_CHANCE).setTranslatedName("Improve resurection chance +%3$s%%").setLevels(new double[] {0.01, 0.03}));
+        effects.add(new ResearchEffect(RESURRECT_CHANCE).setTranslatedName("Improve resurection chance +%3$s%%").setLevels(new double[] {0.01, 0.03}));
         effects.add(new ResearchEffect(GRAVE_DECAY_BONUS).setTranslatedName("Citizen's graves decay %s minutes later").setLevels(new double[] {2, 5}));
 
         // Guard and Worker unlocks do not need a strength, but do have static ResourceLocations.
@@ -633,7 +633,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                 .setIcon(ModBlocks.blockHutGraveyard.asItem())
                 .addBuildingRequirement(ModBuildings.GRAVEYARD_ID, 3)
                 .addItemCost(Items.GHAST_TEAR, 1)
-                .addEffect(RESURECT_CHANCE, 1)
+                .addEffect(RESURRECT_CHANCE, 1)
                 .addToList(r);
 
         new Research(new ResourceLocation(Constants.MOD_ID, "civilian/resurectchance2"), CIVIL)
@@ -644,7 +644,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                 .setIcon(ModBlocks.blockHutGraveyard.asItem())
                 .addBuildingRequirement(ModBuildings.GRAVEYARD_ID, 5)
                 .addItemCost(Items.CHORUS_FRUIT, 16)
-                .addEffect(RESURECT_CHANCE, 2)
+                .addEffect(RESURRECT_CHANCE, 2)
                 .addToList(r);
 
 

@@ -180,7 +180,7 @@ public enum AIWorkerState implements IAIState
     /**
      * Burry the citizen
      */
-    BURRY_CITIZEN(false),
+    BURY_CITIZEN(false),
 
     /**
      * Attempt Resurrect

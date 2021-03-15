@@ -10,7 +10,7 @@ import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * A Trigger that is triggered when the miner reaches a certain depth
+ * A Trigger that is triggered when a citizen is buried in a graveyard
  */
 public class CitizenBuryTrigger extends AbstractCriterionTrigger<CriterionListeners<CitizenBuryCriterionInstance>, CitizenBuryCriterionInstance>
 {
