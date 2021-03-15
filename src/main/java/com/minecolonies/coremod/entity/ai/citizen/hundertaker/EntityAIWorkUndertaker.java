@@ -387,7 +387,6 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         {
             final ICitizenData citizenData = buildingGraveyard.getColony().getCitizenManager().resurrectCivilianData(buildingGraveyard.getLastGraveData().getCitizenDataNBT(), true, world, buildingGraveyard.getPosition());
             LanguageHandler.sendPlayersMessage(buildingGraveyard.getColony().getImportantMessageEntityPlayers(), "com.minecolonies.coremod.resurrect", citizenData.getName());
-            worker.getCitizenColonyHandler().getColony().removeNeedToMourn(buildingGraveyard.getLastGraveData().getCitizenName(), true);
             AdvancementUtils.TriggerAdvancementPlayersForColony(worker.getCitizenColonyHandler().getColony(), playerMP -> AdvancementTriggers.CITIZEN_RESURRECT.trigger(playerMP));
             buildingGraveyard.setLastGraveData(null);
             return INVENTORY_FULL;
@@ -447,7 +446,6 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         unequip();
 
         buildingGraveyard.buryCitizenHere(burialPos);
-        worker.getCitizenColonyHandler().getColony().removeNeedToMourn(buildingGraveyard.getLastGraveData().getCitizenName(),false);
         AdvancementUtils.TriggerAdvancementPlayersForColony(worker.getCitizenColonyHandler().getColony(), playerMP -> AdvancementTriggers.CITIZEN_BURY.trigger(playerMP));
 
         buildingGraveyard.setLastGraveData(null);

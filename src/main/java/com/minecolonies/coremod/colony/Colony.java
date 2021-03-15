@@ -258,7 +258,7 @@ public class Colony implements IColony
     /**
      * Mournign parameters.
      */
-    private List<String> needToMourn = new ArrayList<>();
+    private boolean needToMourn = false;
 
     /**
      * If the colony is currently mourning
@@ -557,15 +557,6 @@ public class Colony implements IColony
 
             if (mourning)
             {
-                needToMourn.clear();
-                mourning = false;
-                citizenManager.updateCitizenMourn(false);
-            }
-        }
-        else if (isDay && WorldUtil.isPastNoon(world))
-        {
-            if(mourning && needToMourn.isEmpty())
-            {
                 mourning = false;
                 citizenManager.updateCitizenMourn(false);
             }
@@ -573,13 +564,13 @@ public class Colony implements IColony
         else if (!isDay && WorldUtil.isDayTime(world))
         {
             isDay = true;
-            if (!needToMourn.isEmpty())
+            if (needToMourn)
             {
+                needToMourn = false;
                 mourning = true;
                 citizenManager.updateCitizenMourn(true);
             }
         }
-
         return false;
     }
 
@@ -715,19 +706,14 @@ public class Colony implements IColony
         manualHiring = compound.getBoolean(TAG_MANUAL_HIRING);
         dimensionId = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(compound.getString(TAG_DIMENSION)));
 
-        needToMourn.clear();
-        if (compound.keySet().contains(TAG_NEED_TO_MOURN_LIST))
+        if (compound.keySet().contains(TAG_NEED_TO_MOURN))
         {
-            final ListNBT needToMournList = compound.getList(TAG_NEED_TO_MOURN_LIST, TAG_STRING);
-            for (int i = 0; i < needToMournList.size(); i++)
-            {
-                final String citizenName = needToMournList.getString(i);
-                needToMourn.add(citizenName);
-            }
+            needToMourn = compound.getBoolean(TAG_NEED_TO_MOURN);
             mourning = compound.getBoolean(TAG_MOURNING);
         }
         else
         {
+            needToMourn = false;
             mourning = false;
         }
 
@@ -858,14 +844,7 @@ public class Colony implements IColony
         BlockPosUtil.write(compound, TAG_CENTER, center);
 
         compound.putBoolean(TAG_MANUAL_HIRING, manualHiring);
-
-        // need to mourn
-        @NotNull final ListNBT needToMournTagList = new ListNBT();
-        for (@NotNull final String citizenName : needToMourn)
-        {
-            needToMournTagList.add(StringNBT.valueOf(citizenName));
-        }
-        compound.put(TAG_NEED_TO_MOURN_LIST, needToMournTagList);
+        compound.putBoolean(TAG_NEED_TO_MOURN, needToMourn);
         compound.putBoolean(TAG_MOURNING, mourning);
 
         compound.putLong(TAG_MERCENARY_TIME, mercenaryLastUse);
@@ -1626,44 +1605,24 @@ public class Colony implements IColony
      * @return a boolean indicating the colony needs to mourn
      */
     @Override
-    public boolean isNeedToMournEmpty()
+    public boolean isNeedToMourn()
     {
-        return needToMourn.isEmpty();
+        return needToMourn;
     }
 
     /**
-     * Call to add a citizen to the colony needs to mourn list / or not.
+     * Call to set if the colony needs to mourn or not.
      *
-     * @param need indicate if the colony needs to mourn
+     * @param needToMourn indicate if the colony needs to mourn
      * @param name        Name of citizen that died
      */
     @Override
-    public void addNeedToMourn(final boolean need, final String name)
+    public void setNeedToMourn(final boolean needToMourn, final String name)
     {
-        if (need)
+        this.needToMourn = needToMourn;
+        if (needToMourn)
         {
-            needToMourn.add(name);
             LanguageHandler.sendPlayersMessage(getImportantMessageEntityPlayers(), COM_MINECOLONIES_COREMOD_MOURN, name);
-        }
-    }
-
-    /**
-     * Call to remove a citizen from the colony needs to mourn.
-     *
-     * @param name        Name of citizen that died
-     */
-    public void removeNeedToMourn(final String name, final boolean forceDirect)
-    {
-        if (!forceDirect)
-        {
-            LanguageHandler.sendPlayersMessage(getImportantMessageEntityPlayers(), COM_MINECOLONIES_COREMOD_MOURN_REMOVE, name);
-        }
-
-        needToMourn.remove(name);
-        if (needToMourn.isEmpty() && mourning && (WorldUtil.isPastNoon(world) || forceDirect))
-        {
-            mourning = false;
-            citizenManager.updateCitizenMourn(false);
         }
     }
 

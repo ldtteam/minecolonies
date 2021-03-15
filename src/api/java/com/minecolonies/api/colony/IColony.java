@@ -305,11 +305,9 @@ public interface IColony
 
     CompoundNBT getColonyTag();
 
-    boolean isNeedToMournEmpty();
+    boolean isNeedToMourn();
 
-    void addNeedToMourn(boolean needToMourn, String name);
-
-    void removeNeedToMourn(String name, boolean forceDirect);
+    void setNeedToMourn(boolean needToMourn, String name);
 
     boolean isMourning();
 

@@ -1458,7 +1458,7 @@ public class EntityCitizen extends AbstractEntityCitizen
             if (!(citizenJobHandler.getColonyJob() instanceof AbstractJobGuard)
                   && (damageSource != DamageSource.IN_WALL))
             {
-                citizenColonyHandler.getColony().addNeedToMourn(true, citizenData.getName());
+                citizenColonyHandler.getColony().setNeedToMourn(true, citizenData.getName());
             }
 
             if(citizenColonyHandler.getColony().isCoordInColony(world, getPosition()))
