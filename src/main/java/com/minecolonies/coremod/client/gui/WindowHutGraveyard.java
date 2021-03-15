@@ -139,7 +139,10 @@ public class WindowHutGraveyard extends AbstractWindowWorkerBuilding<BuildingGra
                 final TileEntity entity = world.getTileEntity(grave);
                 if (entity instanceof TileEntityGrave)
                 {
-                    rowPane.findPaneOfTypeByID(TAG_NAME, Text.class).setText("Grave of " + ((TileEntityGrave) entity).getSavedCitizenName());
+                    rowPane.findPaneOfTypeByID(TAG_NAME, Text.class).setText("Grave of " +
+                            ((((TileEntityGrave) entity).getGraveData() != null) ?
+                             ((TileEntityGrave) entity).getGraveData().getCitizenName() :
+                             "Unknown Citizen"));
                     rowPane.findPaneOfTypeByID(TAG_DISTANCE, Text.class).setText(distance + "m");
                     rowPane.findPaneOfTypeByID(TAG_DIRECTION, Text.class).setText(direction);
                 }

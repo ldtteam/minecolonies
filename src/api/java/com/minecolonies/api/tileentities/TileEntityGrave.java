@@ -2,6 +2,7 @@ package com.minecolonies.api.tileentities;
 
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesGrave;
 import com.minecolonies.api.blocks.types.GraveType;
+import com.minecolonies.api.colony.GraveData;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.inventory.container.ContainerGrave;
 import com.minecolonies.api.util.InventoryUtils;
@@ -41,6 +42,11 @@ public class TileEntityGrave extends AbstractTileEntityGrave
      * The content of the chest.
      */
     private final Map<ItemStorage, Integer> content = new HashMap<>();
+
+    /**
+     * NBTTag to store grave data.
+     */
+    private static final String TAG_GRAVE_DATA = "gravedata";
 
     public TileEntityGrave(final TileEntityType<? extends TileEntityGrave> type)
     {
@@ -148,9 +154,13 @@ public class TileEntityGrave extends AbstractTileEntityGrave
 
         decay_timer         = compound.contains(TAG_DECAY_TIMER) ? compound.getInt(TAG_DECAY_TIMER) : DEFAULT_DECAY_TIMER;
         decayed             = compound.contains(TAG_DECAYED) ? compound.getBoolean(TAG_DECAYED) :false;
-        savedCitizenName    = compound.contains(TAG_SAVED_CITIZEN_NAME) ? compound.getString(TAG_SAVED_CITIZEN_NAME) : null;
-        savedCitizenJobName = compound.contains(TAG_SAVED_CITIZEN_JOB_NAME) ? compound.getString(TAG_SAVED_CITIZEN_JOB_NAME) : null;
-        savedCitizenDataNBT = compound.contains(TAG_SAVED_CITIZEN_DATA) ? compound.getCompound(TAG_SAVED_CITIZEN_DATA) : null;
+
+        if (compound.keySet().contains(TAG_GRAVE_DATA))
+        {
+            graveData = new GraveData();
+            graveData.read(compound.getCompound(TAG_GRAVE_DATA));
+        }
+        else graveData = null;
     }
 
     @NotNull
@@ -178,20 +188,11 @@ public class TileEntityGrave extends AbstractTileEntityGrave
         compound.putInt(TAG_DECAY_TIMER, decay_timer);
         compound.putBoolean(TAG_DECAYED, decayed);
 
-        if(savedCitizenName != null)
+        if(graveData != null)
         {
-            compound.putString(TAG_SAVED_CITIZEN_NAME, savedCitizenName);
+            compound.put(TAG_GRAVE_DATA, graveData.write());
         }
 
-        if(savedCitizenJobName != null)
-        {
-            compound.putString(TAG_SAVED_CITIZEN_JOB_NAME, savedCitizenJobName);
-        }
-
-        if(savedCitizenDataNBT != null)
-        {
-            compound.put(TAG_SAVED_CITIZEN_DATA, savedCitizenDataNBT);
-        }
         return compound;
     }
 

@@ -43,6 +43,7 @@ public class AbstractTileEntityNamedGrave extends TileEntity
     public AbstractTileEntityNamedGrave(TileEntityType<?> tileEntityTypeIn)
     {
         super(tileEntityTypeIn);
+        textLines.add("Unknown Citizen");
     }
 
     public ArrayList<String> getTextLines()

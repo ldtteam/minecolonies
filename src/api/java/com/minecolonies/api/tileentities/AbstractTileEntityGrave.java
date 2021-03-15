@@ -1,6 +1,7 @@
 package com.minecolonies.api.tileentities;
 
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IGraveData;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -9,6 +10,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
+import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 
@@ -38,19 +40,10 @@ public abstract class AbstractTileEntityGrave extends TileEntity implements INam
     protected int decay_timer;
 
     /**
-     * The name of the citizen that generated this grave by dying
+     * The GraveData of the citizen that spawned this grave.
      */
-    protected String savedCitizenName;
-
-    /**
-     * The name of thejob of the citizen that generated this grave by dying
-     */
-    protected String savedCitizenJobName;
-
-    /**
-     * The citizen data of the citizen that generated this grave by dying
-     */
-    protected CompoundNBT savedCitizenDataNBT;
+    @Nullable
+    protected IGraveData graveData;
 
     public AbstractTileEntityGrave(final TileEntityType<?> tileEntityTypeIn)
     {
@@ -137,56 +130,20 @@ public abstract class AbstractTileEntityGrave extends TileEntity implements INam
     }
 
     /**
-     * Get the name of the saved citizen data
+     * Get the graveData of the saved citizen
      */
-    public String getSavedCitizenName()
+    public IGraveData getGraveData()
     {
-        return this.savedCitizenName == null ? "Unknown Citizen" : this.savedCitizenName;
+        return graveData;
     }
 
     /**
-     * Get the name of job of the saved citizen data
+     * Set the graveData of the saved citizen
+     * @param graveData
      */
-    public String getSavedCitizenJobName()
+    public void setGraveData(IGraveData graveData)
     {
-        return this.savedCitizenJobName;
-    }
-
-    /**
-     * Get the data of the saved citizen
-     */
-    public CompoundNBT getSavedCitizenDataNBT()
-    {
-        return this.savedCitizenDataNBT;
-    }
-
-    /**
-     * Set the name of the saved citizen data
-     * @param citizenName
-     */
-    public void setSavedCitizenName(String citizenName)
-    {
-        this.savedCitizenName = citizenName;
-        markDirty();
-    }
-
-    /**
-     * Set the name of the saved citizen data
-     * @param citizenJobName
-     */
-    public void setSavedCitizenJobName(String citizenJobName)
-    {
-        this.savedCitizenJobName = citizenJobName;
-        markDirty();
-    }
-
-    /**
-     * Set the saved citizen data
-     * @param citizenDataNBT
-     */
-    public void setSavedCitizenDataNBT(CompoundNBT citizenDataNBT)
-    {
-        this.savedCitizenDataNBT = citizenDataNBT;
+        this.graveData = graveData;
         markDirty();
     }
 }

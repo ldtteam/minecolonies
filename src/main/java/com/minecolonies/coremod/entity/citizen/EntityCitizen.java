@@ -34,6 +34,7 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesGrave;
+import com.minecolonies.api.colony.GraveData;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingGraveyard;
 import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenDiedEvent;
@@ -1494,13 +1495,16 @@ public class EntityCitizen extends AbstractEntityCitizen
            }
 
            graveEntity.delayDecayTimer(getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(GRAVE_DECAY_BONUS));
-           graveEntity.setSavedCitizenName(citizenData.getName());
+
+           GraveData graveData = new GraveData();
+           graveData.setCitizenName(citizenData.getName());
            if (citizenData.getJob() != null)
            {
                final IFormattableTextComponent jobName =  new TranslationTextComponent(citizenData.getJob().getName());
-               graveEntity.setSavedCitizenJobName(jobName.getString());
+               graveData.setCitizenJobName(jobName.getString());
            }
-           graveEntity.setSavedCitizenDataNBT(citizenData.serializeNBT());
+           graveData.setCitizenDataNBT(citizenData.serializeNBT());
+           graveEntity.setGraveData(graveData);
 
            BlockPos closestGraveyardPos = citizenColonyHandler.getColony().getBuildingManager().
                    getClosestGraveyard(this, g -> g instanceof BuildingGraveyard && ((BuildingGraveyard)g).hasSpaceForNewGraves());
