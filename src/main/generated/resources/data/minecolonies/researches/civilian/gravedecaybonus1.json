@@ -11,8 +11,8 @@
       "level": 3
     },
     {
-      "item": "minecraft:nether_wart_block",
-      "quantity": 8
+      "item": "minecraft:rotten_flesh",
+      "quantity": 64
     }
   ],
   "effects": [
