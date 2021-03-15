@@ -12,11 +12,11 @@ import org.jetbrains.annotations.NotNull;
 /**
  * A Trigger that is triggered when the miner reaches a certain depth
  */
-public class CitizenResurrectrigger extends AbstractCriterionTrigger<CriterionListeners<CitizenResurrectCriterionInstance>, CitizenResurrectCriterionInstance>
+public class CitizenResurrecTrigger extends AbstractCriterionTrigger<CriterionListeners<CitizenResurrectCriterionInstance>, CitizenResurrectCriterionInstance>
 {
     private final static ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CITIZEN_RESURRECT);
 
-    public CitizenResurrectrigger()
+    public CitizenResurrecTrigger()
     {
         super(ID, CriterionListeners::new);
     }
