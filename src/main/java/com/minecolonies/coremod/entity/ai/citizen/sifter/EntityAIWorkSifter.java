@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.sifter;
 
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
@@ -17,6 +18,9 @@ import net.minecraft.util.SoundEvents;
 import net.minecraftforge.items.IItemHandler;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.ONE_HUNDRED_PERCENT;
@@ -99,27 +103,36 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
             return INVENTORY_FULL;
         }
 
-        currentRecipeStorage = sifterBuilding.getFirstFullFillableRecipe(item -> ItemStackUtils.isEmpty(item), 1, false);
+        currentRecipeStorage = sifterBuilding.getFirstFullFillableRecipe(ItemStackUtils::isEmpty, 1, false);
 
         if (currentRecipeStorage == null)
         {
+            if (!ItemStackUtils.isEmpty(worker.getHeldItemMainhand()))
+            {
+                worker.setHeldItem(Hand.MAIN_HAND, ItemStack.EMPTY);
+            }
+            if (!ItemStackUtils.isEmpty(worker.getHeldItemOffhand()))
+            {
+                worker.setHeldItem(Hand.OFF_HAND, ItemStack.EMPTY);
+            }
+
             progress = 0;
             return START_WORKING;
         }
 
-        ItemStack meshItem = ItemStack.EMPTY;
-        for (final IItemHandler handler : InventoryUtils.getItemHandlersFromProvider(sifterBuilding))
-        {
-            final int foundSlot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(handler, item -> ItemStackUtils.compareItemStackListIgnoreStackSize(currentRecipeStorage.getCraftingTools(), item, false, true));
-            if (foundSlot > -1)
-            {
-                meshItem = handler.getStackInSlot(foundSlot).copy();
-            }
-        }
+        final ItemStack meshItem = currentRecipeStorage.getCraftingTools().get(0);
+        final ItemStack inputItem = currentRecipeStorage.getCleanedInput().stream()
+                .map(ItemStorage::getItemStack)
+                .filter(item -> !ItemStackUtils.compareItemStacksIgnoreStackSize(item, meshItem, false, true))
+                .findFirst().orElse(ItemStack.EMPTY);
 
-        if(!meshItem.isEmpty() && (ItemStackUtils.isEmpty(worker.getHeldItemMainhand()) || ItemStackUtils.compareItemStacksIgnoreStackSize(worker.getHeldItemMainhand(), meshItem, false, true)))
+        if (!inputItem.isEmpty() && (ItemStackUtils.isEmpty(worker.getHeldItemMainhand()) || ItemStackUtils.compareItemStacksIgnoreStackSize(worker.getHeldItemMainhand(), inputItem)))
         {
-            worker.setHeldItem(Hand.MAIN_HAND, meshItem);
+            worker.setHeldItem(Hand.MAIN_HAND, inputItem);
+        }
+        if (!meshItem.isEmpty() && (ItemStackUtils.isEmpty(worker.getHeldItemOffhand()) || ItemStackUtils.compareItemStacksIgnoreStackSize(worker.getHeldItemOffhand(), meshItem, false, true)))
+        {
+            worker.setHeldItem(Hand.OFF_HAND, meshItem);
         }
 
         WorkerUtil.faceBlock(getOwnBuilding().getPosition(), worker);
@@ -143,7 +156,7 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
         Network.getNetwork()
             .sendToTrackingEntity(new LocalizedParticleEffectMessage(meshItem, sifterBuilding.getID()), worker);
         Network.getNetwork()
-            .sendToTrackingEntity(new LocalizedParticleEffectMessage(currentRecipeStorage.getCleanedInput().get(0).getItemStack().copy(), sifterBuilding.getID().down()), worker);
+            .sendToTrackingEntity(new LocalizedParticleEffectMessage(inputItem, sifterBuilding.getID().down()), worker);
         
         worker.swingArm(Hand.MAIN_HAND);
         SoundUtils.playSoundAtCitizen(world, getOwnBuilding().getID(), SoundEvents.ENTITY_LEASH_KNOT_BREAK);
