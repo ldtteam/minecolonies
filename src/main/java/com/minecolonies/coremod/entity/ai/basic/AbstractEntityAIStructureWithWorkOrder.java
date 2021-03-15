@@ -173,16 +173,15 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             return;
         }
 
+        final AbstractBuildingStructureBuilder buildingWorker = getOwnBuilding();
         if (requestMaterials())
         {
-            final AbstractBuildingStructureBuilder buildingWorker = getOwnBuilding();
             job.getWorkOrder().setRequested(true);
-
-            int newQuantity = buildingWorker.getNeededResources().values().stream().mapToInt(ItemStorage::getAmount).sum();
-            if (job.getWorkOrder().getAmountOfRes() == 0 || newQuantity > job.getWorkOrder().getAmountOfRes())
-            {
-                job.getWorkOrder().setAmountOfRes(newQuantity);
-            }
+        }
+        int newQuantity = buildingWorker.getNeededResources().values().stream().mapToInt(ItemStorage::getAmount).sum();
+        if (job.getWorkOrder().getAmountOfRes() == 0 || newQuantity > job.getWorkOrder().getAmountOfRes())
+        {
+            job.getWorkOrder().setAmountOfRes(newQuantity);
         }
     }
 
