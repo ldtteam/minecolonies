@@ -9,6 +9,8 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.ItemListModuleWindow;
 import com.minecolonies.coremod.network.messages.server.colony.building.AssignFilterableItemMessage;
 import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -151,6 +153,7 @@ public class ItemListModuleView extends AbstractBuildingModuleView implements IB
     }
 
     @Override
+    @OnlyIn(Dist.CLIENT)
     public Window getWindow()
     {
         return new ItemListModuleWindow(Constants.MOD_ID + ":gui/layouthuts/layoutfilterablelist.xml", buildingView, this);
