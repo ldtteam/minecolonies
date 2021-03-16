@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.colony.buildings.modules;
+package com.minecolonies.coremod.colony.buildings.moduleviews;
 
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.buildings.modules.*;

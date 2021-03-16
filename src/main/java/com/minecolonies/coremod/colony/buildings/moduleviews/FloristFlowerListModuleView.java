@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.colony.buildings.modules;
+package com.minecolonies.coremod.colony.buildings.moduleviews;
 
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.crafting.ItemStorage;
