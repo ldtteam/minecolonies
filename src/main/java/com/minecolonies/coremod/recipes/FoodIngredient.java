@@ -88,7 +88,7 @@ public class FoodIngredient extends Ingredient
     @Override
     public IIngredientSerializer<? extends Ingredient> getSerializer()
     {
-        return Serializer.INSTANCE;
+        return Serializer.getInstance();
     }
 
     public static class Builder
@@ -120,7 +120,11 @@ public class FoodIngredient extends Ingredient
 
     public static class Serializer implements IIngredientSerializer<FoodIngredient>
     {
-        public static final Serializer INSTANCE = new Serializer();
+        private static final Serializer INSTANCE = new Serializer();
+
+        public static Serializer getInstance() { return INSTANCE; }
+
+        private Serializer() { }
 
         @NotNull
         @Override

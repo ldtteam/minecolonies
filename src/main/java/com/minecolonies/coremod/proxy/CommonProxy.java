@@ -159,11 +159,11 @@ public abstract class CommonProxy implements IProxy
     public static void registerRecipeSerializers(final RegistryEvent.Register<IRecipeSerializer<?>> event)
     {
         final IForgeRegistry<IRecipeSerializer<?>> r = event.getRegistry();
-        r.register(CompostRecipe.Serializer.INSTANCE);
+        r.register(CompostRecipe.Serializer.getInstance().setRegistryName(CompostRecipe.ID));
 
-        CraftingHelper.register(CountedIngredient.ID, CountedIngredient.Serializer.INSTANCE);
-        CraftingHelper.register(FoodIngredient.ID, FoodIngredient.Serializer.INSTANCE);
-        CraftingHelper.register(PlantIngredient.ID, PlantIngredient.Serializer.INSTANCE);
+        CraftingHelper.register(CountedIngredient.ID, CountedIngredient.Serializer.getInstance());
+        CraftingHelper.register(FoodIngredient.ID, FoodIngredient.Serializer.getInstance());
+        CraftingHelper.register(PlantIngredient.ID, PlantIngredient.Serializer.getInstance());
     }
 
     @Override

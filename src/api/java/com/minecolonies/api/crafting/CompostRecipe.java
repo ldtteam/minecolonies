@@ -109,7 +109,7 @@ public class CompostRecipe implements IRecipe<IInventory>
     @Override
     public IRecipeSerializer<?> getSerializer()
     {
-        return Serializer.INSTANCE;
+        return Serializer.getInstance();
     }
 
     /**
@@ -143,14 +143,11 @@ public class CompostRecipe implements IRecipe<IInventory>
     public static class Serializer extends ForgeRegistryEntry<IRecipeSerializer<?>>
             implements IRecipeSerializer<CompostRecipe>
     {
-        public static final Serializer INSTANCE = new Serializer();
+        private static final Serializer INSTANCE = new Serializer();
 
-        static
-        {
-            INSTANCE.setRegistryName(CompostRecipe.ID);
-        }
+        public static Serializer getInstance() { return INSTANCE; }
 
-        private Serializer() {}
+        private Serializer() { }
 
         @NotNull
         @Override
