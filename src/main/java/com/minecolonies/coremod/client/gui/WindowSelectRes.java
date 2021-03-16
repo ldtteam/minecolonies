@@ -13,7 +13,7 @@ import com.ldtteam.structurize.api.util.ItemStackUtils;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.network.messages.server.colony.building.AddMinimumStockToBuildingMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.AddMinimumStockToBuildingModuleMessage;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -128,7 +128,7 @@ public class WindowSelectRes extends AbstractWindowSkeleton
 
         if (!ItemStackUtils.isEmpty(to))
         {
-            Network.getNetwork().sendToServer(new AddMinimumStockToBuildingMessage(building, to, qty));
+            Network.getNetwork().sendToServer(new AddMinimumStockToBuildingModuleMessage(building, to, qty));
             this.origin.open();
         }
         this.close();

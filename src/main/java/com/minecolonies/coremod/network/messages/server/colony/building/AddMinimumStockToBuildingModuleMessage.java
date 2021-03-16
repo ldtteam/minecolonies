@@ -2,6 +2,7 @@ package com.minecolonies.coremod.network.messages.server.colony.building;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.modules.IMinimumStockModule;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.item.ItemStack;
@@ -12,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Set a new block to the minimum stock list.
  */
-public class RemoveMinimumStockFromBuildingMessage extends AbstractBuildingServerMessage<IBuilding>
+public class AddMinimumStockToBuildingModuleMessage extends AbstractBuildingServerMessage<IBuilding>
 {
     /**
      * How many item need to be transfer from the player inventory to the building chest.
@@ -20,9 +21,14 @@ public class RemoveMinimumStockFromBuildingMessage extends AbstractBuildingServe
     private ItemStack itemStack;
 
     /**
+     * How many item need to be transfer from the player inventory to the building chest.
+     */
+    private int quantity;
+
+    /**
      * Empty constructor used when registering the
      */
-    public RemoveMinimumStockFromBuildingMessage()
+    public AddMinimumStockToBuildingModuleMessage()
     {
         super();
     }
@@ -30,32 +36,34 @@ public class RemoveMinimumStockFromBuildingMessage extends AbstractBuildingServe
     /**
      * Creates a Transfer Items request
      *
-     * @param building  the building we're executing on.
      * @param itemStack to be take from the player for the building
+     * @param quantity  of item needed to be transfered
+     * @param building  the building we're executing on.
      */
-    public RemoveMinimumStockFromBuildingMessage(final IBuildingView building, final ItemStack itemStack)
+    public AddMinimumStockToBuildingModuleMessage(final IBuildingView building, final ItemStack itemStack, final int quantity)
     {
         super(building);
         this.itemStack = itemStack;
+        this.quantity = quantity;
     }
 
     @Override
     public void fromBytesOverride(@NotNull final PacketBuffer buf)
     {
-
         itemStack = buf.readItemStack();
+        quantity = buf.readInt();
     }
 
     @Override
     public void toBytesOverride(@NotNull final PacketBuffer buf)
     {
-
         buf.writeItemStack(itemStack);
+        buf.writeInt(quantity);
     }
 
     @Override
-    protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuilding building)
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuilding building)
     {
-        building.removeMinimumStock(itemStack);
+        building.getFirstModuleOccurance(IMinimumStockModule.class).ifPresent(m -> m.addMinimumStock(itemStack, quantity));
     }
 }

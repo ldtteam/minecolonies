@@ -19,7 +19,7 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.coremod.client.gui.WindowHutBakerModule;
+import com.minecolonies.coremod.client.gui.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobBaker;
@@ -313,7 +313,7 @@ public class BuildingBaker extends AbstractBuildingSmelterCrafter
         @Override
         public Window getWindow()
         {
-            return new WindowHutBakerModule(this);
+            return new WindowHutWorkerModulePlaceholder<>(this, "bakery");
         }
     }
 }
