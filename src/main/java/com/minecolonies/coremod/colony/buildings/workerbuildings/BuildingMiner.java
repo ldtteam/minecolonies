@@ -2,7 +2,6 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.*;
-import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
@@ -12,7 +11,7 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
-import com.minecolonies.coremod.client.gui.WindowHutMiner;
+import com.minecolonies.coremod.client.gui.WindowHutMinerModule;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
@@ -35,7 +34,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.*;
@@ -685,7 +683,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         @Override
         public Window getWindow()
         {
-            return new WindowHutMiner(this);
+            return new WindowHutMinerModule(this);
         }
 
         @Override

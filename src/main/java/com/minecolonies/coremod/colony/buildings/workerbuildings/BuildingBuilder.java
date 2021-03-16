@@ -14,7 +14,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
-import com.minecolonies.coremod.client.gui.WindowHutBuilder;
+import com.minecolonies.coremod.client.gui.WindowHutBuilderModule;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;
@@ -384,7 +384,7 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
         @Override
         public Window getWindow()
         {
-            return new WindowHutBuilder(this);
+            return new WindowHutBuilderModule(this);
         }
 
         /**
