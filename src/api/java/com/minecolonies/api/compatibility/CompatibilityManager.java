@@ -2,20 +2,24 @@ package com.minecolonies.api.compatibility;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
+import com.minecolonies.api.crafting.CompostRecipe;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.*;
 import net.minecraft.block.*;
 import net.minecraft.enchantment.EnchantmentData;
 import net.minecraft.item.*;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.RecipeManager;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.state.BooleanProperty;
-import net.minecraft.state.Property;
 import net.minecraft.state.IntegerProperty;
+import net.minecraft.state.Property;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.util.NonNullList;
@@ -75,9 +79,9 @@ public class CompatibilityManager implements ICompatibilityManager
     private final Set<ItemStorage> smeltableOres = new HashSet<>();
 
     /**
-     * List of all the items that can be composted
+     * List of all the compost recipes
      */
-    private final Set<ItemStorage> compostableItems = new HashSet<>();
+    private final Map<Item, CompostRecipe> compostRecipes = new HashMap<>();
 
     /**
      * List of all the items that can be planted.
@@ -177,7 +181,6 @@ public class CompatibilityManager implements ICompatibilityManager
 
         discoverSaplings();
         discoverOres();
-        discoverCompostableItems();
         discoverPlantables();
         discoverLuckyOres();
         discoverRecruitCosts();
@@ -217,23 +220,6 @@ public class CompatibilityManager implements ICompatibilityManager
     public List<ItemStack> getListOfAllItems()
     {
         return allItems;
-    }
-
-    @Override
-    public boolean isCompost(final ItemStack itemStack)
-    {
-        if (itemStack.isEmpty())
-        {
-            return false;
-        }
-
-        if (itemStack.getItem().isFood() || (itemStack.getItem() instanceof BlockItem && (((BlockItem) itemStack.getItem()).getBlock() instanceof CropsBlock
-                                                                                            || ((BlockItem) itemStack.getItem()).getBlock() instanceof StemBlock)))
-        {
-            return true;
-        }
-
-        return ModTags.compostables.contains(itemStack.getItem());
     }
 
     @Override
@@ -315,9 +301,17 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
-    public Set<ItemStorage> getCopyOfCompostableItems()
+    public Map<Item, CompostRecipe> getCopyOfCompostRecipes()
     {
-        return new HashSet<>(compostableItems);
+        return ImmutableMap.copyOf(compostRecipes);
+    }
+
+    @Override
+    public Set<ItemStorage> getCompostInputs()
+    {
+        return compostRecipes.keySet().stream()
+                .map(item -> new ItemStorage(new ItemStack(item)))
+                .collect(Collectors.toSet());
     }
 
     @Override
@@ -486,6 +480,16 @@ public class CompatibilityManager implements ICompatibilityManager
         return freePositions.contains(block);
     }
 
+    @Override
+    public void invalidateRecipes(@NotNull final RecipeManager recipeManager)
+    {
+        // TODO: this should probably also invalidate anything using tags too (which is most things)
+        //       although technically there's a different event for tag reloads
+
+        compostRecipes.clear();
+        discoverCompostRecipes(recipeManager);
+    }
+
     //------------------------------- Private Utility Methods -------------------------------//
 
     private void discoverOres()
@@ -519,15 +523,26 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     /**
-     * Create complete list of compostable items.
+     * Create complete list of compost recipes.
+     * @param recipeManager
      */
-    private void discoverCompostableItems()
+    @SuppressWarnings("ConditionalExpression")
+    private void discoverCompostRecipes(@NotNull final RecipeManager recipeManager)
     {
-        if (compostableItems.isEmpty())
+        if (compostRecipes.isEmpty())
         {
-            compostableItems.addAll(ImmutableList.copyOf(allItems.stream().filter(this::isCompost).map(ItemStorage::new).collect(Collectors.toList())));
+            for (final IRecipe<?> r : recipeManager.getRecipes(CompostRecipe.TYPE).values())
+            {
+                final CompostRecipe recipe = (CompostRecipe) r;
+                for (final ItemStack stack : recipe.getInput().getMatchingStacks())
+                {
+                    // there can be duplicates due to overlapping tags.  weakest one wins.
+                    compostRecipes.merge(stack.getItem(), recipe,
+                            (r1, r2) -> r1.getStrength() < r2.getStrength() ? r1 : r2);
+                }
+            }
+            Log.getLogger().info("Finished discovering compostables");
         }
-        Log.getLogger().info("Finished discovering compostables");
     }
 
     /**

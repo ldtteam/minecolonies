@@ -891,7 +891,7 @@
   "com.minecolonies.coremod.leavingcolonynotify": "Farewell, %s has just left %s.",
   "com.minecolonies.coremod.colonysizechange": "All land within %d chunks of %s has been claimed.",
 
-  "com.minecolonies.coremod.mourning": "There has been a death in the colony. The colony will mourn %s tomorrow out of respect.",
+  "com.minecolonies.coremod.mourning": "There has been a death in %s. The citizens will mourn %s tomorrow out of respect.",
 
   "event.minecolonies.raidmessage1": "§4Mysterious warriors have been spotted %s of %s!",
   "event.minecolonies.raidmessage2": "§4Citizens report rumors of raiders %s of %s!",
@@ -932,9 +932,9 @@
   "com.minecolonies.coremod.gui.workerhuts.barbpoints": "Last Barbarian Spawns",
   "com.minecolonies.coremod.gui.workerhuts.barbpoints.current": "Current Barbarian Position",
   "com.minecolonies.coremod.barbarians.left": "Only %d raiders left!",
-  "com.minecolonies.coremod.barbarians.killed": "§2Victory! You successfully defended against the intruders!",
-  "com.minecolonies.coremod.pirates.spawners.destroyed": "You successfully destroyed all of the pirate spawners!",
-  "com.minecolonies.coremod.pirates.killed": "§2Victory! You have rid the seas of the intruders!",
+  "com.minecolonies.coremod.barbarians.killed": "§2Victory! %s successfully defended against the intruders!",
+  "com.minecolonies.coremod.pirates.spawners.destroyed": "%s successfully destroyed all the pirate spawners!",
+  "com.minecolonies.coremod.pirates.killed": "§2Victory! %s rid the seas of the intruders!",
   "com.minecolonies.coremod.gui.workerhuts.deconstruct": "Deconstruct",
   "com.minecolonies.coremod.gui.workerhuts.pickup": "Pick Up",
 
@@ -989,7 +989,7 @@
   "com.minecolonies.coremod.progress.twenty_building_levels": "§6 A barbarian spy had been caught next to your colony, and he seems to be from a bigger group! You should consider building Barracks to defend your colony.",
   "com.minecolonies.coremod.progress.twenty_five_citizens_spawned": "§6 Your colony's population has grown to the limits of current management techniques. To accept more citizens, complete the research at the University.",
   "com.minecolonies.coremod.progress.not_enough_jobs": "§6 Building more Houses than available jobs has a bad influence on your citizens' happiness.",
-  "com.minecolonies.coremod.progress.newchild": "§6 A new child is now happily living in your colony!",
+  "com.minecolonies.coremod.progress.newchild": "§6 A new child is now happily living in %s!",
   "com.minecolonies.coremod.progress.childgrow": "%s grew up and wants a job now.",
   "com.minecolonies.coremod.progress.hirecitizen": "§6 Your recruitment package was accepted and a new citizen arrived!",
 
@@ -1530,6 +1530,8 @@
   "com.minecolonies.coremod.info.barracks.2.name": "FAQ",
   "com.minecolonies.coremod.info.barracks.2": "Now let's cover some frequently asked questions:\n\n Q 1. Can I have more than 1 Barracks?\n   A 1. Yes, but the Barracks Tower levels are based on the Barracks they are attached to. So even if you have one Barracks that is level 5, if the second Barracks is only level 1, then that Barracks can only have a single level 1 tower.",
 
+  "com.minecolonies.coremod.jei.composter": "Uses compost barrels to turn various items into compost or dirt (look up usages for the compost barrel to see more). At higher skill levels, they can work faster than you can.",
+
   "com.minecolonies.coremod.movebuilding.invalid": "Can't reposition to this position, undestroyable block at destination!",
 
   "com.minecolonies.coremod.resourcescroll.nobuilder": "Please register a Builder's Hut first by sneak + right-clicking one!",
@@ -1873,5 +1875,7 @@
   "item.minecolonies.sifter_mesh_string": "String Mesh",
   "item.minecolonies.sifter_mesh_flint": "Flint Mesh",
   "item.minecolonies.sifter_mesh_iron": "Iron Mesh",
-  "item.minecolonies.sifter_mesh_diamond": "Diamond Mesh"
+  "item.minecolonies.sifter_mesh_diamond": "Diamond Mesh",
+
+  "com.minecolonies.coremod.gui.maintab": "Main"
 }

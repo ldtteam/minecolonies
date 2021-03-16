@@ -60,13 +60,13 @@ import static com.minecolonies.api.research.util.ResearchConstants.CITIZEN_CAP;
 import static com.minecolonies.api.util.constant.Constants.TICKS_FOURTY_MIN;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
-import static com.minecolonies.coremod.client.gui.WindowHutBuilder.BLACK;
+import static com.minecolonies.coremod.client.gui.WindowHutBuilderModule.BLACK;
 
 /**
  * Window for the town hall.
  */
 @SuppressWarnings("PMD.ExcessiveClassLength")
-public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
+public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
 {
     /**
      * Citizen name comparator.
