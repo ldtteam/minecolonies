@@ -2,12 +2,10 @@
   "replace": false,
   "values": [
     "#forge:crops",
-    "#forge:seeds",
     "#forge:eggs",
     "#minecraft:flowers",
     "#minecraft:fishes",
     "#minecraft:leaves",
-    "#minecraft:saplings",
     "#minecraft:wool",
     "minecraft:rotten_flesh",
     "minecraft:brown_mushroom",
