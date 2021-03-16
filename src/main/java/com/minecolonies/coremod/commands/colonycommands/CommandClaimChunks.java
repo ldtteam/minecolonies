@@ -66,7 +66,14 @@ public class CommandClaimChunks implements IMCOPCommand
         }
 
         ChunkDataHelper.claimChunksInRange(colonyID, context.getSource().getWorld().getDimensionKey(), add, new BlockPos(sender.getPositionVec()), range, 0, sender.world);
-        LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.claim.success");
+        if(add)
+        {
+            LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.claim.success");
+        }
+        else
+        {
+            LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.claim.unclaim");
+        }
         return 1;
     }
 
