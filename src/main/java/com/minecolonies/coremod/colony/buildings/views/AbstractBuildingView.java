@@ -669,4 +669,10 @@ public abstract class AbstractBuildingView implements IBuildingView
         iModuleView.setBuildingView(this);
         this.moduleViews.add(iModuleView);
     }
+
+    @Override
+    public List<IBuildingModuleView> getAllModuleViews()
+    {
+        return this.moduleViews;
+    }
 }

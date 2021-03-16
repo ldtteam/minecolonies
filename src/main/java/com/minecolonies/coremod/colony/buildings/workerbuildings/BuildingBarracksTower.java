@@ -9,7 +9,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.coremod.client.gui.WindowHutBarracksTower;
+import com.minecolonies.coremod.client.gui.WindowHutBarracksTowerModule;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.util.AdvancementUtils;
 import com.minecolonies.coremod.util.ChunkDataHelper;
@@ -238,7 +238,7 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
         @Override
         public Window getWindow()
         {
-            return new WindowHutBarracksTower(this);
+            return new WindowHutBarracksTowerModule(this);
         }
 
         @Override

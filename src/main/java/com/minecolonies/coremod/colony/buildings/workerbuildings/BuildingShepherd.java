@@ -9,7 +9,7 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.client.gui.WindowHutShepherd;
+import com.minecolonies.coremod.client.gui.WindowHutShepherdModule;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingHerder;
 import com.minecolonies.coremod.colony.jobs.JobShepherd;
 import com.minecolonies.coremod.network.messages.server.colony.building.shepherd.ShepherdSetDyeSheepsMessage;
@@ -187,7 +187,7 @@ public class BuildingShepherd extends AbstractBuildingHerder
         @Override
         public Window getWindow()
         {
-            return new WindowHutShepherd(this);
+            return new WindowHutShepherdModule(this);
         }
 
         /**

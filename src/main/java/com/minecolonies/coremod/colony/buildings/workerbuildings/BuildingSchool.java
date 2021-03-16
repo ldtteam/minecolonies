@@ -12,7 +12,7 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.NbtTagConstants;
-import com.minecolonies.coremod.client.gui.WindowHutSchool;
+import com.minecolonies.coremod.client.gui.WindowHutSchoolModule;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobPupil;
 import com.minecolonies.coremod.colony.jobs.JobTeacher;
@@ -307,7 +307,7 @@ public class BuildingSchool extends AbstractBuildingWorker
         @Override
         public Window getWindow()
         {
-            return new WindowHutSchool(this, SCHOOL);
+            return new WindowHutSchoolModule(this, SCHOOL);
         }
 
         @Override

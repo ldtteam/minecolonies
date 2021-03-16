@@ -50,7 +50,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
     /**
      * The previous window.
      */
-    private final WindowHutUniversity last;
+    private final WindowHutUniversityModule last;
 
     /**
      * If has a max research for this branch already.
@@ -96,7 +96,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
      * @param building the associated university.
      * @param last     the GUI we opened this from.
      */
-    public WindowResearchTree(final ResourceLocation branch, final BuildingUniversity.View building, final WindowHutUniversity last)
+    public WindowResearchTree(final ResourceLocation branch, final BuildingUniversity.View building, final WindowHutUniversityModule last)
     {
         super(Constants.MOD_ID + R_TREE_RESOURCE_SUFFIX, last);
         this.branch = branch;

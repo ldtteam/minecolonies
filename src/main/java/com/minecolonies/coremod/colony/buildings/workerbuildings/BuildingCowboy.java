@@ -9,7 +9,7 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.client.gui.WindowHutCowboy;
+import com.minecolonies.coremod.client.gui.WindowHutCowboyModule;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingHerder;
 import com.minecolonies.coremod.colony.jobs.JobCowboy;
 import com.minecolonies.coremod.network.messages.server.colony.building.cowboy.CowboySetMilkCowsMessage;
@@ -174,7 +174,7 @@ public class BuildingCowboy extends AbstractBuildingHerder
         @Override
         public Window getWindow()
         {
-            return new WindowHutCowboy(this);
+            return new WindowHutCowboyModule(this);
         }
 
         public void setMilkCows(final boolean milkCows)

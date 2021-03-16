@@ -22,7 +22,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 /**
  * Window for the home building.
  */
-public class WindowHutCitizen extends AbstractWindowBuilding<HomeBuildingModule.View>
+public class WindowHutCitizen extends AbstractWindowModuleBuilding<HomeBuildingModule.View>
 {
     /**
      * Suffix describing the window xml.
