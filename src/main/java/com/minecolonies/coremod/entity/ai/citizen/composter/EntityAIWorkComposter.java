@@ -82,6 +82,11 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
       new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/composter.png"), "com.minecolonies.gui.visiblestatus.composter");
 
     /**
+     * it makes it work. go away
+     */
+    private Random random;
+
+    /**
      * Constructor for the AI
      *
      * @param job the job to fulfill
@@ -294,6 +299,8 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
     {
         worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_STATUS_COMPOSTER_HARVESTING));
 
+        final int podzolChance = (random.nextInt(100)) + 1;
+
         if (walkToBlock(currentTarget))
         {
             setDelay(2);
@@ -309,7 +316,18 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
 
             if (getOwnBuilding().shouldRetrieveDirtFromCompostBin())
             {
-                InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), new ItemStack(Blocks.DIRT, MineColonies.getConfig().getServer().dirtFromCompost.get()));
+                /**
+                 * Podzol or dirt?
+                 * 5% chance for podzol, else dirt.
+                 */
+                if (podzolChance <= 5)
+                {
+                    InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), new ItemStack(Blocks.PODZOL, 1));
+                }
+                else
+                {
+                    InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), new ItemStack(Blocks.DIRT, MineColonies.getConfig().getServer().dirtFromCompost.get()));
+                }
             }
             else
             {
