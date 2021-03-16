@@ -56,7 +56,7 @@ public class FMLEventHandler
     @SubscribeEvent
     public static void onAddReloadListenerEvent(@NotNull final AddReloadListenerEvent event)
     {
-        event.addListener(new CrafterRecipeListener());
+        event.addListener(new CrafterRecipeListener(event.getDataPackRegistries()));
         event.addListener(new ResearchListener());
     }
 
