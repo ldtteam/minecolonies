@@ -27,7 +27,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.client.gui.WindowHutGuardTower;
+import com.minecolonies.coremod.client.gui.WindowHutGuardTowerModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.colony.jobs.JobArcherTraining;
@@ -799,7 +799,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         @Override
         public Window getWindow()
         {
-            return new WindowHutGuardTower(this);
+            return new WindowHutGuardTowerModule(this);
         }
 
         /**

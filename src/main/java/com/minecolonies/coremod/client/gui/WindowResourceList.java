@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
-import static com.minecolonies.coremod.client.gui.WindowHutBuilder.*;
+import static com.minecolonies.coremod.client.gui.WindowHutBuilderModule.*;
 import static com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource.RessourceAvailability.*;
 
 /**

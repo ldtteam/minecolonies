@@ -11,7 +11,7 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
-import com.minecolonies.coremod.client.gui.WindowHutComposter;
+import com.minecolonies.coremod.client.gui.WindowHutComposterModule;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
 import com.minecolonies.coremod.colony.jobs.JobComposter;
@@ -240,7 +240,7 @@ public class BuildingComposter extends AbstractBuildingWorker
         @Override
         public Window getWindow()
         {
-            return new WindowHutComposter(this);
+            return new WindowHutComposterModule(this);
         }
     }
 }

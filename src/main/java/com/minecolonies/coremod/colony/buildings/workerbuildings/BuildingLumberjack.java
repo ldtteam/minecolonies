@@ -15,7 +15,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.ToolType;
-import com.minecolonies.coremod.client.gui.WindowHutLumberjack;
+import com.minecolonies.coremod.client.gui.WindowHutLumberjackModule;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
 import com.minecolonies.coremod.util.AttributeModifierUtils;
@@ -538,7 +538,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker implements IBuild
         @Override
         public Window getWindow()
         {
-            return new WindowHutLumberjack(this);
+            return new WindowHutLumberjackModule(this);
         }
     }
 }
