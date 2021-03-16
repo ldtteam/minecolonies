@@ -102,7 +102,7 @@ public final class ModBuildingsInitializer
                                    .setBuildingViewProducer(() -> BuildingComposter.View::new)
                                    .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.COMPOSTER_ID))
                                    .addBuildingModuleProducer(() -> new ItemListModule(COMPOSTABLE_LIST), () -> new ItemListModuleView(COMPOSTABLE_LIST, COM_MINECOLONIES_REQUESTS_COMPOSTABLE_UI, false,
-                                     (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getCopyOfCompostableItems()))
+                                     (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getCompostInputs()))
                                    .createBuildingEntry();
 
         ModBuildings.cook = new BuildingEntry.Builder()

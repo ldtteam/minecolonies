@@ -1530,6 +1530,8 @@
   "com.minecolonies.coremod.info.barracks.2.name": "FAQ",
   "com.minecolonies.coremod.info.barracks.2": "Now let's cover some frequently asked questions:\n\n Q 1. Can I have more than 1 Barracks?\n   A 1. Yes, but the Barracks Tower levels are based on the Barracks they are attached to. So even if you have one Barracks that is level 5, if the second Barracks is only level 1, then that Barracks can only have a single level 1 tower.",
 
+  "com.minecolonies.coremod.jei.composter": "Uses compost barrels to turn various items into compost or dirt (look up usages for the compost barrel to see more). At higher skill levels, they can work faster than you can.",
+
   "com.minecolonies.coremod.movebuilding.invalid": "Can't reposition to this position, undestroyable block at destination!",
 
   "com.minecolonies.coremod.resourcescroll.nobuilder": "Please register a Builder's Hut first by sneak + right-clicking one!",

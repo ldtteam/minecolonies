@@ -15,6 +15,10 @@ import com.minecolonies.api.research.registry.ResearchRequirementEntry;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.apiimp.CommonMinecoloniesAPIImpl;
 import com.minecolonies.apiimp.initializer.*;
+import com.minecolonies.api.crafting.CompostRecipe;
+import com.minecolonies.api.crafting.CountedIngredient;
+import com.minecolonies.coremod.recipes.FoodIngredient;
+import com.minecolonies.coremod.recipes.PlantIngredient;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -23,9 +27,11 @@ import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.RecipeBook;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -147,6 +153,17 @@ public abstract class CommonProxy implements IProxy
     public static void registerRecipeTypes(final RegistryEvent.Register<RecipeTypeEntry> event)
     {
         ModRecipeTypesInitializer.init(event);
+    }
+
+    @SubscribeEvent
+    public static void registerRecipeSerializers(final RegistryEvent.Register<IRecipeSerializer<?>> event)
+    {
+        final IForgeRegistry<IRecipeSerializer<?>> r = event.getRegistry();
+        r.register(CompostRecipe.Serializer.getInstance().setRegistryName(CompostRecipe.ID));
+
+        CraftingHelper.register(CountedIngredient.ID, CountedIngredient.Serializer.getInstance());
+        CraftingHelper.register(FoodIngredient.ID, FoodIngredient.Serializer.getInstance());
+        CraftingHelper.register(PlantIngredient.ID, PlantIngredient.Serializer.getInstance());
     }
 
     @Override

@@ -23,7 +23,6 @@ public class ModTags
     public static ITag<Block> indestructible;
 
     public static ITag<Block> oreChanceBlocks;
-    public static ITag<Item>  compostables;
 
     public static ITag<Item> fungi;
 
