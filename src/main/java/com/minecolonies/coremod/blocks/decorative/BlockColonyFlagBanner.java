@@ -1,12 +1,10 @@
 package com.minecolonies.coremod.blocks.decorative;
 
-import com.google.common.collect.Maps;
 import com.minecolonies.api.blocks.decorative.AbstractColonyFlagBanner;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.item.DyeColor;
 import net.minecraft.state.IntegerProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
@@ -20,8 +18,6 @@ import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
-
-import java.util.Map;
 
 /**
  * A custom banner block to construct the associated tile entity that will render the colony flag.

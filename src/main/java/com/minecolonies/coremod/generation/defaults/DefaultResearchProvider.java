@@ -36,6 +36,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
     private static final ResourceLocation CIVIL  = new ResourceLocation(Constants.MOD_ID, "civilian");
     private static final ResourceLocation COMBAT = new ResourceLocation(Constants.MOD_ID, "combat");
     private static final ResourceLocation TECH   = new ResourceLocation(Constants.MOD_ID, "technology");
+    private static final ResourceLocation UNLOCK = new ResourceLocation(Constants.MOD_ID, "unlockable");
 
     /**
      * Get a list of all research branches. Conventions: these are not mandatory, and their inclusion simply fixes capitalization. MineColonies should fully populate new branches
@@ -50,6 +51,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         branches.add(new ResearchBranch(CIVIL).setTranslatedBranchName("Civilian").setBranchTimeMultiplier(1.0));
         branches.add(new ResearchBranch(COMBAT).setTranslatedBranchName("Combat").setBranchTimeMultiplier(1.0));
         branches.add(new ResearchBranch(TECH).setTranslatedBranchName("Technology").setBranchTimeMultiplier(1.0));
+        branches.add(new ResearchBranch(UNLOCK).setTranslatedBranchName("Unlockables").setBranchTimeMultiplier(0.0));
         return branches;
     }
 
@@ -141,6 +143,16 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           "Enchanter Learns Scroll Recipes to Locate Workers and Summon Guards"));
         effects.add(new ResearchEffect(new ResourceLocation(Constants.MOD_ID, "effects/platearmorunlock")).setTranslatedName("Blacksmith Learns Plate Armor Recipes"));
 
+        //Sifter Mesh triggers
+        effects.add(new ResearchEffect(new ResourceLocation(Constants.MOD_ID, "effects/sifterstringunlock")).setTranslatedName(
+            "Fletcher Learns How to Make String Meshes for the Sifter"));
+        effects.add(new ResearchEffect(new ResourceLocation(Constants.MOD_ID, "effects/sifterflintunlock")).setTranslatedName(
+            "Stonemason Learns How to Make Flint Meshes for the Sifter"));
+        effects.add(new ResearchEffect(new ResourceLocation(Constants.MOD_ID, "effects/sifterironunlock")).setTranslatedName(
+            "Blacksmith Learns How to Make Iron Meshes for the Sifter"));
+        effects.add(new ResearchEffect(new ResourceLocation(Constants.MOD_ID, "effects/sifterdiamondunlock")).setTranslatedName(
+            "Mechanic Learns How to Make Diamond Meshes for the Sifter"));
+            
         return effects;
     }
 
@@ -159,6 +171,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         researches.addAll(getCivilResearch(researches));
         researches.addAll(getCombatResearch(researches));
         researches.addAll(getTechnologyResearch(researches));
+        researches.addAll(getAchievementResearch(researches));
 
         return researches;
     }
@@ -298,7 +311,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                     .addToList(r);
         final Research scholarly = new Research(new ResourceLocation(Constants.MOD_ID, "civilian/scholarly"), CIVIL).setParentResearch(studious)
                                      .setTranslatedName("Scholarly")
-                                     .setTranslatedSubtitle("Homework for the next decade...check!")
+                                     .setTranslatedSubtitle("Homework for the next decade... check!")
                                      .setIcon(Items.EXPERIENCE_BOTTLE, 3)
                                      .addBuildingRequirement(ModBuildings.LIBRARY_ID, 4)
                                      .addItemCost(Items.BOOK, 24)
@@ -706,27 +719,27 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                           .setIcon(Items.IRON_INGOT)
                                           .addBuildingRequirement(ModBuildings.COMBAT_ACADEMY_ID, 3)
                                           .addItemCost(Items.SHIELD, 4)
-                                          .addEffect(BLOCK_ATTACKS, 2)
+                                          .addEffect(BLOCK_ATTACKS, 1)
                                           .addToList(r);
         final Research knightTraining = new Research(new ResourceLocation(Constants.MOD_ID, "combat/knighttraining"), COMBAT).setParentResearch(squireTraining)
                                           .setTranslatedName("Knight Training")
                                           .setIcon(Items.BARREL)
                                           .addBuildingRequirement(ModBuildings.COMBAT_ACADEMY_ID, 4)
                                           .addItemCost(Items.SHIELD, 8)
-                                          .addEffect(BLOCK_ATTACKS, 3)
+                                          .addEffect(BLOCK_ATTACKS, 2)
                                           .addToList(r);
         final Research captainTraining = new Research(new ResourceLocation(Constants.MOD_ID, "combat/captaintraining"), COMBAT).setParentResearch(knightTraining)
                                            .setTranslatedName("Captain Training")
                                            .setIcon(Items.IRON_BARS)
                                            .addBuildingRequirement(ModBuildings.COMBAT_ACADEMY_ID, 5)
                                            .addItemCost(Items.SHIELD, 16)
-                                           .addEffect(BLOCK_ATTACKS, 4)
+                                           .addEffect(BLOCK_ATTACKS, 3)
                                            .addToList(r);
         new Research(new ResourceLocation(Constants.MOD_ID, "combat/captainoftheguard"), COMBAT).setParentResearch(captainTraining)
           .setTranslatedName("Captain of the Guard")
           .setIcon(Items.IRON_BLOCK)
           .addItemCost(Items.SHIELD, 27)
-          .addEffect(BLOCK_ATTACKS, 5)
+          .addEffect(BLOCK_ATTACKS, 4)
           .addToList(r);
 
         final Research improvedBows = new Research(new ResourceLocation(Constants.MOD_ID, "combat/improvedbows"), COMBAT).setParentResearch(tacticTraining)
@@ -869,21 +882,21 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                          .setIcon(Items.TURTLE_HELMET)
                                          .addBuildingRequirement(ModBuildings.TOWNHALL_ID, 2)
                                          .addItemCost(Items.LEATHER, 64)
-                                         .addEffect(ARMOR_DURABILITY, 1)
+                                         .addEffect(ARMOR_DURABILITY, 2)
                                          .addToList(r);
         final Research ironSkin = new Research(new ResourceLocation(Constants.MOD_ID, "combat/ironskin"), COMBAT).setParentResearch(boiledLeather)
                                     .setTranslatedName("Iron Skin")
                                     .setIcon(Items.CHAINMAIL_HELMET)
                                     .addBuildingRequirement(ModBuildings.TOWNHALL_ID, 3)
                                     .addItemCost(Items.IRON_INGOT, 16)
-                                    .addEffect(ARMOR_DURABILITY, 2)
+                                    .addEffect(ARMOR_DURABILITY, 3)
                                     .addToList(r);
         final Research ironArmor = new Research(new ResourceLocation(Constants.MOD_ID, "combat/ironarmor"), COMBAT).setParentResearch(ironSkin)
                                      .setTranslatedName("Iron Armor")
                                      .setIcon(Items.IRON_HELMET)
                                      .addBuildingRequirement(ModBuildings.TOWNHALL_ID, 4)
                                      .addItemCost(Items.IRON_INGOT, 32)
-                                     .addEffect(ARMOR_DURABILITY, 3)
+                                     .addEffect(ARMOR_DURABILITY, 4)
                                      .addToList(r);
         final Research steelArmor = new Research(new ResourceLocation(Constants.MOD_ID, "combat/steelarmor"), COMBAT).setParentResearch(ironArmor)
                                       .setTranslatedName("Steel Armor")
@@ -891,13 +904,13 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                       .setIcon(Items.GOLDEN_HELMET)
                                       .addBuildingRequirement(ModBuildings.TOWNHALL_ID, 5)
                                       .addItemCost(Items.IRON_INGOT, 64)
-                                      .addEffect(ARMOR_DURABILITY, 4)
+                                      .addEffect(ARMOR_DURABILITY, 5)
                                       .addToList(r);
         new Research(new ResourceLocation(Constants.MOD_ID, "combat/platearmor"), COMBAT).setParentResearch(ironArmor)
                                      .setTranslatedName("Plate Armor")
                                      .setSortOrder(2)
                                      .setIcon(ModItems.plateArmorHelmet)
-                                     .addBuildingRequirement(ModBuildings.BLACKSMITH_ID, 4)
+                                     .addMandatoryBuildingRequirement(ModBuildings.BLACKSMITH_ID, 4)
                                      .addItemCost(Items.IRON_INGOT, 32)
                                      .addEffect(PLATE_ARMOR, 1)
                                      .addToList(r);
@@ -905,7 +918,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .setTranslatedName("Diamond Skin")
           .setIcon(Items.DIAMOND_HELMET)
           .addItemCost(Items.DIAMOND, 64)
-          .addEffect(ARMOR_DURABILITY, 5)
+          .addEffect(ARMOR_DURABILITY, 6)
           .addToList(r);
 
         final Research regeneration = new Research(new ResourceLocation(Constants.MOD_ID, "combat/regeneration"), COMBAT).setParentResearch(improvedLeather)
@@ -978,7 +991,9 @@ public class DefaultResearchProvider extends AbstractResearchProvider
 
         // Primary Research #5
         final Research taunt =
-          new Research(new ResourceLocation(Constants.MOD_ID, "combat/taunt"), COMBAT).setTranslatedSubtitle("Your mother was a hamster and your father smelt of elderberries!")
+          new Research(new ResourceLocation(Constants.MOD_ID, "combat/taunt"), COMBAT)
+            .setTranslatedName("Taunt")
+            .setTranslatedSubtitle("Your mother was a hamster and your father smelt of elderberries!")
             .setSortOrder(5)
             .setIcon(Items.CHAIN)
             .addBuildingRequirement(ModBuildings.GUARD_TOWER_ID, 1)
@@ -1046,10 +1061,10 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                      .setTranslatedName("Let It Grow")
                                      .setTranslatedSubtitle("Just one tiny seed is all we really need.")
                                      .setSortOrder(2)
-                                     .setIcon(ModBlocks.blockHutComposter.asItem())
+                                     .setIcon(ModBlocks.blockHutPlantation.asItem())
                                      .addBuildingRequirement(ModBuildings.FARMER_ID, 3)
                                      .addItemCost(ModItems.compost, 16)
-                                     .addEffect(ModBuildings.composter.getBuildingBlock(), 1)
+                                     .addEffect(ModBuildings.plantation.getBuildingBlock(), 1)
                                      .addToList(r);
         new Research(new ResourceLocation(Constants.MOD_ID, "technology/doubletrouble"), TECH).setParentResearch(letItGrow)
           .setTranslatedName("Double Trouble")
@@ -1479,6 +1494,51 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .addItemCost(Items.OBSIDIAN, 32)
           .addEffect(MECHANIC_ENHANCED_GATES, 2)
           .addToList(r);
+
+        return r;
+    }
+
+    public Collection<Research> getAchievementResearch(Collection<Research> r)
+    {
+        new Research(new ResourceLocation(Constants.MOD_ID, "unlockable/stringmesh"), UNLOCK)
+            .setTranslatedName("String Mesh")
+            .setIcon(ModItems.sifterMeshString)
+            .addMandatoryBuildingRequirement(ModBuildings.SIFTER_ID, 1)
+            .setHidden()
+            .setAutostart()
+            .setInstant()
+            .addEffect(new ResourceLocation(Constants.MOD_ID, "effects/sifterstringunlock"), 1)
+            .addToList(r);
+
+        new Research(new ResourceLocation(Constants.MOD_ID, "unlockable/flintmesh"), UNLOCK)
+            .setTranslatedName("Flint Mesh")
+            .setIcon(ModItems.sifterMeshString)
+            .addMandatoryBuildingRequirement(ModBuildings.SIFTER_ID, 3)
+            .setHidden()
+            .setAutostart()
+            .setInstant()
+            .addEffect(new ResourceLocation(Constants.MOD_ID, "effects/sifterflintunlock"), 1)
+            .addToList(r);
+
+        new Research(new ResourceLocation(Constants.MOD_ID, "unlockable/ironmesh"), UNLOCK)
+            .setTranslatedName("Iron Mesh")
+            .setIcon(ModItems.sifterMeshString)
+            .addMandatoryBuildingRequirement(ModBuildings.SIFTER_ID, 4)
+            .setHidden()
+            .setAutostart()
+            .setInstant()
+            .addEffect(new ResourceLocation(Constants.MOD_ID, "effects/sifterironunlock"), 1)
+            .addToList(r);
+
+        new Research(new ResourceLocation(Constants.MOD_ID, "unlockable/diamondmesh"), UNLOCK)
+            .setTranslatedName("Diamond Mesh")
+            .setIcon(ModItems.sifterMeshString)
+            .addMandatoryBuildingRequirement(ModBuildings.SIFTER_ID, 5)
+            .setHidden()
+            .setAutostart()
+            .setInstant()
+            .addEffect(new ResourceLocation(Constants.MOD_ID, "effects/sifterdiamondunlock"), 1)
+            .addToList(r);
 
         return r;
     }

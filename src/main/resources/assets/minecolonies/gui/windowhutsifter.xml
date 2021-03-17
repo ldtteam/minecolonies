@@ -6,7 +6,7 @@
             <layout source="minecolonies:gui/layouthuts/layouthutpageactions.xml"/>
         </view>
         <view id="sifterSettings" size="100% 100%">
-            <image source="minecolonies:textures/gui/builderhut/builder_papper.png" size="190 244"/>
+            <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
             <label size="130 11" pos="30 24" textalign="MIDDLE" color="black"
                    label="$(com.minecolonies.coremod.gui.workerhuts.sifterSettings):"/>
 
@@ -17,21 +17,9 @@
             <buttonimage id="save" size="86 17" pos="52 60" textcolor="black"
                          source="minecolonies:textures/gui/builderhut/builder_button_medium.png" label="$(com.minecolonies.coremod.gui.workerhuts.save)"/>
 
-
-            <label size="130 11" pos="30 100" textalign="MIDDLE" color="black"
-                   label="$(com.minecolonies.coremod.gui.workerhuts.meshSettings):"/>
-            <list id="resources" size="164 136" pos="13 120">
-                <box size="100% 17" linewidth="2">
-                    <itemicon id="resourceIcon" size="17 17" pos="0 0"/>
-                    <label id="resourceName" size="100 12" pos="20 1" color="white"/>
-                    <buttonimage label="$(com.minecolonies.coremod.gui.workerhuts.buy)" id="buyMesh" pos="120 1" size="29 15"
-                                 source="minecolonies:textures/gui/builderhut/builder_button_very_small.png" textcolor="black"/>
-                </box>
-            </list>
-
         </view>
         <view id="sifterPrestock">
-            <image source="minecolonies:textures/gui/builderhut/builder_papper.png" size="190 244"/>
+            <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
             <label size="130 11" pos="30 14" textalign="MIDDLE" color="black"
                    label="$(com.minecolonies.coremod.gui.warehouse.stock)"/>
             <list id="resourcesstock" size="170 100" pos="13 50">

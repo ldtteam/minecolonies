@@ -35,7 +35,6 @@ import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.*;
-import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
@@ -51,7 +50,6 @@ import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper
 import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
 import com.minecolonies.coremod.util.ChunkDataHelper;
 import com.minecolonies.coremod.util.ColonyUtils;
-import io.netty.buffer.Unpooled;
 import net.minecraft.block.AirBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -177,14 +175,35 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public boolean hasModule(final Class<? extends IBuildingModule> clazz)
     {
-        return getModule(clazz).isPresent();
+        return getFirstModuleOccurance(clazz).isPresent();
     }
 
     @NotNull
     @Override
-    public <T extends IBuildingModule> Optional<T> getModule(final Class<T> clazz)
+    public <T extends IBuildingModule> Optional<T> getFirstModuleOccurance(final Class<T> clazz)
     {
-        return getModules(clazz).stream().findFirst();
+        for (final IBuildingModule module : modules)
+        {
+            if (clazz.isInstance(module))
+            {
+                return Optional.of((T) module);
+            }
+        }
+        return Optional.empty();
+    }
+
+    @NotNull
+    @Override
+    public <T extends IBuildingModule> Optional<T> getModuleMatching(final Class<T> clazz, final Predicate<? super T> modulePredicate)
+    {
+        for (final IBuildingModule module : modules)
+        {
+            if (clazz.isInstance(module) && modulePredicate.test((T) module))
+            {
+                return Optional.of((T) module);
+            }
+        }
+        return Optional.empty();
     }
 
     @NotNull
@@ -695,9 +714,9 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         }
         buf.writeCompoundTag(StandardFactoryController.getInstance().serialize(getId()));
         buf.writeInt(containerList.size());
-        for (int i = 0; i < containerList.size(); i++)
+        for (BlockPos blockPos : containerList)
         {
-            buf.writeBlockPos(containerList.get(i));
+            buf.writeBlockPos(blockPos);
         }
         buf.writeCompoundTag(requestSystemCompound);
 
@@ -772,7 +791,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
                     continue;
                 }
 
-                final int count = InventoryUtils.hasBuildingEnoughElseCount(this, new ItemStorage(itemStack), entry.getValue() * itemStack.getMaxStackSize());
+                final int count = InventoryUtils.hasBuildingEnoughElseCount(this, new ItemStorage(itemStack, true), entry.getValue() * itemStack.getMaxStackSize());
                 final int delta = (entry.getValue() * itemStack.getMaxStackSize()) - count;
                 final IToken<?> request = getMatchingRequest(itemStack, list);
                 if (delta > 0)
@@ -780,7 +799,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
                     if (request == null)
                     {
                         itemStack.setCount(Math.min(itemStack.getMaxStackSize(), delta));
-                        final Stack stack = new Stack(itemStack);
+                        final Stack stack = new Stack(itemStack, false);
                         if (getMainCitizen() != null)
                         {
                             getMainCitizen().createRequestAsync(stack);
@@ -1964,10 +1983,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             @Override
             public Container createMenu(final int id, @NotNull final PlayerInventory inv, @NotNull final PlayerEntity player)
             {
-                final PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
-                buffer.writeBoolean(false);
-                buffer.writeBlockPos(getID());
-                return new ContainerCrafting(id, inv, buffer);
+                return new ContainerCrafting(id, inv, false, getID());
             }
         }, buffer -> new PacketBuffer(buffer.writeBoolean(false)).writeBlockPos(getID()));
     }

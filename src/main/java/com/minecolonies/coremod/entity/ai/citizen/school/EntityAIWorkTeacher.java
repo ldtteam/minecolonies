@@ -145,7 +145,8 @@ public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher, Bu
         }
 
         final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), PAPER);
-        if (slot != -1)
+        final int pupilSlot = InventoryUtils.findFirstSlotInItemHandlerWith(pupilToTeach.getInventoryCitizen(), PAPER);
+        if (slot != -1 && pupilSlot == -1)
         {
             InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoNextFreeSlotInItemHandler(
               worker.getInventoryCitizen(),

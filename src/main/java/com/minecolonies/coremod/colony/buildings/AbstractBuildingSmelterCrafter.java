@@ -15,18 +15,15 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.inventory.container.ContainerCraftingFurnace;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingProductionResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingRequestResolver;
-import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -119,7 +116,7 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractBuildingFur
         }
 
         final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep = new HashMap<>(super.getRequiredItemsAndAmount());
-        toKeep.putAll(requiredItems.entrySet().stream().collect(Collectors.toMap(key -> (stack -> stack.isItemEqual(key.getKey().getItemStack())), Map.Entry::getValue)));
+        toKeep.putAll(requiredItems.entrySet().stream().collect(Collectors.toMap(key -> (stack -> stack.isItemEqualIgnoreDurability(key.getKey().getItemStack())), Map.Entry::getValue)));
         return toKeep;
     }
 
@@ -150,9 +147,7 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractBuildingFur
             @Override
             public Container createMenu(final int id, @NotNull final PlayerInventory inv, @NotNull final PlayerEntity player)
             {
-                final PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
-                buffer.writeBlockPos(getID());
-                return new ContainerCraftingFurnace(id, inv, buffer);
+                return new ContainerCraftingFurnace(id, inv, getID());
             }
         }, getID());
     }
@@ -161,7 +156,7 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractBuildingFur
     /**
      * Crafter building View.
      */
-    public static class View extends AbstractFilterableListsView
+    public static class View extends AbstractBuildingWorker.View
     {
         /**
          * Instantiate the crafter view.

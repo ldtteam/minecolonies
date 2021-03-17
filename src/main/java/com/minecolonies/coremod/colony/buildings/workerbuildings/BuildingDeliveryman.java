@@ -13,7 +13,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Delivery;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
-import com.minecolonies.coremod.client.gui.WindowHutDeliveryman;
+import com.minecolonies.coremod.client.gui.WindowHutDeliverymanModule;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.util.AttributeModifierUtils;
@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
-import static com.minecolonies.api.util.constant.CitizenConstants.*;
+import static com.minecolonies.api.util.constant.CitizenConstants.SKILL_BONUS_ADD;
 
 /**
  * Class of the warehouse building.
@@ -145,7 +145,7 @@ public class BuildingDeliveryman extends AbstractBuildingWorker implements IBuil
         @Override
         public Window getWindow()
         {
-            return new WindowHutDeliveryman(this);
+            return new WindowHutDeliverymanModule(this);
         }
     }
 }

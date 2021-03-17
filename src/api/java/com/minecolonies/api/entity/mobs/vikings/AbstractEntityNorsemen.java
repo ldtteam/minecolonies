@@ -3,7 +3,6 @@ package com.minecolonies.api.entity.mobs.vikings;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.entity.mobs.RaiderType;
 import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
-import com.minecolonies.api.sounds.RaiderSounds;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.util.SoundEvent;
@@ -11,7 +10,6 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
 import java.util.Random;
 
 import static com.minecolonies.api.util.constant.RaiderConstants.ONE;

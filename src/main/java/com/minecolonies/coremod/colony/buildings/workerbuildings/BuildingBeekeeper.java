@@ -11,7 +11,7 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.client.gui.WindowHutBeekeeper;
+import com.minecolonies.coremod.client.gui.WindowHutBeekeeperModule;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobBeekeeper;
 import com.minecolonies.coremod.network.messages.server.colony.building.beekeeper.BeekeeperSetHarvestHoneycombsMessage;
@@ -257,7 +257,7 @@ public class BuildingBeekeeper extends AbstractBuildingWorker
         @Override
         public Window getWindow()
         {
-            return new WindowHutBeekeeper(this);
+            return new WindowHutBeekeeperModule(this);
         }
 
         public boolean isHarvestHoneycombs()

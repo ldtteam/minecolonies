@@ -40,7 +40,6 @@ import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MobEntity;
-import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.monster.EndermanEntity;
 import net.minecraft.entity.monster.IMob;
@@ -51,10 +50,10 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.dedicated.DedicatedServer;
+import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.state.properties.BedPart;
 import net.minecraft.tileentity.MobSpawnerTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -70,7 +69,6 @@ import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
-import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
@@ -420,11 +418,7 @@ public class EventHandler
                 }
             }
 
-            MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
-            if(server instanceof DedicatedServer)
-            {
-                IGlobalResearchTree.getInstance().sendGlobalResearchTreePackets((ServerPlayerEntity) event.getPlayer());
-            }
+            IGlobalResearchTree.getInstance().sendGlobalResearchTreePackets((ServerPlayerEntity) event.getPlayer());
         }
     }
 

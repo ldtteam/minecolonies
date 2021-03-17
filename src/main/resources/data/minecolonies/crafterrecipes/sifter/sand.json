@@ -1,4 +1,5 @@
 {
+  "_note": "These recipes are not used any more, but exist to allow upgrades to remove the old version",
   "type" : "recipe",
   "crafter": "sifter",
   "inputs": [
@@ -7,5 +8,14 @@
         "count": "1"
     }
   ],
-  "loot-table": "minecolonies:recipes/sifter_sand"
+  "additional-output": [
+    {
+        "item" : "minecraft:cactus"
+    },
+    {
+        "item" : "minecraft:sugar_cane"
+    }
+  ],
+  "loot-table": "minecolonies:recipes/sifter_sand",
+  "min-building-level" : 99
 }

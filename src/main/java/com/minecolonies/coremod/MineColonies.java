@@ -2,7 +2,6 @@ package com.minecolonies.coremod;
 
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.util.StructureLoadingUtils;
-import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IChunkmanagerCapability;
@@ -110,7 +109,6 @@ public class MineColonies
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(ClientEventHandler.class));
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(HighlightManager.class));
 
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(DebugRendererChunkBorder.class));
         Mod.EventBusSubscriber.Bus.MOD.bus().get().register(CommonProxy.class);
 
         Mod.EventBusSubscriber.Bus.MOD.bus().get().addListener(GatherDataHandler::dataGeneratorSetup);

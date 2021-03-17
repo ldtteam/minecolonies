@@ -17,10 +17,9 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.coremod.client.gui.WindowHutDyer;
+import com.minecolonies.coremod.client.gui.WindowHutDyerModule;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
 import com.minecolonies.coremod.colony.jobs.JobDyer;
-import io.netty.buffer.Unpooled;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -34,7 +33,6 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -143,10 +141,7 @@ public class BuildingDyer extends AbstractBuildingSmelterCrafter
             @Override
             public Container createMenu(final int id, @NotNull final PlayerInventory inv, @NotNull final PlayerEntity player)
             {
-                final PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
-                buffer.writeBoolean(canCraftComplexRecipes());
-                buffer.writeBlockPos(getID());
-                return new ContainerCrafting(id, inv, buffer);
+                return new ContainerCrafting(id, inv, canCraftComplexRecipes(), getID());
             }
         }, buffer -> new PacketBuffer(buffer.writeBoolean(canCraftComplexRecipes())).writeBlockPos(getID()));
     }
@@ -238,7 +233,7 @@ public class BuildingDyer extends AbstractBuildingSmelterCrafter
         @Override
         public Window getWindow()
         {
-            return new WindowHutDyer(this);
+            return new WindowHutDyerModule(this);
         }
     }
 }

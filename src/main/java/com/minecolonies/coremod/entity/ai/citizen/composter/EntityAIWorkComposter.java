@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.composter;
 
+import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.requestsystem.requestable.StackList;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AIEventTarget;
@@ -12,6 +13,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingComposter;
 import com.minecolonies.coremod.colony.jobs.JobComposter;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
@@ -28,6 +30,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
@@ -70,7 +73,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
     /**
      * Id in compostable map for list.
      */
-    private static final String COMPOSTABLE_LIST = "compostables";
+    public static final String COMPOSTABLE_LIST = "compostables";
 
     /**
      * Composting icon
@@ -138,22 +141,26 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
             setDelay(2);
             return getState();
         }
-        if (getOwnBuilding().getCopyOfAllowedItems().isEmpty())
+
+        final List<ItemStorage> list = getOwnBuilding().getModuleMatching(ItemListModule.class, m -> m.getId().equals(COMPOSTABLE_LIST))
+                                         .map(ItemListModule::getList).orElse(ImmutableList.of());
+        if (list.isEmpty())
         {
             complain();
             return getState();
         }
-        if (InventoryUtils.hasItemInProvider(getOwnBuilding(), stack -> getOwnBuilding().isAllowedItem(COMPOSTABLE_LIST, new ItemStorage(stack))))
+
+        if (InventoryUtils.hasItemInProvider(getOwnBuilding(), stack -> list.contains(new ItemStorage(stack))))
         {
             InventoryUtils.transferItemStackIntoNextFreeSlotFromProvider(
               getOwnBuilding(),
-              InventoryUtils.findFirstSlotInProviderNotEmptyWith(getOwnBuilding(), stack -> getOwnBuilding().isAllowedItem(COMPOSTABLE_LIST, new ItemStorage(stack))),
+              InventoryUtils.findFirstSlotInProviderNotEmptyWith(getOwnBuilding(), stack -> list.contains(new ItemStorage(stack))),
               worker.getInventoryCitizen());
         }
 
         final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(
           worker.getInventoryCitizen(),
-          stack -> getOwnBuilding().isAllowedItem(COMPOSTABLE_LIST, new ItemStorage(stack))
+          stack -> list.contains(new ItemStorage(stack))
         );
         if (slot >= 0)
         {
@@ -166,7 +173,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
         if (!getOwnBuilding().hasWorkerOpenRequests(worker.getCitizenData()))
         {
             final ArrayList<ItemStack> itemList = new ArrayList<>();
-            for (final ItemStorage item : getOwnBuilding().getCopyOfAllowedItems().get(COMPOSTABLE_LIST))
+            for (final ItemStorage item : list)
             {
                 final ItemStack itemStack = item.getItemStack();
                 itemStack.setCount(itemStack.getMaxStackSize());
@@ -244,7 +251,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
         if (worker.getHeldItem(Hand.MAIN_HAND) == ItemStack.EMPTY)
         {
             final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(
-              worker.getInventoryCitizen(), stack -> getOwnBuilding().isAllowedItem(COMPOSTABLE_LIST, new ItemStorage(stack)));
+              worker.getInventoryCitizen(), stack -> getOwnBuilding().getModuleMatching(ItemListModule.class, m -> m.getId().equals(COMPOSTABLE_LIST)).map(m -> m.isItemInList(new ItemStorage(stack))).orElse(false));
 
             if (slot >= 0)
             {

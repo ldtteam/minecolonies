@@ -1,5 +1,6 @@
 package com.minecolonies.api.compatibility;
 
+import com.minecolonies.api.crafting.CompostRecipe;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.Disease;
 import com.minecolonies.api.util.Tuple;
@@ -7,11 +8,11 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.RecipeManager;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -48,7 +49,7 @@ public interface ICompatibilityManager
      *
      * @return the list of saplings.
      */
-    List<ItemStorage> getCopyOfSaplings();
+    Set<ItemStorage> getCopyOfSaplings();
 
     /**
      * Get a set of all fuel items.
@@ -63,6 +64,12 @@ public interface ICompatibilityManager
      * @return an immutable set.
      */
     Set<ItemStorage> getFood();
+
+    /**
+     * Get a set of all edibles for citizens.
+     * @return list of edible food.
+     */
+    Set<ItemStorage> getEdibles();
 
     /**
      * Get a set of all smeltable ores.
@@ -80,18 +87,25 @@ public interface ICompatibilityManager
     boolean isMineableOre(@NotNull ItemStack stack);
 
     /**
-     * Get a copy of the list of compostable items.
+     * Get a copy of the list of compost recipes.
      *
-     * @return the list of compostable items.
+     * @return the list of compost recipes, indexed by input item.
      */
-    List<ItemStorage> getCopyOfCompostableItems();
+    Map<Item, CompostRecipe> getCopyOfCompostRecipes();
+
+    /**
+     * Just the possible composting inputs, for item filters.
+     *
+     * @return the set of compost input items.
+     */
+    Set<ItemStorage> getCompostInputs();
 
     /**
      * Get a copy of the list of plantables.
      *
      * @return the list of plantables.
      */
-    List<ItemStorage> getCopyOfPlantables();
+    Set<ItemStorage> getCopyOfPlantables();
 
     /**
      * Get a random disease of the compat manager.
@@ -144,21 +158,6 @@ public interface ICompatibilityManager
      * @return the immutable list.
      */
     List<ItemStack> getListOfAllItems();
-
-    /**
-     * Test if an itemStack is compostable
-     *
-     * @param stack the stack to test
-     * @return true if so
-     */
-    boolean isCompost(ItemStack stack);
-
-    /**
-     * Get a map of all the crusher modes.
-     *
-     * @return the modes.
-     */
-    Map<ItemStorage, ItemStorage> getCrusherModes();
 
     /**
      * Write colonies to NBT data for saving.
@@ -234,4 +233,9 @@ public interface ICompatibilityManager
      * @return true if so.
      */
     boolean isFreePos(BlockPos block);
+
+    /**
+     * Called when recipes are reloaded and cached info needs to be discarded.
+     */
+    void invalidateRecipes(@NotNull final RecipeManager recipeManager);
 }

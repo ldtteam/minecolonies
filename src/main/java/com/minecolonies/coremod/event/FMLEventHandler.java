@@ -12,6 +12,7 @@ import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -53,10 +54,16 @@ public class FMLEventHandler
     }
 
     @SubscribeEvent
-    public static void onServerAboutToStart(@NotNull final AddReloadListenerEvent event)
+    public static void onAddReloadListenerEvent(@NotNull final AddReloadListenerEvent event)
     {
-        event.addListener(new CrafterRecipeListener());
+        event.addListener(new CrafterRecipeListener(event.getDataPackRegistries()));
         event.addListener(new ResearchListener());
+    }
+
+    @SubscribeEvent
+    public static void onServerAboutToStart(@NotNull final FMLServerAboutToStartEvent event)
+    {
+        IColonyManager.getInstance().getRecipeManager().reset();
     }
 
     public static void onServerStopped(final FMLServerStoppingEvent event)

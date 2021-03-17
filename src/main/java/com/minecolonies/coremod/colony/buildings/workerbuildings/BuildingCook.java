@@ -21,9 +21,10 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.coremod.client.gui.WindowHutCook;
+import com.minecolonies.coremod.client.gui.WindowHutCookModule;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
-import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.coremod.colony.jobs.JobCook;
 import com.minecolonies.coremod.colony.jobs.JobCookAssistant;
@@ -32,7 +33,6 @@ import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraf
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingProductionResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingRequestResolver;
 import com.minecolonies.coremod.util.FurnaceRecipes;
-import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -69,6 +69,11 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
      * The cook string.
      */
     private static final String COOK_DESC = "cook";
+
+    /**
+     * Exclusion list id.
+     */
+    public static final String FOOD_EXCLUSION_LIST = "food";
 
     /**
      * Max building level of the cook.
@@ -115,7 +120,7 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
     public BuildingCook(final IColony c, final BlockPos l)
     {
         super(c, l);
-        keepX.put(stack -> !isAllowedItem("food", new ItemStorage(stack)), new Tuple<> (STACKSIZE, true));
+        keepX.put((stack) -> this.hasModule(ItemListModule.class) && !this.getModuleMatching(ItemListModule.class, m -> m.getId().equals(FOOD_EXCLUSION_LIST)).map(m -> m.isItemInList(new ItemStorage(stack))).orElse(false), new Tuple<>(STACKSIZE, true));
         keepX.put(stack -> isAllowedFuel(stack), new Tuple<>(STACKSIZE, true));
         keepX.put(stack -> !ItemStackUtils.isEmpty(stack.getContainerItem()) && !stack.getContainerItem().getItem().equals(Items.BUCKET), new Tuple<>(STACKSIZE, false));
     }
@@ -472,7 +477,8 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
             return stack.getCount();
         }
 
-        if (ISFOOD.test(stack) && !isAllowedItem("food", new ItemStorage(stack)) && (localAlreadyKept.stream().filter(storage -> ISFOOD.test(storage.getItemStack())).mapToInt(ItemStorage::getAmount).sum() < STACKSIZE || !inventory))
+        if (ISFOOD.test(stack) && this.hasModule(ItemListModule.class) && !this.getModuleMatching(ItemListModule.class, m -> m.getId().equals(FOOD_EXCLUSION_LIST))
+                                                                                    .map(m -> m.isItemInList(new ItemStorage(stack))).orElse(false) && (localAlreadyKept.stream().filter(storage -> ISFOOD.test(storage.getItemStack())).mapToInt(ItemStorage::getAmount).sum() < STACKSIZE || !inventory))
         {
             final ItemStorage kept = new ItemStorage(stack);
             if (localAlreadyKept.contains(kept))
@@ -531,10 +537,7 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
             @Override
             public Container createMenu(final int id, @NotNull final PlayerInventory inv, @NotNull final PlayerEntity player)
             {
-                final PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
-                buffer.writeBoolean(canCraftComplexRecipes());
-                buffer.writeBlockPos(getID());
-                return new ContainerCrafting(id, inv, buffer);
+                return new ContainerCrafting(id, inv, canCraftComplexRecipes(), getID());
             }
         }, buffer -> new PacketBuffer(buffer.writeBoolean(canCraftComplexRecipes())).writeBlockPos(getID()));
     }
@@ -543,7 +546,7 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
     /**
      * BuildingCook View.
      */
-    public static class View extends AbstractFilterableListsView
+    public static class View extends AbstractBuildingWorker.View
     {
         /**
          * Instantiate the cook view.
@@ -560,7 +563,7 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
         @Override
         public Window getWindow()
         {
-            return new WindowHutCook(this);
+            return new WindowHutCookModule(this);
         }
     }
 }

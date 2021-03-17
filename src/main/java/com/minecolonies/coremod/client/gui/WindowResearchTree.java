@@ -50,7 +50,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
     /**
      * The previous window.
      */
-    private final WindowHutUniversity last;
+    private final WindowHutUniversityModule last;
 
     /**
      * If has a max research for this branch already.
@@ -96,7 +96,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
      * @param building the associated university.
      * @param last     the GUI we opened this from.
      */
-    public WindowResearchTree(final ResourceLocation branch, final BuildingUniversity.View building, final WindowHutUniversity last)
+    public WindowResearchTree(final ResourceLocation branch, final BuildingUniversity.View building, final WindowHutUniversityModule last)
     {
         super(Constants.MOD_ID + R_TREE_RESOURCE_SUFFIX, last);
         this.branch = branch;
@@ -153,7 +153,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         // Undo just the selected research.
         else if (button.getID().contains("undo:"))
         {
-            final String undoName = button.getID().substring(button.getID().indexOf(':'));
+            final String undoName = button.getID().substring(button.getID().indexOf(':') + 1);
             if(!ResourceLocation.isResouceNameValid(undoName))
             {
                 return;
@@ -361,8 +361,8 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         {
             return ResearchButtonState.IN_PROGRESS;
         }
-        // If the University too low-level for the research, or if this research is max-level and another max-level research is completed.
-        else if (research.getDepth() > building.getBuildingLevel() || (research.getDepth() > building.getBuildingMaxLevel() && !hasMax
+        // If the University too low-level for the research, or if this research is max-level, the building is max level, and another max-level research is completed.
+        else if (research.getDepth() > building.getBuildingLevel() && !(research.getDepth() > building.getBuildingMaxLevel() && !hasMax
                     && building.getBuildingLevel() == building.getBuildingMaxLevel()))
         {
             return ResearchButtonState.TOO_LOW_UNIVERSITY;
@@ -786,7 +786,12 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                 for (Map.Entry<String, Integer> building : ((AlternateBuildingResearchRequirement) requirement).getBuildings().entrySet())
                 {
                     final Item item;
-                    if (IMinecoloniesAPI.getInstance().getBuildingRegistry().containsKey(
+                    //TODO Houses use 'citizen' for schematics, but 'home' for ForgeRegistry purposes.  Consider fixing for 1.17
+                    if(building.equals("citizen"))
+                    {
+                        item = ModBuildings.home.getBuildingBlock().asItem();
+                    }
+                    else if (IMinecoloniesAPI.getInstance().getBuildingRegistry().containsKey(
                       new ResourceLocation(Constants.MOD_ID, building.getKey())))
                     {
                         item = IMinecoloniesAPI.getInstance().getBuildingRegistry().getValue(

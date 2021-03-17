@@ -17,9 +17,9 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvents;
 import org.jetbrains.annotations.NotNull;
-
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
+import com.google.common.collect.ImmutableList;
 
 /**
  * Crusher AI class.
@@ -119,7 +119,7 @@ public class EntityAIWorkCrusher extends AbstractEntityAICrafting<JobCrusher, Bu
 
                 worker.swingArm(Hand.MAIN_HAND);
                 job.setCraftCounter(job.getCraftCounter() + 1);
-                currentRecipeStorage.fullFillRecipe(worker.getEntityWorld(), worker.getItemHandlerCitizen());
+                currentRecipeStorage.fullfillRecipe(getLootContext(), ImmutableList.of(worker.getItemHandlerCitizen()));
 
                 worker.decreaseSaturationForContinuousAction();
                 worker.getCitizenExperienceHandler().addExperience(0.1);

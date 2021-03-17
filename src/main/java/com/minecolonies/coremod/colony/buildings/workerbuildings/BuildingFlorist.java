@@ -13,9 +13,9 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.items.ModItems;
-import com.minecolonies.coremod.client.gui.WindowHutFlorist;
-import com.minecolonies.coremod.colony.buildings.AbstractFilterableListBuilding;
-import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
+import com.minecolonies.coremod.client.gui.WindowHutFloristModule;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
 import com.minecolonies.coremod.colony.jobs.JobFlorist;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
@@ -34,6 +34,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.FLORIST_FLOWER_LIST;
@@ -44,7 +45,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 /**
  * The florist building.
  */
-public class BuildingFlorist extends AbstractFilterableListBuilding
+public class BuildingFlorist extends AbstractBuildingWorker
 {
     /**
      * Florist.
@@ -186,9 +187,9 @@ public class BuildingFlorist extends AbstractFilterableListBuilding
     public ItemStack getFlowerToGrow()
     {
         final List<ItemStorage> stacks = getPlantablesForBuildingLevel(getBuildingLevel()).stream()
-                                           .filter(stack -> !isAllowedItem(FLORIST_FLOWER_LIST, stack))
+                                           .filter(stack -> !getModuleMatching(ItemListModule.class, m -> m.getId().equals(FLORIST_FLOWER_LIST))
+                                                               .map(module -> module.isItemInList(stack)).orElse(false))
                                            .collect(Collectors.toList());
-
         if (stacks.isEmpty())
         {
             return null;
@@ -204,7 +205,7 @@ public class BuildingFlorist extends AbstractFilterableListBuilding
      * @param level the building level.
      * @return the restricted list.
      */
-    public static List<ItemStorage> getPlantablesForBuildingLevel(final int level)
+    public static Set<ItemStorage> getPlantablesForBuildingLevel(final int level)
     {
         switch (level)
         {
@@ -213,11 +214,11 @@ public class BuildingFlorist extends AbstractFilterableListBuilding
                 return IColonyManager.getInstance().getCompatibilityManager().getCopyOfPlantables().stream()
                          .filter(storage -> storage.getItem() == Items.POPPY || storage.getItem() == Items.DANDELION)
                          .filter(itemStorage -> itemStorage.getItem().isIn(ItemTags.SMALL_FLOWERS))
-                         .collect(Collectors.toList());
+                         .collect(Collectors.toSet());
             case 2:
                 return IColonyManager.getInstance().getCompatibilityManager().getCopyOfPlantables().stream()
                          .filter(itemStorage -> itemStorage.getItem().isIn(ItemTags.SMALL_FLOWERS))
-                         .collect(Collectors.toList());
+                         .collect(Collectors.toSet());
             case 3:
             case 4:
             case 5:
@@ -229,7 +230,7 @@ public class BuildingFlorist extends AbstractFilterableListBuilding
     /**
      * The client side representation of the building.
      */
-    public static class View extends AbstractFilterableListsView
+    public static class View extends AbstractBuildingWorker.View
     {
         /**
          * Instantiates the view of the building.
@@ -246,7 +247,7 @@ public class BuildingFlorist extends AbstractFilterableListBuilding
         @Override
         public Window getWindow()
         {
-            return new WindowHutFlorist(this);
+            return new WindowHutFloristModule(this);
         }
     }
 }

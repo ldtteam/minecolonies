@@ -1,4 +1,5 @@
 {
+  "_note": "These recipes are not used any more, but exist to allow upgrades to remove the old version",
   "type" : "recipe",
   "crafter": "sifter",
   "inputs": [
@@ -7,5 +8,23 @@
         "count": "1"
     }
   ],
-  "loot-table": "minecolonies:recipes/dirt"
+  "additional-output": [
+    {
+        "item" : "minecraft:wheat_seeds"
+    },
+    {
+        "item" : "minecraft:oak_sapling"
+    },
+    {
+        "item" : "minecraft:birch_sapling"
+    },
+    {
+        "item" : "minecraft:spruce_sapling"
+    },
+    {
+        "item" : "minecraft:jungle_sapling"
+    }
+  ],
+  "loot-table": "minecolonies:recipes/dirt",
+  "min-building-level" : 99
 }

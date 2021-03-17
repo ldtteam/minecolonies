@@ -31,7 +31,6 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.BossInfo;
 import net.minecraft.world.server.ServerBossInfo;
 import org.jetbrains.annotations.NotNull;
@@ -265,7 +264,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
 
         if (horde.hordeSize > 0)
         {
-            LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), ALL_BARBARIANS_KILLED_MESSAGE);
+            LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), ALL_BARBARIANS_KILLED_MESSAGE, colony.getName());
         }
     }
 
@@ -443,7 +442,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
 
         if (total == 0)
         {
-            LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), LanguageHandler.translateKey(ALL_BARBARIANS_KILLED_MESSAGE));
+            LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), LanguageHandler.translateKey(ALL_BARBARIANS_KILLED_MESSAGE), colony.getName());
 
             boolean early = getColony().getBuildingManager().getTownHall().getBuildingLevel() < 3 && horde.getMessageID() < 2;
             PlayAudioMessage audio = new PlayAudioMessage(early ? RaidSounds.VICTORY_EARLY : RaidSounds.VICTORY, SoundCategory.RECORDS);

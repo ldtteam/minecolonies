@@ -20,7 +20,7 @@ public class ClientConfiguration extends AbstractConfiguration
     {
         createCategory(builder, "gameplay");
         citizenVoices = defineBoolean(builder, "disablecitizenvoices", true);
-        neighborbuildingrendering = defineBoolean(builder, "blueprintrender", true);
+        neighborbuildingrendering = defineBoolean(builder, "neighborbuildingrendering", true);
 
         swapToCategory(builder, "pathfinding");
         pathfindingDebugDraw = defineBoolean(builder, "pathfindingdebugdraw", false);

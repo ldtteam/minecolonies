@@ -3,7 +3,6 @@ package com.minecolonies.api.advancements.colony_population;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.advancements.criterion.CriterionInstance;
 import net.minecraft.advancements.criterion.EntityPredicate;
-import net.minecraft.advancements.criterion.ItemPredicate;
 import net.minecraft.util.ResourceLocation;
 
 /**

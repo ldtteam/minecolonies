@@ -16,11 +16,7 @@ import com.minecolonies.coremod.colony.colonyEvents.buildingEvents.BuildingBuilt
 import com.minecolonies.coremod.colony.colonyEvents.buildingEvents.BuildingDeconstructedEvent;
 import com.minecolonies.coremod.colony.colonyEvents.buildingEvents.BuildingUpgradedEvent;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuildRemoval;
+import com.minecolonies.coremod.colony.workorders.*;
 import com.minecolonies.coremod.entity.ai.util.BuildingStructureHandler;
 import com.minecolonies.coremod.entity.ai.util.WorkerLoadOnlyStructureHandler;
 import net.minecraft.item.ItemStack;
@@ -32,10 +28,7 @@ import static com.ldtteam.structurize.placement.BlueprintIterator.NULL_POS;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.IDLE;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.PICK_UP_RESIDUALS;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE;
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE_MANUAL;
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDSTART;
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECONSTRUCTION_COMPLETE;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
  * AI class for the builder. Manages building and repairing buildings.
@@ -180,16 +173,15 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             return;
         }
 
+        final AbstractBuildingStructureBuilder buildingWorker = getOwnBuilding();
         if (requestMaterials())
         {
-            final AbstractBuildingStructureBuilder buildingWorker = getOwnBuilding();
             job.getWorkOrder().setRequested(true);
-
-            int newQuantity = buildingWorker.getNeededResources().values().stream().mapToInt(ItemStorage::getAmount).sum();
-            if (job.getWorkOrder().getAmountOfRes() == 0 || newQuantity > job.getWorkOrder().getAmountOfRes())
-            {
-                job.getWorkOrder().setAmountOfRes(newQuantity);
-            }
+        }
+        int newQuantity = buildingWorker.getNeededResources().values().stream().mapToInt(ItemStorage::getAmount).sum();
+        if (job.getWorkOrder().getAmountOfRes() == 0 || newQuantity > job.getWorkOrder().getAmountOfRes())
+        {
+            job.getWorkOrder().setAmountOfRes(newQuantity);
         }
     }
 
@@ -325,13 +317,14 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
 
         if (wo instanceof WorkOrderBuildBuilding)
         {
+            BlockPos position = wo.getBuildingLocation();
             if (getOwnBuilding() instanceof BuildingBuilder && ((BuildingBuilder) getOwnBuilding()).getManualMode())
             {
-            	worker.getCitizenChatHandler().sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE_MANUAL, structureName);
+            	worker.getCitizenChatHandler().sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE_MANUAL, structureName, position.getX(), position.getY(), position.getZ());
             }
             else
             {
-                worker.getCitizenChatHandler().sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE, structureName);
+                worker.getCitizenChatHandler().sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE, structureName, position.getX(), position.getY(), position.getZ());
             }
 
             WorkOrderBuild wob = (WorkOrderBuild) wo;

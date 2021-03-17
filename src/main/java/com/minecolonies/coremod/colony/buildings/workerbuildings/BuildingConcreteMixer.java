@@ -16,7 +16,7 @@ import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.coremod.client.gui.WindowHutCrafter;
+import com.minecolonies.coremod.client.gui.WindowHutCrafterModule;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.jobs.JobConcreteMixer;
 import net.minecraft.block.Block;
@@ -103,7 +103,7 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
               new ItemStack(item, 8),
               Blocks.AIR);
 
-            addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage));
+            addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage), false);
 
             final Block block = item instanceof BlockItem ? ((BlockItem) item).getBlock() : null;
             if (block instanceof ConcretePowderBlock)
@@ -116,7 +116,7 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
                   new ItemStack(((ConcretePowderBlock) block).solidifiedState.getBlock(), 1),
                   Blocks.AIR);
 
-                addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage2));
+                addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage2), false);
             }
         }
     }
@@ -338,7 +338,7 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
         @Override
         public Window getWindow()
         {
-            return new WindowHutCrafter(this, CONCRETE_MIXER);
+            return new WindowHutCrafterModule(this, CONCRETE_MIXER);
         }
     }
 }

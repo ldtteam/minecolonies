@@ -1,11 +1,8 @@
 package com.minecolonies.coremod.blocks.huts;
 
 import com.minecolonies.api.blocks.AbstractBlockHut;
-import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 /**
  * Hut for the mystical site. No different from {@link AbstractBlockHut}

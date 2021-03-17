@@ -82,6 +82,10 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_REQUESTS_BURNABLE                                   = "com.minecolonies.coremod.request.burnable";
     @NonNls
+    public static final String COM_MINECOLONIES_REQUESTS_COMPOSTABLE_UI                             = "com.minecolonies.gui.workerhuts.composter.compostables";
+    @NonNls
+    public static final String COM_MINECOLONIES_REQUESTS_SAPLINGS                                   = "com.minecolonies.coremod.gui.workerhuts.saplingList";
+    @NonNls
     public static final String COM_MINECOLONIES_REQUESTS_CRAFTING                                   = "com.minecolonies.coremod.request.crafting";
     @NonNls
     public static final String COM_MINECOLONIES_REQUESTS_TOOL_PRETYPE                               = "com.minecolonies.coremod.request.tool.pretype";
@@ -332,8 +336,6 @@ public final class TranslationConstants
     @NonNls
     public static final String UNABLE_TO_ADD_RECIPE_MESSAGE                                         = "com.minecolonies.coremod.recipe.unable";
     @NonNls
-    public static final String BAKER_HAS_NO_RECIPES                                                 = "com.minecolonies.coremod.bakery.norecipe";
-    @NonNls
     public static final String FERTLIZER                                                            = "com.minecolonies.coremod.request.fertilizer";
     @NonNls
     public static final String FURNACE_USER_NO_FUEL                                                 = "com.minecolonies.coremod.furnaceuser.nofuel";
@@ -351,6 +353,8 @@ public final class TranslationConstants
     public static final String COM_MINECOLONIES_COREMOD_GENERAL_OFFBIG                              = "com.minecolonies.coremod.general.offbig";
     @NonNls
     public static final String COM_MINECOLONIES_INFO_PREFIX                                         = "com.minecolonies.coremod.info.";
+    @NonNls
+    public static final String COM_MINECOLONIES_JEI_PREFIX                                          = "com.minecolonies.coremod.jei.";
     @NonNls
     public static final String COM_MINECOLONIES_CANT_TAKE_EQUIPPED                                  = "com.minecolonies.coremod.general.canttakeequipped";
     @NonNls
@@ -437,6 +441,8 @@ public final class TranslationConstants
     public static final String AT                                                                   = "com.minecolonies.coremod.at";
     @NonNls
     public static final String IN_QUEUE                                                             = "com.minecolonies.coremod.listentry";
+    @NonNls
+    public static final String IN_PROGRESS                                                          = "com.minecolonies.coremod.in_progress";
     @NonNls
     public static final String MISSING_DELIVERIES                                                   = "com.minecolonies.coremod.missingitems";
     @NonNls

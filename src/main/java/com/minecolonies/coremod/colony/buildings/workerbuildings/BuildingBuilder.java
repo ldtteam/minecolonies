@@ -14,18 +14,13 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
-import com.minecolonies.coremod.client.gui.WindowHutBuilder;
+import com.minecolonies.coremod.client.gui.WindowHutBuilderModule;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
-import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuildRemoval;
+import com.minecolonies.coremod.colony.workorders.*;
 import com.minecolonies.coremod.network.messages.server.colony.building.builder.BuilderSetManualModeMessage;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.ChestBlock;
 import net.minecraft.item.ItemStack;
@@ -389,7 +384,7 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
         @Override
         public Window getWindow()
         {
-            return new WindowHutBuilder(this);
+            return new WindowHutBuilderModule(this);
         }
 
         /**
