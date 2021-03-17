@@ -401,5 +401,9 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
      */
     boolean isInBuilding(Vector3d positionVec);
 
+    /**
+     * Get a map of all open requests by type.
+     * @return the map.
+     */
     Map<TypeToken<?>, Collection<IToken<?>>> getOpenRequestsByRequestableType();
 }

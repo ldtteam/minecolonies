@@ -1,9 +1,8 @@
 package com.minecolonies.api.colony.buildings.modules;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Tuple;
+import org.apache.logging.log4j.util.TriConsumer;
 
-import java.util.Map;
 import java.util.function.Predicate;
 
 /**
@@ -13,7 +12,7 @@ public interface IAltersRequiredItems extends IBuildingModule
 {
     /**
      * Check if additional items have to be kept and add to map if necessary.
-     * @param toKeep the map of items that should be kept already.
+     * @param consumer consumer that adds items to it.
      */
-    void alterItemsToBeKept(final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep);
+    void alterItemsToBeKept(final TriConsumer<Predicate<ItemStack>, Integer, Boolean> consumer);
 }

@@ -16,8 +16,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.Tuple;
 import net.minecraftforge.common.util.Constants;
+import org.apache.logging.log4j.util.TriConsumer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -166,13 +166,13 @@ public class MinimumStockModule extends AbstractBuildingModule implements IMinim
     }
 
     @Override
-    public void alterItemsToBeKept(final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep)
+    public void alterItemsToBeKept(final TriConsumer<Predicate<ItemStack>, Integer, Boolean> consumer)
     {
         if(!minimumStock.isEmpty())
         {
             for(ItemStorage item:minimumStock.keySet())
             {
-                toKeep.put(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, item.getItemStack(), false, true), new Tuple<>(minimumStock.get(item).intValue() * item.getItemStack().getMaxStackSize(), false));
+                consumer.accept(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, item.getItemStack(), false, true), minimumStock.get(item).intValue() * item.getItemStack().getMaxStackSize(), false);
             }
         }
     }
