@@ -2,19 +2,15 @@ package com.minecolonies.api.compatibility;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
-import com.minecolonies.api.compatibility.resourcefulbees.TieredBeehiveTileEntity;
-import com.minecolonies.api.crafting.CompostRecipe;
+import com.minecolonies.api.compatibility.resourcefulbees.*;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.*;
 import net.minecraft.block.*;
 import net.minecraft.enchantment.EnchantmentData;
 import net.minecraft.item.*;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.RecipeManager;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
@@ -81,9 +77,9 @@ public class CompatibilityManager implements ICompatibilityManager
     private final Set<ItemStorage> smeltableOres = new HashSet<>();
 
     /**
-     * List of all the compost recipes
+     * List of all the items that can be composted
      */
-    private final Map<Item, CompostRecipe> compostRecipes = new HashMap<>();
+    private final Set<ItemStorage> compostableItems = new HashSet<>();
 
     /**
      * List of all the items that can be planted.
@@ -101,11 +97,6 @@ public class CompatibilityManager implements ICompatibilityManager
     private final Set<ItemStorage> food = new HashSet<>();
 
     /**
-     * List of all the items that can be used as food
-     */
-    private final Set<ItemStorage> edibles = new HashSet<>();
-
-    /**
      * Set of all possible diseases.
      */
     private final Map<String, Disease> diseases = new HashMap<>();
@@ -119,6 +110,11 @@ public class CompatibilityManager implements ICompatibilityManager
      * List of lucky oreBlocks which get dropped by the miner.
      */
     private final List<ItemStorage> luckyOres = new ArrayList<>();
+
+    /**
+     * What the crusher can work on.
+     */
+    private final Map<ItemStorage, ItemStorage> crusherModes = new HashMap<>();
 
     /**
      * The items and weights of the recruitment.
@@ -183,10 +179,12 @@ public class CompatibilityManager implements ICompatibilityManager
 
         discoverSaplings();
         discoverOres();
+        discoverCompostableItems();
         discoverPlantables();
         discoverLuckyOres();
         discoverRecruitCosts();
         discoverDiseases();
+        discoverCrusherModes();
         discoverSifting();
         discoverFood();
         discoverFuel();
@@ -223,6 +221,23 @@ public class CompatibilityManager implements ICompatibilityManager
     public List<ItemStack> getListOfAllItems()
     {
         return allItems;
+    }
+
+    @Override
+    public boolean isCompost(final ItemStack itemStack)
+    {
+        if (itemStack.isEmpty())
+        {
+            return false;
+        }
+
+        if (itemStack.getItem().isFood() || (itemStack.getItem() instanceof BlockItem && (((BlockItem) itemStack.getItem()).getBlock() instanceof CropsBlock
+                                                                                            || ((BlockItem) itemStack.getItem()).getBlock() instanceof StemBlock)))
+        {
+            return true;
+        }
+
+        return ModTags.compostables.contains(itemStack.getItem());
     }
 
     @Override
@@ -274,9 +289,9 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
-    public Set<ItemStorage> getCopyOfSaplings()
+    public List<ItemStorage> getCopyOfSaplings()
     {
-        return new HashSet<>(saplings);
+        return new ArrayList<>(saplings);
     }
 
     @Override
@@ -292,35 +307,21 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
-    public Set<ItemStorage> getEdibles()
-    {
-        return edibles;
-    }
-
-    @Override
     public Set<ItemStorage> getSmeltableOres()
     {
         return smeltableOres;
     }
 
     @Override
-    public Map<Item, CompostRecipe> getCopyOfCompostRecipes()
+    public List<ItemStorage> getCopyOfCompostableItems()
     {
-        return ImmutableMap.copyOf(compostRecipes);
+        return ImmutableList.copyOf(compostableItems);
     }
 
     @Override
-    public Set<ItemStorage> getCompostInputs()
+    public List<ItemStorage> getCopyOfPlantables()
     {
-        return compostRecipes.keySet().stream()
-                .map(item -> new ItemStorage(new ItemStack(item)))
-                .collect(Collectors.toSet());
-    }
-
-    @Override
-    public Set<ItemStorage> getCopyOfPlantables()
-    {
-        return new HashSet<>(plantables);
+        return ImmutableList.copyOf(plantables);
     }
 
     @Override
@@ -406,6 +407,17 @@ public class CompatibilityManager implements ICompatibilityManager
         return false;
     }
 
+    /**
+     * Getter for all the crusher modes.
+     *
+     * @return an immutable copy of the map.
+     */
+    @Override
+    public Map<ItemStorage, ItemStorage> getCrusherModes()
+    {
+        return ImmutableMap.<ItemStorage, ItemStorage>builder().putAll(this.crusherModes).build();
+    }
+
     @Override
     public void write(@NotNull final CompoundNBT compound)
     {
@@ -483,16 +495,6 @@ public class CompatibilityManager implements ICompatibilityManager
         return freePositions.contains(block);
     }
 
-    @Override
-    public void invalidateRecipes(@NotNull final RecipeManager recipeManager)
-    {
-        // TODO: this should probably also invalidate anything using tags too (which is most things)
-        //       although technically there's a different event for tag reloads
-
-        compostRecipes.clear();
-        discoverCompostRecipes(recipeManager);
-    }
-
     //------------------------------- Private Utility Methods -------------------------------//
 
     private void discoverOres()
@@ -526,26 +528,15 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     /**
-     * Create complete list of compost recipes.
-     * @param recipeManager
+     * Create complete list of compostable items.
      */
-    @SuppressWarnings("ConditionalExpression")
-    private void discoverCompostRecipes(@NotNull final RecipeManager recipeManager)
+    private void discoverCompostableItems()
     {
-        if (compostRecipes.isEmpty())
+        if (compostableItems.isEmpty())
         {
-            for (final IRecipe<?> r : recipeManager.getRecipes(CompostRecipe.TYPE).values())
-            {
-                final CompostRecipe recipe = (CompostRecipe) r;
-                for (final ItemStack stack : recipe.getInput().getMatchingStacks())
-                {
-                    // there can be duplicates due to overlapping tags.  weakest one wins.
-                    compostRecipes.merge(stack.getItem(), recipe,
-                            (r1, r2) -> r1.getStrength() < r2.getStrength() ? r1 : r2);
-                }
-            }
-            Log.getLogger().info("Finished discovering compostables");
+            compostableItems.addAll(ImmutableList.copyOf(allItems.stream().filter(this::isCompost).map(ItemStorage::new).collect(Collectors.toList())));
         }
+        Log.getLogger().info("Finished discovering compostables");
     }
 
     /**
@@ -583,10 +574,6 @@ public class CompatibilityManager implements ICompatibilityManager
         if (food.isEmpty())
         {
             food.addAll(ImmutableList.copyOf(allItems.stream().filter(ISFOOD.or(ISCOOKABLE)).map(ItemStorage::new).collect(Collectors.toList())));
-        }
-        if (edibles.isEmpty())
-        {
-            edibles.addAll(ImmutableList.copyOf(food.stream().filter(storage -> CAN_EAT.test(storage.getItemStack())).collect(Collectors.toList())));
         }
         Log.getLogger().info("Finished discovering food");
     }
@@ -804,6 +791,45 @@ public class CompatibilityManager implements ICompatibilityManager
         }
     }
 
+    /**
+     * Calculate the crusher modes from the config file.
+     */
+    private void discoverCrusherModes()
+    {
+        for (final String string : MinecoloniesAPIProxy.getInstance().getConfig().getServer().crusherProduction.get())
+        {
+            final String[] split = string.split("!");
+            if (split.length != 2)
+            {
+                Log.getLogger().warn("Invalid crusher mode setting: " + string);
+                continue;
+            }
+
+            final String[] firstItem = split[0].split(":");
+            final String[] secondItem = split[1].split(":");
+
+            final Item item1 = ForgeRegistries.ITEMS.getValue(new ResourceLocation(firstItem[0], firstItem[1]));
+            final Item item2 = ForgeRegistries.ITEMS.getValue(new ResourceLocation(secondItem[0], secondItem[1]));
+
+            try
+            {
+                if (item1 == null || item2 == null)
+                {
+                    Log.getLogger().warn("Invalid crusher mode setting: " + string);
+                    continue;
+                }
+
+                final ItemStorage storage1 = new ItemStorage(new ItemStack(item1, 2));
+                final ItemStorage storage2 = new ItemStorage(new ItemStack(item2, 1));
+                crusherModes.put(storage1, storage2);
+            }
+            catch (final NumberFormatException ex)
+            {
+                Log.getLogger().warn("Error getting metaData", ex);
+            }
+        }
+    }
+
     private static CompoundNBT writeLeafSaplingEntryToNBT(final BlockState state, final ItemStorage storage)
     {
         final CompoundNBT compound = NBTUtil.writeBlockState(state);
@@ -853,7 +879,7 @@ public class CompatibilityManager implements ICompatibilityManager
         }
         else
         {
-            Compatibility.beeHiveCompat = new NoBeeCompat();
+            Compatibility.beeHiveCompat = new IBeehiveCompat() {};
         }
     }
 }
