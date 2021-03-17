@@ -2,6 +2,7 @@ package com.minecolonies.api.compatibility.resourcefulbees;
 
 import com.resourcefulbees.resourcefulbees.tileentity.TieredBeehiveTileEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -29,7 +30,8 @@ public class ResourcefulBeesCompat implements IBeehiveCompat
         }
         else
         {
-            return IBeehiveCompat.super.getCombsFromHive(pos, world, amount);
+            list.add(new ItemStack(Items.HONEYCOMB, amount));
+            return list;
         }
     }
 }
