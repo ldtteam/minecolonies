@@ -2,6 +2,7 @@ package com.minecolonies.api.compatibility;
 
 import com.minecolonies.api.compatibility.dynamictrees.DynamicTreeCompat;
 import com.minecolonies.api.compatibility.resourcefulbees.IBeehiveCompat;
+import com.minecolonies.api.compatibility.resourcefulbees.NoBeeCompat;
 import com.minecolonies.api.compatibility.tinkers.SlimeTreeCheck;
 import com.minecolonies.api.compatibility.tinkers.TinkersWeaponHelper;
 import com.minecolonies.api.compatibility.tinkers.ToolBrokenCheck;
@@ -32,7 +33,7 @@ public final class Compatibility
         throw new IllegalAccessError("Utility class");
     }
 
-    public static IBeehiveCompat beeHiveCompat = null;
+    public static IBeehiveCompat beeHiveCompat = new NoBeeCompat();
 
     /**
      * This method checks to see if STACK is able to mine anything. It goes through all compatibility checks.

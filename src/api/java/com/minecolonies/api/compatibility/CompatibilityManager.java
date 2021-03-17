@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
+import com.minecolonies.api.compatibility.resourcefulbees.*;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.*;
@@ -872,6 +873,13 @@ public class CompatibilityManager implements ICompatibilityManager
      */
     private void discoverModCompat()
     {
-        ModList.get().isLoaded("resourcefulbees") ? Compatibility.beeHiveCompat = new ResourcefulBeesCompat() : Compatibility.beeHiveCompat = new IBeeHiveCompat() {};
+        if (ModList.get().isLoaded("resourcefulbees"))
+        {
+            Compatibility.beeHiveCompat = new ResourcefulBeesCompat();
+        }
+        else
+        {
+            Compatibility.beeHiveCompat = new NoBeeCompat();
+        }
     }
 }
