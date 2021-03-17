@@ -84,7 +84,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
     /**
      * it makes it work. go away
      */
-    private Random random;
+    private final Random random = new Random();
 
     /**
      * Constructor for the AI
@@ -299,8 +299,6 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
     {
         worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_STATUS_COMPOSTER_HARVESTING));
 
-        final int podzolChance = (random.nextInt(100)) + 1;
-
         if (walkToBlock(currentTarget))
         {
             setDelay(2);
@@ -320,7 +318,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
                  * Podzol or dirt?
                  * 5% chance for podzol, else dirt.
                  */
-                if (podzolChance <= 5)
+                if ((random.nextInt(100)) <= 4)
                 {
                     InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), new ItemStack(Blocks.PODZOL, 1));
                 }
