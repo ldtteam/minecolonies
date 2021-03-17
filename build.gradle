@@ -100,6 +100,7 @@ dependencies {
     
     implementation fg.deobf("mezz.jei:jei-1.16.4:${config.jei_version}")
     compileOnly fg.deobf("com.resourcefulbees:ResourcefulBees:${config.rb_version}")
+    apiCompileOnly fg.deobf("com.resourcefulbees:ResourcefulBees:${config.rb_version}")
 
     testImplementation  'junit:junit:4.12'
     testImplementation  "org.mockito:mockito-core:1.+"
