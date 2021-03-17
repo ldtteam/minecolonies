@@ -30,8 +30,7 @@ public class ResourcefulBeesCompat implements IBeehiveCompat
         }
         else
         {
-            list.add(new ItemStack(Items.HONEYCOMB, amount));
-            return list;
+            return IBeehiveCompat.super.getCombsFromHive(pos, world, amount);
         }
     }
 }
