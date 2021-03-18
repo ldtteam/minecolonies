@@ -12,10 +12,12 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.items.IItemHandler;
@@ -398,7 +400,7 @@ public class GlobalResearch implements IGlobalResearch
             final ILocalResearch research = new LocalResearch(this.id, this.branch, this.depth);
             if (this.instant)
             {
-                research.setProgress((int)(BASE_RESEARCH_TIME * IGlobalResearchTree.getInstance().getBranchTime(branch) * Math.pow(2, research.getDepth() - 1)));
+                research.setProgress((int)(BASE_RESEARCH_TIME * IGlobalResearchTree.getInstance().getBranchData(branch).getBaseTime() * Math.pow(2, research.getDepth() - 1)));
             }
             research.setState(ResearchState.IN_PROGRESS);
             localResearchTree.addResearch(branch, research);
@@ -798,27 +800,13 @@ public class GlobalResearch implements IGlobalResearch
                 if(reqArrayElement.isJsonObject() && reqArrayElement.getAsJsonObject().has(RESEARCH_ITEM_NAME_PROP) &&
                      reqArrayElement.getAsJsonObject().get(RESEARCH_ITEM_NAME_PROP).isJsonPrimitive() && reqArrayElement.getAsJsonObject().get(RESEARCH_ITEM_NAME_PROP).getAsJsonPrimitive().isString())
                 {
-                    final String[] itemName = reqArrayElement.getAsJsonObject().get(RESEARCH_ITEM_NAME_PROP).getAsString().split(":");
-                    final Item item;
-                    if  (itemName.length == 2)
-                    {
-                        item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(itemName[0], itemName[1]));
-                    }
-                    else if (itemName.length == 1)
-                    {
-                        item = ForgeRegistries.ITEMS.getValue(new ResourceLocation("minecraft", itemName[0]));
-                    }
-                    else
-                    {
-                        item = ForgeRegistries.ITEMS.getValue(new ResourceLocation("minecraft", "cobblestone"));
-                    }
-                    final ItemStack itemStack = new ItemStack(item);
+                    final ItemStack itemStack = idToItemStack(reqArrayElement.getAsJsonObject().get(RESEARCH_ITEM_NAME_PROP).getAsString());
                     if(reqArrayElement.getAsJsonObject().has(RESEARCH_QUANTITY_PROP) && reqArrayElement.getAsJsonObject().get(RESEARCH_QUANTITY_PROP).isJsonPrimitive()
                          && reqArrayElement.getAsJsonObject().get(RESEARCH_QUANTITY_PROP).getAsJsonPrimitive().isNumber())
                     {
                         itemStack.setCount(reqArrayElement.getAsJsonObject().get(RESEARCH_QUANTITY_PROP).getAsNumber().intValue());
                     }
-                    this.costList.add(new ItemStorage(itemStack, false));
+                    this.costList.add(new ItemStorage(itemStack, false, !itemStack.hasTag()));
                 }
                 // Building Requirements.  If no level, assume 1x.
                 else if(reqArrayElement.isJsonObject() && reqArrayElement.getAsJsonObject().has(RESEARCH_REQUIRED_BUILDING_PROP) &&
@@ -877,6 +865,51 @@ public class GlobalResearch implements IGlobalResearch
                 }
             }
         }
+    }
+
+    /**
+     * Convert an Item string with NBT to an ItemStack
+     * @param itemData ie: minecraft:potion{Potion=minecraft:water}
+     * @return stack with any defined NBT
+     */
+    private static ItemStack idToItemStack(final String itemData)
+    {
+        String itemId = itemData;
+        final int tagIndex = itemId.indexOf("{");
+        final String tag = tagIndex > 0 ? itemId.substring(tagIndex) : null;
+        itemId = tagIndex > 0 ? itemId.substring(0, tagIndex) : itemId;
+        String[] split = itemId.split(":");
+        if(split.length != 2)
+        {
+            if(split.length == 1)
+            {
+                final String[] tempArray ={"minecraft", split[0]};
+                split = tempArray;
+            }
+            else
+            {
+                Log.getLogger().error("Unable to parse item definition: " + itemData);
+            }
+        }
+        final Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(split[0], split[1]));
+        final ItemStack stack = new ItemStack(item);
+        if (tag != null)
+        {
+            try
+            {
+                stack.setTag(JsonToNBT.getTagFromJson(tag));
+            }
+            catch (CommandSyntaxException e1)
+            {
+                //Unable to parse tags, drop them.
+                Log.getLogger().error("Unable to parse item definition: " + itemData);
+            }
+        }
+        if (stack.isEmpty())
+        {
+            Log.getLogger().warn("Parsed item definition returned empty: " + itemData);
+        }
+        return stack;
     }
 
     /**
