@@ -1,13 +1,9 @@
 package com.minecolonies.coremod.colony.crafting;
 
-import java.util.*;
-import java.util.stream.Collectors;
-import com.google.gson.JsonObject;
+import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
-import net.minecraft.util.ResourceLocation;
-
-import static com.minecolonies.coremod.colony.crafting.CustomRecipe.*;
+import java.util.*;
 
 /**
  * Manager class for tracking Custom recipes during load and use
