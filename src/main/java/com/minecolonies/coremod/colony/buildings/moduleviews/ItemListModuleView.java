@@ -21,7 +21,7 @@ import java.util.function.Function;
 /**
  * Client side version of the abstract class for all buildings which require a filterable list of allowed items.
  */
-public class ItemListModuleView extends AbstractBuildingModuleView implements IBuildingModuleView
+public class ItemListModuleView extends AbstractBuildingModuleView implements IBuildingModuleView, IItemListModuleView
 {
     /**
      * The list of items.
@@ -64,71 +64,45 @@ public class ItemListModuleView extends AbstractBuildingModuleView implements IB
         this.allItems = allItems;
     }
 
-    /**
-     * Add item to the view and notify the server side.
-     *
-     * @param item the item to add.
-     */
+    @Override
     public void addItem(final ItemStorage item)
     {
         Network.getNetwork().sendToServer(new AssignFilterableItemMessage(this.buildingView, id, item, true));
         listsOfItems.add(item);
     }
 
-    /**
-     * Check if an item is in the list of allowed items.
-     *
-     * @param item the item to check.
-     * @return true if so.
-     */
+    @Override
     public boolean isAllowedItem(final ItemStorage item)
     {
         return listsOfItems.contains(item);
     }
 
-    /**
-     * Get the size of allowed items.
-     *
-     * @return the size.
-     */
+    @Override
     public int getSize()
     {
         return listsOfItems.size();
     }
 
-    /**
-     * Remove an item from the view and notify the server side.
-     *
-     * @param item the item to remove.
-     */
+    @Override
     public void removeItem(final ItemStorage item)
     {
         Network.getNetwork().sendToServer(new AssignFilterableItemMessage(this.buildingView, id, item, false));
         listsOfItems.remove(item);
     }
 
-    /**
-     * Get the unique id of this group (used to sync with server side).
-     * @return the id.
-     */
+    @Override
     public String getId()
     {
         return id;
     }
 
-    /**
-     * Get the supplier of the list of all items to display.
-     * @return the list.
-     */
+    @Override
     public Function<IBuildingView, Set<ItemStorage>> getAllItems()
     {
         return allItems;
     }
 
-    /**
-     * Check if the list is enabling or disabling.
-     * @return true if enabling.
-     */
+    @Override
     public boolean isInverted()
     {
         return inverted;

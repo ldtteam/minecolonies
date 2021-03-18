@@ -25,6 +25,7 @@ import com.minecolonies.coremod.client.gui.WindowHutCookModule;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
+import com.minecolonies.coremod.colony.buildings.modules.MinimumStockModule;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.coremod.colony.jobs.JobCook;
 import com.minecolonies.coremod.colony.jobs.JobCookAssistant;
@@ -472,7 +473,7 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
             return 0;
         }
 
-        if (inventory && minimumStock.containsKey(new ItemStorage(stack)))
+        if (inventory && getFirstModuleOccurance(MinimumStockModule.class).map(m -> m.isStocked(stack)).orElse(false))
         {
             return stack.getCount();
         }
