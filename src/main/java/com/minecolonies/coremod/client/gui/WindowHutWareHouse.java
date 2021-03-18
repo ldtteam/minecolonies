@@ -1,35 +1,26 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.PaneBuilders;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.ButtonImage;
 import com.ldtteam.blockout.controls.ItemIcon;
 import com.ldtteam.blockout.controls.Text;
-import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.structurize.util.LanguageHandler;
-import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.coremod.network.messages.server.colony.building.MarkBuildingDirtyMessage;
-import com.minecolonies.coremod.network.messages.server.colony.building.RemoveMinimumStockFromBuildingMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.warehouse.SortWarehouseMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.warehouse.UpgradeWarehouseMessage;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.*;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.WAREHOUSE_SORTED;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
@@ -52,16 +43,6 @@ public class WindowHutWareHouse extends AbstractWindowModuleBuilding<BuildingWar
     private static final int BUILDING_LEVEL_FOR_SORTING = 3;
 
     /**
-     * Limit reached label.
-     */
-    private static final String LABEL_LIMIT_REACHED = "com.minecolonies.coremod.gui.warehouse.limitreached";
-
-    /**
-     * Resource scrolling list.
-     */
-    private final ScrollingList resourceList;
-
-    /**
      * If further upgrades should be locked.
      */
     private boolean lockUpgrade = false;
@@ -77,43 +58,6 @@ public class WindowHutWareHouse extends AbstractWindowModuleBuilding<BuildingWar
         this.building = building;
         registerButton(RESOURCE_ADD, this::transferItems);
         registerButton(SORT_WAREHOUSE_BUTTON, this::sortWarehouse);
-
-        resourceList = window.findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class);
-
-        registerButton(STOCK_ADD, this::addStock);
-        if (building.hasReachedLimit())
-        {
-            final ButtonImage button = findPaneOfTypeByID(STOCK_ADD, ButtonImage.class);
-            button.setText(LanguageHandler.format(LABEL_LIMIT_REACHED));
-            button.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium_dark.png"));
-        }
-
-        registerButton(STOCK_REMOVE, this::removeStock);
-    }
-
-    /**
-     * Remove the stock.
-     *
-     * @param button the button.
-     */
-    private void removeStock(final Button button)
-    {
-        final int row = resourceList.getListElementIndexByPane(button);
-        final Tuple<ItemStorage, Integer> tuple = building.getStock().get(row);
-        building.getStock().remove(row);
-        Network.getNetwork().sendToServer(new RemoveMinimumStockFromBuildingMessage(building, tuple.getA().getItemStack()));
-        updateStockList();
-    }
-
-    /**
-     * Add the stock.
-     */
-    private void addStock()
-    {
-        if (!building.hasReachedLimit())
-        {
-            new WindowSelectRes(this, building, stack -> true).open();
-        }
     }
 
     @Override
@@ -133,7 +77,6 @@ public class WindowHutWareHouse extends AbstractWindowModuleBuilding<BuildingWar
         super.onOpened();
 
         updateResourcePane();
-        updateStockList();
         //Make sure we have a fresh view
         Network.getNetwork().sendToServer(new MarkBuildingDirtyMessage(this.building));
     }
@@ -235,46 +178,6 @@ public class WindowHutWareHouse extends AbstractWindowModuleBuilding<BuildingWar
             resourceStackOfOne.setTag(resource.getItemStack().getTag());
             findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(resourceStackOfOne);
         }
-    }
-
-    /**
-     * Updates the resource list in the GUI with the info we need.
-     */
-    private void updateStockList()
-    {
-        resourceList.enable();
-        resourceList.show();
-        final List<Tuple<ItemStorage, Integer>> tempRes = new ArrayList<>(building.getStock());
-
-        //Creates a dataProvider for the unemployed resourceList.
-        resourceList.setDataProvider(new ScrollingList.DataProvider()
-        {
-            /**
-             * The number of rows of the list.
-             * @return the number.
-             */
-            @Override
-            public int getElementCount()
-            {
-                return tempRes.size();
-            }
-
-            /**
-             * Inserts the elements into each row.
-             * @param index the index of the row/list element.
-             * @param rowPane the parent Pane for the row, containing the elements to update.
-             */
-            @Override
-            public void updateElement(final int index, @NotNull final Pane rowPane)
-            {
-                final ItemStack resource = tempRes.get(index).getA().getItemStack().copy();
-                resource.setCount(resource.getMaxStackSize());
-
-                rowPane.findPaneOfTypeByID(RESOURCE_NAME, Text.class).setText(resource.getDisplayName());
-                rowPane.findPaneOfTypeByID(QUANTITY_LABEL, Text.class).setText(String.valueOf(tempRes.get(index).getB()));
-                rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(resource);
-            }
-        });
     }
 
     /**

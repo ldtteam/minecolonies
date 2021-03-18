@@ -1,12 +1,21 @@
 {
-  "parent": "block/cube_all",
-  "textures": {
-    "particle": "minecolonies:blocks/barrel_block/compost",
-    "down": "minecolonies:blocks/barrel_block/compost",
-    "up": "minecolonies:blocks/barrel_block/compost",
-    "north": "minecolonies:blocks/barrel_block/compost",
-    "east": "minecolonies:blocks/barrel_block/compost",
-    "south": "minecolonies:blocks/barrel_block/compost",
-    "west": "minecolonies:blocks/barrel_block/compost"
-  }
+	"credit": "Made with Blockbench",
+	"textures": {
+		"particle": "block/composter_compost",
+		"compost": "block/composter_compost"
+	},
+	"elements": [
+		{
+			"from": [0, 0, 0],
+			"to": [16, 16, 16],
+			"faces": {
+				"north": {"uv": [2, 2, 14, 14], "texture": "#compost", "cullface": "north"},
+				"east": {"uv": [2, 2, 14, 14], "texture": "#compost", "cullface": "north"},
+				"south": {"uv": [2, 2, 14, 14], "texture": "#compost", "cullface": "north"},
+				"west": {"uv": [2, 2, 14, 14], "texture": "#compost", "cullface": "north"},
+				"up": {"uv": [2, 2, 14, 14], "texture": "#compost", "cullface": "north"},
+				"down": {"uv": [2, 2, 14, 14], "texture": "#compost", "cullface": "north"}
+			}
+		}
+	]
 }

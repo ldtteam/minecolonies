@@ -15,8 +15,6 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBaker;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractBuildingDependentRequestResolver;
 import net.minecraft.item.ItemStack;
@@ -67,8 +65,7 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
     public boolean canResolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final AbstractBuilding building)
     {
         if (building instanceof BuildingWareHouse
-              || (building instanceof BuildingCook && building.isMinimumStockRequest(request))
-              || (building instanceof BuildingBaker && building.isMinimumStockRequest(request))
+              || building.isMinimumStockRequest(request)
               || (building.getCitizenForRequest(request.getId()).isPresent() && building.getCitizenForRequest(request.getId()).get().isRequestAsync(request.getId())))
         {
             return false;

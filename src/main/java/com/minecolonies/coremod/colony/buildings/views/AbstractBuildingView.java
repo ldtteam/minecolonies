@@ -5,7 +5,6 @@ import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IBuildingModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
@@ -14,9 +13,7 @@ import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMessage;
@@ -126,16 +123,6 @@ public abstract class AbstractBuildingView implements IBuildingView
      */
 
     private List<BlockPos> containerlist = new ArrayList<>();
-
-    /**
-     * The minimum stock.
-     */
-    private List<Tuple<ItemStorage, Integer>> minimumStock = new ArrayList<>();
-
-    /**
-     * If the stock limit was reached.
-     */
-    private boolean reachedLimit = false;
 
     /**
      * If building is deconstructed.
@@ -410,40 +397,12 @@ public abstract class AbstractBuildingView implements IBuildingView
             containerlist.add(buf.readBlockPos());
         }
         loadRequestSystemFromNBT(buf.readCompoundTag());
-
-        minimumStock.clear();
-        final int size = buf.readInt();
-        for (int i = 0; i < size; i++)
-        {
-            minimumStock.add(new Tuple<>(new ItemStorage(buf.readItemStack()), buf.readInt()));
-        }
-        reachedLimit = buf.readBoolean();
         isDeconstructed = buf.readBoolean();
 
         for (final IBuildingModuleView module: moduleViews)
         {
             module.deserialize(buf);
         }
-    }
-
-    /**
-     * The minimum stock.
-     *
-     * @return the stock.
-     */
-    public List<Tuple<ItemStorage, Integer>> getStock()
-    {
-        return minimumStock;
-    }
-
-    /**
-     * Check if the warehouse has reached the limit.
-     *
-     * @return true if so.
-     */
-    public boolean hasReachedLimit()
-    {
-        return reachedLimit;
     }
 
     private void loadRequestSystemFromNBT(final CompoundNBT compound)

@@ -7,31 +7,31 @@ import com.ldtteam.blockout.controls.ItemIcon;
 import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.colony.buildings.modules.IMinimumStockModuleView;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
-import com.minecolonies.coremod.network.messages.server.colony.building.RemoveMinimumStockFromBuildingMessage;
-import com.minecolonies.coremod.util.FurnaceRecipes;
+import com.minecolonies.coremod.network.messages.server.colony.building.RemoveMinimumStockFromBuildingModuleMessage;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
  * Cook window class. Specifies the extras the composter has for its list.
  */
-public class WindowHutCookModule extends AbstractWindowWorkerModuleBuilding<BuildingCook.View>
+public class MinimumStockModuleWindow extends AbstractModuleWindow
 {
     /**
      * The resource string.
      */
-    private static final String RESOURCE_STRING = ":gui/windowhutcook.xml";
+    private static final String RESOURCE_STRING = ":gui/layouthuts/layoutminimumstock.xml";
 
     /**
      * Limit reached label.
@@ -44,18 +44,27 @@ public class WindowHutCookModule extends AbstractWindowWorkerModuleBuilding<Buil
     private final ScrollingList resourceList;
 
     /**
-     * Constructor for the window of the worker building.
+     * The matching module view to the window.
+     */
+    private final IMinimumStockModuleView moduleView;
+
+    /**
+     * Constructor for the minimum stock window view.
      *
      * @param building class extending
+     * @param moduleView the module view.
      */
-    public WindowHutCookModule(final BuildingCook.View building)
+    public MinimumStockModuleWindow(
+      final IBuildingView building,
+      final IMinimumStockModuleView moduleView)
     {
         super(building, Constants.MOD_ID + RESOURCE_STRING);
 
         resourceList = this.window.findPaneOfTypeByID("resourcesstock", ScrollingList.class);
+        this.moduleView = moduleView;
 
         registerButton(STOCK_ADD, this::addStock);
-        if (building.hasReachedLimit())
+        if (moduleView.hasReachedLimit())
         {
             final ButtonImage button = findPaneOfTypeByID(STOCK_ADD, ButtonImage.class);
             button.setText(LanguageHandler.format(LABEL_LIMIT_REACHED));
@@ -73,9 +82,9 @@ public class WindowHutCookModule extends AbstractWindowWorkerModuleBuilding<Buil
     private void removeStock(final Button button)
     {
         final int row = resourceList.getListElementIndexByPane(button);
-        final Tuple<ItemStorage, Integer> tuple = building.getStock().get(row);
-        building.getStock().remove(row);
-        Network.getNetwork().sendToServer(new RemoveMinimumStockFromBuildingMessage(building, tuple.getA().getItemStack()));
+        final Tuple<ItemStorage, Integer> tuple = moduleView.getStock().get(row);
+        moduleView.getStock().remove(row);
+        Network.getNetwork().sendToServer(new RemoveMinimumStockFromBuildingModuleMessage(buildingView, tuple.getA().getItemStack()));
         updateStockList();
     }
 
@@ -84,10 +93,9 @@ public class WindowHutCookModule extends AbstractWindowWorkerModuleBuilding<Buil
      */
     private void addStock()
     {
-        if (!building.hasReachedLimit())
+        if (!moduleView.hasReachedLimit())
         {
-            new WindowSelectRes(this, building,
-              itemStack -> ItemStackUtils.CAN_EAT.test(itemStack) || ItemStackUtils.CAN_EAT.test(FurnaceRecipes.getInstance().getSmeltingResult(itemStack))).open();
+            new WindowSelectRes(this, buildingView, (stack) -> true).open();
         }
     }
 
@@ -105,7 +113,7 @@ public class WindowHutCookModule extends AbstractWindowWorkerModuleBuilding<Buil
     {
         resourceList.enable();
         resourceList.show();
-        final List<Tuple<ItemStorage, Integer>> tempRes = new ArrayList<>(building.getStock());
+        final List<Tuple<ItemStorage, Integer>> tempRes = new ArrayList<>(moduleView.getStock());
 
         //Creates a dataProvider for the unemployed resourceList.
         resourceList.setDataProvider(new ScrollingList.DataProvider()
@@ -136,11 +144,5 @@ public class WindowHutCookModule extends AbstractWindowWorkerModuleBuilding<Buil
                 rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(resource);
             }
         });
-    }
-
-    @Override
-    public String getBuildingName()
-    {
-        return "com.minecolonies.coremod.gui.workerhuts.cook";
     }
 }
