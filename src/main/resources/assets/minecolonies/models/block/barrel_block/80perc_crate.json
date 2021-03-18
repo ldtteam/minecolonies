@@ -1,11 +1,11 @@
 {
-	"credit": "Made with Blockbench by Sandriell",
+	"credit": "Made with Blockbench",
 	"textures": {
-		"0": "block/stripped_oak_log",
+		"0": "block/stripped_spruce_log",
 		"1": "block/glass",
 		"2": "block/stone",
 		"3": "block/oak_planks",
-		"4": "minecolonies:blocks/barrel_block/compost",
+		"4": "block/composter_compost",
 		"particle": "block/oak_planks"
 	},
 	"elements": [
@@ -14,7 +14,7 @@
 			"from": [2, 5, 2],
 			"to": [14, 19, 14],
 			"faces": {
-				"north": {"uv": [2, 2, 14, 16], "texture": "#4"},
+				"north": {"uv": [2, 2, 14, 14], "texture": "#4"},
 				"up": {"uv": [2, 2, 14, 14], "texture": "#4"}
 			}
 		},
