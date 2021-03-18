@@ -124,11 +124,6 @@ public class CompatibilityManager implements ICompatibilityManager
     private final List<Tuple<Item, Integer>> recruitmentCostsWeights = new ArrayList<>();
 
     /**
-     * The meshes the sifter is going to be able to use.
-     */
-    private final List<Tuple<ItemStorage, Double>> sifterMeshes = new ArrayList<>();
-
-    /**
      * Map of building level to the list of possible enchantments.
      */
     private final Map<Integer, List<Tuple<String, Integer>>> enchantments = new HashMap<>();
@@ -169,12 +164,6 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
-    public List<Tuple<ItemStorage, Double>> getMeshes()
-    {
-        return new ArrayList<>(this.sifterMeshes);
-    }
-
-    @Override
     public void discover(final boolean serverSide)
     {
         discoverAllItems();
@@ -185,7 +174,6 @@ public class CompatibilityManager implements ICompatibilityManager
         discoverLuckyOres();
         discoverRecruitCosts();
         discoverDiseases();
-        discoverSifting();
         discoverFood();
         discoverFuel();
         discoverEnchantments();
@@ -579,7 +567,10 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         if (food.isEmpty())
         {
-            food.addAll(ImmutableList.copyOf(allItems.stream().filter(ISFOOD.or(ISCOOKABLE)).map(ItemStorage::new).collect(Collectors.toList())));
+            food.addAll(ImmutableList.copyOf(allItems.stream()
+                    .filter(ISFOOD.or(ISCOOKABLE))
+                    .map(ItemStorage::new)
+                    .collect(Collectors.toList())));
         }
         if (edibles.isEmpty())
         {
@@ -715,46 +706,6 @@ public class CompatibilityManager implements ICompatibilityManager
             }
         }
         Log.getLogger().info("Finished discovering diseases");
-    }
-
-    /**
-     * Method discovering and loading from the config all materials the sifter needs.
-     */
-    private void discoverSifting()
-    {
-        for (final String string : MinecoloniesAPIProxy.getInstance().getConfig().getServer().sifterMeshes.get())
-        {
-            final String[] mesh = string.split(",");
-
-            if (mesh.length != 2)
-            {
-                Log.getLogger().warn("Couldn't parse the mesh: " + string);
-                continue;
-            }
-
-            try
-            {
-                final double probability = Double.parseDouble(mesh[1]);
-
-                final String[] item = mesh[0].split(":");
-                final Item theItem = ForgeRegistries.ITEMS.getValue(new ResourceLocation(item[0], item[1]));
-
-                if (theItem == null)
-                {
-                    Log.getLogger().warn("Couldn't find item for mesh: " + string);
-                    continue;
-                }
-
-                final ItemStack stack = new ItemStack(theItem, 1);
-                sifterMeshes.add(new Tuple<>(new ItemStorage(stack), probability));
-            }
-            catch (final NumberFormatException ex)
-            {
-                Log.getLogger().warn("Couldn't retrieve probability for mesh: " + string, ex);
-            }
-        }
-
-        Log.getLogger().info("Finished initiating sifter config");
     }
 
     /**
