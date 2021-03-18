@@ -1,6 +1,7 @@
 {
   "branch": "minecolonies:unlockable",
-  "researchLevel": 1,
+  "parentResearch": "minecolonies:unlockable/stringmesh",
+  "researchLevel": 2,
   "icon": "minecolonies:sifter_mesh_string",
   "requirements": [
     {
