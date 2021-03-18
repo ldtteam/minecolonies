@@ -26,7 +26,6 @@ import java.util.Collection;
  */
 public abstract class AbstractResearchProvider implements IDataProvider
 {
-    public static final String ASSETS_DIR = "data/" + Constants.MOD_ID + "/researches";
     protected final DataGenerator generator;
 
     /**
@@ -75,6 +74,10 @@ public abstract class AbstractResearchProvider implements IDataProvider
             if(branch.translatedName != null && !branch.translatedName.isEmpty())
             {
                 addLanguageKeySafe(langJson, "com." + branch.id.getNamespace() + ".research." + branch.id.getPath().replaceAll("[/]",".") + ".name", branch.translatedName);
+            }
+            if(branch.translatedSubtitle != null && !branch.translatedSubtitle.isEmpty())
+            {
+                addLanguageKeySafe(langJson, "com." + branch.id.getNamespace() + ".research." + branch.id.getPath().replaceAll("[/]",".") + ".subtitle", branch.translatedSubtitle);
             }
         }
         for(final ResearchEffect effect : getResearchEffectCollection())
@@ -761,6 +764,10 @@ public abstract class AbstractResearchProvider implements IDataProvider
          *  A Translated Name to add to the output language file.
          */
         public String translatedName;
+        /**
+         *  A Translated Subtitle to add to the output language file.
+         */
+        public String translatedSubtitle;
 
         /**
          * Creates a Research Branch.
@@ -796,15 +803,79 @@ public abstract class AbstractResearchProvider implements IDataProvider
         }
 
         /**
+         * Set the subtitle, as a human-readable name.
+         * If using a translation key, use setTranslatedSubtitle.
+         * @param subtitle    The research's human-readable subtitle.
+         * @return this
+         */
+        public ResearchBranch setSubtitle(final String subtitle)
+        {
+            this.json.addProperty("subtitle", subtitle);
+            return this;
+        }
+
+        /**
+         * Sets a subtitle translation key.  This will use an auto-generated key, and add a matching translation text to the language output file.
+         * @param translatedSubtitle    The research's human-readable subtitle.
+         * @return this
+         */
+        public ResearchBranch setTranslatedSubtitle(final String translatedSubtitle)
+        {
+            this.translatedSubtitle = translatedSubtitle;
+            this.json.addProperty("subtitle", "com." + id.getNamespace() + ".research." + id.getPath().replaceAll("[ /]",".") + ".subtitle");
+            return this;
+        }
+
+        /**
          * Sets the Branch Time Multiplier.  This increases or decreases the worker time required
          * to complete all research on this branch.  Larger numbers go slower, while lower numbers go faster.
-         * Very low values may have unpredictable results.
+         * Very low values may have unpredictable results.  Defaults to 1.0
          * @param branchTimeMultiplier  The multiplier to set.
          * @return this
          */
         public ResearchBranch setBranchTimeMultiplier(final double branchTimeMultiplier)
         {
             this.json.addProperty("base-time", branchTimeMultiplier);
+            return this;
+        }
+
+        /**
+         * Sets a research branch type.  This styles presentation of the branch at the university, and
+         * can have logic or colony ramifications.  See {@link com.minecolonies.api.research.ResearchBranchType} for details.
+         * Branches with no branch-type will default to ResearchBranchTyupe.DEFAULT
+         * @param type      The style of the research branch.
+         * @return this
+         */
+        public ResearchBranch setBranchType(final ResearchBranchType type)
+        {
+            this.json.addProperty("branch-type", type.tag);
+            return this;
+        }
+
+        /**
+         * The sorting order of the research branches within the Minecolonies University Window.
+         * Higher numbers will appear lower on the list.  Defaults to 0, accepts negative numbers.
+         * Builtin branches should be separated by large ranges, to allow possible inserts by third parties.
+         * @param sortOrder   The sorting order of the branches.
+         * @return this
+         */
+        public ResearchBranch setBranchSortOrder(final int sortOrder)
+        {
+            this.json.addProperty("sortOrder", sortOrder);
+            return this;
+        }
+
+        /**
+         * If true, hides a research branch within the University Window until at least one research has at least one research that isn't hidden, or with requirements met, or complete.
+         * This is mostly intended to avoid spoilers, or to prevent branches with many primary researches from showing a giant and useless tooltip.
+         * Only applies to branches where all primary researches are hidden.
+         * Defaults to false.
+         * @param hidden If true, hides the branch until at least one research is available.
+         * @return this
+         */
+        public ResearchBranch setHidden(final boolean hidden)
+        {
+            this.json.addProperty("hidden", hidden);
             return this;
         }
     }

@@ -354,6 +354,8 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_INFO_PREFIX                                         = "com.minecolonies.coremod.info.";
     @NonNls
+    public static final String COM_MINECOLONIES_JEI_PREFIX                                          = "com.minecolonies.coremod.jei.";
+    @NonNls
     public static final String COM_MINECOLONIES_CANT_TAKE_EQUIPPED                                  = "com.minecolonies.coremod.general.canttakeequipped";
     @NonNls
     public static final String TOO_LOW_LEVEL_TO_FILTER_FLORIST                                      = "com.minecolonies.gui.workerhuts.florist.toolow";

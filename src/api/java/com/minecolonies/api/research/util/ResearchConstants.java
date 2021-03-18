@@ -29,6 +29,7 @@ public final class ResearchConstants
     public static final String TAG_NAME           = "name";
     public static final String TAG_COSTS          = "cost";
     public static final String TAG_COST_ITEM      = "cost-item";
+    public static final String TAG_COST_NBT       = "cost-nbt";
     public static final String TAG_REQS           = "requirements";
     public static final String TAG_REQ_TYPE       = "requirement-type";
     public static final String TAG_REQ_ITEM       = "requirement-item";

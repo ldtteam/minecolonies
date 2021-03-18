@@ -12,7 +12,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.entity.citizen.Skill;
-import com.minecolonies.coremod.client.gui.WindowHutCrafter;
+import com.minecolonies.coremod.client.gui.WindowHutCrafterModule;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.jobs.JobBlacksmith;
 import net.minecraft.item.*;
@@ -162,7 +162,7 @@ public class BuildingBlacksmith extends AbstractBuildingCrafter
         @NotNull
         public Window getWindow()
         {
-            return new WindowHutCrafter(this, BLACKSMITH);
+            return new WindowHutCrafterModule(this, BLACKSMITH);
         }
     }
 }

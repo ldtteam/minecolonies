@@ -32,6 +32,6 @@ public class WindowHutGuide extends AbstractWindowSkeleton
     private void closeGuide()
     {
         close();
-        new WindowHutBuilder(building, false).open();
+        new WindowHutBuilderModule(building, false).open();
     }
 }

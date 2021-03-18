@@ -1,6 +1,7 @@
 {
   "branch": "minecolonies:unlockable",
-  "researchLevel": 1,
+  "parentResearch": "minecolonies:unlockable/ironmesh",
+  "researchLevel": 4,
   "icon": "minecolonies:sifter_mesh_string",
   "requirements": [
     {

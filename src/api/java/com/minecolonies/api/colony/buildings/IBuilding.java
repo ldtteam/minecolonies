@@ -371,21 +371,6 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
     BuildingEntry getBuildingRegistryEntry();
 
     /**
-     * Remove the minimum stock.
-     *
-     * @param itemStack the stack to remove.
-     */
-    void removeMinimumStock(final ItemStack itemStack);
-
-    /**
-     * Add the minimum stock of the warehouse to this building.
-     *
-     * @param itemStack the itemStack to add.
-     * @param quantity  the quantity.
-     */
-    void addMinimumStock(final ItemStack itemStack, final int quantity);
-
-    /**
      * Calculate the number of reserved stacks the resolver can't touch.
      * @return a list of itemstorages.
      */
@@ -415,4 +400,10 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
      * @return true if so.
      */
     boolean isInBuilding(Vector3d positionVec);
+
+    /**
+     * Get a map of all open requests by type.
+     * @return the map.
+     */
+    Map<TypeToken<?>, Collection<IToken<?>>> getOpenRequestsByRequestableType();
 }

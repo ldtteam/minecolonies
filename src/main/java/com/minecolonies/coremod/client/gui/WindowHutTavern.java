@@ -22,7 +22,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_RECALL;
 /**
  * Window for the tavern
  */
-public class WindowHutTavern extends AbstractWindowBuilding<TavernBuildingModule.View>
+public class WindowHutTavern extends AbstractWindowModuleBuilding<TavernBuildingModule.View>
 {
     /**
      * Id of the hire/fire button in the GUI.

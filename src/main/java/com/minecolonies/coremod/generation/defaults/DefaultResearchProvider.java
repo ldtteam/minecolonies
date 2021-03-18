@@ -6,6 +6,7 @@ import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.inventory.ModContainers;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.research.AbstractResearchProvider;
+import com.minecolonies.api.research.ResearchBranchType;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.item.Items;
@@ -42,8 +43,9 @@ public class DefaultResearchProvider extends AbstractResearchProvider
     private static final ResourceLocation UNLOCK = new ResourceLocation(Constants.MOD_ID, "unlockable");
 
     /**
-     * Get a list of all research branches. Conventions: these are not mandatory, and their inclusion simply fixes capitalization. MineColonies should fully populate new branches
-     * for clarity; other data pack makers may not want to do so.
+     * Get a list of all research branches. Conventions: these are not mandatory, and their inclusion simply fixes capitalization and sorting. MineColonies should fully populate new branches
+     * for clarity; other data pack makers may not want to do so.  Branch Sort Order should be separated by large values, to allow possible third-party inserts between existing branches.
+     * Only use setBranchType for non-default styled branches, and use {@link com.minecolonies.api.research.ResearchBranchType} to do so.
      *
      * @return a complete list of all research branches.
      */
@@ -51,10 +53,10 @@ public class DefaultResearchProvider extends AbstractResearchProvider
     public Collection<ResearchBranch> getResearchBranchCollection()
     {
         final List<ResearchBranch> branches = new ArrayList<>();
-        branches.add(new ResearchBranch(CIVIL).setTranslatedBranchName("Civilian").setBranchTimeMultiplier(1.0));
-        branches.add(new ResearchBranch(COMBAT).setTranslatedBranchName("Combat").setBranchTimeMultiplier(1.0));
-        branches.add(new ResearchBranch(TECH).setTranslatedBranchName("Technology").setBranchTimeMultiplier(1.0));
-        branches.add(new ResearchBranch(UNLOCK).setTranslatedBranchName("Unlockables").setBranchTimeMultiplier(0.0));
+        branches.add(new ResearchBranch(CIVIL).setTranslatedBranchName("Civilian").setBranchTimeMultiplier(1.0).setBranchSortOrder(50));
+        branches.add(new ResearchBranch(COMBAT).setTranslatedBranchName("Combat").setBranchTimeMultiplier(1.0).setBranchSortOrder(100));
+        branches.add(new ResearchBranch(TECH).setTranslatedBranchName("Technology").setBranchTimeMultiplier(1.0).setBranchSortOrder(150));
+        branches.add(new ResearchBranch(UNLOCK).setTranslatedBranchName("Unlockables").setBranchTimeMultiplier(0.0).setBranchSortOrder(200).setBranchType(ResearchBranchType.UNLOCKABLES).setHidden(true));
         return branches;
     }
 
@@ -84,7 +86,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         effects.add(new ResearchEffect(FLEEING_DAMAGE).setTranslatedName("Guards Take -%3$s%% Damage When Fleeing").setLevels(new double[] {0.2, 0.3, 0.4, 1}));
         effects.add(new ResearchEffect(FLEEING_SPEED).setTranslatedName("Fleeing Citizens Gain Swiftness %2$s").setLevels(new double[] {1, 2, 3, 5}));
         effects.add(new ResearchEffect(GROWTH).setTranslatedName("Child Growth Rate +%3$s%%").setLevels(new double[] {0.05, 0.1, 0.25, 0.5, 1}));
-        effects.add(new ResearchEffect(HAPPINESS).setTranslatedName("Citizen Happiness +%3$s%%").setLevels(new double[] {0.05, 0.1, 0.1, 0.2, 0.5}));
+        effects.add(new ResearchEffect(HAPPINESS).setTranslatedName("Citizen Happiness +%3$s%%").setLevels(new double[] {0.05, 0.1, 0.15, 0.2, 0.5}));
         effects.add(new ResearchEffect(SATLIMIT).setTranslatedName("Healing Saturation Min %s").setLevels(new double[] {-0.5, -1, -1.5, -2, -5}));
         effects.add(new ResearchEffect(HEALTH_BOOST).setTranslatedName("Citizen HP +%s").setLevels(new double[] {2, 4, 6, 8, 10, 20}));
         effects.add(new ResearchEffect(LEVELING).setTranslatedName("Citizen XP Growth +%3$s%%").setLevels(new double[] {0.05, 0.1, 0.25, 0.5, 1}));
@@ -1345,6 +1347,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         new Research(new ResourceLocation(Constants.MOD_ID, "technology/heavilyloaded"), TECH).setParentResearch(loaded)
           .setTranslatedName("Heavily Loaded")
           .setIcon(Items.BLUE_SHULKER_BOX)
+          .setNoReset()
           .addItemCost(Items.EMERALD, 256)
           .addEffect(CITIZEN_INV_SLOTS, 3)
           .addToList(r);
@@ -1563,7 +1566,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
 
     public Collection<Research> getAchievementResearch(Collection<Research> r)
     {
-        new Research(new ResourceLocation(Constants.MOD_ID, "unlockable/stringmesh"), UNLOCK)
+        Research stringmesh = new Research(new ResourceLocation(Constants.MOD_ID, "unlockable/stringmesh"), UNLOCK)
             .setTranslatedName("String Mesh")
             .setIcon(ModItems.sifterMeshString)
             .addMandatoryBuildingRequirement(ModBuildings.SIFTER_ID, 1)
@@ -1573,8 +1576,9 @@ public class DefaultResearchProvider extends AbstractResearchProvider
             .addEffect(new ResourceLocation(Constants.MOD_ID, "effects/sifterstringunlock"), 1)
             .addToList(r);
 
-        new Research(new ResourceLocation(Constants.MOD_ID, "unlockable/flintmesh"), UNLOCK)
+        Research flintmesh = new Research(new ResourceLocation(Constants.MOD_ID, "unlockable/flintmesh"), UNLOCK)
             .setTranslatedName("Flint Mesh")
+            .setParentResearch(stringmesh)
             .setIcon(ModItems.sifterMeshString)
             .addMandatoryBuildingRequirement(ModBuildings.SIFTER_ID, 3)
             .setHidden()
@@ -1583,8 +1587,9 @@ public class DefaultResearchProvider extends AbstractResearchProvider
             .addEffect(new ResourceLocation(Constants.MOD_ID, "effects/sifterflintunlock"), 1)
             .addToList(r);
 
-        new Research(new ResourceLocation(Constants.MOD_ID, "unlockable/ironmesh"), UNLOCK)
+        Research ironmesh = new Research(new ResourceLocation(Constants.MOD_ID, "unlockable/ironmesh"), UNLOCK)
             .setTranslatedName("Iron Mesh")
+            .setParentResearch(flintmesh)
             .setIcon(ModItems.sifterMeshString)
             .addMandatoryBuildingRequirement(ModBuildings.SIFTER_ID, 4)
             .setHidden()
@@ -1595,6 +1600,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
 
         new Research(new ResourceLocation(Constants.MOD_ID, "unlockable/diamondmesh"), UNLOCK)
             .setTranslatedName("Diamond Mesh")
+            .setParentResearch(ironmesh)
             .setIcon(ModItems.sifterMeshString)
             .addMandatoryBuildingRequirement(ModBuildings.SIFTER_ID, 5)
             .setHidden()

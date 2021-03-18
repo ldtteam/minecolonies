@@ -3,6 +3,7 @@ package com.minecolonies.coremod.tileentities;
 import com.minecolonies.api.blocks.AbstractBlockBarrel;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.crafting.CompostRecipe;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.tileentities.AbstractTileEntityBarrel;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
@@ -20,6 +21,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 
@@ -101,7 +103,7 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel
     }
 
     /**
-     * Method called when a player uses the block. Takes the needed itmes from the player if needed.
+     * Method called when a player uses the block. Takes the needed items from the player.
      *
      * @param playerIn  the player
      * @param itemstack the itemStack on the hand of the player
@@ -116,7 +118,8 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel
             return true;
         }
 
-        if (!checkCorrectItem(itemstack))
+        final CompostRecipe recipe = findCompostRecipe(itemstack);
+        if (recipe == null)
         {
             return false;
         }
@@ -128,18 +131,18 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel
         }
         else
         {
-            this.consumeNeededItems(itemstack);
+            this.consumeNeededItems(itemstack, recipe);
             return true;
         }
     }
 
-    private void consumeNeededItems(final ItemStack itemStack)
+    private void consumeNeededItems(final ItemStack itemStack, final CompostRecipe recipe)
     {
-        //Saplings and seeds counts as 1 item added, the rest counts as 2 items
-        final int factor = itemStack.getItem().getRegistryName().toString().contains("sapling")
-                             || itemStack.getItem().getRegistryName().toString().contains("seed") ? 2 : 4;
+        // the strength defined by the recipe determines how many "compostable items" each
+        // item actually counts for.  (most items contribute 4 strength.)
+        final int factor = recipe.getStrength();
 
-        //The available items the player has in his hand (Rotten Flesh counts as the double)
+        //The available items the player has in his hand
         final int availableItems = itemStack.getCount() * factor;
         //The items we need to complete the barrel
         final int neededItems = AbstractTileEntityBarrel.MAX_ITEMS - items;
@@ -147,14 +150,18 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel
         int itemsToRemove = Math.min(neededItems, availableItems);
 
         //We update the quantities in the player´s inventory and in the barrel
-        this.items = this.items + itemsToRemove;
-        itemsToRemove = itemsToRemove / factor;
+        this.items += itemsToRemove;
+        itemsToRemove /= factor;
         ItemStackUtils.changeSize(itemStack, -itemsToRemove);
     }
 
-    public static boolean checkCorrectItem(final ItemStack itemStack)
+    @Nullable
+    private static CompostRecipe findCompostRecipe(final ItemStack itemStack)
     {
-        return IColonyManager.getInstance().getCompatibilityManager().isCompost(itemStack);
+        return IColonyManager.getInstance().getCompatibilityManager()
+                .getCopyOfCompostRecipes().get(itemStack.getItem());
+        // TODO: use the recipe to get the ferment time and output count?
+        // tricky because they might use multiple items with different values
     }
 
     /**
@@ -272,9 +279,10 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel
     @Override
     public boolean addItem(final ItemStack item)
     {
-        if (checkCorrectItem(item) && this.items < MAX_ITEMS)
+        final CompostRecipe recipe = findCompostRecipe(item);
+        if (recipe != null && this.items < MAX_ITEMS)
         {
-            this.consumeNeededItems(item);
+            this.consumeNeededItems(item, recipe);
             this.updateBlock(this.world);
             return true;
         }

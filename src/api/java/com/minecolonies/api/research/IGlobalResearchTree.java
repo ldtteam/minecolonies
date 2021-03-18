@@ -75,44 +75,30 @@ public interface IGlobalResearchTree
     void addResearch(final ResourceLocation branch, final IGlobalResearch research, final boolean isDynamic);
 
     /**
-     * Get the list of all branches.
+     * Add data for a research branch, used to contain translation texts, research speed, and other properties.
+     * @param branchId    the branch Id.
+     * @param branchData  the data.
+     */
+    void addBranchData(final ResourceLocation branchId, final IGlobalResearchBranch branchData);
+
+    /**
+     * Get the list of all branch ids.
      *
      * @return the list of branches.
      */
     List<ResourceLocation> getBranches();
 
     /**
+     * Get the specific GlobalResearchBranch data for a specific branch id.
+     *
+     * @param branchId  the branch of the research
+     */
+    IGlobalResearchBranch getBranchData(final ResourceLocation branchId);
+
+    /**
      * Resets all dynamically assigned research.
      */
     void reset();
-
-    /**
-     * Set name on an individual branch.
-     * @param branchId      Machine identifier of the branch
-     * @param branchName    Human-readable or translation key name for the branch.
-     */
-    void setBranchName(final ResourceLocation branchId, final TranslationTextComponent branchName);
-
-    /**
-     * Gets the name on an individual branch.
-     * @param branchId      Machine identifier of the branch
-     * @return    Human-readable or translation key name for the branch.
-     */
-    TranslationTextComponent getBranchName(final ResourceLocation branchId);
-
-    /**
-     * Set base time on an individual branch.
-     * @param branchId      Machine identifier of the branch
-     * @param baseTime      Base duration of the research.
-     */
-    void setBranchTime(final ResourceLocation branchId, final double baseTime);
-
-    /**
-     * Set base time on an individual branch.
-     * @param branchId      Machine identifier of the branch
-     * @return              Base duration of the research.
-     */
-    double getBranchTime(final ResourceLocation branchId);
 
     /**
      * Get the primary research of a certain branch.
