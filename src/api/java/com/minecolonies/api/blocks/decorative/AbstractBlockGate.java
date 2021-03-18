@@ -9,6 +9,7 @@ import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.state.properties.DoorHingeSide;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
@@ -417,6 +418,8 @@ public abstract class AbstractBlockGate extends DoorBlock
     public void toggleGate(final World world, final BlockPos clickedBlock, final Direction facing)
     {
         final BlockPos lowerLeftCorner = findLowerLeftCorner(world, facing, clickedBlock);
+        // State to put the gate into, all replicate the corner's state
+        final boolean opening = !world.getBlockState(lowerLeftCorner).get(BlockStateProperties.OPEN);
 
         for (int hor = 0; hor < maxWidth; hor++)
         {
@@ -439,11 +442,11 @@ public abstract class AbstractBlockGate extends DoorBlock
                 // Set top blocks to spikes
                 if (world.getBlockState(worldPos.up()).getBlock() != this)
                 {
-                    WorldUtil.setBlockState(world, worldPos, state.func_235896_a_(DoorBlock.HINGE), 2);
+                    WorldUtil.setBlockState(world, worldPos, state.with(DoorBlock.HINGE, opening ? DoorHingeSide.RIGHT : DoorHingeSide.LEFT), 2);
                 }
                 else
                 {
-                    WorldUtil.setBlockState(world, worldPos, state.func_235896_a_(BlockStateProperties.OPEN), 2);
+                    WorldUtil.setBlockState(world, worldPos, state.with(BlockStateProperties.OPEN, opening), 2);
                 }
             }
         }
