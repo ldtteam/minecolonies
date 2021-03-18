@@ -7,32 +7,31 @@ import com.ldtteam.blockout.controls.ItemIcon;
 import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.colony.buildings.modules.IMinimumStockModuleView;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBaker;
-import com.minecolonies.coremod.network.messages.server.colony.building.RemoveMinimumStockFromBuildingMessage;
-import com.minecolonies.coremod.util.FurnaceRecipes;
+import com.minecolonies.coremod.network.messages.server.colony.building.RemoveMinimumStockFromBuildingModuleMessage;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BAKER;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
- * Baker window class. Specifies the extras the bakery has for its list.
+ * Cook window class. Specifies the extras the composter has for its list.
  */
-public class WindowHutBakerModule extends AbstractWindowWorkerModuleBuilding<BuildingBaker.View>
+public class MinimumStockModuleWindow extends AbstractModuleWindow
 {
     /**
      * The resource string.
      */
-    private static final String RESOURCE_STRING = ":gui/windowhutbaker.xml";
+    private static final String RESOURCE_STRING = ":gui/layouthuts/layoutminimumstock.xml";
 
     /**
      * Limit reached label.
@@ -45,18 +44,27 @@ public class WindowHutBakerModule extends AbstractWindowWorkerModuleBuilding<Bui
     private final ScrollingList resourceList;
 
     /**
-     * Constructor for the window of the bakery.
-     *
-     * @param building {@link BuildingBaker.View}.
+     * The matching module view to the window.
      */
-    public WindowHutBakerModule(final BuildingBaker.View building)
+    private final IMinimumStockModuleView moduleView;
+
+    /**
+     * Constructor for the minimum stock window view.
+     *
+     * @param building class extending
+     * @param moduleView the module view.
+     */
+    public MinimumStockModuleWindow(
+      final IBuildingView building,
+      final IMinimumStockModuleView moduleView)
     {
         super(building, Constants.MOD_ID + RESOURCE_STRING);
 
         resourceList = this.window.findPaneOfTypeByID("resourcesstock", ScrollingList.class);
+        this.moduleView = moduleView;
 
         registerButton(STOCK_ADD, this::addStock);
-        if (building.hasReachedLimit())
+        if (moduleView.hasReachedLimit())
         {
             final ButtonImage button = findPaneOfTypeByID(STOCK_ADD, ButtonImage.class);
             button.setText(LanguageHandler.format(LABEL_LIMIT_REACHED));
@@ -67,18 +75,6 @@ public class WindowHutBakerModule extends AbstractWindowWorkerModuleBuilding<Bui
     }
 
     /**
-     * Returns the name of a building.
-     *
-     * @return Name of a building.
-     */
-    @NotNull
-    @Override
-    public String getBuildingName()
-    {
-        return COM_MINECOLONIES_COREMOD_GUI_BAKER;
-    }
-
-    /**
      * Remove the stock.
      *
      * @param button the button.
@@ -86,9 +82,9 @@ public class WindowHutBakerModule extends AbstractWindowWorkerModuleBuilding<Bui
     private void removeStock(final Button button)
     {
         final int row = resourceList.getListElementIndexByPane(button);
-        final Tuple<ItemStorage, Integer> tuple = building.getStock().get(row);
-        building.getStock().remove(row);
-        Network.getNetwork().sendToServer(new RemoveMinimumStockFromBuildingMessage(building, tuple.getA().getItemStack()));
+        final Tuple<ItemStorage, Integer> tuple = moduleView.getStock().get(row);
+        moduleView.getStock().remove(row);
+        Network.getNetwork().sendToServer(new RemoveMinimumStockFromBuildingModuleMessage(buildingView, tuple.getA().getItemStack()));
         updateStockList();
     }
 
@@ -97,10 +93,9 @@ public class WindowHutBakerModule extends AbstractWindowWorkerModuleBuilding<Bui
      */
     private void addStock()
     {
-        if (!building.hasReachedLimit())
+        if (!moduleView.hasReachedLimit())
         {
-            new WindowSelectRes(this, building,
-              itemStack -> ItemStackUtils.CAN_EAT.test(itemStack) || ItemStackUtils.CAN_EAT.test(FurnaceRecipes.getInstance().getSmeltingResult(itemStack)) || building.getRecipes().stream().anyMatch(r -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, r.getPrimaryOutput()))).open();
+            new WindowSelectRes(this, buildingView, (stack) -> true).open();
         }
     }
 
@@ -118,7 +113,7 @@ public class WindowHutBakerModule extends AbstractWindowWorkerModuleBuilding<Bui
     {
         resourceList.enable();
         resourceList.show();
-        final List<Tuple<ItemStorage, Integer>> tempRes = new ArrayList<>(building.getStock());
+        final List<Tuple<ItemStorage, Integer>> tempRes = new ArrayList<>(moduleView.getStock());
 
         //Creates a dataProvider for the unemployed resourceList.
         resourceList.setDataProvider(new ScrollingList.DataProvider()
@@ -144,15 +139,10 @@ public class WindowHutBakerModule extends AbstractWindowWorkerModuleBuilding<Bui
                 final ItemStack resource = tempRes.get(index).getA().getItemStack().copy();
                 resource.setCount(resource.getMaxStackSize());
 
-                final Text resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Text.class);
-                resourceLabel.setText(resource.getDisplayName());
-
-                final Text quantityLabel = rowPane.findPaneOfTypeByID(QUANTITY_LABEL, Text.class);
-                quantityLabel.setText(String.valueOf(tempRes.get(index).getB()));
-
+                rowPane.findPaneOfTypeByID(RESOURCE_NAME, Text.class).setText(resource.getDisplayName());
+                rowPane.findPaneOfTypeByID(QUANTITY_LABEL, Text.class).setText(String.valueOf(tempRes.get(index).getB()));
                 rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(resource);
             }
         });
     }
 }
-

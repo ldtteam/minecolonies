@@ -73,7 +73,6 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -122,21 +121,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
      * The custom name of the building, empty by default.
      */
     private String customName = "";
-
-    /**
-     * Minimum stock it can hold per level.
-     */
-    private static final int STOCK_PER_LEVEL = 5;
-
-    /**
-     * The minimum stock.
-     */
-    protected final Map<ItemStorage, Integer> minimumStock = new HashMap<>();
-
-    /**
-     * The minimum stock tag.
-     */
-    private static final String TAG_MINIMUM_STOCK = "minstock";
 
     /**
      * Whether a guard building is near
@@ -341,14 +325,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             recheckGuardBuildingNear = true;
         }
 
-        minimumStock.clear();
-        final ListNBT minimumStockTagList = compound.getList(TAG_MINIMUM_STOCK, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < minimumStockTagList.size(); i++)
-        {
-            final CompoundNBT compoundNBT = minimumStockTagList.getCompound(i);
-            minimumStock.put(new ItemStorage(ItemStack.read(compoundNBT)), compoundNBT.getInt(TAG_QUANTITY));
-        }
-
         getModules(IPersistentModule.class).forEach(module -> module.deserializeNBT(compound));
     }
 
@@ -367,16 +343,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         compound.putBoolean(TAG_IS_BUILT, isBuilt);
         compound.putString(TAG_CUSTOM_NAME, customName);
         compound.putBoolean(TAG_GUARD_NEARBY, guardBuildingNear);
-
-        @NotNull final ListNBT minimumStockTagList = new ListNBT();
-        for (@NotNull final Map.Entry<ItemStorage, Integer> entry : minimumStock.entrySet())
-        {
-            final CompoundNBT compoundNBT = new CompoundNBT();
-            entry.getKey().getItemStack().write(compoundNBT);
-            compoundNBT.putInt(TAG_QUANTITY, entry.getValue());
-            minimumStockTagList.add(compoundNBT);
-        }
-        compound.put(TAG_MINIMUM_STOCK, minimumStockTagList);
 
         getModules(IPersistentModule.class).forEach(module -> module.serializeNBT(compound));
         return compound;
@@ -720,54 +686,12 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         }
         buf.writeCompoundTag(requestSystemCompound);
 
-        buf.writeInt(minimumStock.size());
-        for (final Map.Entry<ItemStorage, Integer> entry : minimumStock.entrySet())
-        {
-            buf.writeItemStack(entry.getKey().getItemStack());
-            buf.writeInt(entry.getValue());
-        }
-        buf.writeBoolean(minimumStock.size() >= minimumStockSize());
         buf.writeBoolean(isDeconstructed());
 
         getModules(IPersistentModule.class).forEach(module -> module.serializeToView(buf));
     }
 
-    /**
-     * Calculate the minimum stock size.
-     *
-     * @return the size.
-     */
-    private int minimumStockSize()
-    {
-        final double increase = 1 + colony.getResearchManager().getResearchEffects().getEffectStrength(MINIMUM_STOCK);
 
-        return (int) (getBuildingLevel() * STOCK_PER_LEVEL * increase);
-    }
-
-    @Override
-    public void addMinimumStock(final ItemStack itemStack, final int quantity)
-    {
-        if (minimumStock.containsKey(new ItemStorage(itemStack)) || minimumStock.size() < minimumStockSize())
-        {
-            minimumStock.put(new ItemStorage(itemStack), quantity);
-            markDirty();
-        }
-    }
-
-    @Override
-    public void removeMinimumStock(final ItemStack itemStack)
-    {
-        minimumStock.remove(new ItemStorage(itemStack));
-
-        final Collection<IToken<?>> list = getOpenRequestsByRequestableType().getOrDefault(TypeToken.of(Stack.class), new ArrayList<>());
-        final IToken<?> token = getMatchingRequest(itemStack, list);
-        if (token != null)
-        {
-            getColony().getRequestManager().updateRequestState(token, RequestState.CANCELLED);
-        }
-
-        markDirty();
-    }
 
     /**
      * Regularly tick this building and check if we  got the minimum stock(like once a minute is still fine) - If not: Check if there is a request for this already. -- If not:
@@ -777,67 +701,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     public void onColonyTick(final IColony colony)
     {
         super.onColonyTick(colony);
-
-        if (WorldUtil.isBlockLoaded(colony.getWorld(), getPosition()))
-        {
-            final Collection<IToken<?>> list = getOpenRequestsByRequestableType().getOrDefault(TypeToken.of(Stack.class), new ArrayList<>());
-
-            for (final Map.Entry<ItemStorage, Integer> entry : minimumStock.entrySet())
-            {
-                final ItemStack itemStack = entry.getKey().getItemStack().copy();
-
-                if (itemStack.isEmpty())
-                {
-                    continue;
-                }
-
-                final int count = InventoryUtils.hasBuildingEnoughElseCount(this, new ItemStorage(itemStack, true), entry.getValue() * itemStack.getMaxStackSize());
-                final int delta = (entry.getValue() * itemStack.getMaxStackSize()) - count;
-                final IToken<?> request = getMatchingRequest(itemStack, list);
-                if (delta > 0)
-                {
-                    if (request == null)
-                    {
-                        itemStack.setCount(Math.min(itemStack.getMaxStackSize(), delta));
-                        final Stack stack = new Stack(itemStack, false);
-                        if (getMainCitizen() != null)
-                        {
-                            getMainCitizen().createRequestAsync(stack);
-                        }
-                        else
-                        {
-                            createRequest(stack, false);
-                        }
-                    }
-                }
-                else if (request != null)
-                {
-                    getColony().getRequestManager().updateRequestState(request, RequestState.CANCELLED);
-                }
-            }
-        }
-
         getModules(ITickingModule.class).forEach(module -> module.onColonyTick(colony));
-    }
-
-    /**
-     * Check if the building is already requesting this stack.
-     *
-     * @param stack the stack to check.
-     * @param list  the list of tokes to check.
-     * @return the token if so.
-     */
-    private IToken<?> getMatchingRequest(final ItemStack stack, final Collection<IToken<?>> list)
-    {
-        for (final IToken<?> token : list)
-        {
-            final IRequest<?> iRequest = colony.getRequestManager().getRequestForToken(token);
-            if (iRequest != null && iRequest.getRequest() instanceof Stack && ((Stack) iRequest.getRequest()).getStack().isItemEqual(stack))
-            {
-                return token;
-            }
-        }
-        return null;
     }
 
     /**
@@ -848,10 +712,9 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
      */
     public boolean isMinimumStockRequest(final IRequest<? extends IDeliverable> request)
     {
-        for (final Map.Entry<ItemStorage, Integer> entry : minimumStock.entrySet())
+        for (final IMinimumStockModule module : getModules(IMinimumStockModule.class))
         {
-            if (request.getRequest() instanceof com.minecolonies.api.colony.requestsystem.requestable.Stack && ((Stack) request.getRequest()).getStack()
-                                                                                                                 .isItemEqual(entry.getKey().getItemStack()))
+            if (module.isMinimumStockRequest(request))
             {
                 return true;
             }
@@ -1181,14 +1044,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         }
         toKeep.putAll(requiredItems.entrySet().stream().collect(Collectors.toMap(key -> (stack -> stack.isItemEqual(key.getKey().getItemStack())), Map.Entry::getValue)));
 
-        if(!minimumStock.isEmpty())
-        {
-            for(ItemStorage item:minimumStock.keySet())
-            {
-                toKeep.put(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, item.getItemStack(), false, true), new Tuple<>(minimumStock.get(item).intValue() * item.getItemStack().getMaxStackSize(), false));
-            }
-        }
-
+        getModules(IAltersRequiredItems.class).forEach(module -> module.alterItemsToBeKept((stack, qty, inv) -> toKeep.put(stack, new Tuple<>(qty,inv))));
         return toKeep;
     }
 
@@ -1286,7 +1142,8 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         return colony.getRequestManager().getDataStoreManager().get(rsDataStoreToken, TypeConstants.REQUEST_SYSTEM_BUILDING_DATA_STORE);
     }
 
-    protected Map<TypeToken<?>, Collection<IToken<?>>> getOpenRequestsByRequestableType()
+    @Override
+    public Map<TypeToken<?>, Collection<IToken<?>>> getOpenRequestsByRequestableType()
     {
         return getDataStore().getOpenRequestsByRequestableType();
     }
