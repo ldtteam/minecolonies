@@ -86,7 +86,8 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
     {
         final int row = stackList.getListElementIndexByPane(button);
         final ItemStorage storage = allItems.get(row);
-        final List<BlockPos> containerList = building.getContainerList();
+        final Set<BlockPos> containerList = new HashSet<>(building.getContainerList());
+        containerList.add(building.getID());
 
         for (BlockPos blockPos : containerList)
         {
@@ -158,7 +159,7 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
      */
     private void updateResources()
     {
-        final List<BlockPos> containerList = building.getContainerList();
+        final Set<BlockPos> containerList = new HashSet<>(building.getContainerList());
 
         final Map<ItemStorage, Integer> storedItems = new HashMap<>();
         final World world = building.getColony().getWorld();
@@ -169,8 +170,7 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
             final TileEntity rack = world.getTileEntity(blockPos);
             if (rack instanceof TileEntityRack)
             {
-
-                Map<ItemStorage, Integer> rackStorage = ((TileEntityRack) rack).getAllContent();
+                final Map<ItemStorage, Integer> rackStorage = ((TileEntityRack) rack).getAllContent();
 
                 for (final Map.Entry<ItemStorage, Integer> entry : rackStorage.entrySet())
                 {
