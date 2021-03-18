@@ -46,36 +46,27 @@ public class CustomRecipeManager
 
     /**
      * Add recipe to manager.
-     * @param recipeJson
-     * @param recipeLocation
+     * @param recipe the recipe to add
      */
-    public void addRecipe(@NotNull final JsonObject recipeJson, @NotNull final ResourceLocation recipeLocation)
+    public void addRecipe(@NotNull final CustomRecipe recipe)
     {
-        CustomRecipe recipe = CustomRecipe.parse(recipeJson);
-        recipe.setRecipeId(recipeLocation);
-
         if(!recipeMap.containsKey(recipe.getCrafter()))
         {
             recipeMap.put(recipe.getCrafter(), new HashMap<>());
         }
 
-        recipeMap.get(recipe.getCrafter()).put(recipeLocation, recipe);
+        recipeMap.get(recipe.getCrafter()).put(recipe.getRecipeId(), recipe);
     }
 
     /**
      * Remove recipe
-     * @param recipeJson
-     * @param recipeLocation
+     * @param toRemove
      */
-    public void removeRecipe(@NotNull final JsonObject recipeJson, @NotNull final ResourceLocation recipeLocation)
+    public void removeRecipe(@NotNull final ResourceLocation toRemove)
     {
-        if (recipeJson.has(RECIPE_TYPE_PROP) && recipeJson.get(RECIPE_TYPE_PROP).getAsString().equals(RECIPE_TYPE_REMOVE) && recipeJson.has(RECIPE_ID_TO_REMOVE_PROP))
+        if(!removedRecipes.contains(toRemove))
         {
-            ResourceLocation toRemove = new ResourceLocation(recipeJson.get(RECIPE_ID_TO_REMOVE_PROP).getAsString());
-            if(!removedRecipes.contains(toRemove))
-            {
-                removedRecipes.add(toRemove);
-            }
+            removedRecipes.add(toRemove);
         }
     }
 
@@ -86,24 +77,9 @@ public class CustomRecipeManager
      */
     public Set<CustomRecipe> getRecipes(@NotNull final String crafter)
     {
-        if(!removedRecipes.isEmpty())
-        {
-            for(ResourceLocation toRemove: removedRecipes)
-            {
-                final Optional<Map<ResourceLocation, CustomRecipe>> crafterMap = recipeMap.entrySet().stream().map(r -> r.getValue()).filter(r1 -> r1.keySet().contains(toRemove)).findFirst();
-                if(crafterMap.isPresent())
-                {
-                    crafterMap.get().remove(toRemove);
-                }
-             }
-            removedRecipes.clear();
-        }
+        removeRecipes();
 
-        if(recipeMap.containsKey(crafter))
-        {
-            return recipeMap.get(crafter).entrySet().stream().map(x -> x.getValue()).collect(Collectors.toSet());
-        }
-        return new HashSet<>();
+        return Collections.unmodifiableSet(new HashSet<>(recipeMap.getOrDefault(crafter, new HashMap<>()).values()));
     }
 
     /**
@@ -113,5 +89,20 @@ public class CustomRecipeManager
     {
         return recipeMap;
     }
-    
+
+    private void removeRecipes()
+    {
+        if (!removedRecipes.isEmpty())
+        {
+            for (final ResourceLocation toRemove : removedRecipes)
+            {
+                recipeMap.values().stream()
+                    .filter(recipes -> recipes.containsKey(toRemove))
+                    .findFirst()
+                    .ifPresent(crafterRecipeMap -> crafterRecipeMap.remove(toRemove));
+            }
+
+            removedRecipes.clear();
+        }
+    }
 }
