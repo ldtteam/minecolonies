@@ -1,20 +1,32 @@
 {
-  "variants": {
-    "facing=east": {
-      "model": "minecolonies:block/blockhutcitizen",
-      "y": 180
-    },
-    "facing=south": {
-      "model": "minecolonies:block/blockhutcitizen",
-      "y": 270
-    },
-    "facing=west": {
-      "model": "minecolonies:block/blockhutcitizen",
-      "y": 0
-    },
-    "facing=north": {
-      "model": "minecolonies:block/blockhutcitizen",
-      "y": 90
-    }
-  }
+	"variants": {
+		"facing=north":[
+			{"model": "minecolonies:block/blockhutcitizen","y": 90,"weight": 20},
+			{"model": "minecolonies:block/blockhutcitizen_1","y": 90,"weight": 20},
+			{"model": "minecolonies:block/blockhutcitizen_2","y": 90,"weight": 20},
+			{"model": "minecolonies:block/blockhutcitizen_3","y": 90,"weight": 20},
+			{"model": "minecolonies:block/blockhutcitizen_4","y": 90,"weight": 20}
+		],
+		"facing=east":[
+			{"model": "minecolonies:block/blockhutcitizen","y": 180,"weight": 20},
+			{"model": "minecolonies:block/blockhutcitizen_1","y": 180,"weight": 20},
+			{"model": "minecolonies:block/blockhutcitizen_2","y": 180,"weight": 20},
+			{"model": "minecolonies:block/blockhutcitizen_3","y": 180,"weight": 20},
+			{"model": "minecolonies:block/blockhutcitizen_4","y": 180,"weight": 20}
+		],
+		"facing=south":[
+			{"model": "minecolonies:block/blockhutcitizen","y": 270,"weight": 20},
+			{"model": "minecolonies:block/blockhutcitizen_1","y": 270,"weight": 20},
+			{"model": "minecolonies:block/blockhutcitizen_2","y": 270,"weight": 20},
+			{"model": "minecolonies:block/blockhutcitizen_3","y": 270,"weight": 20},
+			{"model": "minecolonies:block/blockhutcitizen_4","y": 270,"weight": 20}
+		],
+		"facing=west":[
+			{"model": "minecolonies:block/blockhutcitizen","y": 0,"weight": 20},
+			{"model": "minecolonies:block/blockhutcitizen_1","y": 0,"weight": 20},
+			{"model": "minecolonies:block/blockhutcitizen_2","y": 0,"weight": 20},
+			{"model": "minecolonies:block/blockhutcitizen_3","y": 0,"weight": 20},
+			{"model": "minecolonies:block/blockhutcitizen_4","y": 0,"weight": 20}
+		]
+	}
 }

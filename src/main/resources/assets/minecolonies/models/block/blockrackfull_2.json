@@ -1,0 +1,10 @@
+{
+	"parent": "minecolonies:block/blockrackfull",
+	"textures": {
+		"9": "block/cobblestone",
+		"10": "block/cyan_concrete_powder",
+		"11": "block/blue_terracotta",
+		"12": "block/barrel_side",
+		"13": "block/barrel_top"
+	}
+}

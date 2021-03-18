@@ -17,6 +17,11 @@ import java.util.Random;
 public abstract class AbstractModuleWindow extends AbstractWindowSkeleton implements IModuleWindow
 {
     /**
+     * Building view matching the module.
+     */
+    protected final IBuildingView buildingView;
+
+    /**
      * Constructor for the window of the the filterable lists.
      *
      * @param building   {@link AbstractBuildingView}.
@@ -25,6 +30,7 @@ public abstract class AbstractModuleWindow extends AbstractWindowSkeleton implem
     public AbstractModuleWindow(final IBuildingView building, final String res)
     {
         super(res);
+        this.buildingView = building;
         final Random random = new Random();
         int offset = 0;
 

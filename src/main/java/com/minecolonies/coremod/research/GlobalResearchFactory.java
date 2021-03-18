@@ -76,6 +76,10 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         {
             final CompoundNBT costCompound = new CompoundNBT();
             costCompound.putString(TAG_COST_ITEM, Objects.requireNonNull(is.getItem().getRegistryName()).toString() + ":" + is.getItemStack().getCount());
+            if(is.getItemStack().getTag() != null)
+            {
+                costCompound.put(TAG_COST_NBT, is.getItemStack().getTag());
+            }
             return costCompound;
         }).collect(NBTUtils.toListNBT());
         compound.put(TAG_COSTS, costTagList);
@@ -137,9 +141,13 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
             String[] costParts = compound.getString(TAG_COST_ITEM).split(":");
             if(costParts.length == 3)
             {
-                ItemStack is = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(costParts[0], costParts[1])));
+                final ItemStack is = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(costParts[0], costParts[1])));
                 is.setCount(Integer.parseInt(costParts[2]));
-                research.addCost(new ItemStorage(is));
+                if (compound.hasUniqueId(TAG_COST_NBT))
+                {
+                    is.setTag(compound.getCompound(TAG_COST_NBT));
+                }
+                research.addCost(new ItemStorage(is, false, !is.hasTag()));
             }
         });
         NBTUtils.streamCompound(nbt.getList(TAG_REQS, Constants.NBT.TAG_COMPOUND)).
@@ -176,6 +184,11 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         for(ItemStorage is : input.getCostList())
         {
             packetBuffer.writeItemStack(is.getItemStack());
+            packetBuffer.writeBoolean(is.ignoreNBT());
+            if(!is.ignoreNBT())
+            {
+                packetBuffer.writeCompoundTag(is.getItemStack().getTag());
+            }
         }
         packetBuffer.writeInt(input.getResearchRequirement().size());
         for(IResearchRequirement req : input.getResearchRequirement())
@@ -222,7 +235,12 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         final int costSize = buffer.readInt();
         for(int i = 0; i < costSize; i++)
         {
-            research.addCost(new ItemStorage(buffer.readItemStack()));
+            final ItemStorage is = new ItemStorage(buffer.readItemStack(), false, buffer.readBoolean());
+            if(!is.ignoreNBT())
+            {
+                is.getItemStack().setTag(buffer.readCompoundTag());
+            }
+            research.addCost(is);
         }
 
         final int reqCount = buffer.readInt();

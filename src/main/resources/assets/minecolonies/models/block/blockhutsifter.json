@@ -2,7 +2,7 @@
   "credit": "Made with Blockbench",
   "ambientocclusion": false,
   "textures": {
-    "0": "minecolonies:blocks/roughwood-full",
+    "0": "block/stripped_spruce_log",
     "1": "block/light_gray_concrete_powder",
     "2": "block/gravel",
     "3": "block/oak_log",

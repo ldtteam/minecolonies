@@ -36,7 +36,7 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -472,7 +472,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
             if (combinedInv == null)
             {
                 //Add additional containers
-                final Set<IItemHandlerModifiable> handlers = new HashSet<>();
+                final Set<IItemHandlerModifiable> handlers = new LinkedHashSet<>();
                 final World world = colony.getWorld();
                 if (world != null)
                 {

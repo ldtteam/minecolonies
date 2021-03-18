@@ -1,7 +1,7 @@
 {
   "ambientocclusion": false,
   "textures": {
-    "particle": "minecolonies:blocks/rack/wood"
+    "particle": "block/oak_log"
   },
   "display": {
     "gui": {

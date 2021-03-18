@@ -3,6 +3,7 @@
   "parentResearch": "minecolonies:technology/loaded",
   "researchLevel": 6,
   "icon": "minecraft:blue_shulker_box",
+  "no-reset": true,
   "requirements": [
     {
       "item": "minecraft:emerald",

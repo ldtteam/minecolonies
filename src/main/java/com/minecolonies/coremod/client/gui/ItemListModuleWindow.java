@@ -3,6 +3,7 @@ package com.minecolonies.coremod.client.gui;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.*;
 import com.ldtteam.blockout.views.ScrollingList;
+import com.minecolonies.api.colony.buildings.modules.IItemListModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.coremod.colony.buildings.moduleviews.ItemListModuleView;
@@ -59,7 +60,7 @@ public class ItemListModuleWindow extends AbstractModuleWindow
     public ItemListModuleWindow(
       final String res,
       final IBuildingView building,
-      final ItemListModuleView moduleView)
+      final IItemListModuleView moduleView)
     {
         super(building, res);
         this.id = moduleView.getId();
