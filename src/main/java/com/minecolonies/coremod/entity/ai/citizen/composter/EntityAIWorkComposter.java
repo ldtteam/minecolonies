@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Random;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.api.research.util.ResearchConstants.PODZOL_CHANCE;
 import static com.minecolonies.api.util.constant.Constants.DOUBLE;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
@@ -291,7 +292,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
     }
 
     /**
-     * The AI will harvest the barrels he found finished on his building.
+     * The AI will harvest the finished barrels they found in their hut.
      *
      * @return the next IAIState after doing this
      */
@@ -316,9 +317,10 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
             {
                 /**
                  * Podzol or dirt?
-                 * 5% chance for podzol, else dirt.
+                 * 5% chance (by default) for podzol, else dirt.
+                 * Two researches to increase it to 10% and 15%, respectively.
                  */
-                if ((random.nextInt(100)) <= 4)
+                if (((random.nextInt(100)) + 1) <= (5 * worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(PODZOL_CHANCE)))
                 {
                     InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), new ItemStack(Blocks.PODZOL, 1));
                 }
