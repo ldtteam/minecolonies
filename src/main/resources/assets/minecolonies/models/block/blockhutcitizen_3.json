@@ -1,0 +1,7 @@
+{
+	"parent": "minecolonies:block/blockhutcitizen",
+	"textures": {
+		"7": "block/cyan_terracotta",
+		"14": "block/blue_wool"
+	}
+}
