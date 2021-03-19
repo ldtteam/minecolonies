@@ -4,6 +4,7 @@ import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.ScrollingList;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.Constants;
@@ -116,14 +117,14 @@ public class WindowHutEnchanterModule extends AbstractWindowWorkerModuleBuilding
     private void switchClicked(@NotNull final Button button)
     {
         final int row = workerList.getListElementIndexByPane(button);
-        if (button.getTextAsString().equals(OFF))
+        if (button.getTextAsString().equals(LanguageHandler.format(OFF)))
         {
             button.setText(new TranslationTextComponent(ON));
             building.addWorker(allBuildings.get(row).getID());
         }
         else
         {
-            button.setText(OFF);
+            button.setText(new TranslationTextComponent(OFF));
             building.removeWorker(allBuildings.get(row).getID());
         }
         selectedBuildings = building.getBuildingsToGatherFrom();

@@ -1,5 +1,6 @@
 {
 	"credit": "Made with Blockbench",
+	"parent": "block/block",
 	"textures": {
 		"particle": "block/composter_compost",
 		"compost": "block/composter_compost"
@@ -9,12 +10,12 @@
 			"from": [0, 0, 0],
 			"to": [16, 16, 16],
 			"faces": {
-				"north": {"uv": [2, 2, 14, 14], "texture": "#compost", "cullface": "north"},
-				"east": {"uv": [2, 2, 14, 14], "texture": "#compost", "cullface": "north"},
-				"south": {"uv": [2, 2, 14, 14], "texture": "#compost", "cullface": "north"},
-				"west": {"uv": [2, 2, 14, 14], "texture": "#compost", "cullface": "north"},
-				"up": {"uv": [2, 2, 14, 14], "texture": "#compost", "cullface": "north"},
-				"down": {"uv": [2, 2, 14, 14], "texture": "#compost", "cullface": "north"}
+				"north": {"uv": [2, 2, 14, 14], "texture": "#compost"},
+				"east": {"uv": [2, 2, 14, 14], "texture": "#compost"},
+				"south": {"uv": [2, 2, 14, 14], "texture": "#compost"},
+				"west": {"uv": [2, 2, 14, 14], "texture": "#compost"},
+				"up": {"uv": [2, 2, 14, 14], "texture": "#compost"},
+				"down": {"uv": [2, 2, 14, 14], "texture": "#compost"}
 			}
 		}
 	]

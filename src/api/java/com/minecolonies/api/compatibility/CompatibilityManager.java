@@ -6,6 +6,7 @@ import com.google.common.collect.ImmutableSet;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.crafting.CompostRecipe;
+import com.minecolonies.api.compatibility.resourcefulbees.*;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.*;
@@ -27,6 +28,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
@@ -190,6 +192,7 @@ public class CompatibilityManager implements ICompatibilityManager
         discoverFuel();
         discoverEnchantments();
         discoverFreeBlocksAndPos();
+        discoverModCompat();
 
         discoveredAlready = true;
     }
@@ -200,13 +203,13 @@ public class CompatibilityManager implements ICompatibilityManager
     private void discoverAllItems()
     {
         final List<ItemStack> stacks = StreamSupport.stream(Spliterators.spliteratorUnknownSize(ForgeRegistries.ITEMS.iterator(), Spliterator.ORDERED), true)
-                                           .flatMap(item ->
-                                             {
-                                                 final NonNullList<ItemStack> list = NonNullList.create();
-                                                 item.fillItemGroup(ItemGroup.SEARCH, list);
-                                                 return list.stream();
-                                             })
-                                           .collect(Collectors.toList());
+                .flatMap(item ->
+                {
+                    final NonNullList<ItemStack> list = NonNullList.create();
+                    item.fillItemGroup(ItemGroup.SEARCH, list);
+                    return list.stream();
+                })
+                .collect(Collectors.toList());
 
         allItems = ImmutableList.copyOf(stacks);
     }
@@ -407,11 +410,11 @@ public class CompatibilityManager implements ICompatibilityManager
     public void write(@NotNull final CompoundNBT compound)
     {
         @NotNull final ListNBT saplingsLeavesTagList =
-          leavesToSaplingMap.entrySet()
-            .stream()
-            .filter(entry -> entry.getKey() != null)
-            .map(entry -> writeLeafSaplingEntryToNBT(entry.getKey().getState(), entry.getValue()))
-            .collect(NBTUtils.toListNBT());
+                leavesToSaplingMap.entrySet()
+                        .stream()
+                        .filter(entry -> entry.getKey() != null)
+                        .map(entry -> writeLeafSaplingEntryToNBT(entry.getKey().getState(), entry.getValue()))
+                        .collect(NBTUtils.toListNBT());
         compound.put(TAG_SAP_LEAF, saplingsLeavesTagList);
     }
 
@@ -419,9 +422,9 @@ public class CompatibilityManager implements ICompatibilityManager
     public void read(@NotNull final CompoundNBT compound)
     {
         NBTUtils.streamCompound(compound.getList(TAG_SAP_LEAF, Constants.NBT.TAG_COMPOUND))
-          .map(CompatibilityManager::readLeafSaplingEntryFromNBT)
-          .filter(key -> !leavesToSaplingMap.containsKey(new BlockStateStorage(key.getA(), leafCompareWithoutProperties, true)) && !leavesToSaplingMap.containsValue(key.getB()))
-          .forEach(key -> leavesToSaplingMap.put(new BlockStateStorage(key.getA(), leafCompareWithoutProperties, true), key.getB()));
+                .map(CompatibilityManager::readLeafSaplingEntryFromNBT)
+                .filter(key -> !leavesToSaplingMap.containsKey(new BlockStateStorage(key.getA(), leafCompareWithoutProperties, true)) && !leavesToSaplingMap.containsValue(key.getB()))
+                .forEach(key -> leavesToSaplingMap.put(new BlockStateStorage(key.getA(), leafCompareWithoutProperties, true), key.getB()));
     }
 
     @Override
@@ -465,7 +468,7 @@ public class CompatibilityManager implements ICompatibilityManager
             ench = list.get(random.nextInt(list.size()));
         }
         return new Tuple<>(getEnchantedItemStack(new EnchantmentData(ForgeRegistries.ENCHANTMENTS.getValue(new ResourceLocation(ench.getA())), ench.getB())),
-          ench.getB());
+                ench.getB());
     }
 
     @Override
@@ -502,9 +505,9 @@ public class CompatibilityManager implements ICompatibilityManager
         if (oreBlocks.isEmpty())
         {
             oreBlocks.addAll(ImmutableList.copyOf(allItems.stream().filter(this::isMineableOre)
-                                                    .filter(stack -> !isEmpty(stack) && stack.getItem() instanceof BlockItem)
-                                                    .map(stack -> ((BlockItem) stack.getItem()).getBlock())
-                                                    .collect(Collectors.toList())));
+                    .filter(stack -> !isEmpty(stack) && stack.getItem() instanceof BlockItem)
+                    .map(stack -> ((BlockItem) stack.getItem()).getBlock())
+                    .collect(Collectors.toList())));
         }
         Log.getLogger().info("Finished discovering Ores");
     }
@@ -553,9 +556,9 @@ public class CompatibilityManager implements ICompatibilityManager
         if (plantables.isEmpty())
         {
             plantables.addAll(ImmutableList.copyOf(allItems.stream()
-                                                     .filter(this::isPlantable)
-                                                     .map(ItemStorage::new)
-                                                     .collect(Collectors.toList())));
+                    .filter(this::isPlantable)
+                    .map(ItemStorage::new)
+                    .collect(Collectors.toList())));
         }
         Log.getLogger().info("Finished discovering plantables");
     }
@@ -836,6 +839,17 @@ public class CompatibilityManager implements ICompatibilityManager
                     freePositions.add(pos);
                 }
             }
+        }
+    }
+
+    /**
+     * Inits compats
+     */
+    private void discoverModCompat()
+    {
+        if (ModList.get().isLoaded("resourcefulbees"))
+        {
+            Compatibility.beeHiveCompat = new ResourcefulBeesCompat();
         }
     }
 }
