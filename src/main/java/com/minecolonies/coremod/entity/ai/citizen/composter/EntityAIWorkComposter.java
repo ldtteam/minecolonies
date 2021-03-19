@@ -320,7 +320,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
                  * 5% chance (by default) for podzol, else dirt.
                  * Two researches to increase it to 10% and 15%, respectively.
                  */
-                if (((random.nextInt(100)) + 1) <= (5 * worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(PODZOL_CHANCE)))
+                if (((random.nextInt(100)) + 1) <= (5 * (1 + worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(PODZOL_CHANCE))))
                 {
                     InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), new ItemStack(Blocks.PODZOL, MineColonies.getConfig().getServer().dirtFromCompost.get()));
                 }

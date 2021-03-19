@@ -91,7 +91,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         effects.add(new ResearchEffect(MELEE_DAMAGE).setTranslatedName("Knight Damage +%s").setLevels(new double[] {0.5, 1, 1.5, 2, 4}));
         effects.add(new ResearchEffect(MINIMUM_STOCK).setTranslatedName("Buildings Can Minimum Stock %3$s%% More").setLevels(new double[] {0.5, 1, 2}));
         effects.add(new ResearchEffect(MORE_ORES).setTranslatedName("Miners Find +%3$s%% More Ores").setLevels(new double[] {0.1, 0.25, 0.5, 1, 2}));
-        effects.add(new ResearchEffect(PODZOL_CHANCE).setTranslatedName("Composters Get +%3$s%% More Podzol").setLevels(new double[] {2, 3}));
+        effects.add(new ResearchEffect(PODZOL_CHANCE).setTranslatedName("Composters Get +%3$s%% More Podzol").setLevels(new double[] {1, 2}));
         effects.add(new ResearchEffect(RECIPES).setTranslatedName("Workers Can Learn +%3$s%% More Recipes").setLevels(new double[] {0.25, 0.5, 1, 2}));
         effects.add(new ResearchEffect(REGENERATION).setTranslatedName("Citizen Regeneration +%3$s%%").setLevels(new double[] {0.1, 0.25, 0.5, 1, 2}));
         effects.add(new ResearchEffect(SATURATION).setTranslatedName("Citizen Saturation Per Meal +%3$s%%").setLevels(new double[] {0.1, 0.25, 0.5, 1, 2}));
