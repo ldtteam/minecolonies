@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity.ai.citizen.beekeeper;
 
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
+import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
@@ -185,7 +186,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
 
         for (BlockPos pos : hives)
         {
-            if(!(world.getBlockState(pos).getBlock() instanceof BeehiveBlock))
+            if (!(world.getBlockState(pos).getBlock() instanceof BeehiveBlock))
             {
                 getOwnBuilding().removeHive(pos);
             }
@@ -343,7 +344,11 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
             if (ItemStackUtils.isTool(itemStack, ToolType.SHEARS))
             {
                 worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, 1);
-                InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(new ItemStack(Items.HONEYCOMB, getHoneycombsPerHarvest()), worker.getItemHandlerCitizen());
+
+                for (ItemStack stackItem : Compatibility.getCombsFromHive(hive, world, getHoneycombsPerHarvest()))
+                {
+                    InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(stackItem, worker.getItemHandlerCitizen());
+                }
                 world.setBlockState(hive, world.getBlockState(hive).with(BlockStateProperties.HONEY_LEVEL, 0));
                 worker.getCitizenExperienceHandler().addExperience(EXP_PER_HARVEST);
             }

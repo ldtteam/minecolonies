@@ -1,6 +1,7 @@
 package com.minecolonies.api.compatibility;
 
 import com.minecolonies.api.compatibility.dynamictrees.DynamicTreeCompat;
+import com.minecolonies.api.compatibility.resourcefulbees.IBeehiveCompat;
 import com.minecolonies.api.compatibility.tinkers.SlimeTreeCheck;
 import com.minecolonies.api.compatibility.tinkers.TinkersWeaponHelper;
 import com.minecolonies.api.compatibility.tinkers.ToolBrokenCheck;
@@ -16,6 +17,8 @@ import net.minecraftforge.fml.ModList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 import static com.minecolonies.api.util.constant.Constants.HARVESTCRAFTMODID;
 
 /**
@@ -28,6 +31,8 @@ public final class Compatibility
     {
         throw new IllegalAccessError("Utility class");
     }
+
+    public static IBeehiveCompat beeHiveCompat = new IBeehiveCompat() {};
 
     /**
      * This method checks to see if STACK is able to mine anything. It goes through all compatibility checks.
@@ -267,5 +272,18 @@ public final class Compatibility
     public static boolean isDynamicFamilyFitting(final BlockPos block1, final BlockPos block2, final IWorld world)
     {
         return DynamicTreeCompat.hasFittingTreeFamily(block1, block2, world);
+    }
+
+    /**
+     * Get comps from a hive at the given position
+     *
+     * @param pos    TE pos
+     * @param world  world
+     * @param amount comb amount
+     * @return list of drops
+     */
+    public static List<ItemStack> getCombsFromHive(BlockPos pos, World world, int amount)
+    {
+        return beeHiveCompat.getCombsFromHive(pos, world, amount);
     }
 }
