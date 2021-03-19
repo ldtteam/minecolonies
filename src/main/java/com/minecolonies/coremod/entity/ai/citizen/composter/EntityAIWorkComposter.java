@@ -322,7 +322,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
                  */
                 if (((random.nextInt(100)) + 1) <= (5 * worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(PODZOL_CHANCE)))
                 {
-                    InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), new ItemStack(Blocks.PODZOL, 1));
+                    InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), new ItemStack(Blocks.PODZOL, MineColonies.getConfig().getServer().dirtFromCompost.get()));
                 }
                 else
                 {
