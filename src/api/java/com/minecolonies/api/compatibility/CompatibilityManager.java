@@ -28,6 +28,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
@@ -191,6 +192,7 @@ public class CompatibilityManager implements ICompatibilityManager
         discoverFuel();
         discoverEnchantments();
         discoverFreeBlocksAndPos();
+        discoverModCompat();
 
         discoveredAlready = true;
     }
