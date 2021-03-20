@@ -232,11 +232,8 @@ public class InteractionValidatorInitializer
             {
                 return false;
             }
-            if (InventoryUtils.getItemCountInProvider(citizen.getWorkBuilding(), item -> ModTags.meshes.contains(item.getItem())) <= 0)
-            {
-                return true;
-            }
-            return false;
+            return InventoryUtils.getItemCountInProvider(citizen.getWorkBuilding(), item -> ModTags.meshes.contains(item.getItem())) <= 0 &&
+                   InventoryUtils.getItemCountInItemHandler(citizen.getInventory(), item -> ModTags.meshes.contains(item.getItem())) <= 0;
           });
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(BAKER_HAS_NO_FURNACES_MESSAGE),
           citizen -> citizen.getWorkBuilding() instanceof BuildingBaker && ((BuildingBaker) citizen.getWorkBuilding()).getFurnaces().isEmpty());
