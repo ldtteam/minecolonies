@@ -1,13 +1,16 @@
 package com.minecolonies.coremod.entity.ai.citizen.sifter;
 
+import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingSifter;
+import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.JobSifter;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
 import com.minecolonies.coremod.network.messages.client.LocalizedParticleEffectMessage;
@@ -15,15 +18,13 @@ import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
-import net.minecraftforge.items.IItemHandler;
+import net.minecraft.util.text.TranslationTextComponent;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.ONE_HUNDRED_PERCENT;
+import static com.minecolonies.api.util.constant.TranslationConstants.SIFTER_NO_MESH;
 
 /**
  * Sifter AI class.
@@ -44,6 +45,11 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
      * Chance for the sifter to dump his inventory.
      */
     private static final int CHANCE_TO_DUMP_INV = 10;
+
+    /**
+     * The delay before processing again when there is no mesh in the building
+     */
+    private static final int NO_MESH_DELAY = 100;
 
     /**
      * Progress of hitting the block.
@@ -107,6 +113,19 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
 
         if (currentRecipeStorage == null)
         {
+            if(InventoryUtils.getCountFromBuilding(sifterBuilding, i -> ModTags.meshes.contains(i.getItem())) == 0)
+            {
+                if(InventoryUtils.getItemCountInProvider(worker, i -> ModTags.meshes.contains(i.getItem())) > 0)
+                {
+                    // We don't want the mesh in our inventory, we 'craft' out of the building
+                    return INVENTORY_FULL;
+                }
+                if(worker.getCitizenData() != null)
+                {
+                    worker.getCitizenData().triggerInteraction(new StandardInteraction(new TranslationTextComponent(SIFTER_NO_MESH), ChatPriority.IMPORTANT));
+                    setDelay(NO_MESH_DELAY);
+                }
+            }
             if (!ItemStackUtils.isEmpty(worker.getHeldItemMainhand()))
             {
                 worker.setHeldItem(Hand.MAIN_HAND, ItemStack.EMPTY);
