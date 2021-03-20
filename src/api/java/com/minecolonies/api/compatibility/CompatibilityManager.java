@@ -474,11 +474,34 @@ public class CompatibilityManager implements ICompatibilityManager
     @Override
     public void invalidateRecipes(@NotNull final RecipeManager recipeManager)
     {
-        // TODO: this should probably also invalidate anything using tags too (which is most things)
-        //       although technically there's a different event for tag reloads
+        // TODO: this should probably also invalidate anything using tags or server-configs too (which is most things)
+        //       although technically there's a different event for tag reloads.
 
         compostRecipes.clear();
         discoverCompostRecipes(recipeManager);
+
+        // Forge tries really hard to prevent people from removing items from the registry after early load stages, and
+        // people try really hard to do it anyway.
+        allItems = ImmutableList.<ItemStack>builder().build();
+
+        // Tag-based configurations may differ between one world and another, or on data pack reload.
+        saplings.clear();
+        oreBlocks.clear();
+        plantables.clear();
+        food.clear();
+        edibles.clear();
+        fuel.clear();
+
+        // Server-config-based files may change between one world and another, or the same world after leaving and re-entering.
+        // Some of these may eventually go to data pack configuration, either for added configurability and/or to reduce the server config size.
+        luckyOres.clear();
+        recruitmentCostsWeights.clear();
+        diseases.clear();
+        diseaseList.clear();
+        enchantments.clear();
+        freeBlocks.clear();
+        freePositions.clear();
+        discoveredAlready = false;
     }
 
     //------------------------------- Private Utility Methods -------------------------------//

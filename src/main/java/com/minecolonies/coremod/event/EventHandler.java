@@ -762,6 +762,7 @@ public class EventHandler
             IColonyManager.getInstance().resetColonyViews();
             ItemBlockHut.checkResearch(null);
             Log.getLogger().info("Removed all colony views");
+            IColonyManager.getInstance().getCompatibilityManager().invalidateRecipes(Minecraft.getInstance().world.getRecipeManager());
         }
     }
 }

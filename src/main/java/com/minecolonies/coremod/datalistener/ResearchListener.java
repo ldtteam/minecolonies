@@ -182,7 +182,6 @@ public class ResearchListener extends JsonReloadListener
             //And same for research-branch-specific settings, to avoid extraneous warnings.
             if (researchJson.has(RESEARCH_BRANCH_NAME_PROP) || researchJson.has(RESEARCH_BASE_TIME_PROP) || researchJson.has(RESEARCH_BRANCH_TYPE_PROP))
             {
-                Log.getLogger().warn(entry.getKey() + " is a branch json.");
                 continue;
             }
 
