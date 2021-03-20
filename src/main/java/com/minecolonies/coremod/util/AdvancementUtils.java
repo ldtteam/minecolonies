@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.util;
 
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.permissions.OldRank;
 import com.minecolonies.api.colony.permissions.Player;
-import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.coremod.MineColonies;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.server.MinecraftServer;
@@ -21,10 +21,10 @@ public class AdvancementUtils
         MinecraftServer minecraftServer = colony.getWorld().getServer();
         if (minecraftServer != null)
         {
-            final List<Rank> ranks =
-              MineColonies.getConfig().getServer().officersReceiveAdvancements.get() ? Arrays.asList(Rank.OWNER, Rank.OFFICER) : Collections.singletonList(Rank.OWNER);
+            final List<OldRank> oldRanks =
+              MineColonies.getConfig().getServer().officersReceiveAdvancements.get() ? Arrays.asList(OldRank.OWNER, OldRank.OFFICER) : Collections.singletonList(OldRank.OWNER);
 
-            for (final Player player : colony.getPermissions().getPlayersByRank(new HashSet<>(ranks)))
+            for (final Player player : colony.getPermissions().getPlayersByRank(new HashSet<>(oldRanks)))
             {
                 final ServerPlayerEntity playerEntity = minecraftServer.getPlayerList().getPlayerByUUID(player.getID());
                 if (playerEntity != null)

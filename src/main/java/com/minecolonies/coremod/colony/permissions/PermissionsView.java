@@ -1,9 +1,6 @@
 package com.minecolonies.coremod.colony.permissions;
 
-import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.colony.permissions.IPermissions;
-import com.minecolonies.api.colony.permissions.Player;
-import com.minecolonies.api.colony.permissions.Rank;
+import com.minecolonies.api.colony.permissions.*;
 import com.minecolonies.api.network.PacketUtils;
 import com.minecolonies.api.util.Utils;
 import com.mojang.authlib.GameProfile;
@@ -22,10 +19,11 @@ import java.util.stream.Collectors;
 public class PermissionsView implements IPermissions
 {
     @NotNull
-    private final Map<UUID, Player>  players     = new HashMap<>();
+    private final Map<UUID, Player>     players     = new HashMap<>();
     @NotNull
-    private final Map<Rank, Integer> permissions = new EnumMap<>(Rank.class);
-    private       Rank               userRank    = Rank.NEUTRAL;
+    private final Map<Rank, Integer> permissions = new HashMap<>();
+    private       Rank               userRank;
+    private final Map<Integer, Rank> ranks = new HashMap<>();
 
     private UUID   colonyOwner;
     private String ownerName = "";
@@ -41,9 +39,9 @@ public class PermissionsView implements IPermissions
     }
 
     /**
-     * Gets all player by a certain rank.
+     * Gets all player by a certain oldRank.
      *
-     * @param rank the rank.
+     * @param rank the oldRank.
      * @return set of players.
      */
     @NotNull
@@ -109,7 +107,7 @@ public class PermissionsView implements IPermissions
     }
 
     /**
-     * Checks if the rank has the permission to do an action.
+     * Checks if the oldRank has the permission to do an action.
      *
      * @param rank   the rank of the player.
      * @param action the action he is trying to execute.
@@ -117,12 +115,12 @@ public class PermissionsView implements IPermissions
      */
     public boolean hasPermission(final Rank rank, @NotNull final Action action)
     {
-        return (rank == Rank.OWNER && action != Action.GUARDS_ATTACK)
+        return (rank.getId() == OWNER_RANK_ID && action != Action.GUARDS_ATTACK)
                  || (permissions != null && action != null && permissions.containsKey(rank) && Utils.testFlag(permissions.get(rank), action.getFlag()));
     }
 
     /**
-     * Sets if the rank has the permission to do an action.
+     * Sets if the oldRank has the permission to do an action.
      *
      * @param rank   the rank to set.
      * @param action the action he is trying to execute.
@@ -142,7 +140,7 @@ public class PermissionsView implements IPermissions
     }
 
     /**
-     * Remove if the rank has the permission to do an action.
+     * Remove if the oldRank has the permission to do an action.
      *
      * @param rank   the rank to set.
      * @param action the action he is trying to execute.
@@ -182,7 +180,7 @@ public class PermissionsView implements IPermissions
     {
         for (@NotNull final Map.Entry<UUID, Player> entry : players.entrySet())
         {
-            if (entry.getValue().getRank().equals(Rank.OWNER))
+            if (entry.getValue().getRank().equals(OldRank.OWNER))
             {
                 return entry;
             }
@@ -227,7 +225,14 @@ public class PermissionsView implements IPermissions
      */
     public void deserialize(@NotNull final PacketBuffer buf)
     {
-        userRank = Rank.valueOf(buf.readString(32767));
+        final int ranksSize = buf.readInt();
+        for (int i = 0; i < ranksSize; ++i)
+        {
+            final int id = buf.readInt();
+            final Rank rank = new Rank(id, buf.readString(32767), buf.readBoolean(), buf.readBoolean());
+            ranks.put(id, rank);
+        }
+        userRank = ranks.get(buf.readInt());
 
         //  Owners
         players.clear();
@@ -236,8 +241,8 @@ public class PermissionsView implements IPermissions
         {
             final UUID id = PacketUtils.readUUID(buf);
             final String name = buf.readString(32767);
-            final Rank rank = Rank.valueOf(buf.readString(32767));
-            if (rank == Rank.OWNER)
+            final Rank rank = ranks.get(buf.readInt());
+            if (rank.getId() == OWNER_RANK_ID)
             {
                 colonyOwner = id;
             }
@@ -250,7 +255,7 @@ public class PermissionsView implements IPermissions
         final int numPermissions = buf.readInt();
         for (int i = 0; i < numPermissions; ++i)
         {
-            final Rank rank = Rank.valueOf(buf.readString(32767));
+            final Rank rank = ranks.get(buf.readInt());
             final int flags = buf.readInt();
             permissions.put(rank, flags);
         }
@@ -279,7 +284,7 @@ public class PermissionsView implements IPermissions
     public Rank getRank(final UUID id)
     {
         final Player player = players.get(id);
-        return player == null ? Rank.NEUTRAL : player.getRank();
+        return player == null ? ranks.get(NEUTRAL_RANK_ID) : player.getRank();
     }
 
     @Override

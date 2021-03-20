@@ -8,15 +8,15 @@ import java.util.UUID;
 public class Player
 {
     private final UUID   id;
-    private final String name;
-    private       Rank   rank;
+    private final String  name;
+    private       Rank rank;
 
     /**
      * Instantiates our own player object.
      *
      * @param id   id of the player.
      * @param name name of the player
-     * @param rank rank of the player.
+     * @param oldRank oldRank of the player.
      */
     public Player(final UUID id, final String name, final Rank rank)
     {
@@ -50,7 +50,7 @@ public class Player
     }
 
     /**
-     * Setter for the Rank of the player.
+     * Setter for the OldRank of the player.
      *
      * @param rank The new Rank.
      */

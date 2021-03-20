@@ -1,30 +1,34 @@
 package com.minecolonies.api.colony.permissions;
 
-/**
- * Ranks within a colony.
- */
-public enum Rank
+public class Rank
 {
-    OWNER(true),
-    OFFICER(true),
-    FRIEND(true),
-    NEUTRAL(false),
-    HOSTILE(false);
+    private boolean isSubscriber;
+    private String name;
+    private int id;
+    private boolean isInitial;
 
-    /**
-     * Is the Rank a subscriber to certain events.
-     */
-    public final boolean isSubscriber;
-
-    /**
-     * Ranks enum constructor.
-     * <p>
-     * Subscribers are receiving events from the colony. They are either citizens or near enough. Ranks with true are automatically subscribed to the colony.
-     *
-     * @param isSubscriber boolean whether auto-subscribed to this colony.
-     */
-    Rank(final boolean isSubscriber)
+    public Rank(int id, String name, boolean isSubscriber, boolean isInitial)
     {
+        this.id = id;
+        this.name = name;
         this.isSubscriber = isSubscriber;
+        this.isInitial = isInitial;
     }
+
+    public int getId()
+    {
+        return id;
+    }
+
+    public boolean isSubscriber()
+    {
+        return isSubscriber;
+    }
+
+    public String getName()
+    {
+        return name;
+    }
+
+    public boolean isInitial() { return isInitial; }
 }

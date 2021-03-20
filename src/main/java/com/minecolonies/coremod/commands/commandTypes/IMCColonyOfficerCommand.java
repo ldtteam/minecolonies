@@ -3,7 +3,7 @@ package com.minecolonies.coremod.commands.commandTypes;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.permissions.Rank;
+import com.minecolonies.api.colony.permissions.OldRank;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.command.CommandSource;
@@ -45,8 +45,8 @@ public interface IMCColonyOfficerCommand extends IMCCommand
         }
 
         // Check colony permissions
-        if (IMCCommand.isPlayerOped((PlayerEntity) sender) || colony.getPermissions().getRank((PlayerEntity) sender) == Rank.OFFICER
-              || colony.getPermissions().getRank((PlayerEntity) sender) == Rank.OWNER)
+        if (IMCCommand.isPlayerOped((PlayerEntity) sender) || colony.getPermissions().getRank((PlayerEntity) sender) == OldRank.OFFICER
+              || colony.getPermissions().getRank((PlayerEntity) sender) == OldRank.OWNER)
         {
             return true;
         }

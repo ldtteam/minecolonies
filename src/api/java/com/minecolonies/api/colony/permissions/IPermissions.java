@@ -15,6 +15,12 @@ import java.util.UUID;
  */
 public interface IPermissions
 {
+    int OWNER_RANK_ID = 0;
+    int OFFICER_RANK_ID = 1;
+    int FRIEND_RANK_ID = 2;
+    int NEUTRAL_RANK_ID = 3;
+    int HOSTILE_RANK_ID = 4;
+
     boolean hasPermission(Rank rank, @NotNull Action action);
 
     Set<Player> getPlayersByRank(Rank rank);
@@ -84,7 +90,7 @@ public interface IPermissions
      * Get the rank of a UUID.
      *
      * @param player UUID to check rank of.
-     * @return Rank of the player.
+     * @return OldRank of the player.
      */
     @NotNull
     Rank getRank(UUID player);

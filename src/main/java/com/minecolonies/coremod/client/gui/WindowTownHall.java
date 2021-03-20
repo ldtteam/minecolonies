@@ -18,10 +18,7 @@ import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
 import com.minecolonies.api.colony.colonyEvents.descriptions.IBuildingEventDescription;
 import com.minecolonies.api.colony.colonyEvents.descriptions.ICitizenEventDescription;
 import com.minecolonies.api.colony.colonyEvents.descriptions.IColonyEventDescription;
-import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.colony.permissions.PermissionEvent;
-import com.minecolonies.api.colony.permissions.Player;
-import com.minecolonies.api.colony.permissions.Rank;
+import com.minecolonies.api.colony.permissions.*;
 import com.minecolonies.api.colony.workorders.WorkOrderView;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
@@ -281,7 +278,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
     {
         users.clear();
         users.addAll(townHall.getColony().getPlayers().values());
-        users.sort(Comparator.comparing(Player::getRank, Rank::compareTo));
+        users.sort(Comparator.comparing(Player::getRank, OldRank::compareTo));
     }
 
     /**
@@ -491,9 +488,9 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         final int index = Integer.valueOf(button.getParent().findPaneOfTypeByID("index", Text.class).getTextAsString());
         final boolean trigger = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON).equals(button.getTextAsString());
         final Action action = Action.values()[index];
-        final Rank rank = Rank.valueOf(actionsList.getParent().getID().toUpperCase(Locale.ENGLISH));
+        final OldRank oldRank = OldRank.valueOf(actionsList.getParent().getID().toUpperCase(Locale.ENGLISH));
 
-        Network.getNetwork().sendToServer(new PermissionsMessage.Permission(townHall.getColony(), PermissionsMessage.MessageType.TOGGLE_PERMISSION, rank, action));
+        Network.getNetwork().sendToServer(new PermissionsMessage.Permission(townHall.getColony(), PermissionsMessage.MessageType.TOGGLE_PERMISSION, oldRank, action));
         townHall.getColony().getPermissions().togglePermission(rank, action);
 
         if (trigger)
@@ -536,7 +533,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
                 }
 
                 rowPane.findPaneOfTypeByID(NAME_LABEL, Text.class).setText(name);
-                final boolean isTriggered = townHall.getColony().getPermissions().hasPermission(Rank.valueOf(actionsList.getParent().getID().toUpperCase(Locale.ENGLISH)), action);
+                final boolean isTriggered = townHall.getColony().getPermissions().hasPermission(OldRank.valueOf(actionsList.getParent().getID().toUpperCase(Locale.ENGLISH)), action);
                 rowPane.findPaneOfTypeByID("trigger", Button.class)
                   .setText(isTriggered ? LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON)
                               : LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF));
@@ -773,7 +770,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
                 final Player player = users.get(index);
-                String rank = player.getRank().name();
+                String rank = player.getRank().getName();
                 rank = Character.toUpperCase(rank.charAt(0)) + rank.toLowerCase(Locale.ENGLISH).substring(1);
                 rowPane.findPaneOfTypeByID(NAME_LABEL, Text.class).setText(player.getName());
                 rowPane.findPaneOfTypeByID("rank", Text.class).setText(rank);
@@ -1308,7 +1305,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         if (row >= 0 && row < users.size())
         {
             final Player user = users.get(row);
-            if (user.getRank() != Rank.OWNER)
+            if (user.getRank().getId() != IPermissions.OWNER_RANK_ID)
             {
                 Network.getNetwork().sendToServer(new PermissionsMessage.RemovePlayer(townHall.getColony(), user.getID()));
             }

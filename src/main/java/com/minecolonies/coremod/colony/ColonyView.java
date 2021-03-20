@@ -8,8 +8,8 @@ import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
 import com.minecolonies.api.colony.managers.interfaces.*;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.IPermissions;
+import com.minecolonies.api.colony.permissions.OldRank;
 import com.minecolonies.api.colony.permissions.Player;
-import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
@@ -321,14 +321,14 @@ public final class ColonyView implements IColonyView
         buf.writeBoolean(colony.getRaiderManager().isRaided());
         buf.writeBoolean(colony.getRaiderManager().areSpiesEnabled());
         final List<IColony> allies = new ArrayList<>();
-        for (final Player player : colony.getPermissions().getPlayersByRank(Rank.OFFICER))
+        for (final Player player : colony.getPermissions().getPlayersByRank(colony.getPermissions().getOfficerRank()))
         {
             final IColony col = IColonyManager.getInstance().getIColonyByOwner(colony.getWorld(), player.getID());
             if (col != null)
             {
-                for (final Player owner : colony.getPermissions().getPlayersByRank(Rank.OWNER))
+                for (final Player owner : colony.getPermissions().getPlayersByRank(colony.getPermissions().getOwnerRank()))
                 {
-                    if (col.getPermissions().getRank(owner.getID()) == Rank.OFFICER)
+                    if (col.getPermissions().getRank(owner.getID()) == colony.getPermissions().getOwnerRank())
                     {
                         allies.add(col);
                     }
@@ -347,14 +347,14 @@ public final class ColonyView implements IColonyView
         }
 
         final List<IColony> feuds = new ArrayList<>();
-        for (final Player player : colony.getPermissions().getPlayersByRank(Rank.HOSTILE))
+        for (final Player player : colony.getPermissions().getPlayersByRank(colony.getPermissions().getHostileRank()))
         {
             final IColony col = IColonyManager.getInstance().getIColonyByOwner(colony.getWorld(), player.getID());
             if (col != null)
             {
-                for (final Player owner : colony.getPermissions().getPlayersByRank(Rank.OWNER))
+                for (final Player owner : colony.getPermissions().getPlayersByRank(colony.getPermissions().getOwnerRank()))
                 {
-                    if (col.getPermissions().getRank(owner.getID()) == Rank.HOSTILE)
+                    if (col.getPermissions().getRank(owner.getID()) == colony.getPermissions().getHostileRank())
                     {
                         feuds.add(col);
                     }
@@ -663,46 +663,46 @@ public final class ColonyView implements IColonyView
     }
 
     /**
-     * Sets a specific permission to a rank. If the permission wasn't already set, it sends a message to the server.
+     * Sets a specific permission to a oldRank. If the permission wasn't already set, it sends a message to the server.
      *
-     * @param rank   Rank to get the permission.
+     * @param oldRank   OldRank to get the permission.
      * @param action Permission to get.
      */
     @Override
-    public void setPermission(final Rank rank, @NotNull final Action action)
+    public void setPermission(final OldRank oldRank, @NotNull final Action action)
     {
-        if (permissions.setPermission(rank, action))
+        if (permissions.setPermission(oldRank, action))
         {
-            Network.getNetwork().sendToServer(new PermissionsMessage.Permission(this, PermissionsMessage.MessageType.SET_PERMISSION, rank, action));
+            Network.getNetwork().sendToServer(new PermissionsMessage.Permission(this, PermissionsMessage.MessageType.SET_PERMISSION, oldRank, action));
         }
     }
 
     /**
-     * removes a specific permission to a rank. If the permission was set, it sends a message to the server.
+     * removes a specific permission to a oldRank. If the permission was set, it sends a message to the server.
      *
-     * @param rank   Rank to remove permission from.
+     * @param oldRank   OldRank to remove permission from.
      * @param action Action to remove permission of.
      */
     @Override
-    public void removePermission(final Rank rank, @NotNull final Action action)
+    public void removePermission(final OldRank oldRank, @NotNull final Action action)
     {
-        if (permissions.removePermission(rank, action))
+        if (permissions.removePermission(oldRank, action))
         {
-            Network.getNetwork().sendToServer(new PermissionsMessage.Permission(this, PermissionsMessage.MessageType.REMOVE_PERMISSION, rank, action));
+            Network.getNetwork().sendToServer(new PermissionsMessage.Permission(this, PermissionsMessage.MessageType.REMOVE_PERMISSION, oldRank, action));
         }
     }
 
     /**
-     * Toggles a specific permission to a rank. Sends a message to the server.
+     * Toggles a specific permission to a oldRank. Sends a message to the server.
      *
-     * @param rank   Rank to toggle permission of.
+     * @param oldRank   OldRank to toggle permission of.
      * @param action Action to toggle permission of.
      */
     @Override
-    public void togglePermission(final Rank rank, @NotNull final Action action)
+    public void togglePermission(final OldRank oldRank, @NotNull final Action action)
     {
-        permissions.togglePermission(rank, action);
-        Network.getNetwork().sendToServer(new PermissionsMessage.Permission(this, PermissionsMessage.MessageType.TOGGLE_PERMISSION, rank, action));
+        permissions.togglePermission(oldRank, action);
+        Network.getNetwork().sendToServer(new PermissionsMessage.Permission(this, PermissionsMessage.MessageType.TOGGLE_PERMISSION, oldRank, action));
     }
 
     /**

@@ -4,8 +4,8 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.IPermissions;
+import com.minecolonies.api.colony.permissions.OldRank;
 import com.minecolonies.api.colony.permissions.Player;
-import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.workorders.WorkOrderView;
@@ -151,28 +151,28 @@ public interface IColonyView extends IColony
     Map<UUID, Player> getPlayers();
 
     /**
-     * Sets a specific permission to a rank. If the permission wasn't already set, it sends a message to the server.
+     * Sets a specific permission to a oldRank. If the permission wasn't already set, it sends a message to the server.
      *
-     * @param rank   Rank to get the permission.
+     * @param oldRank   OldRank to get the permission.
      * @param action Permission to get.
      */
-    void setPermission(Rank rank, @NotNull Action action);
+    void setPermission(OldRank oldRank, @NotNull Action action);
 
     /**
-     * removes a specific permission to a rank. If the permission was set, it sends a message to the server.
+     * removes a specific permission to a oldRank. If the permission was set, it sends a message to the server.
      *
-     * @param rank   Rank to remove permission from.
+     * @param oldRank   OldRank to remove permission from.
      * @param action Action to remove permission of.
      */
-    void removePermission(Rank rank, @NotNull Action action);
+    void removePermission(OldRank oldRank, @NotNull Action action);
 
     /**
-     * Toggles a specific permission to a rank. Sends a message to the server.
+     * Toggles a specific permission to a oldRank. Sends a message to the server.
      *
-     * @param rank   Rank to toggle permission of.
+     * @param oldRank   OldRank to toggle permission of.
      * @param action Action to toggle permission of.
      */
-    void togglePermission(Rank rank, @NotNull Action action);
+    void togglePermission(OldRank oldRank, @NotNull Action action);
 
     /**
      * Returns the maximum amount of total citizen beds in the colony.
