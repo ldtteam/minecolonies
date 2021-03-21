@@ -231,4 +231,9 @@ public interface ICompatibilityManager
      * Called when recipes are reloaded and cached info needs to be discarded.
      */
     void invalidateRecipes(@NotNull final RecipeManager recipeManager);
+
+    /**
+     * Called when tag- or config-based data needs to be discarded.
+     */
+    void invalidateTagsAndConfigs();
 }

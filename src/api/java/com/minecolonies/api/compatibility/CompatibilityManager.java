@@ -474,11 +474,17 @@ public class CompatibilityManager implements ICompatibilityManager
     @Override
     public void invalidateRecipes(@NotNull final RecipeManager recipeManager)
     {
-        // TODO: this should probably also invalidate anything using tags or server-configs too (which is most things)
-        //       although technically there's a different event for tag reloads.
-
         compostRecipes.clear();
         discoverCompostRecipes(recipeManager);
+    }
+
+    @Override
+    public void invalidateTagsAndConfigs()
+    {
+        // This should probably also invalidate anything using tags or server-configs too (which is most things)
+        //       although technically there's a different event for tag reloads.
+        // Kept as a separate function from invalidateRecipes, as invalidateRecipes fires more often, will cause extraneous log messages, and
+        // significantly add to load times as it results in parsing through all items at least twice on single-player.
 
         // Forge tries really hard to prevent people from removing items from the registry after early load stages, and
         // people try really hard to do it anyway.
@@ -487,13 +493,15 @@ public class CompatibilityManager implements ICompatibilityManager
         // Tag-based configurations may differ between one world and another, or on data pack reload.
         saplings.clear();
         oreBlocks.clear();
+        smeltableOres.clear();
         plantables.clear();
         food.clear();
         edibles.clear();
         fuel.clear();
 
         // Server-config-based files may change between one world and another, or the same world after leaving and re-entering.
-        // Some of these may eventually go to data pack configuration, either for added configurability and/or to reduce the server config size.
+        // TODO: Some of these may eventually go to data pack configuration, either for added configurability and/or to reduce the server config size.
+        // Doing so will also reduce the issues here.
         luckyOres.clear();
         recruitmentCostsWeights.clear();
         diseases.clear();
