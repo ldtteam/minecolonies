@@ -681,7 +681,7 @@ public class Colony implements IColony
             c.read(compound);
 
             if (c.getProgressManager().isPrintingProgress() && (c.getBuildingManager().getBuildings().size() > BUILDING_LIMIT_FOR_HELP
-                                                                  || c.getCitizenManager().getCitizens().size() > CITIZEN_LIMIT_FOR_HELP))
+                                                                  || c.getCitizenManager().getCurrentCitizenCount() > CITIZEN_LIMIT_FOR_HELP))
             {
                 c.getProgressManager().togglePrintProgress();
             }

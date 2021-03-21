@@ -278,9 +278,9 @@ public class CitizenManager implements ICitizenManager
         {
             citizenData = createAndRegisterCivilianData();
 
-            if (getMaxCitizens() == getCitizens().size() && !force)
+            if (getMaxCitizens() == getCurrentCitizenCount() && !force)
             {
-                if (maxCitizensFromResearch() <= getCitizens().size())
+                if (maxCitizensFromResearch() <= getCurrentCitizenCount())
                 {
                     LanguageHandler.sendPlayersMessage(
                       colony.getMessagePlayerEntities(),
@@ -509,7 +509,10 @@ public class CitizenManager implements ICitizenManager
      * @return The current amount of citizens in the colony.
      */
     @Override
-    public int getCurrentCitizenCount() { return citizens.size(); }
+    public int getCurrentCitizenCount()
+    {
+        return citizens.size() + colony.getGraveManager().getGraves().size();
+    }
 
     @Override
     public void setMaxCitizens(final int newMaxCitizens)

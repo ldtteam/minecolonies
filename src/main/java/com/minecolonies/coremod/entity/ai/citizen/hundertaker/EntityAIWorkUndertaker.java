@@ -137,8 +137,8 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
           new AITarget(START_WORKING, this::startWorking, STANDARD_DELAY),
           new AITarget(WANDER, this::wander, STANDARD_DELAY),
           new AITarget(EMPTY_GRAVE, this::emptyGrave, STANDARD_DELAY),
-          new AITarget(DIG_GRAVE, this::digGrave, STANDARD_DELAY),
           new AITarget(TRY_RESURRECT, this::tryResurrect, STANDARD_DELAY),
+          new AITarget(DIG_GRAVE, this::digGrave, STANDARD_DELAY),
           new AITarget(BURY_CITIZEN, this::buryCitizen, STANDARD_DELAY)
         );
         worker.setCanPickUpLoot(true);
@@ -179,6 +179,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
             final TileEntity entity = world.getTileEntity(currentGrave);
             if (entity != null && entity instanceof TileEntityGrave)
             {
+                building.setLastGraveData((GraveData) ((TileEntityGrave) entity).getGraveData());
                 return EMPTY_GRAVE;
             }
             building.ClearCurrentGrave();
@@ -252,7 +253,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         {
             if (((TileEntityGrave) entity).isEmpty())
             {
-                return DIG_GRAVE;
+                return TRY_RESURRECT;
             }
 
             if (worker.getInventoryCitizen().isFull())
@@ -277,7 +278,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
             //at position - try to take all item
             if (InventoryUtils.transferAllItemHandler(((TileEntityGrave) entity).getInventory(), worker.getInventoryCitizen()))
             {
-                return DIG_GRAVE;
+                return TRY_RESURRECT;
             }
         }
 
@@ -307,8 +308,6 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
                 return getState();
             }
 
-            buildingGraveyard.setLastGraveData((GraveData) ((TileEntityGrave) entity).getGraveData());
-
             //at position
             if (!digIfAble(gravePos))
             {
@@ -317,7 +316,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
 
             worker.decreaseSaturationForContinuousAction();
             worker.getCitizenData().getCitizenSkillHandler().addXpToSkill(getOwnBuilding().getPrimarySkill(), XP_PER_DIG, worker.getCitizenData());
-            return TRY_RESURRECT;
+            return BURY_CITIZEN;
         }
 
         return IDLE;
@@ -366,31 +365,37 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.resurrecting"));
         unequip();
 
-        //Go back to graveyard
-        if (walkToBuilding())
+        @Nullable final BlockPos gravePos = buildingGraveyard.getGraveToWorkOn();
+        final TileEntity entity = world.getTileEntity(gravePos);
+        if (entity instanceof TileEntityGrave)
         {
-            return getState();
-        }
+            // Still moving to the block
+            if (walkToBlock(gravePos, 1))
+            {
+                return getState();
+            }
 
-        if(effortCounter < EFFORT_RESURRECT)
-        {
-            worker.swingArm(Hand.MAIN_HAND);
-            effortCounter += getSecondarySkillLevel();
-            return getState();
-        }
-        effortCounter = 0;
+            if (effortCounter < EFFORT_RESURRECT)
+            {
+                worker.swingArm(Hand.MAIN_HAND);
+                effortCounter += getSecondarySkillLevel();
+                return getState();
+            }
+            effortCounter = 0;
 
-        shouldDumpInventory = true;
-        final double chance = getResurrectChance(buildingGraveyard);
+            shouldDumpInventory = true;
+            final double chance = getResurrectChance(buildingGraveyard);
 
-        if (chance >= random.nextDouble())
-        {
-            final ICitizenData citizenData = buildingGraveyard.getColony().getCitizenManager().resurrectCivilianData(buildingGraveyard.getLastGraveData().getCitizenDataNBT(), true, world, buildingGraveyard.getPosition());
-            LanguageHandler.sendPlayersMessage(buildingGraveyard.getColony().getImportantMessageEntityPlayers(), "com.minecolonies.coremod.resurrect", citizenData.getName());
-            worker.getCitizenColonyHandler().getColony().setNeedToMourn(false, buildingGraveyard.getLastGraveData().getCitizenName());
-            AdvancementUtils.TriggerAdvancementPlayersForColony(worker.getCitizenColonyHandler().getColony(), playerMP -> AdvancementTriggers.CITIZEN_RESURRECT.trigger(playerMP));
-            buildingGraveyard.setLastGraveData(null);
-            return INVENTORY_FULL;
+            if (chance >= random.nextDouble())
+            {
+                final ICitizenData citizenData = buildingGraveyard.getColony().getCitizenManager().resurrectCivilianData(buildingGraveyard.getLastGraveData().getCitizenDataNBT(), true, world, gravePos);
+                LanguageHandler.sendPlayersMessage(buildingGraveyard.getColony().getImportantMessageEntityPlayers(), "com.minecolonies.coremod.resurrect", citizenData.getName());
+                worker.getCitizenColonyHandler().getColony().setNeedToMourn(false, buildingGraveyard.getLastGraveData().getCitizenName());
+                AdvancementUtils.TriggerAdvancementPlayersForColony(worker.getCitizenColonyHandler().getColony(), playerMP -> AdvancementTriggers.CITIZEN_RESURRECT.trigger(playerMP));
+                buildingGraveyard.setLastGraveData(null);
+                world.setBlockState(gravePos, Blocks.AIR.getDefaultState());
+                return INVENTORY_FULL;
+            }
         }
 
         return BURY_CITIZEN;
