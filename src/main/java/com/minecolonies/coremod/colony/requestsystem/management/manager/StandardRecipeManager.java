@@ -27,6 +27,7 @@ public class StandardRecipeManager implements IRecipeManager
 
     /**
      * Map of all recipes which have been discovered globally already.
+     * Initializing with 4096 as size since default is 16, and growth is costly
      */
     private final BiMap<IToken<?>, IRecipeStorage> recipes = HashBiMap.create(4096);
 
@@ -93,7 +94,7 @@ public class StandardRecipeManager implements IRecipeManager
         for (int i = 0; i < list.size(); i++)
         {
             IRecipeStorage recipe = StandardFactoryController.getInstance().deserialize(list.getCompound(i));
-            if (recipe != null && !recipes.containsKey(recipe.getToken()) && !recipes.containsValue(recipe))
+            if (recipe != null && !recipes.containsValue(recipe))
             {
                 recipes.put(recipe.getToken(), recipe);
             }

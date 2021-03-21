@@ -577,7 +577,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             if (!recipes.contains(token))
             {
                 final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-                if (IColonyManager.getInstance().getRecipeManager().getRecipeId(storage).equals(token))
+                if (!Objects.equals(IColonyManager.getInstance().getRecipeManager().getRecipeId(storage), token))
                 {
                     recipes.add(token);
                     IColonyManager.getInstance().getRecipeManager().registerUse(token);
