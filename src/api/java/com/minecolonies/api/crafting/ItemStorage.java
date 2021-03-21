@@ -1,6 +1,7 @@
 package com.minecolonies.api.crafting;
 
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.constant.NbtTagConstants;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -84,7 +85,7 @@ public class ItemStorage
     {
         this.stack = stack;
         this.shouldIgnoreDamageValue = ignoreDamageValue;
-        this.shouldIgnoreNBTValue = false;
+        this.shouldIgnoreNBTValue = getDefaultIgnoreNBT(stack);
         this.amount = ItemStackUtils.getSize(stack);
         this.creativeTabIndex = stack.getItem().getCreativeTabs().stream().filter(Objects::nonNull).map(g -> g.index).collect(Collectors.toList());
     }
@@ -98,9 +99,15 @@ public class ItemStorage
     {
         this.stack = stack;
         this.shouldIgnoreDamageValue = false;
-        this.shouldIgnoreNBTValue = false;
+        this.shouldIgnoreNBTValue = getDefaultIgnoreNBT(stack);
         this.amount = ItemStackUtils.getSize(stack);
         this.creativeTabIndex = stack.getItem().getCreativeTabs().stream().filter(Objects::nonNull).map(g -> g.index).collect(Collectors.toList());
+    }
+
+    private static boolean getDefaultIgnoreNBT(@NotNull ItemStack stack)
+    {
+        //noinspection ConstantConditions
+        return stack.hasTag() && stack.getTag().getBoolean(NbtTagConstants.TAG_IGNORE_NBT);
     }
 
     /**

@@ -198,7 +198,12 @@ public abstract class CustomRecipeProvider implements IDataProvider
             for (final ItemStack itemStack : itemStacks)
             {
                 final JsonObject jsonItemStack = new JsonObject();
-                jsonItemStack.addProperty(CustomRecipe.ITEM_PROP, itemStack.getItem().getRegistryName().toString());
+                String name = itemStack.getItem().getRegistryName().toString();
+                if (itemStack.hasTag())
+                {
+                    name += itemStack.getTag().toString();
+                }
+                jsonItemStack.addProperty(CustomRecipe.ITEM_PROP, name);
                 if (itemStack.getCount() != 1)
                 {
                     jsonItemStack.addProperty(CustomRecipe.COUNT_PROP, itemStack.getCount());
