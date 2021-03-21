@@ -83,11 +83,6 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
       new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/composter.png"), "com.minecolonies.gui.visiblestatus.composter");
 
     /**
-     * it makes it work. go away
-     */
-    private final Random random = new Random();
-
-    /**
      * Constructor for the AI
      *
      * @param job the job to fulfill
@@ -320,7 +315,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
                  * 5% chance (by default) for podzol, else dirt.
                  * Two researches to increase it to 10% and 15%, respectively.
                  */
-                if (((random.nextInt(100)) + 1) <= (5 * (1 + worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(PODZOL_CHANCE))))
+                if (((worker.getRandom().nextInt(100)) + 1) <= (5 * (1 + worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(PODZOL_CHANCE))))
                 {
                     InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), new ItemStack(Blocks.PODZOL, MineColonies.getConfig().getServer().dirtFromCompost.get()));
                 }
