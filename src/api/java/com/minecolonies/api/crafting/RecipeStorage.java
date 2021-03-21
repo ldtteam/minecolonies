@@ -384,11 +384,11 @@ public class RecipeStorage implements IRecipeStorage
     public int hashCode()
     {
         return Objects.hash(cleanedInput, 
-            primaryOutput.getItem(), 
-            primaryOutput.getCount(), 
-            intermediate, 
-            gridSize, 
-            hashableItemStackList(alternateOutputs), 
+            primaryOutput.getItem(),
+            primaryOutput.getCount(),
+            intermediate,
+            gridSize,
+            hashableItemStackList(alternateOutputs),
             hashableItemStackList(secondaryOutputs),
             hashableItemStackList(tools));
     }
