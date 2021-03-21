@@ -398,7 +398,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
             }
         }
 
-        return BURY_CITIZEN;
+        return DIG_GRAVE;
     }
 
     private double getResurrectChance(@NotNull final BuildingGraveyard buildingGraveyard)
