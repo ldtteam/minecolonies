@@ -23,13 +23,6 @@ import java.util.Set;
 public interface ICompatibilityManager
 {
     /**
-     * Getter for the different meshes the sifter is allowed to use.
-     *
-     * @return a copy of the list of tuples containing the itemStorage and the chance of it breaking.
-     */
-    List<Tuple<ItemStorage, Double>> getMeshes();
-
-    /**
      * Method called to instantiate the requirements.
      *
      * @param serverSide if server side (true) or client side (false).

@@ -16,6 +16,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.client.gui.WindowHutLumberjackModule;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
 import com.minecolonies.coremod.util.AttributeModifierUtils;
@@ -47,7 +48,7 @@ import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_W
 /**
  * The lumberjacks building.
  */
-public class BuildingLumberjack extends AbstractBuildingWorker implements IBuildingPublicCrafter
+public class BuildingLumberjack extends AbstractBuildingCrafter implements IBuildingPublicCrafter
 {
     /**
      * NBT tag if the lj should replant saplings
