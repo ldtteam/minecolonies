@@ -17,5 +17,6 @@ public class GatherDataHandler
         event.getGenerator().addProvider(new DefaultResearchProvider(event.getGenerator()));
         event.getGenerator().addProvider(new SawmillTimberFrameRecipeProvider(event.getGenerator()));
         event.getGenerator().addProvider(new DefaultSifterCraftingProvider(event.getGenerator()));
+        event.getGenerator().addProvider(new DefaultEnchanterCraftingProvider(event.getGenerator()));
     }
 }

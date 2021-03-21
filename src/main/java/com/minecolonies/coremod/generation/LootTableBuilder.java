@@ -5,7 +5,12 @@ import com.ldtteam.datagenerators.loot_table.LootTableTypeEnum;
 import com.ldtteam.datagenerators.loot_table.pool.PoolJson;
 import com.ldtteam.datagenerators.loot_table.pool.entry.EntryJson;
 import com.ldtteam.datagenerators.loot_table.pool.entry.EntryTypeEnum;
+import com.ldtteam.datagenerators.loot_table.pool.entry.functions.IEntryFunction;
+import com.ldtteam.datagenerators.loot_table.pool.entry.functions.SetCountFunctionJson;
+import com.ldtteam.datagenerators.loot_table.pool.entry.functions.SetNbtFunctionJson;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -55,6 +60,25 @@ public class LootTableBuilder
     public LootTableBuilder item(final Item item, final int weight)
     {
         entries.add(new EntryJson(null, EntryTypeEnum.ITEM, item.getRegistryName().toString(), null, false, null, weight, 0));
+        return this;
+    }
+
+    @NotNull
+    public LootTableBuilder item(final ItemStack stack, final int weight)
+    {
+        if (!stack.isEmpty())
+        {
+            List<IEntryFunction> functions = new ArrayList<>();
+            if (stack.hasTag())
+            {
+                functions.add(new SetNbtFunctionJson(stack.getTag().toString()));
+            }
+            if (stack.getCount() > 1)
+            {
+                functions.add(new SetCountFunctionJson(stack.getCount()));
+            }
+            entries.add(new EntryJson(null, EntryTypeEnum.ITEM, stack.getItem().getRegistryName().toString(), null, false, functions, weight, 0));
+        }
         return this;
     }
 

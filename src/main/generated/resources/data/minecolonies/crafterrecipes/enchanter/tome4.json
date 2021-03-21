@@ -1,0 +1,13 @@
+{
+  "type": "recipe",
+  "crafter": "enchanter",
+  "min-building-level": 4,
+  "max-building-level": 4,
+  "inputs": [
+    {
+      "item": "minecolonies:ancienttome{ignoreNBT:1b}"
+    }
+  ],
+  "loot-table": "minecolonies:recipes/enchanter4",
+  "intermediate": "minecraft:air"
+}

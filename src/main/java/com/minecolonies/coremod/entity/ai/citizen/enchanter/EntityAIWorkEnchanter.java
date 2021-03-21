@@ -8,10 +8,7 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.items.ModItems;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.Tuple;
-import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingEnchanter;
@@ -22,19 +19,23 @@ import com.minecolonies.coremod.network.messages.client.CircleParticleEffectMess
 import com.minecolonies.coremod.network.messages.client.StreamParticleEffectMessage;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.item.EnchantedBookItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
@@ -191,9 +192,11 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
      */
     private IAIState enchant()
     {
-        final int ancientTomesInInv = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), IS_ANCIENT_TOME);
-        if (ancientTomesInInv < 1)
+        // this assumes that the only empty-output (pure loot table) recipes are for ancient tome -> enchanted book
+        currentRecipeStorage = getOwnBuilding().getFirstFullFillableRecipe(ItemStackUtils::isEmpty, 1, false);
+        if (currentRecipeStorage == null)
         {
+            progressTicks = 0;
             return DECIDE;
         }
 
@@ -228,34 +231,41 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
             return getState();
         }
 
-        final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), IS_ANCIENT_TOME);
-        if (slot != -1)
+        final ICitizenData data = worker.getCitizenData();
+        if (data != null)
         {
-            final ICitizenData data = worker.getCitizenData();
-            if (data != null)
-            {
-                final int openSlot = InventoryUtils.getFirstOpenSlotFromItemHandler(worker.getInventoryCitizen());
-                if (openSlot == -1)
-                {
-                    //Dump if there is no open slot.
-                    incrementActionsDone();
-                    progressTicks = 0;
-                    return IDLE;
-                }
+            List<RecordingItemHandler> handlers = getOwnBuilding().getHandlers().stream()
+                    .map(RecordingItemHandler::new)
+                    .collect(Collectors.toList());
 
-                final Tuple<ItemStack, Integer> tuple = IColonyManager.getInstance().getCompatibilityManager().getRandomEnchantmentBook(getOwnBuilding().getBuildingLevel());
+            if (currentRecipeStorage.fullfillRecipe(getLootContext(), new ArrayList<>(handlers)))
+            {
+                final int enchantmentLevel = handlers.stream()
+                        .flatMap(handler -> handler.getInserted().stream())
+                        .mapToInt(EntityAIWorkEnchanter::getEnchantedBookLevel)
+                        .max().orElse(0);
 
                 //Decrement mana.
-                data.getCitizenSkillHandler().incrementLevel(Skill.Mana, -tuple.getB());
+                data.getCitizenSkillHandler().incrementLevel(Skill.Mana, -enchantmentLevel);
                 worker.getCitizenExperienceHandler().updateLevel();
-                worker.getInventoryCitizen().setStackInSlot(openSlot, tuple.getA());
-
-                InventoryUtils.reduceStackInItemHandler(worker.getInventoryCitizen(), new ItemStack(ModItems.ancientTome));
                 incrementActionsDoneAndDecSaturation();
             }
         }
+
+        currentRecipeStorage = null;
         progressTicks = 0;
         return IDLE;
+    }
+
+    private static int getEnchantedBookLevel(@NotNull final ItemStack stack)
+    {
+        if (stack.getItem().equals(Items.ENCHANTED_BOOK))
+        {
+            return EnchantedBookItem.getEnchantments(stack).stream()
+                    .mapToInt(nbt -> ((CompoundNBT) nbt).getShort("lvl"))
+                    .max().orElse(0);
+        }
+        return 0;
     }
 
     /**
@@ -407,5 +417,53 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
     public Class<BuildingEnchanter> getExpectedBuildingClass()
     {
         return BuildingEnchanter.class;
+    }
+
+    private static class RecordingItemHandler implements IItemHandler
+    {
+        private final IItemHandler underlying;
+        private final List<ItemStack> inserted;
+
+        public RecordingItemHandler(IItemHandler underlying)
+        {
+            this.underlying = underlying;
+            this.inserted = new ArrayList<>();
+        }
+
+        public List<ItemStack> getInserted() { return inserted; }
+
+        @Override
+        public int getSlots() { return underlying.getSlots(); }
+
+        @Override
+        public int getSlotLimit(int slot) { return underlying.getSlotLimit(slot); }
+
+        @NotNull
+        @Override
+        public ItemStack getStackInSlot(int slot) { return underlying.getStackInSlot(slot); }
+
+        @NotNull
+        @Override
+        public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate)
+        {
+            if (!simulate)
+            {
+                inserted.add(stack);
+            }
+            return underlying.insertItem(slot, stack, simulate);
+        }
+
+        @NotNull
+        @Override
+        public ItemStack extractItem(int slot, int amount, boolean simulate)
+        {
+            return underlying.extractItem(slot, amount, simulate);
+        }
+
+        @Override
+        public boolean isItemValid(int slot, @NotNull ItemStack stack)
+        {
+            return underlying.isItemValid(slot, stack);
+        }
     }
 }

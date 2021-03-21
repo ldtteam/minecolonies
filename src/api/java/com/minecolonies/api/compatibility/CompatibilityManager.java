@@ -126,11 +126,6 @@ public class CompatibilityManager implements ICompatibilityManager
     private final List<Tuple<Item, Integer>> recruitmentCostsWeights = new ArrayList<>();
 
     /**
-     * Map of building level to the list of possible enchantments.
-     */
-    private final Map<Integer, List<Tuple<String, Integer>>> enchantments = new HashMap<>();
-
-    /**
      * If discovery is finished already.
      */
     private boolean discoveredAlready = false;
@@ -178,7 +173,6 @@ public class CompatibilityManager implements ICompatibilityManager
         discoverDiseases();
         discoverFood();
         discoverFuel();
-        discoverEnchantments();
         discoverFreeBlocksAndPos();
         discoverModCompat();
 
@@ -442,24 +436,6 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
-    public Tuple<ItemStack, Integer> getRandomEnchantmentBook(final int buildingLevel)
-    {
-        final List<Tuple<String, Integer>> list = enchantments.getOrDefault(buildingLevel, new ArrayList<>());
-        final Tuple<String, Integer> ench;
-
-        if (list.isEmpty())
-        {
-            ench = new Tuple<>("protection", 1);
-        }
-        else
-        {
-            ench = list.get(random.nextInt(list.size()));
-        }
-        return new Tuple<>(getEnchantedItemStack(new EnchantmentData(ForgeRegistries.ENCHANTMENTS.getValue(new ResourceLocation(ench.getA())), ench.getB())),
-                ench.getB());
-    }
-
-    @Override
     public boolean isFreeBlock(final Block block)
     {
         return freeBlocks.contains(block);
@@ -709,50 +685,6 @@ public class CompatibilityManager implements ICompatibilityManager
             }
         }
         Log.getLogger().info("Finished discovering diseases");
-    }
-
-    /**
-     * Discover the possible enchantments from file.
-     */
-    private void discoverEnchantments()
-    {
-        for (final String string : MinecoloniesAPIProxy.getInstance().getConfig().getServer().enchantments.get())
-        {
-            final String[] split = string.split(",");
-            if (split.length != 4)
-            {
-                Log.getLogger().warn("Invalid enchantment mode setting: " + string);
-                continue;
-            }
-
-            try
-            {
-                final String enchantment = split[1];
-                if (ForgeRegistries.ENCHANTMENTS.getValue(new ResourceLocation(enchantment)) == null)
-                {
-                    Log.getLogger().warn("Enchantment: " + enchantment + " doesn't exist!");
-                    continue;
-                }
-
-                final int buildingLevel = Integer.parseInt(split[0]);
-                final int enchantmentLevel = Integer.parseInt(split[2]);
-                final int numberOfTickets = Integer.parseInt(split[3]);
-
-                for (int level = buildingLevel; level <= Math.min(buildingLevel + 2, 5); level++)
-                {
-                    final List<Tuple<String, Integer>> list = enchantments.getOrDefault(level, new ArrayList<>());
-                    for (int i = 0; i < numberOfTickets; i++)
-                    {
-                        list.add(new Tuple<>(enchantment, enchantmentLevel));
-                    }
-                    enchantments.put(level, list);
-                }
-            }
-            catch (final NumberFormatException ex)
-            {
-                Log.getLogger().warn("Invalid integer at pos 1, 3 or 4");
-            }
-        }
     }
 
     private static CompoundNBT writeLeafSaplingEntryToNBT(final BlockState state, final ItemStorage storage)
