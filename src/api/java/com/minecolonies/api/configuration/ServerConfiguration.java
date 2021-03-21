@@ -135,7 +135,6 @@ public class ServerConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> configListStudyItems;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> configListRecruitmentItems;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> luckyOres;
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> sifterMeshes;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> listOfPlantables;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> enchantments;
     public final ForgeConfigSpec.DoubleValue                         enchanterExperienceMultiplier;
@@ -477,13 +476,6 @@ public class ServerConfiguration extends AbstractConfiguration
                      "minecraft:lapis_ore!4",
                      "minecraft:diamond_ore!2",
                      "minecraft:emerald_ore!1"),
-          s -> s instanceof String);
-        sifterMeshes = defineList(builder, "siftermeshes",
-          Arrays.asList
-                   ("minecraft:string,0",
-                     "minecraft:flint,0.1",
-                     "minecraft:iron_ingot,0.1",
-                     "minecraft:diamond,0.1"),
           s -> s instanceof String);
 
         listOfPlantables = defineList(builder, "listofplantables",

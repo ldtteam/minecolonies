@@ -4,7 +4,7 @@
   "ambientocclusion": false,
   "loader": "forge:multi-layer",
   "textures": {
-    "particle": "minecolonies:blocks/university/table"
+    "particle": "block/oak_planks"
   },
   "layers": {
     "base": {

@@ -1,16 +1,15 @@
 package com.minecolonies.coremod.datalistener;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.coremod.colony.crafting.CustomRecipe;
 import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
 import net.minecraft.client.resources.JsonReloadListener;
 import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.DataPackRegistries;
 import net.minecraft.resources.IResourceManager;
+import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
@@ -39,34 +38,39 @@ public class CrafterRecipeListener extends JsonReloadListener
     }
 
     @Override
-    protected void apply(final Map<ResourceLocation, JsonElement> object, final IResourceManager resourceManagerIn, final IProfiler profilerIn)
+    protected void apply(@NotNull final Map<ResourceLocation, JsonElement> object,
+                         @NotNull final IResourceManager resourceManagerIn,
+                         @NotNull final IProfiler profilerIn)
     {
         Log.getLogger().info("Beginning load of custom recipes for colony workers");
 
-        CustomRecipeManager recipeManager = CustomRecipeManager.getInstance();
-        for(Map.Entry<ResourceLocation, JsonElement> entry : object.entrySet())
+        final CustomRecipeManager recipeManager = CustomRecipeManager.getInstance();
+        for(final Map.Entry<ResourceLocation, JsonElement> entry : object.entrySet())
         {
-            ResourceLocation key = entry.getKey();
-
-            JsonObject recipeJson = entry.getValue().getAsJsonObject();
-
-            if(recipeJson.has(RECIPE_TYPE_PROP) && recipeJson.get(RECIPE_TYPE_PROP).getAsString().equals(RECIPE_TYPE_RECIPE))
+            final ResourceLocation key = entry.getKey();
+            try
             {
-                recipeManager.addRecipe(recipeJson, key);
-            }
+                final JsonObject recipeJson = entry.getValue().getAsJsonObject();
 
-            if(recipeJson.has(RECIPE_TYPE_PROP) && recipeJson.get(RECIPE_TYPE_PROP).getAsString().equals(RECIPE_TYPE_RECIPE_MULT_OUT)) 
+                switch (JSONUtils.getString(recipeJson, RECIPE_TYPE_PROP, ""))
+                {
+                    case RECIPE_TYPE_RECIPE:
+                    case RECIPE_TYPE_RECIPE_MULT_OUT:
+                        recipeManager.addRecipe(CustomRecipe.parse(key, recipeJson));
+                        break;
+                    case RECIPE_TYPE_REMOVE:
+                        final ResourceLocation toRemove = new ResourceLocation(JSONUtils.getString(recipeJson, RECIPE_ID_TO_REMOVE_PROP, ""));
+                        recipeManager.removeRecipe(toRemove);
+                        break;
+                }
+            }
+            catch (final JsonParseException e)
             {
-                recipeManager.addRecipe(recipeJson, key);
+                Log.getLogger().error("Error parsing crafterrecipe " + key.toString(), e);
             }
+        }
 
-            if(recipeJson.has(RECIPE_TYPE_PROP) && recipeJson.get(RECIPE_TYPE_PROP).getAsString().equals(RECIPE_TYPE_REMOVE)) 
-            {
-                recipeManager.removeRecipe(recipeJson, key);
-            }
-        } 
-
-        final int totalRecipes = recipeManager.getAllRecipes().values().stream().mapToInt(x -> x.size()).sum();
+        final int totalRecipes = recipeManager.getAllRecipes().values().stream().mapToInt(Map::size).sum();
         Log.getLogger().info("Loaded " + totalRecipes + " recipes for " + recipeManager.getAllRecipes().size() + " crafters");
 
         IColonyManager.getInstance().getCompatibilityManager().invalidateRecipes(this.dataPackRegistries.getRecipeManager());
