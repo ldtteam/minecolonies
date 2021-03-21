@@ -1,10 +1,11 @@
-package com.minecolonies.coremod.generation;
+package com.minecolonies.coremod.generation.defaults;
 
 import com.google.common.collect.Lists;
 import com.ldtteam.structurize.blocks.decorative.BlockTimberFrame;
 import com.ldtteam.structurize.blocks.types.TimberFrameCentreType;
 import com.ldtteam.structurize.blocks.types.TimberFrameFrameType;
 import com.ldtteam.structurize.blocks.types.TimberFrameType;
+import com.minecolonies.coremod.generation.CustomRecipeProvider;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.IFinishedRecipe;
 import net.minecraft.item.ItemStack;
