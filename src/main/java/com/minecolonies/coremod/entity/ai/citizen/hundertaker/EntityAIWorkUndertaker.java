@@ -64,7 +64,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
     /**
      * The max resurrection chance cap [0.0 min -> 1.0 max]
      */
-    private static final double MAX_RESURRECTION_CHANCE = 0.10;
+    private static final double MAX_RESURRECTION_CHANCE = 0.05;
 
     /**
      * The bonus to max resurrection chance cap per max lvl of Mystical Site in the city

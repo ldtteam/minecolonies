@@ -14,14 +14,14 @@ import java.util.Map;
 public interface IGraveManager
 {
     /**
-     * Read the grave from NBT.
+     * Read the graves from NBT.
      *
      * @param compound the compound.
      */
     void read(@NotNull final CompoundNBT compound);
 
     /**
-     * Write the grave to NBT.
+     * Write the graves to NBT.
      *
      * @param compound the compound.
      */
@@ -41,6 +41,13 @@ public interface IGraveManager
      * @return is the grave successfully reserved.
      */
     boolean reserveGrave(BlockPos pos);
+
+    /**
+     * Reserve the next free grave
+     *
+     * @return the grave successfully reserved or null if none available
+     */
+    BlockPos reserveNextFreeGrave();
 
     /**
      * Returns a map with all graves within the colony. Key is ID (Coordinates), value is isReserved boolean.

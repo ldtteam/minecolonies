@@ -17,7 +17,7 @@ import javax.annotation.Nonnull;
 import static com.minecolonies.api.research.util.ResearchConstants.RESURRECT_CHANCE;
 import static com.minecolonies.api.util.constant.Constants.*;
 
-public abstract class AbstractTileEntityGrave extends TileEntity implements INamedContainerProvider, ITickableTileEntity
+public abstract class AbstractTileEntityGrave extends TileEntity implements INamedContainerProvider
 {
     /**
      * The inventory of the tileEntity.

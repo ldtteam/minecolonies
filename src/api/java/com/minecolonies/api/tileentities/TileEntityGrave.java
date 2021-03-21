@@ -246,15 +246,17 @@ public class TileEntityGrave extends AbstractTileEntityGrave
     }
 
     /**
-     * Since the TileEntity implements ITickableTileEntity, we get an update method which is called once per tick (20 times / second)
-     * When the timer elapses, decay the grave.
+     * Update the decay of this grave onColonyTick
+     * When the timer elapses, decay the grave and reset the timer, if the grave is already decayed - remove the tile entity from the world
+     *
+     * @param delay number of tick between each call
+     * @return true if the grave still exist, false otherwise
      **/
-    @Override
-    public void tick()
+    public boolean onColonyTick(final double delay)
     {
         if (this.hasWorld() && !world.isRemote && decay_timer != -1)
         {
-            --decay_timer;
+            decay_timer -= delay;
             if (decay_timer <= 0)
             {
                 if (!decayed)
@@ -267,8 +269,11 @@ public class TileEntityGrave extends AbstractTileEntityGrave
                 {
                     InventoryUtils.dropItemHandler(inventory, world, this.pos.getX(), this.pos.getY(), this.pos.getZ());
                     world.setBlockState(this.pos, Blocks.AIR.getDefaultState());
+                    return false;
                 }
             }
         }
+
+        return true;
     }
 }

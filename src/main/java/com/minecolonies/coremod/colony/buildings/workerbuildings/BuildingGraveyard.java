@@ -100,11 +100,6 @@ public class BuildingGraveyard extends AbstractBuildingWorker
      */
     private static final String TAG_RIP_CITIZEN_LIST = "ripCitizenList";
 
-      /**
-     * The list of the graves the undertaker need to collect.
-     */
-    private final Set<BlockPos> pendingGraves = new HashSet<>();
-
     /**
      * The list of resting citizen in this graveyard.
      */
@@ -150,32 +145,6 @@ public class BuildingGraveyard extends AbstractBuildingWorker
     }
 
     /**
-     * Returns list of graves that undertaker need to dig.
-     *
-     * @return a list of graves objects.
-     */
-    @NotNull
-    public List<BlockPos> getPendingGraves()
-    {
-        return new ArrayList<>(pendingGraves);
-    }
-
-    /**
-     * Assigns a grave list to the pending grave list.
-     *
-     * @param grave the grave to add.
-     */
-    public void addGrave(final BlockPos grave)
-    {
-        final TileEntity tileEntity = getColony().getWorld().getTileEntity(grave);
-        if (tileEntity instanceof TileEntityGrave)
-        {
-            pendingGraves.add(grave);
-            this.markDirty();
-        }
-    }
-
-    /**
      * Clear the current grave the undertaker is currently working on.
      */
     public void ClearCurrentGrave()
@@ -194,33 +163,28 @@ public class BuildingGraveyard extends AbstractBuildingWorker
         if(currentGrave != null)
         {
             final TileEntity tileEntity = getColony().getWorld().getTileEntity(currentGrave);
-            if(tileEntity == null)
-            {
-                pendingGraves.remove(currentGrave);
-                currentGrave = null;
-            }
-            else
+            if (tileEntity != null)
             {
                 return currentGrave;
             }
+
+            currentGrave = null;
         }
 
-        final List<BlockPos> graves = new ArrayList<>(pendingGraves);
-        for (@NotNull final BlockPos grave : graves)
+        final BlockPos grave = colony.getGraveManager().reserveNextFreeGrave();
+        if(grave == null)
         {
-            final TileEntity tileEntity = getColony().getWorld().getTileEntity(grave);
-            if(tileEntity == null)
-            {
-                pendingGraves.remove(grave);
-            }
-
-            if (tileEntity instanceof TileEntityGrave)
-            {
-                currentGrave = grave;
-                return currentGrave;
-            }
+            return null;
         }
-        return null;
+
+        final TileEntity tileEntity = getColony().getWorld().getTileEntity(grave);
+        if(tileEntity == null || !(tileEntity instanceof TileEntityGrave))
+        {
+            return null;
+        }
+
+        currentGrave = grave;
+        return currentGrave;
     }
 
     @NotNull
@@ -234,13 +198,6 @@ public class BuildingGraveyard extends AbstractBuildingWorker
     public void deserializeNBT(final CompoundNBT compound)
     {
         super.deserializeNBT(compound);
-        final ListNBT graveTagList = compound.getList(TAG_GRAVES, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < graveTagList.size(); ++i)
-        {
-            final CompoundNBT graveCompound = graveTagList.getCompound(i);
-            final BlockPos graveLocation = BlockPosUtil.read(graveCompound, TAG_GRAVES_BLOCKPOS);
-            pendingGraves.add(graveLocation);
-        }
 
         if (compound.keySet().contains(TAG_CURRENT_GRAVE))
         {
@@ -281,14 +238,6 @@ public class BuildingGraveyard extends AbstractBuildingWorker
     public CompoundNBT serializeNBT()
     {
         final CompoundNBT compound = super.serializeNBT();
-        @NotNull final ListNBT graveTagList = new ListNBT();
-        for (@NotNull final BlockPos f : pendingGraves)
-        {
-            @NotNull final CompoundNBT graveCompound = new CompoundNBT();
-            BlockPosUtil.write(graveCompound, TAG_GRAVES_BLOCKPOS, f);
-            graveTagList.add(graveCompound);
-        }
-        compound.put(TAG_GRAVES, graveTagList);
 
         if (currentGrave != null)
         {
@@ -373,7 +322,7 @@ public class BuildingGraveyard extends AbstractBuildingWorker
     {
         super.serializeToView(buf);
 
-        final List<BlockPos> graves = new ArrayList<>(pendingGraves);
+        final List<BlockPos> graves = new ArrayList<>(colony.getGraveManager().getGraves().keySet());
         final List<BlockPos> cleanList = new ArrayList<>();
 
         for (@NotNull final BlockPos grave : graves)
@@ -388,15 +337,7 @@ public class BuildingGraveyard extends AbstractBuildingWorker
             }
         }
 
-        for (final BlockPos pos : pendingGraves)
-        {
-            if (!cleanList.contains(pos))
-            {
-                Log.getLogger().warn("Pending Grave not considered because not loaded: " + pos.toString());
-            }
-        }
-
-        //pending grave list
+        // grave list
         buf.writeInt(cleanList.size());
         for (@NotNull final BlockPos grave : cleanList)
         {

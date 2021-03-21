@@ -76,6 +76,7 @@ public final class NbtTagConstants
     public static final String TAG_IDLE                   = "idle";
     public static final String TAG_PURGED_MOBS            = "purgedMobs";
     public static final String TAG_MANUAL_JOB_SELECTION   = "manualMode";
+    public static final String TAG_RESERVED               = "reserved";
 
     /**
      * Event tags

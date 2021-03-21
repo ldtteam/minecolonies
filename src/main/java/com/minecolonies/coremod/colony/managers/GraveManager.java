@@ -16,6 +16,7 @@ import com.minecolonies.api.tileentities.AbstractScarecrowTileEntity;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityGrave;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.MineColonies;
@@ -48,6 +49,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
 
+import static com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateConstants.MAX_TICKRATE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 
@@ -74,6 +76,11 @@ public class GraveManager implements IGraveManager
         this.colony = colony;
     }
 
+    /**
+     * Read the graves from NBT.
+     *
+     * @param compound the compound.
+     */
     @Override
     public void read(@NotNull final CompoundNBT compound)
     {
@@ -82,21 +89,28 @@ public class GraveManager implements IGraveManager
         for (int i = 0; i < gravesTagList.size(); ++i)
         {
             final CompoundNBT graveCompound = gravesTagList.getCompound(i);
-            //TODO TG
-           // graveCompound.write(BlockPos.);
+            if(graveCompound.contains(TAG_POS) && graveCompound.contains(TAG_RESERVED))
+            {
+                graves.put(BlockPosUtil.read(graveCompound, TAG_POS), graveCompound.getBoolean(TAG_RESERVED));
+            }
         }
     }
 
+    /**
+     * Write the graves to NBT.
+     *
+     * @param compound the compound.
+     */
     @Override
     public void write(@NotNull final CompoundNBT compound)
     {
-        // Graves
         @NotNull final ListNBT gravesTagList = new ListNBT();
         for (@NotNull final BlockPos blockPos : graves.keySet())
         {
-            //TODO TG
-            //@NotNull final CompoundNBT graveCompound = blockPos.serializeNBT();
-            //gravesTagList.add(graveCompound);
+            @NotNull final CompoundNBT graveCompound = new CompoundNBT();
+            BlockPosUtil.write(graveCompound, TAG_POS, blockPos);
+            graveCompound.putBoolean(TAG_RESERVED, graves.get(blockPos));
+            gravesTagList.add(graveCompound);
         }
         compound.put(TAG_GRAVE, gravesTagList);
     }
@@ -109,17 +123,27 @@ public class GraveManager implements IGraveManager
     @Override
     public void onColonyTick(final IColony colony)
     {
-        //  Tick Graves
-        for (@NotNull final BlockPos blockPos : graves.keySet())
+        for (@NotNull final BlockPos pos : graves.keySet())
         {
-            //TODO TG - update decay; cleanup list
-            //if (WorldUtil.isBlockLoaded(colony.getWorld(), building.getPosition()))
-           // {
-           //     building.onColonyTick(colony);
-           // }
+            final TileEntityGrave graveEntity = (TileEntityGrave) colony.getWorld().getTileEntity(pos);
+            if(graveEntity == null)
+            {
+                removeGrave(pos);
+                continue;
+            }
+
+            if(!graveEntity.onColonyTick(MAX_TICKRATE))
+            {
+                removeGrave(pos);
+            }
         }
     }
 
+    /**
+     * Returns a map with all graves within the colony. Key is ID (Coordinates), value is isReserved boolean.
+     *
+     * @return Map with ID (coordinates) as key, value is isReserved boolean.
+     */
     @NotNull
     @Override
     public Map<BlockPos, Boolean> getGraves()
@@ -127,12 +151,21 @@ public class GraveManager implements IGraveManager
         return graves;
     }
 
+    /**
+     * Add a grave from the Colony.
+     *
+     * @param pos    position of the TileEntityGrave to add.
+     * @return the grave that was created and added.
+     */
     @Nullable
     @Override
-    public boolean addNewGrave(@NotNull BlockPos pos)
+    public boolean addNewGrave(@NotNull final BlockPos pos)
     {
-        //TODO TG
-        //IF no tile entity, return false
+        final TileEntityGrave graveEntity = (TileEntityGrave) colony.getWorld().getTileEntity(pos);
+        if(graveEntity == null)
+        {
+            return false;
+        }
 
         if(graves.containsKey(pos))
         {
@@ -140,28 +173,71 @@ public class GraveManager implements IGraveManager
         }
 
         graves.put(pos, false);
-        //TODO TG, should we tag the colony as dirty?
+        colony.markDirty();
         return true;
     }
 
+    /**
+     * Remove a TileEntityGrave from the Colony (when it is destroyed).
+     *
+     * @param pos    position of the TileEntityGrave to remove.
+     */
     @Override
-    public void removeGrave(@NotNull BlockPos pos)
+    public void removeGrave(@NotNull final BlockPos pos)
     {
         graves.remove(pos);
+        colony.markDirty();
     }
 
+    /**
+     * Reserve a grave
+     *
+     * @param pos the id of the grave.
+     * @return is the grave successfully reserved.
+     */
     @Override
-    public boolean reserveGrave(BlockPos pos)
+    public boolean reserveGrave(@NotNull final BlockPos pos)
     {
         if(!graves.containsKey(pos) || graves.get(pos))
         {
             return false;
         }
 
-        //TODO TG
-        //check grave pos still has tile entity
+        final TileEntityGrave graveEntity = (TileEntityGrave) colony.getWorld().getTileEntity(pos);
+        if(graveEntity == null)
+        {
+            removeGrave(pos);
+            return false;
+        }
 
         graves.put(pos, true);
+        colony.markDirty();
         return true;
+    }
+
+    /**
+     * Reserve the next free grave
+     *
+     * @return the grave successfully reserved or null if none available
+     */
+    @Override
+    public BlockPos reserveNextFreeGrave()
+    {
+        for (@NotNull final BlockPos pos : graves.keySet())
+        {
+            final TileEntityGrave graveEntity = (TileEntityGrave) colony.getWorld().getTileEntity(pos);
+            if(graveEntity == null)
+            {
+                removeGrave(pos);
+                continue;
+            }
+
+            if(!graves.get(pos) && reserveGrave(pos))
+            {
+                return pos;
+            }
+        }
+
+        return null;
     }
 }

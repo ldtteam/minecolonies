@@ -1506,19 +1506,7 @@ public class EntityCitizen extends AbstractEntityCitizen
            graveData.setCitizenDataNBT(citizenData.serializeNBT());
            graveEntity.setGraveData(graveData);
 
-           BlockPos closestGraveyardPos = citizenColonyHandler.getColony().getBuildingManager().
-                   getClosestGraveyard(this, g -> g instanceof BuildingGraveyard && ((BuildingGraveyard)g).hasSpaceForNewGraves());
-           if(closestGraveyardPos == null )
-           {
-               closestGraveyardPos =citizenColonyHandler.getColony().getBuildingManager().getClosestGraveyard(this, null);
-           }
-
-           if(closestGraveyardPos != null)
-           {
-               final BuildingGraveyard graveyard = (BuildingGraveyard)citizenColonyHandler.getColony().getBuildingManager().getBuilding(closestGraveyardPos);
-               graveyard.addGrave(firstValidPosition);
-           }
-
+           getCitizenColonyHandler().getColony().getGraveManager().addNewGrave(firstValidPosition);
            LanguageHandler.sendPlayersMessage(getCitizenColonyHandler().getColony().getImportantMessageEntityPlayers(), "com.minecolonies.coremod.gravespawned");
         }
         else
