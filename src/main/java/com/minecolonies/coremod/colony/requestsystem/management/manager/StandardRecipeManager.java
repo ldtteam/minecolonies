@@ -75,22 +75,7 @@ public class StandardRecipeManager implements IRecipeManager
     @Override
     public IToken<?> getRecipeId(final IRecipeStorage storage)
     {
-        IToken<?> candidate = recipes.inverse().get(storage);
-        if (candidate == null)
-        {
-            for(Map.Entry<IToken<?>, IRecipeStorage> tokenEntry : recipes.entrySet())
-            {
-                if(tokenEntry.getValue().equals(storage))
-                {
-                    // This should never get hit. But it does. 
-                    Log.getLogger().info("Found the hard way: " + storage.getPrimaryOutput().getDisplayName().getString());
-                    Log.getLogger().info("Hashes: " + tokenEntry.getValue().hashCode() + " " + storage.hashCode());
-                    candidate = tokenEntry.getKey();
-                    break;
-                }
-            }
-        }
-        return candidate;
+        return recipes.inverse().get(storage);
     }
 
     @Override
