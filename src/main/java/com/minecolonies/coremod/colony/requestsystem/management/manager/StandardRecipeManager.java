@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeManager;
 import com.minecolonies.api.crafting.IRecipeStorage;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -14,6 +15,7 @@ import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public class StandardRecipeManager implements IRecipeManager
@@ -26,7 +28,7 @@ public class StandardRecipeManager implements IRecipeManager
     /**
      * Map of all recipes which have been discovered globally already.
      */
-    private final BiMap<IToken<?>, IRecipeStorage> recipes = HashBiMap.create();
+    private final BiMap<IToken<?>, IRecipeStorage> recipes = HashBiMap.create(4096);
 
     /**
      * Immutable cache.
@@ -53,7 +55,7 @@ public class StandardRecipeManager implements IRecipeManager
     public IToken<?> addRecipe(final IRecipeStorage storage)
     {
         recipes.put(storage.getToken(), storage);
-        usedRecipes.add(storage.getToken());
+        registerUse(storage.getToken());
         cache = null;
         return storage.getToken();
     }
@@ -66,14 +68,29 @@ public class StandardRecipeManager implements IRecipeManager
         {
             return addRecipe(storage);
         }
-        usedRecipes.add(token);
+        registerUse(token);
         return token;
     }
 
     @Override
     public IToken<?> getRecipeId(final IRecipeStorage storage)
     {
-        return recipes.inverse().get(storage);
+        IToken<?> candidate = recipes.inverse().get(storage);
+        if (candidate == null)
+        {
+            for(Map.Entry<IToken<?>, IRecipeStorage> tokenEntry : recipes.entrySet())
+            {
+                if(tokenEntry.getValue().equals(storage))
+                {
+                    // This should never get hit. But it does. 
+                    Log.getLogger().info("Found the hard way: " + storage.getPrimaryOutput().getDisplayName().getString());
+                    Log.getLogger().info("Hashes: " + tokenEntry.getValue().hashCode() + " " + storage.hashCode());
+                    candidate = tokenEntry.getKey();
+                    break;
+                }
+            }
+        }
+        return candidate;
     }
 
     @Override
@@ -91,7 +108,7 @@ public class StandardRecipeManager implements IRecipeManager
         for (int i = 0; i < list.size(); i++)
         {
             IRecipeStorage recipe = StandardFactoryController.getInstance().deserialize(list.getCompound(i));
-            if (recipe != null)
+            if (recipe != null && !recipes.containsKey(recipe.getToken()) && !recipes.containsValue(recipe))
             {
                 recipes.put(recipe.getToken(), recipe);
             }
