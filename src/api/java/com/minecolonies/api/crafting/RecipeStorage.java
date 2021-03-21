@@ -99,6 +99,11 @@ public class RecipeStorage implements IRecipeStorage
     private final ResourceLocation lootTable;
 
     /**
+     * The hash cache
+     */
+    private int hash = 0;
+
+    /**
      * The cached loot table for possible outputs
      */
     private LootTable loot;
@@ -383,7 +388,9 @@ public class RecipeStorage implements IRecipeStorage
     @Override
     public int hashCode()
     {
-        return Objects.hash(cleanedInput, 
+        if(hash == 0)
+        {
+            hash = Objects.hash(cleanedInput, 
             primaryOutput.getItem(),
             primaryOutput.getCount(),
             intermediate,
@@ -391,6 +398,9 @@ public class RecipeStorage implements IRecipeStorage
             hashableItemStackList(alternateOutputs),
             hashableItemStackList(secondaryOutputs),
             hashableItemStackList(tools));
+        }
+
+        return hash;
     }
 
     /**
