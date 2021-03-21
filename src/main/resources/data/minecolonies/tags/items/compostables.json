@@ -6,7 +6,6 @@
     "#minecraft:flowers",
     "#minecraft:fishes",
     "#minecraft:leaves",
-    "#minecraft:wart_blocks",
     "#minecraft:wool",
     "minecraft:rotten_flesh",
     "minecraft:brown_mushroom",
@@ -31,6 +30,8 @@
     "minecraft:mushroom_stem",
     "minecraft:cake",
     "minecraft:rabbit_foot",
-    "minecraft:fermented_spider_eye"
+    "minecraft:fermented_spider_eye",
+    "minecraft:nether_wart_block",
+    "minecraft:warped_wart_block"
   ]
 }
