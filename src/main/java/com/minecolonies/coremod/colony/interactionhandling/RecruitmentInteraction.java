@@ -101,7 +101,7 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
                 .append(this.getInquiry())
                 .emptyLines(1)
                 .append(new TranslationTextComponent(
-                    colony.getCitizenManager().getCurrentCitizenCount() < colony.getCitizenCountLimit() ? "com.minecolonies.coremod.gui.chat.recruitcost"
+                    colony.getCitizens().size() < colony.getCitizenCountLimit() ? "com.minecolonies.coremod.gui.chat.recruitcost"
                         : "com.minecolonies.coremod.gui.chat.nospacerecruit",
                     dataView.getName().split(" ")[0],
                     recruitCost.getCount() + " " + recruitCost.getDisplayName().getString()))

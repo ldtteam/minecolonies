@@ -599,7 +599,7 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
         final String roundedHappiness = df.format(building.getColony().getOverallHappiness());
 
         findPaneOfTypeByID(HAPPINESS_LABEL, Text.class).setText(roundedHappiness);
-        final int citizensSize = townHall.getColony().getCitizenManager().getCurrentCitizenCount();
+        final int citizensSize = townHall.getColony().getCitizens().size();
         final int citizensCap;
 
         if(MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().hasResearchEffect(CITIZEN_CAP))
