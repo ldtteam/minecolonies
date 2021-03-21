@@ -109,6 +109,11 @@ public class RecipeStorage implements IRecipeStorage
     private LootTable loot;
 
     /**
+     * Stores if the input uses the buildTool
+     */
+    private boolean usesBuildTool = false;
+
+    /**
      * The loot parameter set definition
      */
     public static final LootParameterSet recipeLootParameters = (new LootParameterSet.Builder())
@@ -186,6 +191,10 @@ public class RecipeStorage implements IRecipeStorage
         {
             if (ItemStackUtils.isEmpty(stack) || stack.getItem() == ModItems.buildTool)
             {
+                if(stack.getItem() == ModItems.buildTool)
+                {
+                    usesBuildTool = true;
+                }
                 continue;
             }
 
@@ -339,7 +348,8 @@ public class RecipeStorage implements IRecipeStorage
               || !Objects.equals(this.recipeSource, that.recipeSource)
               || !Objects.equals(this.lootTable, that.lootTable)
               || !this.recipeType.getId().equals(that.recipeType.getId())
-              || !ItemStackUtils.compareItemStacksIgnoreStackSize(primaryOutput, that.primaryOutput, false, true))
+              || !ItemStackUtils.compareItemStacksIgnoreStackSize(primaryOutput, that.primaryOutput, false, true)
+              || this.usesBuildTool != that.usesBuildTool)
         {
             return false;
         }
@@ -679,5 +689,12 @@ public class RecipeStorage implements IRecipeStorage
     public List<ItemStack> getSecondaryOutputs()
     {
         return ImmutableList.copyOf(secondaryOutputs);
+    }
+
+    @NotNull
+    @Override
+    public boolean getUsesBuildTool()
+    {
+        return usesBuildTool;
     }
 }
