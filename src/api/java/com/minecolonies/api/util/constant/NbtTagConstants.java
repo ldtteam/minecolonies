@@ -24,6 +24,7 @@ public final class NbtTagConstants
     public static final String TAG_WAYPOINT           = "waypoints";
     public static final String TAG_FREE_BLOCKS        = "freeBlocks";
     public static final String TAG_FREE_POSITIONS     = "freePositions";
+    public static final String TAG_GRAVE              = "graves";
     public static final String TAG_ABANDONED          = "abandoned";
     public static final String TAG_PRIO               = "prio";
     public static final String TAG_LAST_ONLINE        = "lastOnlineTime";
@@ -48,6 +49,7 @@ public final class NbtTagConstants
     public static final String TAG_BUILDING_MANAGER       = "buildingManager";
     public static final String TAG_CITIZEN_MANAGER        = "citizenManager";
     public static final String TAG_EVENT_DESC_MANAGER     = "event_desc_manager";
+    public static final String TAG_GRAVE_MANAGER          = "graveManager";
     public static final String TAG_COLONY_ID              = "colony";
     public static final String TAG_CITIZEN                = "citizen";
     public static final String TAG_HELD_ITEM_SLOT         = "HeldItemSlot";

@@ -129,6 +129,11 @@ public class Colony implements IColony
     private final IBuildingManager buildingManager = new BuildingManager(this);
 
     /**
+     * Grave manager of the colony.
+     */
+    private final IGraveManager graveManager = new GraveManager(this);
+
+    /**
      * Citizen manager of the colony.
      */
     private final ICitizenManager citizenManager = new CitizenManager(this);
@@ -425,6 +430,7 @@ public class Colony implements IColony
         updateAttackingPlayers();
         eventManager.onColonyTick(this);
         buildingManager.onColonyTick(this);
+        graveManager.onColonyTick(this);
         workManager.onColonyTick(this);
 
         final long currTime = System.currentTimeMillis();
@@ -730,6 +736,8 @@ public class Colony implements IColony
         // Recalculate max after citizens and buildings are loaded.
         citizenManager.calculateMaxCitizens();
 
+        graveManager.read(compound.getCompound(TAG_GRAVE_MANAGER));
+
         if (compound.keySet().contains(TAG_PROGRESS_MANAGER))
         {
             progressManager.read(compound);
@@ -866,6 +874,10 @@ public class Colony implements IColony
         compound.put(TAG_CITIZEN_MANAGER, citizenCompound);
 
         visitorManager.write(compound);
+
+        final CompoundNBT graveCompound = new CompoundNBT();
+        graveManager.write(graveCompound);
+        compound.put(TAG_GRAVE_MANAGER, graveCompound);
 
         //  Workload
         @NotNull final CompoundNBT workManagerCompound = new CompoundNBT();
@@ -1478,6 +1490,17 @@ public class Colony implements IColony
     public IBuildingManager getBuildingManager()
     {
         return buildingManager;
+    }
+
+    /**
+     * Get the graveManager of the colony.
+     *
+     * @return the graveManager.
+     */
+    @Override
+    public IGraveManager getGraveManager()
+    {
+        return graveManager;
     }
 
     /**

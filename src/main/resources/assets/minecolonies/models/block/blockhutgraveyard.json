@@ -1,10 +1,10 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"0": "minecolonies:blocks/planks_oak",
-		"1": "minecolonies:blocks/metal_iron",
-		"2": "minecolonies:blocks/graveyard/spruce_planks",
-		"3": "minecolonies:blocks/graveyard/paper"
+		"0": "block/oak_planks",
+		"1": "block/iron_block",
+		"2": "block/spruce_planks",
+		"3": "minecolonies:blocks/books/paper_graveyard"
 	},
 	"elements": [
 		{

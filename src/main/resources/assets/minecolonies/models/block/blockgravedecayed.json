@@ -2,8 +2,8 @@
 	"credit": "Made with Blockbench",
 	"ambientocclusion": false,
 	"textures": {
-		"0": "minecolonies:blocks/mysticalsite/andersite_pol",
-		"particle": "minecolonies:blocks/mysticalsite/andersite_pol"
+		"0": "block/polished_andesite",
+		"particle": "block/polished_andesite"
 	},
 	"elements": [
 		{

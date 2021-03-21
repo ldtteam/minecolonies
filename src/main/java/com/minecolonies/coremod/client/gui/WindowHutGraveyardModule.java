@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * Window for the Graveyard building.
  */
-public class WindowHutGraveyard extends AbstractWindowWorkerBuilding<BuildingGraveyard.View>
+public class WindowHutGraveyardModule extends AbstractWindowWorkerModuleBuilding<BuildingGraveyard.View>
 {
     /**
      * Tag of the pages view.
@@ -102,7 +102,7 @@ public class WindowHutGraveyard extends AbstractWindowWorkerBuilding<BuildingGra
      *
      * @param building {@link BuildingGraveyard.View}.
      */
-    public WindowHutGraveyard(final BuildingGraveyard.View building)
+    public WindowHutGraveyardModule(final BuildingGraveyard.View building)
     {
         super(building, Constants.MOD_ID + HUT_GRAVEYARD_RESOURCE_SUFFIX);
     }
