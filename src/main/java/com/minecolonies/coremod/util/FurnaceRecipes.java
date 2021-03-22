@@ -2,10 +2,12 @@ package com.minecolonies.coremod.util;
 
 import com.google.common.collect.ImmutableList;
 
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.compatibility.IFurnaceRecipes;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.RecipeStorage;
+import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TypeConstants;
@@ -84,6 +86,11 @@ public class FurnaceRecipes implements IFurnaceRecipes
     {
         instance.loadRecipes(event.getServer());
         loadUtilityPredicates();
+        // Furnace Recipe loading should always be the last operation before CompatibilityManager can run discovery on a server.
+        if(!IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().isDiscoveredAlready() && ModTags.tagsLoaded)
+        {
+            IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().discover(true);
+        }
     }
 
     /**

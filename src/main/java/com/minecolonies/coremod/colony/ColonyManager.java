@@ -10,8 +10,6 @@ import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.compatibility.CompatibilityManager;
 import com.minecolonies.api.compatibility.ICompatibilityManager;
 import com.minecolonies.api.crafting.IRecipeManager;
-import com.minecolonies.api.items.ModTags;
-import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.apiimp.initializer.ModTagsInitializer;
 import com.minecolonies.coremod.MineColonies;
@@ -20,7 +18,6 @@ import com.minecolonies.coremod.colony.requestsystem.management.manager.Standard
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewRemoveMessage;
 import com.minecolonies.coremod.util.BackUpHelper;
 import com.minecolonies.coremod.util.ChunkDataHelper;
-import com.minecolonies.coremod.util.FurnaceRecipes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -633,11 +630,6 @@ public final class ColonyManager implements IColonyManager
             //  Player has left the game, clear the Colony View cache
             colonyViews.clear();
         }
-
-        if (ModTags.tagsLoaded && !compatibilityManager.isDiscoveredAlready() && ItemStackUtils.ISFOOD != null && FurnaceRecipes.getInstance().loaded())
-        {
-            compatibilityManager.discover(false);
-        }
     }
 
     @Override
@@ -646,11 +638,6 @@ public final class ColonyManager implements IColonyManager
         if (event.phase == TickEvent.Phase.END)
         {
             getColonies(event.world).forEach(c -> c.onWorldTick(event));
-        }
-
-        if (ModTags.tagsLoaded && !compatibilityManager.isDiscoveredAlready() && FurnaceRecipes.getInstance().loaded())
-        {
-            compatibilityManager.discover(true);
         }
     }
 

@@ -11,14 +11,17 @@ import com.ldtteam.structurize.network.messages.SchematicRequestMessage;
 import com.ldtteam.structurize.placement.structure.IStructureHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.ldtteam.structurize.util.RenderUtils;
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.items.ModItems;
+import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.sounds.ModSoundEvents;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
@@ -27,6 +30,7 @@ import com.minecolonies.coremod.colony.buildings.views.EmptyView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.PostBox;
 import com.minecolonies.coremod.entity.pathfinding.Pathfinding;
 import com.minecolonies.coremod.items.ItemBannerRallyGuards;
+import com.minecolonies.coremod.util.FurnaceRecipes;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
@@ -38,6 +42,7 @@ import net.minecraft.util.Mirror;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -349,6 +354,32 @@ public class ClientEventHandler
             {
                 RenderUtils.renderBox(guardTower.getInDimensionLocation(), guardTower.getInDimensionLocation(), 0, 0, 0, 1.0F, 0.002D, event.getMatrixStack(), linesWithCullAndDepth.get());
             }
+        }
+    }
+
+    /**
+     * Gets called when a client disconnects from a server, and in some other circumstances.
+     * May occur early when creating a new IntegratedServer or connecting to a DedicatedServer
+     *
+     * @param event {@link net.minecraftforge.client.event.ClientPlayerNetworkEvent.LoggedOutEvent}
+     */
+    @SubscribeEvent
+    public static void onClientDisconnect(final ClientPlayerNetworkEvent.LoggedOutEvent event)
+    {
+        // While client-only, this event triggers enough to clear all necessary tags for leaving a single-player instance,
+        // leaving a dedicated server, or leaving an open to LAN world as host or client.
+        // This means you don't need a FMLServerStopping event equivalent, as the only remaining case is a dedicated server machine itself, which can't have this case show up.
+        IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().invalidateTagsAndConfigs();
+    }
+
+    @SubscribeEvent
+    public static void onClientConnect(final ClientPlayerNetworkEvent.LoggedInEvent event)
+    {
+        // This should only run when the player first connects to a remote server
+        // It does have to be here; nearly all other locations won't have the necessary tags to fill the Smelt list.
+        if (ModTags.tagsLoaded && !IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().isDiscoveredAlready() && ItemStackUtils.ISFOOD != null && FurnaceRecipes.getInstance().loaded())
+        {
+            IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().discover(false);
         }
     }
 }

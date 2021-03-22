@@ -48,9 +48,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.dedicated.DedicatedServer;
-import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.state.properties.BedPart;
 import net.minecraft.tileentity.MobSpawnerTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -76,7 +73,6 @@ import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
@@ -762,7 +758,6 @@ public class EventHandler
             IColonyManager.getInstance().resetColonyViews();
             ItemBlockHut.checkResearch(null);
             Log.getLogger().info("Removed all colony views");
-            IColonyManager.getInstance().getCompatibilityManager().invalidateTagsAndConfigs();
         }
     }
 }

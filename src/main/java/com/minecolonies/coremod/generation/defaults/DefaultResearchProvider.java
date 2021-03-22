@@ -199,7 +199,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                         .setTranslatedSubtitle("You missed a spot...")
                                         .setIcon(new ResourceLocation("minecolonies:textures/icons/research/regeneration2.png"))
                                         .addBuildingRequirement(ModBuildings.LIBRARY_ID, 3)
-                                        .addItemCost(Items.GOLDEN_CARROT, 1)
+                                        .addItemCost(Items.GOLDEN_CARROT, 8)
                                         .addEffect(REGENERATION, 2)
                                         .addToList(r);
         final Research bandages = new Research(new ResourceLocation(Constants.MOD_ID, "civilian/bandages"), CIVIL).setParentResearch(healingCream)

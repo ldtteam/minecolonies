@@ -2,7 +2,6 @@ package com.minecolonies.api.compatibility;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.crafting.CompostRecipe;
@@ -485,10 +484,8 @@ public class CompatibilityManager implements ICompatibilityManager
         //       although technically there's a different event for tag reloads.
         // Kept as a separate function from invalidateRecipes, as invalidateRecipes fires more often, will cause extraneous log messages, and
         // significantly add to load times as it results in parsing through all items at least twice on single-player.
-
-        // Forge tries really hard to prevent people from removing items from the registry after early load stages, and
-        // people try really hard to do it anyway.
-        allItems = ImmutableList.<ItemStack>builder().build();
+        // This does mean data packs which change tags will not filter to the Compatibility Manager until a server restart, but better that than
+        // risking irregular disconnects on lower-powered servers.
 
         // Tag-based configurations may differ between one world and another, or on data pack reload.
         saplings.clear();
