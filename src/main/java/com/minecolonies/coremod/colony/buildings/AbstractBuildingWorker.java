@@ -576,8 +576,12 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             final IToken<?> token = StandardFactoryController.getInstance().deserialize(recipesTags.getCompound(i));
             if (!recipes.contains(token))
             {
-                recipes.add(token);
-                IColonyManager.getInstance().getRecipeManager().registerUse(token);
+                final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
+                if (!Objects.equals(IColonyManager.getInstance().getRecipeManager().getRecipeId(storage), token))
+                {
+                    recipes.add(token);
+                    IColonyManager.getInstance().getRecipeManager().registerUse(token);
+                }
             }
         }
     }
@@ -599,7 +603,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         compound.put(TAG_WORKER, workersTagList);
 
         compound.putInt(TAG_HIRING_MODE, this.hiringMode.ordinal());
-        @NotNull final ListNBT recipesTagList = recipes.stream()
+        @NotNull final ListNBT recipesTagList = recipes.stream().limit(this.getMaxRecipes() * 10)
             .map(iToken -> StandardFactoryController.getInstance().serialize(iToken))
             .collect(NBTUtils.toListNBT());
         compound.put(TAG_RECIPES, recipesTagList);
