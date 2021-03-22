@@ -368,18 +368,7 @@ public class ClientEventHandler
     {
         // While client-only, this event triggers enough to clear all necessary tags for leaving a single-player instance,
         // leaving a dedicated server, or leaving an open to LAN world as host or client.
-        // This means you don't need a FMLServerStopping event equivalent, as the only remaining case is a dedicated server machine itself, which can't have this case show up.
+        // This means you don't need a FMLServerStopping event equivalent, as the only remaining case is a dedicated server machine itself, which will always be hard-closing.
         IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().invalidateTagsAndConfigs();
-    }
-
-    @SubscribeEvent
-    public static void onClientConnect(final ClientPlayerNetworkEvent.LoggedInEvent event)
-    {
-        // This should only run when the player first connects to a remote server
-        // It does have to be here; nearly all other locations won't have the necessary tags to fill the Smelt list.
-        if (ModTags.tagsLoaded && !IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().isDiscoveredAlready() && ItemStackUtils.ISFOOD != null && FurnaceRecipes.getInstance().loaded())
-        {
-            IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().discover(false);
-        }
     }
 }

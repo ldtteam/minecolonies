@@ -480,10 +480,8 @@ public class CompatibilityManager implements ICompatibilityManager
     @Override
     public void invalidateTagsAndConfigs()
     {
-        // This should probably also invalidate anything using tags or server-configs too (which is most things)
-        //       although technically there's a different event for tag reloads.
-        // Kept as a separate function from invalidateRecipes, as invalidateRecipes fires more often, will cause extraneous log messages, and
-        // significantly add to load times as it results in parsing through all items at least twice on single-player.
+        // Kept as a separate function from invalidateRecipes, as invalidateRecipes fires very late for JEI compatibility,
+        // will cause extraneous log messages, and significantly add to load times.
         // This does mean data packs which change tags will not filter to the Compatibility Manager until a server restart, but better that than
         // risking irregular disconnects on lower-powered servers.
 
@@ -497,8 +495,7 @@ public class CompatibilityManager implements ICompatibilityManager
         fuel.clear();
 
         // Server-config-based files may change between one world and another, or the same world after leaving and re-entering.
-        // TODO: Some of these may eventually go to data pack configuration, either for added configurability and/or to reduce the server config size.
-        // Doing so will also reduce the issues here.
+        // TODO: Some of these may eventually go to data packs, either for added configurability and/or to reduce the server config size.
         luckyOres.clear();
         recruitmentCostsWeights.clear();
         diseases.clear();
