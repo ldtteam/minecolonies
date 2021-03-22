@@ -1,12 +1,12 @@
 package com.minecolonies.coremod.entity.ai.citizen.enchanter;
 
 import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
+import com.minecolonies.api.inventory.api.RecordingItemHandler;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.Network;
@@ -28,7 +28,6 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -417,53 +416,5 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
     public Class<BuildingEnchanter> getExpectedBuildingClass()
     {
         return BuildingEnchanter.class;
-    }
-
-    private static class RecordingItemHandler implements IItemHandler
-    {
-        private final IItemHandler underlying;
-        private final List<ItemStack> inserted;
-
-        public RecordingItemHandler(IItemHandler underlying)
-        {
-            this.underlying = underlying;
-            this.inserted = new ArrayList<>();
-        }
-
-        public List<ItemStack> getInserted() { return inserted; }
-
-        @Override
-        public int getSlots() { return underlying.getSlots(); }
-
-        @Override
-        public int getSlotLimit(int slot) { return underlying.getSlotLimit(slot); }
-
-        @NotNull
-        @Override
-        public ItemStack getStackInSlot(int slot) { return underlying.getStackInSlot(slot); }
-
-        @NotNull
-        @Override
-        public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate)
-        {
-            if (!simulate)
-            {
-                inserted.add(stack);
-            }
-            return underlying.insertItem(slot, stack, simulate);
-        }
-
-        @NotNull
-        @Override
-        public ItemStack extractItem(int slot, int amount, boolean simulate)
-        {
-            return underlying.extractItem(slot, amount, simulate);
-        }
-
-        @Override
-        public boolean isItemValid(int slot, @NotNull ItemStack stack)
-        {
-            return underlying.isItemValid(slot, stack);
-        }
     }
 }
