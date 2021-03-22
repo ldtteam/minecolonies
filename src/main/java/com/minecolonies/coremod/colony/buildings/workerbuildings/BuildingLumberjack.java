@@ -97,7 +97,7 @@ public class BuildingLumberjack extends AbstractBuildingCrafter implements IBuil
     /**
      * The job description.
      */
-    private static final String LUMBERJACK = "lumberjack";
+    private static final String LUMBERJACK         = "lumberjack";
 
     /**
      * A list of all planted nether trees
@@ -412,12 +412,8 @@ public class BuildingLumberjack extends AbstractBuildingCrafter implements IBuil
     }
 
     /**
-     * Returns early if no worker is assigned
-     * Iterates over the nether tree position list
-     * If position is a fungus, grows it depending on worker's level
-     * If the block has changed, removes the position from the list and returns early
-     * If the position is not a fungus, removes the position from the list
-     *
+     * Returns early if no worker is assigned Iterates over the nether tree position list If position is a fungus, grows it depending on worker's level If the block has changed,
+     * removes the position from the list and returns early If the position is not a fungus, removes the position from the list
      */
     private void bonemealFungi()
     {
@@ -426,8 +422,9 @@ public class BuildingLumberjack extends AbstractBuildingCrafter implements IBuil
             return;
         }
         final int modifier = Math.max(0, Math.min(FUNGI_MODIFIER, 100));
-        for (final BlockPos pos : netherTrees)
+        for (Iterator<BlockPos> iterator = netherTrees.iterator(); iterator.hasNext(); )
         {
+            final BlockPos pos = iterator.next();
             final World world = colony.getWorld();
             if (WorldUtil.isBlockLoaded(world, pos))
             {
@@ -435,15 +432,16 @@ public class BuildingLumberjack extends AbstractBuildingCrafter implements IBuil
                 final Block block = blockState.getBlock();
                 if (block == Blocks.CRIMSON_FUNGUS || block == Blocks.WARPED_FUNGUS)
                 {
-                    int threshold = modifier + (int) Math.ceil(getMainCitizen().getCitizenSkillHandler().getLevel(getPrimarySkill())*(1-((float) modifier/100)));
+                    int threshold = modifier + (int) Math.ceil(getMainCitizen().getCitizenSkillHandler().getLevel(getPrimarySkill()) * (1 - ((float) modifier / 100)));
                     final int rand = world.getRandom().nextInt(100);
                     if (rand < threshold)
                     {
                         final IGrowable growable = (IGrowable) block;
                         if (growable.canGrow(world, pos, blockState, world.isRemote))
                         {
-                            if (!world.isRemote) {
-                                if(growable.canUseBonemeal(world, world.rand, pos, blockState))
+                            if (!world.isRemote)
+                            {
+                                if (growable.canUseBonemeal(world, world.rand, pos, blockState))
                                 {
                                     growable.grow((ServerWorld) world, world.rand, pos, blockState);
                                     return;
@@ -451,11 +449,10 @@ public class BuildingLumberjack extends AbstractBuildingCrafter implements IBuil
                             }
                         }
                     }
-
                 }
                 else
                 {
-                    removeNetherTree(pos);
+                    iterator.remove();
                 }
             }
         }
@@ -463,6 +460,7 @@ public class BuildingLumberjack extends AbstractBuildingCrafter implements IBuil
 
     /**
      * Returns a list of the registered nether trees to grow.
+     *
      * @return a copy of the list
      */
     public Set<BlockPos> getNetherTrees()
@@ -472,6 +470,7 @@ public class BuildingLumberjack extends AbstractBuildingCrafter implements IBuil
 
     /**
      * Removes a position from the nether trees
+     *
      * @param pos the position
      */
     public void removeNetherTree(BlockPos pos)
@@ -481,6 +480,7 @@ public class BuildingLumberjack extends AbstractBuildingCrafter implements IBuil
 
     /**
      * Adds a position to the nether trees
+     *
      * @param pos the position
      */
     public void addNetherTree(BlockPos pos)
