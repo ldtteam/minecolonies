@@ -54,6 +54,17 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
+              "tag": "{StoredEnchantments:[{lvl:1s,id:\"minecraft:efficiency\"}]}"
+            }
+          ],
+          "weight": 50
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:enchanted_book",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
               "tag": "{StoredEnchantments:[{lvl:1s,id:\"minecraft:feather_falling\"}]}"
             }
           ],
@@ -175,6 +186,17 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
+              "tag": "{StoredEnchantments:[{lvl:1s,id:\"minecraft:quick_charge\"}]}"
+            }
+          ],
+          "weight": 50
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:enchanted_book",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
               "tag": "{StoredEnchantments:[{lvl:1s,id:\"minecraft:respiration\"}]}"
             }
           ],
@@ -264,6 +286,17 @@
             {
               "function": "minecraft:set_nbt",
               "tag": "{StoredEnchantments:[{lvl:2s,id:\"minecraft:depth_strider\"}]}"
+            }
+          ],
+          "weight": 25
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:enchanted_book",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{StoredEnchantments:[{lvl:2s,id:\"minecraft:efficiency\"}]}"
             }
           ],
           "weight": 25
@@ -385,6 +418,17 @@
             {
               "function": "minecraft:set_nbt",
               "tag": "{StoredEnchantments:[{lvl:2s,id:\"minecraft:punch\"}]}"
+            }
+          ],
+          "weight": 25
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:enchanted_book",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{StoredEnchantments:[{lvl:2s,id:\"minecraft:quick_charge\"}]}"
             }
           ],
           "weight": 25
