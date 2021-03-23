@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.crafting.IRecipeManager;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ModRecipeTypes;
 import com.minecolonies.api.crafting.RecipeStorage;
@@ -513,6 +514,7 @@ public class CustomRecipe
             {
                 final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(recipeToken);
                 if ((storage.getRecipeSource() != null && storage.getRecipeSource().equals(recipeSource)) || (
+                  ItemStackUtils.compareItemStacksIgnoreStackSize(storage.getPrimaryOutput(), compareStorage.getPrimaryOutput(), false, true) &&
                   storage.getCleanedInput().containsAll(compareStorage.getCleanedInput())
                     && compareStorage.getCleanedInput()
                          .containsAll(storage.getCleanedInput())))
@@ -565,6 +567,12 @@ public class CustomRecipe
                     secondary, //secondary output
                     lootTable
                     );
+            }
+            IRecipeManager recipeManager = IColonyManager.getInstance().getRecipeManager();
+            IToken<?> cachedRecipeToken = recipeManager.getRecipeId(cachedRecipeStorage);
+            if(cachedRecipeToken != null && !cachedRecipeToken.equals(cachedRecipeStorage.getToken()))
+            {
+                cachedRecipeStorage = (RecipeStorage) recipeManager.getRecipes().get(cachedRecipeToken);
             }
         }
         return cachedRecipeStorage;

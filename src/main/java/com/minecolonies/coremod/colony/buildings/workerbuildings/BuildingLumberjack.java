@@ -16,6 +16,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.client.gui.WindowHutLumberjackModule;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
 import com.minecolonies.coremod.util.AttributeModifierUtils;
@@ -47,7 +48,7 @@ import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_W
 /**
  * The lumberjacks building.
  */
-public class BuildingLumberjack extends AbstractBuildingWorker implements IBuildingPublicCrafter
+public class BuildingLumberjack extends AbstractBuildingCrafter implements IBuildingPublicCrafter
 {
     /**
      * NBT tag if the lj should replant saplings
@@ -96,7 +97,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker implements IBuild
     /**
      * The job description.
      */
-    private static final String LUMBERJACK = "lumberjack";
+    private static final String LUMBERJACK         = "lumberjack";
 
     /**
      * A list of all planted nether trees
@@ -411,12 +412,8 @@ public class BuildingLumberjack extends AbstractBuildingWorker implements IBuild
     }
 
     /**
-     * Returns early if no worker is assigned
-     * Iterates over the nether tree position list
-     * If position is a fungus, grows it depending on worker's level
-     * If the block has changed, removes the position from the list and returns early
-     * If the position is not a fungus, removes the position from the list
-     *
+     * Returns early if no worker is assigned Iterates over the nether tree position list If position is a fungus, grows it depending on worker's level If the block has changed,
+     * removes the position from the list and returns early If the position is not a fungus, removes the position from the list
      */
     private void bonemealFungi()
     {
@@ -425,8 +422,9 @@ public class BuildingLumberjack extends AbstractBuildingWorker implements IBuild
             return;
         }
         final int modifier = Math.max(0, Math.min(FUNGI_MODIFIER, 100));
-        for (final BlockPos pos : netherTrees)
+        for (Iterator<BlockPos> iterator = netherTrees.iterator(); iterator.hasNext(); )
         {
+            final BlockPos pos = iterator.next();
             final World world = colony.getWorld();
             if (WorldUtil.isBlockLoaded(world, pos))
             {
@@ -434,15 +432,16 @@ public class BuildingLumberjack extends AbstractBuildingWorker implements IBuild
                 final Block block = blockState.getBlock();
                 if (block == Blocks.CRIMSON_FUNGUS || block == Blocks.WARPED_FUNGUS)
                 {
-                    int threshold = modifier + (int) Math.ceil(getMainCitizen().getCitizenSkillHandler().getLevel(getPrimarySkill())*(1-((float) modifier/100)));
+                    int threshold = modifier + (int) Math.ceil(getMainCitizen().getCitizenSkillHandler().getLevel(getPrimarySkill()) * (1 - ((float) modifier / 100)));
                     final int rand = world.getRandom().nextInt(100);
                     if (rand < threshold)
                     {
                         final IGrowable growable = (IGrowable) block;
                         if (growable.canGrow(world, pos, blockState, world.isRemote))
                         {
-                            if (!world.isRemote) {
-                                if(growable.canUseBonemeal(world, world.rand, pos, blockState))
+                            if (!world.isRemote)
+                            {
+                                if (growable.canUseBonemeal(world, world.rand, pos, blockState))
                                 {
                                     growable.grow((ServerWorld) world, world.rand, pos, blockState);
                                     return;
@@ -450,11 +449,10 @@ public class BuildingLumberjack extends AbstractBuildingWorker implements IBuild
                             }
                         }
                     }
-
                 }
                 else
                 {
-                    removeNetherTree(pos);
+                    iterator.remove();
                 }
             }
         }
@@ -462,6 +460,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker implements IBuild
 
     /**
      * Returns a list of the registered nether trees to grow.
+     *
      * @return a copy of the list
      */
     public Set<BlockPos> getNetherTrees()
@@ -471,6 +470,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker implements IBuild
 
     /**
      * Removes a position from the nether trees
+     *
      * @param pos the position
      */
     public void removeNetherTree(BlockPos pos)
@@ -480,6 +480,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker implements IBuild
 
     /**
      * Adds a position to the nether trees
+     *
      * @param pos the position
      */
     public void addNetherTree(BlockPos pos)

@@ -12,6 +12,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.block.Block;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.LootContext;
 import net.minecraft.loot.LootParameterSet;
@@ -96,6 +97,11 @@ public class RecipeStorage implements IRecipeStorage
      * The Resource location of the Loot Table to use for possible outputs
      */
     private final ResourceLocation lootTable;
+
+    /**
+     * The hash cache
+     */
+    private int hash = 0;
 
     /**
      * The cached loot table for possible outputs
@@ -382,22 +388,34 @@ public class RecipeStorage implements IRecipeStorage
     @Override
     public int hashCode()
     {
-        int result = cleanedInput.hashCode();
-        result = 31 * result + primaryOutput.hashCode();
-        result = 31 * result + (intermediate != null ? intermediate.hashCode() : 0);
-        result = 31 * result + gridSize;
-        if(recipeSource != null)
+        if(hash == 0)
         {
-            result = 31 * result + recipeSource.hashCode();
-        }
-        if(recipeType != null && !(recipeType instanceof ClassicRecipe))
-        {
-            result = 31 * result + recipeType.hashCode();
+            hash = Objects.hash(cleanedInput, 
+            primaryOutput.getItem(),
+            primaryOutput.getCount(),
+            intermediate,
+            gridSize,
+            hashableItemStackList(alternateOutputs),
+            hashableItemStackList(secondaryOutputs),
+            hashableItemStackList(tools));
         }
 
-        result = 31 * result + alternateOutputs.hashCode();
-        result = 31 * result + secondaryOutputs.hashCode();
-        return result;
+        return hash;
+    }
+
+    /**
+     * Convert a list of itemstacks into something hashable
+     * @param items List of item stacks to convert
+     * @return hashtable of items and counts
+     */
+    private Map<Item, Integer> hashableItemStackList(List<ItemStack> items)
+    {
+        Map<Item, Integer> hashableList = new HashMap<>();
+        for(ItemStack item: items)
+        {
+            hashableList.put(item.getItem(), item.getCount());
+        }
+        return hashableList;
     }
 
     /**
