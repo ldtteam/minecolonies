@@ -152,7 +152,7 @@ public interface IRecipeStorage
     /** 
      * Get the location/id of the Loot table used for optional outputs
      * @return the resource location for the table
-    */
+     */
     ResourceLocation getLootTable();
 
     /**
