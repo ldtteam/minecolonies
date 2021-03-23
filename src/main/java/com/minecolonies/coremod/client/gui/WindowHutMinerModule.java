@@ -9,6 +9,7 @@ import com.ldtteam.blockout.views.SwitchView;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
@@ -116,32 +117,35 @@ public class WindowHutMinerModule extends AbstractWindowWorkerModuleBuilding<Bui
             public void updateElement(final int i, final Pane pane)
             {
                 final ICitizenDataView citizen = guardsInfo.get(i);
-                pane.findPaneOfTypeByID("guardName", Text.class).setText(citizen.getName());
-                final IBuildingView building = miner.getColony().getBuilding(citizen.getWorkBuilding());
-                if (building instanceof AbstractBuildingGuards.View)
+                if (citizen != null)
                 {
-                    final AbstractBuildingGuards.View guardbuilding = (AbstractBuildingGuards.View) building;
-                    final Button button = pane.findPaneOfTypeByID("assignGuard", Button.class);
-                    if (guardbuilding.getMinePos() == null)
+                    final IBuildingView building = miner.getColony().getBuilding(citizen.getWorkBuilding());
+                    if (building instanceof AbstractBuildingGuards.View)
                     {
-                        button.setText(new TranslationTextComponent("com.minecolonies.coremod.gui.hiring.buttonassign"));
-                        if (miner.assignedGuards >= miner.getMaxGuards())
+                        pane.findPaneOfTypeByID("guardName", Text.class).setText(citizen.getName());
+                        final AbstractBuildingGuards.View guardbuilding = (AbstractBuildingGuards.View) building;
+                        final Button button = pane.findPaneOfTypeByID("assignGuard", Button.class);
+                        if (guardbuilding.getMinePos() == null)
                         {
-                            button.setEnabled(false);
+                            button.setText(new TranslationTextComponent("com.minecolonies.coremod.gui.hiring.buttonassign"));
+                            if (miner.assignedGuards >= miner.getMaxGuards())
+                            {
+                                button.setEnabled(false);
+                            }
+                            else
+                            {
+                                button.setEnabled(true);
+                            }
+                        }
+                        else if (guardbuilding.getMinePos().equals(miner.getPosition()))
+                        {
+                            button.setText(new TranslationTextComponent("com.minecolonies.coremod.gui.hiring.buttonunassign"));
                         }
                         else
                         {
-                            button.setEnabled(true);
+                            button.setText(new TranslationTextComponent("com.minecolonies.coremod.gui.hiring.buttonassign"));
+                            button.setEnabled(false);
                         }
-                    }
-                    else if (guardbuilding.getMinePos().equals(miner.getPosition()))
-                    {
-                        button.setText(new TranslationTextComponent("com.minecolonies.coremod.gui.hiring.buttonunassign"));
-                    }
-                    else
-                    {
-                        button.setText(new TranslationTextComponent("com.minecolonies.coremod.gui.hiring.buttonassign"));
-                        button.setEnabled(false);
                     }
                 }
             }
