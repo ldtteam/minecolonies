@@ -185,6 +185,13 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         unequip();
 
         @Nullable final BlockPos gravePos = buildingGraveyard.getGraveToWorkOn();
+
+        // Still moving to the block
+        if (walkToBlock(gravePos, 3))
+        {
+            return getState();
+        }
+
         final TileEntity entity = world.getTileEntity(gravePos);
         if (entity instanceof TileEntityGrave)
         {
@@ -196,12 +203,6 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
             if (worker.getInventoryCitizen().isFull())
             {
                 return INVENTORY_FULL;
-            }
-
-            // Still moving to the block
-            if (walkToBlock(gravePos, 3))
-            {
-                return getState();
             }
 
             if(effortCounter < EFFORT_EMPTY_GRAVE)
@@ -241,15 +242,16 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         worker.setSprinting(false);
 
         @Nullable final BlockPos gravePos = buildingGraveyard.getGraveToWorkOn();
+
+        // Still moving to the block
+        if (walkToBlock(gravePos, 3))
+        {
+            return getState();
+        }
+
         final TileEntity entity = world.getTileEntity(gravePos);
         if (entity instanceof TileEntityGrave)
         {
-            // Still moving to the block
-            if (walkToBlock(gravePos, 3))
-            {
-                return getState();
-            }
-
             //at position
             if (!digIfAble(gravePos))
             {
@@ -309,15 +311,16 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         unequip();
 
         @Nullable final BlockPos gravePos = buildingGraveyard.getGraveToWorkOn();
+
+        // Still moving to the block
+        if (walkToBlock(gravePos, 3))
+        {
+            return getState();
+        }
+
         final TileEntity entity = world.getTileEntity(gravePos);
         if (entity instanceof TileEntityGrave)
         {
-            // Still moving to the block
-            if (walkToBlock(gravePos, 3))
-            {
-                return getState();
-            }
-
             if (effortCounter < EFFORT_RESURRECT)
             {
                 worker.swingArm(Hand.MAIN_HAND);
