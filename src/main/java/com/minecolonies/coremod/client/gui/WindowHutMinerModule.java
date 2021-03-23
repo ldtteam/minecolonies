@@ -148,6 +148,11 @@ public class WindowHutMinerModule extends AbstractWindowWorkerModuleBuilding<Bui
                         }
                     }
                 }
+                else
+                {
+                    final Button button = pane.findPaneOfTypeByID("assignGuard", Button.class);
+                    button.setEnabled(false);
+                }
             }
         });
     }
@@ -193,23 +198,26 @@ public class WindowHutMinerModule extends AbstractWindowWorkerModuleBuilding<Bui
             case BUTTON_ASSIGNGUARD:
                 final int guardRow = guardsList.getListElementIndexByPane(button);
                 final ICitizenDataView guard = guardsInfo.get(guardRow);
-                final AbstractBuildingGuards.View guardbuilding = (AbstractBuildingGuards.View) miner.getColony().getBuilding(guard.getWorkBuilding());
-                if (guardbuilding.getMinePos() == null)
+                if (guard != null)
                 {
-                    if (miner.assignedGuards < miner.getMaxGuards())
+                    final AbstractBuildingGuards.View guardbuilding = (AbstractBuildingGuards.View) miner.getColony().getBuilding(guard.getWorkBuilding());
+                    if (guardbuilding.getMinePos() == null)
                     {
-                        Network.getNetwork().sendToServer(new GuardSetMinePosMessage(guardbuilding, miner.getPosition()));
-                        button.setText(new TranslationTextComponent("com.minecolonies.coremod.gui.hiring.buttonunassign"));
-                        guardbuilding.setMinePos(miner.getPosition());
-                        miner.assignedGuards++;
+                        if (miner.assignedGuards < miner.getMaxGuards())
+                        {
+                            Network.getNetwork().sendToServer(new GuardSetMinePosMessage(guardbuilding, miner.getPosition()));
+                            button.setText(new TranslationTextComponent("com.minecolonies.coremod.gui.hiring.buttonunassign"));
+                            guardbuilding.setMinePos(miner.getPosition());
+                            miner.assignedGuards++;
+                        }
                     }
-                }
-                else if (guardbuilding.getMinePos().equals(miner.getPosition()))
-                {
-                    Network.getNetwork().sendToServer(new GuardSetMinePosMessage(guardbuilding));
-                    button.setText(new TranslationTextComponent("com.minecolonies.coremod.gui.hiring.buttonassign"));
-                    guardbuilding.setMinePos(null);
-                    miner.assignedGuards--;
+                    else if (guardbuilding.getMinePos().equals(miner.getPosition()))
+                    {
+                        Network.getNetwork().sendToServer(new GuardSetMinePosMessage(guardbuilding));
+                        button.setText(new TranslationTextComponent("com.minecolonies.coremod.gui.hiring.buttonassign"));
+                        guardbuilding.setMinePos(null);
+                        miner.assignedGuards--;
+                    }
                 }
                 pullGuardsFromHut();
                 break;
