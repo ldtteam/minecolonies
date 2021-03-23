@@ -101,17 +101,10 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
     @NotNull
     private IAIState startWorking()
     {
-        @Nullable final BuildingGraveyard building = getOwnBuilding();
-        if (building == null || building.getBuildingLevel() < 1)
-        {
-            worker.getCitizenData().setVisibleStatus(null);
-            return IDLE;
-        }
-
         worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
         worker.getCitizenData().setIdleAtJob(false);
 
-        @Nullable final BlockPos currentGrave = building.getGraveToWorkOn();
+        @Nullable final BlockPos currentGrave = getOwnBuilding().getGraveToWorkOn();
         if (currentGrave != null)
         {
             if (walkToBuilding())
@@ -122,10 +115,10 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
             final TileEntity entity = world.getTileEntity(currentGrave);
             if (entity != null && entity instanceof TileEntityGrave)
             {
-                building.setLastGraveData((GraveData) ((TileEntityGrave) entity).getGraveData());
+                getOwnBuilding().setLastGraveData((GraveData) ((TileEntityGrave) entity).getGraveData());
                 return EMPTY_GRAVE;
             }
-            building.ClearCurrentGrave();
+            getOwnBuilding().ClearCurrentGrave();
         }
 
         return WANDER;
