@@ -369,6 +369,7 @@ public class DefaultEnchanterCraftingProvider implements IDataProvider
                         .minBuildingLevel(buildingLevel)
                         .maxBuildingLevel(buildingLevel)
                         .inputs(tome)
+                        .secondaryOutputs(Collections.singletonList(new ItemStack(Items.ENCHANTED_BOOK)))
                         .lootTable(new ResourceLocation(MOD_ID, "recipes/enchanter" + buildingLevel))
                         .build(consumer);
             }

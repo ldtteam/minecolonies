@@ -8,6 +8,11 @@
       "item": "minecolonies:ancienttome"
     }
   ],
+  "additional-output": [
+    {
+      "item": "minecraft:enchanted_book"
+    }
+  ],
   "loot-table": "minecolonies:recipes/enchanter1",
   "intermediate": "minecraft:air"
 }
