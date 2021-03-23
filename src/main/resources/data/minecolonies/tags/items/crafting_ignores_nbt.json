@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "#minecraft:banners",
+    "minecraft:clock",
+    "minecraft:compass",
+    "minecolonies:ancienttome",
+    "minecolonies:colony_banner"
+  ]
+}

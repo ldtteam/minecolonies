@@ -361,11 +361,7 @@ public class DefaultEnchanterCraftingProvider implements IDataProvider
         @Override
         protected void registerRecipes(@NotNull final Consumer<IFinishedRecipe> consumer)
         {
-            final CompoundNBT tag = new CompoundNBT();
-            tag.putBoolean(NbtTagConstants.TAG_IGNORE_NBT, true);
-
             final List<ItemStack> tome = Collections.singletonList(new ItemStack(ModItems.ancientTome, 1));
-            tome.get(0).setTag(tag);
 
             for (int buildingLevel = 1; buildingLevel <= MAX_BUILDING_LEVEL; ++buildingLevel)
             {

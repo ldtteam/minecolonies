@@ -5,7 +5,7 @@
   "max-building-level": 1,
   "inputs": [
     {
-      "item": "minecolonies:ancienttome{ignoreNBT:1b}"
+      "item": "minecolonies:ancienttome"
     }
   ],
   "loot-table": "minecolonies:recipes/enchanter1",

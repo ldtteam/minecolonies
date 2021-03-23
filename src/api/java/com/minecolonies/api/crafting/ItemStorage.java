@@ -1,9 +1,15 @@
 package com.minecolonies.api.crafting;
 
+import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.TagUtils;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tags.ITag;
+import net.minecraft.tags.TagCollectionManager;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.util.Lazy;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -11,6 +17,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 
 /**
  * Used to store an stack with various informations to compare items later on.
@@ -41,6 +49,13 @@ public class ItemStorage
      * Amount of the storage.
      */
     private int amount;
+
+    /**
+     * Tag indicating items that should always be compared without NBT, for recipe compatibility.
+     * Note this tag can't be loaded via ModTagsInitializer as that occurs too late.
+     */
+    private static final Lazy<ITag<Item>> craftingIgnoresNbt = Lazy.of(() ->
+            TagUtils.getItem(new ResourceLocation(MOD_ID, "crafting_ignores_nbt")));
 
     /**
      * Creates an instance of the storage.
@@ -104,7 +119,7 @@ public class ItemStorage
         this.creativeTabIndex = stack.getItem().getCreativeTabs().stream().filter(Objects::nonNull).map(g -> g.index).collect(Collectors.toList());
     }
 
-    private static boolean getDefaultIgnoreNBT(@NotNull ItemStack stack)
+    private static boolean getDefaultIgnoreNBT(@NotNull final ItemStack stack)
     {
         //noinspection ConstantConditions
         return stack.hasTag() && stack.getTag().getBoolean(NbtTagConstants.TAG_IGNORE_NBT);
@@ -176,7 +191,7 @@ public class ItemStorage
      */
     public boolean ignoreNBT()
     {
-        return shouldIgnoreNBTValue;
+        return shouldIgnoreNBTValue || craftingIgnoresNbt.get().contains(stack.getItem());
     }
 
     /**
