@@ -13,6 +13,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.colony.GraveData;
 import com.minecolonies.coremod.colony.buildings.BuildingMysticalSite;
+import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingEnchanter;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingGraveyard;
 import com.minecolonies.coremod.colony.jobs.JobUndertaker;
@@ -141,7 +142,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         if(wanderPos == null)
         {
             wanderPos = worker.getCitizenColonyHandler().getColony().getBuildingManager().
-                    getRandomBuilding(b -> b.getSchematicName() == "citizen" || b instanceof BuildingMysticalSite || b instanceof BuildingEnchanter);
+                    getRandomBuilding(b -> b.hasModule(LivingBuildingModule.class) || b instanceof BuildingMysticalSite || b instanceof BuildingEnchanter);
             return getState();
         }
 
