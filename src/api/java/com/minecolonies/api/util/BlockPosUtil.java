@@ -251,7 +251,7 @@ public final class BlockPosUtil
 
         for(IBuilding building : colony.getBuildingManager().getBuildings().values())
         {
-            if(building.isInBuilding(pos))
+            if(building.isInBuilding(new Vector3d(pos.getX(), pos.getY(), pos.getZ())))
             {
                 return building;
             }

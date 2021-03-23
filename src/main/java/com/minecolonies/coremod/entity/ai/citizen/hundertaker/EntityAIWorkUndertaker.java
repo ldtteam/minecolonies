@@ -10,7 +10,6 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.tileentities.TileEntityGrave;
 import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.colony.GraveData;
 import com.minecolonies.coremod.colony.buildings.BuildingMysticalSite;
@@ -23,7 +22,6 @@ import net.minecraft.block.*;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -35,42 +33,13 @@ import java.util.Random;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.research.util.ResearchConstants.RESURRECT_CHANCE;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
+import static com.minecolonies.api.util.constant.UndertakerConstants.*;
 
 /**
  * Undertaker AI class.
  */
 public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertaker, BuildingGraveyard>
 {
-    /**
-     * The EXP Earned per dig.
-     */
-    private static final double XP_PER_DIG = 0.5;
-
-    /**
-     * The EXP Earned per wander.
-     */
-    private static final double XP_PER_WANDER = 0.01;
-
-    /**
-     * The weigth of each building level on the resurrection chances.
-     */
-    private static final double RESURRECT_BUILDING_LVL_WEIGHT = 0.005;
-
-    /**
-     * The weigth of each worker level on the resurrection chances.
-     */
-    private static final double RESURRECT_WORKER_MANA_LVL_WEIGHT = 0.0025;
-
-    /**
-     * The max resurrection chance cap [0.0 min -> 1.0 max]
-     */
-    private static final double MAX_RESURRECTION_CHANCE = 0.05;
-
-    /**
-     * The bonus to max resurrection chance cap per max lvl of Mystical Site in the city
-     */
-    private static final double MAX_RESURRECTION_CHANCE_MYSTICAL_LVL_BONUS = 0.01;
-
     /**
      * The random variable.
      */
@@ -80,34 +49,6 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
      * A counter to delay some task.
      */
     private int effortCounter = 0;
-
-    private static final int EFFORT_EMPTY_GRAVE = 100;
-    private static final int EFFORT_BURY = 400;
-    private static final int EFFORT_RESURRECT = 400;
-
-    /**
-     * Undertaker emptying icon
-     */
-    private final static VisibleCitizenStatus EMPTYING_ICON =
-      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/undertaker.png"), "com.minecolonies.gui.visiblestatus.emptying");
-
-    /**
-     * Undertaker digging icon
-     */
-    private final static VisibleCitizenStatus DIGGING_ICON =
-            new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/undertaker.png"), "com.minecolonies.gui.visiblestatus.digging");
-
-    /**
-     * Undertaker bury icon
-     */
-    private final static VisibleCitizenStatus BURYING_ICON =
-            new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/undertaker.png"), "com.minecolonies.gui.visiblestatus.burying");
-
-    /**
-     * Undertaker resurrect icon
-     */
-    private final static VisibleCitizenStatus RESURRECT_ICON =
-            new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/undertaker.png"), "com.minecolonies.gui.visiblestatus.resurrect");
 
     /**
      * Changed after finished digging in order to dump the inventory.
@@ -196,13 +137,6 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
     @NotNull
     private IAIState wander()
     {
-        @Nullable final BuildingGraveyard building = getOwnBuilding();
-        if (building == null || building.getBuildingLevel() < 1)
-        {
-            worker.getCitizenData().setVisibleStatus(null);
-            return IDLE;
-        }
-
         if(wanderPos == null)
         {
             final BlockPos newWanderPos = worker.getCitizenColonyHandler().getColony().getBuildingManager().
@@ -219,7 +153,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
             return getState();
         }
 
-        if(wanderPos == building.getPosition())
+        if(wanderPos == getOwnBuilding().getPosition())
         {
             wanderPos = null;
             worker.decreaseSaturationForContinuousAction();
@@ -227,7 +161,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         }
         else
         {
-            wanderPos = building.getPosition();
+            wanderPos = getOwnBuilding().getPosition();
         }
 
         return IDLE;
