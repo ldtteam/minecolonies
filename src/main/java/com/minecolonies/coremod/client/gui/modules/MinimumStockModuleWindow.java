@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.client.gui;
+package com.minecolonies.coremod.client.gui.modules;
 
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Button;
@@ -13,6 +13,8 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.client.gui.AbstractModuleWindow;
+import com.minecolonies.coremod.client.gui.WindowSelectRes;
 import com.minecolonies.coremod.network.messages.server.colony.building.RemoveMinimumStockFromBuildingModuleMessage;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;

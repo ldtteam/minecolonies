@@ -225,6 +225,7 @@ public class NetworkChannel
         registerMessage(++idx, FieldPlotResizeMessage.class, FieldPlotResizeMessage::new);
         registerMessage(++idx, AdjustSkillCitizenMessage.class, AdjustSkillCitizenMessage::new);
         registerMessage(++idx, BuilderSelectWorkOrderMessage.class, BuilderSelectWorkOrderMessage::new);
+        registerMessage(++idx, TriggerSettingMessage.class, TriggerSettingMessage::new);
 
         //Client side only
         registerMessage(++idx, BlockParticleEffectMessage.class, BlockParticleEffectMessage::new);

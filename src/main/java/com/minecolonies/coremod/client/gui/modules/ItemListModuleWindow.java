@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.client.gui;
+package com.minecolonies.coremod.client.gui.modules;
 
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.*;
@@ -6,6 +6,7 @@ import com.ldtteam.blockout.views.ScrollingList;
 import com.minecolonies.api.colony.buildings.modules.IItemListModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.coremod.client.gui.AbstractModuleWindow;
 import com.minecolonies.coremod.colony.buildings.moduleviews.ItemListModuleView;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -63,7 +64,6 @@ public class ItemListModuleWindow extends AbstractModuleWindow
       final IItemListModuleView moduleView)
     {
         super(building, res);
-        this.id = moduleView.getId();
 
         resourceList = window.findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class);
         window.findPaneOfTypeByID(DESC_LABEL, Text.class).setText(new TranslationTextComponent(moduleView.getDesc().toLowerCase(Locale.US)));

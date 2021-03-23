@@ -3,6 +3,7 @@ package com.minecolonies.apiimp.initializer;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.coremod.colony.buildings.modules.settings.BoolSetting;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.buildings.BuildingMysticalSite;
@@ -11,6 +12,7 @@ import com.minecolonies.coremod.colony.buildings.modules.*;
 import com.minecolonies.coremod.colony.buildings.moduleviews.FloristFlowerListModuleView;
 import com.minecolonies.coremod.colony.buildings.moduleviews.ItemListModuleView;
 import com.minecolonies.coremod.colony.buildings.moduleviews.MinimumStockModuleView;
+import com.minecolonies.coremod.colony.buildings.moduleviews.SettingsModuleView;
 import com.minecolonies.coremod.colony.buildings.views.EmptyView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
 import net.minecraft.util.ResourceLocation;
@@ -281,6 +283,7 @@ public final class ModBuildingsInitializer
                                  .setBuildingViewProducer(() -> BuildingFlorist.View::new)
                                  .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.FLORIST_ID))
                                  .addBuildingModuleProducer(() -> new ItemListModule(FLORIST_FLOWER_LIST), () -> new FloristFlowerListModuleView())
+                                 .addBuildingModuleProducer(() -> new SettingsModule().with("test", new BoolSetting(true)), SettingsModuleView::new)
                                  .createBuildingEntry();
 
         ModBuildings.enchanter = new BuildingEntry.Builder()
