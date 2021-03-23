@@ -251,30 +251,10 @@ public final class BlockPosUtil
 
         for(IBuilding building : colony.getBuildingManager().getBuildings().values())
         {
-            Tuple<BlockPos, BlockPos> corners = building.getCorners();
-
-            final int minX = Math.min(corners.getA().getX(), corners.getB().getX());
-            final int maxX = Math.max(corners.getA().getX(), corners.getB().getX());
-            if(pos.getX() < minX || pos.getX() > maxX)
+            if(building.isInBuilding(pos))
             {
-                continue;
+                return building;
             }
-
-            final int minY = Math.min(corners.getA().getY(), corners.getB().getY());
-            final int maxY = Math.max(corners.getA().getY(), corners.getB().getY());
-            if(pos.getY() < minY || pos.getY() > maxY)
-            {
-                continue;
-            }
-
-            final int minZ = Math.min(corners.getA().getZ(), corners.getB().getZ());
-            final int maxZ = Math.max(corners.getA().getZ(), corners.getB().getZ());
-            if(pos.getZ() < minZ || pos.getZ() > maxZ)
-            {
-                continue;
-            }
-
-            return building;
         }
 
         return null;
