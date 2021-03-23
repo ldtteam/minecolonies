@@ -245,4 +245,10 @@ public interface IBuildingView extends IRequester
      * @param iModuleView the view.
      */
     void registerModule(IBuildingModuleView iModuleView);
+
+    /**
+     * Get all module views in a list.
+     * @return the list of views.
+     */
+    List<IBuildingModuleView> getAllModuleViews();
 }

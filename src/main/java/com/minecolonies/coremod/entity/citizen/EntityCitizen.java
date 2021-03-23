@@ -1069,7 +1069,7 @@ public class EntityCitizen extends AbstractEntityCitizen
             citizenStatusHandler.setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.waiting"),
               new TranslationTextComponent("com.minecolonies.coremod.status.rainStop"));
             setVisibleStatusIfNone(BAD_WEATHER);
-            desiredActivity = DesiredActivity.IDLE;
+            desiredActivity = DesiredActivity.SLEEP;
             return false;
         }
 

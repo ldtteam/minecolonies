@@ -13,7 +13,7 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.items.ModItems;
-import com.minecolonies.coremod.client.gui.WindowHutFlorist;
+import com.minecolonies.coremod.client.gui.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
 import com.minecolonies.coremod.colony.jobs.JobFlorist;
@@ -247,7 +247,7 @@ public class BuildingFlorist extends AbstractBuildingWorker
         @Override
         public Window getWindow()
         {
-            return new WindowHutFlorist(this);
+            return new WindowHutWorkerModulePlaceholder<>(this, FLORIST);
         }
     }
 }

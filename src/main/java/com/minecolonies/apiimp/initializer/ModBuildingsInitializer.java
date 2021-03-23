@@ -8,6 +8,9 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.buildings.BuildingMysticalSite;
 import com.minecolonies.coremod.colony.buildings.DefaultBuildingInstance;
 import com.minecolonies.coremod.colony.buildings.modules.*;
+import com.minecolonies.coremod.colony.buildings.moduleviews.FloristFlowerListModuleView;
+import com.minecolonies.coremod.colony.buildings.moduleviews.ItemListModuleView;
+import com.minecolonies.coremod.colony.buildings.moduleviews.MinimumStockModuleView;
 import com.minecolonies.coremod.colony.buildings.views.EmptyView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
 import net.minecraft.util.ResourceLocation;
@@ -48,6 +51,7 @@ public final class ModBuildingsInitializer
                                 .setBuildingProducer(BuildingBaker::new)
                                 .setBuildingViewProducer(() -> BuildingBaker.View::new)
                                 .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.BAKERY_ID))
+                                .addBuildingModuleProducer(MinimumStockModule::new, MinimumStockModuleView::new)
                                 .addBuildingModuleProducer(() -> new ItemListModule(FUEL_LIST), () -> new ItemListModuleView(FUEL_LIST, COM_MINECOLONIES_REQUESTS_BURNABLE, false,
                                   (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getFuel()))
                                 .createBuildingEntry();
@@ -102,7 +106,7 @@ public final class ModBuildingsInitializer
                                    .setBuildingViewProducer(() -> BuildingComposter.View::new)
                                    .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.COMPOSTER_ID))
                                    .addBuildingModuleProducer(() -> new ItemListModule(COMPOSTABLE_LIST), () -> new ItemListModuleView(COMPOSTABLE_LIST, COM_MINECOLONIES_REQUESTS_COMPOSTABLE_UI, false,
-                                     (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getCopyOfCompostableItems()))
+                                     (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getCompostInputs()))
                                    .createBuildingEntry();
 
         ModBuildings.cook = new BuildingEntry.Builder()
@@ -110,6 +114,7 @@ public final class ModBuildingsInitializer
                               .setBuildingProducer(BuildingCook::new)
                               .setBuildingViewProducer(() -> BuildingCook.View::new)
                               .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.COOK_ID))
+                              .addBuildingModuleProducer(MinimumStockModule::new, MinimumStockModuleView::new)
                               .addBuildingModuleProducer(() -> new ItemListModule(FUEL_LIST), () -> new ItemListModuleView(FUEL_LIST, COM_MINECOLONIES_REQUESTS_BURNABLE, false,
                                 (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getFuel()))
                               .addBuildingModuleProducer(() -> new ItemListModule(FOOD_EXCLUSION_LIST), () -> new ItemListModuleView(FOOD_EXCLUSION_LIST, COM_MINECOLONIES_REQUESTS_FOOD, true,
@@ -210,6 +215,7 @@ public final class ModBuildingsInitializer
                                 .setBuildingBlock(ModBlocks.blockHutSifter)
                                 .setBuildingProducer(BuildingSifter::new)
                                 .setBuildingViewProducer(() -> BuildingSifter.View::new)
+                                .addBuildingModuleProducer(MinimumStockModule::new, MinimumStockModuleView::new)
                                 .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.SIFTER_ID))
                                 .createBuildingEntry();
 
@@ -259,6 +265,7 @@ public final class ModBuildingsInitializer
                                    .setBuildingProducer(BuildingWareHouse::new)
                                    .setBuildingViewProducer(() -> BuildingWareHouse.View::new)
                                    .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.WAREHOUSE_ID))
+                                   .addBuildingModuleProducer(MinimumStockModule::new, MinimumStockModuleView::new)
                                    .createBuildingEntry();
 
         ModBuildings.postBox = new BuildingEntry.Builder()
@@ -273,8 +280,7 @@ public final class ModBuildingsInitializer
                                  .setBuildingProducer(BuildingFlorist::new)
                                  .setBuildingViewProducer(() -> BuildingFlorist.View::new)
                                  .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.FLORIST_ID))
-                                 .addBuildingModuleProducer(() -> new ItemListModule(FLORIST_FLOWER_LIST), () -> new ItemListModuleView(FLORIST_FLOWER_LIST, FLORIST_FLOWER_DESC, true,
-                                   (buildingView) -> BuildingFlorist.getPlantablesForBuildingLevel(buildingView.getBuildingLevel())))
+                                 .addBuildingModuleProducer(() -> new ItemListModule(FLORIST_FLOWER_LIST), () -> new FloristFlowerListModuleView())
                                  .createBuildingEntry();
 
         ModBuildings.enchanter = new BuildingEntry.Builder()

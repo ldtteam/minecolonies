@@ -738,6 +738,9 @@ public class Colony implements IColony
         if (compound.keySet().contains(TAG_RESEARCH))
         {
             researchManager.readFromNBT(compound.getCompound(TAG_RESEARCH));
+            // now that buildings, colonists, and research are loaded, check for new autoStartResearch.
+            // this is mostly for backwards compatibility with older saves, so players do not have to manually start newly added autostart researches that they've unlocked before the update.
+            researchManager.checkAutoStartResearch();
         }
 
         //  Workload
@@ -1619,7 +1622,7 @@ public class Colony implements IColony
         this.needToMourn = needToMourn;
         if (needToMourn)
         {
-            LanguageHandler.sendPlayersMessage(getImportantMessageEntityPlayers(), COM_MINECOLONIES_COREMOD_MOURN, name);
+            LanguageHandler.sendPlayersMessage(getImportantMessageEntityPlayers(), COM_MINECOLONIES_COREMOD_MOURN, getName(), name);
         }
     }
 

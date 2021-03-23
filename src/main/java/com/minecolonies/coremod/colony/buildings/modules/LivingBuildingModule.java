@@ -69,7 +69,6 @@ public class LivingBuildingModule extends AbstractBuildingModule implements IAss
                 final ICitizenData citizen = building.getColony().getCitizenManager().getCivilian(citizenId);
                 if (citizen != null)
                 {
-                    // Bypass assignCitizen (which marks dirty)
                     assignCitizen(citizen);
                 }
             }
@@ -139,7 +138,7 @@ public class LivingBuildingModule extends AbstractBuildingModule implements IAss
         if (building.getBuildingLevel() > 0 && (childCreationTimer -= TWENTYFIVESEC) <= 0)
         {
             childCreationTimer =
-              (int) (colony.getWorld().rand.nextInt(500) + CHILD_SPAWN_INTERVAL * (1.0 - colony.getCitizenManager().getCurrentCitizenCount() / Math.max(4,
+              (colony.getWorld().rand.nextInt(500) + CHILD_SPAWN_INTERVAL * (colony.getCitizenManager().getCurrentCitizenCount() / Math.max(4,
                 colony.getCitizenManager()
                   .getMaxCitizens())));
             trySpawnChild();
@@ -247,7 +246,7 @@ public class LivingBuildingModule extends AbstractBuildingModule implements IAss
             final int populationCount = building.getColony().getCitizenManager().getCurrentCitizenCount();
             AdvancementUtils.TriggerAdvancementPlayersForColony(building.getColony(), playerMP -> AdvancementTriggers.COLONY_POPULATION.trigger(playerMP, populationCount));
 
-            LanguageHandler.sendPlayersMessage(building.getColony().getImportantMessageEntityPlayers(), "com.minecolonies.coremod.progress.newChild");
+            LanguageHandler.sendPlayersMessage(building.getColony().getImportantMessageEntityPlayers(), "com.minecolonies.coremod.progress.newChild", building.getColony().getName());
             building.getColony().getCitizenManager().spawnOrCreateCitizen(newCitizen, building.getColony().getWorld(), building.getPosition());
 
             building.getColony().getEventDescriptionManager().addEventDescription(new CitizenBornEvent(building.getPosition(), newCitizen.getName()));

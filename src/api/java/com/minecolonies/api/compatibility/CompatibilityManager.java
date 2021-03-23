@@ -2,20 +2,25 @@ package com.minecolonies.api.compatibility;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
+import com.minecolonies.api.crafting.CompostRecipe;
+import com.minecolonies.api.compatibility.resourcefulbees.*;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.*;
 import net.minecraft.block.*;
 import net.minecraft.enchantment.EnchantmentData;
 import net.minecraft.item.*;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.RecipeManager;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.state.BooleanProperty;
-import net.minecraft.state.Property;
 import net.minecraft.state.IntegerProperty;
+import net.minecraft.state.Property;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.util.NonNullList;
@@ -23,6 +28,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
@@ -75,9 +81,9 @@ public class CompatibilityManager implements ICompatibilityManager
     private final Set<ItemStorage> smeltableOres = new HashSet<>();
 
     /**
-     * List of all the items that can be composted
+     * List of all the compost recipes
      */
-    private final Set<ItemStorage> compostableItems = new HashSet<>();
+    private final Map<Item, CompostRecipe> compostRecipes = new HashMap<>();
 
     /**
      * List of all the items that can be planted.
@@ -120,11 +126,6 @@ public class CompatibilityManager implements ICompatibilityManager
     private final List<Tuple<Item, Integer>> recruitmentCostsWeights = new ArrayList<>();
 
     /**
-     * The meshes the sifter is going to be able to use.
-     */
-    private final List<Tuple<ItemStorage, Double>> sifterMeshes = new ArrayList<>();
-
-    /**
      * Map of building level to the list of possible enchantments.
      */
     private final Map<Integer, List<Tuple<String, Integer>>> enchantments = new HashMap<>();
@@ -165,28 +166,21 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
-    public List<Tuple<ItemStorage, Double>> getMeshes()
-    {
-        return new ArrayList<>(this.sifterMeshes);
-    }
-
-    @Override
     public void discover(final boolean serverSide)
     {
         discoverAllItems();
 
         discoverSaplings();
         discoverOres();
-        discoverCompostableItems();
         discoverPlantables();
         discoverLuckyOres();
         discoverRecruitCosts();
         discoverDiseases();
-        discoverSifting();
         discoverFood();
         discoverFuel();
         discoverEnchantments();
         discoverFreeBlocksAndPos();
+        discoverModCompat();
 
         discoveredAlready = true;
     }
@@ -197,13 +191,13 @@ public class CompatibilityManager implements ICompatibilityManager
     private void discoverAllItems()
     {
         final List<ItemStack> stacks = StreamSupport.stream(Spliterators.spliteratorUnknownSize(ForgeRegistries.ITEMS.iterator(), Spliterator.ORDERED), true)
-                                           .flatMap(item ->
-                                             {
-                                                 final NonNullList<ItemStack> list = NonNullList.create();
-                                                 item.fillItemGroup(ItemGroup.SEARCH, list);
-                                                 return list.stream();
-                                             })
-                                           .collect(Collectors.toList());
+                .flatMap(item ->
+                {
+                    final NonNullList<ItemStack> list = NonNullList.create();
+                    item.fillItemGroup(ItemGroup.SEARCH, list);
+                    return list.stream();
+                })
+                .collect(Collectors.toList());
 
         allItems = ImmutableList.copyOf(stacks);
     }
@@ -217,23 +211,6 @@ public class CompatibilityManager implements ICompatibilityManager
     public List<ItemStack> getListOfAllItems()
     {
         return allItems;
-    }
-
-    @Override
-    public boolean isCompost(final ItemStack itemStack)
-    {
-        if (itemStack.isEmpty())
-        {
-            return false;
-        }
-
-        if (itemStack.getItem().isFood() || (itemStack.getItem() instanceof BlockItem && (((BlockItem) itemStack.getItem()).getBlock() instanceof CropsBlock
-                                                                                            || ((BlockItem) itemStack.getItem()).getBlock() instanceof StemBlock)))
-        {
-            return true;
-        }
-
-        return ModTags.compostables.contains(itemStack.getItem());
     }
 
     @Override
@@ -315,9 +292,17 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
-    public Set<ItemStorage> getCopyOfCompostableItems()
+    public Map<Item, CompostRecipe> getCopyOfCompostRecipes()
     {
-        return new HashSet<>(compostableItems);
+        return ImmutableMap.copyOf(compostRecipes);
+    }
+
+    @Override
+    public Set<ItemStorage> getCompostInputs()
+    {
+        return compostRecipes.keySet().stream()
+                .map(item -> new ItemStorage(new ItemStack(item)))
+                .collect(Collectors.toSet());
     }
 
     @Override
@@ -413,11 +398,11 @@ public class CompatibilityManager implements ICompatibilityManager
     public void write(@NotNull final CompoundNBT compound)
     {
         @NotNull final ListNBT saplingsLeavesTagList =
-          leavesToSaplingMap.entrySet()
-            .stream()
-            .filter(entry -> entry.getKey() != null)
-            .map(entry -> writeLeafSaplingEntryToNBT(entry.getKey().getState(), entry.getValue()))
-            .collect(NBTUtils.toListNBT());
+                leavesToSaplingMap.entrySet()
+                        .stream()
+                        .filter(entry -> entry.getKey() != null)
+                        .map(entry -> writeLeafSaplingEntryToNBT(entry.getKey().getState(), entry.getValue()))
+                        .collect(NBTUtils.toListNBT());
         compound.put(TAG_SAP_LEAF, saplingsLeavesTagList);
     }
 
@@ -425,9 +410,9 @@ public class CompatibilityManager implements ICompatibilityManager
     public void read(@NotNull final CompoundNBT compound)
     {
         NBTUtils.streamCompound(compound.getList(TAG_SAP_LEAF, Constants.NBT.TAG_COMPOUND))
-          .map(CompatibilityManager::readLeafSaplingEntryFromNBT)
-          .filter(key -> !leavesToSaplingMap.containsKey(new BlockStateStorage(key.getA(), leafCompareWithoutProperties, true)) && !leavesToSaplingMap.containsValue(key.getB()))
-          .forEach(key -> leavesToSaplingMap.put(new BlockStateStorage(key.getA(), leafCompareWithoutProperties, true), key.getB()));
+                .map(CompatibilityManager::readLeafSaplingEntryFromNBT)
+                .filter(key -> !leavesToSaplingMap.containsKey(new BlockStateStorage(key.getA(), leafCompareWithoutProperties, true)) && !leavesToSaplingMap.containsValue(key.getB()))
+                .forEach(key -> leavesToSaplingMap.put(new BlockStateStorage(key.getA(), leafCompareWithoutProperties, true), key.getB()));
     }
 
     @Override
@@ -471,7 +456,7 @@ public class CompatibilityManager implements ICompatibilityManager
             ench = list.get(random.nextInt(list.size()));
         }
         return new Tuple<>(getEnchantedItemStack(new EnchantmentData(ForgeRegistries.ENCHANTMENTS.getValue(new ResourceLocation(ench.getA())), ench.getB())),
-          ench.getB());
+                ench.getB());
     }
 
     @Override
@@ -486,6 +471,16 @@ public class CompatibilityManager implements ICompatibilityManager
         return freePositions.contains(block);
     }
 
+    @Override
+    public void invalidateRecipes(@NotNull final RecipeManager recipeManager)
+    {
+        // TODO: this should probably also invalidate anything using tags too (which is most things)
+        //       although technically there's a different event for tag reloads
+
+        compostRecipes.clear();
+        discoverCompostRecipes(recipeManager);
+    }
+
     //------------------------------- Private Utility Methods -------------------------------//
 
     private void discoverOres()
@@ -498,9 +493,9 @@ public class CompatibilityManager implements ICompatibilityManager
         if (oreBlocks.isEmpty())
         {
             oreBlocks.addAll(ImmutableList.copyOf(allItems.stream().filter(this::isMineableOre)
-                                                    .filter(stack -> !isEmpty(stack) && stack.getItem() instanceof BlockItem)
-                                                    .map(stack -> ((BlockItem) stack.getItem()).getBlock())
-                                                    .collect(Collectors.toList())));
+                    .filter(stack -> !isEmpty(stack) && stack.getItem() instanceof BlockItem)
+                    .map(stack -> ((BlockItem) stack.getItem()).getBlock())
+                    .collect(Collectors.toList())));
         }
         Log.getLogger().info("Finished discovering Ores");
     }
@@ -519,15 +514,26 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     /**
-     * Create complete list of compostable items.
+     * Create complete list of compost recipes.
+     * @param recipeManager
      */
-    private void discoverCompostableItems()
+    @SuppressWarnings("ConditionalExpression")
+    private void discoverCompostRecipes(@NotNull final RecipeManager recipeManager)
     {
-        if (compostableItems.isEmpty())
+        if (compostRecipes.isEmpty())
         {
-            compostableItems.addAll(ImmutableList.copyOf(allItems.stream().filter(this::isCompost).map(ItemStorage::new).collect(Collectors.toList())));
+            for (final IRecipe<?> r : recipeManager.getRecipes(CompostRecipe.TYPE).values())
+            {
+                final CompostRecipe recipe = (CompostRecipe) r;
+                for (final ItemStack stack : recipe.getInput().getMatchingStacks())
+                {
+                    // there can be duplicates due to overlapping tags.  weakest one wins.
+                    compostRecipes.merge(stack.getItem(), recipe,
+                            (r1, r2) -> r1.getStrength() < r2.getStrength() ? r1 : r2);
+                }
+            }
+            Log.getLogger().info("Finished discovering compostables");
         }
-        Log.getLogger().info("Finished discovering compostables");
     }
 
     /**
@@ -538,9 +544,9 @@ public class CompatibilityManager implements ICompatibilityManager
         if (plantables.isEmpty())
         {
             plantables.addAll(ImmutableList.copyOf(allItems.stream()
-                                                     .filter(this::isPlantable)
-                                                     .map(ItemStorage::new)
-                                                     .collect(Collectors.toList())));
+                    .filter(this::isPlantable)
+                    .map(ItemStorage::new)
+                    .collect(Collectors.toList())));
         }
         Log.getLogger().info("Finished discovering plantables");
     }
@@ -564,7 +570,10 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         if (food.isEmpty())
         {
-            food.addAll(ImmutableList.copyOf(allItems.stream().filter(ISFOOD.or(ISCOOKABLE)).map(ItemStorage::new).collect(Collectors.toList())));
+            food.addAll(ImmutableList.copyOf(allItems.stream()
+                    .filter(ISFOOD.or(ISCOOKABLE))
+                    .map(ItemStorage::new)
+                    .collect(Collectors.toList())));
         }
         if (edibles.isEmpty())
         {
@@ -703,46 +712,6 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     /**
-     * Method discovering and loading from the config all materials the sifter needs.
-     */
-    private void discoverSifting()
-    {
-        for (final String string : MinecoloniesAPIProxy.getInstance().getConfig().getServer().sifterMeshes.get())
-        {
-            final String[] mesh = string.split(",");
-
-            if (mesh.length != 2)
-            {
-                Log.getLogger().warn("Couldn't parse the mesh: " + string);
-                continue;
-            }
-
-            try
-            {
-                final double probability = Double.parseDouble(mesh[1]);
-
-                final String[] item = mesh[0].split(":");
-                final Item theItem = ForgeRegistries.ITEMS.getValue(new ResourceLocation(item[0], item[1]));
-
-                if (theItem == null)
-                {
-                    Log.getLogger().warn("Couldn't find item for mesh: " + string);
-                    continue;
-                }
-
-                final ItemStack stack = new ItemStack(theItem, 1);
-                sifterMeshes.add(new Tuple<>(new ItemStorage(stack), probability));
-            }
-            catch (final NumberFormatException ex)
-            {
-                Log.getLogger().warn("Couldn't retrieve probability for mesh: " + string, ex);
-            }
-        }
-
-        Log.getLogger().info("Finished initiating sifter config");
-    }
-
-    /**
      * Discover the possible enchantments from file.
      */
     private void discoverEnchantments()
@@ -821,6 +790,17 @@ public class CompatibilityManager implements ICompatibilityManager
                     freePositions.add(pos);
                 }
             }
+        }
+    }
+
+    /**
+     * Inits compats
+     */
+    private void discoverModCompat()
+    {
+        if (ModList.get().isLoaded("resourcefulbees"))
+        {
+            Compatibility.beeHiveCompat = new ResourcefulBeesCompat();
         }
     }
 }

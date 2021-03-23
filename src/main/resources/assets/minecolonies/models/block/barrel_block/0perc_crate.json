@@ -1,7 +1,7 @@
 {
-	"credit": "Made with Blockbench by Sandriell",
+	"credit": "Made with Blockbench",
 	"textures": {
-		"0": "block/stripped_oak_log",
+		"0": "block/stripped_spruce_log",
 		"1": "block/glass",
 		"2": "block/stone",
 		"3": "block/oak_planks",
@@ -26,7 +26,7 @@
 			"from": [1, 1, 1],
 			"to": [2, 22, 15],
 			"faces": {
-				"north": {"uv": [15, 0, 16, 15.75], "texture": "#3"},
+				"north": {"uv": [14, 0, 15, 16], "texture": "#3"},
 				"east": {"uv": [1, 0, 15, 16], "texture": "#3"},
 				"south": {"uv": [0, 0, 1, 16], "texture": "#3"},
 				"west": {"uv": [0, 0, 16, 16], "texture": "#3"},
@@ -50,7 +50,7 @@
 			"from": [2, 1, 1],
 			"to": [7, 22, 2],
 			"faces": {
-				"north": {"uv": [11, 0, 15, 15.75], "texture": "#3"},
+				"north": {"uv": [10, 0, 14, 16], "texture": "#3"},
 				"east": {"uv": [4, 0, 5, 16], "texture": "#3"},
 				"south": {"uv": [0, 0, 5, 16], "texture": "#3"},
 				"up": {"uv": [10, 14, 14, 15], "rotation": 180, "texture": "#3"}
@@ -222,7 +222,7 @@
 			"from": [7, 16, 1],
 			"to": [9, 22, 2],
 			"faces": {
-				"north": {"uv": [4, 0, 6, 4.5], "texture": "#3"},
+				"north": {"uv": [8, 0, 10, 5], "texture": "#3"},
 				"south": {"uv": [4, 0, 6, 4.5], "texture": "#3"},
 				"up": {"uv": [7, 14, 9, 15], "rotation": 180, "texture": "#3"},
 				"down": {"uv": [5, 1, 7, 2], "texture": "#3"}

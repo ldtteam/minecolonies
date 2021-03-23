@@ -50,7 +50,12 @@ public class WindowResearchTree extends AbstractWindowSkeleton
     /**
      * The previous window.
      */
-    private final WindowHutUniversity last;
+    private final WindowHutUniversityModule last;
+
+    /**
+     * The styling type of the research window.
+     */
+    private final ResearchBranchType branchType;
 
     /**
      * If has a max research for this branch already.
@@ -96,13 +101,14 @@ public class WindowResearchTree extends AbstractWindowSkeleton
      * @param building the associated university.
      * @param last     the GUI we opened this from.
      */
-    public WindowResearchTree(final ResourceLocation branch, final BuildingUniversity.View building, final WindowHutUniversity last)
+    public WindowResearchTree(final ResourceLocation branch, final BuildingUniversity.View building, final WindowHutUniversityModule last)
     {
         super(Constants.MOD_ID + R_TREE_RESOURCE_SUFFIX, last);
         this.branch = branch;
         this.building = building;
         this.last = last;
         this.hasMax = false;
+        this.branchType = IGlobalResearchTree.getInstance().getBranchData(branch).getType();
 
         final List<ResourceLocation> researchList = IGlobalResearchTree.getInstance().getPrimaryResearch(branch);
         this.hasMax = building.getColony().getResearchManager().getResearchTree().branchFinishedHighestLevel(branch);
@@ -118,8 +124,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
     {
         super.onButtonClicked(button);
 
-        // drawUndoProgressButton and drawUndoCompleteButton replace a Research's normal tooltip
-        // and adds a button and icon(s) representing the cost of resetting the research.
+        // drawUndoProgressButton and drawUndoCompleteButton adds a button and icon(s) representing the cost of resetting the research.
         // See their respective functions for details on the how.
         // These branches remove those buttons from the DragTreeView, if present, on pressing any button.
         // That should occur no matter what buttons are pressed, even disabled buttons, as a "no, I don't want to".
@@ -205,16 +210,21 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             }
             else if (localResearch != null)
             {
+                // Generally allow in-progress research to be cancelled.
+                // This still costs items, so mostly only beneficial to free up a researcher slot.
                 if (localResearch.getState() == ResearchState.IN_PROGRESS)
                 {
                     drawUndoProgressButton(button);
                 }
                 if (localResearch.getState() == ResearchState.FINISHED)
                 {
-                    if (hasMax && research.getDepth() > building.getBuildingMaxLevel() && building.getBuildingLevel() == building.getBuildingMaxLevel() && !research.isImmutable())
+                    // Immutable must never allow UndoComplete.
+                    // Autostart research should not allow undo of completed research as well, as it will attempt to restart it on colony reload.
+                    if(research.isImmutable() || research.isAutostart())
                     {
-                        drawUndoCompleteButton(button);
+                        return;
                     }
+                    // don't allow research with completed or in-progress children to be reset.  They must be reset individually.
                     for (ResourceLocation childId : research.getChildren())
                     {
                         if (building.getColony().getResearchManager().getResearchTree().getResearch(branch, childId) != null
@@ -223,6 +233,20 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                             return;
                         }
                     }
+                    // Generally allow "unrestricted-tree" branches to undo complete research, if not prohibited.
+                    // This is more meant to allow "unrestricted-tree"-style research's effects to be toggled on and off at a small cost.
+                    // Probably not vital most of the time, but even some beneficial effects may not be desirable in all circumstances.
+                    if (branchType == ResearchBranchType.UNLOCKABLES)
+                    {
+                        drawUndoCompleteButton(button);
+                    }
+                    // above-max-level research prohibits other options, and should be resetable.
+                    if (hasMax && research.getDepth() > building.getBuildingMaxLevel() && building.getBuildingLevel() == building.getBuildingMaxLevel())
+                    {
+                        drawUndoCompleteButton(button);
+                        return;
+                    }
+                    // researches with an ancestor with OnlyChild status should be undoable, no children are complete or in-progress.
                     ResourceLocation parentId = IGlobalResearchTree.getInstance().getResearch(branch, research.getId()).getParent();
                     while (!parentId.getPath().isEmpty())
                     {
@@ -306,28 +330,45 @@ public class WindowResearchTree extends AbstractWindowSkeleton
      */
     private void drawTreeBackground(final ZoomDragView view, final int maxHeight)
     {
+        if(branchType == ResearchBranchType.UNLOCKABLES && IGlobalResearchTree.getInstance().getBranchData(branch).getBaseTime() < 0.01)
+        {
+            return;
+        }
         for (int i = 1; i <= MAX_DEPTH; i++)
         {
             final Text timeLabel = new Text();
             timeLabel.setSize(TIME_WIDTH, TIME_HEIGHT);
-            timeLabel.setText(new TranslationTextComponent("com.minecolonies.coremod.gui.research.tier.header",
-              (i > building.getBuildingMaxLevel()) ? building.getBuildingMaxLevel() : i,
-              (IGlobalResearchTree.getInstance().getBranchTime(branch) * Math.pow(2, i - 1))));
             timeLabel.setPosition((i - 1) * (GRADIENT_WIDTH + X_SPACING) + GRADIENT_WIDTH / 2 - TIME_WIDTH / 4, TIMELABEL_Y_POSITION);
-            if (building.getBuildingLevel() < i && (building.getBuildingLevel() != building.getBuildingMaxLevel() || hasMax))
+            if(branchType == ResearchBranchType.UNLOCKABLES)
             {
-                final Gradient gradient = new Gradient();
-                gradient.setGradientStart(80, 80, 80, 100);
-                gradient.setGradientEnd(60, 60, 60, 110);
-                // Draw the last gradient beyond the edge of the displayed area, to avoid blank spot on the right.
-                gradient.setSize(i == MAX_DEPTH ? 400 : GRADIENT_WIDTH + X_SPACING, (maxHeight + 4) * (GRADIENT_HEIGHT + Y_SPACING) + Y_SPACING + TIMELABEL_Y_POSITION);
-                gradient.setPosition((i - 1) * (GRADIENT_WIDTH + X_SPACING), 0);
-                view.getChildren().add(0,gradient);
-                timeLabel.setColors(COLOR_TEXT_NEGATIVE);
+                timeLabel.setText(new TranslationTextComponent("com.minecolonies.coremod.gui.research.tier.header.unrestricted",
+                  (i > building.getBuildingMaxLevel()) ? building.getBuildingMaxLevel() : i,
+                  (IGlobalResearchTree.getInstance().getBranchData(branch).getBaseTime() * Math.pow(2, i - 1))));
+                timeLabel.setColors(COLOR_TEXT_LABEL);
+                view.addChild(timeLabel);
+                continue;
             }
             else
             {
-                timeLabel.setColors(COLOR_TEXT_LABEL);
+                timeLabel.setText(new TranslationTextComponent("com.minecolonies.coremod.gui.research.tier.header",
+                  (i > building.getBuildingMaxLevel()) ? building.getBuildingMaxLevel() : i,
+                  (IGlobalResearchTree.getInstance().getBranchData(branch).getBaseTime() * Math.pow(2, i - 1))));
+
+                if (building.getBuildingLevel() < i && (building.getBuildingLevel() != building.getBuildingMaxLevel() || hasMax))
+                {
+                    final Gradient gradient = new Gradient();
+                    gradient.setGradientStart(80, 80, 80, 100);
+                    gradient.setGradientEnd(60, 60, 60, 110);
+                    // Draw the last gradient beyond the edge of the displayed area, to avoid blank spot on the right.
+                    gradient.setSize(i == MAX_DEPTH ? 400 : GRADIENT_WIDTH + X_SPACING, (maxHeight + 4) * (GRADIENT_HEIGHT + Y_SPACING) + Y_SPACING + TIMELABEL_Y_POSITION);
+                    gradient.setPosition((i - 1) * (GRADIENT_WIDTH + X_SPACING), 0);
+                    view.getChildren().add(0, gradient);
+                    timeLabel.setColors(COLOR_TEXT_NEGATIVE);
+                }
+                else
+                {
+                    timeLabel.setColors(COLOR_TEXT_LABEL);
+                }
             }
             view.addChild(timeLabel);
         }
@@ -363,7 +404,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         }
         // If the University too low-level for the research, or if this research is max-level, the building is max level, and another max-level research is completed.
         else if (research.getDepth() > building.getBuildingLevel() && !(research.getDepth() > building.getBuildingMaxLevel() && !hasMax
-                    && building.getBuildingLevel() == building.getBuildingMaxLevel()))
+                    && building.getBuildingLevel() == building.getBuildingMaxLevel()) && branchType != ResearchBranchType.UNLOCKABLES)
         {
             return ResearchButtonState.TOO_LOW_UNIVERSITY;
         }
@@ -407,7 +448,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         final int progress = tree.getResearch(branch, research.getId()) == null ? 0 : tree.getResearch(branch, research.getId()).getProgress();
 
         if (mc.player.isCreative() && state == ResearchState.IN_PROGRESS && MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchCreativeCompletion.get()
-              && progress < BASE_RESEARCH_TIME * IGlobalResearchTree.getInstance().getBranchTime(branch) * Math.pow(2, research.getDepth() - 1))
+              && progress < BASE_RESEARCH_TIME * IGlobalResearchTree.getInstance().getBranchData(branch).getBaseTime() * Math.pow(2, research.getDepth() - 1))
         {
             Network.getNetwork().sendToServer(new TryResearchMessage(building, research.getId(), research.getBranch(), false));
         }
@@ -545,7 +586,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
 
         // scale down subBar to fit smaller progress text, and make gradients of scale to match progress.
         final double progressRatio = (progress + 1) / (Math.pow(2, research.getDepth() - 1)
-                                                         * (double) BASE_RESEARCH_TIME * IGlobalResearchTree.getInstance().getBranchTime(branch));
+                                                         * (double) BASE_RESEARCH_TIME * IGlobalResearchTree.getInstance().getBranchData(branch).getBaseTime());
         subBar.setSize(RESEARCH_WIDTH - ICON_X_OFFSET * 2 - TEXT_X_OFFSET, TIME_HEIGHT);
         nameGradient.setSize((int) (progressRatio * NAME_LABEL_WIDTH), NAME_LABEL_HEIGHT);
 
@@ -597,19 +638,19 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                       .append(research.getResearchRequirement().get(txt).getDesc());
                 }
             }
-            if (research.getDepth() > building.getBuildingLevel() && building.getBuildingLevel() != building.getBuildingMaxLevel())
+            if (research.getDepth() > building.getBuildingLevel() && building.getBuildingLevel() != building.getBuildingMaxLevel() && branchType != ResearchBranchType.UNLOCKABLES)
             {
-                hoverPaneBuilder.paragraphBreak().append(new TranslationTextComponent("com.minecolonies.coremod.research.requirement.university.level", research.getDepth()));
+                hoverPaneBuilder.paragraphBreak().append(new TranslationTextComponent("com.minecolonies.coremod.research.requirement.university.level", Math.min(research.getDepth(), this.building.getBuildingMaxLevel())));
             }
-            if (research.getDepth() == MAX_DEPTH)
+            if (research.getDepth() == MAX_DEPTH && branchType != ResearchBranchType.UNLOCKABLES)
             {
                 if (hasMax)
                 {
-                    hoverPaneBuilder.paragraphBreak().append(new TranslationTextComponent("com.minecolonies.coremod.research.limit.onemaxperbranch")).color(COLOR_TEXT_FULFILLED);
+                    hoverPaneBuilder.paragraphBreak().append(new TranslationTextComponent("com.minecolonies.coremod.research.limit.onemaxperbranch")).color(COLOR_TEXT_UNFULFILLED);
                 }
                 else
                 {
-                    hoverPaneBuilder.paragraphBreak().append(new TranslationTextComponent("com.minecolonies.coremod.research.limit.onemaxperbranch")).color(COLOR_TEXT_UNFULFILLED);
+                    hoverPaneBuilder.paragraphBreak().append(new TranslationTextComponent("com.minecolonies.coremod.research.limit.onemaxperbranch")).color(COLOR_TEXT_FULFILLED);
                 }
             }
         }
@@ -650,7 +691,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             }
             else
             {
-                progressToGo = (int) (Math.pow(2, research.getDepth() - 1) * (double) BASE_RESEARCH_TIME * IGlobalResearchTree.getInstance().getBranchTime(branch)) - progress;
+                progressToGo = (int) (Math.pow(2, research.getDepth() - 1) * (double) BASE_RESEARCH_TIME * IGlobalResearchTree.getInstance().getBranchData(branch).getBaseTime()) - progress;
             }
             // Write out the rough remaining time for the research.
             // This will necessarily be an estimate, since adjusting for

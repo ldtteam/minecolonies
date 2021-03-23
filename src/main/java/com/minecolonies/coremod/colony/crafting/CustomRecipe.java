@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.crafting.IRecipeManager;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ModRecipeTypes;
 import com.minecolonies.api.crafting.RecipeStorage;
@@ -258,12 +259,14 @@ public class CustomRecipe
     /**
      * Parse a Json object into a Custom recipe
      *
+     * @param recipeId the recipe id
      * @param recipeJson the json representing the recipe
      * @return new instance of CustomRecipe
      */
-    public static CustomRecipe parse(@NotNull final JsonObject recipeJson)
+    public static CustomRecipe parse(@NotNull final ResourceLocation recipeId, @NotNull final JsonObject recipeJson)
     {
         final CustomRecipe recipe = new CustomRecipe();
+        recipe.recipeId = recipeId;
 
         if (recipeJson.has(RECIPE_CRAFTER_PROP))
         {
@@ -403,12 +406,28 @@ public class CustomRecipe
     }
 
     /**
-     * Set the ID for this recipe
+     * Get the ID of research required before this recipe is valid.
+     * @return The research ID or null if there is no such requirement.
      */
-    public void setRecipeId(ResourceLocation recipeId)
-    {
-        this.recipeId = recipeId;
-    }
+    public ResourceLocation getRequiredResearchId() { return this.researchId; }
+
+    /**
+     * Get the ID of research after which this recipe is no longer valid.
+     * @return The research ID or null if there is no such requirement.
+     */
+    public ResourceLocation getExcludedResearchId() { return this.excludedResearchId; }
+
+    /**
+     * Get the minimum (inclusive) building level required before this recipe is valid.
+     * @return The minimum building level (0 means no such requirement).
+     */
+    public int getMinBuildingLevel() { return this.minBldgLevel; }
+
+    /**
+     * Get the maximum (inclusive) building level required to still consider this recipe valid.
+     * @return The maximum building level (the recipe is no longer valid at higher levels).
+     */
+    public int getMaxBuildingLevel() { return this.maxBldgLevel; }
 
     /**
      * Check to see if the recipe is currently valid for the building
@@ -495,6 +514,7 @@ public class CustomRecipe
             {
                 final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(recipeToken);
                 if ((storage.getRecipeSource() != null && storage.getRecipeSource().equals(recipeSource)) || (
+                  ItemStackUtils.compareItemStacksIgnoreStackSize(storage.getPrimaryOutput(), compareStorage.getPrimaryOutput(), false, true) &&
                   storage.getCleanedInput().containsAll(compareStorage.getCleanedInput())
                     && compareStorage.getCleanedInput()
                          .containsAll(storage.getCleanedInput())))
@@ -547,6 +567,12 @@ public class CustomRecipe
                     secondary, //secondary output
                     lootTable
                     );
+            }
+            IRecipeManager recipeManager = IColonyManager.getInstance().getRecipeManager();
+            IToken<?> cachedRecipeToken = recipeManager.getRecipeId(cachedRecipeStorage);
+            if(cachedRecipeToken != null && !cachedRecipeToken.equals(cachedRecipeStorage.getToken()))
+            {
+                cachedRecipeStorage = (RecipeStorage) recipeManager.getRecipes().get(cachedRecipeToken);
             }
         }
         return cachedRecipeStorage;

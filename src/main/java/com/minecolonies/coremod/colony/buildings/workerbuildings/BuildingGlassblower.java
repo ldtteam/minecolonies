@@ -14,7 +14,7 @@ import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.coremod.client.gui.WindowHutGlassblower;
+import com.minecolonies.coremod.client.gui.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
 import com.minecolonies.coremod.colony.jobs.JobGlassblower;
 import com.minecolonies.coremod.util.FurnaceRecipes;
@@ -217,7 +217,7 @@ public class BuildingGlassblower extends AbstractBuildingSmelterCrafter
         @Override
         public Window getWindow()
         {
-            return new WindowHutGlassblower(this);
+            return new WindowHutWorkerModulePlaceholder<>(this, GLASS_BLOWER);
         }
     }
 }

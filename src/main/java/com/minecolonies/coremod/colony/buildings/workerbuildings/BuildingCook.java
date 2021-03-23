@@ -21,10 +21,11 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.coremod.client.gui.WindowHutCook;
+import com.minecolonies.coremod.client.gui.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
+import com.minecolonies.coremod.colony.buildings.modules.MinimumStockModule;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.coremod.colony.jobs.JobCook;
 import com.minecolonies.coremod.colony.jobs.JobCookAssistant;
@@ -472,7 +473,7 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
             return 0;
         }
 
-        if (inventory && minimumStock.containsKey(new ItemStorage(stack)))
+        if (inventory && getFirstModuleOccurance(MinimumStockModule.class).map(m -> m.isStocked(stack)).orElse(false))
         {
             return stack.getCount();
         }
@@ -563,7 +564,7 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
         @Override
         public Window getWindow()
         {
-            return new WindowHutCook(this);
+            return new WindowHutWorkerModulePlaceholder<>(this, COOK_DESC);
         }
     }
 }

@@ -348,11 +348,15 @@ public final class TranslationConstants
     @NonNls
     public static final String FURNACE_USER_NO_FOOD                                                 = "com.minecolonies.coremod.furnaceuser.nofood";
     @NonNls
+    public static final String SIFTER_NO_MESH                                                       = "com.minecolonies.coremod.sifter.nomesh";
+    @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GENERAL_ONBIG                               = "com.minecolonies.coremod.general.onbig";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GENERAL_OFFBIG                              = "com.minecolonies.coremod.general.offbig";
     @NonNls
     public static final String COM_MINECOLONIES_INFO_PREFIX                                         = "com.minecolonies.coremod.info.";
+    @NonNls
+    public static final String COM_MINECOLONIES_JEI_PREFIX                                          = "com.minecolonies.coremod.jei.";
     @NonNls
     public static final String COM_MINECOLONIES_CANT_TAKE_EQUIPPED                                  = "com.minecolonies.coremod.general.canttakeequipped";
     @NonNls

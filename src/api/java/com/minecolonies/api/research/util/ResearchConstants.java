@@ -29,6 +29,7 @@ public final class ResearchConstants
     public static final String TAG_NAME           = "name";
     public static final String TAG_COSTS          = "cost";
     public static final String TAG_COST_ITEM      = "cost-item";
+    public static final String TAG_COST_NBT       = "cost-nbt";
     public static final String TAG_REQS           = "requirements";
     public static final String TAG_REQ_TYPE       = "requirement-type";
     public static final String TAG_REQ_ITEM       = "requirement-item";
@@ -120,6 +121,7 @@ public final class ResearchConstants
     public static final ResourceLocation MELEE_ARMOR       = new ResourceLocation(Constants.MOD_ID, "effects/meleearmormultiplier");
     public static final ResourceLocation MINIMUM_STOCK     = new ResourceLocation(Constants.MOD_ID, "effects/minimumstockmultiplier");
     public static final ResourceLocation MORE_ORES         = new ResourceLocation(Constants.MOD_ID, "effects/moreoresmultiplier");
+    public static final ResourceLocation PODZOL_CHANCE     = new ResourceLocation(Constants.MOD_ID, "effects/podzolchancemultiplier");
     public static final ResourceLocation RECIPES           = new ResourceLocation(Constants.MOD_ID, "effects/recipesmultiplier");
     public static final ResourceLocation REGENERATION      = new ResourceLocation(Constants.MOD_ID, "effects/regenerationmultiplier");
     public static final ResourceLocation SATURATION        = new ResourceLocation(Constants.MOD_ID, "effects/saturationmultiplier");

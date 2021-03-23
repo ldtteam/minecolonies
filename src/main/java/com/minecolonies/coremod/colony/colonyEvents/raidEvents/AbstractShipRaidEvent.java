@@ -294,7 +294,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
             if (spawners.isEmpty())
             {
                 daysToGo = 2;
-                LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), ALL_PIRATE_SPAWNERS_DESTROYED_MESSAGE);
+                LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), ALL_PIRATE_SPAWNERS_DESTROYED_MESSAGE, colony.getName());
             }
         }
     }
@@ -315,7 +315,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
         raiders.remove(entity);
         if (raiders.isEmpty() && spawners.isEmpty())
         {
-            LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), ALL_PIRATES_KILLED_MESSAGE);
+            LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), ALL_PIRATES_KILLED_MESSAGE, colony.getName());
         }
     }
 

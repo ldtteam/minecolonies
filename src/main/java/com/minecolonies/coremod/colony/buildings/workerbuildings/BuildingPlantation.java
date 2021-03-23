@@ -14,7 +14,7 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.client.gui.WindowHutPlantation;
+import com.minecolonies.coremod.client.gui.WindowHutPlantationModule;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.jobs.JobPlanter;
 import com.minecolonies.coremod.network.messages.server.colony.building.plantation.PlantationSetPhaseMessage;
@@ -367,7 +367,7 @@ public class BuildingPlantation extends AbstractBuildingCrafter
         @Override
         public Window getWindow()
         {
-            return new WindowHutPlantation(this);
+            return new WindowHutPlantationModule(this);
         }
 
         /**
