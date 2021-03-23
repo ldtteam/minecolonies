@@ -139,12 +139,8 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
     {
         if(wanderPos == null)
         {
-            final BlockPos newWanderPos = worker.getCitizenColonyHandler().getColony().getBuildingManager().
+            wanderPos = worker.getCitizenColonyHandler().getColony().getBuildingManager().
                     getRandomBuilding(b -> b.getSchematicName() == "citizen" || b instanceof BuildingMysticalSite || b instanceof BuildingEnchanter);
-            if (newWanderPos != null)
-            {
-                wanderPos = newWanderPos;
-            }
             return getState();
         }
 
