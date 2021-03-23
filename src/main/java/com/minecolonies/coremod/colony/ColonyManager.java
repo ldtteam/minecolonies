@@ -634,16 +634,6 @@ public final class ColonyManager implements IColonyManager
             //  Player has left the game, clear the Colony View cache
             colonyViews.clear();
         }
-
-        // This should only run when the player first connects to a remote server, or on datapack reload.
-        // It does have to be here; nearly all other triggers (such as ClientPlayerNetworkEvent.LoggedInEvent)
-        // won't have the necessary data loaded for the Smelt list.
-        if (ModTags.tagsLoaded && !IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().isDiscoveredAlready() && ItemStackUtils.ISFOOD != null && FurnaceRecipes.getInstance().loaded())
-        {
-            IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().discover(false);
-        }
-        // This can possibly be called in the middle of disconnecting from the server, which can cause unnecessary discover()s,
-        // but ClientPlayerNetworkEvent.LoggedOutEvent calls early enough in reconnects or new server starts to prevent logical inconsistency, just a small performance hit.
     }
 
     @Override

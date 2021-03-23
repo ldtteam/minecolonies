@@ -371,4 +371,14 @@ public class ClientEventHandler
         // This means you don't need a FMLServerStopping event equivalent, as the only remaining case is a dedicated server machine itself, which will always be hard-closing.
         IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().invalidateTagsAndConfigs();
     }
+
+    @SubscribeEvent
+    public static void onClientConnect(final ClientPlayerNetworkEvent.LoggedInEvent event)
+    {
+        // This should only run when the player first connects to a remote server, or on datapack reload.
+        if (ModTags.tagsLoaded && !IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().isDiscoveredAlready() && ItemStackUtils.ISFOOD != null && FurnaceRecipes.getInstance().loaded())
+        {
+            IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().discover(false);
+        }
+    }
 }

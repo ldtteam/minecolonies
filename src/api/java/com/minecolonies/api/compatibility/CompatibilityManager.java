@@ -20,7 +20,7 @@ import net.minecraft.nbt.NBTUtil;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.IntegerProperty;
 import net.minecraft.state.Property;
-import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.*;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
@@ -36,8 +36,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static com.minecolonies.api.util.ItemStackUtils.*;
-import static com.minecolonies.api.util.constant.Constants.ONE_HUNDRED_PERCENT;
-import static com.minecolonies.api.util.constant.Constants.ORE_STRING;
+import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_SAP_LEAF;
 import static net.minecraft.item.EnchantedBookItem.getEnchantedItemStack;
 
@@ -145,6 +144,11 @@ public class CompatibilityManager implements ICompatibilityManager
     private static ImmutableList<ItemStack> allItems = ImmutableList.<ItemStack>builder().build();
 
     /**
+     * A List of all blocks, calculated using streams.  Not isomorphic to allItems.
+     */
+    private static ImmutableList<ItemStack> oldItems = ImmutableList.<ItemStack>builder().build();
+
+    /**
      * Free block positions everyone can interact with.
      */
     private Set<Block> freeBlocks = new HashSet<>();
@@ -167,20 +171,40 @@ public class CompatibilityManager implements ICompatibilityManager
     @Override
     public void discover(final boolean serverSide)
     {
+        long startTime = System.nanoTime();
+        long[] times = new long[12];
         discoverAllItems();
+        times[0] = System.nanoTime();
 
         discoverSaplings();
+        times[1] = System.nanoTime();
         discoverOres();
+        times[2] = System.nanoTime();
         discoverPlantables();
-        discoverLuckyOres();
-        discoverRecruitCosts();
-        discoverDiseases();
+        times[3] = System.nanoTime();
         discoverFood();
+        times[4] = System.nanoTime();
         discoverFuel();
-        discoverEnchantments();
-        discoverFreeBlocksAndPos();
-        discoverModCompat();
+        times[5] = System.nanoTime();
 
+        discoverLuckyOres();
+        times[6] = System.nanoTime();
+        discoverRecruitCosts();
+        times[7] = System.nanoTime();
+        discoverDiseases();
+        times[8] = System.nanoTime();
+        discoverEnchantments();
+        times[9] = System.nanoTime();
+        discoverFreeBlocksAndPos();
+        times[10] = System.nanoTime();
+        discoverModCompat();
+        times[11] = System.nanoTime();
+
+        Log.getLogger().info("AllItems [" + ((double)(times[0] - startTime) / 1000000) + "] Saplings [" + ((double)(times[1] - times[0]) / 1000000) + "] Ores [" + ((double)(times[2] - times[1]) / 1000000)
+                               + "] Plantables [" + ((double)(times[3] - times[2]) / 1000000) + "] Food [" + ((double)(times[4] - times[3]) / 1000000) + "] Fuel [" + ((double)(times[5] - times[4]) / 1000000) +"]");
+        Log.getLogger().info("LuckyOres [" + ((double)(times[6] - times[5]) / 1000000) + "] RecruitCosts [" + ((double)(times[7] - times[6]) / 1000000) + "] Diseases [" + ((double)(times[8] - times[7]) / 1000000)
+                               + "] Enchantments [" + ((double)(times[9] - times[8]) / 1000000) + "] FreeBlocks [" + ((double)(times[10] - times[9]) / 1000000) + " ModCompat [" + ((double)(times[11] - times[10]) / 1000000) + "]");
+        Log.getLogger().info("Total Time [" + (double)((System.nanoTime() - startTime) / 1000000)  + "]");
         discoveredAlready = true;
     }
 
@@ -189,16 +213,22 @@ public class CompatibilityManager implements ICompatibilityManager
      */
     private void discoverAllItems()
     {
-        final List<ItemStack> stacks = StreamSupport.stream(Spliterators.spliteratorUnknownSize(ForgeRegistries.ITEMS.iterator(), Spliterator.ORDERED), true)
-                .flatMap(item ->
-                {
-                    final NonNullList<ItemStack> list = NonNullList.create();
-                    item.fillItemGroup(ItemGroup.SEARCH, list);
-                    return list.stream();
-                })
-                .collect(Collectors.toList());
+        final NonNullList<ItemStack> items = NonNullList.create();
+        for(Item item : ForgeRegistries.ITEMS.getValues())
+        {
+            items.add(new ItemStack(item));
+        }
+        allItems = ImmutableList.copyOf(items);
 
-        allItems = ImmutableList.copyOf(stacks);
+        final List<ItemStack> stacks = StreamSupport.stream(Spliterators.spliteratorUnknownSize(ForgeRegistries.ITEMS.iterator(), Spliterator.ORDERED), true)
+                                         .flatMap(item ->
+                                         {
+                                             final NonNullList<ItemStack> list = NonNullList.create();
+                                             item.fillItemGroup(ItemGroup.SEARCH, list);
+                                             return list.stream();
+                                         })
+                                         .collect(Collectors.toList());
+        oldItems = ImmutableList.copyOf(stacks);
     }
 
     /**
@@ -209,6 +239,10 @@ public class CompatibilityManager implements ICompatibilityManager
     @Override
     public List<ItemStack> getListOfAllItems()
     {
+        if(allItems.isEmpty())
+        {
+            discoverAllItems();
+        }
         return allItems;
     }
 
@@ -512,17 +546,72 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         if (smeltableOres.isEmpty())
         {
-            smeltableOres.addAll(ImmutableList.copyOf(allItems.stream().filter(this::isOre).map(ItemStorage::new).collect(Collectors.toList())));
-        }
-
-        if (oreBlocks.isEmpty())
-        {
-            oreBlocks.addAll(ImmutableList.copyOf(allItems.stream().filter(this::isMineableOre)
-                    .filter(stack -> !isEmpty(stack) && stack.getItem() instanceof BlockItem)
-                    .map(stack -> ((BlockItem) stack.getItem()).getBlock())
-                    .collect(Collectors.toList())));
+            for(Item item : Tags.Items.ORES.getAllElements())
+            {
+                if(item.getItem() instanceof BlockItem)
+                {
+                    oreBlocks.add(((BlockItem) item.getItem()).getBlock());
+                }
+                if (!MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getSmeltingResult(new ItemStack((item))).isEmpty())
+                {
+                    smeltableOres.add(new ItemStorage(new ItemStack(item)));
+                }
+            }
         }
         Log.getLogger().info("Finished discovering Ores");
+        //Set<ItemStorage> oldSmeltables = new HashSet<>();
+        //oldSmeltables.addAll(ImmutableList.copyOf(allItems.stream().filter(this::isOre).map(ItemStorage::new).collect(Collectors.toList())));
+        //Set<Block> oldBlocks = new HashSet<>();
+        //oldBlocks.addAll(ImmutableList.copyOf(allItems.stream().filter(this::isMineableOre)
+        //                                        .filter(stack -> !isEmpty(stack) && stack.getItem() instanceof BlockItem)
+        //                                        .map(stack -> ((BlockItem) stack.getItem()).getBlock())
+        //                                        .collect(Collectors.toList())));
+        //Log.getLogger().info("SmeltableOres = " + smeltableOres.size() + " ; OldCalculations " + oldSmeltables.size());
+        //for(ItemStorage item : oldSmeltables)
+        //{
+        //    if(!smeltableOres.contains(item))
+        //    {
+        //        Log.getLogger().info("Mismatch: " + item.getItem().getName() + "\\" + item.getItem().getRegistryName());
+        //        for(ResourceLocation tag : item.getItem().getTags())
+        //        {
+        //            Log.getLogger().info(tag);
+        //        }
+        //    }
+        //}
+        //for(ItemStorage item : smeltableOres)
+        //{
+        //    if(!oldSmeltables.contains(item))
+        //    {
+        //        Log.getLogger().info("Mismatch: " + item.getItem().getName() + "\\" + item.getItem().getRegistryName());
+        //        for(ResourceLocation tag : item.getItem().getTags())
+        //        {
+        //            Log.getLogger().info(tag);
+        //        }
+        //    }
+        //}
+        //Log.getLogger().info("OreBlocks = " + oreBlocks.size() + " ; OldCalculations " + oldBlocks.size());
+        //for(Block oldBlock : oldBlocks)
+        //{
+        //    if(!oreBlocks.contains(oldBlock))
+        //    {
+        //        Log.getLogger().info("Mismatch: " + oldBlock.getTranslatedName() + "\\" + oldBlock.getRegistryName());
+        //        for(ResourceLocation tag : oldBlock.getTags())
+        //        {
+        //            Log.getLogger().info(tag);
+        //        }
+        //    }
+        //}
+        //for(Block newBlock : oreBlocks)
+        //{
+        //    if(!oldBlocks.contains(newBlock))
+        //    {
+        //        Log.getLogger().info("Mismatch: " + newBlock.getRegistryName());
+        //        for(ResourceLocation tag : newBlock.getTags())
+        //        {
+        //            Log.getLogger().info(tag);
+        //        }
+        //    }
+        //}
     }
 
     private void discoverSaplings()
@@ -568,12 +657,61 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         if (plantables.isEmpty())
         {
-            plantables.addAll(ImmutableList.copyOf(allItems.stream()
-                    .filter(this::isPlantable)
-                    .map(ItemStorage::new)
-                    .collect(Collectors.toList())));
+            for (final String string : IMinecoloniesAPI.getInstance().getConfig().getServer().listOfPlantables.get())
+            {
+                // individual flowers by ResourceLocation.
+                if(ForgeRegistries.ITEMS.containsKey(new ResourceLocation(string)))
+                {
+                    Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(string)).getItem();
+                    if(item instanceof BlockItem && !ModTags.floristFlowersExcluded.contains(item) && item != ModTags.floristFlowersExcluded)
+                    {
+                        plantables.add(new ItemStorage(new ItemStack(item)));
+                    }
+                }
+                // check if a valid tag
+                ITag<Item> tag = TagUtils.getItem(new ResourceLocation(string));
+                if(!tag.equals(Tag.getEmptyTag()))
+                {
+                   for(Item item : tag.getAllElements())
+                   {
+                       if(item instanceof BlockItem && ModTags.floristFlowersExcluded.contains(item) && item != ModTags.floristFlowersExcluded)
+                       {
+                           continue;
+                       }
+                       plantables.add(new ItemStorage(new ItemStack(item)));
+                   }
+                }
+            }
         }
         Log.getLogger().info("Finished discovering plantables");
+        Set<ItemStorage> oldPlantables = new HashSet<>();
+        oldPlantables.addAll(ImmutableList.copyOf(oldItems.stream()
+                                                     .filter(this::isPlantable)
+                                                     .map(ItemStorage::new)
+                                                     .collect(Collectors.toList())));
+        Log.getLogger().info("NewCalc: " + plantables.size() + " OldCalc: " + oldPlantables.size());
+        for(ItemStorage is : plantables)
+        {
+            if(!oldPlantables.contains(is))
+            {
+                Log.getLogger().info("Mismatch at : " + is.getItem().getName() + "\\" + is.getItemStack().getItem().getRegistryName());
+                for(ResourceLocation tag : is.getItem().getTags())
+                {
+                    Log.getLogger().info(tag);
+                }
+            }
+        }
+        for(ItemStorage is : oldPlantables)
+        {
+            if(!plantables.contains(is))
+            {
+                Log.getLogger().info("Mismatch at : " + is.getItem().getName() + "\\" + is.getItemStack().getItem().getRegistryName());
+                for(ResourceLocation tag : is.getItem().getTags())
+                {
+                    Log.getLogger().info(tag);
+                }
+            }
+        }
     }
 
     /**
@@ -583,9 +721,19 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         if (fuel.isEmpty())
         {
-            fuel.addAll(ImmutableList.copyOf(allItems.stream().filter(FurnaceTileEntity::isFuel).map(ItemStorage::new).collect(Collectors.toList())));
+            for(ItemStack item : allItems)
+            {
+                if(FurnaceTileEntity.isFuel(item))
+                {
+                    fuel.add(new ItemStorage(item));
+                }
+            }
+
         }
         Log.getLogger().info("Finished discovering fuel");
+        //Set<ItemStorage> oldFuel = new HashSet<>();
+        //oldFuel.addAll(ImmutableList.copyOf(oldItems.stream().filter(FurnaceTileEntity::isFuel).map(ItemStorage::new).collect(Collectors.toList())));
+        //Log.getLogger().info("New calcs: " + fuel.size() + " ; Old calcs: " + oldFuel.size());
     }
 
     /**
@@ -595,16 +743,38 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         if (food.isEmpty())
         {
-            food.addAll(ImmutableList.copyOf(allItems.stream()
-                    .filter(ISFOOD.or(ISCOOKABLE))
-                    .map(ItemStorage::new)
-                    .collect(Collectors.toList())));
-        }
-        if (edibles.isEmpty())
-        {
-            edibles.addAll(ImmutableList.copyOf(food.stream().filter(storage -> CAN_EAT.test(storage.getItemStack())).collect(Collectors.toList())));
+            for(ItemStack item : allItems)
+            {
+                if(ISFOOD.test(item) || ISCOOKABLE.test(item))
+                {
+                    food.add(new ItemStorage(item));
+                    if(CAN_EAT.test(item))
+                    {
+                        edibles.add(new ItemStorage(item));
+                    }
+                }
+            }
         }
         Log.getLogger().info("Finished discovering food");
+        //Set<ItemStorage> oldFood = new HashSet<>();
+        //Set<ItemStorage> oldEdibles = new HashSet<>();
+        //oldFood.addAll(ImmutableList.copyOf(oldItems.stream()
+        //                                   .filter(ISFOOD.or(ISCOOKABLE))
+        //                                   .map(ItemStorage::new)
+        //                                   .collect(Collectors.toList())));
+        //oldEdibles.addAll(ImmutableList.copyOf(oldFood.stream().filter(storage -> CAN_EAT.test(storage.getItemStack())).collect(Collectors.toList())));
+        //Log.getLogger().info("New calcs: " + food.size() + "-" + edibles.size() + " ; " + oldFood.size() + "-" + oldEdibles.size());
+        //for(ItemStorage is : food)
+        //{
+        //    if(!oldFood.contains(is))
+        //    {
+        //        Log.getLogger().info("Mismatch at : " + is.getItem().getName() + "\\" + is.getItemStack().getItem().getRegistryName());
+        //        for (ResourceLocation tag : is.getItem().getTags())
+        //        {
+        //            Log.getLogger().info(tag);
+        //        }
+        //    }
+        //}
     }
 
     /**
