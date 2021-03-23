@@ -92,7 +92,8 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
     }
 
     /**
-     * Prepares the undertaker for digging. Also requests the tools and checks if the undertaker has queued graves.
+     * Prepares the undertaker for digging.
+     * Also requests the tools and checks if the undertaker has queued graves.
      *
      * @return the next IAIState
      */
@@ -163,6 +164,12 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         return IDLE;
     }
 
+    /**
+     * The undertaker empty the inventory from a grave to the graveyard inventory
+     * The undertake will make multiple trip if needed
+     *
+     * @return the next IAIState
+     */
     private IAIState emptyGrave()
     {
         @Nullable final BuildingGraveyard buildingGraveyard = getOwnBuilding();
@@ -215,6 +222,11 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         return IDLE;
     }
 
+    /**
+     * The undertaker dig (remove) the grave tile entity of a fallen citizen
+     *
+     * @return the next IAIState
+     */
     private IAIState digGrave()
     {
         @Nullable final BuildingGraveyard buildingGraveyard = getOwnBuilding();
@@ -279,8 +291,9 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
 
     /**
      * Attempt to resurrect buried citizen from its citizen data
+     * Randomize to see if resurrection successful and resurrect if need be
      *
-     * Calculate chance of resurrectionfrom, rool to see if resurrection successfull and resurrect if need be
+     * @return the next IAIState
      */
     private IAIState tryResurrect()
     {
@@ -331,6 +344,12 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         return DIG_GRAVE;
     }
 
+    /**
+     * Calculate chance of resurrection from multiple factor: Undertaker Skill, Building Level, Research, Mystical Sites in the city
+     *
+     * @param buildingGraveyard
+     * @return the chance of resurrection
+     */
     private double getResurrectChance(@NotNull final BuildingGraveyard buildingGraveyard)
     {
         double chance = buildingGraveyard.getBuildingLevel() * RESURRECT_BUILDING_LVL_WEIGHT +
@@ -342,6 +361,12 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         return chance;
     }
 
+    /**
+     * The Undertaker search for an empty grave site in the graveyard and build a named graved with
+     * the name of the citizen and its job as text
+     *
+     * @return the next IAIState
+     */
     private IAIState buryCitizen()
     {
         @Nullable final BuildingGraveyard buildingGraveyard = getOwnBuilding();
