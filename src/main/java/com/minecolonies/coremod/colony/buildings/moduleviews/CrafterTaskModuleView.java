@@ -27,12 +27,12 @@ public class CrafterTaskModuleView extends AbstractBuildingModuleView
     @Override
     public String getIcon()
     {
-        return null;
+        return "info";
     }
 
     @Override
     public String getDesc()
     {
-        return null;
+        return "com.minecolonies.coremod.gui.workerhuts.crafter.tasks";
     }
 }

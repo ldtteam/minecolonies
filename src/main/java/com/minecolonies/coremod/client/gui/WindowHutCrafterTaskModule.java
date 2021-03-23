@@ -54,7 +54,7 @@ public class WindowHutCrafterTaskModule extends AbstractModuleWindow
             {
                 if (citizen.getJobView() instanceof CrafterJobView)
                 {
-                tasks.addAll(((CrafterJobView) citizen.getJobView()).getDataStore().getQueue());
+                    tasks.addAll(((CrafterJobView) citizen.getJobView()).getDataStore().getQueue());
                 }
                 else if( citizen.getJobView() instanceof DmanJobView)
                 {
