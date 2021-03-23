@@ -331,4 +331,37 @@ public class PermissionsView implements IPermissions
     {
         return players.containsKey(player.getUniqueID());
     }
+
+    @Override
+    public Map<Integer, Rank> getRanks() { return ranks; }
+
+    @Override
+    public Rank getRankOwner()
+    {
+        return ranks.get(OWNER_RANK_ID);
+    }
+
+    @Override
+    public Rank getRankOfficer()
+    {
+        return ranks.get(OFFICER_RANK_ID);
+    }
+
+    @Override
+    public Rank getRankFriend()
+    {
+        return ranks.get(FRIEND_RANK_ID);
+    }
+
+    @Override
+    public Rank getRankNeutral()
+    {
+        return ranks.get(NEUTRAL_RANK_ID);
+    }
+
+    @Override
+    public Rank getRankHostile()
+    {
+        return ranks.get(HOSTILE_RANK_ID);
+    }
 }

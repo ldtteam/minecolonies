@@ -30,7 +30,7 @@
                 </list>
             </switch>
             <list id="rankButtonList">
-                <button id="rankPage" size="60 15" pos="50 95" />
+                <button id="rankButton" size="60 15" pos="50 95" />
             </list>
         </view>
         <view id="freeBlockList">

@@ -62,7 +62,7 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
         {
             final IBuilding building = IColonyManager.getInstance().getBuilding(player.world, pos);
             if (building != null && building.getColony().isCoordInColony(player.world, pos)
-                  && building.getColony().getPermissions().getRank(player) == OldRank.HOSTILE)
+                  && building.getColony().getPermissions().getRank(player) == building.getColony().getPermissions().getRankHostile())
             {
                 final double localProgress = breakProgressOnTownHall;
                 final double hardness = state.getBlockHardness(player.world, pos) * 20.0 * 1.5;

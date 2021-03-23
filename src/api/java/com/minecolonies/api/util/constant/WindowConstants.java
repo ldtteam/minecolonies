@@ -1136,6 +1136,9 @@ public final class WindowConstants
      */
     public static final String UPGRADE_PROGRESS_LABEL = "upgradeProgress";
 
+    public static final String TOWNHALL_RANK_LIST = "rankButtonList";
+    public static final String TOWNHALL_RANK_BUTTON = "rankButton";
+
     /**
      * Private constructor to hide implicit public one.
      */

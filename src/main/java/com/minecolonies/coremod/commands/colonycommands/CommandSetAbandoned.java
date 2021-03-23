@@ -4,6 +4,7 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.OldRank;
+import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.coremod.commands.commandTypes.IMCColonyOfficerCommand;
 import com.minecolonies.coremod.commands.commandTypes.IMCCommand;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
@@ -36,8 +37,8 @@ public class CommandSetAbandoned implements IMCColonyOfficerCommand
         }
 
         boolean addOfficer = false;
-        if (sender != null && (colony.getPermissions().getRank((PlayerEntity) sender) == OldRank.OFFICER
-                                 || colony.getPermissions().getRank((PlayerEntity) sender) == OldRank.OWNER))
+        if (sender != null && (colony.getPermissions().getRank((PlayerEntity) sender) == colony.getPermissions().getRankOfficer()
+                                 || colony.getPermissions().getRank((PlayerEntity) sender) == colony.getPermissions().getRankOwner()))
         {
             addOfficer = true;
         }
@@ -46,7 +47,7 @@ public class CommandSetAbandoned implements IMCColonyOfficerCommand
 
         if (addOfficer)
         {
-            colony.getPermissions().addPlayer(((PlayerEntity) sender).getGameProfile(), OldRank.OFFICER);
+            colony.getPermissions().addPlayer(((PlayerEntity) sender).getGameProfile(), colony.getPermissions().getRankOfficer());
         }
 
         context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.ownerchange.success", "[abandoned]", colony.getName()), true);

@@ -2,10 +2,7 @@ package com.minecolonies.api.colony;
 
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
-import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.colony.permissions.IPermissions;
-import com.minecolonies.api.colony.permissions.OldRank;
-import com.minecolonies.api.colony.permissions.Player;
+import com.minecolonies.api.colony.permissions.*;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.workorders.WorkOrderView;
@@ -153,26 +150,26 @@ public interface IColonyView extends IColony
     /**
      * Sets a specific permission to a oldRank. If the permission wasn't already set, it sends a message to the server.
      *
-     * @param oldRank   OldRank to get the permission.
+     * @param rank   Rank to get the permission.
      * @param action Permission to get.
      */
-    void setPermission(OldRank oldRank, @NotNull Action action);
+    void setPermission(Rank rank, @NotNull Action action);
 
     /**
      * removes a specific permission to a oldRank. If the permission was set, it sends a message to the server.
      *
-     * @param oldRank   OldRank to remove permission from.
+     * @param rank   Rank to remove permission from.
      * @param action Action to remove permission of.
      */
-    void removePermission(OldRank oldRank, @NotNull Action action);
+    void removePermission(Rank rank, @NotNull Action action);
 
     /**
      * Toggles a specific permission to a oldRank. Sends a message to the server.
      *
-     * @param oldRank   OldRank to toggle permission of.
+     * @param rank   Rank to toggle permission of.
      * @param action Action to toggle permission of.
      */
-    void togglePermission(OldRank oldRank, @NotNull Action action);
+    void togglePermission(Rank rank, @NotNull Action action);
 
     /**
      * Returns the maximum amount of total citizen beds in the colony.

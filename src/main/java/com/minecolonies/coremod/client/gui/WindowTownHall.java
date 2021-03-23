@@ -144,6 +144,11 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
     private boolean permissionEvents;
 
     /**
+     *
+     */
+    private final ScrollingList ranksList;
+
+    /**
      * Color constants for builder list.
      */
     public static final int RED       = Color.getByName("red", 0);
@@ -162,6 +167,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
 
         alliesList = findPaneOfTypeByID(LIST_ALLIES, ScrollingList.class);
         feudsList = findPaneOfTypeByID(LIST_FEUDS, ScrollingList.class);
+        ranksList = findPaneOfTypeByID(TOWNHALL_RANK_LIST, ScrollingList.class);
 
         initColorPicker();
         updateUsers();
@@ -278,7 +284,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
     {
         users.clear();
         users.addAll(townHall.getColony().getPlayers().values());
-        users.sort(Comparator.comparing(Player::getRank, OldRank::compareTo));
+        //users.sort(Comparator.comparing(Player::getRank, OldRank::compareTo));
     }
 
     /**
@@ -375,6 +381,25 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         workOrders.clear();
         workOrders.addAll(townHall.getColony().getWorkOrders());
         sortWorkOrders();
+    }
+
+    private void fillRanks()
+    {
+        final Map<Integer, Rank> ranks = townHall.getColony().getPermissions().getRanks();
+        ranksList.setDataProvider(new ScrollingList.DataProvider() {
+            @Override
+            public int getElementCount()
+            {
+                return ranks.size();
+            }
+
+            @Override
+            public void updateElement(final int i, final Pane pane)
+            {
+                Rank rank = ranks.get(ranks.keySet().toArray()[i]);
+                pane.findPaneOfTypeByID(TOWNHALL_RANK_BUTTON, Button.class).setText(rank.getName());
+            }
+        });
     }
 
     /**
@@ -485,7 +510,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
      */
     private void trigger(@NotNull final Button button)
     {
-        final int index = Integer.valueOf(button.getParent().findPaneOfTypeByID("index", Text.class).getTextAsString());
+        /*final int index = Integer.valueOf(button.getParent().findPaneOfTypeByID("index", Text.class).getTextAsString());
         final boolean trigger = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON).equals(button.getTextAsString());
         final Action action = Action.values()[index];
         final OldRank oldRank = OldRank.valueOf(actionsList.getParent().getID().toUpperCase(Locale.ENGLISH));
@@ -500,7 +525,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         else
         {
             button.setText(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON));
-        }
+        }*/
     }
 
     /**
@@ -532,12 +557,12 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
                     return;
                 }
 
-                rowPane.findPaneOfTypeByID(NAME_LABEL, Text.class).setText(name);
+                /*rowPane.findPaneOfTypeByID(NAME_LABEL, Text.class).setText(name);
                 final boolean isTriggered = townHall.getColony().getPermissions().hasPermission(OldRank.valueOf(actionsList.getParent().getID().toUpperCase(Locale.ENGLISH)), action);
                 rowPane.findPaneOfTypeByID("trigger", Button.class)
                   .setText(isTriggered ? LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON)
                               : LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF));
-                rowPane.findPaneOfTypeByID("index", Text.class).setText(Integer.toString(actionIndex));
+                rowPane.findPaneOfTypeByID("index", Text.class).setText(Integer.toString(actionIndex));*/
             }
         });
     }

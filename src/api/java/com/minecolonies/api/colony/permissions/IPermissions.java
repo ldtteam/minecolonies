@@ -27,6 +27,18 @@ public interface IPermissions
 
     Set<Player> getPlayersByRank(@NotNull Set<Rank> ranks);
 
+    Map<Integer, Rank> getRanks();
+
+    Rank getRankOwner();
+
+    Rank getRankOfficer();
+
+    Rank getRankHostile();
+
+    Rank getRankNeutral();
+
+    Rank getRankFriend();
+
     /**
      * Returns whether the player has the permission for an action.
      *

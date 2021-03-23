@@ -4,6 +4,7 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.OldRank;
+import com.minecolonies.api.colony.permissions.Rank;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.command.CommandSource;
@@ -45,8 +46,9 @@ public interface IMCColonyOfficerCommand extends IMCCommand
         }
 
         // Check colony permissions
-        if (IMCCommand.isPlayerOped((PlayerEntity) sender) || colony.getPermissions().getRank((PlayerEntity) sender) == OldRank.OFFICER
-              || colony.getPermissions().getRank((PlayerEntity) sender) == OldRank.OWNER)
+        final Rank owner = colony.getPermissions().getRanks().get(colony.getPermissions().OWNER_RANK_ID);
+        if (IMCCommand.isPlayerOped((PlayerEntity) sender) || colony.getPermissions().getRank((PlayerEntity) sender) == owner
+              || colony.getPermissions().getRank((PlayerEntity) sender) == owner)
         {
             return true;
         }

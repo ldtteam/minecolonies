@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.OldRank;
 import com.minecolonies.api.colony.permissions.Player;
+import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.network.PacketUtils;
 import com.minecolonies.api.util.Log;
@@ -71,13 +72,13 @@ public class PermissionsMessage
          * Instantiate
          *
          * @param colony     with the colony.
-         * @param viewerOldRank and viewer oldRank.
+         * @param viewerRank and viewer rank.
          */
-        public View(@NotNull final Colony colony, @NotNull final OldRank viewerOldRank)
+        public View(@NotNull final Colony colony, @NotNull final Rank viewerRank)
         {
             this.colonyID = colony.getID();
             this.data = new PacketBuffer(Unpooled.buffer());
-            colony.getPermissions().serializeViewNetworkData(this.data, viewerOldRank);
+            colony.getPermissions().serializeViewNetworkData(this.data, viewerRank);
             this.dimension = colony.getDimension();
         }
 
@@ -121,7 +122,7 @@ public class PermissionsMessage
     {
         private int         colonyID;
         private MessageType type;
-        private OldRank     oldRank;
+        private Rank        rank;
         private Action      action;
 
         /**
@@ -142,15 +143,15 @@ public class PermissionsMessage
          *
          * @param colony Colony the permission is set in
          * @param type   Type of permission {@link MessageType}
-         * @param oldRank   OldRank of the permission {@link OldRank}
+         * @param rank   Rank of the permission {@link OldRank}
          * @param action Action of the permission {@link Action}
          */
-        public Permission(@NotNull final IColonyView colony, final MessageType type, final OldRank oldRank, final Action action)
+        public Permission(@NotNull final IColonyView colony, final MessageType type, final Rank rank, final Action action)
         {
             super();
             this.colonyID = colony.getID();
             this.type = type;
-            this.oldRank = oldRank;
+            this.rank = rank;
             this.action = action;
             this.dimension = colony.getDimension();
         }
@@ -181,13 +182,13 @@ public class PermissionsMessage
             switch (type)
             {
                 case SET_PERMISSION:
-                    colony.getPermissions().setPermission(oldRank, action);
+                    colony.getPermissions().setPermission(rank, action);
                     break;
                 case REMOVE_PERMISSION:
-                    colony.getPermissions().removePermission(oldRank, action);
+                    colony.getPermissions().removePermission(rank, action);
                     break;
                 case TOGGLE_PERMISSION:
-                    colony.getPermissions().togglePermission(oldRank, action);
+                    colony.getPermissions().togglePermission(rank, action);
                     break;
                 default:
                     Log.getLogger().error(String.format("Invalid MessageType %s", type.toString()), new Exception());
@@ -199,7 +200,7 @@ public class PermissionsMessage
         {
             buf.writeInt(colonyID);
             buf.writeString(type.name());
-            buf.writeString(oldRank.name());
+            buf.writeInt(rank.getId());
             buf.writeString(action.name());
             buf.writeString(dimension.getLocation().toString());
         }
@@ -209,9 +210,14 @@ public class PermissionsMessage
         {
             colonyID = buf.readInt();
             type = MessageType.valueOf(buf.readString(32767));
-            oldRank = OldRank.valueOf(buf.readString(32767));
+            final int rankId = buf.readInt();
             action = Action.valueOf(buf.readString(32767));
             dimension = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(buf.readString(32767)));
+            final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, dimension);
+            if (colony != null)
+            {
+                rank = colony.getPermissions().getRanks().get(rankId);
+            }
         }
     }
 
@@ -280,7 +286,7 @@ public class PermissionsMessage
 
             if (colony != null && colony.getPermissions().hasPermission(ctxIn.getSender(), Action.CAN_PROMOTE) && colony.getWorld() != null)
             {
-                colony.getPermissions().addPlayer(playerName, OldRank.NEUTRAL, colony.getWorld());
+                colony.getPermissions().addPlayer(playerName, colony.getPermissions().getRanks().get(colony.getPermissions().NEUTRAL_RANK_ID), colony.getWorld());
             }
             else
             {
@@ -359,7 +365,7 @@ public class PermissionsMessage
 
             if (colony != null && colony.getPermissions().hasPermission(ctxIn.getSender(), Action.CAN_PROMOTE) && colony.getWorld() != null)
             {
-                colony.getPermissions().addPlayer(id, playerName, OldRank.NEUTRAL);
+                colony.getPermissions().addPlayer(id, playerName, colony.getPermissions().getRanks().get(colony.getPermissions().NEUTRAL_RANK_ID));
             }
             else
             {
@@ -453,7 +459,7 @@ public class PermissionsMessage
             final PlayerEntity player = ctxIn.getSender();
             if (colony.getPermissions().hasPermission(player, Action.EDIT_PERMISSIONS))
             {
-                if (type == Type.PROMOTE && colony.getPermissions().getRank(player).ordinal() < colony.getPermissions().getRank(playerID).ordinal())
+                /*if (type == Type.PROMOTE && colony.getPermissions().getRank(player).ordinal() < colony.getPermissions().getRank(playerID).ordinal())
                 {
                     colony.getPermissions().setPlayerRank(playerID, Permissions.getPromotionRank(colony.getPermissions().getRank(playerID)), colony.getWorld());
                 }
@@ -462,7 +468,7 @@ public class PermissionsMessage
                                  || player.getUniqueID().equals(playerID)))
                 {
                     colony.getPermissions().setPlayerRank(playerID, Permissions.getDemotionRank(colony.getPermissions().getRank(playerID)), colony.getWorld());
-                }
+                }*/
             }
         }
     }
@@ -537,14 +543,15 @@ public class PermissionsMessage
             }
             final PlayerEntity player = ctxIn.getSender();
             final Player permissionsPlayer = colony.getPermissions().getPlayers().get(playerID);
-            if ((permissionsPlayer.getRank() == OldRank.HOSTILE && colony.getPermissions().hasPermission(player, Action.EDIT_PERMISSIONS))
-                  || (permissionsPlayer.getRank() != OldRank.HOSTILE
+            final Rank hostile = colony.getPermissions().getRanks().get(colony.getPermissions().HOSTILE_RANK_ID);
+            /*if ((permissionsPlayer.getRank() == hostile && colony.getPermissions().hasPermission(player, Action.EDIT_PERMISSIONS))
+                  || (permissionsPlayer.getRank() != hostile
                         && colony.getPermissions().hasPermission(player, Action.EDIT_PERMISSIONS)
                         && colony.getPermissions().getRank(player).ordinal() < colony.getPermissions().getRank(playerID).ordinal())
                   || player.getUniqueID().equals(playerID))
             {
                 colony.getPermissions().removePlayer(playerID);
-            }
+            }*/
         }
     }
 }

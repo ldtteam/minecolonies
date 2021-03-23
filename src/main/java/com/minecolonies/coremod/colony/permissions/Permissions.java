@@ -491,7 +491,7 @@ public class Permissions implements IPermissions
      */
     public void savePermissions(@NotNull final CompoundNBT compound)
     {
-        //  Owners
+        /*//  Owners
         @NotNull final ListNBT ownerTagList = new ListNBT();
         for (@NotNull final Player player : players.values())
         {
@@ -536,6 +536,7 @@ public class Permissions implements IPermissions
         compound.putBoolean(TAG_FULLY_ABANDONED, fullyAbandoned);
 
         compound.putInt(TAG_VERSION, permissionsVersion);
+         */
     }
 
     @Override
@@ -937,19 +938,33 @@ public class Permissions implements IPermissions
         }
     }
 
-    public Rank getOwnerRank()
+    @Override
+    public Rank getRankOwner()
     {
         return ranks.get(OWNER_RANK_ID);
     }
 
-    public Rank getOfficerRank()
+    @Override
+    public Rank getRankOfficer()
     {
         return ranks.get(OFFICER_RANK_ID);
     }
 
-    public Rank getHostileRank()
+    @Override
+    public Rank getRankHostile()
     {
         return ranks.get(HOSTILE_RANK_ID);
+    }
+
+    @Override
+    public Rank getRankFriend()
+    {
+        return ranks.get(FRIEND_RANK_ID);
+    }
+
+    public Rank getRankNeutral()
+    {
+        return ranks.get(NEUTRAL_RANK_ID);
     }
 
     public Map<Integer, Rank> getRanks()
