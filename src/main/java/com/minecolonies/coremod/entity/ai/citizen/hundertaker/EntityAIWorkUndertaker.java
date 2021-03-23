@@ -144,7 +144,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
             return getState();
         }
 
-        if (walkToBlock(wanderPos, 1))
+        if (walkToBlock(wanderPos, 3))
         {
             return getState();
         }
@@ -192,7 +192,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
             }
 
             // Still moving to the block
-            if (walkToBlock(gravePos, 1))
+            if (walkToBlock(gravePos, 3))
             {
                 return getState();
             }
@@ -233,7 +233,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         if (entity instanceof TileEntityGrave)
         {
             // Still moving to the block
-            if (walkToBlock(gravePos, 1))
+            if (walkToBlock(gravePos, 3))
             {
                 return getState();
             }
@@ -300,7 +300,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         if (entity instanceof TileEntityGrave)
         {
             // Still moving to the block
-            if (walkToBlock(gravePos, 1))
+            if (walkToBlock(gravePos, 3))
             {
                 return getState();
             }
@@ -366,7 +366,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
             return IDLE;
         }
 
-        if(walkToBlock(burialPos.getA(), 1))
+        if(walkToBlock(burialPos.getA(), 3))
         {
             return getState();
         }
