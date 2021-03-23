@@ -91,6 +91,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         effects.add(new ResearchEffect(MELEE_DAMAGE).setTranslatedName("Knight Damage +%s").setLevels(new double[] {0.5, 1, 1.5, 2, 4}));
         effects.add(new ResearchEffect(MINIMUM_STOCK).setTranslatedName("Buildings Can Minimum Stock %3$s%% More").setLevels(new double[] {0.5, 1, 2}));
         effects.add(new ResearchEffect(MORE_ORES).setTranslatedName("Miners Find +%3$s%% More Ores").setLevels(new double[] {0.1, 0.25, 0.5, 1, 2}));
+        effects.add(new ResearchEffect(PODZOL_CHANCE).setTranslatedName("Composters Get +%3$s%% More Podzol").setLevels(new double[] {1, 2}));
         effects.add(new ResearchEffect(RECIPES).setTranslatedName("Workers Can Learn +%3$s%% More Recipes").setLevels(new double[] {0.25, 0.5, 1, 2}));
         effects.add(new ResearchEffect(REGENERATION).setTranslatedName("Citizen Regeneration +%3$s%%").setLevels(new double[] {0.1, 0.25, 0.5, 1, 2}));
         effects.add(new ResearchEffect(SATURATION).setTranslatedName("Citizen Saturation Per Meal +%3$s%%").setLevels(new double[] {0.1, 0.25, 0.5, 1, 2}));
@@ -1043,6 +1044,24 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                          .addItemCost(Items.BONE_MEAL, 64)
                                          .addEffect(ModBuildings.composter.getBuildingBlock(), 1)
                                          .addToList(r);
+
+        final Research podzolChance = new Research(new ResourceLocation(Constants.MOD_ID, "technology/podzolchance"), TECH).setParentResearch(biodegradable)
+                                        .setTranslatedName("Podzol Chance")
+                                        .setTranslatedSubtitle("Eww, sticky!")
+                                        .setIcon(Items.PODZOL)
+                                        .addBuildingRequirement(ModBuildings.COMPOSTER_ID, 2)
+                                        .addItemCost(Items.PODZOL, 8)
+                                        .addEffect(PODZOL_CHANCE, 1)
+                                        .addToList(r);
+        new Research(new ResourceLocation(Constants.MOD_ID, "technology/podzolchance2"), TECH).setParentResearch(podzolChance)
+                                        .setTranslatedName("Podzol Chance II")
+                                        .setTranslatedSubtitle("Much easier than Silk Touch.")
+                                        .setIcon(Items.PODZOL)
+                                        .addBuildingRequirement(ModBuildings.COMPOSTER_ID, 3)
+                                        .addItemCost(Items.PODZOL, 32)
+                                        .addEffect(PODZOL_CHANCE, 2)
+                                        .addToList(r);
+
         final Research flowerPower = new Research(new ResourceLocation(Constants.MOD_ID, "technology/flowerpower"), TECH).setParentResearch(biodegradable)
                                        .setTranslatedName("Flower Power")
                                        .setIcon(ModBlocks.blockHutFlorist.asItem())
