@@ -156,13 +156,6 @@ public interface IRecipeStorage
     ResourceLocation getLootTable();
 
     /**
-     * Get if the recipe uses the buildtool as an input
-     * @return true if buildtool used
-     */
-    boolean getUsesBuildTool();
-
-
-    /**
      * Get the unique token of the recipe.
      *
      * @return the IToken.

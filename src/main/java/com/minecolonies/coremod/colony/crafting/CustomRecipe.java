@@ -514,7 +514,6 @@ public class CustomRecipe
             {
                 final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(recipeToken);
                 if ((storage.getRecipeSource() != null && storage.getRecipeSource().equals(recipeSource)) || (
-                  storage.getUsesBuildTool() == compareStorage.getUsesBuildTool() &&
                   ItemStackUtils.compareItemStacksIgnoreStackSize(storage.getPrimaryOutput(), compareStorage.getPrimaryOutput(), false, true) &&
                   storage.getCleanedInput().containsAll(compareStorage.getCleanedInput())
                     && compareStorage.getCleanedInput()
