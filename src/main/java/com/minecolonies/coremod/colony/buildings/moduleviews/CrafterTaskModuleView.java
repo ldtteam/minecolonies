@@ -5,6 +5,8 @@ import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.client.gui.WindowHutCrafterTaskModule;
 import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -18,6 +20,7 @@ public class CrafterTaskModuleView extends AbstractBuildingModuleView
 
     }
 
+    @OnlyIn(Dist.CLIENT)
     @Override
     public Window getWindow()
     {
