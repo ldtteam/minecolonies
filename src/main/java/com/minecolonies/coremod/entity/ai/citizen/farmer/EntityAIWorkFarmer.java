@@ -160,6 +160,12 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
             return nextState;
         }
 
+        if (wantInventoryDumped())
+        {
+            // Wait to dump before continuing.
+            return getState();
+        }
+
         if (job.getTaskQueue().isEmpty())
         {
             return PREPARING;
@@ -193,7 +199,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
             return PREPARING;
         }
 
-        if (!job.getTaskQueue().isEmpty())
+        if (!job.getTaskQueue().isEmpty() || getActionsDoneUntilDumping() <= job.getActionsDone())
         {
             return START_WORKING;
         }
@@ -454,12 +460,12 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
     @Override
     protected boolean wantInventoryDumped()
     {
-        if (shouldDumpInventory)
+        if (shouldDumpInventory || (job != null && job.getActionsDone() >= getActionRewardForCraftingSuccess()))
         {
             shouldDumpInventory = false;
             return true;
         }
-        return false;
+        return super.wantInventoryDumped();
     }
 
     /**
