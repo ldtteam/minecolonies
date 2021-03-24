@@ -927,6 +927,7 @@ public abstract class AbstractResearchProvider implements IDataProvider
          */
         public ResearchBranch setRemove()
         {
+            this.json.addProperty("base-time", 1.0);
             this.json.addProperty("remove", true);
             return this;
         }
@@ -939,6 +940,7 @@ public abstract class AbstractResearchProvider implements IDataProvider
          */
         public ResearchBranch setRemove(final ResourceLocation branchId)
         {
+            this.json.addProperty("base-time", 1.0);
             this.json.addProperty("remove", branchId.toString());
             return this;
         }
@@ -951,6 +953,7 @@ public abstract class AbstractResearchProvider implements IDataProvider
          */
         public ResearchBranch setRemove(final Collection<ResourceLocation> branchIds)
         {
+            this.json.addProperty("base-time", 1.0);
             final JsonArray removes = new JsonArray();
             for(ResourceLocation rem : branchIds)
             {
