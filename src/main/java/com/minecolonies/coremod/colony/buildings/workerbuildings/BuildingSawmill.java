@@ -12,7 +12,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.coremod.client.gui.WindowHutCrafterModule;
+import com.minecolonies.coremod.client.gui.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.jobs.JobSawmill;
 import net.minecraft.item.ItemStack;
@@ -169,7 +169,7 @@ public class BuildingSawmill extends AbstractBuildingCrafter
         @Override
         public Window getWindow()
         {
-            return new WindowHutCrafterModule(this, SAWMILL);
+            return new WindowHutWorkerModulePlaceholder<>(this, SAWMILL);
         }
     }
 }
