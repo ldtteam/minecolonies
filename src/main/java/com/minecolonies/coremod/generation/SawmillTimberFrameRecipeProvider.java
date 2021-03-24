@@ -33,13 +33,14 @@ public class SawmillTimberFrameRecipeProvider extends CustomRecipeProvider
         {
             for (final TimberFrameCentreType centreType : TimberFrameCentreType.values())
             {
-                    final String id = String.format("%s_%s_timber_frame", frameType.getString(), centreType.getLangName());
+                    final String id = String.format("%s_%s_timber_frame", frameType.getString(), centreType.getString());
                     final ItemStack frame = new ItemStack(frameType.getMaterial(), 1);
-                    final ItemStack centre = idToStack(new ResourceLocation(centreType.getLangName()), 1);
+                    final ItemStack centre = new ItemStack(centreType.getMaterial());
 
                     final List<ItemStack> results = Arrays.stream(TimberFrameType.values())
                                                       .map(type -> idToStructurize(BlockTimberFrame.getName(type, frameType, centreType), 4))
                                                       .collect(Collectors.toList());
+
 
                     CustomRecipeBuilder.create("sawmill", id)
                       .inputs(Lists.newArrayList(frame, centre, new ItemStack(buildTool.get())))
