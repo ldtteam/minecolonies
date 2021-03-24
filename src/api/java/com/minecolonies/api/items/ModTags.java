@@ -28,7 +28,7 @@ public class ModTags
 
     public static ITag<Item> meshes;
 
-    public static ITag<Item>  floristFlowersExcluded;
+    public static ITag<Item> floristFlowers;
 
 
     public static final Map<String, ITag<Item>> crafterProduct              = new HashMap<>();

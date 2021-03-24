@@ -18,10 +18,8 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.items.ModItems;
-import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.sounds.ModSoundEvents;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
@@ -30,7 +28,6 @@ import com.minecolonies.coremod.colony.buildings.views.EmptyView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.PostBox;
 import com.minecolonies.coremod.entity.pathfinding.Pathfinding;
 import com.minecolonies.coremod.items.ItemBannerRallyGuards;
-import com.minecolonies.coremod.util.FurnaceRecipes;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
@@ -370,15 +367,5 @@ public class ClientEventHandler
         // leaving a dedicated server, or leaving an open to LAN world as host or client.
         // This means you don't need a FMLServerStopping event equivalent, as the only remaining case is a dedicated server machine itself, which will always be hard-closing.
         IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().invalidateTagsAndConfigs();
-    }
-
-    @SubscribeEvent
-    public static void onClientConnect(final ClientPlayerNetworkEvent.LoggedInEvent event)
-    {
-        // This should only run when the player first connects to a remote server, or on datapack reload.
-        if (ModTags.tagsLoaded && !IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().isDiscoveredAlready() && ItemStackUtils.ISFOOD != null && FurnaceRecipes.getInstance().loaded())
-        {
-            IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().discover(false);
-        }
     }
 }

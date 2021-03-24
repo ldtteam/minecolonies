@@ -634,6 +634,11 @@ public final class ColonyManager implements IColonyManager
             //  Player has left the game, clear the Colony View cache
             colonyViews.clear();
         }
+        // This should only run when the player first connects to a remote server; local single-player uses the OnWorldLoaded FMLServerStartedEvent.
+        if(ModTags.tagsLoaded && !IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().isDiscoveredAlready() && ItemStackUtils.ISFOOD != null && FurnaceRecipes.getInstance().loaded())
+        {
+            IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().discover(false);
+        }
     }
 
     @Override
