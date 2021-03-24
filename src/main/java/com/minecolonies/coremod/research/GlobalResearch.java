@@ -285,6 +285,7 @@ public class GlobalResearch implements IGlobalResearch
         this.id = id;
         final String autogenKey = "com." + this.id.getNamespace() + ".research." + this.id.getPath().replaceAll("[ /]",".");
         this.name = new TranslationTextComponent(autogenKey + ".name");
+        this.parent = new ResourceLocation("");
         this.subtitle = new TranslationTextComponent("");
         this.effects.addAll(effects);
         this.depth = universityLevel;
