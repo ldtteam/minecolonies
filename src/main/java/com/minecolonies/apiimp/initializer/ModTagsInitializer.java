@@ -7,6 +7,7 @@ import com.minecolonies.api.util.TagUtils;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.tags.ITag;
+import net.minecraft.tags.ITagCollectionSupplier;
 import net.minecraft.util.ResourceLocation;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
@@ -38,6 +39,11 @@ public class ModTagsInitializer
      */
     private static final String INGREDIENT_EXCLUDED = "_ingredient_excluded";
 
+    /**
+     * Cached tag supplier from the last successful TagUpdateEvent
+     */
+    private static ITagCollectionSupplier supplier;
+
     private static final ResourceLocation DECORATION_ITEMS = new ResourceLocation(MOD_ID, "decoblocks");
     private static final ResourceLocation CONCRETE_POWDER = new ResourceLocation(MOD_ID, "concrete_powder");
     private static final ResourceLocation CONCRETE_BLOCK  = new ResourceLocation(MOD_ID, "concrete");
@@ -51,24 +57,25 @@ public class ModTagsInitializer
 
     private static boolean loaded = false;
 
-    public static void init()
+    public static void init(final ITagCollectionSupplier tagSupplier)
     {
         if(loaded)
         {
             return;
         }
         loaded = true;
+        supplier = tagSupplier;
 
-        ModTags.decorationItems = getBlockTags(DECORATION_ITEMS);
-        ModTags.concretePowder = getItemTags(CONCRETE_POWDER);
-        ModTags.concreteBlock = getBlockTags(CONCRETE_BLOCK);
-        ModTags.pathingBlocks = getBlockTags(PATHING_BLOCKS);
-        ModTags.floristFlowers = getItemTags(FLORIST_FLOWERS);
-        ModTags.fungi = getItemTags(FUNGI);
-        ModTags.meshes = getItemTags(MESHES);
-        ModTags.oreChanceBlocks = getBlockTags(ORECHANCEBLOCKS);
-        ModTags.colonyProtectionException = getBlockTags(COLONYPROTECTIONEXCEPTION);
-        ModTags.indestructible = getBlockTags(INDESTRUCTIBLE);
+        ModTags.decorationItems = getBlockTags(DECORATION_ITEMS, supplier);
+        ModTags.concretePowder = getItemTags(CONCRETE_POWDER, supplier);
+        ModTags.concreteBlock = getBlockTags(CONCRETE_BLOCK, supplier);
+        ModTags.pathingBlocks = getBlockTags(PATHING_BLOCKS, supplier);
+        ModTags.floristFlowers = getItemTags(FLORIST_FLOWERS, supplier);
+        ModTags.fungi = getItemTags(FUNGI, supplier);
+        ModTags.meshes = getItemTags(MESHES, supplier);
+        ModTags.oreChanceBlocks = getBlockTags(ORECHANCEBLOCKS, supplier);
+        ModTags.colonyProtectionException = getBlockTags(COLONYPROTECTIONEXCEPTION, supplier);
+        ModTags.indestructible = getBlockTags(INDESTRUCTIBLE, supplier);
 
         initCrafterRules("baker");
         initCrafterRules("blacksmith");
@@ -110,29 +117,31 @@ public class ModTagsInitializer
         final ResourceLocation ingredientsExcluded = new ResourceLocation(MOD_ID, lowerName.concat(INGREDIENT_EXCLUDED));
 
 
-        ModTags.crafterProduct.put(lowerName, getItemTags(products));
-        ModTags.crafterProductExclusions.put(lowerName, getItemTags(productsExcluded));
-        ModTags.crafterIngredient.put(lowerName, getItemTags(ingredients));
-        ModTags.crafterIngredientExclusions.put(lowerName, getItemTags(ingredientsExcluded));
+        ModTags.crafterProduct.put(lowerName, getItemTags(products, supplier));
+        ModTags.crafterProductExclusions.put(lowerName, getItemTags(productsExcluded, supplier));
+        ModTags.crafterIngredient.put(lowerName, getItemTags(ingredients, supplier));
+        ModTags.crafterIngredientExclusions.put(lowerName, getItemTags(ingredientsExcluded, supplier));
     }
 
     /**
      * Get the Tag<Item> from the underlying API
      * @param resourceLocation The resource location specifying the tag ID
+     * @param supplier         The tag supplier providing the tag lookup.
      * @return the tag collection
      */
-    private static ITag<Item> getItemTags(final ResourceLocation resourceLocation)
+    private static ITag<Item> getItemTags(final ResourceLocation resourceLocation, final ITagCollectionSupplier supplier)
     {
-        return TagUtils.getItem(resourceLocation);
+        return supplier.getItemTags().getTagByID(resourceLocation);
     }
 
     /**
      * Get the Tag<Block> from the underlying API
      * @param resourceLocation The resource location specifying the tag ID
+     * @param supplier         The tag supplier providing the tag lookup.
      * @return the tag collection
      */
-    private static ITag<Block> getBlockTags(final ResourceLocation resourceLocation)
+    private static ITag<Block> getBlockTags(final ResourceLocation resourceLocation, final ITagCollectionSupplier supplier)
     {
-        return TagUtils.getBlock(resourceLocation);
+        return supplier.getBlockTags().getTagByID(resourceLocation);
     }
 }

@@ -23,11 +23,9 @@ import java.util.Set;
 public interface ICompatibilityManager
 {
     /**
-     * Method called to instantiate the requirements.
-     *
-     * @param serverSide if server side (true) or client side (false).
+     * Method called to instantiate internal data.
      */
-    void discover(final boolean serverSide);
+    void discover();
 
     /**
      * Gets the sapling matching a leave.

@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.event;
 
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.datalistener.CrafterRecipeListener;
@@ -7,12 +8,15 @@ import com.minecolonies.coremod.datalistener.ResearchListener;
 import com.minecolonies.coremod.entity.pathfinding.Pathfinding;
 import com.minecolonies.coremod.network.messages.client.ColonyStylesMessage;
 import com.minecolonies.coremod.network.messages.client.ServerUUIDMessage;
+import com.minecolonies.coremod.util.FurnaceRecipes;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
+import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
 import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -64,6 +68,17 @@ public class FMLEventHandler
     public static void onServerAboutToStart(@NotNull final FMLServerAboutToStartEvent event)
     {
         IColonyManager.getInstance().getRecipeManager().reset();
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOW)
+    public static void onServerStarted(@NotNull final FMLServerStartedEvent event)
+    {
+        // FurnaceRecipes loads on the same event, so EventPriority is relevant here.
+        // EventPriority.Low should guarantee that it only fires after the FurnaceRecipe version has completed.
+        if(FurnaceRecipes.instance.loaded())
+        {
+            IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().discover();
+        }
     }
 
     public static void onServerStopped(final FMLServerStoppingEvent event)

@@ -3,6 +3,7 @@ package com.minecolonies.coremod.event;
 import com.ldtteam.structures.helpers.Settings;
 import com.ldtteam.structurize.items.ModItems;
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.blocks.interfaces.IRSComponentBlock;
 import com.minecolonies.api.colony.*;
@@ -11,9 +12,11 @@ import com.minecolonies.api.colony.buildings.IGuardBuilding;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.items.ItemBlockHut;
 import com.minecolonies.api.research.IGlobalResearchTree;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.apiimp.initializer.ModTagsInitializer;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.blocks.BlockScarecrow;
@@ -34,6 +37,7 @@ import com.minecolonies.coremod.network.messages.client.UpdateChunkCapabilityMes
 import com.minecolonies.coremod.network.messages.client.UpdateChunkRangeCapabilityMessage;
 import com.minecolonies.coremod.util.ChunkClientDataHelper;
 import com.minecolonies.coremod.util.ChunkDataHelper;
+import com.minecolonies.coremod.util.FurnaceRecipes;
 import net.minecraft.block.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
@@ -63,6 +67,7 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
@@ -758,6 +763,19 @@ public class EventHandler
             IColonyManager.getInstance().resetColonyViews();
             ItemBlockHut.checkResearch(null);
             Log.getLogger().info("Removed all colony views");
+        }
+    }
+
+    @SubscribeEvent
+    public static void onTagUpdate(final TagsUpdatedEvent.VanillaTagTypes event)
+    {
+        // This should only run on data pack reload or reconnection to a world; local single-player and server uses the FMLServerStartedEvent.
+        // This is also the only place where a Tag Supplier is guaranteed to have the output of a transmitted TagSupplier.
+        ModTagsInitializer.init(event.getTagManager());
+        if(ItemStackUtils.ISFOOD != null && FurnaceRecipes.instance.loaded())
+        {
+            IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().invalidateTagsAndConfigs();
+            IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().discover();
         }
     }
 }

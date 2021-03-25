@@ -162,7 +162,7 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
-    public void discover(final boolean serverSide)
+    public void discover()
     {
         discoverAllItems();
 
@@ -203,10 +203,6 @@ public class CompatibilityManager implements ICompatibilityManager
     @Override
     public List<ItemStack> getListOfAllItems()
     {
-        if(allItems.isEmpty())
-        {
-            discoverAllItems();
-        }
         return allItems;
     }
 
@@ -237,30 +233,50 @@ public class CompatibilityManager implements ICompatibilityManager
     @Override
     public Set<ItemStorage> getCopyOfSaplings()
     {
+        if(saplings.isEmpty())
+        {
+            discoverSaplings();
+        }
         return new HashSet<>(saplings);
     }
 
     @Override
     public Set<ItemStorage> getFuel()
     {
+        if(fuel.isEmpty())
+        {
+            discoverFuel();
+        }
         return fuel;
     }
 
     @Override
     public Set<ItemStorage> getFood()
     {
+        if(food.isEmpty())
+        {
+            discoverFood();
+        }
         return food;
     }
 
     @Override
     public Set<ItemStorage> getEdibles()
     {
+        if(edibles.isEmpty())
+        {
+            discoverFood();
+        }
         return edibles;
     }
 
     @Override
     public Set<ItemStorage> getSmeltableOres()
     {
+        if(smeltableOres.isEmpty())
+        {
+            discoverOres();
+        }
         return smeltableOres;
     }
 
@@ -482,6 +498,9 @@ public class CompatibilityManager implements ICompatibilityManager
 
     //------------------------------- Private Utility Methods -------------------------------//
 
+    /**
+     * Discover ores for the Smelter and Miners.
+     */
     private void discoverOres()
     {
         if (smeltableOres.isEmpty())
@@ -501,9 +520,11 @@ public class CompatibilityManager implements ICompatibilityManager
         Log.getLogger().info("Finished discovering Ores");
     }
 
+    /**
+     * Discover saplings from the vanilla Saplings tag, used for the Forester
+     */
     private void discoverSaplings()
     {
-
         for (final Item item : ItemTags.SAPLINGS.getAllElements())
         {
             final ItemStack stack = new ItemStack(item);
@@ -538,7 +559,7 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     /**
-     * Create complete list of plantable items.
+     * Create complete list of plantable items, from the "minecolonies:florist_flowers" tag, for the Florist.
      */
     private void discoverPlantables()
     {
@@ -553,14 +574,6 @@ public class CompatibilityManager implements ICompatibilityManager
             }
         }
         Log.getLogger().info("Finished discovering plantables");
-        for(ItemStorage is : plantables)
-        {
-            Log.getLogger().info("Included : " + is.getItemStack().getItem().getRegistryName());
-            for (ResourceLocation tag : is.getItem().getTags())
-            {
-                Log.getLogger().info(tag);
-            }
-        }
     }
 
     /**

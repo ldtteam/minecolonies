@@ -634,11 +634,6 @@ public final class ColonyManager implements IColonyManager
             //  Player has left the game, clear the Colony View cache
             colonyViews.clear();
         }
-        // This should only run when the player first connects to a remote server; local single-player uses the OnWorldLoaded FMLServerStartedEvent.
-        if(ModTags.tagsLoaded && !IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().isDiscoveredAlready() && ItemStackUtils.ISFOOD != null && FurnaceRecipes.getInstance().loaded())
-        {
-            IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().discover(false);
-        }
     }
 
     @Override
@@ -653,9 +648,11 @@ public final class ColonyManager implements IColonyManager
     @Override
     public void onWorldLoad(@NotNull final World world)
     {
-        ModTagsInitializer.init();
         if (!world.isRemote)
         {
+            // Remote clients only guarantee consistent tag behavior if loaded from a TagsUpdatedEvent.
+            ModTagsInitializer.init(world.getTags());
+
             // Late-load restore if cap was not loaded
             if (!capLoaded)
             {
