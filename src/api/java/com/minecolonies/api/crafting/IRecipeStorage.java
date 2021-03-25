@@ -10,6 +10,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
@@ -84,8 +85,10 @@ public interface IRecipeStorage
      * @param handlers the handlers to use.
      * @return true if succesful.
      */
-    boolean fullfillRecipe(final LootContext context, final List<IItemHandler> handlers);
-
+    default boolean fullfillRecipe(final LootContext context, final List<IItemHandler> handlers)
+    {
+        return fullfillRecipeAndCopy(context, handlers) != null;
+    }
 
     /**
      * Check for space, remove items, and insert crafted items.
@@ -95,7 +98,29 @@ public interface IRecipeStorage
      */
     default boolean fullfillRecipe(final World world, final List<IItemHandler> handlers)
     {
-        return fullfillRecipe((new LootContext.Builder((ServerWorld) world)).build(LootParameterSets.EMPTY),handlers);
+        return fullfillRecipeAndCopy(world, handlers) != null;
+    }
+
+    /**
+     * Check for space, remove items, and insert crafted items, returning a copy of the crafted items.
+     *
+     * @param context loot context
+     * @param handlers the handlers to use
+     * @return copy of the crafted items if successful, null on failure
+     */
+    @Nullable
+    List<ItemStack> fullfillRecipeAndCopy(final LootContext context, final List<IItemHandler> handlers);
+
+    /**
+     * Check for space, remove items, and insert crafted items.
+     *
+     * @param handlers the handlers to use.
+     * @return true if succesful.
+     */
+    @Nullable
+    default List<ItemStack> fullfillRecipeAndCopy(final World world, final List<IItemHandler> handlers)
+    {
+        return fullfillRecipeAndCopy((new LootContext.Builder((ServerWorld) world)).build(LootParameterSets.EMPTY), handlers);
     }
 
     /**

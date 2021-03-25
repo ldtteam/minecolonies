@@ -6,7 +6,6 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
-import com.minecolonies.api.inventory.api.RecordingItemHandler;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.Network;
@@ -233,14 +232,10 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
         final ICitizenData data = worker.getCitizenData();
         if (data != null)
         {
-            List<RecordingItemHandler> handlers = getOwnBuilding().getHandlers().stream()
-                    .map(RecordingItemHandler::new)
-                    .collect(Collectors.toList());
-
-            if (currentRecipeStorage.fullfillRecipe(getLootContext(), new ArrayList<>(handlers)))
+            final List<ItemStack> loot = currentRecipeStorage.fullfillRecipeAndCopy(getLootContext(), getOwnBuilding().getHandlers());
+            if (loot != null)
             {
-                final int enchantmentLevel = handlers.stream()
-                        .flatMap(handler -> handler.getInserted().stream())
+                final int enchantmentLevel = loot.stream()
                         .mapToInt(EntityAIWorkEnchanter::getEnchantedBookLevel)
                         .max().orElse(0);
 
