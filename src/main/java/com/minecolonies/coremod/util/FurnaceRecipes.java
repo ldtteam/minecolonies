@@ -2,6 +2,7 @@ package com.minecolonies.coremod.util;
 
 import com.google.common.collect.ImmutableList;
 
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.compatibility.IFurnaceRecipes;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -125,6 +126,11 @@ public class FurnaceRecipes implements IFurnaceRecipes
         if (ItemStackUtils.ISFOOD == null)
         {
             loadUtilityPredicates();
+        }
+        // This is the first place remote clients can reliably run discoverEdibles and discoverOres, as they depend on furnace recipes and predicates.
+        if(!IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().isDiscoveredAlready())
+        {
+            IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().discover();
         }
     }
 

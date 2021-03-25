@@ -55,15 +55,8 @@ public class ModTagsInitializer
     private static final ResourceLocation INDESTRUCTIBLE = new ResourceLocation(MOD_ID, "indestructible");
     private static final ResourceLocation MESHES = new ResourceLocation(MOD_ID, "meshes");
 
-    private static boolean loaded = false;
-
     public static void init(final ITagCollectionSupplier tagSupplier)
     {
-        if(loaded)
-        {
-            return;
-        }
-        loaded = true;
         supplier = tagSupplier;
 
         ModTags.decorationItems = getBlockTags(DECORATION_ITEMS, supplier);

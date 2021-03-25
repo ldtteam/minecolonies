@@ -769,12 +769,15 @@ public class EventHandler
     @SubscribeEvent
     public static void onTagUpdate(final TagsUpdatedEvent.VanillaTagTypes event)
     {
-        // This should only run on data pack reload or reconnection to a world; local single-player and server uses the FMLServerStartedEvent.
+        // This should only run on data pack reload or reconnection to a world; local single-player and dedicated server uses the FMLServerStartedEvent.
         // This is also the only place where a Tag Supplier is guaranteed to have the output of a transmitted TagSupplier.
         ModTagsInitializer.init(event.getTagManager());
+        IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().invalidateTagsAndConfigs();
+        // Can't always run a discover here on first connection to any world, as the food and smelting-related recipes may not yet be filled.
+        // Those cases run in FurnaceRecipes.setMap (remote client) or FMLEventHandler.onServerStarted (logical server).
+        // Does run discover() run on reconnection, or data pack reloads.
         if(ItemStackUtils.ISFOOD != null && FurnaceRecipes.instance.loaded())
         {
-            IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().invalidateTagsAndConfigs();
             IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().discover();
         }
     }

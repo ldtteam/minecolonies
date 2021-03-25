@@ -233,50 +233,30 @@ public class CompatibilityManager implements ICompatibilityManager
     @Override
     public Set<ItemStorage> getCopyOfSaplings()
     {
-        if(saplings.isEmpty())
-        {
-            discoverSaplings();
-        }
         return new HashSet<>(saplings);
     }
 
     @Override
     public Set<ItemStorage> getFuel()
     {
-        if(fuel.isEmpty())
-        {
-            discoverFuel();
-        }
         return fuel;
     }
 
     @Override
     public Set<ItemStorage> getFood()
     {
-        if(food.isEmpty())
-        {
-            discoverFood();
-        }
         return food;
     }
 
     @Override
     public Set<ItemStorage> getEdibles()
     {
-        if(edibles.isEmpty())
-        {
-            discoverFood();
-        }
         return edibles;
     }
 
     @Override
     public Set<ItemStorage> getSmeltableOres()
     {
-        if(smeltableOres.isEmpty())
-        {
-            discoverOres();
-        }
         return smeltableOres;
     }
 
@@ -470,12 +450,9 @@ public class CompatibilityManager implements ICompatibilityManager
     @Override
     public void invalidateTagsAndConfigs()
     {
-        // Kept as a separate function from invalidateRecipes, as invalidateRecipes fires very late for JEI compatibility,
-        // will cause extraneous log messages, and significantly add to load times.
-        // This does mean data packs which change tags will not filter to the Compatibility Manager until a server restart, but better that than
-        // risking irregular disconnects on lower-powered servers.
+        // Kept as a separate function from invalidateRecipes, as invalidateRecipes fires very late for JEI compatibility.
 
-        // Tag-based configurations may differ between one world and another, or on data pack reload.
+        // Tag-based configurations may differ between one world and another, or on data pack reload. TagsUpdatedEvent is the most consistent trigger for this occurrence.
         saplings.clear();
         oreBlocks.clear();
         smeltableOres.clear();
