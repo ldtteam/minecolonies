@@ -74,6 +74,5 @@ public class CrafterRecipeListener extends JsonReloadListener
         Log.getLogger().info("Loaded " + totalRecipes + " recipes for " + recipeManager.getAllRecipes().size() + " crafters");
 
         IColonyManager.getInstance().getCompatibilityManager().invalidateRecipes(this.dataPackRegistries.getRecipeManager());
-        IColonyManager.getInstance().getCompatibilityManager().invalidateTagsAndConfigs();
     }
 }

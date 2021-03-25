@@ -173,13 +173,6 @@ public interface ICompatibilityManager
     void connectLeafToSapling(BlockState block, ItemStack stack);
 
     /**
-     * If discovery process ran already.
-     *
-     * @return true if so.
-     */
-    boolean isDiscoveredAlready();
-
-    /**
      * Test if an itemStack is plantable for the florist.
      *
      * @param itemStack the stack to check.
@@ -229,9 +222,4 @@ public interface ICompatibilityManager
      * Called when recipes are reloaded and cached info needs to be discarded.
      */
     void invalidateRecipes(@NotNull final RecipeManager recipeManager);
-
-    /**
-     * Called when tag- or config-based data needs to be discarded.
-     */
-    void invalidateTagsAndConfigs();
 }

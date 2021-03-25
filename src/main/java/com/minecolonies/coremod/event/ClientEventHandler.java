@@ -11,7 +11,6 @@ import com.ldtteam.structurize.network.messages.SchematicRequestMessage;
 import com.ldtteam.structurize.placement.structure.IStructureHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.ldtteam.structurize.util.RenderUtils;
-import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
@@ -39,7 +38,6 @@ import net.minecraft.util.Mirror;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -352,20 +350,5 @@ public class ClientEventHandler
                 RenderUtils.renderBox(guardTower.getInDimensionLocation(), guardTower.getInDimensionLocation(), 0, 0, 0, 1.0F, 0.002D, event.getMatrixStack(), linesWithCullAndDepth.get());
             }
         }
-    }
-
-    /**
-     * Gets called when a client disconnects from a server, and in some other circumstances.
-     * May occur early when creating a new IntegratedServer or connecting to a DedicatedServer
-     *
-     * @param event {@link net.minecraftforge.client.event.ClientPlayerNetworkEvent.LoggedOutEvent}
-     */
-    @SubscribeEvent
-    public static void onClientDisconnect(final ClientPlayerNetworkEvent.LoggedOutEvent event)
-    {
-        // While client-only, this event triggers enough to clear all necessary tags for leaving a single-player instance,
-        // leaving a dedicated server, or leaving an open to LAN world as host or client.
-        // This means you don't need a FMLServerStopping event equivalent, as the only remaining case is a dedicated server machine itself, which will always be hard-closing.
-        IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().invalidateTagsAndConfigs();
     }
 }

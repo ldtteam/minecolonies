@@ -127,11 +127,6 @@ public class CompatibilityManager implements ICompatibilityManager
     private final Map<Integer, List<Tuple<String, Integer>>> enchantments = new HashMap<>();
 
     /**
-     * If discovery is finished already.
-     */
-    private boolean discoveredAlready = false;
-
-    /**
      * Random obj.
      */
     private static final Random random = new Random();
@@ -164,6 +159,22 @@ public class CompatibilityManager implements ICompatibilityManager
     @Override
     public void discover()
     {
+        saplings.clear();
+        oreBlocks.clear();
+        smeltableOres.clear();
+        plantables.clear();
+        food.clear();
+        edibles.clear();
+        fuel.clear();
+
+        luckyOres.clear();
+        recruitmentCostsWeights.clear();
+        diseases.clear();
+        diseaseList.clear();
+        enchantments.clear();
+        freeBlocks.clear();
+        freePositions.clear();
+
         discoverAllItems();
 
         discoverSaplings();
@@ -178,8 +189,6 @@ public class CompatibilityManager implements ICompatibilityManager
         discoverEnchantments();
         discoverFreeBlocksAndPos();
         discoverModCompat();
-
-        discoveredAlready = true;
     }
 
     /**
@@ -395,12 +404,6 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
-    public boolean isDiscoveredAlready()
-    {
-        return discoveredAlready;
-    }
-
-    @Override
     public ItemStack getRandomLuckyOre(final double chanceBonus)
     {
         if (random.nextDouble() * ONE_HUNDRED_PERCENT <= MinecoloniesAPIProxy.getInstance().getConfig().getServer().luckyBlockChance.get() * chanceBonus)
@@ -445,32 +448,6 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         compostRecipes.clear();
         discoverCompostRecipes(recipeManager);
-    }
-
-    @Override
-    public void invalidateTagsAndConfigs()
-    {
-        // Kept as a separate function from invalidateRecipes, as invalidateRecipes fires very late for JEI compatibility.
-
-        // Tag-based configurations may differ between one world and another, or on data pack reload. TagsUpdatedEvent is the most consistent trigger for this occurrence.
-        saplings.clear();
-        oreBlocks.clear();
-        smeltableOres.clear();
-        plantables.clear();
-        food.clear();
-        edibles.clear();
-        fuel.clear();
-
-        // Server-config-based files may change between one world and another, or the same world after leaving and re-entering.
-        // TODO: Some of these may eventually go to data packs, either for added configurability and/or to reduce the server config size.
-        luckyOres.clear();
-        recruitmentCostsWeights.clear();
-        diseases.clear();
-        diseaseList.clear();
-        enchantments.clear();
-        freeBlocks.clear();
-        freePositions.clear();
-        discoveredAlready = false;
     }
 
     //------------------------------- Private Utility Methods -------------------------------//
@@ -567,7 +544,6 @@ public class CompatibilityManager implements ICompatibilityManager
                     fuel.add(new ItemStorage(item));
                 }
             }
-
         }
         Log.getLogger().info("Finished discovering fuel");
     }
