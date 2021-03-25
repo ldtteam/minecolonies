@@ -11,7 +11,7 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.entity.citizen.Skill;
-import com.minecolonies.coremod.client.gui.WindowHutCrafterModule;
+import com.minecolonies.coremod.client.gui.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.jobs.JobFletcher;
 import net.minecraft.item.ArmorMaterial;
@@ -155,7 +155,7 @@ public class BuildingFletcher extends AbstractBuildingCrafter
         @Override
         public Window getWindow()
         {
-            return new WindowHutCrafterModule(this, FLETCHER);
+            return new WindowHutWorkerModulePlaceholder<>(this, FLETCHER);
         }
     }
 }
