@@ -6,11 +6,12 @@ import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenDataView;
+import com.minecolonies.api.colony.buildings.IBuildingWorkerView;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.IDeliverymanRequestable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingDeliveryman;
+import com.minecolonies.coremod.colony.jobs.views.CrafterJobView;
 import com.minecolonies.coremod.colony.jobs.views.DmanJobView;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,28 +22,23 @@ import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECO
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
- * Window for the courer hut.
+ * Task list module.
  */
-public class WindowHutDeliverymanModule extends AbstractWindowWorkerModuleBuilding<BuildingDeliveryman.View>
+public class WindowHutCrafterTaskModule extends AbstractModuleWindow
 {
     /**
-     * Resource suffix of the GUI.
+     * Id of the the task list inside the GUI.
      */
-    private static final String HUT_DMAN_RESOURCE_SUFFIX = ":gui/windowhutdeliveryman.xml";
+    private static final String LIST_TASKS = "tasks";
 
     /**
-     * Id of the the fields list inside the GUI.
+     * The constructor of the window.
+     * @param view the building view.
+     * @param name the layout file.
      */
-    private static final String LIST_DELIVERIES = "deliveries";
-
-    /**
-     * Constructor for the window of the courier.
-     *
-     * @param building {@link BuildingDeliveryman.View}.
-     */
-    public WindowHutDeliverymanModule(final BuildingDeliveryman.View building)
+    public WindowHutCrafterTaskModule(final IBuildingView view, final String name)
     {
-        super(building, Constants.MOD_ID + HUT_DMAN_RESOURCE_SUFFIX);
+        super(view, name);
     }
 
     @Override
@@ -51,43 +47,50 @@ public class WindowHutDeliverymanModule extends AbstractWindowWorkerModuleBuildi
         super.onOpened();
         final List<IToken<?>> tasks = new ArrayList<>();
 
-        for (final int citizenId : building.getWorkerId())
+        for (final int citizenId : ((IBuildingWorkerView) buildingView).getWorkerId())
         {
-            ICitizenDataView citizen = building.getColony().getCitizen(citizenId);
-            if (citizen != null && citizen.getJobView() instanceof DmanJobView)
+            ICitizenDataView citizen = buildingView.getColony().getCitizen(citizenId);
+            if (citizen != null)
             {
-                tasks.addAll(((DmanJobView) citizen.getJobView()).getDataStore().getQueue());
+                if (citizen.getJobView() instanceof CrafterJobView)
+                {
+                    tasks.addAll(((CrafterJobView) citizen.getJobView()).getDataStore().getQueue());
+                }
+                else if( citizen.getJobView() instanceof DmanJobView)
+                {
+                    tasks.addAll(((DmanJobView) citizen.getJobView()).getDataStore().getQueue());
+                }
             }
         }
 
-        final ScrollingList deliveryList = findPaneOfTypeByID(LIST_DELIVERIES, ScrollingList.class);
+        final ScrollingList deliveryList = findPaneOfTypeByID(LIST_TASKS, ScrollingList.class);
         deliveryList.setDataProvider(new ScrollingList.DataProvider()
         {
             @Override
             public int getElementCount()
             {
-                tasks.removeIf(token -> building.getColony().getRequestManager().getRequestForToken(token) == null);
+                tasks.removeIf(token -> buildingView.getColony().getRequestManager().getRequestForToken(token) == null);
                 return tasks.size();
             }
 
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                final IRequest<?> request = building.getColony().getRequestManager().getRequestForToken(tasks.get(index));
+                final IRequest<?> request = buildingView.getColony().getRequestManager().getRequestForToken(tasks.get(index));
 
-                final IRequest<?> parent = building.getColony().getRequestManager().getRequestForToken(request.getParent());
+                final IRequest<?> parent = buildingView.getColony().getRequestManager().getRequestForToken(request.getParent());
 
                 if (parent != null)
                 {
                     rowPane.findPaneOfTypeByID(REQUESTER, Text.class)
-                      .setText(request.getRequester().getRequesterDisplayName(building.getColony().getRequestManager(), request).getString() + " ->");
+                      .setText(request.getRequester().getRequesterDisplayName(buildingView.getColony().getRequestManager(), request).getString() + " ->");
                     rowPane.findPaneOfTypeByID(PARENT, Text.class)
-                      .setText(parent.getRequester().getRequesterDisplayName(building.getColony().getRequestManager(), parent));
+                      .setText(parent.getRequester().getRequesterDisplayName(buildingView.getColony().getRequestManager(), parent));
                 }
                 else
                 {
                     rowPane.findPaneOfTypeByID(REQUESTER, Text.class)
-                      .setText(request.getRequester().getRequesterDisplayName(building.getColony().getRequestManager(), request));
+                      .setText(request.getRequester().getRequesterDisplayName(buildingView.getColony().getRequestManager(), request));
                     rowPane.findPaneOfTypeByID(PARENT, Text.class).clearText();
                 }
 
@@ -106,12 +109,4 @@ public class WindowHutDeliverymanModule extends AbstractWindowWorkerModuleBuildi
             }
         });
     }
-
-    @NotNull
-    @Override
-    public String getBuildingName()
-    {
-        return "com.minecolonies.coremod.gui.workerhuts.deliveryman";
-    }
 }
-
