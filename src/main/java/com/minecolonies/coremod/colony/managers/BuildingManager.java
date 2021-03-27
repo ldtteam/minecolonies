@@ -38,6 +38,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.util.Constants;
@@ -327,16 +328,26 @@ public class BuildingManager implements IBuildingManager
     @Override
     public boolean isWithinBuildingZone(final Chunk chunk)
     {
-        final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
+        final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
         if (cap != null)
         {
             final Set<BlockPos> capList = cap.getAllClaimingBuildings().get(colony.getID());
-            if (capList != null && capList.size() >= MineColonies.getConfig().getServer().colonyLoadStrictness.get())
+            return capList != null && capList.size() >= MineColonies.getConfig().getServer().colonyLoadStrictness.get();
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean isInsideBuilding(@NotNull final BlockPos pos)
+    {
+        for (final IBuilding building : buildings.values())
+        {
+            if (building.isInBuilding(new Vector3d(pos.getX(), pos.getY(), pos.getZ())))
             {
                 return true;
             }
         }
-
         return false;
     }
 
@@ -538,7 +549,7 @@ public class BuildingManager implements IBuildingManager
     {
         double distance = Double.MAX_VALUE;
         BlockPos goodCook = null;
-        for (final IBuilding building : citizen.getCitizenColonyHandler().getColony().getBuildingManager().getBuildings().values())
+        for (final IBuilding building : buildings.values())
         {
             if (building instanceof BuildingCook && building.getBuildingLevel() > 0)
             {
@@ -558,7 +569,7 @@ public class BuildingManager implements IBuildingManager
     {
         double distance = Double.MAX_VALUE;
         BlockPos goodHospital = null;
-        for (final IBuilding building : citizen.getCitizenColonyHandler().getColony().getBuildingManager().getBuildings().values())
+        for (final IBuilding building :  buildings.values())
         {
             if (building instanceof BuildingHospital && building.getBuildingLevel() > 0)
             {
@@ -609,7 +620,7 @@ public class BuildingManager implements IBuildingManager
         }
 
         final Chunk chunk = colony.getWorld().getChunk(building.getPosition().getX() >> 4, building.getPosition().getZ() >> 4);
-        final IColonyTagCapability closeCap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElse(null);
+        final IColonyTagCapability closeCap = chunk.getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
 
         if (closeCap == null || closeCap.getAllClaimingBuildings().isEmpty() || !closeCap.getAllClaimingBuildings().containsKey(colony.getID()))
         {

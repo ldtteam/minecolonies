@@ -86,6 +86,13 @@ public interface IBuildingManager
     IWareHouse getClosestWarehouseInColony(BlockPos pos);
 
     /**
+     * check fi a position is inside one of the buildings.
+     * @param pos the position to check.
+     * @return true if so.
+     */
+    boolean isInsideBuilding(@NotNull final BlockPos pos);
+
+    /**
      * Returns a map with all buildings within the colony. Key is ID (Coordinates), value is building object.
      *
      * @return Map with ID (coordinates) as key, and buildings as value.
