@@ -577,7 +577,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             final IToken<?> token = StandardFactoryController.getInstance().deserialize(recipesTags.getCompound(i));
             if (!recipes.contains(token)) 
             {
-                // We can't existance check with the global collection here, because it's often zero length when this code runs. 
                 recipes.add(token);
                 IColonyManager.getInstance().getRecipeManager().registerUse(token);
             }
@@ -745,10 +744,11 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             buf.writeInt(data == null ? 0 : data.getId());
         }
         final List<IRecipeStorage> storages = new ArrayList<>();
+        Map<ResourceLocation, CustomRecipe> crafterRecipes = CustomRecipeManager.getInstance().getAllRecipes().get(getJobName());
         for (final IToken<?> token : new ArrayList<>(recipes))
         {
             final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-            if (storage == null)
+            if (storage == null || (storage.getRecipeSource() != null && !crafterRecipes.containsKey(storage.getRecipeSource())))
             {
                 removeRecipe(token);
             }
@@ -956,16 +956,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             }
         }
 
-        //Make a pass through our building recipes, and make sure the custom recipes still exist. 
-        Map<ResourceLocation, CustomRecipe> crafterRecipes = CustomRecipeManager.getInstance().getAllRecipes().get(getJobName());
-        for(IToken<?> token : ImmutableList.copyOf(recipes))
-        {
-            final IRecipeStorage recipe = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-            if (recipe != null && recipe.getRecipeSource() != null && !crafterRecipes.containsKey(recipe.getRecipeSource()))
-            {
-                removeRecipe(token);
-            }
-        }
         markDirty();
     }
 
