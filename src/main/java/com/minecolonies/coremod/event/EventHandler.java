@@ -404,7 +404,7 @@ public class EventHandler
         for (final BlockPos buildingPos : newCloseColonies.getAllClaimingBuildings().getOrDefault(newCloseColonies.getOwningColony(), Collections.emptySet()))
         {
             final IBuilding building = newColony.getBuildingManager().getBuilding(buildingPos);
-            if (building != null && building.isInBuilding(pos))
+            if (building != null && building.getBuildingLevel() >= 1 && building.isInBuilding(pos))
             {
                 event.setCanceled(true);
             }
