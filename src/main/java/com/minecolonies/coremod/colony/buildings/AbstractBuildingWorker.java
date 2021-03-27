@@ -50,6 +50,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -574,14 +575,11 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         for (int i = 0; i < recipesTags.size(); i++)
         {
             final IToken<?> token = StandardFactoryController.getInstance().deserialize(recipesTags.getCompound(i));
-            if (!recipes.contains(token))
+            if (!recipes.contains(token)) 
             {
-                final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-                if (Objects.equals(IColonyManager.getInstance().getRecipeManager().getRecipeId(storage), token))
-                {
-                    recipes.add(token);
-                    IColonyManager.getInstance().getRecipeManager().registerUse(token);
-                }
+                // We can't existance check with the global collection here, because it's often zero length when this code runs. 
+                recipes.add(token);
+                IColonyManager.getInstance().getRecipeManager().registerUse(token);
             }
         }
     }
@@ -955,6 +953,17 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
                 {
                     removeRecipe(recipeToken);
                 }
+            }
+        }
+
+        //Make a pass through our building recipes, and make sure the custom recipes still exist. 
+        Map<ResourceLocation, CustomRecipe> crafterRecipes = CustomRecipeManager.getInstance().getAllRecipes().get(getJobName());
+        for(IToken<?> token : ImmutableList.copyOf(recipes))
+        {
+            final IRecipeStorage recipe = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
+            if (recipe != null && recipe.getRecipeSource() != null && !crafterRecipes.containsKey(recipe.getRecipeSource()))
+            {
+                removeRecipe(token);
             }
         }
         markDirty();
