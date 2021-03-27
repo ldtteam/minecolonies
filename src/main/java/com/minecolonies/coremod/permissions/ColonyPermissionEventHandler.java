@@ -12,7 +12,6 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
@@ -40,7 +39,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
-import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.*;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
@@ -566,27 +564,6 @@ public class ColonyPermissionEventHandler
             if (!(event.getTarget() instanceof MobEntity) && !perms.hasPermission(event.getPlayer(), Action.ATTACK_ENTITY))
             {
                 cancelEvent(event, event.getPlayer(), colony, Action.ATTACK_ENTITY, new BlockPos(event.getTarget().getPositionVec()));
-            }
-        }
-    }
-
-    /**
-     * Join world event.
-     * @param event the join world event.
-     */
-    @SubscribeEvent
-    public void on(final LivingSpawnEvent.CheckSpawn event)
-    {
-        final BlockPos pos = new BlockPos(event.getX(), event.getY(), event.getZ());
-        if (event.isSpawner() || event.getWorld().isRemote() || !WorldUtil.isEntityBlockLoaded(event.getWorld(), pos))
-        {
-            return;
-        }
-        if (colony.isCoordInColony((World) event.getWorld(), pos))
-        {
-            if (event.getEntity() instanceof MonsterEntity && colony.getBuildingManager().isInsideBuilding(pos))
-            {
-                event.setCanceled(true);
             }
         }
     }

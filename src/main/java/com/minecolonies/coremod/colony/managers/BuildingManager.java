@@ -38,7 +38,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.util.Constants;
@@ -335,19 +334,6 @@ public class BuildingManager implements IBuildingManager
             return capList != null && capList.size() >= MineColonies.getConfig().getServer().colonyLoadStrictness.get();
         }
 
-        return false;
-    }
-
-    @Override
-    public boolean isInsideBuilding(@NotNull final BlockPos pos)
-    {
-        for (final IBuilding building : buildings.values())
-        {
-            if (building.isInBuilding(new Vector3d(pos.getX(), pos.getY(), pos.getZ())))
-            {
-                return true;
-            }
-        }
         return false;
     }
 

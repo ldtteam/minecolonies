@@ -43,6 +43,7 @@ import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.monster.EndermanEntity;
 import net.minecraft.entity.monster.IMob;
+import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.passive.horse.LlamaEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -69,6 +70,7 @@ import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
+import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
@@ -371,6 +373,40 @@ public class EventHandler
                         }
                     }
                 }
+            }
+        }
+    }
+
+    /**
+     * Join world event.
+     * @param event the join world event.
+     */
+    @SubscribeEvent
+    public void on(final LivingSpawnEvent.CheckSpawn event)
+    {
+        final BlockPos pos = new BlockPos(event.getX(), event.getY(), event.getZ());
+        if (event.isSpawner() || event.getWorld().isRemote() || !WorldUtil.isEntityBlockLoaded(event.getWorld(), pos))
+        {
+            return;
+        }
+
+        final IColonyTagCapability newCloseColonies = ((World) event.getWorld()).getChunkAt(pos).getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
+        if (newCloseColonies == null || newCloseColonies.getOwningColony() == 0)
+        {
+            return;
+        }
+        final IColony newColony = IColonyManager.getInstance().getColonyByWorld(newCloseColonies.getOwningColony(), (World) event.getWorld());
+        if (newColony == null)
+        {
+            return;
+        }
+
+        for (final BlockPos buildingPos : newCloseColonies.getAllClaimingBuildings().getOrDefault(newCloseColonies.getOwningColony(), Collections.emptySet()))
+        {
+            final IBuilding building = newColony.getBuildingManager().getBuilding(buildingPos);
+            if (building != null && building.isInBuilding(pos))
+            {
+                event.setCanceled(true);
             }
         }
     }
