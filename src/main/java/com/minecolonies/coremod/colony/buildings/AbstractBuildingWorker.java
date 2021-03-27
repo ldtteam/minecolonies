@@ -575,7 +575,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         for (int i = 0; i < recipesTags.size(); i++)
         {
             final IToken<?> token = StandardFactoryController.getInstance().deserialize(recipesTags.getCompound(i));
-            if (!recipes.contains(token)) 
+            if (!recipes.contains(token))
             {
                 recipes.add(token);
                 IColonyManager.getInstance().getRecipeManager().registerUse(token);
@@ -955,7 +955,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
                 }
             }
         }
-
         markDirty();
     }
 
