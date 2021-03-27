@@ -390,18 +390,18 @@ public class EventHandler
             return;
         }
 
-        final IColonyTagCapability newCloseColonies = ((World) event.getWorld()).getChunkAt(pos).getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
-        if (newCloseColonies == null || newCloseColonies.getOwningColony() == 0)
+        final IColonyTagCapability closeColonyCap = ((World) event.getWorld()).getChunkAt(pos).getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
+        if (closeColonyCap == null || closeColonyCap.getOwningColony() == 0)
         {
             return;
         }
-        final IColony newColony = IColonyManager.getInstance().getColonyByWorld(newCloseColonies.getOwningColony(), (World) event.getWorld());
+        final IColony newColony = IColonyManager.getInstance().getColonyByWorld(closeColonyCap.getOwningColony(), (World) event.getWorld());
         if (newColony == null)
         {
             return;
         }
 
-        for (final BlockPos buildingPos : newCloseColonies.getAllClaimingBuildings().getOrDefault(newCloseColonies.getOwningColony(), Collections.emptySet()))
+        for (final BlockPos buildingPos : closeColonyCap.getAllClaimingBuildings().getOrDefault(closeColonyCap.getOwningColony(), Collections.emptySet()))
         {
             final IBuilding building = newColony.getBuildingManager().getBuilding(buildingPos);
             if (building != null && building.getBuildingLevel() >= 1 && building.isInBuilding(pos))
