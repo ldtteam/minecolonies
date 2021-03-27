@@ -48,6 +48,7 @@ public class DimensionFluidHandler implements IPlacementHandler
             return Collections.emptyList();
         }
 
+        //Todo 1.17 will need adjustments for "spreading fluids".
         if (!blockState.getFluidState().isSource())
         {
             return Collections.emptyList();
