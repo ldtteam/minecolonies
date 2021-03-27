@@ -55,6 +55,7 @@ public final class ModBuildingsInitializer
                                 .addBuildingModuleProducer(MinimumStockModule::new, MinimumStockModuleView::new)
                                 .addBuildingModuleProducer(() -> new ItemListModule(FUEL_LIST), () -> new ItemListModuleView(FUEL_LIST, COM_MINECOLONIES_REQUESTS_BURNABLE, false,
                                   (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getFuel()))
+                                .addBuildingModuleProducer(CrafterTaskModule::new, CrafterTaskModuleView::new)
                                 .createBuildingEntry();
 
         ModBuildings.barracks = new BuildingEntry.Builder()
