@@ -14,6 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.SSetSlotPacket;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.SlotItemHandler;
@@ -248,18 +249,19 @@ public class ContainerCraftingFurnace extends Container
             clickResult = super.slotClick(slotId, clickedButton, mode, playerInventory.player);
         }
 
-        if (!playerInventory.player.world.isRemote)
-        {
-            final ServerPlayerEntity player = (ServerPlayerEntity) playerIn;
-            final ItemStack result = IMinecoloniesAPI.getInstance().getFurnaceRecipes().getSmeltingResult(furnaceInventory.getStackInSlot(0));
-
-            if (result != ItemStack.EMPTY)
-            {
-                this.furnaceInventory.insertItem(1, result, false);
-                player.connection.sendPacket(new SSetSlotPacket(this.windowId, 1, result));
-            }
-        }
+        updateFurnaceOutput();
         return clickResult;
+    }
+
+    /**
+     * Sets the furnace input item (intended mainly for crafting teaching).
+     *
+     * @param stack The input stack.
+     */
+    public void setFurnaceInput(final ItemStack stack)
+    {
+        handleSlotClick(getSlot(0), stack);
+        updateFurnaceOutput();
     }
 
     /**
@@ -283,6 +285,24 @@ public class ContainerCraftingFurnace extends Container
         }
 
         return slot.getStack().copy();
+    }
+
+    /**
+     * Update the furnace output slot when called server-side.
+     */
+    private void updateFurnaceOutput()
+    {
+        if (!playerInventory.player.world.isRemote)
+        {
+            final ServerPlayerEntity player = (ServerPlayerEntity) playerInventory.player;
+            final ItemStack result = IMinecoloniesAPI.getInstance().getFurnaceRecipes().getSmeltingResult(furnaceInventory.getStackInSlot(0));
+
+            if (result != ItemStack.EMPTY)
+            {
+                this.furnaceInventory.insertItem(1, result, false);
+                player.connection.sendPacket(new SSetSlotPacket(this.windowId, 1, result));
+            }
+        }
     }
 
     @Override
@@ -347,6 +367,26 @@ public class ContainerCraftingFurnace extends Container
     public boolean canMergeSlot(final ItemStack stack, final Slot slotIn)
     {
         return !(slotIn instanceof FurnaceResultSlot) && super.canMergeSlot(stack, slotIn);
+    }
+
+    /**
+     * Getter for the player.
+     *
+     * @return the player.
+     */
+    public PlayerEntity getPlayer()
+    {
+        return playerInventory.player;
+    }
+
+    /**
+     * Getter for the world obj.
+     *
+     * @return the world obj.
+     */
+    public World getWorldObj()
+    {
+        return playerInventory.player.world;
     }
 
     /**

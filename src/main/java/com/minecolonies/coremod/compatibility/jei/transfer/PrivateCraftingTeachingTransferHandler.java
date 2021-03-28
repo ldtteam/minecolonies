@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.compatibility.jei.transer;
+package com.minecolonies.coremod.compatibility.jei.transfer;
 
 import com.google.common.collect.ImmutableSet;
 import com.ldtteam.structurize.util.LanguageHandler;
@@ -6,8 +6,7 @@ import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.network.messages.server.TransferRecipeCrafingTeachingMessage;
-import io.netty.buffer.Unpooled;
+import com.minecolonies.coremod.network.messages.server.TransferRecipeCraftingTeachingMessage;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.gui.ingredient.IGuiIngredient;
 import mezz.jei.api.gui.ingredient.IGuiItemStackGroup;
@@ -17,8 +16,8 @@ import mezz.jei.api.recipe.transfer.IRecipeTransferHandlerHelper;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.GameRules;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
@@ -29,11 +28,12 @@ public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHa
 {
    private final IRecipeTransferHandlerHelper handlerHelper;
 
-    public PrivateCraftingTeachingTransferHandler(final IRecipeTransferHandlerHelper handlerHelper)
+    public PrivateCraftingTeachingTransferHandler(@NotNull final IRecipeTransferHandlerHelper handlerHelper)
     {
         this.handlerHelper = handlerHelper;
     }
 
+    @NotNull
     @Override
     public Class<ContainerCrafting> getContainerClass()
     {
@@ -43,14 +43,14 @@ public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHa
     @Nullable
     @Override
     public IRecipeTransferError transferRecipe(
-      final ContainerCrafting craftingGUIBuilding,
-      final IRecipeLayout recipeLayout,
-      final PlayerEntity player,
-      final boolean b,
-      final boolean b1)
+            @NotNull final ContainerCrafting craftingGUIBuilding,
+            @NotNull final Object recipe,
+            @NotNull final IRecipeLayout recipeLayout,
+            @NotNull final PlayerEntity player,
+            final boolean maxTransfer,
+            final boolean doTransfer)
     {
         final IGuiItemStackGroup itemStackGroup = recipeLayout.getItemStacks();
-
 
         // compact the crafting grid into a 2x2 area
         final Map<Integer, ItemStack> guiIngredients = new HashMap<>();
@@ -92,10 +92,8 @@ public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHa
                 inputIndex++;
             }
         }
-        final PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
-        buffer.writeBoolean(craftingGUIBuilding.isComplete());
-        final CraftingInventory craftMatrix = craftingGUIBuilding.getInv();
 
+        final CraftingInventory craftMatrix = craftingGUIBuilding.getInv();
         if (craftingGUIBuilding.isComplete())
         {
             craftMatrix.setInventorySlotContents(0, guiIngredients.get(0));
@@ -122,9 +120,9 @@ public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHa
             return handlerHelper.createUserErrorWithTooltip(tooltipMessage);
         }
 
-        if (b1)
+        if (doTransfer)
         {
-            final TransferRecipeCrafingTeachingMessage message = new TransferRecipeCrafingTeachingMessage(guiIngredients, craftingGUIBuilding.isComplete());
+            final TransferRecipeCraftingTeachingMessage message = new TransferRecipeCraftingTeachingMessage(guiIngredients, craftingGUIBuilding.isComplete());
             Network.getNetwork().sendToServer(message);
         }
 
