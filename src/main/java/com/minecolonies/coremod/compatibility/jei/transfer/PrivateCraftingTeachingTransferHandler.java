@@ -93,35 +93,29 @@ public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHa
             }
         }
 
-        final CraftingInventory craftMatrix = craftingGUIBuilding.getInv();
-        if (craftingGUIBuilding.isComplete())
-        {
-            craftMatrix.setInventorySlotContents(0, guiIngredients.get(0));
-            craftMatrix.setInventorySlotContents(1, guiIngredients.get(1));
-            craftMatrix.setInventorySlotContents(2, guiIngredients.get(2));
-            craftMatrix.setInventorySlotContents(3, guiIngredients.get(3));
-            craftMatrix.setInventorySlotContents(4, guiIngredients.get(4));
-            craftMatrix.setInventorySlotContents(5, guiIngredients.get(5));
-            craftMatrix.setInventorySlotContents(6, guiIngredients.get(6));
-            craftMatrix.setInventorySlotContents(7, guiIngredients.get(7));
-            craftMatrix.setInventorySlotContents(8, guiIngredients.get(8));
-        }
-        else
-        {
-            craftMatrix.setInventorySlotContents(0, guiIngredients.get(0));
-            craftMatrix.setInventorySlotContents(1, guiIngredients.get(1));
-            craftMatrix.setInventorySlotContents(2, guiIngredients.get(3));
-            craftMatrix.setInventorySlotContents(3, guiIngredients.get(4));
-        }
-
-        if (craftingGUIBuilding.getWorldObj().getGameRules().getBoolean(GameRules.DO_LIMITED_CRAFTING) && !craftingGUIBuilding.getPlayer().isCreative())
-        {
-            final String tooltipMessage = LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_COMPAT_JEI_CRAFTIN_TEACHING_UNKNOWN_RECIPE);
-            return handlerHelper.createUserErrorWithTooltip(tooltipMessage);
-        }
-
         if (doTransfer)
         {
+            final CraftingInventory craftMatrix = craftingGUIBuilding.getInv();
+            if (craftingGUIBuilding.isComplete())
+            {
+                craftMatrix.setInventorySlotContents(0, guiIngredients.get(0));
+                craftMatrix.setInventorySlotContents(1, guiIngredients.get(1));
+                craftMatrix.setInventorySlotContents(2, guiIngredients.get(2));
+                craftMatrix.setInventorySlotContents(3, guiIngredients.get(3));
+                craftMatrix.setInventorySlotContents(4, guiIngredients.get(4));
+                craftMatrix.setInventorySlotContents(5, guiIngredients.get(5));
+                craftMatrix.setInventorySlotContents(6, guiIngredients.get(6));
+                craftMatrix.setInventorySlotContents(7, guiIngredients.get(7));
+                craftMatrix.setInventorySlotContents(8, guiIngredients.get(8));
+            }
+            else
+            {
+                craftMatrix.setInventorySlotContents(0, guiIngredients.get(0));
+                craftMatrix.setInventorySlotContents(1, guiIngredients.get(1));
+                craftMatrix.setInventorySlotContents(2, guiIngredients.get(3));
+                craftMatrix.setInventorySlotContents(3, guiIngredients.get(4));
+            }
+
             final TransferRecipeCraftingTeachingMessage message = new TransferRecipeCraftingTeachingMessage(guiIngredients, craftingGUIBuilding.isComplete());
             Network.getNetwork().sendToServer(message);
         }
