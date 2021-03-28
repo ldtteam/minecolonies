@@ -136,7 +136,7 @@ public abstract class AbstractEntityAITraining<J extends AbstractJob<?, J>, B ex
             return null;
         }
 
-        if (getOwnBuilding().isInBuilding(new Vector3d(pos.getX(), pos.getY(), pos.getZ())))
+        if (getOwnBuilding().isInBuilding(pos))
         {
             return pos;
         }
