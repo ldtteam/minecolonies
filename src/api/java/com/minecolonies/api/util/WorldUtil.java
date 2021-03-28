@@ -314,7 +314,7 @@ public class WorldUtil
                         {
                             for (final T entity : chunk.getEntityLists()[y].getByClass(clazz))
                             {
-                                if (building.isInBuilding(entity.getPositionVec()) && (predicate == null || predicate.test(entity)))
+                                if (building.isInBuilding(entity.getPosition()) && (predicate == null || predicate.test(entity)))
                                 {
                                     list.add(entity);
                                 }
