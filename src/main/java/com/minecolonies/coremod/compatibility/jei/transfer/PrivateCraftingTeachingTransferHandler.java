@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableSet;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.server.TransferRecipeCraftingTeachingMessage;
 import mezz.jei.api.gui.IRecipeLayout;
@@ -16,7 +15,6 @@ import mezz.jei.api.recipe.transfer.IRecipeTransferHandlerHelper;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.GameRules;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -24,6 +22,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * JEI recipe transfer handler for teaching crafting recipes
+ */
 public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHandler<ContainerCrafting>
 {
    private final IRecipeTransferHandlerHelper handlerHelper;
