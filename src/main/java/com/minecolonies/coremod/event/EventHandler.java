@@ -275,11 +275,11 @@ public class EventHandler
             final ServerPlayerEntity player = (ServerPlayerEntity) event.getPlayer();
 
             final Chunk newChunk = player.world.getChunk(player.chunkCoordX, player.chunkCoordZ);
-            final IColonyTagCapability newCloseColonies = newChunk.getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
-            if (newCloseColonies != null)
+            final IColonyTagCapability closeColonyCap = newChunk.getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
+            if (closeColonyCap != null)
             {
                 // Add visiting/subscriber to new colony
-                final IColony newColony = IColonyManager.getInstance().getColonyByWorld(newCloseColonies.getOwningColony(), player.world);
+                final IColony newColony = IColonyManager.getInstance().getColonyByWorld(closeColonyCap.getOwningColony(), player.world);
                 if (newColony != null)
                 {
                     newColony.addVisitingPlayer(player);
