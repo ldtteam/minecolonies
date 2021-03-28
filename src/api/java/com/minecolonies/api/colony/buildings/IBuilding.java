@@ -396,10 +396,10 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
 
     /**
      * Check if a certain vec is within this building.
-     * @param positionVec the vec to check.
+     * @param pos the pos to check.
      * @return true if so.
      */
-    boolean isInBuilding(Vector3d positionVec);
+    boolean isInBuilding(@NotNull final BlockPos pos);
 
     /**
      * Get a map of all open requests by type.

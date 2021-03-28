@@ -962,7 +962,7 @@ public class Tree
 
         for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
         {
-            if (building.isInBuilding(new Vector3d(pos.getX(), pos.getY(), pos.getZ())))
+            if (building.isInBuilding(pos))
             {
                 return false;
             }

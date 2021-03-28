@@ -150,7 +150,7 @@ public class WindowSelectRes extends AbstractWindowSkeleton
                                                     .map(ItemStack::new)
                                                     .filter((stack) -> (test.test(stack) && (this.filter.isEmpty() || stack.getTranslationKey().toLowerCase(Locale.US)
                                                                                                                         .contains(this.filter.toLowerCase(Locale.US))
-                                                                                                                   || stack.getDisplayName().getString()
+                                                                                                                   || stack.getDisplayName().getString().toLowerCase(Locale.US)
                                                                                                                         .contains(filter.toLowerCase(Locale.US)))))
                                                     .collect(Collectors.toList())));
         this.updateResourceList();
