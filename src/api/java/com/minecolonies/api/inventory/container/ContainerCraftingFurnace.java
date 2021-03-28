@@ -297,11 +297,8 @@ public class ContainerCraftingFurnace extends Container
             final ServerPlayerEntity player = (ServerPlayerEntity) playerInventory.player;
             final ItemStack result = IMinecoloniesAPI.getInstance().getFurnaceRecipes().getSmeltingResult(furnaceInventory.getStackInSlot(0));
 
-            if (result != ItemStack.EMPTY)
-            {
-                this.furnaceInventory.insertItem(1, result, false);
-                player.connection.sendPacket(new SSetSlotPacket(this.windowId, 1, result));
-            }
+            this.furnaceInventory.insertItem(1, result, false);
+            player.connection.sendPacket(new SSetSlotPacket(this.windowId, 1, result));
         }
     }
 
