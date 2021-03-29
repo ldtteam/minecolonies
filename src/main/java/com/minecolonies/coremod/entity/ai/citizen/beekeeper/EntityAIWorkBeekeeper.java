@@ -90,6 +90,12 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
         );
     }
 
+    @Override
+    protected int getActionsDoneUntilDumping()
+    {
+        return 5;
+    }
+
     /**
      * Checks the beehives/beenests and their surroundings if the maximum number of bees is reached
      *
