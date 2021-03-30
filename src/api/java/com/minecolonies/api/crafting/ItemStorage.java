@@ -2,14 +2,9 @@ package com.minecolonies.api.crafting;
 
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.TagUtils;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tags.ITag;
-import net.minecraft.tags.TagCollectionManager;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.util.Lazy;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -17,8 +12,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 
 /**
  * Used to store an stack with various informations to compare items later on.
@@ -49,13 +42,6 @@ public class ItemStorage
      * Amount of the storage.
      */
     private int amount;
-
-    /**
-     * Tag indicating items that should always be compared without NBT, for recipe compatibility.
-     * Note this tag can't be loaded via ModTagsInitializer as that occurs too late.
-     */
-    private static final Lazy<ITag<Item>> craftingIgnoresNbt = Lazy.of(() ->
-            TagUtils.getItem(new ResourceLocation(MOD_ID, "crafting_ignores_nbt")));
 
     /**
      * Creates an instance of the storage.
@@ -186,12 +172,15 @@ public class ItemStorage
 
     /**
      * Getter for the ignoreNBT.
+     * We also check a tag here so that it will react to /reload and apply
+     * to all existing recipes and other usages that don't explicitly
+     * force the NBT check.
      *
      * @return true if should ignore.
      */
     public boolean ignoreNBT()
     {
-        return shouldIgnoreNBTValue || craftingIgnoresNbt.get().contains(stack.getItem());
+        return shouldIgnoreNBTValue || ModTags.ignoreNbt.contains(stack.getItem());
     }
 
     /**
