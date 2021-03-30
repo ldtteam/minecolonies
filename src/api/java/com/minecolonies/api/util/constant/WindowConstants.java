@@ -1138,6 +1138,9 @@ public final class WindowConstants
 
     public static final String TOWNHALL_RANK_LIST = "rankButtonList";
     public static final String TOWNHALL_RANK_BUTTON = "rankButton";
+    public static final String BUTTON_ADD_RANK = "buttonAddRank";
+    public static final String INPUT_ADDRANK_NAME = "addRankName";
+    public static final String BUTTON_EDIT_PLAYERRANK = "editPlayerRank";
 
     /**
      * Input filter id.

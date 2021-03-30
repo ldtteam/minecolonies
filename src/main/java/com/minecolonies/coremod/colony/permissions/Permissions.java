@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.permissions.*;
 import com.minecolonies.api.network.PacketUtils;
 import com.minecolonies.api.util.Utils;
+import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.coremod.colony.Colony;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.entity.player.PlayerEntity;
@@ -42,6 +43,8 @@ public class Permissions implements IPermissions
     private static final String TAG_OWNER_ID        = "ownerid";
     private static final String TAG_FULLY_ABANDONED = "fully_abandoned";
     private static final String TAG_RANKS           = "ranks";
+    private static final String TAG_SUBSCRIBER      = "is_subscriber";
+    private static final String TAG_INITIAL         = "is_initial";
 
     /**
      * NBTTarget for the permission version, used for updating.
@@ -139,54 +142,6 @@ public class Permissions implements IPermissions
      */
     public Permissions(@NotNull final Colony colony)
     {
-        ranks.clear();
-        for (OldRank oldRank : OldRank.values())
-        {
-            Rank rank = new Rank(oldRank.ordinal(), oldRank.name(), oldRank.isSubscriber, true);
-            ranks.put(rank.getId(), rank);
-            permissionMap.put(rank, 0);
-            switch (oldRank)
-            {
-                case OWNER:
-                    this.setPermission(rank, Action.EDIT_PERMISSIONS);
-                case OFFICER:
-                    this.setPermission(rank, Action.PLACE_HUTS);
-                    this.setPermission(rank, Action.BREAK_HUTS);
-                    this.setPermission(rank, Action.CAN_PROMOTE);
-                    this.setPermission(rank, Action.CAN_DEMOTE);
-                    this.setPermission(rank, Action.SEND_MESSAGES);
-                    this.setPermission(rank, Action.MANAGE_HUTS);
-                    this.setPermission(rank, Action.RECEIVE_MESSAGES);
-                    this.setPermission(rank, Action.PLACE_BLOCKS);
-                    this.setPermission(rank, Action.BREAK_BLOCKS);
-                    this.setPermission(rank, Action.FILL_BUCKET);
-                    this.setPermission(rank, Action.OPEN_CONTAINER);
-                    this.setPermission(rank, Action.RECEIVE_MESSAGES_FAR_AWAY);
-                    this.setPermission(rank, Action.CAN_KEEP_COLONY_ACTIVE_WHILE_AWAY);
-                    this.setPermission(rank, Action.RALLY_GUARDS);
-                case FRIEND:
-                    this.setPermission(rank, Action.ACCESS_HUTS);
-                    this.setPermission(rank, Action.USE_SCAN_TOOL);
-                    this.setPermission(rank, Action.TOSS_ITEM);
-                    this.setPermission(rank, Action.PICKUP_ITEM);
-                    this.setPermission(rank, Action.RIGHTCLICK_BLOCK);
-                    this.setPermission(rank, Action.RIGHTCLICK_ENTITY);
-                    this.setPermission(rank, Action.THROW_POTION);
-                    this.setPermission(rank, Action.SHOOT_ARROW);
-                    this.setPermission(rank, Action.ATTACK_CITIZEN);
-                    this.setPermission(rank, Action.ATTACK_ENTITY);
-                    this.setPermission(rank, Action.TELEPORT_TO_COLONY);
-                case NEUTRAL:
-                    this.setPermission(rank, Action.ACCESS_FREE_BLOCKS);
-                    break;
-                case HOSTILE:
-                    this.setPermission(rank, Action.GUARDS_ATTACK);
-                    break;
-                default:
-                    break;
-            }
-        }
-        //Owner
         this.clearDirty();
         this.colony = colony;
     }
@@ -290,9 +245,71 @@ public class Permissions implements IPermissions
     public void loadPermissions(@NotNull final CompoundNBT compound)
     {
         // Ranks
+        ranks.clear();
         if (compound.contains(TAG_RANKS))
         {
-            // ToDo: load Ranks from compound
+            final ListNBT rankTagList = compound.getList(TAG_RANKS, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
+            for (int i = 0; i < rankTagList.size(); ++i)
+            {
+                final CompoundNBT rankCompound = rankTagList.getCompound(i);
+                final int id = rankCompound.getInt(TAG_ID);
+                final String name = rankCompound.getString(TAG_NAME);
+                final boolean isSubscriber = rankCompound.getBoolean(TAG_SUBSCRIBER);
+                final boolean isInitial = rankCompound.getBoolean(TAG_INITIAL);
+                final Rank rank = new Rank(id, name, isSubscriber, isInitial);
+                ranks.put(id, rank);
+            }
+        }
+        else
+        {
+            for (OldRank oldRank : OldRank.values())
+            {
+                String name = oldRank.name();
+                name = name.substring(0,1).toUpperCase(Locale.ENGLISH) + name.substring(1).toLowerCase(Locale.ENGLISH);
+                Rank rank = new Rank(oldRank.ordinal(), name, oldRank.isSubscriber, true);
+                ranks.put(rank.getId(), rank);
+                permissionMap.put(rank, 0);
+                switch (oldRank)
+                {
+                    case OWNER:
+                        this.setPermission(rank, Action.EDIT_PERMISSIONS);
+                    case OFFICER:
+                        this.setPermission(rank, Action.PLACE_HUTS);
+                        this.setPermission(rank, Action.BREAK_HUTS);
+                        this.setPermission(rank, Action.CAN_PROMOTE);
+                        this.setPermission(rank, Action.CAN_DEMOTE);
+                        this.setPermission(rank, Action.SEND_MESSAGES);
+                        this.setPermission(rank, Action.MANAGE_HUTS);
+                        this.setPermission(rank, Action.RECEIVE_MESSAGES);
+                        this.setPermission(rank, Action.PLACE_BLOCKS);
+                        this.setPermission(rank, Action.BREAK_BLOCKS);
+                        this.setPermission(rank, Action.FILL_BUCKET);
+                        this.setPermission(rank, Action.OPEN_CONTAINER);
+                        this.setPermission(rank, Action.RECEIVE_MESSAGES_FAR_AWAY);
+                        this.setPermission(rank, Action.CAN_KEEP_COLONY_ACTIVE_WHILE_AWAY);
+                        this.setPermission(rank, Action.RALLY_GUARDS);
+                    case FRIEND:
+                        this.setPermission(rank, Action.ACCESS_HUTS);
+                        this.setPermission(rank, Action.USE_SCAN_TOOL);
+                        this.setPermission(rank, Action.TOSS_ITEM);
+                        this.setPermission(rank, Action.PICKUP_ITEM);
+                        this.setPermission(rank, Action.RIGHTCLICK_BLOCK);
+                        this.setPermission(rank, Action.RIGHTCLICK_ENTITY);
+                        this.setPermission(rank, Action.THROW_POTION);
+                        this.setPermission(rank, Action.SHOOT_ARROW);
+                        this.setPermission(rank, Action.ATTACK_CITIZEN);
+                        this.setPermission(rank, Action.ATTACK_ENTITY);
+                        this.setPermission(rank, Action.TELEPORT_TO_COLONY);
+                    case NEUTRAL:
+                        this.setPermission(rank, Action.ACCESS_FREE_BLOCKS);
+                        break;
+                    case HOSTILE:
+                        this.setPermission(rank, Action.GUARDS_ATTACK);
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
         players.clear();
         //  Owners
@@ -491,7 +508,20 @@ public class Permissions implements IPermissions
      */
     public void savePermissions(@NotNull final CompoundNBT compound)
     {
-        /*//  Owners
+        //  Ranks
+        @NotNull final ListNBT rankTagList = new ListNBT();
+        for (@NotNull final Rank rank : ranks.values())
+        {
+            @NotNull final CompoundNBT rankCompound = new CompoundNBT();
+            rankCompound.putInt(TAG_ID, rank.getId());
+            rankCompound.putString(TAG_NAME, rank.getName());
+            rankCompound.putBoolean(TAG_SUBSCRIBER, rank.isSubscriber());
+            rankCompound.putBoolean(TAG_INITIAL, rank.isInitial());
+            rankTagList.add(rankCompound);
+        }
+        compound.put(TAG_RANKS, rankTagList);
+
+        //  Owners
         @NotNull final ListNBT ownerTagList = new ListNBT();
         for (@NotNull final Player player : players.values())
         {
@@ -536,7 +566,6 @@ public class Permissions implements IPermissions
         compound.putBoolean(TAG_FULLY_ABANDONED, fullyAbandoned);
 
         compound.putInt(TAG_VERSION, permissionsVersion);
-         */
     }
 
     @Override
@@ -962,14 +991,33 @@ public class Permissions implements IPermissions
         return ranks.get(FRIEND_RANK_ID);
     }
 
+    @Override
     public Rank getRankNeutral()
     {
         return ranks.get(NEUTRAL_RANK_ID);
     }
 
+    @Override
     public Map<Integer, Rank> getRanks()
     {
         return ranks;
+    }
+
+    @Override
+    public void addRank(String name)
+    {
+
+        int id = HOSTILE_RANK_ID + 1;
+        for (int i = HOSTILE_RANK_ID; i <= ranks.size() + 1; ++i)
+        {
+            if (ranks.get(i) == null)
+            {
+                id = i;
+                break;
+            }
+        }
+        ranks.put(id, new Rank(id, name, false, false));
+        markDirty();
     }
 
     private static class RankPair

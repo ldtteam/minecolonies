@@ -116,4 +116,6 @@ public interface IPermissions
     boolean removePermission(Rank rank, Action action);
 
     boolean removePlayer(UUID playerID);
+
+    void addRank(String name);
 }

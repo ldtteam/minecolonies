@@ -4,18 +4,38 @@
     <switch id="switchpagePermissions" size="100% 100%">
         <view id="pageAddPlayer">
             <list id="users" size="148 171" pos="201 36">
-                <box size="100% 30" linewidth="2">
+                <box size="100% 50" linewidth="2">
                     <label id="name" size="100 11" pos="5 2" color="black"/>
                     <button id="removePlayer" size="11 11" pos="7 2" align="TOP_RIGHT" label="X" textscale="0.5"/>
-                    <button id="demote" size="11 11" pos="5 16" label="-" textscale="0.5"/>
-                    <button id="promote" size="11 11" pos="20 16" label="+" textscale="0.5"/>
-                    <label id="rank" size="50 11" pos="35 17" color="black"/>
+                    <label id="rank" size="85 30" pos="5 15" color="black" align="TOP_LEFT"/>
+                    <button id="editPlayerRank" size="35 15" pos="85 17" align="MIDDLE_MIDDLE" label="Edit" />
                 </box>
             </list>
+
 
             <label size="148 11" pos="26 65" color="black" label="$(com.minecolonies.coremod.gui.townHall.addPlayer)"/>
             <input id="addPlayerName" size="100 18" pos="26 76" maxlength="32"/>
             <button id="addPlayer" size="19 19" pos="130 76" label="+"/>
+
+            <box id="editPlayerRankBox" size="190 244" pos="26 36" linewidth="0">
+                <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
+                <label id="playerName" size="120 11" pos="12 12" label="Edit player" color="black" />
+                <dropdown id="rankPicker"
+                          size="129 17"
+                          pos="12 42"
+                          maxContentHeight="100"
+                          dropDownSize="129 100"
+                          dropDownPos="50 50"
+                          source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
+                          textcolor="black"
+                          scrollbarOffset="9 0"
+                          dropfixx="100">
+                    <view size="100% 15">
+                        <label id="id" size="100% 100%" label="" pos="0 0" textalign="MIDDLE"/>
+                        <buttonimage id="button" size="129 17" pos="0 0" source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png" textcolor="black"/>
+                    </view>
+                </dropdown>
+            </box>
         </view>
         <view id="managePermissions">
             <switch id="userGroups" size="148 171" pos="201 36">
@@ -29,9 +49,14 @@
                     </view>
                 </list>
             </switch>
-            <list id="rankButtonList">
-                <button id="rankButton" size="60 15" pos="50 95" />
+            <list id="rankButtonList" size="148 111" pos="26 65">
+                <box size="100% 17" linewidth="0">
+                    <button id="rankButton" size="120 15" pos="2 2" align="TOP_MIDDLE" />
+                </box>
             </list>
+            <label size="148 11" pos="26 198" color="black" label="$(com.minecolonies.coremod.gui.townhall.addrank)"/>
+            <input id="addRankName" size="100 18" pos="26 190" maxlength="32"/>
+            <button id="buttonAddRank" size="19 19" pos="130 190" label="+"/>
         </view>
         <view id="freeBlockList">
             <label size="148 11" pos="201 24" color="black" label="$(com.minecolonies.coremod.gui.townHall.freeBlocks)"/>

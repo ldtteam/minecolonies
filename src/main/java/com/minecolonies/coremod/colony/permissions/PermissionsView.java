@@ -364,4 +364,9 @@ public class PermissionsView implements IPermissions
     {
         return ranks.get(HOSTILE_RANK_ID);
     }
+
+    @Override
+    public void addRank(String name)
+    {
+    }
 }
