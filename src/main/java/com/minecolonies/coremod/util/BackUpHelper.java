@@ -27,6 +27,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -418,6 +420,7 @@ public final class BackUpHelper
     {
         final MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
         final File topworldDir = server.func_240776_a_(FolderName.DOT).toFile();
+        final File minecraftDir = new File(topworldDir.getAbsolutePath().replace(topworldDir.getPath(), ""));
 
         final String worldname = topworldDir.getParent().replace("." + File.separator, "");
         final String minecoloniesZipDir = worldname + File.separator + "minecolonies";
@@ -520,6 +523,36 @@ public final class BackUpHelper
             if (config.exists())
             {
                 addFileToZipWithPath(worldname + File.separator + "serverconfig" + File.separator + "minecolonies-server.toml", zos, config);
+            }
+
+            // Mod list
+            final File modFolder = new File(minecraftDir, "mods");
+            final Set<String> mods = new HashSet<>();
+            if (modFolder.exists() && modFolder.isDirectory())
+            {
+                for (final File mod : modFolder.listFiles())
+                {
+                    if (mod.exists())
+                    {
+                        mods.add(mod.getName());
+                    }
+                }
+            }
+
+            if (!mods.isEmpty())
+            {
+                zos.putNextEntry(new ZipEntry(worldname + File.separator + "mods.txt"));
+                for (final String mod : mods)
+                {
+                    zos.write(mod.concat("\n").getBytes());
+                }
+            }
+
+            // Latest.log
+            final File latestlog = new File(minecraftDir, "logs" + File.separator + "latest.log");
+            if (latestlog.exists())
+            {
+                addFileToZipWithPath(worldname + File.separator + latestlog.getName(), zos, latestlog);
             }
 
             zos.close();
