@@ -306,18 +306,16 @@ task setupCIWorkspace {
 }
 
 processResources {
-    onlyIf {
-        // this won't exist on the first time running data gen after wiping the generated folder
-        file('src/main/generated/resources/assets/minecolonies/lang/default.json').exists()
-    }
     doLast {
-        def slurper = new JsonSlurper()
-        def standard = slurper.parse(file('src/main/resources/assets/minecolonies/lang/en_us.json'), 'UTF-8')
-        def generated = slurper.parse(file('src/main/generated/resources/assets/minecolonies/lang/default.json'), 'UTF-8')
+        if(file('src/main/generated/resources/assets/minecolonies/lang/default.json').exists()) {
+            def slurper = new JsonSlurper()
+            def standard = slurper.parse(file('src/main/resources/assets/minecolonies/lang/en_us.json'), 'UTF-8')
+            def generated = slurper.parse(file('src/main/generated/resources/assets/minecolonies/lang/default.json'), 'UTF-8')
 
-        standard += generated
+            standard += generated
 
-        file('build/resources/main/assets/minecolonies/lang/en_us.json').write(JsonOutput.prettyPrint(JsonOutput.toJson(standard)), 'UTF-8')
+            file('build/resources/main/assets/minecolonies/lang/en_us.json').write(JsonOutput.prettyPrint(JsonOutput.toJson(standard)), 'UTF-8')
+        }
     }
 }
 

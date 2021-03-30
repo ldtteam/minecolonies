@@ -23,11 +23,9 @@ import java.util.Set;
 public interface ICompatibilityManager
 {
     /**
-     * Method called to instantiate the requirements.
-     *
-     * @param serverSide if server side (true) or client side (false).
+     * Method called to instantiate internal data.
      */
-    void discover(final boolean serverSide);
+    void discover();
 
     /**
      * Gets the sapling matching a leave.
@@ -173,13 +171,6 @@ public interface ICompatibilityManager
      * @param stack the sapling.
      */
     void connectLeafToSapling(BlockState block, ItemStack stack);
-
-    /**
-     * If discovery process ran already.
-     *
-     * @return true if so.
-     */
-    boolean isDiscoveredAlready();
 
     /**
      * Test if an itemStack is plantable for the florist.

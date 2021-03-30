@@ -43,14 +43,12 @@ import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.monster.EndermanEntity;
 import net.minecraft.entity.monster.IMob;
+import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.passive.horse.LlamaEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.dedicated.DedicatedServer;
-import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.state.properties.BedPart;
 import net.minecraft.tileentity.MobSpawnerTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -69,6 +67,7 @@ import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
+import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
@@ -76,7 +75,6 @@ import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
@@ -273,11 +271,11 @@ public class EventHandler
             final ServerPlayerEntity player = (ServerPlayerEntity) event.getPlayer();
 
             final Chunk newChunk = player.world.getChunk(player.chunkCoordX, player.chunkCoordZ);
-            final IColonyTagCapability newCloseColonies = newChunk.getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
-            if (newCloseColonies != null)
+            final IColonyTagCapability closeColonyCap = newChunk.getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
+            if (closeColonyCap != null)
             {
                 // Add visiting/subscriber to new colony
-                final IColony newColony = IColonyManager.getInstance().getColonyByWorld(newCloseColonies.getOwningColony(), player.world);
+                final IColony newColony = IColonyManager.getInstance().getColonyByWorld(closeColonyCap.getOwningColony(), player.world);
                 if (newColony != null)
                 {
                     newColony.addVisitingPlayer(player);
@@ -371,6 +369,40 @@ public class EventHandler
                         }
                     }
                 }
+            }
+        }
+    }
+
+    /**
+     * Join world event.
+     * @param event the join world event.
+     */
+    @SubscribeEvent
+    public void on(final LivingSpawnEvent.CheckSpawn event)
+    {
+        final BlockPos pos = new BlockPos(event.getX(), event.getY(), event.getZ());
+        if (event.isSpawner() || event.getWorld().isRemote() || !WorldUtil.isEntityBlockLoaded(event.getWorld(), pos))
+        {
+            return;
+        }
+
+        final IColonyTagCapability closeColonyCap = ((World) event.getWorld()).getChunkAt(pos).getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
+        if (closeColonyCap == null || closeColonyCap.getOwningColony() == 0)
+        {
+            return;
+        }
+        final IColony newColony = IColonyManager.getInstance().getColonyByWorld(closeColonyCap.getOwningColony(), (World) event.getWorld());
+        if (newColony == null)
+        {
+            return;
+        }
+
+        for (final BlockPos buildingPos : closeColonyCap.getAllClaimingBuildings().getOrDefault(closeColonyCap.getOwningColony(), Collections.emptySet()))
+        {
+            final IBuilding building = newColony.getBuildingManager().getBuilding(buildingPos);
+            if (building != null && building.getBuildingLevel() >= 1 && building.isInBuilding(pos))
+            {
+                event.setCanceled(true);
             }
         }
     }

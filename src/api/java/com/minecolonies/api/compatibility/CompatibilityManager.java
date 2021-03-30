@@ -2,8 +2,6 @@ package com.minecolonies.api.compatibility;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.crafting.CompostRecipe;
 import com.minecolonies.api.compatibility.resourcefulbees.*;
@@ -21,7 +19,7 @@ import net.minecraft.nbt.NBTUtil;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.IntegerProperty;
 import net.minecraft.state.Property;
-import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.*;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
@@ -34,11 +32,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import static com.minecolonies.api.util.ItemStackUtils.*;
-import static com.minecolonies.api.util.constant.Constants.ONE_HUNDRED_PERCENT;
-import static com.minecolonies.api.util.constant.Constants.ORE_STRING;
+import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_SAP_LEAF;
 import static net.minecraft.item.EnchantedBookItem.getEnchantedItemStack;
 
@@ -126,11 +122,6 @@ public class CompatibilityManager implements ICompatibilityManager
     private final List<Tuple<Item, Integer>> recruitmentCostsWeights = new ArrayList<>();
 
     /**
-     * If discovery is finished already.
-     */
-    private boolean discoveredAlready = false;
-
-    /**
      * Random obj.
      */
     private static final Random random = new Random();
@@ -143,12 +134,12 @@ public class CompatibilityManager implements ICompatibilityManager
     /**
      * Free block positions everyone can interact with.
      */
-    private Set<Block> freeBlocks = new HashSet<>();
+    private final Set<Block> freeBlocks = new HashSet<>();
 
     /**
      * Free positions everyone can interact with.
      */
-    private Set<BlockPos> freePositions = new HashSet<>();
+    private final Set<BlockPos> freePositions = new HashSet<>();
 
     /**
      * Instantiates the compatibilityManager.
@@ -161,22 +152,36 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
-    public void discover(final boolean serverSide)
+    public void discover()
     {
+        saplings.clear();
+        oreBlocks.clear();
+        smeltableOres.clear();
+        plantables.clear();
+        food.clear();
+        edibles.clear();
+        fuel.clear();
+
+        luckyOres.clear();
+        recruitmentCostsWeights.clear();
+        diseases.clear();
+        diseaseList.clear();
+        freeBlocks.clear();
+        freePositions.clear();
+
         discoverAllItems();
 
         discoverSaplings();
         discoverOres();
         discoverPlantables();
+        discoverFood();
+        discoverFuel();
+
         discoverLuckyOres();
         discoverRecruitCosts();
         discoverDiseases();
-        discoverFood();
-        discoverFuel();
         discoverFreeBlocksAndPos();
         discoverModCompat();
-
-        discoveredAlready = true;
     }
 
     /**
@@ -184,16 +189,12 @@ public class CompatibilityManager implements ICompatibilityManager
      */
     private void discoverAllItems()
     {
-        final List<ItemStack> stacks = StreamSupport.stream(Spliterators.spliteratorUnknownSize(ForgeRegistries.ITEMS.iterator(), Spliterator.ORDERED), true)
-                .flatMap(item ->
-                {
-                    final NonNullList<ItemStack> list = NonNullList.create();
-                    item.fillItemGroup(ItemGroup.SEARCH, list);
-                    return list.stream();
-                })
-                .collect(Collectors.toList());
-
-        allItems = ImmutableList.copyOf(stacks);
+        final NonNullList<ItemStack> items = NonNullList.create();
+        for(Item item : ForgeRegistries.ITEMS.getValues())
+        {
+            items.add(new ItemStack(item));
+        }
+        allItems = ImmutableList.copyOf(items);
     }
 
     /**
@@ -210,31 +211,7 @@ public class CompatibilityManager implements ICompatibilityManager
     @Override
     public boolean isPlantable(final ItemStack itemStack)
     {
-        if (itemStack.isEmpty() || !(itemStack.getItem() instanceof BlockItem) || itemStack.getItem() == ModTags.floristFlowersExcluded)
-        {
-            return false;
-        }
-
-        for (final String string : IMinecoloniesAPI.getInstance().getConfig().getServer().listOfPlantables.get())
-        {
-            if (itemStack.getItem().getRegistryName().toString().equals(string))
-            {
-                return true;
-            }
-
-            String[] split = string.split(":");
-            if (split.length == 2)
-            {
-                for (final ResourceLocation tag : itemStack.getItem().getTags())
-                {
-                    if (tag.toString().contains(":" + split[1]) && itemStack.getItem().getRegistryName().getNamespace().equals(split[0]))
-                    {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
+        return !itemStack.isEmpty() && itemStack.getItem() instanceof BlockItem && ModTags.floristFlowers.contains(itemStack.getItem());
     }
 
     @Override
@@ -420,12 +397,6 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
-    public boolean isDiscoveredAlready()
-    {
-        return discoveredAlready;
-    }
-
-    @Override
     public ItemStack getRandomLuckyOre(final double chanceBonus)
     {
         if (random.nextDouble() * ONE_HUNDRED_PERCENT <= MinecoloniesAPIProxy.getInstance().getConfig().getServer().luckyBlockChance.get() * chanceBonus)
@@ -450,35 +421,39 @@ public class CompatibilityManager implements ICompatibilityManager
     @Override
     public void invalidateRecipes(@NotNull final RecipeManager recipeManager)
     {
-        // TODO: this should probably also invalidate anything using tags too (which is most things)
-        //       although technically there's a different event for tag reloads
-
         compostRecipes.clear();
         discoverCompostRecipes(recipeManager);
     }
 
     //------------------------------- Private Utility Methods -------------------------------//
 
+    /**
+     * Discover ores for the Smelter and Miners.
+     */
     private void discoverOres()
     {
         if (smeltableOres.isEmpty())
         {
-            smeltableOres.addAll(ImmutableList.copyOf(allItems.stream().filter(this::isOre).map(ItemStorage::new).collect(Collectors.toList())));
-        }
-
-        if (oreBlocks.isEmpty())
-        {
-            oreBlocks.addAll(ImmutableList.copyOf(allItems.stream().filter(this::isMineableOre)
-                    .filter(stack -> !isEmpty(stack) && stack.getItem() instanceof BlockItem)
-                    .map(stack -> ((BlockItem) stack.getItem()).getBlock())
-                    .collect(Collectors.toList())));
+            for(Item item : Tags.Items.ORES.getAllElements())
+            {
+                if(item.getItem() instanceof BlockItem)
+                {
+                    oreBlocks.add(((BlockItem) item.getItem()).getBlock());
+                }
+                if (!MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getSmeltingResult(new ItemStack((item))).isEmpty())
+                {
+                    smeltableOres.add(new ItemStorage(new ItemStack(item)));
+                }
+            }
         }
         Log.getLogger().info("Finished discovering Ores");
     }
 
+    /**
+     * Discover saplings from the vanilla Saplings tag, used for the Forester
+     */
     private void discoverSaplings()
     {
-
         for (final Item item : ItemTags.SAPLINGS.getAllElements())
         {
             final ItemStack stack = new ItemStack(item);
@@ -513,16 +488,19 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     /**
-     * Create complete list of plantable items.
+     * Create complete list of plantable items, from the "minecolonies:florist_flowers" tag, for the Florist.
      */
     private void discoverPlantables()
     {
         if (plantables.isEmpty())
         {
-            plantables.addAll(ImmutableList.copyOf(allItems.stream()
-                    .filter(this::isPlantable)
-                    .map(ItemStorage::new)
-                    .collect(Collectors.toList())));
+            for (Item item : ModTags.floristFlowers.getAllElements())
+            {
+                if (item instanceof BlockItem)
+                {
+                    plantables.add(new ItemStorage(new ItemStack(item)));
+                }
+            }
         }
         Log.getLogger().info("Finished discovering plantables");
     }
@@ -534,7 +512,13 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         if (fuel.isEmpty())
         {
-            fuel.addAll(ImmutableList.copyOf(allItems.stream().filter(FurnaceTileEntity::isFuel).map(ItemStorage::new).collect(Collectors.toList())));
+            for(ItemStack item : allItems)
+            {
+                if(FurnaceTileEntity.isFuel(item))
+                {
+                    fuel.add(new ItemStorage(item));
+                }
+            }
         }
         Log.getLogger().info("Finished discovering fuel");
     }
@@ -546,14 +530,17 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         if (food.isEmpty())
         {
-            food.addAll(ImmutableList.copyOf(allItems.stream()
-                    .filter(ISFOOD.or(ISCOOKABLE))
-                    .map(ItemStorage::new)
-                    .collect(Collectors.toList())));
-        }
-        if (edibles.isEmpty())
-        {
-            edibles.addAll(ImmutableList.copyOf(food.stream().filter(storage -> CAN_EAT.test(storage.getItemStack())).collect(Collectors.toList())));
+            for(ItemStack item : allItems)
+            {
+                if(ISFOOD.test(item) || ISCOOKABLE.test(item))
+                {
+                    food.add(new ItemStorage(item));
+                    if(CAN_EAT.test(item))
+                    {
+                        edibles.add(new ItemStorage(item));
+                    }
+                }
+            }
         }
         Log.getLogger().info("Finished discovering food");
     }

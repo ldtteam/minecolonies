@@ -917,9 +917,6 @@
   "com.minecolonies.coremod.resolvers.crafter.private": "Crafting",
   "com.minecolonies.coremod.gui.workerhuts.togglereplantsaplingson": "Replant On",
   "com.minecolonies.coremod.gui.workerhuts.togglereplantsaplingsoff": "Replant Off",
-
-  "com.minecolonies.coremod.compat.jei.crafting.teaching.unknown.recipe": "You have not learned this recipe yet!",
-
   "com.minecolonies.coremod.gui.workerhuts.switchstyle": "Switch Style",
   "com.minecolonies.coremod.gui.townhall.toolow": "Town Hall level too low!",
   "com.minecolonies.coremod.gui.recipe.full": "Max number of recipes reached for hut level",

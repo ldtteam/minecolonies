@@ -79,7 +79,8 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
         {
             final int citizenModifier = citizen.getCitizenJobHandler().getColonyJob() == null ? 1 : citizen.getCitizenJobHandler().getColonyJob().getDiseaseModifier();
             final int configModifier = MineColonies.getConfig().getServer().diseaseModifier.get();
-            if (citizen.getRandom().nextInt(configModifier * DISEASE_FACTOR) < citizenModifier)
+            if (!IColonyManager.getInstance().getCompatibilityManager().getDiseases().isEmpty() &&
+                  citizen.getRandom().nextInt(configModifier * DISEASE_FACTOR) < citizenModifier)
             {
                 this.disease = IColonyManager.getInstance().getCompatibilityManager().getRandomDisease();
             }
@@ -131,7 +132,11 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
     @Override
     public void read(final CompoundNBT compound)
     {
-        this.disease = compound.getString(TAG_DISEASE);
+        // cure diseases that have been removed from the configuration file.
+        if(IColonyManager.getInstance().getCompatibilityManager().getDisease(compound.getString(TAG_DISEASE)) != null)
+        {
+            this.disease = compound.getString(TAG_DISEASE);
+        }
         this.immunityTicks = compound.getInt(TAG_IMMUNITY);
     }
 
