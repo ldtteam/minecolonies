@@ -59,7 +59,7 @@ public class WindowHutPlantationModule extends AbstractWindowWorkerModuleBuildin
     private void switchPlantingMode(final Button phaseSettingButton)
     {
         final List<Item> phases = building.getPhases();
-        int index = building.getPhases().indexOf(building.getCurrentPhase()) + 1;
+        int index = building.getPhases().indexOf(building.getSetting()) + 1;
 
         if (index >= phases.size())
         {
@@ -77,9 +77,9 @@ public class WindowHutPlantationModule extends AbstractWindowWorkerModuleBuildin
      */
     private void setupSettings(final Button plantSettingsButton)
     {
-        if (building.getCurrentPhase() != null)
+        if (building.getSetting() != null)
         {
-            plantSettingsButton.setText(new ItemStack(building.getCurrentPhase()).getDisplayName());
+            plantSettingsButton.setText(new ItemStack(building.getSetting()).getDisplayName());
         }
     }
 
