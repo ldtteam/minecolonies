@@ -23,7 +23,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONY_ID;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_EVENT_ID;
 
 /**
  * Utils for Colony pirate events
@@ -158,7 +159,7 @@ public final class ShipBasedRaiderUtils
         return isSurfaceAreaMostlyMaterial(Lists.newArrayList(Material.WATER, Material.ICE), world, pos.getY(),
           zeroPos,
           new BlockPos(zeroPos.getX() + ship.getSizeX() - 1, zeroPos.getY(), zeroPos.getZ() + ship.getSizeZ() - 1),
-          0.9);
+          0.3);
     }
 
     /**
@@ -245,7 +246,12 @@ public final class ShipBasedRaiderUtils
 
         if (WorldUtil.isBlockLoaded(colony.getWorld(), startPos))
         {
-            return BlockPosUtil.findLand(startPos, colony.getWorld());
+            return BlockPosUtil.findAround(colony.getWorld(),
+              startPos,
+              3,
+              30,
+              (world, pos) -> (world.getBlockState(pos).isSolid() || world.getBlockState(pos).getMaterial().isLiquid()) && world.getBlockState(
+                pos.up()).getMaterial() == Material.AIR && world.getBlockState(pos.up(2)).getMaterial() == Material.AIR);
         }
 
         BlockPos diff = colony.getCenter().subtract(startPos);
