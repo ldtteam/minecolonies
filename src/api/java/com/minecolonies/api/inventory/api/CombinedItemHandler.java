@@ -38,6 +38,11 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
     private String customName = "";
 
     /**
+     * Total slots of the item handler.
+     */
+    private int totalSlots = 0;
+
+    /**
      * Method to create a new {@link CombinedItemHandler}.
      *
      * @param defaultName The default name of this {@link CombinedItemHandler}.
@@ -47,6 +52,13 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
     {
         this.handlers = handlers;
         this.defaultName = defaultName;
+        for (final IItemHandler handler : handlers)
+        {
+            if (handler != null)
+            {
+                totalSlots += handler.getSlots();
+            }
+        }
     }
 
     /**
@@ -58,9 +70,8 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
      */
     public CombinedItemHandler(@NotNull final String defaultName, @NotNull final String customName, @NotNull final IItemHandlerModifiable... handlers)
     {
-        this.handlers = handlers;
+        this(defaultName, handlers);
         this.customName = customName;
-        this.defaultName = defaultName;
     }
 
     @Override
@@ -174,16 +185,7 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
     @Override
     public int getSlots()
     {
-        int sum = 0;
-        for (final IItemHandler handler : handlers)
-        {
-            if (handler != null)
-            {
-                sum += handler.getSlots();
-            }
-        }
-
-        return sum;
+        return totalSlots;
     }
 
     /**
