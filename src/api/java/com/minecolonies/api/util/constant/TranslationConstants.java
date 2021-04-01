@@ -218,8 +218,6 @@ public final class TranslationConstants
     @NonNls
     public static final String TOGGLE_REPLANT_SAPLINGS_OFF                                          = "com.minecolonies.coremod.gui.workerhuts.togglereplantsaplingsoff";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_COMPAT_JEI_CRAFTIN_TEACHING_UNKNOWN_RECIPE  = "com.minecolonies.coremod.compat.jei.crafting.teaching.unknown.recipe";
-    @NonNls
     public static final String DO_REALLY_WANNA_TP                                                   = "com.minecolonies.coremod.gui.townhall.tp";
     @NonNls
     public static final String TH_TOO_LOW                                                           = "com.minecolonies.coremod.gui.townhall.tooLow";
@@ -347,6 +345,8 @@ public final class TranslationConstants
     public static final String FURNACE_USER_NO_ORE                                                  = "com.minecolonies.coremod.furnaceuser.noore";
     @NonNls
     public static final String FURNACE_USER_NO_FOOD                                                 = "com.minecolonies.coremod.furnaceuser.nofood";
+    @NonNls
+    public static final String SIFTER_NO_MESH                                                       = "com.minecolonies.coremod.sifter.nomesh";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GENERAL_ONBIG                               = "com.minecolonies.coremod.general.onbig";
     @NonNls

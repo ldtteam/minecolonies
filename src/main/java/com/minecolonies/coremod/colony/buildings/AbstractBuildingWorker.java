@@ -50,6 +50,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -599,7 +600,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         compound.put(TAG_WORKER, workersTagList);
 
         compound.putInt(TAG_HIRING_MODE, this.hiringMode.ordinal());
-        @NotNull final ListNBT recipesTagList = recipes.stream()
+        @NotNull final ListNBT recipesTagList = recipes.stream().limit(this.getMaxRecipes() * 10)
             .map(iToken -> StandardFactoryController.getInstance().serialize(iToken))
             .collect(NBTUtils.toListNBT());
         compound.put(TAG_RECIPES, recipesTagList);
@@ -743,10 +744,11 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             buf.writeInt(data == null ? 0 : data.getId());
         }
         final List<IRecipeStorage> storages = new ArrayList<>();
+        Map<ResourceLocation, CustomRecipe> crafterRecipes = CustomRecipeManager.getInstance().getAllRecipes().get(getJobName());
         for (final IToken<?> token : new ArrayList<>(recipes))
         {
             final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-            if (storage == null)
+            if (storage == null || (storage.getRecipeSource() != null && !crafterRecipes.containsKey(storage.getRecipeSource())))
             {
                 removeRecipe(token);
             }
@@ -925,6 +927,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
                 {
                     addRecipeToList(recipeToken, true);
                     colony.getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).matches(recipeStorage.getPrimaryOutput()));
+                    markDirty();
                 }
                 else if((forceReplace || newRecipe.getMustExist()) && !(duplicateFound.equals(recipeToken)))
                 {
@@ -943,6 +946,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
                         }
                     }
                     colony.getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof IDeliverable && recipeStorage.getAlternateOutputs().stream().anyMatch(i -> ((IDeliverable) request.getRequest()).matches(i)));
+                    markDirty();
                 }
             }
             else
@@ -950,10 +954,10 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
                 if(recipes.contains(recipeToken))
                 {
                     removeRecipe(recipeToken);
+                    markDirty();
                 }
             }
         }
-        markDirty();
     }
 
 

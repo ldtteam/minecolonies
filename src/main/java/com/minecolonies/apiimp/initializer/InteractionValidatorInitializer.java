@@ -14,8 +14,10 @@ import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestResolver;
 import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequestResolver;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
@@ -61,13 +63,13 @@ public class InteractionValidatorInitializer
           citizen -> citizen.getWorkBuilding() instanceof AbstractBuildingSmelterCrafter && ((AbstractBuildingSmelterCrafter) citizen.getWorkBuilding()).getFurnaces().isEmpty());
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(RAW_FOOD),
           citizen -> InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(citizen.getInventory(), ISCOOKABLE) > 0
-                       && InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(citizen.getInventory(), ISFOOD) == 0);
+                       && InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(citizen.getInventory(), ISFOOD) != -1);
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(BETTER_FOOD),
           citizen -> InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(citizen.getInventory(),
-                  stack -> CAN_EAT.test(stack) && !(citizen.getWorkBuilding() == null || citizen.getWorkBuilding().canEat(stack))) == 0 && !citizen.isChild());
+                  stack -> CAN_EAT.test(stack) && !(citizen.getWorkBuilding() == null || citizen.getWorkBuilding().canEat(stack))) != -1 && !citizen.isChild());
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(BETTER_FOOD_CHILDREN),
           citizen -> InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(citizen.getInventory(),
-                  stack -> CAN_EAT.test(stack) && !(citizen.getWorkBuilding() == null || citizen.getWorkBuilding().canEat(stack))) == 0 && citizen.isChild());
+                  stack -> CAN_EAT.test(stack) && !(citizen.getWorkBuilding() == null || citizen.getWorkBuilding().canEat(stack))) != -1 && citizen.isChild());
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(NO_RESTAURANT),
           citizen -> citizen.getColony() != null && citizen.getSaturation() <= LOW_SATURATION && citizen.getEntity().isPresent()
                        && citizen.getColony().getBuildingManager().getBestRestaurant(citizen.getEntity().get()) == null
@@ -223,6 +225,15 @@ public class InteractionValidatorInitializer
             }
 
             return true;
+          });
+        InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(SIFTER_NO_MESH), 
+          citizen -> {
+            if (!(citizen.getWorkBuilding() instanceof BuildingSifter))
+            {
+                return false;
+            }
+            return InventoryUtils.getItemCountInProvider(citizen.getWorkBuilding(), item -> ModTags.meshes.contains(item.getItem())) <= 0 &&
+                   InventoryUtils.getItemCountInItemHandler(citizen.getInventory(), item -> ModTags.meshes.contains(item.getItem())) <= 0;
           });
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(BAKER_HAS_NO_FURNACES_MESSAGE),
           citizen -> citizen.getWorkBuilding() instanceof BuildingBaker && ((BuildingBaker) citizen.getWorkBuilding()).getFurnaces().isEmpty());

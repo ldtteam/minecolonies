@@ -1,7 +1,6 @@
 package com.minecolonies.api.research;
 
 import com.google.gson.*;
-import com.ldtteam.structurize.generation.DataGeneratorConstants;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.data.DataGenerator;
@@ -106,7 +105,7 @@ public abstract class AbstractResearchProvider implements IDataProvider
                 addLanguageKeySafe(langJson, "com." + research.id.getNamespace() + ".research." + research.id.getPath().replaceAll("[/]",".") + ".subtitle", research.translatedSubtitle);
             }
         }
-        IDataProvider.save(DataGeneratorConstants.GSONLang, cache, langJson, generator.getOutputFolder().resolve("assets/" + Constants.MOD_ID + "/lang/default.json"));
+        IDataProvider.save(GSON, cache, langJson, generator.getOutputFolder().resolve("assets/" + Constants.MOD_ID + "/lang/default.json"));
     }
 
     /**
@@ -628,6 +627,46 @@ public abstract class AbstractResearchProvider implements IDataProvider
         }
 
         /**
+         * Sets the Research to be removed, for its own ResourceLocation.
+         * Prevents load (though not data gen) of all other settings.  Not compatible with other variants of setRemove.
+         * @return this
+         */
+        public Research setRemove()
+        {
+            this.json.addProperty("remove", true);
+            return this;
+        }
+
+        /**
+         * Sets the Research JSON to remove a different individual research, by ResourceLocation.
+         * Prevents load (though not data gen) of all other settings.  Not compatible with other variants of setRemove.
+         * @param researchId  The target research.
+         * @return this
+         */
+        public Research setRemove(final ResourceLocation researchId)
+        {
+            this.json.addProperty("remove", researchId.toString());
+            return this;
+        }
+
+        /**
+         * Sets the Research JSON to remove multiple individual research, by ResourceLocations.
+         * Prevents load (though not data gen) of all other settings.  Not compatible with other variants of setRemove.
+         * @param researchIds  The target research.
+         * @return this
+         */
+        public Research setRemove(final Collection<ResourceLocation> researchIds)
+        {
+            JsonArray removes = new JsonArray();
+            for(ResourceLocation rem : researchIds)
+            {
+                removes.add(rem.toString());
+            }
+            this.json.add("remove", removes);
+            return this;
+        }
+
+        /**
          * Add the Research to a collection, and return the same research.
          * essentially the same as List.add() with a useful return.
          * @param list      The list to add the Research onto.
@@ -876,6 +915,50 @@ public abstract class AbstractResearchProvider implements IDataProvider
         public ResearchBranch setHidden(final boolean hidden)
         {
             this.json.addProperty("hidden", hidden);
+            return this;
+        }
+
+        /**
+         * Sets the Research Branch JSON to remove all researches attached to its branch.
+         * Avoid use where stacking data packs are possible, as only last JSON for a ResourceLocation wins.
+         * Not compatible with other variants of setRemove.
+         * @return this
+         */
+        public ResearchBranch setRemove()
+        {
+            this.json.addProperty("base-time", 1.0);
+            this.json.addProperty("remove", true);
+            return this;
+        }
+
+        /**
+         * Sets the Research Branch JSON to remove a different branch and all dependent researches, by ResourceLocation.
+         * Not compatible with other variants of setRemove.
+         * @param branchId  The target research branch.
+         * @return this
+         */
+        public ResearchBranch setRemove(final ResourceLocation branchId)
+        {
+            this.json.addProperty("base-time", 1.0);
+            this.json.addProperty("remove", branchId.toString());
+            return this;
+        }
+
+        /**
+         * Sets the Research JSON to remove different branches and all dependent researches, by ResourceLocation.
+         * Not compatible with other variants of setRemove.
+         * @param branchIds  The target research branch.
+         * @return this
+         */
+        public ResearchBranch setRemove(final Collection<ResourceLocation> branchIds)
+        {
+            this.json.addProperty("base-time", 1.0);
+            final JsonArray removes = new JsonArray();
+            for(ResourceLocation rem : branchIds)
+            {
+                removes.add(rem.toString());
+            }
+            this.json.add("remove", removes);
             return this;
         }
     }

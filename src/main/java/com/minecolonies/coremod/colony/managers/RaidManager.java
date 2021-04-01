@@ -29,6 +29,7 @@ import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.Pirat
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipBasedRaiderUtils;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipSize;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
+import net.minecraft.block.material.Material;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -400,7 +401,7 @@ public class RaidManager implements IRaiderManager
             return null;
         }
 
-        return BlockPosUtil.findLand(spawnPos, colony.getWorld());
+        return BlockPosUtil.findAround(colony.getWorld(), BlockPosUtil.getFloor(spawnPos, colony.getWorld()), 3, 30, state -> state.getMaterial() == Material.AIR);
     }
 
     private final static int RAID_SPAWN_SEARCH_CHUNKS = 10;

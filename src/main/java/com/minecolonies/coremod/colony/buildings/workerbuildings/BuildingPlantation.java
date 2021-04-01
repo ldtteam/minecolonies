@@ -168,43 +168,6 @@ public class BuildingPlantation extends AbstractBuildingCrafter
             }
         }
 
-        //todo remove as soon as all schematics got tag support
-        if (filtered.isEmpty())
-        {
-            for (final BlockPos pos : sand)
-            {
-                if (currentPhase == Items.SUGAR_CANE)
-                {
-                    if (world.getBlockState(pos.down()).getBlock() == Blocks.COBBLESTONE
-                          && (world.getBlockState(pos.north()).getBlock() == Blocks.WATER
-                                || world.getBlockState(pos.south()).getBlock() == Blocks.WATER
-                                || world.getBlockState(pos.east()).getBlock() == Blocks.WATER
-                                || world.getBlockState(pos.west()).getBlock() == Blocks.WATER))
-                    {
-                        filtered.add(pos);
-                    }
-                }
-                else if (currentPhase == Items.CACTUS)
-                {
-                    if (world.getBlockState(pos.down()).getBlock() == Blocks.COBBLESTONE
-                          && world.getBlockState(pos.north()).getBlock() != Blocks.WATER
-                          && world.getBlockState(pos.south()).getBlock() != Blocks.WATER
-                          && world.getBlockState(pos.east()).getBlock() != Blocks.WATER
-                          && world.getBlockState(pos.west()).getBlock() != Blocks.WATER)
-                    {
-                        filtered.add(pos);
-                    }
-                }
-                else
-                {
-                    //Bamboo
-                    if (world.getBlockState(pos.down()).getBlock() == Blocks.STONE_BRICKS)
-                    {
-                        filtered.add(pos);
-                    }
-                }
-            }
-        }
         return filtered;
     }
 
@@ -239,29 +202,12 @@ public class BuildingPlantation extends AbstractBuildingCrafter
     @Override
     public boolean canRecipeBeAdded(final IToken<?> token)
     {
-
-        Optional<Boolean> isRecipeAllowed;
-
         if (!super.canRecipeBeAdded(token))
         {
             return false;
         }
 
-        isRecipeAllowed = super.canRecipeBeAddedBasedOnTags(token);
-        if (isRecipeAllowed.isPresent())
-        {
-            return isRecipeAllowed.get();
-        }
-        else
-        {
-            // Additional recipe rules
-
-            final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-
-            // End Additional recipe rules
-        }
-
-        return false;
+        return super.canRecipeBeAddedBasedOnTags(token).orElse(false);
     }
 
     @Override
@@ -278,6 +224,7 @@ public class BuildingPlantation extends AbstractBuildingCrafter
     public void setSetting(final Item phase)
     {
         this.setting = phase;
+        this.currentPhase = this.setting;
     }
 
     @Override
@@ -333,7 +280,7 @@ public class BuildingPlantation extends AbstractBuildingCrafter
         /**
          * The current phase.
          */
-        private Item currentPhase;
+        private Item setting;
 
         /**
          * Instantiate the plantation view.
@@ -360,7 +307,7 @@ public class BuildingPlantation extends AbstractBuildingCrafter
         public void deserialize(@NotNull final PacketBuffer buf)
         {
             super.deserialize(buf);
-            this.currentPhase = buf.readItemStack().getItem();
+            this.setting = buf.readItemStack().getItem();
         }
 
         @NotNull
@@ -371,13 +318,13 @@ public class BuildingPlantation extends AbstractBuildingCrafter
         }
 
         /**
-         * Get the current phase.
+         * Get the current setting.
          *
          * @return the phase.
          */
-        public Item getCurrentPhase()
+        public Item getSetting()
         {
-            return currentPhase;
+            return setting;
         }
 
         /**
@@ -387,7 +334,7 @@ public class BuildingPlantation extends AbstractBuildingCrafter
          */
         public void setPhase(final Item phase)
         {
-            this.currentPhase = phase;
+            this.setting = phase;
             Network.getNetwork().sendToServer(new PlantationSetPhaseMessage(this, phase));
         }
     }
