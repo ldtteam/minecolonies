@@ -16,7 +16,6 @@ import com.minecolonies.coremod.colony.buildings.views.LivingBuildingView;
 import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.VisitorSpawnedEvent;
 import com.minecolonies.coremod.colony.interactionhandling.RecruitmentInteraction;
 import com.minecolonies.coremod.network.messages.client.colony.PlayMusicAtPosMessage;
-import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -175,11 +174,7 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
 
         newCitizen.getCitizenSkillHandler().init(recruitLevel);
 
-        BlockPos spawnPos = BlockPosUtil.findAround(building.getColony().getWorld(),
-          building.getPosition(),
-          1,
-          1,
-          (world, pos) -> world.getBlockState(pos).getMaterial() == Material.AIR && world.getBlockState(pos.up()).getMaterial() == Material.AIR);
+        BlockPos spawnPos = BlockPosUtil.findSpawnPosAround(building.getColony().getWorld(), building.getPosition());
         if (spawnPos == null)
         {
             spawnPos = building.getPosition();

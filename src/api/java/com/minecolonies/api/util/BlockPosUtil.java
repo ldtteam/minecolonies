@@ -5,6 +5,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.block.AirBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
@@ -734,5 +735,18 @@ public final class BlockPosUtil
         }
 
         return null;
+    }
+
+    /**
+     * Finds a spawn pos around the given startpos with two air blocks
+     *
+     * @param worldReader blockreader
+     * @param start       startpos
+     * @return
+     */
+    public static BlockPos findSpawnPosAround(final IBlockReader worldReader, final BlockPos start)
+    {
+        return findAround(worldReader, start, 1, 1,
+          (world, pos) -> world.getBlockState(pos).getMaterial() == Material.AIR && world.getBlockState(pos.up()).getMaterial() == Material.AIR);
     }
 }

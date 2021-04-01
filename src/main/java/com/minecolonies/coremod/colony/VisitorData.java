@@ -4,7 +4,6 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IVisitorData;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.WorldUtil;
-import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -131,11 +130,7 @@ public class VisitorData extends CitizenData implements IVisitorData
         {
             if (WorldUtil.isEntityBlockLoaded(getColony().getWorld(), getHomeBuilding().getID()))
             {
-                final BlockPos spawnPos = BlockPosUtil.findAround(getColony().getWorld(),
-                  getHomeBuilding().getID(),
-                  1,
-                  1,
-                  (world, pos) -> world.getBlockState(pos).getMaterial() == Material.AIR && world.getBlockState(pos.up()).getMaterial() == Material.AIR);
+                final BlockPos spawnPos = BlockPosUtil.findSpawnPosAround(getColony().getWorld(), getHomeBuilding().getID());
                 if (spawnPos != null)
                 {
                     getColony().getVisitorManager().spawnOrCreateCivilian(this, getColony().getWorld(), spawnPos, true);
