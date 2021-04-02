@@ -69,6 +69,7 @@ public class ItemListModuleWindow extends AbstractModuleWindow
         window.findPaneOfTypeByID(DESC_LABEL, Text.class).setText(new TranslationTextComponent(moduleView.getDesc().toLowerCase(Locale.US)));
         this.building = building;
         this.isInverted = moduleView.isInverted();
+        this.id = moduleView.getId();
 
         groupedItemList = new ArrayList<>(moduleView.getAllItems().apply(building));
     }
@@ -203,7 +204,7 @@ public class ItemListModuleWindow extends AbstractModuleWindow
                 resourceLabel.setText(resource.getDisplayName());
                 resourceLabel.setColors(WHITE);
                 rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(resource);
-                final boolean isAllowedItem  = building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id)).map(m -> m.isAllowedItem(new ItemStorage(resource))).orElse(!isInverted);
+                final boolean isAllowedItem  = building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id)).map(m -> m.isAllowedItem(new ItemStorage(resource))).orElse(isInverted);
                 final Button switchButton = rowPane.findPaneOfTypeByID(BUTTON_SWITCH, Button.class);
 
                 if ((isInverted && !isAllowedItem) || (!isInverted && isAllowedItem))

@@ -6,7 +6,7 @@ import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 /**
  * Settings module interface.
  */
-public interface ISettingsModule
+public interface ISettingsModule extends IBuildingModule
 {
     /**
      * Register a new setting.
@@ -14,12 +14,11 @@ public interface ISettingsModule
      * @param setting the setting.
      * @return the instance of the module.
      */
-    IBuildingModule with(final String key, final ISetting setting);
+    IBuildingModule with(final ISettingKey<?> key, final ISetting setting);
 
     /**
      * Get a specific setting.
-     * @param id the id of the setting.
-     * @param clazz the class of the setting.
+     * @param key the key of the setting.
      * @param <T> the type of setting.
      * @return the setting.
      */

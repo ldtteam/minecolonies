@@ -2,12 +2,15 @@ package com.minecolonies.coremod.network.messages.server.colony.building;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.modules.settings.ISetting;
+import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.modules.SettingsModule;
+import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,7 +22,7 @@ public class TriggerSettingMessage extends AbstractBuildingServerMessage<Abstrac
     /**
      * The unique setting key.
      */
-    private String key;
+    private ResourceLocation key;
 
     /**
      * The value of the setting.
@@ -40,24 +43,24 @@ public class TriggerSettingMessage extends AbstractBuildingServerMessage<Abstrac
      * @param key the unique key of it.
      * @param value the value of the setting.
      */
-    public TriggerSettingMessage(final IBuildingView building, final String key, final ISetting value)
+    public TriggerSettingMessage(final IBuildingView building, final ISettingKey key, final ISetting value)
     {
         super(building);
-        this.key = key;
+        this.key = key.getUniqueId();
         this.value = value;
     }
 
     @Override
     public void fromBytesOverride(@NotNull final PacketBuffer buf)
     {
-        this.key = buf.readString(32767);
+        this.key = buf.readResourceLocation();
         this.value = StandardFactoryController.getInstance().deserialize(buf);
     }
 
     @Override
     public void toBytesOverride(@NotNull final PacketBuffer buf)
     {
-        buf.writeString(this.key);
+        buf.writeResourceLocation(this.key);
         StandardFactoryController.getInstance().serialize(buf, this.value);
     }
 
@@ -67,7 +70,7 @@ public class TriggerSettingMessage extends AbstractBuildingServerMessage<Abstrac
     {
         if (building.hasModule(SettingsModule.class))
         {
-            building.getFirstModuleOccurance(SettingsModule.class).ifPresent(m -> m.with(this.key, this.value));
+            building.getFirstModuleOccurance(SettingsModule.class).ifPresent(m -> m.with(new SettingKey(this.value.getClass(), this.key), this.value));
         }
     }
 }

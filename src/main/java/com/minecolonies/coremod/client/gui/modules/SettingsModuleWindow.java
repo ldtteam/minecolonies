@@ -5,6 +5,7 @@ import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.Box;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.minecolonies.api.colony.buildings.modules.settings.ISetting;
+import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.client.gui.AbstractModuleWindow;
 import com.minecolonies.coremod.colony.buildings.moduleviews.SettingsModuleView;
@@ -55,8 +56,6 @@ public class SettingsModuleWindow extends AbstractModuleWindow
 
         settingsList = window.findPaneOfTypeByID(LIST_SETTINGS, ScrollingList.class);
         this.moduleView = moduleView;
-
-        //todo register button handles
     }
 
     @Override
@@ -70,7 +69,7 @@ public class SettingsModuleWindow extends AbstractModuleWindow
      */
     private void updateSettingsList()
     {
-        final List<Map.Entry<String, ISetting>> list = new ArrayList<>(moduleView.getSettings().entrySet());
+        final List<Map.Entry<ISettingKey<?>, ISetting>> list = new ArrayList<>(moduleView.getSettings().entrySet());
 
         settingsList.enable();
         settingsList.show();
@@ -96,7 +95,7 @@ public class SettingsModuleWindow extends AbstractModuleWindow
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                final Map.Entry<String, ISetting> setting = list.get(index);
+                final Map.Entry<ISettingKey<?>, ISetting> setting = list.get(index);
                 setting.getValue().addHandlersToBox(setting.getKey(), rowPane.findPaneOfTypeByID("box", Box.class), moduleView);
             }
         });

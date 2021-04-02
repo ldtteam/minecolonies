@@ -9,5 +9,5 @@ public interface ISettingsModuleView
      * Trigger a setting of a specific key.
      * @param key the settings key.
      */
-    void trigger(String key);
+    void trigger(final ISettingKey<?> key);
 }

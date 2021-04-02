@@ -5,13 +5,13 @@ import net.minecraft.util.ResourceLocation;
 /**
  * Key type for settings.
  */
-public interface ISettingKey<T extends ISetting>
+public interface ISettingKey<T>
 {
     /**
      * Get the class type of the key.
      * @return the type.
      */
-    Class<T> getType();
+    Class<? extends T> getType();
 
     /**
      * Get the unique id of the setting.

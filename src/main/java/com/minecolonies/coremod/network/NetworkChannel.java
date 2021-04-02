@@ -17,7 +17,6 @@ import com.minecolonies.coremod.network.messages.server.colony.building.beekeepe
 import com.minecolonies.coremod.network.messages.server.colony.building.beekeeper.BeekeeperSetHarvestHoneycombsMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.builder.BuilderSelectWorkOrderMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.builder.BuilderSetManualModeMessage;
-import com.minecolonies.coremod.network.messages.server.colony.building.composter.ComposterRetrievalMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.cowboy.CowboySetMilkCowsMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.crusher.CrusherSetModeMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.enchanter.EnchanterWorkerSetMessage;
@@ -204,7 +203,6 @@ public class NetworkChannel
         registerMessage(++idx, RestartCitizenMessage.class, RestartCitizenMessage::new);
         registerMessage(++idx, SortWarehouseMessage.class, SortWarehouseMessage::new);
         registerMessage(++idx, PostBoxRequestMessage.class, PostBoxRequestMessage::new);
-        registerMessage(++idx, ComposterRetrievalMessage.class, ComposterRetrievalMessage::new);
         registerMessage(++idx, CrusherSetModeMessage.class, CrusherSetModeMessage::new);
         registerMessage(++idx, HireMercenaryMessage.class, HireMercenaryMessage::new);
         registerMessage(++idx, ShepherdSetDyeSheepsMessage.class, ShepherdSetDyeSheepsMessage::new);

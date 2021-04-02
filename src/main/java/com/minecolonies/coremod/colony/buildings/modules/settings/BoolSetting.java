@@ -5,6 +5,7 @@ import com.ldtteam.blockout.controls.ButtonImage;
 import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.Box;
 import com.minecolonies.api.colony.buildings.modules.settings.ISetting;
+import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingsModuleView;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
@@ -69,24 +70,27 @@ public class BoolSetting implements ISetting
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void addHandlersToBox(final String key, final Box box, final ISettingsModuleView settingsModuleView)
+    public void addHandlersToBox(final ISettingKey<?> key, final Box box, final ISettingsModuleView settingsModuleView)
     {
         final ButtonImage image;
         if (box.findPaneByID("trigger") == null)
         {
+            final int black = Color.getByName("black", 0);
             final Text text = new Text();
-            text.setText(new TranslationTextComponent("com.minecolonies.coremod.setting." + key));
+            text.setText(new TranslationTextComponent("com.minecolonies.coremod.setting." + key.getUniqueId().toString()));
             text.setSize(120, 15);
-            text.setPosition(2, 10);
+            text.setPosition(5, 10);
             text.setID("desc");
-            text.setTextColor(Color.getByName("black", 0));
+            text.setTextColor(black);
+            text.setTextHoverColor(black);
 
             image = new ButtonImage();
             image.setImage("minecolonies:textures/gui/builderhut/builder_button_very_small.png");
             image.setPosition(120, 10);
             image.setHandler(button -> settingsModuleView.trigger(key));
             image.setID("trigger");
-            image.setTextColor(Color.getByName("black", 0));
+            image.setTextColor(black);
+            image.setTextHoverColor(black);
             image.setSize(29, 15);
             image.setTextRenderBox(29, 15);
 
@@ -104,6 +108,6 @@ public class BoolSetting implements ISetting
     @Override
     public void trigger()
     {
-        this.value = true;
+        this.value = !this.value;
     }
 }

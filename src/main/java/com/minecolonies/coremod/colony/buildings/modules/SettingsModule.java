@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.buildings.modules.ISettingsModule;
 import com.minecolonies.api.colony.buildings.modules.settings.ISetting;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
+import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.PacketBuffer;
@@ -24,21 +25,16 @@ public class SettingsModule extends AbstractBuildingModule implements IPersisten
     /**
      * Map of setting id (string) to generic setting.
      */
-    final Map<ISettingKey<ISetting>, ISetting> settings = new HashMap<>();
+    final Map<ISettingKey<?>, ISetting> settings = new HashMap<>();
 
     @Override
     public <T extends ISetting> T getSetting(final ISettingKey<T> key)
     {
-        final ISetting setting = settings.getOrDefault(key, null);
-        if (!key.getType().isInstance(setting))
-        {
-            return null;
-        }
-        return (T) setting;
+        return (T) settings.getOrDefault(key, null);
     }
 
     @Override
-    public IBuildingModule with(final ISettingKey<ISetting> key, final ISetting setting)
+    public IBuildingModule with(final ISettingKey<?> key, final ISetting setting)
     {
         settings.put(key, setting);
         return this;
@@ -52,9 +48,9 @@ public class SettingsModule extends AbstractBuildingModule implements IPersisten
         for (int i = 0; i < list.size(); i++)
         {
             final CompoundNBT entryCompound = list.getCompound(i);
-            final String key = entryCompound.getString("key");
+            final ResourceLocation key = new ResourceLocation(entryCompound.getString("key"));
             final ISetting setting = StandardFactoryController.getInstance().deserialize(entryCompound.getCompound("value"));
-            settings.put(key, setting);
+            settings.put(new SettingKey<>(setting.getClass(), key), setting);
         }
     }
 
@@ -64,11 +60,12 @@ public class SettingsModule extends AbstractBuildingModule implements IPersisten
         final CompoundNBT settingsCompound = new CompoundNBT();
 
         final ListNBT list = new ListNBT();
-        for (final Map.Entry<String, ISetting> setting : settings.entrySet())
+        for (final Map.Entry<ISettingKey<?>, ISetting> setting : settings.entrySet())
         {
             final CompoundNBT entryCompound = new CompoundNBT();
-            entryCompound.putString("key", setting.getKey());
+            entryCompound.putString("key", setting.getKey().getUniqueId().toString());
             entryCompound.put("value", StandardFactoryController.getInstance().serialize(setting.getValue()));
+            list.add(entryCompound);
         }
         settingsCompound.put("settingslist", list);
 
@@ -79,9 +76,9 @@ public class SettingsModule extends AbstractBuildingModule implements IPersisten
     public void serializeToView(final PacketBuffer buf)
     {
         buf.writeInt(settings.size());
-        for (final Map.Entry<String, ISetting> setting : settings.entrySet())
+        for (final Map.Entry<ISettingKey<?>, ISetting> setting : settings.entrySet())
         {
-            buf.writeString(setting.getKey(), 32767);
+            buf.writeResourceLocation(setting.getKey().getUniqueId());
             StandardFactoryController.getInstance().serialize(buf, setting.getValue());
         }
     }

@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.coremod.client.gui.townhall.WindowTownHall;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.gui.screen.Screen;

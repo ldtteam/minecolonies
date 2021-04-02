@@ -112,6 +112,7 @@ public final class ModBuildingsInitializer
                                    .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.COMPOSTER_ID))
                                    .addBuildingModuleProducer(() -> new ItemListModule(COMPOSTABLE_LIST), () -> new ItemListModuleView(COMPOSTABLE_LIST, COM_MINECOLONIES_REQUESTS_COMPOSTABLE_UI, false,
                                      (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getCompostInputs()))
+                                   .addBuildingModuleProducer(() -> new SettingsModule().with(BuildingComposter.PRODUCE_DIRT, new BoolSetting(false)), SettingsModuleView::new)
                                    .createBuildingEntry();
 
         ModBuildings.cook = new BuildingEntry.Builder()
@@ -294,7 +295,6 @@ public final class ModBuildingsInitializer
                                  .setBuildingViewProducer(() -> BuildingFlorist.View::new)
                                  .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.FLORIST_ID))
                                  .addBuildingModuleProducer(() -> new ItemListModule(FLORIST_FLOWER_LIST), () -> new FloristFlowerListModuleView())
-                                 .addBuildingModuleProducer(() -> new SettingsModule().with("test", new BoolSetting(true)), SettingsModuleView::new)
                                  .createBuildingEntry();
 
         ModBuildings.enchanter = new BuildingEntry.Builder()

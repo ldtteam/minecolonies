@@ -2,13 +2,21 @@ package com.minecolonies.api.colony.buildings.modules.settings;
 
 import com.ldtteam.blockout.views.Box;
 
+/**
+ * Generic ISetting that represents all possible setting objects (string, numbers, boolean, etc).
+ */
 public interface ISetting
 {
     /**
-     * todo we need sth like this, allowing to draw the setting inside a list. So we just have a list that we fill with settings.size and then we go over each, give it its own little pane and fill it in.
-     * @param key
+     * Add the handling of the specific setting to the box in the UI.
+     * @param key the key of the setting.
+     * @param rowPane the pane of it.
+     * @param settingsModuleView the module view that holds the setting.
      */
-    void addHandlersToBox(final String key, final Box rowPane, final ISettingsModuleView settingsModuleView);
+    void addHandlersToBox(final ISettingKey<?> key, final Box rowPane, final ISettingsModuleView settingsModuleView);
 
+    /**
+     * Trigger a setting.
+     */
     void trigger();
 }

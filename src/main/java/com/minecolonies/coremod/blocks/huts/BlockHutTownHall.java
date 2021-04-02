@@ -9,7 +9,7 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.client.gui.WindowTownHallColonyManage;
+import com.minecolonies.coremod.client.gui.townhall.WindowTownHallColonyManage;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.PlayerEntity;

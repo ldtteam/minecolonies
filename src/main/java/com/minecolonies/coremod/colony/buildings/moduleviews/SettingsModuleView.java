@@ -3,27 +3,30 @@ package com.minecolonies.coremod.colony.buildings.moduleviews;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.buildings.modules.*;
 import com.minecolonies.api.colony.buildings.modules.settings.ISetting;
+import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingsModuleView;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.modules.SettingsModuleWindow;
+import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.coremod.network.messages.server.colony.building.TriggerSettingMessage;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Module containing all settings (client side)
+ * Module containing all settings (client side).
  */
 public class SettingsModuleView extends AbstractBuildingModuleView implements ISettingsModuleView
 {
     /**
      * Map of setting id (string) to generic setting.
      */
-    final HashMap<String, ISetting> settings = new HashMap<>();
+    final Map<ISettingKey<?>, ISetting> settings = new HashMap<>();
 
     @Override
     public void deserialize(@NotNull final PacketBuffer buf)
@@ -33,9 +36,9 @@ public class SettingsModuleView extends AbstractBuildingModuleView implements IS
         final int size = buf.readInt();
         for (int i = 0; i < size; i++)
         {
-            final String key = buf.readString(32767);
+            final ResourceLocation key = buf.readResourceLocation();
             final ISetting setting = StandardFactoryController.getInstance().deserialize(buf);
-            settings.put(key, setting);
+            settings.put(new SettingKey<>(setting.getClass(), key), setting);
         }
     }
 
@@ -43,7 +46,7 @@ public class SettingsModuleView extends AbstractBuildingModuleView implements IS
      * Get the full settings map.
      * @return the map of string key and ISetting value.
      */
-    public Map<String, ISetting> getSettings()
+    public Map<ISettingKey<?>, ISetting> getSettings()
     {
         return settings;
     }
@@ -67,7 +70,7 @@ public class SettingsModuleView extends AbstractBuildingModuleView implements IS
     }
 
     @Override
-    public void trigger(final String key)
+    public void trigger(final ISettingKey<?> key)
     {
         final ISetting setting = settings.get(key);
         setting.trigger();
