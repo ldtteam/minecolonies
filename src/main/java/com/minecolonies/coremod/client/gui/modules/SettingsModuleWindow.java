@@ -20,7 +20,7 @@ import java.util.Map;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
- * Window for all the filterable lists.
+ * Window for all the settings of a hut.
  */
 public class SettingsModuleWindow extends AbstractModuleWindow
 {

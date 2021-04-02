@@ -6,7 +6,7 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Interface for the IItemStorageFactory which is responsible for creating and maintaining bool setting objects.
+ * Interface for the boolean settings factory which is responsible for creating and maintaining bool setting objects.
  */
 public interface IBoolSettingFactory<T extends ISetting> extends IFactory<FactoryVoidInput, T>
 {
