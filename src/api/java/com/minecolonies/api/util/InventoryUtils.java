@@ -24,7 +24,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
@@ -506,23 +505,12 @@ public class InventoryUtils
     @NotNull
     public static Set<IItemHandler> getItemHandlersFromProvider(@NotNull final ICapabilityProvider provider)
     {
-        final Set<IItemHandler> handlerList = Arrays.stream(Direction.values())
-                                                .filter(facing -> provider.getCapability(ITEM_HANDLER_CAPABILITY, facing).isPresent())
-                                                .map(facing -> provider.getCapability(ITEM_HANDLER_CAPABILITY, facing).orElse(null))
-                                                .filter(Objects::nonNull)
-                                                .collect(Collectors.toSet());
-
-
-        if (provider.getCapability(ITEM_HANDLER_CAPABILITY, null).isPresent())
+        final Set<IItemHandler> handlerList = new HashSet<>();
+        for (final Direction side : Direction.values())
         {
-            final IItemHandler nullHandler = provider.getCapability(ITEM_HANDLER_CAPABILITY, null).orElse(null);
-            if (nullHandler != null)
-            {
-                handlerList.add(nullHandler);
-            }
+            provider.getCapability(ITEM_HANDLER_CAPABILITY, side).ifPresent(handlerList::add);
         }
-
-        handlerList.removeIf(Objects::isNull);
+        provider.getCapability(ITEM_HANDLER_CAPABILITY, null).ifPresent(handlerList::add);
         return handlerList;
     }
 

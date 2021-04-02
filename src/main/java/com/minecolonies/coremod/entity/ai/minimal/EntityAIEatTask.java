@@ -445,22 +445,6 @@ public class EntityAIEatTask extends Goal
         final IColony colony = citizenData.getColony();
         restaurantPos = colony.getBuildingManager().getBestRestaurant(citizen);
 
-        if (InventoryUtils.hasItemInItemHandler(citizen.getInventoryCitizen(), ISCOOKABLE))
-        {
-            citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(RAW_FOOD), ChatPriority.PENDING));
-        }
-        else if (InventoryUtils.hasItemInItemHandler(citizen.getInventoryCitizen(), stack -> CAN_EAT.test(stack) && !canEat(citizenData, stack)))
-        {
-            if (citizenData.isChild())
-            {
-                citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(BETTER_FOOD_CHILDREN), ChatPriority.BLOCKING));
-            }
-            else
-            {
-                citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(BETTER_FOOD), ChatPriority.BLOCKING));
-            }
-        }
-
         final IJob<?> job = citizen.getCitizenJobHandler().getColonyJob();
         if (job != null && job.isActive())
         {
@@ -487,6 +471,24 @@ public class EntityAIEatTask extends Goal
         {
             foodSlot = slot;
             return true;
+        }
+
+        final ICitizenData citizenData = citizen.getCitizenData();
+
+        if (InventoryUtils.hasItemInItemHandler(citizen.getInventoryCitizen(), ISCOOKABLE))
+        {
+            citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(RAW_FOOD), ChatPriority.PENDING));
+        }
+        else if (InventoryUtils.hasItemInItemHandler(citizen.getInventoryCitizen(), stack -> CAN_EAT.test(stack) && !canEat(citizenData, stack)))
+        {
+            if (citizenData.isChild())
+            {
+                citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(BETTER_FOOD_CHILDREN), ChatPriority.BLOCKING));
+            }
+            else
+            {
+                citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(BETTER_FOOD), ChatPriority.BLOCKING));
+            }
         }
 
         return false;

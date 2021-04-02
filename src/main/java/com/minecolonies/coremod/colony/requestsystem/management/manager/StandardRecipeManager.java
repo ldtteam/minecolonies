@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeManager;
 import com.minecolonies.api.crafting.IRecipeStorage;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -14,6 +15,7 @@ import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public class StandardRecipeManager implements IRecipeManager
@@ -25,8 +27,9 @@ public class StandardRecipeManager implements IRecipeManager
 
     /**
      * Map of all recipes which have been discovered globally already.
+     * Initializing with 4096 as size since default is 16, and growth is costly
      */
-    private final BiMap<IToken<?>, IRecipeStorage> recipes = HashBiMap.create();
+    private final BiMap<IToken<?>, IRecipeStorage> recipes = HashBiMap.create(4096);
 
     /**
      * Immutable cache.
@@ -53,7 +56,7 @@ public class StandardRecipeManager implements IRecipeManager
     public IToken<?> addRecipe(final IRecipeStorage storage)
     {
         recipes.put(storage.getToken(), storage);
-        usedRecipes.add(storage.getToken());
+        registerUse(storage.getToken());
         cache = null;
         return storage.getToken();
     }
@@ -66,7 +69,7 @@ public class StandardRecipeManager implements IRecipeManager
         {
             return addRecipe(storage);
         }
-        usedRecipes.add(token);
+        registerUse(token);
         return token;
     }
 
@@ -91,9 +94,16 @@ public class StandardRecipeManager implements IRecipeManager
         for (int i = 0; i < list.size(); i++)
         {
             IRecipeStorage recipe = StandardFactoryController.getInstance().deserialize(list.getCompound(i));
-            if (recipe != null)
+            if (recipe != null && !recipes.containsValue(recipe))
             {
-                recipes.put(recipe.getToken(), recipe);
+                try
+                {
+                    recipes.put(recipe.getToken(), recipe);
+                }
+                catch (Exception e)
+                {
+                    // Eat the exception
+                }
             }
         }
         cache = null;
