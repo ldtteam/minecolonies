@@ -1,9 +1,11 @@
 package com.minecolonies.coremod.colony.buildings.modules.settings;
 
-import com.ldtteam.blockout.Color;
+import com.ldtteam.blockout.Loader;
+import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.ButtonImage;
 import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.Box;
+import com.ldtteam.blockout.views.View;
 import com.minecolonies.api.colony.buildings.modules.settings.ISetting;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingsModuleView;
@@ -70,39 +72,15 @@ public class BoolSetting implements ISetting
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void addHandlersToBox(final ISettingKey<?> key, final Box box, final ISettingsModuleView settingsModuleView)
+    public void addHandlersToBox(final ISettingKey<?> key, final Pane pane, final ISettingsModuleView settingsModuleView)
     {
-        final ButtonImage image;
-        if (box.findPaneByID("trigger") == null)
+        if (pane.findPaneOfTypeByID("box", Box.class).getChildren().isEmpty())
         {
-            final int black = Color.getByName("black", 0);
-            final Text text = new Text();
-            text.setText(new TranslationTextComponent("com.minecolonies.coremod.setting." + key.getUniqueId().toString()));
-            text.setSize(120, 15);
-            text.setPosition(5, 10);
-            text.setID("desc");
-            text.setTextColor(black);
-            text.setTextHoverColor(black);
-
-            image = new ButtonImage();
-            image.setImage("minecolonies:textures/gui/builderhut/builder_button_very_small.png");
-            image.setPosition(120, 10);
-            image.setHandler(button -> settingsModuleView.trigger(key));
-            image.setID("trigger");
-            image.setTextColor(black);
-            image.setTextHoverColor(black);
-            image.setSize(29, 15);
-            image.setTextRenderBox(29, 15);
-
-            box.addChild(text);
-            box.addChild(image);
+            Loader.createFromXMLFile("minecolonies:gui/layouthuts/layoutboolsetting.xml", (View) pane);
+            pane.findPaneOfTypeByID("desc", Text.class).setText(new TranslationTextComponent("com.minecolonies.coremod.setting." + key.getUniqueId().toString()));
+            pane.findPaneOfTypeByID("trigger", ButtonImage.class).setHandler(button -> settingsModuleView.trigger(key));
         }
-        else
-        {
-            image = box.findPaneOfTypeByID("trigger", ButtonImage.class);
-        }
-
-        image.setText(new TranslationTextComponent(value ? ON : OFF));
+        pane.findPaneOfTypeByID("trigger", ButtonImage.class).setText(new TranslationTextComponent(value ? ON : OFF));
     }
 
     @Override

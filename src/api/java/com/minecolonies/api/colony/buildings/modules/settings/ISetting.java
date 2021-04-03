@@ -1,6 +1,6 @@
 package com.minecolonies.api.colony.buildings.modules.settings;
 
-import com.ldtteam.blockout.views.Box;
+import com.ldtteam.blockout.Pane;
 
 /**
  * Generic ISetting that represents all possible setting objects (string, numbers, boolean, etc).
@@ -13,7 +13,7 @@ public interface ISetting
      * @param rowPane the pane of it.
      * @param settingsModuleView the module view that holds the setting.
      */
-    void addHandlersToBox(final ISettingKey<?> key, final Box rowPane, final ISettingsModuleView settingsModuleView);
+    void addHandlersToBox(final ISettingKey<?> key, final Pane rowPane, final ISettingsModuleView settingsModuleView);
 
     /**
      * Trigger a setting.
