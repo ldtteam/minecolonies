@@ -271,7 +271,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             return;
         }
 
-        if (isInBuilding(player.getPositionVec()))
+        if (isInBuilding(player.getPosition()))
         {
             onPlayerEnterBuilding(player);
         }

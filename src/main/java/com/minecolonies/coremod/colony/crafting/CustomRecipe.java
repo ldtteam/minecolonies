@@ -574,6 +574,7 @@ public class CustomRecipe
             {
                 cachedRecipeStorage = (RecipeStorage) recipeManager.getRecipes().get(cachedRecipeToken);
             }
+            recipeManager.registerUse(cachedRecipeStorage.getToken());
         }
         return cachedRecipeStorage;
     }

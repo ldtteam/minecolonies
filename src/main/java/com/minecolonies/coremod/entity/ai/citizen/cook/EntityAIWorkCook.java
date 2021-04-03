@@ -176,7 +176,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
 
         final Entity living = citizenToServe.isEmpty() ? playerToServe.get(0) : citizenToServe.get(0);
 
-        if (!getOwnBuilding().isInBuilding(living.getPositionVec()))
+        if (!getOwnBuilding().isInBuilding(living.getPosition()))
         {
             worker.getNavigator().clearPath();
             removeFromQueue();

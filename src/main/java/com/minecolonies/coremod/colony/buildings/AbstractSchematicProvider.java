@@ -17,6 +17,7 @@ import net.minecraft.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
+import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
@@ -322,7 +323,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     }
 
     @Override
-    public boolean isInBuilding(final Vector3d positionVec)
+    public boolean isInBuilding(@NotNull final BlockPos positionVec)
     {
         final Tuple<BlockPos, BlockPos> corners = getCorners();
         return positionVec.getX() >= corners.getA().getX() - 1 && positionVec.getX() <= corners.getB().getX() + 1

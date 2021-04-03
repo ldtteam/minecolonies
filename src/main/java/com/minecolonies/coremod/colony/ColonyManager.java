@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony;
 
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -633,11 +634,6 @@ public final class ColonyManager implements IColonyManager
             //  Player has left the game, clear the Colony View cache
             colonyViews.clear();
         }
-
-        if (ModTags.tagsLoaded && !compatibilityManager.isDiscoveredAlready() && ItemStackUtils.ISFOOD != null && FurnaceRecipes.getInstance().loaded())
-        {
-            compatibilityManager.discover(false);
-        }
     }
 
     @Override
@@ -647,19 +643,16 @@ public final class ColonyManager implements IColonyManager
         {
             getColonies(event.world).forEach(c -> c.onWorldTick(event));
         }
-
-        if (ModTags.tagsLoaded && !compatibilityManager.isDiscoveredAlready() && FurnaceRecipes.getInstance().loaded())
-        {
-            compatibilityManager.discover(true);
-        }
     }
 
     @Override
     public void onWorldLoad(@NotNull final World world)
     {
-        ModTagsInitializer.init();
         if (!world.isRemote)
         {
+            // Remote clients only guarantee consistent tag behavior if loaded from a TagsUpdatedEvent.
+            ModTagsInitializer.init(world.getTags());
+
             // Late-load restore if cap was not loaded
             if (!capLoaded)
             {

@@ -600,7 +600,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         compound.put(TAG_WORKER, workersTagList);
 
         compound.putInt(TAG_HIRING_MODE, this.hiringMode.ordinal());
-        @NotNull final ListNBT recipesTagList = recipes.stream().limit(this.getMaxRecipes() * 10)
+        @NotNull final ListNBT recipesTagList = recipes.stream()
             .map(iToken -> StandardFactoryController.getInstance().serialize(iToken))
             .collect(NBTUtils.toListNBT());
         compound.put(TAG_RECIPES, recipesTagList);
@@ -927,6 +927,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
                 {
                     addRecipeToList(recipeToken, true);
                     colony.getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).matches(recipeStorage.getPrimaryOutput()));
+                    markDirty();
                 }
                 else if((forceReplace || newRecipe.getMustExist()) && !(duplicateFound.equals(recipeToken)))
                 {
@@ -945,6 +946,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
                         }
                     }
                     colony.getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof IDeliverable && recipeStorage.getAlternateOutputs().stream().anyMatch(i -> ((IDeliverable) request.getRequest()).matches(i)));
+                    markDirty();
                 }
             }
             else
@@ -952,10 +954,10 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
                 if(recipes.contains(recipeToken))
                 {
                     removeRecipe(recipeToken);
+                    markDirty();
                 }
             }
         }
-        markDirty();
     }
 
 
