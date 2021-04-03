@@ -40,17 +40,16 @@
         <view id="managePermissions">
             <switch id="userGroups" size="148 171" pos="201 36">
                 <list id="rankList">
-                    <view id="rank">
-                        <box size="100% 21" linewidth="2">
-                            <label id="name" size="110 18" pos="2 2" color="black" />
-                            <button id="trigger" size="24 17" pos="2 2" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerhuts.retrieveOff)" />
-                            <label id="index" pos="100 100" />
-                        </box>
-                    </view>
+                    <box size="100% 21" linewidth="2">
+                        <label id="name" size="110 18" pos="2 2" color="black" />
+                        <button id="trigger" size="24 17" pos="2 2" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerhuts.retrieveOff)" />
+                        <label id="index" pos="100 100" />
+                    </box>
                 </list>
             </switch>
             <list id="rankButtonList" size="148 111" pos="26 65">
                 <box size="100% 17" linewidth="0">
+                    <label id="rankId" />
                     <button id="rankButton" size="120 15" pos="2 2" align="TOP_MIDDLE" />
                 </box>
             </list>

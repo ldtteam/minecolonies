@@ -171,6 +171,7 @@ public class PermissionsView implements IPermissions
      */
     public void togglePermission(final Rank rank, @NotNull final Action action)
     {
+        permissions.putIfAbsent(rank, 0);
         permissions.put(rank, Utils.toggleFlag(permissions.get(rank), action.getFlag()));
     }
 

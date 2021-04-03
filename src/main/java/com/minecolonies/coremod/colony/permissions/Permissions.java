@@ -1016,7 +1016,9 @@ public class Permissions implements IPermissions
                 break;
             }
         }
-        ranks.put(id, new Rank(id, name, false, false));
+        Rank rank = new Rank(id, name, false, false);
+        ranks.put(id, rank);
+        permissionMap.put(rank, 0);
         markDirty();
     }
 
