@@ -9,8 +9,11 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.storage.FolderName;
@@ -24,6 +27,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -37,6 +42,16 @@ public final class BackUpHelper
      * The maximum amount of colonies we're trying to load from a backup
      */
     private final static int MAX_COLONY_LOAD = 5000;
+
+    /**
+     * Base name of region data folders
+     */
+    private static final String REGION_FOLDER = "region";
+
+    /**
+     * Export colony filename scheme
+     */
+    public static final String FILENAME_EXPORT = "colony%dExport.zip";
 
     /**
      * Private constructor to hide implicit one.
@@ -179,9 +194,21 @@ public final class BackUpHelper
     private static void addToZipFile(final String fileName, final ZipOutputStream zos, final File folder)
     {
         final File file = new File(folder, fileName);
+        addFileToZipWithPath(fileName, zos, file);
+    }
+
+    /**
+     * Add the file to the given zip, with the path
+     *
+     * @param zipPath path to use in the zip
+     * @param zos     zip
+     * @param file    file to put
+     */
+    private static void addFileToZipWithPath(final String zipPath, final ZipOutputStream zos, final File file)
+    {
         try (FileInputStream fis = new FileInputStream(file))
         {
-            zos.putNextEntry(new ZipEntry(fileName));
+            zos.putNextEntry(new ZipEntry(zipPath));
             Files.copy(file, zos);
         }
         catch (final Exception e)
@@ -189,7 +216,7 @@ public final class BackUpHelper
             /*
              * Intentionally not being thrown.
              */
-            Log.getLogger().warn("Error packing " + fileName + " into the zip.", e);
+            Log.getLogger().warn("Error packing " + zipPath + " into the zip.", e);
         }
     }
 
@@ -364,7 +391,7 @@ public final class BackUpHelper
             if (claimChunks)
             {
                 final Chunk chunk = ((Chunk) colonyWorld.getChunk(loadedColony.getCenter()));
-                final int id  = chunk.getCapability(CLOSE_COLONY_CAP, null).map(IColonyTagCapability::getOwningColony).orElse(0);
+                final int id = chunk.getCapability(CLOSE_COLONY_CAP, null).map(IColonyTagCapability::getOwningColony).orElse(0);
                 if (id != colonyId)
                 {
                     for (final IBuilding building : loadedColony.getBuildingManager().getBuildings().values())
@@ -381,5 +408,165 @@ public final class BackUpHelper
         }
 
         Log.getLogger().warn("Successfully restored colony:" + colonyId);
+    }
+
+    /**
+     * Exports a certain colony and its part of the world and colony data data to a zip
+     *
+     * @param colony colony to export
+     * @return file Path and name
+     */
+    public static String exportColony(final IColony colony)
+    {
+        final MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
+        final File topworldDir = server.func_240776_a_(FolderName.DOT).toFile();
+        final File minecraftDir = new File(topworldDir.getAbsolutePath().replace(topworldDir.getPath(), ""));
+
+        final String worldname = topworldDir.getParent().replace("." + File.separator, "");
+        final String minecoloniesZipDir = worldname + File.separator + "minecolonies";
+        final File saveDir = new File(topworldDir, FILENAME_MINECOLONIES_PATH);
+        try (FileOutputStream fos = new FileOutputStream(new File(saveDir, String.format(FILENAME_EXPORT, colony.getID()))))
+        {
+            final ZipOutputStream zos = new ZipOutputStream(fos);
+
+            // Save region content for Colony
+            final File regionDir = new File(DimensionType.getDimensionFolder(colony.getDimension(), server.func_240776_a_(FolderName.DOT).toFile()), REGION_FOLDER);
+
+            int maxX = Integer.MIN_VALUE;
+            int minX = Integer.MAX_VALUE;
+            int maxZ = Integer.MIN_VALUE;
+            int minZ = Integer.MAX_VALUE;
+
+            for (final BlockPos buildingPos : colony.getBuildingManager().getBuildings().keySet())
+            {
+                if (buildingPos.getX() > maxX)
+                {
+                    maxX = buildingPos.getX();
+                }
+
+                if (buildingPos.getX() < minX)
+                {
+                    minX = buildingPos.getX();
+                }
+
+                if (buildingPos.getZ() > maxZ)
+                {
+                    maxZ = buildingPos.getZ();
+                }
+
+                if (buildingPos.getZ() < minZ)
+                {
+                    minZ = buildingPos.getZ();
+                }
+            }
+
+            // Convert to region coords
+            maxX = maxX >> 9;
+            minX = minX >> 9;
+            maxZ = maxZ >> 9;
+            minZ = minZ >> 9;
+
+            for (final File currentRegion : regionDir.listFiles())
+            {
+                if (currentRegion != null && currentRegion.getName().contains(".mca"))
+                {
+                    final String[] split = currentRegion.getName().split("\\.");
+                    if (split.length != 4)
+                    {
+                        continue;
+                    }
+
+                    // Current region file X/Z positions
+                    final int regionX = Integer.parseInt(split[1]);
+                    final int regionZ = Integer.parseInt(split[2]);
+
+                    if (regionX <= maxX && regionX >= minX && regionZ <= maxZ && regionZ >= minZ)
+                    {
+                        addFileToZipWithPath(regionDir.getPath().replace("." + File.separator, "") + File.separator + currentRegion.getName(), zos, currentRegion);
+                    }
+                }
+            }
+
+            // Save colony.dat backup
+            final File file = new File(saveDir, getFolderForDimension(colony.getDimension().getLocation()) + String.format(FILENAME_COLONY, colony.getID()));
+            final File fileDeleted = new File(saveDir, getFolderForDimension(colony.getDimension().getLocation()) + String.format(FILENAME_COLONY_DELETED, colony.getID()));
+            if (file.exists())
+            {
+                addFileToZipWithPath(
+                  minecoloniesZipDir + File.separator + getFolderForDimension(colony.getDimension().getLocation()) + String.format(FILENAME_COLONY, colony.getID()), zos, file);
+            }
+
+            if (fileDeleted.exists())
+            {
+                addFileToZipWithPath(
+                  minecoloniesZipDir + File.separator + getFolderForDimension(colony.getDimension().getLocation()) + String.format(FILENAME_COLONY_DELETED, colony.getID()),
+                  zos,
+                  file);
+            }
+
+            // Save colony manager
+            final File colonyManager = getSaveLocation();
+            if (colonyManager.exists())
+            {
+                addFileToZipWithPath(minecoloniesZipDir + File.separator + colonyManager.getName(), zos, colonyManager);
+            }
+
+            // Save level.dat
+            final File levelDat = new File(topworldDir, "level.dat");
+            if (levelDat.exists())
+            {
+                addFileToZipWithPath(worldname + File.separator + levelDat.getName(), zos, levelDat);
+            }
+
+            // Save config
+            final File config = new File(topworldDir, "serverconfig" + File.separator + "minecolonies-server.toml");
+            if (config.exists())
+            {
+                addFileToZipWithPath(worldname + File.separator + "serverconfig" + File.separator + "minecolonies-server.toml", zos, config);
+            }
+
+            // Mod list
+            final File modFolder = new File(minecraftDir, "mods");
+            final Set<String> mods = new HashSet<>();
+            if (modFolder.exists() && modFolder.isDirectory())
+            {
+                for (final File mod : modFolder.listFiles())
+                {
+                    if (mod.exists())
+                    {
+                        mods.add(mod.getName());
+                    }
+                }
+            }
+
+            if (!mods.isEmpty())
+            {
+                zos.putNextEntry(new ZipEntry(worldname + File.separator + "mods.txt"));
+                for (final String mod : mods)
+                {
+                    zos.write(mod.concat("\n").getBytes());
+                }
+            }
+
+            // Latest.log
+            final File latestlog = new File(minecraftDir, "logs" + File.separator + "latest.log");
+            if (latestlog.exists())
+            {
+                addFileToZipWithPath(worldname + File.separator + latestlog.getName(), zos, latestlog);
+            }
+
+            zos.close();
+        }
+        catch (final Exception e)
+        {
+            /*
+             * Intentionally not being thrown.
+             */
+            Log.getLogger().warn("Unable to to create colony export", e);
+            return "Unable to to create colony export";
+        }
+
+
+        return new File(saveDir, String.format(FILENAME_EXPORT, colony.getID())).getAbsolutePath();
     }
 }

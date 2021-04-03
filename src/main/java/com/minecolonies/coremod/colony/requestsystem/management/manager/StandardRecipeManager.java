@@ -96,7 +96,14 @@ public class StandardRecipeManager implements IRecipeManager
             IRecipeStorage recipe = StandardFactoryController.getInstance().deserialize(list.getCompound(i));
             if (recipe != null && !recipes.containsValue(recipe))
             {
-                recipes.put(recipe.getToken(), recipe);
+                try
+                {
+                    recipes.put(recipe.getToken(), recipe);
+                }
+                catch (Exception e)
+                {
+                    // Eat the exception
+                }
             }
         }
         cache = null;

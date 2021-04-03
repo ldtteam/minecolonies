@@ -115,6 +115,11 @@ public class MineColonies
 
         Mod.EventBusSubscriber.Bus.MOD.bus().get().register(this.getClass());
 
+        // Temporary additional
+        Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(TagWorkAroundEventHandler.TagEventHandler.class);
+        Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(TagWorkAroundEventHandler.TagFMLEventHandlers.class);
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(TagWorkAroundEventHandler.TagClientEventHandler.class));
+
         InteractionValidatorInitializer.init();
         proxy.setupApi();
     }

@@ -135,7 +135,6 @@ public class ServerConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> configListStudyItems;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> configListRecruitmentItems;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> luckyOres;
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> listOfPlantables;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> enchantments;
     public final ForgeConfigSpec.DoubleValue                         enchanterExperienceMultiplier;
     public final ForgeConfigSpec.IntValue                            dynamicTreeHarvestSize;
@@ -476,20 +475,6 @@ public class ServerConfiguration extends AbstractConfiguration
                      "minecraft:lapis_ore!4",
                      "minecraft:diamond_ore!2",
                      "minecraft:emerald_ore!1"),
-          s -> s instanceof String);
-
-        listOfPlantables = defineList(builder, "listofplantables",
-          Arrays.asList
-                   ("minecraft:sunflower",
-                     "minecraft:lilac",
-                     "minecraft:rose_bush",
-                     "minecraft:peony",
-                     "minecraft:tall_grass",
-                     "minecraft:large_fern",
-                     "minecraft:fern",
-                     "biomesoplenty:small_flowers",
-                     "minecraft:small_flowers"
-                   ),
           s -> s instanceof String);
 
         enchantments = defineList(builder, "enchantments",

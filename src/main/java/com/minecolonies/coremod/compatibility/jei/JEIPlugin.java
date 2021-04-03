@@ -6,7 +6,8 @@ import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.crafting.CompostRecipe;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
-import com.minecolonies.coremod.compatibility.jei.transer.PrivateCraftingTeachingTransferHandler;
+import com.minecolonies.coremod.compatibility.jei.transfer.PrivateCraftingTeachingTransferHandler;
+import com.minecolonies.coremod.compatibility.jei.transfer.PrivateSmeltingTeachingTransferHandler;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.constants.VanillaRecipeCategoryUid;
 import mezz.jei.api.constants.VanillaTypes;
@@ -62,5 +63,6 @@ public class JEIPlugin implements IModPlugin
     public void registerRecipeTransferHandlers(@NotNull final IRecipeTransferRegistration registration)
     {
         registration.addRecipeTransferHandler(new PrivateCraftingTeachingTransferHandler(registration.getTransferHelper()), VanillaRecipeCategoryUid.CRAFTING);
+        registration.addRecipeTransferHandler(new PrivateSmeltingTeachingTransferHandler(registration.getTransferHelper()), VanillaRecipeCategoryUid.FURNACE);
     }
 }

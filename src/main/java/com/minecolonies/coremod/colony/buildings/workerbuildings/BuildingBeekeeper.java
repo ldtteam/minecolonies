@@ -19,6 +19,7 @@ import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
@@ -30,6 +31,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
+import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 
 public class BuildingBeekeeper extends AbstractBuildingWorker
 {
@@ -59,6 +61,7 @@ public class BuildingBeekeeper extends AbstractBuildingWorker
         super(c, l);
         keepX.put(stack -> Items.SHEARS == stack.getItem(), new Tuple<>(1, true));
         keepX.put(stack -> Items.GLASS_BOTTLE == stack.getItem(), new Tuple<>(4, true));
+        keepX.put(stack -> ItemTags.FLOWERS.contains(stack.getItem()), new Tuple<>(STACKSIZE,true));
     }
 
     /**
