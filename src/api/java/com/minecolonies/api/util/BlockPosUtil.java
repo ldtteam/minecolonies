@@ -5,6 +5,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.block.AirBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
@@ -28,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Random;
-import java.util.function.Predicate;
+import java.util.function.BiPredicate;
 
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
@@ -665,7 +666,7 @@ public final class BlockPosUtil
      * @param predicate check predicate for the right block
      * @return position or null
      */
-    public static BlockPos findAround(final IBlockReader world, final BlockPos start, final int vRange, final int hRange, final Predicate<BlockState> predicate)
+    public static BlockPos findAround(final IBlockReader world, final BlockPos start, final int vRange, final int hRange, final BiPredicate<IBlockReader, BlockPos> predicate)
     {
         if (vRange < 1 && hRange < 1)
         {
@@ -687,7 +688,7 @@ public final class BlockPosUtil
                 for (int x = 0; x <= steps; x++)
                 {
                     temp = temp.add(1, 0, 0);
-                    if (predicate.test(world.getBlockState(temp)) && predicate.test(world.getBlockState(temp.up())))
+                    if (predicate.test(world, temp))
                     {
                         return temp;
                     }
@@ -699,7 +700,7 @@ public final class BlockPosUtil
                 for (int z = 0; z <= steps; z++)
                 {
                     temp = temp.add(0, 0, 1);
-                    if (predicate.test(world.getBlockState(temp)) && predicate.test(world.getBlockState(temp.up())))
+                    if (predicate.test(world, temp))
                     {
                         return temp;
                     }
@@ -709,7 +710,7 @@ public final class BlockPosUtil
                 for (int x = 0; x <= steps; x++)
                 {
                     temp = temp.add(-1, 0, 0);
-                    if (predicate.test(world.getBlockState(temp)) && predicate.test(world.getBlockState(temp.up())))
+                    if (predicate.test(world, temp))
                     {
                         return temp;
                     }
@@ -721,7 +722,7 @@ public final class BlockPosUtil
                 for (int z = 0; z <= steps; z++)
                 {
                     temp = temp.add(0, 0, -1);
-                    if (predicate.test(world.getBlockState(temp)) && predicate.test(world.getBlockState(temp.up())))
+                    if (predicate.test(world, temp))
                     {
                         return temp;
                     }
@@ -734,5 +735,18 @@ public final class BlockPosUtil
         }
 
         return null;
+    }
+
+    /**
+     * Finds a spawn pos around the given startpos with two air blocks
+     *
+     * @param worldReader blockreader
+     * @param start       startpos
+     * @return
+     */
+    public static BlockPos findSpawnPosAround(final IBlockReader worldReader, final BlockPos start)
+    {
+        return findAround(worldReader, start, 1, 1,
+          (world, pos) -> world.getBlockState(pos).getMaterial() == Material.AIR && world.getBlockState(pos.up()).getMaterial() == Material.AIR);
     }
 }

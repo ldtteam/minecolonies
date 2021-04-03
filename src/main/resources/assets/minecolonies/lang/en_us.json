@@ -408,6 +408,7 @@
   "com.minecolonies.command.raidnow.success": "Raid started for colony %s, take care!",
   "com.minecolonies.command.raidtonight.success": "A raid on colony %s is coming tonight!",
   "com.minecolonies.command.loadbackup.success": "Successfully loaded backup.",
+  "com.minecolonies.command.export.success": "Exported colony to zip: %s",
   "com.minecolonies.command.deleteable.success": "Changed deletable flag of colony ID %s. It is now set to %s.",
   "com.minecolonies.command.rsreset.success": "The request system for colony %s has been restarted in 1.618 seconds.",
   "com.minecolonies.command.rsresetall.success": "The request systems for all colonies have been restarted in 1.618 seconds.",

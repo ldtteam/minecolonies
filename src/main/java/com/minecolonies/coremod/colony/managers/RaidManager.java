@@ -11,6 +11,7 @@ import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
 import com.minecolonies.api.colony.managers.interfaces.IRaiderManager;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.Colony;
@@ -93,6 +94,16 @@ public class RaidManager implements IRaiderManager
      * Min required raidlevel
      */
     private static final int MIN_REQUIRED_RAIDLEVEL = 75;
+
+    /**
+     * Minimum block sqdistance to colony center allowed to spawn
+     */
+    private static final int MIN_RAID_BLOCK_DIST_CENTER_SQ = 5 * 5 * 16 * 16;
+
+    /**
+     * How many chunks distance a raid span searches additionally
+     */
+    private final static int RAID_SPAWN_SEARCH_CHUNKS = 10;
 
     /**
      * Percentage increased amount of spawns per player
@@ -281,7 +292,7 @@ public class RaidManager implements IRaiderManager
             final String homeBiomePath = colony.getWorld().getBiome(colony.getCenter()).getCategory().getName();
             final int rand = colony.getWorld().rand.nextInt(100);
             if ((raidType.isEmpty() && (homeBiomePath.contains(TAIGA_BIOME_ID) || rand < IGNORE_BIOME_CHANCE)
-                  || raidType.equals(NorsemenRaidEvent.NORSEMEN_RAID_EVENT_TYPE_ID.getPath()))
+                   || raidType.equals(NorsemenRaidEvent.NORSEMEN_RAID_EVENT_TYPE_ID.getPath()))
                   && ShipBasedRaiderUtils.canSpawnShipAt(colony,
               targetSpawnPoint,
               amount,
@@ -295,7 +306,7 @@ public class RaidManager implements IRaiderManager
                 colony.getEventManager().addEvent(event);
             }
             else if (ShipBasedRaiderUtils.canSpawnShipAt(colony, targetSpawnPoint, amount, shipRotation, PirateRaidEvent.SHIP_NAME)
-                     && (raidType.isEmpty() || raidType.equals(PirateRaidEvent.PIRATE_RAID_EVENT_TYPE_ID.getPath())))
+                       && (raidType.isEmpty() || raidType.equals(PirateRaidEvent.PIRATE_RAID_EVENT_TYPE_ID.getPath())))
             {
                 final PirateRaidEvent event = new PirateRaidEvent(colony);
                 event.setSpawnPoint(targetSpawnPoint);
@@ -308,21 +319,21 @@ public class RaidManager implements IRaiderManager
                 final String biomePath = colony.getWorld().getBiome(targetSpawnPoint).getCategory().getName().toLowerCase();
                 final HordeRaidEvent event;
                 if (((biomePath.contains(DESERT_BIOME_ID) || (rand > IGNORE_BIOME_CHANCE && rand < IGNORE_BIOME_CHANCE * 2))
-                      && raidType.isEmpty()) || raidType.equals(EgyptianRaidEvent.EGYPTIAN_RAID_EVENT_TYPE_ID.getPath()))
+                       && raidType.isEmpty()) || raidType.equals(EgyptianRaidEvent.EGYPTIAN_RAID_EVENT_TYPE_ID.getPath()))
                 {
                     event = new EgyptianRaidEvent(colony);
                 }
                 else if (((biomePath.contains(JUNGLE_BIOME_ID) || (rand > IGNORE_BIOME_CHANCE * 2 && rand < IGNORE_BIOME_CHANCE * 3)
-                           && raidType.isEmpty())) || (raidType.equals(AmazonRaidEvent.AMAZON_RAID_EVENT_TYPE_ID.getPath())))
+                                                                    && raidType.isEmpty())) || (raidType.equals(AmazonRaidEvent.AMAZON_RAID_EVENT_TYPE_ID.getPath())))
                 {
                     event = new AmazonRaidEvent(colony);
                 }
                 else if (((biomePath.contains(TAIGA_BIOME_ID) || (rand > IGNORE_BIOME_CHANCE * 3 && rand < IGNORE_BIOME_CHANCE * 4))
-                           && raidType.isEmpty()) || raidType.equals(NorsemenRaidEvent.NORSEMEN_RAID_EVENT_TYPE_ID.getPath()))
+                            && raidType.isEmpty()) || raidType.equals(NorsemenRaidEvent.NORSEMEN_RAID_EVENT_TYPE_ID.getPath()))
                 {
                     event = new NorsemenRaidEvent(colony);
                 }
-                else if(raidType.equals(PirateRaidEvent.PIRATE_RAID_EVENT_TYPE_ID.getPath()))
+                else if (raidType.equals(PirateRaidEvent.PIRATE_RAID_EVENT_TYPE_ID.getPath()))
                 {
                     event = new PirateGroundRaidEvent(colony);
                 }
@@ -341,8 +352,6 @@ public class RaidManager implements IRaiderManager
         colony.markDirty();
     }
 
-    private static final int MIN_RAID_CHUNK_DIST_CENTER = 5;
-
     /**
      * Calculate a random spawn point along the colony's border
      *
@@ -351,7 +360,6 @@ public class RaidManager implements IRaiderManager
     @Override
     public BlockPos calculateSpawnLocation()
     {
-        List<IBuilding> loadedBuildings = new ArrayList<>();
         BlockPos locationSum = new BlockPos(0, 0, 0);
         int amount = 0;
 
@@ -359,7 +367,6 @@ public class RaidManager implements IRaiderManager
         {
             if (WorldUtil.isEntityBlockLoaded(colony.getWorld(), building.getPosition()))
             {
-                loadedBuildings.add(building);
                 amount++;
                 locationSum = locationSum.add(building.getPosition());
             }
@@ -378,18 +385,26 @@ public class RaidManager implements IRaiderManager
 
         BlockPos spawnPos = null;
 
-        Direction direction1 = random.nextInt(2) < 1 ? Direction.EAST : Direction.WEST;
-        Direction direction2 = random.nextInt(2) < 1 ? Direction.NORTH : Direction.SOUTH;
+        final Direction direction1 = random.nextInt(2) < 1 ? Direction.EAST : Direction.WEST;
+        final Direction direction2 = random.nextInt(2) < 1 ? Direction.NORTH : Direction.SOUTH;
 
-        for (int i = 0; i < 4; i++)
+        Tuple<Direction, Direction> mainDir = new Tuple<>(direction1, direction1);
+        Tuple<Direction, Direction> secondDir = new Tuple<>(direction2, direction2);
+
+        for (int i = 0; i < 8; i++)
         {
-            if (i > 0)
+            if (i % 2 == 0)
             {
-                direction1 = direction1.rotateY();
-                direction2 = direction2.rotateY();
+                mainDir = new Tuple<>(mainDir.getA(), mainDir.getB().rotateY());
+                secondDir = new Tuple<>(secondDir.getA().rotateY(), secondDir.getB());
+            }
+            else
+            {
+                mainDir = new Tuple<>(mainDir.getA().rotateY(), mainDir.getB());
+                secondDir = new Tuple<>(secondDir.getA(), secondDir.getB().rotateY());
             }
 
-            spawnPos = findSpawnPointInDirections(calcCenter, direction1, direction2, loadedBuildings);
+            spawnPos = findSpawnPointInDirections(calcCenter, mainDir, secondDir);
             if (spawnPos != null)
             {
                 break;
@@ -401,10 +416,13 @@ public class RaidManager implements IRaiderManager
             return null;
         }
 
-        return BlockPosUtil.findAround(colony.getWorld(), BlockPosUtil.getFloor(spawnPos, colony.getWorld()), 3, 30, state -> state.getMaterial() == Material.AIR);
+        return BlockPosUtil.findAround(colony.getWorld(),
+          BlockPosUtil.getFloor(spawnPos, colony.getWorld()),
+          3,
+          30,
+          (world, pos) -> (world.getBlockState(pos).isSolid() || world.getBlockState(pos).getMaterial().isLiquid()) && world.getBlockState(
+            pos.up()).getMaterial() == Material.AIR && world.getBlockState(pos.up(2)).getMaterial() == Material.AIR);
     }
-
-    private final static int RAID_SPAWN_SEARCH_CHUNKS = 10;
 
     /**
      * Finds a spawnpoint randomly in a circular shape around the center Advances
@@ -415,22 +433,33 @@ public class RaidManager implements IRaiderManager
      * @param loadedBuildings a list of loaded buildings
      * @return the calculated position
      */
-    private BlockPos findSpawnPointInDirections(final BlockPos center, final Direction dir1, final Direction dir2, final List<IBuilding> loadedBuildings)
+    private BlockPos findSpawnPointInDirections(
+      final BlockPos center,
+      final Tuple<Direction, Direction> dir1,
+      final Tuple<Direction, Direction> dir2)
     {
         final Random random = colony.getWorld().rand;
 
         BlockPos spawnPos = new BlockPos(center);
 
-        // Do the min offset
-        for (int i = 1; i <= MIN_RAID_CHUNK_DIST_CENTER; i++)
+        while (spawnPos.distanceSq(center) < MIN_RAID_BLOCK_DIST_CENTER_SQ)
         {
             if (random.nextBoolean())
             {
-                spawnPos = spawnPos.offset(dir1, 16);
+                spawnPos = spawnPos.offset(dir1.getA(), 16);
             }
             else
             {
-                spawnPos = spawnPos.offset(dir2, 16);
+                spawnPos = spawnPos.offset(dir2.getA(), 16);
+            }
+
+            if (random.nextBoolean())
+            {
+                spawnPos = spawnPos.offset(dir1.getB(), 16);
+            }
+            else
+            {
+                spawnPos = spawnPos.offset(dir2.getB(), 16);
             }
         }
 
@@ -439,20 +468,19 @@ public class RaidManager implements IRaiderManager
         // Check if loaded
         if (WorldUtil.isBlockLoaded(colony.getWorld(), spawnPos))
         {
-            for (int i = 1; i <= random.nextInt(RAID_SPAWN_SEARCH_CHUNKS - 3) + 3; i++)
+            final int chunks = random.nextInt(RAID_SPAWN_SEARCH_CHUNKS - 3) + 3;
+            for (int i = 1; i <= chunks; i++)
             {
-                // Choose random between our two directions
+                // Direction one
                 if (random.nextBoolean())
                 {
-                    if (WorldUtil.isBlockLoaded(colony.getWorld(), tempPos.offset(dir1, 16))
-                          && WorldUtil.isBlockLoaded(colony.getWorld(), tempPos.offset(dir1, 32))
-                          && WorldUtil.isBlockLoaded(colony.getWorld(), tempPos.offset(dir2, 16)))
+                    if (areChunksLoadedForRaidSpawn(tempPos, dir1.getA(), dir2.getB()))
                     {
-                        if (isValidSpawnPoint(tempPos.offset(dir1, 16)))
+                        if (isValidSpawnPoint(tempPos.offset(dir1.getA(), 16)))
                         {
-                            spawnPos = tempPos.offset(dir1, 16);
+                            spawnPos = tempPos.offset(dir1.getA(), 16);
                         }
-                        tempPos = tempPos.offset(dir1, 16);
+                        tempPos = tempPos.offset(dir1.getA(), 16);
                     }
                     else
                     {
@@ -461,15 +489,45 @@ public class RaidManager implements IRaiderManager
                 }
                 else
                 {
-                    if (WorldUtil.isBlockLoaded(colony.getWorld(), tempPos.offset(dir2, 16))
-                          && WorldUtil.isBlockLoaded(colony.getWorld(), tempPos.offset(dir2, 32))
-                          && WorldUtil.isBlockLoaded(colony.getWorld(), tempPos.offset(dir1, 16)))
+                    if (areChunksLoadedForRaidSpawn(tempPos, dir2.getA(), dir1.getB()))
                     {
-                        if (isValidSpawnPoint(tempPos.offset(dir2, 16)))
+                        if (isValidSpawnPoint(tempPos.offset(dir2.getA(), 16)))
                         {
-                            spawnPos = tempPos.offset(dir2, 16);
+                            spawnPos = tempPos.offset(dir2.getA(), 16);
                         }
-                        tempPos = tempPos.offset(dir2, 16);
+                        tempPos = tempPos.offset(dir2.getA(), 16);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+                // Direction two
+                if (random.nextBoolean())
+                {
+                    if (areChunksLoadedForRaidSpawn(tempPos, dir1.getB(), dir2.getA()))
+                    {
+                        if (isValidSpawnPoint(tempPos.offset(dir1.getB(), 16)))
+                        {
+                            spawnPos = tempPos.offset(dir1.getB(), 16);
+                        }
+                        tempPos = tempPos.offset(dir1.getB(), 16);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                else
+                {
+                    if (areChunksLoadedForRaidSpawn(tempPos, dir2.getB(), dir1.getA()))
+                    {
+                        if (isValidSpawnPoint(tempPos.offset(dir2.getB(), 16)))
+                        {
+                            spawnPos = tempPos.offset(dir2.getB(), 16);
+                        }
+                        tempPos = tempPos.offset(dir2.getB(), 16);
                     }
                     else
                     {
@@ -477,7 +535,6 @@ public class RaidManager implements IRaiderManager
                     }
                 }
             }
-
             if (isValidSpawnPoint(spawnPos))
             {
                 return spawnPos;
@@ -488,9 +545,21 @@ public class RaidManager implements IRaiderManager
     }
 
     /**
+     * Checks if there is enough chunks loaded to advance the raid spawn into the direction
+     *
+     * @return
+     */
+    private boolean areChunksLoadedForRaidSpawn(final BlockPos pos, final Direction dir1, final Direction dir2)
+    {
+        return (WorldUtil.isBlockLoaded(colony.getWorld(), pos.offset(dir1, 16))
+                  && WorldUtil.isBlockLoaded(colony.getWorld(), pos.offset(dir1, 32))
+                  && WorldUtil.isBlockLoaded(colony.getWorld(), pos.offset(dir2, 16)));
+    }
+
+    /**
      * Determines whether the given spawn point is allowed.
      *
-     * @param spawnPos        the spawn point to check
+     * @param spawnPos the spawn point to check
      * @return true if valid
      */
     private boolean isValidSpawnPoint(final BlockPos spawnPos)
@@ -719,7 +788,7 @@ public class RaidManager implements IRaiderManager
     public double getRaidDifficultyModifier()
     {
         return ((raidDifficulty / (double) 10) + MIN_DIFFICULTY_MODIFIER) * (MinecoloniesAPIProxy.getInstance().getConfig().getServer().barbarianHordeDifficulty.get()
-                                                                       / (double) DEFAULT_BARBARIAN_DIFFICULTY) * (colony.getWorld().getDifficulty().getId() / 2d);
+                                                                               / (double) DEFAULT_BARBARIAN_DIFFICULTY) * (colony.getWorld().getDifficulty().getId() / 2d);
     }
 
     @Override
