@@ -11,12 +11,11 @@ import com.minecolonies.api.sounds.TavernSounds;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.client.gui.WindowHutTavern;
+import com.minecolonies.coremod.client.gui.huts.WindowHutTavern;
 import com.minecolonies.coremod.colony.buildings.views.LivingBuildingView;
 import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.VisitorSpawnedEvent;
 import com.minecolonies.coremod.colony.interactionhandling.RecruitmentInteraction;
 import com.minecolonies.coremod.network.messages.client.colony.PlayMusicAtPosMessage;
-import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -30,7 +29,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import static com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateConstants.MAX_TICKRATE;
 import static com.minecolonies.api.util.constant.Constants.TAG_COMPOUND;
@@ -173,7 +174,7 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
 
         newCitizen.getCitizenSkillHandler().init(recruitLevel);
 
-        BlockPos spawnPos = BlockPosUtil.findAround(building.getColony().getWorld(), building.getPosition(), 1, 1, bs -> bs.getMaterial() == Material.AIR);
+        BlockPos spawnPos = BlockPosUtil.findSpawnPosAround(building.getColony().getWorld(), building.getPosition());
         if (spawnPos == null)
         {
             spawnPos = building.getPosition();

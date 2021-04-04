@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.requestsystem.init;
 
+import com.minecolonies.coremod.colony.buildings.modules.settings.SettingsFactories;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.factory.standard.IntegerFactory;
 import com.minecolonies.api.colony.requestsystem.factory.standard.TypeTokenFactory;
@@ -75,6 +76,7 @@ public final class StandardFactoryControllerInitializer
         StandardFactoryController.getInstance().registerNewFactory(new StandardDataStoreManager.Factory());
         StandardFactoryController.getInstance().registerNewFactory(new StandardRequestFactories.PublicCraftingRequestFactory());
         StandardFactoryController.getInstance().registerNewFactory(new StandardRequestFactories.PrivateCraftingRequestFactory());
+        StandardFactoryController.getInstance().registerNewFactory(new SettingsFactories.BoolSettingFactory());
 
         StandardFactoryController.getInstance().registerNewTypeOverrideHandler(new TypeTokenFactory.TypeTokenSubTypeOverrideHandler());
 

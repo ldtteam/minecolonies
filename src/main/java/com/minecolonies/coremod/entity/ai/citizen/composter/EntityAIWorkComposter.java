@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity.ai.citizen.composter;
 
 import com.google.common.collect.ImmutableList;
+import com.minecolonies.api.colony.buildings.modules.ISettingsModule;
 import com.minecolonies.api.colony.requestsystem.requestable.StackList;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AIEventTarget;
@@ -308,7 +309,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
             final TileEntityBarrel te = (TileEntityBarrel) world.getTileEntity(currentTarget);
             final ItemStack compost = te.retrieveCompost(getLootMultiplier(worker.getRandom()));
 
-            if (getOwnBuilding().shouldRetrieveDirtFromCompostBin())
+            if (getOwnBuilding().getFirstModuleOccurance(ISettingsModule.class).map(m -> m.getSetting(BuildingComposter.PRODUCE_DIRT).getValue()).orElse(false))
             {
                 /**
                  * Podzol or dirt?
