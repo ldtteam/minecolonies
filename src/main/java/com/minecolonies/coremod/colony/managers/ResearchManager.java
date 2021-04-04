@@ -5,10 +5,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ModBuildings;
-import com.minecolonies.api.research.IGlobalResearch;
-import com.minecolonies.api.research.IGlobalResearchTree;
-import com.minecolonies.api.research.ILocalResearch;
-import com.minecolonies.api.research.IResearchManager;
+import com.minecolonies.api.research.*;
 import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.research.effects.IResearchEffectManager;
 import com.minecolonies.api.research.util.ResearchState;
@@ -110,22 +107,27 @@ public class ResearchManager implements IResearchManager
             {
                 continue;
             }
-            Map<BlockPos, IBuilding> buildings = colony.getBuildingManager().getBuildings();
-            int level = 0;
-            for (Map.Entry<BlockPos, IBuilding> building : buildings.entrySet())
+            // Unlockable Branch Research should trigger even if the university isn't at the required depth. Otherwise, we do need to consider it. CheckAutoStart will rerun on the university upgrade completion.
+            if(IGlobalResearchTree.getInstance().getBranchData(research.getBranch()).getType() != ResearchBranchType.UNLOCKABLES)
             {
-                if (building.getValue().getBuildingRegistryEntry() == ModBuildings.university)
+                int level = 0;
+                Map<BlockPos, IBuilding> buildings = colony.getBuildingManager().getBuildings();
+                for (Map.Entry<BlockPos, IBuilding> building : buildings.entrySet())
                 {
-                    if (building.getValue().getBuildingLevel() > level)
+                    if (building.getValue().getBuildingRegistryEntry() == ModBuildings.university)
                     {
-                        level = building.getValue().getBuildingLevel();
+                        if (building.getValue().getBuildingLevel() > level)
+                        {
+                            level = building.getValue().getBuildingLevel();
+                        }
                     }
                 }
+                if (level < research.getDepth())
+                {
+                    continue;
+                }
             }
-            if (level < research.getDepth())
-            {
-                continue;
-            }
+
             boolean researchAlreadyRun = false;
             for (ILocalResearch progressResearch : colony.getResearchManager().getResearchTree().getResearchInProgress())
             {

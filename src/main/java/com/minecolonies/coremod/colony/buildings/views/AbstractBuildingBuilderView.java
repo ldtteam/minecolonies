@@ -133,7 +133,7 @@ public abstract class AbstractBuildingBuilderView extends AbstractBuildingWorker
      */
     public String getProgress()
     {
-        int localProgress = 100 - (int) (progress * 100);
+        int localProgress = Math.max(100 - (int) (progress * 100), 0);
         if (finishedStages == 0)
         {
             if (totalStages == finishedStages)

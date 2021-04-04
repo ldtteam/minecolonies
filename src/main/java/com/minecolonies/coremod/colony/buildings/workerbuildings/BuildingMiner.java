@@ -11,7 +11,7 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
-import com.minecolonies.coremod.client.gui.WindowHutMinerModule;
+import com.minecolonies.coremod.client.gui.huts.WindowHutMinerModule;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
