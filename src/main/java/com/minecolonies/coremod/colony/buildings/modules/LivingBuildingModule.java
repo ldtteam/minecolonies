@@ -144,7 +144,7 @@ public class LivingBuildingModule extends AbstractBuildingModule implements IAss
             trySpawnChild();
         }
 
-        if (building.getAssignedCitizen().size() < getModuleMax() && !building.getColony().isManualHousing())
+        if (!building.isFull() && !building.getColony().isManualHousing())
         {
             // 'Capture' as many citizens into this house as possible
             addHomelessCitizens();
@@ -284,21 +284,24 @@ public class LivingBuildingModule extends AbstractBuildingModule implements IAss
     private void addHomelessCitizens()
     {
         // Priotize missing genders for assigning
-        for (@NotNull final ICitizenData citizen : building.getColony().getCitizenManager().getCitizens())
+        if (!malePresent || !femalePresent)
         {
-            if (building.isFull())
+            for (@NotNull final ICitizenData citizen : building.getColony().getCitizenManager().getCitizens())
             {
-                break;
+                if (building.isFull())
+                {
+                    break;
+                }
+                if (femalePresent && citizen.isFemale())
+                {
+                    continue;
+                }
+                if (malePresent && !citizen.isFemale())
+                {
+                    continue;
+                }
+                moveCitizenToHut(citizen);
             }
-            if (femalePresent && citizen.isFemale())
-            {
-                continue;
-            }
-            if (malePresent && !citizen.isFemale())
-            {
-                continue;
-            }
-            moveCitizenToHut(citizen);
         }
 
         for (@NotNull final ICitizenData citizen : building.getColony().getCitizenManager().getCitizens())
