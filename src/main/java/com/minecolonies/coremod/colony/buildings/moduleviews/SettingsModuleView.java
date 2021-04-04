@@ -13,6 +13,8 @@ import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.coremod.network.messages.server.colony.building.TriggerSettingMessage;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -51,6 +53,7 @@ public class SettingsModuleView extends AbstractBuildingModuleView implements IS
         return settings;
     }
 
+    @OnlyIn(Dist.CLIENT)
     @Override
     public Window getWindow()
     {
