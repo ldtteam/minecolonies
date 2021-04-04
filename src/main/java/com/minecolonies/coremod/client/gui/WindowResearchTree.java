@@ -19,6 +19,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingUnivers
 import com.minecolonies.coremod.network.messages.server.colony.building.university.TryResearchMessage;
 import com.minecolonies.coremod.research.AlternateBuildingResearchRequirement;
 import com.minecolonies.coremod.research.BuildingResearchRequirement;
+import com.minecolonies.coremod.research.GlobalResearchEffect;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -301,6 +302,14 @@ public class WindowResearchTree extends AbstractWindowSkeleton
 
             final IGlobalResearch research = IGlobalResearchTree.getInstance().getResearch(branch, researchList.get(i));
             if (research.isHidden() && !IGlobalResearchTree.getInstance().isResearchRequirementsFulfilled(research.getResearchRequirement(), this.building.getColony()))
+            {
+                continue;
+            }
+            // WORKING_IN_RAIN does nothing if the server config equivalent is already on, and it blocks other research of the same tier.
+            // I'd rather remove it at the initial ResearchListener, but JsonReloadListeners only fire long before the config files are read,
+            // and colonies that already bought the research before changing configs do need the ability to cancel or undo it.
+            if(IMinecoloniesAPI.getInstance().getConfig().getServer().workersAlwaysWorkInRain.get() && research.getEffects().size() == 1 &&
+                 research.getEffects().get(0).getId().equals(WORKING_IN_RAIN) && building.getColony().getResearchManager().getResearchTree().getResearch(branch, researchList.get(i)) == null)
             {
                 continue;
             }
@@ -618,7 +627,19 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         }
         for (int txt = 0; txt < research.getEffects().size(); txt++)
         {
-            hoverPaneBuilder.paragraphBreak().append(research.getEffects().get(txt).getDesc());
+            // CITIZEN_CAP's meaningful effect range is controlled by configuration file settings. Very low values will necessarily make their researches a little weird, but we should at least handle 'sane' ranges.
+            // Only change the effect description, rather than removing the effect, as someone may plausibly use the research as a parent research.
+            // I'd rather make these modifications during ResearchListener.apply, but that's called before config files can be loaded, and the other workarounds are even uglier.
+            if(research.getEffects().get(txt).getId().equals(CITIZEN_CAP)
+                 && (((GlobalResearchEffect)research.getEffects().get(txt)).getEffect() + 25) > IMinecoloniesAPI.getInstance().getConfig().getServer().maxCitizenPerColony.get())
+            {
+                hoverPaneBuilder.paragraphBreak().append(new TranslationTextComponent("com.minecolonies.research.effects.citizencapaddition.description", new TranslationTextComponent(
+                  "com.minecolonies.coremod.research.limit.maxeffect")));
+            }
+            else
+            {
+                hoverPaneBuilder.paragraphBreak().append(research.getEffects().get(txt).getDesc());
+            }
             if (!research.getEffects().get(txt).getSubtitle().getKey().isEmpty())
             {
                 hoverPaneBuilder.paragraphBreak().append(new StringTextComponent("-")).append(research.getEffects().get(txt).getSubtitle());
