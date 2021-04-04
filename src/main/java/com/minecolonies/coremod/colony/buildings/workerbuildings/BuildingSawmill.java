@@ -12,7 +12,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.coremod.client.gui.WindowHutWorkerModulePlaceholder;
+import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.jobs.JobSawmill;
 import net.minecraft.item.ItemStack;

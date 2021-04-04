@@ -11,7 +11,7 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.research.ILocalResearch;
-import com.minecolonies.coremod.client.gui.WindowHutUniversityModule;
+import com.minecolonies.coremod.client.gui.huts.WindowHutUniversityModule;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobResearch;
 

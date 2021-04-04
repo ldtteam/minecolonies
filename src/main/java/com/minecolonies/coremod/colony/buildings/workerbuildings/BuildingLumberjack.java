@@ -15,7 +15,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.ToolType;
-import com.minecolonies.coremod.client.gui.WindowHutLumberjackModule;
+import com.minecolonies.coremod.client.gui.huts.WindowHutLumberjackModule;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;

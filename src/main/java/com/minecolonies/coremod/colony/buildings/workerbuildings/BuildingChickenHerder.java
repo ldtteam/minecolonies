@@ -8,7 +8,7 @@ import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.citizen.Skill;
-import com.minecolonies.coremod.client.gui.WindowHutChickenHerderModule;
+import com.minecolonies.coremod.client.gui.huts.WindowHutChickenHerderModule;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingHerder;
 import com.minecolonies.coremod.colony.jobs.JobChickenHerder;
 import net.minecraft.util.math.BlockPos;

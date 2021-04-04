@@ -374,7 +374,7 @@ public class Colony implements IColony
             return ACTIVE;
         }
 
-        if (!packageManager.getImportantColonyPlayers().isEmpty())
+        if (!packageManager.getImportantColonyPlayers().isEmpty() || forceLoadTimer > 0)
         {
             isActive = true;
             return UNLOADED;
