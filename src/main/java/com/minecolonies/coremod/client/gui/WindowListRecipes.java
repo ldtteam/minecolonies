@@ -142,7 +142,7 @@ public class WindowListRecipes extends Window implements ButtonHandler
                     {
                         if (i < recipe.getInput().size())
                         {
-                            final ItemStack displayItem = recipe.getInput().get(i).getItemStack().copy();
+                            final ItemStack displayItem = recipe.getInput().get(i).getItemStack();
 
                             rowPane.findPaneOfTypeByID(String.format(RESOURCE, i + 1), ItemIcon.class).setItem(displayItem);
                         }

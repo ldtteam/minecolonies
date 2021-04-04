@@ -51,7 +51,6 @@ public class ItemStorageFactory implements IItemStorageFactory
     {
         final CompoundNBT compound = new CompoundNBT();
         @NotNull CompoundNBT stackTag = new CompoundNBT();
-        Log.getLogger().info("Writing new ItemStorage: " + storage.getItemStack().getDisplayName().getString());
         storage.getItemStack().write(stackTag);
         compound.put(TAG_STACK, stackTag);
         compound.putInt(TAG_SIZE, storage.getAmount());
@@ -64,7 +63,6 @@ public class ItemStorageFactory implements IItemStorageFactory
     {
         final ItemStack stack = ItemStack.read(nbt.getCompound(TAG_STACK));
         final int size = nbt.getInt(TAG_SIZE);
-        Log.getLogger().info("deserializing stack: " + stack.getDisplayName().getString());
         return this.getNewInstance(stack, size);
     }
 

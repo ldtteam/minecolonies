@@ -116,16 +116,16 @@ public class BuildingSawmill extends AbstractBuildingCrafter
 
             double amountOfValidBlocks = 0;
             double blocks = 0;
-            for (final ItemStorage stack : storage.getInput())
+            for (final ItemStorage inputItem : storage.getInput())
             {
-                if (!stack.isEmpty())
+                if (!inputItem.isEmpty())
                 {
-                    if (stack.getItem().isIn(ItemTags.PLANKS) || stack.getItem().isIn(ItemTags.LOGS))
+                    if (inputItem.getItem().isIn(ItemTags.PLANKS) || inputItem.getItem().isIn(ItemTags.LOGS))
                     {
                         amountOfValidBlocks++;
                         continue;
                     }
-                    for (final ResourceLocation tag : stack.getItem().getTags())
+                    for (final ResourceLocation tag : inputItem.getItem().getTags())
                     {
                         if (tag.getPath().contains("wood"))
                         {

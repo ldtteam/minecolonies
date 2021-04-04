@@ -182,15 +182,15 @@ public class RecipeStorage implements IRecipeStorage
     {
         final List<ItemStorage> items = new ArrayList<>();
 
-        for (final ItemStorage stack : input)
+        for (final ItemStorage inputItem : input)
         {
-            if (stack.isEmpty() || stack.getItem() == ModItems.buildTool.get())
+            if (inputItem.isEmpty() || inputItem.getItem() == ModItems.buildTool.get())
             {
                 continue;
             }
 
-            ItemStorage storage = new ItemStorage(stack.getItemStack());
-            storage.setAmount(stack.getAmount());
+            ItemStorage storage = new ItemStorage(inputItem.getItemStack());
+            storage.setAmount(inputItem.getAmount());
             if (items.contains(storage))
             {
                 final int index = items.indexOf(storage);
@@ -216,17 +216,17 @@ public class RecipeStorage implements IRecipeStorage
     private List<ItemStack> calculateSecondaryOutputs()
     {
         final List<ItemStack> secondaryStacks = new ArrayList<>();
-        for (final ItemStorage stack : input)
+        for (final ItemStorage inputItem : input)
         {
-            if (stack.getItem() == ModItems.buildTool.get())
+            if (inputItem.getItem() == ModItems.buildTool.get())
             {
                 continue;
             }
 
-            final ItemStack container = stack.getItem().getContainerItem(stack.getItemStack());
+            final ItemStack container = inputItem.getItem().getContainerItem(inputItem.getItemStack());
             if (!ItemStackUtils.isEmpty(container))
             {
-                container.setCount(stack.getAmount());
+                container.setCount(inputItem.getAmount());
                 secondaryStacks.add(container);
             }
         }
