@@ -445,6 +445,7 @@ public final class WindowConstants
      */
     public static final String HUT_BUILDER_RESOURCE_SUFFIX = ":gui/windowhutbuilder.xml";
     public static final String LIST_RESOURCES              = "resources";
+
     public static final String PAGE_RESOURCES              = "resourceActions";
     public static final String LIST_WORK_ORDERS            = "workOrders";
     public static final String RESOURCE_NAME               = "resourceName";
@@ -1160,6 +1161,11 @@ public final class WindowConstants
      * String describing off for the gui.
      */
     public static final String OFF = COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF;
+
+    /**
+     * Settings list ID.
+     */
+    public static final String LIST_SETTINGS = "settingslist";
 
     /**
      * Private constructor to hide implicit public one.

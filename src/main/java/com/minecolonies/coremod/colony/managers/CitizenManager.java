@@ -278,7 +278,7 @@ public class CitizenManager implements ICitizenManager
         {
             citizenData = createAndRegisterCivilianData();
 
-            if (getMaxCitizens() == getCurrentCitizenCount() && !force)
+            if (getMaxCitizens() >= getCurrentCitizenCount() && !force)
             {
                 if (maxCitizensFromResearch() <= getCurrentCitizenCount())
                 {

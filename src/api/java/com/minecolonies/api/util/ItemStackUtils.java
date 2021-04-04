@@ -773,10 +773,12 @@ public final class ItemStackUtils
             return true;
         }
 
-        if (!isEmpty(itemStack1) &&
-              !isEmpty(itemStack2) &&
-              itemStack1.getItem() == itemStack2.getItem() &&
-              (itemStack1.getDamage() == itemStack2.getDamage() || !matchDamage))
+        if (isEmpty(itemStack1) != isEmpty(itemStack2))
+        {
+            return false;
+        }
+
+        if (itemStack1.getItem() == itemStack2.getItem() && (!matchDamage || itemStack1.getDamage() == itemStack2.getDamage()))
         {
             if (!matchNBT)
             {

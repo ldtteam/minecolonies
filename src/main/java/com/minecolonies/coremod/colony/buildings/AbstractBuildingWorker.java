@@ -600,7 +600,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         compound.put(TAG_WORKER, workersTagList);
 
         compound.putInt(TAG_HIRING_MODE, this.hiringMode.ordinal());
-        @NotNull final ListNBT recipesTagList = recipes.stream().limit(this.getMaxRecipes() * 10)
+        @NotNull final ListNBT recipesTagList = recipes.stream()
             .map(iToken -> StandardFactoryController.getInstance().serialize(iToken))
             .collect(NBTUtils.toListNBT());
         compound.put(TAG_RECIPES, recipesTagList);
