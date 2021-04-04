@@ -626,7 +626,8 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         }
         for (int txt = 0; txt < research.getEffects().size(); txt++)
         {
-            // CITIZEN_CAP can be effected serious by configuration file settings. Very large differences are up, but we should at least handle 'sane' ranges.
+            // CITIZEN_CAP's meaningful effect range is controlled by configuration file settings. Very low values will necessarily make their researches a little weird, but we should at least handle 'sane' ranges.
+            // Only change the effect description, rather than removing the effect, as someone may plausibly use the research as a parent research.
             // I'd rather make these modifications during ResearchListener.apply, but that's called before config files can be loaded, and the other workarounds are even uglier.
             if(research.getEffects().get(txt).getId().equals(CITIZEN_CAP)
                  && (((GlobalResearchEffect)research.getEffects().get(txt)).getEffect() + 25) > IMinecoloniesAPI.getInstance().getConfig().getServer().maxCitizenPerColony.get())
