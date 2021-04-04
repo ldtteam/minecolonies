@@ -14,7 +14,7 @@ import com.minecolonies.api.colony.colonyEvents.registry.ColonyEventDescriptionT
 import com.minecolonies.api.colony.permissions.PermissionEvent;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.client.gui.WindowTownHall;
+import com.minecolonies.coremod.client.gui.townhall.WindowTownHall;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.network.PacketBuffer;

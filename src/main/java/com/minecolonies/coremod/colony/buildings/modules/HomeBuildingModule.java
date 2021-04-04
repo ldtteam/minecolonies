@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IDefinesCoreBuildingStatsModule;
 import com.minecolonies.api.colony.buildings.modules.stat.IStat;
-import com.minecolonies.coremod.client.gui.WindowHutCitizen;
+import com.minecolonies.coremod.client.gui.huts.WindowHutCitizen;
 import com.minecolonies.coremod.colony.buildings.views.LivingBuildingView;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
