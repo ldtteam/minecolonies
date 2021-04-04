@@ -10,6 +10,7 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
@@ -115,9 +116,9 @@ public class BuildingSawmill extends AbstractBuildingCrafter
 
             double amountOfValidBlocks = 0;
             double blocks = 0;
-            for (final ItemStack stack : storage.getInput())
+            for (final ItemStorage stack : storage.getInput())
             {
-                if (!ItemStackUtils.isEmpty(stack))
+                if (!stack.isEmpty())
                 {
                     if (stack.getItem().isIn(ItemTags.PLANKS) || stack.getItem().isIn(ItemTags.LOGS))
                     {

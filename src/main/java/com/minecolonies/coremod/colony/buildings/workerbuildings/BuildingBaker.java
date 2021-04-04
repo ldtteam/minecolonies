@@ -235,7 +235,7 @@ public class BuildingBaker extends AbstractBuildingSmelterCrafter
                 final IRecipeStorage smeltingRecipe =  StandardFactoryController.getInstance().getNewInstance(
                     TypeConstants.RECIPE,
                     StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-                    ImmutableList.of(storage.getPrimaryOutput().copy()),
+                    ImmutableList.of(new ItemStorage(storage.getPrimaryOutput().copy())),
                     1,
                     smeltResult,
                     Blocks.FURNACE);

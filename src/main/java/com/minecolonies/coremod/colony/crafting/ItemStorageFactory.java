@@ -5,11 +5,14 @@ import com.minecolonies.api.colony.requestsystem.factory.FactoryVoidInput;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.crafting.IItemStorageFactory;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import org.jetbrains.annotations.NotNull;
+
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_STACK;
 
 /**
  * Factory implementation taking care of creating new instances, serializing and deserializing ItemStorage.
@@ -20,11 +23,6 @@ public class ItemStorageFactory implements IItemStorageFactory
      * Compound tag for the size.
      */
     private static final String TAG_SIZE = "size";
-
-    /**
-     * Compound tag for the stack.
-     */
-    private static final String TAG_STACK = "stack";
 
     @NotNull
     @Override
@@ -52,7 +50,8 @@ public class ItemStorageFactory implements IItemStorageFactory
     public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final ItemStorage storage)
     {
         final CompoundNBT compound = new CompoundNBT();
-        @NotNull final CompoundNBT stackTag = new CompoundNBT();
+        @NotNull CompoundNBT stackTag = new CompoundNBT();
+        Log.getLogger().info("Writing new ItemStorage: " + storage.getItemStack().getDisplayName().getString());
         storage.getItemStack().write(stackTag);
         compound.put(TAG_STACK, stackTag);
         compound.putInt(TAG_SIZE, storage.getAmount());
@@ -65,6 +64,7 @@ public class ItemStorageFactory implements IItemStorageFactory
     {
         final ItemStack stack = ItemStack.read(nbt.getCompound(TAG_STACK));
         final int size = nbt.getInt(TAG_SIZE);
+        Log.getLogger().info("deserializing stack: " + stack.getDisplayName().getString());
         return this.getNewInstance(stack, size);
     }
 

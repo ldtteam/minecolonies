@@ -142,7 +142,9 @@ public class WindowListRecipes extends Window implements ButtonHandler
                     {
                         if (i < recipe.getInput().size())
                         {
-                            rowPane.findPaneOfTypeByID(String.format(RESOURCE, i + 1), ItemIcon.class).setItem(recipe.getInput().get(i));
+                            final ItemStack displayItem = recipe.getInput().get(i).getItemStack().copy();
+
+                            rowPane.findPaneOfTypeByID(String.format(RESOURCE, i + 1), ItemIcon.class).setItem(displayItem);
                         }
                         else
                         {
@@ -152,11 +154,11 @@ public class WindowListRecipes extends Window implements ButtonHandler
                 }
                 else if (recipe.getInput().size() == 4)
                 {
-                    rowPane.findPaneOfTypeByID(String.format(RESOURCE, 1), ItemIcon.class).setItem(recipe.getInput().get(0));
-                    rowPane.findPaneOfTypeByID(String.format(RESOURCE, 2), ItemIcon.class).setItem(recipe.getInput().get(1));
+                    rowPane.findPaneOfTypeByID(String.format(RESOURCE, 1), ItemIcon.class).setItem(recipe.getInput().get(0).getItemStack());
+                    rowPane.findPaneOfTypeByID(String.format(RESOURCE, 2), ItemIcon.class).setItem(recipe.getInput().get(1).getItemStack());
                     rowPane.findPaneOfTypeByID(String.format(RESOURCE, 3), ItemIcon.class).setItem(ItemStack.EMPTY);
-                    rowPane.findPaneOfTypeByID(String.format(RESOURCE, 4), ItemIcon.class).setItem(recipe.getInput().get(2));
-                    rowPane.findPaneOfTypeByID(String.format(RESOURCE, 5), ItemIcon.class).setItem(recipe.getInput().get(3));
+                    rowPane.findPaneOfTypeByID(String.format(RESOURCE, 4), ItemIcon.class).setItem(recipe.getInput().get(2).getItemStack());
+                    rowPane.findPaneOfTypeByID(String.format(RESOURCE, 5), ItemIcon.class).setItem(recipe.getInput().get(3).getItemStack());
                     for (int i = 6; i < 9; i++)
                     {
                         rowPane.findPaneOfTypeByID(String.format(RESOURCE, i + 1), ItemIcon.class).setItem(ItemStack.EMPTY);
@@ -166,7 +168,7 @@ public class WindowListRecipes extends Window implements ButtonHandler
                 {
                     for (int i = 0; i < 9; i++)
                     {
-                        rowPane.findPaneOfTypeByID(String.format(RESOURCE, i + 1), ItemIcon.class).setItem(recipe.getInput().get(i));
+                        rowPane.findPaneOfTypeByID(String.format(RESOURCE, i + 1), ItemIcon.class).setItem(recipe.getInput().get(i).getItemStack());
                     }
                 }
             }

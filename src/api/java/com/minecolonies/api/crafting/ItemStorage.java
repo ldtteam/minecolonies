@@ -251,4 +251,14 @@ public class ItemStorage
     {
         return stack.getMaxDamage() - stack.getDamage();
     }
+
+    /**
+     * Is this an empty ItemStorage
+     * 
+     * @return true if empty
+     */
+    public boolean isEmpty()
+    {
+        return ItemStackUtils.isEmpty(stack) || amount <= 0;
+    }
 }

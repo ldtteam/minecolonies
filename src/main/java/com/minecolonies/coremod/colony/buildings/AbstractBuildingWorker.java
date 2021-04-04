@@ -346,7 +346,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         }
 
         // Check against excluded ingredients
-        for (final ItemStack stack : storage.getInput())
+        for (final ItemStorage stack : storage.getInput())
         {
             if (ModTags.crafterIngredientExclusions.containsKey(crafterName) && ModTags.crafterIngredientExclusions.get(crafterName).contains(stack.getItem()))
             {
@@ -355,7 +355,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         }
 
         // Check against allowed ingredients
-        for (final ItemStack stack : storage.getInput())
+        for (final ItemStorage stack : storage.getInput())
         {
             if (ModTags.crafterIngredient.containsKey(crafterName) && ModTags.crafterIngredient.get(crafterName).contains(stack.getItem()))
             {
@@ -384,7 +384,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
 
         if(roll <= actualChance && ModTags.crafterProductExclusions.containsKey(REDUCEABLE) && !ModTags.crafterProductExclusions.get(REDUCEABLE).contains(recipe.getPrimaryOutput().getItem()))
         {
-            final ArrayList<ItemStack> newRecipe = new ArrayList<>();
+            final ArrayList<ItemStorage> newRecipe = new ArrayList<>();
             boolean didReduction = false;
             for(ItemStorage input : inputs)
             {
@@ -393,12 +393,12 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
                 {
                     reducedItem = input.getItemStack();
                     reducedItem.setCount(input.getAmount() - 1);
-                    newRecipe.add(reducedItem);
+                    newRecipe.add(new ItemStorage(reducedItem));
                     didReduction = true;
                 }
                 else
                 {
-                    newRecipe.add(input.getItemStack());
+                    newRecipe.add(new ItemStorage(input.getItemStack()));
                 }
             }
 
