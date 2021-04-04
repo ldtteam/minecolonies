@@ -356,11 +356,11 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                                                                                                          || info.getBlockInfo().getState().getBlock() instanceof AirBlock
                                                                                                          || !handler.getWorld().getBlockState(pos).getFluidState().isEmpty()
                                                                                                          || info.getBlockInfo().getState().getBlock()
-                                                                                                              == com.ldtteam.structurize.blocks.ModBlocks.blockSolidSubstitution
+                                                                                                              == com.ldtteam.structurize.blocks.ModBlocks.blockSolidSubstitution.get()
                                                                                                          || info.getBlockInfo().getState().getBlock()
-                                                                                                              == com.ldtteam.structurize.blocks.ModBlocks.blockSubstitution
+                                                                                                              == com.ldtteam.structurize.blocks.ModBlocks.blockSubstitution.get()
                                                                                                          || info.getBlockInfo().getState().getBlock()
-                                                                                                              == com.ldtteam.structurize.blocks.ModBlocks.blockSubstitution
+                                                                                                              == com.ldtteam.structurize.blocks.ModBlocks.blockSubstitution.get()
                                                                                                          || handler.getWorld().getBlockState(pos).getBlock() instanceof IBuilderUndestroyable),
                   true);
                 break;
@@ -372,7 +372,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                                                                                  || handler.getWorld().getBlockState(pos).getBlock() == Blocks.BEDROCK
                                                                                  || handler.getWorld().getBlockState(pos).getBlock() instanceof AirBlock
                                                                                  || info.getBlockInfo().getState().getBlock()
-                                                                                      == com.ldtteam.structurize.blocks.ModBlocks.blockFluidSubstitution
+                                                                                      == com.ldtteam.structurize.blocks.ModBlocks.blockFluidSubstitution.get()
                                                                                  || !handler.getWorld().getBlockState(pos).getFluidState().isEmpty()), false);
                 break;
         }
