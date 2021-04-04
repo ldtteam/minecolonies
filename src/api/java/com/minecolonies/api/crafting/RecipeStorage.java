@@ -141,7 +141,7 @@ public class RecipeStorage implements IRecipeStorage
         this.cleanedInput.addAll(this.calculateCleanedInput());
         this.primaryOutput = primaryOutput;
         this.alternateOutputs = altOutputs != null && !altOutputs.isEmpty() ? altOutputs : ImmutableList.of();
-        this.secondaryOutputs = secOutputs != null && !secOutputs.isEmpty() ? secOutputs.stream().filter(i -> i.getItem() != ModItems.buildTool).collect(Collectors.toList()): this.calculateSecondaryOutputs();
+        this.secondaryOutputs = secOutputs != null && !secOutputs.isEmpty() ? secOutputs.stream().filter(i -> i.getItem() != ModItems.buildTool.get()).collect(Collectors.toList()): this.calculateSecondaryOutputs();
         this.gridSize = gridSize;
         this.intermediate = intermediate;
         this.token = token;
@@ -184,7 +184,7 @@ public class RecipeStorage implements IRecipeStorage
 
         for (final ItemStack stack : input)
         {
-            if (ItemStackUtils.isEmpty(stack) || stack.getItem() == ModItems.buildTool)
+            if (ItemStackUtils.isEmpty(stack) || stack.getItem() == ModItems.buildTool.get())
             {
                 continue;
             }
@@ -217,7 +217,7 @@ public class RecipeStorage implements IRecipeStorage
         final List<ItemStack> secondaryStacks = new ArrayList<>();
         for (final ItemStack stack : input)
         {
-            if (stack.getItem() == ModItems.buildTool)
+            if (stack.getItem() == ModItems.buildTool.get())
             {
                 continue;
             }

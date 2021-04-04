@@ -183,7 +183,7 @@ minecraft {
 
             property 'forge.logging.console.level', 'info'
 
-            args '--mod', 'minecolonies', '--all', '--output', file('src/main/generated/resources'), '--input', file('src/main/resources'), '--existing', file('src/main/resources')
+            args '--mod', 'minecolonies', '--all', '--output', file('src/main/generated/resources'), '--input', file('src/main/resources'), '--existing', file('src/main/resources'), '--existing-mod', 'structurize'
 
             mods {
                 minecolonies {

@@ -121,7 +121,7 @@ public class ClientEventHandler
         {
             handleRenderBannerRallyGuards(event, world, player);
         }
-        else if (player.getHeldItemMainhand().getItem() == com.ldtteam.structurize.items.ModItems.buildTool)
+        else if (player.getHeldItemMainhand().getItem() == com.ldtteam.structurize.items.ModItems.buildTool.get())
         {
             handleRenderBuildTool(event, world, player);
         }
