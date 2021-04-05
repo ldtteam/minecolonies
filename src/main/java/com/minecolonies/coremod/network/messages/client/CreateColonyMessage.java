@@ -118,8 +118,11 @@ public class CreateColonyMessage implements IMessage
             }
         }
 
-        if (colony == null || !IColonyManager.getInstance().isTooCloseToColony(world, townHall))
+        if (colony != null && IColonyManager.getInstance().isTooCloseToColony(world, townHall))
         {
+            LanguageHandler.sendPlayerMessage(sender, "com.minecolonies.coremod.gui.colony.denied.tooclose", colony.getName());
+        }
+
             final IColony ownedColony = IColonyManager.getInstance().getIColonyByOwner(world, sender);
 
             if (ownedColony == null)
@@ -129,7 +132,6 @@ public class CreateColonyMessage implements IMessage
                 LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.coremod.progress.colony_founded");
                 return;
             }
-        }
 
         LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.coremod.gui.colony.create.failed");
     }
