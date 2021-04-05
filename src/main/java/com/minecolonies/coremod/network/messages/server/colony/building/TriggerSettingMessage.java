@@ -43,7 +43,7 @@ public class TriggerSettingMessage extends AbstractBuildingServerMessage<Abstrac
      * @param key the unique key of it.
      * @param value the value of the setting.
      */
-    public TriggerSettingMessage(final IBuildingView building, final ISettingKey key, final ISetting value)
+    public TriggerSettingMessage(final IBuildingView building, final ISettingKey<?> key, final ISetting value)
     {
         super(building);
         this.key = key.getUniqueId();
@@ -70,7 +70,7 @@ public class TriggerSettingMessage extends AbstractBuildingServerMessage<Abstrac
     {
         if (building.hasModule(SettingsModule.class))
         {
-            building.getFirstModuleOccurance(SettingsModule.class).ifPresent(m -> m.with(new SettingKey(this.value.getClass(), this.key), this.value));
+            building.getFirstModuleOccurance(SettingsModule.class).with(new SettingKey<>(this.value.getClass(), this.key), this.value);
         }
     }
 }

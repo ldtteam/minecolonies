@@ -988,9 +988,9 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
      * @param <T> the key type.
      * @return the optional wrapping the value.
      */
-    public <T extends ISetting> Optional<T> getSetting(ISettingKey<T> key)
+    public <T extends ISetting> T getSetting(@NotNull final ISettingKey<T> key)
     {
-        return getFirstModuleOccurance(ISettingsModule .class).map(m -> m.getSetting(key));
+        return getFirstModuleOccurance(ISettingsModule .class).getSetting(key);
     }
 
     /**
