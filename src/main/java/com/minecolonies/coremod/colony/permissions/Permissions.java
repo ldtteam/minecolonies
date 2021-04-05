@@ -396,6 +396,27 @@ public class Permissions implements IPermissions
                 checkFullyAbandoned();
             }
         }
+        else
+        {
+            permissionMap.clear();
+            final ListNBT permissionsTagList = compound.getList(TAG_PERMISSIONS, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
+            for (int i = 0; i < permissionsTagList.size(); ++i)
+            {
+                final CompoundNBT permissionsCompound = permissionsTagList.getCompound(i);
+                final OldRank oldRank = OldRank.valueOf(permissionsCompound.getString(TAG_RANK));
+                final Rank rank = ranks.get(oldRank.ordinal());
+                final ListNBT flagsTagList = permissionsCompound.getList(TAG_FLAGS, net.minecraftforge.common.util.Constants.NBT.TAG_STRING);
+
+                int flags = 0;
+
+                for (int j = 0; j < flagsTagList.size(); ++j)
+                {
+                    final String flag = flagsTagList.getString(j);
+                    flags = Utils.setFlag(flags, Action.valueOf(flag).getFlag());
+                }
+                permissionMap.put(rank, flags);
+            }
+        }
 
         restoreOwnerIfNull();
     }
