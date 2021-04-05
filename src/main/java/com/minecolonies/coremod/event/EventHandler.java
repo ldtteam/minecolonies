@@ -626,7 +626,7 @@ public class EventHandler
             }
         }
 
-        if (!event.isCanceled() && event.getItemStack().getItem() == ModItems.buildTool)
+        if (!event.isCanceled() && event.getItemStack().getItem() == ModItems.buildTool.get())
         {
             if (event.getWorld().isRemote)
             {
@@ -651,7 +651,7 @@ public class EventHandler
     @SubscribeEvent
     public static void onPlayerInteract(@NotNull final PlayerInteractEvent.RightClickItem event)
     {
-        if (!event.isCanceled() && event.getItemStack().getItem() == ModItems.buildTool && event.getWorld().isRemote)
+        if (!event.isCanceled() && event.getItemStack().getItem() == ModItems.buildTool.get() && event.getWorld().isRemote)
         {
             final IColonyView view = IColonyManager.getInstance().getClosestColonyView(event.getWorld(), event.getPos());
             if (view != null && Settings.instance.getStyle().isEmpty())
