@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_TOKEN;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_STACK;
 
 /**
  * Factory implementation taking care of creating new instances, serializing and deserializing RecipeStorages.

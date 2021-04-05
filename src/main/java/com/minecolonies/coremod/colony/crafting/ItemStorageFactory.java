@@ -5,14 +5,11 @@ import com.minecolonies.api.colony.requestsystem.factory.FactoryVoidInput;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.crafting.IItemStorageFactory;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import org.jetbrains.annotations.NotNull;
-
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_STACK;
 
 /**
  * Factory implementation taking care of creating new instances, serializing and deserializing ItemStorage.
@@ -23,6 +20,11 @@ public class ItemStorageFactory implements IItemStorageFactory
      * Compound tag for the size.
      */
     private static final String TAG_SIZE = "size";
+
+    /**
+     * Compound tag for the stack.
+     */
+    private static final String TAG_STACK = "stack";
 
     @NotNull
     @Override

@@ -563,11 +563,6 @@ public final class NbtTagConstants
     public static final String TAG_RESPAWN_POS   = "nextrespawnpos";
 
     /**
-     * Compound tag for the stack.
-     */
-    public static final String TAG_STACK = "stack_store";
-
-    /**
      * Private constructor to hide the implicit one.
      */
     private NbtTagConstants()
