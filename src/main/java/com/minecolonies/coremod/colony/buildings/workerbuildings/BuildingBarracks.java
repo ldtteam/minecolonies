@@ -13,7 +13,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.blocks.BlockBarracksTowerSubstitution;
-import com.minecolonies.coremod.client.gui.WindowBarracksBuilding;
+import com.minecolonies.coremod.client.gui.huts.WindowBarracksBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.block.BlockState;

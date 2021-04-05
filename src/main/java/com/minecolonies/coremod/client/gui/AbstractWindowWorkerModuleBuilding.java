@@ -96,7 +96,7 @@ public abstract class AbstractWindowWorkerModuleBuilding<B extends AbstractBuild
      * @param building class extending {@link AbstractBuildingWorker.View}.
      * @param resource Resource of the window.
      */
-    AbstractWindowWorkerModuleBuilding(final B building, final String resource)
+    protected AbstractWindowWorkerModuleBuilding(final B building, final String resource)
     {
         super(building, resource);
 

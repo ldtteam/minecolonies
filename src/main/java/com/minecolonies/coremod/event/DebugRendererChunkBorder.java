@@ -51,7 +51,7 @@ public class DebugRendererChunkBorder
     {
         final PlayerEntity player = Minecraft.getInstance().player;
 
-        if (player.getHeldItem(Hand.MAIN_HAND).getItem() != ModItems.buildTool)
+        if (player.getHeldItem(Hand.MAIN_HAND).getItem() != ModItems.buildTool.get())
         {
             return;
         }

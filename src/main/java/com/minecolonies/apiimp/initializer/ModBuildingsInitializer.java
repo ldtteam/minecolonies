@@ -3,6 +3,7 @@ package com.minecolonies.apiimp.initializer;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.coremod.colony.buildings.modules.settings.BoolSetting;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.buildings.BuildingMysticalSite;
@@ -12,6 +13,7 @@ import com.minecolonies.coremod.colony.buildings.moduleviews.CrafterTaskModuleVi
 import com.minecolonies.coremod.colony.buildings.moduleviews.FloristFlowerListModuleView;
 import com.minecolonies.coremod.colony.buildings.moduleviews.ItemListModuleView;
 import com.minecolonies.coremod.colony.buildings.moduleviews.MinimumStockModuleView;
+import com.minecolonies.coremod.colony.buildings.moduleviews.SettingsModuleView;
 import com.minecolonies.coremod.colony.buildings.views.EmptyView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
 import net.minecraft.util.ResourceLocation;
@@ -110,6 +112,7 @@ public final class ModBuildingsInitializer
                                    .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.COMPOSTER_ID))
                                    .addBuildingModuleProducer(() -> new ItemListModule(COMPOSTABLE_LIST), () -> new ItemListModuleView(COMPOSTABLE_LIST, COM_MINECOLONIES_REQUESTS_COMPOSTABLE_UI, false,
                                      (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getCompostInputs()))
+                                   .addBuildingModuleProducer(() -> new SettingsModule().with(BuildingComposter.PRODUCE_DIRT, new BoolSetting(false)), SettingsModuleView::new)
                                    .createBuildingEntry();
 
         ModBuildings.cook = new BuildingEntry.Builder()

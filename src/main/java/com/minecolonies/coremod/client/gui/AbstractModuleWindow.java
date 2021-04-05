@@ -12,7 +12,7 @@ import java.util.Locale;
 import java.util.Random;
 
 /**
- * Window for all the filterable lists.
+ * Generic module window class. This creates the navigational menu.
  */
 public abstract class AbstractModuleWindow extends AbstractWindowSkeleton implements IModuleWindow
 {
