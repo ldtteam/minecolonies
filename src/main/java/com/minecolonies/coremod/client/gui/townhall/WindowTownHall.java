@@ -428,7 +428,10 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
                 final Rank rank = rankList.get(i);
                 final Button button = pane.findPaneOfTypeByID(TOWNHALL_RANK_BUTTON, Button.class);
                 button.setText(rank.getName());
-                button.setEnabled(true);
+                if (actionsRank != rank)
+                {
+                    button.setEnabled(true);
+                }
                 pane.findPaneOfTypeByID("rankId", Text.class).setText(Integer.toString(rank.getId()));
             }
         });
@@ -441,8 +444,8 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
         if (rank != null)
         {
             actionsRank = rank;
-            //actionsList.refreshElementPanes();
-            //button.setEnabled(false);
+            actionsList.refreshElementPanes();
+            button.setEnabled(false);
             actionsList.show();
         }
     }
@@ -804,8 +807,7 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
                 Rank rank = player.getRank();
                 rowPane.findPaneOfTypeByID(NAME_LABEL, Text.class).setText(player.getName());
                 rowPane.findPaneOfTypeByID("rank", Text.class).setText(rank.getName());
-                final UUID currentPlayer = Minecraft.getInstance().player.getUniqueID();
-                if (rank.getId() == townHall.getColony().getPermissions().OWNER_RANK_ID || currentPlayer == player.getID())
+                if (rank.getId() == townHall.getColony().getPermissions().OWNER_RANK_ID)
                 {
                     rowPane.findPaneOfTypeByID(BUTTON_EDIT_PLAYERRANK, Button.class).setEnabled(false);
                     rowPane.findPaneOfTypeByID(BUTTON_REMOVE_PLAYER, Button.class).setEnabled(false);

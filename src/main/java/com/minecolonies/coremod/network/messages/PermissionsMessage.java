@@ -574,15 +574,15 @@ public class PermissionsMessage
             }
             final PlayerEntity player = ctxIn.getSender();
             final Player permissionsPlayer = colony.getPermissions().getPlayers().get(playerID);
-            final Rank hostile = colony.getPermissions().getRanks().get(colony.getPermissions().HOSTILE_RANK_ID);
-            /*if ((permissionsPlayer.getRank() == hostile && colony.getPermissions().hasPermission(player, Action.EDIT_PERMISSIONS))
+            final Rank hostile = colony.getPermissions().getRankHostile();
+            if ((permissionsPlayer.getRank() == hostile && colony.getPermissions().hasPermission(player, Action.EDIT_PERMISSIONS))
                   || (permissionsPlayer.getRank() != hostile
                         && colony.getPermissions().hasPermission(player, Action.EDIT_PERMISSIONS)
-                        && colony.getPermissions().getRank(player).ordinal() < colony.getPermissions().getRank(playerID).ordinal())
+                        && permissionsPlayer.getRank() != colony.getPermissions().getRankOwner())
                   || player.getUniqueID().equals(playerID))
             {
                 colony.getPermissions().removePlayer(playerID);
-            }*/
+            }
         }
     }
 }
