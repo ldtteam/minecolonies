@@ -298,7 +298,7 @@ public final class ColonyManager implements IColonyManager
     }
 
     @Override
-    public boolean isTooCloseToColony(@NotNull final World w, @NotNull final BlockPos pos)
+    public boolean isFarEnoughFromColonies(@NotNull final World w, @NotNull final BlockPos pos)
     {
         final int blockRange = Math.max(MineColonies.getConfig().getServer().minColonyDistance.get(), getConfig().getServer().initialColonySize.get()) << 4;
         final IColony closest = getClosestColony(w, pos);
@@ -308,7 +308,7 @@ public final class ColonyManager implements IColonyManager
             return false;
         }
 
-        return !ChunkDataHelper.canClaimChunksInRange(w,
+        return ChunkDataHelper.canClaimChunksInRange(w,
           pos,
           getConfig().getServer().initialColonySize.get());
     }

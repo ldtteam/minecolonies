@@ -118,9 +118,10 @@ public class CreateColonyMessage implements IMessage
             }
         }
 
-        if (colony != null && IColonyManager.getInstance().isTooCloseToColony(world, townHall))
+        if (colony != null && !IColonyManager.getInstance().isFarEnoughFromColonies(world, townHall))
         {
             LanguageHandler.sendPlayerMessage(sender, "com.minecolonies.coremod.gui.colony.denied.tooclose", colony.getName());
+            return;
         }
 
             final IColony ownedColony = IColonyManager.getInstance().getIColonyByOwner(world, sender);
