@@ -261,4 +261,15 @@ public class ItemStorage
     {
         return ItemStackUtils.isEmpty(stack) || amount <= 0;
     }
+
+    /**
+     * Make a copy of the ItemStorage
+     * @return a copy
+     */
+    public ItemStorage copy()
+    {
+        ItemStorage newInstance = new ItemStorage(stack.copy(), shouldIgnoreDamageValue, shouldIgnoreNBTValue);
+        newInstance.setAmount(amount);
+        return newInstance;
+    }    
 }

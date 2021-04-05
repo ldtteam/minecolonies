@@ -380,7 +380,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         final double actualChance = Math.min(5.0, (BASE_CHANCE * count) + (BASE_CHANCE * citizen.getCitizenSkillHandler().getLevel(getRecipeImprovementSkill())));
         final double roll = citizen.getRandom().nextDouble() * 100;
 
-        ItemStack reducedItem = null;
+        ItemStorage reducedItem = null;
 
         if(roll <= actualChance && ModTags.crafterProductExclusions.containsKey(REDUCEABLE) && !ModTags.crafterProductExclusions.get(REDUCEABLE).contains(recipe.getPrimaryOutput().getItem()))
         {
@@ -391,14 +391,14 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
                 // Check against excluded products
                 if (input.getAmount() > 1 && ModTags.crafterIngredient.containsKey(REDUCEABLE) && ModTags.crafterIngredient.get(REDUCEABLE).contains(input.getItem()))
                 {
-                    reducedItem = input.getItemStack();
-                    reducedItem.setCount(input.getAmount() - 1);
-                    newRecipe.add(new ItemStorage(reducedItem));
+                    reducedItem = input.copy();
+                    reducedItem.setAmount(input.getAmount() - 1);
+                    newRecipe.add(reducedItem);
                     didReduction = true;
                 }
                 else
                 {
-                    newRecipe.add(new ItemStorage(input.getItemStack()));
+                    newRecipe.add(input.copy());
                 }
             }
 
@@ -418,7 +418,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
                 final TranslationTextComponent message = new TranslationTextComponent(RECIPE_IMPROVED + citizen.getRandom().nextInt(3),
                     new TranslationTextComponent(citizen.getJob().getName().toLowerCase()),
                     recipe.getPrimaryOutput().getDisplayName(),
-                    reducedItem.getDisplayName(),
+                    reducedItem.getItemStack().getDisplayName(),
                     citizen.getName());
 
                 for(PlayerEntity player :colony.getMessagePlayerEntities())
