@@ -23,7 +23,7 @@ public class PermissionsView implements IPermissions
     @NotNull
     private final Map<Rank, Integer> permissions = new HashMap<>();
     private       Rank               userRank;
-    private final Map<Integer, Rank> ranks = new HashMap<>();
+    private final LinkedHashMap<Integer, Rank> ranks = new LinkedHashMap<>();
 
     private UUID   colonyOwner;
     private String ownerName = "";
@@ -334,7 +334,7 @@ public class PermissionsView implements IPermissions
     }
 
     @Override
-    public Map<Integer, Rank> getRanks() { return ranks; }
+    public LinkedHashMap<Integer, Rank> getRanks() { return ranks; }
 
     @Override
     public Rank getRankOwner()

@@ -39,7 +39,7 @@
         </view>
         <view id="managePermissions">
             <switch id="userGroups" size="148 171" pos="201 36">
-                <list id="rankList">
+                <list id="rankList" size="148 171">
                     <box size="100% 21" linewidth="2">
                         <label id="name" size="110 18" pos="2 2" color="black" />
                         <button id="trigger" size="24 17" pos="2 2" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerhuts.retrieveOff)" />

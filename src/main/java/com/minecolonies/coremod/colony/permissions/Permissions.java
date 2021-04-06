@@ -4,7 +4,6 @@ import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.permissions.*;
 import com.minecolonies.api.network.PacketUtils;
 import com.minecolonies.api.util.Utils;
-import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.coremod.colony.Colony;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.entity.player.PlayerEntity;
@@ -19,7 +18,6 @@ import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.security.acl.LastOwnerException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -60,7 +58,7 @@ public class Permissions implements IPermissions
     /**
      * All defined ranks
      */
-    private static final Map<Integer, Rank> ranks = new HashMap<>();
+    private static final LinkedHashMap<Integer, Rank> ranks = new LinkedHashMap<>();
 
     /**
      * A flag for all the permissions unlocked in a fully abandoned colony.
@@ -1019,7 +1017,7 @@ public class Permissions implements IPermissions
     }
 
     @Override
-    public Map<Integer, Rank> getRanks()
+    public LinkedHashMap<Integer, Rank> getRanks()
     {
         return ranks;
     }

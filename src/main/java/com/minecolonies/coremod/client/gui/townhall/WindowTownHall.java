@@ -96,9 +96,6 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
     @NotNull
     private final Map<String, String> tabsToPages = new HashMap<>();
 
-    @NotNull
-    private Map<Integer, Rank> ranks = new HashMap<>();
-
     /**
      * Drop down list for style.
      */
@@ -151,7 +148,7 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
 
     private Player selectedPlayer;
 
-    private List<Rank> rankList = new LinkedList<>();
+    private final List<Rank> rankList = new LinkedList<>();
 
     private Rank actionsRank;
 
@@ -182,9 +179,12 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
             }
         }
 
+        actionsRank = townHall.getColony().getPermissions().getRankOfficer();
+
         alliesList = findPaneOfTypeByID(LIST_ALLIES, ScrollingList.class);
         feudsList = findPaneOfTypeByID(LIST_FEUDS, ScrollingList.class);
         ranksList = findPaneOfTypeByID(TOWNHALL_RANK_LIST, ScrollingList.class);
+        actionsList = findPaneOfTypeByID("rankList", ScrollingList.class);
 
         initColorPicker();
         updateUsers();
@@ -409,8 +409,14 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
 
     private void updateRanks()
     {
-        ranks = townHall.getColony().getPermissions().getRanks();
-        rankList = ranks.values().stream().filter(rank -> rank != townHall.getColony().getPermissions().getRankOwner()).collect(Collectors.toList());
+        rankList.clear();
+        for (final Rank rank : townHall.getColony().getPermissions().getRanks().values())
+        {
+            if (rank != townHall.getColony().getPermissions().getRankOwner())
+            {
+                rankList.add(rank);
+            }
+        }
     }
 
     private void fillRanks()
@@ -428,7 +434,11 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
                 final Rank rank = rankList.get(i);
                 final Button button = pane.findPaneOfTypeByID(TOWNHALL_RANK_BUTTON, Button.class);
                 button.setText(rank.getName());
-                if (actionsRank != rank)
+                if (rank.equals(actionsRank))
+                {
+                    button.setEnabled(false);
+                }
+                else
                 {
                     button.setEnabled(true);
                 }
@@ -439,14 +449,13 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
 
     private void onRankButtonClicked(@NotNull final Button button)
     {
-        final int rankId = Integer.parseInt(button.getParent().findPaneOfTypeByID("rankId", Text.class).getTextAsString());
-        final Rank rank = ranks.get(rankId);
+        final int rankId = ranksList.getListElementIndexByPane(button);
+        final Rank rank = rankList.get(rankId);
         if (rank != null)
         {
             actionsRank = rank;
             actionsList.refreshElementPanes();
             button.setEnabled(false);
-            actionsList.show();
         }
     }
 
@@ -580,11 +589,6 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
      */
     private void fillPermissionList()
     {
-        actionsList = findPaneOfTypeByID("rankList", ScrollingList.class);
-        if (actionsRank == null)
-        {
-            actionsList.hide();
-        }
         actionsList.setDataProvider(new ScrollingList.DataProvider()
         {
             @Override
@@ -602,11 +606,6 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
                 if (name.contains(KEY_TO_PERMISSIONS))
                 {
                     Log.getLogger().warn("Didn't work for:" + name);
-                    return;
-                }
-
-                if (actionsRank == null)
-                {
                     return;
                 }
 
