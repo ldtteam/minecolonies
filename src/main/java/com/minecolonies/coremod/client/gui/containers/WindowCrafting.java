@@ -2,6 +2,7 @@ package com.minecolonies.coremod.client.gui.containers;
 
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
@@ -125,7 +126,7 @@ public class WindowCrafting extends ContainerScreen<ContainerCrafting>
         {
             if (building.canRecipeBeAdded())
             {
-                final List<ItemStack> input = new LinkedList<>();
+                final List<ItemStorage> input = new LinkedList<>();
 
                 for (int i = 0; i < (completeCrafting ? MAX_CRAFTING_GRID_SIZE : CRAFTING_GRID_SIZE); i++)
                 {
@@ -133,7 +134,7 @@ public class WindowCrafting extends ContainerScreen<ContainerCrafting>
                     final ItemStack copy = stack.copy();
                     ItemStackUtils.setSize(copy, 1);
 
-                    input.add(copy);
+                    input.add(new ItemStorage(copy));
                 }
 
                 final ItemStack primaryOutput = container.craftResult.getStackInSlot(0).getStack().copy();

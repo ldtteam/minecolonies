@@ -7,7 +7,9 @@ import com.minecolonies.api.colony.buildings.HiringMode;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.buildings.IBuildingWorkerView;
-import com.minecolonies.api.colony.buildings.modules.IBuildingModuleView;
+import com.minecolonies.api.colony.buildings.modules.ISettingsModule;
+import com.minecolonies.api.colony.buildings.modules.settings.ISetting;
+import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
@@ -29,6 +31,8 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.colony.buildings.modules.settings.BoolSetting;
+import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.crafting.CustomRecipe;
@@ -80,6 +84,11 @@ import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABI
  */
 public abstract class AbstractBuildingWorker extends AbstractBuilding implements IBuildingWorker
 {
+    /**
+     * Breeding setting.
+     */
+    public static final ISettingKey<BoolSetting> BREEDING = new SettingKey<>(BoolSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "breeding"));
+
     /**
      * The base chance for a recipe to be improved. This is modified by worker skill and the number of items crafted
      */
@@ -346,7 +355,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         }
 
         // Check against excluded ingredients
-        for (final ItemStack stack : storage.getInput())
+        for (final ItemStorage stack : storage.getInput())
         {
             if (ModTags.crafterIngredientExclusions.containsKey(crafterName) && ModTags.crafterIngredientExclusions.get(crafterName).contains(stack.getItem()))
             {
@@ -355,7 +364,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         }
 
         // Check against allowed ingredients
-        for (final ItemStack stack : storage.getInput())
+        for (final ItemStorage stack : storage.getInput())
         {
             if (ModTags.crafterIngredient.containsKey(crafterName) && ModTags.crafterIngredient.get(crafterName).contains(stack.getItem()))
             {
@@ -380,25 +389,25 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         final double actualChance = Math.min(5.0, (BASE_CHANCE * count) + (BASE_CHANCE * citizen.getCitizenSkillHandler().getLevel(getRecipeImprovementSkill())));
         final double roll = citizen.getRandom().nextDouble() * 100;
 
-        ItemStack reducedItem = null;
+        ItemStorage reducedItem = null;
 
         if(roll <= actualChance && ModTags.crafterProductExclusions.containsKey(REDUCEABLE) && !ModTags.crafterProductExclusions.get(REDUCEABLE).contains(recipe.getPrimaryOutput().getItem()))
         {
-            final ArrayList<ItemStack> newRecipe = new ArrayList<>();
+            final ArrayList<ItemStorage> newRecipe = new ArrayList<>();
             boolean didReduction = false;
             for(ItemStorage input : inputs)
             {
                 // Check against excluded products
                 if (input.getAmount() > 1 && ModTags.crafterIngredient.containsKey(REDUCEABLE) && ModTags.crafterIngredient.get(REDUCEABLE).contains(input.getItem()))
                 {
-                    reducedItem = input.getItemStack();
-                    reducedItem.setCount(input.getAmount() - 1);
+                    reducedItem = input.copy();
+                    reducedItem.setAmount(input.getAmount() - 1);
                     newRecipe.add(reducedItem);
                     didReduction = true;
                 }
                 else
                 {
-                    newRecipe.add(input.getItemStack());
+                    newRecipe.add(input.copy());
                 }
             }
 
@@ -418,7 +427,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
                 final TranslationTextComponent message = new TranslationTextComponent(RECIPE_IMPROVED + citizen.getRandom().nextInt(3),
                     new TranslationTextComponent(citizen.getJob().getName().toLowerCase()),
                     recipe.getPrimaryOutput().getDisplayName(),
-                    reducedItem.getDisplayName(),
+                    reducedItem.getItemStack().getDisplayName(),
                     citizen.getName());
 
                 for(PlayerEntity player :colony.getMessagePlayerEntities())
@@ -971,6 +980,17 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             jobDisplayName = createJob(null).getName();
         }
         return jobDisplayName;
+    }
+
+    /**
+     * Get setting for key. Utility function.
+     * @param key the key.
+     * @param <T> the key type.
+     * @return the optional wrapping the value.
+     */
+    public <T extends ISetting> Optional<T> getSetting(ISettingKey<T> key)
+    {
+        return getFirstModuleOccurance(ISettingsModule .class).map(m -> m.getSetting(key));
     }
 
     /**

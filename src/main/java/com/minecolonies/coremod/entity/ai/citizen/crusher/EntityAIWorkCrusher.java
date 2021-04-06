@@ -132,7 +132,7 @@ public class EntityAIWorkCrusher extends AbstractEntityAICrafting<JobCrusher, Bu
                 {
                     return START_WORKING;
                 }
-                final ItemStack stack = currentRecipeStorage.getInput().get(0).copy();
+                final ItemStack stack = currentRecipeStorage.getInput().get(0).getItemStack().copy();
                 stack.setCount(requestQty);
                 checkIfRequestForItemExistOrCreateAsynch(stack);
                 return START_WORKING;
@@ -144,7 +144,7 @@ public class EntityAIWorkCrusher extends AbstractEntityAICrafting<JobCrusher, Bu
         }
         if (check == CRAFT)
         {
-            Network.getNetwork().sendToTrackingEntity(new LocalizedParticleEffectMessage(currentRecipeStorage.getInput().get(0).copy(), crusherBuilding.getID()), worker);
+            Network.getNetwork().sendToTrackingEntity(new LocalizedParticleEffectMessage(currentRecipeStorage.getInput().get(0).getItemStack().copy(), crusherBuilding.getID()), worker);
             Network.getNetwork().sendToTrackingEntity(new LocalizedParticleEffectMessage(currentRecipeStorage.getPrimaryOutput().copy(), crusherBuilding.getID().down()),
               worker);
             SoundUtils.playSoundAtCitizen(world, getOwnBuilding().getID(), SoundEvents.BLOCK_STONE_BREAK);

@@ -3,9 +3,11 @@ package com.minecolonies.api.tileentities;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.items.ModItems;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.DyeColor;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -16,6 +18,8 @@ import net.minecraft.tileentity.BannerTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.DistExecutor;
+
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
@@ -101,7 +105,7 @@ public class TileEntityColonyFlag extends TileEntity
      * @return the ItemStack representing this banner
      */
     @OnlyIn(Dist.CLIENT)
-    public ItemStack getItem()
+    public ItemStack getItemClient()
     {
         ItemStack itemstack = new ItemStack(ModBlocks.blockColonyBanner);
         List<Pair<BannerPattern, DyeColor>> list = getPatternList();
@@ -119,5 +123,14 @@ public class TileEntityColonyFlag extends TileEntity
             itemstack.getOrCreateChildTag("BlockEntityTag").put(TAG_BANNER_PATTERNS, nbt);
 
         return itemstack;
+    }
+
+    /**
+     * Serverside version of the getItem method.
+     * @return the classic stack.
+     */
+    public ItemStack getItemServer()
+    {
+        return new ItemStack(ModItems.flagBanner);
     }
 }
