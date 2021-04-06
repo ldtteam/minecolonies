@@ -144,6 +144,54 @@ public class Permissions implements IPermissions
     {
         this.clearDirty();
         this.colony = colony;
+        for (OldRank oldRank : OldRank.values())
+        {
+            String name = oldRank.name();
+            name = name.substring(0,1).toUpperCase(Locale.ENGLISH) + name.substring(1).toLowerCase(Locale.ENGLISH);
+            Rank rank = new Rank(oldRank.ordinal(), name, oldRank.isSubscriber, true);
+            ranks.put(rank.getId(), rank);
+            permissionMap.put(rank, 0);
+            switch (oldRank)
+            {
+                case OWNER:
+                    this.setPermission(rank, Action.EDIT_PERMISSIONS);
+                case OFFICER:
+                    this.setPermission(rank, Action.PLACE_HUTS);
+                    this.setPermission(rank, Action.BREAK_HUTS);
+                    this.setPermission(rank, Action.CAN_PROMOTE);
+                    this.setPermission(rank, Action.CAN_DEMOTE);
+                    this.setPermission(rank, Action.SEND_MESSAGES);
+                    this.setPermission(rank, Action.MANAGE_HUTS);
+                    this.setPermission(rank, Action.RECEIVE_MESSAGES);
+                    this.setPermission(rank, Action.PLACE_BLOCKS);
+                    this.setPermission(rank, Action.BREAK_BLOCKS);
+                    this.setPermission(rank, Action.FILL_BUCKET);
+                    this.setPermission(rank, Action.OPEN_CONTAINER);
+                    this.setPermission(rank, Action.RECEIVE_MESSAGES_FAR_AWAY);
+                    this.setPermission(rank, Action.CAN_KEEP_COLONY_ACTIVE_WHILE_AWAY);
+                    this.setPermission(rank, Action.RALLY_GUARDS);
+                case FRIEND:
+                    this.setPermission(rank, Action.ACCESS_HUTS);
+                    this.setPermission(rank, Action.USE_SCAN_TOOL);
+                    this.setPermission(rank, Action.TOSS_ITEM);
+                    this.setPermission(rank, Action.PICKUP_ITEM);
+                    this.setPermission(rank, Action.RIGHTCLICK_BLOCK);
+                    this.setPermission(rank, Action.RIGHTCLICK_ENTITY);
+                    this.setPermission(rank, Action.THROW_POTION);
+                    this.setPermission(rank, Action.SHOOT_ARROW);
+                    this.setPermission(rank, Action.ATTACK_CITIZEN);
+                    this.setPermission(rank, Action.ATTACK_ENTITY);
+                    this.setPermission(rank, Action.TELEPORT_TO_COLONY);
+                case NEUTRAL:
+                    this.setPermission(rank, Action.ACCESS_FREE_BLOCKS);
+                    break;
+                case HOSTILE:
+                    this.setPermission(rank, Action.GUARDS_ATTACK);
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
     /**
@@ -258,57 +306,6 @@ public class Permissions implements IPermissions
                 final boolean isInitial = rankCompound.getBoolean(TAG_INITIAL);
                 final Rank rank = new Rank(id, name, isSubscriber, isInitial);
                 ranks.put(id, rank);
-            }
-        }
-        else
-        {
-            for (OldRank oldRank : OldRank.values())
-            {
-                String name = oldRank.name();
-                name = name.substring(0,1).toUpperCase(Locale.ENGLISH) + name.substring(1).toLowerCase(Locale.ENGLISH);
-                Rank rank = new Rank(oldRank.ordinal(), name, oldRank.isSubscriber, true);
-                ranks.put(rank.getId(), rank);
-                permissionMap.put(rank, 0);
-                switch (oldRank)
-                {
-                    case OWNER:
-                        this.setPermission(rank, Action.EDIT_PERMISSIONS);
-                    case OFFICER:
-                        this.setPermission(rank, Action.PLACE_HUTS);
-                        this.setPermission(rank, Action.BREAK_HUTS);
-                        this.setPermission(rank, Action.CAN_PROMOTE);
-                        this.setPermission(rank, Action.CAN_DEMOTE);
-                        this.setPermission(rank, Action.SEND_MESSAGES);
-                        this.setPermission(rank, Action.MANAGE_HUTS);
-                        this.setPermission(rank, Action.RECEIVE_MESSAGES);
-                        this.setPermission(rank, Action.PLACE_BLOCKS);
-                        this.setPermission(rank, Action.BREAK_BLOCKS);
-                        this.setPermission(rank, Action.FILL_BUCKET);
-                        this.setPermission(rank, Action.OPEN_CONTAINER);
-                        this.setPermission(rank, Action.RECEIVE_MESSAGES_FAR_AWAY);
-                        this.setPermission(rank, Action.CAN_KEEP_COLONY_ACTIVE_WHILE_AWAY);
-                        this.setPermission(rank, Action.RALLY_GUARDS);
-                    case FRIEND:
-                        this.setPermission(rank, Action.ACCESS_HUTS);
-                        this.setPermission(rank, Action.USE_SCAN_TOOL);
-                        this.setPermission(rank, Action.TOSS_ITEM);
-                        this.setPermission(rank, Action.PICKUP_ITEM);
-                        this.setPermission(rank, Action.RIGHTCLICK_BLOCK);
-                        this.setPermission(rank, Action.RIGHTCLICK_ENTITY);
-                        this.setPermission(rank, Action.THROW_POTION);
-                        this.setPermission(rank, Action.SHOOT_ARROW);
-                        this.setPermission(rank, Action.ATTACK_CITIZEN);
-                        this.setPermission(rank, Action.ATTACK_ENTITY);
-                        this.setPermission(rank, Action.TELEPORT_TO_COLONY);
-                    case NEUTRAL:
-                        this.setPermission(rank, Action.ACCESS_FREE_BLOCKS);
-                        break;
-                    case HOSTILE:
-                        this.setPermission(rank, Action.GUARDS_ATTACK);
-                        break;
-                    default:
-                        break;
-                }
             }
         }
         players.clear();
@@ -621,7 +618,7 @@ public class Permissions implements IPermissions
     public Set<Player> getPlayersByRank(final Rank rank)
     {
         return this.players.values().stream()
-                 .filter(player -> player.getRank().equals(rank))
+                 .filter(player -> player.getRank() != null && player.getRank().equals(rank))
                  .collect(Collectors.toSet());
     }
 
