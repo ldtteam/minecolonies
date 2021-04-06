@@ -184,7 +184,7 @@ public class BuildingDyer extends AbstractBuildingSmelterCrafter
             recipe = StandardFactoryController.getInstance().getNewInstance(
                 TypeConstants.RECIPE,
                 StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-                ImmutableList.of(woolToUse.getItemStack(), new ItemStack(Items.WHITE_DYE, 1)),
+                ImmutableList.of(woolToUse, new ItemStorage(new ItemStack(Items.WHITE_DYE, 1))),
                 1,
                 new ItemStack(Items.WHITE_WOOL, 1),
                 Blocks.AIR);

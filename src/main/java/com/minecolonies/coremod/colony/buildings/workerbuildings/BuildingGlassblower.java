@@ -11,6 +11,7 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.api.util.constant.TypeConstants;
@@ -144,8 +145,8 @@ public class BuildingGlassblower extends AbstractBuildingSmelterCrafter
             final ItemStack output = FurnaceRecipes.getInstance().getSmeltingResult(stack);
             if (Tags.Items.GLASS.contains(output.getItem()))
             {
-                final List<ItemStack> list = new ArrayList<>();
-                list.add(stack);
+                final List<ItemStorage> list = new ArrayList<>();
+                list.add(new ItemStorage(stack));
 
                 final IRecipeStorage storage = StandardFactoryController.getInstance().getNewInstance(
                   TypeConstants.RECIPE,

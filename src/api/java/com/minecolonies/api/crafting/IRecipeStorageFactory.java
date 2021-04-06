@@ -74,7 +74,7 @@ public interface IRecipeStorageFactory extends IFactory<IToken<?>, RecipeStorage
             throw new IllegalArgumentException("Ninth parameter is supposed to be a ResourceLocation or Null!");
         }
 
-        final List<ItemStack> input = (List<ItemStack>) context[0];
+        final List<ItemStorage> input = (List<ItemStorage>) context[0];
         final int gridSize = (int) context[1];
         final ItemStack primaryOutput = (ItemStack) context[2];
         final Block intermediate = context.length < 4 ? Blocks.AIR : (Block) context[3];
@@ -103,7 +103,7 @@ public interface IRecipeStorageFactory extends IFactory<IToken<?>, RecipeStorage
     @NotNull
     RecipeStorage getNewInstance(
       @NotNull final IToken<?> token,
-      @NotNull final List<ItemStack> input,
+      @NotNull final List<ItemStorage> input,
       final int gridSize,
       @NotNull final ItemStack primaryOutput,
       @Nullable final Block intermediate,

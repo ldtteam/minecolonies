@@ -55,7 +55,7 @@ public class FurnaceRecipes implements IFurnaceRecipes
                         final RecipeStorage storage = StandardFactoryController.getInstance().getNewInstance(
                           TypeConstants.RECIPE,
                           StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-                          ImmutableList.of(smeltable),
+                          ImmutableList.of(new ItemStorage(smeltable)),
                           1,
                           recipe.getRecipeOutput(),
                           Blocks.FURNACE);
