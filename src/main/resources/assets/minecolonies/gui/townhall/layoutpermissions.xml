@@ -47,15 +47,16 @@
                     </box>
                 </list>
             </switch>
-            <list id="rankButtonList" size="148 111" pos="26 65">
+            <list id="rankButtonList" size="148 100" pos="26 65">
                 <box size="100% 17" linewidth="0">
                     <label id="rankId" />
                     <button id="rankButton" size="120 15" pos="2 2" align="TOP_MIDDLE" />
                 </box>
             </list>
-            <label size="148 11" pos="26 198" color="black" label="$(com.minecolonies.coremod.gui.townhall.addrank)"/>
-            <input id="addRankName" size="100 18" pos="26 190" maxlength="32"/>
-            <button id="buttonAddRank" size="19 19" pos="130 190" label="+"/>
+            <label size="148 11" pos="26 167" color="black" label="$(com.minecolonies.coremod.gui.townhall.addrank)"/>
+            <input id="addRankName" size="100 18" pos="26 179" maxlength="32"/>
+            <button id="buttonAddRank" size="19 19" pos="130 179" label="+"/>
+            <label id="rankNameError" size="148 11" pos="26 200" color="red" label="$(com.minecolonies.coremod.gui.townhall.invalidrankname)" />
         </view>
         <view id="freeBlockList">
             <label size="148 11" pos="201 24" color="black" label="$(com.minecolonies.coremod.gui.townHall.freeBlocks)"/>

@@ -232,9 +232,34 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
 
     private void addRank()
     {
+        final Text label = findPaneOfTypeByID("rankNameError", Text.class);
         final TextField input = findPaneOfTypeByID(INPUT_ADDRANK_NAME, TextField.class);
-        Network.getNetwork().sendToServer(new PermissionsMessage.AddRank(townHall.getColony(), input.getText()));
-        input.setText("");
+        if (checkForValidRankName(input.getText()))
+        {
+            Network.getNetwork().sendToServer(new PermissionsMessage.AddRank(townHall.getColony(), input.getText()));
+            input.setText("");
+            label.hide();
+        }
+        else
+        {
+            label.show();
+        }
+    }
+
+    private boolean checkForValidRankName(String name)
+    {
+        if (name.equals(""))
+        {
+            return false;
+        }
+        for (Rank rank : rankList)
+        {
+            if (rank.getName().equals(name))
+            {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -1414,7 +1439,7 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
         // Additional handlers
         if (switchView.getCurrentView().getID().equals(PERMISSION_VIEW))
         {
-            //editOfficer();
+            findPaneOfTypeByID("rankNameError", Text.class).hide();
         }
     }
 
