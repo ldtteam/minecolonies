@@ -96,7 +96,7 @@ dependencies {
     implementation fg.deobf("com.ldtteam:structurize:${config.structurize_version}")
     contained fg.deobf("com.ldtteam:structurize:${config.structurize_version}")
     additionalMods "com.ldtteam:structurize:${config.structurize_version}"
-    compile "com.ldtteam:datagenerators:0.1.38-ALPHA"
+    compile "com.ldtteam:datagenerators:${config.datagen_version}"
     
     implementation fg.deobf("mezz.jei:jei-1.16.4:${config.jei_version}")
     compileOnly fg.deobf("com.resourcefulbees:ResourcefulBees:${config.rb_version}")
@@ -183,7 +183,7 @@ minecraft {
 
             property 'forge.logging.console.level', 'info'
 
-            args '--mod', 'minecolonies', '--all', '--output', file('src/main/generated/resources'), '--input', file('src/main/resources'), '--existing', file('src/main/resources')
+            args '--mod', 'minecolonies', '--all', '--output', file('src/main/generated/resources'), '--input', file('src/main/resources'), '--existing', file('src/main/resources'), '--existing-mod', 'structurize'
 
             mods {
                 minecolonies {

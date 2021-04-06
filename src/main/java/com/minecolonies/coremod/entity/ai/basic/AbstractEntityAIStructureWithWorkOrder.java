@@ -330,7 +330,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             WorkOrderBuild wob = (WorkOrderBuild) wo;
             String buildingName = wo.getStructureName();
             buildingName = buildingName.substring(buildingName.indexOf('/') + 1, buildingName.lastIndexOf('/')) + " " +
-                  buildingName.substring(buildingName.lastIndexOf('/') + 1, buildingName.indexOf(String.valueOf(wob.getUpgradeLevel())));
+                  buildingName.substring(buildingName.lastIndexOf('/') + 1, buildingName.lastIndexOf(String.valueOf(wob.getUpgradeLevel())));
             job.getColony().getEventDescriptionManager().addEventDescription(wob.getUpgradeLevel() > 1 ? new BuildingUpgradedEvent(wo.getBuildingLocation(), buildingName,
                   wob.getUpgradeLevel()) : new BuildingBuiltEvent(wo.getBuildingLocation(), buildingName, wob.getUpgradeLevel()));
         }

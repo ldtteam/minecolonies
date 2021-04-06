@@ -7,19 +7,24 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.modules.settings.ISetting;
+import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
-import com.minecolonies.coremod.client.gui.WindowHutComposterModule;
+import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
+import com.minecolonies.coremod.colony.buildings.modules.settings.BoolSetting;
+import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.coremod.colony.jobs.JobComposter;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -33,6 +38,11 @@ import static com.minecolonies.coremod.entity.ai.citizen.composter.EntityAIWorkC
 
 public class BuildingComposter extends AbstractBuildingWorker
 {
+    /**
+     * Settings key for the composting mode.
+     */
+    public static final ISettingKey<BoolSetting> PRODUCE_DIRT = new SettingKey<>(BoolSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "producedirt"));
+
     /**
      * Description of the job for this building
      */
@@ -52,16 +62,6 @@ public class BuildingComposter extends AbstractBuildingWorker
      * Tag to store the barrel list.
      */
     private static final String TAG_BARRELS = "barrels";
-
-    /**
-     * Tag to store the if dirt should be retrieved.
-     */
-    private static final String TAG_DIRT = "dirt";
-
-    /**
-     * If the composter should retrieve dirt from his compost bin.
-     */
-    private boolean retrieveDirtFromCompostBin = false;
 
     /**
      * List of registered barrels.
@@ -151,10 +151,6 @@ public class BuildingComposter extends AbstractBuildingWorker
         {
             barrels.add(NBTUtil.readBlockPos(compostBinTagList.getCompound(i).getCompound(TAG_POS)));
         }
-        if (compound.keySet().contains(TAG_DIRT))
-        {
-            retrieveDirtFromCompostBin = compound.getBoolean(TAG_DIRT);
-        }
     }
 
     @Override
@@ -169,8 +165,6 @@ public class BuildingComposter extends AbstractBuildingWorker
             compostBinTagList.add(compostBinCompound);
         }
         compound.put(TAG_BARRELS, compostBinTagList);
-        compound.putBoolean(TAG_DIRT, retrieveDirtFromCompostBin);
-
         return compound;
     }
 
@@ -178,7 +172,6 @@ public class BuildingComposter extends AbstractBuildingWorker
     public void serializeToView(@NotNull final PacketBuffer buf)
     {
         super.serializeToView(buf);
-        buf.writeBoolean(retrieveDirtFromCompostBin);
     }
 
     @Override
@@ -187,37 +180,12 @@ public class BuildingComposter extends AbstractBuildingWorker
         return ModBuildings.composter;
     }
 
-    /**
-     * If the composter should retrieve dirt and not compost from the compost bin.
-     *
-     * @return true if so.
-     */
-    public boolean shouldRetrieveDirtFromCompostBin()
-    {
-        return retrieveDirtFromCompostBin;
-    }
-
-    /**
-     * Set if the composter should retrieve dirt and not compost from the compost bin.
-     *
-     * @param shouldRetrieveDirt whether or not to retrieve dirt..
-     */
-    public void setShouldRetrieveDirtFromCompostBin(final boolean shouldRetrieveDirt)
-    {
-        this.retrieveDirtFromCompostBin = shouldRetrieveDirt;
-        markDirty();
-    }
 
     /**
      * The client side representation of the building.
      */
     public static class View extends AbstractBuildingWorker.View
     {
-        /**
-         * If the composter should retrieve dirt from his compost bin.
-         */
-        public boolean retrieveDirtFromCompostBin = false;
-
         /**
          * Instantiates the view of the building.
          *
@@ -229,18 +197,11 @@ public class BuildingComposter extends AbstractBuildingWorker
             super(c, l);
         }
 
-        @Override
-        public void deserialize(@NotNull final PacketBuffer buf)
-        {
-            super.deserialize(buf);
-            retrieveDirtFromCompostBin = buf.readBoolean();
-        }
-
         @NotNull
         @Override
         public Window getWindow()
         {
-            return new WindowHutComposterModule(this);
+            return new WindowHutWorkerModulePlaceholder<>(this, COMPOSTER);
         }
     }
 }

@@ -10,9 +10,10 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.coremod.client.gui.WindowHutWorkerModulePlaceholder;
+import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.jobs.JobSawmill;
 import net.minecraft.item.ItemStack;
@@ -115,16 +116,16 @@ public class BuildingSawmill extends AbstractBuildingCrafter
 
             double amountOfValidBlocks = 0;
             double blocks = 0;
-            for (final ItemStack stack : storage.getInput())
+            for (final ItemStorage inputItem : storage.getInput())
             {
-                if (!ItemStackUtils.isEmpty(stack))
+                if (!inputItem.isEmpty())
                 {
-                    if (stack.getItem().isIn(ItemTags.PLANKS) || stack.getItem().isIn(ItemTags.LOGS))
+                    if (inputItem.getItem().isIn(ItemTags.PLANKS) || inputItem.getItem().isIn(ItemTags.LOGS))
                     {
                         amountOfValidBlocks++;
                         continue;
                     }
-                    for (final ResourceLocation tag : stack.getItem().getTags())
+                    for (final ResourceLocation tag : inputItem.getItem().getTags())
                     {
                         if (tag.getPath().contains("wood"))
                         {

@@ -7,7 +7,7 @@ import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.client.VanillaParticleMessage;
 import com.minecolonies.coremod.util.TeleportHelper;
-import net.minecraft.block.AirBlock;
+import net.minecraft.block.material.Material;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -55,7 +55,11 @@ public class ItemScrollColonyTP extends AbstractItemScroll
             BlockPos pos = null;
             for (final Direction dir : Direction.Plane.HORIZONTAL)
             {
-                pos = BlockPosUtil.findAround(world, player.getPosition().offset(dir, 10), 5, 5, state -> state.getBlock() instanceof AirBlock);
+                pos = BlockPosUtil.findAround(world,
+                  player.getPosition().offset(dir, 10),
+                  5,
+                  5,
+                  (predWorld, predPos) -> predWorld.getBlockState(predPos).getMaterial() == Material.AIR && predWorld.getBlockState(predPos.up()).getMaterial() == Material.AIR);
                 if (pos != null)
                 {
                     break;

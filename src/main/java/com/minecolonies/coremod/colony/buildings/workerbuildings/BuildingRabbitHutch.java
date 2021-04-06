@@ -8,8 +8,8 @@ import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.citizen.Skill;
-import com.minecolonies.coremod.client.gui.WindowHutWorkerModulePlaceholder;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingHerder;
+import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobRabbitHerder;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -22,7 +22,7 @@ import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 /**
  * Creates a new building for the rabbit hutch.
  */
-public class BuildingRabbitHutch extends AbstractBuildingHerder
+public class BuildingRabbitHutch extends AbstractBuildingWorker
 {
     /**
      * Description of the job executed in the hut.
@@ -112,7 +112,7 @@ public class BuildingRabbitHutch extends AbstractBuildingHerder
     /**
      * ClientSide representation of the building.
      */
-    public static class View extends AbstractBuildingHerder.View
+    public static class View extends AbstractBuildingWorker.View
     {
         /**
          * Instantiates the view of the building.
@@ -129,7 +129,7 @@ public class BuildingRabbitHutch extends AbstractBuildingHerder
         @Override
         public Window getWindow()
         {
-            return new WindowHutWorkerModulePlaceholder<AbstractBuildingHerder.View>(this, RABBIT_HUTCH);
+            return new WindowHutWorkerModulePlaceholder<>(this, RABBIT_HUTCH);
         }
     }
 }

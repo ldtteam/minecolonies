@@ -86,7 +86,7 @@ public class TileEntityColonyFlagRenderer extends TileEntityRenderer<TileEntityC
              && mc.playerController.getCurrentGameType() == GameType.CREATIVE)
             {
                 transform.push();
-                ItemStack placeholder = new ItemStack(ModBlocks.blockSubstitution);
+                ItemStack placeholder = new ItemStack(ModBlocks.blockSubstitution.get());
 
                 transform.translate(0.0D, 0.5D, 0.0D);
                 transform.scale(0.75F, 0.75F, 0.75F);

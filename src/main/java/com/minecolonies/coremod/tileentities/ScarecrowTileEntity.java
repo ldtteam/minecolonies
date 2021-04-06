@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.tileentities;
 
-import com.ldtteam.structurize.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
@@ -172,7 +171,7 @@ public class ScarecrowTileEntity extends AbstractScarecrowTileEntity
      */
     private static boolean isValidDelimiter(final Block block)
     {
-        return block instanceof FenceBlock || block instanceof FenceGateBlock || block == ModBlocks.blockCactusFence || block == ModBlocks.blockCactusFenceGate
+        return block instanceof FenceBlock || block instanceof FenceGateBlock
                  || block instanceof WallBlock;
     }
 

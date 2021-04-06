@@ -19,7 +19,7 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.coremod.client.gui.WindowHutWorkerModulePlaceholder;
+import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobBaker;
@@ -235,7 +235,7 @@ public class BuildingBaker extends AbstractBuildingSmelterCrafter
                 final IRecipeStorage smeltingRecipe =  StandardFactoryController.getInstance().getNewInstance(
                     TypeConstants.RECIPE,
                     StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-                    ImmutableList.of(storage.getPrimaryOutput().copy()),
+                    ImmutableList.of(new ItemStorage(storage.getPrimaryOutput().copy())),
                     1,
                     smeltResult,
                     Blocks.FURNACE);

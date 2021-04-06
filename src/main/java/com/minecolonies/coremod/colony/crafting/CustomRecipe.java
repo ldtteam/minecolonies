@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeManager;
 import com.minecolonies.api.crafting.IRecipeStorage;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.ModRecipeTypes;
 import com.minecolonies.api.crafting.RecipeStorage;
 import com.minecolonies.api.research.IGlobalResearchTree;
@@ -147,7 +148,7 @@ public class CustomRecipe
     /**
      * The list of ItemStacks for input to the recipe
      */
-    private ArrayList<ItemStack> inputs = new ArrayList<>();
+    private ArrayList<ItemStorage> inputs = new ArrayList<>();
 
     /**
      * The list of ItemStacks for alternate (multi-recipe) outputs from the recipe
@@ -286,7 +287,7 @@ public class CustomRecipe
                         {
                             stack.setCount(ingredient.get(COUNT_PROP).getAsInt());
                         }
-                        recipe.inputs.add(stack);
+                        recipe.inputs.add(new ItemStorage(stack));
                     }
 
                 }
@@ -574,6 +575,7 @@ public class CustomRecipe
             {
                 cachedRecipeStorage = (RecipeStorage) recipeManager.getRecipes().get(cachedRecipeToken);
             }
+            recipeManager.registerUse(cachedRecipeStorage.getToken());
         }
         return cachedRecipeStorage;
     }

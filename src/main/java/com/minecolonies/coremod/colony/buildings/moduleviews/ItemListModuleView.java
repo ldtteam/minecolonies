@@ -6,7 +6,7 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.client.gui.ItemListModuleWindow;
+import com.minecolonies.coremod.client.gui.modules.ItemListModuleWindow;
 import com.minecolonies.coremod.network.messages.server.colony.building.AssignFilterableItemMessage;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.api.distmarker.Dist;
@@ -21,7 +21,7 @@ import java.util.function.Function;
 /**
  * Client side version of the abstract class for all buildings which require a filterable list of allowed items.
  */
-public class ItemListModuleView extends AbstractBuildingModuleView implements IBuildingModuleView, IItemListModuleView
+public class ItemListModuleView extends AbstractBuildingModuleView implements IItemListModuleView
 {
     /**
      * The list of items.

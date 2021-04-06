@@ -408,6 +408,7 @@
   "com.minecolonies.command.raidnow.success": "Raid started for colony %s, take care!",
   "com.minecolonies.command.raidtonight.success": "A raid on colony %s is coming tonight!",
   "com.minecolonies.command.loadbackup.success": "Successfully loaded backup.",
+  "com.minecolonies.command.export.success": "Exported colony to zip: %s",
   "com.minecolonies.command.deleteable.success": "Changed deletable flag of colony ID %s. It is now set to %s.",
   "com.minecolonies.command.rsreset.success": "The request system for colony %s has been restarted in 1.618 seconds.",
   "com.minecolonies.command.rsresetall.success": "The request systems for all colonies have been restarted in 1.618 seconds.",
@@ -1131,7 +1132,7 @@
   "com.minecolonies.coremod.gui.colony.create.failed": "§l§4Colony creation failed, try somewhere else!",
   "com.minecolonies.coremod.gui.colony.denied.existing": "§l§4There is an existing colony you own, delete it before creating a new one.",
   "com.minecolonies.coremod.gui.colony.denied.existingandabandon": "§4There is an existing colony you own, delete or abandon it before creating a new one.",
-  "com.minecolonies.coremod.gui.colony.denied.tooclose": "§l§4There is an existing colony too close.",
+  "com.minecolonies.coremod.gui.colony.denied.tooclose": "§l§4 Colony %s is too close.",
   "com.minecolonies.coremod.gui.colony.allowed.create": "§2You are able to create a new colony here",
 
   "block.minecolonies.composted_dirt": "Composted Dirt",
@@ -1351,6 +1352,7 @@
   "com.minecolonies.coremod.research.requirement.university.level": "Requires University Level %d",
   "com.minecolonies.coremod.research.limit.onemaxperbranch": "Only one max-level research can be unlocked per branch.",
   "com.minecolonies.coremod.research.limit.immutable": "This research cannot be undone.",
+  "com.minecolonies.coremod.research.limit.maxeffect": "MAX",
   "com.minecolonies.coremod.research.effect.modifier.multiplication": "%s by %d percent",
   "com.minecolonies.coremod.research.effect.modifier.addition": "%s + %d",
   "com.minecolonies.coremod.research.effect.unlock": "Unlocks %s",
@@ -1877,5 +1879,9 @@
   "item.minecolonies.sifter_mesh_iron": "Iron Mesh",
   "item.minecolonies.sifter_mesh_diamond": "Diamond Mesh",
 
-  "com.minecolonies.coremod.gui.maintab": "Main"
+  "com.minecolonies.coremod.gui.maintab": "Main",
+  "com.minecolonies.coremod.setting.minecolonies:producedirt": "Produce Dirt:",
+  "com.minecolonies.coremod.setting.minecolonies:breeding": "Breeding:",
+  "com.minecolonies.coremod.setting.minecolonies:milking": "Milking:",
+  "com.minecolonies.coremod.setting.minecolonies:dyeing": "Dyeing:"
 }

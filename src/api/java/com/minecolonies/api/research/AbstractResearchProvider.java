@@ -3,6 +3,7 @@ package com.minecolonies.api.research;
 import com.google.gson.*;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.coremod.generation.DataGeneratorConstants;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DirectoryCache;
 import net.minecraft.data.IDataProvider;
@@ -105,7 +106,7 @@ public abstract class AbstractResearchProvider implements IDataProvider
                 addLanguageKeySafe(langJson, "com." + research.id.getNamespace() + ".research." + research.id.getPath().replaceAll("[/]",".") + ".subtitle", research.translatedSubtitle);
             }
         }
-        IDataProvider.save(GSON, cache, langJson, generator.getOutputFolder().resolve("assets/" + Constants.MOD_ID + "/lang/default.json"));
+        IDataProvider.save(DataGeneratorConstants.GSON, cache, langJson, generator.getOutputFolder().resolve("assets/" + Constants.MOD_ID + "/lang/default.json"));
     }
 
     /**

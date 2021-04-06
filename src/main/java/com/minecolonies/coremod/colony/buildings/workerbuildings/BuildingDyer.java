@@ -17,7 +17,7 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.coremod.client.gui.WindowHutWorkerModulePlaceholder;
+import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
 import com.minecolonies.coremod.colony.jobs.JobDyer;
 import net.minecraft.block.Blocks;
@@ -184,7 +184,7 @@ public class BuildingDyer extends AbstractBuildingSmelterCrafter
             recipe = StandardFactoryController.getInstance().getNewInstance(
                 TypeConstants.RECIPE,
                 StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-                ImmutableList.of(woolToUse.getItemStack(), new ItemStack(Items.WHITE_DYE, 1)),
+                ImmutableList.of(woolToUse, new ItemStorage(new ItemStack(Items.WHITE_DYE, 1))),
                 1,
                 new ItemStack(Items.WHITE_WOOL, 1),
                 Blocks.AIR);

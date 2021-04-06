@@ -8,8 +8,8 @@ import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.citizen.Skill;
-import com.minecolonies.coremod.client.gui.WindowHutChickenHerderModule;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingHerder;
+import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobChickenHerder;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Creates a new building for the Chicken Herder.
  */
-public class BuildingChickenHerder extends AbstractBuildingHerder
+public class BuildingChickenHerder extends AbstractBuildingWorker
 {
     /**
      * Description of the job executed in the hut.
@@ -90,7 +90,7 @@ public class BuildingChickenHerder extends AbstractBuildingHerder
     /**
      * ClientSide representation of the building.
      */
-    public static class View extends AbstractBuildingHerder.View
+    public static class View extends AbstractBuildingWorker.View
     {
         /**
          * Instantiates the view of the building.
@@ -107,7 +107,7 @@ public class BuildingChickenHerder extends AbstractBuildingHerder
         @Override
         public Window getWindow()
         {
-            return new WindowHutChickenHerderModule(this);
+            return new WindowHutWorkerModulePlaceholder<>(this, JOB);
         }
     }
 }

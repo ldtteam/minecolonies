@@ -52,7 +52,7 @@ public class ItemStorageFactory implements IItemStorageFactory
     public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final ItemStorage storage)
     {
         final CompoundNBT compound = new CompoundNBT();
-        @NotNull final CompoundNBT stackTag = new CompoundNBT();
+        @NotNull CompoundNBT stackTag = new CompoundNBT();
         storage.getItemStack().write(stackTag);
         compound.put(TAG_STACK, stackTag);
         compound.putInt(TAG_SIZE, storage.getAmount());
