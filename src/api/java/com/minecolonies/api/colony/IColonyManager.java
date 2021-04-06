@@ -117,7 +117,7 @@ public interface IColonyManager
      * @param pos coordinates.
      * @return true if so.
      */
-    boolean isTooCloseToColony(@NotNull World w, @NotNull BlockPos pos);
+    boolean isFarEnoughFromColonies(@NotNull World w, @NotNull BlockPos pos);
 
     /**
      * Get all colonies in this world.

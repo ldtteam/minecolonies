@@ -9,18 +9,17 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingHerder;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobSwineHerder;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Creates a new building for the Swine Herder.
  */
-public class BuildingSwineHerder extends AbstractBuildingHerder
+public class BuildingSwineHerder extends AbstractBuildingWorker
 {
     /**
      * Description of the job executed in the hut.
@@ -105,20 +104,10 @@ public class BuildingSwineHerder extends AbstractBuildingHerder
         return super.canEat(stack);
     }
 
-    @Override
-    public void deserializeNBT(final CompoundNBT compound)
-    {
-        super.deserializeNBT(compound);
-        if (!isBreeding())
-        {
-            setBreeding(true);
-        }
-    }
-
     /**
      * ClientSide representation of the building.
      */
-    public static class View extends AbstractBuildingHerder.View
+    public static class View extends AbstractBuildingWorker.View
     {
         /**
          * Instantiates the view of the building.
@@ -135,7 +124,7 @@ public class BuildingSwineHerder extends AbstractBuildingHerder
         @Override
         public Window getWindow()
         {
-            return new WindowHutWorkerModulePlaceholder<AbstractBuildingHerder.View>(this, HUT_NAME);
+            return new WindowHutWorkerModulePlaceholder<>(this, HUT_NAME);
         }
     }
 }
