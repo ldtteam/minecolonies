@@ -19,8 +19,10 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
+import javax.swing.*;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
@@ -42,6 +44,7 @@ public class ItemColonyFlagBanner extends BannerItem
         super(standingBanner, wallBanner, builder);
     }
 
+    @NotNull
     @Override
     public ActionResultType onItemUse(ItemUseContext context)
     {
@@ -50,13 +53,20 @@ public class ItemColonyFlagBanner extends BannerItem
         BlockState state = context.getWorld().getBlockState(context.getPos());
         ItemStack stack = context.getPlayer().getHeldItemMainhand();
 
-        if (te instanceof BannerTileEntity || te instanceof TileEntityColonyFlag) {
-            CompoundNBT source =
-                (te instanceof BannerTileEntity
-                    ? ((BannerTileEntity) te).getItem(state)
-                    : ((TileEntityColonyFlag) te).getItem())
-                .getTag()
-                .getCompound("BlockEntityTag");
+        if (te instanceof BannerTileEntity || te instanceof TileEntityColonyFlag)
+        {
+            CompoundNBT source;
+            if (te instanceof BannerTileEntity)
+            {
+                source = ((BannerTileEntity) te).getItem(state)
+                           .getTag().getCompound("BlockEntityTag");
+            }
+            else
+            {
+                source = (context.getWorld().isRemote ? ((TileEntityColonyFlag) te).getItemClient() : ((TileEntityColonyFlag) te).getItemServer())
+                           .getTag().getCompound("BlockEntityTag");
+            }
+
             ListNBT patternList = source.getList(TAG_BANNER_PATTERNS, 10);
 
             // Set the base pattern, if there wasn't one set.

@@ -27,7 +27,7 @@ public interface IRecipeStorage
      *
      * @return the list.
      */
-    List<ItemStack> getInput();
+    List<ItemStorage> getInput();
 
     /**
      * Get the cleaned up list of the recipes. Air gets removed and equal items get put together.

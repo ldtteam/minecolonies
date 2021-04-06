@@ -14,7 +14,7 @@ public interface ISettingsModule extends IBuildingModule
      * @param setting the setting.
      * @return the instance of the module.
      */
-    IBuildingModule with(final ISettingKey<?> key, final ISetting setting);
+    ISettingsModule with(final ISettingKey<?> key, final ISetting setting);
 
     /**
      * Get a specific setting.

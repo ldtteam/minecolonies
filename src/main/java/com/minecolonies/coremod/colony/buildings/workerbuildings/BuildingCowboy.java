@@ -5,27 +5,25 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.citizen.Skill;
-import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.client.gui.huts.WindowHutCowboyModule;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingHerder;
+import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.modules.settings.BoolSetting;
+import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.coremod.colony.jobs.JobCowboy;
-import com.minecolonies.coremod.network.messages.server.colony.building.cowboy.CowboySetMilkCowsMessage;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
-
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_MILK_COWS;
 
 /**
  * Creates a new building for the Cowboy.
  */
-public class BuildingCowboy extends AbstractBuildingHerder
+public class BuildingCowboy extends AbstractBuildingWorker
 {
     /**
      * Description of the job executed in the hut.
@@ -38,9 +36,9 @@ public class BuildingCowboy extends AbstractBuildingHerder
     private static final int MAX_BUILDING_LEVEL = 5;
 
     /**
-     * Milk Cows or not.
+     * Milking setting.
      */
-    private boolean milkCows = true;
+    public static final ISettingKey<BoolSetting> MILKING  = new SettingKey<>(BoolSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "milking"));
 
     /**
      * Instantiates the building.
@@ -101,42 +99,9 @@ public class BuildingCowboy extends AbstractBuildingHerder
     }
 
     @Override
-    public void serializeToView(@NotNull final PacketBuffer buf)
-    {
-        super.serializeToView(buf);
-        buf.writeBoolean(milkCows);
-    }
-
-    @Override
     public BuildingEntry getBuildingRegistryEntry()
     {
         return ModBuildings.cowboy;
-    }
-
-    @Override
-    public void deserializeNBT(final CompoundNBT compound)
-    {
-        super.deserializeNBT(compound);
-        this.milkCows = compound.getBoolean(TAG_MILK_COWS);
-    }
-
-    @Override
-    public CompoundNBT serializeNBT()
-    {
-        final CompoundNBT compound = super.serializeNBT();
-        compound.putBoolean(TAG_MILK_COWS, this.milkCows);
-        return compound;
-    }
-
-    public boolean isMilkingCows()
-    {
-        return milkCows;
-    }
-
-    public void setMilkCows(final boolean milkCows)
-    {
-        this.milkCows = milkCows;
-        markDirty();
     }
 
     @Override
@@ -152,13 +117,8 @@ public class BuildingCowboy extends AbstractBuildingHerder
     /**
      * ClientSide representation of the building.
      */
-    public static class View extends AbstractBuildingHerder.View
+    public static class View extends AbstractBuildingWorker.View
     {
-        /**
-         * Milk Cows or not.
-         */
-        private boolean milkCows = true;
-
         /**
          * Instantiates the view of the building.
          *
@@ -174,25 +134,7 @@ public class BuildingCowboy extends AbstractBuildingHerder
         @Override
         public Window getWindow()
         {
-            return new WindowHutCowboyModule(this);
-        }
-
-        public void setMilkCows(final boolean milkCows)
-        {
-            Network.getNetwork().sendToServer(new CowboySetMilkCowsMessage(this, milkCows));
-            this.milkCows = milkCows;
-        }
-
-        public boolean isMilkCows()
-        {
-            return milkCows;
-        }
-
-        @Override
-        public void deserialize(@NotNull final PacketBuffer buf)
-        {
-            super.deserialize(buf);
-            milkCows = buf.readBoolean();
+            return new WindowHutWorkerModulePlaceholder<>(this, COWBOY);
         }
     }
 }

@@ -11,6 +11,7 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -84,16 +85,16 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
     {
         super.checkForWorkerSpecificRecipes();
 
-        final List<ItemStack> input = new ArrayList<>();
-        input.add(new ItemStack(Items.SAND, 4));
-        input.add(new ItemStack(Items.GRAVEL, 4));
+        final List<ItemStorage> input = new ArrayList<>();
+        input.add(new ItemStorage(new ItemStack(Items.SAND, 4)));
+        input.add(new ItemStorage(new ItemStack(Items.GRAVEL, 4)));
 
         for (final Item item : ModTags.concretePowder.getAllElements())
         {
-            final List<ItemStack> customInput = new ArrayList<>(input);
+            final List<ItemStorage> customInput = new ArrayList<>(input);
 
             final Item dye = DyeItem.getItem(DyeColor.byTranslationKey(item.getRegistryName().getPath().replace("_concrete_powder", ""), DyeColor.WHITE));
-            customInput.add(new ItemStack(dye, 1));
+            customInput.add(new ItemStorage(new ItemStack(dye, 1)));
 
             final IRecipeStorage storage = StandardFactoryController.getInstance().getNewInstance(
               TypeConstants.RECIPE,
@@ -111,7 +112,7 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
                 final IRecipeStorage storage2 = StandardFactoryController.getInstance().getNewInstance(
                   TypeConstants.RECIPE,
                   StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-                  Collections.singletonList(new ItemStack(item, 1)),
+                  Collections.singletonList(new ItemStorage(new ItemStack(item, 1))),
                   3,
                   new ItemStack(((ConcretePowderBlock) block).solidifiedState.getBlock(), 1),
                   Blocks.AIR);

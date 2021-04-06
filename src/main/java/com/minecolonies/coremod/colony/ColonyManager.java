@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.colony;
 
 import com.ldtteam.structurize.util.LanguageHandler;
-import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -11,8 +10,7 @@ import com.minecolonies.api.colony.permissions.OldRank;
 import com.minecolonies.api.compatibility.CompatibilityManager;
 import com.minecolonies.api.compatibility.ICompatibilityManager;
 import com.minecolonies.api.crafting.IRecipeManager;
-import com.minecolonies.api.items.ModTags;
-import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.apiimp.initializer.ModTagsInitializer;
 import com.minecolonies.coremod.MineColonies;
@@ -21,7 +19,6 @@ import com.minecolonies.coremod.colony.requestsystem.management.manager.Standard
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewRemoveMessage;
 import com.minecolonies.coremod.util.BackUpHelper;
 import com.minecolonies.coremod.util.ChunkDataHelper;
-import com.minecolonies.coremod.util.FurnaceRecipes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -301,11 +298,19 @@ public final class ColonyManager implements IColonyManager
     }
 
     @Override
-    public boolean isTooCloseToColony(@NotNull final World w, @NotNull final BlockPos pos)
+    public boolean isFarEnoughFromColonies(@NotNull final World w, @NotNull final BlockPos pos)
     {
-        return !ChunkDataHelper.canClaimChunksInRange(w,
+        final int blockRange = Math.max(MineColonies.getConfig().getServer().minColonyDistance.get(), getConfig().getServer().initialColonySize.get()) << 4;
+        final IColony closest = getClosestColony(w, pos);
+
+        if (closest != null && BlockPosUtil.getDistance(pos, closest.getCenter()) < blockRange)
+        {
+            return false;
+        }
+
+        return ChunkDataHelper.canClaimChunksInRange(w,
           pos,
-          Math.max(MineColonies.getConfig().getServer().minColonyDistance.get(), getConfig().getServer().initialColonySize.get()));
+          getConfig().getServer().initialColonySize.get());
     }
 
     @Override
@@ -700,7 +705,12 @@ public final class ColonyManager implements IColonyManager
     }
 
     @Override
-    public void handleColonyViewMessage(final int colonyId, @NotNull final PacketBuffer colonyData, @NotNull final World world, final boolean isNewSubscription, final RegistryKey<World> dim)
+    public void handleColonyViewMessage(
+      final int colonyId,
+      @NotNull final PacketBuffer colonyData,
+      @NotNull final World world,
+      final boolean isNewSubscription,
+      final RegistryKey<World> dim)
     {
         IColonyView view = getColonyView(colonyId, dim);
         if (view == null)
