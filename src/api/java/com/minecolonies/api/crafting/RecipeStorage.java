@@ -12,6 +12,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.LootContext;
@@ -143,7 +144,7 @@ public class RecipeStorage implements IRecipeStorage
         this.alternateOutputs = altOutputs != null && !altOutputs.isEmpty() ? altOutputs : ImmutableList.of();
         this.secondaryOutputs = secOutputs != null && !secOutputs.isEmpty() ? secOutputs.stream().filter(i -> i.getItem() != ModItems.buildTool.get()).collect(Collectors.toList()): this.calculateSecondaryOutputs();
         this.gridSize = gridSize;
-        this.intermediate = intermediate;
+        this.intermediate = intermediate == null ? Blocks.AIR : intermediate;
         this.token = token;
         this.recipeSource = source;
         IForgeRegistry<RecipeTypeEntry> recipeTypes = MinecoloniesAPIProxy.getInstance().getRecipeTypeRegistry();
