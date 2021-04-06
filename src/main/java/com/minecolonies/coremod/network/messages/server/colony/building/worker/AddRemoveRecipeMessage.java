@@ -91,7 +91,7 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
               StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
               input,
               gridSize,
-              primaryOutput, null, null, null, null, additionalOutputs);
+              primaryOutput, Blocks.AIR, null, null, null, additionalOutputs);
         }
     }
 

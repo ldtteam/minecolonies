@@ -9,6 +9,7 @@ import com.minecolonies.api.crafting.ModRecipeTypes;
 import com.minecolonies.api.crafting.RecipeStorage;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -165,7 +166,9 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
         }
 
         final ItemStack primaryOutput = ItemStack.read(nbt);
+
         final Block intermediate = NBTUtil.readBlockState(nbt.getCompound(BLOCK_TAG)).getBlock();
+
         final int gridSize = nbt.getInt(TAG_GRID);
         final IToken<?> token = StandardFactoryController.getInstance().deserialize(nbt.getCompound(TAG_TOKEN));
 
@@ -246,7 +249,7 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
         }
 
         final ItemStack primaryOutput = buffer.readItemStack();
-        final Block intermediate = buffer.readBoolean() ? Block.getStateById(buffer.readInt()).getBlock() : null;
+        final Block intermediate = buffer.readBoolean() ? Block.getStateById(buffer.readInt()).getBlock() : Blocks.AIR;
         final int gridSize = buffer.readInt();
         final ResourceLocation type = buffer.readResourceLocation();
 
