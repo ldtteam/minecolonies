@@ -142,6 +142,13 @@ public class Permissions implements IPermissions
     {
         this.clearDirty();
         this.colony = colony;
+        this.loadRanks();
+    }
+
+    private void loadRanks()
+    {
+        ranks.clear();
+        permissionMap.clear();
         for (OldRank oldRank : OldRank.values())
         {
             String name = oldRank.name();
@@ -291,9 +298,9 @@ public class Permissions implements IPermissions
     public void loadPermissions(@NotNull final CompoundNBT compound)
     {
         // Ranks
-        ranks.clear();
         if (compound.contains(TAG_RANKS))
         {
+            ranks.clear();
             final ListNBT rankTagList = compound.getList(TAG_RANKS, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < rankTagList.size(); ++i)
             {
@@ -305,6 +312,10 @@ public class Permissions implements IPermissions
                 final Rank rank = new Rank(id, name, isSubscriber, isInitial);
                 ranks.put(id, rank);
             }
+        }
+        else
+        {
+            this.loadRanks();
         }
         players.clear();
         //  Owners
