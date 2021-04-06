@@ -17,7 +17,6 @@ import com.minecolonies.coremod.network.messages.server.colony.building.beekeepe
 import com.minecolonies.coremod.network.messages.server.colony.building.beekeeper.BeekeeperSetHarvestHoneycombsMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.builder.BuilderSelectWorkOrderMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.builder.BuilderSetManualModeMessage;
-import com.minecolonies.coremod.network.messages.server.colony.building.cowboy.CowboySetMilkCowsMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.crusher.CrusherSetModeMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.enchanter.EnchanterWorkerSetMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.farmer.AssignFieldMessage;
@@ -27,7 +26,6 @@ import com.minecolonies.coremod.network.messages.server.colony.building.guard.Gu
 import com.minecolonies.coremod.network.messages.server.colony.building.guard.GuardSetMinePosMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.guard.GuardTaskMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.guard.MobEntryChangeMessage;
-import com.minecolonies.coremod.network.messages.server.colony.building.herder.HerderSetBreedingMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.home.AssignUnassignMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.lumberjack.LumberjackReplantSaplingToggleMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.lumberjack.LumberjackRestrictionToggleMessage;
@@ -35,7 +33,6 @@ import com.minecolonies.coremod.network.messages.server.colony.building.lumberja
 import com.minecolonies.coremod.network.messages.server.colony.building.miner.MinerSetLevelMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.plantation.PlantationSetPhaseMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.postbox.PostBoxRequestMessage;
-import com.minecolonies.coremod.network.messages.server.colony.building.shepherd.ShepherdSetDyeSheepsMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.sifter.SifterSettingsMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.university.TryResearchMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.warehouse.SortWarehouseMessage;
@@ -192,8 +189,6 @@ public class NetworkChannel
         registerMessage(++idx, UpdateRequestStateMessage.class, UpdateRequestStateMessage::new);
         registerMessage(++idx, BuildingSetStyleMessage.class, BuildingSetStyleMessage::new);
         registerMessage(++idx, BuilderSetManualModeMessage.class, BuilderSetManualModeMessage::new);
-        registerMessage(++idx, CowboySetMilkCowsMessage.class, CowboySetMilkCowsMessage::new);
-        registerMessage(++idx, HerderSetBreedingMessage.class, HerderSetBreedingMessage::new);
         registerMessage(++idx, RecallSingleCitizenMessage.class, RecallSingleCitizenMessage::new);
         registerMessage(++idx, AssignFilterableItemMessage.class, AssignFilterableItemMessage::new);
         registerMessage(++idx, TeamColonyColorChangeMessage.class, TeamColonyColorChangeMessage::new);
@@ -205,7 +200,6 @@ public class NetworkChannel
         registerMessage(++idx, PostBoxRequestMessage.class, PostBoxRequestMessage::new);
         registerMessage(++idx, CrusherSetModeMessage.class, CrusherSetModeMessage::new);
         registerMessage(++idx, HireMercenaryMessage.class, HireMercenaryMessage::new);
-        registerMessage(++idx, ShepherdSetDyeSheepsMessage.class, ShepherdSetDyeSheepsMessage::new);
         registerMessage(++idx, SifterSettingsMessage.class, SifterSettingsMessage::new);
         registerMessage(++idx, HutRenameMessage.class, HutRenameMessage::new);
         registerMessage(++idx, BuildingHiringModeMessage.class, BuildingHiringModeMessage::new);

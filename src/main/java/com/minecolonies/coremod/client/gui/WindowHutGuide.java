@@ -1,7 +1,8 @@
-package com.minecolonies.coremod.client.gui.huts;
+package com.minecolonies.coremod.client.gui;
 
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.client.gui.AbstractWindowSkeleton;
+import com.minecolonies.coremod.client.gui.huts.WindowHutBuilderModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;

@@ -34,7 +34,7 @@ public class SettingsModule extends AbstractBuildingModule implements IPersisten
     }
 
     @Override
-    public IBuildingModule with(final ISettingKey<?> key, final ISetting setting)
+    public ISettingsModule with(final ISettingKey<?> key, final ISetting setting)
     {
         settings.put(key, setting);
         return this;
