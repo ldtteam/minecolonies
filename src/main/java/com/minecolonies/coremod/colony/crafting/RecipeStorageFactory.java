@@ -165,7 +165,16 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
         }
 
         final ItemStack primaryOutput = ItemStack.read(nbt);
-        final Block intermediate = NBTUtil.readBlockState(nbt.getCompound(BLOCK_TAG)).getBlock();
+
+        final Block intermediate;
+        if (nbt.contains(BLOCK_TAG))
+        {
+            intermediate = NBTUtil.readBlockState(nbt.getCompound(BLOCK_TAG)).getBlock();
+        }
+        else
+        {
+            intermediate = null;
+        }
         final int gridSize = nbt.getInt(TAG_GRID);
         final IToken<?> token = StandardFactoryController.getInstance().deserialize(nbt.getCompound(TAG_TOKEN));
 
