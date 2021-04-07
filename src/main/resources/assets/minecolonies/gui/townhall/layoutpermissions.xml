@@ -56,7 +56,7 @@
             <label size="148 11" pos="26 167" color="black" label="$(com.minecolonies.coremod.gui.townhall.addrank)"/>
             <input id="addRankName" size="100 18" pos="26 179" maxlength="32"/>
             <button id="buttonAddRank" size="19 19" pos="130 179" label="+"/>
-            <label id="rankNameError" size="100 11" pos="26 200" color="red" label="$(com.minecolonies.coremod.gui.townhall.invalidrankname)" />
+            <label id="rankNameError" size="148 11" pos="26 200" color="red" label="$(com.minecolonies.coremod.gui.townhall.invalidrankname)" />
             <button id="removeRank" size="100 19" pos="203 200" label="$(com.minecolonies.coremod.gui.townhall.removerank)"/>
         </view>
         <view id="freeBlockList">
