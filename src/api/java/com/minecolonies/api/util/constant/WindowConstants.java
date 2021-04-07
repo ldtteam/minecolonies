@@ -1142,6 +1142,7 @@ public final class WindowConstants
     public static final String BUTTON_ADD_RANK = "buttonAddRank";
     public static final String INPUT_ADDRANK_NAME = "addRankName";
     public static final String BUTTON_EDIT_PLAYERRANK = "editPlayerRank";
+    public static final String BUTTON_REMOVE_RANK = "removeRank";
 
     /**
      * Input filter id.

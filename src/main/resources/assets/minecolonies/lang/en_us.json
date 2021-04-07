@@ -561,6 +561,7 @@
 
   "com.minecolonies.coremod.gui.townhall.addplayer": "Add Player:",
   "com.minecolonies.coremod.gui.townhall.addrank": "Add Rank:",
+  "com.minecolonies.coremod.gui.townhall.removerank": "Remove Rank",
   "com.minecolonies.coremod.gui.townhall.invalidrankname": "This rank name is invalid",
   "com.minecolonies.coremod.gui.townhall.addblock": "Add Block/Position:",
   "com.minecolonies.coremod.gui.townhall.permissions": "Permissions",

@@ -376,6 +376,7 @@ public class PermissionsView implements IPermissions
         if (!rank.isInitial())
         {
             ranks.remove(rank.getId());
+            permissions.remove(rank);
         }
     }
 }

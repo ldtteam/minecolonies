@@ -1002,6 +1002,7 @@ public class Permissions implements IPermissions
             player.setRank(getRankNeutral());
         }
         ranks.remove(rank.getId());
+        permissionMap.remove(rank);
         markDirty();
     }
 }

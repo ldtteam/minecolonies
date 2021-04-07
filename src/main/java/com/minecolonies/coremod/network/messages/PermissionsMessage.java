@@ -585,4 +585,47 @@ public class PermissionsMessage
             }
         }
     }
+
+    public static class RemoveRank implements IMessage
+    {
+        private int colonyId;
+        private int rankId;
+        private RegistryKey<World> dimension;
+
+        public RemoveRank()
+        {
+            super();
+        }
+
+        public RemoveRank(@NotNull final IColonyView colony, @NotNull final Rank rank)
+        {
+            super();
+            colonyId = colony.getID();
+            rankId = rank.getId();
+            dimension = colony.getDimension();
+        }
+
+        public void toBytes(@NotNull final PacketBuffer buf)
+        {
+            buf.writeInt(colonyId);
+            buf.writeInt(rankId);
+            buf.writeString(dimension.getLocation().toString());
+        }
+
+        public void fromBytes(@NotNull final PacketBuffer buf)
+        {
+            colonyId = buf.readInt();
+            rankId = buf.readInt();
+            dimension = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(buf.readString(32767)));
+        }
+
+        public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+        {
+            final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, dimension);
+            if (colony != null && colony.getPermissions().hasPermission(ctxIn.getSender(), Action.EDIT_PERMISSIONS))
+            {
+                colony.getPermissions().removeRank(colony.getPermissions().getRanks().get(rankId));
+            }
+        }
+    }
 }

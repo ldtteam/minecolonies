@@ -180,6 +180,7 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
         }
 
         actionsRank = townHall.getColony().getPermissions().getRankOfficer();
+        findPaneOfTypeByID(BUTTON_REMOVE_RANK, Button.class).setEnabled(false);
 
         alliesList = findPaneOfTypeByID(LIST_ALLIES, ScrollingList.class);
         feudsList = findPaneOfTypeByID(LIST_FEUDS, ScrollingList.class);
@@ -226,7 +227,8 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
         registerButton(BUTTON_ADD_BLOCK, this::addBlock);
         registerButton(BUTTON_REMOVE_BLOCK, this::removeBlock);
         registerButton(BUTTON_ADD_RANK, this::addRank);
-        registerButton("rankButton", this::onRankButtonClicked);
+        registerButton(TOWNHALL_RANK_BUTTON, this::onRankButtonClicked);
+        registerButton(BUTTON_REMOVE_RANK, this::onRemoveRankButtonClicked);
         colorDropDownList.setSelectedIndex(townHall.getColony().getTeamColonyColor().ordinal());
     }
 
@@ -260,6 +262,17 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
             }
         }
         return true;
+    }
+
+    private void onRemoveRankButtonClicked(Button button)
+    {
+        if (actionsRank != null)
+        {
+            Network.getNetwork().sendToServer(new PermissionsMessage.RemoveRank(townHall.getColony(), actionsRank));
+            townHall.getColony().getPermissions().removeRank(actionsRank);
+            actionsRank = townHall.getColony().getPermissions().getRankOfficer();
+            findPaneOfTypeByID(BUTTON_REMOVE_RANK, Button.class).setEnabled(false);
+        }
     }
 
     /**
@@ -479,8 +492,8 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
         if (rank != null)
         {
             actionsRank = rank;
-            actionsList.refreshElementPanes();
             button.setEnabled(false);
+            findPaneOfTypeByID(BUTTON_REMOVE_RANK, Button.class).setEnabled(!actionsRank.isInitial());
         }
     }
 
