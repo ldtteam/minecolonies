@@ -119,4 +119,6 @@ public interface IPermissions
     boolean removePlayer(UUID playerID);
 
     void addRank(String name);
+
+    void removeRank(Rank rank);
 }

@@ -369,4 +369,13 @@ public class PermissionsView implements IPermissions
     public void addRank(String name)
     {
     }
+
+    @Override
+    public void removeRank(Rank rank)
+    {
+        if (!rank.isInitial())
+        {
+            ranks.remove(rank.getId());
+        }
+    }
 }

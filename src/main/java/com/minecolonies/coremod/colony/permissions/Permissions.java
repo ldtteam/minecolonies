@@ -50,12 +50,6 @@ public class Permissions implements IPermissions
     private static final String TAG_VERSION = "permissionVersion";
 
     /**
-     * All promotion rank possibilities.
-     */
-    @NotNull
-    private static final Map<OldRank, RankPair> promotionRanks = new EnumMap<>(OldRank.class);
-
-    /**
      * All defined ranks
      */
     private static final LinkedHashMap<Integer, Rank> ranks = new LinkedHashMap<>();
@@ -67,14 +61,6 @@ public class Permissions implements IPermissions
 
     static
     {
-        /*
-         * Fill the promotion ranks.
-         */
-        setPromotionRanks(OldRank.OFFICER, OldRank.OFFICER, OldRank.FRIEND);
-        setPromotionRanks(OldRank.FRIEND, OldRank.OFFICER, OldRank.NEUTRAL);
-        setPromotionRanks(OldRank.NEUTRAL, OldRank.FRIEND, OldRank.HOSTILE);
-        setPromotionRanks(OldRank.HOSTILE, OldRank.NEUTRAL, OldRank.HOSTILE);
-
         /*
          * Generate the fully abandoned flag.
          */
@@ -231,50 +217,6 @@ public class Permissions implements IPermissions
         {
             colony.markDirty();
         }
-    }
-
-    /**
-     * Stores the list of promotion/demotion ranks.
-     *
-     * @param r OldRank to set pro- and demotion of.
-     * @param p Promotion rank.
-     * @param d Demotion rank.
-     */
-    private static void setPromotionRanks(final OldRank r, final OldRank p, final OldRank d)
-    {
-        promotionRanks.put(r, new RankPair(p, d));
-    }
-
-    /**
-     * Returns the promotion oldRank of a specific oldRank. E.G.: Neutral will return Friend.
-     *
-     * @param oldRank OldRank to check promotion of.
-     * @return {@link OldRank} after promotion.
-     */
-    public static OldRank getPromotionRank(final OldRank oldRank)
-    {
-        if (promotionRanks.containsKey(oldRank))
-        {
-            return promotionRanks.get(oldRank).promote;
-        }
-
-        return oldRank;
-    }
-
-    /**
-     * Returns the demotion oldRank of a specific oldRank. E.G.: Neutral will return Hostile.
-     *
-     * @param oldRank OldRank to check demotion of.
-     * @return {@link OldRank} after demotion.
-     */
-    public static OldRank getDemotionRank(final OldRank oldRank)
-    {
-        if (promotionRanks.containsKey(oldRank))
-        {
-            return promotionRanks.get(oldRank).demote;
-        }
-
-        return oldRank;
     }
 
     /**
@@ -1049,28 +991,17 @@ public class Permissions implements IPermissions
         markDirty();
     }
 
-    private static class RankPair
+    @Override public void removeRank(Rank rank)
     {
-        /**
-         * The rank if promoted.
-         */
-        private final OldRank promote;
-
-        /**
-         * The rank if demoted.
-         */
-        private final OldRank demote;
-
-        /**
-         * Links promotion and demotion.
-         *
-         * @param p Promoting rank.
-         * @param d Demoting rank.
-         */
-        RankPair(final OldRank p, final OldRank d)
+        if (rank.isInitial())
         {
-            promote = p;
-            demote = d;
+            return;
         }
+        for (Player player : getPlayersByRank(rank))
+        {
+            player.setRank(getRankNeutral());
+        }
+        ranks.remove(rank.getId());
+        markDirty();
     }
 }

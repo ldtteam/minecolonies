@@ -39,7 +39,7 @@
         </view>
         <view id="managePermissions">
             <switch id="userGroups" size="148 171" pos="201 36">
-                <list id="rankList" size="148 171">
+                <list id="rankList" size="148 150">
                     <box size="100% 21" linewidth="2">
                         <label id="name" size="110 18" pos="2 2" color="black" />
                         <button id="trigger" size="24 17" pos="2 2" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerhuts.retrieveOff)" />
@@ -56,7 +56,8 @@
             <label size="148 11" pos="26 167" color="black" label="$(com.minecolonies.coremod.gui.townhall.addrank)"/>
             <input id="addRankName" size="100 18" pos="26 179" maxlength="32"/>
             <button id="buttonAddRank" size="19 19" pos="130 179" label="+"/>
-            <label id="rankNameError" size="148 11" pos="26 200" color="red" label="$(com.minecolonies.coremod.gui.townhall.invalidrankname)" />
+            <label id="rankNameError" size="100 11" pos="26 200" color="red" label="$(com.minecolonies.coremod.gui.townhall.invalidrankname)" />
+            <button id="removeRank" size="60 15" pos="150 186" align="MIDDLE" label="Delete Rank"/>
         </view>
         <view id="freeBlockList">
             <label size="148 11" pos="201 24" color="black" label="$(com.minecolonies.coremod.gui.townHall.freeBlocks)"/>
