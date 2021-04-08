@@ -725,6 +725,10 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
                 {
                     crop = (CropsBlock) block;
                 }
+                else
+                {
+                    return false;
+                }
             }
             return crop.isMaxAge(state);
         }
