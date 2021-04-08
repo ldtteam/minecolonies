@@ -253,8 +253,12 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
      */
     private void updateResources()
     {
+        if (stylesDropDownList.getSelectedIndex() == -1)
+        {
+            return;
+        }
         // Ensure the player cannot change a style of an already constructed building
-        if (building.getBuildingLevel() > 0 && stylesDropDownList.getSelectedIndex() != -1)
+        if (building.getBuildingLevel() > 0 )
         {
             findPaneOfTypeByID(BUTTON_BUILD, Button.class).setText(
                     LanguageHandler.format(
