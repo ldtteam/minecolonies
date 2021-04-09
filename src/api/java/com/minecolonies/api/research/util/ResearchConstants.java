@@ -89,7 +89,7 @@ public final class ResearchConstants
     public static final int    COLOR_TEXT_LABEL      = Color.rgbaToInt(218, 202, 171, 255);
     public static final int    COLOR_TEXT_DARK       = Color.rgbaToInt(60, 60, 60, 255);
     public static final int    COLOR_TEXT_NAME       = Color.rgbaToInt(255,170,0, 255);
-    public static final int    COLOR_TEXT_UNFULFILLED= Color.rgbaToInt(170,0,0,255);
+    public static final int    COLOR_TEXT_UNFULFILLED= Color.rgbaToInt(240,150,135,255);
     public static final int    COLOR_TEXT_FULFILLED  = Color.rgbaToInt(85,255,255,255);
 
     /**
