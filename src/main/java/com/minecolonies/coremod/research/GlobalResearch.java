@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static com.minecolonies.api.research.util.ResearchConstants.BASE_RESEARCH_TIME;
 import static com.minecolonies.api.research.util.ResearchConstants.MAX_DEPTH;
 
 /**
@@ -401,7 +400,7 @@ public class GlobalResearch implements IGlobalResearch
             final ILocalResearch research = new LocalResearch(this.id, this.branch, this.depth);
             if (this.instant)
             {
-                research.setProgress((int)(BASE_RESEARCH_TIME * IGlobalResearchTree.getInstance().getBranchData(branch).getBaseTime() * Math.pow(2, research.getDepth() - 1)));
+                research.setProgress(IGlobalResearchTree.getInstance().getBranchData(branch).getBaseTime(research.getDepth()));
             }
             research.setState(ResearchState.IN_PROGRESS);
             localResearchTree.addResearch(branch, research);

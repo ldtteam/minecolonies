@@ -340,7 +340,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
      */
     private void drawTreeBackground(final ZoomDragView view, final int maxHeight)
     {
-        if(branchType == ResearchBranchType.UNLOCKABLES && IGlobalResearchTree.getInstance().getBranchData(branch).getBaseTime() < 0.01)
+        if(branchType == ResearchBranchType.UNLOCKABLES && IGlobalResearchTree.getInstance().getBranchData(branch).getBaseTime(1) < 1)
         {
             return;
         }
@@ -349,12 +349,11 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             final Text timeLabel = new Text();
             timeLabel.setSize(TIME_WIDTH, TIME_HEIGHT);
             timeLabel.setPosition((i - 1) * (GRADIENT_WIDTH + X_SPACING) + GRADIENT_WIDTH / 2 - TIME_WIDTH / 4, TIMELABEL_Y_POSITION);
-            final double hoursTime = ((Math.pow(2, i - 1) * IGlobalResearchTree.getInstance().getBranchData(branch).getBaseTime()) * BASE_RESEARCH_TIME) / (BASE_RESEARCH_TIME * 2);
             if(branchType == ResearchBranchType.UNLOCKABLES)
             {
                 timeLabel.setText(new TranslationTextComponent("com.minecolonies.coremod.gui.research.tier.header.unrestricted",
                   (i > building.getBuildingMaxLevel()) ? building.getBuildingMaxLevel() : i,
-                  hoursTime));
+                  IGlobalResearchTree.getInstance().getBranchData(branch).getHoursTime(i)));
                 timeLabel.setColors(COLOR_TEXT_LABEL);
                 view.addChild(timeLabel);
                 continue;
@@ -363,7 +362,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             {
                 timeLabel.setText(new TranslationTextComponent("com.minecolonies.coremod.gui.research.tier.header",
                   (i > building.getBuildingMaxLevel()) ? building.getBuildingMaxLevel() : i,
-                  hoursTime));
+                  IGlobalResearchTree.getInstance().getBranchData(branch).getHoursTime(i)));
 
                 if (building.getBuildingLevel() < i && (building.getBuildingLevel() != building.getBuildingMaxLevel() || hasMax))
                 {
@@ -459,7 +458,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         final int progress = tree.getResearch(branch, research.getId()) == null ? 0 : tree.getResearch(branch, research.getId()).getProgress();
 
         if (mc.player.isCreative() && state == ResearchState.IN_PROGRESS && MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchCreativeCompletion.get()
-              && progress < BASE_RESEARCH_TIME * IGlobalResearchTree.getInstance().getBranchData(branch).getBaseTime() * Math.pow(2, research.getDepth() - 1))
+              && progress < IGlobalResearchTree.getInstance().getBranchData(branch).getBaseTime(research.getDepth()))
         {
             Network.getNetwork().sendToServer(new TryResearchMessage(building, research.getId(), research.getBranch(), false));
         }
@@ -596,8 +595,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         nameGradient.setGradientEnd(102, 225, 80, 60);
 
         // scale down subBar to fit smaller progress text, and make gradients of scale to match progress.
-        final double progressRatio = (progress + 1) / (Math.pow(2, research.getDepth() - 1)
-                                                         * (double) BASE_RESEARCH_TIME * IGlobalResearchTree.getInstance().getBranchData(branch).getBaseTime());
+        final double progressRatio = (progress + 1) / (double)IGlobalResearchTree.getInstance().getBranchData(branch).getBaseTime(research.getDepth());
         subBar.setSize(RESEARCH_WIDTH - ICON_X_OFFSET * 2 - TEXT_X_OFFSET, TIME_HEIGHT);
         nameGradient.setSize((int) (progressRatio * NAME_LABEL_WIDTH), NAME_LABEL_HEIGHT);
 
@@ -714,7 +712,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             }
             else
             {
-                progressToGo = (int) (Math.pow(2, research.getDepth() - 1) * (double) BASE_RESEARCH_TIME * IGlobalResearchTree.getInstance().getBranchData(branch).getBaseTime()) - progress;
+                progressToGo = IGlobalResearchTree.getInstance().getBranchData(branch).getBaseTime(research.getDepth()) - progress;
             }
             // Write out the rough remaining time for the research.
             // This will necessarily be an estimate, since adjusting for
