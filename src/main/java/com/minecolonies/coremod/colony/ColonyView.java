@@ -660,9 +660,9 @@ public final class ColonyView implements IColonyView
     }
 
     /**
-     * Sets a specific permission to a oldRank. If the permission wasn't already set, it sends a message to the server.
+     * Sets a specific permission to a rank. If the permission wasn't already set, it sends a message to the server.
      *
-     * @param rank   OldRank to get the permission.
+     * @param rank   Rank to get the permission.
      * @param action Permission to get.
      */
     @Override
@@ -675,7 +675,7 @@ public final class ColonyView implements IColonyView
     }
 
     /**
-     * removes a specific permission to a oldRank. If the permission was set, it sends a message to the server.
+     * removes a specific permission from a rank. If the permission was set, it sends a message to the server.
      *
      * @param rank   Rank to remove permission from.
      * @param action Action to remove permission of.
@@ -690,7 +690,7 @@ public final class ColonyView implements IColonyView
     }
 
     /**
-     * Toggles a specific permission to a oldRank. Sends a message to the server.
+     * Toggles a specific permission to a rank. Sends a message to the server.
      *
      * @param rank   Rank to toggle permission of.
      * @param action Action to toggle permission of.

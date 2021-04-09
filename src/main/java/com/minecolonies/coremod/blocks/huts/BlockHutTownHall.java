@@ -7,7 +7,6 @@ import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.colony.permissions.OldRank;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.client.gui.townhall.WindowTownHallColonyManage;
 import net.minecraft.block.BlockState;

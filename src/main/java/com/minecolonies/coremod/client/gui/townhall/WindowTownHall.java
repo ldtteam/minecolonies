@@ -142,16 +142,28 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
     private boolean permissionEvents;
 
     /**
-     *
+     * The ScrollingList of all rank buttons
      */
-    private final ScrollingList ranksList;
+    private final ScrollingList rankButtonList;
 
+    /**
+     * The currently selected player to edit
+     */
     private Player selectedPlayer;
 
+    /**
+     * A list of ranks (excluding owner)
+     */
     private final List<Rank> rankList = new LinkedList<>();
 
+    /**
+     * The currently selected rank to edit or delete
+     */
     private Rank actionsRank;
 
+    /**
+     * A filtered list of actions
+     */
     private List<Action> actions = new ArrayList<>();
 
     /**
@@ -184,8 +196,8 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
 
         alliesList = findPaneOfTypeByID(LIST_ALLIES, ScrollingList.class);
         feudsList = findPaneOfTypeByID(LIST_FEUDS, ScrollingList.class);
-        ranksList = findPaneOfTypeByID(TOWNHALL_RANK_LIST, ScrollingList.class);
-        actionsList = findPaneOfTypeByID("rankList", ScrollingList.class);
+        rankButtonList = findPaneOfTypeByID(TOWNHALL_RANK_BUTTON_LIST, ScrollingList.class);
+        actionsList = findPaneOfTypeByID(TOWNHALL_RANK_LIST, ScrollingList.class);
 
         initColorPicker();
         updateUsers();
@@ -232,9 +244,14 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
         colorDropDownList.setSelectedIndex(townHall.getColony().getTeamColonyColor().ordinal());
     }
 
+    /**
+     * Read the text input with the name of the rank to be added
+     * If the chosen name is valid, send a message to the server, hide the error label and empty the input
+     * else show the error label
+     */
     private void addRank()
     {
-        final Text label = findPaneOfTypeByID("rankNameError", Text.class);
+        final Text label = findPaneOfTypeByID(TOWNHALL_ADD_RANK_ERROR, Text.class);
         final TextField input = findPaneOfTypeByID(INPUT_ADDRANK_NAME, TextField.class);
         if (checkForValidRankName(input.getText()))
         {
@@ -248,6 +265,12 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
         }
     }
 
+    /**
+     * Validates whether the given name is a valid rank name
+     * If name is empty or already in use for a rank within this colony, it is invalid
+     * @param name the name
+     * @return true if name is valid
+     */
     private boolean checkForValidRankName(String name)
     {
         if (name.equals(""))
@@ -264,6 +287,12 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
         return true;
     }
 
+    /**
+     * Send message to server to remove the currently selected rank
+     * Remove rank from view
+     * Set currently selected rank to officer and disable button
+     * @param button the clicked button
+     */
     private void onRemoveRankButtonClicked(Button button)
     {
         if (actionsRank != null)
@@ -271,7 +300,7 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
             Network.getNetwork().sendToServer(new PermissionsMessage.RemoveRank(townHall.getColony(), actionsRank));
             townHall.getColony().getPermissions().removeRank(actionsRank);
             actionsRank = townHall.getColony().getPermissions().getRankOfficer();
-            findPaneOfTypeByID(BUTTON_REMOVE_RANK, Button.class).setEnabled(false);
+            button.setEnabled(false);
         }
     }
 
@@ -436,7 +465,7 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
     }
 
     /**
-     * Clears and resets all citizens.
+     * Clears and resets all work orders.
      */
     private void updateWorkOrders()
     {
@@ -445,21 +474,27 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
         sortWorkOrders();
     }
 
+    /**
+     * Clears and resets all ranks
+     */
     private void updateRanks()
     {
         rankList.clear();
         for (final Rank rank : townHall.getColony().getPermissions().getRanks().values())
         {
-            if (rank != townHall.getColony().getPermissions().getRankOwner())
+            if (!rank.equals(townHall.getColony().getPermissions().getRankOwner()))
             {
                 rankList.add(rank);
             }
         }
     }
 
+    /**
+     * Fill the rank button list in the GUI
+     */
     private void fillRanks()
     {
-        ranksList.setDataProvider(new ScrollingList.DataProvider() {
+        rankButtonList.setDataProvider(new ScrollingList.DataProvider() {
             @Override
             public int getElementCount()
             {
@@ -472,22 +507,19 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
                 final Rank rank = rankList.get(i);
                 final Button button = pane.findPaneOfTypeByID(TOWNHALL_RANK_BUTTON, Button.class);
                 button.setText(rank.getName());
-                if (rank.equals(actionsRank))
-                {
-                    button.setEnabled(false);
-                }
-                else
-                {
-                    button.setEnabled(true);
-                }
+                button.setEnabled(!rank.equals(actionsRank));
                 pane.findPaneOfTypeByID("rankId", Text.class).setText(Integer.toString(rank.getId()));
             }
         });
     }
 
+    /**
+     * Change to currently selected rank to the one belonging to the clicked button
+     * @param button the clicked button
+     */
     private void onRankButtonClicked(@NotNull final Button button)
     {
-        final int rankId = ranksList.getListElementIndexByPane(button);
+        final int rankId = rankButtonList.getListElementIndexByPane(button);
         final Rank rank = rankList.get(rankId);
         if (rank != null)
         {
@@ -853,12 +885,18 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
         });
     }
 
+    /**
+     * Select a player to edit
+     * Fill the dropdown with the list of ranks
+     * Display the box
+     * @param button
+     */
     private void editRank(Button button)
     {
         selectedPlayer = users.get(userList.getListElementIndexByPane(button));
-        Box box = findPaneOfTypeByID("editPlayerRankBox", Box.class);
-        box.findPaneOfTypeByID("playerName", Text.class).setText(selectedPlayer.getName());
-        DropDownList dropdown = box.findPaneOfTypeByID("rankPicker", DropDownList.class);
+        Box box = findPaneOfTypeByID(TOWNHALL_EDIT_PLAYER_BOX, Box.class);
+        box.findPaneOfTypeByID(TOWNHALL_PLAYER_NAME, Text.class).setText(selectedPlayer.getName());
+        DropDownList dropdown = box.findPaneOfTypeByID(TOWNHALL_RANK_PICKER, DropDownList.class);
         dropdown.setDataProvider(new DropDownList.DataProvider() {
             @Override
             public int getElementCount()
@@ -879,6 +917,10 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
         box.show();
     }
 
+    /**
+     * Send a message to set the selected rank for the selected player
+     * @param dropdown the rank dropdown
+     */
     private void onRankSelected(@NotNull DropDownList dropdown)
     {
         final int index = dropdown.getSelectedIndex();
@@ -1364,7 +1406,7 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
                 updateUsers();
                 updateRanks();
                 window.findPaneOfTypeByID(LIST_USERS, ScrollingList.class).refreshElementPanes();
-                window.findPaneOfTypeByID(TOWNHALL_RANK_LIST, ScrollingList.class).refreshElementPanes();
+                window.findPaneOfTypeByID(TOWNHALL_RANK_BUTTON_LIST, ScrollingList.class).refreshElementPanes();
                 break;
             case PAGE_CITIZENS:
                 updateCitizens();
@@ -1452,7 +1494,7 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
         // Additional handlers
         if (switchView.getCurrentView().getID().equals(PERMISSION_VIEW))
         {
-            findPaneOfTypeByID("rankNameError", Text.class).hide();
+            findPaneOfTypeByID(TOWNHALL_ADD_RANK_ERROR, Text.class).hide();
         }
     }
 

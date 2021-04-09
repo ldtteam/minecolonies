@@ -1137,12 +1137,17 @@ public final class WindowConstants
      */
     public static final String UPGRADE_PROGRESS_LABEL = "upgradeProgress";
 
-    public static final String TOWNHALL_RANK_LIST = "rankButtonList";
-    public static final String TOWNHALL_RANK_BUTTON = "rankButton";
+    public static final String TOWNHALL_RANK_BUTTON_LIST = "rankButtonList";
+    public static final String TOWNHALL_RANK_BUTTON      = "rankButton";
     public static final String BUTTON_ADD_RANK = "buttonAddRank";
     public static final String INPUT_ADDRANK_NAME = "addRankName";
     public static final String BUTTON_EDIT_PLAYERRANK = "editPlayerRank";
     public static final String BUTTON_REMOVE_RANK = "removeRank";
+    public static final String TOWNHALL_RANK_LIST = "rankList";
+    public static final String TOWNHALL_ADD_RANK_ERROR = "rankNameError";
+    public static final String TOWNHALL_EDIT_PLAYER_BOX = "editPlayerRankBox";
+    public static final String TOWNHALL_PLAYER_NAME = "playerName";
+    public static final String TOWNHALL_RANK_PICKER = "rankPicker";
 
     /**
      * Input filter id.

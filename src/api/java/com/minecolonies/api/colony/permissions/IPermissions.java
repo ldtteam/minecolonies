@@ -16,6 +16,9 @@ import java.util.UUID;
  */
 public interface IPermissions
 {
+    /**
+     * IDs of the initial ranks according to their old enum values
+     */
     int OWNER_RANK_ID = 0;
     int OFFICER_RANK_ID = 1;
     int FRIEND_RANK_ID = 2;
@@ -103,7 +106,7 @@ public interface IPermissions
      * Get the rank of a UUID.
      *
      * @param player UUID to check rank of.
-     * @return OldRank of the player.
+     * @return rank of the player.
      */
     @NotNull
     Rank getRank(UUID player);
