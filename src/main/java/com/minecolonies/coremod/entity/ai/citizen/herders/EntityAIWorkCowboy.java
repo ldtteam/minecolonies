@@ -6,6 +6,7 @@ import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
+import com.minecolonies.coremod.colony.buildings.modules.settings.BoolSetting;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCowboy;
 import com.minecolonies.coremod.colony.jobs.JobCowboy;
 import net.minecraft.entity.passive.CowEntity;
@@ -82,7 +83,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
         final BuildingCowboy building = getOwnBuilding();
 
         final boolean hasBucket = InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), Items.BUCKET);
-        if (building != null && building.isMilkingCows() && result.equals(START_WORKING) && hasBucket)
+        if (building != null && getOwnBuilding().getSetting(BuildingCowboy.MILKING).map(BoolSetting::getValue).orElse(false) && result.equals(START_WORKING) && hasBucket)
         {
             return COWBOY_MILK;
         }
@@ -94,7 +95,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
     public List<ItemStack> getExtraItemsNeeded()
     {
         final List<ItemStack> list = super.getExtraItemsNeeded();
-        if (getOwnBuilding().isMilkingCows())
+        if (getOwnBuilding().getSetting(BuildingCowboy.MILKING).map(BoolSetting::getValue).orElse(false))
         {
             list.add(new ItemStack(Items.BUCKET));
         }

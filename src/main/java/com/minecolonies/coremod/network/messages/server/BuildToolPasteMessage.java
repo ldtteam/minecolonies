@@ -285,7 +285,7 @@ public class BuildToolPasteMessage implements IMessage
         final IColony tempColony = IColonyManager.getInstance().getClosestColony(world, buildPos);
         if (!complete && tempColony != null
               && !tempColony.getPermissions().hasPermission(player, Action.MANAGE_HUTS)
-              && !IColonyManager.getInstance().isTooCloseToColony(world, buildPos))
+              && IColonyManager.getInstance().isFarEnoughFromColonies(world, buildPos))
         {
             return;
         }

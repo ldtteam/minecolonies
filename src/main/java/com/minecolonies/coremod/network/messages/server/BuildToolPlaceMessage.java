@@ -219,7 +219,7 @@ public class BuildToolPlaceMessage implements IMessage
         if (tempColony != null
               && (!tempColony.getPermissions().hasPermission(player, Action.MANAGE_HUTS)
                     && !(block instanceof BlockHutTownHall
-                           && !IColonyManager.getInstance().isTooCloseToColony(world, buildPos))))
+                           && IColonyManager.getInstance().isFarEnoughFromColonies(world, buildPos))))
         {
             return;
         }

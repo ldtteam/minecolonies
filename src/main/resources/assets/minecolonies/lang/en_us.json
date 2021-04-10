@@ -1146,7 +1146,7 @@
   "com.minecolonies.coremod.gui.colony.create.failed": "§l§4Colony creation failed, try somewhere else!",
   "com.minecolonies.coremod.gui.colony.denied.existing": "§l§4There is an existing colony you own, delete it before creating a new one.",
   "com.minecolonies.coremod.gui.colony.denied.existingandabandon": "§4There is an existing colony you own, delete or abandon it before creating a new one.",
-  "com.minecolonies.coremod.gui.colony.denied.tooclose": "§l§4There is an existing colony too close.",
+  "com.minecolonies.coremod.gui.colony.denied.tooclose": "§l§4 Colony %s is too close.",
   "com.minecolonies.coremod.gui.colony.allowed.create": "§2You are able to create a new colony here",
 
   "block.minecolonies.composted_dirt": "Composted Dirt",
@@ -1908,5 +1908,8 @@
   "item.minecolonies.sifter_mesh_diamond": "Diamond Mesh",
 
   "com.minecolonies.coremod.gui.maintab": "Main",
-  "com.minecolonies.coremod.setting.minecolonies:producedirt": "Produce Dirt:"
+  "com.minecolonies.coremod.setting.minecolonies:producedirt": "Produce Dirt:",
+  "com.minecolonies.coremod.setting.minecolonies:breeding": "Breeding:",
+  "com.minecolonies.coremod.setting.minecolonies:milking": "Milking:",
+  "com.minecolonies.coremod.setting.minecolonies:dyeing": "Dyeing:"
 }

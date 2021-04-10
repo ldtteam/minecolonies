@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.tileentities.TileEntityColonyFlag;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.DyeColor;
@@ -16,6 +17,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.registries.IForgeRegistry;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
@@ -61,11 +63,23 @@ public class AbstractColonyFlagBanner<B extends AbstractColonyFlagBanner<B>> ext
 
     }
 
+    @NotNull
     @Override
-    public ItemStack getItem(IBlockReader worldIn, BlockPos pos, BlockState state)
+    public ItemStack getItem(final IBlockReader worldIn, @NotNull final BlockPos pos, @NotNull final BlockState state)
     {
         TileEntity tileentity = worldIn.getTileEntity(pos);
-        return tileentity instanceof TileEntityColonyFlag ? ((TileEntityColonyFlag)tileentity).getItem() : super.getItem(worldIn, pos, state);
+        if (tileentity instanceof TileEntityColonyFlag)
+        {
+            if (worldIn instanceof ClientWorld)
+            {
+                ((TileEntityColonyFlag)tileentity).getItemClient();
+            }
+            else
+            {
+                ((TileEntityColonyFlag)tileentity).getItemServer();
+            }
+        }
+        return super.getItem(worldIn, pos, state);
     }
 
     @Override
