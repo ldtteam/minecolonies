@@ -1,20 +1,10 @@
 package com.minecolonies.api.tileentities;
 
-import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IGraveData;
 import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
-import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-
-import static com.minecolonies.api.research.util.ResearchConstants.RESURRECT_CHANCE;
 import static com.minecolonies.api.util.constant.Constants.*;
 
 public abstract class AbstractTileEntityGrave extends TileEntityRack implements INamedContainerProvider

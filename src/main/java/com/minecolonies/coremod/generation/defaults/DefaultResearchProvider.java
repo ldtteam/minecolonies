@@ -118,6 +118,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         effects.add(new ResearchEffect(SLEEP_LESS).setTranslatedName("Guards Need %3$s%% Less Sleep"));
         effects.add(new ResearchEffect(KNIGHT_WHIRLWIND).setTranslatedName("Knights Learn Special Attack That Damages and Knocks Back Nearby Enemies"));
         effects.add(new ResearchEffect(WORKING_IN_RAIN).setTranslatedName("Citizens Work in Rain"));
+        effects.add(new ResearchEffect(UNDERTAKER_RUN).setTranslatedName("Undertaker unlocks run ability"));
 
         // Building-focused unlocks are derived from the block hut name.  Do not manually add ResourceLocations as a string, as some building blocks have surprising names.
         effects.add(new ResearchEffect(ModBuildings.archery.getBuildingBlock()).setTranslatedName("Unlocks Archery"));
@@ -631,6 +632,17 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                 .addBuildingRequirement(ModBuildings.TOWNHALL_ID, 2)
                 .addItemCost(Items.BONE, 8)
                 .setTranslatedSubtitle("Our fallen shall not be forgotten!")
+                .addToList(r);
+
+        new Research(new ResourceLocation(Constants.MOD_ID, "civilian/undertakeremergency"), CIVIL)
+                .setParentResearch(remembrance)
+                .setTranslatedName("Undertaker Emergency")
+                .setTranslatedSubtitle("Teach Undertaker the ability to run towards graves")
+                .setSortOrder(3)
+                .setIcon(ModBlocks.blockHutGraveyard.asItem())
+                .addBuildingRequirement(ModBuildings.GRAVEYARD_ID, 2)
+                .addItemCost(Items.IRON_BOOTS, 1)
+                .addEffect(UNDERTAKER_RUN, 1)
                 .addToList(r);
 
         final Research resurrectChance1 = new Research(new ResourceLocation(Constants.MOD_ID, "civilian/resurrectchance1"), CIVIL)

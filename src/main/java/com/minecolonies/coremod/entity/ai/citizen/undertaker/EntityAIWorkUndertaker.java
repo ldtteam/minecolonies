@@ -32,7 +32,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Random;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
-import static com.minecolonies.api.research.util.ResearchConstants.RESURRECT_CHANCE;
+import static com.minecolonies.api.research.util.ResearchConstants.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.UndertakerConstants.*;
 
@@ -175,7 +175,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
 
         worker.getCitizenData().setVisibleStatus(EMPTYING_ICON);
         worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.emptying"));
-        worker.setSprinting(true);
+        worker.setSprinting(worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(UNDERTAKER_RUN) > 0);
         unequip();
 
         @Nullable final BlockPos gravePos = buildingGraveyard.getGraveToWorkOn();
@@ -233,7 +233,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
 
         worker.getCitizenData().setVisibleStatus(DIGGING_ICON);
         worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.digging"));
-        worker.setSprinting(false);
+        worker.setSprinting(worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(UNDERTAKER_RUN) > 0);
 
         @Nullable final BlockPos gravePos = buildingGraveyard.getGraveToWorkOn();
 
@@ -242,6 +242,8 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         {
             return getState();
         }
+
+        worker.setSprinting(false);
 
         final TileEntity entity = world.getTileEntity(gravePos);
         if (entity instanceof TileEntityGrave)
