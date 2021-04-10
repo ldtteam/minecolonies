@@ -125,7 +125,7 @@ public class TileEntityGrave extends AbstractTileEntityGrave
     @Override
     public ItemStackHandler createInventory(final int slots)
     {
-        return new GraveInventory(slots);
+        return new RackInventory(slots);
     }
 
     @Override
