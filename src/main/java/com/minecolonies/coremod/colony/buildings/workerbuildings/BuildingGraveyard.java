@@ -13,7 +13,6 @@ import com.minecolonies.api.tileentities.TileEntityGrave;
 import com.minecolonies.api.tileentities.TileEntityNamedGrave;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.client.gui.WindowHutGraveyardModule;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
@@ -53,7 +52,7 @@ public class BuildingGraveyard extends AbstractBuildingWorker
     /**
      * Descriptive string of the profession.
      */
-    private static final String HUNDERTAKER = "undertaker";
+    private static final String UNDERTAKER = "undertaker";
 
     /**
      * The maximum building level of the hut.
@@ -272,7 +271,7 @@ public class BuildingGraveyard extends AbstractBuildingWorker
     @Override
     public String getJobName()
     {
-        return HUNDERTAKER;
+        return UNDERTAKER;
 }
 
     @NotNull

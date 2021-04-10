@@ -4,7 +4,7 @@ import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
-import com.minecolonies.coremod.entity.ai.citizen.hundertaker.EntityAIWorkUndertaker;
+import com.minecolonies.coremod.entity.ai.citizen.undertaker.EntityAIWorkUndertaker;
 import org.jetbrains.annotations.NotNull;
 
 /**

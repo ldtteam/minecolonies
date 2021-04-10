@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.entity.ai.citizen.hundertaker;
+package com.minecolonies.coremod.entity.ai.citizen.undertaker;
 
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.advancements.AdvancementTriggers;
