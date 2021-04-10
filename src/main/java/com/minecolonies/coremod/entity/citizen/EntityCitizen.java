@@ -1500,7 +1500,7 @@ public class EntityCitizen extends AbstractEntityCitizen
            graveData.setCitizenName(citizenData.getName());
            if (citizenData.getJob() != null)
            {
-               final IFormattableTextComponent jobName =  new TranslationTextComponent(citizenData.getJob().getName());
+               final IFormattableTextComponent jobName =  new TranslationTextComponent(citizenData.getJob().getName().toLowerCase());
                graveData.setCitizenJobName(jobName.getString());
            }
            graveData.setCitizenDataNBT(citizenData.serializeNBT());
