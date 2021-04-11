@@ -111,16 +111,18 @@ public class ResearchListener extends JsonReloadListener
             if (effectJson.has(RESEARCH_EFFECT_PROP))
             {
                 final ResearchEffectCategory category;
-                if((effectJson.has(RESEARCH_NAME_PROP) && effectJson.get(RESEARCH_NAME_PROP).isJsonPrimitive() && effectJson.get(RESEARCH_NAME_PROP).getAsJsonPrimitive().isString()))
+                if((effectJson.has(RESEARCH_NAME_PROP) && effectJson.get(RESEARCH_NAME_PROP).isJsonPrimitive() && effectJson.get(RESEARCH_NAME_PROP).getAsJsonPrimitive().isString())
+                     && effectJson.has(RESEARCH_SUBTITLE_PROP) && effectJson.get(RESEARCH_SUBTITLE_PROP).isJsonPrimitive() && effectJson.get(RESEARCH_SUBTITLE_PROP).getAsJsonPrimitive().isString())
                 {
-                    if(effectJson.has(RESEARCH_SUBTITLE_PROP) && effectJson.get(RESEARCH_SUBTITLE_PROP).isJsonPrimitive() && effectJson.get(RESEARCH_SUBTITLE_PROP).getAsJsonPrimitive().isString())
-                    {
-                        category = new ResearchEffectCategory(entry.getKey().toString(), effectJson.get(RESEARCH_NAME_PROP).getAsString(), effectJson.get(RESEARCH_SUBTITLE_PROP).getAsString());
-                    }
-                    else
-                    {
-                        category = new ResearchEffectCategory(entry.getKey().toString(), effectJson.get(RESEARCH_NAME_PROP).getAsString());
-                    }
+                    category = new ResearchEffectCategory(entry.getKey().toString(), effectJson.get(RESEARCH_NAME_PROP).getAsString(), effectJson.get(RESEARCH_SUBTITLE_PROP).getAsString());
+                }
+                else if((effectJson.has(RESEARCH_NAME_PROP) && effectJson.get(RESEARCH_NAME_PROP).isJsonPrimitive() && effectJson.get(RESEARCH_NAME_PROP).getAsJsonPrimitive().isString()))
+                {
+                    category = new ResearchEffectCategory(entry.getKey().toString(), effectJson.get(RESEARCH_NAME_PROP).getAsString());
+                }
+                else if(effectJson.has(RESEARCH_SUBTITLE_PROP) && effectJson.get(RESEARCH_SUBTITLE_PROP).isJsonPrimitive() && effectJson.get(RESEARCH_SUBTITLE_PROP).getAsJsonPrimitive().isString())
+                {
+                    category = new ResearchEffectCategory(entry.getKey().toString(), null, effectJson.get(RESEARCH_SUBTITLE_PROP).getAsString());
                 }
                 else
                 {
