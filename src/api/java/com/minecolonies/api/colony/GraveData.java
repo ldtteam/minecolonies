@@ -4,6 +4,9 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.StringNBT;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * Container for all the grave data
+ */
 public class GraveData implements IGraveData
 {
     /**

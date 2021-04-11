@@ -2,6 +2,9 @@ package com.minecolonies.api.tileentities;
 
 import net.minecraft.tileentity.TileEntityType;
 
+/**
+ * Represent a TileEntity that will be built by a graveyard undertaker in a graveyard to honor a dead citizen
+ */
 public class TileEntityNamedGrave extends AbstractTileEntityNamedGrave
 {
     /**

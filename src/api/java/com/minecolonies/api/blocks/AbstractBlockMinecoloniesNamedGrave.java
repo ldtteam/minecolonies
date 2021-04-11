@@ -8,6 +8,9 @@ import net.minecraft.item.Item;
 import net.minecraft.state.DirectionProperty;
 import net.minecraftforge.registries.IForgeRegistry;
 
+/**
+ * Abstract class for minecolonies named graves.
+ */
 public abstract class AbstractBlockMinecoloniesNamedGrave<B extends AbstractBlockMinecoloniesNamedGrave<B>> extends AbstractBlockMinecolonies<B>
 {
     /**
