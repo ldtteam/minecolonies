@@ -11,12 +11,12 @@ public class UndertakerConstants
     /**
      * The EXP Earned per dig.
      */
-    public static final double XP_PER_DIG = 0.5;
+    public static final double XP_PER_DIG = 7.5;
 
     /**
      * The EXP Earned per wander.
      */
-    public static final double XP_PER_WANDER = 0.01;
+    public static final double XP_PER_WANDER = 2;
 
     /**
      * The weigth of each building level on the resurrection chances.
