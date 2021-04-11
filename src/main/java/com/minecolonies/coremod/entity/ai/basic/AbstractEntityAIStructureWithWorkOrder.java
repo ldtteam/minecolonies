@@ -262,7 +262,6 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                 {
                     requestState = RequestStage.SOLID;
                     requestProgress = null;
-                    getOwnBuilding().checkOrRequestBucket(getOwnBuilding().getRequiredResources(), worker.getCitizenData(), true);
                     return true;
                 }
                 return false;

@@ -124,6 +124,12 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
      */
     public IAIState pickUpMaterial()
     {
+        if (structurePlacer.getB().getStage() == null || structurePlacer.getB().getStage() == BuildingStructureHandler.Stage.CLEAR)
+        {
+            pickUpCount = 0;
+            return START_WORKING;
+        }
+
         final BuildingBuilder building = getOwnBuilding();
         final List<Tuple<Predicate<ItemStack>, Integer>> neededItemsList = new ArrayList<>();
 

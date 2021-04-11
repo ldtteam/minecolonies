@@ -166,15 +166,16 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
                         return stack.getCount() - qtyToKeep;
                     }
                 }
-
-                if (checkIfShouldKeepTool(ToolType.PICKAXE, stack, localAlreadyKept)
-                      || checkIfShouldKeepTool(ToolType.SHOVEL, stack, localAlreadyKept)
-                      || checkIfShouldKeepTool(ToolType.AXE, stack, localAlreadyKept))
-                {
-                    return 0;
-                }
-                return stack.getCount();
             }
+            if (checkIfShouldKeepTool(ToolType.PICKAXE, stack, localAlreadyKept)
+                  || checkIfShouldKeepTool(ToolType.SHOVEL, stack, localAlreadyKept)
+                  || checkIfShouldKeepTool(ToolType.AXE, stack, localAlreadyKept)
+                  || checkIfShouldKeepTool(ToolType.HOE, stack, localAlreadyKept))
+            {
+                localAlreadyKept.add(new ItemStorage(stack, 1, true));
+                return 0;
+            }
+            return stack.getCount();
         }
         return super.buildingRequiresCertainAmountOfItem(stack, localAlreadyKept, inventory);
     }
@@ -193,7 +194,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
         {
             for (final ItemStorage storage : localAlreadyKept)
             {
-                if (ItemStackUtils.hasToolLevel(storage.getItemStack(), ToolType.PICKAXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()))
+                if (ItemStackUtils.getMiningLevel(stack, type) <= ItemStackUtils.getMiningLevel(storage.getItemStack(), type))
                 {
                     return false;
                 }
@@ -412,7 +413,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     @Nullable
     public BuilderBucket getRequiredResources()
     {
-        return buckets.isEmpty() ? null : buckets.getFirst();
+        return (buckets.isEmpty() || currentStage == 0) ? null : buckets.getFirst();
     }
 
     /**
