@@ -258,7 +258,7 @@
   "minecolonies.config.pathfindingmaxnodes": "Pathfinding Max Nodes",
   "minecolonies.config.pathfindingmaxnodes.comment": "Max amount of nodes (positions) to map during pathfinding. Lowering increases performance, but might lead to pathing glitches.",
   "minecolonies.config.enabledebuglogging": "Enable Debug Logging",
-  "minecolonies.config.enabledebuglogging.comment": "Should the request system show debug information into debug.log? Useful if malfunctioning.",
+  "minecolonies.config.enabledebuglogging.comment": "Should the request system show debug information in the debug.log? Useful if malfunctioning.",
   "minecolonies.config.maximalretries": "Maximal Retries",
   "minecolonies.config.maximalretries.comment": "The maximal amount of tries that the request system will perform for retryable requests. Higher increases server load.",
   "minecolonies.config.delaybetweenretries": "Delay Between Retries",
