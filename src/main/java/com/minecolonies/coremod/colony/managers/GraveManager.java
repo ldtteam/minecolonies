@@ -125,6 +125,11 @@ public class GraveManager implements IGraveManager
     {
         for (@NotNull final BlockPos pos : graves.keySet())
         {
+            if(!WorldUtil.isBlockLoaded(colony.getWorld(), pos))
+            {
+                continue;
+            }
+
             final TileEntityGrave graveEntity = (TileEntityGrave) colony.getWorld().getTileEntity(pos);
             if(graveEntity == null)
             {
