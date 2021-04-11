@@ -642,7 +642,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             }
             if (!research.getEffects().get(txt).getSubtitle().getKey().isEmpty())
             {
-                hoverPaneBuilder.paragraphBreak().append(new StringTextComponent("-")).append(research.getEffects().get(txt).getSubtitle());
+                hoverPaneBuilder.paragraphBreak().append(new StringTextComponent("-")).append(research.getEffects().get(txt).getSubtitle()).italic().colorName("GRAY");
             }
         }
         if (state != ResearchButtonState.FINISHED && state != ResearchButtonState.IN_PROGRESS)
