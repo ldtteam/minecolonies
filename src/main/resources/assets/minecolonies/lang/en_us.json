@@ -353,7 +353,7 @@
 
   "entity.worker.inventoryfullchestfull": "Please make space in my chests/racks. I am not able to dump my inventory.",
 
-  "entity.builder.messagebuildstart": ": I've started work on %s!",
+  "entity.builder.messagebuildstart": "I've started work on %s!",
   "entity.builder.messagebuildcomplete": ": I've finished building the %s at %s %s %s!",
   "entity.builder.messagebuildcomplete_manual": ": I've finished building the %s at %s %s %s. You can assign me another task now!",
   "entity.builder.messageremovalcomplete": ": I've finished deconstructing building %s! §6 To move the building while retaining its current level, use the 'Pick Up' button on the building's 'Build Options' GUI.",
@@ -587,8 +587,8 @@
   "com.minecolonies.coremod.gui.townhall.feuds": "Feuds:",
   "com.minecolonies.coremod.gui.townhall.tp": "Do you really want to teleport to %s? [YES]",
 
-  "com.minecolonies.coremod.workorderadded": "Build request created!",
-  "com.minecolonies.coremod.decoorderadded": "Decoration request created!",
+  "com.minecolonies.coremod.workorderadded": "Build request created for colony %s!",
+  "com.minecolonies.coremod.decoorderadded": "Decoration request created for colony %s!",
 
   "com.minecolonies.coremod.gui.hiring.on": "Manual",
   "com.minecolonies.coremod.gui.requestfert.on": "Enabled",
@@ -1589,7 +1589,7 @@
   "com.minecolonies.coremod.entity.citizen.no.slepttonight": "I didn't have enough time to go to sleep in the last three days!",
   "com.minecolonies.coremod.entity.citizen.sleep": "All colonists are tucked into bed.",
 
-  "com.minecolonies.coremod.gui.townhall.happiness.homelessness": "Homelessness",
+  "com.minecolonies.coremod.gui.townhall.happiness.homelessness": "Housing",
   "com.minecolonies.coremod.gui.townhall.happiness.unemployment": "Unemployment",
   "com.minecolonies.coremod.gui.townhall.happiness.health": "Health",
   "com.minecolonies.coremod.gui.townhall.happiness.idleatjob": "Idling as a Worker",
