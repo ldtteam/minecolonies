@@ -1463,7 +1463,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
             if(citizenColonyHandler.getColony().isCoordInColony(world, getPosition()))
             {
-                createCitizenGrave();
+                getCitizenColonyHandler().getColony().getGraveManager().createCitizenGrave(world, getPosition(), citizenData);
             }
             else
             {
@@ -1480,39 +1480,6 @@ public class EntityCitizen extends AbstractEntityCitizen
             citizenColonyHandler.getColony().getEventDescriptionManager().addEventDescription(new CitizenDiedEvent(getPosition(), citizenData.getName(), deathCause));
         }
         super.onDeath(damageSource);
-    }
-
-    private void createCitizenGrave()
-    {
-        final BlockPos firstValidPosition = ConstructionTapeHelper.firstValidPosition(getPosition(), world, 10);
-        if (firstValidPosition != null)
-        {
-           world.setBlockState(firstValidPosition, BlockMinecoloniesGrave.getPlacementState(ModBlocks.blockGrave.getDefaultState(), new TileEntityGrave(), firstValidPosition));
-           final TileEntityGrave graveEntity = (TileEntityGrave) world.getTileEntity(firstValidPosition);
-           if(!InventoryUtils.transferAllItemHandler(citizenData.getInventory(), graveEntity.getInventory()))
-           {
-               InventoryUtils.dropItemHandler(citizenData.getInventory(), world, (int) getPosX(), (int) getPosY(), (int) getPosZ());
-           }
-
-           graveEntity.delayDecayTimer(getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(GRAVE_DECAY_BONUS));
-
-           GraveData graveData = new GraveData();
-           graveData.setCitizenName(citizenData.getName());
-           if (citizenData.getJob() != null)
-           {
-               final IFormattableTextComponent jobName =  new TranslationTextComponent(citizenData.getJob().getName().toLowerCase());
-               graveData.setCitizenJobName(jobName.getString());
-           }
-           graveData.setCitizenDataNBT(citizenData.serializeNBT());
-           graveEntity.setGraveData(graveData);
-
-           getCitizenColonyHandler().getColony().getGraveManager().addNewGrave(firstValidPosition);
-           LanguageHandler.sendPlayersMessage(getCitizenColonyHandler().getColony().getImportantMessageEntityPlayers(), "com.minecolonies.coremod.gravespawned");
-        }
-        else
-        {
-            InventoryUtils.dropItemHandler(citizenData.getInventory(), world, (int) getPosX(), (int) getPosY(), (int) getPosZ());
-        }
     }
 
     /**

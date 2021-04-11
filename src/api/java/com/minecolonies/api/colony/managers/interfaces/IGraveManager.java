@@ -1,8 +1,10 @@
 package com.minecolonies.api.colony.managers.interfaces;
 
+import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -48,6 +50,17 @@ public interface IGraveManager
      * @return the grave successfully reserved or null if none available
      */
     BlockPos reserveNextFreeGrave();
+
+    /**
+     * Attempt to create a TileEntityGrave at @pos containing the specific @citizenData
+     *
+     * On failure: drop all the citizen inventory on the ground.
+     *
+     * @param world        The world.
+     * @param pos          The position where to spawn a grave
+     * @param citizenData  The citizenData
+     */
+    void createCitizenGrave(final World world, final BlockPos pos, final ICitizenData citizenData);
 
     /**
      * Returns a map with all graves within the colony. Key is ID (Coordinates), value is isReserved boolean.

@@ -1,6 +1,8 @@
 package com.minecolonies.coremod.colony.managers;
 
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.blocks.ModBlocks;
+import com.minecolonies.api.colony.GraveData;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyTagCapability;
@@ -21,9 +23,11 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.blocks.BlockMinecoloniesGrave;
 import com.minecolonies.coremod.blocks.huts.BlockHutTavern;
 import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
 import com.minecolonies.coremod.blocks.huts.BlockHutWareHouse;
+import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.BuildingMysticalSite;
@@ -40,6 +44,8 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.util.Constants;
@@ -50,6 +56,7 @@ import java.util.*;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateConstants.MAX_TICKRATE;
+import static com.minecolonies.api.research.util.ResearchConstants.GRAVE_DECAY_BONUS;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 
@@ -244,5 +251,48 @@ public class GraveManager implements IGraveManager
         }
 
         return null;
+    }
+
+    /**
+     * Attempt to create a TileEntityGrave at @pos containing the specific @citizenData
+     *
+     * On failure: drop all the citizen inventory on the ground.
+     *
+     * @param world        The world.
+     * @param pos          The position where to spawn a grave
+     * @param citizenData  The citizenData
+     */
+    @Override
+    public void createCitizenGrave(final World world, final BlockPos pos, final ICitizenData citizenData)
+    {
+        final BlockPos firstValidPosition = ConstructionTapeHelper.firstValidPosition(pos, world, 10);
+        if (firstValidPosition != null)
+        {
+            world.setBlockState(firstValidPosition, BlockMinecoloniesGrave.getPlacementState(ModBlocks.blockGrave.getDefaultState(), new TileEntityGrave(), firstValidPosition));
+            final TileEntityGrave graveEntity = (TileEntityGrave) world.getTileEntity(firstValidPosition);
+            if(!InventoryUtils.transferAllItemHandler(citizenData.getInventory(), graveEntity.getInventory()))
+            {
+                InventoryUtils.dropItemHandler(citizenData.getInventory(), world, pos.getX(), pos.getY(), pos.getZ());
+            }
+
+            graveEntity.delayDecayTimer(colony.getResearchManager().getResearchEffects().getEffectStrength(GRAVE_DECAY_BONUS));
+
+            GraveData graveData = new GraveData();
+            graveData.setCitizenName(citizenData.getName());
+            if (citizenData.getJob() != null)
+            {
+                final IFormattableTextComponent jobName =  new TranslationTextComponent(citizenData.getJob().getName().toLowerCase());
+                graveData.setCitizenJobName(jobName.getString());
+            }
+            graveData.setCitizenDataNBT(citizenData.serializeNBT());
+            graveEntity.setGraveData(graveData);
+
+            colony.getGraveManager().addNewGrave(firstValidPosition);
+            LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), "com.minecolonies.coremod.gravespawned");
+        }
+        else
+        {
+            InventoryUtils.dropItemHandler(citizenData.getInventory(), world, pos.getX(), pos.getY(), pos.getZ());
+        }
     }
 }
