@@ -131,6 +131,9 @@ public class Permissions implements IPermissions
         this.loadRanks();
     }
 
+    /**
+     * Load ranks from old enum and create according class instances
+     */
     private void loadRanks()
     {
         ranks.clear();
@@ -186,10 +189,10 @@ public class Permissions implements IPermissions
     }
 
     /**
-     * Sets the oldRank for a specific action.
+     * Sets the rank for a specific action.
      *
      * @param rank   Desired rank.
-     * @param action Action that should have desired oldRank.
+     * @param action Action that should have desired rank.
      */
     public final boolean setPermission(final Rank rank, @NotNull final Action action)
     {
@@ -220,9 +223,9 @@ public class Permissions implements IPermissions
     }
 
     /**
-     * Toggle permission for a specific oldRank.
+     * Toggle permission for a specific rank.
      *
-     * @param rank   OldRank to toggle permission.
+     * @param rank   Rank to toggle permission.
      * @param action Action to toggle permission.
      */
     @Override
@@ -545,11 +548,11 @@ public class Permissions implements IPermissions
     }
 
     /**
-     * Checks if a oldRank can perform an action.
+     * Checks if a rank can perform an action.
      *
      * @param rank   Rank you want to check.
      * @param action Action you want to perform.
-     * @return true if oldRank has permission for action, otherwise false.
+     * @return true if rank has permission for action, otherwise false.
      */
     @Override
     public boolean hasPermission(final Rank rank, @NotNull final Action action)
@@ -560,7 +563,7 @@ public class Permissions implements IPermissions
     }
 
     /**
-     * Gets all player by a certain oldRank.
+     * Gets all player by a certain rank.
      *
      * @param rank the rank.
      * @return set of players.
@@ -574,7 +577,7 @@ public class Permissions implements IPermissions
     }
 
     /**
-     * Gets all player by a set of oldRanks.
+     * Gets all player by a set of ranks.
      *
      * @param ranks the set of Ranks.
      * @return set of players.
@@ -624,9 +627,9 @@ public class Permissions implements IPermissions
     }
 
     /**
-     * Remove permission for a specific oldRank.
+     * Remove permission for a specific rank.
      *
-     * @param rank   OldRank to remove permission.
+     * @param rank   Rank to remove permission.
      * @param action Action to remove from rank.
      */
     public boolean removePermission(final Rank rank, @NotNull final Action action)
@@ -644,7 +647,7 @@ public class Permissions implements IPermissions
     }
 
     /**
-     * Sets the player's oldRank to a given oldRank.
+     * Sets the player's rank to a given rank.
      *
      * @param id    UUID of the player of the new oldRank.
      * @param rank  Desired rank.
@@ -936,42 +939,70 @@ public class Permissions implements IPermissions
         }
     }
 
+    /**
+     * Get rank instance of owner
+     * @return the rank
+     */
     @Override
     public Rank getRankOwner()
     {
         return ranks.get(OWNER_RANK_ID);
     }
 
+    /**
+     * Get rank instance of officer
+     * @return the rank
+     */
     @Override
     public Rank getRankOfficer()
     {
         return ranks.get(OFFICER_RANK_ID);
     }
 
+    /**
+     * Get rank instance of hostile
+     * @return the rank
+     */
     @Override
     public Rank getRankHostile()
     {
         return ranks.get(HOSTILE_RANK_ID);
     }
 
+    /**
+     * Get rank instance of friend
+     * @return the rank
+     */
     @Override
     public Rank getRankFriend()
     {
         return ranks.get(FRIEND_RANK_ID);
     }
 
+    /**
+     * Get rank instance of neutral
+     * @return the rank
+     */
     @Override
     public Rank getRankNeutral()
     {
         return ranks.get(NEUTRAL_RANK_ID);
     }
 
+    /**
+     * Get a map of all ranks with their according ID as key
+     * @return the ranks
+     */
     @Override
     public LinkedHashMap<Integer, Rank> getRanks()
     {
         return ranks;
     }
 
+    /**
+     * Create a new rank instance with the given name, auto assign lowest unused ID, no permissions
+     * @param name the name of the rank
+     */
     @Override
     public void addRank(String name)
     {
@@ -991,6 +1022,11 @@ public class Permissions implements IPermissions
         markDirty();
     }
 
+    /**
+     * Remove the given rank, if it is not an initial rank
+     * Set all players with the given rank to neutral
+     * @param rank the rank to remove
+     */
     @Override public void removeRank(Rank rank)
     {
         if (rank.isInitial())

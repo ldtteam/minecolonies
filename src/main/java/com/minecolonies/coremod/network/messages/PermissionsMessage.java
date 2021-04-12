@@ -4,14 +4,12 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.colony.permissions.OldRank;
 import com.minecolonies.api.colony.permissions.Player;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.network.PacketUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.permissions.Permissions;
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
@@ -143,7 +141,7 @@ public class PermissionsMessage
          *
          * @param colony Colony the permission is set in
          * @param type   Type of permission {@link MessageType}
-         * @param rank   Rank of the permission {@link OldRank}
+         * @param rank   Rank of the permission {@link Rank}
          * @param action Action of the permission {@link Action}
          */
         public Permission(@NotNull final IColonyView colony, final MessageType type, final Rank rank, final Action action)
@@ -295,17 +293,37 @@ public class PermissionsMessage
         }
     }
 
+    /**
+     * Message class for adding a rank to the colony
+     */
     public static class AddRank implements IMessage
     {
+        /**
+         * the ID of the colony
+         */
         private int colonyID;
+        /**
+         * the name of the new rank
+         */
         private String rankName;
+        /**
+         * the dimension of the colony
+         */
         private RegistryKey<World> dimension;
 
+        /**
+         * Empty public constructor
+         */
         public AddRank()
         {
             super();
         }
 
+        /**
+         * Constructor for adding a rank to the colony
+         * @param colony the colony to add the rank to
+         * @param name the name of the rank
+         */
         public AddRank(@NotNull IColonyView colony, @NotNull String name)
         {
             super();
@@ -422,7 +440,7 @@ public class PermissionsMessage
     }
 
     /**
-     * Message class for setting a player oldRank in the permissions.
+     * Message class for setting a player rank in the permissions.
      */
     public static class ChangePlayerRank implements IMessage
     {
@@ -444,10 +462,10 @@ public class PermissionsMessage
         }
 
         /**
-         * Constructor for setting a player oldRank.
+         * Constructor for setting a player rank.
          *
-         * @param colony Colony the oldRank is set in.
-         * @param player UUID of the player to set oldRank.
+         * @param colony Colony the rank is set in.
+         * @param player UUID of the player to set rank.
          * @param rank   Rank to change to.
          */
         public ChangePlayerRank(@NotNull final IColonyView colony, final UUID player, final Rank rank)
@@ -586,17 +604,37 @@ public class PermissionsMessage
         }
     }
 
+    /**
+     * Message class for removing a rank from a colony
+     */
     public static class RemoveRank implements IMessage
     {
+        /**
+         * the colony ID
+         */
         private int colonyId;
+        /**
+         * the rank ID
+         */
         private int rankId;
+        /**
+         * the dimension of the colony
+         */
         private RegistryKey<World> dimension;
 
+        /**
+         * Empty public constructor
+         */
         public RemoveRank()
         {
             super();
         }
 
+        /**
+         * Constructor for removing a rank from a colony
+         * @param colony the colony to remove the rank from
+         * @param rank the rank to remove
+         */
         public RemoveRank(@NotNull final IColonyView colony, @NotNull final Rank rank)
         {
             super();

@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.util;
 
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.permissions.OldRank;
 import com.minecolonies.api.colony.permissions.Player;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.coremod.MineColonies;

@@ -2,7 +2,6 @@ package com.minecolonies.coremod.network.messages.server.colony;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.colony.permissions.OldRank;
 import com.minecolonies.coremod.network.messages.server.AbstractColonyServerMessage;
 import com.minecolonies.coremod.util.TeleportHelper;
 import net.minecraft.network.PacketBuffer;

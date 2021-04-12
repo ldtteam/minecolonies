@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public class PermissionsView implements IPermissions
 {
     @NotNull
-    private final Map<UUID, Player>     players     = new HashMap<>();
+    private final Map<UUID, Player>  players     = new HashMap<>();
     @NotNull
     private final Map<Rank, Integer> permissions = new HashMap<>();
     private       Rank               userRank;
@@ -39,9 +39,9 @@ public class PermissionsView implements IPermissions
     }
 
     /**
-     * Gets all player by a certain oldRank.
+     * Gets all player by a certain rank.
      *
-     * @param rank the oldRank.
+     * @param rank the rank.
      * @return set of players.
      */
     @NotNull
@@ -107,7 +107,7 @@ public class PermissionsView implements IPermissions
     }
 
     /**
-     * Checks if the oldRank has the permission to do an action.
+     * Checks if the rank has the permission to do an action.
      *
      * @param rank   the rank of the player.
      * @param action the action he is trying to execute.
@@ -120,7 +120,7 @@ public class PermissionsView implements IPermissions
     }
 
     /**
-     * Sets if the oldRank has the permission to do an action.
+     * Sets if the rank has the permission to do an action.
      *
      * @param rank   the rank to set.
      * @param action the action he is trying to execute.
@@ -140,7 +140,7 @@ public class PermissionsView implements IPermissions
     }
 
     /**
-     * Remove if the oldRank has the permission to do an action.
+     * Remove if the rank has the permission to do an action.
      *
      * @param rank   the rank to set.
      * @param action the action he is trying to execute.
