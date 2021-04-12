@@ -633,8 +633,8 @@ public class Colony implements IColony
             this.colonyTeamColor = colonyColor;
             this.world.getScoreboard().getTeam(getTeamName()).setColor(colonyColor);
             this.world.getScoreboard().getTeam(getTeamName()).setPrefix(new StringTextComponent(colonyColor.toString()));
-            this.markDirty();
         }
+        this.markDirty();
     }
 
     /**
@@ -670,11 +670,6 @@ public class Colony implements IColony
             c.setRequestManager();
             c.read(compound);
 
-            if (c.getProgressManager().isPrintingProgress() && (c.getBuildingManager().getBuildings().size() > BUILDING_LIMIT_FOR_HELP
-                                                                  || c.getCitizenManager().getCitizens().size() > CITIZEN_LIMIT_FOR_HELP))
-            {
-                c.getProgressManager().togglePrintProgress();
-            }
             return c;
         }
         catch (final Exception e)
@@ -800,7 +795,9 @@ public class Colony implements IColony
 
         if (compound.keySet().contains(TAG_TEAM_COLOR))
         {
-            this.setColonyColor(TextFormatting.values()[compound.getInt(TAG_TEAM_COLOR)]);
+            // This read can occur before the world is non-null, due to Minecraft's order of operations for capabilities.
+            // As a result, setColonyColor proper must wait until onWorldLoad fires.
+            this.colonyTeamColor = TextFormatting.values()[compound.getInt(TAG_TEAM_COLOR)];
         }
 
         if (compound.keySet().contains(TAG_FLAG_PATTERNS))
@@ -960,6 +957,7 @@ public class Colony implements IColony
                 eventHandler = new ColonyPermissionEventHandler(this);
                 MinecraftForge.EVENT_BUS.register(eventHandler);
             }
+            setColonyColor(this.colonyTeamColor);
         }
     }
 

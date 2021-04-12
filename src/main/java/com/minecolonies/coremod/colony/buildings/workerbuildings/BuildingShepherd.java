@@ -36,6 +36,11 @@ public class BuildingShepherd extends AbstractBuildingWorker
     private static final String SHEPHERD = "shepherd";
 
     /**
+     * The hut name, used for the lang string in the GUI
+     */
+    private static final String HUT_NAME = "shepherdhut";
+
+    /**
      * Max building level of the hut.
      */
     private static final int MAX_BUILDING_LEVEL = 5;
@@ -128,7 +133,7 @@ public class BuildingShepherd extends AbstractBuildingWorker
         @Override
         public Window getWindow()
         {
-            return new WindowHutWorkerModulePlaceholder<>(this, SHEPHERD);
+            return new WindowHutWorkerModulePlaceholder<>(this, HUT_NAME);
         }
     }
 }
