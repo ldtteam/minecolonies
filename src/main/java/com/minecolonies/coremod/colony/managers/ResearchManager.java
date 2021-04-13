@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
-import static com.minecolonies.api.research.util.ResearchConstants.BASE_RESEARCH_TIME;
 import static com.minecolonies.api.util.constant.TranslationConstants.RESEARCH_CONCLUDED;
 
 /**
@@ -184,7 +183,7 @@ public class ResearchManager implements IResearchManager
         if(research.isInstant() || (creativePlayer && MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchCreativeCompletion.get()))
         {
             ILocalResearch localResearch = tree.getResearch(research.getBranch(), research.getId());
-            localResearch.setProgress((int) (BASE_RESEARCH_TIME * IGlobalResearchTree.getInstance().getBranchData(research.getBranch()).getBaseTime() * Math.pow(2, research.getDepth() - 1)));
+            localResearch.setProgress(IGlobalResearchTree.getInstance().getBranchData(research.getBranch()).getBaseTime(research.getDepth()));
             localResearch.setState(ResearchState.FINISHED);
             tree.finishResearch(research.getId());
             for (IResearchEffect<?> effect : IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getEffects())
