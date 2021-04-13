@@ -80,6 +80,6 @@ public class WindowHutBeekeeperModule extends AbstractWindowWorkerModuleBuilding
     @Override
     public String getBuildingName()
     {
-        return "com.minecolonies.coremod.gui.workerhuts.beekeeperHut";
+        return "com.minecolonies.coremod.gui.workerhuts.beekeeperhut";
     }
 }
