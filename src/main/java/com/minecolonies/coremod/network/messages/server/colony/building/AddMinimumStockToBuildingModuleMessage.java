@@ -64,6 +64,6 @@ public class AddMinimumStockToBuildingModuleMessage extends AbstractBuildingServ
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuilding building)
     {
-        building.getFirstModuleOccurance(IMinimumStockModule.class).addMinimumStock(itemStack, quantity);
+        building.getFirstOptionalModuleOccurance(IMinimumStockModule.class).ifPresent(m -> m.addMinimumStock(itemStack, quantity));
     }
 }

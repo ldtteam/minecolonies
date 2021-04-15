@@ -157,7 +157,14 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public boolean hasModule(final Class<? extends IBuildingModule> clazz)
     {
-        return getFirstModuleOccurance(clazz) != null;
+        for (final IBuildingModule module : modules)
+        {
+            if (clazz.isInstance(module))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     @NotNull
@@ -171,7 +178,8 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
                 return (T) module;
             }
         }
-        return null;
+
+        throw new IllegalStateException("The module of class: " + clazz.toString() + "should never be null!");
     }
 
     @NotNull
