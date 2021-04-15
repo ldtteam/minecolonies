@@ -224,10 +224,7 @@ public class EntityAISleep extends Goal
             {
                 final IBuilding hut = colony.getBuildingManager().getBuilding(citizen.getHomePosition());
                 List<BlockPos> bedList = new ArrayList<>();
-                if (hut.hasModule(BedHandlingModule.class))
-                {
-                    hut.getFirstOptionalModuleOccurance(BedHandlingModule.class).ifPresent(module -> bedList.addAll(module.getRegisteredBlocks()));
-                }
+                hut.getFirstOptionalModuleOccurance(BedHandlingModule.class).ifPresent(module -> bedList.addAll(module.getRegisteredBlocks()));
 
                 for (final BlockPos pos : bedList)
                 {

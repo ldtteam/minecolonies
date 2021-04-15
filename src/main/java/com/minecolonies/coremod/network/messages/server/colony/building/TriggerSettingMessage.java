@@ -68,10 +68,7 @@ public class TriggerSettingMessage extends AbstractBuildingServerMessage<Abstrac
     public void onExecute(
       final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final AbstractBuildingWorker building)
     {
-        if (building.hasModule(SettingsModule.class))
-        {
-            building.getFirstModuleOccurance(SettingsModule.class).with(new SettingKey<>(this.value.getClass(), this.key), this.value);
-        }
+        building.getFirstOptionalModuleOccurance(SettingsModule.class).ifPresent(m -> m.with(new SettingKey<>(this.value.getClass(), this.key), this.value));
     }
 }
 
