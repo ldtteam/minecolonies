@@ -697,7 +697,7 @@ public final class BlockPosUtil
      * @param predicate check predicate for the right block
      * @return position or null
      */
-    public static BlockPos findAround(final IBlockReader world, final BlockPos start, final int vRange, final int hRange, final BiPredicate<IBlockReader, BlockPos> predicate)
+    public static BlockPos findAround(final World world, final BlockPos start, final int vRange, final int hRange, final BiPredicate<IBlockReader, BlockPos> predicate)
     {
         if (vRange < 1 && hRange < 1)
         {
@@ -763,6 +763,11 @@ public final class BlockPosUtil
             y += y_offset;
             y_offset++;
             y_offset *= -1;
+
+            if (world.func_234938_ad_() <= start.getY() + y)
+            {
+                return null;
+            }
         }
 
         return null;
@@ -775,7 +780,7 @@ public final class BlockPosUtil
      * @param start       startpos
      * @return
      */
-    public static BlockPos findSpawnPosAround(final IBlockReader worldReader, final BlockPos start)
+    public static BlockPos findSpawnPosAround(final World worldReader, final BlockPos start)
     {
         return findAround(worldReader, start, 1, 1,
           (world, pos) -> world.getBlockState(pos).getMaterial() == Material.AIR && world.getBlockState(pos.up()).getMaterial() == Material.AIR);
