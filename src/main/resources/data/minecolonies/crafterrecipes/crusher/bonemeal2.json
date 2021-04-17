@@ -3,12 +3,12 @@
   "crafter": "crusher",
   "inputs": [
     {
-      "item" : "minecraft:bone_block",
+      "item" : "minecraft:bone",
       "count": "1"
     }
   ],
   "result": "minecraft:bone_meal",
-  "count": "9",
+  "count": "5",
   "intermediate" : "minecraft:air",
-  "not-research-id" : "minecolonies:technology/gildedhammer"
+  "research-id" : "minecolonies:technology/gildedhammer"
 }
