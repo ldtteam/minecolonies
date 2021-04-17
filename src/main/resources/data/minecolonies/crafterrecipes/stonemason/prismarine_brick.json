@@ -13,6 +13,5 @@
   ],
   "result": "minecraft:prismarine_bricks",
   "count": 1,
-  "intermediate" : "minecraft:air",
-  "show-jei" : true
+  "intermediate" : "minecraft:air"
 }

@@ -10,6 +10,5 @@
   "result": "minecraft:clay",
   "count": "1",
   "intermediate" : "minecraft:air",
-  "not-research-id" : "minecolonies:technology/gildedhammer",
-  "show-jei" : true
+  "not-research-id" : "minecolonies:technology/gildedhammer"
 }

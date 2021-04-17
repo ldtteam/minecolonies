@@ -40,6 +40,5 @@
   ],
   "loot-table": "minecolonies:recipes/diamond/gravel",
   "min-building-level": 5,
-  "intermediate": "minecraft:air",
-  "show-jei" : true
+  "intermediate": "minecraft:air"
 }

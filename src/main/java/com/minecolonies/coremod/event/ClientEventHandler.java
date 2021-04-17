@@ -184,7 +184,11 @@ public class ClientEventHandler
         {
             return;
         }
-        final IColony colony = IMinecoloniesAPI.getInstance().getColonyManager().getClosestIColony(event.getPlayer().world, event.getPlayer().getPosition());
+        IColony colony = IMinecoloniesAPI.getInstance().getColonyManager().getClosestIColony(event.getPlayer().world, event.getPlayer().getPosition());
+        if(colony == null || !colony.isCoordInColony(event.getPlayer().world, event.getPlayer().getPosition()))
+        {
+            colony = IMinecoloniesAPI.getInstance().getColonyManager().getIColonyByOwner(event.getPlayer().world, event.getPlayer());
+        }
         handleCrafterRecipeTooltips(colony, event.getToolTip(), event.getItemStack().getItem());
         if(event.getItemStack().getItem() instanceof BlockItem)
         {
@@ -220,20 +224,13 @@ public class ClientEventHandler
             if(rec.getMinBuildingLevel() > 0)
             {
                 final IFormattableTextComponent reqLevelText = new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ITEM_BUILDLEVEL_TOOLTIP_GUI, crafterCapitalized, rec.getMinBuildingLevel());
-                if(colony != null)
+                if(colony != null && colony.hasBuilding(rec.getCrafter(), rec.getMinBuildingLevel(), true))
                 {
-                    if(colony.hasBuilding(rec.getCrafter(), rec.getMinBuildingLevel(), true))
-                    {
-                        reqLevelText.setStyle(Style.EMPTY.setFormatting(TextFormatting.AQUA));
-                    }
-                    else
-                    {
-                        reqLevelText.setStyle(Style.EMPTY.setFormatting(TextFormatting.RED));
-                    }
+                    reqLevelText.setStyle(Style.EMPTY.setFormatting(TextFormatting.AQUA));
                 }
                 else
                 {
-                    reqLevelText.setStyle(Style.EMPTY.setItalic(true).setFormatting(TextFormatting.GRAY));
+                    reqLevelText.setStyle(Style.EMPTY.setFormatting(TextFormatting.RED));
                 }
                 toolTip.add(reqLevelText);
             }
@@ -245,19 +242,6 @@ public class ClientEventHandler
             }
             if(rec.getRequiredResearchId() != null)
             {
-                TextFormatting researchFormat = TextFormatting.GRAY;
-                if(colony != null)
-                {
-                    if (colony.getResearchManager().getResearchTree().hasCompletedResearch(rec.getRequiredResearchId()) ||
-                          colony.getResearchManager().getResearchEffects().getEffectStrength(rec.getRequiredResearchId()) > 0)
-                    {
-                        researchFormat = TextFormatting.AQUA;
-                    }
-                    else
-                    {
-                        researchFormat = TextFormatting.RED;
-                    }
-                }
                 final Set<IGlobalResearch> researches;
                 if(IMinecoloniesAPI.getInstance().getGlobalResearchTree().hasResearch(rec.getRequiredResearchId()))
                 {
@@ -270,6 +254,17 @@ public class ClientEventHandler
                 }
                 if(researches != null)
                 {
+                    TextFormatting researchFormat = TextFormatting.GRAY;
+                    if (colony != null && (colony.getResearchManager().getResearchTree().hasCompletedResearch(rec.getRequiredResearchId()) ||
+                                             colony.getResearchManager().getResearchEffects().getEffectStrength(rec.getRequiredResearchId()) > 0))
+                    {
+                        researchFormat = TextFormatting.AQUA;
+                    }
+                    else
+                    {
+                        researchFormat = TextFormatting.RED;
+                    }
+
                     for (IGlobalResearch research : researches)
                     {
                         toolTip.add(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ITEM_REQUIRES_RESEARCH_TOOLTIP_GUI,

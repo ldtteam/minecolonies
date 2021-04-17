@@ -25,6 +25,5 @@
   ],
   "loot-table": "minecolonies:recipes/flint/soul_sand",
   "min-building-level": 3,
-  "intermediate": "minecraft:air",
-  "show-jei" : true
+  "intermediate": "minecraft:air"
 }

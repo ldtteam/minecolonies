@@ -142,11 +142,6 @@ public class CustomRecipe
     public static final String RECIPE_SHOW_TOOLTIP = "show-tooltip";
 
     /**
-     * The property name to transmit to the client, without adding tooltip information.
-     */
-    public static final String RECIPE_SHOW_JEI = "show-jei";
-
-    /**
      * The crafter name for this instance, defaults to 'unknown'
      */
     private String crafter = "unknown";
@@ -210,11 +205,6 @@ public class CustomRecipe
      * If true, display the recipe's requirements and crafter in an Inventory / JEI tooltip.
      */
     private boolean showTooltip = false;
-
-    /**
-     * If true, sends the data to the client to be read for JEI purposes, without displaying tool text information.
-     */
-    private boolean showJei = false;
 
     /**
      * The loottable to use for possible additional outputs
@@ -409,10 +399,6 @@ public class CustomRecipe
         {
             recipe.showTooltip = recipeJson.get(RECIPE_SHOW_TOOLTIP).getAsBoolean();
         }
-        if(recipeJson.has(RECIPE_SHOW_JEI))
-        {
-            recipe.showJei = recipeJson.get(RECIPE_SHOW_JEI).getAsBoolean();
-        }
 
         return recipe;
     }
@@ -426,12 +412,15 @@ public class CustomRecipe
         this.result = primaryOutput;
         this.secondary = secondaryOutput;
         this.altOutputs = altOutputs;
-        this.lootTable = lootTable;
-        if(!researchReq.getPath().isEmpty())
+        if(lootTable != null)
+        {
+            this.lootTable = lootTable;
+        }
+        if(researchReq != null)
         {
             this.researchId = researchReq;
         }
-        if(!researchExclude.getPath().isEmpty())
+        if(researchExclude != null)
         {
             this.excludedResearchId = researchExclude;
         }
@@ -439,7 +428,6 @@ public class CustomRecipe
         this.maxBldgLevel = maxBldgLevel;
         this.mustExist = mustExist;
         this.showTooltip = showTooltip;
-        this.showJei = true;
     }
 
     /**
@@ -721,13 +709,5 @@ public class CustomRecipe
     public boolean getShowTooltip()
     {
         return showTooltip;
-    }
-
-    /**
-     * Should the recipe be transmitted for later use in JEI or non-tooltip client applications?
-     */
-    public boolean getShowJei()
-    {
-        return showJei;
     }
 }

@@ -1749,7 +1749,7 @@
   "com.minecolonies.coremod.item.chorus.bread.gui": "Teleports you to the surface",
   "com.minecolonies.coremod.item.available.gui": "Crafted by a MineColonies %s",
   "com.minecolonies.coremod.item.buildlevel.gui": "Crafted by a MineColonies %s level %s or higher",
-  "com.minecolonies.coremod.item.requiresresearch.gui": "Requires Research : %s",
+  "com.minecolonies.coremod.item.requiresresearch.gui": "Requires Research: %s",
 
   "com.minecolonies.coremod.gui.xofz": "%d of %d",
   "com.minecolonies.coremod.gui.happiness.negative": "Negative",

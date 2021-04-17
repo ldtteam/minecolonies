@@ -52,6 +52,5 @@
   ],
   "loot-table": "minecolonies:recipes/iron/dirt",
   "min-building-level": 4,
-  "intermediate": "minecraft:air",
-  "show-jei" : true
+  "intermediate": "minecraft:air"
 }

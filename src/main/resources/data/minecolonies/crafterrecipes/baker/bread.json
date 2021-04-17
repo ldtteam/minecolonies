@@ -9,6 +9,5 @@
   ],
   "result": "minecraft:bread",
   "count": 1,
-  "intermediate" : "minecraft:furnace",
-  "show-jei" : true
+  "intermediate" : "minecraft:furnace"
 }

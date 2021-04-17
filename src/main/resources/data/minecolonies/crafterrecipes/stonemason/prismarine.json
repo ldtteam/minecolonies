@@ -12,6 +12,5 @@
     }  ],
   "result": "minecraft:prismarine",
   "count": 1,
-  "intermediate" : "minecraft:air",
-  "show-jei" : true
+  "intermediate" : "minecraft:air"
 }

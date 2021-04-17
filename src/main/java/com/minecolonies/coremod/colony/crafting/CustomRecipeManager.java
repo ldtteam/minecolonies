@@ -24,12 +24,12 @@ public class CustomRecipeManager
     final private static CustomRecipeManager instance = new CustomRecipeManager();
 
     /**
-     * The map of loaded recipes by crafter. Only fully populated on the server or in local single-player.
+     * The map of loaded recipes by crafter.
      */
     final private HashMap<String, Map<ResourceLocation, CustomRecipe>> recipeMap = new HashMap<>();
 
     /**
-     * The map of all loaded recipes by output. Only reliably populated on the client.
+     * The map of all loaded recipes by output.
      */
     final private HashMap<Item, List<CustomRecipe>> recipeOutputMap = new HashMap<>();
 
@@ -65,6 +65,20 @@ public class CustomRecipeManager
         }
 
         recipeMap.get(recipe.getCrafter()).put(recipe.getRecipeId(), recipe);
+
+        if (!recipeOutputMap.containsKey(recipe.getPrimaryOutput().getItem()))
+        {
+            recipeOutputMap.put(recipe.getPrimaryOutput().getItem(), new ArrayList<>());
+        }
+        recipeOutputMap.get(recipe.getPrimaryOutput().getItem()).add(recipe);
+        for (final ItemStack item : recipe.getAltOutputs())
+        {
+            if (!recipeOutputMap.containsKey(item.getItem()))
+            {
+                recipeOutputMap.put(item.getItem(), new ArrayList<>());
+            }
+            recipeOutputMap.get(item.getItem()).add(recipe);
+        }
     }
 
     /**
@@ -145,55 +159,23 @@ public class CustomRecipeManager
 
     /**
      * Serializes a partial assembly of Custom Recipes.
-     * This version only includes recipes with showTooltip to be true.
-     * @param recipeMgrPacketBuffer packet buffer to encode the data into.
-     */
-    private void serializeNetworkData(final PacketBuffer recipeMgrPacketBuffer)
-    {
-        // Custom Recipe Manager packets can potentially get very large, and individual CompoundNBTs can not be parsed if they exceed 2MB.
-        // For safety with arbitrary data packs (or sets of data packs), we can not wrap the entire CustomRecipeManager into single ListNBT.
-        // Filtering to only recipes with ShowTooltip or ShowJei enabled reduces total transfer size to <50KB.
-        // See CustomRecipeFactory.serialize for last tested numbers and more precise breakdown.
-        recipeMgrPacketBuffer.writeInt(recipeMap.size());
-        for (Map.Entry<String, Map<ResourceLocation, CustomRecipe>> crafter : recipeMap.entrySet())
-        {
-            int count = 0;
-            final int startIdx = recipeMgrPacketBuffer.writerIndex();
-            recipeMgrPacketBuffer.writerIndex(startIdx + 4);
-            for (CustomRecipe recipe : crafter.getValue().values())
-            {
-                if (recipe.getShowTooltip() || recipe.getShowJei())
-                {
-                    count++;
-                    recipeMgrPacketBuffer.writeCompoundTag(StandardFactoryController.getInstance().serialize(recipe));
-                }
-            }
-            final int endIdx = recipeMgrPacketBuffer.writerIndex();
-            recipeMgrPacketBuffer.writerIndex(startIdx);
-            recipeMgrPacketBuffer.writeInt(count);
-            recipeMgrPacketBuffer.writerIndex(endIdx);
-        }
-    }
-
-    /**
-     * Serializes a partial assembly of Custom Recipes.
      * This version sends the full Custom Recipe Manager.
      * @param recipeMgrPacketBuffer packet buffer to encode the data into.
      */
     // Alternative approach, if it becomes necessary to send the entire CustomRecipeManager.
-    private void serializeNetworkDataByRecipe(final PacketBuffer recipeMgrPacketBuffer)
+    private void serializeNetworkData(final PacketBuffer recipeMgrPacketBuffer)
     {
         // Custom Recipe Manager packets can potentially get very large, and individual CompoundNBTs can not be parsed if they exceed 2MB.
         // For safety with arbitrary data packs (or sets of data packs), we can not wrap the entire CustomRecipeManager into single ListNBT.
         // Including all recipes in transfer results in total transfer size around ~400KB for base recipes.
         // See CustomRecipeFactory.serialize for last tested numbers and more precise breakdown.
-        recipeMgrPacketBuffer.writeInt(recipeMap.size());
+        recipeMgrPacketBuffer.writeVarInt(recipeMap.size());
         for (Map.Entry<String, Map<ResourceLocation, CustomRecipe>> crafter : recipeMap.entrySet())
         {
-            recipeMgrPacketBuffer.writeInt(crafter.getValue().size());
+            recipeMgrPacketBuffer.writeVarInt(crafter.getValue().size());
             for (CustomRecipe recipe : crafter.getValue().values())
             {
-                recipeMgrPacketBuffer.writeCompoundTag(StandardFactoryController.getInstance().serialize(recipe));
+                StandardFactoryController.getInstance().serialize(recipeMgrPacketBuffer, recipe);
             }
         }
     }
@@ -205,25 +187,14 @@ public class CustomRecipeManager
     public void handleCustomRecipeManagerMessage(final PacketBuffer buff)
     {
         recipeOutputMap.clear();
+        recipeMap.clear();
 
-        for (int crafterNum = buff.readInt(); crafterNum > 0; crafterNum--)
+        for (int crafterNum = buff.readVarInt(); crafterNum > 0; crafterNum--)
         {
-            for (int recipeNum = buff.readInt(); recipeNum > 0; recipeNum--)
+            for (int recipeNum = buff.readVarInt(); recipeNum > 0; recipeNum--)
             {
-                CustomRecipe rec = StandardFactoryController.getInstance().deserialize(buff.readCompoundTag());
-                if (!recipeOutputMap.containsKey(rec.getPrimaryOutput().getItem()))
-                {
-                    recipeOutputMap.put(rec.getPrimaryOutput().getItem(), new ArrayList<>());
-                }
-                recipeOutputMap.get(rec.getPrimaryOutput().getItem()).add(rec);
-                for (final ItemStack item : rec.getAltOutputs())
-                {
-                    if (!recipeOutputMap.containsKey(item.getItem()))
-                    {
-                        recipeOutputMap.put(item.getItem(), new ArrayList<>());
-                    }
-                    recipeOutputMap.get(item.getItem()).add(rec);
-                }
+                CustomRecipe rec = StandardFactoryController.getInstance().deserialize(buff);
+                addRecipe(rec);
             }
         }
     }

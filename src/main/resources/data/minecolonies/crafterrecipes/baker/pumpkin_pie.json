@@ -10,6 +10,5 @@
   "result": "minecraft:pumpkin_pie",
   "count": 1,
   "intermediate" : "minecraft:furnace",
-  "min-building-level" : 3,
-  "show-jei" : true
+  "min-building-level" : 3
 }

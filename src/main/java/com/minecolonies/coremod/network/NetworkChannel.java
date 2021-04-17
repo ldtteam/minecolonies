@@ -6,6 +6,7 @@ import com.google.common.collect.Maps;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.coremod.colony.crafting.CustomRecipeManagerMessage;
 import com.minecolonies.coremod.network.messages.PermissionsMessage;
 import com.minecolonies.coremod.network.messages.client.*;
 import com.minecolonies.coremod.network.messages.client.colony.*;
@@ -249,6 +250,9 @@ public class NetworkChannel
 
         // Research-related messages.
         registerMessage(++idx, GlobalResearchTreeMessage.class, GlobalResearchTreeMessage::new);
+
+        // Crafter Recipe-related messages
+        registerMessage(++idx, CustomRecipeManagerMessage.class, CustomRecipeManagerMessage::new);
     }
 
     private void setupInternalMessages()

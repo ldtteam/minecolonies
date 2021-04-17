@@ -35,7 +35,7 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
 
     @NotNull
     @Override
-    public CustomRecipe getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final FactoryVoidInput factoryVoidInput, @NotNull final Object... context)
+    public CustomRecipe getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final FactoryVoidInput factoryVoidInput, final Object... context)
       throws IllegalArgumentException
     {
         if (context.length != PARAMS_CUSTOM_RECIPE)
@@ -49,13 +49,6 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
         if (!(context[2] instanceof ItemStack))
         {
             throw new IllegalArgumentException("Unsupported context - Invalid output ItemStack");
-        }
-        if(!(context[4] instanceof ResourceLocation) ||
-                         !(context[5] instanceof ResourceLocation) ||
-                             !(context[6] instanceof ResourceLocation) ||
-                                 !(context[7] instanceof ResourceLocation))
-        {
-            throw new IllegalArgumentException("Unsupported context - Invalid ResourceLocation.");
         }
         return getNewInstance((String)context[0], (List<ItemStorage>)context[1], (ItemStack)context[2], (List<ItemStack>)context[3], (List<ItemStack>)context[4],
           (ResourceLocation)context[5], (ResourceLocation)context[6], (ResourceLocation)context[7], (ResourceLocation)context[8],
@@ -131,6 +124,7 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
         // Most users don't care that much about the bandwidth -- 100kb for 500 recipes wouldn't be that bad compared to chunk updates, and this is only sent on rare occasions --
         // but the wrapping CompoundNBT containing the sent Custom Recipe NBTs can not exceed 2MB: this approach allows >1,700 (average) recipes, where RecipeStorage serializer would become unsafe at ~1,300 (average).
         // As the default sawmill recipes involve 342 recipes already (a/o 4/2021), and an expert pack could easily involve a large set of complex recipes, this isn't a far-off concern.
+        // We're sending the recipes as multiple compoundNBTs, to avoid this issue going to a crash, but want to avoid the potential if refactored.
         // Calling getRecipeStorage() also populates and retains a cache internal to CustomRecipe, which we probably don't want to do.
         // Instead, we'll get only those components necessary to recreate on a remote client.
         final ListNBT inputs = new ListNBT();
@@ -211,49 +205,48 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
         return getNewInstance(crafter, inputs, primaryOutput, secondaryOutput, altOutputs, lootTable, recipeId, researchReq, researchExclude, minBldgLevel, maxBldgLevel, mustExist, showTooltip);
     }
 
-    private void writeBufferForItemStack(final PacketBuffer buffer, final ItemStack is)
-    {
-        buffer.writeResourceLocation(is.getItem().getRegistryName());
-        buffer.writeInt(is.getCount());
-        buffer.writeCompoundTag(is.serializeNBT());
-    }
-
-    private ItemStack getItemStackFromPacketBuffer(final PacketBuffer buffer)
-    {
-        final ItemStack item = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(buffer.readString())), buffer.readInt());
-        item.deserializeNBT(buffer.readCompoundTag());
-        return item;
-    }
-
     @Override
     public void serialize(@NotNull IFactoryController controller, CustomRecipe recipe, PacketBuffer packetBuffer)
     {
+        //This serialization is drastically more efficient: expect <150 bytes per recipes, avg, compared to 800 bytes for CompoundNBT variant.
         packetBuffer.writeString(recipe.getCrafter());
         packetBuffer.writeResourceLocation(recipe.getRecipeStorage().getRecipeSource());
-        packetBuffer.writeResourceLocation(recipe.getRequiredResearchId() == null ? new ResourceLocation("") : recipe.getRequiredResearchId());
-        packetBuffer.writeResourceLocation(recipe.getExcludedResearchId() == null ? new ResourceLocation("") : recipe.getExcludedResearchId());
-        packetBuffer.writeResourceLocation(recipe.getLootTable() == null ? new ResourceLocation("") : recipe.getLootTable());
-        packetBuffer.writeInt(recipe.getMinBuildingLevel());
-        packetBuffer.writeInt(recipe.getMaxBuildingLevel());
+        packetBuffer.writeBoolean(recipe.getRequiredResearchId() != null);
+        if(recipe.getRequiredResearchId() != null)
+        {
+            packetBuffer.writeResourceLocation(recipe.getRequiredResearchId());
+        }
+        packetBuffer.writeBoolean(recipe.getExcludedResearchId() != null);
+        if(recipe.getExcludedResearchId() != null)
+        {
+            packetBuffer.writeResourceLocation(recipe.getExcludedResearchId());
+        }
+        packetBuffer.writeBoolean(recipe.getLootTable() != null);
+        if(recipe.getLootTable() != null)
+        {
+            packetBuffer.writeResourceLocation(recipe.getLootTable());
+        }
+        packetBuffer.writeVarInt(recipe.getMinBuildingLevel());
+        packetBuffer.writeVarInt(recipe.getMaxBuildingLevel());
         packetBuffer.writeBoolean(recipe.getMustExist());
         packetBuffer.writeBoolean(recipe.getShowTooltip());
-        packetBuffer.writeInt(recipe.getInputs().size());
+        packetBuffer.writeVarInt(recipe.getInputs().size());
         for(final ItemStorage input : recipe.getInputs())
         {
-            writeBufferForItemStack(packetBuffer, input.getItemStack());
+            packetBuffer.writeItemStack(input.getItemStack());
             packetBuffer.writeBoolean(input.ignoreDamageValue());
             packetBuffer.writeBoolean(input.ignoreNBT());
         }
-        writeBufferForItemStack(packetBuffer, recipe.getPrimaryOutput());
-        packetBuffer.writeInt(recipe.getSecondaryOutput().size());
+        packetBuffer.writeItemStack(recipe.getPrimaryOutput());
+        packetBuffer.writeVarInt(recipe.getSecondaryOutput().size());
         for(final ItemStack secondary : recipe.getSecondaryOutput())
         {
-            writeBufferForItemStack(packetBuffer, secondary);
+            packetBuffer.writeItemStack(secondary);
         }
-        packetBuffer.writeInt(recipe.getAltOutputs().size());
+        packetBuffer.writeVarInt(recipe.getAltOutputs().size());
         for(final ItemStack alts : recipe.getAltOutputs())
         {
-            writeBufferForItemStack(packetBuffer, alts);
+            packetBuffer.writeItemStack(alts);
         }
     }
 
@@ -263,28 +256,52 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
     {
         final String crafter = buffer.readString();
         final ResourceLocation recipeId = buffer.readResourceLocation();
-        final ResourceLocation researchReq = buffer.readResourceLocation();
-        final ResourceLocation researchExclude = buffer.readResourceLocation();
-        final ResourceLocation lootTable = buffer.readResourceLocation();
-        final int minBldgLevel = buffer.readInt();
-        final int maxBldgLevel = buffer.readInt();
+        final ResourceLocation researchReq;
+        if(buffer.readBoolean())
+        {
+            researchReq = buffer.readResourceLocation();
+        }
+        else
+        {
+            researchReq = null;
+        }
+        final ResourceLocation researchExclude;
+        if(buffer.readBoolean())
+        {
+            researchExclude = buffer.readResourceLocation();
+        }
+        else
+        {
+            researchExclude = null;
+        }
+        final ResourceLocation lootTable;
+        if(buffer.readBoolean())
+        {
+            lootTable = buffer.readResourceLocation();
+        }
+        else
+        {
+            lootTable = null;
+        }
+        final int minBldgLevel = buffer.readVarInt();
+        final int maxBldgLevel = buffer.readVarInt();
         final boolean mustExist = buffer.readBoolean();
         final boolean showTooltip = buffer.readBoolean();
         final List<ItemStorage> inputs = new ArrayList<>();
-        for(int numInputs = buffer.readInt(); numInputs > 0; numInputs--)
+        for(int numInputs = buffer.readVarInt(); numInputs > 0; numInputs--)
         {
-            inputs.add(new ItemStorage(getItemStackFromPacketBuffer(buffer), buffer.readBoolean(), buffer.readBoolean()));
+            inputs.add(new ItemStorage(buffer.readItemStack(), buffer.readBoolean(), buffer.readBoolean()));
         }
-        final ItemStack primaryOutput = getItemStackFromPacketBuffer(buffer);
+        final ItemStack primaryOutput = buffer.readItemStack();
         final List<ItemStack> secondaryOutput = new ArrayList<>();
-        for(int numSec = buffer.readInt(); numSec > 0; numSec--)
+        for(int numSec = buffer.readVarInt(); numSec > 0; numSec--)
         {
-            secondaryOutput.add(getItemStackFromPacketBuffer(buffer));
+            secondaryOutput.add(buffer.readItemStack());
         }
         final List<ItemStack> altOutputs = new ArrayList<>();
-        for(int numAlts = buffer.readInt(); numAlts > 0; numAlts--)
+        for(int numAlts = buffer.readVarInt(); numAlts > 0; numAlts--)
         {
-            altOutputs.add(getItemStackFromPacketBuffer(buffer));
+            altOutputs.add(buffer.readItemStack());
         }
 
         return getNewInstance(crafter, inputs, primaryOutput, secondaryOutput, altOutputs, lootTable, recipeId, researchReq, researchExclude, minBldgLevel, maxBldgLevel, mustExist, showTooltip);
