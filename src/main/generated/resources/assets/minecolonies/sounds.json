@@ -22934,6 +22934,60 @@
       }
     ]
   },
+  "mob.mercenary.attack": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/mercenary/attack",
+        "stream": false
+      }
+    ]
+  },
+  "mob.mercenary.celebrate": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/mercenary/celebrate",
+        "stream": false
+      }
+    ]
+  },
+  "mob.mercenary.die": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/mercenary/die",
+        "stream": false
+      }
+    ]
+  },
+  "mob.mercenary.hurt": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/mercenary/hurt",
+        "stream": false
+      }
+    ]
+  },
+  "mob.mercenary.say": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/mercenary/say",
+        "stream": false
+      }
+    ]
+  },
+  "mob.mercenary.step": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/mercenary/step",
+        "stream": false
+      }
+    ]
+  },
   "raid.raid_alert": {
     "category": "record",
     "sounds": [

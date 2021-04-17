@@ -11,6 +11,7 @@ import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRat
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
+import com.minecolonies.api.sounds.MercenarySounds;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.entity.ai.minimal.EntityAIInteractToggleAble;
@@ -243,7 +244,7 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
         final BlockPos first = soldiers.get(0).getPosition().add(0, 0, 1);
         final BlockPos last = soldiers.get(soldiers.size() - 1).getPosition().add(0, 0, 1);
 
-        playSound(SoundEvents.ENTITY_EVOKER_CELEBRATE, 2.0f, 1.0f);
+        playSound(MercenarySounds.mercenaryCelebrate, 2.0f, 1.0f);
         if (getPosition().equals(first))
         {
             getNavigator().tryMoveToBlockPos(last, 0.5);
@@ -300,7 +301,7 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
     @Override
     protected void playStepSound(final BlockPos pos, final BlockState blockIn)
     {
-        this.playSound(SoundEvents.ITEM_ARMOR_EQUIP_CHAIN, 0.45F, 1.0F);
+        this.playSound(MercenarySounds.mercenaryStep, 0.45F, 1.0F);
     }
 
     @Override
