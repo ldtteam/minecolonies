@@ -11,27 +11,21 @@ import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.research.IResearchRequirement;
 import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.Network;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.JsonToNBT;
-import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static com.minecolonies.api.research.util.ResearchConstants.TAG_RESEARCH_TREE;
 
 /**
  * The class which contains all research.
@@ -231,28 +225,6 @@ public class GlobalResearchTree implements IGlobalResearchTree
         return true;
     }
 
-
-    @Override
-    public void writeToNBT(final CompoundNBT compound)
-    {
-        @NotNull final ListNBT
-          researchTagList = researchTree.values()
-                             .stream()
-                             .flatMap(map -> map.values().stream())
-                             .map(research -> StandardFactoryController.getInstance().serialize(research))
-                             .collect(NBTUtils.toListNBT());
-        compound.put(TAG_RESEARCH_TREE, researchTagList);
-    }
-
-    @Override
-    public void readFromNBT(final CompoundNBT compound)
-    {
-        researchTree.clear();
-        NBTUtils.streamCompound(compound.getList(TAG_RESEARCH_TREE, Constants.NBT.TAG_COMPOUND))
-          .map(researchCompound -> (IGlobalResearch) StandardFactoryController.getInstance().deserialize(researchCompound))
-          .forEach(research -> addResearch(research.getBranch(), research, true));
-    }
-
     @Override
     public void sendGlobalResearchTreePackets(final ServerPlayerEntity player)
     {
@@ -264,10 +236,15 @@ public class GlobalResearchTree implements IGlobalResearchTree
 
     public void serializeNetworkData(final PacketBuffer buf)
     {
-        CompoundNBT treeNBT = new CompoundNBT();
-        writeToNBT(treeNBT);
-        buf.writeCompoundTag(treeNBT);
-
+        buf.writeVarInt(researchTree.size());
+        for(final Map<ResourceLocation, IGlobalResearch> branch : researchTree.values())
+        {
+            buf.writeVarInt(branch.size());
+            for(final IGlobalResearch research : branch.values())
+            {
+                StandardFactoryController.getInstance().serialize(buf, research);
+            }
+        }
         // Lastly, we'll send the branch identifiers.
         for(Map.Entry<ResourceLocation, IGlobalResearchBranch> branch : branchDatas.entrySet())
         {
@@ -279,7 +256,14 @@ public class GlobalResearchTree implements IGlobalResearchTree
     @Override
     public IMessage handleGlobalResearchTreeMessage(final PacketBuffer buf)
     {
-        readFromNBT(buf.readCompoundTag());
+        for (int branchNum = buf.readVarInt(); branchNum > 0; branchNum--)
+        {
+            for(int researchNum = buf.readVarInt(); researchNum > 0; researchNum--)
+            {
+                final IGlobalResearch newResearch = StandardFactoryController.getInstance().deserialize(buf);
+                addResearch(newResearch.getBranch(), newResearch, true);
+            }
+        }
         for (int i = 0; i < researchTree.entrySet().size(); i++)
         {
             ResourceLocation branchId = buf.readResourceLocation();

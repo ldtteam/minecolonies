@@ -21,23 +21,23 @@ public class CustomRecipeManager
     /**
      * The internal static instance of the singleton
      */
-    final private static CustomRecipeManager instance = new CustomRecipeManager();
+    private final static CustomRecipeManager instance = new CustomRecipeManager();
 
     /**
      * The map of loaded recipes by crafter.
      */
-    final private HashMap<String, Map<ResourceLocation, CustomRecipe>> recipeMap = new HashMap<>();
+    private final HashMap<String, Map<ResourceLocation, CustomRecipe>> recipeMap = new HashMap<>();
 
     /**
      * The map of all loaded recipes by output.
      */
-    final private HashMap<Item, List<CustomRecipe>> recipeOutputMap = new HashMap<>();
+    private final HashMap<Item, List<CustomRecipe>> recipeOutputMap = new HashMap<>();
 
     /**
      * The recipes that are marked for removal after loading all resource packs
      * This list will be processed on first access of the custom recipe list after load, and will be emptied.
      */
-    final private List<ResourceLocation> removedRecipes = new ArrayList<>();
+    private final List<ResourceLocation> removedRecipes = new ArrayList<>();
 
     private CustomRecipeManager()
     {

@@ -254,7 +254,7 @@ public class ClientEventHandler
                 }
                 if(researches != null)
                 {
-                    TextFormatting researchFormat = TextFormatting.GRAY;
+                    final TextFormatting researchFormat;
                     if (colony != null && (colony.getResearchManager().getResearchTree().hasCompletedResearch(rec.getRequiredResearchId()) ||
                                              colony.getResearchManager().getResearchEffects().getEffectStrength(rec.getRequiredResearchId()) > 0))
                     {

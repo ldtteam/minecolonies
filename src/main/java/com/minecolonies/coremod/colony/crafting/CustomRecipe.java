@@ -25,6 +25,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -404,7 +406,7 @@ public class CustomRecipe
     }
 
     public CustomRecipe(final String crafter, final List<ItemStorage> inputs, final ItemStack primaryOutput, final List<ItemStack> secondaryOutput, final List<ItemStack> altOutputs,
-      final ResourceLocation lootTable, final ResourceLocation recipeId, final ResourceLocation researchReq, final ResourceLocation researchExclude, final int minBldgLevel, final int maxBldgLevel, final boolean mustExist, final boolean showTooltip)
+     @Nullable final ResourceLocation lootTable, final ResourceLocation recipeId, @Nullable final ResourceLocation researchReq, @Nullable final ResourceLocation researchExclude, final int minBldgLevel, final int maxBldgLevel, final boolean mustExist, final boolean showTooltip)
     {
         this.crafter = crafter;
         this.recipeId = recipeId;
@@ -412,18 +414,9 @@ public class CustomRecipe
         this.result = primaryOutput;
         this.secondary = secondaryOutput;
         this.altOutputs = altOutputs;
-        if(lootTable != null)
-        {
-            this.lootTable = lootTable;
-        }
-        if(researchReq != null)
-        {
-            this.researchId = researchReq;
-        }
-        if(researchExclude != null)
-        {
-            this.excludedResearchId = researchExclude;
-        }
+        this.lootTable = lootTable;
+        this.researchId = researchReq;
+        this.excludedResearchId = researchExclude;
         this.minBldgLevel = minBldgLevel;
         this.maxBldgLevel = maxBldgLevel;
         this.mustExist = mustExist;

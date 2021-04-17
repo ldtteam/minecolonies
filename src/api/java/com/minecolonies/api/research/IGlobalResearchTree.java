@@ -155,20 +155,6 @@ public interface IGlobalResearchTree
     boolean isResearchRequirementsFulfilled(final List<IResearchRequirement> requirements, final IColony colony);
 
     /**
-     * Write the research tree to NBT.
-     *
-     * @param compound the compound.
-     */
-    void writeToNBT(final CompoundNBT compound);
-
-    /**
-     * Read the research tree from NBT.
-     *
-     * @param compound the compound to read it from.
-     */
-    void readFromNBT(final CompoundNBT compound);
-
-    /**
      * Handle messages in the client from the server describing the Global Research Tree.
      * Only used for remote clients.
      * @param buf       the buffer of received network data.

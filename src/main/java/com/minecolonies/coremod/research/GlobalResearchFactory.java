@@ -170,17 +170,17 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         packetBuffer.writeResourceLocation(input.getId());
         packetBuffer.writeResourceLocation(input.getBranch());
         packetBuffer.writeString(input.getName().getKey());
-        packetBuffer.writeInt(input.getDepth());
-        packetBuffer.writeInt(input.getSortOrder());
+        packetBuffer.writeVarInt(input.getDepth());
+        packetBuffer.writeVarInt(input.getSortOrder());
         packetBuffer.writeBoolean(input.hasOnlyChild());
-        packetBuffer.writeString(input.getIconItemStack().getItem().getRegistryName() + ":" + input.getIconItemStack().getCount());
+        packetBuffer.writeItemStack(input.getIconItemStack());
         packetBuffer.writeResourceLocation(input.getIconTextureResourceLocation());
         packetBuffer.writeString(input.getSubtitle().getKey());
         packetBuffer.writeBoolean(input.isInstant());
         packetBuffer.writeBoolean(input.isAutostart());
         packetBuffer.writeBoolean(input.isImmutable());
         packetBuffer.writeBoolean(input.isHidden());
-        packetBuffer.writeInt(input.getCostList().size());
+        packetBuffer.writeVarInt(input.getCostList().size());
         for(ItemStorage is : input.getCostList())
         {
             packetBuffer.writeItemStack(is.getItemStack());
@@ -190,19 +190,19 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
                 packetBuffer.writeCompoundTag(is.getItemStack().getTag());
             }
         }
-        packetBuffer.writeInt(input.getResearchRequirement().size());
+        packetBuffer.writeVarInt(input.getResearchRequirement().size());
         for(IResearchRequirement req : input.getResearchRequirement())
         {
             packetBuffer.writeString(req.getClass().getName());
             packetBuffer.writeCompoundTag(req.writeToNBT());
         }
-        packetBuffer.writeInt(input.getEffects().size());
+        packetBuffer.writeVarInt(input.getEffects().size());
         for(IResearchEffect<?> effect : input.getEffects())
         {
             packetBuffer.writeString(effect.getClass().getName());
             packetBuffer.writeCompoundTag(effect.writeToNBT());
         }
-        packetBuffer.writeInt(input.getChildren().size());
+        packetBuffer.writeVarInt(input.getChildren().size());
         for (ResourceLocation child : input.getChildren())
         {
             packetBuffer.writeResourceLocation(child);
@@ -216,15 +216,13 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         final ResourceLocation parent = buffer.readResourceLocation();
         final ResourceLocation id = buffer.readResourceLocation();
         final ResourceLocation branch = buffer.readResourceLocation();
-        final TranslationTextComponent desc = new TranslationTextComponent(buffer.readString(32767));
-        final int depth = buffer.readInt();
-        final int sortOrder = buffer.readInt();
+        final TranslationTextComponent desc = new TranslationTextComponent(buffer.readString());
+        final int depth = buffer.readVarInt();
+        final int sortOrder = buffer.readVarInt();
         final boolean hasOnlyChild = buffer.readBoolean();
-        final String[] iconStackParts  = buffer.readString(32767).split(":");
-        final ItemStack iconStack = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(iconStackParts[0], iconStackParts[1])));
-        iconStack.setCount(Integer.parseInt(iconStackParts[2]));
+        final ItemStack iconStack = buffer.readItemStack();
         final ResourceLocation iconTexture = buffer.readResourceLocation();
-        final TranslationTextComponent subtitle = new TranslationTextComponent(buffer.readString(32767));
+        final TranslationTextComponent subtitle = new TranslationTextComponent(buffer.readString());
         final boolean instant = buffer.readBoolean();
         final boolean autostart = buffer.readBoolean();
         final boolean immutable = buffer.readBoolean();
@@ -232,7 +230,7 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
 
         final IGlobalResearch research = getNewInstance(id, branch, parent, desc, depth, sortOrder,iconTexture, iconStack, subtitle, hasOnlyChild, hidden, autostart, instant, immutable);
 
-        final int costSize = buffer.readInt();
+        final int costSize = buffer.readVarInt();
         for(int i = 0; i < costSize; i++)
         {
             final ItemStorage is = new ItemStorage(buffer.readItemStack(), false, buffer.readBoolean());
@@ -243,21 +241,21 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
             research.addCost(is);
         }
 
-        final int reqCount = buffer.readInt();
+        final int reqCount = buffer.readVarInt();
         for(int i = 0; i < reqCount; i++)
         {
             CompoundNBT nbt = buffer.readCompoundTag();
             research.addRequirement(Objects.requireNonNull(IResearchRequirementRegistry.getInstance().getValue(new ResourceLocation(Objects.requireNonNull(nbt).getString(TAG_REQ_TYPE)))).readFromNBT(nbt.getCompound(TAG_REQ_TYPE)));
         }
 
-        final int effectCount = buffer.readInt();
+        final int effectCount = buffer.readVarInt();
         for(int i = 0; i < effectCount; i++)
         {
             CompoundNBT nbt = buffer.readCompoundTag();
             research.addEffect(Objects.requireNonNull(IResearchEffectRegistry.getInstance().getValue(new ResourceLocation(Objects.requireNonNull(nbt).getString(TAG_EFFECT_TYPE)))).readFromNBT(nbt.getCompound(TAG_EFFECT_ITEM)));
         }
 
-        final int childCount = buffer.readInt();
+        final int childCount = buffer.readVarInt();
         for(int i = 0; i < childCount; i++)
         {
             research.addChild(buffer.readResourceLocation());
