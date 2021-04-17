@@ -1,0 +1,14 @@
+{
+  "type" : "recipe",
+  "crafter": "crusher",
+  "inputs": [
+    {
+      "item" : "minecraft:bone_block",
+      "count": "1"
+    }
+  ],
+  "result": "minecraft:bone_meal",
+  "count": "9",
+  "intermediate" : "minecraft:air",
+  "not-research-id" : "minecolonies:technology/gildedhammer"
+}
