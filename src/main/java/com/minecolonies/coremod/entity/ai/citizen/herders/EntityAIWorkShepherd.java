@@ -5,7 +5,6 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TranslationConstants;
-import com.minecolonies.coremod.colony.buildings.modules.settings.BoolSetting;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingShepherd;
 import com.minecolonies.coremod.colony.jobs.JobShepherd;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -31,11 +30,6 @@ import static net.minecraft.entity.passive.SheepEntity.WOOL_BY_COLOR;
  */
 public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, BuildingShepherd, SheepEntity>
 {
-    /**
-     * Experience given per sheep sheared.
-     */
-    protected static final double EXP_PER_SHEEP = 5.0;
-
     /**
      * Max amount of animals per Hut Level.
      */
@@ -189,7 +183,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
      */
     private void dyeSheepChance(final SheepEntity sheep)
     {
-        if (worker.getCitizenColonyHandler().getWorkBuilding() != null && getOwnBuilding().getSetting(BuildingShepherd.DYEING).map(BoolSetting::getValue).orElse(true))
+        if (worker.getCitizenColonyHandler().getWorkBuilding() != null && getOwnBuilding().getSetting(BuildingShepherd.DYEING).getValue())
         {
             final int chanceToDye = worker.getCitizenColonyHandler().getWorkBuilding().getBuildingLevel();
 

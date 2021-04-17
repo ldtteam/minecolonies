@@ -9,7 +9,6 @@ import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.modules.settings.BoolSetting;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import net.minecraft.entity.item.ItemEntity;
@@ -119,7 +118,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
     protected List<ItemStack> itemsNiceToHave()
     {
         final List<ItemStack> list = super.itemsNiceToHave();
-        if (getOwnBuilding().getSetting(AbstractBuildingWorker.BREEDING).map(BoolSetting::getValue).orElse(true))
+        if (getOwnBuilding().getSetting(AbstractBuildingWorker.BREEDING).getValue())
         {
             list.add(getRequestBreedingItems());
         }
@@ -194,7 +193,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
         {
             return HERDER_BUTCHER;
         }
-        else if (getOwnBuilding().getSetting(AbstractBuildingWorker.BREEDING).map(BoolSetting::getValue).orElse(true) && numOfBreedableAnimals >= NUM_OF_ANIMALS_TO_BREED && hasBreedingItem)
+        else if (getOwnBuilding().getSetting(AbstractBuildingWorker.BREEDING).getValue() && numOfBreedableAnimals >= NUM_OF_ANIMALS_TO_BREED && hasBreedingItem)
         {
             return HERDER_BREED;
         }
