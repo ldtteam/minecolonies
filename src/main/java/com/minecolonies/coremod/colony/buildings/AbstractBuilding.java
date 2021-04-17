@@ -22,7 +22,6 @@ import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
-import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Pickup;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
@@ -82,7 +81,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.getPlayerActionPriority;
-import static com.minecolonies.api.research.util.ResearchConstants.MINIMUM_STOCK;
 import static com.minecolonies.api.util.constant.BuildingConstants.NO_WORK_ORDER;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.Suppression.GENERIC_WILDCARD;
@@ -159,12 +157,34 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public boolean hasModule(final Class<? extends IBuildingModule> clazz)
     {
-        return getFirstModuleOccurance(clazz).isPresent();
+        for (final IBuildingModule module : modules)
+        {
+            if (clazz.isInstance(module))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     @NotNull
     @Override
-    public <T extends IBuildingModule> Optional<T> getFirstModuleOccurance(final Class<T> clazz)
+    public <T extends IBuildingModule> T getFirstModuleOccurance(final Class<T> clazz)
+    {
+        for (final IBuildingModule module : modules)
+        {
+            if (clazz.isInstance(module))
+            {
+                return (T) module;
+            }
+        }
+
+        throw new IllegalStateException("The module of class: " + clazz.toString() + "should never be null!");
+    }
+
+    @NotNull
+    @Override
+    public <T extends IBuildingModule> Optional<T> getFirstOptionalModuleOccurance(final Class<T> clazz)
     {
         for (final IBuildingModule module : modules)
         {
@@ -178,16 +198,16 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
 
     @NotNull
     @Override
-    public <T extends IBuildingModule> Optional<T> getModuleMatching(final Class<T> clazz, final Predicate<? super T> modulePredicate)
+    public <T extends IBuildingModule> T getModuleMatching(final Class<T> clazz, final Predicate<? super T> modulePredicate)
     {
         for (final IBuildingModule module : modules)
         {
             if (clazz.isInstance(module) && modulePredicate.test((T) module))
             {
-                return Optional.of((T) module);
+                return (T) module;
             }
         }
-        return Optional.empty();
+        return null;
     }
 
     @NotNull

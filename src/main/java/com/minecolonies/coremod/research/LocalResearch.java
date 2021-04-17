@@ -8,8 +8,6 @@ import com.minecolonies.api.research.effects.IResearchEffectManager;
 import com.minecolonies.api.research.util.ResearchState;
 import net.minecraft.util.ResourceLocation;
 
-import static com.minecolonies.api.research.util.ResearchConstants.BASE_RESEARCH_TIME;
-
 /**
  * The implementation of the ILocalResearch interface which represents one type of research, stored in each colony.
  */
@@ -60,7 +58,7 @@ public class LocalResearch implements ILocalResearch
         if (state == ResearchState.IN_PROGRESS)
         {
             progress++;
-            if (progress >= BASE_RESEARCH_TIME * IGlobalResearchTree.getInstance().getBranchData(branch).getBaseTime() * Math.pow(2, depth - 1))
+            if (progress >= IGlobalResearchTree.getInstance().getBranchData(branch).getBaseTime(this.depth))
             {
                 state = ResearchState.FINISHED;
                 for(final IResearchEffect<?> effect : IGlobalResearchTree.getInstance().getResearch(this.branch, this.getId()).getEffects())

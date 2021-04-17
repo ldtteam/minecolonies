@@ -17,7 +17,6 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
@@ -57,8 +56,7 @@ public class InteractionValidatorInitializer
     {
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(FURNACE_USER_NO_FUEL),
           citizen -> citizen.getWorkBuilding() instanceof AbstractBuildingSmelterCrafter
-                       && ((AbstractBuildingSmelterCrafter) citizen.getWorkBuilding()).getModuleMatching(ItemListModule.class, m -> m.getId().equals(FUEL_LIST))
-                            .map(m -> m.getList().isEmpty()).orElse(false));
+                       && ((AbstractBuildingSmelterCrafter) citizen.getWorkBuilding()).getModuleMatching(ItemListModule.class, m -> m.getId().equals(FUEL_LIST)).getList().isEmpty());
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(BAKER_HAS_NO_FURNACES_MESSAGE),
           citizen -> citizen.getWorkBuilding() instanceof AbstractBuildingSmelterCrafter && ((AbstractBuildingSmelterCrafter) citizen.getWorkBuilding()).getFurnaces().isEmpty());
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(RAW_FOOD),
@@ -180,8 +178,7 @@ public class InteractionValidatorInitializer
           citizen -> {
             if (citizen.getWorkBuilding() instanceof BuildingSmeltery)
             {
-                final List<ItemStorage> oreList = ((BuildingSmeltery) citizen.getWorkBuilding()).getModuleMatching(ItemListModule.class, m -> m.getId().equals(ORE_LIST))
-                                                    .map(ItemListModule::getList).orElse(ImmutableList.of());
+                final List<ItemStorage> oreList = ((BuildingSmeltery) citizen.getWorkBuilding()).getModuleMatching(ItemListModule.class, m -> m.getId().equals(ORE_LIST)).getList();
                 for (final ItemStorage storage : IColonyManager.getInstance().getCompatibilityManager().getSmeltableOres())
                 {
                     if (!oreList.contains(storage))
@@ -214,8 +211,7 @@ public class InteractionValidatorInitializer
                 return false;
             }
 
-            final ImmutableList<ItemStorage> exclusionList = ((BuildingCook) citizen.getWorkBuilding()).getModuleMatching(ItemListModule.class, m -> ((ItemListModule)m).getId().equals(FOOD_EXCLUSION_LIST)).map(
-              ItemListModule::getList).orElse(ImmutableList.of());
+            final ImmutableList<ItemStorage> exclusionList = ((BuildingCook) citizen.getWorkBuilding()).getModuleMatching(ItemListModule.class, m -> m.getId().equals(FOOD_EXCLUSION_LIST)).getList();
             for (final ItemStorage storage : IColonyManager.getInstance().getCompatibilityManager().getEdibles())
             {
                 if (!exclusionList.contains(storage))
