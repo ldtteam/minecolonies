@@ -26,6 +26,7 @@ import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -136,6 +137,16 @@ public class CustomRecipe
     public static final String RECIPE_MUST_EXIST = "must-exist";
 
     /**
+     * The property name to enable tooltip display (and transmission to the client).
+     */
+    public static final String RECIPE_SHOW_TOOLTIP = "show-tooltip";
+
+    /**
+     * The property name to transmit to the client, without adding tooltip information.
+     */
+    public static final String RECIPE_SHOW_JEI = "show-jei";
+
+    /**
      * The crafter name for this instance, defaults to 'unknown'
      */
     private String crafter = "unknown";
@@ -148,12 +159,12 @@ public class CustomRecipe
     /**
      * The list of ItemStacks for input to the recipe
      */
-    private ArrayList<ItemStorage> inputs = new ArrayList<>();
+    private List<ItemStorage> inputs = new ArrayList<>();
 
     /**
      * The list of ItemStacks for alternate (multi-recipe) outputs from the recipe
      */
-    private ArrayList<ItemStack> altOutputs = new ArrayList<>();
+    private List<ItemStack> altOutputs = new ArrayList<>();
 
     /**
      * the result ItemStack
@@ -163,7 +174,7 @@ public class CustomRecipe
     /**
      * The list of ItemStacks for additional outputs to the recipe
      */
-    private ArrayList<ItemStack> secondary = new ArrayList<>();
+    private List<ItemStack> secondary = new ArrayList<>();
 
     /**
      * The Intermediate Block
@@ -194,6 +205,16 @@ public class CustomRecipe
      * If true, the recipe inputs must match an already existing recipe's inputs
      */
     private boolean mustExist = false;
+
+    /**
+     * If true, display the recipe's requirements and crafter in an Inventory / JEI tooltip.
+     */
+    private boolean showTooltip = false;
+
+    /**
+     * If true, sends the data to the client to be read for JEI purposes, without displaying tool text information.
+     */
+    private boolean showJei = false;
 
     /**
      * The loottable to use for possible additional outputs
@@ -384,8 +405,41 @@ public class CustomRecipe
         {
             recipe.mustExist = recipeJson.get(RECIPE_MUST_EXIST).getAsBoolean();
         }
+        if(recipeJson.has(RECIPE_SHOW_TOOLTIP))
+        {
+            recipe.showTooltip = recipeJson.get(RECIPE_SHOW_TOOLTIP).getAsBoolean();
+        }
+        if(recipeJson.has(RECIPE_SHOW_JEI))
+        {
+            recipe.showJei = recipeJson.get(RECIPE_SHOW_JEI).getAsBoolean();
+        }
 
         return recipe;
+    }
+
+    public CustomRecipe(final String crafter, final List<ItemStorage> inputs, final ItemStack primaryOutput, final List<ItemStack> secondaryOutput, final List<ItemStack> altOutputs,
+      final ResourceLocation lootTable, final ResourceLocation recipeId, final ResourceLocation researchReq, final ResourceLocation researchExclude, final int minBldgLevel, final int maxBldgLevel, final boolean mustExist, final boolean showTooltip)
+    {
+        this.crafter = crafter;
+        this.recipeId = recipeId;
+        this.inputs = inputs;
+        this.result = primaryOutput;
+        this.secondary = secondaryOutput;
+        this.altOutputs = altOutputs;
+        this.lootTable = lootTable;
+        if(!researchReq.getPath().isEmpty())
+        {
+            this.researchId = researchReq;
+        }
+        if(!researchExclude.getPath().isEmpty())
+        {
+            this.excludedResearchId = researchExclude;
+        }
+        this.minBldgLevel = minBldgLevel;
+        this.maxBldgLevel = maxBldgLevel;
+        this.mustExist = mustExist;
+        this.showTooltip = showTooltip;
+        this.showJei = true;
     }
 
     /**
@@ -404,6 +458,52 @@ public class CustomRecipe
     public ResourceLocation getRecipeId()
     {
         return recipeId;
+    }
+
+    /**
+     * Gets the input items for this recipe
+     * @return input ItemStorages
+     */
+    public List<ItemStorage> getInputs()
+    {
+        return inputs;
+    }
+
+    /**
+     * Get the primary output for the recipe
+     * @return primary output ItemStack
+     */
+    public ItemStack getPrimaryOutput()
+    {
+        return result;
+    }
+
+    /**
+     * Get the secondary outputs for the recipe.
+     * @return secondary output ItemStacks
+     */
+    public List<ItemStack> getSecondaryOutput()
+    {
+        return secondary;
+    }
+
+    /**
+     * Get the alternative outputs for the recipe.
+     *
+     * @return alternative output ItemStacks
+     */
+    public List<ItemStack> getAltOutputs()
+    {
+        return altOutputs;
+    }
+
+    /**
+     * Get the Loot Table, if one is present.
+     * @return Loot Table resource location
+     */
+    public ResourceLocation getLootTable()
+    {
+        return lootTable;
     }
 
     /**
@@ -530,7 +630,7 @@ public class CustomRecipe
     }
 
     /**
-     * Get a the recipe storage represented by this recipe
+     * Get the recipe storage represented by this recipe
      * @return Recipe Storage
      */
     public IRecipeStorage getRecipeStorage()
@@ -615,4 +715,19 @@ public class CustomRecipe
         return mustExist;
     }
 
+    /**
+     * Should tooltip information be displayed on the client in inventory and JEI?
+     */
+    public boolean getShowTooltip()
+    {
+        return showTooltip;
+    }
+
+    /**
+     * Should the recipe be transmitted for later use in JEI or non-tooltip client applications?
+     */
+    public boolean getShowJei()
+    {
+        return showJei;
+    }
 }

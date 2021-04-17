@@ -20,6 +20,7 @@ import com.minecolonies.coremod.blocks.BlockScarecrow;
 import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
 import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.commands.EntryPoint;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
@@ -453,6 +454,7 @@ public class EventHandler
             }
 
             IGlobalResearchTree.getInstance().sendGlobalResearchTreePackets((ServerPlayerEntity) event.getPlayer());
+            CustomRecipeManager.getInstance().sendCustomRecipeManagerPackets((ServerPlayerEntity) event.getPlayer());
         }
     }
 
@@ -794,7 +796,6 @@ public class EventHandler
         if (event.getWorld().isRemote())
         {
             IColonyManager.getInstance().resetColonyViews();
-            ItemBlockHut.checkResearch(null);
             Log.getLogger().info("Removed all colony views");
         }
     }

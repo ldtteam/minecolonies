@@ -185,6 +185,20 @@ public abstract class CustomRecipeProvider implements IDataProvider
             return this;
         }
 
+        @NotNull
+        public CustomRecipeBuilder showTooltip(final boolean value)
+        {
+            this.json.addProperty(CustomRecipe.RECIPE_SHOW_TOOLTIP, value);
+            return this;
+        }
+
+        @NotNull
+        public CustomRecipeBuilder showJei(final boolean value)
+        {
+            this.json.addProperty(CustomRecipe.RECIPE_SHOW_JEI, value);
+            return this;
+        }
+
         public void build(@NotNull final Consumer<IFinishedRecipe> consumer)
         {
             this.json.addProperty(CustomRecipe.RECIPE_INTERMEDIATE_PROP, this.intermediate.getRegistryName().toString());

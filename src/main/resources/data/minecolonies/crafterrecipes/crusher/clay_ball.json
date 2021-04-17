@@ -9,5 +9,6 @@
   ],
   "result": "minecraft:clay_ball",
   "count": "4",
-  "intermediate" : "minecraft:air"
+  "intermediate" : "minecraft:air",
+  "show-jei" : true
 }

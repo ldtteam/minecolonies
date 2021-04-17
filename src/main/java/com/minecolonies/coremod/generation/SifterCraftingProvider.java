@@ -321,6 +321,7 @@ public class SifterCraftingProvider implements IDataProvider
                                         .collect(Collectors.toList()))
                             .lootTable(new ResourceLocation(MOD_ID, "recipes/" + name))
                             .minBuildingLevel(mesh.getMinBuildingLevel())
+                            .showJei(true)
                             .build(consumer);
                 }
             }

@@ -10,5 +10,6 @@
   "result": "minecraft:cookie",
   "count": 1,
   "intermediate" : "minecraft:furnace",
-  "min-building-level" : 4
+  "min-building-level" : 4,
+  "show-jei" : true
 }

@@ -23,10 +23,10 @@ import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -56,15 +56,29 @@ public class GlobalResearchTree implements IGlobalResearchTree
     /**
      * The list containing all autostart research.
      */
-    private final HashSet<IGlobalResearch> autostartResearch = new HashSet<>();
+    private final Set<IGlobalResearch> autostartResearch = new HashSet<>();
 
     /**
      * The map containing loaded Research Effect IDs.
      */
-    private final HashSet<ResourceLocation> researchEffectsIds = new HashSet<>();
+    private final Map<ResourceLocation, Set<IGlobalResearch>> researchEffectsIds = new HashMap<>();
 
     @Override
     public IGlobalResearch getResearch(final ResourceLocation branch, final ResourceLocation id) { return researchTree.get(branch).get(id); }
+
+    @Nullable
+    @Override
+    public IGlobalResearch getResearch(final ResourceLocation id)
+    {
+        for(final Map.Entry<ResourceLocation, Map<ResourceLocation, IGlobalResearch>> branch: researchTree.entrySet())
+        {
+            if(branch.getValue().containsKey(id))
+            {
+                return branch.getValue().get(id);
+            }
+        }
+        return null;
+    }
 
     @Override
     public boolean hasResearch(final ResourceLocation branch, final ResourceLocation id)
@@ -112,7 +126,14 @@ public class GlobalResearchTree implements IGlobalResearchTree
         }
         for (IResearchEffect<?> effect : research.getEffects())
         {
-            researchEffectsIds.add(effect.getId());
+            if(researchEffectsIds.containsKey(effect.getId()))
+            {
+                researchEffectsIds.get(effect.getId()).add(research);
+            }
+            else
+            {
+                researchEffectsIds.put(effect.getId(), new HashSet<IGlobalResearch>());
+            }
         }
         if (research.isAutostart())
         {
@@ -127,9 +148,15 @@ public class GlobalResearchTree implements IGlobalResearchTree
     }
 
     @Override
+    public Set<IGlobalResearch> getResearchForEffect(final ResourceLocation id)
+    {
+        return researchEffectsIds.get(id);
+    }
+
+    @Override
     public boolean hasResearchEffect(final ResourceLocation id)
     {
-        return researchEffectsIds.contains(id);
+        return researchEffectsIds.get(id) != null;
     }
 
     @Override
@@ -276,7 +303,7 @@ public class GlobalResearchTree implements IGlobalResearchTree
     }
 
     @Override
-    public HashSet<IGlobalResearch> getAutostartResearches()
+    public Set<IGlobalResearch> getAutostartResearches()
     {
         return autostartResearch;
     }

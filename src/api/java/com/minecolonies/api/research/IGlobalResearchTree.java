@@ -9,13 +9,13 @@ import com.minecolonies.api.research.effects.IResearchEffect;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.nbt.CompoundNBT;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * The interface for the object that holds all research globally.
@@ -37,9 +37,19 @@ public interface IGlobalResearchTree
      *
      * @param id     the id of the research.
      * @param branch the branch of the research.
-     * @return the IResearch object.
+     * @return the IGlobalResearch object.
      */
+    @Nullable
     IGlobalResearch getResearch(final ResourceLocation branch, final ResourceLocation id);
+
+    /**
+     * Get the first research with a given id, on any branch.
+     * Avoid using when branch is available.
+     * @param id       the id of the research.
+     * @return the first matching IGlobalResearch object.
+     */
+    @Nullable
+    IGlobalResearch getResearch(final ResourceLocation id);
 
     /**
      * Get an effect id for a particular research
@@ -113,7 +123,7 @@ public interface IGlobalResearchTree
      * once their requirements are met.
      * @return the list of research.
      */
-    HashSet<IGlobalResearch> getAutostartResearches();
+    Set<IGlobalResearch> getAutostartResearches();
 
     /**
      * Validates and gets the list of research reset costs, if any are set, from their configuration values.
@@ -127,6 +137,14 @@ public interface IGlobalResearchTree
      * @return true if present, false if not registered.
      */
     boolean hasResearchEffect(final ResourceLocation id);
+
+    /**
+     * Gets all research for a given research effect id, if any are present.
+     * @param id   the effect's identifier.
+     * @return The set of researches for the effect, or null if no research has this effect.
+     */
+    @Nullable
+    Set<IGlobalResearch> getResearchForEffect(final ResourceLocation id);
 
     /**
      * Checks if the research requirements are completed, for a given colony.

@@ -34,5 +34,6 @@
   ],
   "loot-table": "minecolonies:recipes/diamond/soul_sand",
   "min-building-level": 5,
-  "intermediate": "minecraft:air"
+  "intermediate": "minecraft:air",
+  "show-jei" : true
 }

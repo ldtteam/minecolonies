@@ -9,5 +9,6 @@
   ],
   "result": "minecraft:carved_pumpkin",
   "count": 1,
-  "intermediate" : "minecraft:air"
+  "intermediate" : "minecraft:air",
+  "show-jei" : true
 }

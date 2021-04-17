@@ -22,5 +22,6 @@
   ],
   "loot-table": "minecolonies:recipes/string/sand",
   "min-building-level": 1,
-  "intermediate": "minecraft:air"
+  "intermediate": "minecraft:air",
+  "show-jei" : true
 }

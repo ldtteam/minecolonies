@@ -10,5 +10,6 @@
   "result": "minecraft:cake",
   "count": 1,
   "intermediate" : "minecraft:furnace",
-  "min-building-level" : 2
+  "min-building-level" : 2,
+  "show-jei" : true
 }

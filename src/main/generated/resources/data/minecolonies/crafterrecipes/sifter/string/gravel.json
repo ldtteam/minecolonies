@@ -25,5 +25,6 @@
   ],
   "loot-table": "minecolonies:recipes/string/gravel",
   "min-building-level": 1,
-  "intermediate": "minecraft:air"
+  "intermediate": "minecraft:air",
+  "show-jei" : true
 }

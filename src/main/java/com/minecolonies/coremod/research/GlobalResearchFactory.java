@@ -248,7 +248,6 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         {
             CompoundNBT nbt = buffer.readCompoundTag();
             research.addRequirement(Objects.requireNonNull(IResearchRequirementRegistry.getInstance().getValue(new ResourceLocation(Objects.requireNonNull(nbt).getString(TAG_REQ_TYPE)))).readFromNBT(nbt.getCompound(TAG_REQ_TYPE)));
-            //research.addRequirement((IResearchRequirement) Class.forName(Objects.requireNonNull(nbt).getString(TAG_REQ_TYPE)).getConstructor(CompoundNBT.class).newInstance(nbt.getCompound(TAG_REQ_ITEM)));
         }
 
         final int effectCount = buffer.readInt();
@@ -256,7 +255,6 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         {
             CompoundNBT nbt = buffer.readCompoundTag();
             research.addEffect(Objects.requireNonNull(IResearchEffectRegistry.getInstance().getValue(new ResourceLocation(Objects.requireNonNull(nbt).getString(TAG_EFFECT_TYPE)))).readFromNBT(nbt.getCompound(TAG_EFFECT_ITEM)));
-            //research.addEffect((IResearchEffect<?>) Class.forName(Objects.requireNonNull(nbt).getString(TAG_EFFECT_TYPE)).getConstructor(CompoundNBT.class).newInstance(nbt.getCompound(TAG_EFFECT_ITEM)));
         }
 
         final int childCount = buffer.readInt();

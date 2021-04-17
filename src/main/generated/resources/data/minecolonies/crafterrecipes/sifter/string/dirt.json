@@ -31,5 +31,6 @@
   ],
   "loot-table": "minecolonies:recipes/string/dirt",
   "min-building-level": 1,
-  "intermediate": "minecraft:air"
+  "intermediate": "minecraft:air",
+  "show-jei" : true
 }

@@ -11,51 +11,63 @@ import com.ldtteam.structurize.network.messages.SchematicRequestMessage;
 import com.ldtteam.structurize.placement.structure.IStructureHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.ldtteam.structurize.util.RenderUtils;
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
+import com.minecolonies.api.blocks.AbstractBlockHut;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.items.ModItems;
+import com.minecolonies.api.research.IGlobalResearch;
 import com.minecolonies.api.sounds.ModSoundEvents;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.views.EmptyView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.PostBox;
+import com.minecolonies.coremod.colony.crafting.CustomRecipe;
+import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
 import com.minecolonies.coremod.entity.pathfinding.Pathfinding;
 import com.minecolonies.coremod.items.ItemBannerRallyGuards;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Mirror;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.*;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
+import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.antlr.v4.runtime.misc.Triple;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.WAYPOINT_STRING;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
  * Used to handle client events.
@@ -157,6 +169,139 @@ public class ClientEventHandler
             {
                 event.setResultSound(null);
             }
+        }
+    }
+
+    /**
+     * Fires when an item tooltip is requested, generally from inventory, JEI, or when minecraft is first populating the recipe book.
+     * @param event An ItemTooltipEvent
+     */
+    @SubscribeEvent
+    public static void onItemTooltipEvent(final ItemTooltipEvent event)
+    {
+        // Vanilla recipe books populate tooltips once before the player exists on remote clients, some other cases.
+        if(event.getPlayer() == null)
+        {
+            return;
+        }
+        final IColony colony = IMinecoloniesAPI.getInstance().getColonyManager().getClosestIColony(event.getPlayer().world, event.getPlayer().getPosition());
+        handleCrafterRecipeTooltips(colony, event.getToolTip(), event.getItemStack().getItem());
+        if(event.getItemStack().getItem() instanceof BlockItem)
+        {
+            final BlockItem blockItem = (BlockItem) event.getItemStack().getItem();
+            if(blockItem.getBlock() instanceof AbstractBlockHut)
+            {
+                handleHutBlockResearchUnlocks(colony, event.getToolTip(), blockItem.getBlock());
+            }
+        }
+    }
+
+    /**
+     * Display crafter recipe-related information on the client.
+     * @param colony   The colony to check against, if one is present.
+     * @param toolTip  The tooltip to add the text onto.
+     * @param item     The item that will have the tooltip text added.
+     */
+    private static void handleCrafterRecipeTooltips(@Nullable final IColony colony, final List<ITextComponent> toolTip, final Item item)
+    {
+        final List<CustomRecipe> recipes = CustomRecipeManager.getInstance().getRecipeByOutput(item);
+        if(recipes == null)
+        {
+            return;
+        }
+
+        for(CustomRecipe rec : recipes)
+        {
+            if(!rec.getShowTooltip() || rec.getCrafter().length() < 2)
+            {
+                continue;
+            }
+            final String crafterCapitalized = rec.getCrafter().substring(0, 1).toUpperCase(Locale.ROOT) + rec.getCrafter().substring(1);
+            if(rec.getMinBuildingLevel() > 0)
+            {
+                final IFormattableTextComponent reqLevelText = new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ITEM_BUILDLEVEL_TOOLTIP_GUI, crafterCapitalized, rec.getMinBuildingLevel());
+                if(colony != null)
+                {
+                    if(colony.hasBuilding(rec.getCrafter(), rec.getMinBuildingLevel(), true))
+                    {
+                        reqLevelText.setStyle(Style.EMPTY.setFormatting(TextFormatting.AQUA));
+                    }
+                    else
+                    {
+                        reqLevelText.setStyle(Style.EMPTY.setFormatting(TextFormatting.RED));
+                    }
+                }
+                else
+                {
+                    reqLevelText.setStyle(Style.EMPTY.setItalic(true).setFormatting(TextFormatting.GRAY));
+                }
+                toolTip.add(reqLevelText);
+            }
+            else
+            {
+                final IFormattableTextComponent reqBuildingTxt = new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ITEM_AVAILABLE_TOOLTIP_GUI, crafterCapitalized)
+                .setStyle(Style.EMPTY.setItalic(true).setFormatting(TextFormatting.GRAY));
+                toolTip.add(reqBuildingTxt);
+            }
+            if(rec.getRequiredResearchId() != null)
+            {
+                TextFormatting researchFormat = TextFormatting.GRAY;
+                if(colony != null)
+                {
+                    if (colony.getResearchManager().getResearchTree().hasCompletedResearch(rec.getRequiredResearchId()) ||
+                          colony.getResearchManager().getResearchEffects().getEffectStrength(rec.getRequiredResearchId()) > 0)
+                    {
+                        researchFormat = TextFormatting.AQUA;
+                    }
+                    else
+                    {
+                        researchFormat = TextFormatting.RED;
+                    }
+                }
+                final Set<IGlobalResearch> researches;
+                if(IMinecoloniesAPI.getInstance().getGlobalResearchTree().hasResearch(rec.getRequiredResearchId()))
+                {
+                    researches = new HashSet<>();
+                    researches.add(IMinecoloniesAPI.getInstance().getGlobalResearchTree().getResearch(rec.getRequiredResearchId()));
+                }
+                else
+                {
+                    researches = IMinecoloniesAPI.getInstance().getGlobalResearchTree().getResearchForEffect(rec.getRequiredResearchId());
+                }
+                if(researches != null)
+                {
+                    for (IGlobalResearch research : researches)
+                    {
+                        toolTip.add(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ITEM_REQUIRES_RESEARCH_TOOLTIP_GUI,
+                          research.getName()).setStyle(Style.EMPTY.setFormatting(researchFormat)));
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Display research-related information on MineColonies Building hut blocks.
+     * While this test can handle other non-hut blocks, research can only currently effect AbstractHutBlocks.
+     * @param colony   The colony to check against, if one is present.
+     * @param tooltip  The tooltip to add the text onto.
+     * @param block    The hut block
+     */
+    private static void handleHutBlockResearchUnlocks(final IColony colony, final List<ITextComponent> tooltip, final Block block)
+    {
+        if (colony == null)
+        {
+            return;
+        }
+        final ResourceLocation effectId = colony.getResearchManager().getResearchEffectIdFrom(block.getBlock());
+        if (colony.getResearchManager().getResearchEffects().getEffectStrength(effectId) > 0)
+        {
+            return;
+        }
+        if (MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().getResearchForEffect(effectId) != null)
+        {
+            tooltip.add(new TranslationTextComponent(TranslationConstants.HUT_NEEDS_RESEARCH_TOOLTIP_1, block.getBlock().getTranslatedName()));
+            tooltip.add(new TranslationTextComponent(TranslationConstants.HUT_NEEDS_RESEARCH_TOOLTIP_2, block.getBlock().getTranslatedName()));
         }
     }
 

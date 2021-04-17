@@ -52,5 +52,6 @@
   ],
   "loot-table": "minecolonies:recipes/diamond/dirt",
   "min-building-level": 5,
-  "intermediate": "minecraft:air"
+  "intermediate": "minecraft:air",
+  "show-jei" : true
 }

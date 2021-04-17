@@ -31,5 +31,6 @@
   ],
   "loot-table": "minecolonies:recipes/iron/soul_sand",
   "min-building-level": 4,
-  "intermediate": "minecraft:air"
+  "intermediate": "minecraft:air",
+  "show-jei" : true
 }

@@ -25,5 +25,6 @@
   ],
   "loot-table": "minecolonies:recipes/flint/sand",
   "min-building-level": 3,
-  "intermediate": "minecraft:air"
+  "intermediate": "minecraft:air",
+  "show-jei" : true
 }

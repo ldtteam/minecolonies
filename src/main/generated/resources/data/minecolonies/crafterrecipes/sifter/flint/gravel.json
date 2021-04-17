@@ -28,5 +28,6 @@
   ],
   "loot-table": "minecolonies:recipes/flint/gravel",
   "min-building-level": 3,
-  "intermediate": "minecraft:air"
+  "intermediate": "minecraft:air",
+  "show-jei" : true
 }

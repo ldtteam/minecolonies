@@ -13,5 +13,6 @@
   ],
   "result": "minecraft:red_sand",
   "count": "4",
-  "intermediate" : "minecraft:air"
+  "intermediate" : "minecraft:air",
+  "show-jei" : true
 }
