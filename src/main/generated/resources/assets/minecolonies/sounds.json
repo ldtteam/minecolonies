@@ -22938,7 +22938,7 @@
     "category": "neutral",
     "sounds": [
       {
-        "name": "minecolonies:mob/mercenary/attack",
+        "name": "minecolonies:mob/mercenary/attack/attack1",
         "stream": false
       }
     ]
@@ -22947,7 +22947,7 @@
     "category": "neutral",
     "sounds": [
       {
-        "name": "minecolonies:mob/mercenary/celebrate",
+        "name": "minecolonies:mob/mercenary/celebrate/celebrate1",
         "stream": false
       }
     ]
@@ -22956,7 +22956,11 @@
     "category": "neutral",
     "sounds": [
       {
-        "name": "minecolonies:mob/mercenary/die",
+        "name": "minecolonies:mob/mercenary/die/death1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/mercenary/die/death2",
         "stream": false
       }
     ]
@@ -22965,7 +22969,15 @@
     "category": "neutral",
     "sounds": [
       {
-        "name": "minecolonies:mob/mercenary/hurt",
+        "name": "minecolonies:mob/mercenary/hurt/hurt1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/mercenary/hurt/hurt2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/mercenary/hurt/hurt3",
         "stream": false
       }
     ]
@@ -22974,7 +22986,15 @@
     "category": "neutral",
     "sounds": [
       {
-        "name": "minecolonies:mob/mercenary/say",
+        "name": "minecolonies:mob/mercenary/say/say1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/mercenary/say/say2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/mercenary/say/say3",
         "stream": false
       }
     ]
@@ -22983,7 +23003,7 @@
     "category": "neutral",
     "sounds": [
       {
-        "name": "minecolonies:mob/mercenary/step",
+        "name": "minecolonies:mob/mercenary/step/step1",
         "stream": false
       }
     ]
