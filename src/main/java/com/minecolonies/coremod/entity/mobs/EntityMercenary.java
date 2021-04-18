@@ -43,6 +43,7 @@ import net.minecraft.world.gen.Heightmap;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -302,6 +303,25 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
     protected void playStepSound(final BlockPos pos, final BlockState blockIn)
     {
         this.playSound(MercenarySounds.mercenaryStep, 0.45F, 1.0F);
+    }
+
+    @Override
+    protected SoundEvent getHurtSound(final DamageSource damageSourceIn)
+    {
+        return MercenarySounds.mercenaryHurt;
+    }
+
+    @Override
+    protected SoundEvent getDeathSound()
+    {
+        return MercenarySounds.mercenaryDie;
+    }
+
+    @Nullable
+    @Override
+    protected SoundEvent getAmbientSound()
+    {
+        return MercenarySounds.mercenarySay;
     }
 
     @Override
