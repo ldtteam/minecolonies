@@ -278,7 +278,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         return START_WORKING;
     }
 
-    @Nullable
+    @NotNull
     public B getOwnBuilding()
     {
         return getOwnBuilding(getExpectedBuildingClass());
@@ -297,7 +297,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      * @param type the type.
      * @return the building associated with this AI's worker.
      */
-    @Nullable
+    @NotNull
     @SuppressWarnings("unchecked")
     private B getOwnBuilding(@NotNull final Class<B> type)
     {
@@ -305,19 +305,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         {
             return (B) worker.getCitizenColonyHandler().getWorkBuilding();
         }
-        else
-        {
-            Log.getLogger().warn("Citizen {} has lost its building, type does not match found {} expected {}.",
-              worker.getCitizenData().getName(),
-              getExpectedBuildingClass().getSimpleName(),
-              type.getSimpleName());
-
-            if (worker.getCitizenData() != null)
-            {
-                worker.getCitizenData().setJob(null);
-            }
-        }
-        return null;
+        throw new IllegalStateException("Citizen " + worker.getCitizenData().getName() + " has lost its building unexpectedly, type does not match");
     }
 
     @Override
@@ -414,6 +402,15 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     {
         if (null == worker.getCitizenJobHandler().getColonyJob() || worker.getCitizenColonyHandler().getWorkBuilding() == null || worker.getCitizenData() == null)
         {
+            return INIT;
+        }
+
+        if (!getExpectedBuildingClass().isInstance(worker.getCitizenColonyHandler().getWorkBuilding()))
+        {
+            if (worker.getCitizenData() != null)
+            {
+                worker.getCitizenData().setJob(null);
+            }
             return INIT;
         }
 

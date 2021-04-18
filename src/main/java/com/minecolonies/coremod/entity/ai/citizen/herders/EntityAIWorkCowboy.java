@@ -113,7 +113,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
 
         if (!worker.getCitizenInventoryHandler().hasItemInInventory(getBreedingItem().getItem()) && isInHut(new ItemStack(Items.BUCKET, 1)))
         {
-            if (!walkToBuilding() && getOwnBuilding() != null)
+            if (!walkToBuilding())
             {
                 isInTileEntity(getOwnBuilding().getTileEntity(), new ItemStack(Items.BUCKET, 1));
             }
