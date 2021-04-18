@@ -183,23 +183,18 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         packetBuffer.writeVarInt(input.getCostList().size());
         for(ItemStorage is : input.getCostList())
         {
-            packetBuffer.writeItemStack(is.getItemStack());
-            packetBuffer.writeBoolean(is.ignoreNBT());
-            if(!is.ignoreNBT())
-            {
-                packetBuffer.writeCompoundTag(is.getItemStack().getTag());
-            }
+            controller.serialize(packetBuffer, is);
         }
         packetBuffer.writeVarInt(input.getResearchRequirement().size());
         for(IResearchRequirement req : input.getResearchRequirement())
         {
-            packetBuffer.writeString(req.getClass().getName());
+            packetBuffer.writeResourceLocation(req.getRegistryEntry().getRegistryName());
             packetBuffer.writeCompoundTag(req.writeToNBT());
         }
         packetBuffer.writeVarInt(input.getEffects().size());
         for(IResearchEffect<?> effect : input.getEffects())
         {
-            packetBuffer.writeString(effect.getClass().getName());
+            packetBuffer.writeResourceLocation(effect.getRegistryEntry().getRegistryName());
             packetBuffer.writeCompoundTag(effect.writeToNBT());
         }
         packetBuffer.writeVarInt(input.getChildren().size());
@@ -233,26 +228,21 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         final int costSize = buffer.readVarInt();
         for(int i = 0; i < costSize; i++)
         {
-            final ItemStorage is = new ItemStorage(buffer.readItemStack(), false, buffer.readBoolean());
-            if(!is.ignoreNBT())
-            {
-                is.getItemStack().setTag(buffer.readCompoundTag());
-            }
-            research.addCost(is);
+            research.addCost(controller.deserialize(buffer));
         }
 
         final int reqCount = buffer.readVarInt();
         for(int i = 0; i < reqCount; i++)
         {
-            CompoundNBT nbt = buffer.readCompoundTag();
-            research.addRequirement(Objects.requireNonNull(IResearchRequirementRegistry.getInstance().getValue(new ResourceLocation(Objects.requireNonNull(nbt).getString(TAG_REQ_TYPE)))).readFromNBT(nbt.getCompound(TAG_REQ_TYPE)));
+            final ResourceLocation reqId = buffer.readResourceLocation();
+            research.addRequirement(Objects.requireNonNull(IResearchRequirementRegistry.getInstance().getValue(reqId)).readFromNBT(buffer.readCompoundTag()));
         }
 
         final int effectCount = buffer.readVarInt();
         for(int i = 0; i < effectCount; i++)
         {
-            CompoundNBT nbt = buffer.readCompoundTag();
-            research.addEffect(Objects.requireNonNull(IResearchEffectRegistry.getInstance().getValue(new ResourceLocation(Objects.requireNonNull(nbt).getString(TAG_EFFECT_TYPE)))).readFromNBT(nbt.getCompound(TAG_EFFECT_ITEM)));
+            final ResourceLocation effectId = buffer.readResourceLocation();
+            research.addEffect(Objects.requireNonNull(IResearchEffectRegistry.getInstance().getValue(effectId)).readFromNBT(buffer.readCompoundTag()));
         }
 
         final int childCount = buffer.readVarInt();

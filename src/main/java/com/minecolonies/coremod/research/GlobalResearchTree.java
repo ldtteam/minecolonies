@@ -256,6 +256,8 @@ public class GlobalResearchTree implements IGlobalResearchTree
     @Override
     public IMessage handleGlobalResearchTreeMessage(final PacketBuffer buf)
     {
+        researchTree.clear();
+        branchDatas.clear();
         for (int branchNum = buf.readVarInt(); branchNum > 0; branchNum--)
         {
             for(int researchNum = buf.readVarInt(); researchNum > 0; researchNum--)

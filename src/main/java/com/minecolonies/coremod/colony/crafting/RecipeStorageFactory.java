@@ -8,7 +8,6 @@ import com.minecolonies.api.crafting.IRecipeStorageFactory;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.ModRecipeTypes;
 import com.minecolonies.api.crafting.RecipeStorage;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -211,24 +210,24 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
     @Override
     public void serialize(@NotNull final IFactoryController controller, final RecipeStorage input, final PacketBuffer packetBuffer)
     {
-        packetBuffer.writeInt(input.getInput().size());
+        packetBuffer.writeVarInt(input.getInput().size());
         input.getInput().forEach(stack -> StandardFactoryController.getInstance().serialize(packetBuffer, stack));
         packetBuffer.writeItemStack(input.getPrimaryOutput());
 
         packetBuffer.writeBoolean(input.getIntermediate() != null);
         if (input.getIntermediate() != null)
         {
-            packetBuffer.writeInt(Block.getStateId(input.getIntermediate().getDefaultState()));
+            packetBuffer.writeVarInt(Block.getStateId(input.getIntermediate().getDefaultState()));
         }
 
-        packetBuffer.writeInt(input.getGridSize());
+        packetBuffer.writeVarInt(input.getGridSize());
 
         packetBuffer.writeResourceLocation(input.getRecipeType().getId());
 
-        packetBuffer.writeInt(input.getAlternateOutputs().size());
+        packetBuffer.writeVarInt(input.getAlternateOutputs().size());
         input.getAlternateOutputs().forEach(stack -> packetBuffer.writeItemStack(stack));
 
-        packetBuffer.writeInt(input.getCraftingToolsAndSecondaryOutputs().size());
+        packetBuffer.writeVarInt(input.getCraftingToolsAndSecondaryOutputs().size());
         input.getCraftingToolsAndSecondaryOutputs().forEach(stack -> packetBuffer.writeItemStack(stack));
 
         packetBuffer.writeBoolean(input.getLootTable() != null);
@@ -251,26 +250,26 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
     public RecipeStorage deserialize(@NotNull final IFactoryController controller, final PacketBuffer buffer) throws Throwable
     {
         final List<ItemStorage> input = new ArrayList<>();
-        final int inputSize = buffer.readInt();
+        final int inputSize = buffer.readVarInt();
         for (int i = 0; i < inputSize; ++i)
         {
             input.add(StandardFactoryController.getInstance().deserialize(buffer));
         }
 
         final ItemStack primaryOutput = buffer.readItemStack();
-        final Block intermediate = buffer.readBoolean() ? Block.getStateById(buffer.readInt()).getBlock() : Blocks.AIR;
-        final int gridSize = buffer.readInt();
+        final Block intermediate = buffer.readBoolean() ? Block.getStateById(buffer.readVarInt()).getBlock() : Blocks.AIR;
+        final int gridSize = buffer.readVarInt();
         final ResourceLocation type = buffer.readResourceLocation();
 
         final List<ItemStack> altOutputs = new ArrayList<>();
-        final int altOutputSize = buffer.readInt();
+        final int altOutputSize = buffer.readVarInt();
         for (int i = 0; i < altOutputSize; ++i)
         {
             altOutputs.add(buffer.readItemStack());
         }
 
         final List<ItemStack> secOutputs = new ArrayList<>();
-        final int secOutputSize = buffer.readInt();
+        final int secOutputSize = buffer.readVarInt();
         for (int i = 0; i < secOutputSize; ++i)
         {
             secOutputs.add(buffer.readItemStack());

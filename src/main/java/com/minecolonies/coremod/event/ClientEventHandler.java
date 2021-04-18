@@ -184,8 +184,8 @@ public class ClientEventHandler
         {
             return;
         }
-        IColony colony = IMinecoloniesAPI.getInstance().getColonyManager().getClosestIColony(event.getPlayer().world, event.getPlayer().getPosition());
-        if(colony == null || !colony.isCoordInColony(event.getPlayer().world, event.getPlayer().getPosition()))
+        IColony colony = IMinecoloniesAPI.getInstance().getColonyManager().getIColony(event.getPlayer().world, event.getPlayer().getPosition());
+        if(colony == null)
         {
             colony = IMinecoloniesAPI.getInstance().getColonyManager().getIColonyByOwner(event.getPlayer().world, event.getPlayer());
         }

@@ -1229,10 +1229,10 @@ public class Colony implements IColony
                 else
                 {
                     sum += building.getBuildingLevel();
-                }
-                if(sum >= level)
-                {
-                    return true;
+                    if(sum >= level)
+                    {
+                        return true;
+                    }
                 }
             }
         }

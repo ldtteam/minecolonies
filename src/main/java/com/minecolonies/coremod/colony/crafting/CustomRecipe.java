@@ -405,22 +405,69 @@ public class CustomRecipe
         return recipe;
     }
 
-    public CustomRecipe(final String crafter, final List<ItemStorage> inputs, final ItemStack primaryOutput, final List<ItemStack> secondaryOutput, final List<ItemStack> altOutputs,
-     @Nullable final ResourceLocation lootTable, final ResourceLocation recipeId, @Nullable final ResourceLocation researchReq, @Nullable final ResourceLocation researchExclude, final int minBldgLevel, final int maxBldgLevel, final boolean mustExist, final boolean showTooltip)
+    /**
+     * Creates a custom recipe from its components.
+     * @param crafter           The crafter for the recipe.
+     * @param minBldgLevel      Minimum level before the recipe can be learned.
+     * @param maxBldgLevel      Maximum level before buildings in the colony will remove the recipe, if learned.
+     * @param mustExist         If true, the custom recipe will only be learned if another recipe with the same output is taught to the building.
+     * @param showTooltip       If a tooltip describing the recipe should be attached to the item.  Only one recipe per output should have showTooltip set to true.
+     * @param recipeId          The identifier for the recipe, as a resource location.
+     * @param researchReq       Research ID that the colony must have to begin the research.
+     * @param researchExclude   Research ID that will cause buildings in the colony to remove the recipe, if learned.
+     * @param lootTable         The loot table's resource location, if one is present.
+     * @param inputs            The consumed items, as ItemStorages.
+     * @param primaryOutput     The primary output of the recipe.
+     * @param secondaryOutput   The secondary outputs of the recipe. Most often items like buckets or tools.
+     * @param altOutputs        Alternative outputs of the recipe.  Used to allow one taught recipe to result in multiple effective choices for the request system.
+     */
+    public CustomRecipe(final String crafter, final int minBldgLevel, final int maxBldgLevel, final boolean mustExist, final boolean showTooltip, final ResourceLocation recipeId,
+      @Nullable final ResourceLocation researchReq, @Nullable final ResourceLocation researchExclude, @Nullable final ResourceLocation lootTable, final List<ItemStorage> inputs,
+      final ItemStack primaryOutput, final List<ItemStack> secondaryOutput, final List<ItemStack> altOutputs)
     {
         this.crafter = crafter;
         this.recipeId = recipeId;
-        this.inputs = inputs;
-        this.result = primaryOutput;
-        this.secondary = secondaryOutput;
-        this.altOutputs = altOutputs;
-        this.lootTable = lootTable;
         this.researchId = researchReq;
         this.excludedResearchId = researchExclude;
         this.minBldgLevel = minBldgLevel;
         this.maxBldgLevel = maxBldgLevel;
         this.mustExist = mustExist;
         this.showTooltip = showTooltip;
+        this.inputs = inputs;
+        this.result = primaryOutput;
+        this.secondary = secondaryOutput;
+        this.altOutputs = altOutputs;
+        this.lootTable = lootTable;
+    }
+
+    /**
+     * Creates a custom recipe from its components.
+     * @param crafter           The crafter for the recipe.
+     * @param minBldgLevel      Minimum level before the recipe can be learned.
+     * @param maxBldgLevel      Maximum level before buildings in the colony will remove the recipe, if learned.
+     * @param mustExist         If true, the custom recipe will only be learned if another recipe with the same output is taught to the building.
+     * @param showTooltip       If a tooltip describing the recipe should be attached to the item.  Only one recipe per output should have showTooltip set to true.
+     * @param recipeId          The identifier for the recipe, as a resource location.
+     * @param researchReq       Research ID that the colony must have to begin the research.
+     * @param researchExclude   Research ID that will cause buildings in the colony to remove the recipe, if learned.
+     * @param recipe            The RecipeStorage of the recipe.
+     */
+    public CustomRecipe(final String crafter, final int minBldgLevel, final int maxBldgLevel, final boolean mustExist, final boolean showTooltip, final ResourceLocation recipeId,
+      @Nullable final ResourceLocation researchReq, @Nullable final ResourceLocation researchExclude, final RecipeStorage recipe)
+    {
+        this.crafter = crafter;
+        this.recipeId = recipeId;
+        this.researchId = researchReq;
+        this.excludedResearchId = researchExclude;
+        this.minBldgLevel = minBldgLevel;
+        this.maxBldgLevel = maxBldgLevel;
+        this.mustExist = mustExist;
+        this.showTooltip = showTooltip;
+        this.inputs = recipe.getInput();
+        this.result = recipe.getPrimaryOutput();
+        this.secondary = recipe.getSecondaryOutputs();
+        this.altOutputs = recipe.getAlternateOutputs();
+        this.lootTable = recipe.getLootTable();
     }
 
     /**

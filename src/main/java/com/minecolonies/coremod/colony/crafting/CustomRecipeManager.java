@@ -167,7 +167,7 @@ public class CustomRecipeManager
     {
         // Custom Recipe Manager packets can potentially get very large, and individual CompoundNBTs can not be parsed if they exceed 2MB.
         // For safety with arbitrary data packs (or sets of data packs), we can not wrap the entire CustomRecipeManager into single ListNBT.
-        // Including all recipes in transfer results in total transfer size around ~400KB for base recipes.
+        // Including all recipes in transfer results in total transfer size around ~670KB for just Minecolonies + Structurize recipes.
         // See CustomRecipeFactory.serialize for last tested numbers and more precise breakdown.
         recipeMgrPacketBuffer.writeVarInt(recipeMap.size());
         for (Map.Entry<String, Map<ResourceLocation, CustomRecipe>> crafter : recipeMap.entrySet())
@@ -175,6 +175,7 @@ public class CustomRecipeManager
             recipeMgrPacketBuffer.writeVarInt(crafter.getValue().size());
             for (CustomRecipe recipe : crafter.getValue().values())
             {
+                //recipeMgrPacketBuffer.writeCompoundTag(StandardFactoryController.getInstance().serialize(recipe));
                 StandardFactoryController.getInstance().serialize(recipeMgrPacketBuffer, recipe);
             }
         }
@@ -193,8 +194,8 @@ public class CustomRecipeManager
         {
             for (int recipeNum = buff.readVarInt(); recipeNum > 0; recipeNum--)
             {
-                CustomRecipe rec = StandardFactoryController.getInstance().deserialize(buff);
-                addRecipe(rec);
+                addRecipe(StandardFactoryController.getInstance().deserialize(buff));
+                //addRecipe(StandardFactoryController.getInstance().deserialize(buff.readCompoundTag()));
             }
         }
     }
