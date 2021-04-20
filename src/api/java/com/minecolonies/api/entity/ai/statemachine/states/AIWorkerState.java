@@ -164,6 +164,30 @@ public enum AIWorkerState implements IAIState
     FARMER_HARVEST(false),
 
       /*
+###Undertaker###
+    */
+
+    /**
+     * Empty The grave
+     */
+    EMPTY_GRAVE(false),
+
+    /**
+     * Dig The grave
+     */
+    DIG_GRAVE(false),
+
+    /**
+     * Bury the citizen
+     */
+    BURY_CITIZEN(false),
+
+    /**
+     * Attempt Resurrect
+     */
+    TRY_RESURRECT(false),
+
+      /*
 ###Guard###
     */
 

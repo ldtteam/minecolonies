@@ -8,6 +8,8 @@ import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.tileentities.AbstractScarecrowTileEntity;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
+import com.minecolonies.api.tileentities.AbstractTileEntityGrave;
+import com.mojang.serialization.RecordBuilder;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -203,6 +205,15 @@ public interface IBuildingManager
      * @return the Position of it.
      */
     BlockPos getBestRestaurant(final AbstractEntityCitizen citizen);
+
+    /**
+     * Calculate the closest graveyard that satisfy the given predicate for a certain citizen
+     *
+     * @param citizen the citizen.
+     * @param predicate to validate the graveyard.
+     * @return the Position of it.
+     */
+    BlockPos getClosestGraveyard(AbstractEntityCitizen citizen, Predicate<Object> predicate);
 
     /**
      * Calculate a good hospital for a certain citizen.

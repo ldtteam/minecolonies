@@ -51,6 +51,7 @@ public final class ModBuildings
     public static final String RABBIT_ID         = "rabbithutch";
     public static final String BEEKEEPER_ID      = "beekeeper";
     public static final String MYSTICAL_SITE_ID  = "mysticalsite";
+    public static final String GRAVEYARD_ID      = "graveyard";
 
     public static BuildingEntry archery;
     public static BuildingEntry bakery;
@@ -98,6 +99,7 @@ public final class ModBuildings
     public static BuildingEntry rabbitHutch;
     public static BuildingEntry beekeeper;
     public static BuildingEntry mysticalSite;
+    public static BuildingEntry graveyard;
 
     private ModBuildings()
     {

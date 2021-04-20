@@ -634,6 +634,11 @@
   "com.minecolonies.coremod.gui.workerhuts.farmerhut.assignmentmode": "Assign Fields to Farmer:",
   "com.minecolonies.coremod.gui.workerhuts.farmerhut.requestfertilizer": "Allow Farmer to request Fertilizer",
 
+  "com.minecolonies.coremod.job.undertaker": "Undertaker",
+  "com.minecolonies.coremod.gui.workerhuts.graveyard": "Graveyard",
+  "com.minecolonies.coremod.gui.workerhuts.graveyard.graves": "Graves to retrieve",
+  "com.minecolonies.coremod.gui.workerhuts.graveyard.rip": "Citizens buried here",
+
   "com.minecolonies.coremod.gui.workerhuts.farmerhut.north": "North",
   "com.minecolonies.coremod.gui.workerhuts.farmerhut.south": "South",
   "com.minecolonies.coremod.gui.workerhuts.farmerhut.east": "East",
@@ -767,6 +772,8 @@
   "com.minecolonies.coremod.gui.home.assign": "Assign %d citizens",
   "com.minecolonies.coremod.gui.workerhuts.unassign": "Remove Citizen",
   "block.minecolonies.blockminecoloniesrack": "Rack",
+  "block.minecolonies.blockminecoloniesgrave": "Grave",
+  "block.minecolonies.blockminecoloniesnamedgrave": "Named Grave",
 
   "com.minecolonies.coremod.status.deciding": "Deciding",
   "com.minecolonies.coremod.status.sleeping": "Let me sleep",
@@ -792,6 +799,12 @@
   "com.minecolonies.coremod.status.searchingtree": "Searching for trees",
   "com.minecolonies.coremod.status.chopping": "Chopping",
   "com.minecolonies.coremod.status.stuckinleaves": "Stuck in leaves!",
+  "com.minecolonies.coremod.status.digging": "Digging a grave",
+  "com.minecolonies.coremod.status.emptying": "Emptying a grave",
+  "com.minecolonies.coremod.status.burying": "Burying a citizen",
+  "com.minecolonies.coremod.resurrect": "Amazing! Your Undertaker resurrected %s today!",
+  "com.minecolonies.coremod.gravespawned": "A grave spawned, collect it before it decays!",
+  "com.minecolonies.coremod.nospaceforgrave": "Your Graveyard is full and %s couldn't be buried. Upgrade it or build more Graveyards before this happens again!",
 
   "com.minecolonies.coremod.gui.workerhuts.buildbarracks": "Barracks",
   "com.minecolonies.coremod.gui.barracks.spieshire": "Hire",
@@ -1190,6 +1203,10 @@
   "advancements.minecolonies.build.farmer.description": "To start food production for your citizens, build a Farm. You'll need to place the Field (scarecrow) to mark where your Farmer will farm.",
   "advancements.minecolonies.build.citizen.title": "Home Sweet Home",
   "advancements.minecolonies.build.citizen.description": "Your citizens need a place to live! Build them a House - each level houses one citizen.",
+  "advancements.minecolonies.citizen.bury.title": "A Sad Day Indeed",
+  "advancements.minecolonies.citizen.bury.description": "Bury your first citizen. It's a sad day for everyone, but better than letting their grave decay away.",
+  "advancements.minecolonies.citizen.resurrect.title": "A Wonderful Day Indeed",
+  "advancements.minecolonies.citizen.resurrect.description": "Your Undertaker resurrected a fallen citizen!",
   "advancements.minecolonies.build.tavern.title": "Any Shelter Will Do",
   "advancements.minecolonies.build.tavern.description": "Your citizens need a roof over their heads! Build a Tavern for some initial housing. You can also recruit citizens there!",
   "advancements.minecolonies.build.town_hall.title": "The Centerpiece",
@@ -1316,6 +1333,9 @@
   "com.minecolonies.gui.visiblestatus.sawmill": "Carpentering",
   "com.minecolonies.gui.visiblestatus.smelting": "Smelting",
   "com.minecolonies.gui.visiblestatus.teacher_student": "Teaching",
+  "com.minecolonies.gui.visiblestatus.emptying": "Emptying a grave",
+  "com.minecolonies.gui.visiblestatus.digging": "Digging a grave",
+  "com.minecolonies.gui.visiblestatus.burying": "Burying a citizen",
 
   "entity.fisherman.messagewatertoofar": "My hut seems to be too far away from water, and I can't find any water to fish in! It should be an area of at least 7x7 blocks, and the same height as my hut.",
   "com.minecolonies.coremod.furnaceuser.nofuel": "Please tell me what kind of fuel I should use in my furnace!",
@@ -1532,6 +1552,11 @@
   "com.minecolonies.coremod.info.barracks.1": "Now let's cover restrictions:\n\n 1. Barracks only hold 1 Barracks Tower per level, and each tower can only level as high as the Barracks. So if you have a level 1 Barracks, it will only allow 1 Barracks Tower with a max level of 1. If you have a level 3 Barracks, it will allow 3 Barracks Towers with a max level of 3.",
   "com.minecolonies.coremod.info.barracks.2.name": "FAQ",
   "com.minecolonies.coremod.info.barracks.2": "Now let's cover some frequently asked questions:\n\n Q 1. Can I have more than 1 Barracks?\n   A 1. Yes, but the Barracks Tower levels are based on the Barracks they are attached to. So even if you have one Barracks that is level 5, if the second Barracks is only level 1, then that Barracks can only have a single level 1 tower.",
+
+  "com.minecolonies.coremod.info.graveyard.0.name": "Introduction",
+  "com.minecolonies.coremod.info.graveyard.0": "The Graveyard is the resting place of your fallen citizens!\n\nWithout it, you'll still be able to manually collect fallen citizens' graves, but your colony will mourn longer.\n\nEach Graveyard needs an Undertaker, who collects graves within the city.",
+  "com.minecolonies.coremod.info.graveyard.1.name": "Resurrection",
+  "com.minecolonies.coremod.info.graveyard.1": "During their free time, the Undertaker will get to know citizens and visit the Mystical Site, slowly attuning to the mana of the world.\n\nIf their Mana skill is high, the Undertaker has a small chance to resurrect a fallen citizen!\n\nYou can increase this chance by upgrading the Graveyard, building a Mystical Site, and completing researches in the University.",
 
   "com.minecolonies.coremod.jei.composter": "Uses compost barrels to turn various items into compost or dirt (look up usages for the compost barrel to see more). At higher skill levels, they can work faster than you can.",
 
@@ -1874,7 +1899,8 @@
   "block.minecolonies.blocksubstitution": "Placeholder Block",
   "block.minecolonies.blocksubstitution.name": "Placeholder Block",
   "block.minecolonies.blockwaypoint": "Waypoint Placeholder",
-
+  "block.minecolonies.blockhutgraveyard": "Graveyard",
+  "block.minecolonies.blockhutgraveyard.name": "Graveyard",
   "item.minecolonies.sifter_mesh_string": "String Mesh",
   "item.minecolonies.sifter_mesh_flint": "Flint Mesh",
   "item.minecolonies.sifter_mesh_iron": "Iron Mesh",

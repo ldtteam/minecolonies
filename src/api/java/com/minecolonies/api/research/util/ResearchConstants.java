@@ -105,6 +105,9 @@ public final class ResearchConstants
     public static final ResourceLocation HEALTH_BOOST                 = new ResourceLocation(Constants.MOD_ID, "effects/healthaddition");
     public static final ResourceLocation MELEE_DAMAGE                 = new ResourceLocation(Constants.MOD_ID, "effects/meleedamageaddition");
     public static final ResourceLocation WORK_LONGER                  = new ResourceLocation(Constants.MOD_ID, "effects/workingdayhaddition");
+    public static final ResourceLocation RESURRECT_CHANCE             = new ResourceLocation(Constants.MOD_ID, "effects/resurrectchanceaddition");
+    public static final ResourceLocation GRAVE_DECAY_BONUS            = new ResourceLocation(Constants.MOD_ID, "effects/gravedecaybonus");
+    public static final ResourceLocation UNDERTAKER_RUN               = new ResourceLocation(Constants.MOD_ID, "effects/undertakerrun");
 
     //Multiplier Modifiers
     public static final ResourceLocation ARCHER_ARMOR      = new ResourceLocation(Constants.MOD_ID, "effects/archerarmormultiplier");

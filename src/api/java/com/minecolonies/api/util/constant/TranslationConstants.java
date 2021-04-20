@@ -458,6 +458,8 @@ public final class TranslationConstants
     @NonNls
     public static final String RACK                                                                 = "block.minecolonies.blockminecoloniesrack";
     @NonNls
+    public static final String GRAVE                                                                = "block.minecolonies.blockminecoloniesgrave";
+    @NonNls
     public static final String RESEARCH_AVAILABLE                                                   = "com.minecolonies.coremod.research.available";
     @NonNls
     public static final String RESEARCH_REQUIRES                                                    = "com.minecolonies.coremod.research.requirement.research";
