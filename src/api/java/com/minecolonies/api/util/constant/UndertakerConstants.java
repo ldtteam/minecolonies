@@ -26,17 +26,17 @@ public class UndertakerConstants
     /**
      * The weigth of each worker level on the resurrection chances.
      */
-    public static final double RESURRECT_WORKER_MANA_LVL_WEIGHT = 0.0025;
+    public static final double RESURRECT_WORKER_MANA_LVL_WEIGHT = 0.00125;
 
     /**
      * The max resurrection chance cap [0.0 min -> 1.0 max]
      */
-    public static final double MAX_RESURRECTION_CHANCE = 0.05;
+    public static final double MAX_RESURRECTION_CHANCE = 0.025;
 
     /**
      * The bonus to max resurrection chance cap per max lvl of Mystical Site in the city
      */
-    public static final double MAX_RESURRECTION_CHANCE_MYSTICAL_LVL_BONUS = 0.01;
+    public static final double MAX_RESURRECTION_CHANCE_MYSTICAL_LVL_BONUS = 0.005;
 
     /**
      * Effort needed to empty a grave
