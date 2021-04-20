@@ -802,7 +802,6 @@
   "com.minecolonies.coremod.status.digging": "Digging a grave",
   "com.minecolonies.coremod.status.emptying": "Emptying a grave",
   "com.minecolonies.coremod.status.burying": "Burying a citizen",
-  "com.minecolonies.coremod.status.resurrect": "Trying to resurrect a citizen",
   "com.minecolonies.coremod.resurrect": "Amazing! Your Undertaker resurrected %s today!",
   "com.minecolonies.coremod.gravespawned": "A grave spawned, collect it before it decays!",
   "com.minecolonies.coremod.nospaceforgrave": "Your Graveyard is full and %s couldn't be buried. Upgrade it or build more Graveyards before this happens again!",
@@ -1337,7 +1336,6 @@
   "com.minecolonies.gui.visiblestatus.emptying": "Emptying a grave",
   "com.minecolonies.gui.visiblestatus.digging": "Digging a grave",
   "com.minecolonies.gui.visiblestatus.burying": "Burying a citizen",
-  "com.minecolonies.gui.visiblestatus.resurrect": "Trying to resurrect a citizen",
 
   "entity.fisherman.messagewatertoofar": "My hut seems to be too far away from water, and I can't find any water to fish in! It should be an area of at least 7x7 blocks, and the same height as my hut.",
   "com.minecolonies.coremod.furnaceuser.nofuel": "Please tell me what kind of fuel I should use in my furnace!",

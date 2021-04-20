@@ -70,10 +70,4 @@ public class UndertakerConstants
     public final static VisibleCitizenStatus BURYING_ICON =
             new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/undertaker.png"), "com.minecolonies.gui.visiblestatus.burying");
 
-    /**
-     * Undertaker resurrect icon
-     */
-    public final static VisibleCitizenStatus RESURRECT_ICON =
-            new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/undertaker.png"), "com.minecolonies.gui.visiblestatus.resurrect");
-
 }

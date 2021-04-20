@@ -302,8 +302,6 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
             return IDLE;
         }
 
-        worker.getCitizenData().setVisibleStatus(RESURRECT_ICON);
-        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.resurrecting"));
         unequip();
 
         @Nullable final BlockPos gravePos = buildingGraveyard.getGraveToWorkOn();
