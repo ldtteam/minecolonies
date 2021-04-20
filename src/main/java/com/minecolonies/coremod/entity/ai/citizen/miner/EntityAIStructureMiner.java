@@ -234,7 +234,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     @NotNull
     private IAIState prepareForMining()
     {
-        if (getOwnBuilding() != null && !getOwnBuilding().hasFoundLadder())
+        if (!getOwnBuilding().hasFoundLadder())
         {
             return MINER_SEARCHING_LADDER;
         }

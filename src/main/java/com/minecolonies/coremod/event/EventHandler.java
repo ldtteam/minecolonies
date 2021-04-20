@@ -380,8 +380,13 @@ public class EventHandler
      * @param event the join world event.
      */
     @SubscribeEvent
-    public void on(final LivingSpawnEvent.CheckSpawn event)
+    public static void on(final LivingSpawnEvent.CheckSpawn event)
     {
+        if (!(event.getEntity() instanceof IMob))
+        {
+            return;
+        }
+
         final BlockPos pos = new BlockPos(event.getX(), event.getY(), event.getZ());
         if (event.isSpawner() || event.getWorld().isRemote() || !WorldUtil.isEntityBlockLoaded(event.getWorld(), pos))
         {
@@ -404,7 +409,8 @@ public class EventHandler
             final IBuilding building = newColony.getBuildingManager().getBuilding(buildingPos);
             if (building != null && building.getBuildingLevel() >= 1 && building.isInBuilding(pos))
             {
-                event.setCanceled(true);
+                event.setResult(Event.Result.DENY);
+                break;
             }
         }
     }
