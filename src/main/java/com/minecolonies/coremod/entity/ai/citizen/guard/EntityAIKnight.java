@@ -207,94 +207,92 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight, AbstractBui
             return getState();
         }
 
-        if (getOwnBuilding() != null)
+        currentAttackDelay = getAttackDelay();
+        worker.faceEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
+
+        worker.swingArm(Hand.MAIN_HAND);
+        worker.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
+
+        double damageToBeDealt = getAttackDamage();
+
+        if (worker.getHealth() <= worker.getMaxHealth() * 0.2D)
         {
-            currentAttackDelay = getAttackDelay();
-            worker.faceEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
-
-            worker.swingArm(Hand.MAIN_HAND);
-            worker.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
-
-            double damageToBeDealt = getAttackDamage();
-
-            if (worker.getHealth() <= worker.getMaxHealth() * 0.2D)
-            {
-                damageToBeDealt *= 2;
-            }
-
-            final DamageSource source = new NamedDamageSource(worker.getName().getString(), worker);
-            if (MineColonies.getConfig().getServer().pvp_mode.get() && target instanceof PlayerEntity)
-            {
-                source.setDamageBypassesArmor();
-            }
-
-            final int fireLevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.FIRE_ASPECT, worker.getHeldItem(Hand.MAIN_HAND));
-            if (fireLevel > 0)
-            {
-                target.setFire(fireLevel * 80);
-            }
-
-            if (knockbackAoeCooldown <= 0)
-            {
-                if (worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(KNIGHT_WHIRLWIND) > 0
-                      && worker.getRandom().nextInt(KNOCKBACK_CHANCE) == 0)
-                {
-                    List<LivingEntity> entities = this.world.getLoadedEntitiesWithinAABB(LivingEntity.class, worker.getBoundingBox().grow(2.0D, 0.5D, 2.0D));
-                    for (LivingEntity livingentity : entities)
-                    {
-                        if (livingentity != worker && (!worker.isOnSameTeam(livingentity)) && (!(livingentity instanceof ArmorStandEntity)))
-                        {
-                            livingentity.applyKnockback(
-                              2F,
-                              MathHelper.sin(livingentity.rotationYaw * ((float) Math.PI)),
-                              (-MathHelper.cos(livingentity.rotationYaw * ((float) Math.PI))));
-                            livingentity.attackEntityFrom(source, (float) (damageToBeDealt / entities.size()));
-                        }
-                    }
-
-                    this.world.playSound(null,
-                      worker.getPosX(),
-                      worker.getPosY(),
-                      worker.getPosZ(),
-                      SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP,
-                      worker.getSoundCategory(),
-                      1.0F,
-                      1.0F);
-
-                    double d0 = (double) (-MathHelper.sin(worker.rotationYaw * ((float) Math.PI / 180)));
-                    double d1 = (double) MathHelper.cos(worker.rotationYaw * ((float) Math.PI / 180));
-                    if (worker.world instanceof ServerWorld)
-                    {
-                        ((ServerWorld) worker.world).spawnParticle(ParticleTypes.SWEEP_ATTACK,
-                          worker.getPosX() + d0,
-                          worker.getPosYHeight(0.5D),
-                          worker.getPosZ() + d1,
-                          2,
-                          d0,
-                          0.0D,
-                          d1,
-                          0.0D);
-                    }
-
-                    knockbackAoeCooldown = KNOCKBACK_COOLDOWN;
-                }
-            }
-
-
-            target.attackEntityFrom(source, (float) damageToBeDealt);
-            target.setRevengeTarget(worker);
-            if (target instanceof MobEntity)
-            {
-                if (worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(KNIGHT_TAUNT) > 0)
-                {
-                    ((MobEntity) target).setAttackTarget(worker);
-                }
-            }
-
-            worker.decreaseSaturationForContinuousAction();
-
-            worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, 1);
+            damageToBeDealt *= 2;
         }
+
+        final DamageSource source = new NamedDamageSource(worker.getName().getString(), worker);
+        if (MineColonies.getConfig().getServer().pvp_mode.get() && target instanceof PlayerEntity)
+        {
+            source.setDamageBypassesArmor();
+        }
+
+        final int fireLevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.FIRE_ASPECT, worker.getHeldItem(Hand.MAIN_HAND));
+        if (fireLevel > 0)
+        {
+            target.setFire(fireLevel * 80);
+        }
+
+        if (knockbackAoeCooldown <= 0)
+        {
+            if (worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(KNIGHT_WHIRLWIND) > 0
+                  && worker.getRandom().nextInt(KNOCKBACK_CHANCE) == 0)
+            {
+                List<LivingEntity> entities = this.world.getLoadedEntitiesWithinAABB(LivingEntity.class, worker.getBoundingBox().grow(2.0D, 0.5D, 2.0D));
+                for (LivingEntity livingentity : entities)
+                {
+                    if (livingentity != worker && (!worker.isOnSameTeam(livingentity)) && (!(livingentity instanceof ArmorStandEntity)))
+                    {
+                        livingentity.applyKnockback(
+                          2F,
+                          MathHelper.sin(livingentity.rotationYaw * ((float) Math.PI)),
+                          (-MathHelper.cos(livingentity.rotationYaw * ((float) Math.PI))));
+                        livingentity.attackEntityFrom(source, (float) (damageToBeDealt / entities.size()));
+                    }
+                }
+
+                this.world.playSound(null,
+                  worker.getPosX(),
+                  worker.getPosY(),
+                  worker.getPosZ(),
+                  SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP,
+                  worker.getSoundCategory(),
+                  1.0F,
+                  1.0F);
+
+                double d0 = (double) (-MathHelper.sin(worker.rotationYaw * ((float) Math.PI / 180)));
+                double d1 = (double) MathHelper.cos(worker.rotationYaw * ((float) Math.PI / 180));
+                if (worker.world instanceof ServerWorld)
+                {
+                    ((ServerWorld) worker.world).spawnParticle(ParticleTypes.SWEEP_ATTACK,
+                      worker.getPosX() + d0,
+                      worker.getPosYHeight(0.5D),
+                      worker.getPosZ() + d1,
+                      2,
+                      d0,
+                      0.0D,
+                      d1,
+                      0.0D);
+                }
+
+                knockbackAoeCooldown = KNOCKBACK_COOLDOWN;
+            }
+        }
+
+
+        target.attackEntityFrom(source, (float) damageToBeDealt);
+        target.setRevengeTarget(worker);
+        if (target instanceof MobEntity)
+        {
+            if (worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(KNIGHT_TAUNT) > 0)
+            {
+                ((MobEntity) target).setAttackTarget(worker);
+            }
+        }
+
+        worker.decreaseSaturationForContinuousAction();
+
+        worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, 1);
+
         return GUARD_ATTACK_PHYSICAL;
     }
 
