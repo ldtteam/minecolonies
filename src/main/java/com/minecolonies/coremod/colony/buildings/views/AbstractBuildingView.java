@@ -586,30 +586,30 @@ public abstract class AbstractBuildingView implements IBuildingView
 
     @NotNull
     @Override
-    public <T extends IBuildingModuleView> Optional<T> getModuleView(final Class<T> clazz)
+    public <T extends IBuildingModuleView> T getModuleView(final Class<T> clazz)
     {
         for (final IBuildingModuleView view : moduleViews)
         {
             if (clazz.isInstance(view))
             {
-                return Optional.of((T) view);
+                return (T) view;
             }
         }
-        return Optional.empty();
+        return null;
     }
 
     @NotNull
     @Override
-    public <T extends IBuildingModuleView> Optional<T> getModuleViewMatching(final Class<T> clazz, final Predicate<? super T> modulePredicate)
+    public <T extends IBuildingModuleView> T getModuleViewMatching(final Class<T> clazz, final Predicate<? super T> modulePredicate)
     {
         for (final IBuildingModuleView module : moduleViews)
         {
             if (clazz.isInstance(module) && modulePredicate.test(clazz.cast(module)))
             {
-                return Optional.of((T) module);
+                return (T) module;
             }
         }
-        return Optional.empty();
+        return null;
     }
 
     @NotNull

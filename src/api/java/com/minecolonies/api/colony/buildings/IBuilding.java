@@ -48,7 +48,15 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
      * @return the module or empty if not existent.
      */
     @NotNull
-    <T extends IBuildingModule> Optional<T> getFirstModuleOccurance(Class<T> clazz);
+    <T extends IBuildingModule> T getFirstModuleOccurance(Class<T> clazz);
+
+    /**
+     * Get the first module with a particular class or interface.
+     * @param clazz the module's class or interface.
+     * @return the module or empty if not existent.
+     */
+    @NotNull
+    <T extends IBuildingModule> Optional<T> getFirstOptionalModuleOccurance(Class<T> clazz);
 
     /**
      * Get all modules with a particular class or interface.

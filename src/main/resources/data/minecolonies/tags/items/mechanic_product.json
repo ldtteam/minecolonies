@@ -10,6 +10,7 @@
     "minecraft:tripwire_hook",
     "#minecraft:rails",
     "#forge:storage_blocks",
+    "minecraft:bone_block",
     "minecraft:sea_lantern",
     "minecraft:stone_pressure_plate",
     "minecraft:polished_blackstone_pressure_plate",
