@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.fluid.FluidState;
+import net.minecraft.util.Direction;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
@@ -261,14 +262,34 @@ public class WorldUtil
 
         if ((flags & 2) != 0)
         {
+            // Remove the update flag
             flags -= 2;
-            ((ServerWorld) world).getChunkProvider().markBlockChanged(pos);
-            return world.setBlockState(pos, state, flags);
+
+            final boolean result = world.setBlockState(pos, state, flags);
+            sendNeighbourUpdates((ServerWorld) world, pos);
+            return result;
         }
         else
         {
             return world.setBlockState(pos, state, flags);
         }
+    }
+
+    /**
+     * Notifies client updates for neighbours
+     *
+     * @param world world
+     * @param pos   position
+     */
+    private static void sendNeighbourUpdates(final ServerWorld world, final BlockPos pos)
+    {
+        world.getChunkProvider().markBlockChanged(pos);
+        world.getChunkProvider().markBlockChanged(pos.down());
+        world.getChunkProvider().markBlockChanged(pos.up());
+        world.getChunkProvider().markBlockChanged(pos.offset(Direction.NORTH));
+        world.getChunkProvider().markBlockChanged(pos.offset(Direction.EAST));
+        world.getChunkProvider().markBlockChanged(pos.offset(Direction.SOUTH));
+        world.getChunkProvider().markBlockChanged(pos.offset(Direction.WEST));
     }
 
     /**
