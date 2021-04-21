@@ -441,36 +441,6 @@ public class CustomRecipe
     }
 
     /**
-     * Creates a custom recipe from its components.
-     * @param crafter           The crafter for the recipe.
-     * @param minBldgLevel      Minimum level before the recipe can be learned.
-     * @param maxBldgLevel      Maximum level before buildings in the colony will remove the recipe, if learned.
-     * @param mustExist         If true, the custom recipe will only be learned if another recipe with the same output is taught to the building.
-     * @param showTooltip       If a tooltip describing the recipe should be attached to the item.  Only one recipe per output should have showTooltip set to true.
-     * @param recipeId          The identifier for the recipe, as a resource location.
-     * @param researchReq       Research ID that the colony must have to begin the research.
-     * @param researchExclude   Research ID that will cause buildings in the colony to remove the recipe, if learned.
-     * @param recipe            The RecipeStorage of the recipe.
-     */
-    public CustomRecipe(final String crafter, final int minBldgLevel, final int maxBldgLevel, final boolean mustExist, final boolean showTooltip, final ResourceLocation recipeId,
-      @Nullable final ResourceLocation researchReq, @Nullable final ResourceLocation researchExclude, final RecipeStorage recipe)
-    {
-        this.crafter = crafter;
-        this.recipeId = recipeId;
-        this.researchId = researchReq;
-        this.excludedResearchId = researchExclude;
-        this.minBldgLevel = minBldgLevel;
-        this.maxBldgLevel = maxBldgLevel;
-        this.mustExist = mustExist;
-        this.showTooltip = showTooltip;
-        this.inputs = recipe.getInput();
-        this.result = recipe.getPrimaryOutput();
-        this.secondary = recipe.getSecondaryOutputs();
-        this.altOutputs = recipe.getAlternateOutputs();
-        this.lootTable = recipe.getLootTable();
-    }
-
-    /**
      * Get the name of the crafter this recipe applies to
      * @return crafter name
      */

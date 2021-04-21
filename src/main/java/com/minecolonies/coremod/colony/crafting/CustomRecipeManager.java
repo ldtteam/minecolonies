@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.crafting;
 
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.coremod.Network;
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -9,6 +10,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -124,10 +126,68 @@ public class CustomRecipeManager
 
     /**
      * Get the custom recipes for an item, or null if no matching recipe exists.
+     * @param item     An individual item to search for recipes.
+     * @return  A list of custom recipes with that output.
      */
+    @Nullable
     public List<CustomRecipe> getRecipeByOutput(final Item item)
     {
         return recipeOutputMap.get(item);
+    }
+
+    /**
+     * Gets the custom recipes for an ItemStack, including comparing count and tags, or null if no matching recipe exists.
+     * @param itemStack An ItemStack to search for recipes.
+     * @return  A list of custom recipes with that output.
+     */
+    @Nullable
+    public List<CustomRecipe> getRecipeByOutput(final ItemStack itemStack)
+    {
+        List<CustomRecipe> returnList = new ArrayList<>();
+        for(CustomRecipe recipe : recipeOutputMap.get(itemStack.getItem()))
+        {
+            // ItemStacks don't override equals, so have to use the static methods.
+            if(ItemStack.areItemStacksEqual(recipe.getPrimaryOutput(), itemStack))
+            {
+                returnList.add(recipe);
+            }
+            for(ItemStack output : recipe.getAltOutputs())
+            {
+                if(ItemStack.areItemStacksEqual(output, itemStack))
+                {
+                    returnList.add(recipe);
+                }
+            }
+        }
+        if(returnList.size() > 0)
+        {
+            return returnList;
+        }
+        return null;
+    }
+
+    /**
+     * Gets the custom recipes for an ItemStorage, optionally including comparing count, damage, and NBT, or null if no matching recipe exists.
+     * @param itemStorage An ItemStorage to search for recipes.
+     * @return  A list of custom recipes with that output.
+     */
+    @Nullable
+    public List<CustomRecipe> getRecipeByOutput(final ItemStorage itemStorage)
+    {
+        List<CustomRecipe> returnList = new ArrayList<>();
+        for(CustomRecipe recipe : recipeOutputMap.get(itemStorage.getItem()))
+        {
+            // ItemStorage#equals does the actual comparison work for us, here.
+            if(recipe.getPrimaryOutput().equals(itemStorage) || recipe.getAltOutputs().contains(itemStorage))
+            {
+                returnList.add(recipe);
+            }
+        }
+        if(returnList.size() > 0)
+        {
+            return returnList;
+        }
+        return null;
     }
 
     private void removeRecipes()
@@ -162,7 +222,6 @@ public class CustomRecipeManager
      * This version sends the full Custom Recipe Manager.
      * @param recipeMgrPacketBuffer packet buffer to encode the data into.
      */
-    // Alternative approach, if it becomes necessary to send the entire CustomRecipeManager.
     private void serializeNetworkData(final PacketBuffer recipeMgrPacketBuffer)
     {
         // Custom Recipe Manager packets can potentially get very large, and individual CompoundNBTs can not be parsed if they exceed 2MB.
@@ -175,8 +234,9 @@ public class CustomRecipeManager
             recipeMgrPacketBuffer.writeVarInt(crafter.getValue().size());
             for (CustomRecipe recipe : crafter.getValue().values())
             {
-                //recipeMgrPacketBuffer.writeCompoundTag(StandardFactoryController.getInstance().serialize(recipe));
                 StandardFactoryController.getInstance().serialize(recipeMgrPacketBuffer, recipe);
+                //// NBT-based serialization for debugging/diagnosis only, as total packet size can be /very/ large.
+                //recipeMgrPacketBuffer.writeCompoundTag(StandardFactoryController.getInstance().serialize(recipe));
             }
         }
     }
@@ -195,6 +255,7 @@ public class CustomRecipeManager
             for (int recipeNum = buff.readVarInt(); recipeNum > 0; recipeNum--)
             {
                 addRecipe(StandardFactoryController.getInstance().deserialize(buff));
+                //// NBT-based serialization for debugging/diagnostics only, as total packet size can be very large.
                 //addRecipe(StandardFactoryController.getInstance().deserialize(buff.readCompoundTag()));
             }
         }

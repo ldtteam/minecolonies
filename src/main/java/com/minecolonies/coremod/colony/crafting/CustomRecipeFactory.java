@@ -9,8 +9,11 @@ import com.minecolonies.api.crafting.RecipeStorage;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,9 +30,6 @@ import static com.minecolonies.coremod.colony.crafting.CustomRecipe.*;
 public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRecipe>
 {
     private final static String CUSTOM_RECIPE_ID_PROP = "id";
-    private final static String RECIPE_IGNORE_NBT = "ign-nbt";
-    private final static String RECIPE_IGNORE_DMG = "ign-dmg";
-    private final static String RECIPE_TAG = "tag";
 
 
     @NotNull
@@ -50,10 +50,6 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
               !(context[7] instanceof ResourceLocation))
         {
             throw new IllegalArgumentException("Unsupported context - Invalid ResourceLocation");
-        }
-        if(context[8] instanceof RecipeStorage)
-        {
-            return getNewInstance((String)context[0], (int)context[1], (int)context[2], (boolean)context[3], (boolean)context[4], (ResourceLocation)context[5], (ResourceLocation)context[6], (ResourceLocation)context[7], (RecipeStorage) context[8]);
         }
         if(!(context[8] instanceof ResourceLocation))
         {
@@ -77,12 +73,6 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
         return new CustomRecipe(crafter, minBldgLevel, maxBldgLevel, mustExist, showTooltip, recipeId, researchReq, researchExclude, lootTable, inputs, primaryOutput, secondaryOutput, altOutputs);
     }
 
-    private CustomRecipe getNewInstance(final String crafter, final int minBldgLevel, final int maxBldgLevel, final boolean mustExist, final boolean showTooltip, final ResourceLocation recipeId,
-      final ResourceLocation researchReq, final ResourceLocation researchExclude, final RecipeStorage recipe)
-    {
-        return new CustomRecipe(crafter, minBldgLevel, maxBldgLevel, mustExist, showTooltip, recipeId, researchReq, researchExclude, recipe);
-    }
-
     @NotNull
     @Override
     public TypeToken<CustomRecipe> getFactoryOutputType()
@@ -97,33 +87,11 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
         return TypeConstants.FACTORYVOIDINPUT;
     }
 
-    private CompoundNBT getCompoundForItemStack(final ItemStack is)
-    {
-        final CompoundNBT item = new CompoundNBT();
-        item.putString(ITEM_PROP, is.getItem().getRegistryName().toString());
-        item.putInt(COUNT_PROP, is.getCount());
-        if(is.hasTag())
-        {
-            item.put(RECIPE_TAG, is.serializeNBT());
-        }
-        return item;
-    }
-
-    private ItemStack getItemStackForCompound(final CompoundNBT nbt)
-    {
-        final ItemStack item = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(nbt.getString(ITEM_PROP))), nbt.getInt(COUNT_PROP));
-        if(nbt.hasUniqueId(RECIPE_TAG))
-        {
-            item.deserializeNBT(nbt.getCompound(RECIPE_TAG));
-        }
-        return item;
-    }
-
     @NotNull
     @Override
     public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final CustomRecipe recipe)
     {
-        // CustomRecipes involve a large number of ItemStacks, and a number of data types.  Individually, this isn't that big of a deal (~1.2KB vs 120bytes).
+        // CustomRecipes involve a large number of ItemStacks, and a number of data types that are inefficient in NBT form.  Individually, this isn't that big of a deal (~1.2KB vs 120bytes).
         // However, for large sets, such as CustomRecipeManager, this can grow into a very large total (ie, default Minecolonies + Structurize recipes alone can total >600KB).
         // If transmitting a large number of recipes at once across a network, favor the byte-based serializer instead.
         // This serialization also populates the RecipeStorage inside the Custom Recipe, which remains cached until the next data pack reload.
@@ -139,11 +107,41 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
         {
             compound.putString(RECIPE_EXCLUDED_RESEARCHID_PROP, recipe.getExcludedResearchId().toString());
         }
+        if(recipe.getLootTable() != null)
+        {
+            compound.putString(RECIPE_LOOTTABLE_PROP, recipe.getLootTable().toString());
+        }
         compound.putInt(RECIPE_BUILDING_MIN_LEVEL_PROP, recipe.getMinBuildingLevel());
         compound.putInt(RECIPE_BUILDING_MAX_LEVEL_PROP, recipe.getMaxBuildingLevel());
         compound.putBoolean(RECIPE_MUST_EXIST, recipe.getMustExist());
         compound.putBoolean(RECIPE_SHOW_TOOLTIP, recipe.getShowTooltip());
-        compound.put(RECIPE_TYPE_RECIPE, controller.serialize(recipe.getRecipeStorage()));
+        final ListNBT inputs = new ListNBT();
+        for(final ItemStorage in : recipe.getInputs())
+        {
+            inputs.add(controller.serialize(in));
+        }
+        compound.put(RECIPE_INPUTS_PROP, inputs);
+
+        compound.put(RECIPE_RESULT_PROP, recipe.getPrimaryOutput().write(new CompoundNBT()));
+
+        if(recipe.getSecondaryOutput().size() > 0)
+        {
+            final ListNBT secondaryOutputs = new ListNBT();
+            for (final ItemStack is : recipe.getSecondaryOutput())
+            {
+                secondaryOutputs.add(is.write(new CompoundNBT()));
+            }
+            compound.put(RECIPE_SECONDARY_PROP, secondaryOutputs);
+        }
+        if(recipe.getAltOutputs().size() > 0)
+        {
+            final ListNBT altOutputs = new ListNBT();
+            for (final ItemStack is : recipe.getAltOutputs())
+            {
+                altOutputs.add(is.write(new CompoundNBT()));
+            }
+            compound.put(RECIPE_ALTERNATE_PROP, altOutputs);
+        }
 
         return compound;
     }
@@ -153,16 +151,78 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
     public CustomRecipe deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
     {
         final String crafter = nbt.getString(RECIPE_CRAFTER_PROP);
-        final ResourceLocation recipeId = new ResourceLocation(nbt.getString(CUSTOM_RECIPE_ID_PROP));
-        final ResourceLocation researchReq = new ResourceLocation(nbt.getString(RECIPE_RESEARCHID_PROP));
-        final ResourceLocation researchExclude = new ResourceLocation(nbt.getString(RECIPE_EXCLUDED_RESEARCHID_PROP));
+        final ResourceLocation recipeId;
+        if(nbt.hasUniqueId(CUSTOM_RECIPE_ID_PROP))
+        {
+            recipeId = new ResourceLocation(nbt.getString(CUSTOM_RECIPE_ID_PROP));
+        }
+        else
+        {
+            recipeId = null;
+        }
+        final ResourceLocation researchReq;
+        if(nbt.hasUniqueId(RECIPE_RESEARCHID_PROP))
+        {
+            researchReq = new ResourceLocation(nbt.getString(RECIPE_RESEARCHID_PROP));
+        }
+        else
+        {
+            researchReq = null;
+        }
+        final ResourceLocation researchExclude;
+        if(nbt.hasUniqueId(RECIPE_EXCLUDED_RESEARCHID_PROP))
+        {
+             researchExclude = new ResourceLocation(nbt.getString(RECIPE_EXCLUDED_RESEARCHID_PROP));
+        }
+        else
+        {
+            researchExclude = null;
+        }
+        final ResourceLocation lootTable;
+        if(nbt.hasUniqueId(RECIPE_LOOTTABLE_PROP))
+        {
+            lootTable = new ResourceLocation(nbt.getString());
+        }
+        else
+        {
+            lootTable = null;
+        }
         final int minBldgLevel = nbt.getInt(RECIPE_BUILDING_MIN_LEVEL_PROP);
         final int maxBldgLevel = nbt.getInt(RECIPE_BUILDING_MAX_LEVEL_PROP);
         final boolean mustExist = nbt.getBoolean(RECIPE_MUST_EXIST);
         final boolean showTooltip = nbt.getBoolean(RECIPE_SHOW_TOOLTIP);
-        final RecipeStorage recipe = controller.deserialize(nbt.getCompound(RECIPE_TYPE_RECIPE));
+        final ListNBT inputList = nbt.getList(RECIPE_INPUTS_PROP, Constants.NBT.TAG_COMPOUND);
+        final List<ItemStorage> inputs = new ArrayList<>();
+        for(INBT input : inputList)
+        {
+            if(input instanceof CompoundNBT)
+            {
+                inputs.add(controller.deserialize((CompoundNBT)input));
+            }
+        }
+        final ItemStack primaryOutput = ItemStack.read(nbt.getCompound(RECIPE_RESULT_PROP));
 
-        return getNewInstance(crafter, minBldgLevel, maxBldgLevel, mustExist, showTooltip, recipeId, researchReq, researchExclude, recipe);
+        final ListNBT secondaryList = nbt.getList(RECIPE_SECONDARY_PROP, Constants.NBT.TAG_COMPOUND);
+        final List<ItemStack> secondaryOutput = new ArrayList<>();
+        for(INBT secondary : secondaryList)
+        {
+            if(secondary instanceof CompoundNBT)
+            {
+                secondaryOutput.add(ItemStack.read((CompoundNBT)secondary));
+            }
+        }
+
+        final ListNBT altList = nbt.getList(RECIPE_ALTERNATE_PROP, Constants.NBT.TAG_COMPOUND);
+        final List<ItemStack> altOutputs = new ArrayList<>();
+        for(INBT alt : altList)
+        {
+            if(alt instanceof CompoundNBT)
+            {
+                secondaryOutput.add(ItemStack.read((CompoundNBT)alt));
+            }
+        }
+
+        return getNewInstance(crafter, minBldgLevel, maxBldgLevel, mustExist, showTooltip, recipeId, researchReq, researchExclude, lootTable, inputs, primaryOutput, secondaryOutput, altOutputs);
     }
 
     @Override
