@@ -10,6 +10,7 @@ import com.minecolonies.api.entity.pathfinding.PathingOptions;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.blocks.BlockDecorationController;
 import com.minecolonies.coremod.entity.pathfinding.ChunkCache;
@@ -229,7 +230,7 @@ public abstract class AbstractPathJob implements Callable<Path>
      */
     public static BlockPos prepareStart(@NotNull final LivingEntity entity)
     {
-        @NotNull final BlockPos.Mutable pos = new BlockPos.Mutable(MathHelper.floor(entity.getPosX()),
+        @NotNull BlockPos.Mutable pos = new BlockPos.Mutable(MathHelper.floor(entity.getPosX()),
           MathHelper.floor(entity.getPosY()),
           MathHelper.floor(entity.getPosZ()));
         BlockState bs = CompatibilityUtils.getWorldFromEntity(entity).getBlockState(pos);
@@ -251,6 +252,19 @@ public abstract class AbstractPathJob implements Callable<Path>
                     bs = CompatibilityUtils.getWorldFromEntity(entity).getBlockState(pos);
                     break;
                 }
+            }
+        }
+
+        BlockState down = CompatibilityUtils.getWorldFromEntity(entity).getBlockState(pos.down());
+        while (!bs.getMaterial().blocksMovement() && !down.getMaterial().blocksMovement() && !down.getBlock().isLadder(down, entity.getEntityWorld(), pos.down(), entity))
+        {
+            pos.move(Direction.DOWN, 1);
+            bs = down;
+            down = CompatibilityUtils.getWorldFromEntity(entity).getBlockState(pos.down());
+
+            if (pos.getY() < WorldUtil.)
+            {
+                return entity.getPosition();
             }
         }
 
