@@ -151,7 +151,7 @@ public class EntityAIAttackArcher extends Goal
                     arrowEntity.setPierceLevel((byte) 2);
                 }
 
-                if (true || EntityUtils.isFlying(target))
+                if (EntityUtils.isFlying(target))
                 {
                     ((CustomArrowEntity) arrowEntity).setPlayerArmorPierce();
                     arrowEntity.setFire(200);
