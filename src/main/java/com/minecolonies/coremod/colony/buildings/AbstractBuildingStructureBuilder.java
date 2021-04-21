@@ -413,7 +413,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     @Nullable
     public BuilderBucket getRequiredResources()
     {
-        return (buckets.isEmpty() || currentStage == 0) ? null : buckets.getFirst();
+        return (buckets.isEmpty() || progressStage == BuildingStructureHandler.Stage.CLEAR) ? null : buckets.getFirst();
     }
 
     /**
