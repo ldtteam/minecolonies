@@ -262,7 +262,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             bs = down;
             down = CompatibilityUtils.getWorldFromEntity(entity).getBlockState(pos.down());
 
-            if (pos.getY() < WorldUtil.)
+            if (pos.getY() < 0)
             {
                 return entity.getPosition();
             }
