@@ -125,69 +125,62 @@ public class CustomRecipeManager
     }
 
     /**
-     * Get the custom recipes for an item, or null if no matching recipe exists.
+     * Get the custom recipes for an item, or an empty list if no matching recipe exists.
      * @param item     An individual item to search for recipes.
      * @return  A list of custom recipes with that output.
      */
-    @Nullable
     public List<CustomRecipe> getRecipeByOutput(final Item item)
     {
-        return recipeOutputMap.get(item);
+        if(recipeOutputMap.containsKey(item))
+        {
+            return recipeOutputMap.get(item);
+        }
+        return Collections.emptyList();
     }
 
     /**
-     * Gets the custom recipes for an ItemStack, including comparing count and tags, or null if no matching recipe exists.
+     * Gets the custom recipes for an ItemStack, including comparing count and tags, or an empty list if no matching recipe exists.
      * @param itemStack An ItemStack to search for recipes.
      * @return  A list of custom recipes with that output.
      */
-    @Nullable
     public List<CustomRecipe> getRecipeByOutput(final ItemStack itemStack)
     {
         List<CustomRecipe> returnList = new ArrayList<>();
-        for(CustomRecipe recipe : recipeOutputMap.get(itemStack.getItem()))
+        for (CustomRecipe recipe : recipeOutputMap.get(itemStack.getItem()))
         {
             // ItemStacks don't override equals, so have to use the static methods.
-            if(ItemStack.areItemStacksEqual(recipe.getPrimaryOutput(), itemStack))
+            if (ItemStack.areItemStacksEqual(recipe.getPrimaryOutput(), itemStack))
             {
                 returnList.add(recipe);
             }
-            for(ItemStack output : recipe.getAltOutputs())
+            for (ItemStack output : recipe.getAltOutputs())
             {
-                if(ItemStack.areItemStacksEqual(output, itemStack))
+                if (ItemStack.areItemStacksEqual(output, itemStack))
                 {
                     returnList.add(recipe);
                 }
             }
         }
-        if(returnList.size() > 0)
-        {
-            return returnList;
-        }
-        return null;
+        return returnList;
     }
 
     /**
-     * Gets the custom recipes for an ItemStorage, optionally including comparing count, damage, and NBT, or null if no matching recipe exists.
+     * Gets the custom recipes for an ItemStorage, optionally including comparing count, damage, and NBT, or an empty list if no matching recipe exists.
      * @param itemStorage An ItemStorage to search for recipes.
      * @return  A list of custom recipes with that output.
      */
-    @Nullable
     public List<CustomRecipe> getRecipeByOutput(final ItemStorage itemStorage)
     {
         List<CustomRecipe> returnList = new ArrayList<>();
-        for(CustomRecipe recipe : recipeOutputMap.get(itemStorage.getItem()))
+        for (CustomRecipe recipe : recipeOutputMap.get(itemStorage.getItem()))
         {
             // ItemStorage#equals does the actual comparison work for us, here.
-            if(recipe.getPrimaryOutput().equals(itemStorage) || recipe.getAltOutputs().contains(itemStorage))
+            if (recipe.getPrimaryOutput().equals(itemStorage) || recipe.getAltOutputs().contains(itemStorage))
             {
                 returnList.add(recipe);
             }
         }
-        if(returnList.size() > 0)
-        {
-            return returnList;
-        }
-        return null;
+        return returnList;
     }
 
     private void removeRecipes()

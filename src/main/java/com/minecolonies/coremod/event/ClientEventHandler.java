@@ -209,7 +209,7 @@ public class ClientEventHandler
     private static void handleCrafterRecipeTooltips(@Nullable final IColony colony, final List<ITextComponent> toolTip, final Item item)
     {
         final List<CustomRecipe> recipes = CustomRecipeManager.getInstance().getRecipeByOutput(item);
-        if(recipes == null)
+        if(recipes.isEmpty())
         {
             return;
         }
