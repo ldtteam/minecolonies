@@ -354,6 +354,10 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
                 {
                     rowPane.findPaneOfTypeByID(REQUEST_FULLFIL, ButtonImage.class).hide();
                 }
+                else
+                {
+                    rowPane.findPaneOfTypeByID(REQUEST_FULLFIL, ButtonImage.class).show();
+                }
             }
         });
     }
