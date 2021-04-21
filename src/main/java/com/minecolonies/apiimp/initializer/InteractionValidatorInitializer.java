@@ -64,10 +64,12 @@ public class InteractionValidatorInitializer
                        && InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(citizen.getInventory(), stack -> CAN_EAT.test(stack) && (citizen.getWorkBuilding() == null || citizen.getWorkBuilding().canEat(stack))) == -1);
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(BETTER_FOOD),
           citizen -> InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(citizen.getInventory(),
-                  stack -> CAN_EAT.test(stack) && !(citizen.getWorkBuilding() == null || citizen.getWorkBuilding().canEat(stack))) != -1 && !citizen.isChild());
+                  stack -> CAN_EAT.test(stack) && !(citizen.getWorkBuilding() == null || citizen.getWorkBuilding().canEat(stack))) != -1 && InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(citizen.getInventory(),
+                  stack -> CAN_EAT.test(stack) && (citizen.getWorkBuilding() == null || citizen.getWorkBuilding().canEat(stack))) == -1 && !citizen.isChild());
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(BETTER_FOOD_CHILDREN),
           citizen -> InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(citizen.getInventory(),
-                  stack -> CAN_EAT.test(stack) && !(citizen.getWorkBuilding() == null || citizen.getWorkBuilding().canEat(stack))) != -1 && citizen.isChild());
+                  stack -> CAN_EAT.test(stack) && !(citizen.getWorkBuilding() == null || citizen.getWorkBuilding().canEat(stack))) != -1 && InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(citizen.getInventory(),
+                  stack -> CAN_EAT.test(stack) && (citizen.getWorkBuilding() == null || citizen.getWorkBuilding().canEat(stack))) == -1 && citizen.isChild());
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(NO_RESTAURANT),
           citizen -> citizen.getColony() != null && citizen.getSaturation() <= LOW_SATURATION && citizen.getEntity().isPresent()
                        && citizen.getColony().getBuildingManager().getBestRestaurant(citizen.getEntity().get()) == null

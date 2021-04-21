@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.ai.citizen.cook;
 
 import com.google.common.reflect.TypeToken;
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
@@ -129,7 +130,8 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
         //Only return true if the item isn't queued for a recipe. 
         if(!getOwnBuilding().getIsCooking() )
         {
-            return ItemStackUtils.ISCOOKABLE.test(stack) && !isItemStackForAssistant(stack);
+            final List<ItemStorage> allowedItems = getOwnBuilding().getModuleMatching(ItemListModule.class, m -> m.getId().equals(FOOD_EXCLUSION_LIST)).getList();
+            return ItemStackUtils.ISCOOKABLE.test(stack) && !isItemStackForAssistant(stack) && !allowedItems.contains(new ItemStorage(MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getSmeltingResult(stack)));
         }
         return false;
     }
