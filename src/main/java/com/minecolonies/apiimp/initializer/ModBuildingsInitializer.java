@@ -431,6 +431,14 @@ public final class ModBuildingsInitializer
                                       .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.MYSTICAL_SITE_ID))
                                       .createBuildingEntry();
 
+
+        ModBuildings.graveyard = new BuildingEntry.Builder()
+                                    .setBuildingBlock(ModBlocks.blockHutGraveyard)
+                                    .setBuildingProducer(BuildingGraveyard::new)
+                                    .setBuildingViewProducer(() -> BuildingGraveyard.View::new)
+                                    .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.GRAVEYARD_ID))
+                                    .createBuildingEntry();
+
         reg.register(ModBuildings.archery);
         reg.register(ModBuildings.bakery);
         reg.register(ModBuildings.barracks);
@@ -477,5 +485,6 @@ public final class ModBuildingsInitializer
         reg.register(ModBuildings.concreteMixer);
         reg.register(ModBuildings.beekeeper);
         reg.register(ModBuildings.mysticalSite);
+        reg.register(ModBuildings.graveyard);
     }
 }

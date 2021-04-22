@@ -65,7 +65,6 @@ public class DefaultBlockLootTableProvider implements IDataProvider
     {
         if (block.getRegistryName() != null)
         {
-
             final EntryJson entryJson = new EntryJson();
             entryJson.setType(EntryTypeEnum.ITEM);
             entryJson.setName(block.getRegistryName().toString());

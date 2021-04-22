@@ -179,6 +179,16 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
     }
 
     /**
+     * Checks if the inventory is completely full.
+     *
+     * @return true if the main inventory (without armor slots) is completely full.
+     */
+    public boolean isFull()
+    {
+        return freeSlots == 0;
+    }
+
+    /**
      * Resize this inventory.
      *
      * @param size       the current size.

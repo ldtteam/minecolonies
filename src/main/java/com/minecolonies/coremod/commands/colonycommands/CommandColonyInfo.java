@@ -56,7 +56,7 @@ public class CommandColonyInfo implements IMCCommand
         final String mayor = colony.getPermissions().getOwnerName();
         context.getSource().sendFeedback(new StringTextComponent(MAYOR_TEXT + mayor), true);
         context.getSource()
-          .sendFeedback(new StringTextComponent(CITIZENS + colony.getCitizenManager().getCitizens().size() + "/" + colony.getCitizenManager().getMaxCitizens()), true);
+          .sendFeedback(new StringTextComponent(CITIZENS + colony.getCitizenManager().getCurrentCitizenCount() + "/" + colony.getCitizenManager().getMaxCitizens()), true);
         context.getSource()
           .sendFeedback(new StringTextComponent(COORDINATES_TEXT + String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())).setStyle(Style.EMPTY.setFormatting(
             TextFormatting.GREEN)), true);

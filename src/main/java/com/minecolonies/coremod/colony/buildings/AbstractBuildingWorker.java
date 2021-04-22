@@ -969,7 +969,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         }
     }
 
-
     /**
      * Get the Job DisplayName
      */

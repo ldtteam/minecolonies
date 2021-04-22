@@ -4,13 +4,16 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.tileentities.TileEntityGrave;
 import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.coremod.network.messages.server.AbstractColonyServerMessage;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.StringUtils;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.network.NetworkEvent;
@@ -155,9 +158,12 @@ public class OpenInventoryMessage extends AbstractColonyServerMessage
 
     private void doHutInventory(final ServerPlayerEntity player, final IColony colony)
     {
-        @NotNull final TileEntityRack chest = (TileEntityRack) BlockPosUtil.getTileEntity(player.world, tePos);
+        final TileEntity tileEntity = BlockPosUtil.getTileEntity(player.world, tePos);
 
-        NetworkHooks.openGui(player, chest, packetBuffer -> packetBuffer.writeVarInt(colony.getID()).writeBlockPos(chest.getPos()));
+        if(tileEntity instanceof TileEntityRack || tileEntity instanceof TileEntityGrave)
+        {
+            NetworkHooks.openGui(player, (INamedContainerProvider) tileEntity, packetBuffer -> packetBuffer.writeVarInt(colony.getID()).writeBlockPos(tileEntity.getPos()));
+        }
     }
 
     private void doFieldInventory(final ServerPlayerEntity player)

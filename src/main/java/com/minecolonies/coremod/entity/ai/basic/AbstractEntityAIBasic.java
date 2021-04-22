@@ -261,7 +261,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
 
             pickUpCounter = 0;
 
-            tryTransferFromPosToWorkerIfNeeded(walkTo, needsCurrently);
+            if (!tryTransferFromPosToWorkerIfNeeded(walkTo, needsCurrently))
+            {
+                walkTo = null;
+                return getState();
+            }
         }
 
         walkTo = null;
@@ -1587,7 +1591,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      *
      * @param pos       the position to transfer it from.
      * @param predicate the predicate to evaluate.
-     * @return true if succesful.
+     * @return true if cancelling state.
      */
 
     private boolean tryTransferFromPosToWorkerIfNeeded(final BlockPos pos, @NotNull final Tuple<Predicate<ItemStack>, Integer> predicate)
@@ -1595,10 +1599,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         final TileEntity entity = world.getTileEntity(pos);
         if (entity == null)
         {
-            return false;
+            return true;
         }
 
-        final int existingAmount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), predicate.getA());
+        int existingAmount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), predicate.getA());
         int amount;
         if (predicate.getB() > existingAmount)
         {
@@ -1609,7 +1613,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             return true; // has already needed transfers...
         }
 
-        return InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandlerWithResult(entity, predicate.getA(), amount, worker.getInventoryCitizen()) == 0;
+        InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandlerWithResult(entity, predicate.getA(), amount, worker.getInventoryCitizen());
+        existingAmount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), predicate.getA());
+        // has already needed transfers...
+        return existingAmount >= predicate.getB();
     }
 
     /**
