@@ -124,6 +124,11 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
      */
     public IAIState pickUpMaterial()
     {
+        if (structurePlacer == null || !structurePlacer.getB().hasBluePrint())
+        {
+            return IDLE;
+        }
+        
         if (structurePlacer.getB().getStage() == null || structurePlacer.getB().getStage() == BuildingStructureHandler.Stage.CLEAR)
         {
             pickUpCount = 0;
@@ -157,11 +162,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
 
         needsCurrently = neededItemsList.get(pickUpCount);
         pickUpCount++;
-
-        if (structurePlacer == null || !structurePlacer.getB().hasBluePrint())
-        {
-            return IDLE;
-        }
 
         if (InventoryUtils.hasItemInProvider(building.getTileEntity(), needsCurrently.getA()))
         {
