@@ -121,7 +121,7 @@ public class ServerConfiguration extends AbstractConfiguration
      *  ----------------------------------------------------------------------------- */
 
     public final ForgeConfigSpec.BooleanValue                        enableColonyProtection;
-    public final ForgeConfigSpec.BooleanValue                        turnOffExplosionsInColonies;
+    public final ForgeConfigSpec.IntValue                            turnOffExplosionsInColonies;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> specialPermGroup;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> freeToInteractBlocks;
     public final ForgeConfigSpec.IntValue                            secondsBetweenPermissionMessages;
@@ -265,7 +265,7 @@ public class ServerConfiguration extends AbstractConfiguration
         swapToCategory(builder, "permissions");
 
         enableColonyProtection = defineBoolean(builder, "enablecolonyprotection", true);
-        turnOffExplosionsInColonies = defineBoolean(builder, "turnoffexplosionsincolonies", true);
+        turnOffExplosionsInColonies = defineInteger(builder, "turnoffexplosionsincolonies", 0, 0, 2);
         specialPermGroup = defineList(builder, "specialpermgroup",
           Arrays.asList
                    ("_Raycoms_"),
