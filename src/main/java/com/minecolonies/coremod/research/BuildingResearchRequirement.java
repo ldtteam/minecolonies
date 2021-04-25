@@ -89,58 +89,7 @@ public class BuildingResearchRequirement implements IResearchRequirement
     @Override
     public boolean isFulfilled(final IColony colony)
     {
-        int sum = 0;
-        if(colony instanceof IColonyView)
-        {
-            for (final IBuildingView building : ((IColonyView) colony).getBuildings())
-            {
-                if (building.getSchematicName().equals(this.getBuilding()))
-                {
-                    if(singleBuilding)
-                    {
-                        if(building.getBuildingLevel() >= this.buildingLevel)
-                        {
-                            return true;
-                        }
-                    }
-                    else
-                    {
-                        sum += building.getBuildingLevel();
-
-                        if (sum >= this.buildingLevel)
-                        {
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-        else if(colony instanceof IColony)
-        {
-            for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
-            {
-                if (building.getSchematicName().equalsIgnoreCase(this.building))
-                {
-                    if(singleBuilding)
-                    {
-                        if(building.getBuildingLevel() >= this.buildingLevel)
-                        {
-                            return true;
-                        }
-                    }
-                    else
-                    {
-                        sum += building.getBuildingLevel();
-
-                        if (sum >= this.buildingLevel)
-                        {
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-        return false;
+        return colony.hasBuilding(this.building, this.buildingLevel, this.singleBuilding);
     }
 
     @Override

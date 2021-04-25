@@ -24,6 +24,7 @@ import com.minecolonies.coremod.colony.buildings.modules.BedHandlingModule;
 import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
 import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenSpawnedEvent;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
+import com.minecolonies.coremod.colony.jobs.JobUndertaker;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewCitizenViewMessage;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewRemoveCitizenMessage;
@@ -43,6 +44,7 @@ import java.util.stream.Collectors;
 import static com.minecolonies.api.research.util.ResearchConstants.CITIZEN_CAP;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CITIZENS;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 import static com.minecolonies.api.util.constant.TranslationConstants.ALL_CITIZENS_ARE_SLEEPING;
 
 public class CitizenManager implements ICitizenManager
@@ -276,9 +278,9 @@ public class CitizenManager implements ICitizenManager
         {
             citizenData = createAndRegisterCivilianData();
 
-            if (getMaxCitizens() >= getCitizens().size() && !force)
+            if (getMaxCitizens() >= getCurrentCitizenCount() && !force)
             {
-                if (maxCitizensFromResearch() <= getCitizens().size())
+                if (maxCitizensFromResearch() <= getCurrentCitizenCount())
                 {
                     LanguageHandler.sendPlayersMessage(
                       colony.getMessagePlayerEntities(),
@@ -327,6 +329,31 @@ public class CitizenManager implements ICitizenManager
         citizenData.initForNewCivilian();
         citizens.put(citizenData.getId(), citizenData);
 
+        return citizenData;
+    }
+
+    @Override
+    public ICitizenData resurrectCivilianData(@NotNull final CompoundNBT compoundNBT, final boolean resetId, @NotNull final World world, final BlockPos spawnPos)
+    {
+        //This ensures that citizen IDs are getting reused.
+        //That's needed to prevent bugs when calling IDs that are not used.
+        for (int i = 1; i <= this.getCurrentCitizenCount() + 1; i++)
+        {
+            if (this.getCivilian(i) == null)
+            {
+                topCitizenId = i;
+                break;
+            }
+        }
+
+        if(resetId)
+        {
+            compoundNBT.putInt(TAG_ID, topCitizenId);
+        }
+
+        final ICitizenData citizenData = deserializeCitizen(compoundNBT);
+        citizens.put(citizenData.getId(), citizenData);
+        spawnOrCreateCitizen(citizenData, world, spawnPos);
         return citizenData;
     }
 
@@ -482,7 +509,10 @@ public class CitizenManager implements ICitizenManager
      * @return The current amount of citizens in the colony.
      */
     @Override
-    public int getCurrentCitizenCount() { return citizens.size(); }
+    public int getCurrentCitizenCount()
+    {
+        return citizens.size() + colony.getGraveManager().getGraves().size();
+    }
 
     @Override
     public void setMaxCitizens(final int newMaxCitizens)
@@ -577,7 +607,7 @@ public class CitizenManager implements ICitizenManager
     {
         for (final ICitizenData citizen : getCitizens())
         {
-            if (citizen.getEntity().isPresent() && !(citizen.getJob() instanceof AbstractJobGuard))
+            if (citizen.getEntity().isPresent() && !(citizen.getJob() instanceof AbstractJobGuard) && !(citizen.getJob() instanceof JobUndertaker))
             {
                 citizen.getEntity().get().setMourning(mourn);
             }

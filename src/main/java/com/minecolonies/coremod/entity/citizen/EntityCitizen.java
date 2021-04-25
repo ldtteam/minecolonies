@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity.citizen;
 
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
@@ -26,14 +27,19 @@ import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.inventory.container.ContainerCitizenInventory;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.sounds.EventType;
+import com.minecolonies.api.tileentities.TileEntityGrave;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.blocks.BlockMinecoloniesGrave;
+import com.minecolonies.api.colony.GraveData;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingGraveyard;
 import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenDiedEvent;
 import com.minecolonies.coremod.colony.jobs.*;
 import com.minecolonies.coremod.entity.SittingEntity;
+import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard;
 import com.minecolonies.coremod.entity.ai.minimal.*;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.*;
@@ -63,6 +69,7 @@ import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -85,8 +92,7 @@ import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.Suppression.INCREMENT_AND_DECREMENT_OPERATORS_SHOULD_NOT_BE_USED_IN_A_METHOD_CALL_OR_MIXED_WITH_OTHER_OPERATORS_IN_AN_EXPRESSION;
-import static com.minecolonies.api.util.constant.TranslationConstants.CITIZEN_RENAME_NOT_ALLOWED;
-import static com.minecolonies.api.util.constant.TranslationConstants.CITIZEN_RENAME_SAME;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.entity.ai.minimal.EntityAIInteractToggleAble.*;
 
 /**
@@ -1030,7 +1036,7 @@ public class EntityCitizen extends AbstractEntityCitizen
             return false;
         }
 
-        if (getCitizenColonyHandler().getColony().isMourning() && mourning)
+        if (getCitizenColonyHandler().getColony().isMourning() && mourning && !(citizenJobHandler.getColonyJob() instanceof JobUndertaker))
         {
             setVisibleStatusIfNone(MOURNING);
             desiredActivity = DesiredActivity.MOURN;
@@ -1453,15 +1459,23 @@ public class EntityCitizen extends AbstractEntityCitizen
             {
                 citizenColonyHandler.getColony().setNeedToMourn(true, citizenData.getName());
             }
+
+            if(citizenColonyHandler.getColony().isCoordInColony(world, getPosition()))
+            {
+                getCitizenColonyHandler().getColony().getGraveManager().createCitizenGrave(world, getPosition(), citizenData);
+            }
+            else
+            {
+                InventoryUtils.dropItemHandler(citizenData.getInventory(), world, (int) getPosX(), (int) getPosY(), (int) getPosZ());
+            }
+
             if (citizenData.getJob() != null)
             {
                 citizenData.getJob().onRemoval();
             }
             citizenColonyHandler.getColony().getCitizenManager().removeCivilian(getCitizenData());
-            InventoryUtils.dropItemHandler(citizenData.getInventory(), world, (int) getPosX(), (int) getPosY(), (int) getPosZ());
 
-            final String deathCause =
-              new StringTextComponent(damageSource.getDeathMessage(this).getString()).getString().replaceFirst(this.getDisplayName().getString(), "Citizen");
+            final String deathCause = new StringTextComponent(damageSource.getDeathMessage(this).getString()).getString().replaceFirst(this.getDisplayName().getString(), "Citizen");
             citizenColonyHandler.getColony().getEventDescriptionManager().addEventDescription(new CitizenDiedEvent(getPosition(), citizenData.getName(), deathCause));
         }
         super.onDeath(damageSource);

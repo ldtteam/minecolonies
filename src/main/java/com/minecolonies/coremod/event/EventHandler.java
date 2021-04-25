@@ -20,6 +20,7 @@ import com.minecolonies.coremod.blocks.BlockScarecrow;
 import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
 import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.commands.EntryPoint;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
@@ -380,8 +381,13 @@ public class EventHandler
      * @param event the join world event.
      */
     @SubscribeEvent
-    public void on(final LivingSpawnEvent.CheckSpawn event)
+    public static void on(final LivingSpawnEvent.CheckSpawn event)
     {
+        if (!(event.getEntity() instanceof IMob))
+        {
+            return;
+        }
+
         final BlockPos pos = new BlockPos(event.getX(), event.getY(), event.getZ());
         if (event.isSpawner() || event.getWorld().isRemote() || !WorldUtil.isEntityBlockLoaded(event.getWorld(), pos))
         {
@@ -404,7 +410,8 @@ public class EventHandler
             final IBuilding building = newColony.getBuildingManager().getBuilding(buildingPos);
             if (building != null && building.getBuildingLevel() >= 1 && building.isInBuilding(pos))
             {
-                event.setCanceled(true);
+                event.setResult(Event.Result.DENY);
+                break;
             }
         }
     }
@@ -453,6 +460,7 @@ public class EventHandler
             }
 
             IGlobalResearchTree.getInstance().sendGlobalResearchTreePackets((ServerPlayerEntity) event.getPlayer());
+            CustomRecipeManager.getInstance().sendCustomRecipeManagerPackets((ServerPlayerEntity) event.getPlayer());
         }
     }
 
@@ -794,7 +802,6 @@ public class EventHandler
         if (event.getWorld().isRemote())
         {
             IColonyManager.getInstance().resetColonyViews();
-            ItemBlockHut.checkResearch(null);
             Log.getLogger().info("Removed all colony views");
         }
     }

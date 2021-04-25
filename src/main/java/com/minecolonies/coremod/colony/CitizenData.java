@@ -19,6 +19,7 @@ import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.Suppression;
@@ -57,6 +58,7 @@ import static com.minecolonies.api.research.util.ResearchConstants.HEALTH_BOOST;
 import static com.minecolonies.api.research.util.ResearchConstants.WALKING;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.ItemStackUtils.*;
 
 /**
  * Extra data for Citizens.
@@ -1228,6 +1230,23 @@ public class CitizenData implements ICitizenData
     public void setNextRespawnPosition(final BlockPos pos)
     {
         nextRespawnPos = pos;
+    }
+
+    @Override
+    public boolean needsBetterFood()
+    {
+        if (this.getWorkBuilding() == null)
+        {
+            return false;
+        }
+        else
+        {
+            int slotBadFood = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(inventory,
+              stack -> CAN_EAT.test(stack) && !this.getWorkBuilding().canEat(stack));
+            int slotGoodFood = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(inventory,
+              stack -> CAN_EAT.test(stack) && this.getWorkBuilding().canEat(stack));
+            return slotBadFood != -1 && slotGoodFood == -1;
+        }
     }
 
 }

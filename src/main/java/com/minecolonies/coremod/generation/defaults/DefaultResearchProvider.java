@@ -2,6 +2,8 @@ package com.minecolonies.coremod.generation.defaults;
 
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.entity.ModEntities;
+import com.minecolonies.api.inventory.ModContainers;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.research.AbstractResearchProvider;
 import com.minecolonies.api.research.ResearchBranchType;
@@ -9,6 +11,7 @@ import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.ModContainer;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -99,6 +102,8 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         effects.add(new ResearchEffect(TOOL_DURABILITY).setTranslatedName("Citizen Tools +%3$s%% Durability").setLevels(new double[] {0.05, 0.1, 0.25, 0.5, 0.9}));
         effects.add(new ResearchEffect(WALKING).setTranslatedName("Citizen Walk Speed +%3$s%%").setLevels(new double[] {0.05, 0.1, 0.15, 0.25}));
         effects.add(new ResearchEffect(WORK_LONGER).setTranslatedName("Citizen Work Day +%sH").setLevels(new double[] {1, 2}));
+        effects.add(new ResearchEffect(RESURRECT_CHANCE).setTranslatedName("Improve Resurrection Chance by +%3$s%%").setLevels(new double[] {0.01, 0.03}));
+        effects.add(new ResearchEffect(GRAVE_DECAY_BONUS).setTranslatedName("Citizen Graves Take %s More Minutes to Decay").setLevels(new double[] {2, 5}));
 
         // Guard and Worker unlocks do not need a strength, but do have static ResourceLocations.
         effects.add(new ResearchEffect(ARCHER_USE_ARROWS).setTranslatedName("Archers Use Arrows For +2 Damage"));
@@ -113,6 +118,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         effects.add(new ResearchEffect(SLEEP_LESS).setTranslatedName("Guards Need %3$s%% Less Sleep"));
         effects.add(new ResearchEffect(KNIGHT_WHIRLWIND).setTranslatedName("Knights Learn Special Attack That Damages and Knocks Back Nearby Enemies"));
         effects.add(new ResearchEffect(WORKING_IN_RAIN).setTranslatedName("Citizens Work in Rain"));
+        effects.add(new ResearchEffect(UNDERTAKER_RUN).setTranslatedName("Undertaker unlocks run ability").setTranslatedSubtitle("Teach Undertaker the ability to run towards graves"));
 
         // Building-focused unlocks are derived from the block hut name.  Do not manually add ResourceLocations as a string, as some building blocks have surprising names.
         effects.add(new ResearchEffect(ModBuildings.archery.getBuildingBlock()).setTranslatedName("Unlocks Archery"));
@@ -125,6 +131,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         effects.add(new ResearchEffect(ModBuildings.dyer.getBuildingBlock()).setTranslatedName("Unlocks Dyer's Hut"));
         effects.add(new ResearchEffect(ModBuildings.fletcher.getBuildingBlock()).setTranslatedName("Unlocks Fletcher's Hut"));
         effects.add(new ResearchEffect(ModBuildings.florist.getBuildingBlock()).setTranslatedName("Unlocks Flower Shop"));
+        effects.add(new ResearchEffect(ModBuildings.graveyard.getBuildingBlock()).setTranslatedName("Unlocks Graveyard"));
         effects.add(new ResearchEffect(ModBuildings.glassblower.getBuildingBlock()).setTranslatedName("Unlocks Glassblower's Hut"));
         effects.add(new ResearchEffect(ModBuildings.hospital.getBuildingBlock()).setTranslatedName("Unlocks Hospital"));
         effects.add(new ResearchEffect(ModBuildings.library.getBuildingBlock()).setTranslatedName("Unlocks Library"));
@@ -615,6 +622,73 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .addItemCost(Items.DIAMOND, 1)
           .addEffect(ModBuildings.mysticalSite.getBuildingBlock(), 1)
           .addToList(r);
+
+        // Primary Research #6
+        final Research remembrance = new Research(new ResourceLocation(Constants.MOD_ID, "civilian/remembrance"), CIVIL)
+                .setTranslatedName("Remembrance")
+                .setSortOrder(6)
+                .setIcon(ModBlocks.blockHutGraveyard.asItem())
+                .addEffect(ModBuildings.graveyard.getBuildingBlock(), 1)
+                .addBuildingRequirement(ModBuildings.TOWNHALL_ID, 2)
+                .addItemCost(Items.BONE, 8)
+                .setTranslatedSubtitle("Our fallen shall not be forgotten!")
+                .addToList(r);
+
+        new Research(new ResourceLocation(Constants.MOD_ID, "civilian/undertakeremergency"), CIVIL)
+                .setParentResearch(remembrance)
+                .setTranslatedName("Undertaker Emergency")
+                .setSortOrder(3)
+                .setIcon(ModBlocks.blockHutGraveyard.asItem())
+                .addBuildingRequirement(ModBuildings.GRAVEYARD_ID, 2)
+                .addItemCost(Items.IRON_BOOTS, 1)
+                .addEffect(UNDERTAKER_RUN, 1)
+                .addToList(r);
+
+        final Research resurrectChance1 = new Research(new ResourceLocation(Constants.MOD_ID, "civilian/resurrectchance1"), CIVIL)
+                .setParentResearch(remembrance)
+                .setTranslatedName("Resurrection Chance I")
+                .setTranslatedSubtitle("Use the right words")
+                .setSortOrder(1)
+                .setIcon(ModBlocks.blockHutGraveyard.asItem())
+                .addBuildingRequirement(ModBuildings.GRAVEYARD_ID, 3)
+                .addItemCost(Items.GHAST_TEAR, 1)
+                .addEffect(RESURRECT_CHANCE, 1)
+                .addToList(r);
+
+        new Research(new ResourceLocation(Constants.MOD_ID, "civilian/resurrectchance2"), CIVIL)
+                .setParentResearch(resurrectChance1)
+                .setTranslatedName("Resurrection Chance II")
+                .setTranslatedSubtitle("Dance around and wave your hands")
+                .setSortOrder(1)
+                .setIcon(ModBlocks.blockHutGraveyard.asItem())
+                .addBuildingRequirement(ModBuildings.GRAVEYARD_ID, 5)
+                .addItemCost(Items.CHORUS_FRUIT, 16)
+                .addEffect(RESURRECT_CHANCE, 2)
+                .addToList(r);
+
+
+        final Research decayBonus1 = new Research(new ResourceLocation(Constants.MOD_ID, "civilian/gravedecaybonus1"), CIVIL)
+                .setParentResearch(remembrance)
+                .setTranslatedName("Grave Decay I")
+                .setTranslatedSubtitle("Dig deeper before death")
+                .setSortOrder(2)
+                .setIcon(ModBlocks.blockGrave.asItem())
+                .addBuildingRequirement(ModBuildings.GRAVEYARD_ID, 3)
+                .addItemCost(Items.ROTTEN_FLESH, 64)
+                .addEffect(GRAVE_DECAY_BONUS, 1)
+                .addToList(r);
+
+        new Research(new ResourceLocation(Constants.MOD_ID, "civilian/gravedecaybonus2"), CIVIL)
+                .setParentResearch(decayBonus1)
+                .setTranslatedName("Grave Decay II")
+                .setTranslatedSubtitle("I don't want to leave yet!")
+                .setSortOrder(2)
+                .setIcon(ModBlocks.blockGrave.asItem())
+                .addBuildingRequirement(ModBuildings.GRAVEYARD_ID, 5)
+                .addItemCost(Items.NETHER_WART_BLOCK, 8)
+                .addEffect(GRAVE_DECAY_BONUS, 2)
+                .addToList(r);
+
         return r;
     }
 

@@ -114,16 +114,16 @@ public class ItemListModuleWindow extends AbstractModuleWindow
         final ItemStorage item = currentDisplayedList.get(row);
         final boolean on = button.getText().equals(new TranslationTextComponent(ON));
         final boolean add = (on && isInverted) || (!on && !isInverted);
-        building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id)).ifPresent(m -> {
-            if (add)
-            {
-                m.addItem(item);
-            }
-            else
-            {
-                m.removeItem(item);
-            }
-        });
+        final IItemListModuleView module = building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id));
+
+        if (add)
+        {
+            module.addItem(item);
+        }
+        else
+        {
+            module.removeItem(item);
+        }
 
         resourceList.refreshElementPanes();
     }
@@ -147,11 +147,9 @@ public class ItemListModuleWindow extends AbstractModuleWindow
 
         currentDisplayedList.sort((o1, o2) -> {
 
-            boolean o1Allowed = building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id))
-                                  .map(m -> m.isAllowedItem(o1)).orElse(false);
+            boolean o1Allowed = building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id)).isAllowedItem(o1);
 
-            boolean o2Allowed = building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id))
-                                  .map(m -> m.isAllowedItem(o2)).orElse(false);
+            boolean o2Allowed = building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id)).isAllowedItem(o2);
 
             if(!o1Allowed && o2Allowed)
             {
@@ -204,7 +202,7 @@ public class ItemListModuleWindow extends AbstractModuleWindow
                 resourceLabel.setText(resource.getDisplayName());
                 resourceLabel.setColors(WHITE);
                 rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(resource);
-                final boolean isAllowedItem  = building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id)).map(m -> m.isAllowedItem(new ItemStorage(resource))).orElse(isInverted);
+                final boolean isAllowedItem  = building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id)).isAllowedItem(new ItemStorage(resource));
                 final Button switchButton = rowPane.findPaneOfTypeByID(BUTTON_SWITCH, Button.class);
 
                 if ((isInverted && !isAllowedItem) || (!isInverted && isAllowedItem))

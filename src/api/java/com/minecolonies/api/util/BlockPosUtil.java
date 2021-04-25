@@ -1,6 +1,9 @@
 package com.minecolonies.api.util;
 
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.block.AirBlock;
 import net.minecraft.block.Block;
@@ -16,7 +19,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.util.RegistryKey;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
@@ -28,7 +30,6 @@ import net.minecraft.world.server.ServerWorld;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -51,48 +52,6 @@ public final class BlockPosUtil
      * Amount of string required to try to calculate a blockpos.
      */
     private static final int BLOCKPOS_LENGTH = 3;
-
-    /**
-     * World height limits for vanilla worlds
-     */
-    private static final Map<RegistryKey<World>, WorldLimit> WORLD_LIMITS = new HashMap<RegistryKey<World>, WorldLimit>()
-    {{
-        put(World.OVERWORLD, new WorldLimit(1, 255));
-        put(World.THE_NETHER, new WorldLimit(1, 125));
-        put(World.THE_END, new WorldLimit(1, 255));
-    }};
-
-    /**
-     * Upper and lower limit holder
-     */
-    private static final class WorldLimit
-    {
-        final int minY;
-        final int maxY;
-
-        private WorldLimit(int minY, int maxY)
-        {
-            this.minY = minY;
-            this.maxY = maxY;
-        }
-
-        private boolean isInLimit(final int y)
-        {
-            return y >= minY && y <= maxY;
-        }
-    }
-
-    /**
-     * Check if the given height is valid for this world
-     *
-     * @param world world to check
-     * @param y     y level to check
-     * @return true if valid
-     */
-    public static boolean isInWorldHeight(final World world, final int y)
-    {
-        return WORLD_LIMITS.getOrDefault(world.getDimensionKey(), new WorldLimit(1, 255)).isInLimit(y);
-    }
 
     private BlockPosUtil()
     {
@@ -273,6 +232,33 @@ public final class BlockPosUtil
                  && !sender.getBlockState(blockPos).getMaterial().isLiquid()
                  && !sender.getBlockState(blockPos.down()).getMaterial().isLiquid()
                  && sender.getWorldBorder().contains(blockPos);
+    }
+
+
+    /**
+     * this find the building that the BlockPos bellong to
+     *
+     * @param world   the world
+     * @param pos for the current block
+     */
+    @Nullable
+    public static IBuilding findBuilding(final World world, final BlockPos pos)
+    {
+        final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, pos);
+        if(colony == null)
+        {
+            return null;
+        }
+
+        for(IBuilding building : colony.getBuildingManager().getBuildings().values())
+        {
+            if(building.isInBuilding(pos))
+            {
+                return building;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -778,7 +764,7 @@ public final class BlockPosUtil
             y_offset++;
             y_offset *= -1;
 
-            if (!isInWorldHeight(world, start.getY() + y))
+            if (world.func_234938_ad_() <= start.getY() + y)
             {
                 return null;
             }

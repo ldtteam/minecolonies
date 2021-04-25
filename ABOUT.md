@@ -60,9 +60,9 @@ ___
 ### Visuals
 * Carlansor - Texture Designer
 * Fan of porkchops - Textures and Models
+* Imrielle – Static Modeling and Texturing
 * Odd Alexander Della Robbia - Animated/Static Modeling and Texturing
 * D3miurge - Graphics Artist, Models, Textures, and GUI (inactive)
-* Imrielle – Static Modeling and Texturing (inactive)
 * Khranos – Animated/Static Modeling and Texturing (inactive)
 
 ### Top Translators

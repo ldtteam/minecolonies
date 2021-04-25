@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.herders;
 
+import com.minecolonies.api.colony.buildings.modules.ISettingsModule;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
@@ -9,7 +10,6 @@ import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.modules.settings.BoolSetting;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import net.minecraft.entity.item.ItemEntity;
@@ -119,7 +119,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
     protected List<ItemStack> itemsNiceToHave()
     {
         final List<ItemStack> list = super.itemsNiceToHave();
-        if (getOwnBuilding().getSetting(AbstractBuildingWorker.BREEDING).map(BoolSetting::getValue).orElse(true))
+        if (getOwnBuilding().getSetting(AbstractBuildingWorker.BREEDING).getValue())
         {
             list.add(getRequestBreedingItems());
         }
@@ -194,7 +194,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
         {
             return HERDER_BUTCHER;
         }
-        else if (getOwnBuilding().getSetting(AbstractBuildingWorker.BREEDING).map(BoolSetting::getValue).orElse(true) && numOfBreedableAnimals >= NUM_OF_ANIMALS_TO_BREED && hasBreedingItem)
+        else if (getOwnBuilding().getFirstOptionalModuleOccurance(ISettingsModule.class).map(m-> m.getSetting(AbstractBuildingWorker.BREEDING).getValue()).orElse(true) && numOfBreedableAnimals >= NUM_OF_ANIMALS_TO_BREED && hasBreedingItem)
         {
             return HERDER_BREED;
         }
@@ -497,22 +497,17 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      */
     public boolean maxAnimals(final List<T> allAnimals)
     {
-        if (getOwnBuilding() != null)
+        final List<T> animals = allAnimals.stream()
+                                  .filter(animalToButcher -> !animalToButcher.isChild()).collect(Collectors.toList());
+        if (animals.isEmpty())
         {
-            final List<T> animals = allAnimals.stream()
-                                      .filter(animalToButcher -> !animalToButcher.isChild()).collect(Collectors.toList());
-
-            if (animals.isEmpty())
-            {
-                return false;
-            }
-
-            final int numOfAnimals = animals.size();
-            final int maxAnimals = getOwnBuilding().getBuildingLevel() * getMaxAnimalMultiplier();
-
-            return numOfAnimals > maxAnimals;
+            return false;
         }
-        return true;
+
+        final int numOfAnimals = animals.size();
+        final int maxAnimals = getOwnBuilding().getBuildingLevel() * getMaxAnimalMultiplier();
+
+        return numOfAnimals > maxAnimals;
     }
 
     /**
@@ -540,18 +535,14 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      */
     private int getToolSlot(final ToolType toolType)
     {
-        if (getOwnBuilding() != null)
-        {
-            final int slot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(getInventory(), toolType,
-              TOOL_LEVEL_WOOD_OR_GOLD, getOwnBuilding().getMaxToolLevel());
+        final int slot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(getInventory(), toolType,
+          TOOL_LEVEL_WOOD_OR_GOLD, getOwnBuilding().getMaxToolLevel());
 
-            if (slot == -1)
-            {
-                checkForToolOrWeapon(toolType);
-            }
-            return slot;
+        if (slot == -1)
+        {
+            checkForToolOrWeapon(toolType);
         }
-        return -1;
+        return slot;
     }
 
     /**

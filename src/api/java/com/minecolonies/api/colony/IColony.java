@@ -106,6 +106,15 @@ public interface IColony
     boolean hasWarehouse();
 
     /**
+     * Check if the colony has a building type at a specific level or higher.
+     * @param building       The string identifier for the building, based on schematic name.
+     * @param level          The level requirement.
+     * @param singleBuilding If true, requires that a single building meet the minimum requirement.
+     * @return true if at least one building of at least the target level is present.
+     */
+    boolean hasBuilding(final String building, final int level, final boolean singleBuilding);
+
+    /**
      * Defines the team name for all colonies (both Colony and ColonyView)
      *
      * @return The team name
@@ -235,6 +244,8 @@ public interface IColony
     IBuildingManager getBuildingManager();
 
     ICitizenManager getCitizenManager();
+
+    IGraveManager getGraveManager();
 
     /**
      * Gets the visitor manager

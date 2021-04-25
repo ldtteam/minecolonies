@@ -117,14 +117,11 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
             {
                 return getState();
             }
-            else if (getOwnBuilding() != null)
-            {
-                InventoryFunctions.matchFirstInProviderWithSimpleAction(worker,
-                  stack -> !ItemStackUtils.isEmpty(stack)
-                             && ItemStackUtils.doesItemServeAsWeapon(stack)
-                             && ItemStackUtils.hasToolLevel(stack, tool, 0, getOwnBuilding().getMaxToolLevel()),
-                  itemStack -> worker.getCitizenItemHandler().setMainHeldItem(itemStack));
-            }
+            InventoryFunctions.matchFirstInProviderWithSimpleAction(worker,
+              stack -> !ItemStackUtils.isEmpty(stack)
+                         && ItemStackUtils.doesItemServeAsWeapon(stack)
+                         && ItemStackUtils.hasToolLevel(stack, tool, 0, getOwnBuilding().getMaxToolLevel()),
+              itemStack -> worker.getCitizenItemHandler().setMainHeldItem(itemStack));
         }
 
         equipInventoryArmor();
@@ -237,11 +234,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
             return COMBAT_SPEED;
         }
         double levelAdjustment = getCombatSpeedBonus();
-
-        if (getOwnBuilding() != null)
-        {
-            levelAdjustment += (getOwnBuilding().getBuildingLevel() * 2 - 1) * SPEED_LEVEL_BONUS;
-        }
+        levelAdjustment += (getOwnBuilding().getBuildingLevel() * 2 - 1) * SPEED_LEVEL_BONUS;
 
         levelAdjustment = levelAdjustment > 0.3 ? 0.3 : levelAdjustment;
         return COMBAT_SPEED + levelAdjustment;

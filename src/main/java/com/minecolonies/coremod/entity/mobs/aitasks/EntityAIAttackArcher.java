@@ -4,6 +4,7 @@ import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.entity.CustomArrowEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
@@ -152,8 +153,9 @@ public class EntityAIAttackArcher extends Goal
 
                 if (EntityUtils.isFlying(target))
                 {
+                    ((CustomArrowEntity) arrowEntity).setPlayerArmorPierce();
                     arrowEntity.setFire(200);
-                    arrowEntity.setDamage(20);
+                    arrowEntity.setDamage(10);
                     lastAttack = 10;
                 }
                 else

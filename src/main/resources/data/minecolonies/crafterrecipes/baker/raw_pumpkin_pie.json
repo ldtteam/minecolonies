@@ -18,5 +18,6 @@
   "result": "minecolonies:raw_pumpkin_pie",
   "count": 1,
   "intermediate" : "minecraft:air",
-  "min-building-level" : 3
+  "min-building-level" : 3,
+  "show-tooltip": true
 }

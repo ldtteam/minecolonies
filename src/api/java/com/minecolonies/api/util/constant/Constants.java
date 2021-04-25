@@ -41,6 +41,8 @@ public final class Constants
     public static final int    PARAMS_RESEARCH_EFFECT           = 2;
     public static final int    PARAMS_GLOBAL_RESEARCH           = 5;
     public static final int    PARAMS_LOCAL_RESEARCH            = 3;
+    public static final int    PARAMS_CUSTOM_RECIPE             = 8;
+    public static final int    PARAMS_CUSTOM_RECIPE_MGR         = 13;
     public static final String DEFAULT_STYLE                    = "wooden";
     public static final String ORES                             = "ores";
     public static final double HALF_BLOCK                       = 0.5D;
@@ -80,6 +82,8 @@ public final class Constants
     public static final String CRITERION_ALL_TOWERS             = "all_barracks_towers";
     public static final String CRITERION_DEEP_MINE              = "deep_mine";
     public static final String CRITERION_MAX_FIELDS             = "max_fields";
+    public static final String CRITERION_CITIZEN_BURY           = "citizen_bury";
+    public static final String CRITERION_CITIZEN_RESURRECT      = "citizen_resurrect";
 
     /**
      * Placement key for item nbt
@@ -120,6 +124,11 @@ public final class Constants
      * Slot where the fuel should be put in the furnace.
      */
     public static final int FUEL_SLOT = 1;
+
+    /**
+     * Tag String of forge.
+     */
+    public static final int TAG_STRING = 8;
 
     /**
      * Tag compound of forge.
