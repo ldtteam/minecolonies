@@ -226,51 +226,6 @@ public class CustomRecipe
     }
 
     /**
-     * Convert an Item string with NBT to an ItemStack
-     * @param itemData ie: minecraft:potion{Potion=minecraft:water}
-     * @return stack with any defined NBT
-     */
-    private static ItemStack idToItemStack(final String itemData)
-    {
-        String itemId = itemData;
-        final int tagIndex = itemId.indexOf("{");
-        final String tag = tagIndex > 0 ? itemId.substring(tagIndex) : null;
-        itemId = tagIndex > 0 ? itemId.substring(0, tagIndex) : itemId;
-        String[] split = itemId.split(":");
-        if(split.length != 2)
-        {
-            if(split.length == 1)
-            {
-                final String[] tempArray ={"minecraft", split[0]};
-                split = tempArray;
-            }
-            else
-            {
-                Log.getLogger().error("Unable to parse item definition: " + itemData);
-            }
-        }
-        final Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(split[0], split[1]));
-        final ItemStack stack = new ItemStack(item);
-        if (tag != null)
-        {
-            try
-            {
-                stack.setTag(JsonToNBT.getTagFromJson(tag));
-            }
-            catch (CommandSyntaxException e1)
-            {
-                //Unable to parse tags, drop them.
-                Log.getLogger().error("Unable to parse item definition: " + itemData);
-            }
-        }
-        if (stack.isEmpty())
-        {
-            Log.getLogger().warn("Parsed item definition returned empty: " + itemData);
-        }
-        return stack;
-    }
-
-    /**
      * Parse a Json object into a Custom recipe
      *
      * @param recipeId the recipe id
@@ -293,23 +248,14 @@ public class CustomRecipe
                 if (e.isJsonObject())
                 {
                     JsonObject ingredient = e.getAsJsonObject();
-                    if (ingredient.has(ITEM_PROP))
-                    {
-                        final ItemStack stack = idToItemStack(ingredient.get(ITEM_PROP).getAsString());
-                        if(ingredient.has(COUNT_PROP))
-                        {
-                            stack.setCount(ingredient.get(COUNT_PROP).getAsInt());
-                        }
-                        recipe.inputs.add(new ItemStorage(stack));
-                    }
-
+                    recipe.inputs.add(new ItemStorage(ingredient));
                 }
             }
         }
 
         if (recipeJson.has(RECIPE_RESULT_PROP))
         {
-            recipe.result = idToItemStack(recipeJson.get(RECIPE_RESULT_PROP).getAsString());
+            recipe.result = ItemStackUtils.idToItemStack(recipeJson.get(RECIPE_RESULT_PROP).getAsString());
         }
         else
         {
@@ -330,7 +276,7 @@ public class CustomRecipe
                     JsonObject ingredient = e.getAsJsonObject();
                     if (ingredient.has(ITEM_PROP))
                     {
-                        final ItemStack stack = idToItemStack(ingredient.get(ITEM_PROP).getAsString());
+                        final ItemStack stack = ItemStackUtils.idToItemStack(ingredient.get(ITEM_PROP).getAsString());
                         if(ingredient.has(COUNT_PROP))
                         {
                             stack.setCount(ingredient.get(COUNT_PROP).getAsInt());
@@ -352,7 +298,7 @@ public class CustomRecipe
                     JsonObject ingredient = e.getAsJsonObject();
                     if (ingredient.has(ITEM_PROP))
                     {
-                        final ItemStack stack = idToItemStack(ingredient.get(ITEM_PROP).getAsString());
+                        final ItemStack stack = ItemStackUtils.idToItemStack(ingredient.get(ITEM_PROP).getAsString());
                         if(ingredient.has(COUNT_PROP))
                         {
                             stack.setCount(ingredient.get(COUNT_PROP).getAsInt());
