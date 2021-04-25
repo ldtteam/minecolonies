@@ -22,6 +22,10 @@ public class Rank
      */
     private boolean isInitial;
 
+    private boolean isColonyManager;
+
+    private boolean isHostile;
+
     /**
      * Rank constructor
      * @param id the id of the rank
@@ -29,12 +33,19 @@ public class Rank
      * @param isSubscriber whether the rank is a subscriber
      * @param isInitial whether the rank is an initial rank
      */
-    public Rank(int id, String name, boolean isSubscriber, boolean isInitial)
+    public Rank(int id, String name, boolean isSubscriber, boolean isInitial, boolean isColonyManager, boolean isHostile)
     {
         this.id = id;
         this.name = name;
         this.isSubscriber = isSubscriber;
         this.isInitial = isInitial;
+        this.isColonyManager = isColonyManager;
+        this.isHostile = isHostile;
+    }
+
+    public Rank(int id, String name, boolean isSubscriber, boolean isInitial)
+    {
+        this(id, name, isSubscriber, isInitial, false, false);
     }
 
     /**
@@ -69,6 +80,20 @@ public class Rank
      * @return true if so
      */
     public boolean isInitial() { return isInitial; }
+
+    public boolean isColonyManager() { return isColonyManager; }
+
+    public boolean isHostile() { return isHostile; }
+
+    public void setColonyManager(boolean isColonyManager)
+    {
+        this.isColonyManager = isColonyManager;
+    }
+
+    public void setHostile(boolean isHostile)
+    {
+        this.isHostile = isHostile;
+    }
 
     @Override
     public boolean equals(final Object o)

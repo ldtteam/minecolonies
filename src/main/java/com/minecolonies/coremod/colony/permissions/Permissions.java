@@ -43,6 +43,8 @@ public class Permissions implements IPermissions
     private static final String TAG_RANKS           = "ranks";
     private static final String TAG_SUBSCRIBER      = "is_subscriber";
     private static final String TAG_INITIAL         = "is_initial";
+    private static final String TAG_COLONY_MANAGER  = "is_colony_manager";
+    private static final String TAG_HOSTILE         = "is_hostile";
 
     /**
      * NBTTarget for the permission version, used for updating.
@@ -164,6 +166,7 @@ public class Permissions implements IPermissions
                     this.setPermission(rank, Action.RECEIVE_MESSAGES_FAR_AWAY);
                     this.setPermission(rank, Action.CAN_KEEP_COLONY_ACTIVE_WHILE_AWAY);
                     this.setPermission(rank, Action.RALLY_GUARDS);
+                    rank.setColonyManager(true);
                 case FRIEND:
                     this.setPermission(rank, Action.ACCESS_HUTS);
                     this.setPermission(rank, Action.USE_SCAN_TOOL);
@@ -181,6 +184,7 @@ public class Permissions implements IPermissions
                     break;
                 case HOSTILE:
                     this.setPermission(rank, Action.GUARDS_ATTACK);
+                    rank.setHostile(true);
                     break;
                 default:
                     break;
@@ -254,7 +258,9 @@ public class Permissions implements IPermissions
                 final String name = rankCompound.getString(TAG_NAME);
                 final boolean isSubscriber = rankCompound.getBoolean(TAG_SUBSCRIBER);
                 final boolean isInitial = rankCompound.getBoolean(TAG_INITIAL);
-                final Rank rank = new Rank(id, name, isSubscriber, isInitial);
+                final boolean isColonyManager = rankCompound.getBoolean(TAG_COLONY_MANAGER);
+                final boolean isHostile = rankCompound.getBoolean(TAG_HOSTILE);
+                final Rank rank = new Rank(id, name, isSubscriber, isInitial, isColonyManager, isHostile);
                 ranks.put(id, rank);
             }
         }
@@ -489,6 +495,8 @@ public class Permissions implements IPermissions
             rankCompound.putString(TAG_NAME, rank.getName());
             rankCompound.putBoolean(TAG_SUBSCRIBER, rank.isSubscriber());
             rankCompound.putBoolean(TAG_INITIAL, rank.isInitial());
+            rankCompound.putBoolean(TAG_COLONY_MANAGER, rank.isColonyManager());
+            rankCompound.putBoolean(TAG_HOSTILE, rank.isHostile());
             rankTagList.add(rankCompound);
         }
         compound.put(TAG_RANKS, rankTagList);
@@ -899,6 +907,8 @@ public class Permissions implements IPermissions
             buf.writeString(rank.getName());
             buf.writeBoolean(rank.isSubscriber());
             buf.writeBoolean(rank.isInitial());
+            buf.writeBoolean(rank.isColonyManager());
+            buf.writeBoolean(rank.isHostile());
         }
 
         buf.writeInt(viewerRank.getId());
@@ -987,6 +997,12 @@ public class Permissions implements IPermissions
     public Rank getRankNeutral()
     {
         return ranks.get(NEUTRAL_RANK_ID);
+    }
+
+    @Override
+    public Rank getRank(final int id)
+    {
+        return ranks.get(id);
     }
 
     /**

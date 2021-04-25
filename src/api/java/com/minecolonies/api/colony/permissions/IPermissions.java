@@ -33,6 +33,8 @@ public interface IPermissions
 
     LinkedHashMap<Integer, Rank> getRanks();
 
+    Rank getRank(int id);
+
     Rank getRankOwner();
 
     Rank getRankOfficer();

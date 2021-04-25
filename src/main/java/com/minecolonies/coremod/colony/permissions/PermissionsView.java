@@ -180,7 +180,7 @@ public class PermissionsView implements IPermissions
     {
         for (@NotNull final Map.Entry<UUID, Player> entry : players.entrySet())
         {
-            if (entry.getValue().getRank().equals(OldRank.OWNER))
+            if (entry.getValue().getRank().equals(getRanks().get(OWNER_RANK_ID)))
             {
                 return entry;
             }
@@ -229,7 +229,7 @@ public class PermissionsView implements IPermissions
         for (int i = 0; i < ranksSize; ++i)
         {
             final int id = buf.readInt();
-            final Rank rank = new Rank(id, buf.readString(32767), buf.readBoolean(), buf.readBoolean());
+            final Rank rank = new Rank(id, buf.readString(32767), buf.readBoolean(), buf.readBoolean(), buf.readBoolean(), buf.readBoolean());
             ranks.put(id, rank);
         }
         userRank = ranks.get(buf.readInt());
@@ -271,6 +271,12 @@ public class PermissionsView implements IPermissions
     public Rank getRank(@NotNull final PlayerEntity player)
     {
         return getRank(player.getUniqueID());
+    }
+
+    @Override
+    public Rank getRank(final int id)
+    {
+        return ranks.get(id);
     }
 
     @Override

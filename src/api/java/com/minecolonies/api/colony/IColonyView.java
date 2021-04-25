@@ -148,7 +148,7 @@ public interface IColonyView extends IColony
     Map<UUID, Player> getPlayers();
 
     /**
-     * Sets a specific permission to a oldRank. If the permission wasn't already set, it sends a message to the server.
+     * Sets a specific permission to a rank. If the permission wasn't already set, it sends a message to the server.
      *
      * @param rank   Rank to get the permission.
      * @param action Permission to get.
@@ -156,7 +156,7 @@ public interface IColonyView extends IColony
     void setPermission(Rank rank, @NotNull Action action);
 
     /**
-     * removes a specific permission to a oldRank. If the permission was set, it sends a message to the server.
+     * removes a specific permission to a rank. If the permission was set, it sends a message to the server.
      *
      * @param rank   Rank to remove permission from.
      * @param action Action to remove permission of.
@@ -164,7 +164,7 @@ public interface IColonyView extends IColony
     void removePermission(Rank rank, @NotNull Action action);
 
     /**
-     * Toggles a specific permission to a oldRank. Sends a message to the server.
+     * Toggles a specific permission to a rank. Sends a message to the server.
      *
      * @param rank   Rank to toggle permission of.
      * @param action Action to toggle permission of.

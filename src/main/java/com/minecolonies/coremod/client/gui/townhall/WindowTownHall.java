@@ -253,7 +253,7 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
     {
         final Text label = findPaneOfTypeByID(TOWNHALL_ADD_RANK_ERROR, Text.class);
         final TextField input = findPaneOfTypeByID(INPUT_ADDRANK_NAME, TextField.class);
-        if (checkForValidRankName(input.getText()))
+        if (isValidRankname(input.getText()))
         {
             Network.getNetwork().sendToServer(new PermissionsMessage.AddRank(townHall.getColony(), input.getText()));
             input.setText("");
@@ -271,7 +271,7 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
      * @param name the name
      * @return true if name is valid
      */
-    private boolean checkForValidRankName(String name)
+    private boolean isValidRankname(String name)
     {
         if (name.equals(""))
         {

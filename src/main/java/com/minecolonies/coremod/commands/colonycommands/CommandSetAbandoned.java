@@ -35,8 +35,7 @@ public class CommandSetAbandoned implements IMCColonyOfficerCommand
         }
 
         boolean addOfficer = false;
-        if (sender != null && (colony.getPermissions().getRank((PlayerEntity) sender) == colony.getPermissions().getRankOfficer()
-                                 || colony.getPermissions().getRank((PlayerEntity) sender) == colony.getPermissions().getRankOwner()))
+        if (sender != null && (colony.getPermissions().getRank((PlayerEntity) sender).isColonyManager()))
         {
             addOfficer = true;
         }

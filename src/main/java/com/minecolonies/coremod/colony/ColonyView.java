@@ -317,6 +317,7 @@ public final class ColonyView implements IColonyView
         buf.writeString(colony.getStyle());
         buf.writeBoolean(colony.getRaiderManager().isRaided());
         buf.writeBoolean(colony.getRaiderManager().areSpiesEnabled());
+        // ToDo: rework ally system
         final List<IColony> allies = new ArrayList<>();
         for (final Player player : colony.getPermissions().getPlayersByRank(colony.getPermissions().getRankOfficer()))
         {
