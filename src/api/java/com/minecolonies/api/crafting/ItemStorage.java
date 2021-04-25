@@ -15,6 +15,8 @@ import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+
 /**
  * Used to store an stack with various informations to compare items later on.
  */
@@ -44,17 +46,6 @@ public class ItemStorage
      * Amount of the storage.
      */
     private int amount;
-
-    /**
-     * The property name for Count, used both in inputs array and for result
-     */
-    public static final String COUNT_PROP = "count";
-
-    /**
-     * The property name for the item id in the inputs array
-     */
-    public static final String ITEM_PROP = "item";
-
 
     /**
      * Creates an instance of the storage.
@@ -138,10 +129,10 @@ public class ItemStorage
                 this.amount = parsedStack.getCount();
             }
             this.stack = parsedStack;
-            if(jObject.has("matchType"))
+            if(jObject.has(MATCHTYPE_PROP))
             {
-                String matchType = jObject.get("matchType").getAsString();
-                if(matchType.equals("ignore"))
+                String matchType = jObject.get(MATCHTYPE_PROP).getAsString();
+                if(matchType.equals(MATCH_NBTIGNORE))
                 {
                     this.shouldIgnoreNBTValue = true;
                 }

@@ -31,6 +31,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+
 /**
  * This class represents a recipe loaded from custom data that is available to a crafter
  * but not to a player
@@ -97,16 +99,6 @@ public class CustomRecipe
      * The property namefor the result loottable
      */
     public static final String RECIPE_LOOTTABLE_PROP = "loot-table";
-
-    /**
-     * The property name for Count, used both in inputs array and for result
-     */
-    public static final String COUNT_PROP = "count";
-
-    /**
-     * The property name for the item id in the inputs array
-     */
-    public static final String ITEM_PROP = "item";
 
     /**
      * The property name for the intermediate block ID
