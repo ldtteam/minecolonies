@@ -7,6 +7,7 @@ import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.colony.permissions.Explosions;
 import com.minecolonies.api.colony.permissions.PermissionEvent;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.items.ModTags;
@@ -25,7 +26,9 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.ContainerBlock;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.monster.MonsterEntity;
+import net.minecraft.entity.passive.horse.LlamaEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -236,25 +239,40 @@ public class ColonyPermissionEventHandler
     @SubscribeEvent
     public void on(final ExplosionEvent.Detonate event)
     {
-        if (!MineColonies.getConfig().getServer().turnOffExplosionsInColonies.get())
+        if (MineColonies.getConfig().getServer().turnOffExplosionsInColonies.get() == Explosions.DAMAGE_EVERYTHING)
         {
             return;
         }
 
         final World eventWorld = event.getWorld();
         final Predicate<BlockPos> getBlocksInColony = pos -> colony.isCoordInColony(eventWorld, pos);
-        final Predicate<Entity> getEntitiesInColony = entity -> colony.isCoordInColony(entity.getEntityWorld(), new BlockPos(entity.getPositionVec()));
-        // if block is in colony -> remove from list
-        final List<BlockPos> blocksToRemove = event.getAffectedBlocks().stream()
-                                                .filter(getBlocksInColony)
-                                                .collect(Collectors.toList());
-
-        // if entity is in colony -> remove from list
-        final List<Entity> entitiesToRemove = event.getAffectedEntities().stream()
-                                                .filter(getEntitiesInColony)
-                                                .collect(Collectors.toList());
-        event.getAffectedBlocks().removeAll(blocksToRemove);
-        event.getAffectedEntities().removeAll(entitiesToRemove);
+        Predicate<Entity> getEntitiesInColony = entity -> (!(entity instanceof IMob) || (entity instanceof LlamaEntity))
+                                                            && colony.isCoordInColony(entity.getEntityWorld(), new BlockPos(entity.getPositionVec()));
+        switch(MineColonies.getConfig().getServer().turnOffExplosionsInColonies.get())
+        {
+            case DAMAGE_NOTHING:
+                // if any entity is in colony -> remove from list
+                getEntitiesInColony = entity -> colony.isCoordInColony(entity.getEntityWorld(), new BlockPos(entity.getPositionVec()));
+                // intentional fall-through to next case.
+            case DAMAGE_PLAYERS:
+                // if non-mob or llama entity is in colony -> remove from list
+                final List<Entity> entitiesToRemove = event.getAffectedEntities().stream()
+                                                          .filter(getEntitiesInColony)
+                                                          .filter(entity -> !(entity instanceof ServerPlayerEntity))
+                                                          .collect(Collectors.toList());
+                event.getAffectedEntities().removeAll(entitiesToRemove);
+                // intentional fall-through to next case.
+            case DAMAGE_ENTITIES:
+                // if block is in colony -> remove from list
+                final List<BlockPos> blocksToRemove = event.getAffectedBlocks().stream()
+                                                        .filter(getBlocksInColony)
+                                                        .collect(Collectors.toList());
+                event.getAffectedBlocks().removeAll(blocksToRemove);
+                break;
+            case DAMAGE_EVERYTHING:
+            default:
+                break;
+        }
     }
 
     /**
@@ -266,7 +284,7 @@ public class ColonyPermissionEventHandler
     public void on(final ExplosionEvent.Start event)
     {
         if (MineColonies.getConfig().getServer().enableColonyProtection.get()
-              && MineColonies.getConfig().getServer().turnOffExplosionsInColonies.get()
+              && MineColonies.getConfig().getServer().turnOffExplosionsInColonies.get() == Explosions.DAMAGE_NOTHING
               && colony.isCoordInColony(event.getWorld(), new BlockPos(event.getExplosion().getPosition())))
         {
             cancelEvent(event, null, colony, Action.EXPLODE, new BlockPos(event.getExplosion().getPosition()));
