@@ -56,7 +56,6 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static com.minecolonies.api.util.ItemStackUtils.CAN_EAT;
 import static com.minecolonies.api.util.ItemStackUtils.ISFOOD;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_SITTING;
@@ -136,7 +135,7 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
     public boolean isAllowedFood(ItemStack stack)
     {
         ItemListModule listModule = this.getModuleMatching(ItemListModule.class, m -> m.getId().equals(FOOD_EXCLUSION_LIST));
-        return CAN_EAT.test(stack) && !listModule.isItemInList(new ItemStorage(stack))
+        return ISFOOD.test(stack) && !listModule.isItemInList(new ItemStorage(stack))
           && !listModule.isItemInList(new ItemStorage(MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getSmeltingResult(stack)));
     }
 
