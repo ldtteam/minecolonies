@@ -145,9 +145,10 @@ public class ItemStorage
             {
                 this.shouldIgnoreNBTValue = false;
             }
-
             this.shouldIgnoreDamageValue= true;
-        } else {
+        }
+        else
+        {
             this.stack = new ItemStack(Items.AIR);
             this.amount = 0;
             this.shouldIgnoreDamageValue = true;

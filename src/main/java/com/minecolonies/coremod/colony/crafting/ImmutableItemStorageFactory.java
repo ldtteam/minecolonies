@@ -15,6 +15,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 
+/**
+ * Factory implementation taking care of creating new instances, serializing and deserializing ImmutableItemStorage.
+ */
 public class ImmutableItemStorageFactory implements IImmutableItemStorageFactory
 {
 
