@@ -194,7 +194,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
             }
         }
 
-        final Optional<BlockPos> hive = hives
+        final Optional<BlockPos> hive = getOwnBuilding().getHives()
                                           .stream()
                                           .filter(pos -> BeehiveTileEntity.getHoneyLevel(world.getBlockState(pos)) >= 5)
                                           .findFirst();
