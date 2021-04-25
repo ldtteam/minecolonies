@@ -14,5 +14,6 @@
   "result": "minecolonies:cookie_dough",
   "count": 8,
   "intermediate" : "minecraft:air",
-  "min-building-level" : 4
+  "min-building-level" : 4,
+  "show-tooltip": true
 }

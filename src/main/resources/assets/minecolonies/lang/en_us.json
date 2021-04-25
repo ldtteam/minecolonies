@@ -888,7 +888,6 @@
 
   "enchantment.minecolonies.raider_damage_enchant": "Raider's Bane",
 
-  "com.minecolonies.coremod.item.gate.craft": "Crafted by the Mechanic",
   "com.minecolonies.coremod.item.gate.place": "Autoplaces parts. The max size is 5x4 which needs a stack of 20.",
 
   "com.minecolonies.coremod.gui.workerhuts.buildprio": "Pickup Prio.: ",
@@ -1773,7 +1772,9 @@
   "com.minecolonies.coremod.item.milky.bread.gui": "Removes potion effects",
   "com.minecolonies.coremod.item.golden.bread.gui": "Instantly heals 2 hearts",
   "com.minecolonies.coremod.item.chorus.bread.gui": "Teleports you to the surface",
-  "com.minecolonies.coremod.item.bread.available.gui": "Only available from a MineColonies Bakery",
+  "com.minecolonies.coremod.item.available.gui": "Crafted by a MineColonies %s",
+  "com.minecolonies.coremod.item.buildlevel.gui": "Crafted by a MineColonies %s level %s or higher",
+  "com.minecolonies.coremod.item.requiresresearch.gui": "Requires Research: %s",
 
   "com.minecolonies.coremod.gui.xofz": "%d of %d",
   "com.minecolonies.coremod.gui.happiness.negative": "Negative",

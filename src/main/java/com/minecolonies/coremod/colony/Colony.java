@@ -1228,6 +1228,34 @@ public class Colony implements IColony
     }
 
     @Override
+    public boolean hasBuilding(final String name, final int level, boolean singleBuilding)
+    {
+        int sum = 0;
+        for (final IBuilding building : this.getBuildingManager().getBuildings().values())
+        {
+            if (building.getSchematicName().equalsIgnoreCase(name))
+            {
+                if (singleBuilding)
+                {
+                    if (building.getBuildingLevel() >= level)
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    sum += building.getBuildingLevel();
+                    if(sum >= level)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
     public int getLastContactInHours()
     {
         return packageManager.getLastContactInHours();

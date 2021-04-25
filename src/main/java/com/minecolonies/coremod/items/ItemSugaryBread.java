@@ -68,10 +68,6 @@ public class ItemSugaryBread extends AbstractItemMinecolonies
         guiHint.setStyle(Style.EMPTY.setFormatting(TextFormatting.GRAY));
         tooltip.add(guiHint);
 
-        final IFormattableTextComponent getHint = LanguageHandler.buildChatComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_BREAD_AVAILABLE_TOOLTIP_GUI);
-        getHint.setStyle(Style.EMPTY.setItalic(true).setFormatting(TextFormatting.GRAY));
-        tooltip.add(getHint);
-
         super.addInformation(stack, worldIn, tooltip, flagIn);
     }
 }

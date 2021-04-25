@@ -9,5 +9,6 @@
   ],
   "result": "minecolonies:gate_wood",
   "count": 1,
-  "intermediate": "minecraft:air"
+  "intermediate": "minecraft:air",
+  "show-tooltip": true
 }

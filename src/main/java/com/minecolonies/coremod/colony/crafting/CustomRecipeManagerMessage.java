@@ -1,7 +1,6 @@
-package com.minecolonies.coremod.research;
+package com.minecolonies.coremod.colony.crafting;
 
 import com.minecolonies.api.network.IMessage;
-import com.minecolonies.api.research.IGlobalResearchTree;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.api.distmarker.Dist;
@@ -12,44 +11,43 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * The message used to synchronize global research trees from a server to a remote client.
+ * The message used to synchronize crafter recipes from a server to a client.
  */
-public class GlobalResearchTreeMessage implements IMessage
+public class CustomRecipeManagerMessage implements IMessage
 {
-
     /**
      * The buffer with the data.
      */
-    private PacketBuffer treeBuffer;
+    private PacketBuffer managerBuffer;
 
     /**
      * Empty constructor used when registering the message
      */
-    public GlobalResearchTreeMessage()
+    public CustomRecipeManagerMessage()
     {
         super();
     }
 
     /**
-     * Add or Update a GlobalResearchTree on the client.
+     * Add or Update a CustomRecipeManager on the client.
      *
      * @param buf               the bytebuffer.
      */
-    public GlobalResearchTreeMessage(final PacketBuffer buf)
+    public CustomRecipeManagerMessage(final PacketBuffer buf)
     {
-        this.treeBuffer = new PacketBuffer(buf.copy());
+        this.managerBuffer = new PacketBuffer(buf.copy());
     }
 
     @Override
     public void fromBytes(@NotNull final PacketBuffer buf)
     {
-        treeBuffer = new PacketBuffer(buf.retain());
+        managerBuffer = new PacketBuffer(buf.retain());
     }
 
     @Override
     public void toBytes(@NotNull final PacketBuffer buf)
     {
-        buf.writeBytes(treeBuffer);
+        buf.writeBytes(managerBuffer);
     }
 
     @Nullable
@@ -65,8 +63,8 @@ public class GlobalResearchTreeMessage implements IMessage
     {
         if (Minecraft.getInstance().world != null)
         {
-            IGlobalResearchTree.getInstance().handleGlobalResearchTreeMessage(treeBuffer);
+            CustomRecipeManager.getInstance().handleCustomRecipeManagerMessage(managerBuffer);
         }
-        treeBuffer.release();
+        managerBuffer.release();
     }
 }
