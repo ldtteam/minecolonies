@@ -7,6 +7,8 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
 
+import static com.minecolonies.api.research.util.ResearchConstants.BASE_RESEARCH_TIME;
+
 public class GlobalResearchBranch implements IGlobalResearchBranch
 {
     /**
@@ -78,7 +80,10 @@ public class GlobalResearchBranch implements IGlobalResearchBranch
     public TranslationTextComponent getSubtitle(){return this.subtitle;}
 
     @Override
-    public double getBaseTime(){return this.baseTime;}
+    public int getBaseTime(final int depth){return (int)(BASE_RESEARCH_TIME * this.baseTime * Math.pow(2, depth - 1));}
+
+    @Override
+    public double getHoursTime(final int depth){return (BASE_RESEARCH_TIME * this.baseTime * Math.pow(2, depth - 1)) / (BASE_RESEARCH_TIME * 2);}
 
     @Override
     public int getSortOrder(){return this.sortOrder;}

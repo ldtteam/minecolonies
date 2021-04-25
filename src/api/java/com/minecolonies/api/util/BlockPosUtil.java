@@ -1,6 +1,9 @@
 package com.minecolonies.api.util;
 
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.block.AirBlock;
 import net.minecraft.block.Block;
@@ -28,6 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.function.BiPredicate;
 
@@ -228,6 +232,33 @@ public final class BlockPosUtil
                  && !sender.getBlockState(blockPos).getMaterial().isLiquid()
                  && !sender.getBlockState(blockPos.down()).getMaterial().isLiquid()
                  && sender.getWorldBorder().contains(blockPos);
+    }
+
+
+    /**
+     * this find the building that the BlockPos bellong to
+     *
+     * @param world   the world
+     * @param pos for the current block
+     */
+    @Nullable
+    public static IBuilding findBuilding(final World world, final BlockPos pos)
+    {
+        final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, pos);
+        if(colony == null)
+        {
+            return null;
+        }
+
+        for(IBuilding building : colony.getBuildingManager().getBuildings().values())
+        {
+            if(building.isInBuilding(pos))
+            {
+                return building;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -666,7 +697,7 @@ public final class BlockPosUtil
      * @param predicate check predicate for the right block
      * @return position or null
      */
-    public static BlockPos findAround(final IBlockReader world, final BlockPos start, final int vRange, final int hRange, final BiPredicate<IBlockReader, BlockPos> predicate)
+    public static BlockPos findAround(final World world, final BlockPos start, final int vRange, final int hRange, final BiPredicate<IBlockReader, BlockPos> predicate)
     {
         if (vRange < 1 && hRange < 1)
         {
@@ -732,6 +763,11 @@ public final class BlockPosUtil
             y += y_offset;
             y_offset++;
             y_offset *= -1;
+
+            if (world.func_234938_ad_() <= start.getY() + y)
+            {
+                return null;
+            }
         }
 
         return null;
@@ -744,7 +780,7 @@ public final class BlockPosUtil
      * @param start       startpos
      * @return
      */
-    public static BlockPos findSpawnPosAround(final IBlockReader worldReader, final BlockPos start)
+    public static BlockPos findSpawnPosAround(final World worldReader, final BlockPos start)
     {
         return findAround(worldReader, start, 1, 1,
           (world, pos) -> world.getBlockState(pos).getMaterial() == Material.AIR && world.getBlockState(pos.up()).getMaterial() == Material.AIR);

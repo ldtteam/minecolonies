@@ -2325,6 +2325,31 @@ public class InventoryUtils
     }
 
     /**
+     * Attempt to transfer as much item as possible from origin to target inventory
+     *
+     * @param origin the handler.
+     * @param target   the world.
+     * @return true if all item transfered, false if some item remain in origin
+     */
+    public static boolean transferAllItemHandler(final IItemHandler origin, final IItemHandler target)
+    {
+        for (int i = 0; i < origin.getSlots(); ++i)
+        {
+            final ItemStack itemStack = origin.getStackInSlot(i);
+            if(!ItemStackUtils.isEmpty(itemStack))
+            {
+                if(addItemStackToItemHandler(target, itemStack))
+                {
+                    removeStackFromItemHandler(origin, itemStack, itemStack.getCount());
+                }
+                else return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Spawn an itemStack in the world.
      *
      * @param worldIn the world.

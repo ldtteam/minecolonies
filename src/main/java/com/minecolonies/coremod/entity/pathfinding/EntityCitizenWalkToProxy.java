@@ -212,7 +212,7 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
                     }
                 }
 
-                if (building.getActiveNode().getParent() != null)
+                if (building.getActiveNode() != null && building.getActiveNode().getParent() != null)
                 {
                     calculateNodes(level, levelDepth, building);
                 }

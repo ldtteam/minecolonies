@@ -25,8 +25,6 @@ public class RequestSystemInitializer
 
     public static void onPostInit()
     {
-        reconfigureLogging();
-
         Log.getLogger().warn("Register mappings");
         RequestMappingHandler.registerRequestableTypeMapping(Stack.class, StandardRequests.ItemStackRequest.class);
         RequestMappingHandler.registerRequestableTypeMapping(Burnable.class, StandardRequests.BurnableRequest.class);
@@ -41,9 +39,8 @@ public class RequestSystemInitializer
         RequestMappingHandler.registerRequestableTypeMapping(Tag.class, StandardRequests.ItemTagRequest.class);
     }
 
-    private static void reconfigureLogging()
+    public static void reconfigureLogging()
     {
-        // TODO: move to config listener
         final LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
         final Configuration config = ctx.getConfiguration();
         final LoggerConfig loggerConfig = getLoggerConfiguration(config, String.format("%s.requestsystem", Constants.MOD_ID));

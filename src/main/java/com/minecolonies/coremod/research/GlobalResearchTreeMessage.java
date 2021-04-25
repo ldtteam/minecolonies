@@ -31,7 +31,7 @@ public class GlobalResearchTreeMessage implements IMessage
     }
 
     /**
-     * Add or Update a ColonyView on the client.
+     * Add or Update a GlobalResearchTree on the client.
      *
      * @param buf               the bytebuffer.
      */

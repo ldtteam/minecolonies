@@ -96,38 +96,10 @@ public class AlternateBuildingResearchRequirement implements IResearchRequiremen
     {
         for (Map.Entry<String, Integer> requirement : buildings.entrySet())
         {
-            int sum = 0;
-            if (colony instanceof IColonyView)
+            if(colony.hasBuilding(requirement.getKey(), requirement.getValue(), false))
             {
-                for (final IBuildingView building : ((IColonyView) colony).getBuildings())
-                {
-                    if (building.getSchematicName().equals(requirement.getKey()))
-                    {
-                        sum += building.getBuildingLevel();
-
-                        if (sum >= requirement.getValue())
-                        {
-                            return true;
-                        }
-                    }
-                }
+                return true;
             }
-            else if (colony != null)
-            {
-                for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
-                {
-                    if (building.getSchematicName().equalsIgnoreCase(requirement.getKey()))
-                    {
-                        sum += building.getBuildingLevel();
-
-                        if (sum >= requirement.getValue())
-                        {
-                            return true;
-                        }
-                    }
-                }
-            }
-            return false;
         }
         return false;
     }

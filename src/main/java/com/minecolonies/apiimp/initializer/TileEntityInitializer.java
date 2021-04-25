@@ -34,6 +34,12 @@ public class TileEntityInitializer
         MinecoloniesTileEntities.RACK = TileEntityType.Builder.create(TileEntityRack::new, ModBlocks.blockRack).build(null);
         MinecoloniesTileEntities.RACK.setRegistryName(Constants.MOD_ID, "rack");
 
+        MinecoloniesTileEntities.GRAVE = TileEntityType.Builder.create(TileEntityGrave::new, ModBlocks.blockGrave).build(null);
+        MinecoloniesTileEntities.GRAVE.setRegistryName(Constants.MOD_ID, "grave");
+
+        MinecoloniesTileEntities.NAMED_GRAVE = TileEntityType.Builder.create(TileEntityNamedGrave::new, ModBlocks.blockNamedGrave).build(null);
+        MinecoloniesTileEntities.NAMED_GRAVE.setRegistryName(Constants.MOD_ID, "namedgrave");
+
         MinecoloniesTileEntities.WAREHOUSE = TileEntityType.Builder.create(TileEntityWareHouse::new, ModBlocks.blockHutWareHouse).build(null);
         MinecoloniesTileEntities.WAREHOUSE.setRegistryName(Constants.MOD_ID, "warehouse");
 
@@ -57,6 +63,8 @@ public class TileEntityInitializer
           MinecoloniesTileEntities.BUILDING,
           MinecoloniesTileEntities.DECO_CONTROLLER,
           MinecoloniesTileEntities.RACK,
+          MinecoloniesTileEntities.GRAVE,
+          MinecoloniesTileEntities.NAMED_GRAVE,
           MinecoloniesTileEntities.WAREHOUSE,
           MinecoloniesTileEntities.COMPOSTED_DIRT,
           MinecoloniesTileEntities.ENCHANTER,

@@ -100,7 +100,7 @@ public class PathingStuckHandler implements IStuckHandler
     /**
      * Delay before taking unstuck actions in ticks, default 60 seconds
      */
-    private int delayBeforeActions       = 30 * 20;
+    private int delayBeforeActions       = 10 * 20;
     private int delayToNextUnstuckAction = delayBeforeActions;
 
     private Random rand = new Random();

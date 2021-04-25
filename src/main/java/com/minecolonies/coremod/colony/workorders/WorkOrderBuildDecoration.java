@@ -177,7 +177,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
             ConstructionTapeHelper.placeConstructionTape(this, colony.getWorld());
             LanguageHandler.sendPlayersMessage(
                     colony.getImportantMessageEntityPlayers(),
-                    "com.minecolonies.coremod.decoorderadded");
+                    "com.minecolonies.coremod.decoorderadded", colony.getName());
         }
     }
 

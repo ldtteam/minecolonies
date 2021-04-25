@@ -3,6 +3,7 @@ package com.minecolonies.apiimp.initializer;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.modules.settings.BoolSetting;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
@@ -21,8 +22,11 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.registries.IForgeRegistry;
 
+import java.util.Set;
+
 import static com.minecolonies.api.util.constant.BuildingConstants.FLORIST_FLOWER_LIST;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.ItemStackUtils.ISCOOKABLE;
 import static com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser.FUEL_LIST;
 import static com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook.FOOD_EXCLUSION_LIST;
 import static com.minecolonies.coremod.entity.ai.citizen.composter.EntityAIWorkComposter.COMPOSTABLE_LIST;
@@ -126,7 +130,12 @@ public final class ModBuildingsInitializer
                               .addBuildingModuleProducer(() -> new ItemListModule(FUEL_LIST), () -> new ItemListModuleView(FUEL_LIST, COM_MINECOLONIES_REQUESTS_BURNABLE, false,
                                 (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getFuel()))
                               .addBuildingModuleProducer(() -> new ItemListModule(FOOD_EXCLUSION_LIST), () -> new ItemListModuleView(FOOD_EXCLUSION_LIST, COM_MINECOLONIES_REQUESTS_FOOD, true,
-                                (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getEdibles()))
+                                (buildingView) ->
+                                {
+                                    Set<ItemStorage> edibles = IColonyManager.getInstance().getCompatibilityManager().getEdibles();
+                                    edibles.removeIf(item -> ISCOOKABLE.test(item.getItemStack()));
+                                    return edibles;
+                                }))
                               .addBuildingModuleProducer(CrafterTaskModule::new, CrafterTaskModuleView::new)
                               .createBuildingEntry();
 
@@ -422,6 +431,14 @@ public final class ModBuildingsInitializer
                                       .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.MYSTICAL_SITE_ID))
                                       .createBuildingEntry();
 
+
+        ModBuildings.graveyard = new BuildingEntry.Builder()
+                                    .setBuildingBlock(ModBlocks.blockHutGraveyard)
+                                    .setBuildingProducer(BuildingGraveyard::new)
+                                    .setBuildingViewProducer(() -> BuildingGraveyard.View::new)
+                                    .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.GRAVEYARD_ID))
+                                    .createBuildingEntry();
+
         reg.register(ModBuildings.archery);
         reg.register(ModBuildings.bakery);
         reg.register(ModBuildings.barracks);
@@ -468,5 +485,6 @@ public final class ModBuildingsInitializer
         reg.register(ModBuildings.concreteMixer);
         reg.register(ModBuildings.beekeeper);
         reg.register(ModBuildings.mysticalSite);
+        reg.register(ModBuildings.graveyard);
     }
 }

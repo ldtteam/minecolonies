@@ -24,6 +24,7 @@ public final class NbtTagConstants
     public static final String TAG_WAYPOINT           = "waypoints";
     public static final String TAG_FREE_BLOCKS        = "freeBlocks";
     public static final String TAG_FREE_POSITIONS     = "freePositions";
+    public static final String TAG_GRAVE              = "graves";
     public static final String TAG_ABANDONED          = "abandoned";
     public static final String TAG_PRIO               = "prio";
     public static final String TAG_LAST_ONLINE        = "lastOnlineTime";
@@ -48,6 +49,7 @@ public final class NbtTagConstants
     public static final String TAG_BUILDING_MANAGER       = "buildingManager";
     public static final String TAG_CITIZEN_MANAGER        = "citizenManager";
     public static final String TAG_EVENT_DESC_MANAGER     = "event_desc_manager";
+    public static final String TAG_GRAVE_MANAGER          = "graveManager";
     public static final String TAG_COLONY_ID              = "colony";
     public static final String TAG_CITIZEN                = "citizen";
     public static final String TAG_HELD_ITEM_SLOT         = "HeldItemSlot";
@@ -74,6 +76,7 @@ public final class NbtTagConstants
     public static final String TAG_IDLE                   = "idle";
     public static final String TAG_PURGED_MOBS            = "purgedMobs";
     public static final String TAG_MANUAL_JOB_SELECTION   = "manualMode";
+    public static final String TAG_RESERVED               = "reserved";
 
     /**
      * Event tags
@@ -211,6 +214,11 @@ public final class NbtTagConstants
      * Tag to store the inventory to nbt.
      */
     public static final String TAG_INVENTORY = "inventory";
+
+    /**
+     * Tag to store the content to nbt.
+     */
+    public static final String TAG_CONTENT = "content";
 
     /**
      * Tag to store an empty stack to nbt.
@@ -566,6 +574,15 @@ public final class NbtTagConstants
     public static final String TAG_DECONSTRUCTED = "deconstructed";
     public static final String TAG_GUARD_NEARBY  = "guardnearby";
     public static final String TAG_RESPAWN_POS   = "nextrespawnpos";
+
+    /**
+     * Tags to store grave information
+     */
+    public static final String TAG_DECAY_TIMER = "decaytimer";
+    public static final String TAG_DECAYED = "decayed";
+    public static final String TAG_SAVED_CITIZEN_NAME = "savedcitizenname";
+    public static final String TAG_SAVED_CITIZEN_JOB_NAME = "savedcitizenjobname";
+    public static final String TAG_SAVED_CITIZEN_DATA = "savedcitizendata";
 
     /**
      * Private constructor to hide the implicit one.

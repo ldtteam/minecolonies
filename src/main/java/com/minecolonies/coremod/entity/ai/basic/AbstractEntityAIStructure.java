@@ -374,6 +374,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                                                                                  || info.getBlockInfo().getState().getBlock()
                                                                                       == com.ldtteam.structurize.blocks.ModBlocks.blockFluidSubstitution.get()
                                                                                  || !handler.getWorld().getBlockState(pos).getFluidState().isEmpty()), false);
+                if (result.getBlockResult().getResult() == BlockPlacementResult.Result.FINISHED)
+                {
+                    getOwnBuilding().checkOrRequestBucket(getOwnBuilding().getRequiredResources(), worker.getCitizenData(), true);
+                }
                 break;
         }
 

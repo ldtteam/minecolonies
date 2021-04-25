@@ -305,7 +305,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         {
             @Nullable final AbstractScarecrowTileEntity newField = colony.getBuildingManager().getFreeField(worker.getCitizenData().getId(), world);
 
-            if (newField != null && getOwnBuilding() != null)
+            if (newField != null)
             {
                 newField.setOwner(worker.getCitizenData().getId());
                 newField.setTaken(true);
@@ -724,6 +724,10 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
                 if (isCrop(block))
                 {
                     crop = (CropsBlock) block;
+                }
+                else
+                {
+                    return false;
                 }
             }
             return crop.isMaxAge(state);

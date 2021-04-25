@@ -261,7 +261,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
 
             pickUpCounter = 0;
 
-            tryTransferFromPosToWorkerIfNeeded(walkTo, needsCurrently);
+            if (!tryTransferFromPosToWorkerIfNeeded(walkTo, needsCurrently))
+            {
+                walkTo = null;
+                return getState();
+            }
         }
 
         walkTo = null;
@@ -278,7 +282,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         return START_WORKING;
     }
 
-    @Nullable
+    @NotNull
     public B getOwnBuilding()
     {
         return getOwnBuilding(getExpectedBuildingClass());
@@ -297,7 +301,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      * @param type the type.
      * @return the building associated with this AI's worker.
      */
-    @Nullable
+    @NotNull
     @SuppressWarnings("unchecked")
     private B getOwnBuilding(@NotNull final Class<B> type)
     {
@@ -305,19 +309,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         {
             return (B) worker.getCitizenColonyHandler().getWorkBuilding();
         }
-        else
-        {
-            Log.getLogger().warn("Citizen {} has lost its building, type does not match found {} expected {}.",
-              worker.getCitizenData().getName(),
-              getExpectedBuildingClass().getSimpleName(),
-              type.getSimpleName());
-
-            if (worker.getCitizenData() != null)
-            {
-                worker.getCitizenData().setJob(null);
-            }
-        }
-        return null;
+        throw new IllegalStateException("Citizen " + worker.getCitizenData().getName() + " has lost its building unexpectedly, type does not match");
     }
 
     @Override
@@ -414,6 +406,15 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     {
         if (null == worker.getCitizenJobHandler().getColonyJob() || worker.getCitizenColonyHandler().getWorkBuilding() == null || worker.getCitizenData() == null)
         {
+            return INIT;
+        }
+
+        if (!getExpectedBuildingClass().isInstance(worker.getCitizenColonyHandler().getWorkBuilding()))
+        {
+            if (worker.getCitizenData() != null)
+            {
+                worker.getCitizenData().setJob(null);
+            }
             return INIT;
         }
 
@@ -1590,7 +1591,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      *
      * @param pos       the position to transfer it from.
      * @param predicate the predicate to evaluate.
-     * @return true if succesful.
+     * @return true if cancelling state.
      */
 
     private boolean tryTransferFromPosToWorkerIfNeeded(final BlockPos pos, @NotNull final Tuple<Predicate<ItemStack>, Integer> predicate)
@@ -1598,10 +1599,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         final TileEntity entity = world.getTileEntity(pos);
         if (entity == null)
         {
-            return false;
+            return true;
         }
 
-        final int existingAmount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), predicate.getA());
+        int existingAmount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), predicate.getA());
         int amount;
         if (predicate.getB() > existingAmount)
         {
@@ -1612,7 +1613,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             return true; // has already needed transfers...
         }
 
-        return InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandlerWithResult(entity, predicate.getA(), amount, worker.getInventoryCitizen()) == 0;
+        InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandlerWithResult(entity, predicate.getA(), amount, worker.getInventoryCitizen());
+        existingAmount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), predicate.getA());
+        // has already needed transfers...
+        return existingAmount >= predicate.getB();
     }
 
     /**

@@ -66,6 +66,7 @@ import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
@@ -208,6 +209,21 @@ public class MineColonies
         RequestSystemInitializer.onPostInit();
     }
 
+    /**
+     * Called when MineCraft reloads a configuration file.
+     * @param event event
+     */
+    @SubscribeEvent
+    public static void onConfigReload(final ModConfig.Reloading event)
+    {
+        if(event.getConfig().getType() == ModConfig.Type.SERVER)
+        {
+            // ModConfig fires for each of server, client, and common.
+            // Request Systems logging only really needs to be changed on the server, and this reduced log spam.
+            RequestSystemInitializer.reconfigureLogging();
+        }
+    }
+
     @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
     public static void doClientStuff(final FMLClientSetupEvent event)
@@ -244,6 +260,7 @@ public class MineColonies
         ClientRegistry.bindTileEntityRenderer(MinecoloniesTileEntities.SCARECROW, TileEntityScarecrowRenderer::new);
         ClientRegistry.bindTileEntityRenderer(MinecoloniesTileEntities.ENCHANTER, TileEntityEnchanterRenderer::new);
         ClientRegistry.bindTileEntityRenderer(MinecoloniesTileEntities.COLONY_FLAG, TileEntityColonyFlagRenderer::new);
+        ClientRegistry.bindTileEntityRenderer(MinecoloniesTileEntities.NAMED_GRAVE, TileEntityNamedGraveRenderer::new);
 
         Arrays.stream(ModBlocks.getHuts())
           .forEach(hut -> RenderTypeLookup.setRenderLayer(hut, renderType -> renderType.equals(RenderType.getCutout()) || renderType.equals(RenderType.getSolid())));
