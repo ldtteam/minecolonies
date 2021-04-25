@@ -18,10 +18,20 @@ public interface IGlobalResearchBranch
     TranslationTextComponent getSubtitle();
 
     /**
-     * Get the base time requirements for non-instant research on the branch.
-     * @return A multiplier for research time.  Defaults to 1.0
+     * Get the base progress requirements for non-instant research on the branch.
+     * @param depth The university level for the research.
+     * @return The number of progress 'ticks' required to complete the research for the included depth.
+     *         Each tick is (on average) 12.5 seconds, but this depends on researcher availability, time of minecraft day, and may be reduced by stored researcher time.
      */
-    double getBaseTime();
+    int getBaseTime(final int depth);
+
+    /**
+     * Get the base progress time requirements for non-instant research on the branch.
+     * Use only for direct display purposes, as it is likely to be inaccurate. Favor getBaseTime for any mathematical use.
+     * @param depth The university level for the research.
+     * @return The number of hours required to complete a research for the included depth, to a rough estimate.
+     */
+    double getHoursTime(final int depth);
 
     /**
      * Get the sort order numeral for the branch's placement on the University Hut GUI.

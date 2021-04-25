@@ -551,6 +551,26 @@ public class BuildingManager implements IBuildingManager
     }
 
     @Override
+    public BlockPos getClosestGraveyard(final AbstractEntityCitizen citizen, final Predicate<Object> predicate)
+    {
+        double distance = Double.MAX_VALUE;
+        BlockPos graveyard = null;
+        for (final IBuilding building : citizen.getCitizenColonyHandler().getColony().getBuildingManager().getBuildings().values())
+        {
+            if (building instanceof BuildingGraveyard && building.getBuildingLevel() > 0 && (predicate == null || predicate.test((BuildingGraveyard)building)))
+            {
+                final double localDistance = building.getPosition().distanceSq(citizen.getPosition());
+                if (localDistance < distance)
+                {
+                    distance = localDistance;
+                    graveyard = building.getPosition();
+                }
+            }
+        }
+        return graveyard;
+    }
+
+    @Override
     public BlockPos getBestHospital(final AbstractEntityCitizen citizen)
     {
         double distance = Double.MAX_VALUE;

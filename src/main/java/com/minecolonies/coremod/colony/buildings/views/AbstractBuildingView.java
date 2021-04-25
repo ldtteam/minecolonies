@@ -517,12 +517,15 @@ public abstract class AbstractBuildingView implements IBuildingView
     @Override
     public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
-        final Integer citizenThatRequested = getCitizensByRequest().remove(request.getId());
-        getOpenRequestsByCitizen().get(citizenThatRequested).remove(request.getId());
-
-        if (getOpenRequestsByCitizen().get(citizenThatRequested).isEmpty())
+        if (getOpenRequestsOfBuilding().contains(request))
         {
-            getOpenRequestsByCitizen().remove(citizenThatRequested);
+            final Integer citizenThatRequested = getCitizensByRequest().remove(request.getId());
+            getOpenRequestsByCitizen().get(citizenThatRequested).remove(request.getId());
+
+            if (getOpenRequestsByCitizen().get(citizenThatRequested).isEmpty())
+            {
+                getOpenRequestsByCitizen().remove(citizenThatRequested);
+            }
         }
     }
 
@@ -586,30 +589,30 @@ public abstract class AbstractBuildingView implements IBuildingView
 
     @NotNull
     @Override
-    public <T extends IBuildingModuleView> Optional<T> getModuleView(final Class<T> clazz)
+    public <T extends IBuildingModuleView> T getModuleView(final Class<T> clazz)
     {
         for (final IBuildingModuleView view : moduleViews)
         {
             if (clazz.isInstance(view))
             {
-                return Optional.of((T) view);
+                return (T) view;
             }
         }
-        return Optional.empty();
+        return null;
     }
 
     @NotNull
     @Override
-    public <T extends IBuildingModuleView> Optional<T> getModuleViewMatching(final Class<T> clazz, final Predicate<? super T> modulePredicate)
+    public <T extends IBuildingModuleView> T getModuleViewMatching(final Class<T> clazz, final Predicate<? super T> modulePredicate)
     {
         for (final IBuildingModuleView module : moduleViews)
         {
             if (clazz.isInstance(module) && modulePredicate.test(clazz.cast(module)))
             {
-                return Optional.of((T) module);
+                return (T) module;
             }
         }
-        return Optional.empty();
+        return null;
     }
 
     @NotNull

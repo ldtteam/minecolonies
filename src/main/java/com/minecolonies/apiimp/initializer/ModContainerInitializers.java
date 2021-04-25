@@ -21,12 +21,13 @@ public class ModContainerInitializers
         ModContainers.craftingFurnace = (ContainerType<ContainerCraftingFurnace>) IForgeContainerType.create(ContainerCraftingFurnace::fromPacketBuffer).setRegistryName("crafting_furnace");
         ModContainers.buildingInv = (ContainerType<ContainerBuildingInventory>) IForgeContainerType.create(ContainerBuildingInventory::fromPacketBuffer).setRegistryName("bulding_inv");
         ModContainers.citizenInv = (ContainerType<ContainerCitizenInventory>) IForgeContainerType.create(ContainerCitizenInventory::fromPacketBuffer).setRegistryName("citizen_inv");
-        ModContainers.rackInv = (ContainerType<ContainerRack>) IForgeContainerType.create(ContainerRack::fromPacketBuffer).setRegistryName("rack_inv");
         ModContainers.craftingGrid = (ContainerType<ContainerCrafting>) IForgeContainerType.create(ContainerCrafting::fromPacketBuffer).setRegistryName("crafting_building");
+        ModContainers.rackInv = (ContainerType<ContainerRack>) IForgeContainerType.create(ContainerRack::fromPacketBuffer).setRegistryName("rack_inv");
+        ModContainers.graveInv = (ContainerType<ContainerGrave>) IForgeContainerType.create(ContainerGrave::fromPacketBuffer).setRegistryName("grave_inv");
         ModContainers.field = (ContainerType<ContainerField>) IForgeContainerType.create(ContainerField::fromPacketBuffer).setRegistryName("field");
 
         event.getRegistry()
-          .registerAll(ModContainers.craftingFurnace, ModContainers.buildingInv, ModContainers.citizenInv, ModContainers.rackInv, ModContainers.craftingGrid, ModContainers.field);
+          .registerAll(ModContainers.craftingFurnace, ModContainers.buildingInv, ModContainers.citizenInv, ModContainers.rackInv, ModContainers.graveInv, ModContainers.craftingGrid, ModContainers.field);
     }
 
     @SubscribeEvent
@@ -38,6 +39,7 @@ public class ModContainerInitializers
         ScreenManager.registerFactory(ModContainers.buildingInv, WindowBuildingInventory::new);
         ScreenManager.registerFactory(ModContainers.citizenInv, WindowCitizenInventory::new);
         ScreenManager.registerFactory(ModContainers.rackInv, WindowRack::new);
+        ScreenManager.registerFactory(ModContainers.graveInv, WindowGrave::new);
         ScreenManager.registerFactory(ModContainers.field, WindowField::new);
     }
 }

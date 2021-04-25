@@ -1391,6 +1391,12 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
+    public IGraveManager getGraveManager()
+    {
+        return null;
+    }
+
+    @Override
     public ICitizenManager getCitizenManager()
     {
         return null;

@@ -1,9 +1,12 @@
 package com.minecolonies.coremod.entity;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.network.IPacket;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
@@ -18,6 +21,11 @@ public class CustomArrowEntity extends ArrowEntity
      * Max time the arrow is stuck before removing it
      */
     private static final int MAX_TIME_IN_GROUND = 100;
+
+    /**
+     * Whether the arrow entity pierces players
+     */
+    private boolean armorPiercePlayer = false;
 
     public CustomArrowEntity(final EntityType<? extends ArrowEntity> type, final World world)
     {
@@ -50,10 +58,39 @@ public class CustomArrowEntity extends ArrowEntity
             setDamage(prevDamage / f);
         }
 
+        if (armorPiercePlayer)
+        {
+            final Entity player = traceResult.getEntity();
+            if (player instanceof PlayerEntity)
+            {
+                Entity shooter = this.func_234616_v_();
+                DamageSource source;
+                if (shooter == null)
+                {
+                    source = DamageSource.causeArrowDamage(this, this);
+                }
+                else
+                {
+                    source = DamageSource.causeArrowDamage(this, shooter);
+                }
+                source.setDamageBypassesArmor();
+                player.attackEntityFrom(source, (float) getDamage());
+                setDamage(0);
+            }
+        }
+
         super.onEntityHit(traceResult);
 
         // Set the old actual damage value back
         setDamage(prevDamage);
+    }
+
+    /**
+     * Makes the arrow pierce player armor
+     */
+    public void setPlayerArmorPierce()
+    {
+        armorPiercePlayer = true;
     }
 
     @Override

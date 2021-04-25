@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.entity.ai.citizen.lumberjack;
 
-import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -332,8 +331,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         if (pathResult == null || pathResult.treeLocation == null)
         {
             final BuildingLumberjack buildingLumberjack = (BuildingLumberjack) building;
-            final List<ItemStorage> copy = buildingLumberjack.getModuleMatching(ItemListModule.class, m -> m.getId().equals(SAPLINGS_LIST))
-                                             .map(ItemListModule::getList).orElse(ImmutableList.of());
+            final List<ItemStorage> copy = buildingLumberjack.getModuleMatching(ItemListModule.class, m -> m.getId().equals(SAPLINGS_LIST)).getList();
             if (buildingLumberjack.shouldRestrict())
             {
                 final BlockPos startPos = buildingLumberjack.getStartRestriction();

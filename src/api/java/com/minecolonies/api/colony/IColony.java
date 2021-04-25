@@ -236,6 +236,8 @@ public interface IColony
 
     ICitizenManager getCitizenManager();
 
+    IGraveManager getGraveManager();
+
     /**
      * Gets the visitor manager
      *

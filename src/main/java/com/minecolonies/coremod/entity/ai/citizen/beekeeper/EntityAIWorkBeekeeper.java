@@ -104,15 +104,11 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
      */
     private boolean hasMaxAnimals(final List<BeeEntity> allBees)
     {
-        if (getOwnBuilding() != null)
-        {
-            final int numOfBeesInHive = getBeesInHives();
-            final int numOfAnimals = allBees.size();
-            final int maxAnimals = getOwnBuilding().getBuildingLevel() * BEES_PER_LEVEL;
+        final int numOfBeesInHive = getBeesInHives();
+        final int numOfAnimals = allBees.size();
+        final int maxAnimals = getOwnBuilding().getBuildingLevel() * BEES_PER_LEVEL;
 
-            return (numOfAnimals + numOfBeesInHive) >= maxAnimals;
-        }
-        return true;
+        return (numOfAnimals + numOfBeesInHive) >= maxAnimals;
     }
 
     /**
@@ -198,7 +194,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
             }
         }
 
-        final Optional<BlockPos> hive = hives
+        final Optional<BlockPos> hive = getOwnBuilding().getHives()
                                           .stream()
                                           .filter(pos -> BeehiveTileEntity.getHoneyLevel(world.getBlockState(pos)) >= 5)
                                           .findFirst();
@@ -459,18 +455,14 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
      */
     private int getToolSlot(final ToolType toolType)
     {
-        if (getOwnBuilding() != null)
-        {
-            final int slot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(getInventory(), toolType,
-              TOOL_LEVEL_WOOD_OR_GOLD, getOwnBuilding().getMaxToolLevel());
+        final int slot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(getInventory(), toolType,
+          TOOL_LEVEL_WOOD_OR_GOLD, getOwnBuilding().getMaxToolLevel());
 
-            if (slot == -1)
-            {
-                checkForToolOrWeapon(toolType);
-            }
-            return slot;
+        if (slot == -1)
+        {
+            checkForToolOrWeapon(toolType);
         }
-        return -1;
+        return slot;
     }
 
     /**

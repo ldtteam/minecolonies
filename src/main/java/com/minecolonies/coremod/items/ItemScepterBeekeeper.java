@@ -5,13 +5,16 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBeekeeper;
 import net.minecraft.block.BeehiveBlock;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResultType;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.Collection;
@@ -63,6 +66,8 @@ public class ItemScepterBeekeeper extends AbstractItemMinecolonies
             {
                 LanguageHandler.sendPlayerMessage(useContext.getPlayer(), "item.minecolonies.scepterbeekeeper.removehive");
                 building.removeHive(pos);
+                SoundUtils.playSoundForPlayer((ServerPlayerEntity) player, SoundEvents.BLOCK_NOTE_BLOCK_BELL,
+                        (float) SoundUtils.VOLUME * 2, 0.5f);
             }
             else
             {
@@ -70,6 +75,7 @@ public class ItemScepterBeekeeper extends AbstractItemMinecolonies
                 {
                     LanguageHandler.sendPlayerMessage(useContext.getPlayer(), "item.minecolonies.scepterbeekeeper.addhive");
                     building.addHive(pos);
+                    SoundUtils.playSuccessSound(player, player.getPosition());
                 }
                 if (positions.size() >= building.getMaximumHives())
                 {

@@ -250,4 +250,10 @@ public interface ICitizenData extends ICivilianData
      * @param pos position to set
      */
     void setNextRespawnPosition(final BlockPos pos);
+
+    /**
+     * Returns whether the citizen has food in their inventory that's not good enough (but no good food)
+     * @return true if so
+     */
+    boolean needsBetterFood();
 }

@@ -39,6 +39,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.DyeColor;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
@@ -68,8 +69,7 @@ import java.util.*;
 import static com.minecolonies.api.colony.ColonyState.*;
 import static com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateConstants.MAX_TICKRATE;
 import static com.minecolonies.api.util.constant.ColonyConstants.*;
-import static com.minecolonies.api.util.constant.Constants.DEFAULT_STYLE;
-import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
+import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
@@ -127,6 +127,11 @@ public class Colony implements IColony
      * Building manager of the colony.
      */
     private final IBuildingManager buildingManager = new BuildingManager(this);
+
+    /**
+     * Grave manager of the colony.
+     */
+    private final IGraveManager graveManager = new GraveManager(this);
 
     /**
      * Citizen manager of the colony.
@@ -259,7 +264,11 @@ public class Colony implements IColony
      * Mournign parameters.
      */
     private boolean needToMourn = false;
-    private boolean mourning    = false;
+
+    /**
+     * If the colony is currently mourning
+     */
+    private boolean mourning = false;
 
     /**
      * If the colony is dirty.
@@ -421,6 +430,7 @@ public class Colony implements IColony
         updateAttackingPlayers();
         eventManager.onColonyTick(this);
         buildingManager.onColonyTick(this);
+        graveManager.onColonyTick(this);
         workManager.onColonyTick(this);
 
         final long currTime = System.currentTimeMillis();
@@ -721,6 +731,8 @@ public class Colony implements IColony
         // Recalculate max after citizens and buildings are loaded.
         citizenManager.calculateMaxCitizens();
 
+        graveManager.read(compound.getCompound(TAG_GRAVE_MANAGER));
+
         if (compound.keySet().contains(TAG_PROGRESS_MANAGER))
         {
             progressManager.read(compound);
@@ -859,6 +871,10 @@ public class Colony implements IColony
         compound.put(TAG_CITIZEN_MANAGER, citizenCompound);
 
         visitorManager.write(compound);
+
+        final CompoundNBT graveCompound = new CompoundNBT();
+        graveManager.write(graveCompound);
+        compound.put(TAG_GRAVE_MANAGER, graveCompound);
 
         //  Workload
         @NotNull final CompoundNBT workManagerCompound = new CompoundNBT();
@@ -1472,6 +1488,17 @@ public class Colony implements IColony
     public IBuildingManager getBuildingManager()
     {
         return buildingManager;
+    }
+
+    /**
+     * Get the graveManager of the colony.
+     *
+     * @return the graveManager.
+     */
+    @Override
+    public IGraveManager getGraveManager()
+    {
+        return graveManager;
     }
 
     /**
