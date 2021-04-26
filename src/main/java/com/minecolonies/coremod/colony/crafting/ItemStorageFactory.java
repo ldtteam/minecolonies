@@ -80,6 +80,8 @@ public class ItemStorageFactory implements IItemStorageFactory
     {
         final ItemStack stack = buffer.readItemStack();
         final int size = buffer.readVarInt();
+        // PacketBuffer.readItemStack uses a byte internally for item count, and this is limited (to -128 - 127). Override with the ItemStorage value to keep the two values synced, and support larger stacks.
+        stack.setCount(size);
         return this.getNewInstance(stack, size);
     }
 

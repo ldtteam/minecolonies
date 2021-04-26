@@ -1,6 +1,6 @@
 {
   "branch": "minecolonies:civilian",
-  "parentResearch": "minecolonies:civilian/festival",
+  "parentResearch": "minecolonies:civilian/nightowl",
   "researchLevel": 4,
   "subtitle": "com.minecolonies.research.civilian.nightowl2.subtitle",
   "sortOrder": 2,
