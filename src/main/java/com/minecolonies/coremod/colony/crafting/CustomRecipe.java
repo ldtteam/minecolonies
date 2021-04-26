@@ -240,7 +240,10 @@ public class CustomRecipe
                 if (e.isJsonObject())
                 {
                     JsonObject ingredient = e.getAsJsonObject();
-                    recipe.inputs.add(new ItemStorage(ingredient));
+                    ItemStorage parsed = new ItemStorage(ingredient);
+                    if(!parsed.isEmpty()) {
+                        recipe.inputs.add(parsed);
+                    }
                 }
             }
         }

@@ -5,7 +5,6 @@ import com.minecolonies.api.util.ItemStackUtils;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -149,7 +148,7 @@ public class ItemStorage
         }
         else
         {
-            this.stack = new ItemStack(Items.AIR);
+            this.stack = ItemStack.EMPTY;
             this.amount = 0;
             this.shouldIgnoreDamageValue = true;
             this.shouldIgnoreNBTValue = true;
