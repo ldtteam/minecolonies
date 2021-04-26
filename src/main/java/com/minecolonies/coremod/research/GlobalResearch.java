@@ -706,6 +706,10 @@ public class GlobalResearch implements IGlobalResearch
             try
             {
                 count = Integer.parseInt(iconParts[2]);
+                if(count > 127)
+                {
+                    count = 127;
+                }
             }
             catch (NumberFormatException parseError)
             {
@@ -801,12 +805,13 @@ public class GlobalResearch implements IGlobalResearch
                      reqArrayElement.getAsJsonObject().get(RESEARCH_ITEM_NAME_PROP).isJsonPrimitive() && reqArrayElement.getAsJsonObject().get(RESEARCH_ITEM_NAME_PROP).getAsJsonPrimitive().isString())
                 {
                     final ItemStack itemStack = idToItemStack(reqArrayElement.getAsJsonObject().get(RESEARCH_ITEM_NAME_PROP).getAsString());
+                    final ItemStorage itemStorage = new ItemStorage(itemStack, false, !itemStack.hasTag());
                     if(reqArrayElement.getAsJsonObject().has(RESEARCH_QUANTITY_PROP) && reqArrayElement.getAsJsonObject().get(RESEARCH_QUANTITY_PROP).isJsonPrimitive()
                          && reqArrayElement.getAsJsonObject().get(RESEARCH_QUANTITY_PROP).getAsJsonPrimitive().isNumber())
                     {
-                        itemStack.setCount(reqArrayElement.getAsJsonObject().get(RESEARCH_QUANTITY_PROP).getAsNumber().intValue());
+                        itemStorage.setAmount(reqArrayElement.getAsJsonObject().get(RESEARCH_QUANTITY_PROP).getAsNumber().intValue());
                     }
-                    this.costList.add(new ItemStorage(itemStack, false, !itemStack.hasTag()));
+                    this.costList.add(itemStorage);
                 }
                 // Building Requirements.  If no level, assume 1x.
                 else if(reqArrayElement.isJsonObject() && reqArrayElement.getAsJsonObject().has(RESEARCH_REQUIRED_BUILDING_PROP) &&
@@ -1000,6 +1005,5 @@ public class GlobalResearch implements IGlobalResearch
                 }
             }
         }
-
     }
 }
