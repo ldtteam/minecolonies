@@ -706,10 +706,6 @@ public class GlobalResearch implements IGlobalResearch
             try
             {
                 count = Integer.parseInt(iconParts[2]);
-                if(count > 127)
-                {
-                    count = 127;
-                }
             }
             catch (NumberFormatException parseError)
             {
@@ -738,7 +734,7 @@ public class GlobalResearch implements IGlobalResearch
             return ItemStack.EMPTY;
         }
         final ItemStack is = new ItemStack(item);
-        is.setCount(count);
+        is.setCount(Math.min(count, is.getMaxStackSize()));
 
         return is;
     }
