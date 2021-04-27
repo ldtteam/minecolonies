@@ -18,8 +18,6 @@
   "result": "minecolonies:plate_armor_helmet",
   "count": 1,
   "min-building-level" : 4,
-  "research-id" : "minecolonies:combat/platearmor"
+  "research-id" : "minecolonies:combat/platearmor",
+  "show-tooltip": true
 }
-
-
-

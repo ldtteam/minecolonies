@@ -4,7 +4,8 @@
 		"0": "block/oak_planks",
 		"1": "block/iron_block",
 		"2": "block/spruce_planks",
-		"3": "minecolonies:blocks/books/paper_graveyard"
+		"3": "minecolonies:blocks/books/paper_graveyard",
+		"particle": "block/oak_planks"
 	},
 	"elements": [
 		{

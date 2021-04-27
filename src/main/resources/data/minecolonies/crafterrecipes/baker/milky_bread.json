@@ -14,5 +14,6 @@
   "result": "minecolonies:milky_bread",
   "count": 4,
   "intermediate" : "minecraft:air",
-  "min-building-level" : 4
+  "min-building-level" : 4,
+  "show-tooltip": true
 }

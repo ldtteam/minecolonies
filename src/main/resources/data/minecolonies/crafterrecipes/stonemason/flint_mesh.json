@@ -9,5 +9,6 @@
   ],
   "result": "minecolonies:sifter_mesh_flint",
   "count": 1,
-  "research-id" : "minecolonies:effects/sifterflintunlock"
+  "research-id" : "minecolonies:effects/sifterflintunlock",
+  "show-tooltip": true
 }

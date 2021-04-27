@@ -11,6 +11,7 @@ import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestR
 import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.colony.requestsystem.token.StandardToken;
+import com.minecolonies.api.crafting.ImmutableItemStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.RecipeStorage;
 
@@ -38,6 +39,8 @@ public class TypeConstants
     public static final TypeToken<IDeliverable>     DELIVERABLE      = TypeToken.of(IDeliverable.class);
     public static final TypeToken<Tag>              TAG_REQUEST      = TypeToken.of(Tag.class);
     public static final TypeToken<ItemStorage>      ITEMSTORAGE      = TypeToken.of(ItemStorage.class);
+
+    public static final TypeToken<ImmutableItemStorage> IMMUTABLEITEMSTORAGE = TypeToken.of(ImmutableItemStorage.class);
 
     /////Request system specific
     public static final TypeToken<IPlayerRequestResolver>                             PLAYER_REQUEST_RESOLVER                         = TypeToken.of(IPlayerRequestResolver.class);

@@ -5,7 +5,6 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.permissions.Action;
@@ -35,8 +34,6 @@ import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.registries.IForgeRegistry;
 
 import org.jetbrains.annotations.NotNull;
@@ -76,12 +73,6 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
      * Smaller shape.
      */
     private static final VoxelShape SHAPE = VoxelShapes.create(0.1, 0.1, 0.1, 0.9, 0.9, 0.9);
-
-    /**
-     * Whether this hut is yet to be researched in the current colony.
-     * This is only ever used client side, but adding @OnlyIn(Dist.CLIENT) causes the server to crash, so its not there.
-     */
-    protected boolean needsResearch = false;
 
     /**
      * The hut's lower-case building-registry-compatible name.
@@ -290,47 +281,9 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
         onBlockPlacedBy(worldIn, pos, state, placer, stack);
     }
 
-    /**
-     * Checks whether the research for this hut block is already researched in the given colony.
-     *
-     * @param colony     the colony to check.
-     */
-    @OnlyIn(Dist.CLIENT)
-    public void checkResearch(final IColonyView colony)
-    {
-        if (colony == null)
-        {
-            needsResearch = false;
-            return;
-        }
-        final ResourceLocation effectId = colony.getResearchManager().getResearchEffectIdFrom(this);
-        if(colony.getResearchManager().getResearchEffects().getEffectStrength(effectId) > 0)
-        {
-            needsResearch = false;
-            return;
-        }
-        if(MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().hasResearchEffect(effectId))
-        {
-            needsResearch = true;
-            return;
-        }
-        needsResearch = false;
-    }
-
     @Override
     public void registerBlockItem(final IForgeRegistry<Item> registry, final net.minecraft.item.Item.Properties properties)
     {
         registry.register((new ItemBlockHut(this, properties)).setRegistryName(this.getRegistryName()));
-    }
-
-    /**
-     * Whether this hut blocks building needs to be researched.
-     * 
-     * @return true if this building needs to be researched, but isn't yet.
-     */
-    @OnlyIn(Dist.CLIENT)
-    public boolean needsResearch()
-    {
-        return needsResearch;
     }
 }

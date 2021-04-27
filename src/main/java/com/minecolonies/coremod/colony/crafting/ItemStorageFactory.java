@@ -72,14 +72,14 @@ public class ItemStorageFactory implements IItemStorageFactory
     public void serialize(IFactoryController controller, ItemStorage input, PacketBuffer packetBuffer)
     {
         packetBuffer.writeItemStack(input.getItemStack());
-        packetBuffer.writeInt(input.getAmount());
+        packetBuffer.writeVarInt(input.getAmount());
     }
 
     @Override
     public ItemStorage deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
     {
         final ItemStack stack = buffer.readItemStack();
-        final int size = buffer.readInt();
+        final int size = buffer.readVarInt();
         return this.getNewInstance(stack, size);
     }
 
