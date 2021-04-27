@@ -54,7 +54,6 @@ public class ModTagsInitializer
     private static final ResourceLocation FUNGI = new ResourceLocation(MOD_ID, "fungi");
     private static final ResourceLocation INDESTRUCTIBLE = new ResourceLocation(MOD_ID, "indestructible");
     private static final ResourceLocation MESHES = new ResourceLocation(MOD_ID, "meshes");
-    private static final ResourceLocation IGNORE_NBT = new ResourceLocation(MOD_ID, "ignore_nbt");
 
     public static void init(final ITagCollectionSupplier tagSupplier)
     {
@@ -70,7 +69,6 @@ public class ModTagsInitializer
         ModTags.oreChanceBlocks = getBlockTags(ORECHANCEBLOCKS, supplier);
         ModTags.colonyProtectionException = getBlockTags(COLONYPROTECTIONEXCEPTION, supplier);
         ModTags.indestructible = getBlockTags(INDESTRUCTIBLE, supplier);
-        ModTags.ignoreNbt = getItemTags(IGNORE_NBT, supplier);
 
         initCrafterRules("baker");
         initCrafterRules("blacksmith");

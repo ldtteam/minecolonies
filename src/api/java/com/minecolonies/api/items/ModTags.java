@@ -22,8 +22,6 @@ public class ModTags
     public static ITag<Block> colonyProtectionException;
     public static ITag<Block> indestructible;
 
-    public static ITag<Item> ignoreNbt;
-
     public static ITag<Block> oreChanceBlocks;
 
     public static ITag<Item> fungi;

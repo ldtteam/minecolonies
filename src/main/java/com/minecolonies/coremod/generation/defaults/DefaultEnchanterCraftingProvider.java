@@ -1,12 +1,10 @@
 package com.minecolonies.coremod.generation.defaults;
 
 import com.ldtteam.datagenerators.loot_table.LootTableJson;
-import com.ldtteam.datagenerators.loot_table.pool.entry.EntryTypeEnum;
 import com.minecolonies.api.colony.jobs.ModJobs;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.enchants.ModEnchants;
 import com.minecolonies.api.items.ModItems;
-import com.minecolonies.api.util.constant.NbtTagConstants;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingEnchanter;
 import com.minecolonies.coremod.generation.CustomRecipeProvider;
 import com.minecolonies.coremod.generation.LootTableBuilder;
 import com.minecolonies.coremod.generation.LootTableJsonProvider;
@@ -18,19 +16,14 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentData;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.item.EnchantedBookItem;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 
@@ -393,7 +386,8 @@ public class DefaultEnchanterCraftingProvider implements IDataProvider
         @Override
         protected void registerRecipes(@NotNull final Consumer<IFinishedRecipe> consumer)
         {
-            final List<ItemStack> tome = Collections.singletonList(new ItemStack(ModItems.ancientTome, 1));
+            final List<ItemStorage> tome = Collections.singletonList(new ItemStorage(
+                    new ItemStack(ModItems.ancientTome), true, true));
 
             for (int buildingLevel = 1; buildingLevel <= MAX_BUILDING_LEVEL; ++buildingLevel)
             {

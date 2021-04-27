@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.crafting.CustomRecipe;
 import net.minecraft.block.Block;
@@ -48,10 +49,14 @@ public abstract class CustomRecipeProvider implements IDataProvider
     {
         final Path path = this.generator.getOutputFolder();
         final Set<ResourceLocation> set = Sets.newHashSet();
-        registerRecipes((recipe) -> {
-            if (!set.add(recipe.getID())) {
+        registerRecipes((recipe) ->
+        {
+            if (!set.add(recipe.getID()))
+            {
                 throw new IllegalStateException("Duplicate recipe " + recipe.getID());
-            } else {
+            }
+            else
+            {
                 saveRecipe(cache, recipe.getRecipeJson(), path.resolve("data/" + recipe.getID().getNamespace() + "/crafterrecipes/" + recipe.getID().getPath() + ".json"));
             }
         });
@@ -79,6 +84,7 @@ public abstract class CustomRecipeProvider implements IDataProvider
         }
     }
 
+    @NotNull
     @Override
     public String getName()
     {
@@ -107,9 +113,9 @@ public abstract class CustomRecipeProvider implements IDataProvider
         }
 
         @NotNull
-        public CustomRecipeBuilder inputs(@NotNull final List<ItemStack> inputs)
+        public CustomRecipeBuilder inputs(@NotNull final List<ItemStorage> inputs)
         {
-            this.json.add(CustomRecipe.RECIPE_INPUTS_PROP, asJson(inputs));
+            this.json.add(CustomRecipe.RECIPE_INPUTS_PROP, storageAsJson(inputs));
             return this;
         }
 
@@ -134,14 +140,14 @@ public abstract class CustomRecipeProvider implements IDataProvider
         @NotNull
         public CustomRecipeBuilder secondaryOutputs(@NotNull final List<ItemStack> secondary)
         {
-            this.json.add(CustomRecipe.RECIPE_SECONDARY_PROP, asJson(secondary));
+            this.json.add(CustomRecipe.RECIPE_SECONDARY_PROP, stackAsJson(secondary));
             return this;
         }
 
         @NotNull
         public CustomRecipeBuilder alternateOutputs(@NotNull final List<ItemStack> alternates)
         {
-            this.json.add(CustomRecipe.RECIPE_ALTERNATE_PROP, asJson(alternates));
+            this.json.add(CustomRecipe.RECIPE_ALTERNATE_PROP, stackAsJson(alternates));
             return this;
         }
 
@@ -201,14 +207,16 @@ public abstract class CustomRecipeProvider implements IDataProvider
         }
 
         @NotNull
-        private JsonArray asJson(final List<ItemStack> itemStacks)
+        private JsonArray stackAsJson(final List<ItemStack> itemStacks)
         {
             final JsonArray jsonItemStacks = new JsonArray();
             for (final ItemStack itemStack : itemStacks)
             {
                 final JsonObject jsonItemStack = new JsonObject();
                 String name = itemStack.getItem().getRegistryName().toString();
-                if (itemStack.hasTag())
+                // this could be incorrect for items with both damage and other NBT,
+                // but that should be rare, and this avoids some annoyance.
+                if (itemStack.hasTag() && !itemStack.isDamageable())
                 {
                     name += itemStack.getTag().toString();
                 }
@@ -222,6 +230,35 @@ public abstract class CustomRecipeProvider implements IDataProvider
             return jsonItemStacks;
         }
 
+        @NotNull
+        private JsonArray storageAsJson(final List<ItemStorage> itemStorages)
+        {
+            final JsonArray jsonItemStorages = new JsonArray();
+            for (final ItemStorage itemStorage : itemStorages)
+            {
+                final ItemStack stack = itemStorage.getItemStack();
+                final JsonObject jsonItemStorage = new JsonObject();
+                String name = stack.getItem().getRegistryName().toString();
+                // this could be incorrect for items with both damage and other NBT,
+                // but that should be rare, and this avoids some annoyance.
+                if (stack.hasTag() && !stack.isDamageable())
+                {
+                    name += stack.getTag().toString();
+                }
+                jsonItemStorage.addProperty(ITEM_PROP, name);
+                if (itemStorage.ignoreNBT())
+                {
+                    jsonItemStorage.addProperty(MATCHTYPE_PROP, MATCH_NBTIGNORE);
+                }
+                if (itemStorage.getAmount() != 1)
+                {
+                    jsonItemStorage.addProperty(COUNT_PROP, itemStorage.getAmount());
+                }
+                jsonItemStorages.add(jsonItemStorage);
+            }
+            return jsonItemStorages;
+        }
+
         private static class Result implements IFinishedRecipe
         {
             final JsonObject json;
@@ -233,12 +270,14 @@ public abstract class CustomRecipeProvider implements IDataProvider
                 this.id = id;
             }
 
+            @NotNull
             @Override
             public JsonObject getRecipeJson()
             {
                 return this.json;
             }
 
+            @NotNull
             @Override
             public ResourceLocation getID()
             {
@@ -246,7 +285,7 @@ public abstract class CustomRecipeProvider implements IDataProvider
             }
 
             @Override
-            public void serialize(final JsonObject json)
+            public void serialize(@NotNull final JsonObject json)
             {
             }
 

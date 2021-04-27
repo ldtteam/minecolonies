@@ -6,12 +6,12 @@
       "item": "minecraft:gravel"
     },
     {
-      "item": "minecolonies:sifter_mesh_diamond{Damage:0}"
+      "item": "minecolonies:sifter_mesh_diamond"
     }
   ],
   "additional-output": [
     {
-      "item": "minecolonies:sifter_mesh_diamond{Damage:0}"
+      "item": "minecolonies:sifter_mesh_diamond"
     },
     {
       "item": "minecraft:redstone"

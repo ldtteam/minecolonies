@@ -6,12 +6,12 @@
       "item": "minecraft:soul_sand"
     },
     {
-      "item": "minecolonies:sifter_mesh_flint{Damage:0}"
+      "item": "minecolonies:sifter_mesh_flint"
     }
   ],
   "additional-output": [
     {
-      "item": "minecolonies:sifter_mesh_flint{Damage:0}"
+      "item": "minecolonies:sifter_mesh_flint"
     },
     {
       "item": "minecraft:nether_wart"

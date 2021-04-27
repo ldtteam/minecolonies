@@ -89,7 +89,7 @@ public class ItemStorage
     {
         this.stack = stack;
         this.shouldIgnoreDamageValue = ignoreDamageValue;
-        this.shouldIgnoreNBTValue = getDefaultIgnoreNBT(stack);
+        this.shouldIgnoreNBTValue = false;
         this.amount = ItemStackUtils.getSize(stack);
         this.creativeTabIndex = stack.getItem().getCreativeTabs().stream().filter(Objects::nonNull).map(g -> g.index).collect(Collectors.toList());
     }
@@ -103,15 +103,9 @@ public class ItemStorage
     {
         this.stack = stack;
         this.shouldIgnoreDamageValue = false;
-        this.shouldIgnoreNBTValue = getDefaultIgnoreNBT(stack);
+        this.shouldIgnoreNBTValue = false;
         this.amount = ItemStackUtils.getSize(stack);
         this.creativeTabIndex = stack.getItem().getCreativeTabs().stream().filter(Objects::nonNull).map(g -> g.index).collect(Collectors.toList());
-    }
-
-    private static boolean getDefaultIgnoreNBT(@NotNull final ItemStack stack)
-    {
-        //noinspection ConstantConditions
-        return stack.hasTag() && stack.getTag().getBoolean(NbtTagConstants.TAG_IGNORE_NBT);
     }
 
     /**
@@ -224,15 +218,12 @@ public class ItemStorage
 
     /**
      * Getter for the ignoreNBT.
-     * We also check a tag here so that it will react to /reload and apply
-     * to all existing recipes and other usages that don't explicitly
-     * force the NBT check.
      *
      * @return true if should ignore.
      */
     public boolean ignoreNBT()
     {
-        return shouldIgnoreNBTValue || ModTags.ignoreNbt.contains(stack.getItem());
+        return shouldIgnoreNBTValue;
     }
 
     /**

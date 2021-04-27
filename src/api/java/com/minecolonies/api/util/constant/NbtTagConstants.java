@@ -147,11 +147,6 @@ public final class NbtTagConstants
     public static final String TAG_RAID_WILL_HAPPEN = "raidWillHappen";
 
     /**
-     * Tag on ItemStorage items to tell them they should be ignoring NBT by default.
-     */
-    public static final String TAG_IGNORE_NBT = "ignoreNBT";
-
-    /**
      * Tag to store if auto deletable to a colony.
      */
     public static final String TAG_AUTO_DELETE = "autoDelete";

@@ -6,12 +6,12 @@
       "item": "minecraft:sand"
     },
     {
-      "item": "minecolonies:sifter_mesh_string{Damage:0}"
+      "item": "minecolonies:sifter_mesh_string"
     }
   ],
   "additional-output": [
     {
-      "item": "minecolonies:sifter_mesh_string{Damage:0}"
+      "item": "minecolonies:sifter_mesh_string"
     },
     {
       "item": "minecraft:cactus"

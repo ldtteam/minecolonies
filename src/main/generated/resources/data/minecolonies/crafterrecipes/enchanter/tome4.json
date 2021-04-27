@@ -5,7 +5,8 @@
   "max-building-level": 4,
   "inputs": [
     {
-      "item": "minecolonies:ancienttome"
+      "item": "minecolonies:ancienttome",
+      "matchType": "ignore"
     }
   ],
   "additional-output": [

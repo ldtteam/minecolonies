@@ -3,6 +3,7 @@ package com.minecolonies.coremod.generation.defaults;
 import com.ldtteam.datagenerators.loot_table.LootTableJson;
 import com.ldtteam.datagenerators.loot_table.pool.entry.EntryTypeEnum;
 import com.minecolonies.api.colony.jobs.ModJobs;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.coremod.generation.CustomRecipeProvider;
 import com.minecolonies.coremod.generation.LootTableBuilder;
@@ -274,7 +275,10 @@ public class DefaultSifterCraftingProvider implements IDataProvider
                             .map(entry -> ForgeRegistries.ITEMS.getValue(new ResourceLocation(entry.getName())));
 
                     CustomRecipeBuilder.create(ModJobs.SIFTER_ID.getPath(), name)
-                            .inputs(Stream.of(new ItemStack(inputEntry.getKey()), new ItemStack(mesh.getMesh())).collect(Collectors.toList()))
+                            .inputs(Stream.of(
+                                    new ItemStorage(new ItemStack(inputEntry.getKey())),
+                                    new ItemStorage(new ItemStack(mesh.getMesh()), true, false))
+                                    .collect(Collectors.toList()))
                             .secondaryOutputs(Stream.concat(Stream.of(mesh.getMesh()), loot)
                                         .map(ItemStack::new)
                                         .collect(Collectors.toList()))
