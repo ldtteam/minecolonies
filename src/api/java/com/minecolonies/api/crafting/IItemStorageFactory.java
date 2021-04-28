@@ -44,8 +44,8 @@ public interface IItemStorageFactory extends IFactory<FactoryVoidInput, ItemStor
 
         final ItemStack stack = (ItemStack) context[0];
         final int size = (int) context[1];
-        final boolean ignoreDamage = context[2] != null ? (Boolean) context[2] : false;
-        final boolean ignoreNBT = context[3] != null ? (Boolean) context[3] : false;
+        final boolean ignoreDamage = context.length >= 3 ? (Boolean) context[2] : false;
+        final boolean ignoreNBT = context.length >= 4 ? (Boolean) context[3] : false;
 
         return getNewInstance(stack, size, ignoreDamage, ignoreNBT);
     }
