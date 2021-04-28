@@ -31,6 +31,11 @@ public class BuildingShepherd extends AbstractBuildingWorker
     public static final ISettingKey<BoolSetting> DYEING = new SettingKey<>(BoolSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "dyeing"));
 
     /**
+     * Automatic shearing.
+     */
+    public static final ISettingKey<BoolSetting> SHEARING = new SettingKey<>(BoolSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "shearing"));
+
+    /**
      * Description of the job executed in the hut.
      */
     private static final String SHEPHERD = "shepherd";

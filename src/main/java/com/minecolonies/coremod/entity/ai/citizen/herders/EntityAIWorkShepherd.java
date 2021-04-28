@@ -59,7 +59,10 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
     public List<ToolType> getExtraToolsNeeded()
     {
         final List<ToolType> toolsNeeded = super.getExtraToolsNeeded();
-        toolsNeeded.add(ToolType.SHEARS);
+        if (getOwnBuilding().getSetting(BuildingShepherd.SHEARING).getValue())
+        {
+            toolsNeeded.add(ToolType.SHEARS);
+        }
         return toolsNeeded;
     }
 
@@ -119,6 +122,11 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
      */
     private IAIState shearSheep()
     {
+        if (!getOwnBuilding().getSetting(BuildingShepherd.SHEARING).getValue())
+        {
+            return DECIDE;
+        }
+
         worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_SHEPHERD_SHEARING));
 
         final List<SheepEntity> sheeps = searchForAnimals();
