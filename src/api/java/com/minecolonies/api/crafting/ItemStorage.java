@@ -275,6 +275,11 @@ public class ItemStorage
                        || (that.getItemStack().getTag() != null && that.getItemStack().getTag().equals(this.getItemStack().getTag())));
     }
 
+    /**
+     * Ensure that two ItemStorage have the same comparison defintion
+     * @param that the item to compare to
+     * @return true if the comparisons match
+     */
     public boolean matchDefinitionEquals(ItemStorage that)
     {
         return this.shouldIgnoreDamageValue == that.shouldIgnoreDamageValue 
