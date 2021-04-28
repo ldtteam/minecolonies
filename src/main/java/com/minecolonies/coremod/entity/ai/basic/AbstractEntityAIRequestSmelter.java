@@ -528,7 +528,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
 
         final int preExtractCount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(currentRequest.getRequest().getStack(), stack));
 
-        extractFromFurnace((FurnaceTileEntity) entity);
+        extractFromFurnaceSlot((FurnaceTileEntity) entity, RESULT_SLOT);
         //Do we have the requested item in the inventory now?
         final int resultCount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(currentRequest.getRequest().getStack(), stack)) - preExtractCount;
         if (resultCount > 0)
@@ -587,33 +587,24 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
 
         walkTo = null;
 
-        extractFuelFromFurnace((FurnaceTileEntity) entity);
+        extractFromFurnaceSlot((FurnaceTileEntity) entity, FUEL_SLOT);
         return START_WORKING;
     }
 
     /**
-     * Very simple action, straightly extract it from the furnace.
+     * Very simple action, straightly extract from a furnace slot.
      *
      * @param furnace the furnace to retrieve from.
      */
-    private void extractFromFurnace(final FurnaceTileEntity furnace)
+    private void extractFromFurnaceSlot(final FurnaceTileEntity furnace, final int slot)
     {
         InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandler(
-          new InvWrapper(furnace), RESULT_SLOT,
+          new InvWrapper(furnace), slot,
           worker.getInventoryCitizen());
-        worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
-    }
-
-    /**
-     * Extract fuel from the furnace.
-     *
-     * @param furnace the furnace to retrieve from.
-     */
-    private void extractFuelFromFurnace(final FurnaceTileEntity furnace)
-    {
-        InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandler(
-                new InvWrapper(furnace), FUEL_SLOT,
-                worker.getInventoryCitizen());
+        if(slot == RESULT_SLOT)
+        {
+            worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
+        {
     }
 
     /**
