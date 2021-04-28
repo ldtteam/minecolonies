@@ -190,13 +190,18 @@ public class RecipeStorage implements IRecipeStorage
                 continue;
             }
 
-            ItemStorage storage = new ItemStorage(inputItem.getItemStack());
-            storage.setAmount(inputItem.getAmount());
-            if (items.contains(storage))
+            ItemStorage storage = inputItem.copy();
+            if (items.contains(storage) )
             {
                 final int index = items.indexOf(storage);
-                final ItemStorage tempStorage = items.remove(index);
+                ItemStorage tempStorage = items.remove(index);
                 tempStorage.setAmount(tempStorage.getAmount() + storage.getAmount());
+                if(!tempStorage.matchDefinitionEquals(storage))
+                {
+                    int amount = tempStorage.getAmount();
+                    tempStorage = new ItemStorage(tempStorage.getItemStack(), tempStorage.ignoreDamageValue() || storage.ignoreDamageValue(), tempStorage.ignoreNBT() || storage.ignoreNBT());
+                    tempStorage.setAmount(amount);
+                }
                 storage = tempStorage;
             }
             items.add(storage);
@@ -348,7 +353,7 @@ public class RecipeStorage implements IRecipeStorage
 
         for (int i = 0; i < cleanedInput.size(); i++)
         {
-            if(!cleanedInput.get(i).equals(that.cleanedInput.get(i)) || cleanedInput.get(i).getAmount() != that.cleanedInput.get(i).getAmount())
+            if(!cleanedInput.get(i).equals(that.cleanedInput.get(i)) || !cleanedInput.get(i).matchDefinitionEquals(that.cleanedInput.get(i)) || cleanedInput.get(i).getAmount() != that.cleanedInput.get(i).getAmount())
             {
                 return false;
             }

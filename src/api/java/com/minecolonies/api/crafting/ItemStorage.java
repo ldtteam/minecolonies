@@ -269,10 +269,16 @@ public class ItemStorage
 
 
         return stack.isItemEqual(that.getItemStack())
-                 && (this.shouldIgnoreDamageValue || that.getDamageValue() == this.getDamageValue())
+                 && (this.shouldIgnoreDamageValue || that.shouldIgnoreDamageValue || that.getDamageValue() == this.getDamageValue())
                  && (this.shouldIgnoreNBTValue || that.shouldIgnoreNBTValue
                        || (that.getItemStack().getTag() == null && this.getItemStack().getTag() == null)
                        || (that.getItemStack().getTag() != null && that.getItemStack().getTag().equals(this.getItemStack().getTag())));
+    }
+
+    public boolean matchDefinitionEquals(ItemStorage that)
+    {
+        return this.shouldIgnoreDamageValue == that.shouldIgnoreDamageValue 
+        && this.shouldIgnoreNBTValue == that.shouldIgnoreNBTValue;
     }
 
     /**
