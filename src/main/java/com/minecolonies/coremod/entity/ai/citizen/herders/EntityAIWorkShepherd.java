@@ -95,7 +95,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
         final List<SheepEntity> animals = new ArrayList<>(searchForAnimals());
         final SheepEntity shearingSheep = animals.stream().filter(sheepie -> !sheepie.getSheared() && !sheepie.isChild()).findFirst().orElse(null);
 
-        if (result.equals(START_WORKING) && shearingSheep != null)
+        if (getOwnBuilding().getSetting(BuildingShepherd.SHEARING).getValue() && result.equals(START_WORKING) && shearingSheep != null)
         {
             return SHEPHERD_SHEAR;
         }
@@ -122,11 +122,6 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
      */
     private IAIState shearSheep()
     {
-        if (!getOwnBuilding().getSetting(BuildingShepherd.SHEARING).getValue())
-        {
-            return DECIDE;
-        }
-
         worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_SHEPHERD_SHEARING));
 
         final List<SheepEntity> sheeps = searchForAnimals();
