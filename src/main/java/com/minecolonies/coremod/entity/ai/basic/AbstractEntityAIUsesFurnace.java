@@ -151,7 +151,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
             {
                 final FurnaceTileEntity furnace = (FurnaceTileEntity) entity;
 
-                if (furnace.getStackInSlot(FUEL_SLOT).getItem() == Items.BUCKET)
+                if (!compareItemStackListIgnoreStackSize(getOwnBuilding().getAllowedFuel(), furnace.getStackInSlot(FUEL_SLOT), false, false) && !furnace.getStackInSlot(FUEL_SLOT).isEmpty())
                 {
                     worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_STATUS_RETRIEVING));
                     return pos;

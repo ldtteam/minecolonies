@@ -448,7 +448,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             {
                 final FurnaceTileEntity furnace = (FurnaceTileEntity) entity;
 
-                if (furnace.getStackInSlot(FUEL_SLOT).getItem() == Items.BUCKET)
+                if (!compareItemStackListIgnoreStackSize(getOwnBuilding().getAllowedFuel(), furnace.getStackInSlot(FUEL_SLOT), false, false) && !furnace.getStackInSlot(FUEL_SLOT).isEmpty())
                 {
                     worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_STATUS_RETRIEVING));
                     return pos;
@@ -813,6 +813,14 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             }
             setDelay(STANDARD_DELAY);
             return START_WORKING;
+        }
+
+        final BlockPos furnacePosWithUsedFuel = getPositionOfOvenToRetrieveFuelFrom();
+        if (furnacePosWithUsedFuel != null)
+        {
+            walkTo = furnacePosWithUsedFuel;
+            worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.retrieving"));
+            return RETRIEVING_USED_FUEL_FROM_FURNACE;
         }
 
         final BlockPos posOfOven = getPositionOfOvenToRetrieveFrom();
