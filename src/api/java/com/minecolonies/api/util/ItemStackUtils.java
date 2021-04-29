@@ -8,6 +8,8 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -16,11 +18,15 @@ import net.minecraft.entity.item.ItemFrameEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.*;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tileentity.FurnaceTileEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.world.World;
+import net.minecraftforge.registries.ForgeRegistries;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -938,6 +944,51 @@ public final class ItemStackUtils
     {
         return ItemStackUtils.isEmpty(entity.getStackInSlot(SMELTABLE_SLOT))
                  && !ItemStackUtils.isEmpty(entity.getStackInSlot(FUEL_SLOT));
+    }
+
+    /**
+     * Convert an Item string with NBT to an ItemStack
+     * @param itemData ie: minecraft:potion{Potion=minecraft:water}
+     * @return stack with any defined NBT
+     */
+    public static ItemStack idToItemStack(final String itemData)
+    {
+        String itemId = itemData;
+        final int tagIndex = itemId.indexOf("{");
+        final String tag = tagIndex > 0 ? itemId.substring(tagIndex) : null;
+        itemId = tagIndex > 0 ? itemId.substring(0, tagIndex) : itemId;
+        String[] split = itemId.split(":");
+        if(split.length != 2)
+        {
+            if(split.length == 1)
+            {
+                final String[] tempArray ={"minecraft", split[0]};
+                split = tempArray;
+            }
+            else
+            {
+                Log.getLogger().error("Unable to parse item definition: " + itemData);
+            }
+        }
+        final Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(split[0], split[1]));
+        final ItemStack stack = new ItemStack(item);
+        if (tag != null)
+        {
+            try
+            {
+                stack.setTag(JsonToNBT.getTagFromJson(tag));
+            }
+            catch (CommandSyntaxException e1)
+            {
+                //Unable to parse tags, drop them.
+                Log.getLogger().error("Unable to parse item definition: " + itemData);
+            }
+        }
+        if (stack.isEmpty())
+        {
+            Log.getLogger().warn("Parsed item definition returned empty: " + itemData);
+        }
+        return stack;
     }
 }
 

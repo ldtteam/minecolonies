@@ -298,6 +298,11 @@ public class Colony implements IColony
     private int additionalChildTime = 0;
 
     /**
+     * The maximum amount of additional child time to be stored when the colony is not loaded.
+     */
+    private static final int maxAdditionalChildTime = 70000;
+
+    /**
      * Boolean whether the colony has childs.
      */
     private boolean hasChilds = false;
@@ -532,7 +537,7 @@ public class Colony implements IColony
      */
     private void updateChildTime()
     {
-        if (hasChilds)
+        if (hasChilds && additionalChildTime < maxAdditionalChildTime)
         {
             additionalChildTime += MAX_TICKRATE;
         }

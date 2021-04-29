@@ -965,6 +965,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         storageXOffset = COST_OFFSET;
         for (final ItemStorage storage : research.getCostList())
         {
+            // This must be a copy, to avoid potential serialization issues with large item stack counts.
             final ItemStack is = storage.getItemStack().copy();
             is.setCount(storage.getAmount());
             final ItemIcon icon = new ItemIcon();
@@ -976,12 +977,12 @@ public class WindowResearchTree extends AbstractWindowSkeleton
               stack -> !ItemStackUtils.isEmpty(stack) && stack.isItemEqual(storage.getItemStack())) < storage.getAmount()))
             {
                 PaneBuilders.tooltipBuilder().hoverPane(icon).paragraphBreak().append(new TranslationTextComponent("com.minecolonies.coremod.research.limit.requirement",
-                  is.getCount(), is.getItem().getName())).color(COLOR_TEXT_UNFULFILLED).build();
+                  storage.getAmount(), is.getItem().getName())).color(COLOR_TEXT_UNFULFILLED).build();
             }
             else
             {
                 PaneBuilders.tooltipBuilder().hoverPane(icon).paragraphBreak().append(new TranslationTextComponent("com.minecolonies.coremod.research.limit.requirement",
-                  is.getCount(), is.getItem().getName())).color(COLOR_TEXT_FULFILLED).build();
+                  storage.getAmount(), is.getItem().getName())).color(COLOR_TEXT_FULFILLED).build();
             }
             storageXOffset += COST_OFFSET;
         }
