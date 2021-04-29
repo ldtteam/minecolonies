@@ -17,5 +17,6 @@
   ],
   "result": "minecolonies:scroll_tp",
   "count": 3,
-  "intermediate": "minecraft:air"
+  "intermediate": "minecraft:air",
+  "show-tooltip": true
 }

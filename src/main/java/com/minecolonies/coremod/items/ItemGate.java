@@ -39,10 +39,6 @@ public class ItemGate extends BlockItem
     public void addInformation(
       @NotNull final ItemStack stack, @Nullable final World worldIn, @NotNull final List<ITextComponent> tooltip, @NotNull final ITooltipFlag flagIn)
     {
-        final IFormattableTextComponent guiHint = LanguageHandler.buildChatComponent(TranslationConstants.GATE_CRAFTING_TOOLTIP);
-        guiHint.setStyle(Style.EMPTY.setFormatting(TextFormatting.DARK_AQUA));
-        tooltip.add(guiHint);
-
         final IFormattableTextComponent guiHint2 = LanguageHandler.buildChatComponent(TranslationConstants.GATE_PLACEMENT_TOOLTIP);
         guiHint2.setStyle(Style.EMPTY.setFormatting(TextFormatting.DARK_AQUA));
         tooltip.add(guiHint2);

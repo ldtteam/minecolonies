@@ -10,5 +10,6 @@
   "result": "minecolonies:bread_dough",
   "count": 1,
   "intermediate" : "minecraft:air",
-  "max-building-level" : 2
+  "max-building-level" : 2,
+  "show-tooltip": true
 }

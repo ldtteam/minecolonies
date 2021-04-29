@@ -5,60 +5,31 @@ import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.GraveData;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyTagCapability;
-import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.IMysticalSite;
-import com.minecolonies.api.colony.buildings.IRSComponent;
-import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
-import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
-import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.managers.interfaces.IGraveManager;
-import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.tileentities.AbstractScarecrowTileEntity;
-import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityGrave;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
-import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesGrave;
-import com.minecolonies.coremod.blocks.huts.BlockHutTavern;
-import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
-import com.minecolonies.coremod.blocks.huts.BlockHutWareHouse;
-import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
-import com.minecolonies.coremod.colony.buildings.BuildingMysticalSite;
-import com.minecolonies.coremod.colony.buildings.modules.TavernBuildingModule;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
-import com.minecolonies.coremod.network.messages.client.colony.ColonyViewBuildingViewMessage;
-import com.minecolonies.coremod.network.messages.client.colony.ColonyViewRemoveBuildingMessage;
-import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
-import net.minecraft.block.Block;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
-import java.util.function.Predicate;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import static com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateConstants.MAX_TICKRATE;
 import static com.minecolonies.api.research.util.ResearchConstants.GRAVE_DECAY_BONUS;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
-import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 
 public class GraveManager implements IGraveManager
 {
@@ -96,7 +67,7 @@ public class GraveManager implements IGraveManager
         for (int i = 0; i < gravesTagList.size(); ++i)
         {
             final CompoundNBT graveCompound = gravesTagList.getCompound(i);
-            if(graveCompound.contains(TAG_POS) && graveCompound.contains(TAG_RESERVED))
+            if (graveCompound.contains(TAG_POS) && graveCompound.contains(TAG_RESERVED))
             {
                 graves.put(BlockPosUtil.read(graveCompound, TAG_POS), graveCompound.getBoolean(TAG_RESERVED));
             }
@@ -130,23 +101,26 @@ public class GraveManager implements IGraveManager
     @Override
     public void onColonyTick(final IColony colony)
     {
-        for (@NotNull final BlockPos pos : graves.keySet())
+        for (final Iterator<BlockPos> iterator = graves.keySet().iterator(); iterator.hasNext(); )
         {
-            if(!WorldUtil.isBlockLoaded(colony.getWorld(), pos))
+            final BlockPos pos = iterator.next();
+            if (!WorldUtil.isBlockLoaded(colony.getWorld(), pos))
             {
                 continue;
             }
 
             final TileEntityGrave graveEntity = (TileEntityGrave) colony.getWorld().getTileEntity(pos);
-            if(graveEntity == null)
+            if (graveEntity == null)
             {
-                removeGrave(pos);
+                iterator.remove();
+                colony.markDirty();
                 continue;
             }
 
-            if(!graveEntity.onColonyTick(MAX_TICKRATE))
+            if (!graveEntity.onColonyTick(MAX_TICKRATE))
             {
-                removeGrave(pos);
+                iterator.remove();
+                colony.markDirty();
             }
         }
     }
@@ -166,7 +140,7 @@ public class GraveManager implements IGraveManager
     /**
      * Add a grave from the Colony.
      *
-     * @param pos    position of the TileEntityGrave to add.
+     * @param pos position of the TileEntityGrave to add.
      * @return the grave that was created and added.
      */
     @Nullable
@@ -174,12 +148,12 @@ public class GraveManager implements IGraveManager
     public boolean addNewGrave(@NotNull final BlockPos pos)
     {
         final TileEntityGrave graveEntity = (TileEntityGrave) colony.getWorld().getTileEntity(pos);
-        if(graveEntity == null)
+        if (graveEntity == null)
         {
             return false;
         }
 
-        if(graves.containsKey(pos))
+        if (graves.containsKey(pos))
         {
             return true;
         }
@@ -192,7 +166,7 @@ public class GraveManager implements IGraveManager
     /**
      * Remove a TileEntityGrave from the Colony (when it is destroyed).
      *
-     * @param pos    position of the TileEntityGrave to remove.
+     * @param pos position of the TileEntityGrave to remove.
      */
     @Override
     public void removeGrave(@NotNull final BlockPos pos)
@@ -210,13 +184,13 @@ public class GraveManager implements IGraveManager
     @Override
     public boolean reserveGrave(@NotNull final BlockPos pos)
     {
-        if(!graves.containsKey(pos) || graves.get(pos))
+        if (!graves.containsKey(pos) || graves.get(pos))
         {
             return false;
         }
 
         final TileEntityGrave graveEntity = (TileEntityGrave) colony.getWorld().getTileEntity(pos);
-        if(graveEntity == null)
+        if (graveEntity == null)
         {
             removeGrave(pos);
             return false;
@@ -238,13 +212,13 @@ public class GraveManager implements IGraveManager
         for (@NotNull final BlockPos pos : graves.keySet())
         {
             final TileEntityGrave graveEntity = (TileEntityGrave) colony.getWorld().getTileEntity(pos);
-            if(graveEntity == null)
+            if (graveEntity == null)
             {
                 removeGrave(pos);
                 continue;
             }
 
-            if(!graves.get(pos) && reserveGrave(pos))
+            if (!graves.get(pos) && reserveGrave(pos))
             {
                 return pos;
             }
@@ -255,12 +229,12 @@ public class GraveManager implements IGraveManager
 
     /**
      * Attempt to create a TileEntityGrave at @pos containing the specific @citizenData
-     *
+     * <p>
      * On failure: drop all the citizen inventory on the ground.
      *
-     * @param world        The world.
-     * @param pos          The position where to spawn a grave
-     * @param citizenData  The citizenData
+     * @param world       The world.
+     * @param pos         The position where to spawn a grave
+     * @param citizenData The citizenData
      */
     @Override
     public void createCitizenGrave(final World world, final BlockPos pos, final ICitizenData citizenData)
@@ -270,7 +244,7 @@ public class GraveManager implements IGraveManager
         {
             world.setBlockState(firstValidPosition, BlockMinecoloniesGrave.getPlacementState(ModBlocks.blockGrave.getDefaultState(), new TileEntityGrave(), firstValidPosition));
             final TileEntityGrave graveEntity = (TileEntityGrave) world.getTileEntity(firstValidPosition);
-            if(!InventoryUtils.transferAllItemHandler(citizenData.getInventory(), graveEntity.getInventory()))
+            if (!InventoryUtils.transferAllItemHandler(citizenData.getInventory(), graveEntity.getInventory()))
             {
                 InventoryUtils.dropItemHandler(citizenData.getInventory(), world, pos.getX(), pos.getY(), pos.getZ());
             }
@@ -281,7 +255,7 @@ public class GraveManager implements IGraveManager
             graveData.setCitizenName(citizenData.getName());
             if (citizenData.getJob() != null)
             {
-                final IFormattableTextComponent jobName =  new TranslationTextComponent(citizenData.getJob().getName().toLowerCase());
+                final IFormattableTextComponent jobName = new TranslationTextComponent(citizenData.getJob().getName().toLowerCase());
                 graveData.setCitizenJobName(jobName.getString());
             }
             graveData.setCitizenDataNBT(citizenData.serializeNBT());

@@ -298,6 +298,11 @@ public class Colony implements IColony
     private int additionalChildTime = 0;
 
     /**
+     * The maximum amount of additional child time to be stored when the colony is not loaded.
+     */
+    private static final int maxAdditionalChildTime = 70000;
+
+    /**
      * Boolean whether the colony has childs.
      */
     private boolean hasChilds = false;
@@ -532,7 +537,7 @@ public class Colony implements IColony
      */
     private void updateChildTime()
     {
-        if (hasChilds)
+        if (hasChilds && additionalChildTime < maxAdditionalChildTime)
         {
             additionalChildTime += MAX_TICKRATE;
         }
@@ -1225,6 +1230,34 @@ public class Colony implements IColony
     public boolean hasWarehouse()
     {
         return buildingManager.hasWarehouse();
+    }
+
+    @Override
+    public boolean hasBuilding(final String name, final int level, boolean singleBuilding)
+    {
+        int sum = 0;
+        for (final IBuilding building : this.getBuildingManager().getBuildings().values())
+        {
+            if (building.getSchematicName().equalsIgnoreCase(name))
+            {
+                if (singleBuilding)
+                {
+                    if (building.getBuildingLevel() >= level)
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    sum += building.getBuildingLevel();
+                    if(sum >= level)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     @Override

@@ -14,5 +14,6 @@
   "result": "minecolonies:golden_bread",
   "count": 4,
   "intermediate" : "minecraft:air",
-  "min-building-level" : 5
+  "min-building-level" : 5,
+  "show-tooltip": true
 }

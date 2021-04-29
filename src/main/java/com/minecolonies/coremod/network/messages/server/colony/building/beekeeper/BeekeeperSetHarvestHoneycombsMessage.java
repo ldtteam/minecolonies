@@ -7,11 +7,18 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 /**
- * Message to set the wether the beekeeper should harvest honeycombs.
+ * Message to set the whether the beekeeper should harvest honeycombs.
  */
 public class BeekeeperSetHarvestHoneycombsMessage extends AbstractBuildingServerMessage<BuildingBeekeeper>
 {
-    private boolean harvestHoneycombs;
+    public enum HarvestType
+    {
+        HONEYCOMBS,
+        HONEY_BOTTLES,
+        BOTH
+    }
+
+    private HarvestType harvestHoneycombs;
 
     /**
      * Empty standard constructor.
@@ -27,7 +34,7 @@ public class BeekeeperSetHarvestHoneycombsMessage extends AbstractBuildingServer
      * @param building          View of the building to read data from.
      * @param harvestHoneycombs Whether Beekeeper should harvest honeycombs.
      */
-    public BeekeeperSetHarvestHoneycombsMessage(final BuildingBeekeeper.View building, final boolean harvestHoneycombs)
+    public BeekeeperSetHarvestHoneycombsMessage(final BuildingBeekeeper.View building, final HarvestType harvestHoneycombs)
     {
         super(building);
         this.harvestHoneycombs = harvestHoneycombs;
@@ -47,7 +54,7 @@ public class BeekeeperSetHarvestHoneycombsMessage extends AbstractBuildingServer
     @Override
     protected void toBytesOverride(final PacketBuffer buf)
     {
-        buf.writeBoolean(this.harvestHoneycombs);
+        buf.writeEnumValue(this.harvestHoneycombs);
     }
 
     /**
@@ -58,6 +65,6 @@ public class BeekeeperSetHarvestHoneycombsMessage extends AbstractBuildingServer
     @Override
     protected void fromBytesOverride(final PacketBuffer buf)
     {
-        this.harvestHoneycombs = buf.readBoolean();
+        this.harvestHoneycombs = buf.readEnumValue(HarvestType.class);
     }
 }

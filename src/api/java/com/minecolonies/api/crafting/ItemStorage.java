@@ -1,8 +1,11 @@
 package com.minecolonies.api.crafting;
 
+import com.google.gson.JsonObject;
 import com.minecolonies.api.util.ItemStackUtils;
+
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -10,6 +13,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
  * Used to store an stack with various informations to compare items later on.
@@ -100,6 +105,55 @@ public class ItemStorage
         this.shouldIgnoreDamageValue = false;
         this.shouldIgnoreNBTValue = false;
         this.amount = ItemStackUtils.getSize(stack);
+        this.creativeTabIndex = stack.getItem().getCreativeTabs().stream().filter(Objects::nonNull).map(g -> g.index).collect(Collectors.toList());
+    }
+
+    /**
+     * Creates an instance of the storage from JSON
+     * 
+     * @param jObject the JSON Object to parse
+     */
+    public ItemStorage(@NotNull final JsonObject jObject)
+    {
+        if (jObject.has(ITEM_PROP))
+        {
+            final ItemStack parsedStack = ItemStackUtils.idToItemStack(jObject.get(ITEM_PROP).getAsString());
+            if(jObject.has(COUNT_PROP))
+            {
+                parsedStack.setCount(jObject.get(COUNT_PROP).getAsInt());
+                this.amount = jObject.get(COUNT_PROP).getAsInt();
+            }
+            else
+            {
+                this.amount = parsedStack.getCount();
+            }
+            this.stack = parsedStack;
+            if(jObject.has(MATCHTYPE_PROP))
+            {
+                String matchType = jObject.get(MATCHTYPE_PROP).getAsString();
+                if(matchType.equals(MATCH_NBTIGNORE))
+                {
+                    this.shouldIgnoreNBTValue = true;
+                }
+                else // includes "exact"
+                {
+                    this.shouldIgnoreNBTValue = false;
+                }
+            }
+            else
+            {
+                this.shouldIgnoreNBTValue = false;
+            }
+            this.shouldIgnoreDamageValue= true;
+        }
+        else
+        {
+            this.stack = ItemStack.EMPTY;
+            this.amount = 0;
+            this.shouldIgnoreDamageValue = true;
+            this.shouldIgnoreNBTValue = true;
+        }
+    
         this.creativeTabIndex = stack.getItem().getCreativeTabs().stream().filter(Objects::nonNull).map(g -> g.index).collect(Collectors.toList());
     }
 
@@ -272,4 +326,13 @@ public class ItemStorage
         newInstance.setAmount(amount);
         return newInstance;
     }    
+
+    /**
+     * Get an immutable version of this item storage
+     * @return immutable wrapper
+     */
+    public ImmutableItemStorage toImmutable()
+    {
+        return new ImmutableItemStorage(this);
+    }
 }

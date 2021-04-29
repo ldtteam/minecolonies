@@ -402,12 +402,12 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
                 {
                     reducedItem = input.copy();
                     reducedItem.setAmount(input.getAmount() - 1);
-                    newRecipe.add(reducedItem);
+                    newRecipe.add(reducedItem.toImmutable());
                     didReduction = true;
                 }
                 else
                 {
-                    newRecipe.add(input.copy());
+                    newRecipe.add(input.copy().toImmutable());
                 }
             }
 

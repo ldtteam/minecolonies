@@ -650,13 +650,28 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             {
                 if (research.getResearchRequirement().get(txt).isFulfilled(this.building.getColony()))
                 {
-                    hoverPaneBuilder.paragraphBreak().append(new TranslationTextComponent(" - ")).color(COLOR_TEXT_FULFILLED)
+                    hoverPaneBuilder.paragraphBreak().append(new StringTextComponent(" - ")).color(COLOR_TEXT_FULFILLED)
                       .append(research.getResearchRequirement().get(txt).getDesc());
                 }
                 else
                 {
-                    hoverPaneBuilder.paragraphBreak().append(new TranslationTextComponent(" - ")).color(COLOR_TEXT_UNFULFILLED)
+                    hoverPaneBuilder.paragraphBreak().append(new StringTextComponent(" - ")).color(COLOR_TEXT_UNFULFILLED)
                       .append(research.getResearchRequirement().get(txt).getDesc());
+                }
+            }
+            for(final ItemStorage is : research.getCostList())
+            {
+                hoverPaneBuilder.paragraphBreak()
+                  .append(new StringTextComponent(" - "))
+                  .append(new TranslationTextComponent("com.minecolonies.coremod.research.limit.requirement", is.getAmount(), is.getItem().getName()));
+                if((InventoryUtils.getItemCountInItemHandler(new InvWrapper(Minecraft.getInstance().player.inventory),
+                  stack -> !ItemStackUtils.isEmpty(stack) && stack.isItemEqual(is.getItemStack())) < is.getAmount()))
+                {
+                    hoverPaneBuilder.color(COLOR_TEXT_UNFULFILLED);
+                }
+                else
+                {
+                    hoverPaneBuilder.color(COLOR_TEXT_FULFILLED);
                 }
             }
             if (research.getDepth() > building.getBuildingLevel() && building.getBuildingLevel() != building.getBuildingMaxLevel() && branchType != ResearchBranchType.UNLOCKABLES)
@@ -950,6 +965,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         storageXOffset = COST_OFFSET;
         for (final ItemStorage storage : research.getCostList())
         {
+            // This must be a copy, to avoid potential serialization issues with large item stack counts.
             final ItemStack is = storage.getItemStack().copy();
             is.setCount(storage.getAmount());
             final ItemIcon icon = new ItemIcon();
@@ -961,12 +977,12 @@ public class WindowResearchTree extends AbstractWindowSkeleton
               stack -> !ItemStackUtils.isEmpty(stack) && stack.isItemEqual(storage.getItemStack())) < storage.getAmount()))
             {
                 PaneBuilders.tooltipBuilder().hoverPane(icon).paragraphBreak().append(new TranslationTextComponent("com.minecolonies.coremod.research.limit.requirement",
-                  is.getCount(), is.getItem().getName())).color(COLOR_TEXT_UNFULFILLED).build();
+                  storage.getAmount(), is.getItem().getName())).color(COLOR_TEXT_UNFULFILLED).build();
             }
             else
             {
                 PaneBuilders.tooltipBuilder().hoverPane(icon).paragraphBreak().append(new TranslationTextComponent("com.minecolonies.coremod.research.limit.requirement",
-                  is.getCount(), is.getItem().getName())).color(COLOR_TEXT_FULFILLED).build();
+                  storage.getAmount(), is.getItem().getName())).color(COLOR_TEXT_FULFILLED).build();
             }
             storageXOffset += COST_OFFSET;
         }

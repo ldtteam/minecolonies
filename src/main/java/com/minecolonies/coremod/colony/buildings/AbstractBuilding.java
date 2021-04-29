@@ -792,7 +792,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         }
         else
         {
-            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.worker.noUpgrade"), player.getUniqueID());
+            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.worker.noupgrade"), player.getUniqueID());
         }
     }
 

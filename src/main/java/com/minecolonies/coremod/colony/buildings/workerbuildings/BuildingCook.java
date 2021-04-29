@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockout.views.Window;
 import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -121,9 +122,21 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
     public BuildingCook(final IColony c, final BlockPos l)
     {
         super(c, l);
-        keepX.put((stack) -> !this.getModuleMatching(ItemListModule.class, m -> m.getId().equals(FOOD_EXCLUSION_LIST)).isItemInList(new ItemStorage(stack)), new Tuple<>(STACKSIZE, true));
+        keepX.put(stack -> isAllowedFood(stack), new Tuple<>(STACKSIZE, true));
         keepX.put(stack -> isAllowedFuel(stack), new Tuple<>(STACKSIZE, true));
         keepX.put(stack -> !ItemStackUtils.isEmpty(stack.getContainerItem()) && !stack.getContainerItem().getItem().equals(Items.BUCKET), new Tuple<>(STACKSIZE, false));
+    }
+
+    /**
+     * Return whether the given stack is allowed food
+     * @param stack the stack
+     * @return true if so
+     */
+    public boolean isAllowedFood(ItemStack stack)
+    {
+        ItemListModule listModule = this.getModuleMatching(ItemListModule.class, m -> m.getId().equals(FOOD_EXCLUSION_LIST));
+        return ISFOOD.test(stack) && !listModule.isItemInList(new ItemStorage(stack))
+          && !listModule.isItemInList(new ItemStorage(MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getSmeltingResult(stack)));
     }
 
     /**
@@ -477,9 +490,8 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
         {
             return stack.getCount();
         }
-
-        if (ISFOOD.test(stack) && !this.getModuleMatching(ItemListModule.class, m -> m.getId().equals(FOOD_EXCLUSION_LIST))
-                                                                                    .isItemInList(new ItemStorage(stack)) && (localAlreadyKept.stream().filter(storage -> ISFOOD.test(storage.getItemStack())).mapToInt(ItemStorage::getAmount).sum() < STACKSIZE || !inventory))
+        ItemListModule listModule = this.getModuleMatching(ItemListModule.class, m -> m.getId().equals(FOOD_EXCLUSION_LIST));
+        if (isAllowedFood(stack) && (localAlreadyKept.stream().filter(storage -> ISFOOD.test(storage.getItemStack())).mapToInt(ItemStorage::getAmount).sum() < STACKSIZE || !inventory))
         {
             final ItemStorage kept = new ItemStorage(stack);
             if (localAlreadyKept.contains(kept))
