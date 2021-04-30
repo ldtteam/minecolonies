@@ -63,9 +63,9 @@ public class InteractionValidatorInitializer
           citizen -> InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(citizen.getInventory(), ISCOOKABLE) != -1
                        && InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(citizen.getInventory(), stack -> CAN_EAT.test(stack) && (citizen.getWorkBuilding() == null || citizen.getWorkBuilding().canEat(stack))) == -1);
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(BETTER_FOOD),
-          citizen -> !citizen.isChild() && citizen.needsBetterFood());
+          citizen -> citizen.getSaturation() == 0 && !citizen.isChild() && citizen.needsBetterFood());
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(BETTER_FOOD_CHILDREN),
-          citizen -> citizen.isChild() && citizen.needsBetterFood());
+          citizen -> citizen.getSaturation() == 0 && citizen.isChild() && citizen.needsBetterFood());
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(NO_RESTAURANT),
           citizen -> citizen.getColony() != null && citizen.getSaturation() <= LOW_SATURATION && citizen.getEntity().isPresent()
                        && citizen.getColony().getBuildingManager().getBestRestaurant(citizen.getEntity().get()) == null
