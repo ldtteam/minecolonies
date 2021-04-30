@@ -616,8 +616,6 @@
   "com.minecolonies.coremod.gui.cowboy.collect": "Collecting Milk",
   "com.minecolonies.coremod.gui.workerhuts.settings": "Settings",
   "com.minecolonies.coremod.gui.workerhuts.farmer": "Farmer",
-  "com.minecolonies.coremod.gui.herder.breeding": "Breeding",
-  "com.minecolonies.coremod.gui.herder.notbreeding": "Not Breeding",
 
   "com.minecolonies.coremod.gui.workerhuts.workorder": "Work Orders",
 
@@ -651,8 +649,6 @@
   "com.minecolonies.coremod.gui.workerhuts.barrackstower": "Barracks Tower",
 
   "com.minecolonies.coremod.gui.workerhuts.university": "University",
-  "com.minecolonies.coremod.gui.workerhuts.bakery": "Bakery",
-  "com.minecolonies.coremod.gui.workerhuts.bakery.recipes": "Recipes",
 
   "com.minecolonies.coremod.gui.workerhuts.level0": "You must construct this hut before you can hire a worker!",
 
@@ -1099,8 +1095,6 @@
   "block.blockHutTownHall.addofficermessagelink": "[ADD AS OFFICER]",
 
   "com.minecolonies.coremod.gui.shepherd.autodye": "Random sheep dyeing:",
-  "com.minecolonies.coremod.general.onbig": "On",
-  "com.minecolonies.coremod.general.offbig": "Off",
 
   "com.minecolonies.coremod.general.canttakeequipped": "The only armor you have is what you're wearing. Put it in your inventory if you want to give it to me.",
 
@@ -1151,7 +1145,6 @@
   "com.minecolonies.coremod.composted_dirt.player_use_message": "This block can be only used by the Florist!",
   "com.minecolonies.coremod.job.florist": "Florist",
   "tile.minecolonies.blockhutflorist.name": "Flower Shop",
-  "com.minecolonies.coremod.gui.workerhuts.florist": "Florist",
   "com.minecolonies.gui.workerhuts.florist.flowers": "Plantables",
   "com.minecolonies.gui.workerhuts.florist.toolow": "The Florist currently randomly grows the flowers in this list, upgrade the Flower Shop to level 3 or above to select them manually!",
   "com.minecolonies.gui.workerhuts.florist.toomany": "You can deactivate max 5 options. Upgrade to level 5 to restrict it further!",

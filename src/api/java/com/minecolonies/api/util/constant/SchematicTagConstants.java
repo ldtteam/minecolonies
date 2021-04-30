@@ -15,8 +15,4 @@ public class SchematicTagConstants
     public static final String ARCHER_RAIDER = "archer";
     public static final String BOSS_RAIDER   = "boss";
 
-    /**
-     * Graveyard constants.
-     */
-    public static final String GRAVE        = "grave";
 }

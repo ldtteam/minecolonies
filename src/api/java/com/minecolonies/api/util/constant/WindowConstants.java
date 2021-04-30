@@ -652,20 +652,10 @@ public final class WindowConstants
     public static final int XP_BAR_WIDTH = 182 / 2;
 
     /**
-     * The row where the empty xpBar starts.
-     */
-    public static final int XP_BAR_EMPTY_ROW = 64;
-
-    /**
      * The row where the emtpy Happiness bar starts.
      */
 
     public static final int HAPPINESS_BAR_EMPTY_ROW = 74;
-
-    /**
-     * The row where the full xpBar starts.
-     */
-    public static final int XP_BAR_FULL_ROW = 69;
 
     /**
      * The row where the full happiness bar starts.
@@ -1083,10 +1073,6 @@ public final class WindowConstants
      * The resource string.
      */
     public static final String RESOURCE_STRING   = ":gui/windowhutuniversity.xml";
-    public static final String BRANCH_VIEW_ID    = "pageBranches";
-    public static final int    INITITAL_X_OFFSET = 30;
-    public static final int    INITITAL_Y_OFFSET = 60;
-    public static final int    BUTTON_PADDING    = 10;
 
     /**
      * The job modifier page.
