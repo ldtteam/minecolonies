@@ -45,9 +45,7 @@ public interface IMCColonyOfficerCommand extends IMCCommand
         }
 
         // Check colony permissions
-        final Rank owner = colony.getPermissions().getRanks().get(colony.getPermissions().OWNER_RANK_ID);
-        if (IMCCommand.isPlayerOped((PlayerEntity) sender) || colony.getPermissions().getRank((PlayerEntity) sender) == owner
-              || colony.getPermissions().getRank((PlayerEntity) sender) == owner)
+        if (IMCCommand.isPlayerOped((PlayerEntity) sender) || colony.getPermissions().getRank((PlayerEntity) sender).isColonyManager())
         {
             return true;
         }

@@ -1254,7 +1254,7 @@ public class EntityCitizen extends AbstractEntityCitizen
             if (attackerColony != null && citizenColonyHandler.getColony() != null)
             {
                 final IPermissions permission = attackerColony.getPermissions();
-                citizenColonyHandler.getColony().getPermissions().addPlayer(permission.getOwner(), permission.getOwnerName(), permission.getRanks().get(permission.HOSTILE_RANK_ID));
+                citizenColonyHandler.getColony().getPermissions().addPlayer(permission.getOwner(), permission.getOwnerName(), permission.getRank(permission.HOSTILE_RANK_ID));
             }
         }
 

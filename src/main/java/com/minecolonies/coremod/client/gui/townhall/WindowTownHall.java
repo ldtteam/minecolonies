@@ -241,7 +241,44 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
         registerButton(BUTTON_ADD_RANK, this::addRank);
         registerButton(TOWNHALL_RANK_BUTTON, this::onRankButtonClicked);
         registerButton(BUTTON_REMOVE_RANK, this::onRemoveRankButtonClicked);
+        registerButton(TOWNHALL_PERM_MODE_TOGGLE, this::togglePermMode);
+        registerButton(TOWNHALL_BUTTON_HOSTILE, this::changeRankMode);
+        registerButton(TOWNHALL_BUTTON_MANAGER, this::changeRankMode);
+        registerButton(TOWNHALL_BUTTON_NONE, this::changeRankMode);
         colorDropDownList.setSelectedIndex(townHall.getColony().getTeamColonyColor().ordinal());
+    }
+
+    private void changeRankMode(Button button)
+    {
+        Network.getNetwork().sendToServer(new PermissionsMessage.EditRankType(townHall.getColony(), actionsRank, button.getID()));
+        button.setEnabled(false);
+        switch (button.getID())
+        {
+            case TOWNHALL_BUTTON_MANAGER:
+                findPaneOfTypeByID(TOWNHALL_BUTTON_NONE, Button.class).setEnabled(true);
+                findPaneOfTypeByID(TOWNHALL_BUTTON_HOSTILE, Button.class).setEnabled(true);
+                break;
+            case TOWNHALL_BUTTON_HOSTILE:
+                findPaneOfTypeByID(TOWNHALL_BUTTON_MANAGER, Button.class).setEnabled(true);
+                findPaneOfTypeByID(TOWNHALL_BUTTON_NONE, Button.class).setEnabled(true);
+                break;
+            default:
+                findPaneOfTypeByID(TOWNHALL_BUTTON_HOSTILE, Button.class).setEnabled(true);
+                findPaneOfTypeByID(TOWNHALL_BUTTON_MANAGER, Button.class).setEnabled(true);
+                break;
+        }
+    }
+
+    private void togglePermMode(Button button)
+    {
+        SwitchView permSwitch = findPaneOfTypeByID(TOWNHALL_PERM_MANAGEMENT, SwitchView.class);
+        permSwitch.setView(permSwitch.getCurrentView() != null && permSwitch.getCurrentView().getID().equals(TOWNHALL_PERM_LIST) ? TOWNHALL_PERM_SETTINGS : TOWNHALL_PERM_LIST);
+        if (permSwitch.getCurrentView().getID().equals(TOWNHALL_PERM_SETTINGS))
+        {
+            findPaneOfTypeByID(TOWNHALL_BUTTON_MANAGER, Button.class).setEnabled(!actionsRank.isColonyManager());
+            findPaneOfTypeByID(TOWNHALL_BUTTON_HOSTILE, Button.class).setEnabled(!actionsRank.isHostile());
+            findPaneOfTypeByID(TOWNHALL_BUTTON_NONE, Button.class).setEnabled(actionsRank.isHostile() || actionsRank.isColonyManager());
+        }
     }
 
     /**
@@ -409,6 +446,7 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
         createAndSetStatistics();
 
         findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).setView(PAGE_ACTIONS);
+        findPaneOfTypeByID(TOWNHALL_PERM_MANAGEMENT, SwitchView.class).setView(TOWNHALL_PERM_LIST);
 
         lastTabButton = findPaneOfTypeByID(BUTTON_ACTIONS, Button.class);
         lastTabButton.off();
@@ -526,6 +564,7 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
             actionsRank = rank;
             button.setEnabled(false);
             findPaneOfTypeByID(BUTTON_REMOVE_RANK, Button.class).setEnabled(!actionsRank.isInitial());
+            findPaneOfTypeByID(TOWNHALL_PERM_MANAGEMENT, SwitchView.class).setView(TOWNHALL_PERM_LIST);
         }
     }
 

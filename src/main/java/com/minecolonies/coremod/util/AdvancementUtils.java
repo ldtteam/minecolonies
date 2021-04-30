@@ -7,11 +7,9 @@ import com.minecolonies.coremod.MineColonies;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.server.MinecraftServer;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public class AdvancementUtils
 {
@@ -22,7 +20,7 @@ public class AdvancementUtils
         if (minecraftServer != null)
         {
             final List<Rank> ranks =
-              MineColonies.getConfig().getServer().officersReceiveAdvancements.get() ? Arrays.asList(colony.getPermissions().getRankOfficer(), colony.getPermissions().getRankOwner()) : Collections.singletonList(colony.getPermissions().getRankOwner());
+              MineColonies.getConfig().getServer().officersReceiveAdvancements.get() ? colony.getPermissions().getRanks().values().stream().filter(r -> r.isColonyManager()).collect(Collectors.toList()) : Collections.singletonList(colony.getPermissions().getRankOwner());
 
             for (final Player player : colony.getPermissions().getPlayersByRank(new HashSet<>(ranks)))
             {

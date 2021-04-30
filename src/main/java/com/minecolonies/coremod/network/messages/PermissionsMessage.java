@@ -23,6 +23,7 @@ import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 import java.util.UUID;
 
@@ -282,9 +283,9 @@ public class PermissionsMessage
         {
             final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, dimension);
 
-            if (colony != null && colony.getPermissions().hasPermission(ctxIn.getSender(), Action.CAN_PROMOTE) && colony.getWorld() != null)
+            if (colony != null && colony.getPermissions().hasPermission(ctxIn.getSender(), Action.EDIT_PERMISSIONS) && colony.getWorld() != null)
             {
-                colony.getPermissions().addPlayer(playerName, colony.getPermissions().getRanks().get(colony.getPermissions().NEUTRAL_RANK_ID), colony.getWorld());
+                colony.getPermissions().addPlayer(playerName, colony.getPermissions().getRank(colony.getPermissions().NEUTRAL_RANK_ID), colony.getWorld());
             }
             else
             {
@@ -428,9 +429,9 @@ public class PermissionsMessage
         {
             final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, dimension);
 
-            if (colony != null && colony.getPermissions().hasPermission(ctxIn.getSender(), Action.CAN_PROMOTE) && colony.getWorld() != null)
+            if (colony != null && colony.getPermissions().hasPermission(ctxIn.getSender(), Action.EDIT_PERMISSIONS) && colony.getWorld() != null)
             {
-                colony.getPermissions().addPlayer(id, playerName, colony.getPermissions().getRanks().get(colony.getPermissions().NEUTRAL_RANK_ID));
+                colony.getPermissions().addPlayer(id, playerName, colony.getPermissions().getRank(colony.getPermissions().NEUTRAL_RANK_ID));
             }
             else
             {
@@ -593,10 +594,10 @@ public class PermissionsMessage
             final PlayerEntity player = ctxIn.getSender();
             final Player permissionsPlayer = colony.getPermissions().getPlayers().get(playerID);
             final Rank hostile = colony.getPermissions().getRankHostile();
-            if ((permissionsPlayer.getRank() == hostile && colony.getPermissions().hasPermission(player, Action.EDIT_PERMISSIONS))
-                  || (permissionsPlayer.getRank() != hostile
+            if ((permissionsPlayer.getRank().isHostile() && colony.getPermissions().hasPermission(player, Action.EDIT_PERMISSIONS))
+                  || (!permissionsPlayer.getRank().isHostile()
                         && colony.getPermissions().hasPermission(player, Action.EDIT_PERMISSIONS)
-                        && permissionsPlayer.getRank() != colony.getPermissions().getRankOwner())
+                        && permissionsPlayer.getRank().isColonyManager())
                   || player.getUniqueID().equals(playerID))
             {
                 colony.getPermissions().removePlayer(playerID);
@@ -643,6 +644,7 @@ public class PermissionsMessage
             dimension = colony.getDimension();
         }
 
+        @Override
         public void toBytes(@NotNull final PacketBuffer buf)
         {
             buf.writeInt(colonyId);
@@ -650,6 +652,7 @@ public class PermissionsMessage
             buf.writeString(dimension.getLocation().toString());
         }
 
+        @Override
         public void fromBytes(@NotNull final PacketBuffer buf)
         {
             colonyId = buf.readInt();
@@ -657,12 +660,73 @@ public class PermissionsMessage
             dimension = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(buf.readString(32767)));
         }
 
+        @Override
         public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
         {
             final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, dimension);
             if (colony != null && colony.getPermissions().hasPermission(ctxIn.getSender(), Action.EDIT_PERMISSIONS))
             {
                 colony.getPermissions().removeRank(colony.getPermissions().getRanks().get(rankId));
+            }
+        }
+    }
+
+    public static class EditRankType implements IMessage
+    {
+        private int colonyId;
+        private int rankId;
+        private RegistryKey<World> dimension;
+        private String rankType;
+
+        public EditRankType() { super(); }
+
+        public EditRankType(@NotNull final IColonyView colony, @NotNull final Rank rank, @NotNull final String rankType)
+        {
+            this.colonyId = colony.getID();
+            this.rankId = rank.getId();
+            this.dimension = colony.getDimension();
+            this.rankType = rankType;
+        }
+
+        @Override
+        public void toBytes(final PacketBuffer buf)
+        {
+            buf.writeInt(colonyId);
+            buf.writeInt(rankId);
+            buf.writeString(dimension.getLocation().toString());
+            buf.writeString(rankType);
+        }
+
+        @Override
+        public void fromBytes(final PacketBuffer buf)
+        {
+            this.colonyId = buf.readInt();
+            this.rankId = buf.readInt();
+            this.dimension = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(buf.readString(32767)));
+            this.rankType = buf.readString(32767);
+        }
+
+        @Override
+        public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+        {
+            final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, dimension);
+            if (colony != null && colony.getPermissions().hasPermission(ctxIn.getSender(), Action.EDIT_PERMISSIONS))
+            {
+                final Rank rank = colony.getPermissions().getRank(rankId);
+                switch (rankType)
+                {
+                    case TOWNHALL_BUTTON_MANAGER:
+                        rank.setColonyManager(true);
+                        rank.setHostile(false);
+                        break;
+                    case TOWNHALL_BUTTON_HOSTILE:
+                        rank.setHostile(true);
+                        rank.setColonyManager(false);
+                        break;
+                    default:
+                        rank.setHostile(false);
+                        rank.setColonyManager(false);
+                }
             }
         }
     }
