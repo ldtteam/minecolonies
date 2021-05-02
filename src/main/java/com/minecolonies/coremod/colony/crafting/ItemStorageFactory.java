@@ -26,6 +26,16 @@ public class ItemStorageFactory implements IItemStorageFactory
      */
     private static final String TAG_STACK = "stack";
 
+    /**
+     * Compound tag for the NBT info
+     */
+    private static final String TAG_SHOULDIGNORENBT = "ignoreNBT";
+
+    /**
+     * Compound tag for the Damage Match Info
+     */
+    private static final String TAG_SHOULDIGNOREDAMAGE = "ignoreDamage";
+
     @NotNull
     @Override
     public TypeToken<ItemStorage> getFactoryOutputType()
@@ -42,9 +52,12 @@ public class ItemStorageFactory implements IItemStorageFactory
 
     @NotNull
     @Override
-    public ItemStorage getNewInstance(@NotNull final ItemStack stack, final int size)
+    public ItemStorage getNewInstance(@NotNull final ItemStack stack, final int size, final boolean ignoreDamage, final boolean ignoreNBT)
     {
-        return new ItemStorage(stack, size, false);
+        ItemStorage newItem = new ItemStorage(stack, ignoreDamage, ignoreNBT);
+        newItem.setAmount(size);
+        return newItem;
+
     }
 
     @NotNull
@@ -56,6 +69,8 @@ public class ItemStorageFactory implements IItemStorageFactory
         storage.getItemStack().write(stackTag);
         compound.put(TAG_STACK, stackTag);
         compound.putInt(TAG_SIZE, storage.getAmount());
+        compound.putBoolean(TAG_SHOULDIGNOREDAMAGE, storage.ignoreDamageValue());
+        compound.putBoolean(TAG_SHOULDIGNORENBT , storage.ignoreNBT());
         return compound;
     }
 
@@ -65,7 +80,9 @@ public class ItemStorageFactory implements IItemStorageFactory
     {
         final ItemStack stack = ItemStack.read(nbt.getCompound(TAG_STACK));
         final int size = nbt.getInt(TAG_SIZE);
-        return this.getNewInstance(stack, size);
+        final boolean ignoreNBT = nbt.getBoolean(TAG_SHOULDIGNORENBT);
+        final boolean ignoreDamage = nbt.getBoolean(TAG_SHOULDIGNOREDAMAGE);
+        return this.getNewInstance(stack, size, ignoreDamage, ignoreNBT);
     }
 
     @Override
@@ -73,6 +90,8 @@ public class ItemStorageFactory implements IItemStorageFactory
     {
         packetBuffer.writeItemStack(input.getItemStack());
         packetBuffer.writeVarInt(input.getAmount());
+        packetBuffer.writeBoolean(input.ignoreDamageValue());
+        packetBuffer.writeBoolean(input.ignoreNBT());
     }
 
     @Override
@@ -80,7 +99,9 @@ public class ItemStorageFactory implements IItemStorageFactory
     {
         final ItemStack stack = buffer.readItemStack();
         final int size = buffer.readVarInt();
-        return this.getNewInstance(stack, size);
+        final boolean ignoreDamage = buffer.readBoolean();
+        final boolean ignoreNBT = buffer.readBoolean();
+        return this.getNewInstance(stack, size, ignoreDamage, ignoreNBT);
     }
 
     @Override
