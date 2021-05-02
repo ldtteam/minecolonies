@@ -235,7 +235,8 @@ public final class ModBuildingsInitializer
                                   .setBuildingViewProducer(() -> BuildingShepherd.View::new)
                                   .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.SHEPHERD_ID))
                                   .addBuildingModuleProducer(() -> new SettingsModule().with(AbstractBuildingWorker.BREEDING, new BoolSetting(true))
-                                                                                       .with(BuildingShepherd.DYEING, new BoolSetting(true)), SettingsModuleView::new)
+                                                                                       .with(BuildingShepherd.DYEING, new BoolSetting(true))
+                                                                                       .with(BuildingShepherd.SHEARING, new BoolSetting(true)), SettingsModuleView::new)
                                   .createBuildingEntry();
 
         ModBuildings.sifter = new BuildingEntry.Builder()
