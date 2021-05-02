@@ -210,6 +210,11 @@ public class WindowResourceList extends AbstractWindowSkeleton
             rowPane.findPaneOfTypeByID(IN_DELIVERY_ICON, Image.class).setVisible(true);
             rowPane.findPaneOfTypeByID(IN_DELIVERY_AMOUNT, Text.class).setText("" + resource.getAmountInDelivery());
         }
+        else
+        {
+            rowPane.findPaneOfTypeByID(IN_DELIVERY_ICON, Image.class).setVisible(false);
+            rowPane.findPaneOfTypeByID(IN_DELIVERY_AMOUNT, Text.class).setText("");
+        }
 
         switch (resource.getAvailabilityStatus())
         {
