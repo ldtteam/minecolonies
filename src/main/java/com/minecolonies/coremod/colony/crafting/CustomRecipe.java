@@ -25,8 +25,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
  * This class represents a recipe loaded from custom data that is available to a crafter
@@ -96,16 +101,6 @@ public class CustomRecipe
     public static final String RECIPE_LOOTTABLE_PROP = "loot-table";
 
     /**
-     * The property name for Count, used both in inputs array and for result
-     */
-    public static final String COUNT_PROP = "count";
-
-    /**
-     * The property name for the item id in the inputs array
-     */
-    public static final String ITEM_PROP = "item";
-
-    /**
      * The property name for the intermediate block ID
      */
     public static final String RECIPE_INTERMEDIATE_PROP = "intermediate";
@@ -136,6 +131,11 @@ public class CustomRecipe
     public static final String RECIPE_MUST_EXIST = "must-exist";
 
     /**
+     * The property name to enable tooltip display (and transmission to the client).
+     */
+    public static final String RECIPE_SHOW_TOOLTIP = "show-tooltip";
+
+    /**
      * The crafter name for this instance, defaults to 'unknown'
      */
     private String crafter = "unknown";
@@ -148,12 +148,12 @@ public class CustomRecipe
     /**
      * The list of ItemStacks for input to the recipe
      */
-    private ArrayList<ItemStorage> inputs = new ArrayList<>();
+    private List<ItemStorage> inputs = new ArrayList<>();
 
     /**
      * The list of ItemStacks for alternate (multi-recipe) outputs from the recipe
      */
-    private ArrayList<ItemStack> altOutputs = new ArrayList<>();
+    private List<ItemStack> altOutputs = new ArrayList<>();
 
     /**
      * the result ItemStack
@@ -163,7 +163,7 @@ public class CustomRecipe
     /**
      * The list of ItemStacks for additional outputs to the recipe
      */
-    private ArrayList<ItemStack> secondary = new ArrayList<>();
+    private List<ItemStack> secondary = new ArrayList<>();
 
     /**
      * The Intermediate Block
@@ -196,6 +196,11 @@ public class CustomRecipe
     private boolean mustExist = false;
 
     /**
+     * If true, display the recipe's requirements and crafter in an Inventory / JEI tooltip.
+     */
+    private boolean showTooltip = false;
+
+    /**
      * The loottable to use for possible additional outputs
      */
     private ResourceLocation lootTable;
@@ -210,51 +215,6 @@ public class CustomRecipe
      */
     private CustomRecipe()
     {
-    }
-
-    /**
-     * Convert an Item string with NBT to an ItemStack
-     * @param itemData ie: minecraft:potion{Potion=minecraft:water}
-     * @return stack with any defined NBT
-     */
-    private static ItemStack idToItemStack(final String itemData)
-    {
-        String itemId = itemData;
-        final int tagIndex = itemId.indexOf("{");
-        final String tag = tagIndex > 0 ? itemId.substring(tagIndex) : null;
-        itemId = tagIndex > 0 ? itemId.substring(0, tagIndex) : itemId;
-        String[] split = itemId.split(":");
-        if(split.length != 2)
-        {
-            if(split.length == 1)
-            {
-                final String[] tempArray ={"minecraft", split[0]};
-                split = tempArray;
-            }
-            else
-            {
-                Log.getLogger().error("Unable to parse item definition: " + itemData);
-            }
-        }
-        final Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(split[0], split[1]));
-        final ItemStack stack = new ItemStack(item);
-        if (tag != null)
-        {
-            try
-            {
-                stack.setTag(JsonToNBT.getTagFromJson(tag));
-            }
-            catch (CommandSyntaxException e1)
-            {
-                //Unable to parse tags, drop them.
-                Log.getLogger().error("Unable to parse item definition: " + itemData);
-            }
-        }
-        if (stack.isEmpty())
-        {
-            Log.getLogger().warn("Parsed item definition returned empty: " + itemData);
-        }
-        return stack;
     }
 
     /**
@@ -280,23 +240,17 @@ public class CustomRecipe
                 if (e.isJsonObject())
                 {
                     JsonObject ingredient = e.getAsJsonObject();
-                    if (ingredient.has(ITEM_PROP))
-                    {
-                        final ItemStack stack = idToItemStack(ingredient.get(ITEM_PROP).getAsString());
-                        if(ingredient.has(COUNT_PROP))
-                        {
-                            stack.setCount(ingredient.get(COUNT_PROP).getAsInt());
-                        }
-                        recipe.inputs.add(new ItemStorage(stack));
+                    ItemStorage parsed = new ItemStorage(ingredient);
+                    if(!parsed.isEmpty()) {
+                        recipe.inputs.add(parsed);
                     }
-
                 }
             }
         }
 
         if (recipeJson.has(RECIPE_RESULT_PROP))
         {
-            recipe.result = idToItemStack(recipeJson.get(RECIPE_RESULT_PROP).getAsString());
+            recipe.result = ItemStackUtils.idToItemStack(recipeJson.get(RECIPE_RESULT_PROP).getAsString());
         }
         else
         {
@@ -317,7 +271,7 @@ public class CustomRecipe
                     JsonObject ingredient = e.getAsJsonObject();
                     if (ingredient.has(ITEM_PROP))
                     {
-                        final ItemStack stack = idToItemStack(ingredient.get(ITEM_PROP).getAsString());
+                        final ItemStack stack = ItemStackUtils.idToItemStack(ingredient.get(ITEM_PROP).getAsString());
                         if(ingredient.has(COUNT_PROP))
                         {
                             stack.setCount(ingredient.get(COUNT_PROP).getAsInt());
@@ -339,7 +293,7 @@ public class CustomRecipe
                     JsonObject ingredient = e.getAsJsonObject();
                     if (ingredient.has(ITEM_PROP))
                     {
-                        final ItemStack stack = idToItemStack(ingredient.get(ITEM_PROP).getAsString());
+                        final ItemStack stack = ItemStackUtils.idToItemStack(ingredient.get(ITEM_PROP).getAsString());
                         if(ingredient.has(COUNT_PROP))
                         {
                             stack.setCount(ingredient.get(COUNT_PROP).getAsInt());
@@ -384,8 +338,47 @@ public class CustomRecipe
         {
             recipe.mustExist = recipeJson.get(RECIPE_MUST_EXIST).getAsBoolean();
         }
+        if(recipeJson.has(RECIPE_SHOW_TOOLTIP))
+        {
+            recipe.showTooltip = recipeJson.get(RECIPE_SHOW_TOOLTIP).getAsBoolean();
+        }
 
         return recipe;
+    }
+
+    /**
+     * Creates a custom recipe from its components.
+     * @param crafter           The crafter for the recipe.
+     * @param minBldgLevel      Minimum level before the recipe can be learned.
+     * @param maxBldgLevel      Maximum level before buildings in the colony will remove the recipe, if learned.
+     * @param mustExist         If true, the custom recipe will only be learned if another recipe with the same output is taught to the building.
+     * @param showTooltip       If a tooltip describing the recipe should be attached to the item.  Only one recipe per output should have showTooltip set to true.
+     * @param recipeId          The identifier for the recipe, as a resource location.
+     * @param researchReq       Research ID that the colony must have to begin the research.
+     * @param researchExclude   Research ID that will cause buildings in the colony to remove the recipe, if learned.
+     * @param lootTable         The loot table's resource location, if one is present.
+     * @param inputs            The consumed items, as ItemStorages.
+     * @param primaryOutput     The primary output of the recipe.
+     * @param secondaryOutput   The secondary outputs of the recipe. Most often items like buckets or tools.
+     * @param altOutputs        Alternative outputs of the recipe.  Used to allow one taught recipe to result in multiple effective choices for the request system.
+     */
+    public CustomRecipe(final String crafter, final int minBldgLevel, final int maxBldgLevel, final boolean mustExist, final boolean showTooltip, final ResourceLocation recipeId,
+      @Nullable final ResourceLocation researchReq, @Nullable final ResourceLocation researchExclude, @Nullable final ResourceLocation lootTable, final List<ItemStorage> inputs,
+      final ItemStack primaryOutput, final List<ItemStack> secondaryOutput, final List<ItemStack> altOutputs)
+    {
+        this.crafter = crafter;
+        this.recipeId = recipeId;
+        this.researchId = researchReq;
+        this.excludedResearchId = researchExclude;
+        this.minBldgLevel = minBldgLevel;
+        this.maxBldgLevel = maxBldgLevel;
+        this.mustExist = mustExist;
+        this.showTooltip = showTooltip;
+        this.inputs = inputs;
+        this.result = primaryOutput;
+        this.secondary = secondaryOutput;
+        this.altOutputs = altOutputs;
+        this.lootTable = lootTable;
     }
 
     /**
@@ -404,6 +397,52 @@ public class CustomRecipe
     public ResourceLocation getRecipeId()
     {
         return recipeId;
+    }
+
+    /**
+     * Gets the input items for this recipe
+     * @return input ItemStorages
+     */
+    public List<ItemStorage> getInputs()
+    {
+        return inputs;
+    }
+
+    /**
+     * Get the primary output for the recipe
+     * @return primary output ItemStack
+     */
+    public ItemStack getPrimaryOutput()
+    {
+        return result;
+    }
+
+    /**
+     * Get the secondary outputs for the recipe.
+     * @return secondary output ItemStacks
+     */
+    public List<ItemStack> getSecondaryOutput()
+    {
+        return secondary;
+    }
+
+    /**
+     * Get the alternative outputs for the recipe.
+     *
+     * @return alternative output ItemStacks
+     */
+    public List<ItemStack> getAltOutputs()
+    {
+        return altOutputs;
+    }
+
+    /**
+     * Get the Loot Table, if one is present.
+     * @return Loot Table resource location
+     */
+    public ResourceLocation getLootTable()
+    {
+        return lootTable;
     }
 
     /**
@@ -530,7 +569,7 @@ public class CustomRecipe
     }
 
     /**
-     * Get a the recipe storage represented by this recipe
+     * Get the recipe storage represented by this recipe
      * @return Recipe Storage
      */
     public IRecipeStorage getRecipeStorage()
@@ -615,4 +654,11 @@ public class CustomRecipe
         return mustExist;
     }
 
+    /**
+     * Should tooltip information be displayed on the client in inventory and JEI?
+     */
+    public boolean getShowTooltip()
+    {
+        return showTooltip;
+    }
 }

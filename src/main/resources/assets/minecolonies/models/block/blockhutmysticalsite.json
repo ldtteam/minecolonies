@@ -7,7 +7,8 @@
 		"5": "block/cauldron_side",
 		"6": "block/oak_planks",
 		"7": "block/stripped_oak_log",
-		"11": "minecolonies:blocks/books/sketchbook_3"
+		"11": "minecolonies:blocks/books/sketchbook_3",
+		"particle": "block/stripped_oak_log"
 	},
 	"elements": [
 		{

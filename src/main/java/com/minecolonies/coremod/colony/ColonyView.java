@@ -858,10 +858,6 @@ public final class ColonyView implements IColonyView
         }
 
         this.manager.readFromNBT(buf.readCompoundTag());
-        if (isCoordInColony(world, Minecraft.getInstance().player.getPosition()))
-        {
-            ItemBlockHut.checkResearch(this);
-        }
 
         final int ticketChunkCount = buf.readInt();
         if (ticketChunkCount != -1)
@@ -1145,6 +1141,35 @@ public final class ColonyView implements IColonyView
     public boolean hasWarehouse()
     {
         return hasColonyWarehouse;
+    }
+
+    @Override
+    public boolean hasBuilding(final String name, final int level, final boolean singleBuilding)
+    {
+        int sum = 0;
+        for (final IBuildingView building : buildings.values())
+        {
+            if (building.getSchematicName().equals(name))
+            {
+                if (singleBuilding)
+                {
+                    if (building.getBuildingLevel() >= level)
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    sum += building.getBuildingLevel();
+
+                    if (sum >= level)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     @Override

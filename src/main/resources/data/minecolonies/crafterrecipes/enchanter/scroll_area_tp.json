@@ -10,5 +10,6 @@
   "result": "minecolonies:scroll_area_tp",
   "count": 1,
   "intermediate": "minecraft:air",
-  "min-building-level": 2
+  "min-building-level": 2,
+  "show-tooltip": true
 }

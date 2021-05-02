@@ -40,9 +40,9 @@ public class PathingStuckHandler implements IStuckHandler
     private int teleportRange = 0;
 
     /**
-     * Max timeout per block to go, default = 5sec per block
+     * Max timeout per block to go, default = 10sec per block
      */
-    private int timePerBlockDistance = 100;
+    private int timePerBlockDistance = 200;
 
     /**
      * The current stucklevel, determines actions taken
@@ -154,7 +154,7 @@ public class PathingStuckHandler implements IStuckHandler
             globalTimeout++;
 
             // Try path first, if path fits target pos
-            if (stuckLevel > 4 && globalTimeout > timePerBlockDistance * distanceToGoal)
+            if (globalTimeout > timePerBlockDistance * distanceToGoal)
             {
                 completeStuckAction(navigator);
             }

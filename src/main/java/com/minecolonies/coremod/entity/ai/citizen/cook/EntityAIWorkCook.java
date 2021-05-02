@@ -240,6 +240,11 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
      */
     private boolean canEat(final ItemStack stack)
     {
+        final ItemListModule module = ((BuildingCook) worker.getCitizenData().getWorkBuilding()).getModuleMatching(ItemListModule.class, m -> m.getId().equals(FOOD_EXCLUSION_LIST));
+        if (module.isItemInList(new ItemStorage(stack)))
+        {
+            return false;
+        }
         if (!citizenToServe.isEmpty())
         {
             final IBuildingWorker building = citizenToServe.get(0).getCitizenData().getWorkBuilding();

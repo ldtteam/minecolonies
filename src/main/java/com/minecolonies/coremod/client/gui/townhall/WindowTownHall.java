@@ -1132,6 +1132,7 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
             }
             pane.addChild(image);
             pane.addChild(label);
+            PaneBuilders.tooltipBuilder().hoverPane(label).append(new TranslationTextComponent("com.minecolonies.coremod.gui.townhall.happiness.desc." + entry.getKey())).build();
 
             yPos += 12;
         }

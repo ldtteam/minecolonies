@@ -8,6 +8,9 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.AbstractWindowWorkerModuleBuilding;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBeekeeper;
 import com.minecolonies.coremod.network.messages.server.colony.building.beekeeper.BeekeeperScepterMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.beekeeper.BeekeeperSetHarvestHoneycombsMessage;
+
+import static com.minecolonies.api.research.util.ResearchConstants.BEEKEEP_2;
 
 /**
  * Window for the beekeeper hut.
@@ -24,7 +27,7 @@ public class WindowHutBeekeeperModule extends AbstractWindowWorkerModuleBuilding
     /**
      * Button for toggling honeycomb harvesting.
      */
-    private Button buttonHarvestHoneycombs;
+    private final Button buttonHarvestHoneycombs;
 
     /**
      * Constructor for the window of the worker building.
@@ -38,13 +41,17 @@ public class WindowHutBeekeeperModule extends AbstractWindowWorkerModuleBuilding
 
         buttonHarvestHoneycombs = findPaneOfTypeByID(BUTTON_HARVEST_HONEYCOMB, Button.class);
 
-        if (building.isHarvestHoneycombs())
+        switch (building.isHarvestHoneycombs())
         {
-            buttonHarvestHoneycombs.setText(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BEEKEEPER_COLLECT));
-        }
-        else
-        {
-            buttonHarvestHoneycombs.setText(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BEEKEEPER_NOTCOLLECT));
+            case HONEYCOMBS:
+                buttonHarvestHoneycombs.setText(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BEEKEEPER_COLLECTCOMB));
+                break;
+            case HONEY_BOTTLES:
+                buttonHarvestHoneycombs.setText(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BEEKEEPER_COLLECTBOTTLE));
+                break;
+            case BOTH:
+                buttonHarvestHoneycombs.setText(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BEEKEEPER_COLLECTBOTH));
+                break;
         }
 
         registerButton(BUTTON_GIVE_TOOL, this::givePlayerScepter);
@@ -60,15 +67,22 @@ public class WindowHutBeekeeperModule extends AbstractWindowWorkerModuleBuilding
 
     private void harvestHoneycombClicked()
     {
-        if (buttonHarvestHoneycombs.getTextAsString().equals(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BEEKEEPER_COLLECT)))
+        // can't use switch/case, due to LanguageHandlers.
+        if (buttonHarvestHoneycombs.getTextAsString().equals(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BEEKEEPER_COLLECTCOMB)))
         {
-            buttonHarvestHoneycombs.setText(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BEEKEEPER_NOTCOLLECT));
-            building.setHarvestHoneycombs(false);
+            buttonHarvestHoneycombs.setText(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BEEKEEPER_COLLECTBOTTLE));
+            building.setHarvestHoneycombs(BeekeeperSetHarvestHoneycombsMessage.HarvestType.HONEY_BOTTLES);
+        }
+        else if(buttonHarvestHoneycombs.getTextAsString().equals(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BEEKEEPER_COLLECTBOTTLE)) &&
+                 building.getColony().getResearchManager().getResearchEffects().getEffectStrength(BEEKEEP_2) > 0)
+        {
+            buttonHarvestHoneycombs.setText(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BEEKEEPER_COLLECTBOTH));
+            building.setHarvestHoneycombs(BeekeeperSetHarvestHoneycombsMessage.HarvestType.BOTH);
         }
         else
         {
-            buttonHarvestHoneycombs.setText(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BEEKEEPER_COLLECT));
-            building.setHarvestHoneycombs(true);
+            buttonHarvestHoneycombs.setText(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BEEKEEPER_COLLECTCOMB));
+            building.setHarvestHoneycombs(BeekeeperSetHarvestHoneycombsMessage.HarvestType.HONEYCOMBS);
         }
     }
 

@@ -168,7 +168,11 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_CHORUS_BREAD_TOOLTIP_GUI                    = "com.minecolonies.coremod.item.chorus.bread.gui";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_BREAD_AVAILABLE_TOOLTIP_GUI                 = "com.minecolonies.coremod.item.bread.available.gui";
+    public static final String COM_MINECOLONIES_COREMOD_ITEM_AVAILABLE_TOOLTIP_GUI                  = "com.minecolonies.coremod.item.available.gui";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_ITEM_BUILDLEVEL_TOOLTIP_GUI                 = "com.minecolonies.coremod.item.buildlevel.gui";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_ITEM_REQUIRES_RESEARCH_TOOLTIP_GUI          = "com.minecolonies.coremod.item.requiresresearch.gui";
     @NonNls
     public static final String CITIZEN_RENAME_SAME                                                  = "com.minecolonies.coremod.citizen.rename.same";
     @NonNls
@@ -258,9 +262,11 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_COWBOY_NOTCOLLECT                       = "com.minecolonies.coremod.gui.cowboy.notcollect";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_BEEKEEPER_COLLECT                       = "com.minecolonies.coremod.gui.beekeeper.collect";
+    public static final String COM_MINECOLONIES_COREMOD_GUI_BEEKEEPER_COLLECTCOMB                   = "com.minecolonies.coremod.gui.beekeeper.collectcomb";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_BEEKEEPER_NOTCOLLECT                    = "com.minecolonies.coremod.gui.beekeeper.notcollect";
+    public static final String COM_MINECOLONIES_COREMOD_GUI_BEEKEEPER_COLLECTBOTTLE                 = "com.minecolonies.coremod.gui.beekeeper.collectbottle";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_GUI_BEEKEEPER_COLLECTBOTH                 = "com.minecolonies.coremod.gui.beekeeper.collectboth";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_MODE_AUTO                    = "com.minecolonies.coremod.gui.workerhuts.modeA";
     @NonNls
@@ -423,8 +429,6 @@ public final class TranslationConstants
     public static final String WAREHOUSE_SORTED                                                     = "com.minecolonies.coremod.gui.warehouse.sorted";
     @NonNls
     public static final String ALL_CITIZENS_ARE_SLEEPING                                            = "com.minecolonies.coremod.entity.citizen.sleep";
-    @NonNls
-    public static final String GATE_CRAFTING_TOOLTIP                                                = "com.minecolonies.coremod.item.gate.craft";
     @NonNls
     public static final String GATE_PLACEMENT_TOOLTIP                                               = "com.minecolonies.coremod.item.gate.place";
     @NonNls

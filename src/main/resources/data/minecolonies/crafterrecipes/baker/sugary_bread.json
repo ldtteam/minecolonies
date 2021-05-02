@@ -14,5 +14,6 @@
   "result": "minecolonies:sugary_bread",
   "count": 4,
   "intermediate" : "minecraft:air",
-  "min-building-level" : 3
+  "min-building-level" : 3,
+  "show-tooltip": true
 }

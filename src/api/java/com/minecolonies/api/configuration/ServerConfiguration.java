@@ -1,5 +1,6 @@
 package com.minecolonies.api.configuration;
 
+import com.minecolonies.api.colony.permissions.Explosions;
 import com.minecolonies.api.util.constant.NameConstants;
 import net.minecraftforge.common.ForgeConfigSpec;
 
@@ -121,7 +122,7 @@ public class ServerConfiguration extends AbstractConfiguration
      *  ----------------------------------------------------------------------------- */
 
     public final ForgeConfigSpec.BooleanValue                        enableColonyProtection;
-    public final ForgeConfigSpec.BooleanValue                        turnOffExplosionsInColonies;
+    public final ForgeConfigSpec.EnumValue<Explosions>               turnOffExplosionsInColonies;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> specialPermGroup;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> freeToInteractBlocks;
     public final ForgeConfigSpec.IntValue                            secondsBetweenPermissionMessages;
@@ -265,7 +266,7 @@ public class ServerConfiguration extends AbstractConfiguration
         swapToCategory(builder, "permissions");
 
         enableColonyProtection = defineBoolean(builder, "enablecolonyprotection", true);
-        turnOffExplosionsInColonies = defineBoolean(builder, "turnoffexplosionsincolonies", true);
+        turnOffExplosionsInColonies = defineEnum(builder, "turnoffexplosionsincolonies", Explosions.DAMAGE_NOTHING);
         specialPermGroup = defineList(builder, "specialpermgroup",
           Arrays.asList
                    ("_Raycoms_"),

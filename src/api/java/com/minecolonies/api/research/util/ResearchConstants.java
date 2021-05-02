@@ -140,6 +140,7 @@ public final class ResearchConstants
     public static final ResourceLocation FIRE_RES          = new ResourceLocation(Constants.MOD_ID, "effects/minerfireresunlock");
     public static final ResourceLocation ARROW_PIERCE      = new ResourceLocation(Constants.MOD_ID, "effects/piercingarrowsunlock");
     public static final ResourceLocation PLANT_2           = new ResourceLocation(Constants.MOD_ID, "effects/plant2unlock");
+    public static final ResourceLocation BEEKEEP_2         = new ResourceLocation(Constants.MOD_ID, "effects/beekeep2unlock");
     public static final ResourceLocation PLATE_ARMOR       = new ResourceLocation(Constants.MOD_ID, "effects/platearmorunlock");
     public static final ResourceLocation RAILS             = new ResourceLocation(Constants.MOD_ID, "effects/railsunlock");
     public static final ResourceLocation RETREAT           = new ResourceLocation(Constants.MOD_ID, "effects/retreatunlock");
