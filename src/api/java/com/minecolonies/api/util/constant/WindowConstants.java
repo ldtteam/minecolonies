@@ -1085,7 +1085,6 @@ public final class WindowConstants
     public static final String BUTTON_REMOVE_RANK = "removeRank";
     public static final String TOWNHALL_RANK_LIST = "rankList";
     public static final String TOWNHALL_ADD_RANK_ERROR = "rankNameError";
-    public static final String TOWNHALL_EDIT_PLAYER_BOX = "editPlayerRankBox";
     public static final String TOWNHALL_PLAYER_NAME = "playerName";
     public static final String TOWNHALL_RANK_PICKER = "rankPicker";
     public static final String TOWNHALL_PERM_MANAGEMENT = "permissionsManagement";
@@ -1095,6 +1094,11 @@ public final class WindowConstants
     public static final String TOWNHALL_BUTTON_MANAGER = "typeManager";
     public static final String TOWNHALL_BUTTON_HOSTILE = "typeHostile";
     public static final String TOWNHALL_BUTTON_NONE = "typeNone";
+    public static final String TOWNHALL_BUTTON_SUBSCRIBER = "setSubscriber";
+    public static final String TOWNHALL_SWITCH_PLAYER = "switchPlayer";
+    public static final String TOWNHALL_SWITCH_PLAYER_LIST = "playerList";
+    public static final String TOWNHALL_SWITCH_PLAYER_RANK = "playerEditRank";
+    public static final String TOWNHALL_USER_VIEW = "pageAddPlayer";
 
     /**
      * Input filter id.

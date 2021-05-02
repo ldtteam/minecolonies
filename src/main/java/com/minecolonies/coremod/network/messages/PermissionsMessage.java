@@ -727,7 +727,57 @@ public class PermissionsMessage
                         rank.setHostile(false);
                         rank.setColonyManager(false);
                 }
+                colony.markDirty();
             }
         }
+    }
+
+    public static class SetSubscriber implements IMessage
+    {
+        private int colonyId;
+        private int rankId;
+        private RegistryKey<World> dimension;
+        private boolean isSubscriber;
+
+        public SetSubscriber() { super(); }
+
+        public SetSubscriber(@NotNull final IColonyView colony, @NotNull final Rank rank, @NotNull final boolean isSubscriber)
+        {
+            this.colonyId = colony.getID();
+            this.dimension = colony.getDimension();
+            this.rankId = rank.getId();
+            this.isSubscriber = isSubscriber;
+        }
+
+        @Override
+        public void toBytes(final PacketBuffer buf)
+        {
+            buf.writeInt(colonyId);
+            buf.writeString(dimension.toString());
+            buf.writeInt(rankId);
+            buf.writeBoolean(isSubscriber);
+        }
+
+        @Override
+        public void fromBytes(final PacketBuffer buf)
+        {
+            this.colonyId = buf.readInt();
+            this.dimension = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(buf.readString(32767)));
+            this.rankId = buf.readInt();
+            this.isSubscriber = buf.readBoolean();
+        }
+
+        @Override
+        public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+        {
+            final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, dimension);
+            if (colony != null && colony.getPermissions().hasPermission(ctxIn.getSender(), Action.EDIT_PERMISSIONS))
+            {
+                colony.getPermissions().getRank(rankId).setSubscriber(isSubscriber);
+                colony.markDirty();
+            }
+        }
+
+
     }
 }

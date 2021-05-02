@@ -95,6 +95,8 @@ public class Rank
         this.isHostile = isHostile;
     }
 
+    public void setSubscriber(boolean isSubscriber) { this.isSubscriber = isSubscriber; }
+
     @Override
     public boolean equals(final Object o)
     {
