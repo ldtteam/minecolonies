@@ -23,6 +23,7 @@ import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.FurnaceBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Hand;
@@ -77,6 +78,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
           new AIEventTarget(AIBlockingEventType.EVENT, this::accelerateFurnaces, this::getState, TICKS_SECOND),
           new AITarget(START_USING_FURNACE, this::fillUpFurnace, TICKS_SECOND),
           new AITarget(RETRIEVING_END_PRODUCT_FROM_FURNACE, this::retrieveSmeltableFromFurnace, TICKS_SECOND),
+          new AITarget(RETRIEVING_USED_FUEL_FROM_FURNACE, this::retrieveUsedFuel, TICKS_SECOND),
           new AITarget(ADD_FUEL_TO_FURNACE, this::addFuelToFurnace, TICKS_SECOND)
         );
     }
@@ -128,6 +130,15 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
         }
 
         job.setMaxCraftingCount(currentTask.getRequest().getCount());
+
+        final BlockPos furnacePosWithUsedFuel = getPositionOfOvenToRetrieveFuelFrom();
+        if (furnacePosWithUsedFuel != null)
+        {
+            currentRequest = currentTask;
+            walkTo = furnacePosWithUsedFuel;
+            return RETRIEVING_USED_FUEL_FROM_FURNACE;
+        }
+
         final BlockPos furnacePos = getPositionOfOvenToRetrieveFrom();
         if (furnacePos != null)
         {
@@ -423,6 +434,31 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
         return null;
     }
 
+    /**
+     * Get the furnace which has used fuel. For this check each furnace which has been registered to the building. Check if the furnace has used fuel in the fuel slot.
+     *
+     * @return the position of the furnace.
+     */
+    protected BlockPos getPositionOfOvenToRetrieveFuelFrom()
+    {
+        for (final BlockPos pos : getOwnBuilding().getFurnaces())
+        {
+            final TileEntity entity = world.getTileEntity(pos);
+            if (entity instanceof FurnaceTileEntity)
+            {
+                final FurnaceTileEntity furnace = (FurnaceTileEntity) entity;
+
+                if (!furnace.getStackInSlot(FUEL_SLOT).isEmpty() && !compareItemStackListIgnoreStackSize(getOwnBuilding().getAllowedFuel(), furnace.getStackInSlot(FUEL_SLOT), false, false))
+                {
+                    worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_STATUS_RETRIEVING));
+                    return pos;
+                }
+            }
+        }
+        return null;
+    }
+
+
     @Override
     protected IAIState checkForItems(@NotNull final IRecipeStorage storage)
     {
@@ -492,7 +528,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
 
         final int preExtractCount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(currentRequest.getRequest().getStack(), stack));
 
-        extractFromFurnace((FurnaceTileEntity) entity);
+        extractFromFurnaceSlot((FurnaceTileEntity) entity, RESULT_SLOT);
         //Do we have the requested item in the inventory now?
         final int resultCount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(currentRequest.getRequest().getStack(), stack)) - preExtractCount;
         if (resultCount > 0)
@@ -522,16 +558,53 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
     }
 
     /**
-     * Very simple action, straightly extract it from the furnace.
+     * Retrieve used fuel from the furnaces. If no position has been set return. Else navigate to the position of the furnace. On arrival execute the extract method of the
+     * specialized worker.
+     *
+     * @return the next state to go to.
+     */
+    private IAIState retrieveUsedFuel()
+    {
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_STATUS_RETRIEVING));
+
+        if (walkTo == null)
+        {
+            return START_WORKING;
+        }
+
+        if (walkToBlock(walkTo))
+        {
+            return getState();
+        }
+
+        final TileEntity entity = world.getTileEntity(walkTo);
+        if (!(entity instanceof FurnaceTileEntity)
+                || (ItemStackUtils.isEmpty(((FurnaceTileEntity) entity).getStackInSlot(FUEL_SLOT))))
+        {
+            walkTo = null;
+            return START_WORKING;
+        }
+
+        walkTo = null;
+
+        extractFromFurnaceSlot((FurnaceTileEntity) entity, FUEL_SLOT);
+        return START_WORKING;
+    }
+
+    /**
+     * Very simple action, straightly extract from a furnace slot.
      *
      * @param furnace the furnace to retrieve from.
      */
-    private void extractFromFurnace(final FurnaceTileEntity furnace)
+    private void extractFromFurnaceSlot(final FurnaceTileEntity furnace, final int slot)
     {
         InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandler(
-          new InvWrapper(furnace), RESULT_SLOT,
+          new InvWrapper(furnace), slot,
           worker.getInventoryCitizen());
-        worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
+        if(slot == RESULT_SLOT)
+        {
+            worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
+        {
     }
 
     /**
@@ -731,6 +804,14 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             }
             setDelay(STANDARD_DELAY);
             return START_WORKING;
+        }
+
+        final BlockPos furnacePosWithUsedFuel = getPositionOfOvenToRetrieveFuelFrom();
+        if (furnacePosWithUsedFuel != null)
+        {
+            walkTo = furnacePosWithUsedFuel;
+            worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.retrieving"));
+            return RETRIEVING_USED_FUEL_FROM_FURNACE;
         }
 
         final BlockPos posOfOven = getPositionOfOvenToRetrieveFrom();
