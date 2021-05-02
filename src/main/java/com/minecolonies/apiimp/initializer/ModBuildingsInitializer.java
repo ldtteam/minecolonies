@@ -422,6 +422,7 @@ public final class ModBuildingsInitializer
                                    .setBuildingProducer(BuildingBeekeeper::new)
                                    .setBuildingViewProducer(() -> BuildingBeekeeper.View::new)
                                    .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.BEEKEEPER_ID))
+                                   .addBuildingModuleProducer(() -> new SettingsModule().with(BuildingBeekeeper.BREEDING, new BoolSetting(true)), SettingsModuleView::new)
                                    .createBuildingEntry();
 
         ModBuildings.mysticalSite = new BuildingEntry.Builder()
