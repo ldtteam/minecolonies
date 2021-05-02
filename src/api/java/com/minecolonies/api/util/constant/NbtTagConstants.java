@@ -466,16 +466,6 @@ public final class NbtTagConstants
     public static final String TAG_CURR_MANA  = "currentMana";
 
     /**
-     * Herder breeding tag
-     */
-    public static final String TAG_BREEDING = "breeding";
-
-    /**
-     * Cowboy milking tag
-     */
-    public static final String TAG_MILK_COWS = "MILK_COWS";
-
-    /**
      * Beekeeper tags
      */
     public static final String TAG_HIVES              = "hives";
@@ -575,9 +565,6 @@ public final class NbtTagConstants
      */
     public static final String TAG_DECAY_TIMER = "decaytimer";
     public static final String TAG_DECAYED = "decayed";
-    public static final String TAG_SAVED_CITIZEN_NAME = "savedcitizenname";
-    public static final String TAG_SAVED_CITIZEN_JOB_NAME = "savedcitizenjobname";
-    public static final String TAG_SAVED_CITIZEN_DATA = "savedcitizendata";
 
     /**
      * Tags/JSON names for storing item informations
