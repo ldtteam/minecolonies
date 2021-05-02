@@ -17,6 +17,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 
 import static com.minecolonies.api.util.constant.ColonyManagerConstants.UNABLE_TO_FIND_WORLD_CAP_TEXT;
+import static com.minecolonies.api.util.constant.Constants.CHUNKS_TO_CLAIM_THRESHOLD;
 import static com.minecolonies.coremod.MineColonies.CHUNK_STORAGE_UPDATE_CAP;
 import static com.minecolonies.coremod.commands.CommandArgumentNames.*;
 
@@ -58,7 +59,7 @@ public class CommandClaimChunks implements IMCOPCommand
             return 0;
         }
 
-        if (chunkManager.getAllChunkStorages().size() > 5000)
+        if (chunkManager.getAllChunkStorages().size() > CHUNKS_TO_CLAIM_THRESHOLD)
         {
             LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.claim.maxchunks");
             return 0;
