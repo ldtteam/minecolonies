@@ -449,7 +449,7 @@ public class CitizenData implements ICitizenData
         if(MineColonies.getConfig().getServer().useEasternNameOrder.get())
         {
             //For now, don't include middle names, as their rules (and presence) vary heavily by region.
-            citizenName = String.format("%s%s", lastName, firstName);
+            citizenName = String.format("%s %s", lastName, firstName);
         }
         else
         {
