@@ -601,10 +601,10 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
         InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandler(
           new InvWrapper(furnace), slot,
           worker.getInventoryCitizen());
-        if(slot == RESULT_SLOT)
+        if (slot == RESULT_SLOT)
         {
             worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
-        {
+        }
     }
 
     /**
