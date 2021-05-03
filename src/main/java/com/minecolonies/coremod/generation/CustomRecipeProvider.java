@@ -30,6 +30,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+
 public abstract class CustomRecipeProvider implements IDataProvider
 {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -117,7 +119,7 @@ public abstract class CustomRecipeProvider implements IDataProvider
             this.json.addProperty(CustomRecipe.RECIPE_RESULT_PROP, result.getItem().getRegistryName().toString());
             if (result.getCount() != 1)
             {
-                this.json.addProperty(CustomRecipe.COUNT_PROP, result.getCount());
+                this.json.addProperty(COUNT_PROP, result.getCount());
             }
             return this;
         }
@@ -210,10 +212,10 @@ public abstract class CustomRecipeProvider implements IDataProvider
                 {
                     name += itemStack.getTag().toString();
                 }
-                jsonItemStack.addProperty(CustomRecipe.ITEM_PROP, name);
+                jsonItemStack.addProperty(ITEM_PROP, name);
                 if (itemStack.getCount() != 1)
                 {
-                    jsonItemStack.addProperty(CustomRecipe.COUNT_PROP, itemStack.getCount());
+                    jsonItemStack.addProperty(COUNT_PROP, itemStack.getCount());
                 }
                 jsonItemStacks.add(jsonItemStack);
             }

@@ -25,6 +25,11 @@ public class BuildingChickenHerder extends AbstractBuildingWorker
     private static final String JOB = "chickenherder";
 
     /**
+     * The hut name, used for the lang string in the GUI
+     */
+    private static final String HUT_NAME = "chickenherderhut";
+
+    /**
      * Max building level of the hut.
      */
     private static final int MAX_BUILDING_LEVEL = 5;
@@ -107,7 +112,7 @@ public class BuildingChickenHerder extends AbstractBuildingWorker
         @Override
         public Window getWindow()
         {
-            return new WindowHutWorkerModulePlaceholder<>(this, JOB);
+            return new WindowHutWorkerModulePlaceholder<>(this, HUT_NAME);
         }
     }
 }

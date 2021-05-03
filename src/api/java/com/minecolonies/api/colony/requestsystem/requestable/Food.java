@@ -171,7 +171,7 @@ public class Food implements IDeliverable
     @Override
     public boolean matches(@NotNull final ItemStack stack)
     {
-        return stack.getItem().isFood() && ItemStackUtils.ISFOOD.test(stack) && !exclusionList.contains(new ItemStorage(stack)) && !(ItemStackUtils.ISCOOKABLE.test(stack) && exclusionList.contains(new ItemStorage(MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getSmeltingResult(stack))));
+        return ItemStackUtils.ISFOOD.test(stack) && !exclusionList.contains(new ItemStorage(stack)) && !(ItemStackUtils.ISCOOKABLE.test(stack) && exclusionList.contains(new ItemStorage(MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getSmeltingResult(stack))));
     }
 
     @Override

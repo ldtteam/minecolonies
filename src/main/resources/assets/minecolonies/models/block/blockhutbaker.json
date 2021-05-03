@@ -6,7 +6,8 @@
 		"3": "block/stripped_oak_log",
 		"4": "minecolonies:blocks/sack-small",
 		"6": "block/basalt_top",
-		"7": "block/diorite"
+		"7": "block/diorite",
+		"particle": "block/basalt_side"
 	},
 	"elements": [
 		{

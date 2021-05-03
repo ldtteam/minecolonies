@@ -5,10 +5,14 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.citizen.Skill;
+import com.minecolonies.coremod.colony.buildings.modules.settings.BoolSetting;
+import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.api.util.NBTUtils;
+import net.minecraft.util.ResourceLocation;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.huts.WindowHutBeekeeperModule;
@@ -36,6 +40,11 @@ import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 public class BuildingBeekeeper extends AbstractBuildingWorker
 {
     /**
+     * Automatic breeding.
+     */
+    public static final ISettingKey<BoolSetting> BREEDING = new SettingKey<>(BoolSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "breeding"));
+
+    /**
      * Description of the job executed in the hut.
      */
     private static final String BEEKEEPER = "beekeeper";
@@ -48,7 +57,7 @@ public class BuildingBeekeeper extends AbstractBuildingWorker
     /**
      * Whether the beekeeper should harvest honeycombs or honey bottles
      */
-    private boolean harvestHoneycombs = true;
+    private BeekeeperSetHarvestHoneycombsMessage.HarvestType harvestHoneycombs = BeekeeperSetHarvestHoneycombsMessage.HarvestType.HONEYCOMBS;
 
     /**
      * The abstract constructor of the building.
@@ -149,7 +158,7 @@ public class BuildingBeekeeper extends AbstractBuildingWorker
         NBTUtils.streamCompound(compound.getList(NbtTagConstants.TAG_HIVES, Constants.NBT.TAG_COMPOUND))
           .map(NBTUtil::readBlockPos)
           .forEach(this.hives::add);
-        this.harvestHoneycombs = compound.getBoolean(NbtTagConstants.TAG_HARVEST_HONEYCOMBS);
+        this.harvestHoneycombs = BeekeeperSetHarvestHoneycombsMessage.HarvestType.values()[compound.getInt(NbtTagConstants.TAG_HARVEST_HONEYCOMBS)];
     }
 
     @Override
@@ -157,7 +166,7 @@ public class BuildingBeekeeper extends AbstractBuildingWorker
     {
         final CompoundNBT nbt = super.serializeNBT();
         nbt.put(NbtTagConstants.TAG_HIVES, this.hives.stream().map(NBTUtil::writeBlockPos).collect(NBTUtils.toListNBT()));
-        nbt.putBoolean(NbtTagConstants.TAG_HARVEST_HONEYCOMBS, this.harvestHoneycombs);
+        nbt.putInt(NbtTagConstants.TAG_HARVEST_HONEYCOMBS, this.harvestHoneycombs.ordinal());
         return nbt;
     }
 
@@ -165,7 +174,7 @@ public class BuildingBeekeeper extends AbstractBuildingWorker
     public void serializeToView(@NotNull final PacketBuffer buf)
     {
         super.serializeToView(buf);
-        buf.writeBoolean(harvestHoneycombs);
+        buf.writeEnumValue(harvestHoneycombs);
     }
 
     /**
@@ -201,7 +210,7 @@ public class BuildingBeekeeper extends AbstractBuildingWorker
     /**
      * Set the hives/nests positions that belong to this beekeeper
      *
-     * @param hives the new set of psitions of hives/nests that belong to this beekeeper
+     * @param hives the new set of positions of hives/nests that belong to this beekeeper
      */
     public void setHives(final Set<BlockPos> hives)
     {
@@ -209,21 +218,21 @@ public class BuildingBeekeeper extends AbstractBuildingWorker
     }
 
     /**
-     * Set wether the beekeeper should harvest honeycombs
+     * Set whether the beekeeper should harvest honeycombs
      *
-     * @param harvestHoneycombs if true the beekeeper will harvest honeycombs if false will harvest honeybottles
+     * @param harvestHoneycombs what materials the beekeeper should harvest
      */
-    public void setHarvestHoneycombs(final boolean harvestHoneycombs)
+    public void setHarvestHoneycombs(final BeekeeperSetHarvestHoneycombsMessage.HarvestType harvestHoneycombs)
     {
         this.harvestHoneycombs = harvestHoneycombs;
     }
 
     /**
-     * Get wether the beekeeper should harvest honeycombs
+     * Get what materials the beekeeper should harvest.
      *
-     * @return if true the beekeeper will harvest honeycombs if false will harvest honeybottles
+     * @return honeycomb, honey bottle, or both
      */
-    public boolean shouldHarvestHoneycombs()
+    public BeekeeperSetHarvestHoneycombsMessage.HarvestType getHarvestTypes()
     {
         return harvestHoneycombs;
     }
@@ -243,7 +252,7 @@ public class BuildingBeekeeper extends AbstractBuildingWorker
         /**
          * Harvest honeycombs or not.
          */
-        private boolean harvestHoneycombs = true;
+        private BeekeeperSetHarvestHoneycombsMessage.HarvestType harvestHoneycombs = BeekeeperSetHarvestHoneycombsMessage.HarvestType.HONEYCOMBS;
 
         /**
          * Creates a building view.
@@ -263,12 +272,12 @@ public class BuildingBeekeeper extends AbstractBuildingWorker
             return new WindowHutBeekeeperModule(this);
         }
 
-        public boolean isHarvestHoneycombs()
+        public BeekeeperSetHarvestHoneycombsMessage.HarvestType isHarvestHoneycombs()
         {
             return harvestHoneycombs;
         }
 
-        public void setHarvestHoneycombs(final boolean harvestHoneycombs)
+        public void setHarvestHoneycombs(final BeekeeperSetHarvestHoneycombsMessage.HarvestType harvestHoneycombs)
         {
             Network.getNetwork().sendToServer(new BeekeeperSetHarvestHoneycombsMessage(this, harvestHoneycombs));
             this.harvestHoneycombs = harvestHoneycombs;
@@ -278,7 +287,7 @@ public class BuildingBeekeeper extends AbstractBuildingWorker
         public void deserialize(@NotNull final PacketBuffer buf)
         {
             super.deserialize(buf);
-            harvestHoneycombs = buf.readBoolean();
+            harvestHoneycombs = buf.readEnumValue(BeekeeperSetHarvestHoneycombsMessage.HarvestType.class);
         }
     }
 }

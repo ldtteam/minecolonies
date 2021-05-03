@@ -539,6 +539,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
             label.setColors(BLACK);
             label.setText(LanguageHandler.format("com.minecolonies.coremod.gui.townhall.happiness." + name));
             pane.addChild(label);
+            PaneBuilders.tooltipBuilder().hoverPane(label).append(new TranslationTextComponent("com.minecolonies.coremod.gui.townhall.happiness.desc." + name)).build();
 
             if (value > 1.0)
             {

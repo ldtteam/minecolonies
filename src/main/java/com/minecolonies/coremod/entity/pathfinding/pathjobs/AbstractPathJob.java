@@ -10,7 +10,6 @@ import com.minecolonies.api.entity.pathfinding.PathingOptions;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.blocks.BlockDecorationController;
 import com.minecolonies.coremod.entity.pathfinding.ChunkCache;
@@ -1278,6 +1277,7 @@ public abstract class AbstractPathJob implements Callable<Path>
               || block instanceof AbstractBlockMinecoloniesDefault
               || block instanceof AbstractBlockBarrel
               || block instanceof BambooBlock
+              || block instanceof DoorBlock
               || (blockState.getShape(world, pos).getEnd(Direction.Axis.Y) > 1.0))
         {
             return SurfaceType.NOT_PASSABLE;

@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.fluid.FluidState;
-import net.minecraft.util.Direction;
+import net.minecraft.pathfinding.PathNavigator;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
@@ -22,7 +22,9 @@ import net.minecraft.world.server.ServerWorld;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.NIGHT;
@@ -255,41 +257,23 @@ public class WorldUtil
      */
     public static boolean setBlockState(final IWorld world, final BlockPos pos, final BlockState state, int flags)
     {
-        if (world.isRemote())
+        if (world.isRemote() || !(world instanceof ServerWorld))
         {
             return world.setBlockState(pos, state, flags);
         }
 
         if ((flags & 2) != 0)
         {
-            // Remove the update flag
-            flags -= 2;
-
+            final Set<PathNavigator> navigators = ((ServerWorld) world).navigations;
+            ((ServerWorld) world).navigations = Collections.emptySet();
             final boolean result = world.setBlockState(pos, state, flags);
-            sendNeighbourUpdates((ServerWorld) world, pos);
+            ((ServerWorld) world).navigations = navigators;
             return result;
         }
         else
         {
             return world.setBlockState(pos, state, flags);
         }
-    }
-
-    /**
-     * Notifies client updates for neighbours
-     *
-     * @param world world
-     * @param pos   position
-     */
-    private static void sendNeighbourUpdates(final ServerWorld world, final BlockPos pos)
-    {
-        world.getChunkProvider().markBlockChanged(pos);
-        world.getChunkProvider().markBlockChanged(pos.down());
-        world.getChunkProvider().markBlockChanged(pos.up());
-        world.getChunkProvider().markBlockChanged(pos.offset(Direction.NORTH));
-        world.getChunkProvider().markBlockChanged(pos.offset(Direction.EAST));
-        world.getChunkProvider().markBlockChanged(pos.offset(Direction.SOUTH));
-        world.getChunkProvider().markBlockChanged(pos.offset(Direction.WEST));
     }
 
     /**

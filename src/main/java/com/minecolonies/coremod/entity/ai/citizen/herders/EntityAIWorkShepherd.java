@@ -59,7 +59,10 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
     public List<ToolType> getExtraToolsNeeded()
     {
         final List<ToolType> toolsNeeded = super.getExtraToolsNeeded();
-        toolsNeeded.add(ToolType.SHEARS);
+        if (getOwnBuilding().getSetting(BuildingShepherd.SHEARING).getValue())
+        {
+            toolsNeeded.add(ToolType.SHEARS);
+        }
         return toolsNeeded;
     }
 
@@ -92,7 +95,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
         final List<SheepEntity> animals = new ArrayList<>(searchForAnimals());
         final SheepEntity shearingSheep = animals.stream().filter(sheepie -> !sheepie.getSheared() && !sheepie.isChild()).findFirst().orElse(null);
 
-        if (result.equals(START_WORKING) && shearingSheep != null)
+        if (getOwnBuilding().getSetting(BuildingShepherd.SHEARING).getValue() && result.equals(START_WORKING) && shearingSheep != null)
         {
             return SHEPHERD_SHEAR;
         }

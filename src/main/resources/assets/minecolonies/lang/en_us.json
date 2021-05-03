@@ -41,7 +41,7 @@
   "minecolonies.config.forceloadcolony.comment": "If part of the colony is loaded by an owner/officer, should the colony be kept loaded? (Set how many chunks are loaded with the \"Colony Chunk Loading Strictness\" option.)",
 
   "minecolonies.config.colonyloadstrictness": "Colony Chunk Loading Strictness",
-  "minecolonies.config.colonyloadstrictness.comment": "This controls how many chunks are loaded with the \"Chunk Load Colony\" option. The higher this value, the less chunks will be loaded. (The innermost chunks will be loaded first.) 1 = load all claimed chunks.",
+  "minecolonies.config.colonyloadstrictness.comment": "This controls how many chunks are loaded with the \"Chunk Load Colony\" option. The higher this value, the fewer chunks will be loaded. (The innermost chunks will be loaded first.) 1 = load all claimed chunks.",
 
   "minecolonies.config.badvisitorchance": "Bad Recruitment Chance",
   "minecolonies.config.badvisitorchance.comment": "Chance to get an evil Tavern visitor that will run off with the resources you give them. This is a %.",
@@ -93,7 +93,7 @@
   "minecolonies.config.allowinfinitecolonies.comment": "Should players be allowed to abandon their colony to create a new one easily? Note: This is buggy!",
   "minecolonies.config.allowotherdimcolonies": "Other Dim Colonies",
   "minecolonies.config.allowotherdimcolonies.comment": "Should colonies in other dimensions be allowed?",
-  "minecolonies.config.citizenrespawninterval": "Inital Citizen Respawn Interval",
+  "minecolonies.config.citizenrespawninterval": "Initial Citizen Respawn Interval",
   "minecolonies.config.citizenrespawninterval.comment": "If a colony is under the initial citizen count, this changes the amount of time before a new citizen spawns.",
   "minecolonies.config.maxcitizenpercolony": "Citizen Cap",
   "minecolonies.config.maxcitizenpercolony.comment": "Max citizens in one colony.",
@@ -616,8 +616,6 @@
   "com.minecolonies.coremod.gui.cowboy.collect": "Collecting Milk",
   "com.minecolonies.coremod.gui.workerhuts.settings": "Settings",
   "com.minecolonies.coremod.gui.workerhuts.farmer": "Farmer",
-  "com.minecolonies.coremod.gui.herder.breeding": "Breeding",
-  "com.minecolonies.coremod.gui.herder.notbreeding": "Not Breeding",
 
   "com.minecolonies.coremod.gui.workerhuts.workorder": "Work Orders",
 
@@ -651,8 +649,6 @@
   "com.minecolonies.coremod.gui.workerhuts.barrackstower": "Barracks Tower",
 
   "com.minecolonies.coremod.gui.workerhuts.university": "University",
-  "com.minecolonies.coremod.gui.workerhuts.bakery": "Bakery",
-  "com.minecolonies.coremod.gui.workerhuts.bakery.recipes": "Recipes",
 
   "com.minecolonies.coremod.gui.workerhuts.level0": "You must construct this hut before you can hire a worker!",
 
@@ -990,11 +986,11 @@
   "com.minecolonies.coremod.progress.all_citizens_homed": "§6 I see all your settlers have a nice home now. Build more Houses to get more settlers!",
   "com.minecolonies.coremod.progress.four_citizens_spawned": "§6 The last initial citizen arrived at your colony. To spawn new children, build a House and assign a male and female citizen to it.",
   "com.minecolonies.coremod.progress.seven_citizens_spawned": "§6 A new settler arrived at your colony, and they bring word that barbarian spies have found the growing village. You might want to build a Guard Tower!",
-  "com.minecolonies.coremod.progress.six_citizens_spawned": "§6 A growing settlement means a growing responsibility. You should consider placing a Restaurant to keep your settlers well fed.",
+  "com.minecolonies.coremod.progress.six_citizens_spawned": "§6 A growing settlement means a growing responsibility. You should consider placing a Restaurant to keep your settlers well-fed.",
   "com.minecolonies.coremod.progress.eight_citizens_spawned": "§6 Your citizens urge you to build a Warehouse. This will lighten your backpack, and they may get their materials faster!",
   "com.minecolonies.coremod.progress.warehouse_built": "§6 You've built a Warehouse. However, your people are too tasked as it is to fill it. Build some Courier's Huts to hire Couriers. Up to 2 can work per Warehouse level.",
-  "com.minecolonies.coremod.progress.nine_citizens_spawned": "§6 Settlers are saying that their skills influence their leveling speed. You can manually employ citizens, if it is turned on in the Town Hall settings. The best skills for the job will be highlighted during the employment process.",
-  "com.minecolonies.coremod.progress.manual_employment_on": "§6 Workers are complaining about a long walk to their work. You can manually assign them to the closest houses, if the option is turned on in the Town Hall settings.",
+  "com.minecolonies.coremod.progress.nine_citizens_spawned": "§6 Settlers are saying that their skills influence their leveling speed. You can manually employ citizens if it is turned on in the Town Hall settings. The best skills for the job will be highlighted during the employment process.",
+  "com.minecolonies.coremod.progress.manual_employment_on": "§6 Workers are complaining about a long walk to their work. You can manually assign them to the closest houses if the option is turned on in the Town Hall settings.",
   "com.minecolonies.coremod.progress.ten_citizens_spawned": "§6 A growing colony increases the burdens on your settlers. You should consider upgrading your work huts.",
   "com.minecolonies.coremod.progress.twenty_building_levels": "§6 A barbarian spy had been caught next to your colony, and he seems to be from a bigger group! You should consider building Barracks to defend your colony.",
   "com.minecolonies.coremod.progress.twenty_five_citizens_spawned": "§6 Your colony's population has grown to the limits of current management techniques. To accept more citizens, complete the research at the University.",
@@ -1099,8 +1095,6 @@
   "block.blockHutTownHall.addofficermessagelink": "[ADD AS OFFICER]",
 
   "com.minecolonies.coremod.gui.shepherd.autodye": "Random sheep dyeing:",
-  "com.minecolonies.coremod.general.onbig": "On",
-  "com.minecolonies.coremod.general.offbig": "Off",
 
   "com.minecolonies.coremod.general.canttakeequipped": "The only armor you have is what you're wearing. Put it in your inventory if you want to give it to me.",
 
@@ -1124,7 +1118,7 @@
   "com.minecolonies.coremod.gui.deco.level": "The level of the decoration:",
   "com.minecolonies.coremod.gui.deco.level.none": "This schematic is already at the highest level or not upgradeable!",
 
-  "com.minecolonies.coremod.gui.placement.warning": "We suggest using the build tool to place this schematic. This will allow you to to adjust the position.",
+  "com.minecolonies.coremod.gui.placement.warning": "We suggest using the build tool to place this schematic. This will allow you to adjust the position.",
   "com.minecolonies.coremod.gui.placement.buildtool": "Use build tool",
   "com.minecolonies.coremod.gui.placement.direct": "Place anyway",
 
@@ -1151,7 +1145,6 @@
   "com.minecolonies.coremod.composted_dirt.player_use_message": "This block can be only used by the Florist!",
   "com.minecolonies.coremod.job.florist": "Florist",
   "tile.minecolonies.blockhutflorist.name": "Flower Shop",
-  "com.minecolonies.coremod.gui.workerhuts.florist": "Florist",
   "com.minecolonies.gui.workerhuts.florist.flowers": "Plantables",
   "com.minecolonies.gui.workerhuts.florist.toolow": "The Florist currently randomly grows the flowers in this list, upgrade the Flower Shop to level 3 or above to select them manually!",
   "com.minecolonies.gui.workerhuts.florist.toomany": "You can deactivate max 5 options. Upgrade to level 5 to restrict it further!",
@@ -1411,7 +1404,7 @@
   "com.minecolonies.coremod.info.citizen.2": "Workers have their level capped by the level of their House. Thus, if they are unhappy with their living conditions, they will stop leveling until you provide them with better housing.",
 
   "com.minecolonies.coremod.info.miner.0.name": "Introduction",
-  "com.minecolonies.coremod.info.miner.0": "The Miner is one of the production workers for your colony. They will need an pickaxe to mine stone, a shovel to mine dirt and gravel, and sometimes even an axe if they run into a mineshaft. They will also need supplies to build their own mineshafts, such as blocks, slabs, fences/walls, signs, ladders, and torches.",
+  "com.minecolonies.coremod.info.miner.0": "The Miner is one of the production workers for your colony. They will need a pickaxe to mine stone, a shovel to mine dirt and gravel, and sometimes even an axe if they run into a mineshaft. They will also need supplies to build their own mineshafts, such as blocks, slabs, fences/walls, signs, ladders, and torches.",
   "com.minecolonies.coremod.info.miner.1.name": "Restrictions",
   "com.minecolonies.coremod.info.miner.1": "Let's cover restrictions:\n\n 1. Miners unlock certain tool levels per their hut level:\n   lvl 0. Wood/Gold Tools\n   lvl 1. Stone Tools\n   lvl 2. Iron Tools\n   lvl 4. Diamond Tools\n   lvl 5. Enchanted Tools\n\n ",
   "com.minecolonies.coremod.info.miner.2.name": "FAQ",
@@ -1444,7 +1437,7 @@
   "com.minecolonies.coremod.info.deliveryman.1.name": "Restrictions",
   "com.minecolonies.coremod.info.deliveryman.1": "Now let's cover restrictions:\n\n The number of stacks a Courier can carry at a time depends on their hut level. \n Level 1: 1 Stack \n Level 2: 2 Stacks \n Level 3: 4 Stacks \n Level 4: 8 Stacks \n Level 5: unlimited stacks (that can still fit in their inventory)",
   "com.minecolonies.coremod.info.deliveryman.2.name": "FAQ",
-  "com.minecolonies.coremod.info.deliveryman.2": "Now let's cover some frequently asked questions:\n\n Q 1. How do I change the priority of who the Couriers pickup from?\n   A 1. In each hut, there is a pickup priority setting. 1 is the lowest, 10 is the highest, and there's also never (no items will ever be picked up).\n\n Q 2. Can I change the delivery priority?\n A 2. No, the delivery schedule is determined by order the request is sent.",
+  "com.minecolonies.coremod.info.deliveryman.2": "Now let's cover some frequently asked questions:\n\n Q 1. How do I change the priority of who the Couriers pick up from?\n   A 1. In each hut, there is a pickup priority setting. 1 is the lowest, 10 is the highest, and there's also never (no items will ever be picked up).\n\n Q 2. Can I change the delivery priority?\n A 2. No, the delivery schedule is determined by the order the request is sent.",
   "com.minecolonies.coremod.info.deliveryman.3.name": "Leveling",
   "com.minecolonies.coremod.info.deliveryman.3": "As all workers do, Couriers level up while working.\n At higher levels, a Courier's speed increases. The higher their hut level and Intelligence skill, the quicker they level up. \n However, their level is capped by the level of their home. Thus, if they are unhappy with their living conditions, they will stop leveling until you provide them with better housing.",
 
@@ -1532,7 +1525,7 @@
   "com.minecolonies.coremod.info.guardtower.1.name": "Restrictions",
   "com.minecolonies.coremod.info.guardtower.1": "Now let's cover restrictions:\n\n 1. Guards unlock certain tool levels per their hut level:\n   lvl 0. Wood/Gold Tools\n   lvl 1. Stone Tools\n   lvl 2. Iron Tools\n   lvl 4. Diamond Tools\n   lvl 5. Enchanted Tools\n\n",
   "com.minecolonies.coremod.info.guardtower.2.name": "FAQ",
-  "com.minecolonies.coremod.info.guardtower.2": "Now let's cover some frequently asked questions:\n\n Q 1. My Guard Tower was leveled up, but the Guard isn't asking for higher level equipment. Why?\n   A 1. Guards will not ask for updated equipment until they use up their current equipment.",
+  "com.minecolonies.coremod.info.guardtower.2": "Now let's cover some frequently asked questions:\n\n Q 1. My Guard Tower was leveled up, but the Guard isn't asking for higher-level equipment. Why?\n   A 1. Guards will not ask for updated equipment until they use up their current equipment.",
   "com.minecolonies.coremod.info.guardtower.3.name": "Leveling",
   "com.minecolonies.coremod.info.guardtower.3": "As all workers do, the Guard levels up while working.\n At higher levels, a Guard's speed increases. The higher their hut level and Intelligence skill, the quicker they level up. \n However, their level is capped by the level of their home. Thus, if they are unhappy with their living conditions, they will stop leveling until you provide them with better housing.",
 
@@ -1629,6 +1622,22 @@
   "com.minecolonies.coremod.gui.townhall.happiness.death": "Deaths",
   "com.minecolonies.coremod.gui.townhall.happiness.raidwithoutdeath": "Raids without Deaths",
   "com.minecolonies.coremod.gui.townhall.happiness.slepttonight": "Getting Sleep",
+
+  "com.minecolonies.coremod.gui.townhall.happiness.desc.homelessness": "Increases happiness if colonists have housing, and for higher-level housing.",
+  "com.minecolonies.coremod.gui.townhall.happiness.desc.unemployment": "Increases happiness if colonists have a job, and for higher-level work buildings.",
+  "com.minecolonies.coremod.gui.townhall.happiness.desc.health": "Decreases happiness if colonists are sick.",
+  "com.minecolonies.coremod.gui.townhall.happiness.desc.idleatjob": "Decreases happiness if colonists are unable to work due to missing tools or farmer fields.",
+
+  "com.minecolonies.coremod.gui.townhall.happiness.desc.school": "Increases happiness for child colonists if they are assigned to a school.",
+  "com.minecolonies.coremod.gui.townhall.happiness.desc.security": "Increases happiness as more guards are employed at the colony.",
+  "com.minecolonies.coremod.gui.townhall.happiness.desc.social": "Decreases happiness if fellow colonists are unhappy due to sickness, unemployment, homelessness, or starvation.",
+  "com.minecolonies.coremod.gui.townhall.happiness.desc.saturation": "Increases happiness as colonists are well-fed.",
+  "com.minecolonies.coremod.gui.townhall.happiness.desc.mysticalsite": "Increases happiness if the colony has a Mystical Site, based on that Site's level.",
+
+  "com.minecolonies.coremod.gui.townhall.happiness.desc.damage": "Decreases happiness if colonists has been injured recently.",
+  "com.minecolonies.coremod.gui.townhall.happiness.desc.death": "Decreases happiness if colonists has died recently.",
+  "com.minecolonies.coremod.gui.townhall.happiness.desc.raidwithoutdeath": "Increases happiness if the colony has survived a raid without a civilian death recently.",
+  "com.minecolonies.coremod.gui.townhall.happiness.desc.slepttonight": "Increases happiness if civilian colonists have been able to sleep recently.",
   "com.minecolonies.coremod.gui.back": "Back",
   "com.minecolonies.coremod.research.research.maxunlocked": "Max 1 Level 6 per branch",
   "com.minecolonies.coremod.research.research.or": "or",
@@ -1693,7 +1702,7 @@
   "com.minecolonies.coremod.gui.workerhuts.guide.arrow": "Make sure to check out all the building's pages!",
   "com.minecolonies.coremod.gui.workerhuts.guide.chest": "Here you can have an overview of the combined building inventory.",
 
-  "com.minecolonies.coremod.gui.tavern.visitordeath": "The visitor %s died from %s at %s and word spreads around that your Tavern is a dangerous place. You are likely to see less visitors in the future!",
+  "com.minecolonies.coremod.gui.tavern.visitordeath": "The visitor %s died from %s at %s and word spreads around that your Tavern is a dangerous place. You are likely to see fewer visitors in the future!",
   "com.minecolonies.coremod.gui.chat.showstats": "Show citizen stats",
   "com.minecolonies.coremod.gui.chat.recruit": "Recruit for ",
   "com.minecolonies.coremod.recruit.message": "%s has decided to stay in your colony as a citizen!",
@@ -1728,8 +1737,9 @@
   "com.minecolonies.coremod.gui.chat.noguardnearwork": "There are no Guard or Barrack Towers near my workplace, so I don't feel safe there!",
   "com.minecolonies.coremod.gui.chat.noguardnearhome": "There are no Guard or Barrack Towers near my home, so I don't feel safe there!",
 
-  "com.minecolonies.coremod.gui.beekeeper.notcollect": "Collect honey",
-  "com.minecolonies.coremod.gui.beekeeper.collect": "Collect honeycomb",
+  "com.minecolonies.coremod.gui.beekeeper.collectbottle": "Collect honey",
+  "com.minecolonies.coremod.gui.beekeeper.collectcomb": "Collect honeycomb",
+  "com.minecolonies.coremod.gui.beekeeper.collectboth": "Collect comb and honey",
   "com.minecolonies.coremod.gui.beekeeper.addhives": "Get hive tool",
   "entity.beekeeper.messagenohives": "There are no hives for me to work at!",
   "entity.beekeeper.messagenobees": "I can't find any bees!",
@@ -1911,5 +1921,6 @@
   "com.minecolonies.coremod.setting.minecolonies:producedirt": "Produce Dirt:",
   "com.minecolonies.coremod.setting.minecolonies:breeding": "Breeding:",
   "com.minecolonies.coremod.setting.minecolonies:milking": "Milking:",
-  "com.minecolonies.coremod.setting.minecolonies:dyeing": "Dyeing:"
+  "com.minecolonies.coremod.setting.minecolonies:dyeing": "Dyeing:",
+  "com.minecolonies.coremod.setting.minecolonies:shearing": "Shearing:"
 }

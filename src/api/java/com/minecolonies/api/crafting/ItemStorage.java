@@ -1,10 +1,11 @@
 package com.minecolonies.api.crafting;
 
-import com.minecolonies.api.items.ModTags;
+import com.google.gson.JsonObject;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.constant.NbtTagConstants;
+
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -12,6 +13,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
  * Used to store an stack with various informations to compare items later on.
@@ -109,6 +112,55 @@ public class ItemStorage
     {
         //noinspection ConstantConditions
         return stack.hasTag() && stack.getTag().getBoolean(NbtTagConstants.TAG_IGNORE_NBT);
+    }
+
+    /**
+     * Creates an instance of the storage from JSON
+     * 
+     * @param jObject the JSON Object to parse
+     */
+    public ItemStorage(@NotNull final JsonObject jObject)
+    {
+        if (jObject.has(ITEM_PROP))
+        {
+            final ItemStack parsedStack = ItemStackUtils.idToItemStack(jObject.get(ITEM_PROP).getAsString());
+            if(jObject.has(COUNT_PROP))
+            {
+                parsedStack.setCount(jObject.get(COUNT_PROP).getAsInt());
+                this.amount = jObject.get(COUNT_PROP).getAsInt();
+            }
+            else
+            {
+                this.amount = parsedStack.getCount();
+            }
+            this.stack = parsedStack;
+            if(jObject.has(MATCHTYPE_PROP))
+            {
+                String matchType = jObject.get(MATCHTYPE_PROP).getAsString();
+                if(matchType.equals(MATCH_NBTIGNORE))
+                {
+                    this.shouldIgnoreNBTValue = true;
+                }
+                else // includes "exact"
+                {
+                    this.shouldIgnoreNBTValue = false;
+                }
+            }
+            else
+            {
+                this.shouldIgnoreNBTValue = false;
+            }
+            this.shouldIgnoreDamageValue= true;
+        }
+        else
+        {
+            this.stack = ItemStack.EMPTY;
+            this.amount = 0;
+            this.shouldIgnoreDamageValue = true;
+            this.shouldIgnoreNBTValue = true;
+        }
+    
+        this.creativeTabIndex = stack.getItem().getCreativeTabs().stream().filter(Objects::nonNull).map(g -> g.index).collect(Collectors.toList());
     }
 
     /**
@@ -226,10 +278,21 @@ public class ItemStorage
 
 
         return stack.isItemEqual(that.getItemStack())
-                 && (this.shouldIgnoreDamageValue || that.getDamageValue() == this.getDamageValue())
+                 && (this.shouldIgnoreDamageValue || that.shouldIgnoreDamageValue || that.getDamageValue() == this.getDamageValue())
                  && (this.shouldIgnoreNBTValue || that.shouldIgnoreNBTValue
                        || (that.getItemStack().getTag() == null && this.getItemStack().getTag() == null)
                        || (that.getItemStack().getTag() != null && that.getItemStack().getTag().equals(this.getItemStack().getTag())));
+    }
+
+    /**
+     * Ensure that two ItemStorage have the same comparison defintion
+     * @param that the item to compare to
+     * @return true if the comparisons match
+     */
+    public boolean matchDefinitionEquals(ItemStorage that)
+    {
+        return this.shouldIgnoreDamageValue == that.shouldIgnoreDamageValue 
+        && this.shouldIgnoreNBTValue == that.shouldIgnoreNBTValue;
     }
 
     /**
@@ -283,4 +346,13 @@ public class ItemStorage
         newInstance.setAmount(amount);
         return newInstance;
     }    
+
+    /**
+     * Get an immutable version of this item storage
+     * @return immutable wrapper
+     */
+    public ImmutableItemStorage toImmutable()
+    {
+        return new ImmutableItemStorage(this);
+    }
 }

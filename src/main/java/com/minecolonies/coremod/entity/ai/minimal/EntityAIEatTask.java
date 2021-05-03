@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
@@ -18,6 +19,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.CitizenConstants;
 import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.entity.SittingEntity;
@@ -296,7 +298,8 @@ public class EntityAIEatTask extends Goal
             InventoryUtils.transferFoodUpToSaturation(cookBuilding,
               citizen.getInventoryCitizen(),
               GET_YOURSELF_SATURATION,
-              stack -> CAN_EAT.test(stack) && canEat(citizen.getCitizenData(), stack));
+              stack -> CAN_EAT.test(stack) && canEat(citizen.getCitizenData(), stack)
+                         && !((BuildingCook) cookBuilding).getModuleMatching(ItemListModule.class, m -> m.getId().equals(BuildingCook.FOOD_EXCLUSION_LIST)).isItemInList(new ItemStorage(stack)));
         }
 
         return WAIT_FOR_FOOD;
@@ -444,18 +447,26 @@ public class EntityAIEatTask extends Goal
         final ICitizenData citizenData = citizen.getCitizenData();
         final IColony colony = citizenData.getColony();
         restaurantPos = colony.getBuildingManager().getBestRestaurant(citizen);
-
-        final IJob<?> job = citizen.getCitizenJobHandler().getColonyJob();
-        if (job != null && job.isActive())
+        if (citizenData.getSaturation() == 0.0)
         {
-            job.setActive(false);
+
+            final IJob<?> job = citizen.getCitizenJobHandler().getColonyJob();
+            if (job != null && job.isActive())
+            {
+                job.setActive(false);
+            }
+
+            if (restaurantPos == null)
+            {
+                citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(NO_RESTAURANT), ChatPriority.BLOCKING));
+                return CHECK_FOR_FOOD;
+            }
+        }
+        else if (restaurantPos == null)
+        {
+            return IDLE;
         }
 
-        if (restaurantPos == null)
-        {
-            citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(NO_RESTAURANT), ChatPriority.BLOCKING));
-            return CHECK_FOR_FOOD;
-        }
 
         return GO_TO_RESTAURANT;
     }

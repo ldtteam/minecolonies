@@ -12,6 +12,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBeekeep
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.JobBeekeeper;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
+import com.minecolonies.coremod.network.messages.server.colony.building.beekeeper.BeekeeperSetHarvestHoneycombsMessage;
 import net.minecraft.block.BeehiveBlock;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.AnimalEntity;
@@ -71,6 +72,11 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
     private static final int NO_ANIMALS_DELAY = 100;
     private static final int NO_HIVES_DELAY   = 100;
     private static final int BREEDING_DELAY   = 40;
+
+    /**
+     * If true, last harvest contained a honey bottle
+     */
+    private boolean lastHarvestedBottle = false;
 
     /**
      * Creates the abstract part of the AI. Always use this constructor!
@@ -136,14 +142,14 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
     private IAIState prepareForHerding()
     {
         setDelay(DECIDING_DELAY);
-        if (getOwnBuilding().shouldHarvestHoneycombs())
+        if (getOwnBuilding().getHarvestTypes() != BeekeeperSetHarvestHoneycombsMessage.HarvestType.HONEY_BOTTLES)
         {
             if (checkForToolOrWeapon(ToolType.SHEARS))
             {
                 return getState();
             }
         }
-        else
+        if (getOwnBuilding().getHarvestTypes() != BeekeeperSetHarvestHoneycombsMessage.HarvestType.HONEYCOMBS)
         {
             checkIfRequestForItemExistOrCreateAsynch(new ItemStack(Items.GLASS_BOTTLE));
         }
@@ -239,7 +245,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
           InventoryUtils.hasItemInItemHandler((worker.getInventoryCitizen()),
             (ItemStack stack) -> stack.getItem().isIn(ItemTags.FLOWERS));
 
-        if (!hasMaxAnimals(bees) && breedableAnimals >= NUM_OF_ANIMALS_TO_BREED && hasBreedingItem)
+        if (getOwnBuilding().getSetting(BuildingBeekeeper.BREEDING).getValue() && !hasMaxAnimals(bees) && breedableAnimals >= NUM_OF_ANIMALS_TO_BREED && hasBreedingItem)
         {
             return HERDER_BREED;
         }
@@ -296,7 +302,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
     }
 
     /**
-     * Haverst honey/honeycomb from full beehives.
+     * Harvest honey/honeycomb from full beehives.
      *
      * @return The next {@link IAIState}.
      */
@@ -314,7 +320,8 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
         {
             return DECIDE;
         }
-        if (getOwnBuilding().shouldHarvestHoneycombs())
+        if (getOwnBuilding().getHarvestTypes() == BeekeeperSetHarvestHoneycombsMessage.HarvestType.HONEYCOMBS ||
+              (getOwnBuilding().getHarvestTypes() == BeekeeperSetHarvestHoneycombsMessage.HarvestType.BOTH && lastHarvestedBottle))
         {
             if (!equipTool(Hand.MAIN_HAND, ToolType.SHEARS))
             {
@@ -341,33 +348,29 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
 
         worker.swingArm(Hand.MAIN_HAND);
         final ItemStack itemStack = worker.getHeldItemMainhand();
-        if (getOwnBuilding().shouldHarvestHoneycombs())
+        if (getOwnBuilding().getHarvestTypes() != BeekeeperSetHarvestHoneycombsMessage.HarvestType.HONEY_BOTTLES && ItemStackUtils.isTool(itemStack, ToolType.SHEARS))
         {
-            if (ItemStackUtils.isTool(itemStack, ToolType.SHEARS))
-            {
-                worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, 1);
+            worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, 1);
 
-                for (ItemStack stackItem : Compatibility.getCombsFromHive(hive, world, getHoneycombsPerHarvest()))
-                {
-                    InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(stackItem, worker.getItemHandlerCitizen());
-                }
-                world.setBlockState(hive, world.getBlockState(hive).with(BlockStateProperties.HONEY_LEVEL, 0));
-                worker.getCitizenExperienceHandler().addExperience(EXP_PER_HARVEST);
-            }
-        }
-        else
-        {
-            if (itemStack.getItem() == Items.GLASS_BOTTLE)
+            for (ItemStack stackItem : Compatibility.getCombsFromHive(hive, world, getHoneycombsPerHarvest()))
             {
-                int i;
-                for (i = 0; i < getHoneyBottlesPerHarvest() && !itemStack.isEmpty(); i++)
-                {
-                    itemStack.shrink(1);
-                }
-                InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(new ItemStack(Items.HONEY_BOTTLE, i), worker.getItemHandlerCitizen());
-                world.setBlockState(hive, world.getBlockState(hive).with(BlockStateProperties.HONEY_LEVEL, 0));
-                worker.getCitizenExperienceHandler().addExperience(EXP_PER_HARVEST);
+                InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(stackItem, worker.getItemHandlerCitizen());
             }
+            world.setBlockState(hive, world.getBlockState(hive).with(BlockStateProperties.HONEY_LEVEL, 0));
+            worker.getCitizenExperienceHandler().addExperience(EXP_PER_HARVEST);
+            lastHarvestedBottle = false;
+        }
+        else if(getOwnBuilding().getHarvestTypes() != BeekeeperSetHarvestHoneycombsMessage.HarvestType.HONEYCOMBS && itemStack.getItem() == Items.GLASS_BOTTLE)
+        {
+            int i;
+            for (i = 0; i < getHoneyBottlesPerHarvest() && !itemStack.isEmpty(); i++)
+            {
+                itemStack.shrink(1);
+            }
+            InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(new ItemStack(Items.HONEY_BOTTLE, i), worker.getItemHandlerCitizen());
+            world.setBlockState(hive, world.getBlockState(hive).with(BlockStateProperties.HONEY_LEVEL, 0));
+            worker.getCitizenExperienceHandler().addExperience(EXP_PER_HARVEST);
+            lastHarvestedBottle = true;
         }
 
         final int dex = getPrimarySkillLevel();

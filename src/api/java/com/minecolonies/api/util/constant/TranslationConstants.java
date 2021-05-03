@@ -52,8 +52,6 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_WAREHOUSE_FULL_MAX_UPGRADE                  = "com.minecolonies.coremod.warehouse.full.max";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_BAKER                                   = "com.minecolonies.coremod.gui.workerhuts.bakery";
-    @NonNls
     public static final String COM_MINECOLONIES_COREMOD_JOB_BAKER                                   = "com.minecolonies.coremod.job.bakery";
     @NonNls
     public static final String BAKER_HAS_NO_FURNACES_MESSAGE                                        = "com.minecolonies.coremod.bakery.nofurnace";
@@ -254,17 +252,11 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_BUILDER_AUTOMATIC                       = "com.minecolonies.coremod.gui.builder.automatic";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_HERDER_BREEDING                         = "com.minecolonies.coremod.gui.herder.breeding";
+    public static final String COM_MINECOLONIES_COREMOD_GUI_BEEKEEPER_COLLECTCOMB                   = "com.minecolonies.coremod.gui.beekeeper.collectcomb";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_HERDER_NOTBREEDING                      = "com.minecolonies.coremod.gui.herder.notbreeding";
+    public static final String COM_MINECOLONIES_COREMOD_GUI_BEEKEEPER_COLLECTBOTTLE                 = "com.minecolonies.coremod.gui.beekeeper.collectbottle";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_COWBOY_COLLECT                          = "com.minecolonies.coremod.gui.cowboy.collect";
-    @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_COWBOY_NOTCOLLECT                       = "com.minecolonies.coremod.gui.cowboy.notcollect";
-    @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_BEEKEEPER_COLLECT                       = "com.minecolonies.coremod.gui.beekeeper.collect";
-    @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_BEEKEEPER_NOTCOLLECT                    = "com.minecolonies.coremod.gui.beekeeper.notcollect";
+    public static final String COM_MINECOLONIES_COREMOD_GUI_BEEKEEPER_COLLECTBOTH                 = "com.minecolonies.coremod.gui.beekeeper.collectboth";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_MODE_AUTO                    = "com.minecolonies.coremod.gui.workerhuts.modeA";
     @NonNls
@@ -352,10 +344,6 @@ public final class TranslationConstants
     @NonNls
     public static final String SIFTER_NO_MESH                                                       = "com.minecolonies.coremod.sifter.nomesh";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GENERAL_ONBIG                               = "com.minecolonies.coremod.general.onbig";
-    @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GENERAL_OFFBIG                              = "com.minecolonies.coremod.general.offbig";
-    @NonNls
     public static final String COM_MINECOLONIES_INFO_PREFIX                                         = "com.minecolonies.coremod.info.";
     @NonNls
     public static final String COM_MINECOLONIES_JEI_PREFIX                                          = "com.minecolonies.coremod.jei.";
@@ -367,8 +355,6 @@ public final class TranslationConstants
     public static final String TOO_MANY_FILTERED_FLORIST                                            = "com.minecolonies.gui.workerhuts.florist.toomany";
     @NonNls
     public static final String TOO_MANY_FILTERED_BELOW_LVL4_FLORIST                                 = "com.minecolonies.gui.workerhuts.florist.toomanybelow";
-    @NonNls
-    public static final String FLORIST_BUILDING_NAME                                                = "com.minecolonies.coremod.gui.workerhuts.florist";
     @NonNls
     public static final String ENCHANTER_BUILDING_NAME                                              = "com.minecolonies.coremod.gui.workerhuts.enchanter";
     @NonNls
@@ -459,8 +445,6 @@ public final class TranslationConstants
     public static final String DIST                                                                 = "com.minecolonies.coremod.dist.blocks";
     @NonNls
     public static final String RACK                                                                 = "block.minecolonies.blockminecoloniesrack";
-    @NonNls
-    public static final String GRAVE                                                                = "block.minecolonies.blockminecoloniesgrave";
     @NonNls
     public static final String RESEARCH_AVAILABLE                                                   = "com.minecolonies.coremod.research.available";
     @NonNls

@@ -65,6 +65,7 @@ public final class Constants
     public static final float  WATCH_CLOSEST2                   = 3.0F;
     public static final float  WATCH_CLOSEST2_FAR               = 5.0F;
     public static final float  WATCH_CLOSEST2_FAR_CHANCE        = 0.02F;
+    public static final int    CHUNKS_TO_CLAIM_THRESHOLD        = 5000;
 
     /**
      * Advancement Criterion Names

@@ -2,8 +2,6 @@ package com.minecolonies.coremod.generation.defaults;
 
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.buildings.ModBuildings;
-import com.minecolonies.api.entity.ModEntities;
-import com.minecolonies.api.inventory.ModContainers;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.research.AbstractResearchProvider;
 import com.minecolonies.api.research.ResearchBranchType;
@@ -11,7 +9,6 @@ import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.ModContainer;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -84,7 +81,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         effects.add(new ResearchEffect(MECHANIC_ENHANCED_GATES).setTranslatedName("Gates Gain +100% Raider Swarm Resistance").setLevels(new double[] {5, 15}));
         effects.add(new ResearchEffect(FARMING).setTranslatedName("Farmers Harvest +%3$s%% Crops").setLevels(new double[] {0.1, 0.25, 0.5, 0.75, 2}));
         effects.add(new ResearchEffect(FLEEING_DAMAGE).setTranslatedName("Guards Take -%3$s%% Damage When Fleeing").setLevels(new double[] {0.2, 0.3, 0.4, 1}));
-        effects.add(new ResearchEffect(FLEEING_SPEED).setTranslatedName("Fleeing Citizens Gain Swiftness %2$s").setLevels(new double[] {1, 2, 3, 5}));
+        effects.add(new ResearchEffect(FLEEING_SPEED).setTranslatedName("Fleeing Guards Gain Swiftness %2$s").setLevels(new double[] {1, 2, 3, 5}));
         effects.add(new ResearchEffect(GROWTH).setTranslatedName("Child Growth Rate +%3$s%%").setLevels(new double[] {0.05, 0.1, 0.25, 0.5, 1}));
         effects.add(new ResearchEffect(HAPPINESS).setTranslatedName("Citizen Happiness +%3$s%%").setLevels(new double[] {0.05, 0.1, 0.15, 0.2, 0.5}));
         effects.add(new ResearchEffect(SATLIMIT).setTranslatedName("Healing Saturation Min %s").setLevels(new double[] {-0.5, -1, -1.5, -2, -5}));
@@ -112,6 +109,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         effects.add(new ResearchEffect(FIRE_RES).setTranslatedName("Miners Have Fire and Lava Immunity"));
         effects.add(new ResearchEffect(ARROW_PIERCE).setTranslatedName("Archers Gain Piercing II"));
         effects.add(new ResearchEffect(PLANT_2).setTranslatedName("Plantations Grow Two Crops at Once"));
+        effects.add(new ResearchEffect(BEEKEEP_2).setTranslatedName("Beekeepers Can Harvest Both Honey Bottles and Combs at Once"));
         effects.add(new ResearchEffect(RAILS).setTranslatedName("Citizens use Rails"));
         effects.add(new ResearchEffect(RETREAT).setTranslatedName("Guards Flee Under 20% HP"));
         effects.add(new ResearchEffect(SHIELD_USAGE).setTranslatedName("Knights Unlock Shield Use"));
@@ -468,7 +466,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .addEffect(HAPPINESS, 5)
           .addToList(r);
 
-        new Research(new ResourceLocation(Constants.MOD_ID, "civilian/nightowl"), CIVIL).setParentResearch(circus)
+        final Research night_owl = new Research(new ResourceLocation(Constants.MOD_ID, "civilian/nightowl"), CIVIL).setParentResearch(circus)
           .setTranslatedName("Night Owl")
           .setTranslatedSubtitle("Overtime penalty rates need not apply.")
           .setSortOrder(2)
@@ -477,7 +475,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .addItemCost(Items.GOLDEN_CARROT, 25)
           .addEffect(WORK_LONGER, 1)
           .addToList(r);
-        new Research(new ResourceLocation(Constants.MOD_ID, "civilian/nightowl2"), CIVIL).setParentResearch(festival)
+        new Research(new ResourceLocation(Constants.MOD_ID, "civilian/nightowl2"), CIVIL).setParentResearch(night_owl)
           .setTranslatedName("Night Owl II")
           .setTranslatedSubtitle("Got any coffee?")
           .setSortOrder(2)
@@ -1143,13 +1141,21 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                        .addItemCost(ModItems.compost, 64)
                                        .addEffect(ModBuildings.florist.getBuildingBlock(), 1)
                                        .addToList(r);
-        new Research(new ResourceLocation(Constants.MOD_ID, "technology/rainbowheaven"), TECH).setParentResearch(flowerPower)
+        final Research rainbowHeaven = new Research(new ResourceLocation(Constants.MOD_ID, "technology/rainbowheaven"), TECH).setParentResearch(flowerPower)
           .setTranslatedName("Rainbow Heaven")
           .setTranslatedSubtitle("Now in color! And 3D!")
           .setIcon(ModBlocks.blockHutComposter.asItem())
           .addBuildingRequirement(ModBuildings.FLORIST_ID, 3)
           .addItemCost(Items.POPPY, 64)
           .addEffect(ModBuildings.dyer.getBuildingBlock(), 1)
+          .addToList(r);
+        new Research(new ResourceLocation(Constants.MOD_ID, "technology/honeypot"), TECH).setParentResearch(rainbowHeaven)
+          .setTranslatedName("Honey Pot")
+          .setTranslatedSubtitle("Wasn't going to eat it. Just going to taste it.")
+          .setIcon(Items.HONEYCOMB.asItem())
+          .addBuildingRequirement(ModBuildings.BEEKEEPER_ID, 3)
+          .addItemCost(Items.BEEHIVE, 16)
+          .addEffect(BEEKEEP_2, 1)
           .addToList(r);
 
         final Research letItGrow = new Research(new ResourceLocation(Constants.MOD_ID, "technology/letitgrow"), TECH).setParentResearch(biodegradable)

@@ -31,6 +31,11 @@ public class BuildingCowboy extends AbstractBuildingWorker
     private static final String COWBOY = "cowboy";
 
     /**
+     * The hut name, used for the lang string in the GUI
+     */
+    private static final String HUT_NAME = "cowboyhut";
+
+    /**
      * Max building level of the hut.
      */
     private static final int MAX_BUILDING_LEVEL = 5;
@@ -134,7 +139,7 @@ public class BuildingCowboy extends AbstractBuildingWorker
         @Override
         public Window getWindow()
         {
-            return new WindowHutWorkerModulePlaceholder<>(this, COWBOY);
+            return new WindowHutWorkerModulePlaceholder<>(this, HUT_NAME);
         }
     }
 }
