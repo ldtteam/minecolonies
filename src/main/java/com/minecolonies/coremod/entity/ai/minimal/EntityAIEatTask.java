@@ -447,18 +447,26 @@ public class EntityAIEatTask extends Goal
         final ICitizenData citizenData = citizen.getCitizenData();
         final IColony colony = citizenData.getColony();
         restaurantPos = colony.getBuildingManager().getBestRestaurant(citizen);
-
-        final IJob<?> job = citizen.getCitizenJobHandler().getColonyJob();
-        if (job != null && job.isActive())
+        if (citizenData.getSaturation() == 0.0)
         {
-            job.setActive(false);
+
+            final IJob<?> job = citizen.getCitizenJobHandler().getColonyJob();
+            if (job != null && job.isActive())
+            {
+                job.setActive(false);
+            }
+
+            if (restaurantPos == null)
+            {
+                citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(NO_RESTAURANT), ChatPriority.BLOCKING));
+                return CHECK_FOR_FOOD;
+            }
+        }
+        else if (restaurantPos == null)
+        {
+            return IDLE;
         }
 
-        if (restaurantPos == null)
-        {
-            citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(NO_RESTAURANT), ChatPriority.BLOCKING));
-            return CHECK_FOR_FOOD;
-        }
 
         return GO_TO_RESTAURANT;
     }

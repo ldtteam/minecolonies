@@ -15,7 +15,7 @@
   "com.minecolonies.research.effects.enhancesgatedurabilityaddition.description": "Gates Gain +100% Raider Swarm Resistance",
   "com.minecolonies.research.effects.farmingmultiplier.description": "Farmers Harvest +%3$s%% Crops",
   "com.minecolonies.research.effects.fleeingdamagemultiplier.description": "Guards Take -%3$s%% Damage When Fleeing",
-  "com.minecolonies.research.effects.fleeingspeedaddition.description": "Fleeing Citizens Gain Swiftness %2$s",
+  "com.minecolonies.research.effects.fleeingspeedaddition.description": "Fleeing Guards Gain Swiftness %2$s",
   "com.minecolonies.research.effects.growthmultiplier.description": "Child Growth Rate +%3$s%%",
   "com.minecolonies.research.effects.happinessmultiplier.description": "Citizen Happiness +%3$s%%",
   "com.minecolonies.research.effects.healingsaturationlimitaddition.description": "Healing Saturation Min %s",

@@ -17,6 +17,7 @@ import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.FurnaceBlock;
+import net.minecraft.item.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -66,7 +67,8 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
           new AITarget(START_WORKING, this::startWorking, 60),
           new AITarget(START_USING_FURNACE, this::fillUpFurnace, STANDARD_DELAY),
           new AIEventTarget(AIBlockingEventType.AI_BLOCKING, this::accelerateFurnaces, TICKS_SECOND),
-          new AITarget(RETRIEVING_END_PRODUCT_FROM_FURNACE, this::retrieveSmeltableFromFurnace, STANDARD_DELAY));
+          new AITarget(RETRIEVING_END_PRODUCT_FROM_FURNACE, this::retrieveSmeltableFromFurnace, STANDARD_DELAY),
+          new AITarget(RETRIEVING_USED_FUEL_FROM_FURNACE, this::retrieveUsedFuel, STANDARD_DELAY));
     }
 
     /**
@@ -75,6 +77,18 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
      * @param furnace the furnace to retrieveSmeltableFromFurnace from.
      */
     protected abstract void extractFromFurnace(final FurnaceTileEntity furnace);
+
+    /**
+     * Extract fuel from the furnace.
+     *
+     * @param furnace the furnace to retrieve from.
+     */
+    private void extractFuelFromFurnace(final FurnaceTileEntity furnace)
+    {
+        InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandler(
+                new InvWrapper(furnace), FUEL_SLOT,
+                worker.getInventoryCitizen());
+    }
 
     /**
      * Method called to detect if a certain stack is of the type we want to be put in the furnace.
@@ -114,6 +128,30 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
                 if ((!furnace.isBurning() && countInResultSlot > 0)
                       || countInResultSlot > RETRIEVE_SMELTABLE_IF_MORE_THAN
                       || (countInResultSlot > 0 && countInInputSlot == 0))
+                {
+                    worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_STATUS_RETRIEVING));
+                    return pos;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Get the furnace which has used fuel. For this check each furnace which has been registered to the building. Check if the furnace has used fuel in the fuel slot.
+     *
+     * @return the position of the furnace.
+     */
+    protected BlockPos getPositionOfOvenToRetrieveFuelFrom()
+    {
+        for (final BlockPos pos : getOwnBuilding().getFurnaces())
+        {
+            final TileEntity entity = world.getTileEntity(pos);
+            if (entity instanceof FurnaceTileEntity)
+            {
+                final FurnaceTileEntity furnace = (FurnaceTileEntity) entity;
+
+                if (!furnace.getStackInSlot(FUEL_SLOT).isEmpty() && !compareItemStackListIgnoreStackSize(getOwnBuilding().getAllowedFuel(), furnace.getStackInSlot(FUEL_SLOT), false, false))
                 {
                     worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_STATUS_RETRIEVING));
                     return pos;
@@ -164,6 +202,14 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
         if (nextState != START_WORKING)
         {
             return nextState;
+        }
+
+        final BlockPos posOfUsedFuelOven = getPositionOfOvenToRetrieveFuelFrom();
+        if (posOfUsedFuelOven != null)
+        {
+            walkTo = posOfUsedFuelOven;
+            worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.retrieving"));
+            return RETRIEVING_USED_FUEL_FROM_FURNACE;
         }
 
         final BlockPos posOfOven = getPositionOfOvenToRetrieveFrom();
@@ -340,6 +386,40 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
 
         extractFromFurnace((FurnaceTileEntity) entity);
         incrementActionsDoneAndDecSaturation();
+        return START_WORKING;
+    }
+
+    /**
+     * Retrieve used fuel from the furnaces. If no position has been set return. Else navigate to the position of the furnace. On arrival execute the extract method of the
+     * specialized worker.
+     *
+     * @return the next state to go to.
+     */
+    private IAIState retrieveUsedFuel()
+    {
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_STATUS_RETRIEVING));
+
+        if (walkTo == null)
+        {
+            return START_WORKING;
+        }
+
+        if (walkToBlock(walkTo))
+        {
+            return getState();
+        }
+
+        final TileEntity entity = world.getTileEntity(walkTo);
+        if (!(entity instanceof FurnaceTileEntity)
+                || (ItemStackUtils.isEmpty(((FurnaceTileEntity) entity).getStackInSlot(FUEL_SLOT))))
+        {
+            walkTo = null;
+            return START_WORKING;
+        }
+
+        walkTo = null;
+
+        extractFuelFromFurnace((FurnaceTileEntity) entity);
         return START_WORKING;
     }
 
