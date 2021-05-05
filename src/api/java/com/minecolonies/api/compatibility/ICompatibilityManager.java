@@ -197,14 +197,6 @@ public interface ICompatibilityManager
     ItemStack getRandomLuckyOre(final double chanceBonus);
 
     /**
-     * Get a random enchantment book for a certain building level.
-     *
-     * @param buildingLevel the building level.
-     * @return a tuple containing the stack and the level applied to it.
-     */
-    Tuple<ItemStack, Integer> getRandomEnchantmentBook(final int buildingLevel);
-
-    /**
      * Check if the block is configured to bypass the colony restrictions.
      * @param block the block to check.
      * @return true if so.

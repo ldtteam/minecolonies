@@ -1,10 +1,12 @@
-package com.minecolonies.coremod.generation;
+package com.minecolonies.coremod.generation.defaults;
 
 import com.google.common.collect.Lists;
 import com.ldtteam.structurize.blocks.decorative.BlockTimberFrame;
 import com.ldtteam.structurize.blocks.types.TimberFrameCentreType;
 import com.ldtteam.structurize.blocks.types.TimberFrameType;
 import com.ldtteam.structurize.blocks.types.WoodType;
+import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.coremod.generation.CustomRecipeProvider;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.IFinishedRecipe;
 import net.minecraft.item.ItemStack;
@@ -34,8 +36,8 @@ public class SawmillTimberFrameRecipeProvider extends CustomRecipeProvider
             for (final TimberFrameCentreType centreType : TimberFrameCentreType.values())
             {
                     final String id = String.format("%s_%s_timber_frame", frameType.getString(), centreType.getString());
-                    final ItemStack frame = new ItemStack(frameType.getMaterial(), 1);
-                    final ItemStack centre = new ItemStack(centreType.getMaterial());
+                    final ItemStorage frame = new ItemStorage(new ItemStack(frameType.getMaterial(), 1));
+                    final ItemStorage centre = new ItemStorage(new ItemStack(centreType.getMaterial()));
 
                     final List<ItemStack> results = Arrays.stream(TimberFrameType.values())
                                                       .map(type -> idToStructurize(BlockTimberFrame.getName(type, frameType, centreType), 4))
@@ -43,7 +45,7 @@ public class SawmillTimberFrameRecipeProvider extends CustomRecipeProvider
 
 
                     CustomRecipeBuilder.create("sawmill", id)
-                      .inputs(Lists.newArrayList(frame, centre, new ItemStack(buildTool.get())))
+                      .inputs(Lists.newArrayList(frame, centre, new ItemStorage(new ItemStack(buildTool.get()))))
                       .alternateOutputs(results.subList(1, results.size()))
                       .result(results.get(0))
                       .mustExist(true)

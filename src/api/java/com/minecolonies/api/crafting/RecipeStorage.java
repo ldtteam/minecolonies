@@ -289,12 +289,12 @@ public class RecipeStorage implements IRecipeStorage
             final int availableCount = InventoryUtils.getItemCountInItemHandlers(
               ImmutableList.copyOf(inventories),
               itemStack -> !ItemStackUtils.isEmpty(itemStack)
-                             && ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, false, true));
+                             && ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, false, !storage.ignoreNBT()));
 
             final int neededCount;
             if(!secondaryOutputs.isEmpty() || !tools.isEmpty())
             {
-                if(!ItemStackUtils.compareItemStackListIgnoreStackSize(this.getCraftingToolsAndSecondaryOutputs(), stack, false, true))
+                if(!ItemStackUtils.compareItemStackListIgnoreStackSize(this.getCraftingToolsAndSecondaryOutputs(), stack, false, !storage.ignoreNBT()))
                 {
                     neededCount = storage.getAmount() * neededMultiplier;
                 }
@@ -306,7 +306,7 @@ public class RecipeStorage implements IRecipeStorage
             else
             {
                 final ItemStack container = stack.getItem().getContainerItem(stack);
-                if(ItemStackUtils.isEmpty(container) || !ItemStackUtils.compareItemStacksIgnoreStackSize(stack, container, false, true))
+                if(ItemStackUtils.isEmpty(container) || !ItemStackUtils.compareItemStacksIgnoreStackSize(stack, container, false, !storage.ignoreNBT()))
                 {
                     neededCount = storage.getAmount() * neededMultiplier;
                 }
@@ -467,17 +467,18 @@ public class RecipeStorage implements IRecipeStorage
     }
 
     /**
-     * Check for space, remove items, and insert crafted items.
+     * Check for space, remove items, and insert crafted items, returning a copy of the crafted items.
      *
-     * @param handlers the handlers to use.
-     * @return true if succesful.
+     * @param context loot context
+     * @param handlers the handlers to use
+     * @return copy of the crafted items if successful, null on failure
      */
     @Override
-    public boolean fullfillRecipe(final LootContext context, final List<IItemHandler> handlers)
+    public List<ItemStack> fullfillRecipeAndCopy(final LootContext context, final List<IItemHandler> handlers)
     {
         if (!checkForFreeSpace(handlers) || !canFullFillRecipe(1, Collections.emptyMap(), handlers.toArray(new IItemHandler[0])))
         {
-            return false;
+            return null;
         }
 
         final AbstractEntityCitizen citizen = (AbstractEntityCitizen) context.get(LootParameters.THIS_ENTITY);
@@ -495,11 +496,11 @@ public class RecipeStorage implements IRecipeStorage
             for (final IItemHandler handler : handlers)
             {
                 int slotOfStack =
-                  InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(handler, itemStack -> !ItemStackUtils.isEmpty(itemStack) && ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, false, true));
+                  InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(handler, itemStack -> !ItemStackUtils.isEmpty(itemStack) && ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, false, !storage.ignoreNBT()));
 
                 while (slotOfStack != -1 && amountNeeded > 0)
                 {
-                    if(citizen != null && ItemStackUtils.compareItemStackListIgnoreStackSize(tools, stack, false, true) && ItemStackUtils.getDurability(handler.getStackInSlot(slotOfStack)) > 0 )
+                    if(citizen != null && ItemStackUtils.compareItemStackListIgnoreStackSize(tools, stack, false, !storage.ignoreNBT()) && ItemStackUtils.getDurability(handler.getStackInSlot(slotOfStack)) > 0 )
                     {
                         ItemStack toDamage = handler.extractItem(slotOfStack,1, false);
                         if (!ItemStackUtils.isEmpty(toDamage))
@@ -524,14 +525,14 @@ public class RecipeStorage implements IRecipeStorage
                         if (ItemStackUtils.isEmpty(extractedStack))
                         {
                             handler.insertItem(slotOfStack, extractedStack, false);
-                            return false;
+                            return null;
                         }
 
                         amountNeeded -= count;
                         if (amountNeeded > 0)
                         {
                             slotOfStack = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(handler,
-                            itemStack -> !ItemStackUtils.isEmpty(itemStack) && ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, false, true));
+                            itemStack -> !ItemStackUtils.isEmpty(itemStack) && ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, false, !storage.ignoreNBT()));
                         }
                     }
                 }
@@ -545,12 +546,11 @@ public class RecipeStorage implements IRecipeStorage
 
             if (amountNeeded > 0)
             {
-                return false;
+                return null;
             }
         }
 
-        insertCraftedItems(handlers, getPrimaryOutput(), context);
-        return true;
+        return insertCraftedItems(handlers, getPrimaryOutput(), context);
     }
 
     @Override
@@ -564,12 +564,14 @@ public class RecipeStorage implements IRecipeStorage
      *
      * @param handlers the handlers.
      */
-    private void insertCraftedItems(final List<IItemHandler> handlers, ItemStack outputStack, LootContext context)
+    private List<ItemStack> insertCraftedItems(final List<IItemHandler> handlers, ItemStack outputStack, LootContext context)
     {
+        final List<ItemStack> resultStacks = new ArrayList<>();
         final List<ItemStack> secondaryStacks = new ArrayList<>();
 
         if(!ItemStackUtils.isEmpty(outputStack))
         {
+            resultStacks.add(outputStack.copy());
             for (final IItemHandler handler : handlers)
             {
                 if (InventoryUtils.addItemStackToItemHandler(handler, outputStack.copy()))
@@ -590,6 +592,7 @@ public class RecipeStorage implements IRecipeStorage
             secondaryStacks.addAll(loot.generate(context));
         }
 
+        resultStacks.addAll(secondaryStacks.stream().map(ItemStack::copy).collect(Collectors.toList()));
         for (final ItemStack stack : secondaryStacks)
         {
             for (final IItemHandler handler : handlers)
@@ -600,6 +603,8 @@ public class RecipeStorage implements IRecipeStorage
                 }
             }
         }
+
+        return Collections.unmodifiableList(resultStacks);
     }
 
     @Override
