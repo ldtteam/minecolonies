@@ -49,7 +49,7 @@ public class AbstractColonyFlagBanner<B extends AbstractColonyFlagBanner<B>> ext
         if (worldIn.isRemote) return;
 
         TileEntity te = worldIn.getTileEntity(pos);
-        if (te instanceof TileEntityColonyFlag)
+        if (te instanceof TileEntityColonyFlag && ((TileEntityColonyFlag) te).colonyId == -1 )
         {
             IColony colony = IColonyManager.getInstance().getIColony(worldIn, pos);
 

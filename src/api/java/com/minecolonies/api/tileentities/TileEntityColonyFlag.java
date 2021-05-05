@@ -43,6 +43,13 @@ public class TileEntityColonyFlag extends TileEntity
     {
         super.write(compound);
 
+        if(this.colonyId == -1 && this.hasWorld())
+        {
+            IColony colony = IColonyManager.getInstance().getIColony(this.getWorld(), pos);
+            if (colony != null)
+                this.colonyId = colony.getID();
+        }
+
         compound.put(TAG_FLAG_PATTERNS, this.flag);
         compound.put(TAG_BANNER_PATTERNS, this.patterns);
 
@@ -64,9 +71,11 @@ public class TileEntityColonyFlag extends TileEntity
         {
             IColony colony = IColonyManager.getInstance().getIColony(this.getWorld(), pos);
             if (colony != null)
+            {
                 this.colonyId = colony.getID();
+                this.markDirty();
+            }
         }
-
     }
 
     @Override
