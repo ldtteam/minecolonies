@@ -1,6 +1,7 @@
 package com.minecolonies.api.tileentities;
 
 import com.minecolonies.api.blocks.ModBlocks;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.items.ModItems;
@@ -58,6 +59,14 @@ public class TileEntityColonyFlag extends TileEntity
         this.flag = compound.getList(TAG_FLAG_PATTERNS, 10);
         this.patterns = compound.getList(TAG_BANNER_PATTERNS, 10);
         this.colonyId = compound.getInt(TAG_COLONY_ID);
+
+        if(this.colonyId == -1 && this.hasWorld())
+        {
+            IColony colony = IColonyManager.getInstance().getIColony(this.getWorld(), pos);
+            if (colony != null)
+                this.colonyId = colony.getID();
+        }
+
     }
 
     @Override
