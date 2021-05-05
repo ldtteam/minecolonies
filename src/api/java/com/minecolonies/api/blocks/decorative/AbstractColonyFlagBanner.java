@@ -55,7 +55,7 @@ public class AbstractColonyFlagBanner<B extends AbstractColonyFlagBanner<B>> ext
 
             // Allow the player to place their own beyond the colony
             if (colony == null && placer instanceof PlayerEntity)
-                IColonyManager.getInstance().getIColonyByOwner(worldIn, (PlayerEntity) placer);
+                colony = IColonyManager.getInstance().getIColonyByOwner(worldIn, (PlayerEntity) placer);
 
             if (colony != null)
                 ((TileEntityColonyFlag) te).colonyId = colony.getID();
