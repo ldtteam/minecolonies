@@ -99,7 +99,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static com.minecolonies.api.util.constant.Constants.MAX_STORY;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONY_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_EVENT_ID;
 import static com.minecolonies.api.util.constant.TranslationConstants.CANT_PLACE_COLONY_IN_OTHER_DIM;
@@ -877,7 +876,7 @@ public class EventHandler
                     Tuple<Item, Integer> cost = recruitCosts.get(world.rand.nextInt(recruitCosts.size()));
                     visitorData.setRecruitCosts(new ItemStack(cost.getA(), (int)(recruitLevel * 3.0 / cost.getB())));
                     visitorData.triggerInteraction(new RecruitmentInteraction(new TranslationTextComponent(
-                            "com.minecolonies.coremod.gui.chat.recruitstory" + (world.rand.nextInt(MAX_STORY) + 1), visitorData.getName().split(" ")[0]), ChatPriority.IMPORTANT));
+                            "com.minecolonies.coremod.gui.chat.recruitstorycured", visitorData.getName().split(" ")[0]), ChatPriority.IMPORTANT));
                 }
             }
         }
