@@ -59,7 +59,7 @@ public class BuildingSmeltery extends AbstractBuildingFurnaceUser
     {
         super(c, l);
         keepX.put(IColonyManager.getInstance().getCompatibilityManager()::isOre, new Tuple<>(Integer.MAX_VALUE, true));
-        keepX.put(FurnaceTileEntity::isFuel, new Tuple<>(Integer.MAX_VALUE, true));
+        keepX.put(stack -> isAllowedFuel(stack), new Tuple<>(STACKSIZE, true));
         keepX.put(stack -> !ItemStackUtils.isEmpty(stack)
                              && (stack.getItem() instanceof SwordItem || stack.getItem() instanceof ToolItem || stack.getItem() instanceof ArmorItem)
           , new Tuple<>(STUFF_TO_KEEP, true));
