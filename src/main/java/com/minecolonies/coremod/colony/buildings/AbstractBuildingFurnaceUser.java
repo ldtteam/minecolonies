@@ -127,7 +127,7 @@ public abstract class AbstractBuildingFurnaceUser extends AbstractBuildingWorker
     public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
     {
         final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep = new HashMap<>(super.getRequiredItemsAndAmount());
-        toKeep.put(this::isAllowedFuel, new Tuple<>(STACKSIZE * this.getBuildingLevel(), true));
+        toKeep.put(this::isAllowedFuel, new Tuple<>(STACKSIZE * this.getBuildingLevel(), false));
         return toKeep;
     }
 
