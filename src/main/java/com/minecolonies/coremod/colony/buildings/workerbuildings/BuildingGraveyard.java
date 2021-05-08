@@ -3,7 +3,10 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesNamedGrave;
 import com.minecolonies.api.blocks.ModBlocks;
-import com.minecolonies.api.colony.*;
+import com.minecolonies.api.colony.GraveData;
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
@@ -13,6 +16,7 @@ import com.minecolonies.api.tileentities.TileEntityGrave;
 import com.minecolonies.api.tileentities.TileEntityNamedGrave;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.client.gui.WindowHutGraveyardModule;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
@@ -33,9 +37,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 
-import static com.ldtteam.structurize.placement.handlers.placement.PlacementHandlers.handleTileEntityPlacement;
 import static com.minecolonies.api.util.constant.Constants.TAG_STRING;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
@@ -161,28 +167,20 @@ public class BuildingGraveyard extends AbstractBuildingWorker
     {
         if(currentGrave != null)
         {
-            final TileEntity tileEntity = getColony().getWorld().getTileEntity(currentGrave);
-            if (tileEntity != null)
+            if (WorldUtil.isBlockLoaded(colony.getWorld(), currentGrave))
             {
-                return currentGrave;
+                final TileEntity tileEntity = getColony().getWorld().getTileEntity(currentGrave);
+                if (tileEntity != null)
+                {
+                    return currentGrave;
+                }
             }
 
+            colony.getGraveManager().unReserveGrave(currentGrave);
             currentGrave = null;
         }
 
-        final BlockPos grave = colony.getGraveManager().reserveNextFreeGrave();
-        if(grave == null)
-        {
-            return null;
-        }
-
-        final TileEntity tileEntity = getColony().getWorld().getTileEntity(grave);
-        if(tileEntity == null || !(tileEntity instanceof TileEntityGrave))
-        {
-            return null;
-        }
-
-        currentGrave = grave;
+        currentGrave = colony.getGraveManager().reserveNextFreeGrave();
         return currentGrave;
     }
 
