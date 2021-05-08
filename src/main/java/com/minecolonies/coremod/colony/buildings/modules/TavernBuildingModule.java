@@ -35,6 +35,7 @@ import java.util.Map;
 
 import static com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateConstants.MAX_TICKRATE;
 import static com.minecolonies.api.util.constant.Constants.TAG_COMPOUND;
+import static com.minecolonies.api.util.constant.Constants.MAX_STORY;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_VISITORS;
 import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_SITTING;
 import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_WORK;
@@ -56,8 +57,6 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
     private static final int GOLD_SKILL_LEVEL    = 25;
     private static final int IRON_SKILL_LEVEL    = 30;
     private static final int DIAMOND_SKILL_LEVEL = 35;
-
-    private static final int MAX_STORY = 20;
 
     /**
      * Music interval
