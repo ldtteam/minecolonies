@@ -327,9 +327,8 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
           colony.getImportantMessageEntityPlayers(),
           RAID_EVENT_MESSAGE + horde.getMessageID(), BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint), colony.getName());
 
-        boolean early = getColony().getBuildingManager().getTownHall().getBuildingLevel() < 3 && horde.getMessageID() < 2;
-        PlayAudioMessage audio = new PlayAudioMessage(early ? RaidSounds.WARNING_EARLY : RaidSounds.WARNING, SoundCategory.RECORDS);
-        PlayAudioMessage.sendToAll(getColony(), true, false, audio);
+        PlayAudioMessage audio = new PlayAudioMessage(horde.initialSize <= SMALL_HORDE_SIZE ? RaidSounds.WARNING_EARLY : RaidSounds.WARNING, SoundCategory.RECORDS);
+        PlayAudioMessage.sendToAll(getColony(), false, false, audio);
     }
 
     /**
@@ -444,9 +443,8 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
         {
             LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), LanguageHandler.translateKey(ALL_BARBARIANS_KILLED_MESSAGE), colony.getName());
 
-            boolean early = getColony().getBuildingManager().getTownHall().getBuildingLevel() < 3 && horde.getMessageID() < 2;
-            PlayAudioMessage audio = new PlayAudioMessage(early ? RaidSounds.VICTORY_EARLY : RaidSounds.VICTORY, SoundCategory.RECORDS);
-            PlayAudioMessage.sendToAll(getColony(), true, true, audio);
+            PlayAudioMessage audio = new PlayAudioMessage(horde.initialSize <= SMALL_HORDE_SIZE ? RaidSounds.VICTORY_EARLY : RaidSounds.VICTORY, SoundCategory.RECORDS);
+            PlayAudioMessage.sendToAll(getColony(), false, true, audio);
 
             if (colony.getRaiderManager().getLostCitizen() == 0)
             {
