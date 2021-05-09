@@ -189,16 +189,19 @@ public class GraveManager implements IGraveManager
             return false;
         }
 
-        final TileEntityGrave graveEntity = (TileEntityGrave) colony.getWorld().getTileEntity(pos);
-        if (graveEntity == null)
-        {
-            removeGrave(pos);
-            return false;
-        }
-
         graves.put(pos, true);
         colony.markDirty();
         return true;
+    }
+
+    @Override
+    public void unReserveGrave(@NotNull final BlockPos pos)
+    {
+        if (graves.get(pos))
+        {
+            graves.put(pos, false);
+            colony.markDirty();
+        }
     }
 
     /**
@@ -211,14 +214,18 @@ public class GraveManager implements IGraveManager
     {
         for (@NotNull final BlockPos pos : graves.keySet())
         {
-            final TileEntityGrave graveEntity = (TileEntityGrave) colony.getWorld().getTileEntity(pos);
-            if (graveEntity == null)
+            if (!WorldUtil.isBlockLoaded(colony.getWorld(), pos))
             {
-                removeGrave(pos);
                 continue;
             }
 
-            if (!graves.get(pos) && reserveGrave(pos))
+            final TileEntityGrave graveEntity = (TileEntityGrave) colony.getWorld().getTileEntity(pos);
+            if (graveEntity == null)
+            {
+                continue;
+            }
+
+            if (reserveGrave(pos))
             {
                 return pos;
             }
