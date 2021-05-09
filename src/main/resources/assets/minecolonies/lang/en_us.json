@@ -65,7 +65,7 @@
   "item.minecolonies.scepterlumberjack.restrictionset": "Forester restricted area set (x: %d to %d, z: %d to %d, area: %d blocks). The max size is %d blocks.",
   
   "minecolonies.config.maxtreesize": "Max tree size",
-  "minecolonies.config.maxtreesize.comment": "Maximal log count in one tree during lumberjack tree search.",
+  "minecolonies.config.maxtreesize.comment": "Max log count in one tree for the Forester to check during their tree search.",
 
   "com.minecolonies.coremod.gui.workerhuts.togglerestrictionon": "Restriction (on)",
   "com.minecolonies.coremod.gui.workerhuts.togglerestrictionoff": "Restriction (off)",
