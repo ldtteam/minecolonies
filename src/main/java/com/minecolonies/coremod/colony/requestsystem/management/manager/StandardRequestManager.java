@@ -109,6 +109,7 @@ public class StandardRequestManager implements IStandardRequestManager
     public StandardRequestManager(@NotNull final IColony colony)
     {
         this.colony = colony;
+
         this.logger = LogManager.getLogger(String.format("%s.requestsystem.%s", Constants.MOD_ID, colony.getID()));
         reset();
     }

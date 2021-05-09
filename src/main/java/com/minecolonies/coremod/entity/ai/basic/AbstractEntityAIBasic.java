@@ -45,6 +45,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -320,7 +321,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         try
         {
             final int timeout = EXCEPTION_TIMEOUT * exceptionTimer;
-            this.setDelay(timeout);
+            this.setDelay(FMLEnvironment.production ? timeout : EXCEPTION_TIMEOUT);
             // wait for longer now
             exceptionTimer *= 2;
             if (worker != null)

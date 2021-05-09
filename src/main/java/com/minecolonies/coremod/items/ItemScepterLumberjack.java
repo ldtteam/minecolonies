@@ -3,18 +3,16 @@ package com.minecolonies.coremod.items;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLumberjack;
 import com.minecolonies.coremod.entity.ai.citizen.lumberjack.EntityAIWorkLumberjack;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -30,8 +28,6 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies
     private static final String NBT_START_POS = Constants.MOD_ID + ":" + "start_pos";
     private static final String NBT_END_POS   = Constants.MOD_ID + ":" + "end_pos";
 
-    private boolean hasSetFirstPosition = false;
-
     /**
      * LumberjackScepter constructor. Sets max stack to 1, like other tools.
      *
@@ -46,44 +42,42 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies
     @Override
     public ActionResultType onItemUse(final ItemUseContext context)
     {
-        // if server world, do nothing
         if (context.getWorld().isRemote)
         {
             return ActionResultType.FAIL;
         }
 
         final ItemStack scepter = context.getPlayer().getHeldItem(context.getHand());
-        if (!scepter.hasTag())
+        LanguageHandler.sendPlayerMessage(context.getPlayer(), "item.minecolonies.scepterlumberjack.usedend");
+        if (setPosition(scepter.getOrCreateTag(), NBT_START_POS, context.getPos(), context.getPlayer()))
         {
-            scepter.setTag(new CompoundNBT());
+            storeRestrictedArea(context.getPlayer(), scepter.getOrCreateTag(), context.getWorld());
         }
-        final CompoundNBT compound = scepter.getTag();
-
-        if (hasSetFirstPosition)
-        {
-            LanguageHandler.sendPlayerMessage(context.getPlayer(), "item.minecolonies.scepterlumberjack.usedend");
-            setPosition(compound, NBT_END_POS, context.getPos());
-            storeRestrictedArea(context.getPlayer(), context.getHand(), context.getWorld());
-        }
-        else
-        {
-            LanguageHandler.sendPlayerMessage(context.getPlayer(), "item.minecolonies.scepterlumberjack.usedstart");
-            setPosition(compound, NBT_START_POS, context.getPos());
-        }
-
-        return super.onItemUse(context);
+        return ActionResultType.FAIL;
     }
 
-    private void storeRestrictedArea(final PlayerEntity player, final Hand hand, final World worldIn)
+    @Override
+    public boolean canPlayerBreakBlockWhileHolding(@NotNull final BlockState state, @NotNull final World world, @NotNull final BlockPos pos, @NotNull final PlayerEntity player)
     {
-        final ItemStack scepter = player.getHeldItem(hand);
-        if (!scepter.hasTag())
+        if (!world.isRemote)
         {
-            scepter.setTag(new CompoundNBT());
+            final ItemStack tool = player.getHeldItemMainhand();
+            LanguageHandler.sendPlayerMessage(player, "item.minecolonies.scepterlumberjack.usedstart");
+            if (setPosition(tool.getOrCreateTag(), NBT_END_POS, pos, player))
+            {
+                storeRestrictedArea(player, tool.getOrCreateTag(), world);
+            }
         }
 
-        final CompoundNBT compound = scepter.getTag();
+        return false;
+    }
 
+    public float getDestroySpeed(ItemStack stack, BlockState state) {
+        return 3.4028235E38F;
+    }
+
+    private void storeRestrictedArea(final PlayerEntity player, final CompoundNBT compound, final World worldIn)
+    {
         final BlockPos startRestriction = BlockPosUtil.read(compound, NBT_START_POS);
         final BlockPos endRestriction = BlockPosUtil.read(compound, NBT_END_POS);
 
@@ -107,22 +101,38 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies
             return;
         }
 
-        LanguageHandler.sendPlayerMessage(player, "item.minecolonies.scepterlumberjack.restrictionset", area, maxArea);
-
+        LanguageHandler.sendPlayerMessage(player, "item.minecolonies.scepterlumberjack.restrictionset", minX, maxX, minZ, maxZ, area, maxArea);
         final IColony colony = IColonyManager.getInstance().getColonyByWorld(compound.getInt(TAG_ID), worldIn);
         final BlockPos hutPos = BlockPosUtil.read(compound, TAG_POS);
-        final IBuilding hut = colony.getBuildingManager().getBuilding(hutPos);
+        final BuildingLumberjack hut = colony.getBuildingManager().getBuilding(hutPos, BuildingLumberjack.class);
+        if (hut == null)
+        {
+            return;
+        }
 
-        final AbstractBuildingWorker abstractBuilding = (AbstractBuildingWorker) hut;
-
-        final BuildingLumberjack lumberjackBuilding = (BuildingLumberjack) abstractBuilding;
-        lumberjackBuilding.setRestrictedArea(startRestriction, endRestriction);
-        player.inventory.removeStackFromSlot(player.inventory.currentItem);
+        hut.setRestrictedArea(startRestriction, endRestriction);
     }
 
-    private void setPosition(final CompoundNBT compound, final String NBT, final BlockPos pos)
+    /**
+     * Continue the flux.
+     * @param compound the set compound.
+     * @param key the key to set.
+     * @param pos the pos to set for the key.
+     * @param player the player entity.
+     * @return true if continue.
+     */
+    private boolean setPosition(final CompoundNBT compound, final String key, final BlockPos pos, final PlayerEntity player)
     {
-        hasSetFirstPosition = !hasSetFirstPosition;
-        BlockPosUtil.write(compound, NBT, pos);
+        if (compound.contains(key))
+        {
+            if (BlockPosUtil.read(compound, key).equals(pos))
+            {
+                player.inventory.removeStackFromSlot(player.inventory.currentItem);
+                return false;
+            }
+        }
+
+        BlockPosUtil.write(compound, key, pos);
+        return compound.contains(NBT_END_POS) && compound.contains(NBT_START_POS);
     }
 }

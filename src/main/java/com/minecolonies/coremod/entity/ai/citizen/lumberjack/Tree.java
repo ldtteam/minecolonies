@@ -62,11 +62,6 @@ public class Tree
     private static final int LEAVES_WIDTH = 4;
 
     /**
-     * Max size a tree should have.
-     */
-    private static final int MAX_TREE_SIZE = 256;
-
-    /**
      * A lot of luck to get a guaranteed saplings drop.
      */
     private static final int A_LOT_OF_LUCK = 10000;
@@ -156,11 +151,10 @@ public class Tree
 
             checkTree(world, topLog);
 
-            final Block bottomBlock = world.getBlockState(location).getBlock();
-            dynamicTree = Compatibility.isDynamicBlock(bottomBlock);
+            dynamicTree = Compatibility.isDynamicBlock(block);
             stumpLocations = new ArrayList<>();
             woodBlocks.clear();
-            slimeTree = Compatibility.isSlimeBlock(bottomBlock);
+            slimeTree = Compatibility.isSlimeBlock(block);
             sapling = calcSapling(world);
             if (sapling.getItem().isIn(fungi))
             {
@@ -395,7 +389,7 @@ public class Tree
         BlockPos bottom = bottomLog == null ? log : bottomLog;
         BlockPos top = topLog == null ? log : topLog;
 
-        if (woodenBlocks.size() >= MAX_TREE_SIZE)
+        if (woodenBlocks.size() >= MineColonies.getConfig().getServer().maxTreeSize.get())
         {
             return new Tuple<>(bottom, top);
         }
@@ -453,7 +447,7 @@ public class Tree
         {
             for (int dz = -1; dz <= 1; dz++)
             {
-                for (int dy = -1; dy <= 1 + dynamicBonusY; dy++)
+                for (int dy = -3; dy <= 1 + dynamicBonusY; dy++)
                 {
                     final BlockPos leafPos = pos.add(dx, dy, dz);
                     if (world.getBlockState(leafPos).getMaterial().equals(Material.LEAVES) || BlockTags.WART_BLOCKS.contains(world.getBlockState(leafPos).getBlock()))
@@ -638,7 +632,7 @@ public class Tree
      */
     private void addAndSearch(@NotNull final World world, @NotNull final BlockPos log)
     {
-        if (woodBlocks.size() >= MAX_TREE_SIZE)
+        if (woodBlocks.size() >= MineColonies.getConfig().getServer().maxTreeSize.get())
         {
             return;
         }
@@ -711,7 +705,7 @@ public class Tree
         }
         for (int locX = locXMin; locX <= locXMax; locX++)
         {
-            for (int locY = locYMin; locY <= MAX_TREE_SIZE; locY++)
+            for (int locY = locYMin; !world.isYOutOfBounds(locY); locY++)
             {
                 for (int locZ = locZMin; locZ <= locZMax; locZ++)
                 {

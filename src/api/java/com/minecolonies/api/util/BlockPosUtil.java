@@ -21,6 +21,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.Tuple;
+import net.minecraft.util.Direction.Axis;
+import net.minecraft.util.Direction.AxisDirection;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
@@ -784,5 +786,97 @@ public final class BlockPosUtil
     {
         return findAround(worldReader, start, 1, 1,
           (world, pos) -> world.getBlockState(pos).getMaterial() == Material.AIR && world.getBlockState(pos.up()).getMaterial() == Material.AIR);
+    }
+
+    /**
+     * Returns plane furthest from lookFrom within the box.
+     *
+     * @param lookFrom from where to look at the box
+     * @param boxStart possibly unsorted box start pos
+     * @param boxEnd   possible unsorted box end pos
+     * @param ignoreY  if should ignore Y planes or not
+     * @return furthest plane from lookFrom within the box
+     */
+    public static Direction getBoxFurthestPlane(final BlockPos lookFrom,
+        final BlockPos boxStart,
+        final BlockPos boxEnd,
+        final boolean ignoreY)
+    {
+        final int lfX = lookFrom.getX();
+        final int lfY = lookFrom.getY();
+        final int lfZ = lookFrom.getZ();
+
+        final int bsX = boxStart.getX();
+        final int bsY = boxStart.getY();
+        final int bsZ = boxStart.getZ();
+        final int beX = boxEnd.getX();
+        final int beY = boxEnd.getY();
+        final int beZ = boxEnd.getZ();
+        final int minX = Math.min(bsX, beX);
+        final int minY = Math.min(bsY, beY);
+        final int minZ = Math.min(bsZ, beZ);
+        final int maxX = Math.max(bsX, beX);
+        final int maxY = Math.max(bsY, beY);
+        final int maxZ = Math.max(bsZ, beZ);
+
+        final int closestVecX;
+        final int closestVecY;
+        final int closestVecZ;
+
+        if (minX <= lfX && lfX <= maxX && (ignoreY || (minY <= lfY && lfY <= maxY)) && minZ <= lfZ && lfZ <= maxZ)
+        {
+            closestVecX = (Math.abs(bsX - lfX) >= Math.abs(beX - lfX) ? bsX : beX) - lfX;
+            closestVecY = (Math.abs(bsY - lfY) >= Math.abs(beY - lfY) ? bsY : beY) - lfY;
+            closestVecZ = (Math.abs(bsZ - lfZ) >= Math.abs(beZ - lfZ) ? bsZ : beZ) - lfZ;
+        }
+        else
+        {
+            closestVecX = (Math.abs(bsX - lfX) < Math.abs(beX - lfX) ? bsX : beX) - lfX;
+            closestVecY = (Math.abs(bsY - lfY) < Math.abs(beY - lfY) ? bsY : beY) - lfY;
+            closestVecZ = (Math.abs(bsZ - lfZ) < Math.abs(beZ - lfZ) ? bsZ : beZ) - lfZ;
+        }
+
+        final int absX = Math.abs(closestVecX);
+        final int absY = Math.abs(closestVecY);
+        final int absZ = Math.abs(closestVecZ);
+
+        if ((ignoreY || absX > absY) && absX > absZ)
+        {
+            return Direction.byLong(closestVecX < 0 ? -1 : 1, 0, 0);
+        }
+        else if (!ignoreY && absY > absX && absY > absZ)
+        {
+            return Direction.byLong(0, closestVecY < 0 ? -1 : 1, 0);
+        }
+        else
+        {
+            return Direction.byLong(0, 0, closestVecZ < 0 ? -1 : 1);
+        }
+    }
+
+    private static Random planeRandom = new Random();
+
+    /**
+     * Get random pos from border plane of given box.
+     *
+     * @param plane    pos source plane
+     * @param boxStart possibly unsorted box start pos
+     * @param boxEnd   possibly unsorted box end pos
+     * @return random pos within the box calculated using given plane
+     */
+    public static BlockPos getRandomPosInBoxPlane(final Direction plane, final BlockPos boxStart, final BlockPos boxEnd)
+    {
+        final int minX = Math.min(boxStart.getX(), boxEnd.getX());
+        final int minY = Math.min(boxStart.getY(), boxEnd.getY());
+        final int minZ = Math.min(boxStart.getZ(), boxEnd.getZ());
+        final int maxX = Math.max(boxStart.getX(), boxEnd.getX());
+        final int maxY = Math.max(boxStart.getY(), boxEnd.getY());
+        final int maxZ = Math.max(boxStart.getZ(), boxEnd.getZ());
+
+        int x = plane.getAxis() != Axis.X ? MathHelper.nextInt(planeRandom, minX, maxX) : (plane.getAxisDirection() == AxisDirection.POSITIVE ? maxX : minX);
+        int y = plane.getAxis() != Axis.Y ? MathHelper.nextInt(planeRandom, minY, maxY) : (plane.getAxisDirection() == AxisDirection.POSITIVE ? maxY : minY);
+        int z = plane.getAxis() != Axis.Z ? MathHelper.nextInt(planeRandom, minZ, maxZ) : (plane.getAxisDirection() == AxisDirection.POSITIVE ? maxZ : minZ);
+
+        return new BlockPos(x, y, z);
     }
 }
