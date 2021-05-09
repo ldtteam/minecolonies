@@ -112,7 +112,8 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies
     }
 
     /**
-     * Continue the flux.
+     * Set the position into the compound with the right key.
+     * Decide if flux continues or stops.
      * @param compound the set compound.
      * @param key the key to set.
      * @param pos the pos to set for the key.

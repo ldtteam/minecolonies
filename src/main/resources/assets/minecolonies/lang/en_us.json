@@ -60,11 +60,11 @@
 
   "item.minecolonies.scepterlumberjack": "Forest Tool",
   "item.minecolonies.scepterlumberjack.usedstart": "First position set. Click the same position to finish.",
-  "item.minecolonies.scepterlumberjack.usedend": "Second position set. (Click same position to finish)",
+  "item.minecolonies.scepterlumberjack.usedend": "Second position set. Click the same position to finish.",
   "item.minecolonies.scepterlumberjack.restrictiontoobig": "An area of %d blocks is too large. The maximum restricted area for the Forester is %d blocks.",
   "item.minecolonies.scepterlumberjack.restrictionset": "Forester restricted area set (x: %d to %d, z: %d to %d, area: %d blocks). The max size is %d blocks.",
   
-  "minecolonies.config.maxtreesize": "Max tree size",
+  "minecolonies.config.maxtreesize": "Max Tree Size",
   "minecolonies.config.maxtreesize.comment": "Max log count in one tree for the Forester to check during their tree search.",
 
   "com.minecolonies.coremod.gui.workerhuts.togglerestrictionon": "Restriction (on)",

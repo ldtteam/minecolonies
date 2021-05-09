@@ -705,7 +705,7 @@ public class Tree
         }
         for (int locX = locXMin; locX <= locXMax; locX++)
         {
-            for (int locY = locYMin; !world.isYOutOfBounds(locY); locY++)
+            for (int locY = locYMin; locY < world.func_234938_ad_(); locY++)
             {
                 for (int locZ = locZMin; locZ <= locZMax; locZ++)
                 {
