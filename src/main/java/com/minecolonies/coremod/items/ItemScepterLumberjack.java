@@ -91,9 +91,7 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies
         final int distZ = maxZ - minZ;
 
         final int area = distX * distZ;
-
-        final int radius = EntityAIWorkLumberjack.SEARCH_RANGE;
-        final double maxArea = 3.14 * Math.pow(radius, 2);
+        final int maxArea = (int) Math.floor(2 * Math.pow(EntityAIWorkLumberjack.SEARCH_RANGE, 2));
 
         if (area > maxArea)
         {
