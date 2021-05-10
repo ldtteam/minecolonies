@@ -82,6 +82,14 @@ public class ItemListModuleWindow extends AbstractModuleWindow
         {
             switchClicked(button);
         }
+        else if (Objects.equals(button.getID(), BUTTON_SELECT_ALL))
+        {
+            selectAll(true);
+        }
+        else if (Objects.equals(button.getID(), BUTTON_DESELECT_ALL))
+        {
+            selectAll(false);
+        }
     }
 
     @Override
@@ -123,6 +131,28 @@ public class ItemListModuleWindow extends AbstractModuleWindow
         else
         {
             module.removeItem(item);
+        }
+
+        resourceList.refreshElementPanes();
+    }
+
+    /**
+     * Fired when select or deselect has been clicked.
+     */
+    private void selectAll(@NotNull final boolean enable)
+    {
+        final IItemListModuleView module = building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id));
+
+        for (final ItemStorage storage : groupedItemList)
+        {
+            if (enable && !module.containsItem(storage))
+            {
+                module.addItem(storage);
+            }
+            else if (!enable && module.containsItem(storage))
+            {
+                module.removeItem(storage);
+            }
         }
 
         resourceList.refreshElementPanes();

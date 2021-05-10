@@ -1139,6 +1139,16 @@ public final class WindowConstants
     public static final String BUTTON_SWITCH = "switch";
 
     /**
+     * Select all button Id.
+     */
+    public static final String BUTTON_SELECT_ALL = "selectAll";
+
+    /**
+     * Deselect all button Id.
+     */
+    public static final String BUTTON_DESELECT_ALL = "deselectAll";
+
+    /**
      * String describing on for the gui.
      */
     public static final String ON = COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON;

@@ -109,6 +109,15 @@ public class ItemListModuleView extends AbstractBuildingModuleView implements II
     }
 
     @Override
+    public boolean containsItem(final ItemStorage item) {
+        if (listsOfItems.contains(item))
+        {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public String getDesc()
     {
         return desc;
