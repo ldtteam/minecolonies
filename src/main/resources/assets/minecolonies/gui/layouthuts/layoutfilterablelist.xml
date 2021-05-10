@@ -11,8 +11,8 @@
                          source="minecolonies:textures/gui/builderhut/builder_button_very_small.png" textcolor="black"/>
         </box>
     </list>
-    <buttonimage label ="$(com.minecolonies.coremod.gui.workerhuts.selectall)" id="selectAll" size="75 18" pos="20 217"
+    <buttonimage label ="$(com.minecolonies.coremod.gui.workerhuts.selectall)" id="selectAll" size="86 17" pos="50 194"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium.png" textcolor="black"/>
-    <buttonimage label ="$(com.minecolonies.coremod.gui.workerhuts.deselectall)" id="deselectAll" size="75 18" pos="20 240"
+    <buttonimage label ="$(com.minecolonies.coremod.gui.workerhuts.deselectall)" id="deselectAll" size="86 17" pos="50 211"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium.png" textcolor="black"/>
 </window>
