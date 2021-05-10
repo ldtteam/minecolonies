@@ -359,7 +359,7 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
     {
         for (final IToken<?> t : getTaskQueue())
         {
-            final IRequest r = getColony().getRequestManager().getRequestForToken(t);
+            final IRequest<?> r = getColony().getRequestManager().getRequestForToken(t);
             if (r != null)
             {
                 getColony().getRequestManager().updateRequestState(t, RequestState.FAILED);

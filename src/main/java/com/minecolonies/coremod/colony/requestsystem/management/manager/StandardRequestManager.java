@@ -357,6 +357,12 @@ public class StandardRequestManager implements IStandardRequestManager
         getProviderHandler().removeProvider(provider);
     }
 
+    @Override
+    public void onRequesterRemovedFromColony(@NotNull final IRequester requester) throws IllegalArgumentException
+    {
+        getRequestHandler().removeRequester(requester);
+    }
+
     /**
      * Method used to reassign requests based on a predicate.
      *

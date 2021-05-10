@@ -519,6 +519,8 @@ public class BuildingManager implements IBuildingManager
         }
 
         colony.getRequestManager().onProviderRemovedFromColony(building);
+        colony.getRequestManager().onRequesterRemovedFromColony(building.getRequester());
+
         colony.getCitizenManager().calculateMaxCitizens();
     }
 
