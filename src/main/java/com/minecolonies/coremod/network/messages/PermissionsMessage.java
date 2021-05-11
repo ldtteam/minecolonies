@@ -664,15 +664,39 @@ public class PermissionsMessage
         }
     }
 
+    /**
+     * Message for changing the rank type of a given rank on a colony
+     */
     public static class EditRankType implements IMessage
     {
+        /**
+         * the colony id
+         */
         private int colonyId;
+        /**
+         * the rank id
+         */
         private int rankId;
+        /**
+         * the dimension
+         */
         private RegistryKey<World> dimension;
+        /**
+         * the new rank type
+         */
         private int rankType;
 
+        /**
+         * empty public constructor
+         */
         public EditRankType() { super(); }
 
+        /**
+         * Constructor for changing the rank type
+         * @param colony the colony of the rank
+         * @param rank the rank
+         * @param rankType the new rank type
+         */
         public EditRankType(@NotNull final IColonyView colony, @NotNull final Rank rank, @NotNull final int rankType)
         {
             this.colonyId = colony.getID();
@@ -726,15 +750,39 @@ public class PermissionsMessage
         }
     }
 
+    /**
+     * Message to change whether a rank is a subscriber to certain colony events
+     */
     public static class SetSubscriber implements IMessage
     {
+        /**
+         * the colony ID
+         */
         private int colonyId;
+        /**
+         * the rank ID
+         */
         private int rankId;
+        /**
+         * the dimension
+         */
         private RegistryKey<World> dimension;
+        /**
+         * the new isSubscriber state
+         */
         private boolean isSubscriber;
 
+        /**
+         * Empty public constructor
+         */
         public SetSubscriber() { super(); }
 
+        /**
+         * Constructor to change whether the given rank is a subscriber
+         * @param colony the colony of the rank
+         * @param rank the rank
+         * @param isSubscriber whether the rank should be a subscriber
+         */
         public SetSubscriber(@NotNull final IColonyView colony, @NotNull final Rank rank, @NotNull final boolean isSubscriber)
         {
             this.colonyId = colony.getID();
@@ -771,7 +819,5 @@ public class PermissionsMessage
                 colony.markDirty();
             }
         }
-
-
     }
 }

@@ -449,6 +449,12 @@ public final class TranslationConstants
     public static final String RESEARCH_AVAILABLE                                                   = "com.minecolonies.coremod.research.available";
     @NonNls
     public static final String RESEARCH_REQUIRES                                                    = "com.minecolonies.coremod.research.requirement.research";
+    @NonNls
+    public static final String RANKTYPE_COLONY_MANAGER                                              = "com.minecolonies.coremod.gui.townhall.ranktype.colonymanager";
+    @NonNls
+    public static final String RANKTYPE_HOSTILE                                                     = "com.minecolonies.coremod.gui.townhall.ranktype.hostile";
+    @NonNls
+    public static final String RANKTYPE_NONE                                                        = "com.minecolonies.coremod.gui.townhall.ranktype.none";
 
     private TranslationConstants()
     {

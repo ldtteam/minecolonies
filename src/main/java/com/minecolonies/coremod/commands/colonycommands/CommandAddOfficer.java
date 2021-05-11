@@ -58,7 +58,7 @@ public class CommandAddOfficer implements IMCColonyOfficerCommand
             context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.playernotfound", profile.getName()), true);
             return 0;
         }
-        colony.getPermissions().addPlayer(profile, colony.getPermissions().getRank(colony.getPermissions().OWNER_RANK_ID));
+        colony.getPermissions().addPlayer(profile, colony.getPermissions().getRank(colony.getPermissions().OFFICER_RANK_ID));
 
         context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.addofficer.success", profile.getName(), colony.getName()), true);
         return 1;

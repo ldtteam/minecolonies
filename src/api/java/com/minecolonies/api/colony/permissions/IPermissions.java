@@ -31,18 +31,47 @@ public interface IPermissions
 
     Set<Player> getPlayersByRank(@NotNull Set<Rank> ranks);
 
+    /**
+     * Returns a map of all ranks present in the colony, identified by their ID
+     * @return the map
+     */
     LinkedHashMap<Integer, Rank> getRanks();
 
+    /**
+     * Returns the rank with the given ID
+     * @param id the id
+     * @return the rank
+     */
     Rank getRank(int id);
 
+    /**
+     * Returns the owner rank
+     * @return the rank
+     */
     Rank getRankOwner();
 
+    /**
+     * Returns the officer rank
+     * @return the rank
+     */
     Rank getRankOfficer();
 
+    /**
+     * Returns the hostile rank
+     * @return the rank
+     */
     Rank getRankHostile();
 
+    /**
+     * Returns the neutral rank
+     * @return the rank
+     */
     Rank getRankNeutral();
 
+    /**
+     * Returns the friend rank
+     * @return the rank
+     */
     Rank getRankFriend();
 
     /**
@@ -123,7 +152,15 @@ public interface IPermissions
 
     boolean removePlayer(UUID playerID);
 
+    /**
+     * Adds a rink with the given name to the colony
+     * @param name the chosen name
+     */
     void addRank(String name);
 
+    /**
+     * Removes the given rank from the colony
+     * @param rank the rank
+     */
     void removeRank(Rank rank);
 }

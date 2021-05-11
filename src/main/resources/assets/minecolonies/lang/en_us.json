@@ -577,6 +577,9 @@
   "com.minecolonies.coremod.gui.townhall.population.unemployed": "Unemployed: %d",
   "com.minecolonies.coremod.gui.townhall.population.childs": "Children: %d",
   "com.minecolonies.coremod.gui.townhall.currentspecialization": "Current Specialization:",
+  "com.minecolonies.coremod.gui.townhall.ranktype.colonymanager": "Colony Manager",
+  "com.minecolonies.coremod.gui.townhall.ranktype.hostile": "Hostile",
+  "com.minecolonies.coremod.gui.townhall.ranktype.none": "None",
 
   "com.minecolonies.coremod.gui.townhall.citizens": "Citizens",
   "com.minecolonies.coremod.gui.townhall.citizens.unemployed": "Unemployed",

@@ -166,6 +166,9 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
      */
     private List<Action> actions = new ArrayList<>();
 
+    /**
+     * A list of available rank types
+     */
     private Map<Integer, String> rankTypes = new HashMap<>();
 
     /**
@@ -193,9 +196,9 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
             }
         }
 
-        rankTypes.put(0, "Colony Manager");
-        rankTypes.put(1, "Hostile");
-        rankTypes.put(2, "None");
+        rankTypes.put(0, RANKTYPE_COLONY_MANAGER);
+        rankTypes.put(1, RANKTYPE_HOSTILE);
+        rankTypes.put(2, RANKTYPE_NONE);
 
         actionsRank = townHall.getColony().getPermissions().getRankOfficer();
         findPaneOfTypeByID(BUTTON_REMOVE_RANK, Button.class).setEnabled(false);
@@ -251,6 +254,11 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
         colorDropDownList.setSelectedIndex(townHall.getColony().getTeamColonyColor().ordinal());
     }
 
+    /**
+     * Toggle the subscriber flag on client
+     * Send message to change it on server
+     * @param button the button clicked
+     */
     private void setSubscriber(Button button)
     {
         Network.getNetwork().sendToServer(new PermissionsMessage.SetSubscriber(townHall.getColony(), actionsRank, !actionsRank.isSubscriber()));
@@ -258,18 +266,26 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
         button.setText(LanguageHandler.format(actionsRank.isSubscriber() ? COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON : COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF));
     }
 
+    /**
+     * Send message to the server to change the rank type
+     * @param dropdown the index of the type
+     */
     private void changeRankMode(DropDownList dropdown)
     {
         Network.getNetwork().sendToServer(new PermissionsMessage.EditRankType(townHall.getColony(), actionsRank, dropdown.getSelectedIndex()));
     }
 
+    /**
+     * Switch the view on the rank view (between permissions and settings)
+     * @param button the button clicked
+     */
     private void togglePermMode(Button button)
     {
         SwitchView permSwitch = findPaneOfTypeByID(TOWNHALL_PERM_MANAGEMENT, SwitchView.class);
         permSwitch.setView(permSwitch.getCurrentView() != null && permSwitch.getCurrentView().getID().equals(TOWNHALL_PERM_LIST) ? TOWNHALL_PERM_SETTINGS : TOWNHALL_PERM_LIST);
         if (permSwitch.getCurrentView().getID().equals(TOWNHALL_PERM_SETTINGS))
         {
-            DropDownList dropdown = findPaneOfTypeByID("rankTypePicker", DropDownList.class);
+            DropDownList dropdown = findPaneOfTypeByID(TOWNHALL_RANK_TYPE_PICKER, DropDownList.class);
             dropdown.setDataProvider(new DropDownList.DataProvider() {
                 @Override
                 public int getElementCount()
@@ -280,7 +296,7 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
                 @Override
                 public String getLabel(final int i)
                 {
-                    return rankTypes.get(i);
+                    return LanguageHandler.format(rankTypes.get(i));
                 }
             });
             dropdown.setHandler(this::changeRankMode);
@@ -416,7 +432,7 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
     {
         users.clear();
         users.addAll(townHall.getColony().getPlayers().values());
-        //users.sort(Comparator.comparing(Player::getRank, OldRank::compareTo));
+        users.sort(Comparator.comparing(Player::getRank, Rank::compareTo));
     }
 
     /**
@@ -950,6 +966,12 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
         });
     }
 
+    /**
+     * When the selected index in the rank dropdown is updated,
+     * check if the rank is different to the current one
+     * if so, change the rank client side and send a message to the server
+     * @param dropdown the rank dropdown
+     */
     private void onRankSelected(final DropDownList dropdown)
     {
         final int index = dropdown.getSelectedIndex();

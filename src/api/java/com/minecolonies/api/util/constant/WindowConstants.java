@@ -1085,6 +1085,7 @@ public final class WindowConstants
     public static final String TOWNHALL_SWITCH_PLAYER_LIST = "playerList";
     public static final String TOWNHALL_SWITCH_PLAYER_RANK = "playerEditRank";
     public static final String TOWNHALL_USER_VIEW = "pageAddPlayer";
+    public static final String TOWNHALL_RANK_TYPE_PICKER = "rankTypePicker";
 
     /**
      * Input filter id.

@@ -22,8 +22,14 @@ public class Rank
      */
     private boolean isInitial;
 
+    /**
+     * Whether the rank is a colony manager (can perform certain actions)
+     */
     private boolean isColonyManager;
 
+    /**
+     * Whether the rank is hostile (can attack and be attacked)
+     */
     private boolean isHostile;
 
     /**
@@ -81,20 +87,40 @@ public class Rank
      */
     public boolean isInitial() { return isInitial; }
 
+    /**
+     * Get whether this rank is a colony manager
+     * @return true if so
+     */
     public boolean isColonyManager() { return isColonyManager; }
 
+    /**
+     * Get whether this rank is hostile
+     * @return true if so
+     */
     public boolean isHostile() { return isHostile; }
 
+    /**
+     * Set whether this rank is a colony manager
+     * @param isColonyManager whether the rank is a colony manager
+     */
     public void setColonyManager(boolean isColonyManager)
     {
         this.isColonyManager = isColonyManager;
     }
 
+    /**
+     * Set whether this rank is hostile
+     * @param isHostile whether the rank is hostile
+     */
     public void setHostile(boolean isHostile)
     {
         this.isHostile = isHostile;
     }
 
+    /**
+     * Set whether this rank is a subscriber (receives certain colony events)
+     * @param isSubscriber whether the rank is a subscriber
+     */
     public void setSubscriber(boolean isSubscriber) { this.isSubscriber = isSubscriber; }
 
     @Override
@@ -116,5 +142,10 @@ public class Rank
     public int hashCode()
     {
         return Objects.hash(name, id);
+    }
+
+    public int compareTo(Rank rank)
+    {
+        return this.getId() - rank.getId();
     }
 }
