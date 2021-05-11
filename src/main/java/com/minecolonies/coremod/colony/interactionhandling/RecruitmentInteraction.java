@@ -126,7 +126,7 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
         // Validate recruitment before returning true
         if (response.equals(recruitAnswer.getA()) && data instanceof IVisitorViewData)
         {
-            if (InventoryUtils.getItemCountInItemHandler(new InvWrapper(player.inventory), ((IVisitorViewData) data).getRecruitCost().getItem())
+            if (player.isCreative() || InventoryUtils.getItemCountInItemHandler(new InvWrapper(player.inventory), ((IVisitorViewData) data).getRecruitCost().getItem())
                   >= ((IVisitorViewData) data).getRecruitCost().getCount())
             {
                 return super.onClientResponseTriggered(response, player, data, window);
@@ -147,7 +147,7 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
             IColony colony = data.getColony();
             if (colony.getCitizenManager().getCurrentCitizenCount() < colony.getCitizenManager().getPotentialMaxCitizens())
             {
-                if (InventoryUtils.attemptReduceStackInItemHandler(new InvWrapper(player.inventory),
+                if (player.isCreative() || InventoryUtils.attemptReduceStackInItemHandler(new InvWrapper(player.inventory),
                   ((IVisitorData) data).getRecruitCost(),
                   ((IVisitorData) data).getRecruitCost().getCount()))
                 {
