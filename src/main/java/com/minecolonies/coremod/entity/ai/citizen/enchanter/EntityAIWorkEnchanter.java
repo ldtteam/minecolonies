@@ -1,17 +1,13 @@
 package com.minecolonies.coremod.entity.ai.citizen.enchanter;
 
 import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.items.ModItems;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.Tuple;
-import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingEnchanter;
@@ -22,8 +18,10 @@ import com.minecolonies.coremod.network.messages.client.CircleParticleEffectMess
 import com.minecolonies.coremod.network.messages.client.StreamParticleEffectMessage;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.item.EnchantedBookItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
@@ -35,6 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
@@ -191,9 +190,11 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
      */
     private IAIState enchant()
     {
-        final int ancientTomesInInv = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), IS_ANCIENT_TOME);
-        if (ancientTomesInInv < 1)
+        // this assumes that the only empty-output (pure loot table) recipes are for ancient tome -> enchanted book
+        currentRecipeStorage = getOwnBuilding().getFirstFullFillableRecipe(ItemStackUtils::isEmpty, 1, false);
+        if (currentRecipeStorage == null)
         {
+            progressTicks = 0;
             return DECIDE;
         }
 
@@ -228,34 +229,37 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
             return getState();
         }
 
-        final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), IS_ANCIENT_TOME);
-        if (slot != -1)
+        final ICitizenData data = worker.getCitizenData();
+        if (data != null)
         {
-            final ICitizenData data = worker.getCitizenData();
-            if (data != null)
+            final List<ItemStack> loot = currentRecipeStorage.fullfillRecipeAndCopy(getLootContext(), getOwnBuilding().getHandlers());
+            if (loot != null)
             {
-                final int openSlot = InventoryUtils.getFirstOpenSlotFromItemHandler(worker.getInventoryCitizen());
-                if (openSlot == -1)
-                {
-                    //Dump if there is no open slot.
-                    incrementActionsDone();
-                    progressTicks = 0;
-                    return IDLE;
-                }
-
-                final Tuple<ItemStack, Integer> tuple = IColonyManager.getInstance().getCompatibilityManager().getRandomEnchantmentBook(getOwnBuilding().getBuildingLevel());
+                final int enchantmentLevel = loot.stream()
+                        .mapToInt(EntityAIWorkEnchanter::getEnchantedBookLevel)
+                        .max().orElse(0);
 
                 //Decrement mana.
-                data.getCitizenSkillHandler().incrementLevel(Skill.Mana, -tuple.getB());
+                data.getCitizenSkillHandler().incrementLevel(Skill.Mana, -enchantmentLevel);
                 worker.getCitizenExperienceHandler().updateLevel();
-                worker.getInventoryCitizen().setStackInSlot(openSlot, tuple.getA());
-
-                InventoryUtils.reduceStackInItemHandler(worker.getInventoryCitizen(), new ItemStack(ModItems.ancientTome));
                 incrementActionsDoneAndDecSaturation();
             }
         }
+
+        currentRecipeStorage = null;
         progressTicks = 0;
         return IDLE;
+    }
+
+    private static int getEnchantedBookLevel(@NotNull final ItemStack stack)
+    {
+        if (stack.getItem().equals(Items.ENCHANTED_BOOK))
+        {
+            return EnchantedBookItem.getEnchantments(stack).stream()
+                    .mapToInt(nbt -> ((CompoundNBT) nbt).getShort("lvl"))
+                    .max().orElse(0);
+        }
+        return 0;
     }
 
     /**

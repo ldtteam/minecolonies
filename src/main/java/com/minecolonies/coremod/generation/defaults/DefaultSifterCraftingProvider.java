@@ -1,12 +1,13 @@
-package com.minecolonies.coremod.generation;
+package com.minecolonies.coremod.generation.defaults;
 
 import com.ldtteam.datagenerators.loot_table.LootTableJson;
-import com.ldtteam.datagenerators.loot_table.LootTableTypeEnum;
-import com.ldtteam.datagenerators.loot_table.pool.PoolJson;
-import com.ldtteam.datagenerators.loot_table.pool.entry.EntryJson;
 import com.ldtteam.datagenerators.loot_table.pool.entry.EntryTypeEnum;
 import com.minecolonies.api.colony.jobs.ModJobs;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.items.ModItems;
+import com.minecolonies.coremod.generation.CustomRecipeProvider;
+import com.minecolonies.coremod.generation.LootTableBuilder;
+import com.minecolonies.coremod.generation.LootTableJsonProvider;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DirectoryCache;
 import net.minecraft.data.IDataProvider;
@@ -19,21 +20,22 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.nio.file.Path;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 
-public class SifterCraftingProvider implements IDataProvider
+public class DefaultSifterCraftingProvider implements IDataProvider
 {
     private final SifterRecipeProvider recipeProvider;
     private final SifterLootTableProvider lootTableProvider;
     private final Map<Item, List<SifterMeshDetails>> inputs = new HashMap<>();
 
-    public SifterCraftingProvider(@NotNull final DataGenerator generatorIn)
+    public DefaultSifterCraftingProvider(@NotNull final DataGenerator generatorIn)
     {
         inputs.put(Items.DIRT, Stream.of(
                 new SifterMeshDetails(ModItems.sifterMeshString, 1, new LootTableBuilder()
@@ -252,48 +254,6 @@ public class SifterCraftingProvider implements IDataProvider
         public LootTableJson getLootTable() { return lootTable; }
     }
 
-    private static class LootTableBuilder
-    {
-        private final List<EntryJson> entries = new ArrayList<>();
-        private int rolls = 1;
-        private float bonusRolls = 0f;
-
-        @NotNull
-        public LootTableBuilder rolls(final int rolls)
-        {
-            this.rolls = rolls;
-            return this;
-        }
-
-        @NotNull
-        public LootTableBuilder bonusRolls(final float bonusRolls)
-        {
-            this.bonusRolls = bonusRolls;
-            return this;
-        }
-
-        @NotNull
-        public LootTableBuilder empty(final int weight)
-        {
-            entries.add(new EntryJson(null, EntryTypeEnum.EMPTY, null, null, false, null, weight, 0));
-            return this;
-        }
-
-        @NotNull
-        public LootTableBuilder item(final Item item, final int weight)
-        {
-            entries.add(new EntryJson(null, EntryTypeEnum.ITEM, item.getRegistryName().toString(), null, false, null, weight, 0));
-            return this;
-        }
-
-        @NotNull
-        public LootTableJson build()
-        {
-            return new LootTableJson(LootTableTypeEnum.GENERIC,
-                    Collections.singletonList(new PoolJson(null, rolls, bonusRolls, entries)));
-        }
-    }
-
     private class SifterRecipeProvider extends CustomRecipeProvider
     {
         public SifterRecipeProvider(@NotNull final DataGenerator generatorIn)
@@ -315,7 +275,10 @@ public class SifterCraftingProvider implements IDataProvider
                             .map(entry -> ForgeRegistries.ITEMS.getValue(new ResourceLocation(entry.getName())));
 
                     CustomRecipeBuilder.create(ModJobs.SIFTER_ID.getPath(), name)
-                            .inputs(Stream.of(new ItemStack(inputEntry.getKey()), new ItemStack(mesh.getMesh())).collect(Collectors.toList()))
+                            .inputs(Stream.of(
+                                    new ItemStorage(new ItemStack(inputEntry.getKey())),
+                                    new ItemStorage(new ItemStack(mesh.getMesh()), true, false))
+                                    .collect(Collectors.toList()))
                             .secondaryOutputs(Stream.concat(Stream.of(mesh.getMesh()), loot)
                                         .map(ItemStack::new)
                                         .collect(Collectors.toList()))
@@ -327,38 +290,27 @@ public class SifterCraftingProvider implements IDataProvider
         }
     }
 
-    // there is a LootTableProvider but it's a bit more of a pain to work with
-    private class SifterLootTableProvider implements IDataProvider
+    private class SifterLootTableProvider extends LootTableJsonProvider
     {
-        private final DataGenerator generator;
-
         public SifterLootTableProvider(@NotNull final DataGenerator dataGeneratorIn)
         {
-            this.generator = dataGeneratorIn;
-        }
-
-        @NotNull
-        @Override
-        public String getName()
-        {
-            return "SifterLootTableProvider";
+            super(dataGeneratorIn);
         }
 
         @Override
-        public void act(@NotNull final DirectoryCache cache) throws IOException
+        protected Map<ResourceLocation, LootTableJson> getLootTables()
         {
+            final Map<ResourceLocation, LootTableJson> tables = new HashMap<>();
             for (final Map.Entry<Item, List<SifterMeshDetails>> inputEntry : inputs.entrySet())
             {
                 for (final SifterMeshDetails mesh : inputEntry.getValue())
                 {
                     final String name = mesh.getName() + "/" + inputEntry.getKey().getRegistryName().getPath();
 
-                    final Path savePath = generator.getOutputFolder()
-                            .resolve(DataGeneratorConstants.DATAPACK_DIR + "loot_tables/recipes")
-                            .resolve(name + ".json");
-                    IDataProvider.save(DataGeneratorConstants.GSON, cache, mesh.getLootTable().serialize(), savePath);
+                    tables.put(new ResourceLocation(MOD_ID, "recipes/" + name), mesh.getLootTable());
                 }
             }
+            return tables;
         }
     }
 }

@@ -5,10 +5,14 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.citizen.Skill;
+import com.minecolonies.coremod.colony.buildings.modules.settings.BoolSetting;
+import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.api.util.NBTUtils;
+import net.minecraft.util.ResourceLocation;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.huts.WindowHutBeekeeperModule;
@@ -35,6 +39,11 @@ import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 
 public class BuildingBeekeeper extends AbstractBuildingWorker
 {
+    /**
+     * Automatic breeding.
+     */
+    public static final ISettingKey<BoolSetting> BREEDING = new SettingKey<>(BoolSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "breeding"));
+
     /**
      * Description of the job executed in the hut.
      */

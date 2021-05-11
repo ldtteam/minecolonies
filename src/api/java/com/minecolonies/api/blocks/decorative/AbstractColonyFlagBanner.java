@@ -49,13 +49,13 @@ public class AbstractColonyFlagBanner<B extends AbstractColonyFlagBanner<B>> ext
         if (worldIn.isRemote) return;
 
         TileEntity te = worldIn.getTileEntity(pos);
-        if (te instanceof TileEntityColonyFlag)
+        if (te instanceof TileEntityColonyFlag && ((TileEntityColonyFlag) te).colonyId == -1 )
         {
             IColony colony = IColonyManager.getInstance().getIColony(worldIn, pos);
 
             // Allow the player to place their own beyond the colony
             if (colony == null && placer instanceof PlayerEntity)
-                IColonyManager.getInstance().getIColonyByOwner(worldIn, (PlayerEntity) placer);
+                colony = IColonyManager.getInstance().getIColonyByOwner(worldIn, (PlayerEntity) placer);
 
             if (colony != null)
                 ((TileEntityColonyFlag) te).colonyId = colony.getID();

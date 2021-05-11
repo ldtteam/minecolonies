@@ -245,7 +245,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
           InventoryUtils.hasItemInItemHandler((worker.getInventoryCitizen()),
             (ItemStack stack) -> stack.getItem().isIn(ItemTags.FLOWERS));
 
-        if (!hasMaxAnimals(bees) && breedableAnimals >= NUM_OF_ANIMALS_TO_BREED && hasBreedingItem)
+        if (getOwnBuilding().getSetting(BuildingBeekeeper.BREEDING).getValue() && !hasMaxAnimals(bees) && breedableAnimals >= NUM_OF_ANIMALS_TO_BREED && hasBreedingItem)
         {
             return HERDER_BREED;
         }

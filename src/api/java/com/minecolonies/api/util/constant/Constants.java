@@ -65,6 +65,7 @@ public final class Constants
     public static final float  WATCH_CLOSEST2                   = 3.0F;
     public static final float  WATCH_CLOSEST2_FAR               = 5.0F;
     public static final float  WATCH_CLOSEST2_FAR_CHANCE        = 0.02F;
+    public static final int    CHUNKS_TO_CLAIM_THRESHOLD        = 5000;
 
     /**
      * Advancement Criterion Names
@@ -163,6 +164,11 @@ public final class Constants
      * Max tries to find a position to path to.
      */
     public static final int MAX_TRIES = 20;
+
+    /**
+     * The number of backstories for visitors.
+     */
+    public static final int MAX_STORY = 20;
 
     /**
      * Private constructor to hide implicit public one.
