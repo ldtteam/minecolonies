@@ -95,7 +95,7 @@ public class MovementHandler extends MovementController
             final VoxelShape voxelshape = blockstate.getCollisionShape(this.mob.world, blockpos);
             if ((yDif > (double) this.mob.stepHeight && xDif * xDif + zDif * zDif < (double) Math.max(1.0F, this.mob.getWidth()))
                   || (!voxelshape.isEmpty() && this.mob.getPosY() < voxelshape.getEnd(Direction.Axis.Y) + (double) blockpos.getY() && !block.isIn(BlockTags.DOORS) && !block.isIn(
-              BlockTags.FENCES))
+              BlockTags.FENCES) && !block.isIn(BlockTags.FENCE_GATES))
                        && !block.isLadder(blockstate, this.mob.world, blockpos, this.mob))
             {
                 this.mob.getJumpController().setJumping();

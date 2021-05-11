@@ -123,7 +123,6 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
     {
         super(c, l);
         keepX.put(stack -> isAllowedFood(stack), new Tuple<>(STACKSIZE, true));
-        keepX.put(stack -> isAllowedFuel(stack), new Tuple<>(STACKSIZE, true));
         keepX.put(stack -> !ItemStackUtils.isEmpty(stack.getContainerItem()) && !stack.getContainerItem().getItem().equals(Items.BUCKET), new Tuple<>(STACKSIZE, false));
     }
 
