@@ -672,7 +672,7 @@ public class Permissions implements IPermissions
         {
             player.setRank(rank);
 
-            if (rank == ranks.get(OFFICER_RANK_ID) || rank == ranks.get(OWNER_RANK_ID))
+            if (rank.isColonyManager())
             {
                 fullyAbandoned = false;
             }

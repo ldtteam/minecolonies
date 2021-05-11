@@ -52,6 +52,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BANNER_PATTERNS;
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
@@ -319,7 +320,8 @@ public final class ColonyView implements IColonyView
         buf.writeBoolean(colony.getRaiderManager().areSpiesEnabled());
         // ToDo: rework ally system
         final List<IColony> allies = new ArrayList<>();
-        for (final Player player : colony.getPermissions().getPlayersByRank(colony.getPermissions().getRankOfficer()))
+        final Set<Rank> managerRanks = colony.getPermissions().getRanks().values().stream().filter(rank -> rank.isColonyManager()).collect(Collectors.toSet());
+        for (final Player player : colony.getPermissions().getPlayersByRank(managerRanks))
         {
             final IColony col = IColonyManager.getInstance().getIColonyByOwner(colony.getWorld(), player.getID());
             if (col != null)
@@ -345,7 +347,8 @@ public final class ColonyView implements IColonyView
         }
 
         final List<IColony> feuds = new ArrayList<>();
-        for (final Player player : colony.getPermissions().getPlayersByRank(colony.getPermissions().getRankHostile()))
+        final Set<Rank> hostileRanks = colony.getPermissions().getRanks().values().stream().filter(rank -> rank.isHostile()).collect(Collectors.toSet());
+        for (final Player player : colony.getPermissions().getPlayersByRank(hostileRanks))
         {
             final IColony col = IColonyManager.getInstance().getIColonyByOwner(colony.getWorld(), player.getID());
             if (col != null)
