@@ -264,7 +264,8 @@ public class EntityAIEatTask extends Goal
         citizenData.getInventory().extractItem(foodSlot, 1, false);
 
         if (isBottled) {
-            if (!InventoryUtils.addItemStackToItemHandler(citizenData.getInventory(), new ItemStack(Items.GLASS_BOTTLE, 1))){
+            if (citizenData.getInventory().isFull())
+            {
                 InventoryUtils.spawnItemStack(
                         citizen.world,
                         citizen.getPosX(),
@@ -272,6 +273,10 @@ public class EntityAIEatTask extends Goal
                         citizen.getPosZ(),
                         new ItemStack(Items.GLASS_BOTTLE, 1)
                 );
+            }
+            else
+            {
+                InventoryUtils.addItemStackToItemHandler(citizenData.getInventory(), new ItemStack(Items.GLASS_BOTTLE, 1));
             }
         }
 
