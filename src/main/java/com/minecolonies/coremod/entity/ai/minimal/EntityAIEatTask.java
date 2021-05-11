@@ -256,7 +256,7 @@ public class EntityAIEatTask extends Goal
 
         final Food itemFood = stack.getItem().getFood();
 
-        final boolean isBottled = stack.getItem() instanceof HoneyBottleItem;
+        final boolean isBottled = stack.getItem().getContainerItem() instanceof GlassBottleItem;
 
         final double satIncrease = itemFood.getHealing() * (1.0 + citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SATURATION));
 
