@@ -27,8 +27,7 @@ import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.client.ItemParticleEffectMessage;
 import com.minecolonies.coremod.util.AdvancementUtils;
 import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.item.Food;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.*;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
@@ -257,10 +256,24 @@ public class EntityAIEatTask extends Goal
 
         final Food itemFood = stack.getItem().getFood();
 
+        final boolean isBottled = stack.getItem() instanceof HoneyBottleItem;
+
         final double satIncrease = itemFood.getHealing() * (1.0 + citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SATURATION));
 
         citizenData.increaseSaturation(satIncrease / 2.0);
         citizenData.getInventory().extractItem(foodSlot, 1, false);
+
+        if (isBottled) {
+            if (!InventoryUtils.addItemStackToItemHandler(citizenData.getInventory(), new ItemStack(Items.GLASS_BOTTLE, 1))){
+                InventoryUtils.spawnItemStack(
+                        citizen.world,
+                        citizen.getPosX(),
+                        citizen.getPosY(),
+                        citizen.getPosZ(),
+                        new ItemStack(Items.GLASS_BOTTLE, 1)
+                );
+            }
+        }
 
         IColony citizenColony = citizen.getCitizenColonyHandler().getColony();
         if (citizenColony != null)
