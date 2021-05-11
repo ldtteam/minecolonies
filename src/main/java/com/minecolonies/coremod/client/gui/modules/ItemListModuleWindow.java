@@ -145,13 +145,27 @@ public class ItemListModuleWindow extends AbstractModuleWindow
 
         for (final ItemStorage storage : groupedItemList)
         {
-            if (enable && !module.containsItem(storage))
+            if (isInverted)
             {
-                module.addItem(storage);
+                if (!enable && !module.containsItem(storage))
+                {
+                    module.addItem(storage);
+                }
+                else if (enable && module.containsItem(storage))
+                {
+                    module.removeItem(storage);
+                }
             }
-            else if (!enable && module.containsItem(storage))
+            else
             {
-                module.removeItem(storage);
+                if (enable && !module.containsItem(storage))
+                {
+                    module.addItem(storage);
+                }
+                else if (!enable && module.containsItem(storage))
+                {
+                    module.removeItem(storage);
+                }
             }
         }
 
