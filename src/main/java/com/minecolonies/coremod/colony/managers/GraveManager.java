@@ -197,7 +197,7 @@ public class GraveManager implements IGraveManager
     @Override
     public void unReserveGrave(@NotNull final BlockPos pos)
     {
-        if (graves.get(pos))
+        if (graves.get(pos) != null)
         {
             graves.put(pos, false);
             colony.markDirty();
