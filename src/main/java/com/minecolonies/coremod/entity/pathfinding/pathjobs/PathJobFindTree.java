@@ -50,7 +50,7 @@ public class PathJobFindTree extends AbstractPathJob
     /**
      * Fake goal when using restricted area
      */
-    private final BlockPos furthestRestriction;
+    private final BlockPos boxCenter;
 
     /**
      * AbstractPathJob constructor.
@@ -76,7 +76,7 @@ public class PathJobFindTree extends AbstractPathJob
         this.treesToNotCut = treesToCut;
         this.hutLocation = home;
         this.colony = colony;
-        this.furthestRestriction = null;
+        this.boxCenter = null;
     }
 
     /**
@@ -114,7 +114,9 @@ public class PathJobFindTree extends AbstractPathJob
         this.treesToNotCut = treesToCut;
         this.hutLocation = home;
         this.colony = colony;
-        this.furthestRestriction = furthestRestriction;
+
+        final BlockPos size = startRestriction.subtract(endRestriction);
+        this.boxCenter = endRestriction.add(size.getX()/2, size.getY()/2, size.getZ()/2);
     }
 
     @NotNull
@@ -127,7 +129,7 @@ public class PathJobFindTree extends AbstractPathJob
     @Override
     protected double computeHeuristic(@NotNull final BlockPos pos)
     {
-        return furthestRestriction == null ? pos.distanceSq(hutLocation) * TIE_BREAKER : BlockPosUtil.getDistanceSquared2D(pos, furthestRestriction);
+        return boxCenter == null ? pos.distanceSq(hutLocation) * TIE_BREAKER : BlockPosUtil.getDistanceSquared2D(pos, boxCenter);
     }
 
     @Override
