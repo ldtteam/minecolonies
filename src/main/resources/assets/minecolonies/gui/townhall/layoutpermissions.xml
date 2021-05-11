@@ -3,22 +3,14 @@
 
     <switch id="switchpagePermissions" size="100% 100%">
         <view id="pageAddPlayer">
-            <switch id="switchPlayer" size="148 171" pos="201 36">
-                <view id="playerList" size="100% 100%">
-                    <list id="users" size="100% 100%">
-                        <box size="100% 50" linewidth="2">
-                            <label id="name" size="100 11" pos="5 2" color="black"/>
-                            <button id="removePlayer" size="11 11" pos="7 2" align="TOP_RIGHT" label="X" textscale="0.5"/>
-                            <label id="rank" size="85 30" pos="5 15" color="black" align="TOP_LEFT"/>
-                            <button id="editPlayerRank" size="35 15" pos="85 17" align="MIDDLE_MIDDLE" label="Edit" />
-                        </box>
-                    </list>
-                </view>
-                <view id="playerEditRank" size="148 171" pos="0 0">
-                    <label id="playerName" size="120 11" pos="12 12" label="Edit player" color="black" />
+            <list id="users" size="148 171" pos="201 36">
+                <box size="100% 35" linewidth="2">
+                    <label id="name" size="100 11" pos="5 2" color="black"/>
+                    <button id="removePlayer" size="11 11" pos="7 2" align="TOP_RIGHT" label="X" textscale="0.5"/>
+                    <label id="rank" size="129 11" pos="5 15" color="black" />
                     <dropdown id="rankPicker"
                               size="129 17"
-                              pos="12 42"
+                              pos="2 15"
                               maxContentHeight="100"
                               dropDownSize="129 100"
                               source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
@@ -30,8 +22,8 @@
                             <buttonimage id="button" size="129 17" pos="0 0" source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png" textcolor="black"/>
                         </view>
                     </dropdown>
-                </view>
-            </switch>
+                </box>
+            </list>
 
             <label size="148 11" pos="26 65" color="black" label="$(com.minecolonies.coremod.gui.townHall.addPlayer)"/>
             <input id="addPlayerName" size="100 18" pos="26 76" maxlength="32"/>
@@ -52,12 +44,23 @@
                 <view id="permissionsSettings">
                     <buttonimage id="permissionsModeToggle" label="Permissions" size="129 17" pos="0 0" source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png" textcolor="black"/>
                     <label id="rankType" size="50 11" pos="0 19" label="Type:" color="black" />
-                    <buttonimage id="typeManager" label="Colony Manager" size="129 17" pos="0 32" source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png" textcolor="black"/>
-                    <buttonimage id="typeHostile" label="Hostile" size="129 17" pos="0 51" source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png" textcolor="black"/>
-                    <buttonimage id="typeNone" label="None" size="129 17" pos="0 70" source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png" textcolor="black"/>
-                    <label id="isSubscriber" size="98 11" pos="0 89" label="Is Subscriber:" color="black" />
-                    <buttonimage id="setSubscriber" size="29 15" pos="100 89" color="black" label="$(com.minecolonies.coremod.gui.workerhuts.retrieveOff)" source="minecolonies:textures/gui/builderhut/builder_button_very_small.png" />
-                    <buttonimage id="removeRank" size="129 17" pos="0 105" label="$(com.minecolonies.coremod.gui.townhall.removerank)" source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png" textcolor="red" />
+                    <dropdown id="rankTypePicker"
+                              size="129 17"
+                              pos="0 32"
+                              maxContentHeight="100"
+                              dropDownSize="129 100"
+                              source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
+                              textcolor="black"
+                              scrollbarOffset="9 0"
+                              dropfixx="276">
+                        <view size="100% 15">
+                            <label id="id" size="100% 100%" label="" pos="0 0" textalign="MIDDLE"/>
+                            <buttonimage id="button" size="129 17" pos="0 0" source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png" textcolor="black"/>
+                        </view>
+                    </dropdown>
+                    <label id="isSubscriber" size="98 11" pos="0 52" label="Is Subscriber:" color="black" />
+                    <buttonimage id="setSubscriber" size="29 15" pos="100 52" color="black" label="$(com.minecolonies.coremod.gui.workerhuts.retrieveOff)" source="minecolonies:textures/gui/builderhut/builder_button_very_small.png" />
+                    <buttonimage id="removeRank" size="129 17" pos="0 70" label="$(com.minecolonies.coremod.gui.townhall.removerank)" source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png" textcolor="red" />
                 </view>
             </switch>
 

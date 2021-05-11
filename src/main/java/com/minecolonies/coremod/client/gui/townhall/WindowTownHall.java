@@ -166,6 +166,8 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
      */
     private List<Action> actions = new ArrayList<>();
 
+    private Map<Integer, String> rankTypes = new HashMap<>();
+
     /**
      * Color constants for builder list.
      */
@@ -190,6 +192,10 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
                 actions.add(action);
             }
         }
+
+        rankTypes.put(0, "Colony Manager");
+        rankTypes.put(1, "Hostile");
+        rankTypes.put(2, "None");
 
         actionsRank = townHall.getColony().getPermissions().getRankOfficer();
         findPaneOfTypeByID(BUTTON_REMOVE_RANK, Button.class).setEnabled(false);
@@ -223,7 +229,6 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
         registerButton(BUTTON_TOGGLE_MOVE_IN, this::toggleMoveIn);
         registerButton(BUTTON_TOGGLE_PRINT_PROGRESS, this::togglePrintProgress);
         registerButton("bannerPicker", this::openBannerPicker);
-        registerButton(BUTTON_EDIT_PLAYERRANK, this::editRank);
 
         registerButton(NAME_LABEL, this::fillCitizenInfo);
         registerButton(RECALL_ONE, this::recallOneClicked);
@@ -242,9 +247,6 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
         registerButton(TOWNHALL_RANK_BUTTON, this::onRankButtonClicked);
         registerButton(BUTTON_REMOVE_RANK, this::onRemoveRankButtonClicked);
         registerButton(TOWNHALL_PERM_MODE_TOGGLE, this::togglePermMode);
-        registerButton(TOWNHALL_BUTTON_HOSTILE, this::changeRankMode);
-        registerButton(TOWNHALL_BUTTON_MANAGER, this::changeRankMode);
-        registerButton(TOWNHALL_BUTTON_NONE, this::changeRankMode);
         registerButton(TOWNHALL_BUTTON_SUBSCRIBER, this::setSubscriber);
         colorDropDownList.setSelectedIndex(townHall.getColony().getTeamColonyColor().ordinal());
     }
@@ -256,25 +258,9 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
         button.setText(LanguageHandler.format(actionsRank.isSubscriber() ? COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON : COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF));
     }
 
-    private void changeRankMode(Button button)
+    private void changeRankMode(DropDownList dropdown)
     {
-        Network.getNetwork().sendToServer(new PermissionsMessage.EditRankType(townHall.getColony(), actionsRank, button.getID()));
-        button.setEnabled(false);
-        switch (button.getID())
-        {
-            case TOWNHALL_BUTTON_MANAGER:
-                findPaneOfTypeByID(TOWNHALL_BUTTON_NONE, Button.class).setEnabled(true);
-                findPaneOfTypeByID(TOWNHALL_BUTTON_HOSTILE, Button.class).setEnabled(true);
-                break;
-            case TOWNHALL_BUTTON_HOSTILE:
-                findPaneOfTypeByID(TOWNHALL_BUTTON_MANAGER, Button.class).setEnabled(true);
-                findPaneOfTypeByID(TOWNHALL_BUTTON_NONE, Button.class).setEnabled(true);
-                break;
-            default:
-                findPaneOfTypeByID(TOWNHALL_BUTTON_HOSTILE, Button.class).setEnabled(true);
-                findPaneOfTypeByID(TOWNHALL_BUTTON_MANAGER, Button.class).setEnabled(true);
-                break;
-        }
+        Network.getNetwork().sendToServer(new PermissionsMessage.EditRankType(townHall.getColony(), actionsRank, dropdown.getSelectedIndex()));
     }
 
     private void togglePermMode(Button button)
@@ -283,9 +269,22 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
         permSwitch.setView(permSwitch.getCurrentView() != null && permSwitch.getCurrentView().getID().equals(TOWNHALL_PERM_LIST) ? TOWNHALL_PERM_SETTINGS : TOWNHALL_PERM_LIST);
         if (permSwitch.getCurrentView().getID().equals(TOWNHALL_PERM_SETTINGS))
         {
-            findPaneOfTypeByID(TOWNHALL_BUTTON_MANAGER, Button.class).setEnabled(!actionsRank.isColonyManager());
-            findPaneOfTypeByID(TOWNHALL_BUTTON_HOSTILE, Button.class).setEnabled(!actionsRank.isHostile());
-            findPaneOfTypeByID(TOWNHALL_BUTTON_NONE, Button.class).setEnabled(actionsRank.isHostile() || actionsRank.isColonyManager());
+            DropDownList dropdown = findPaneOfTypeByID("rankTypePicker", DropDownList.class);
+            dropdown.setDataProvider(new DropDownList.DataProvider() {
+                @Override
+                public int getElementCount()
+                {
+                    return rankTypes.size();
+                }
+
+                @Override
+                public String getLabel(final int i)
+                {
+                    return rankTypes.get(i);
+                }
+            });
+            dropdown.setHandler(this::changeRankMode);
+            dropdown.setSelectedIndex(actionsRank.isColonyManager() ? 0 : (actionsRank.isHostile() ? 1 : 2));
             findPaneOfTypeByID(TOWNHALL_BUTTON_SUBSCRIBER, Button.class).setText(LanguageHandler.format(actionsRank.isSubscriber() ? COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON : COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF));
         }
     }
@@ -456,7 +455,6 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
 
         findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).setView(PAGE_ACTIONS);
         findPaneOfTypeByID(TOWNHALL_PERM_MANAGEMENT, SwitchView.class).setView(TOWNHALL_PERM_LIST);
-        findPaneOfTypeByID(TOWNHALL_SWITCH_PLAYER, SwitchView.class).setView(TOWNHALL_SWITCH_PLAYER_LIST);
 
         lastTabButton = findPaneOfTypeByID(BUTTON_ACTIONS, Button.class);
         lastTabButton.off();
@@ -922,58 +920,46 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
                 final Player player = users.get(index);
                 Rank rank = player.getRank();
                 rowPane.findPaneOfTypeByID(NAME_LABEL, Text.class).setText(player.getName());
-                rowPane.findPaneOfTypeByID("rank", Text.class).setText(rank.getName());
+                DropDownList dropdown = rowPane.findPaneOfTypeByID(TOWNHALL_RANK_PICKER, DropDownList.class);
                 if (rank.getId() == townHall.getColony().getPermissions().OWNER_RANK_ID)
                 {
-                    rowPane.findPaneOfTypeByID(BUTTON_EDIT_PLAYERRANK, Button.class).setEnabled(false);
                     rowPane.findPaneOfTypeByID(BUTTON_REMOVE_PLAYER, Button.class).setEnabled(false);
+                    rowPane.findPaneOfTypeByID("rank", Text.class).setText(rank.getName());
+                    dropdown.setEnabled(false);
+                }
+                else
+                {
+                    dropdown.setDataProvider(new DropDownList.DataProvider() {
+                        @Override
+                        public int getElementCount()
+                        {
+                            return rankList.size();
+                        }
+
+                        @Override
+                        public String getLabel(final int i)
+                        {
+                            Rank rank = rankList.get(i);
+                            return rank.getName();
+                        }
+                    });
+                    dropdown.setSelectedIndex(rankList.indexOf(rank));
+                    dropdown.setHandler(WindowTownHall.this::onRankSelected);
                 }
             }
         });
     }
 
-    /**
-     * Select a player to edit
-     * Fill the dropdown with the list of ranks
-     * Display the box
-     * @param button
-     */
-    private void editRank(Button button)
-    {
-        selectedPlayer = users.get(userList.getListElementIndexByPane(button));
-        View view = findPaneOfTypeByID(TOWNHALL_SWITCH_PLAYER_RANK, View.class);
-        view.findPaneOfTypeByID(TOWNHALL_PLAYER_NAME, Text.class).setText(selectedPlayer.getName());
-        DropDownList dropdown = view.findPaneOfTypeByID(TOWNHALL_RANK_PICKER, DropDownList.class);
-        dropdown.setDataProvider(new DropDownList.DataProvider() {
-            @Override
-            public int getElementCount()
-            {
-                return rankList.size();
-            }
-
-            @Override
-            public String getLabel(final int i)
-            {
-                Rank rank = rankList.get(i);
-                return rank.getName();
-            }
-        });
-        Rank playerRank = townHall.getColony().getPermissions().getRank(selectedPlayer.getID());
-        dropdown.setSelectedIndex(rankList.indexOf(playerRank));
-        dropdown.setHandler(this::onRankSelected);
-        findPaneOfTypeByID(TOWNHALL_SWITCH_PLAYER, SwitchView.class).setView(view.getID());
-    }
-
-    /**
-     * Send a message to set the selected rank for the selected player
-     * @param dropdown the rank dropdown
-     */
-    private void onRankSelected(@NotNull DropDownList dropdown)
+    private void onRankSelected(final DropDownList dropdown)
     {
         final int index = dropdown.getSelectedIndex();
+        final Player player = users.get(userList.getListElementIndexByPane(dropdown));
         final Rank rank = rankList.get(index);
-        Network.getNetwork().sendToServer(new PermissionsMessage.ChangePlayerRank(townHall.getColony(), selectedPlayer.getID(), rank));
-        findPaneOfTypeByID(TOWNHALL_SWITCH_PLAYER, SwitchView.class).setView(TOWNHALL_SWITCH_PLAYER_LIST);
+        if (rank != player.getRank())
+        {
+            player.setRank(rank);
+            Network.getNetwork().sendToServer(new PermissionsMessage.ChangePlayerRank(townHall.getColony(), player.getID(), rank));
+        }
     }
 
     /**
@@ -1508,6 +1494,8 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
             final Player user = users.get(row);
             if (user.getRank().getId() != IPermissions.OWNER_RANK_ID)
             {
+                users.remove(user);
+                userList.removeChild(button.getParent());
                 Network.getNetwork().sendToServer(new PermissionsMessage.RemovePlayer(townHall.getColony(), user.getID()));
             }
         }
@@ -1543,10 +1531,6 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
         if (switchView.getCurrentView().getID().equals(PERMISSION_VIEW))
         {
             findPaneOfTypeByID(TOWNHALL_ADD_RANK_ERROR, Text.class).hide();
-        }
-        else if (switchView.getCurrentView().getID().equals(TOWNHALL_USER_VIEW))
-        {
-            findPaneOfTypeByID(TOWNHALL_SWITCH_PLAYER, SwitchView.class).setView(TOWNHALL_SWITCH_PLAYER_LIST);
         }
     }
 

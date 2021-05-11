@@ -494,15 +494,8 @@ public class PermissionsMessage
             playerID = PacketUtils.readUUID(buf);
             dimension = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(buf.readString(32767)));
             IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, dimension);
-            rank = colony.getPermissions().getRanks().get(buf.readInt());
+            rank = colony.getPermissions().getRank(buf.readInt());
 
-        }
-
-        @Nullable
-        @Override
-        public LogicalSide getExecutionSide()
-        {
-            return LogicalSide.SERVER;
         }
 
         @Override
@@ -516,8 +509,9 @@ public class PermissionsMessage
                 return;
             }
             final PlayerEntity player = ctxIn.getSender();
-            if (colony.getPermissions().hasPermission(player, Action.EDIT_PERMISSIONS) && rank != colony.getPermissions().getRankOwner())
+            if (colony.getPermissions().hasPermission(player, Action.EDIT_PERMISSIONS) && rank != colony.getPermissions().getRank(colony.getPermissions().OWNER_RANK_ID))
             {
+                Log.getLogger().error(rank.getName());
                 colony.getPermissions().setPlayerRank(playerID, rank, colony.getWorld());
             }
         }
@@ -593,11 +587,10 @@ public class PermissionsMessage
             }
             final PlayerEntity player = ctxIn.getSender();
             final Player permissionsPlayer = colony.getPermissions().getPlayers().get(playerID);
-            final Rank hostile = colony.getPermissions().getRankHostile();
             if ((permissionsPlayer.getRank().isHostile() && colony.getPermissions().hasPermission(player, Action.EDIT_PERMISSIONS))
                   || (!permissionsPlayer.getRank().isHostile()
                         && colony.getPermissions().hasPermission(player, Action.EDIT_PERMISSIONS)
-                        && permissionsPlayer.getRank().isColonyManager())
+                        && colony.getPermissions().getRank(player).isColonyManager())
                   || player.getUniqueID().equals(playerID))
             {
                 colony.getPermissions().removePlayer(playerID);
@@ -676,11 +669,11 @@ public class PermissionsMessage
         private int colonyId;
         private int rankId;
         private RegistryKey<World> dimension;
-        private String rankType;
+        private int rankType;
 
         public EditRankType() { super(); }
 
-        public EditRankType(@NotNull final IColonyView colony, @NotNull final Rank rank, @NotNull final String rankType)
+        public EditRankType(@NotNull final IColonyView colony, @NotNull final Rank rank, @NotNull final int rankType)
         {
             this.colonyId = colony.getID();
             this.rankId = rank.getId();
@@ -694,7 +687,7 @@ public class PermissionsMessage
             buf.writeInt(colonyId);
             buf.writeInt(rankId);
             buf.writeString(dimension.getLocation().toString());
-            buf.writeString(rankType);
+            buf.writeInt(rankType);
         }
 
         @Override
@@ -703,7 +696,7 @@ public class PermissionsMessage
             this.colonyId = buf.readInt();
             this.rankId = buf.readInt();
             this.dimension = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(buf.readString(32767)));
-            this.rankType = buf.readString(32767);
+            this.rankType = buf.readInt();
         }
 
         @Override
@@ -715,17 +708,18 @@ public class PermissionsMessage
                 final Rank rank = colony.getPermissions().getRank(rankId);
                 switch (rankType)
                 {
-                    case TOWNHALL_BUTTON_MANAGER:
+                    case 0:
                         rank.setColonyManager(true);
                         rank.setHostile(false);
                         break;
-                    case TOWNHALL_BUTTON_HOSTILE:
+                    case 1:
                         rank.setHostile(true);
                         rank.setColonyManager(false);
                         break;
                     default:
                         rank.setHostile(false);
                         rank.setColonyManager(false);
+                        break;
                 }
                 colony.markDirty();
             }
@@ -753,7 +747,7 @@ public class PermissionsMessage
         public void toBytes(final PacketBuffer buf)
         {
             buf.writeInt(colonyId);
-            buf.writeString(dimension.toString());
+            buf.writeString(dimension.getLocation().toString());
             buf.writeInt(rankId);
             buf.writeBoolean(isSubscriber);
         }

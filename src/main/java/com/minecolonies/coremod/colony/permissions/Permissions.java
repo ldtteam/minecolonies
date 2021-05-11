@@ -816,7 +816,7 @@ public class Permissions implements IPermissions
      * Remove a player from the permissionMap.
      *
      * @param id UUID of the player.
-     * @return True if successfull, otherwise false.
+     * @return True if successful, otherwise false.
      */
     public boolean removePlayer(final UUID id)
     {
