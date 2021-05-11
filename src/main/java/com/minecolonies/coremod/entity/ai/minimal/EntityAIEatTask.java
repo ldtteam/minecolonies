@@ -256,14 +256,14 @@ public class EntityAIEatTask extends Goal
 
         final Food itemFood = stack.getItem().getFood();
 
-        final boolean isBottled = stack.getItem().getContainerItem() instanceof GlassBottleItem;
+        final Item containerItem = stack.getItem().getContainerItem();
 
         final double satIncrease = itemFood.getHealing() * (1.0 + citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SATURATION));
 
         citizenData.increaseSaturation(satIncrease / 2.0);
         citizenData.getInventory().extractItem(foodSlot, 1, false);
 
-        if (isBottled)
+        if (containerItem != null)
         {
             if (citizenData.getInventory().isFull())
             {
@@ -272,12 +272,12 @@ public class EntityAIEatTask extends Goal
                         citizen.getPosX(),
                         citizen.getPosY(),
                         citizen.getPosZ(),
-                        new ItemStack(Items.GLASS_BOTTLE, 1)
+                        new ItemStack(containerItem, 1)
                 );
             }
             else
             {
-                InventoryUtils.addItemStackToItemHandler(citizenData.getInventory(), new ItemStack(Items.GLASS_BOTTLE, 1));
+                InventoryUtils.addItemStackToItemHandler(citizenData.getInventory(), new ItemStack(containerItem, 1));
             }
         }
 
