@@ -9,16 +9,21 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.Suppression.OVERRIDE_EQUALS;
+import static com.minecolonies.api.util.constant.Constants.*;
 
 /**
  * Abstract Class for all furnace users.
@@ -116,6 +121,14 @@ public abstract class AbstractBuildingFurnaceUser extends AbstractBuildingWorker
             furnaces.add(pos);
         }
         markDirty();
+    }
+
+    @Override
+    public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
+    {
+        final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep = new HashMap<>(super.getRequiredItemsAndAmount());
+        toKeep.put(this::isAllowedFuel, new Tuple<>(STACKSIZE * this.getBuildingLevel(), false));
+        return toKeep;
     }
 
     /**
