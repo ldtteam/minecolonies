@@ -263,7 +263,8 @@ public class EntityAIEatTask extends Goal
         citizenData.increaseSaturation(satIncrease / 2.0);
         citizenData.getInventory().extractItem(foodSlot, 1, false);
 
-        if (isBottled) {
+        if (isBottled)
+        {
             if (citizenData.getInventory().isFull())
             {
                 InventoryUtils.spawnItemStack(
