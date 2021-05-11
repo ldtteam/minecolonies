@@ -55,7 +55,7 @@ public class Permissions implements IPermissions
     /**
      * All defined ranks
      */
-    private static final LinkedHashMap<Integer, Rank> ranks = new LinkedHashMap<>();
+    private static final Map<Integer, Rank> ranks = new LinkedHashMap<>();
 
     /**
      * A flag for all the permissions unlocked in a fully abandoned colony.
@@ -1019,7 +1019,7 @@ public class Permissions implements IPermissions
      * @return the ranks
      */
     @Override
-    public LinkedHashMap<Integer, Rank> getRanks()
+    public Map<Integer, Rank> getRanks()
     {
         return ranks;
     }

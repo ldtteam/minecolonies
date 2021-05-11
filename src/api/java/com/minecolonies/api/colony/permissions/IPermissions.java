@@ -36,7 +36,7 @@ public interface IPermissions
      * Returns a map of all ranks present in the colony, identified by their ID
      * @return the map
      */
-    LinkedHashMap<Integer, Rank> getRanks();
+    Map<Integer, Rank> getRanks();
 
     /**
      * Returns the rank with the given ID
