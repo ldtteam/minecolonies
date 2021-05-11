@@ -153,6 +153,15 @@ public interface IRequestManager extends INBTSerializable<CompoundNBT>, ITickabl
     void onProviderAddedToColony(@NotNull IRequestResolverProvider provider) throws IllegalArgumentException;
 
     /**
+     * Method used to indicate to this manager that a Requster has been removed from the colony.
+     *
+     * @param requester The removed requester.
+     * @throws IllegalArgumentException is thrown when no requester with the same token is registered.
+
+     */
+    void onRequesterRemovedFromColony(@NotNull final IRequester requester) throws IllegalArgumentException;
+
+    /**
      * Method used to indicate to this manager that Provider has been removed from the colony.
      *
      * @param provider The removed provider.
