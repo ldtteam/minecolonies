@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -86,6 +87,15 @@ public class PermissionsView implements IPermissions
             .stream()
             .filter(player -> ranks.contains(player.getRank()))
             .collect(Collectors.toSet()));
+    }
+
+    @Override
+    public Set<Player> getFilteredPlayers(@NotNull final Predicate<Rank> predicate)
+    {
+        return Collections.unmodifiableSet(
+          this.players.values().stream()
+          .filter(player -> predicate.test(player.getRank()))
+          .collect(Collectors.toSet()));
     }
 
     @NotNull

@@ -320,15 +320,14 @@ public final class ColonyView implements IColonyView
         buf.writeBoolean(colony.getRaiderManager().areSpiesEnabled());
         // ToDo: rework ally system
         final List<IColony> allies = new ArrayList<>();
-        final Set<Rank> managerRanks = colony.getPermissions().getRanks().values().stream().filter(rank -> rank.isColonyManager()).collect(Collectors.toSet());
-        for (final Player player : colony.getPermissions().getPlayersByRank(managerRanks))
+        for (final Player player : colony.getPermissions().getFilteredPlayers(Rank::isColonyManager))
         {
             final IColony col = IColonyManager.getInstance().getIColonyByOwner(colony.getWorld(), player.getID());
             if (col != null)
             {
                 for (final Player owner : colony.getPermissions().getPlayersByRank(colony.getPermissions().getRankOwner()))
                 {
-                    if (col.getPermissions().getRank(owner.getID()) == colony.getPermissions().getRankOwner())
+                    if (col.getPermissions().getRank(owner.getID()).isColonyManager() && col.getID() != colony.getID())
                     {
                         allies.add(col);
                     }
@@ -347,15 +346,14 @@ public final class ColonyView implements IColonyView
         }
 
         final List<IColony> feuds = new ArrayList<>();
-        final Set<Rank> hostileRanks = colony.getPermissions().getRanks().values().stream().filter(rank -> rank.isHostile()).collect(Collectors.toSet());
-        for (final Player player : colony.getPermissions().getPlayersByRank(hostileRanks))
+        for (final Player player : colony.getPermissions().getFilteredPlayers(Rank::isHostile))
         {
             final IColony col = IColonyManager.getInstance().getIColonyByOwner(colony.getWorld(), player.getID());
             if (col != null)
             {
                 for (final Player owner : colony.getPermissions().getPlayersByRank(colony.getPermissions().getRankOwner()))
                 {
-                    if (col.getPermissions().getRank(owner.getID()) == colony.getPermissions().getRankHostile())
+                    if (col.getPermissions().getRank(owner.getID()).isHostile())
                     {
                         feuds.add(col);
                     }

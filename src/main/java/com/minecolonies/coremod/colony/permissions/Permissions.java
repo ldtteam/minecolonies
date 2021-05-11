@@ -19,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_NAME;
@@ -596,6 +597,14 @@ public class Permissions implements IPermissions
         return this.players.values().stream()
                  .filter(player -> ranks.contains(player.getRank()))
                  .collect(Collectors.toSet());
+    }
+
+    @Override
+    public Set<Player> getFilteredPlayers(@NotNull final Predicate<Rank> predicate)
+    {
+        return this.players.values().stream()
+          .filter(player -> predicate.test(player.getRank()))
+          .collect(Collectors.toSet());
     }
 
     /**

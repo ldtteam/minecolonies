@@ -10,6 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 /**
  * Permission interface.
@@ -163,4 +164,6 @@ public interface IPermissions
      * @param rank the rank
      */
     void removeRank(Rank rank);
+
+    Set<Player> getFilteredPlayers(Predicate<Rank> p);
 }
