@@ -27,8 +27,7 @@ import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.client.ItemParticleEffectMessage;
 import com.minecolonies.coremod.util.AdvancementUtils;
 import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.item.Food;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.*;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
@@ -257,10 +256,30 @@ public class EntityAIEatTask extends Goal
 
         final Food itemFood = stack.getItem().getFood();
 
+        final Item containerItem = stack.getItem().getContainerItem();
+
         final double satIncrease = itemFood.getHealing() * (1.0 + citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SATURATION));
 
         citizenData.increaseSaturation(satIncrease / 2.0);
         citizenData.getInventory().extractItem(foodSlot, 1, false);
+
+        if (containerItem != null && !(containerItem instanceof AirItem))
+        {
+            if (citizenData.getInventory().isFull())
+            {
+                InventoryUtils.spawnItemStack(
+                        citizen.world,
+                        citizen.getPosX(),
+                        citizen.getPosY(),
+                        citizen.getPosZ(),
+                        new ItemStack(containerItem, 1)
+                );
+            }
+            else
+            {
+                InventoryUtils.addItemStackToItemHandler(citizenData.getInventory(), new ItemStack(containerItem, 1));
+            }
+        }
 
         IColony citizenColony = citizen.getCitizenColonyHandler().getColony();
         if (citizenColony != null)
