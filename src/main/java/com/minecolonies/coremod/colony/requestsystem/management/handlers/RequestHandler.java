@@ -515,6 +515,18 @@ public class RequestHandler implements IRequestHandler
         manager.getRequestIdentitiesDataStore().getIdentities().remove(token);
     }
 
+    @Override
+    public void removeRequester(final IRequester requester)
+    {
+        for (final IRequest<?> req : new ArrayList<>(manager.getRequestIdentitiesDataStore().getIdentities().values()))
+        {
+            if (req.getRequester().getId().equals(requester.getId()))
+            {
+                onRequestCancelled(req.getId());
+            }
+        }
+    }
+
     /**
      * Method used to get a registered request from a given token.
      *
