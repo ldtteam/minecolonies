@@ -1,10 +1,6 @@
 package com.minecolonies.coremod.event;
 
-import com.minecolonies.coremod.generation.SawmillTimberFrameRecipeProvider;
-import com.minecolonies.coremod.generation.SifterCraftingProvider;
-import com.minecolonies.coremod.generation.defaults.DefaultBlockLootTableProvider;
-import com.minecolonies.coremod.generation.defaults.DefaultResearchProvider;
-import com.minecolonies.coremod.generation.defaults.DefaultSoundProvider;
+import com.minecolonies.coremod.generation.defaults.*;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 
 public class GatherDataHandler
@@ -20,6 +16,7 @@ public class GatherDataHandler
         event.getGenerator().addProvider(new DefaultSoundProvider(event.getGenerator()));
         event.getGenerator().addProvider(new DefaultResearchProvider(event.getGenerator()));
         event.getGenerator().addProvider(new SawmillTimberFrameRecipeProvider(event.getGenerator()));
-        event.getGenerator().addProvider(new SifterCraftingProvider(event.getGenerator()));
+        event.getGenerator().addProvider(new DefaultSifterCraftingProvider(event.getGenerator()));
+        event.getGenerator().addProvider(new DefaultEnchanterCraftingProvider(event.getGenerator()));
     }
 }

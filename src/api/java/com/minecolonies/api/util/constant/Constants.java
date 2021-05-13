@@ -166,6 +166,11 @@ public final class Constants
     public static final int MAX_TRIES = 20;
 
     /**
+     * The number of backstories for visitors.
+     */
+    public static final int MAX_STORY = 20;
+
+    /**
      * Private constructor to hide implicit public one.
      */
     private Constants()

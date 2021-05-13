@@ -196,6 +196,12 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
         wrappedManager.onProviderRemovedFromColony(provider);
     }
 
+    @Override
+    public void onRequesterRemovedFromColony(@NotNull final IRequester requester) throws IllegalArgumentException
+    {
+        wrappedManager.onRequesterRemovedFromColony(requester);
+    }
+
     @NotNull
     @Override
     public IPlayerRequestResolver getPlayerResolver()

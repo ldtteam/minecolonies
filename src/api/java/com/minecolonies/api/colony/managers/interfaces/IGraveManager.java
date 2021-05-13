@@ -45,6 +45,13 @@ public interface IGraveManager
     boolean reserveGrave(BlockPos pos);
 
     /**
+     * Un-Reserve a grave
+     *
+     * @param pos the id of the grave.
+     */
+    void unReserveGrave(BlockPos pos);
+
+    /**
      * Reserve the next free grave
      *
      * @return the grave successfully reserved or null if none available

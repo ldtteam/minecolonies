@@ -156,13 +156,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return PICKUP;
         }
 
-        final IBuildingWorker ownBuilding = getOwnBuilding();
-        if (ownBuilding == null)
-        {
-            return START_WORKING;
-        }
-
-        final IBuilding pickupBuilding = ownBuilding.getColony().getBuildingManager().getBuilding(pickupTarget);
+        final IBuilding pickupBuilding = getOwnBuilding().getColony().getBuildingManager().getBuilding(pickupTarget);
         if (pickupBuilding == null)
         {
             job.finishRequest(false);

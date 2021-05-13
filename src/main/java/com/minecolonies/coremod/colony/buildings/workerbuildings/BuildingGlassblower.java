@@ -62,7 +62,6 @@ public class BuildingGlassblower extends AbstractBuildingSmelterCrafter
     public BuildingGlassblower(final IColony c, final BlockPos l)
     {
         super(c, l);
-        keepX.put(stack -> isAllowedFuel(stack), new Tuple<>(STACKSIZE, true));
     }
 
     @NotNull
