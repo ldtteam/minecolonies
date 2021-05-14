@@ -1296,6 +1296,9 @@
   "advancements.minecolonies.build.all_towers.title": "Grand Garrison",
   "advancements.minecolonies.build.all_towers.description": "A mighty barracks to strike fear in the enemy - all upgrades, all towers",
 
+  "advancements.minecolonies.undertaker.totem.title": "A Powerful Artifact",
+  "advancements.minecolonies.undertaker.totem.description": "The Undertaker has been given a Totem of Undying to assist in resurrection.",
+
   "com.minecolonies.coremod.gui.chat.okay": "I will work on it!",
   "com.minecolonies.coremod.gui.chat.ignore": "That has to do for now!",
   "com.minecolonies.coremod.gui.chat.remindmelater": "Please remind me later!",
