@@ -11,7 +11,7 @@ import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * A Trigger that is triggered when the miner reaches a certain depth
+ * A Trigger that is triggered when the undertaker recieves a totem of undying
  */
 public class UndertakerTotemTrigger extends AbstractCriterionTrigger<CriterionListeners<UndertakerTotemCriterionInstance>, UndertakerTotemCriterionInstance>
 {

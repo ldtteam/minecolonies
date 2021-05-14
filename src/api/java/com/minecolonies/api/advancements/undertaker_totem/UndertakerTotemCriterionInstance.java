@@ -6,7 +6,7 @@ import net.minecraft.advancements.criterion.EntityPredicate;
 import net.minecraft.util.ResourceLocation;
 
 /**
- * A citizen is buried criterion instance.
+ * An undertaker recieves a totem of undying criterion instance.
  */
 public class UndertakerTotemCriterionInstance extends CriterionInstance
 {

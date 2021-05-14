@@ -24,6 +24,7 @@ import net.minecraft.item.Items;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -158,6 +159,9 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         {
             wanderPos = getOwnBuilding().getPosition();
         }
+
+        // Check for totem in order to grant advancement
+        getTotemResurrectChance();
 
         return IDLE;
     }
@@ -330,6 +334,11 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
             shouldDumpInventory = true;
             final double chance = getResurrectChance(buildingGraveyard);
 
+            if (getTotemResurrectChance() > 0 && random.nextDouble() <= TOTEM_BREAK_CHANCE) {
+                worker.getInventoryCitizen().extractItem(InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), Items.TOTEM_OF_UNDYING), 1, false);
+                //worker.playSound(SoundEvents.)
+            }
+
             if (chance >= random.nextDouble())
             {
                 final ICitizenData citizenData = buildingGraveyard.getColony().getCitizenManager().resurrectCivilianData(buildingGraveyard.getLastGraveData().getCitizenDataNBT(), true, world, gravePos);
@@ -339,10 +348,6 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
                 buildingGraveyard.setLastGraveData(null);
                 world.setBlockState(gravePos, Blocks.AIR.getDefaultState());
                 return INVENTORY_FULL;
-            }
-
-            if (getTotemResurrectChance() > 0 && random.nextDouble() <= TOTEM_BREAK_CHANCE) {
-                worker.getInventoryCitizen().extractItem(InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), Items.TOTEM_OF_UNDYING), 1, true);
             }
         }
 
