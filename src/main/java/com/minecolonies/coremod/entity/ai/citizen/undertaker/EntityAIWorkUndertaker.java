@@ -336,7 +336,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
 
             if (getTotemResurrectChance() > 0 && random.nextDouble() <= TOTEM_BREAK_CHANCE) {
                 worker.getInventoryCitizen().extractItem(InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), Items.TOTEM_OF_UNDYING), 1, false);
-                //worker.playSound(SoundEvents.)
+                worker.playSound(SoundEvents.ITEM_TOTEM_USE, 1.0f, 1.0f);
             }
 
             if (chance >= random.nextDouble())
