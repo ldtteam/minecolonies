@@ -20,6 +20,7 @@ import com.minecolonies.coremod.colony.jobs.JobUndertaker;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.util.AdvancementUtils;
 import net.minecraft.block.*;
+import net.minecraft.item.Items;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
@@ -120,6 +121,8 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
             }
             getOwnBuilding().ClearCurrentGrave();
         }
+
+        getTotemResurrectChance();
 
         return WANDER;
     }
@@ -336,6 +339,10 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
                 world.setBlockState(gravePos, Blocks.AIR.getDefaultState());
                 return INVENTORY_FULL;
             }
+
+            if (getTotemResurrectChance() > 0 && random.nextDouble() <= TOTEM_BREAK_CHANCE) {
+                worker.getInventoryCitizen().extractItem(InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), Items.TOTEM_OF_UNDYING), 1, true);
+            }
         }
 
         return DIG_GRAVE;
@@ -349,13 +356,40 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
      */
     private double getResurrectChance(@NotNull final BuildingGraveyard buildingGraveyard)
     {
+        double totemChance = getTotemResurrectChance();
         double chance = buildingGraveyard.getBuildingLevel() * RESURRECT_BUILDING_LVL_WEIGHT +
                 worker.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Mana) * RESURRECT_WORKER_MANA_LVL_WEIGHT +
-                worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(RESURRECT_CHANCE);
+                worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(RESURRECT_CHANCE) +
+                totemChance;
 
-        final double cap = MAX_RESURRECTION_CHANCE + worker.getCitizenColonyHandler().getColony().getBuildingManager().getMysticalSiteMaxBuildingLevel() * MAX_RESURRECTION_CHANCE_MYSTICAL_LVL_BONUS;
+        final double cap = MAX_RESURRECTION_CHANCE + worker.getCitizenColonyHandler().getColony().getBuildingManager().getMysticalSiteMaxBuildingLevel() * MAX_RESURRECTION_CHANCE_MYSTICAL_LVL_BONUS + totemChance;
         if (chance > cap) { chance = cap; }
         return chance;
+    }
+
+    /**
+     * Check for a totem of undying, the required research, and get the increased resurrection chance
+     *
+     * @return the chance increase that the totem provides
+     */
+    private double getTotemResurrectChance() {
+        final int totems = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), Items.TOTEM_OF_UNDYING);
+
+        if (totems > 0)
+        {
+            AdvancementUtils.TriggerAdvancementPlayersForColony(worker.getCitizenColonyHandler().getColony(), playerMP -> AdvancementTriggers.UNDERTAKER_TOTEM.trigger(playerMP));
+        }
+
+        if (worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(USE_TOTEM) > 0)
+        {
+            if ( totems == 1 ) {
+                return SINGLE_TOTEM_RESURRECTION_CHANCE_BONUS;
+            } else if ( totems > 1 ) {
+                return MULTIPLE_TOTEMS_RESURRECTION_CHANCE_BONUS;
+            }
+        }
+
+        return 0;
     }
 
     /**
