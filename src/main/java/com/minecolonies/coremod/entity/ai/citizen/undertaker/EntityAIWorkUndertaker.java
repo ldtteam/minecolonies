@@ -122,6 +122,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
             getOwnBuilding().ClearCurrentGrave();
         }
 
+        // Check for totem in order to grant advancement
         getTotemResurrectChance();
 
         return WANDER;
