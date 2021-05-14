@@ -170,7 +170,7 @@ public class BuildingGraveyard extends AbstractBuildingWorker
             if (WorldUtil.isBlockLoaded(colony.getWorld(), currentGrave))
             {
                 final TileEntity tileEntity = getColony().getWorld().getTileEntity(currentGrave);
-                if (tileEntity != null)
+                if (tileEntity instanceof TileEntityGrave)
                 {
                     return currentGrave;
                 }
