@@ -449,7 +449,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
         if (pathBackupFactor > 10)
         {
             pathResult = null;
-            return pos;
+            return null;
         }
 
         return null;
