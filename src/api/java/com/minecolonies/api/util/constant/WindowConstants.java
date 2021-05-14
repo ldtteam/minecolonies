@@ -1139,14 +1139,9 @@ public final class WindowConstants
     public static final String BUTTON_SWITCH = "switch";
 
     /**
-     * Select all button Id.
+     * Reset to default button Id.
      */
-    public static final String BUTTON_SELECT_ALL = "selectAll";
-
-    /**
-     * Deselect all button Id.
-     */
-    public static final String BUTTON_DESELECT_ALL = "deselectAll";
+    public static final String BUTTON_RESET_DEFAULT = "resetDefault";
 
     /**
      * String describing on for the gui.

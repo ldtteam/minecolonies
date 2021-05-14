@@ -57,8 +57,7 @@ public interface IItemListModuleView extends IBuildingModuleView
     boolean isInverted();
 
     /**
-     * Check if the list contains a specific item.
-     * @return true if the item is in the list.
+     * Clear the list of items
      */
-    boolean containsItem(final ItemStorage item);
+    void clearItems();
 }
