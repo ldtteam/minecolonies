@@ -123,9 +123,6 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
             getOwnBuilding().ClearCurrentGrave();
         }
 
-        // Check for totem in order to grant advancement
-        getTotemResurrectChance();
-
         return WANDER;
     }
 
@@ -159,9 +156,6 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         {
             wanderPos = getOwnBuilding().getPosition();
         }
-
-        // Check for totem in order to grant advancement
-        getTotemResurrectChance();
 
         return IDLE;
     }
@@ -334,7 +328,8 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
             shouldDumpInventory = true;
             final double chance = getResurrectChance(buildingGraveyard);
 
-            if (getTotemResurrectChance() > 0 && random.nextDouble() <= TOTEM_BREAK_CHANCE) {
+            if (getTotemResurrectChance() > 0 && random.nextDouble() <= TOTEM_BREAK_CHANCE)
+            {
                 worker.getInventoryCitizen().extractItem(InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), Items.TOTEM_OF_UNDYING), 1, false);
                 worker.playSound(SoundEvents.ITEM_TOTEM_USE, 1.0f, 1.0f);
             }
@@ -388,9 +383,12 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
 
         if (worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(USE_TOTEM) > 0)
         {
-            if ( totems == 1 ) {
+            if ( totems == 1 )
+            {
                 return SINGLE_TOTEM_RESURRECTION_CHANCE_BONUS;
-            } else if ( totems > 1 ) {
+            }
+            else if ( totems > 1 )
+            {
                 return MULTIPLE_TOTEMS_RESURRECTION_CHANCE_BONUS;
             }
         }
