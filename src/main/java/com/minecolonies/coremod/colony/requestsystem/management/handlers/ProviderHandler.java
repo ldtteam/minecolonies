@@ -4,6 +4,8 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.requestsystem.management.IProviderHandler;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
+import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverProvider;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequestManager;
@@ -164,14 +166,27 @@ public class ProviderHandler implements IProviderHandler
         Validate.isTrue(assignedResolvers.contains(resolverToken));
 
         //Clone the original list to modify it during iteration, if need be.
-        final Collection<IToken<?>> assignedRequests = new ArrayList<>(manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(resolverToken));
+        Collection<IToken<?>> assignedRequests = new ArrayList<>(manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(resolverToken));
         manager.getLogger().debug("Starting reassignment of already registered requests registered to resolver with token: " + resolverToken);
+        manager.getRequestHandler().addToTempBlackList(resolverToken);
 
+        for (final IToken<?> requestToken : assignedRequests)
+        {
+            final IRequest<?> req = manager.getRequestForToken(requestToken);
+            for (final IToken<?> childReq : req.getChildren())
+            {
+                manager.getRequestHandler().onRequestCancelledDirectly(childReq);
+            }
+        }
+
+        assignedRequests = new ArrayList<>(manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(resolverToken));
         //Get all assigned requests and reassign them.
         for (final IToken<?> requestToken : assignedRequests)
         {
             manager.reassignRequest(requestToken, assignedResolvers);
         }
+
+        manager.getRequestHandler().removeFromTempBlackList(resolverToken);
 
         removeResolverWithoutAssignedRequests(resolverToken);
 

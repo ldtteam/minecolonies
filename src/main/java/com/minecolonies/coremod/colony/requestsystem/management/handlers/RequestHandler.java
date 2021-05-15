@@ -33,6 +33,11 @@ public class RequestHandler implements IRequestHandler
 
     private final IStandardRequestManager manager;
 
+    /**
+     * Additional temporary blacklist of the request handler.
+     */
+    private List<IToken<?>> tempBlackList = new ArrayList<>();
+
     public RequestHandler(final IStandardRequestManager manager) {this.manager = manager;}
 
     @Override
@@ -148,7 +153,7 @@ public class RequestHandler implements IRequestHandler
         for (@SuppressWarnings(RAWTYPES) final IRequestResolver resolver : resolvers)
         {
             //Skip when the resolver is in the blacklist.
-            if (resolverTokenBlackList.contains(resolver.getId()))
+            if (resolverTokenBlackList.contains(resolver.getId()) || tempBlackList.contains(resolver.getId()))
             {
                 continue;
             }
@@ -525,6 +530,18 @@ public class RequestHandler implements IRequestHandler
                 onRequestCancelled(req.getId());
             }
         }
+    }
+
+    @Override
+    public void addToTempBlackList(final IToken<?> resolverToken)
+    {
+        tempBlackList.add(resolverToken);
+    }
+
+    @Override
+    public void removeFromTempBlackList(final IToken<?> resolverToken)
+    {
+        tempBlackList.remove(resolverToken);
     }
 
     /**
