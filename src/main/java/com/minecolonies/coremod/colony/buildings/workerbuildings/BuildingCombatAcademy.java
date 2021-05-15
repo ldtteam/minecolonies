@@ -93,6 +93,16 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
     }
 
     @Override
+    public void removeCitizen(final ICitizenData citizen)
+    {
+        if (isCitizenAssigned(citizen))
+        {
+            citizen.setHomeBuilding(null);
+        }
+        super.removeAssignedCitizen(citizen);
+    }
+
+    @Override
     public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
     {
         if (block instanceof CarvedPumpkinBlock && world.getBlockState(pos.down()).getBlock() instanceof HayBlock)
