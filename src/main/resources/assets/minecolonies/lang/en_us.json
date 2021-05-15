@@ -995,7 +995,7 @@
   "com.minecolonies.coremod.progress.twenty_building_levels": "§6 A barbarian spy had been caught next to your colony, and he seems to be from a bigger group! You should consider building Barracks to defend your colony.",
   "com.minecolonies.coremod.progress.twenty_five_citizens_spawned": "§6 Your colony's population has grown to the limits of current management techniques. To accept more citizens, complete the research at the University.",
   "com.minecolonies.coremod.progress.not_enough_jobs": "§6 Building more Houses than available jobs has a bad influence on your citizens' happiness.",
-  "com.minecolonies.coremod.progress.newchild": "§6 A new child is now happily living in %s!",
+  "com.minecolonies.coremod.progress.newchild": "§6 A new child, %s, is now happily living in %s!",
   "com.minecolonies.coremod.progress.childgrow": "%s grew up and wants a job now.",
   "com.minecolonies.coremod.progress.hirecitizen": "§6 Your recruitment package was accepted and a new citizen arrived!",
 
