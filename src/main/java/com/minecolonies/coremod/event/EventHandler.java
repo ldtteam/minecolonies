@@ -637,13 +637,12 @@ public class EventHandler
 
                 if (MineColonies.getConfig().getServer().suggestBuildToolPlacement.get())
                 {
-                    final ItemStack stack = new ItemStack(block);
+                    final ItemStack stack = event.getItemStack();
                     if (!stack.isEmpty() && !world.isRemote)
                     {
                         Network.getNetwork()
-                          .sendToPlayer(new OpenSuggestionWindowMessage(block.getDefaultState().with(AbstractBlockHut.FACING, event.getPlayer().getHorizontalFacing()),
-                            event.getPos().offset(event.getFace()),
-                            stack), (ServerPlayerEntity) player);
+                          .sendToPlayer(new OpenSuggestionWindowMessage(block.getDefaultState().with(AbstractBlockHut.FACING,
+                            event.getPlayer().getHorizontalFacing()), event.getPos().offset(event.getFace()), stack), (ServerPlayerEntity) player);
                     }
                     event.setCanceled(true);
                 }
