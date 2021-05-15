@@ -148,16 +148,4 @@ public interface IRequestHandler
      * @param requester the requester.
      */
     void removeRequester(IRequester requester);
-
-    /**
-     * Add a resolver to the temporary blacklist.
-     * @param resolverToken the resolver uuid.
-     */
-    void addToTempBlackList(IToken<?> resolverToken);
-
-    /**
-     * Remove a resolver from the temporary blacklist.
-     * @param resolverToken the resolver uuid.
-     */
-    void removeFromTempBlackList(IToken<?> resolverToken);
 }
