@@ -373,7 +373,8 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
      *
      * @return the chance increase that the totem provides
      */
-    private double getTotemResurrectChance() {
+    private double getTotemResurrectChance()
+    {
         final int totems = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), Items.TOTEM_OF_UNDYING);
 
         if (totems > 0)
