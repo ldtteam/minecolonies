@@ -297,7 +297,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
     {
         @Nullable final BuildingGraveyard buildingGraveyard = getOwnBuilding();
 
-        if (buildingGraveyard == null || checkForToolOrWeapon(ToolType.SHOVEL) || buildingGraveyard.getLastGraveData() == null)
+        if (checkForToolOrWeapon(ToolType.SHOVEL) || buildingGraveyard.getLastGraveData() == null || buildingGraveyard.getGraveToWorkOn() == null)
         {
             return IDLE;
         }
