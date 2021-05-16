@@ -21,6 +21,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.Tuple;
+import net.minecraft.util.Direction.Axis;
+import net.minecraft.util.Direction.AxisDirection;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
@@ -31,7 +33,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.function.BiPredicate;
 
@@ -784,5 +785,43 @@ public final class BlockPosUtil
     {
         return findAround(worldReader, start, 1, 1,
           (world, pos) -> world.getBlockState(pos).getMaterial() == Material.AIR && world.getBlockState(pos.up()).getMaterial() == Material.AIR);
+    }
+
+    /**
+     * Get the furthest corner from a pos.
+     * @param startPos the startpos.
+     * @param boxStart the box start.
+     * @param boxEnd the box end.
+     * @return the furthest corner.
+     */
+    public static BlockPos getFurthestCorner(final BlockPos startPos, final BlockPos boxStart, final BlockPos boxEnd)
+    {
+        final int minX = Math.min(boxStart.getX(), boxEnd.getX());
+        final int minZ = Math.min(boxStart.getZ(), boxEnd.getZ());
+        final int minY = Math.min(boxStart.getY(), boxEnd.getY());
+
+        final int maxX = Math.max(boxStart.getX(), boxEnd.getX());
+        final int maxZ = Math.max(boxStart.getZ(), boxEnd.getZ());
+        final int maxY = Math.max(boxStart.getY(), boxEnd.getY());
+
+        int cornerX = maxX;
+        if (Math.abs(startPos.getX() - minX) > Math.abs(startPos.getX() - maxX))
+        {
+            cornerX = minX;
+        }
+
+        int cornerY = maxY;
+        if (Math.abs(startPos.getY() - minY) > Math.abs(startPos.getY() - maxY))
+        {
+            cornerY = minY;
+        }
+
+        int cornerZ = maxZ;
+        if (Math.abs(startPos.getZ() - minZ) > Math.abs(startPos.getZ() - maxZ))
+        {
+            cornerZ = minZ;
+        }
+
+        return new BlockPos(cornerX, cornerY, cornerZ);
     }
 }
