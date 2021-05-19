@@ -192,6 +192,7 @@ public class CustomGoalSelector extends GoalSelector
      * about 6 times faster, when checking at the same rate as the vanilla one, resulting in about 3-4 times less time spent updating and executing AI goals. When updating
      * non-running goals only every 4 ticks it goes up to about 10% of vanilla's time spent for the whole update goals and their execution.
      */
+    @Override
     public void tick()
     {
         this.profiler.get().startSection("goalUpdate");
@@ -239,6 +240,7 @@ public class CustomGoalSelector extends GoalSelector
      *
      * @return the stream of running goals.
      */
+    @Override
     public Stream<PrioritizedGoal> getRunningGoals()
     {
         return this.goals.stream().filter(PrioritizedGoal::isRunning);
@@ -249,6 +251,7 @@ public class CustomGoalSelector extends GoalSelector
      *
      * @param flag the flag to disable.
      */
+    @Override
     public void disableFlag(Goal.Flag flag)
     {
         this.disabledFlagsArray[flag.ordinal()] = true;
@@ -259,6 +262,7 @@ public class CustomGoalSelector extends GoalSelector
      *
      * @param flag the flag to enable.
      */
+    @Override
     public void enableFlag(Goal.Flag flag)
     {
         this.disabledFlagsArray[flag.ordinal()] = false;
@@ -270,6 +274,7 @@ public class CustomGoalSelector extends GoalSelector
      * @param flag    Flag to set
      * @param enabled enable or disable it
      */
+    @Override
     public void setFlag(Goal.Flag flag, boolean enabled)
     {
         if (enabled)
