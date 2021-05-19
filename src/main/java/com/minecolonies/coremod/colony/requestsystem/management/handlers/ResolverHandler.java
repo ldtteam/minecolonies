@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.requestsystem.management.handlers;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.management.IResolverHandler;
@@ -13,6 +14,8 @@ import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequestManager;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.wrapped.WrappedStaticStateRequestManager;
+import org.apache.commons.lang3.Validate;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -26,6 +29,11 @@ public class ResolverHandler implements IResolverHandler
 {
 
     private final IStandardRequestManager manager;
+
+    /**
+     * Additional temporary blacklist of the request handler.
+     */
+    private List<IToken<?>> tempBlackList = new ArrayList<>();
 
     public ResolverHandler(final IStandardRequestManager manager)
     {
@@ -158,6 +166,86 @@ public class ResolverHandler implements IResolverHandler
         }
 
         removeResolverInternal(resolver);
+    }
+
+    /**
+     * Internal method that handles the removal of a single resolvers that is attached to a provider that is being removed.
+     *
+     * @param assignedResolvers The list of resolvers which are being removed.
+     * @param resolverToken     The id of the resolver which is being removed, needs to be part of the assignedResolvers list.
+     */
+    @Override
+    public void processResolverForRemoval(final Collection<IToken<?>> assignedResolvers, final IToken<?> resolverToken)
+    {
+        //Make sure that the resolver is actually supposed to be deleted.
+        Validate.isTrue(assignedResolvers.contains(resolverToken));
+
+        //Skip if the resolver has no requests assigned.
+        if (!manager.getRequestResolverRequestAssignmentDataStore().getAssignments().containsKey(resolverToken)
+              || manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(resolverToken).isEmpty())
+        {
+            //No requests assigned so lets process this resolver as such.
+            removeResolverWithoutAssignedRequests(resolverToken);
+            return;
+        }
+
+        //This resolver has currently requests assigned, which needs to be handled separately
+        removeResolverWithAssignedRequests(assignedResolvers, resolverToken);
+    }
+
+    /**
+     * Internal method that is handling the removal of a resolver that has no requests assigned to it.
+     *
+     * @param resolverToken The resolver from the provider which is being removed, but has no requests assigned anymore.
+     */
+    @VisibleForTesting
+    void removeResolverWithoutAssignedRequests(@NotNull final IToken<?> resolverToken)
+    {
+        manager.getLogger().debug("Removing resolver without assigned requests: " + resolverToken);
+        manager.getRequestResolverRequestAssignmentDataStore().getAssignments().remove(resolverToken);
+
+        manager.getResolverHandler().removeResolver(resolverToken);
+    }
+
+    /**
+     * Internal method that is handling the removal of a resolver that has requests currently assigned to it. Reassigns the assigned requests, using the provided list as
+     * blacklist.
+     *
+     * @param assignedResolvers The resolvers from the provider that is being removed.
+     * @param resolverToken     The particular resolver that is being removed. Needs to be part of the assignedResolvers list.
+     */
+    @VisibleForTesting
+    void removeResolverWithAssignedRequests(@NotNull final Collection<IToken<?>> assignedResolvers, final IToken<?> resolverToken)
+    {
+        //Make sure that the resolver is actually supposed to be deleted
+        Validate.isTrue(assignedResolvers.contains(resolverToken));
+
+        //Clone the original list to modify it during iteration, if need be.
+        Collection<IToken<?>> assignedRequests = new ArrayList<>(manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(resolverToken));
+        manager.getLogger().debug("Starting reassignment of already registered requests registered to resolver with token: " + resolverToken);
+        tempBlackList.addAll(assignedResolvers);
+
+        for (final IToken<?> requestToken : assignedRequests)
+        {
+            final IRequest<?> req = manager.getRequestForToken(requestToken);
+            for (final IToken<?> childReq : req.getChildren())
+            {
+                manager.getRequestHandler().onRequestCancelledDirectly(childReq);
+            }
+        }
+
+        assignedRequests = new ArrayList<>(manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(resolverToken));
+        //Get all assigned requests and reassign them.
+        for (final IToken<?> requestToken : assignedRequests)
+        {
+            manager.reassignRequest(requestToken, assignedResolvers);
+        }
+
+        tempBlackList.removeAll(assignedResolvers);
+
+        removeResolverWithoutAssignedRequests(resolverToken);
+
+        manager.getLogger().debug("Finished reassignment of already registered requests registered to resolver with token: " + resolverToken);
     }
 
     /**
@@ -342,5 +430,11 @@ public class ResolverHandler implements IResolverHandler
     public void onColonyUpdate(final Predicate<IRequest<?>> shouldTriggerReassign)
     {
         manager.getRequestResolverIdentitiesDataStore().getIdentities().values().forEach(resolver -> resolver.onColonyUpdate(manager, shouldTriggerReassign));
+    }
+
+    @Override
+    public boolean isBeingRemoved(final IToken<?> id)
+    {
+        return tempBlackList.contains(id);
     }
 }

@@ -23,6 +23,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobUndertaker;
 import net.minecraft.block.BlockState;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.StringNBT;
@@ -147,6 +148,8 @@ public class BuildingGraveyard extends AbstractBuildingWorker
     {
         super(c, l);
         keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.SHOVEL, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
+        keepX.put(itemStack -> itemStack.getItem() == Items.TOTEM_OF_UNDYING, new Tuple<>(2, true));
+
     }
 
     /**
@@ -170,7 +173,7 @@ public class BuildingGraveyard extends AbstractBuildingWorker
             if (WorldUtil.isBlockLoaded(colony.getWorld(), currentGrave))
             {
                 final TileEntity tileEntity = getColony().getWorld().getTileEntity(currentGrave);
-                if (tileEntity != null)
+                if (tileEntity instanceof TileEntityGrave)
                 {
                     return currentGrave;
                 }

@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.coremod.network.messages.server.AbstractColonyServerMessage;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -71,47 +72,20 @@ public class GuardScepterMessage extends AbstractColonyServerMessage
     @Override
     protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony)
     {
-        final ItemStack scepter;
-        boolean giveToPlayer = true;
         final PlayerEntity player = ctxIn.getSender();
         if (player == null)
         {
             return;
         }
 
-        if (player.getHeldItemMainhand().getItem() == ModItems.scepterGuard)
-        {
-            scepter = player.getHeldItemMainhand();
-            giveToPlayer = false;
-        }
-        else
-        {
-            scepter = new ItemStack(ModItems.scepterGuard);
-        }
+        final ItemStack scepter = InventoryUtils
+            .getOrCreateItemAndPutToHotbarAndSelectOrDrop(ModItems.scepterGuard, player, ModItems.scepterGuard::getDefaultInstance, true);
 
-        if (!scepter.hasTag())
-        {
-            scepter.setTag(new CompoundNBT());
-        }
-        final CompoundNBT compound = scepter.getTag();
-
-        //Should never happen.
-        if (compound == null)
-        {
-            return;
-        }
+        final CompoundNBT compound = scepter.getOrCreateTag();
         compound.putInt("task", taskId);
-
-        final int emptySlot = player.inventory.getFirstEmptyStack();
         BlockPosUtil.write(compound, TAG_POS, buildingId);
         compound.putInt(TAG_ID, colony.getID());
 
-        if (giveToPlayer)
-        {
-            final ItemStack item = player.inventory.getStackInSlot(player.inventory.currentItem);
-            player.inventory.setInventorySlotContents(emptySlot, item);
-            player.inventory.setInventorySlotContents(player.inventory.currentItem, scepter);
-        }
         player.inventory.markDirty();
     }
 }

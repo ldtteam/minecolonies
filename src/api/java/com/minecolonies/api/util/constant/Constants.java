@@ -85,6 +85,7 @@ public final class Constants
     public static final String CRITERION_MAX_FIELDS             = "max_fields";
     public static final String CRITERION_CITIZEN_BURY           = "citizen_bury";
     public static final String CRITERION_CITIZEN_RESURRECT      = "citizen_resurrect";
+    public static final String CRITERION_UNDERTAKER_TOTEM       = "undertaker_totem";
 
     /**
      * Placement key for item nbt

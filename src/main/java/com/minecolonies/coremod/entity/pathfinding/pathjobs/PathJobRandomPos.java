@@ -74,19 +74,19 @@ public class PathJobRandomPos extends AbstractPathJob
      * @param world            world the entity is in.
      * @param start            starting location.
      * @param minDistFromStart how far to move away.
-     * @param serachRange            max range to search.
+     * @param searchRange            max range to search.
      * @param entity           the entity.
      */
     public PathJobRandomPos(
       final World world,
       @NotNull final BlockPos start,
       final int minDistFromStart,
-      final int serachRange,
+      final int searchRange,
       final int maxDistToDest,
       final LivingEntity entity,
       @NotNull final BlockPos dest)
     {
-        super(world, start, dest, serachRange, new PathResult<PathJobRandomPos>(), entity);
+        super(world, start, dest, searchRange, new PathResult<PathJobRandomPos>(), entity);
         this.minDistFromStart = minDistFromStart;
         this.maxDistToDest = maxDistToDest;
         this.destination = dest;
@@ -114,7 +114,7 @@ public class PathJobRandomPos extends AbstractPathJob
     @Override
     protected boolean isAtDestination(@NotNull final Node n)
     {
-        if (start.distanceSq(n.pos) > minDistFromStart * minDistFromStart && isWalkableSurface(world.getBlockState(n.pos.down()), n.pos.down()) == SurfaceType.WALKABLE
+        if ((minDistFromStart ==  1 || start.distanceSq(n.pos) > minDistFromStart * minDistFromStart) && isWalkableSurface(world.getBlockState(n.pos.down()), n.pos.down()) == SurfaceType.WALKABLE
               && destination.distanceSq(n.pos) < this.maxDistToDest * this.maxDistToDest)
         {
             return true;

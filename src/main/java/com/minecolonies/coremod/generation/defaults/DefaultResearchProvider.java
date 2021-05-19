@@ -117,6 +117,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         effects.add(new ResearchEffect(KNIGHT_WHIRLWIND).setTranslatedName("Knights Learn Special Attack That Damages and Knocks Back Nearby Enemies"));
         effects.add(new ResearchEffect(WORKING_IN_RAIN).setTranslatedName("Citizens Work in Rain"));
         effects.add(new ResearchEffect(UNDERTAKER_RUN).setTranslatedName("Undertaker unlocks run ability").setTranslatedSubtitle("Teach Undertaker the ability to run towards graves"));
+        effects.add(new ResearchEffect(USE_TOTEM).setTranslatedName("Undertaker gains the ability to use Totems of Undying to assist in Resurrection"));
 
         // Building-focused unlocks are derived from the block hut name.  Do not manually add ResourceLocations as a string, as some building blocks have surprising names.
         effects.add(new ResearchEffect(ModBuildings.archery.getBuildingBlock()).setTranslatedName("Unlocks Archery"));
@@ -653,7 +654,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                 .addEffect(RESURRECT_CHANCE, 1)
                 .addToList(r);
 
-        new Research(new ResourceLocation(Constants.MOD_ID, "civilian/resurrectchance2"), CIVIL)
+        final Research resurrectChance2 = new Research(new ResourceLocation(Constants.MOD_ID, "civilian/resurrectchance2"), CIVIL)
                 .setParentResearch(resurrectChance1)
                 .setTranslatedName("Resurrection Chance II")
                 .setTranslatedSubtitle("Dance around and wave your hands")
@@ -664,6 +665,16 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                 .addEffect(RESURRECT_CHANCE, 2)
                 .addToList(r);
 
+        new Research(new ResourceLocation(Constants.MOD_ID, "civilian/raisingthedead"), CIVIL)
+                .setParentResearch(resurrectChance2)
+                .setTranslatedName("Raising The Dead")
+                .setTranslatedSubtitle("Magic totems are for more than just looks")
+                .setSortOrder(1)
+                .setIcon(Items.TOTEM_OF_UNDYING.asItem())
+                .addBuildingRequirement(ModBuildings.GRAVEYARD_ID, 5)
+                .addItemCost(Items.TOTEM_OF_UNDYING, 1)
+                .addEffect(USE_TOTEM, 1)
+                .addToList(r);
 
         final Research decayBonus1 = new Research(new ResourceLocation(Constants.MOD_ID, "civilian/gravedecaybonus1"), CIVIL)
                 .setParentResearch(remembrance)

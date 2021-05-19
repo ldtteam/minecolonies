@@ -59,10 +59,13 @@
   "minecolonies.config.listofplantables.comment": "The items and item-tags that the Florist can plant.",
 
   "item.minecolonies.scepterlumberjack": "Forest Tool",
-  "item.minecolonies.scepterlumberjack.usedstart": "First position set.",
-  "item.minecolonies.scepterlumberjack.usedend": "Second position set.",
-  "item.minecolonies.scepterlumberjack.restrictiontoobig": "Area %s is too large. Maximum restricted area for the Forester is %s blocks.",
-  "item.minecolonies.scepterlumberjack.restrictionset": "Forester restricted area set. Size is %s blocks. Max size is %s blocks.",
+  "item.minecolonies.scepterlumberjack.usedstart": "First position set. Click the same position to finish.",
+  "item.minecolonies.scepterlumberjack.usedend": "Second position set. Click the same position to finish.",
+  "item.minecolonies.scepterlumberjack.restrictiontoobig": "An area of %d blocks is too large. The maximum restricted area for the Forester is %d blocks.",
+  "item.minecolonies.scepterlumberjack.restrictionset": "Forester restricted area set (x: %d to %d, z: %d to %d, area: %d blocks). The max size is %d blocks.",
+  
+  "minecolonies.config.maxtreesize": "Max Tree Size",
+  "minecolonies.config.maxtreesize.comment": "Max log count in one tree for the Forester to check during their tree search.",
 
   "com.minecolonies.coremod.gui.workerhuts.togglerestrictionon": "Restriction (on)",
   "com.minecolonies.coremod.gui.workerhuts.togglerestrictionoff": "Restriction (off)",
@@ -995,7 +998,7 @@
   "com.minecolonies.coremod.progress.twenty_building_levels": "§6 A barbarian spy had been caught next to your colony, and he seems to be from a bigger group! You should consider building Barracks to defend your colony.",
   "com.minecolonies.coremod.progress.twenty_five_citizens_spawned": "§6 Your colony's population has grown to the limits of current management techniques. To accept more citizens, complete the research at the University.",
   "com.minecolonies.coremod.progress.not_enough_jobs": "§6 Building more Houses than available jobs has a bad influence on your citizens' happiness.",
-  "com.minecolonies.coremod.progress.newchild": "§6 A new child is now happily living in %s!",
+  "com.minecolonies.coremod.progress.newchild": "§6 A new child, %s, is now happily living in %s!",
   "com.minecolonies.coremod.progress.childgrow": "%s grew up and wants a job now.",
   "com.minecolonies.coremod.progress.hirecitizen": "§6 Your recruitment package was accepted and a new citizen arrived!",
 
@@ -1295,6 +1298,9 @@
   "advancements.minecolonies.army_80.description": "An army of 80 is not a small obstacle",
   "advancements.minecolonies.build.all_towers.title": "Grand Garrison",
   "advancements.minecolonies.build.all_towers.description": "A mighty barracks to strike fear in the enemy - all upgrades, all towers",
+
+  "advancements.minecolonies.undertaker.totem.title": "A Powerful Artifact",
+  "advancements.minecolonies.undertaker.totem.description": "The Undertaker has been given a Totem of Undying to assist in Resurrection, but make sure you've done your research first!",
 
   "com.minecolonies.coremod.gui.chat.okay": "I will work on it!",
   "com.minecolonies.coremod.gui.chat.ignore": "That has to do for now!",
@@ -1693,6 +1699,7 @@
   "item.minecolonies.amazonegg": "Amazon Spawn Egg",
   "item.minecolonies.amazonchiefegg": "Amazon Leader Spawn Egg",
   "com.minecolonies.coremod.playerinvfull": "You can't pick up this item, as your inventory is full!",
+  "com.minecolonies.coremod.playerinvfull.hotbarinsert": " was dropped in front of you, as your inventory is full!",
 
   "com.minecolonies.coremod.gui.workerhuts.concretemixer": "Concrete Mixer's Hut",
   "com.minecolonies.coremod.job.concretemixer": "Concrete Mixer",

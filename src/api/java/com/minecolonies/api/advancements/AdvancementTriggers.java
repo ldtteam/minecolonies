@@ -15,6 +15,7 @@ import com.minecolonies.api.advancements.max_fields.MaxFieldsTrigger;
 import com.minecolonies.api.advancements.open_gui_window.OpenGuiWindowTrigger;
 import com.minecolonies.api.advancements.place_structure.PlaceStructureTrigger;
 import com.minecolonies.api.advancements.place_supply.PlaceSupplyTrigger;
+import com.minecolonies.api.advancements.undertaker_totem.UndertakerTotemTrigger;
 import net.minecraft.advancements.CriteriaTriggers;
 
 /**
@@ -37,7 +38,8 @@ public class AdvancementTriggers
     public static final DeepMineTrigger             DEEP_MINE              = new DeepMineTrigger();
     public static final AllTowersTrigger            ALL_TOWERS             = new AllTowersTrigger();
     public static final CitizenBuryTrigger          CITIZEN_BURY           = new CitizenBuryTrigger();
-    public static final CitizenResurrectTrigger CITIZEN_RESURRECT      = new CitizenResurrectTrigger();
+    public static final CitizenResurrectTrigger     CITIZEN_RESURRECT      = new CitizenResurrectTrigger();
+    public static final UndertakerTotemTrigger      UNDERTAKER_TOTEM       = new UndertakerTotemTrigger();
 
     /**
      * Registers all the triggers so they can be referenced in the advancement JSON
@@ -59,5 +61,6 @@ public class AdvancementTriggers
         CriteriaTriggers.register(ALL_TOWERS);
         CriteriaTriggers.register(CITIZEN_BURY);
         CriteriaTriggers.register(CITIZEN_RESURRECT);
+        CriteriaTriggers.register(UNDERTAKER_TOTEM);
     }
 }

@@ -82,7 +82,7 @@ public class JobLumberjack extends AbstractJobCrafter<EntityAIWorkLumberjack, Jo
     public void deserializeNBT(final CompoundNBT compound)
     {
         super.deserializeNBT(compound);
-        if (compound.keySet().contains(TAG_TREE))
+        if (compound.contains(TAG_TREE))
         {
             tree = Tree.read(compound.getCompound(TAG_TREE));
             if (!tree.isTree())
