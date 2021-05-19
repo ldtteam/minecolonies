@@ -7,6 +7,7 @@ import net.minecraft.entity.ai.goal.PrioritizedGoal;
 import net.minecraft.profiler.IProfiler;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -126,6 +127,7 @@ public class CustomGoalSelector extends GoalSelector
     /**
      * Add a now AITask. Args : priority, task
      */
+    @Override
     public void addGoal(int priority, Goal task)
     {
         this.goals.add(new PrioritizedGoal(priority, task));
@@ -134,6 +136,7 @@ public class CustomGoalSelector extends GoalSelector
     /**
      * removes the indicated task from the entity's AI tasks.
      */
+    @Override
     public void removeGoal(Goal task)
     {
         this.goals.stream().filter((goal) -> {
@@ -196,7 +199,7 @@ public class CustomGoalSelector extends GoalSelector
         boolean hasFlags;
         counter++;
 
-        for (final PrioritizedGoal currentGoal : goals)
+        for (final PrioritizedGoal currentGoal : new ArrayList<>(goals))
         {
             hasFlags = !currentGoal.getMutexFlags().isEmpty();
 
