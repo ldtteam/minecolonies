@@ -1749,7 +1749,7 @@
   "com.minecolonies.coremod.gui.beekeeper.collectcomb": "Collect honeycomb",
   "com.minecolonies.coremod.gui.beekeeper.collectboth": "Collect comb and honey",
   "com.minecolonies.coremod.gui.beekeeper.addhives": "Get hive tool",
-  "entity.beekeeper.messagenohives": "There are no hives for me to work at!",
+  "entity.beekeeper.messagenohives": "There are no hives for me to work at! Please find one nearby for me and assign it with the hive tool.",
   "entity.beekeeper.messagenobees": "I can't find any bees!",
 
   "com.minecolonies.coremod.gui.field.north": "Northward field size",
