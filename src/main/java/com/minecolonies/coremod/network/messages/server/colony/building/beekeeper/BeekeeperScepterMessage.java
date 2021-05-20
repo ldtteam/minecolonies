@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBeekeeper;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.entity.player.PlayerEntity;
@@ -55,29 +56,15 @@ public class BeekeeperScepterMessage extends AbstractBuildingServerMessage<Build
             return;
         }
 
-        final ItemStack scepter;
-        boolean giveToPlayer = true;
-        if (player.getHeldItemMainhand().getItem() == ModItems.scepterBeekeeper)
-        {
-            scepter = player.getHeldItemMainhand();
-            giveToPlayer = false;
-        }
-        else
-        {
-            scepter = new ItemStack(ModItems.scepterBeekeeper);
-        }
+        final ItemStack scepter = InventoryUtils.getOrCreateItemAndPutToHotbarAndSelectOrDrop(ModItems.scepterBeekeeper,
+            player,
+            ModItems.scepterBeekeeper::getDefaultInstance,
+            true);
         final CompoundNBT compound = scepter.getOrCreateTag();
 
-        final int emptySlot = player.inventory.getFirstEmptyStack();
         BlockPosUtil.write(compound, TAG_POS, building.getID());
         compound.putInt(TAG_ID, colony.getID());
 
-        if (giveToPlayer)
-        {
-            final ItemStack item = player.inventory.getStackInSlot(player.inventory.currentItem);
-            player.inventory.setInventorySlotContents(emptySlot, item);
-            player.inventory.setInventorySlotContents(player.inventory.currentItem, scepter);
-        }
         player.inventory.markDirty();
     }
 }

@@ -40,6 +40,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
  * Send build tool data to the server. Verify the data on the server side and then place the building. Created: August 13, 2015
@@ -48,13 +49,6 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
  */
 public class BuildToolPlaceMessage implements IMessage
 {
-    /**
-     * Language key for missing hut
-     */
-    private static final String NO_HUT_IN_INVENTORY = "com.minecolonies.coremod.gui.buildtool.nohutininventory";
-    private static final String WRONG_COLONY                = "com.minecolonies.coremod.gui.buildtool.wrongcolony";
-    private static final String INDESTRUCTIBLE_BLOCK_AT_POS = "com.minecolonies.coremod.buildtool.indestructible";
-
     /**
      * The state at the offset position.
      */

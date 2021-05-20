@@ -8,10 +8,13 @@ import com.minecolonies.api.blocks.interfaces.IRSComponentBlock;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
+import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.items.ItemBlockHut;
+import com.minecolonies.api.entity.ModEntities;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
@@ -20,7 +23,10 @@ import com.minecolonies.coremod.blocks.BlockScarecrow;
 import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
 import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.buildings.modules.TavernBuildingModule;
+import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.VisitorSpawnedEvent;
 import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
+import com.minecolonies.coremod.colony.interactionhandling.RecruitmentInteraction;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.commands.EntryPoint;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
@@ -35,19 +41,25 @@ import com.minecolonies.coremod.network.messages.client.UpdateChunkCapabilityMes
 import com.minecolonies.coremod.network.messages.client.UpdateChunkRangeCapabilityMessage;
 import com.minecolonies.coremod.util.ChunkClientDataHelper;
 import com.minecolonies.coremod.util.ChunkDataHelper;
+
 import net.minecraft.block.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.monster.EndermanEntity;
 import net.minecraft.entity.monster.IMob;
+import net.minecraft.entity.monster.ZombieVillagerEntity;
 import net.minecraft.entity.passive.horse.LlamaEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.properties.BedPart;
 import net.minecraft.tileentity.MobSpawnerTileEntity;
@@ -55,6 +67,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.server.ServerWorld;
@@ -62,11 +75,13 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
+import net.minecraftforge.event.entity.living.LivingConversionEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -121,7 +136,7 @@ public class EventHandler
     @SubscribeEvent
     public static void onEntityAdded(@NotNull final EntityJoinWorldEvent event)
     {
-        if (!event.getWorld().isRemote)
+        if (!event.getWorld().isRemote())
         {
             if (MineColonies.getConfig().getServer().mobAttackCitizens.get() && (event.getEntity() instanceof IMob) && !(event.getEntity() instanceof LlamaEntity)
                   && !(event.getEntity() instanceof EndermanEntity))
@@ -622,13 +637,12 @@ public class EventHandler
 
                 if (MineColonies.getConfig().getServer().suggestBuildToolPlacement.get())
                 {
-                    final ItemStack stack = new ItemStack(block);
+                    final ItemStack stack = event.getItemStack();
                     if (!stack.isEmpty() && !world.isRemote)
                     {
                         Network.getNetwork()
-                          .sendToPlayer(new OpenSuggestionWindowMessage(block.getDefaultState().with(AbstractBlockHut.FACING, event.getPlayer().getHorizontalFacing()),
-                            event.getPos().offset(event.getFace()),
-                            stack), (ServerPlayerEntity) player);
+                          .sendToPlayer(new OpenSuggestionWindowMessage(block.getDefaultState().with(AbstractBlockHut.FACING,
+                            event.getPlayer().getHorizontalFacing()), event.getPos().offset(event.getFace()), stack), (ServerPlayerEntity) player);
                     }
                     event.setCanceled(true);
                 }
@@ -638,7 +652,7 @@ public class EventHandler
 
         if (!event.isCanceled() && event.getItemStack().getItem() == ModItems.buildTool.get())
         {
-            if (event.getWorld().isRemote)
+            if (event.getWorld().isRemote())
             {
                 if (event.getUseBlock() == Event.Result.DEFAULT && event.getFace() != null)
                 {
@@ -698,7 +712,7 @@ public class EventHandler
         final Block heldBlock = Block.getBlockFromItem(event.getItemStack().getItem());
         if (heldBlock instanceof AbstractBlockHut || heldBlock instanceof BlockScarecrow)
         {
-            if (event.getWorld().isRemote)
+            if (event.getWorld().isRemote())
             {
                 event.setCanceled(MineColonies.getConfig().getServer().suggestBuildToolPlacement.get());
             }
@@ -803,6 +817,67 @@ public class EventHandler
         {
             IColonyManager.getInstance().resetColonyViews();
             Log.getLogger().info("Removed all colony views");
+        }
+    }
+
+    /**
+     * Gets called when a Hoglin, Pig, Piglin, Villager, or ZombieVillager gets converted to something else.
+     * 
+     * @param event the event to handle.
+     */
+    @SubscribeEvent
+    public static void onEntityConverted(@NotNull final LivingConversionEvent.Pre event)
+    {
+        LivingEntity entity = event.getEntityLiving();
+        if (entity instanceof ZombieVillagerEntity && event.getOutcome() == EntityType.VILLAGER)
+        {
+            final World world = entity.getEntityWorld();
+            final IColony colony = IColonyManager.getInstance().getIColony(world, entity.getPosition());
+            if (colony != null && colony.hasBuilding("tavern", 1, false))
+            {
+                event.setCanceled(true);
+                if (ForgeEventFactory.canLivingConvert(entity, ModEntities.VISITOR, null))
+                {
+                    IVisitorData visitorData = (IVisitorData) colony.getVisitorManager().createAndRegisterCivilianData();
+                    BlockPos tavernPos = colony.getBuildingManager().getRandomBuilding(b -> !b.getModules(TavernBuildingModule.class).isEmpty());
+                    IBuilding tavern = colony.getBuildingManager().getBuilding(tavernPos);
+
+                    visitorData.setHomeBuilding(tavern);
+                    visitorData.setBedPos(tavernPos);
+                    tavern.getModules(TavernBuildingModule.class).forEach(mod -> mod.getExternalCitizens().add(visitorData.getId()));
+
+                    int recruitLevel = world.rand.nextInt(10 * tavern.getBuildingLevel()) + 15;
+                    List<com.minecolonies.api.util.Tuple<Item, Integer>> recruitCosts = IColonyManager.getInstance().getCompatibilityManager().getRecruitmentCostsWeights();
+
+                    visitorData.getCitizenSkillHandler().init(recruitLevel);
+                    colony.getVisitorManager().spawnOrCreateCivilian(visitorData, world, entity.getPosition(), false);
+                    colony.getEventDescriptionManager().addEventDescription(new VisitorSpawnedEvent(entity.getPosition(), visitorData.getName()));
+
+                    if (visitorData.getEntity().isPresent())
+                    {
+                        AbstractEntityCitizen visitorEntity = visitorData.getEntity().get();
+                        for(EquipmentSlotType slotType : EquipmentSlotType.values())
+                        {
+                            ItemStack itemstack = entity.getItemStackFromSlot(slotType);
+                            if (slotType.getSlotType() == EquipmentSlotType.Group.ARMOR && !itemstack.isEmpty())
+                            {
+                                visitorEntity.setItemStackToSlot(slotType, itemstack);
+                            }
+                        }
+                    }
+
+                    if (!entity.isSilent())
+                    {
+                        world.playEvent((PlayerEntity) null, 1027, entity.getPosition(), 0);
+                    }
+
+                    entity.remove();
+                    Tuple<Item, Integer> cost = recruitCosts.get(world.rand.nextInt(recruitCosts.size()));
+                    visitorData.setRecruitCosts(new ItemStack(cost.getA(), (int)(recruitLevel * 3.0 / cost.getB())));
+                    visitorData.triggerInteraction(new RecruitmentInteraction(new TranslationTextComponent(
+                            "com.minecolonies.coremod.gui.chat.recruitstorycured", visitorData.getName().split(" ")[0]), ChatPriority.IMPORTANT));
+                }
+            }
         }
     }
 }

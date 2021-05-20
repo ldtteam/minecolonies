@@ -40,11 +40,6 @@ import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 public class BuildingBeekeeper extends AbstractBuildingWorker
 {
     /**
-     * Automatic breeding.
-     */
-    public static final ISettingKey<BoolSetting> BREEDING = new SettingKey<>(BoolSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "breeding"));
-
-    /**
      * Description of the job executed in the hut.
      */
     private static final String BEEKEEPER = "beekeeper";

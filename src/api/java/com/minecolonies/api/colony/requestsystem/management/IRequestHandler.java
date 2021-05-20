@@ -142,4 +142,10 @@ public interface IRequestHandler
      * @return A collection with request instances that are made by the given requester.
      */
     Collection<IRequest<?>> getRequestsMadeByRequester(IRequester requester);
+
+    /**
+     * Remove a specific requester and all assigned requests from the manager.
+     * @param requester the requester.
+     */
+    void removeRequester(IRequester requester);
 }

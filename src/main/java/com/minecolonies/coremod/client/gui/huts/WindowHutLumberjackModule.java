@@ -66,6 +66,7 @@ public class WindowHutLumberjackModule extends AbstractWindowWorkerModuleBuildin
     private void giveTool()
     {
         givePlayerScepter();
+        close();
     }
 
     /**

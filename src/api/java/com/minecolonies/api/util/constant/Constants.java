@@ -85,6 +85,7 @@ public final class Constants
     public static final String CRITERION_MAX_FIELDS             = "max_fields";
     public static final String CRITERION_CITIZEN_BURY           = "citizen_bury";
     public static final String CRITERION_CITIZEN_RESURRECT      = "citizen_resurrect";
+    public static final String CRITERION_UNDERTAKER_TOTEM       = "undertaker_totem";
 
     /**
      * Placement key for item nbt
@@ -164,6 +165,11 @@ public final class Constants
      * Max tries to find a position to path to.
      */
     public static final int MAX_TRIES = 20;
+
+    /**
+     * The number of backstories for visitors.
+     */
+    public static final int MAX_STORY = 20;
 
     /**
      * Private constructor to hide implicit public one.

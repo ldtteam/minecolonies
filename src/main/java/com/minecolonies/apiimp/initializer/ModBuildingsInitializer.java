@@ -408,6 +408,7 @@ public final class ModBuildingsInitializer
                                      .setBuildingProducer(BuildingRabbitHutch::new)
                                      .setBuildingViewProducer(() -> BuildingRabbitHutch.View::new)
                                      .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.RABBIT_ID))
+                                     .addBuildingModuleProducer(() -> new SettingsModule().with(AbstractBuildingWorker.BREEDING, new BoolSetting(true)), SettingsModuleView::new)
                                      .createBuildingEntry();
 
         ModBuildings.concreteMixer = new BuildingEntry.Builder()
@@ -423,7 +424,7 @@ public final class ModBuildingsInitializer
                                    .setBuildingProducer(BuildingBeekeeper::new)
                                    .setBuildingViewProducer(() -> BuildingBeekeeper.View::new)
                                    .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.BEEKEEPER_ID))
-                                   .addBuildingModuleProducer(() -> new SettingsModule().with(BuildingBeekeeper.BREEDING, new BoolSetting(true)), SettingsModuleView::new)
+                                   .addBuildingModuleProducer(() -> new SettingsModule().with(AbstractBuildingWorker.BREEDING, new BoolSetting(true)), SettingsModuleView::new)
                                    .createBuildingEntry();
 
         ModBuildings.mysticalSite = new BuildingEntry.Builder()

@@ -96,8 +96,17 @@ public class WindowTownHallColonyManage extends AbstractWindowSkeleton
 
             if (existingColony != null || !IColonyManager.getInstance().isFarEnoughFromColonies(world, pos))
             {
-                final IColony colony = IColonyManager.getInstance().getClosestColony(world, pos);
-                findPaneOfTypeByID(TEXT_FEEDBACK, Text.class).setText(LanguageHandler.format("com.minecolonies.coremod.gui.colony.denied.tooclose", colony.getName()));
+                final IColony colony;
+                if (existingColony != null)
+                {
+                    colony = existingColony;
+                }
+                else
+                {
+                    colony = IColonyManager.getInstance().getClosestColony(world, pos);
+                }
+
+                findPaneOfTypeByID(TEXT_FEEDBACK, Text.class).setText(LanguageHandler.buildChatComponent("com.minecolonies.coremod.gui.colony.denied.tooclose", colony.getName()));
             }
         }
 

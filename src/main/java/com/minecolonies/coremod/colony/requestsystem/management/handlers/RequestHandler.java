@@ -148,7 +148,7 @@ public class RequestHandler implements IRequestHandler
         for (@SuppressWarnings(RAWTYPES) final IRequestResolver resolver : resolvers)
         {
             //Skip when the resolver is in the blacklist.
-            if (resolverTokenBlackList.contains(resolver.getId()))
+            if (resolverTokenBlackList.contains(resolver.getId()) || manager.getResolverHandler().isBeingRemoved(resolver.getId()))
             {
                 continue;
             }
@@ -513,6 +513,18 @@ public class RequestHandler implements IRequestHandler
         }
 
         manager.getRequestIdentitiesDataStore().getIdentities().remove(token);
+    }
+
+    @Override
+    public void removeRequester(final IRequester requester)
+    {
+        for (final IRequest<?> req : new ArrayList<>(manager.getRequestIdentitiesDataStore().getIdentities().values()))
+        {
+            if (req.getRequester().getId().equals(requester.getId()))
+            {
+                onRequestCancelled(req.getId());
+            }
+        }
     }
 
     /**
