@@ -928,6 +928,7 @@
   "com.minecolonies.coremod.raid.pirate.name": "Pirates",
   "com.minecolonies.coremod.raid.norsemen.name": "Norsemen",
 
+  "com.minecolonies.coremod.gui.workerhuts.recipe": "Crafting",
   "com.minecolonies.coremod.gui.recipe.remove": "Remove",
   "com.minecolonies.coremod.gui.workerhuts.crafting": "Teach Recipe",
   "com.minecolonies.coremod.gui.recipe.done": "Successfully saved recipe!",

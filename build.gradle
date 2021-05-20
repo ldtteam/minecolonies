@@ -98,7 +98,7 @@ dependencies {
     additionalMods "com.ldtteam:structurize:${config.structurize_version}"
     compile "com.ldtteam:datagenerators:${config.datagen_version}"
     
-    implementation fg.deobf("mezz.jei:jei-1.16.4:${config.jei_version}")
+    implementation fg.deobf("mezz.jei:jei-${config.jei_version}")
     compileOnly fg.deobf("com.resourcefulbees:ResourcefulBees:${config.rb_version}")
     apiCompileOnly fg.deobf("com.resourcefulbees:ResourcefulBees:${config.rb_version}")
 

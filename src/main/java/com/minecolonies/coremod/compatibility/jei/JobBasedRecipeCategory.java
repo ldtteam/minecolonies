@@ -63,6 +63,11 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
                         this.job.getJobRegistryEntry().getRegistryName().getPath())));
     }
 
+    public IJob<?> getJob()
+    {
+        return this.job;
+    }
+
     @NotNull
     @NotNull
     @Override

@@ -2,7 +2,6 @@ package com.minecolonies.coremod.compatibility.jei;
 
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.blocks.ModBlocks;
-import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
@@ -11,6 +10,8 @@ import com.minecolonies.api.crafting.CompostRecipe;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
+import com.minecolonies.coremod.compatibility.jei.transfer.CraftingGuiHandler;
+import com.minecolonies.coremod.compatibility.jei.transfer.FurnaceCraftingGuiHandler;
 import com.minecolonies.coremod.compatibility.jei.transfer.PrivateCraftingTeachingTransferHandler;
 import com.minecolonies.coremod.compatibility.jei.transfer.PrivateSmeltingTeachingTransferHandler;
 import mezz.jei.api.IModPlugin;
@@ -102,5 +103,12 @@ public class JEIPlugin implements IModPlugin
     {
         registration.addRecipeTransferHandler(new PrivateCraftingTeachingTransferHandler(registration.getTransferHelper()), VanillaRecipeCategoryUid.CRAFTING);
         registration.addRecipeTransferHandler(new PrivateSmeltingTeachingTransferHandler(registration.getTransferHelper()), VanillaRecipeCategoryUid.FURNACE);
+    }
+
+    @Override
+    public void registerGuiHandlers(@NotNull final IGuiHandlerRegistration registration)
+    {
+        new CraftingGuiHandler(this.categories).register(registration);
+        new FurnaceCraftingGuiHandler(this.categories).register(registration);
     }
 }
