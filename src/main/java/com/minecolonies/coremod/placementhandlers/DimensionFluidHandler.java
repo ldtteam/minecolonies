@@ -6,6 +6,7 @@ import com.minecolonies.api.compatibility.candb.ChiselAndBitsCheck;
 import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.BubbleColumnBlock;
 import net.minecraft.block.FlowingFluidBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -28,7 +29,7 @@ public class DimensionFluidHandler implements IPlacementHandler
     @Override
     public boolean canHandle(@NotNull World world, @NotNull BlockPos pos, @NotNull BlockState blockState)
     {
-        return blockState.getBlock() instanceof FlowingFluidBlock;
+         return blockState.getBlock() instanceof FlowingFluidBlock || blockState.getBlock() instanceof BubbleColumnBlock;
     }
 
     @Override
@@ -72,6 +73,7 @@ public class DimensionFluidHandler implements IPlacementHandler
             return ActionProcessingResult.PASS;
         }
         world.setBlockState(pos, blockState, UPDATE_FLAG);
+        world.getPendingFluidTicks().scheduleTick(pos, blockState.getFluidState().getFluid(), blockState.getFluidState().getFluid().getTickRate(world));
         return ActionProcessingResult.SUCCESS;
     }
 }

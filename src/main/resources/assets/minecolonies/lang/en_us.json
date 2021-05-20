@@ -1099,7 +1099,7 @@
 
   "com.minecolonies.coremod.gui.shepherd.autodye": "Random sheep dyeing:",
 
-  "com.minecolonies.coremod.general.canttakeequipped": "The only armor you have is what you're wearing. Put it in your inventory if you want to give it to me.",
+  "com.minecolonies.coremod.general.canttakeequipped": "The only item you have is what you're wearing or holding. Put it in your inventory if you want to give it to me.",
 
   "com.minecolonies.coremod.gui.workerhuts.siftersettings": "Daily limit progress",
   "com.minecolonies.coremod.gui.workerhuts.sifterinfo": "of %d allowed",

@@ -7,6 +7,7 @@ import net.minecraft.entity.ai.goal.PrioritizedGoal;
 import net.minecraft.profiler.IProfiler;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -126,6 +127,7 @@ public class CustomGoalSelector extends GoalSelector
     /**
      * Add a now AITask. Args : priority, task
      */
+    @Override
     public void addGoal(int priority, Goal task)
     {
         this.goals.add(new PrioritizedGoal(priority, task));
@@ -134,6 +136,7 @@ public class CustomGoalSelector extends GoalSelector
     /**
      * removes the indicated task from the entity's AI tasks.
      */
+    @Override
     public void removeGoal(Goal task)
     {
         this.goals.stream().filter((goal) -> {
@@ -189,6 +192,7 @@ public class CustomGoalSelector extends GoalSelector
      * about 6 times faster, when checking at the same rate as the vanilla one, resulting in about 3-4 times less time spent updating and executing AI goals. When updating
      * non-running goals only every 4 ticks it goes up to about 10% of vanilla's time spent for the whole update goals and their execution.
      */
+    @Override
     public void tick()
     {
         this.profiler.get().startSection("goalUpdate");
@@ -196,7 +200,7 @@ public class CustomGoalSelector extends GoalSelector
         boolean hasFlags;
         counter++;
 
-        for (final PrioritizedGoal currentGoal : goals)
+        for (final PrioritizedGoal currentGoal : new ArrayList<>(goals))
         {
             hasFlags = !currentGoal.getMutexFlags().isEmpty();
 
@@ -236,6 +240,7 @@ public class CustomGoalSelector extends GoalSelector
      *
      * @return the stream of running goals.
      */
+    @Override
     public Stream<PrioritizedGoal> getRunningGoals()
     {
         return this.goals.stream().filter(PrioritizedGoal::isRunning);
@@ -246,6 +251,7 @@ public class CustomGoalSelector extends GoalSelector
      *
      * @param flag the flag to disable.
      */
+    @Override
     public void disableFlag(Goal.Flag flag)
     {
         this.disabledFlagsArray[flag.ordinal()] = true;
@@ -256,6 +262,7 @@ public class CustomGoalSelector extends GoalSelector
      *
      * @param flag the flag to enable.
      */
+    @Override
     public void enableFlag(Goal.Flag flag)
     {
         this.disabledFlagsArray[flag.ordinal()] = false;
@@ -267,6 +274,7 @@ public class CustomGoalSelector extends GoalSelector
      * @param flag    Flag to set
      * @param enabled enable or disable it
      */
+    @Override
     public void setFlag(Goal.Flag flag, boolean enabled)
     {
         if (enabled)
