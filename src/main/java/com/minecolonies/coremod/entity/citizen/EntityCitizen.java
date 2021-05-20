@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.entity.citizen;
 
 import com.ldtteam.structurize.util.LanguageHandler;
-import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
@@ -28,19 +27,14 @@ import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.inventory.container.ContainerCitizenInventory;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.sounds.EventType;
-import com.minecolonies.api.tileentities.TileEntityGrave;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.blocks.BlockMinecoloniesGrave;
-import com.minecolonies.api.colony.GraveData;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingGraveyard;
 import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenDiedEvent;
 import com.minecolonies.coremod.colony.jobs.*;
 import com.minecolonies.coremod.entity.SittingEntity;
-import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard;
 import com.minecolonies.coremod.entity.ai.minimal.*;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.*;
@@ -70,7 +64,6 @@ import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -212,7 +205,7 @@ public class EntityCitizen extends AbstractEntityCitizen
         INIT,
         ACTIVE_SERVER,
         ACTIVE_CLIENT,
-        INACTIVE;
+        INACTIVE
     }
 
     /**
@@ -272,7 +265,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     /**
      * Whether the entity should be inactive
      *
-     * @return
+     * @return if true, should be inactive.
      */
     private boolean shouldBeInactive()
     {
@@ -532,6 +525,18 @@ public class EntityCitizen extends AbstractEntityCitizen
         {
             getDataManager().set(DATA_TEXTURE_SUFFIX, citizenData.getTextureSuffix());
         }
+        if (citizenData.getSuffixColor() != getDataManager().get(DATA_SUFFIX_COLOR))
+        {
+            getDataManager().set(DATA_SUFFIX_COLOR, citizenData.getSuffixColor());
+        }
+        if (citizenData.getEyeColor() != getDataManager().get(DATA_EYE_COLOR))
+        {
+            getDataManager().set(DATA_EYE_COLOR, citizenData.getEyeColor());
+        }
+        if (citizenData.getHairColor() != getDataManager().get(DATA_HAIR_COLOR))
+        {
+            getDataManager().set(DATA_HAIR_COLOR, citizenData.getHairColor());
+        }
 
         return false;
     }
@@ -615,7 +620,7 @@ public class EntityCitizen extends AbstractEntityCitizen
             }
             else
             {
-                healAmount = 1 * (1.0 + getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(REGENERATION));;
+                healAmount = 1 * (1.0 + getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(REGENERATION));
             }
 
             heal((float) healAmount);

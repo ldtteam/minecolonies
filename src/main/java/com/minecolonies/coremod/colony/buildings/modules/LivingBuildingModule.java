@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.modules;
 
+import com.ldtteam.blockout.Color;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.ICitizenData;
@@ -232,16 +233,27 @@ public class LivingBuildingModule extends AbstractBuildingModule implements IAss
                 }
             }
 
-            final List<String> possibleSuffixes = new ArrayList<>();
-            possibleSuffixes.add(mom.getTextureSuffix());
-            possibleSuffixes.add(dad.getTextureSuffix());
-
-            if (possibleSuffixes.contains("_w") && possibleSuffixes.contains("_d"))
+            // TODO: evaluate, consider similar 'genetics' for eye color, hair color, moving into the initializer for the new citizen data?
+            final int momSuffix = mom.getHairColor();
+            final int dadSuffix = dad.getHairColor();
+            int red = 0;
+            int green = 0;
+            int blue = 0;
+            // Put a little weighting into the resulting suffix color, to avoid gravitating toward middle values too quickly colonies without a Tavern.
+            final int weighting = rand.nextInt(10);
+            for(int i = 0; i < weighting; i++)
             {
-                possibleSuffixes.add("_b");
+                red += momSuffix & 0xFF0000;
+                green += momSuffix & 0xFF00;
+                blue += momSuffix & 0xFF;
             }
-
-            newCitizen.setSuffix(possibleSuffixes.get(rand.nextInt(possibleSuffixes.size())));
+            for(int i = 0; i < 10 - weighting; i++)
+            {
+                red += dadSuffix & 0xFF0000;
+                green += dadSuffix & 0xFF00;
+                blue += dadSuffix & 0xFF;
+            }
+            newCitizen.setSuffix(Color.rgbaToInt((int)(red / 10f), (int)(green / 10f), (int)(blue / 10f), 0));
 
             final int populationCount = building.getColony().getCitizenManager().getCurrentCitizenCount();
             AdvancementUtils.TriggerAdvancementPlayersForColony(building.getColony(), playerMP -> AdvancementTriggers.COLONY_POPULATION.trigger(playerMP, populationCount));
@@ -283,7 +295,7 @@ public class LivingBuildingModule extends AbstractBuildingModule implements IAss
      */
     private void addHomelessCitizens()
     {
-        // Priotize missing genders for assigning
+        // Prioritize missing genders for assigning
         if (!malePresent || !femalePresent)
         {
             for (@NotNull final ICitizenData citizen : building.getColony().getCitizenManager().getCitizens())

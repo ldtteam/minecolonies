@@ -630,6 +630,7 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         if (diseases.isEmpty())
         {
+            byte diseaseCounter = 0;
             for (final String disease : MinecoloniesAPIProxy.getInstance().getConfig().getServer().diseases.get())
             {
                 final String[] split = disease.split(",");
@@ -659,7 +660,7 @@ public class CompatibilityManager implements ICompatibilityManager
                         final ItemStack stack = new ItemStack(item, 1);
                         cure.add(stack);
                     }
-                    diseases.put(name, new Disease(name, rarity, cure));
+                    diseases.put(name, new Disease(name, rarity, cure, diseaseCounter++));
                     for (int i = 0; i < rarity; i++)
                     {
                         diseaseList.add(name);

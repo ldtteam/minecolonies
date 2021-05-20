@@ -35,6 +35,7 @@ import com.minecolonies.coremod.client.render.mobs.pirates.RendererPirate;
 import com.minecolonies.coremod.colony.IColonyManagerCapability;
 import com.minecolonies.coremod.colony.requestsystem.init.RequestSystemInitializer;
 import com.minecolonies.coremod.colony.requestsystem.init.StandardFactoryControllerInitializer;
+import com.minecolonies.coremod.datalistener.ClientResourceListener;
 import com.minecolonies.coremod.entity.mobs.EntityMercenary;
 import com.minecolonies.coremod.event.*;
 import com.minecolonies.coremod.placementhandlers.PlacementHandlerInitializer;
@@ -120,6 +121,7 @@ public class MineColonies
         Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(TagWorkAroundEventHandler.TagEventHandler.class);
         Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(TagWorkAroundEventHandler.TagFMLEventHandlers.class);
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(TagWorkAroundEventHandler.TagClientEventHandler.class));
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> ClientResourceListener::register);
 
         InteractionValidatorInitializer.init();
         proxy.setupApi();

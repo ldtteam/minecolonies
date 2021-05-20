@@ -28,6 +28,7 @@ public enum BipedModelType implements ISimpleModelType
     SMELTER("smelter", 1),
     COOK("cook", 1),
     STUDENT("student", 6),
+    STUDENT_MONK("studentmonk", 0),
     CRAFTER("crafter", 1),
     BLACKSMITH("blacksmith", 1),
     CHILD("child", 4),

@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony;
 
+import com.ldtteam.blockout.Color;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenData;
@@ -85,6 +86,48 @@ public class CitizenData implements ICitizenData
      * Possible texture suffixes.
      */
     private static final List<String> SUFFIXES = Arrays.asList("_b", "_d", "_a", "_w");
+
+    /**
+     * Default suffix colors.  Note that alpha channel is ignored.
+     */
+    private static final List<Integer> SUFFIX_COLORS = Arrays.asList(
+      Color.rgbaToInt(141, 82, 34, 0),
+      Color.rgbaToInt(193, 138, 65, 0),
+      Color.rgbaToInt(224, 168, 105, 0),
+      Color.rgbaToInt(241, 194, 125, 0),
+      Color.rgbaToInt(255, 230, 180, 0),
+      Color.rgbaToInt(30, 140, 70, 0)
+      );
+
+    /**
+     * Default eye colors.
+     */
+    private static final List<Integer> EYE_COLORS = Arrays.asList(
+      Color.rgbaToInt(0, 255, 0, 0),
+      Color.rgbaToInt(0, 0, 255, 0),
+      Color.rgbaToInt(0, 0, 0, 0),
+      Color.rgbaToInt(255, 0, 0, 0),
+      Color.rgbaToInt(100, 82, 50, 0),
+      Color.rgbaToInt(60, 100, 40, 0),
+      Color.rgbaToInt(30, 140, 70, 0),
+      Color.rgbaToInt(100, 120, 100, 0),
+      Color.rgbaToInt(15, 48, 91, 0),
+      Color.rgbaToInt(27, 76, 117, 0),
+      Color.rgbaToInt(127, 180, 190, 0)
+    );
+
+    /**
+     * Default hair colors.
+     */
+    private static final List<Integer> HAIR_COLORS = Arrays.asList(
+      Color.rgbaToInt(40, 40, 40, 0),
+      Color.rgbaToInt(0, 0, 0, 0),
+      Color.rgbaToInt(80, 82, 80, 0),
+      Color.rgbaToInt(90, 50, 20, 0),
+      Color.rgbaToInt(255, 255, 90, 0),
+      Color.rgbaToInt(200, 60, 60, 0),
+      Color.rgbaToInt(80, 25, 0, 0)
+    );
 
     /**
      * The unique citizen id.
@@ -213,6 +256,21 @@ public class CitizenData implements ICitizenData
      * The texture suffix.
      */
     private String textureSuffix;
+
+    /**
+     * The colonist suffix color, as an ARGB integer.
+     */
+    private int suffixColor;
+
+    /**
+     * The colonist eye color.
+     */
+    private int eyeColor;
+
+    /**
+     * The colonist hair color.
+     */
+    private int hairColor;
 
     /**
      * The status icon to display
@@ -364,6 +422,9 @@ public class CitizenData implements ICitizenData
         //Assign the gender before name
         female = random.nextBoolean();
         textureSuffix = SUFFIXES.get(random.nextInt(SUFFIXES.size()));
+        suffixColor = SUFFIX_COLORS.get(random.nextInt(SUFFIX_COLORS.size()));
+        eyeColor = EYE_COLORS.get(random.nextInt(EYE_COLORS.size()));
+        hairColor = HAIR_COLORS.get(random.nextInt(HAIR_COLORS.size()));
         paused = false;
         name = generateName(random);
         textureId = random.nextInt(255);
@@ -405,6 +466,9 @@ public class CitizenData implements ICitizenData
         citizen.getDataManager().set(DATA_IS_FEMALE, citizen.isFemale() ? 1 : 0);
         citizen.getDataManager().set(DATA_TEXTURE, citizen.getTextureId());
         citizen.getDataManager().set(DATA_TEXTURE_SUFFIX, getTextureSuffix());
+        citizen.getDataManager().set(DATA_SUFFIX_COLOR, getSuffixColor());
+        citizen.getDataManager().set(DATA_HAIR_COLOR, getHairColor());
+        citizen.getDataManager().set(DATA_EYE_COLOR, getEyeColor());
         citizen.getDataManager().set(DATA_IS_ASLEEP, isAsleep());
         citizen.getDataManager().set(DATA_IS_CHILD, isChild());
         citizen.getDataManager().set(DATA_BED_POS, getBedPos());
@@ -884,6 +948,9 @@ public class CitizenData implements ICitizenData
         nbtTagCompound.putInt(TAG_ID, id);
         nbtTagCompound.putString(TAG_NAME, name);
         nbtTagCompound.putString(TAG_SUFFIX, textureSuffix);
+        nbtTagCompound.putInt(TAG_SUFFIX_COLOR, suffixColor);
+        nbtTagCompound.putInt(TAG_EYE_COLOR, eyeColor);
+        nbtTagCompound.putInt(TAG_HAIR_COLOR, hairColor);
 
         nbtTagCompound.putBoolean(TAG_FEMALE, female);
         nbtTagCompound.putBoolean(TAG_PAUSED, paused);
@@ -938,13 +1005,52 @@ public class CitizenData implements ICitizenData
         isChild = nbtTagCompound.getBoolean(TAG_CHILD);
         textureId = nbtTagCompound.getInt(TAG_TEXTURE);
 
-        if (nbtTagCompound.keySet().contains(TAG_SUFFIX))
+        // TODO: remove TAG_SUFFIX and transition fields for 1.17, or after sufficient time has passed.
+        if(nbtTagCompound.hasUniqueId(TAG_SUFFIX_COLOR))
+        {
+            suffixColor = nbtTagCompound.getInt(TAG_SUFFIX_COLOR);
+        }
+        else if (nbtTagCompound.keySet().contains(TAG_SUFFIX))
         {
             textureSuffix = nbtTagCompound.getString(TAG_SUFFIX);
+            if(!nbtTagCompound.hasUniqueId(TAG_SUFFIX_COLOR))
+                switch(textureSuffix)
+                {
+                    case "_a":
+                        suffixColor = SUFFIX_COLORS.get(3);
+                        break;
+                    case "_b":
+                        suffixColor = SUFFIX_COLORS.get(1);
+                        break;
+                    case "_d":
+                        suffixColor = SUFFIX_COLORS.get(0);
+                        break;
+                    case "_w":
+                        suffixColor = SUFFIX_COLORS.get(4);
+                        break;
+                }
         }
         else
         {
-            textureSuffix = SUFFIXES.get(random.nextInt(SUFFIXES.size()));
+            suffixColor = SUFFIX_COLORS.get(random.nextInt(SUFFIX_COLORS.size()));
+        }
+
+        if(nbtTagCompound.hasUniqueId(TAG_EYE_COLOR))
+        {
+            eyeColor = nbtTagCompound.getInt(TAG_EYE_COLOR);
+        }
+        else
+        {
+            eyeColor = EYE_COLORS.get(random.nextInt(EYE_COLORS.size()));
+        }
+
+        if(nbtTagCompound.hasUniqueId(TAG_HAIR_COLOR))
+        {
+            hairColor = nbtTagCompound.getInt(TAG_HAIR_COLOR);
+        }
+        else
+        {
+            hairColor = HAIR_COLORS.get(random.nextInt(HAIR_COLORS.size()));
         }
 
         lastPosition = BlockPosUtil.read(nbtTagCompound, TAG_POS);
@@ -1112,9 +1218,28 @@ public class CitizenData implements ICitizenData
     }
 
     @Override
-    public void setSuffix(final String suffix)
+    public int getSuffixColor()
     {
-        this.textureSuffix = suffix;
+        return this.suffixColor;
+    }
+
+    @Override
+    public int getEyeColor()
+    {
+        return this.eyeColor;
+    }
+
+    @Override
+    public int getHairColor()
+    {
+        return this.hairColor;
+    }
+
+
+    @Override
+    public void setSuffix(final int suffix)
+    {
+        this.suffixColor = suffix;
     }
 
     // --------------------------- Request Handling --------------------------- //
