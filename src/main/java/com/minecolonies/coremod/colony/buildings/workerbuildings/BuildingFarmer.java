@@ -457,10 +457,6 @@ public class BuildingFarmer extends AbstractBuildingCrafter
                     }
                 }
             }
-            else
-            {
-                Log.getLogger().warn("Owning field not considered because not loaded: " + field.toString());
-            }
         }
 
         buf.writeInt(size);
