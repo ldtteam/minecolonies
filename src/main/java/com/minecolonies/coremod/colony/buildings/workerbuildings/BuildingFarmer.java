@@ -12,6 +12,7 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.huts.WindowHutFarmerModule;
@@ -436,7 +437,7 @@ public class BuildingFarmer extends AbstractBuildingCrafter
 
         for (@NotNull final BlockPos field : fields)
         {
-            if (colony.getWorld().isAreaLoaded(field, 1))
+            if (WorldUtil.isBlockLoaded(getColony().getWorld(), field))
             {
                 final TileEntity scareCrow = getColony().getWorld().getTileEntity(field);
                 if (scareCrow instanceof ScarecrowTileEntity)
@@ -456,20 +457,16 @@ public class BuildingFarmer extends AbstractBuildingCrafter
                     }
                 }
             }
+            else
+            {
+                Log.getLogger().warn("Owning field not considered because not loaded: " + field.toString());
+            }
         }
 
         buf.writeInt(size);
         for (@NotNull final BlockPos field : cleanList)
         {
             buf.writeBlockPos(field);
-        }
-
-        for (final BlockPos pos : farmerFields)
-        {
-            if (!cleanList.contains(pos))
-            {
-                Log.getLogger().warn("Owning field not considered because not loaded: " + pos.toString());
-            }
         }
 
         buf.writeInt(farmerFields.size());
