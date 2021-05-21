@@ -666,6 +666,7 @@
   "com.minecolonies.coremod.gui.workerhuts.modea": "Automatically",
   "com.minecolonies.coremod.gui.workerhuts.retrieveoff": "Off",
   "com.minecolonies.coremod.gui.workerhuts.retrieveon": "On",
+  "com.minecolonies.coremod.gui.workerhuts.resetdefault": "Reset to Default",
   "com.minecolonies.coremod.gui.workerhuts.task.guard": "Guard",
   "com.minecolonies.coremod.gui.workerhuts.task.patrol": "Patrol",
   "com.minecolonies.coremod.gui.workerhuts.task.patrolmine": "Patrol Mine",

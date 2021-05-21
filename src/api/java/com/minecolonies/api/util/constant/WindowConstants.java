@@ -1139,6 +1139,11 @@ public final class WindowConstants
     public static final String BUTTON_SWITCH = "switch";
 
     /**
+     * Reset to default button Id.
+     */
+    public static final String BUTTON_RESET_DEFAULT = "resetDefault";
+
+    /**
      * String describing on for the gui.
      */
     public static final String ON = COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON;

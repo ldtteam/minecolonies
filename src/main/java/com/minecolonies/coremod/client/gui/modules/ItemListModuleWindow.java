@@ -82,6 +82,10 @@ public class ItemListModuleWindow extends AbstractModuleWindow
         {
             switchClicked(button);
         }
+        else if (Objects.equals(button.getID(), BUTTON_RESET_DEFAULT))
+        {
+            reset();
+        }
     }
 
     @Override
@@ -124,6 +128,18 @@ public class ItemListModuleWindow extends AbstractModuleWindow
         {
             module.removeItem(item);
         }
+
+        resourceList.refreshElementPanes();
+    }
+
+    /**
+     * Fired when reset to default has been clicked.
+     */
+    private void reset()
+    {
+        final IItemListModuleView module = building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id));
+
+        module.clearItems();
 
         resourceList.refreshElementPanes();
     }
