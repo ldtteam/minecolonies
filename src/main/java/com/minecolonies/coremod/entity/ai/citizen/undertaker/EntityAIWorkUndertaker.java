@@ -10,6 +10,7 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.tileentities.TileEntityGrave;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.colony.GraveData;
 import com.minecolonies.coremod.colony.buildings.BuildingMysticalSite;
@@ -25,7 +26,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
-import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
@@ -115,7 +115,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
             }
 
             final TileEntity entity = world.getTileEntity(currentGrave);
-            if (entity != null && entity instanceof TileEntityGrave)
+            if (entity instanceof TileEntityGrave)
             {
                 getOwnBuilding().setLastGraveData((GraveData) ((TileEntityGrave) entity).getGraveData());
                 return EMPTY_GRAVE;
@@ -228,7 +228,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
     {
         @Nullable final BuildingGraveyard buildingGraveyard = getOwnBuilding();
 
-        if (buildingGraveyard == null || checkForToolOrWeapon(ToolType.SHOVEL) || buildingGraveyard.getGraveToWorkOn() == null)
+        if (checkForToolOrWeapon(ToolType.SHOVEL) || buildingGraveyard.getGraveToWorkOn() == null)
         {
             return IDLE;
         }
@@ -238,6 +238,11 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         worker.setSprinting(worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(UNDERTAKER_RUN) > 0);
 
         @Nullable final BlockPos gravePos = buildingGraveyard.getGraveToWorkOn();
+
+        if (gravePos == null)
+        {
+            return IDLE;
+        }
 
         // Still moving to the block
         if (walkToBlock(gravePos, 3))
@@ -308,6 +313,11 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
 
         @Nullable final BlockPos gravePos = buildingGraveyard.getGraveToWorkOn();
 
+        if (gravePos == null)
+        {
+            return IDLE;
+        }
+
         // Still moving to the block
         if (walkToBlock(gravePos, 3))
         {
@@ -352,7 +362,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
     /**
      * Calculate chance of resurrection from multiple factor: Undertaker Skill, Building Level, Research, Mystical Sites in the city
      *
-     * @param buildingGraveyard
+     * @param buildingGraveyard the building.
      * @return the chance of resurrection
      */
     private double getResurrectChance(@NotNull final BuildingGraveyard buildingGraveyard)
@@ -407,7 +417,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
     {
         @Nullable final BuildingGraveyard buildingGraveyard = getOwnBuilding();
 
-        if (buildingGraveyard == null || checkForToolOrWeapon(ToolType.SHOVEL) || buildingGraveyard.getLastGraveData() == null)
+        if (checkForToolOrWeapon(ToolType.SHOVEL) || buildingGraveyard.getLastGraveData() == null)
         {
             return IDLE;
         }
@@ -419,7 +429,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
             burialPos = getOwnBuilding().getRandomFreeVisualGravePos();
         }
 
-        if(burialPos == null)
+        if(burialPos == null || burialPos.getA() == null)
         {
             //coudn't find a place to dig a grave
             LanguageHandler.sendPlayersMessage(buildingGraveyard.getColony().getImportantMessageEntityPlayers(),
