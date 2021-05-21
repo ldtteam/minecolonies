@@ -1,5 +1,6 @@
 package com.minecolonies.api;
 
+import com.minecolonies.api.client.render.modeltype.registry.ICitizenResourceRegistry;
 import com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry;
 import com.minecolonies.api.colony.ICitizenDataManager;
 import com.minecolonies.api.colony.IColonyManager;
@@ -54,6 +55,8 @@ public interface IMinecoloniesAPI
     IForgeRegistry<GuardType> getGuardTypeRegistry();
 
     IModelTypeRegistry getModelTypeRegistry();
+
+    ICitizenResourceRegistry getCitizenResourceRegistry();
 
     Configuration getConfig();
 

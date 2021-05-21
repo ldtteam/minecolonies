@@ -8,6 +8,9 @@ public final class NbtTagConstants
     public static final String TAG_ID                 = "id";
     public static final String TAG_NAME               = "name";
     public static final String TAG_SUFFIX             = "suffix";
+    public static final String TAG_SUFFIX_COLOR       = "color_suff";
+    public static final String TAG_EYE_COLOR          = "color_eye";
+    public static final String TAG_HAIR_COLOR         = "color_hair";
     public static final String TAG_DIMENSION          = "dimension";
     public static final String TAG_CENTER             = "center";
     public static final String TAG_BUILDINGS          = "buildings";

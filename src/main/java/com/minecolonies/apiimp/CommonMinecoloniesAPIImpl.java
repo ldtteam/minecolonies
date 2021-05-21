@@ -1,6 +1,7 @@
 package com.minecolonies.apiimp;
 
 import com.minecolonies.api.IMinecoloniesAPI;
+import com.minecolonies.api.client.render.modeltype.registry.ICitizenResourceRegistry;
 import com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry;
 import com.minecolonies.api.colony.ICitizenDataManager;
 import com.minecolonies.api.colony.IColonyManager;
@@ -138,6 +139,12 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
 
     @Override
     public IModelTypeRegistry getModelTypeRegistry()
+    {
+        return null;
+    }
+
+    @Override
+    public ICitizenResourceRegistry getCitizenResourceRegistry()
     {
         return null;
     }

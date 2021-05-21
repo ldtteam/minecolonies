@@ -1,9 +1,11 @@
 package com.minecolonies.coremod.client.render;
 
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.client.render.modeltype.CitizenModel;
-import com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry;
+import com.minecolonies.api.client.render.modeltype.modularcitizen.ModularCitizenModel;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.coremod.client.model.ModelEntityFemaleCitizen;
+import com.minecolonies.coremod.client.model.basemodels.ModelEntityBaseFemale;
+import com.minecolonies.coremod.client.render.modularcitizen.*;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
@@ -26,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Renderer for the citizens.
  */
-public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, CitizenModel<AbstractEntityCitizen>>
+public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, ModularCitizenModel>
 {
     private static final double  SHADOW_SIZE   = 0.5F;
     public static        boolean isItGhostTime = false;
@@ -38,8 +40,14 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
      */
     public RenderBipedCitizen(final EntityRendererManager renderManagerIn)
     {
-        super(renderManagerIn, new CitizenModel<>(0.0F), (float) SHADOW_SIZE);
-        super.addLayer(new BipedArmorLayer<>(this, new CitizenModel<>(0.5F), new CitizenModel<>(1.0F)));
+        super(renderManagerIn, new ModularCitizenModel(0.0F), (float) SHADOW_SIZE);
+        super.addLayer(new ColorVariedLayer(this, ColorVariedLayer.ColorVariedLayerType.EYES));
+        super.addLayer(new ColorVariedLayer(this, ColorVariedLayer.ColorVariedLayerType.SUFFIX));
+        super.addLayer(new IllnessLayer(this));
+        super.addLayer(new ClothLayer(this));
+        super.addLayer(new AccessoryLayer(this));
+        super.addLayer(new ColorVariedLayer(this, ColorVariedLayer.ColorVariedLayerType.HAIR));
+        super.addLayer(new BipedArmorLayer<>(this, new CitizenModel(0.5F), new CitizenModel(1.0F)));
         super.addLayer(new HeldItemLayer<>(this));
     }
 
@@ -54,7 +62,7 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
     {
         setupMainModelFrom(citizen);
 
-        final CitizenModel<AbstractEntityCitizen> citizenModel = entityModel;
+        final ModularCitizenModel citizenModel = entityModel;
 
         final ItemStack mainHandStack = citizen.getHeldItemMainhand();
         final ItemStack offHandStack = citizen.getHeldItemOffhand();
@@ -82,14 +90,7 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
 
     private void setupMainModelFrom(@NotNull final AbstractEntityCitizen citizen)
     {
-        entityModel = (citizen.isFemale()
-                         ? IModelTypeRegistry.getInstance().getFemaleMap().get(citizen.getModelType())
-                         : IModelTypeRegistry.getInstance().getMaleMap().get(citizen.getModelType()));
-        if (entityModel == null)
-        {
-            entityModel = (citizen.isFemale() ? new ModelEntityFemaleCitizen() : new CitizenModel<>(0.0F));
-        }
-
+        entityModel = citizen.citizenRenderSettings.modelBase;
         entityModel.isChild = citizen.isChild();
         entityModel.isSitting = citizen.getRidingEntity() != null;
         entityModel.swingProgress = citizen.swingProgress;

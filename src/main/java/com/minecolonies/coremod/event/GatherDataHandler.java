@@ -12,6 +12,7 @@ public class GatherDataHandler
      */
     public static void dataGeneratorSetup(final GatherDataEvent event)
     {
+        event.getGenerator().addProvider(new DefaultCitizenModelProvider(event.getGenerator()));
         event.getGenerator().addProvider(new DefaultBlockLootTableProvider(event.getGenerator()));
         event.getGenerator().addProvider(new DefaultSoundProvider(event.getGenerator()));
         event.getGenerator().addProvider(new DefaultResearchProvider(event.getGenerator()));

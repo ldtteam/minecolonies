@@ -26,17 +26,23 @@ public class Disease
     private final List<ItemStack> cure;
 
     /**
+     * The identifier, used to determine the texture for ill colonists.
+     */
+    private final byte identifier;
+
+    /**
      * Create a disease.
      *
      * @param name   the name of it.
      * @param rarity its rarity.
      * @param cure   the cure.
      */
-    public Disease(final String name, final int rarity, final List<ItemStack> cure)
+    public Disease(final String name, final int rarity, final List<ItemStack> cure, final byte identifier)
     {
         this.name = name;
         this.rarity = rarity;
         this.cure = cure;
+        this.identifier = identifier;
     }
 
     /**
@@ -67,6 +73,15 @@ public class Disease
     public List<ItemStack> getCure()
     {
         return ImmutableList.copyOf(cure);
+    }
+
+    /**
+     * Gets the disease identifier.
+     * @return identifier as a byte
+     */
+    public byte getIdentifier()
+    {
+        return identifier;
     }
 
     /**

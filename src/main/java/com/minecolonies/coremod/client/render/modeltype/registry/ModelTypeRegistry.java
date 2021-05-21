@@ -5,7 +5,6 @@ import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.client.render.modeltype.CitizenModel;
 import com.minecolonies.api.client.render.modeltype.IModelType;
 import com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry;
-import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.coremod.client.model.*;
 
 import java.util.Collections;
@@ -13,19 +12,19 @@ import java.util.Map;
 
 public class ModelTypeRegistry implements IModelTypeRegistry
 {
-    private final Map<IModelType, CitizenModel<AbstractEntityCitizen>> maleMap   = Maps.newHashMap();
-    private final Map<IModelType, CitizenModel<AbstractEntityCitizen>> femaleMap = Maps.newHashMap();
+    private final Map<IModelType, CitizenModel>        maleMap   = Maps.newHashMap();
+    private final Map<IModelType, CitizenModel> femaleMap = Maps.newHashMap();
 
     public ModelTypeRegistry()
     {
-        register(BipedModelType.NOBLE, new CitizenModel<>(), new ModelEntityCitizenFemaleNoble());
-        register(BipedModelType.ARISTOCRAT, new CitizenModel<>(), new ModelEntityFemaleAristocrat());
-        register(BipedModelType.BUILDER, new CitizenModel<>(), new ModelEntityBuilderFemale());
+        register(BipedModelType.NOBLE, new CitizenModel(), new ModelEntityCitizenFemaleNoble());
+        register(BipedModelType.ARISTOCRAT, new CitizenModel(), new ModelEntityFemaleAristocrat());
+        register(BipedModelType.BUILDER, new CitizenModel(), new ModelEntityBuilderFemale());
         register(BipedModelType.DELIVERYMAN, new ModelEntityDeliverymanMale(), new ModelEntityDeliverymanFemale());
         register(BipedModelType.MINER, new ModelEntityMinerMale(), new ModelEntityMinerFemale());
         register(BipedModelType.LUMBERJACK, new ModelEntityLumberjackMale(), new ModelEntityLumberjackFemale());
         register(BipedModelType.FARMER, new ModelEntityFarmerMale(), new ModelEntityFarmerFemale());
-        register(BipedModelType.UNDERTAKER, new ModelEntityUndertaker(), new ModelEntityUndertaker());
+        register(BipedModelType.UNDERTAKER, new ModelEntityUndertakerMale(), new ModelEntityUndertakerFemale());
         register(BipedModelType.FISHERMAN, new ModelEntityFishermanMale(), new ModelEntityFishermanFemale());
         register(BipedModelType.BAKER, new ModelEntityBakerMale(), new ModelEntityBakerFemale());
         register(BipedModelType.COMPOSTER, new ModelEntityComposterMale(), new ModelEntityComposterFemale());
@@ -38,8 +37,8 @@ public class ModelTypeRegistry implements IModelTypeRegistry
         register(BipedModelType.STUDENT, new ModelEntityStudentMale(), new ModelEntityStudentFemale());
         register(BipedModelType.CRAFTER, new ModelEntityCrafterMale(), new ModelEntityCrafterFemale());
         register(BipedModelType.BLACKSMITH, new ModelEntityBlacksmithMale(), new ModelEntityBlacksmithFemale());
-        register(BipedModelType.ARCHER_GUARD, new CitizenModel<>(), new CitizenModel<>());
-        register(BipedModelType.KNIGHT_GUARD, new CitizenModel<>(), new CitizenModel<>());
+        register(BipedModelType.ARCHER_GUARD, new CitizenModel(), new CitizenModel());
+        register(BipedModelType.KNIGHT_GUARD, new CitizenModel(), new CitizenModel());
         register(BipedModelType.CHILD, new ModelEntityChildMale(), new ModelEntityChildFemale());
         register(BipedModelType.HEALER, new ModelEntityHealerMale(), new ModelEntityHealerFemale());
         register(BipedModelType.TEACHER, new ModelEntityTeacherMale(), new ModelEntityTeacherFemale());
@@ -54,7 +53,7 @@ public class ModelTypeRegistry implements IModelTypeRegistry
     }
 
     @Override
-    public IModelTypeRegistry register(final IModelType type, final CitizenModel<AbstractEntityCitizen> maleModel, final CitizenModel<AbstractEntityCitizen> femaleModel)
+    public IModelTypeRegistry register(final IModelType type, final CitizenModel maleModel, final CitizenModel femaleModel)
     {
         this.maleMap.put(type, maleModel);
         this.femaleMap.put(type, femaleModel);
@@ -63,13 +62,13 @@ public class ModelTypeRegistry implements IModelTypeRegistry
     }
 
     @Override
-    public Map<IModelType, CitizenModel<AbstractEntityCitizen>> getMaleMap()
+    public Map<IModelType, CitizenModel> getMaleMap()
     {
         return Collections.unmodifiableMap(maleMap);
     }
 
     @Override
-    public Map<IModelType, CitizenModel<AbstractEntityCitizen>> getFemaleMap()
+    public Map<IModelType, CitizenModel> getFemaleMap()
     {
         return Collections.unmodifiableMap(femaleMap);
     }

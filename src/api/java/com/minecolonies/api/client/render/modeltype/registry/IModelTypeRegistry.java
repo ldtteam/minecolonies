@@ -15,9 +15,9 @@ public interface IModelTypeRegistry
         return IMinecoloniesAPI.getInstance().getModelTypeRegistry();
     }
 
-    IModelTypeRegistry register(IModelType type, CitizenModel<AbstractEntityCitizen> maleModel, CitizenModel<AbstractEntityCitizen> femaleModel);
+    IModelTypeRegistry register(IModelType type, CitizenModel maleModel, CitizenModel femaleModel);
 
-    Map<IModelType, CitizenModel<AbstractEntityCitizen>> getMaleMap();
+    Map<IModelType, CitizenModel> getMaleMap();
 
-    Map<IModelType, CitizenModel<AbstractEntityCitizen>> getFemaleMap();
+    Map<IModelType, CitizenModel> getFemaleMap();
 }

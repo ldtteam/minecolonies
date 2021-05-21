@@ -1,13 +1,13 @@
 package com.minecolonies.api.client.render.modeltype;
 
+import com.minecolonies.api.client.render.modeltype.modularcitizen.ModularCitizenModel;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import net.minecraft.client.renderer.entity.model.BipedModel;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Citizen model.
  */
-public class CitizenModel<T extends AbstractEntityCitizen> extends BipedModel<AbstractEntityCitizen>
+public class CitizenModel extends ModularCitizenModel
 {
     public CitizenModel(final float size)
     {
@@ -42,5 +42,12 @@ public class CitizenModel<T extends AbstractEntityCitizen> extends BipedModel<Ab
     public float getActualRotation()
     {
         return 0;
+    }
+
+    public void setRotation(net.minecraft.client.renderer.model.ModelRenderer modelRenderer, float x, float y, float z)
+    {
+        modelRenderer.rotateAngleX = x;
+        modelRenderer.rotateAngleY = y;
+        modelRenderer.rotateAngleZ = z;
     }
 }

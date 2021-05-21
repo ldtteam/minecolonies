@@ -1,9 +1,12 @@
 package com.minecolonies.api.entity.citizen;
 
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.client.render.modeltype.IModelType;
+import com.minecolonies.api.client.render.modeltype.modularcitizen.CitizenRenderContainer;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.ICitizenDataView;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.entity.ai.pathfinding.IWalkToProxy;
@@ -67,6 +70,9 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     public static final DataParameter<BlockPos> DATA_BED_POS         = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.BLOCK_POS);
     public static final DataParameter<String>   DATA_STYLE           = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.STRING);
     public static final DataParameter<String>   DATA_TEXTURE_SUFFIX  = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.STRING);
+    public static final DataParameter<Integer>  DATA_SUFFIX_COLOR    = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.VARINT);
+    public static final DataParameter<Integer>  DATA_HAIR_COLOR      = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.VARINT);
+    public static final DataParameter<Integer>  DATA_EYE_COLOR       = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.VARINT);
 
     /**
      * The default model.
@@ -79,6 +85,11 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     private int textureId;
 
     /**
+     * The citizen's render settings.
+     */
+    public final CitizenRenderContainer citizenRenderSettings;
+
+    /**
      * Additional render data.
      */
     private String renderMetadata = "";
@@ -89,14 +100,9 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     private boolean female;
 
     /**
-     * The texture.
+     * When true, update citizenRenderSettings from the colonist metadata on next opportunity.
      */
-    private ResourceLocation texture;
-
-    /**
-     * Was the texture initiated with the citizen view.
-     */
-    private boolean textureDirty = true;
+    private boolean renderSettingsDirty = false;
 
     private AbstractAdvancedPathNavigate pathNavigate;
 
@@ -119,6 +125,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     public AbstractEntityCitizen(final EntityType<? extends AgeableEntity> type, final World world)
     {
         super(type, world);
+        citizenRenderSettings = world.isRemote ? new CitizenRenderContainer() : null;
     }
 
     /**
@@ -240,8 +247,32 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
             return;
         }
 
-        texture = getModelType().getTexture(this);
-        textureDirty = false;
+        // TODO: convert to a more serious tag-based system.
+        final String style;
+        if(this.getDataManager().get(DATA_STYLE).contains("medieval"))
+        {
+            style = "medieval";
+        }
+        else
+        {
+            // the citizenRenderSettings will automatically convert styles without backing resources into defaults, so don't need to worry about them here.
+            style = this.getDataManager().get(DATA_STYLE);
+        }
+        citizenRenderSettings.updateCitizen(this.getDataManager().get(DATA_HAIR_COLOR), this.getDataManager().get(DATA_EYE_COLOR), this.getDataManager().get(DATA_SUFFIX_COLOR));
+        if(this.modelId instanceof BipedModelType)
+        {
+            if(this.modelId == BipedModelType.STUDENT && rand.nextBoolean())
+            {
+                this.modelId = BipedModelType.STUDENT_MONK;
+            }
+            citizenRenderSettings.updateWorker(style, female, (BipedModelType) this.modelId, this.textureId);
+        }
+        if(getCitizenDiseaseHandler().isSick())
+        {
+            citizenRenderSettings.updateIllness(style, female, IColonyManager.getInstance().getCompatibilityManager().getDisease(getCitizenDiseaseHandler().getDisease()).getIdentifier());
+        }
+
+        renderSettingsDirty = false;
     }
 
     /**
@@ -251,6 +282,12 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      */
     public abstract ICitizenDataView getCitizenDataView();
 
+
+    public CitizenRenderContainer getRenderSettings()
+    {
+        return citizenRenderSettings;
+    }
+
     /**
      * Getter of the resource location of the texture.
      *
@@ -259,16 +296,11 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     @NotNull
     public ResourceLocation getTexture()
     {
-        final String renderMeta = getRenderMetadata();
-        if (texture == null
-              || textureDirty
-              || !texture.getPath().contains(renderMeta)
-              || !texture.getPath().contains(textureMapping.getOrDefault(getDataManager().get(DATA_STYLE), "default"))
-              || !texture.getPath().contains(getDataManager().get(DATA_TEXTURE_SUFFIX)))
+        if (renderSettingsDirty && IMinecoloniesAPI.getInstance().getCitizenResourceRegistry().isLoaded())
         {
             setTexture();
         }
-        return texture;
+        return citizenRenderSettings.textureBase;
     }
 
     /**
@@ -276,7 +308,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      */
     public void setTextureDirty()
     {
-        this.textureDirty = true;
+        this.renderSettingsDirty = true;
     }
 
     /**
@@ -325,6 +357,9 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
         dataManager.register(DATA_IS_ASLEEP, false);
         dataManager.register(DATA_IS_CHILD, false);
         dataManager.register(DATA_BED_POS, new BlockPos(0, 0, 0));
+        dataManager.register(DATA_SUFFIX_COLOR, 0);
+        dataManager.register(DATA_EYE_COLOR, 0);
+        dataManager.register(DATA_HAIR_COLOR, 0);
     }
 
     /**
@@ -412,6 +447,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     public void setModelId(final IModelType model)
     {
         this.modelId = model;
+        this.renderSettingsDirty = true;
     }
 
     /**
@@ -440,9 +476,9 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     }
 
     /**
-     * Set the texture id.
+     * Set the texture ID, which controls colonist variation textures.
      *
-     * @param textureId the id of the texture.
+     * @param textureId the variant ID for the colonist appearance.
      */
     public void setTextureId(final int textureId)
     {

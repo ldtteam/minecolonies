@@ -60,7 +60,7 @@ public interface ICivilianData extends ICitizen, INBTSerializable<CompoundNBT>
      *
      * @param isFemale true if female
      */
-    void setIsFemale(@NotNull boolean isFemale);
+    void setIsFemale(boolean isFemale);
 
     /**
      * Returns the texture id for the civilian.
@@ -176,11 +176,32 @@ public interface ICivilianData extends ICitizen, INBTSerializable<CompoundNBT>
     String getTextureSuffix();
 
     /**
+     * Get the suffix color modifier.
+     *
+     * @return the suffix color modifier, in RGB integer format.
+     */
+    int getSuffixColor();
+
+    /**
+     * Get the eye color modifier.
+     *
+     * @return the eye color modifier, in RGB integer format.
+     */
+    int getEyeColor();
+
+    /**
+     * Get the hair color modifier.
+     *
+     * @return the hair color modifier, in RGB integer format.
+     */
+    int getHairColor();
+
+    /**
      * Set the texture suffix.
      *
      * @param suffix the suffix to set.
      */
-    void setSuffix(String suffix);
+    void setSuffix(int suffix);
 
     /**
      * Gets the entity
