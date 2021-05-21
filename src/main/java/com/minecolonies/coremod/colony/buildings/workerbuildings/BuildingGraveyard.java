@@ -327,7 +327,7 @@ public class BuildingGraveyard extends AbstractBuildingWorker
 
         for (@NotNull final BlockPos grave : graves)
         {
-            if (colony.getWorld().isAreaLoaded(grave, 1))
+            if (WorldUtil.isBlockLoaded(colony.getWorld(), grave))
             {
                 final TileEntity tileEntity = getColony().getWorld().getTileEntity(grave);
                 if (tileEntity instanceof TileEntityGrave)
