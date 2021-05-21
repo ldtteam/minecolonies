@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.compatibility.jei;
 
 import com.minecolonies.api.blocks.ModBlocks;
-import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.crafting.CompostRecipe;
 import com.minecolonies.api.util.constant.Constants;
@@ -17,7 +16,6 @@ import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import mezz.jei.api.registration.IRecipeTransferRegistration;
-import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
@@ -42,11 +40,6 @@ public class JEIPlugin implements IModPlugin
     @Override
     public void registerRecipes(@NotNull final IRecipeRegistration registration)
     {
-        // on initial world load, this is entirely redundant.  but sadly it's required for
-        // supporting /reload or /datapack on multiplayer, as there we have separate
-        // IColonyManager instances and only the server reloads via datapack event.
-        IColonyManager.getInstance().getCompatibilityManager().invalidateRecipes(Minecraft.getInstance().world.getRecipeManager());
-
         registration.addRecipes(CompostRecipeCategory.findRecipes(), CompostRecipe.ID);
         registration.addIngredientInfo(new ItemStack(ModBlocks.blockHutComposter.asItem()), VanillaTypes.ITEM,
                 TranslationConstants.COM_MINECOLONIES_JEI_PREFIX + ModJobs.COMPOSTER_ID.getPath());
