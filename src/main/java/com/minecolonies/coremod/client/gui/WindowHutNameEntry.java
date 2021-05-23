@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.client.gui.huts;
+package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.ButtonHandler;

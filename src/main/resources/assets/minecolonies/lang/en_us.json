@@ -481,6 +481,7 @@
   "com.minecolonies.coremod.gui.workerhuts.buildershut": "Builder's Hut",
   "com.minecolonies.coremod.gui.workerhuts.lumberjackhut": "Forester's Hut",
   "com.minecolonies.coremod.gui.workerhuts.mysticalsite": "Mystical Site",
+  "com.minecolonies.coremod.gui.workerhuts.florist": "Flower Shop",
 
   "com.minecolonies.coremod.gui.workerhuts.minerminenode": "Mine Level",
   "com.minecolonies.coremod.gui.workerhuts.minerguards": "Guards",
@@ -609,8 +610,8 @@
 
   "com.minecolonies.coremod.gui.workerhuts.mobslist": "Mob Attack List",
 
-  "com.minecolonies.coremod.gui.builder.manual": "Manual Mode",
-  "com.minecolonies.coremod.gui.builder.automatic": "Automatic Mode",
+  "com.minecolonies.core.builder.setting.manual": "Manual Mode",
+  "com.minecolonies.core.builder.setting.automatic": "Automatic Mode",
   "com.minecolonies.coremod.gui.builder.select": "Select",
 
   "com.minecolonies.coremod.gui.workerhuts.minernode": "Nodes",
@@ -1746,9 +1747,9 @@
   "com.minecolonies.coremod.gui.chat.noguardnearwork": "There are no Guard or Barrack Towers near my workplace, so I don't feel safe there!",
   "com.minecolonies.coremod.gui.chat.noguardnearhome": "There are no Guard or Barrack Towers near my home, so I don't feel safe there!",
 
-  "com.minecolonies.coremod.gui.beekeeper.collectbottle": "Collect honey",
-  "com.minecolonies.coremod.gui.beekeeper.collectcomb": "Collect honeycomb",
-  "com.minecolonies.coremod.gui.beekeeper.collectboth": "Collect comb and honey",
+  "com.minecolonies.core.apiary.setting.honey": "Collect honey",
+  "com.minecolonies.core.apiary.setting.honeycomb": "Collect honeycomb",
+  "com.minecolonies.core.apiary.setting.both": "Collect comb and honey",
   "com.minecolonies.coremod.gui.beekeeper.addhives": "Get hive tool",
   "entity.beekeeper.messagenohives": "Either there are no hives for me to work at, or you haven't assigned me any. Use the hive tool available from my hut to do so.",
   "entity.beekeeper.messagenobees": "I can't find any bees!",
@@ -1931,5 +1932,13 @@
   "com.minecolonies.coremod.setting.minecolonies:breeding": "Breeding:",
   "com.minecolonies.coremod.setting.minecolonies:milking": "Milking:",
   "com.minecolonies.coremod.setting.minecolonies:dyeing": "Dyeing:",
-  "com.minecolonies.coremod.setting.minecolonies:shearing": "Shearing:"
+  "com.minecolonies.coremod.setting.minecolonies:shearing": "Shearing:",
+  "com.minecolonies.coremod.gui.workerhuts.switch": "Switch",
+  "com.minecolonies.coremod.gui.workerhuts.tools": "Selection Tools",
+  "com.minecolonies.coremod.gui.tooldesc.scepterbeekeeper": "Right click a Hive with the tool to add it to the Building, right click any other block to discard the tool.",
+  "com.minecolonies.coremod.setting.minecolonies:replant": "Replanting:",
+  "com.minecolonies.coremod.setting.minecolonies:restrict": "Zoning Mode:",
+  "com.minecolonies.coremod.gui.tooldesc.scepterlumberjack": "Restrict the foresters working area by left clicking one corner and right clicking the another corner with the tool.",
+
+  "com.minecolonies.coremod.gui.givetool": "Obtain Tool"
 }

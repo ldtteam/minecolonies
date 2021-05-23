@@ -15,11 +15,6 @@ public class WindowHutMysticalSite extends AbstractWindowModuleBuilding<Building
     private static final String MYSTICAL_SITE_BUILDING_RESOURCE_SUFFIX = ":gui/windowhutmysticalsite.xml";
 
     /**
-     * The building the view is relates to.
-     */
-    private final BuildingMysticalSite.View mysticalSite;
-
-    /**
      * The name of the specific one.
      */
     private final String name;
@@ -32,7 +27,6 @@ public class WindowHutMysticalSite extends AbstractWindowModuleBuilding<Building
     public WindowHutMysticalSite(final BuildingMysticalSite.View building, final String name)
     {
         super(building, Constants.MOD_ID + MYSTICAL_SITE_BUILDING_RESOURCE_SUFFIX);
-        this.mysticalSite = building;
         this.name = name;
     }
 

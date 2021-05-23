@@ -31,7 +31,6 @@
         </view>
         <view id="pageActions" size="100% 100%">
             <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
-            <buttonimage id="manualMode" size="129 17" pos="30 14" textcolor="black" label="$(com.minecolonies.coremod.gui.builder.manual)" source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"/>
             <list id="workOrders" size="164 154" pos="13 35">
                 <box size="100% 30" linewidth="2">
                     <label id="buildingName" size="50 12" pos="2 3" color="black"/>

@@ -15,6 +15,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.AbstractModuleWindow;
 import com.minecolonies.coremod.client.gui.WindowSelectRes;
+import com.minecolonies.coremod.network.messages.server.colony.building.AddMinimumStockToBuildingModuleMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.RemoveMinimumStockFromBuildingModuleMessage;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -97,7 +98,7 @@ public class MinimumStockModuleWindow extends AbstractModuleWindow
     {
         if (!moduleView.hasReachedLimit())
         {
-            new WindowSelectRes(this, buildingView, (stack) -> true).open();
+            new WindowSelectRes(this, buildingView, (stack) -> true, (stack, qty) -> Network.getNetwork().sendToServer(new AddMinimumStockToBuildingModuleMessage(buildingView, stack, qty)), true).open();
         }
     }
 

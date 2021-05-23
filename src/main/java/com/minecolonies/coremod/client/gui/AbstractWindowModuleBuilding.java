@@ -5,7 +5,6 @@ import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.client.gui.huts.WindowHutNameEntry;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.BuildRequestMessage;
