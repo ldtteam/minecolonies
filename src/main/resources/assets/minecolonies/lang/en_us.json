@@ -1935,7 +1935,7 @@
   "com.minecolonies.coremod.setting.minecolonies:shearing": "Shearing:",
   "com.minecolonies.coremod.gui.workerhuts.switch": "Switch",
   "com.minecolonies.coremod.gui.workerhuts.tools": "Selection Tools",
-  "com.minecolonies.coremod.gui.tooldesc.scepterbeekeeper": "Right click a Hive with the tool to add it to the Building, right click any other block to discard the tool.",
+  "com.minecolonies.coremod.gui.tooldesc.scepterbeekeeper": "Right-click a beehive with the tool to add it to the hut. Right-click any other block to discard the tool.",
   "com.minecolonies.coremod.setting.minecolonies:replant": "Replanting:",
   "com.minecolonies.coremod.setting.minecolonies:restrict": "Zoning Mode:",
   "com.minecolonies.coremod.gui.tooldesc.scepterlumberjack": "Restrict the foresters working area by left clicking one corner and right clicking the another corner with the tool.",
