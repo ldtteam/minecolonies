@@ -172,6 +172,7 @@ public final class ModBuildingsInitializer
                                 .setBuildingViewProducer(() -> BuildingFarmer.View::new)
                                 .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.FARMER_ID))
                                 .addBuildingModuleProducer(CrafterTaskModule::new, CrafterTaskModuleView::new)
+                                .addBuildingModuleProducer(() -> new SettingsModule().with(BuildingFarmer.FERTILIZE, new BoolSetting(true)), SettingsModuleView::new)
                                 .createBuildingEntry();
 
         ModBuildings.fisherman = new BuildingEntry.Builder()

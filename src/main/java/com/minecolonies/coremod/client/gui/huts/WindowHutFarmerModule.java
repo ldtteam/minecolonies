@@ -118,7 +118,6 @@ public class WindowHutFarmerModule extends AbstractWindowWorkerModuleBuilding<Bu
         super(building, Constants.MOD_ID + HUT_FARMER_RESOURCE_SUFFIX);
         registerButton(TAG_BUTTON_ASSIGNMENT_MODE, this::assignmentModeClicked);
         registerButton(TAG_BUTTON_ASSIGN, this::assignClicked);
-        registerButton(TAG_BUTTON_REQUEST_FERTILIZER, this::requestFertilizerClicked);
     }
 
     /**
@@ -177,25 +176,6 @@ public class WindowHutFarmerModule extends AbstractWindowWorkerModuleBuilding<Bu
         window.findPaneOfTypeByID(LIST_FIELDS, ScrollingList.class).refreshElementPanes();
     }
 
-    /**
-     * Fired when the request fertilizer button has been toggled
-     *
-     * @param button clicked button
-     */
-    private void requestFertilizerClicked(@NotNull final Button button)
-    {
-        if (button.getTextAsString().equals(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_REQUESTFERT_OFF)))
-        {
-            button.setText(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_REQUESTFERT_ON));
-            building.setRequestFertilizer(true);
-        }
-        else
-        {
-            button.setText(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_REQUESTFERT_OFF));
-            building.setRequestFertilizer(false);
-        }
-    }
-
     @Override
     public void onOpened()
     {
@@ -208,15 +188,6 @@ public class WindowHutFarmerModule extends AbstractWindowWorkerModuleBuilding<Bu
         else
         {
             findPaneOfTypeByID(TAG_BUTTON_ASSIGNMENT_MODE, Button.class).setText(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF));
-        }
-
-        if (building.requestFertilizer())
-        {
-            findPaneOfTypeByID(TAG_BUTTON_REQUEST_FERTILIZER, Button.class).setText(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_REQUESTFERT_ON));
-        }
-        else
-        {
-            findPaneOfTypeByID(TAG_BUTTON_REQUEST_FERTILIZER, Button.class).setText(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_REQUESTFERT_OFF));
         }
 
         fieldList = findPaneOfTypeByID(LIST_FIELDS, ScrollingList.class);

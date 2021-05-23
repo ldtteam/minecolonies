@@ -634,7 +634,6 @@
   "com.minecolonies.coremod.gui.inventory.scarecrow": "Scarecrow",
   "com.minecolonies.coremod.gui.workerhuts.farmerhut.fields": "Fields",
   "com.minecolonies.coremod.gui.workerhuts.farmerhut.assignmentmode": "Assign Fields to Farmer:",
-  "com.minecolonies.coremod.gui.workerhuts.farmerhut.requestfertilizer": "Allow Farmer to request Fertilizer",
 
   "com.minecolonies.coremod.job.undertaker": "Undertaker",
   "com.minecolonies.coremod.gui.workerhuts.graveyard": "Graveyard",
@@ -1939,6 +1938,8 @@
   "com.minecolonies.coremod.setting.minecolonies:replant": "Replanting:",
   "com.minecolonies.coremod.setting.minecolonies:restrict": "Zoning Mode:",
   "com.minecolonies.coremod.gui.tooldesc.scepterlumberjack": "Restrict the Forester's working area by left-clicking one corner and right-clicking the opposite corner with the tool.",
+
+  "com.minecolonies.coremod.setting.minecolonies:fertilize": "Request Fertilizer",
 
   "com.minecolonies.coremod.gui.givetool": "Obtain Tool"
 }
