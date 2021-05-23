@@ -24,6 +24,8 @@
     "minecraft:ender_chest",
     "minecraft:lever",
     "minecraft:daylight_detector",
-    "minecraft:dried_kelp_block"
+    "minecraft:dried_kelp_block",
+    "minecraft:honey_block",
+    "minecraft:honeycomb_block"
   ]
 }
