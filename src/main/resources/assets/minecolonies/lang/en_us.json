@@ -1938,7 +1938,7 @@
   "com.minecolonies.coremod.gui.tooldesc.scepterbeekeeper": "Right-click a beehive with the tool to add it to the hut. Right-click any other block to discard the tool.",
   "com.minecolonies.coremod.setting.minecolonies:replant": "Replanting:",
   "com.minecolonies.coremod.setting.minecolonies:restrict": "Zoning Mode:",
-  "com.minecolonies.coremod.gui.tooldesc.scepterlumberjack": "Restrict the foresters working area by left clicking one corner and right clicking the another corner with the tool.",
+  "com.minecolonies.coremod.gui.tooldesc.scepterlumberjack": "Restrict the Forester's working area by left-clicking one corner and right-clicking the opposite corner with the tool.",
 
   "com.minecolonies.coremod.gui.givetool": "Obtain Tool"
 }
