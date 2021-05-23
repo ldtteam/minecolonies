@@ -59,6 +59,9 @@ public class DefaultConcreteMixerCraftingProvider extends CustomRecipeProvider
                     .result(new ItemStack(concrete))
                     //.intermediate(Blocks.WATER)
                     .build(consumer);
+            // TODO: it makes sense for this to have WATER as an intermediate, but the RS logic
+            //       and JEI rendering don't currently support that.  Previous versions just used
+            //       air, so we'll do the same for now.
         }
     }
 }
