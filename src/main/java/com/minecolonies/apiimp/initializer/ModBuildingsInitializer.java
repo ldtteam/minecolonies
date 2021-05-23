@@ -60,6 +60,7 @@ public final class ModBuildingsInitializer
                                 .setBuildingProducer(BuildingBaker::new)
                                 .setBuildingViewProducer(() -> BuildingBaker.View::new)
                                 .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.BAKERY_ID))
+                                .addBuildingModuleProducer(BuildingBaker.CraftingModule::new)
                                 .addBuildingModuleProducer(MinimumStockModule::new, MinimumStockModuleView::new)
                                 .addBuildingModuleProducer(() -> new ItemListModule(FUEL_LIST), () -> new ItemListModuleView(FUEL_LIST, COM_MINECOLONIES_REQUESTS_BURNABLE, false,
                                   (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getFuel()))
@@ -87,6 +88,7 @@ public final class ModBuildingsInitializer
                                     .setBuildingViewProducer(() -> BuildingBlacksmith.View::new)
                                     .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.BLACKSMITH_ID))
                                     .addBuildingModuleProducer(CrafterTaskModule::new, CrafterTaskModuleView::new)
+                                    .addBuildingModuleProducer(BuildingBlacksmith.CraftingModule::new)
                                     .createBuildingEntry();
 
         ModBuildings.builder = new BuildingEntry.Builder()
@@ -95,6 +97,7 @@ public final class ModBuildingsInitializer
                                  .setBuildingViewProducer(() -> BuildingBuilder.View::new)
                                  .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.BUILDER_ID))
                                  .addBuildingModuleProducer(() -> new SettingsModule().with(BuildingBuilder.MODE, new StringSetting(BuildingBuilder.AUTO_SETTING, BuildingBuilder.MANUAL_SETTING)), SettingsModuleView::new)
+                                 .addBuildingModuleProducer(SimpleCraftingModule::new)
                                  .createBuildingEntry();
 
         ModBuildings.chickenHerder = new BuildingEntry.Builder()
@@ -128,6 +131,8 @@ public final class ModBuildingsInitializer
                               .setBuildingProducer(BuildingCook::new)
                               .setBuildingViewProducer(() -> BuildingCook.View::new)
                               .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.COOK_ID))
+                              .addBuildingModuleProducer(BuildingCook.CraftingModule::new)
+                              .addBuildingModuleProducer(BuildingCook.SmeltingModule::new)
                               .addBuildingModuleProducer(MinimumStockModule::new, MinimumStockModuleView::new)
                               .addBuildingModuleProducer(() -> new ItemListModule(FUEL_LIST), () -> new ItemListModuleView(FUEL_LIST, COM_MINECOLONIES_REQUESTS_BURNABLE, false,
                                 (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getFuel()))
@@ -156,6 +161,7 @@ public final class ModBuildingsInitializer
                                  .setBuildingViewProducer(() -> BuildingCrusher.View::new)
                                  .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.CRUSHER_ID))
                                  .addBuildingModuleProducer(CrafterTaskModule::new, CrafterTaskModuleView::new)
+                                 .addBuildingModuleProducer(BuildingCrusher.CraftingModule::new)
                                  .createBuildingEntry();
 
         ModBuildings.deliveryman = new BuildingEntry.Builder()
@@ -173,6 +179,7 @@ public final class ModBuildingsInitializer
                                 .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.FARMER_ID))
                                 .addBuildingModuleProducer(CrafterTaskModule::new, CrafterTaskModuleView::new)
                                 .addBuildingModuleProducer(() -> new SettingsModule().with(BuildingFarmer.FERTILIZE, new BoolSetting(true)), SettingsModuleView::new)
+                                .addBuildingModuleProducer(BuildingFarmer.CraftingModule::new)
                                 .createBuildingEntry();
 
         ModBuildings.fisherman = new BuildingEntry.Builder()
@@ -212,6 +219,7 @@ public final class ModBuildingsInitializer
                                     .setBuildingProducer(BuildingLumberjack::new)
                                     .setBuildingViewProducer(() -> BuildingLumberjack.View::new)
                                     .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.LUMBERJACK_ID))
+                                    .addBuildingModuleProducer(BuildingLumberjack.CraftingModule::new)
                                     .addBuildingModuleProducer(() -> new ItemListModule(SAPLINGS_LIST), () -> new ItemListModuleView(SAPLINGS_LIST, COM_MINECOLONIES_REQUESTS_SAPLINGS, true,
                                       (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getCopyOfSaplings()))
                                     .addBuildingModuleProducer(CrafterTaskModule::new, CrafterTaskModuleView::new)
@@ -224,6 +232,7 @@ public final class ModBuildingsInitializer
                                .setBuildingProducer(BuildingMiner::new)
                                .setBuildingViewProducer(() -> BuildingMiner.View::new)
                                .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.MINER_ID))
+                               .addBuildingModuleProducer(SimpleCraftingModule::new)
                                .createBuildingEntry();
 
         ModBuildings.sawmill = new BuildingEntry.Builder()
@@ -232,6 +241,7 @@ public final class ModBuildingsInitializer
                                  .setBuildingViewProducer(() -> BuildingSawmill.View::new)
                                  .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.SAWMILL_ID))
                                  .addBuildingModuleProducer(CrafterTaskModule::new, CrafterTaskModuleView::new)
+                                 .addBuildingModuleProducer(BuildingSawmill.CraftingModule::new)
                                  .createBuildingEntry();
 
         ModBuildings.shepherd = new BuildingEntry.Builder()
@@ -248,6 +258,7 @@ public final class ModBuildingsInitializer
                                 .setBuildingBlock(ModBlocks.blockHutSifter)
                                 .setBuildingProducer(BuildingSifter::new)
                                 .setBuildingViewProducer(() -> BuildingSifter.View::new)
+                                .addBuildingModuleProducer(BuildingSifter.CraftingModule::new)
                                 .addBuildingModuleProducer(MinimumStockModule::new, MinimumStockModuleView::new)
                                 .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.SIFTER_ID))
                                 .createBuildingEntry();
@@ -257,6 +268,7 @@ public final class ModBuildingsInitializer
                                   .setBuildingProducer(BuildingSmeltery::new)
                                   .setBuildingViewProducer(() -> BuildingSmeltery.View::new)
                                   .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.SMELTERY_ID))
+                                  .addBuildingModuleProducer(BuildingSmeltery.SmeltingModule::new)
                                   .addBuildingModuleProducer(() -> new ItemListModule(FUEL_LIST), () -> new ItemListModuleView(FUEL_LIST, COM_MINECOLONIES_REQUESTS_BURNABLE, false,
                                     (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getFuel()))
                                   .addBuildingModuleProducer(() -> new ItemListModule(ORE_LIST), () -> new ItemListModuleView(ORE_LIST, COM_MINECOLONIES_REQUESTS_SMELTABLE_ORE, true,
@@ -269,6 +281,7 @@ public final class ModBuildingsInitializer
                                     .setBuildingViewProducer(() -> BuildingStonemason.View::new)
                                     .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.STONE_MASON_ID))
                                     .addBuildingModuleProducer(CrafterTaskModule::new, CrafterTaskModuleView::new)
+                                    .addBuildingModuleProducer(BuildingStonemason.CraftingModule::new)
                                     .createBuildingEntry();
 
         ModBuildings.stoneSmelter = new BuildingEntry.Builder()
@@ -276,6 +289,7 @@ public final class ModBuildingsInitializer
                                       .setBuildingProducer(BuildingStoneSmeltery::new)
                                       .setBuildingViewProducer(() -> BuildingStoneSmeltery.View::new)
                                       .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.STONE_SMELTERY_ID))
+                                      .addBuildingModuleProducer(BuildingStoneSmeltery.SmeltingModule::new)
                                       .addBuildingModuleProducer(() -> new ItemListModule(FUEL_LIST), () -> new ItemListModuleView(FUEL_LIST, COM_MINECOLONIES_REQUESTS_BURNABLE, false,
                                         (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getFuel()))
                                       .addBuildingModuleProducer(CrafterTaskModule::new, CrafterTaskModuleView::new)
@@ -324,6 +338,7 @@ public final class ModBuildingsInitializer
                                    .setBuildingProducer(BuildingEnchanter::new)
                                    .setBuildingViewProducer(() -> BuildingEnchanter.View::new)
                                    .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.ENCHANTER_ID))
+                                   .addBuildingModuleProducer(BuildingEnchanter.CraftingModule::new)
                                    .createBuildingEntry();
 
         ModBuildings.university = new BuildingEntry.Builder()
@@ -359,6 +374,7 @@ public final class ModBuildingsInitializer
                                      .setBuildingProducer(BuildingGlassblower::new)
                                      .setBuildingViewProducer(() -> BuildingGlassblower.View::new)
                                      .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.GLASSBLOWER_ID))
+                                     .addBuildingModuleProducer(BuildingGlassblower.CraftingModule::new)
                                      .addBuildingModuleProducer(() -> new ItemListModule(FUEL_LIST), () -> new ItemListModuleView(FUEL_LIST, COM_MINECOLONIES_REQUESTS_BURNABLE, false,
                                        (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getFuel()))
                                      .addBuildingModuleProducer(CrafterTaskModule::new, CrafterTaskModuleView::new)
@@ -369,6 +385,7 @@ public final class ModBuildingsInitializer
                               .setBuildingProducer(BuildingDyer::new)
                               .setBuildingViewProducer(() -> BuildingDyer.View::new)
                               .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.DYER_ID))
+                              .addBuildingModuleProducer(BuildingDyer.CraftingModule::new)
                               .addBuildingModuleProducer(() -> new ItemListModule(FUEL_LIST), () -> new ItemListModuleView(FUEL_LIST, COM_MINECOLONIES_REQUESTS_BURNABLE, false,
                                 (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getFuel()))
                               .addBuildingModuleProducer(CrafterTaskModule::new, CrafterTaskModuleView::new)
@@ -380,6 +397,7 @@ public final class ModBuildingsInitializer
                                   .setBuildingViewProducer(() -> BuildingFletcher.View::new)
                                   .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.FLETCHER_ID))
                                   .addBuildingModuleProducer(CrafterTaskModule::new, CrafterTaskModuleView::new)
+                                  .addBuildingModuleProducer(BuildingFletcher.CraftingModule::new)
                                   .createBuildingEntry();
 
         ModBuildings.tavern = new BuildingEntry.Builder()
@@ -398,6 +416,7 @@ public final class ModBuildingsInitializer
                                   .setBuildingViewProducer(() -> BuildingMechanic.View::new)
                                   .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.MECHANIC_ID))
                                   .addBuildingModuleProducer(CrafterTaskModule::new, CrafterTaskModuleView::new)
+                                  .addBuildingModuleProducer(BuildingMechanic.CraftingModule::new)
                                   .createBuildingEntry();
 
         ModBuildings.plantation = new BuildingEntry.Builder()
@@ -406,6 +425,7 @@ public final class ModBuildingsInitializer
                                     .setBuildingViewProducer(() -> BuildingPlantation.View::new)
                                     .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.PLANTATION_ID))
                                     .addBuildingModuleProducer(CrafterTaskModule::new, CrafterTaskModuleView::new)
+                                    .addBuildingModuleProducer(BuildingPlantation.CraftingModule::new)
                                     .createBuildingEntry();
 
         ModBuildings.rabbitHutch = new BuildingEntry.Builder()
@@ -422,6 +442,7 @@ public final class ModBuildingsInitializer
                                        .setBuildingViewProducer(() -> BuildingConcreteMixer.View::new)
                                        .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.CONCRETE_ID))
                                        .addBuildingModuleProducer(CrafterTaskModule::new, CrafterTaskModuleView::new)
+                                       .addBuildingModuleProducer(BuildingConcreteMixer.CraftingModule::new)
                                        .createBuildingEntry();
 
         ModBuildings.beekeeper = new BuildingEntry.Builder()

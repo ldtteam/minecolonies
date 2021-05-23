@@ -7,15 +7,18 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.huts.WindowHutCrusherModule;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
+import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.coremod.colony.jobs.JobCrusher;
 import com.minecolonies.coremod.network.messages.server.colony.building.crusher.CrusherSetModeMessage;
 import net.minecraft.item.ItemStack;
@@ -24,6 +27,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -87,7 +91,17 @@ public class BuildingCrusher extends AbstractBuildingCrafter
     public BuildingCrusher(final IColony c, final BlockPos l)
     {
         super(c, l);
-        loadCrusherMode();
+    }
+
+    @Override
+    public void registerModule(@NotNull final IBuildingModule module)
+    {
+        super.registerModule(module);
+
+        if (module instanceof CraftingModule)
+        {
+            loadCrusherMode();
+        }
     }
 
     /**
@@ -154,6 +168,13 @@ public class BuildingCrusher extends AbstractBuildingCrafter
 
     @Override
     public boolean isRecipeAlterationAllowed() { return false; }
+
+    @Override
+    public boolean canRecipeBeAdded(@NotNull final IToken<?> token)
+    {
+        if (!super.canRecipeBeAdded(token)) return false;
+        return isRecipeCompatibleWithCraftingModule(token);
+    }
 
     @Override
     public boolean canCraftComplexRecipes()
@@ -396,6 +417,16 @@ public class BuildingCrusher extends AbstractBuildingCrafter
         public Window getWindow()
         {
             return new WindowHutCrusherModule(this);
+        }
+    }
+
+    public static class CraftingModule extends AbstractCraftingBuildingModule.Custom
+    {
+        @Nullable
+        @Override
+        public IJob<?> getCraftingJob()
+        {
+            return getMainBuildingJob().orElseGet(() -> new JobCrusher(null));
         }
     }
 }

@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.Log;
@@ -22,7 +23,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -196,6 +199,13 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
         tasks.goals.stream().filter(goal -> goal.getGoal() instanceof AbstractAISkeleton).forEach(goal -> tasks.removeGoal(goal.getGoal()));
         workerAI = new WeakReference<>(tempAI);
         tasks.addGoal(TASK_PRIORITY, tempAI);
+    }
+
+    @NotNull
+    @Override
+    public List<IGenericRecipe> getAdditionalRecipesForDisplayPurposesOnly()
+    {
+        return Collections.emptyList();
     }
 
     @Override

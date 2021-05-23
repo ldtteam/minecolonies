@@ -3,25 +3,28 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import com.minecolonies.api.crafting.IRecipeStorage;
+import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
+import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
+import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.coremod.colony.jobs.JobSawmill;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Optional;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
@@ -96,51 +99,12 @@ public class BuildingSawmill extends AbstractBuildingCrafter
     @Override
     public boolean canRecipeBeAdded(final IToken<?> token)
     {
-        Optional<Boolean> isRecipeAllowed;
-
         if (!super.canRecipeBeAdded(token))
         {
             return false;
         }
 
-        isRecipeAllowed = super.canRecipeBeAddedBasedOnTags(token);
-        if (isRecipeAllowed.isPresent())
-        {
-            return isRecipeAllowed.get();
-        }
-        else
-        {
-            // Additional recipe rules
-
-            final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-
-            double amountOfValidBlocks = 0;
-            double blocks = 0;
-            for (final ItemStorage inputItem : storage.getInput())
-            {
-                if (!inputItem.isEmpty())
-                {
-                    if (inputItem.getItem().isIn(ItemTags.PLANKS) || inputItem.getItem().isIn(ItemTags.LOGS))
-                    {
-                        amountOfValidBlocks++;
-                        continue;
-                    }
-                    for (final ResourceLocation tag : inputItem.getItem().getTags())
-                    {
-                        if (tag.getPath().contains("wood"))
-                        {
-                            amountOfValidBlocks++;
-                            break;
-                        }
-                    }
-                    blocks++;
-                }
-            }
-
-            return amountOfValidBlocks > 0 && amountOfValidBlocks / blocks > MIN_PERCENTAGE_TO_CRAFT;
-
-            // End Additional recipe rules
-        }
+        return isRecipeCompatibleWithCraftingModule(token);
     }
 
     @Override
@@ -171,6 +135,51 @@ public class BuildingSawmill extends AbstractBuildingCrafter
         public Window getWindow()
         {
             return new WindowHutWorkerModulePlaceholder<>(this, SAWMILL);
+        }
+    }
+
+    public static class CraftingModule extends AbstractCraftingBuildingModule.Crafting
+    {
+        @Nullable
+        @Override
+        public IJob<?> getCraftingJob()
+        {
+            return getMainBuildingJob().orElseGet(() -> new JobSawmill(null));
+        }
+
+        @Override
+        public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
+        {
+            final Optional<Boolean> isRecipeAllowed = CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, SAWMILL);
+            if (isRecipeAllowed.isPresent()) return isRecipeAllowed.get();
+
+            double amountOfValidBlocks = 0;
+            double blocks = 0;
+            for (final List<ItemStack> stacks : recipe.getInputs())
+            {
+                // just check the first alternative for now
+                if (stacks.isEmpty()) continue;
+                final ItemStack stack = stacks.get(0);
+                if (!ItemStackUtils.isEmpty(stack))
+                {
+                    if (stack.getItem().isIn(ItemTags.PLANKS) || stack.getItem().isIn(ItemTags.LOGS))
+                    {
+                        amountOfValidBlocks += stack.getCount();
+                        continue;
+                    }
+                    for (final ResourceLocation tag : stack.getItem().getTags())
+                    {
+                        if (tag.getPath().contains("wood"))
+                        {
+                            amountOfValidBlocks += stack.getCount();
+                            break;
+                        }
+                    }
+                    blocks += stack.getCount();
+                }
+            }
+
+            return amountOfValidBlocks > 0 && amountOfValidBlocks / blocks > MIN_PERCENTAGE_TO_CRAFT;
         }
     }
 }

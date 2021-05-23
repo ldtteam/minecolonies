@@ -3,22 +3,21 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import com.minecolonies.api.crafting.IRecipeStorage;
+import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.entity.citizen.Skill;
+import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
+import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.coremod.colony.jobs.JobStoneSmeltery;
-import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Optional;
+import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 
@@ -92,22 +91,7 @@ public class BuildingStoneSmeltery extends AbstractBuildingSmelterCrafter
             return false;
         }
 
-        final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-        if (storage == null)
-        {
-            return false;
-        }
-
-        if (storage.getIntermediate() != Blocks.FURNACE || storage.getInput().isEmpty())
-        {
-            return false;
-        }
-
-        Optional<Boolean> isRecipeAllowed;
-
-        isRecipeAllowed = super.canRecipeBeAddedBasedOnTags(token);
-        
-        return isRecipeAllowed.orElse(false);
+        return isRecipeCompatibleWithCraftingModule(token);
     }
 
     @Override
@@ -138,6 +122,22 @@ public class BuildingStoneSmeltery extends AbstractBuildingSmelterCrafter
         public Window getWindow()
         {
             return new WindowHutWorkerModulePlaceholder<>(this, STONE_SMELTERY);
+        }
+    }
+
+    public static class SmeltingModule extends AbstractCraftingBuildingModule.Smelting
+    {
+        @Nullable
+        @Override
+        public IJob<?> getCraftingJob()
+        {
+            return getMainBuildingJob().orElseGet(() -> new JobStoneSmeltery(null));
+        }
+
+        @Override
+        public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
+        {
+            return CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, STONE_SMELTERY).orElse(false);
         }
     }
 }

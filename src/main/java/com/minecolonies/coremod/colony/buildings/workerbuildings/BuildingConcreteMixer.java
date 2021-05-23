@@ -14,6 +14,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
+import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.coremod.colony.jobs.JobConcreteMixer;
 import net.minecraft.block.BlockState;
 import net.minecraft.fluid.Fluids;
@@ -291,6 +292,16 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
         public Window getWindow()
         {
             return new WindowHutWorkerModulePlaceholder<>(this, CONCRETE_MIXER);
+        }
+    }
+
+    public static class CraftingModule extends AbstractCraftingBuildingModule.Custom
+    {
+        @Nullable
+        @Override
+        public IJob<?> getCraftingJob()
+        {
+            return getMainBuildingJob().orElseGet(() -> new JobConcreteMixer(null));
         }
     }
 }

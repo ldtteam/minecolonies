@@ -84,7 +84,7 @@ public class CitizenData implements ICitizenData
     /**
      * Possible texture suffixes.
      */
-    private static final List<String> SUFFIXES = Arrays.asList("_b", "_d", "_a", "_w");
+    public static final List<String> SUFFIXES = Arrays.asList("_b", "_d", "_a", "_w");
 
     /**
      * The unique citizen id.

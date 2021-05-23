@@ -7,7 +7,6 @@ import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
@@ -16,15 +15,18 @@ import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.inventory.container.ContainerCrafting;
+import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
 import com.minecolonies.coremod.colony.buildings.modules.MinimumStockModule;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
@@ -431,30 +433,12 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
             return false;
         }
 
-        Optional<Boolean> isRecipeAllowed;
-
         if (!super.canRecipeBeAdded(token))
         {
             return false;
         }
 
-        isRecipeAllowed = super.canRecipeBeAddedBasedOnTags(token);
-        if (isRecipeAllowed.isPresent())
-        {
-            return isRecipeAllowed.get();
-        }
-        else
-        {
-            // Additional recipe rules
-
-            final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-
-            return ItemStackUtils.CAN_EAT.test(storage.getPrimaryOutput())
-                     || ItemStackUtils.CAN_EAT.test(FurnaceRecipes.getInstance()
-                                                      .getSmeltingResult(storage.getPrimaryOutput()));
-
-            // End Additional recipe rules
-        }
+        return isRecipeCompatibleWithCraftingModule(token);
     }
 
     @NotNull
@@ -576,6 +560,52 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
         public Window getWindow()
         {
             return new WindowHutWorkerModulePlaceholder<>(this, COOK_DESC);
+        }
+    }
+
+    public static class CraftingModule extends AbstractCraftingBuildingModule.Crafting
+    {
+        @Nullable
+        @Override
+        public IJob<?> getCraftingJob()
+        {
+            if (this.building != null)
+            {
+                final ICitizenData assistant = ((BuildingCook) this.building).getAssistant();
+                if (assistant != null)
+                {
+                    return assistant.getJob();
+                }
+            }
+            return new JobCookAssistant(null);
+        }
+
+        @Override
+        public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
+        {
+            final Optional<Boolean> isRecipeAllowed = CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, COOK_DESC);
+            if (isRecipeAllowed.isPresent()) return isRecipeAllowed.get();
+
+            final ItemStack output = recipe.getPrimaryOutput();
+            return ItemStackUtils.CAN_EAT.test(output)
+                    || ItemStackUtils.CAN_EAT.test(FurnaceRecipes.getInstance()
+                    .getSmeltingResult(output));
+        }
+    }
+
+    public static class SmeltingModule extends AbstractCraftingBuildingModule.Smelting
+    {
+        @Nullable
+        @Override
+        public IJob<?> getCraftingJob()
+        {
+            return getMainBuildingJob().orElseGet(() -> new JobCook(null));
+        }
+
+        @Override
+        public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
+        {
+            return ItemStackUtils.CAN_EAT.test(recipe.getPrimaryOutput());
         }
     }
 }

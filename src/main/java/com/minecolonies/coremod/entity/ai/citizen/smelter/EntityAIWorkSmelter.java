@@ -3,8 +3,12 @@ package com.minecolonies.coremod.entity.ai.citizen.smelter;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
+import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requestable.StackList;
+import com.minecolonies.api.compatibility.ICompatibilityManager;
+import com.minecolonies.api.crafting.GenericRecipe;
+import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
@@ -12,12 +16,16 @@ import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingSmeltery;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.JobSmelter;
 import com.minecolonies.coremod.colony.requestable.SmeltableOre;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIUsesFurnace;
+import com.minecolonies.coremod.util.FurnaceRecipes;
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentData;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -32,9 +40,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.SMELTER_SMELTING_ITEMS;
@@ -192,6 +198,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
                       ENCHANTED_BOOK_CHANCE[getOwnBuilding().getBuildingLevel() - 1] < new Random().nextInt(MAX_ENCHANTED_BOOK_CHANCE))
                 {
                     final ItemStack book = extractEnchantFromItem(stack);
+                    worker.decreaseSaturationForAction();
                     worker.getInventoryCitizen().insertItem(InventoryUtils.findFirstSlotInItemHandlerWith(
                       worker.getInventoryCitizen(),
                       ItemStack::isEmpty), book, false);
@@ -399,7 +406,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
         return PROGRESS_MULTIPLIER / Math.min((int) (getPrimarySkillLevel()/2.0) + 1, MAX_LEVEL) * HITTING_TIME;
     }
 
-    private ItemStack extractEnchantFromItem(final ItemStack item)
+    private static ItemStack extractEnchantFromItem(final ItemStack item)
     {
         final Map<Enchantment, Integer> enchants = EnchantmentHelper.getEnchantments(item);
         final ItemStack books = new ItemStack(Items.ENCHANTED_BOOK);
@@ -407,7 +414,68 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
         {
             EnchantedBookItem.addEnchantment(books, new EnchantmentData(entry.getKey(), entry.getValue()));
         }
-        worker.decreaseSaturationForAction();
         return books;
+    }
+
+    @NotNull
+    public static List<IGenericRecipe> getAdditionalRecipesForDisplayPurposesOnly()
+    {
+        // TODO: is there a better way to extract this information from the rest of the code?
+        final List<IGenericRecipe> recipes = new ArrayList<>();
+        final ICompatibilityManager compatibility = IColonyManager.getInstance().getCompatibilityManager();
+        for (final ItemStack stack : compatibility.getListOfAllItems())
+        {
+            if (isSmeltableToolOrWeapon(stack))
+            {
+                final Tuple<ItemStack, Integer> result = getMaterialAndAmount(stack);
+                if (ItemStackUtils.isNotEmpty(result.getA()))
+                {
+                    final ItemStack output = result.getA().copy();
+                    output.setCount(result.getB());
+                    recipes.add(createSmeltingRecipe(new ItemStorage(stack), output, Blocks.AIR));
+                    createEnchantedRecipe(stack, output).ifPresent(recipes::add);
+                }
+            }
+
+            if (ItemStackUtils.IS_SMELTABLE.and(compatibility::isOre).test(stack))
+            {
+                final ItemStack output = FurnaceRecipes.getInstance().getSmeltingResult(stack);
+                recipes.add(createSmeltingRecipe(new ItemStorage(stack), output, Blocks.FURNACE));
+            }
+        }
+        return recipes;
+    }
+
+    private static IGenericRecipe createSmeltingRecipe(final ItemStorage input, final ItemStack output, final Block intermediate)
+    {
+        return GenericRecipe.of(StandardFactoryController.getInstance().getNewInstance(
+                TypeConstants.RECIPE,
+                StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+                Collections.singletonList(input),
+                1,
+                output,
+                intermediate));
+    }
+
+    private static Optional<IGenericRecipe> createEnchantedRecipe(final ItemStack input, final ItemStack output)
+    {
+        final ItemStack enchInput = input.copy();
+        EnchantmentHelper.addRandomEnchantment(new Random(), enchInput, 10, true);
+        if (!enchInput.isEnchanted()) return Optional.empty();
+
+        final ItemStack book = extractEnchantFromItem(enchInput);
+
+        //noinspection ConstantConditions
+        return Optional.of(GenericRecipe.of(StandardFactoryController.getInstance().getNewInstance(
+                TypeConstants.RECIPE,
+                StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+                Collections.singletonList(new ItemStorage(enchInput)),
+                1,
+                output,
+                Blocks.AIR,
+                null,
+                null,
+                null,
+                Collections.singletonList(book))));
     }
 }
