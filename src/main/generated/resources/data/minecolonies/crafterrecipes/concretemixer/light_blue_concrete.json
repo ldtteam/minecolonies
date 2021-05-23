@@ -1,0 +1,11 @@
+{
+  "type": "recipe",
+  "crafter": "concretemixer",
+  "inputs": [
+    {
+      "item": "minecraft:light_blue_concrete_powder"
+    }
+  ],
+  "result": "minecraft:light_blue_concrete",
+  "intermediate": "minecraft:air"
+}

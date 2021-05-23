@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.event;
 
 import com.minecolonies.coremod.generation.defaults.*;
+import net.minecraft.data.DataGenerator;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 
 public class GatherDataHandler
@@ -12,11 +13,14 @@ public class GatherDataHandler
      */
     public static void dataGeneratorSetup(final GatherDataEvent event)
     {
-        event.getGenerator().addProvider(new DefaultBlockLootTableProvider(event.getGenerator()));
-        event.getGenerator().addProvider(new DefaultSoundProvider(event.getGenerator()));
-        event.getGenerator().addProvider(new DefaultResearchProvider(event.getGenerator()));
-        event.getGenerator().addProvider(new SawmillTimberFrameRecipeProvider(event.getGenerator()));
-        event.getGenerator().addProvider(new DefaultSifterCraftingProvider(event.getGenerator()));
-        event.getGenerator().addProvider(new DefaultEnchanterCraftingProvider(event.getGenerator()));
+        final DataGenerator generator = event.getGenerator();
+        generator.addProvider(new DefaultBlockLootTableProvider(generator));
+        generator.addProvider(new DefaultSoundProvider(generator));
+        generator.addProvider(new DefaultResearchProvider(generator));
+        generator.addProvider(new SawmillTimberFrameRecipeProvider(generator));
+        generator.addProvider(new DefaultSifterCraftingProvider(generator));
+        generator.addProvider(new DefaultEnchanterCraftingProvider(generator));
+        generator.addProvider(new DefaultConcreteMixerCraftingProvider(generator));
+        generator.addProvider(new DefaultGlassblowerCraftingProvider(generator));
     }
 }

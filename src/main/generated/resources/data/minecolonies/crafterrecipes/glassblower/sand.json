@@ -1,0 +1,11 @@
+{
+  "type": "recipe",
+  "crafter": "glassblower",
+  "inputs": [
+    {
+      "item": "minecraft:sand"
+    }
+  ],
+  "result": "minecraft:glass",
+  "intermediate": "minecraft:furnace"
+}
