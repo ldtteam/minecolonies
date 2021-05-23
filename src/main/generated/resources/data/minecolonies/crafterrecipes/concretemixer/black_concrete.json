@@ -1,0 +1,11 @@
+{
+  "type": "recipe",
+  "crafter": "concretemixer",
+  "inputs": [
+    {
+      "item": "minecraft:black_concrete_powder"
+    }
+  ],
+  "result": "minecraft:black_concrete",
+  "intermediate": "minecraft:air"
+}
