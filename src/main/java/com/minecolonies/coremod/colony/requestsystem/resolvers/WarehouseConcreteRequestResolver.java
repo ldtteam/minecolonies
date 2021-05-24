@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IConcreteDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
+import com.minecolonies.api.colony.requestsystem.requestable.INonExhaustiveDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractWarehouseRequestResolver;
@@ -41,9 +42,19 @@ public class WarehouseConcreteRequestResolver extends AbstractWarehouseRequestRe
             {
                 for (final TileEntityWareHouse wareHouse : wareHouses)
                 {
-                    if (wareHouse.hasMatchingItemStackInWarehouse(possible, requestToCheck.getRequest().getMinimumCount(), ignoreNBT))
+                    if (requestToCheck.getRequest() instanceof INonExhaustiveDeliverable)
                     {
-                        return true;
+                        if (wareHouse.hasMatchingItemStackInWarehouse(possible, requestToCheck.getRequest().getMinimumCount(), ignoreNBT, ((INonExhaustiveDeliverable) requestToCheck.getRequest()).getLeftOver()))
+                        {
+                            return true;
+                        }
+                    }
+                    else
+                    {
+                        if (wareHouse.hasMatchingItemStackInWarehouse(possible, requestToCheck.getRequest().getMinimumCount(), ignoreNBT))
+                        {
+                            return true;
+                        }
                     }
                 }
             }

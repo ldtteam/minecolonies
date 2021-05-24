@@ -1940,6 +1940,7 @@
   "com.minecolonies.coremod.gui.tooldesc.scepterlumberjack": "Restrict the Forester's working area by left-clicking one corner and right-clicking the opposite corner with the tool.",
 
   "com.minecolonies.coremod.setting.minecolonies:fertilize": "Request Fertilizer",
+  "com.minecolonies.coremod.setting.minecolonies:warehousemin": "Min Warehouse Stock:",
 
   "com.minecolonies.coremod.gui.givetool": "Obtain Tool"
 }

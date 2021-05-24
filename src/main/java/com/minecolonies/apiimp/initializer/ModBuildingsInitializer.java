@@ -13,6 +13,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.buildings.BuildingMysticalSite;
 import com.minecolonies.coremod.colony.buildings.DefaultBuildingInstance;
 import com.minecolonies.coremod.colony.buildings.modules.*;
+import com.minecolonies.coremod.colony.buildings.modules.settings.IntSetting;
 import com.minecolonies.coremod.colony.buildings.modules.settings.StringSetting;
 import com.minecolonies.coremod.colony.buildings.moduleviews.*;
 import com.minecolonies.coremod.colony.buildings.views.EmptyView;
@@ -120,7 +121,7 @@ public final class ModBuildingsInitializer
                                    .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.COMPOSTER_ID))
                                    .addBuildingModuleProducer(() -> new ItemListModule(COMPOSTABLE_LIST), () -> new ItemListModuleView(COMPOSTABLE_LIST, COM_MINECOLONIES_REQUESTS_COMPOSTABLE_UI, false,
                                      (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getCompostInputs()))
-                                   .addBuildingModuleProducer(() -> new SettingsModule().with(BuildingComposter.PRODUCE_DIRT, new BoolSetting(false)), SettingsModuleView::new)
+                                   .addBuildingModuleProducer(() -> new SettingsModule().with(BuildingComposter.PRODUCE_DIRT, new BoolSetting(false)).with(BuildingComposter.MIN, new IntSetting(16)), SettingsModuleView::new)
                                    .createBuildingEntry();
 
         ModBuildings.cook = new BuildingEntry.Builder()

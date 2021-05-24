@@ -22,7 +22,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.LIST_REQUE
 /**
  * Deliverable that can only be fulfilled by a single stack with a given minimal amount of items matching one of a list of stacks.
  */
-public class StackList implements IConcreteDeliverable
+public class StackList implements IConcreteDeliverable, INonExhaustiveDeliverable
 {
     /**
      * Set of type tokens belonging to this class.
@@ -38,6 +38,7 @@ public class StackList implements IConcreteDeliverable
     private static final String TAG_DESCRIPTION = "Desc";
     private static final String NBT_COUNT       = "Count";
     private static final String NBT_MINCOUNT    = "MinCount";
+    private static final String NBT_LEFTOVER    = "leftover";
 
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
 
@@ -84,6 +85,11 @@ public class StackList implements IConcreteDeliverable
     private int minCount;
 
     /**
+     * Count to leave behind in warehouse.
+     */
+    private int leftOver;
+
+    /**
      * Create a Stacks deliverable.
      *
      * @param stacks      the required stacks.
@@ -105,7 +111,21 @@ public class StackList implements IConcreteDeliverable
      */
     public StackList(@NotNull final List<ItemStack> stacks, final String description, final int count, final int minCount)
     {
-        this(stacks, true, true, false, ItemStackUtils.EMPTY, description, count, minCount);
+        this(stacks, true, true, false, ItemStackUtils.EMPTY, description, count, minCount, 0);
+    }
+
+    /**
+     * Create a Stacks deliverable.
+     *
+     * @param stacks      the required stacks.
+     * @param description the description.
+     * @param count       the count.
+     * @param minCount    the min count.
+     * @param leftOver    the amount to be left over.
+     */
+    public StackList(@NotNull final List<ItemStack> stacks, final String description, final int count, final int minCount, final int leftOver)
+    {
+        this(stacks, true, true, false, ItemStackUtils.EMPTY, description, count, minCount, leftOver);
     }
 
     /**
@@ -119,6 +139,7 @@ public class StackList implements IConcreteDeliverable
      * @param description the description.
      * @param count       the count.
      * @param minCount    the min count.
+     * @param leftOver    the left over amount.
      */
     public StackList(
       @NotNull final List<ItemStack> stacks,
@@ -128,7 +149,8 @@ public class StackList implements IConcreteDeliverable
       @NotNull final ItemStack result,
       final String description,
       final int count,
-      final int minCount)
+      final int minCount,
+      final int leftOver)
     {
         this.description = description;
         for (final ItemStack stack : stacks)
@@ -145,6 +167,7 @@ public class StackList implements IConcreteDeliverable
         this.result = result;
         this.count = count;
         this.minCount = minCount;
+        this.leftOver = leftOver;
     }
 
     /**
@@ -175,6 +198,7 @@ public class StackList implements IConcreteDeliverable
         compound.putString(TAG_DESCRIPTION, input.description);
         compound.putInt(NBT_COUNT, input.getCount());
         compound.putInt(NBT_MINCOUNT, input.getMinimumCount());
+        compound.putInt(NBT_LEFTOVER, input.getLeftOver());
 
         return compound;
     }
@@ -209,8 +233,9 @@ public class StackList implements IConcreteDeliverable
             count = compound.getInt(NBT_COUNT);
             minCount = compound.getInt(NBT_MINCOUNT);
         }
+        int leftOver = compound.getInt(NBT_LEFTOVER);
 
-        return new StackList(stacks, matchMeta, matchNBT, matchOreDic, result, desc, count, minCount);
+        return new StackList(stacks, matchMeta, matchNBT, matchOreDic, result, desc, count, minCount, leftOver);
     }
 
     /**
@@ -237,6 +262,7 @@ public class StackList implements IConcreteDeliverable
         buffer.writeString(input.description);
         buffer.writeInt(input.getCount());
         buffer.writeInt(input.getMinimumCount());
+        buffer.writeInt(input.getLeftOver());
     }
 
     /**
@@ -263,8 +289,9 @@ public class StackList implements IConcreteDeliverable
         final String desc = buffer.readString(32767);
         int count = buffer.readInt();
         int minCount = buffer.readInt();
+        int leftOver = buffer.readInt();
 
-        return new StackList(stacks, matchMeta, matchNBT, matchOreDic, result, desc, count, minCount);
+        return new StackList(stacks, matchMeta, matchNBT, matchOreDic, result, desc, count, minCount, leftOver);
     }
 
     @Override
@@ -296,6 +323,12 @@ public class StackList implements IConcreteDeliverable
         return count;
     }
 
+    @Override
+    public int getLeftOver()
+    {
+        return leftOver;
+    }
+
     @NotNull
     public List<ItemStack> getStacks()
     {
@@ -311,7 +344,7 @@ public class StackList implements IConcreteDeliverable
     @Override
     public IDeliverable copyWithCount(final int newCount)
     {
-        return new StackList(this.theStacks, this.matchMeta, this.matchNBT, this.matchOreDic, this.result, this.description, newCount, this.minCount);
+        return new StackList(this.theStacks, this.matchMeta, this.matchNBT, this.matchOreDic, this.result, this.description, newCount, this.minCount, this.leftOver);
     }
 
     @NotNull
