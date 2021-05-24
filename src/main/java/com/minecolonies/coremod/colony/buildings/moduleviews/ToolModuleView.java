@@ -52,7 +52,7 @@ public class ToolModuleView extends AbstractBuildingModuleView
     @Override
     public String getIcon()
     {
-        return tool.getRegistryName().getPath();
+        return "scepter";
     }
 
     /**
