@@ -239,22 +239,22 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
                     }
                 }
 
+                int count = Math.min(remainingCount, leftOver);
                 final ItemStack matchingStack = tuple.getA().copy();
-                matchingStack.setCount(Math.min(remainingCount, leftOver));
+                matchingStack.setCount(count);
 
-                final ItemStack deliveryStack = matchingStack.copy();
-                completedRequest.addDelivery(deliveryStack);
+                completedRequest.addDelivery(matchingStack);
 
                 final ILocation itemStackLocation = manager.getFactoryController().getNewInstance(TypeConstants.ILOCATION, tuple.getB(), wareHouse.getWorld().getDimensionKey());
 
                 final Delivery delivery =
-                  new Delivery(itemStackLocation, completedRequest.getRequester().getLocation(), deliveryStack, getDefaultDeliveryPriority(true));
+                  new Delivery(itemStackLocation, completedRequest.getRequester().getLocation(), matchingStack, getDefaultDeliveryPriority(true));
 
                 final IToken<?> requestToken =
                   manager.createRequest(manager.getFactoryController()
                                           .getNewInstance(TypeToken.of(this.getClass()), completedRequest.getRequester().getLocation(), completedRequest.getId()), delivery);
                 deliveries.add(manager.getRequestForToken(requestToken));
-                remainingCount -= ItemStackUtils.getSize(matchingStack);
+                remainingCount -= count;
 
                 if (remainingCount <= 0)
                 {
