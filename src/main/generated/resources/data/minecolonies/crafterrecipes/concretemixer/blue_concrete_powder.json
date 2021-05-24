@@ -1,0 +1,20 @@
+{
+  "type": "recipe",
+  "crafter": "concretemixer",
+  "inputs": [
+    {
+      "item": "minecraft:sand",
+      "count": 4
+    },
+    {
+      "item": "minecraft:gravel",
+      "count": 4
+    },
+    {
+      "item": "minecraft:blue_dye"
+    }
+  ],
+  "result": "minecraft:blue_concrete_powder",
+  "count": 8,
+  "intermediate": "minecraft:air"
+}

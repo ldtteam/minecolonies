@@ -8,11 +8,7 @@ import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingDeliveryman;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.interactionhandling.InteractionValidatorRegistry;
-import com.minecolonies.api.colony.requestsystem.request.IRequest;
-import com.minecolonies.api.colony.requestsystem.request.RequestState;
-import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
-import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestResolver;
-import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequestResolver;
+import com.minecolonies.api.colony.requestsystem.request.RequestUtils;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.InventoryUtils;
@@ -163,11 +159,7 @@ public class InteractionValidatorInitializer
               final IColony colony = citizen.getColony();
               if (colony != null)
               {
-                  final IRequest<?> request = citizen.getColony().getRequestManager().getRequestForToken(token);
-                  final IRequestResolver<?> resolver =
-                    request == null ? null : citizen.getColony().getRequestManager().getResolverForRequest(token);
-                  return request != null && request.getState() == RequestState.IN_PROGRESS && (resolver instanceof IPlayerRequestResolver
-                                                                                                 || resolver instanceof IRetryingRequestResolver);
+                  return RequestUtils.requestChainNeedsPlayer(token, citizen.getColony().getRequestManager());
               }
               return false;
           });
@@ -220,7 +212,7 @@ public class InteractionValidatorInitializer
 
             return true;
           });
-        InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(SIFTER_NO_MESH), 
+        InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(SIFTER_NO_MESH),
           citizen -> {
             if (!(citizen.getWorkBuilding() instanceof BuildingSifter))
             {

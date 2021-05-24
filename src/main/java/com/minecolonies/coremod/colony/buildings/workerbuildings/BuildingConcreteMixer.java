@@ -3,29 +3,22 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
-import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import com.minecolonies.api.crafting.IRecipeStorage;
-import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
-import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.jobs.JobConcreteMixer;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.ConcretePowderBlock;
 import net.minecraft.fluid.Fluids;
-import net.minecraft.item.*;
+import net.minecraft.item.BlockItem;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
@@ -78,48 +71,6 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
     {
         super(c, l);
         keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.PICKAXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
-    }
-
-    @Override
-    public void checkForWorkerSpecificRecipes()
-    {
-        super.checkForWorkerSpecificRecipes();
-
-        final List<ItemStorage> input = new ArrayList<>();
-        input.add(new ItemStorage(new ItemStack(Items.SAND, 4)));
-        input.add(new ItemStorage(new ItemStack(Items.GRAVEL, 4)));
-
-        for (final Item item : ModTags.concretePowder.getAllElements())
-        {
-            final List<ItemStorage> customInput = new ArrayList<>(input);
-
-            final Item dye = DyeItem.getItem(DyeColor.byTranslationKey(item.getRegistryName().getPath().replace("_concrete_powder", ""), DyeColor.WHITE));
-            customInput.add(new ItemStorage(new ItemStack(dye, 1)));
-
-            final IRecipeStorage storage = StandardFactoryController.getInstance().getNewInstance(
-              TypeConstants.RECIPE,
-              StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-              customInput,
-              3,
-              new ItemStack(item, 8),
-              Blocks.AIR);
-
-            addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage), false);
-
-            final Block block = item instanceof BlockItem ? ((BlockItem) item).getBlock() : null;
-            if (block instanceof ConcretePowderBlock)
-            {
-                final IRecipeStorage storage2 = StandardFactoryController.getInstance().getNewInstance(
-                  TypeConstants.RECIPE,
-                  StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-                  Collections.singletonList(new ItemStorage(new ItemStack(item, 1))),
-                  3,
-                  new ItemStack(((ConcretePowderBlock) block).solidifiedState.getBlock(), 1),
-                  Blocks.AIR);
-
-                addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage2), false);
-            }
-        }
     }
 
     @Override
