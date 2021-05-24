@@ -1154,6 +1154,11 @@ public final class WindowConstants
     public static final String OFF = COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF;
 
     /**
+     * String describing switch for the gui.
+     */
+    public static final String SWITCH = "com.minecolonies.coremod.gui.workerhuts.switch";
+
+    /**
      * Settings list ID.
      */
     public static final String LIST_SETTINGS = "settingslist";

@@ -3,7 +3,7 @@ package com.minecolonies.coremod.client.gui.modules;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.ScrollingList;
-import com.minecolonies.api.colony.buildings.modules.settings.ISetting;
+import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.client.gui.AbstractModuleWindow;
@@ -68,7 +68,7 @@ public class SettingsModuleWindow extends AbstractModuleWindow
      */
     private void updateSettingsList()
     {
-        final List<Map.Entry<ISettingKey<?>, ISetting>> list = new ArrayList<>(moduleView.getSettings().entrySet());
+        final List<ISettingKey<?>> list = new ArrayList<>(moduleView.getSettings().keySet());
 
         settingsList.enable();
         settingsList.show();
@@ -94,8 +94,8 @@ public class SettingsModuleWindow extends AbstractModuleWindow
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                final Map.Entry<ISettingKey<?>, ISetting> setting = list.get(index);
-                setting.getValue().addHandlersToBox(setting.getKey(), rowPane, moduleView);
+                final ISettingKey<?> key = list.get(index);
+                moduleView.getSettings().get(key).addHandlersToBox(key, rowPane, moduleView, building, SettingsModuleWindow.this);
             }
         });
     }

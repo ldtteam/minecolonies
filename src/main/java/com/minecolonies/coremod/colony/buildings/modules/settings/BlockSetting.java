@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony.buildings.modules.settings;
 import com.ldtteam.blockout.Loader;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.ButtonImage;
+import com.ldtteam.blockout.controls.ItemIcon;
 import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.Box;
 import com.ldtteam.blockout.views.View;
@@ -11,33 +12,35 @@ import com.minecolonies.api.colony.buildings.modules.settings.ISetting;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingsModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.coremod.client.gui.WindowSelectRes;
+import net.minecraft.item.BlockItem;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-import static com.minecolonies.api.util.constant.WindowConstants.OFF;
-import static com.minecolonies.api.util.constant.WindowConstants.ON;
+import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
  * Stores a boolean setting.
  */
-public class BoolSetting implements ISetting
+public class BlockSetting implements ISetting
 {
     /**
      * The value of the setting.
      */
-    private boolean value;
+    private BlockItem value;
 
     /**
      * Default value of the setting.
      */
-    private boolean defaultValue;
+    private BlockItem defaultValue;
 
     /**
      * Create a new boolean setting.
      * @param init the initial value.
      */
-    public BoolSetting(final boolean init)
+    public BlockSetting(final BlockItem init)
     {
         this.value = init;
         this.defaultValue = init;
@@ -48,7 +51,7 @@ public class BoolSetting implements ISetting
      * @param value the value.
      * @param def the default value.
      */
-    public BoolSetting(final boolean value, final boolean def)
+    public BlockSetting(final BlockItem value, final BlockItem def)
     {
         this.value = value;
         this.defaultValue = def;
@@ -58,7 +61,7 @@ public class BoolSetting implements ISetting
      * Get the setting value.
      * @return the set value.
      */
-    public boolean getValue()
+    public BlockItem getValue()
     {
         return value;
     }
@@ -67,9 +70,18 @@ public class BoolSetting implements ISetting
      * Get the default value.
      * @return the default value.
      */
-    public boolean getDefault()
+    public BlockItem getDefault()
     {
         return defaultValue;
+    }
+
+    /**
+     * Set a new block value.
+     * @param value the itemblock to set.
+     */
+    public void setValue(final BlockItem value)
+    {
+        this.value = value;
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -82,16 +94,24 @@ public class BoolSetting implements ISetting
     {
         if (pane.findPaneOfTypeByID("box", Box.class).getChildren().isEmpty())
         {
-            Loader.createFromXMLFile("minecolonies:gui/layouthuts/layoutboolsetting.xml", (View) pane);
+            Loader.createFromXMLFile("minecolonies:gui/layouthuts/layoutblocksetting.xml", (View) pane);
             pane.findPaneOfTypeByID("desc", Text.class).setText(new TranslationTextComponent("com.minecolonies.coremod.setting." + key.getUniqueId().toString()));
-            pane.findPaneOfTypeByID("trigger", ButtonImage.class).setHandler(button -> settingsModuleView.trigger(key));
+
+            pane.findPaneOfTypeByID("trigger", ButtonImage.class).setHandler(button -> new WindowSelectRes(
+              window,
+              building,
+              (stack) -> stack.getItem() instanceof BlockItem, (stack, qty) -> {
+                value = (BlockItem) stack.getItem();
+                settingsModuleView.trigger(key);
+            }, false).open());
         }
-        pane.findPaneOfTypeByID("trigger", ButtonImage.class).setText(new TranslationTextComponent(value ? ON : OFF));
+        pane.findPaneOfTypeByID("icon", ItemIcon.class).setItem(new ItemStack(value));
+        pane.findPaneOfTypeByID("trigger", ButtonImage.class).setText(new TranslationTextComponent(SWITCH));
     }
 
     @Override
     public void trigger()
     {
-        this.value = !this.value;
+
     }
 }

@@ -119,6 +119,17 @@ public class BuildingEntry extends ForgeRegistryEntry<BuildingEntry>
         }
 
         /**
+         * Add a building module view producer.
+         * @param moduleViewProducer the module view producer.
+         * @return the builder again.
+         */
+        public Builder addBuildingModuleViewProducer(final Supplier<IBuildingModuleView> moduleViewProducer)
+        {
+            buildingModuleViewProducers.add(moduleViewProducer);
+            return this;
+        }
+
+        /**
          * Add a building module producer.
          * @param moduleProducer the module producer.
          * @return the builder again.

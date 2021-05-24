@@ -12,7 +12,6 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBeekeep
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.JobBeekeeper;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
-import com.minecolonies.coremod.network.messages.server.colony.building.beekeeper.BeekeeperSetHarvestHoneycombsMessage;
 import net.minecraft.block.BeehiveBlock;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.AnimalEntity;
@@ -142,14 +141,14 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
     private IAIState prepareForHerding()
     {
         setDelay(DECIDING_DELAY);
-        if (getOwnBuilding().getHarvestTypes() != BeekeeperSetHarvestHoneycombsMessage.HarvestType.HONEY_BOTTLES)
+        if (!getOwnBuilding().getHarvestTypes().equals(BuildingBeekeeper.HONEY))
         {
             if (checkForToolOrWeapon(ToolType.SHEARS))
             {
                 return getState();
             }
         }
-        if (getOwnBuilding().getHarvestTypes() != BeekeeperSetHarvestHoneycombsMessage.HarvestType.HONEYCOMBS)
+        if (!getOwnBuilding().getHarvestTypes().equals(BuildingBeekeeper.HONEYCOMB))
         {
             checkIfRequestForItemExistOrCreateAsynch(new ItemStack(Items.GLASS_BOTTLE));
         }
@@ -320,8 +319,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
         {
             return DECIDE;
         }
-        if (getOwnBuilding().getHarvestTypes() == BeekeeperSetHarvestHoneycombsMessage.HarvestType.HONEYCOMBS ||
-              (getOwnBuilding().getHarvestTypes() == BeekeeperSetHarvestHoneycombsMessage.HarvestType.BOTH && lastHarvestedBottle))
+        if (getOwnBuilding().getHarvestTypes().equals(BuildingBeekeeper.HONEYCOMB) || (getOwnBuilding().getHarvestTypes().equals(BuildingBeekeeper.BOTH) && lastHarvestedBottle))
         {
             if (!equipTool(Hand.MAIN_HAND, ToolType.SHEARS))
             {
@@ -348,7 +346,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
 
         worker.swingArm(Hand.MAIN_HAND);
         final ItemStack itemStack = worker.getHeldItemMainhand();
-        if (getOwnBuilding().getHarvestTypes() != BeekeeperSetHarvestHoneycombsMessage.HarvestType.HONEY_BOTTLES && ItemStackUtils.isTool(itemStack, ToolType.SHEARS))
+        if (!getOwnBuilding().getHarvestTypes().equals(BuildingBeekeeper.HONEY) && ItemStackUtils.isTool(itemStack, ToolType.SHEARS))
         {
             worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, 1);
 
@@ -360,7 +358,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
             worker.getCitizenExperienceHandler().addExperience(EXP_PER_HARVEST);
             lastHarvestedBottle = false;
         }
-        else if(getOwnBuilding().getHarvestTypes() != BeekeeperSetHarvestHoneycombsMessage.HarvestType.HONEYCOMBS && itemStack.getItem() == Items.GLASS_BOTTLE)
+        else if(!getOwnBuilding().getHarvestTypes().equals(BuildingBeekeeper.HONEYCOMB) && itemStack.getItem() == Items.GLASS_BOTTLE)
         {
             int i;
             for (i = 0; i < getHoneyBottlesPerHarvest() && !itemStack.isEmpty(); i++)
