@@ -7,13 +7,11 @@ import com.ldtteam.blockout.controls.ItemIcon;
 import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.blockout.views.SwitchView;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.workorders.WorkOrderView;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.AbstractWindowWorkerModuleBuilding;
 import com.minecolonies.coremod.client.gui.WindowHutGuide;
@@ -56,11 +54,6 @@ public class WindowHutBuilderModule extends AbstractWindowWorkerModuleBuilding<B
     private static final ResourceLocation GUIDE_ADVANCEMENT = new ResourceLocation(Constants.MOD_ID, "minecolonies/check_out_guide");
 
     /**
-     * Button for toggling manual mode.
-     */
-    private static final String BUTTON_MANUAL_MODE = "manualMode";
-
-    /**
      * List of resources needed.
      */
     @NotNull
@@ -98,20 +91,9 @@ public class WindowHutBuilderModule extends AbstractWindowWorkerModuleBuilding<B
         pullResourcesFromHut();
 
         registerButton(RESOURCE_ADD, this::transferItems);
-        registerButton(BUTTON_MANUAL_MODE, this::manualModeClicked);
         registerButton(WORK_ORDER_SELECT, this::selectWorkOrder);
 
         this.needGuide = needGuide;
-
-        Button buttonManualMode = findPaneOfTypeByID(BUTTON_MANUAL_MODE, Button.class);
-        if (building.getManualMode())
-        {
-            buttonManualMode.setText(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BUILDER_MANUAL));
-        }
-        else
-        {
-            buttonManualMode.setText(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BUILDER_AUTOMATIC));
-        }
     }
 
     /**
@@ -340,25 +322,6 @@ public class WindowHutBuilderModule extends AbstractWindowWorkerModuleBuilding<B
             res.setPlayerAmount(Math.max(0, res.getPlayerAmount() - needed));
             resources.sort(new BuildingBuilderResource.ResourceComparator());
             Network.getNetwork().sendToServer(new TransferItemsRequestMessage(this.building, itemStack, quantity, true));
-        }
-    }
-
-    /**
-     * On manual mode button clicked.
-     * 
-     * @param button the button that just got clicked.
-     */
-    private void manualModeClicked(@NotNull final Button button)
-    {
-        if (button.getTextAsString().equals(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BUILDER_MANUAL)))
-        {
-            button.setText(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BUILDER_AUTOMATIC));
-            building.setManualMode(false);
-        }
-        else
-        {
-            button.setText(LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BUILDER_MANUAL));
-            building.setManualMode(true);
         }
     }
 

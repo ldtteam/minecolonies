@@ -176,6 +176,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
         return state.rotate(mirrorIn.toRotation(state.get(FACING)));
     }
 
+    @NotNull
     @Override
     public BlockState updatePostPlacement(
       @NotNull final BlockState stateIn,

@@ -455,6 +455,12 @@ public final class TranslationConstants
     public static final String RANKTYPE_HOSTILE                                                     = "com.minecolonies.coremod.gui.townhall.ranktype.hostile";
     @NonNls
     public static final String RANKTYPE_NONE                                                        = "com.minecolonies.coremod.gui.townhall.ranktype.none";
+    @NonNls
+    public static final String NO_HUT_IN_INVENTORY = "com.minecolonies.coremod.gui.buildtool.nohutininventory";
+    @NonNls
+    public static final String WRONG_COLONY                = "com.minecolonies.coremod.gui.buildtool.wrongcolony";
+    @NonNls
+    public static final String INDESTRUCTIBLE_BLOCK_AT_POS = "com.minecolonies.coremod.buildtool.indestructible";
 
     private TranslationConstants()
     {

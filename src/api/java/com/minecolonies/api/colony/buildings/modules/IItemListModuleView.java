@@ -55,4 +55,9 @@ public interface IItemListModuleView extends IBuildingModuleView
      * @return true if enabling.
      */
     boolean isInverted();
+
+    /**
+     * Clear the list of items
+     */
+    void clearItems();
 }

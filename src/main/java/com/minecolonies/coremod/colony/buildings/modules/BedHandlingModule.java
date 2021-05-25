@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.buildings.modules;
 
 import com.minecolonies.api.colony.buildings.modules.*;
+import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
@@ -86,7 +87,8 @@ public class BedHandlingModule extends AbstractBuildingModule implements IModule
         for (final BlockPos pos : bedList)
         {
             final BlockState state = world.getBlockState(pos);
-            if (state.getBlock() instanceof BedBlock
+            if (WorldUtil.isBlockLoaded(world, pos)
+                  && state.getBlock() instanceof BedBlock
                   && state.get(BedBlock.OCCUPIED)
                   && state.get(BedBlock.PART).equals(BedPart.HEAD))
             {

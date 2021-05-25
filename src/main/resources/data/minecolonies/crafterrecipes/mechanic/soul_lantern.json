@@ -1,0 +1,22 @@
+{
+  "type" : "recipe",
+  "crafter": "mechanic",
+  "inputs": [
+    {
+      "item" : "minecraft:iron_nugget",
+      "count": 3
+    },
+    {
+      "item" : "minecraft:glass_bottle",
+      "count": 1
+    },
+    {
+      "item" : "minecraft:soul_torch",
+      "count": 1
+    }
+  ],
+  "result": "minecraft:soul_lantern",
+  "count": 1,
+  "intermediate" : "minecraft:air",
+  "min-building-level" : 3
+}

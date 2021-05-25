@@ -9,17 +9,15 @@ import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.controls.TextField;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.blockout.views.Window;
-import com.ldtteam.structurize.api.util.ItemStackUtils;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.network.messages.server.colony.building.AddMinimumStockToBuildingModuleMessage;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -49,22 +47,17 @@ public class WindowSelectRes extends AbstractWindowSkeleton
     /**
      * Predicate to test for.
      */
-    private final Predicate<ItemStack> test;
+    private final Predicate<ItemStack>           test;
+
+    /**
+     * The consumer that receives the block quantity.
+     */
+    private final BiConsumer<ItemStack, Integer> consumer;
 
     /**
      * The filter string.
      */
     private String filter = "";
-
-    /**
-     * The origin window where we routed from.
-     */
-    private final Window origin;
-
-    /**
-     * The colony id this belongs to.
-     */
-    private final IBuildingView building;
 
     /**
      * Create a selection window with the origin window as input.
@@ -73,19 +66,23 @@ public class WindowSelectRes extends AbstractWindowSkeleton
      * @param building the building.
      * @param test     the testing predicate for the selector.
      */
-    public WindowSelectRes(final Window origin, final IBuildingView building, final Predicate<ItemStack> test)
+    public WindowSelectRes(final Window origin, final IBuildingView building, final Predicate<ItemStack> test, final BiConsumer<ItemStack, Integer> consumer, final boolean displayQty)
     {
-        super("minecolonies:gui/windowselectres.xml");
+        super("minecolonies:gui/windowselectres.xml", origin);
         this.resourceList = this.findPaneOfTypeByID("resources", ScrollingList.class);
-        this.origin = origin;
         registerButton(BUTTON_DONE, this::doneClicked);
         registerButton(BUTTON_CANCEL, this::cancelClicked);
         registerButton(BUTTON_SELECT, this::selectClicked);
         this.findPaneOfTypeByID("qty", TextField.class).setText("1");
+        if (!displayQty)
+        {
+            this.findPaneOfTypeByID("qty", TextField.class).hide();
+            this.findPaneOfTypeByID("qtylabel", Text.class).hide();
+        }
         this.findPaneOfTypeByID("resourceIcon", ItemIcon.class).setItem(new ItemStack(Items.AIR));
         this.findPaneOfTypeByID("resourceName", Text.class).setText(new ItemStack(Items.AIR).getDisplayName());
-        this.building = building;
         this.test = test;
+        this.consumer = consumer;
     }
 
     /**
@@ -107,7 +104,6 @@ public class WindowSelectRes extends AbstractWindowSkeleton
     private void cancelClicked()
     {
         this.close();
-        this.origin.open();
     }
 
     /**
@@ -126,11 +122,7 @@ public class WindowSelectRes extends AbstractWindowSkeleton
             Log.getLogger().warn("Invalid input in Selection Window for Quantity, defaulting to 1!");
         }
 
-        if (!ItemStackUtils.isEmpty(to))
-        {
-            Network.getNetwork().sendToServer(new AddMinimumStockToBuildingModuleMessage(building, to, qty));
-            this.origin.open();
-        }
+        this.consumer.accept(to, qty);
         this.close();
     }
 

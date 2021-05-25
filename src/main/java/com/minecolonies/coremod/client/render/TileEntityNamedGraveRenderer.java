@@ -1,8 +1,10 @@
 package com.minecolonies.coremod.client.render;
 
+import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.blocks.huts.AbstractBlockMinecoloniesDefault;
 import com.minecolonies.api.tileentities.TileEntityNamedGrave;
 import com.mojang.blaze3d.matrix.MatrixStack;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.texture.NativeImage;
@@ -14,6 +16,7 @@ import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.text.Style;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.NotNull;
 
 @OnlyIn(Dist.CLIENT)
 public class TileEntityNamedGraveRenderer extends TileEntityRenderer<TileEntityNamedGrave> {
@@ -47,50 +50,53 @@ public class TileEntityNamedGraveRenderer extends TileEntityRenderer<TileEntityN
 
 
     @Override
-    public void render(TileEntityNamedGrave tileEntity, float partialTicks, MatrixStack matrixStack, IRenderTypeBuffer buffer, int combinedLight, int combinedOverlay)
+    public void render(@NotNull final TileEntityNamedGrave tileEntity, final float partialTicks, final MatrixStack matrixStack, @NotNull final IRenderTypeBuffer buffer, final int combinedLight, final int combinedOverlay)
     {
         matrixStack.push();
 
         if(tileEntity != null)
         {
-            final Direction facing = tileEntity.getWorld().getBlockState(tileEntity.getPos()).get(AbstractBlockMinecoloniesDefault.FACING);
-            switch (facing)
+            final BlockState state = tileEntity.getWorld().getBlockState(tileEntity.getPos());
+            if (state.getBlock() == ModBlocks.blockNamedGrave)
             {
-                case NORTH:
-                    matrixStack.translate(0.5f, 1.18F, 0.48F); //in front of the center point of the name plate
-                    matrixStack.scale(0.006F, -0.006F, 0.006F); //size of the text font
-                    matrixStack.rotate(Vector3f.YP.rotationDegrees(BASIC_ROTATION * ROTATE_NORTH));
-                    break;
-                case SOUTH:
-                    matrixStack.translate(0.5f, 1.18F, 0.54F); //in front of the center point of the name plate
-                    matrixStack.scale(0.006F, -0.006F, 0.006F); //size of the text font
-                    //don't rotate at all.
-                    break;
-
-                case EAST:
-                    matrixStack.translate(0.54f, 1.18F, 0.5F); //in front of the center point of the name plate
-                    matrixStack.scale(0.006F, -0.006F, 0.006F); //size of the text font
-                    matrixStack.rotate(Vector3f.YP.rotationDegrees(BASIC_ROTATION * ROTATE_EAST));
-                    break;
-                case WEST:
-                    matrixStack.translate(0.48f, 1.18F, 0.5F); //in front of the center point of the name plate
-                    matrixStack.scale(0.006F, -0.006F, 0.006F); //size of the text font
-                    matrixStack.rotate(Vector3f.YP.rotationDegrees(BASIC_ROTATION * ROTATE_WEST));
-                    break;
-            }
-
-            if(tileEntity.getTextLines().isEmpty())
-            {
-                renderText(matrixStack, buffer, combinedLight, "Unknown Citizen", 0);
-            }
-            else
-            {
-                for(int i = 0; i < tileEntity.getTextLines().size(); i++)
+                final Direction facing = state.get(AbstractBlockMinecoloniesDefault.FACING);
+                switch (facing)
                 {
-                    renderText(matrixStack, buffer, combinedLight, tileEntity.getTextLines().get(i), i);
+                    case NORTH:
+                        matrixStack.translate(0.5f, 1.18F, 0.48F); //in front of the center point of the name plate
+                        matrixStack.scale(0.006F, -0.006F, 0.006F); //size of the text font
+                        matrixStack.rotate(Vector3f.YP.rotationDegrees(BASIC_ROTATION * ROTATE_NORTH));
+                        break;
+                    case SOUTH:
+                        matrixStack.translate(0.5f, 1.18F, 0.54F); //in front of the center point of the name plate
+                        matrixStack.scale(0.006F, -0.006F, 0.006F); //size of the text font
+                        //don't rotate at all.
+                        break;
+
+                    case EAST:
+                        matrixStack.translate(0.54f, 1.18F, 0.5F); //in front of the center point of the name plate
+                        matrixStack.scale(0.006F, -0.006F, 0.006F); //size of the text font
+                        matrixStack.rotate(Vector3f.YP.rotationDegrees(BASIC_ROTATION * ROTATE_EAST));
+                        break;
+                    case WEST:
+                        matrixStack.translate(0.48f, 1.18F, 0.5F); //in front of the center point of the name plate
+                        matrixStack.scale(0.006F, -0.006F, 0.006F); //size of the text font
+                        matrixStack.rotate(Vector3f.YP.rotationDegrees(BASIC_ROTATION * ROTATE_WEST));
+                        break;
+                }
+
+                if (tileEntity.getTextLines().isEmpty())
+                {
+                    renderText(matrixStack, buffer, combinedLight, "Unknown Citizen", 0);
+                }
+                else
+                {
+                    for (int i = 0; i < tileEntity.getTextLines().size(); i++)
+                    {
+                        renderText(matrixStack, buffer, combinedLight, tileEntity.getTextLines().get(i), i);
+                    }
                 }
             }
-            //debug oprion: renderText(matrixStack, buffer, combinedLight, facing.getString(), 2);
         }
 
         // restore the original transformation matrix + normals matrix

@@ -24,13 +24,6 @@
                 </box>
             </list>
         </view>
-        <view>
-            <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
-            <label id="RequestFertilizerLabel" size="164 18" pos="13 29" color="black" textalign="MIDDLE"
-                   label="$(com.minecolonies.coremod.gui.workerhuts.farmerhut.requestfertilizer)"/>
-            <button id="requestFert" size="60 15" pos="65 50"
-                    label="$(com.minecolonies.coremod.gui.requestfert.on)"/>
-        </view>
     </switch>
     <buttonimage id="prevPage" size="18 10" pos="13 13" source="minecolonies:textures/gui/builderhut/turn_page_left.png"/>
     <buttonimage id="nextPage" size="18 10" pos="159 13" source="minecolonies:textures/gui/builderhut/turn_page_right.png"/>

@@ -7,23 +7,16 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
-import com.minecolonies.api.crafting.IRecipeStorage;
-import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.items.ModTags;
-import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.huts.WindowHutSifterModule;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobSifter;
-import com.minecolonies.coremod.network.messages.server.colony.building.sifter.SifterSettingsMessage;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CURRENT_DAILY;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_DAILY;
@@ -47,11 +40,6 @@ public class BuildingSifter extends AbstractBuildingWorker
      * Max building level of the sifter.
      */
     private static final int MAX_BUILDING_LEVEL = 5;
-
-    /**
-     * Daily quantity to produce.
-     */
-    private int dailyQuantity = 0;
 
     /**
      * The current daily quantity.
@@ -119,16 +107,6 @@ public class BuildingSifter extends AbstractBuildingWorker
     }
 
     /**
-     * Get the daily quantity the sifter shall produce.
-     *
-     * @return the quantity.
-     */
-    public int getDailyQuantity()
-    {
-        return this.dailyQuantity;
-    }
-
-    /**
      * Set the current daily quantity.
      *
      * @param currentDailyQuantity the current quantity.
@@ -153,18 +131,6 @@ public class BuildingSifter extends AbstractBuildingWorker
         return (int) (Math.pow(getBuildingLevel(), 2) * BUILDING_LEVEL_MULTIPLIER);
     }
 
-    /**
-     * Setup the settings to be used by the sifter.
-     *
-     * @param block    the block to be sieved.
-     * @param quantity the daily quantity.
-     */
-    public void setup(final int quantity)
-    {
-        this.dailyQuantity = quantity;
-        markDirty();
-    }
-
     @Override
     public void onWakeUp()
     {
@@ -187,7 +153,6 @@ public class BuildingSifter extends AbstractBuildingWorker
     {
         super.deserializeNBT(compound);
 
-        this.dailyQuantity = compound.getInt(TAG_DAILY);
         this.currentDailyQuantity = compound.getInt(TAG_CURRENT_DAILY);
     }
 
@@ -196,7 +161,6 @@ public class BuildingSifter extends AbstractBuildingWorker
     {
         final CompoundNBT compound = super.serializeNBT();
 
-        compound.putInt(TAG_DAILY, dailyQuantity);
         compound.putInt(TAG_CURRENT_DAILY, currentDailyQuantity);
 
         return compound;
@@ -206,7 +170,6 @@ public class BuildingSifter extends AbstractBuildingWorker
     public void serializeToView(@NotNull final PacketBuffer buf)
     {
         super.serializeToView(buf);
-        buf.writeInt(dailyQuantity);
         buf.writeInt(getMaxDailyQuantity());
         buf.writeInt(getCurrentDailyQuantity());
     }
@@ -223,11 +186,6 @@ public class BuildingSifter extends AbstractBuildingWorker
     public static class View extends AbstractBuildingCrafter.View
     {
         /**
-         * Daily quantity to produce.
-         */
-        private int dailyQuantity = 0;
-
-        /**
          * Maximum possible daily quantity
          */
         private int maxDailyQuantity = 0;
@@ -236,11 +194,6 @@ public class BuildingSifter extends AbstractBuildingWorker
          * Current daily quantity
          */
         private int currentDailyQuantity = 0;
-
-        /**
-         * A list of all possible blocks.
-         */
-        private List<ItemStorage> sievableBlocks = new ArrayList<>();
 
         /**
          * Instantiate the sifter view.
@@ -257,19 +210,8 @@ public class BuildingSifter extends AbstractBuildingWorker
         public void deserialize(@NotNull final PacketBuffer buf)
         {
             super.deserialize(buf);
-            dailyQuantity = buf.readInt();
             maxDailyQuantity = buf.readInt();
             currentDailyQuantity = buf.readInt();
-        }
-
-        /**
-         * Getter for the current set daily quantity.
-         *
-         * @return the quantity set.
-         */
-        public int getDailyQuantity()
-        {
-            return dailyQuantity;
         }
 
         /**
@@ -289,35 +231,6 @@ public class BuildingSifter extends AbstractBuildingWorker
         {
             return currentDailyQuantity;
         }
-
-        /**
-         * Get a list of all sievable blocks.
-         *
-         * @return the list.
-         */
-        public List<ItemStorage> getSievableBlocks()
-        {
-            sievableBlocks.clear();
-            for(IRecipeStorage recipe : getRecipes())
-            {
-                for(ItemStorage item: recipe.getCleanedInput())
-                {
-                    sievableBlocks.add(item);
-                }
-            }
-            return sievableBlocks;
-        }
-
-        /**
-         * Save the setup.
-         *
-         * @param dailyQuantity the daily quantity.
-         */
-        public void save(final int dailyQuantity)
-        {
-            Network.getNetwork().sendToServer(new SifterSettingsMessage(this, dailyQuantity));
-        }
-
 
         @NotNull
         @Override

@@ -7,7 +7,6 @@ import com.minecolonies.api.colony.GraveData;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
@@ -16,6 +15,7 @@ import com.minecolonies.api.tileentities.TileEntityGrave;
 import com.minecolonies.api.tileentities.TileEntityNamedGrave;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.client.gui.WindowHutGraveyardModule;
@@ -23,13 +23,13 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobUndertaker;
 import net.minecraft.block.BlockState;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.StringNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
@@ -37,10 +37,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 import static com.minecolonies.api.util.constant.Constants.TAG_STRING;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
@@ -66,11 +63,6 @@ public class BuildingGraveyard extends AbstractBuildingWorker
     private static final int MAX_BUILDING_LEVEL = 5;
 
     /**
-     * NBTTag to store the grave.
-     */
-    private static final String TAG_GRAVES = "graves";
-
-    /**
      * NBTTag to store grave data.
      */
     private static final String TAG_GRAVE_DATA = "gravedata";
@@ -89,11 +81,6 @@ public class BuildingGraveyard extends AbstractBuildingWorker
      * NBTTag to store the visual grave facing.
      */
     private static final String TAG_VISUAL_GRAVES_FACING = "visualgravesfacing";
-
-    /**
-     * NBTTag to store the grave BlockPos.
-     */
-    private static final String TAG_GRAVES_BLOCKPOS = "gravesPos";
 
     /**
      * The last field tag.
@@ -123,19 +110,9 @@ public class BuildingGraveyard extends AbstractBuildingWorker
     private GraveData lastGraveData;
 
     /**
-     * Whether we did init tags
-     */
-    private boolean initTags = false;
-
-    /**
      * Grave positions
      */
-    private List<Tuple<BlockPos, Direction>> visualGravePositions = new ArrayList<>();
-
-    /**
-     * The graveyard random.
-     */
-    private Random random = new Random();
+    private Set<Tuple<BlockPos, Direction>> visualGravePositions = new HashSet<>();
 
     /**
      * Public constructor which instantiates the building.
@@ -146,7 +123,9 @@ public class BuildingGraveyard extends AbstractBuildingWorker
     public BuildingGraveyard(final IColony c, final BlockPos l)
     {
         super(c, l);
-        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.SHOVEL, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
+        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.SHOVEL, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new net.minecraft.util.Tuple<>(1, true));
+        keepX.put(itemStack -> itemStack.getItem() == Items.TOTEM_OF_UNDYING, new net.minecraft.util.Tuple<>(2, true));
+
     }
 
     /**
@@ -170,7 +149,7 @@ public class BuildingGraveyard extends AbstractBuildingWorker
             if (WorldUtil.isBlockLoaded(colony.getWorld(), currentGrave))
             {
                 final TileEntity tileEntity = getColony().getWorld().getTileEntity(currentGrave);
-                if (tileEntity != null)
+                if (tileEntity instanceof TileEntityGrave)
                 {
                     return currentGrave;
                 }
@@ -198,8 +177,7 @@ public class BuildingGraveyard extends AbstractBuildingWorker
 
         if (compound.keySet().contains(TAG_CURRENT_GRAVE))
         {
-            final BlockPos pos = BlockPosUtil.read(compound, TAG_CURRENT_GRAVE);
-            currentGrave = pos;
+            currentGrave = BlockPosUtil.read(compound, TAG_CURRENT_GRAVE);
         }
 
         restingCitizen.clear();
@@ -302,13 +280,6 @@ public class BuildingGraveyard extends AbstractBuildingWorker
         return MAX_BUILDING_LEVEL;
     }
 
-    @Override
-    public void onUpgradeComplete(final int newLevel)
-    {
-        super.onUpgradeComplete(newLevel);
-        initTags = false;
-    }
-
     /**
      * Method to serialize data to send it to the view.
      *
@@ -324,7 +295,7 @@ public class BuildingGraveyard extends AbstractBuildingWorker
 
         for (@NotNull final BlockPos grave : graves)
         {
-            if (colony.getWorld().isAreaLoaded(grave, 1))
+            if (WorldUtil.isBlockLoaded(colony.getWorld(), grave))
             {
                 final TileEntity tileEntity = getColony().getWorld().getTileEntity(grave);
                 if (tileEntity instanceof TileEntityGrave)
@@ -393,39 +364,14 @@ public class BuildingGraveyard extends AbstractBuildingWorker
         return this.lastGraveData;
     }
 
-    /**
-     * Handles the named grave placement by a builder.
-     *
-     * @param pos            at pos.
-     * @param world          the world.
-     */
-    public static void handleBuildingNamedGrave(
-            @NotNull final World world,
-            @NotNull final BlockPos pos,
-            @NotNull final BlockState blockState)
+    @Override
+    public void registerBlockPosition(@NotNull final BlockState state, @NotNull final BlockPos pos, @NotNull final World world)
     {
-        final IBuilding building = BlockPosUtil.findBuilding(world,pos);
-
-        if(building == null || !(building instanceof BuildingGraveyard))
+        super.registerBlockPosition(state, pos, world);
+        if (state.getBlock() == ModBlocks.blockNamedGrave)
         {
-            return;
+            visualGravePositions.add(new Tuple<>(pos, state.get(AbstractBlockMinecoloniesNamedGrave.FACING)));
         }
-
-        final Direction facing = blockState.get(AbstractBlockMinecoloniesNamedGrave.FACING);
-
-        if(!((BuildingGraveyard)building).visualGravePositions.stream().anyMatch(t -> BlockPosUtil.isEqual(t.getA(), pos.getX(), pos.getY(), pos.getZ())))
-        {
-            ((BuildingGraveyard) building).visualGravePositions.add(new Tuple<>(pos, facing));
-        }
-    }
-
-    /**
-     * Has the graveyard space for new graves
-     * @return
-     */
-    public boolean hasSpaceForNewGraves()
-    {
-        return getRandomFreeVisualGravePos() != null;
     }
 
     /**
