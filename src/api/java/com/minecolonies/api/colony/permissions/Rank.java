@@ -1,30 +1,151 @@
 package com.minecolonies.api.colony.permissions;
 
-/**
- * Ranks within a colony.
- */
-public enum Rank
+import java.util.Objects;
+
+public class Rank
 {
-    OWNER(true),
-    OFFICER(true),
-    FRIEND(true),
-    NEUTRAL(false),
-    HOSTILE(false);
 
     /**
-     * Is the Rank a subscriber to certain events.
+     * Whether the rank is automatically a subscriber to certain events
      */
-    public final boolean isSubscriber;
+    private boolean isSubscriber;
+    /**
+     * The name of the rank
+     */
+    private String name;
+    /**
+     * The id of the rank
+     */
+    private int id;
+    /**
+     * Whether the rank is one of the initial ranks which cannot be deleted
+     */
+    private boolean isInitial;
 
     /**
-     * Ranks enum constructor.
-     * <p>
-     * Subscribers are receiving events from the colony. They are either citizens or near enough. Ranks with true are automatically subscribed to the colony.
-     *
-     * @param isSubscriber boolean whether auto-subscribed to this colony.
+     * Whether the rank is a colony manager (can perform certain actions)
      */
-    Rank(final boolean isSubscriber)
+    private boolean isColonyManager;
+
+    /**
+     * Whether the rank is hostile (can attack and be attacked)
+     */
+    private boolean isHostile;
+
+    /**
+     * Rank constructor
+     * @param id the id of the rank
+     * @param name the name of the rank
+     * @param isSubscriber whether the rank is a subscriber
+     * @param isInitial whether the rank is an initial rank
+     */
+    public Rank(int id, String name, boolean isSubscriber, boolean isInitial, boolean isColonyManager, boolean isHostile)
     {
+        this.id = id;
+        this.name = name;
         this.isSubscriber = isSubscriber;
+        this.isInitial = isInitial;
+        this.isColonyManager = isColonyManager;
+        this.isHostile = isHostile;
+    }
+
+    public Rank(int id, String name, boolean isSubscriber, boolean isInitial)
+    {
+        this(id, name, isSubscriber, isInitial, false, false);
+    }
+
+    /**
+     * Get the id of the rank
+     * @return the id
+     */
+    public int getId()
+    {
+        return id;
+    }
+
+    /**
+     * Get whether the rank is a subscriber to certain colony events
+     * @return true if so
+     */
+    public boolean isSubscriber()
+    {
+        return isSubscriber;
+    }
+
+    /**
+     * Get the name of the rank
+     * @return the name
+     */
+    public String getName()
+    {
+        return name;
+    }
+
+    /**
+     * Get whether this ranks is an initial rank which cannot be deleted
+     * @return true if so
+     */
+    public boolean isInitial() { return isInitial; }
+
+    /**
+     * Get whether this rank is a colony manager
+     * @return true if so
+     */
+    public boolean isColonyManager() { return isColonyManager; }
+
+    /**
+     * Get whether this rank is hostile
+     * @return true if so
+     */
+    public boolean isHostile() { return isHostile; }
+
+    /**
+     * Set whether this rank is a colony manager
+     * @param isColonyManager whether the rank is a colony manager
+     */
+    public void setColonyManager(boolean isColonyManager)
+    {
+        this.isColonyManager = isColonyManager;
+    }
+
+    /**
+     * Set whether this rank is hostile
+     * @param isHostile whether the rank is hostile
+     */
+    public void setHostile(boolean isHostile)
+    {
+        this.isHostile = isHostile;
+    }
+
+    /**
+     * Set whether this rank is a subscriber (receives certain colony events)
+     * @param isSubscriber whether the rank is a subscriber
+     */
+    public void setSubscriber(boolean isSubscriber) { this.isSubscriber = isSubscriber; }
+
+    @Override
+    public boolean equals(final Object o)
+    {
+        if (this == o)
+        {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass())
+        {
+            return false;
+        }
+        final Rank rank = (Rank) o;
+        return id == rank.id && name.equals(rank.name);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(name, id);
+    }
+
+    public int compareTo(Rank rank)
+    {
+        return this.getId() - rank.getId();
     }
 }

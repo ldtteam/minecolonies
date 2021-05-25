@@ -3,7 +3,6 @@ package com.minecolonies.coremod.commands.colonycommands;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.commands.commandTypes.IMCColonyOfficerCommand;
 import com.minecolonies.coremod.commands.commandTypes.IMCCommand;
@@ -59,7 +58,7 @@ public class CommandAddOfficer implements IMCColonyOfficerCommand
             context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.playernotfound", profile.getName()), true);
             return 0;
         }
-        colony.getPermissions().addPlayer(profile, Rank.OFFICER);
+        colony.getPermissions().addPlayer(profile, colony.getPermissions().getRank(colony.getPermissions().OFFICER_RANK_ID));
 
         context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.addofficer.success", profile.getName(), colony.getName()), true);
         return 1;

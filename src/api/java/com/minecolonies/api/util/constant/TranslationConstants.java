@@ -450,6 +450,12 @@ public final class TranslationConstants
     @NonNls
     public static final String RESEARCH_REQUIRES                                                    = "com.minecolonies.coremod.research.requirement.research";
     @NonNls
+    public static final String RANKTYPE_COLONY_MANAGER                                              = "com.minecolonies.coremod.gui.townhall.ranktype.colonymanager";
+    @NonNls
+    public static final String RANKTYPE_HOSTILE                                                     = "com.minecolonies.coremod.gui.townhall.ranktype.hostile";
+    @NonNls
+    public static final String RANKTYPE_NONE                                                        = "com.minecolonies.coremod.gui.townhall.ranktype.none";
+    @NonNls
     public static final String NO_HUT_IN_INVENTORY = "com.minecolonies.coremod.gui.buildtool.nohutininventory";
     @NonNls
     public static final String WRONG_COLONY                = "com.minecolonies.coremod.gui.buildtool.wrongcolony";

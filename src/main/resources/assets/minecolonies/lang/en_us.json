@@ -564,6 +564,9 @@
   "com.minecolonies.coremod.gui.townhall.rename.title": "Rename your Colony",
 
   "com.minecolonies.coremod.gui.townhall.addplayer": "Add Player:",
+  "com.minecolonies.coremod.gui.townhall.addrank": "Add Rank:",
+  "com.minecolonies.coremod.gui.townhall.removerank": "Remove Rank",
+  "com.minecolonies.coremod.gui.townhall.invalidrankname": "This rank name is invalid",
   "com.minecolonies.coremod.gui.townhall.addblock": "Add Block/Position:",
   "com.minecolonies.coremod.gui.townhall.permissions": "Permissions",
   "com.minecolonies.coremod.gui.townhall.togglespec": "Toggle Specialization",
@@ -578,6 +581,9 @@
   "com.minecolonies.coremod.gui.townhall.population.unemployed": "Unemployed: %d",
   "com.minecolonies.coremod.gui.townhall.population.childs": "Children: %d",
   "com.minecolonies.coremod.gui.townhall.currentspecialization": "Current Specialization:",
+  "com.minecolonies.coremod.gui.townhall.ranktype.colonymanager": "Colony Manager",
+  "com.minecolonies.coremod.gui.townhall.ranktype.hostile": "Hostile",
+  "com.minecolonies.coremod.gui.townhall.ranktype.none": "None",
 
   "com.minecolonies.coremod.gui.townhall.citizens": "Citizens",
   "com.minecolonies.coremod.gui.townhall.citizens.unemployed": "Unemployed",

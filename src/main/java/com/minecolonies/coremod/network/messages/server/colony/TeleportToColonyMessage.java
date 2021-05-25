@@ -2,7 +2,6 @@ package com.minecolonies.coremod.network.messages.server.colony;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.coremod.network.messages.server.AbstractColonyServerMessage;
 import com.minecolonies.coremod.util.TeleportHelper;
 import net.minecraft.network.PacketBuffer;
@@ -41,7 +40,7 @@ public class TeleportToColonyMessage extends AbstractColonyServerMessage
             return;
         }
 
-        if (colony.getPermissions().getRank(ctxIn.getSender().getUniqueID()) != Rank.NEUTRAL)
+        if (colony.getPermissions().getRank(ctxIn.getSender().getUniqueID()) != colony.getPermissions().getRankNeutral())
         {
             TeleportHelper.colonyTeleport(ctxIn.getSender(), colony);
         }

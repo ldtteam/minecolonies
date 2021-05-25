@@ -4,10 +4,7 @@ import com.ldtteam.blockout.Color;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.PaneBuilders;
 import com.ldtteam.blockout.controls.*;
-import com.ldtteam.blockout.views.DropDownList;
-import com.ldtteam.blockout.views.ScrollingList;
-import com.ldtteam.blockout.views.SwitchView;
-import com.ldtteam.blockout.views.View;
+import com.ldtteam.blockout.views.*;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.CompactColonyReference;
@@ -18,10 +15,7 @@ import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
 import com.minecolonies.api.colony.colonyEvents.descriptions.IBuildingEventDescription;
 import com.minecolonies.api.colony.colonyEvents.descriptions.ICitizenEventDescription;
 import com.minecolonies.api.colony.colonyEvents.descriptions.IColonyEventDescription;
-import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.colony.permissions.PermissionEvent;
-import com.minecolonies.api.colony.permissions.Player;
-import com.minecolonies.api.colony.permissions.Rank;
+import com.minecolonies.api.colony.permissions.*;
 import com.minecolonies.api.colony.workorders.WorkOrderView;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
@@ -148,6 +142,36 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
     private boolean permissionEvents;
 
     /**
+     * The ScrollingList of all rank buttons
+     */
+    private final ScrollingList rankButtonList;
+
+    /**
+     * The currently selected player to edit
+     */
+    private Player selectedPlayer;
+
+    /**
+     * A list of ranks (excluding owner)
+     */
+    private final List<Rank> rankList = new LinkedList<>();
+
+    /**
+     * The currently selected rank to edit or delete
+     */
+    private Rank actionsRank;
+
+    /**
+     * A filtered list of actions
+     */
+    private List<Action> actions = new ArrayList<>();
+
+    /**
+     * A list of available rank types
+     */
+    private Map<Integer, String> rankTypes = new HashMap<>();
+
+    /**
      * Color constants for builder list.
      */
     public static final int RED       = Color.getByName("red", 0);
@@ -163,9 +187,26 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
     {
         super(townHall, Constants.MOD_ID + TOWNHALL_RESOURCE_SUFFIX);
         this.townHall = townHall;
+        // ToDo: remove these actions in 1.17
+        for (Action action : Action.values())
+        {
+            if (action != Action.CAN_DEMOTE && action != Action.CAN_PROMOTE && action != Action.SEND_MESSAGES)
+            {
+                actions.add(action);
+            }
+        }
+
+        rankTypes.put(0, RANKTYPE_COLONY_MANAGER);
+        rankTypes.put(1, RANKTYPE_HOSTILE);
+        rankTypes.put(2, RANKTYPE_NONE);
+
+        actionsRank = townHall.getColony().getPermissions().getRankOfficer();
+        findPaneOfTypeByID(BUTTON_REMOVE_RANK, Button.class).setEnabled(false);
 
         alliesList = findPaneOfTypeByID(LIST_ALLIES, ScrollingList.class);
         feudsList = findPaneOfTypeByID(LIST_FEUDS, ScrollingList.class);
+        rankButtonList = findPaneOfTypeByID(TOWNHALL_RANK_BUTTON_LIST, ScrollingList.class);
+        actionsList = findPaneOfTypeByID(TOWNHALL_RANK_LIST, ScrollingList.class);
 
         initColorPicker();
         updateUsers();
@@ -185,8 +226,6 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
         registerButton(BUTTON_RENAME, this::renameClicked);
         registerButton(BUTTON_MERCENARY, this::mercenaryClicked);
         registerButton(BUTTON_REMOVE_PLAYER, this::removePlayerClicked);
-        registerButton(BUTTON_PROMOTE, this::promoteDemoteClicked);
-        registerButton(BUTTON_DEMOTE, this::promoteDemoteClicked);
         registerButton(BUTTON_CHANGE_SPEC, this::doNothing);
         registerButton(BUTTON_TOGGLE_JOB, this::toggleHiring);
         registerButton(BUTTON_TOGGLE_HOUSING, this::toggleHousing);
@@ -197,10 +236,6 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
         registerButton(NAME_LABEL, this::fillCitizenInfo);
         registerButton(RECALL_ONE, this::recallOneClicked);
 
-        registerButton(BUTTON_MANAGE_OFFICER, this::editOfficer);
-        registerButton(BUTTON_MANAGE_FRIEND, this::editFriend);
-        registerButton(BUTTON_MANAGE_NEUTRAL, this::editNeutral);
-        registerButton(BUTTON_MANAGE_HOSTILE, this::editHostile);
         registerButton(BUTTON_PERMISSION_EVENTS, this::permissionEventsClicked);
         registerButton(BUTTON_ADD_PLAYER_OR_FAKEPLAYER, this::addPlayerToColonyClicked);
         registerButton(BUTTON_TP, this::teleportToColony);
@@ -211,8 +246,123 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
         registerButton(BUTTON_TRIGGER, this::trigger);
         registerButton(BUTTON_ADD_BLOCK, this::addBlock);
         registerButton(BUTTON_REMOVE_BLOCK, this::removeBlock);
-        findPaneOfTypeByID(BUTTON_MANAGE_OFFICER, Button.class).setEnabled(false);
+        registerButton(BUTTON_ADD_RANK, this::addRank);
+        registerButton(TOWNHALL_RANK_BUTTON, this::onRankButtonClicked);
+        registerButton(BUTTON_REMOVE_RANK, this::onRemoveRankButtonClicked);
+        registerButton(TOWNHALL_PERM_MODE_TOGGLE, this::togglePermMode);
+        registerButton(TOWNHALL_BUTTON_SUBSCRIBER, this::setSubscriber);
         colorDropDownList.setSelectedIndex(townHall.getColony().getTeamColonyColor().ordinal());
+    }
+
+    /**
+     * Toggle the subscriber flag on client
+     * Send message to change it on server
+     * @param button the button clicked
+     */
+    private void setSubscriber(Button button)
+    {
+        Network.getNetwork().sendToServer(new PermissionsMessage.SetSubscriber(townHall.getColony(), actionsRank, !actionsRank.isSubscriber()));
+        actionsRank.setSubscriber(!actionsRank.isSubscriber());
+        button.setText(LanguageHandler.format(actionsRank.isSubscriber() ? COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON : COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF));
+    }
+
+    /**
+     * Send message to the server to change the rank type
+     * @param dropdown the index of the type
+     */
+    private void changeRankMode(DropDownList dropdown)
+    {
+        Network.getNetwork().sendToServer(new PermissionsMessage.EditRankType(townHall.getColony(), actionsRank, dropdown.getSelectedIndex()));
+    }
+
+    /**
+     * Switch the view on the rank view (between permissions and settings)
+     * @param button the button clicked
+     */
+    private void togglePermMode(Button button)
+    {
+        SwitchView permSwitch = findPaneOfTypeByID(TOWNHALL_PERM_MANAGEMENT, SwitchView.class);
+        permSwitch.setView(permSwitch.getCurrentView() != null && permSwitch.getCurrentView().getID().equals(TOWNHALL_PERM_LIST) ? TOWNHALL_PERM_SETTINGS : TOWNHALL_PERM_LIST);
+        if (permSwitch.getCurrentView().getID().equals(TOWNHALL_PERM_SETTINGS))
+        {
+            DropDownList dropdown = findPaneOfTypeByID(TOWNHALL_RANK_TYPE_PICKER, DropDownList.class);
+            dropdown.setDataProvider(new DropDownList.DataProvider() {
+                @Override
+                public int getElementCount()
+                {
+                    return rankTypes.size();
+                }
+
+                @Override
+                public String getLabel(final int i)
+                {
+                    return LanguageHandler.format(rankTypes.get(i));
+                }
+            });
+            dropdown.setHandler(this::changeRankMode);
+            dropdown.setSelectedIndex(actionsRank.isColonyManager() ? 0 : (actionsRank.isHostile() ? 1 : 2));
+            findPaneOfTypeByID(TOWNHALL_BUTTON_SUBSCRIBER, Button.class).setText(LanguageHandler.format(actionsRank.isSubscriber() ? COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON : COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF));
+        }
+    }
+
+    /**
+     * Read the text input with the name of the rank to be added
+     * If the chosen name is valid, send a message to the server, hide the error label and empty the input
+     * else show the error label
+     */
+    private void addRank()
+    {
+        final Text label = findPaneOfTypeByID(TOWNHALL_ADD_RANK_ERROR, Text.class);
+        final TextField input = findPaneOfTypeByID(INPUT_ADDRANK_NAME, TextField.class);
+        if (isValidRankname(input.getText()))
+        {
+            Network.getNetwork().sendToServer(new PermissionsMessage.AddRank(townHall.getColony(), input.getText()));
+            input.setText("");
+            label.hide();
+        }
+        else
+        {
+            label.show();
+        }
+    }
+
+    /**
+     * Validates whether the given name is a valid rank name
+     * If name is empty or already in use for a rank within this colony, it is invalid
+     * @param name the name
+     * @return true if name is valid
+     */
+    private boolean isValidRankname(String name)
+    {
+        if (name.equals(""))
+        {
+            return false;
+        }
+        for (Rank rank : rankList)
+        {
+            if (rank.getName().equals(name))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Send message to server to remove the currently selected rank
+     * Remove rank from view
+     * Set currently selected rank to officer and disable button
+     * @param button the clicked button
+     */
+    private void onRemoveRankButtonClicked(Button button)
+    {
+        if (actionsRank != null)
+        {
+            Network.getNetwork().sendToServer(new PermissionsMessage.RemoveRank(townHall.getColony(), actionsRank));
+            townHall.getColony().getPermissions().removeRank(actionsRank);
+            actionsRank = townHall.getColony().getPermissions().getRankOfficer();
+            button.setEnabled(false);
+        }
     }
 
     /**
@@ -320,6 +470,7 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
         createAndSetStatistics();
 
         findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).setView(PAGE_ACTIONS);
+        findPaneOfTypeByID(TOWNHALL_PERM_MANAGEMENT, SwitchView.class).setView(TOWNHALL_PERM_LIST);
 
         lastTabButton = findPaneOfTypeByID(BUTTON_ACTIONS, Button.class);
         lastTabButton.off();
@@ -333,6 +484,8 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
         fillAlliesAndFeudsList();
         fillEventsList();
         updateHappiness();
+        fillRanks();
+        fillPermissionList();
 
         if (townHall.getColony().isManualHiring())
         {
@@ -372,13 +525,69 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
     }
 
     /**
-     * Clears and resets all citizens.
+     * Clears and resets all work orders.
      */
     private void updateWorkOrders()
     {
         workOrders.clear();
         workOrders.addAll(townHall.getColony().getWorkOrders());
         sortWorkOrders();
+    }
+
+    /**
+     * Clears and resets all ranks
+     */
+    private void updateRanks()
+    {
+        rankList.clear();
+        for (final Rank rank : townHall.getColony().getPermissions().getRanks().values())
+        {
+            if (!rank.equals(townHall.getColony().getPermissions().getRankOwner()))
+            {
+                rankList.add(rank);
+            }
+        }
+    }
+
+    /**
+     * Fill the rank button list in the GUI
+     */
+    private void fillRanks()
+    {
+        rankButtonList.setDataProvider(new ScrollingList.DataProvider() {
+            @Override
+            public int getElementCount()
+            {
+                return rankList.size();
+            }
+
+            @Override
+            public void updateElement(final int i, final Pane pane)
+            {
+                final Rank rank = rankList.get(i);
+                final Button button = pane.findPaneOfTypeByID(TOWNHALL_RANK_BUTTON, Button.class);
+                button.setText(rank.getName());
+                button.setEnabled(!rank.equals(actionsRank));
+                pane.findPaneOfTypeByID("rankId", Text.class).setText(Integer.toString(rank.getId()));
+            }
+        });
+    }
+
+    /**
+     * Change to currently selected rank to the one belonging to the clicked button
+     * @param button the clicked button
+     */
+    private void onRankButtonClicked(@NotNull final Button button)
+    {
+        final int rankId = rankButtonList.getListElementIndexByPane(button);
+        final Rank rank = rankList.get(rankId);
+        if (rank != null)
+        {
+            actionsRank = rank;
+            button.setEnabled(false);
+            findPaneOfTypeByID(BUTTON_REMOVE_RANK, Button.class).setEnabled(!actionsRank.isInitial());
+            findPaneOfTypeByID(TOWNHALL_PERM_MANAGEMENT, SwitchView.class).setView(TOWNHALL_PERM_LIST);
+        }
     }
 
     /**
@@ -491,11 +700,10 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
     {
         final int index = Integer.valueOf(button.getParent().findPaneOfTypeByID("index", Text.class).getTextAsString());
         final boolean trigger = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON).equals(button.getTextAsString());
-        final Action action = Action.values()[index];
-        final Rank rank = Rank.valueOf(actionsList.getParent().getID().toUpperCase(Locale.ENGLISH));
+        final Action action = actions.get(index);
 
-        Network.getNetwork().sendToServer(new PermissionsMessage.Permission(townHall.getColony(), PermissionsMessage.MessageType.TOGGLE_PERMISSION, rank, action));
-        townHall.getColony().getPermissions().togglePermission(rank, action);
+        Network.getNetwork().sendToServer(new PermissionsMessage.Permission(townHall.getColony(), PermissionsMessage.MessageType.TOGGLE_PERMISSION, actionsRank, action));
+        townHall.getColony().getPermissions().togglePermission(actionsRank, action);
 
         if (trigger)
         {
@@ -509,25 +717,21 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
 
     /**
      * Fills the permission list in the GUI.
-     *
-     * @param category the category to fill.
      */
-    private void fillPermissionList(@NotNull final String category)
+    private void fillPermissionList()
     {
-        actionsList = findPaneOfTypeByID(LIST_ACTIONS + category, ScrollingList.class);
         actionsList.setDataProvider(new ScrollingList.DataProvider()
         {
             @Override
             public int getElementCount()
             {
-                return Action.values().length - IGNORE_INDEX;
+                return actions.size();
             }
 
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                final int actionIndex = index <= IGNORE_INDEX ? index : (index + IGNORE_INDEX);
-                final Action action = Action.values()[actionIndex];
+                final Action action = actions.get(index);
                 final String name = LanguageHandler.format(KEY_TO_PERMISSIONS + action.toString().toLowerCase(Locale.US));
 
                 if (name.contains(KEY_TO_PERMISSIONS))
@@ -537,57 +741,13 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
                 }
 
                 rowPane.findPaneOfTypeByID(NAME_LABEL, Text.class).setText(name);
-                final boolean isTriggered = townHall.getColony().getPermissions().hasPermission(Rank.valueOf(actionsList.getParent().getID().toUpperCase(Locale.ENGLISH)), action);
+                final boolean isTriggered = townHall.getColony().getPermissions().hasPermission(actionsRank, action);
                 rowPane.findPaneOfTypeByID("trigger", Button.class)
                   .setText(isTriggered ? LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON)
                               : LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF));
-                rowPane.findPaneOfTypeByID("index", Text.class).setText(Integer.toString(actionIndex));
+                rowPane.findPaneOfTypeByID("index", Text.class).setText(Integer.toString(index));
             }
         });
-    }
-
-    private void editOfficer()
-    {
-        findPaneOfTypeByID(VIEW_PERM_GROUPS, SwitchView.class).setView(VIEW_OFFICER);
-        findPaneOfTypeByID(BUTTON_MANAGE_OFFICER, Button.class).setEnabled(false);
-        findPaneOfTypeByID(BUTTON_MANAGE_FRIEND, Button.class).setEnabled(true);
-        findPaneOfTypeByID(BUTTON_MANAGE_NEUTRAL, Button.class).setEnabled(true);
-        findPaneOfTypeByID(BUTTON_MANAGE_HOSTILE, Button.class).setEnabled(true);
-
-        fillPermissionList(VIEW_OFFICER);
-    }
-
-    private void editFriend()
-    {
-        findPaneOfTypeByID(VIEW_PERM_GROUPS, SwitchView.class).setView(VIEW_FRIEND);
-        findPaneOfTypeByID(BUTTON_MANAGE_OFFICER, Button.class).setEnabled(true);
-        findPaneOfTypeByID(BUTTON_MANAGE_FRIEND, Button.class).setEnabled(false);
-        findPaneOfTypeByID(BUTTON_MANAGE_NEUTRAL, Button.class).setEnabled(true);
-        findPaneOfTypeByID(BUTTON_MANAGE_HOSTILE, Button.class).setEnabled(true);
-
-        fillPermissionList(VIEW_FRIEND);
-    }
-
-    private void editNeutral()
-    {
-        findPaneOfTypeByID(VIEW_PERM_GROUPS, SwitchView.class).setView(VIEW_NEUTRAL);
-        findPaneOfTypeByID(BUTTON_MANAGE_OFFICER, Button.class).setEnabled(true);
-        findPaneOfTypeByID(BUTTON_MANAGE_FRIEND, Button.class).setEnabled(true);
-        findPaneOfTypeByID(BUTTON_MANAGE_NEUTRAL, Button.class).setEnabled(false);
-        findPaneOfTypeByID(BUTTON_MANAGE_HOSTILE, Button.class).setEnabled(true);
-
-        fillPermissionList(VIEW_NEUTRAL);
-    }
-
-    private void editHostile()
-    {
-        findPaneOfTypeByID(VIEW_PERM_GROUPS, SwitchView.class).setView(VIEW_HOSTILE);
-        findPaneOfTypeByID(BUTTON_MANAGE_OFFICER, Button.class).setEnabled(true);
-        findPaneOfTypeByID(BUTTON_MANAGE_FRIEND, Button.class).setEnabled(true);
-        findPaneOfTypeByID(BUTTON_MANAGE_NEUTRAL, Button.class).setEnabled(true);
-        findPaneOfTypeByID(BUTTON_MANAGE_HOSTILE, Button.class).setEnabled(false);
-
-        fillPermissionList(VIEW_HOSTILE);
     }
 
     /**
@@ -774,12 +934,54 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
                 final Player player = users.get(index);
-                String rank = player.getRank().name();
-                rank = Character.toUpperCase(rank.charAt(0)) + rank.toLowerCase(Locale.ENGLISH).substring(1);
+                Rank rank = player.getRank();
                 rowPane.findPaneOfTypeByID(NAME_LABEL, Text.class).setText(player.getName());
-                rowPane.findPaneOfTypeByID("rank", Text.class).setText(rank);
+                DropDownList dropdown = rowPane.findPaneOfTypeByID(TOWNHALL_RANK_PICKER, DropDownList.class);
+                if (rank.getId() == townHall.getColony().getPermissions().OWNER_RANK_ID)
+                {
+                    rowPane.findPaneOfTypeByID(BUTTON_REMOVE_PLAYER, Button.class).setEnabled(false);
+                    rowPane.findPaneOfTypeByID("rank", Text.class).setText(rank.getName());
+                    dropdown.setEnabled(false);
+                }
+                else
+                {
+                    dropdown.setDataProvider(new DropDownList.DataProvider() {
+                        @Override
+                        public int getElementCount()
+                        {
+                            return rankList.size();
+                        }
+
+                        @Override
+                        public String getLabel(final int i)
+                        {
+                            Rank rank = rankList.get(i);
+                            return rank.getName();
+                        }
+                    });
+                    dropdown.setSelectedIndex(rankList.indexOf(rank));
+                    dropdown.setHandler(WindowTownHall.this::onRankSelected);
+                }
             }
         });
+    }
+
+    /**
+     * When the selected index in the rank dropdown is updated,
+     * check if the rank is different to the current one
+     * if so, change the rank client side and send a message to the server
+     * @param dropdown the rank dropdown
+     */
+    private void onRankSelected(final DropDownList dropdown)
+    {
+        final int index = dropdown.getSelectedIndex();
+        final Player player = users.get(userList.getListElementIndexByPane(dropdown));
+        final Rank rank = rankList.get(index);
+        if (rank != player.getRank())
+        {
+            player.setRank(rank);
+            Network.getNetwork().sendToServer(new PermissionsMessage.ChangePlayerRank(townHall.getColony(), player.getID(), rank));
+        }
     }
 
     /**
@@ -1258,7 +1460,9 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
         {
             case PAGE_PERMISSIONS:
                 updateUsers();
+                updateRanks();
                 window.findPaneOfTypeByID(LIST_USERS, ScrollingList.class).refreshElementPanes();
+                window.findPaneOfTypeByID(TOWNHALL_RANK_BUTTON_LIST, ScrollingList.class).refreshElementPanes();
                 break;
             case PAGE_CITIZENS:
                 updateCitizens();
@@ -1310,8 +1514,10 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
         if (row >= 0 && row < users.size())
         {
             final Player user = users.get(row);
-            if (user.getRank() != Rank.OWNER)
+            if (user.getRank().getId() != IPermissions.OWNER_RANK_ID)
             {
+                users.remove(user);
+                userList.removeChild(button.getParent());
                 Network.getNetwork().sendToServer(new PermissionsMessage.RemovePlayer(townHall.getColony(), user.getID()));
             }
         }
@@ -1333,31 +1539,6 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
     }
 
     /**
-     * Action performed when promote or demote button is clicked.
-     *
-     * @param button Button that holds the  user clicked on.
-     */
-    private void promoteDemoteClicked(@NotNull final Button button)
-    {
-        final int row = userList.getListElementIndexByPane(button);
-        if (row >= 0 && row < users.size())
-        {
-            final Player user = users.get(row);
-
-            if (button.getID().equals(BUTTON_PROMOTE))
-            {
-                Network.getNetwork()
-                  .sendToServer(new PermissionsMessage.ChangePlayerRank(townHall.getColony(), user.getID(), PermissionsMessage.ChangePlayerRank.Type.PROMOTE));
-            }
-            else
-            {
-                Network.getNetwork()
-                  .sendToServer(new PermissionsMessage.ChangePlayerRank(townHall.getColony(), user.getID(), PermissionsMessage.ChangePlayerRank.Type.DEMOTE));
-            }
-        }
-    }
-
-    /**
      * For switches inside of tabs
      */
     @Override
@@ -1371,7 +1552,7 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
         // Additional handlers
         if (switchView.getCurrentView().getID().equals(PERMISSION_VIEW))
         {
-            editOfficer();
+            findPaneOfTypeByID(TOWNHALL_ADD_RANK_ERROR, Text.class).hide();
         }
     }
 

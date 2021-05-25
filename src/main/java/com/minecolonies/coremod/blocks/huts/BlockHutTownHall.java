@@ -7,7 +7,6 @@ import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.client.gui.townhall.WindowTownHallColonyManage;
 import net.minecraft.block.BlockState;
@@ -62,7 +61,7 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
         {
             final IBuilding building = IColonyManager.getInstance().getBuilding(player.world, pos);
             if (building != null && building.getColony().isCoordInColony(player.world, pos)
-                  && building.getColony().getPermissions().getRank(player) == Rank.HOSTILE)
+                  && building.getColony().getPermissions().getRank(player).isHostile())
             {
                 final double localProgress = breakProgressOnTownHall;
                 final double hardness = state.getBlockHardness(player.world, pos) * 20.0 * 1.5;

@@ -1,10 +1,7 @@
 package com.minecolonies.coremod.colony.permissions;
 
 import com.minecolonies.api.colony.IColonyTagCapability;
-import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.colony.permissions.IPermissions;
-import com.minecolonies.api.colony.permissions.Player;
-import com.minecolonies.api.colony.permissions.Rank;
+import com.minecolonies.api.colony.permissions.*;
 import com.minecolonies.api.network.PacketUtils;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.coremod.colony.Colony;
@@ -22,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_NAME;
@@ -43,6 +41,11 @@ public class Permissions implements IPermissions
     private static final String TAG_OWNER           = "owner";
     private static final String TAG_OWNER_ID        = "ownerid";
     private static final String TAG_FULLY_ABANDONED = "fully_abandoned";
+    private static final String TAG_RANKS           = "ranks";
+    private static final String TAG_SUBSCRIBER      = "is_subscriber";
+    private static final String TAG_INITIAL         = "is_initial";
+    private static final String TAG_COLONY_MANAGER  = "is_colony_manager";
+    private static final String TAG_HOSTILE         = "is_hostile";
 
     /**
      * NBTTarget for the permission version, used for updating.
@@ -50,10 +53,9 @@ public class Permissions implements IPermissions
     private static final String TAG_VERSION = "permissionVersion";
 
     /**
-     * All promotion rank possibilities.
+     * All defined ranks
      */
-    @NotNull
-    private static final Map<Rank, RankPair> promotionRanks = new EnumMap<>(Rank.class);
+    private static final Map<Integer, Rank> ranks = new LinkedHashMap<>();
 
     /**
      * A flag for all the permissions unlocked in a fully abandoned colony.
@@ -62,14 +64,6 @@ public class Permissions implements IPermissions
 
     static
     {
-        /*
-         * Fill the promotion ranks.
-         */
-        setPromotionRanks(Rank.OFFICER, Rank.OFFICER, Rank.FRIEND);
-        setPromotionRanks(Rank.FRIEND, Rank.OFFICER, Rank.NEUTRAL);
-        setPromotionRanks(Rank.NEUTRAL, Rank.FRIEND, Rank.HOSTILE);
-        setPromotionRanks(Rank.HOSTILE, Rank.NEUTRAL, Rank.HOSTILE);
-
         /*
          * Generate the fully abandoned flag.
          */
@@ -101,7 +95,7 @@ public class Permissions implements IPermissions
      * Permissions of these players.
      */
     @NotNull
-    private final Map<Rank, Integer> permissionMap = new EnumMap<>(Rank.class);
+    private final Map<Rank, Integer> permissionMap = new HashMap<>();
 
     /**
      * Used to check if the permissions have to by synchronized.
@@ -126,7 +120,7 @@ public class Permissions implements IPermissions
     /**
      * The current version of the permissions, increase upon changes to the preset permissions
      */
-    private static final int permissionsVersion = 2;
+    private static final int permissionsVersion = 3;
 
     /**
      * Saves the permissionMap with allowed actions.
@@ -135,92 +129,68 @@ public class Permissions implements IPermissions
      */
     public Permissions(@NotNull final Colony colony)
     {
-        //Owner
-        permissionMap.put(Rank.OWNER, 0);
-        this.setPermission(Rank.OWNER, Action.ACCESS_HUTS);
-        this.setPermission(Rank.OWNER, Action.PLACE_HUTS);
-        this.setPermission(Rank.OWNER, Action.BREAK_HUTS);
-        this.setPermission(Rank.OWNER, Action.CAN_PROMOTE);
-        this.setPermission(Rank.OWNER, Action.CAN_DEMOTE);
-        this.setPermission(Rank.OWNER, Action.SEND_MESSAGES);
-        this.setPermission(Rank.OWNER, Action.EDIT_PERMISSIONS);
-        this.setPermission(Rank.OWNER, Action.MANAGE_HUTS);
-        this.setPermission(Rank.OWNER, Action.RECEIVE_MESSAGES);
-        this.setPermission(Rank.OWNER, Action.USE_SCAN_TOOL);
-        this.setPermission(Rank.OWNER, Action.PLACE_BLOCKS);
-        this.setPermission(Rank.OWNER, Action.BREAK_BLOCKS);
-        this.setPermission(Rank.OWNER, Action.TOSS_ITEM);
-        this.setPermission(Rank.OWNER, Action.PICKUP_ITEM);
-        this.setPermission(Rank.OWNER, Action.FILL_BUCKET);
-        this.setPermission(Rank.OWNER, Action.OPEN_CONTAINER);
-        this.setPermission(Rank.OWNER, Action.RIGHTCLICK_BLOCK);
-        this.setPermission(Rank.OWNER, Action.RIGHTCLICK_ENTITY);
-        this.setPermission(Rank.OWNER, Action.THROW_POTION);
-        this.setPermission(Rank.OWNER, Action.SHOOT_ARROW);
-        this.setPermission(Rank.OWNER, Action.ATTACK_CITIZEN);
-        this.setPermission(Rank.OWNER, Action.ATTACK_ENTITY);
-        this.setPermission(Rank.OWNER, Action.ACCESS_FREE_BLOCKS);
-        this.setPermission(Rank.OWNER, Action.TELEPORT_TO_COLONY);
-        this.setPermission(Rank.OWNER, Action.RECEIVE_MESSAGES_FAR_AWAY);
-        this.setPermission(Rank.OWNER, Action.CAN_KEEP_COLONY_ACTIVE_WHILE_AWAY);
-        this.setPermission(Rank.OWNER, Action.RALLY_GUARDS);
-
-        //Officer
-        permissionMap.put(Rank.OFFICER, 0);
-        this.setPermission(Rank.OFFICER, Action.ACCESS_HUTS);
-        this.setPermission(Rank.OFFICER, Action.PLACE_HUTS);
-        this.setPermission(Rank.OFFICER, Action.BREAK_HUTS);
-        this.setPermission(Rank.OFFICER, Action.CAN_PROMOTE);
-        this.setPermission(Rank.OFFICER, Action.CAN_DEMOTE);
-        this.setPermission(Rank.OFFICER, Action.SEND_MESSAGES);
-        this.setPermission(Rank.OFFICER, Action.MANAGE_HUTS);
-        this.setPermission(Rank.OFFICER, Action.RECEIVE_MESSAGES);
-        this.setPermission(Rank.OFFICER, Action.USE_SCAN_TOOL);
-        this.setPermission(Rank.OFFICER, Action.PLACE_BLOCKS);
-        this.setPermission(Rank.OFFICER, Action.BREAK_BLOCKS);
-        this.setPermission(Rank.OFFICER, Action.TOSS_ITEM);
-        this.setPermission(Rank.OFFICER, Action.PICKUP_ITEM);
-        this.setPermission(Rank.OFFICER, Action.FILL_BUCKET);
-        this.setPermission(Rank.OFFICER, Action.OPEN_CONTAINER);
-        this.setPermission(Rank.OFFICER, Action.RIGHTCLICK_BLOCK);
-        this.setPermission(Rank.OFFICER, Action.RIGHTCLICK_ENTITY);
-        this.setPermission(Rank.OFFICER, Action.THROW_POTION);
-        this.setPermission(Rank.OFFICER, Action.SHOOT_ARROW);
-        this.setPermission(Rank.OFFICER, Action.ATTACK_CITIZEN);
-        this.setPermission(Rank.OFFICER, Action.ATTACK_ENTITY);
-        this.setPermission(Rank.OFFICER, Action.ACCESS_FREE_BLOCKS);
-        this.setPermission(Rank.OFFICER, Action.TELEPORT_TO_COLONY);
-        this.setPermission(Rank.OFFICER, Action.RECEIVE_MESSAGES_FAR_AWAY);
-        this.setPermission(Rank.OFFICER, Action.CAN_KEEP_COLONY_ACTIVE_WHILE_AWAY);
-        this.setPermission(Rank.OFFICER, Action.RALLY_GUARDS);
-
-
-        //Friend
-        permissionMap.put(Rank.FRIEND, 0);
-        this.setPermission(Rank.FRIEND, Action.ACCESS_HUTS);
-        this.setPermission(Rank.FRIEND, Action.USE_SCAN_TOOL);
-        this.setPermission(Rank.FRIEND, Action.TOSS_ITEM);
-        this.setPermission(Rank.FRIEND, Action.PICKUP_ITEM);
-        this.setPermission(Rank.FRIEND, Action.RIGHTCLICK_BLOCK);
-        this.setPermission(Rank.FRIEND, Action.RIGHTCLICK_ENTITY);
-        this.setPermission(Rank.FRIEND, Action.THROW_POTION);
-        this.setPermission(Rank.FRIEND, Action.SHOOT_ARROW);
-        this.setPermission(Rank.FRIEND, Action.ATTACK_CITIZEN);
-        this.setPermission(Rank.FRIEND, Action.ATTACK_ENTITY);
-        this.setPermission(Rank.FRIEND, Action.ACCESS_FREE_BLOCKS);
-        this.setPermission(Rank.FRIEND, Action.TELEPORT_TO_COLONY);
-
-
-        //Neutral
-        permissionMap.put(Rank.NEUTRAL, 0);
-        this.setPermission(Rank.NEUTRAL, Action.ACCESS_FREE_BLOCKS);
-
-        //Hostile
-        permissionMap.put(Rank.HOSTILE, 0);
-        this.setPermission(Rank.HOSTILE, Action.GUARDS_ATTACK);
-
         this.clearDirty();
         this.colony = colony;
+        this.loadRanks();
+    }
+
+    /**
+     * Load ranks from old enum and create according class instances
+     */
+    private void loadRanks()
+    {
+        ranks.clear();
+        permissionMap.clear();
+        for (OldRank oldRank : OldRank.values())
+        {
+            String name = oldRank.name();
+            name = name.substring(0,1).toUpperCase(Locale.ENGLISH) + name.substring(1).toLowerCase(Locale.ENGLISH);
+            Rank rank = new Rank(oldRank.ordinal(), name, oldRank.isSubscriber, true);
+            ranks.put(rank.getId(), rank);
+            permissionMap.put(rank, 0);
+            switch (oldRank)
+            {
+                case OWNER:
+                    this.setPermission(rank, Action.EDIT_PERMISSIONS);
+                case OFFICER:
+                    this.setPermission(rank, Action.PLACE_HUTS);
+                    this.setPermission(rank, Action.BREAK_HUTS);
+                    this.setPermission(rank, Action.CAN_PROMOTE);
+                    this.setPermission(rank, Action.CAN_DEMOTE);
+                    this.setPermission(rank, Action.SEND_MESSAGES);
+                    this.setPermission(rank, Action.MANAGE_HUTS);
+                    this.setPermission(rank, Action.RECEIVE_MESSAGES);
+                    this.setPermission(rank, Action.PLACE_BLOCKS);
+                    this.setPermission(rank, Action.BREAK_BLOCKS);
+                    this.setPermission(rank, Action.FILL_BUCKET);
+                    this.setPermission(rank, Action.OPEN_CONTAINER);
+                    this.setPermission(rank, Action.RECEIVE_MESSAGES_FAR_AWAY);
+                    this.setPermission(rank, Action.CAN_KEEP_COLONY_ACTIVE_WHILE_AWAY);
+                    this.setPermission(rank, Action.RALLY_GUARDS);
+                    rank.setColonyManager(true);
+                case FRIEND:
+                    this.setPermission(rank, Action.ACCESS_HUTS);
+                    this.setPermission(rank, Action.USE_SCAN_TOOL);
+                    this.setPermission(rank, Action.TOSS_ITEM);
+                    this.setPermission(rank, Action.PICKUP_ITEM);
+                    this.setPermission(rank, Action.RIGHTCLICK_BLOCK);
+                    this.setPermission(rank, Action.RIGHTCLICK_ENTITY);
+                    this.setPermission(rank, Action.THROW_POTION);
+                    this.setPermission(rank, Action.SHOOT_ARROW);
+                    this.setPermission(rank, Action.ATTACK_CITIZEN);
+                    this.setPermission(rank, Action.ATTACK_ENTITY);
+                    this.setPermission(rank, Action.TELEPORT_TO_COLONY);
+                case NEUTRAL:
+                    this.setPermission(rank, Action.ACCESS_FREE_BLOCKS);
+                    break;
+                case HOSTILE:
+                    this.setPermission(rank, Action.GUARDS_ATTACK);
+                    rank.setHostile(true);
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
     /**
@@ -258,50 +228,6 @@ public class Permissions implements IPermissions
     }
 
     /**
-     * Stores the list of promotion/demotion ranks.
-     *
-     * @param r Rank to set pro- and demotion of.
-     * @param p Promotion rank.
-     * @param d Demotion rank.
-     */
-    private static void setPromotionRanks(final Rank r, final Rank p, final Rank d)
-    {
-        promotionRanks.put(r, new RankPair(p, d));
-    }
-
-    /**
-     * Returns the promotion rank of a specific rank. E.G.: Neutral will return Friend.
-     *
-     * @param rank Rank to check promotion of.
-     * @return {@link Rank} after promotion.
-     */
-    public static Rank getPromotionRank(final Rank rank)
-    {
-        if (promotionRanks.containsKey(rank))
-        {
-            return promotionRanks.get(rank).promote;
-        }
-
-        return rank;
-    }
-
-    /**
-     * Returns the demotion rank of a specific rank. E.G.: Neutral will return Hostile.
-     *
-     * @param rank Rank to check demotion of.
-     * @return {@link Rank} after demotion.
-     */
-    public static Rank getDemotionRank(final Rank rank)
-    {
-        if (promotionRanks.containsKey(rank))
-        {
-            return promotionRanks.get(rank).demote;
-        }
-
-        return rank;
-    }
-
-    /**
      * Toggle permission for a specific rank.
      *
      * @param rank   Rank to toggle permission.
@@ -321,9 +247,32 @@ public class Permissions implements IPermissions
      */
     public void loadPermissions(@NotNull final CompoundNBT compound)
     {
+        // Ranks
+        if (compound.contains(TAG_RANKS))
+        {
+            ranks.clear();
+            final ListNBT rankTagList = compound.getList(TAG_RANKS, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
+            for (int i = 0; i < rankTagList.size(); ++i)
+            {
+                final CompoundNBT rankCompound = rankTagList.getCompound(i);
+                final int id = rankCompound.getInt(TAG_ID);
+                final String name = rankCompound.getString(TAG_NAME);
+                final boolean isSubscriber = rankCompound.getBoolean(TAG_SUBSCRIBER);
+                final boolean isInitial = rankCompound.getBoolean(TAG_INITIAL);
+                final boolean isColonyManager = rankCompound.getBoolean(TAG_COLONY_MANAGER);
+                final boolean isHostile = rankCompound.getBoolean(TAG_HOSTILE);
+                final Rank rank = new Rank(id, name, isSubscriber, isInitial, isColonyManager, isHostile);
+                ranks.put(id, rank);
+            }
+        }
+        else
+        {
+            this.loadRanks();
+        }
         players.clear();
         //  Owners
         final ListNBT ownerTagList = compound.getList(TAG_OWNERS, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
+        final int version = compound.getInt(TAG_VERSION);
         for (int i = 0; i < ownerTagList.size(); ++i)
         {
             final CompoundNBT ownerCompound = ownerTagList.getCompound(i);
@@ -333,16 +282,24 @@ public class Permissions implements IPermissions
             {
                 name = ownerCompound.getString(TAG_NAME);
             }
-
-            final Rank rank = Rank.valueOf(ownerCompound.getString(TAG_RANK));
+            Rank rank;
+            if (version == permissionsVersion)
+            {
+                rank = ranks.get(ownerCompound.getInt(TAG_RANK));
+            }
+            else
+            {
+                final OldRank oldRank = OldRank.valueOf(ownerCompound.getString(TAG_RANK));
+                rank = ranks.get(oldRank.ordinal());
+            }
 
             final GameProfile player = ServerLifecycleHooks.getCurrentServer().getPlayerProfileCache().getProfileByUUID(id);
 
-            if (player != null)
+            if (player != null && rank != null)
             {
                 players.put(id, new Player(id, player.getName(), rank));
             }
-            else if (!name.isEmpty())
+            else if (!name.isEmpty() && rank != null)
             {
                 players.put(id, new Player(id, name, rank));
             }
@@ -356,7 +313,7 @@ public class Permissions implements IPermissions
             for (int i = 0; i < permissionsTagList.size(); ++i)
             {
                 final CompoundNBT permissionsCompound = permissionsTagList.getCompound(i);
-                final Rank rank = Rank.valueOf(permissionsCompound.getString(TAG_RANK));
+                final Rank rank = ranks.get(permissionsCompound.getInt(TAG_RANK));
 
                 final ListNBT flagsTagList = permissionsCompound.getList(TAG_FLAGS, net.minecraftforge.common.util.Constants.NBT.TAG_STRING);
 
@@ -397,6 +354,27 @@ public class Permissions implements IPermissions
                 checkFullyAbandoned();
             }
         }
+        else
+        {
+            permissionMap.clear();
+            final ListNBT permissionsTagList = compound.getList(TAG_PERMISSIONS, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
+            for (int i = 0; i < permissionsTagList.size(); ++i)
+            {
+                final CompoundNBT permissionsCompound = permissionsTagList.getCompound(i);
+                final OldRank oldRank = OldRank.valueOf(permissionsCompound.getString(TAG_RANK));
+                final Rank rank = ranks.get(oldRank.ordinal());
+                final ListNBT flagsTagList = permissionsCompound.getList(TAG_FLAGS, net.minecraftforge.common.util.Constants.NBT.TAG_STRING);
+
+                int flags = 0;
+
+                for (int j = 0; j < flagsTagList.size(); ++j)
+                {
+                    final String flag = flagsTagList.getString(j);
+                    flags = Utils.setFlag(flags, Action.valueOf(flag).getFlag());
+                }
+                permissionMap.put(rank, flags);
+            }
+        }
 
         restoreOwnerIfNull();
     }
@@ -413,7 +391,7 @@ public class Permissions implements IPermissions
 
             if (player != null)
             {
-                players.put(ownerUUID, new Player(ownerUUID, player.getName(), Rank.OWNER));
+                players.put(ownerUUID, new Player(ownerUUID, player.getName(), ranks.get(OWNER_RANK_ID)));
             }
         }
     }
@@ -431,7 +409,7 @@ public class Permissions implements IPermissions
     {
         for (@NotNull final Map.Entry<UUID, Player> entry : players.entrySet())
         {
-            if (entry.getValue().getRank().equals(Rank.OWNER))
+            if (entry.getValue().getRank().getId() == OWNER_RANK_ID)
             {
                 return entry;
             }
@@ -443,7 +421,7 @@ public class Permissions implements IPermissions
      * Change the owner of a colony.
      *
      * @param player the player to set.
-     * @return true if succesful.
+     * @return true if successful.
      */
     @Override
     public boolean setOwner(final PlayerEntity player)
@@ -453,7 +431,7 @@ public class Permissions implements IPermissions
         ownerName = player.getName().getString();
         ownerUUID = player.getUniqueID();
 
-        players.put(ownerUUID, new Player(ownerUUID, player.getName().getString(), Rank.OWNER));
+        players.put(ownerUUID, new Player(ownerUUID, player.getName().getString(), ranks.get(OWNER_RANK_ID)));
 
         fullyAbandoned = false;
 
@@ -472,7 +450,7 @@ public class Permissions implements IPermissions
         ownerName = "[abandoned]";
         ownerUUID = UUID.randomUUID();
 
-        players.put(ownerUUID, new Player(ownerUUID, ownerName, Rank.OWNER));
+        players.put(ownerUUID, new Player(ownerUUID, ownerName, ranks.get(OWNER_RANK_ID)));
 
         checkFullyAbandoned();
         markDirty();
@@ -509,6 +487,21 @@ public class Permissions implements IPermissions
      */
     public void savePermissions(@NotNull final CompoundNBT compound)
     {
+        //  Ranks
+        @NotNull final ListNBT rankTagList = new ListNBT();
+        for (@NotNull final Rank rank : ranks.values())
+        {
+            @NotNull final CompoundNBT rankCompound = new CompoundNBT();
+            rankCompound.putInt(TAG_ID, rank.getId());
+            rankCompound.putString(TAG_NAME, rank.getName());
+            rankCompound.putBoolean(TAG_SUBSCRIBER, rank.isSubscriber());
+            rankCompound.putBoolean(TAG_INITIAL, rank.isInitial());
+            rankCompound.putBoolean(TAG_COLONY_MANAGER, rank.isColonyManager());
+            rankCompound.putBoolean(TAG_HOSTILE, rank.isHostile());
+            rankTagList.add(rankCompound);
+        }
+        compound.put(TAG_RANKS, rankTagList);
+
         //  Owners
         @NotNull final ListNBT ownerTagList = new ListNBT();
         for (@NotNull final Player player : players.values())
@@ -516,7 +509,7 @@ public class Permissions implements IPermissions
             @NotNull final CompoundNBT ownersCompound = new CompoundNBT();
             ownersCompound.putString(TAG_ID, player.getID().toString());
             ownersCompound.putString(TAG_NAME, player.getName());
-            ownersCompound.putString(TAG_RANK, player.getRank().name());
+            ownersCompound.putInt(TAG_RANK, player.getRank().getId());
             ownerTagList.add(ownersCompound);
         }
         compound.put(TAG_OWNERS, ownerTagList);
@@ -526,7 +519,7 @@ public class Permissions implements IPermissions
         for (@NotNull final Map.Entry<Rank, Integer> entry : permissionMap.entrySet())
         {
             @NotNull final CompoundNBT permissionsCompound = new CompoundNBT();
-            permissionsCompound.putString(TAG_RANK, entry.getKey().name());
+            permissionsCompound.putInt(TAG_RANK, entry.getKey().getId());
 
             @NotNull final ListNBT flagsTagList = new ListNBT();
             for (@NotNull final Action action : Action.values())
@@ -573,7 +566,7 @@ public class Permissions implements IPermissions
     @Override
     public boolean hasPermission(final Rank rank, @NotNull final Action action)
     {
-        return (rank == Rank.OWNER && action != Action.GUARDS_ATTACK)
+        return (rank == ranks.get(OWNER_RANK_ID) && action != Action.GUARDS_ATTACK)
                  || Utils.testFlag(permissionMap.get(rank), action.getFlag())
                  || (fullyAbandoned && Utils.testFlag(fullyAbandonedPermissionsFlag, action.getFlag()));
     }
@@ -588,14 +581,14 @@ public class Permissions implements IPermissions
     public Set<Player> getPlayersByRank(final Rank rank)
     {
         return this.players.values().stream()
-                 .filter(player -> player.getRank().equals(rank))
+                 .filter(player -> player.getRank() != null && player.getRank().equals(rank))
                  .collect(Collectors.toSet());
     }
 
     /**
      * Gets all player by a set of ranks.
      *
-     * @param ranks the set of ranks.
+     * @param ranks the set of Ranks.
      * @return set of players.
      */
     @Override
@@ -604,6 +597,14 @@ public class Permissions implements IPermissions
         return this.players.values().stream()
                  .filter(player -> ranks.contains(player.getRank()))
                  .collect(Collectors.toSet());
+    }
+
+    @Override
+    public Set<Player> getFilteredPlayers(@NotNull final Predicate<Rank> predicate)
+    {
+        return this.players.values().stream()
+          .filter(player -> predicate.test(player.getRank()))
+          .collect(Collectors.toSet());
     }
 
     /**
@@ -634,7 +635,7 @@ public class Permissions implements IPermissions
      * Returns the rank of a player.
      *
      * @param player player to check rank.
-     * @return Rank of te player.
+     * @return Rank of the player.
      */
     @NotNull
     public Rank getRank(@NotNull final PlayerEntity player)
@@ -665,7 +666,7 @@ public class Permissions implements IPermissions
     /**
      * Sets the player's rank to a given rank.
      *
-     * @param id    UUID of the player of the new rank.
+     * @param id    UUID of the player of the new oldRank.
      * @param rank  Desired rank.
      * @param world the world the player is in.
      * @return True if successful, otherwise false.
@@ -680,7 +681,7 @@ public class Permissions implements IPermissions
         {
             player.setRank(rank);
 
-            if (rank == Rank.OFFICER || rank == Rank.OWNER)
+            if (rank.isColonyManager())
             {
                 fullyAbandoned = false;
             }
@@ -708,7 +709,7 @@ public class Permissions implements IPermissions
      * @param id   UUID of the player..
      * @param rank Desired rank.
      * @param name name of the player.
-     * @return True if succesful, otherwise false.
+     * @return True if successful, otherwise false.
      */
     @Override
     public boolean addPlayer(@NotNull final UUID id, final String name, final Rank rank)
@@ -718,7 +719,7 @@ public class Permissions implements IPermissions
         players.remove(p.getID());
         players.put(p.getID(), p);
 
-        if (rank == Rank.OWNER || rank == Rank.OFFICER)
+        if (rank.getId() == OWNER_RANK_ID || rank.getId() == OFFICER_RANK_ID)
         {
             fullyAbandoned = false;
         }
@@ -738,7 +739,7 @@ public class Permissions implements IPermissions
     public Rank getRank(final UUID id)
     {
         final Player player = players.get(id);
-        return player != null ? player.getRank() : Rank.NEUTRAL;
+        return player != null ? player.getRank() : ranks.get(NEUTRAL_RANK_ID);
     }
 
     /**
@@ -765,13 +766,13 @@ public class Permissions implements IPermissions
             final ServerPlayerEntity playerEntity = (ServerPlayerEntity) world.getPlayerByUuid(gameprofile.getId());
             if (playerEntity != null)
             {
-                if (rank == Rank.OFFICER)
+                if (rank.getId() == OFFICER_RANK_ID)
                 {
                     colony.getPackageManager().addImportantColonyPlayer(playerEntity);
                     colony.getPackageManager().updateSubscribers();
                     fullyAbandoned = false;
                 }
-                else if (rank == Rank.OWNER)
+                else if (rank.getId() == OWNER_RANK_ID)
                 {
                     fullyAbandoned = false;
                 }
@@ -801,7 +802,7 @@ public class Permissions implements IPermissions
      *
      * @param gameprofile GameProfile of the player.
      * @param rank        Desired rank.
-     * @return True if succesful, otherwise false.
+     * @return True if successful, otherwise false.
      */
     @Override
     public boolean addPlayer(@NotNull final GameProfile gameprofile, final Rank rank)
@@ -811,7 +812,7 @@ public class Permissions implements IPermissions
         players.remove(p.getID());
         players.put(p.getID(), p);
 
-        if (rank == Rank.OWNER || rank == Rank.OFFICER)
+        if (rank.getId() == OWNER_RANK_ID || rank.getId() == OFFICER_RANK_ID)
         {
             fullyAbandoned = false;
         }
@@ -824,12 +825,12 @@ public class Permissions implements IPermissions
      * Remove a player from the permissionMap.
      *
      * @param id UUID of the player.
-     * @return True if succesfull, otherwise false.
+     * @return True if successful, otherwise false.
      */
     public boolean removePlayer(final UUID id)
     {
         final Player player = players.get(id);
-        if (player != null && player.getRank() != Rank.OWNER && players.remove(id) != null)
+        if (player != null && player.getRank().getId() != OWNER_RANK_ID && players.remove(id) != null)
         {
             checkFullyAbandoned();
             markDirty();
@@ -879,7 +880,7 @@ public class Permissions implements IPermissions
      */
     private boolean isSubscriber(final UUID player)
     {
-        return getRank(player).isSubscriber;
+        return getRank(player).isSubscriber();
     }
 
     /**
@@ -908,7 +909,18 @@ public class Permissions implements IPermissions
      */
     public void serializeViewNetworkData(@NotNull final PacketBuffer buf, @NotNull final Rank viewerRank)
     {
-        buf.writeString(viewerRank.name());
+        buf.writeInt(ranks.size());
+        for (Rank rank : ranks.values())
+        {
+            buf.writeInt(rank.getId());
+            buf.writeString(rank.getName());
+            buf.writeBoolean(rank.isSubscriber());
+            buf.writeBoolean(rank.isInitial());
+            buf.writeBoolean(rank.isColonyManager());
+            buf.writeBoolean(rank.isHostile());
+        }
+
+        buf.writeInt(viewerRank.getId());
 
         //  Owners
         buf.writeInt(players.size());
@@ -916,14 +928,14 @@ public class Permissions implements IPermissions
         {
             PacketUtils.writeUUID(buf, player.getKey());
             buf.writeString(player.getValue().getName());
-            buf.writeString(player.getValue().getRank().name());
+            buf.writeInt(player.getValue().getRank().getId());
         }
 
         // Permissions
         buf.writeInt(permissionMap.size());
         for (@NotNull final Map.Entry<Rank, Integer> entry : permissionMap.entrySet())
         {
-            buf.writeString(entry.getKey().name());
+            buf.writeInt(entry.getKey().getId());
             buf.writeInt(entry.getValue());
         }
     }
@@ -940,34 +952,118 @@ public class Permissions implements IPermissions
      */
     private void checkFullyAbandoned()
     {
-        if (getOwnerName().equals("[abandoned]") && getPlayersByRank(Rank.OFFICER).isEmpty())
+        if (getOwnerName().equals("[abandoned]") && getPlayersByRank(ranks.get(OFFICER_RANK_ID)).isEmpty())
         {
             fullyAbandoned = true;
         }
     }
 
-    private static class RankPair
+    /**
+     * Get rank instance of owner
+     * @return the rank
+     */
+    @Override
+    public Rank getRankOwner()
     {
-        /**
-         * The rank if promoted.
-         */
-        private final Rank promote;
+        return ranks.get(OWNER_RANK_ID);
+    }
 
-        /**
-         * The rank if demoted.
-         */
-        private final Rank demote;
+    /**
+     * Get rank instance of officer
+     * @return the rank
+     */
+    @Override
+    public Rank getRankOfficer()
+    {
+        return ranks.get(OFFICER_RANK_ID);
+    }
 
-        /**
-         * Links promotion and demotion.
-         *
-         * @param p Promoting rank.
-         * @param d Demoting rank.
-         */
-        RankPair(final Rank p, final Rank d)
+    /**
+     * Get rank instance of hostile
+     * @return the rank
+     */
+    @Override
+    public Rank getRankHostile()
+    {
+        return ranks.get(HOSTILE_RANK_ID);
+    }
+
+    /**
+     * Get rank instance of friend
+     * @return the rank
+     */
+    @Override
+    public Rank getRankFriend()
+    {
+        return ranks.get(FRIEND_RANK_ID);
+    }
+
+    /**
+     * Get rank instance of neutral
+     * @return the rank
+     */
+    @Override
+    public Rank getRankNeutral()
+    {
+        return ranks.get(NEUTRAL_RANK_ID);
+    }
+
+    @Override
+    public Rank getRank(final int id)
+    {
+        return ranks.get(id);
+    }
+
+    /**
+     * Get a map of all ranks with their according ID as key
+     * @return the ranks
+     */
+    @Override
+    public Map<Integer, Rank> getRanks()
+    {
+        return ranks;
+    }
+
+    /**
+     * Create a new rank instance with the given name, auto assign lowest unused ID, no permissions
+     * @param name the name of the rank
+     */
+    @Override
+    public void addRank(String name)
+    {
+
+        int id = HOSTILE_RANK_ID + 1;
+        for (int i = HOSTILE_RANK_ID; i <= ranks.size() + 1; ++i)
         {
-            promote = p;
-            demote = d;
+            if (ranks.get(i) == null)
+            {
+                id = i;
+                break;
+            }
         }
+        Rank rank = new Rank(id, name, false, false);
+        ranks.put(id, rank);
+        permissionMap.put(rank, 0);
+        markDirty();
+    }
+
+    /**
+     * Remove the given rank, if it is not an initial rank
+     * Set all players with the given rank to neutral
+     * @param rank the rank to remove
+     */
+    @Override public void removeRank(Rank rank)
+    {
+        if (rank.isInitial())
+        {
+            return;
+        }
+        for (Player player : getPlayersByRank(rank))
+        {
+            player.setRank(getRankNeutral());
+        }
+        ranks.remove(rank.getId());
+        permissionMap.remove(rank);
+        markDirty();
     }
 }
