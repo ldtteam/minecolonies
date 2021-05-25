@@ -52,11 +52,11 @@ public class GenericRecipe implements IGenericRecipe
             intermediate = Blocks.AIR;
         }
         return new GenericRecipe(recipe.getRecipeOutput(), calculateSecondaryOutputs(recipe), inputs,
-                size, intermediate, null, new ArrayList<>());
+                size, intermediate, null, new ArrayList<>(), -1);
     }
 
     @Nullable
-    public static IGenericRecipe of(@Nullable final IRecipeStorage storage, @NotNull final List<ITextComponent> restrictions)
+    public static IGenericRecipe of(@Nullable final IRecipeStorage storage, @NotNull final List<ITextComponent> restrictions, final int levelSort)
     {
         if (storage == null) return null;
         final List<List<ItemStack>> inputs = storage.getCleanedInput().stream()
@@ -64,13 +64,13 @@ public class GenericRecipe implements IGenericRecipe
                 .collect(Collectors.toList());
         return new GenericRecipe(storage.getPrimaryOutput(), storage.getAlternateOutputs(),
                 storage.getSecondaryOutputs(), inputs, storage.getGridSize(),
-                storage.getIntermediate(), storage.getLootTable(), restrictions);
+                storage.getIntermediate(), storage.getLootTable(), restrictions, levelSort);
     }
 
     @Nullable
     public static IGenericRecipe of(@Nullable final IRecipeStorage storage)
     {
-        return of(storage, new ArrayList<>());
+        return of(storage, new ArrayList<>(), -1);
     }
 
     @Nullable
@@ -88,13 +88,15 @@ public class GenericRecipe implements IGenericRecipe
     private final Block intermediate;
     private final ResourceLocation lootTable;
     private final List<ITextComponent> restrictions;
+    private final int levelSort;
 
     public GenericRecipe(@NotNull final ItemStack output,
                          @NotNull final List<ItemStack> additionalOutputs,
                          @NotNull final List<List<ItemStack>> inputs,
                          final int gridSize, @NotNull final Block intermediate,
                          @Nullable final ResourceLocation lootTable,
-                         @NotNull final List<ITextComponent> restrictions)
+                         @NotNull final List<ITextComponent> restrictions,
+                         final int levelSort)
     {
         this.output = output;
         this.allMultiOutputs = Collections.singletonList(output);
@@ -104,6 +106,7 @@ public class GenericRecipe implements IGenericRecipe
         this.intermediate = intermediate;
         this.lootTable = lootTable;
         this.restrictions = Collections.unmodifiableList(restrictions);
+        this.levelSort = levelSort;
     }
 
     public GenericRecipe(@NotNull final ItemStack output,
@@ -112,7 +115,8 @@ public class GenericRecipe implements IGenericRecipe
                          @NotNull final List<List<ItemStack>> inputs,
                          final int gridSize, @NotNull final Block intermediate,
                          @Nullable final ResourceLocation lootTable,
-                         @NotNull final List<ITextComponent> restrictions)
+                         @NotNull final List<ITextComponent> restrictions,
+                         final int levelSort)
     {
         this.output = output;
         this.allMultiOutputs = Collections.unmodifiableList(
@@ -124,6 +128,7 @@ public class GenericRecipe implements IGenericRecipe
         this.intermediate = intermediate;
         this.lootTable = lootTable;
         this.restrictions = Collections.unmodifiableList(restrictions);
+        this.levelSort = levelSort;
     }
 
     @Override
@@ -161,6 +166,12 @@ public class GenericRecipe implements IGenericRecipe
     public List<ITextComponent> getRestrictions()
     {
         return this.restrictions;
+    }
+
+    @Override
+    public int getLevelSort()
+    {
+        return this.levelSort;
     }
 
     @Override

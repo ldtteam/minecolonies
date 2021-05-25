@@ -37,10 +37,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -353,6 +350,9 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
         // and even more recipes that can't be taught, but are just inherent in the worker AI
         recipes.addAll(this.crafting.getAdditionalRecipesForDisplayPurposesOnly(this.job));
 
-        return recipes;
+        return recipes.stream()
+                .sorted(Comparator.comparing(IGenericRecipe::getLevelSort)
+                    .thenComparing(r -> r.getPrimaryOutput().getItem().getRegistryName()))
+                .collect(Collectors.toList());
     }
 }

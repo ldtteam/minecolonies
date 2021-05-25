@@ -112,4 +112,10 @@ public interface IGenericRecipe
      */
     @NotNull
     List<ITextComponent> getRestrictions();
+
+    /**
+     * Returns an arbitrary integer that influences recipe sort order based on level.
+     * @return a sorting number
+     */
+    int getLevelSort();
 }

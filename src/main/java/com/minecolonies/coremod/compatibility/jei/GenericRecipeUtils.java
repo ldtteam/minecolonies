@@ -64,7 +64,7 @@ public final class GenericRecipeUtils
     public static IGenericRecipe create(@NotNull final CustomRecipe customRecipe, @NotNull final IRecipeStorage storage)
     {
         final List<ITextComponent> restrictions = calculateRestrictions(customRecipe);
-        return Objects.requireNonNull(GenericRecipe.of(storage, restrictions));
+        return Objects.requireNonNull(GenericRecipe.of(storage, restrictions, customRecipe.getMinBuildingLevel()));
     }
 
     @NotNull
@@ -73,7 +73,7 @@ public final class GenericRecipeUtils
         final IGenericRecipe original = Objects.requireNonNull(GenericRecipe.of(recipe));
         final List<List<ItemStack>> inputs = compact(recipe.getIngredients());
         return new GenericRecipe(original.getPrimaryOutput(), original.getAdditionalOutputs(), inputs,
-                original.getGridSize(), original.getIntermediate(), original.getLootTable(), new ArrayList<>());
+                original.getGridSize(), original.getIntermediate(), original.getLootTable(), new ArrayList<>(), -1);
     }
 
     @NotNull
