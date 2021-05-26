@@ -16,6 +16,7 @@ import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
 import com.minecolonies.coremod.colony.buildings.modules.settings.BoolSetting;
+import com.minecolonies.coremod.colony.buildings.modules.settings.IntSetting;
 import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.coremod.colony.jobs.JobComposter;
 import net.minecraft.block.Block;
@@ -41,6 +42,11 @@ public class BuildingComposter extends AbstractBuildingWorker
      * Settings key for the composting mode.
      */
     public static final ISettingKey<BoolSetting> PRODUCE_DIRT = new SettingKey<>(BoolSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "producedirt"));
+
+    /**
+     * Key for min remainder at warehouse.
+     */
+    public static final ISettingKey<IntSetting> MIN = new SettingKey<>(IntSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "warehousemin"));
 
     /**
      * Description of the job for this building
@@ -76,7 +82,6 @@ public class BuildingComposter extends AbstractBuildingWorker
     public BuildingComposter(@NotNull final IColony c, final BlockPos l)
     {
         super(c, l);
-
         keepX.put((stack) -> this.getModuleMatching(ItemListModule.class, m -> m.getId().equals(COMPOSTABLE_LIST)).isItemInList(new ItemStorage(stack)), new Tuple<>(Integer.MAX_VALUE, true));
     }
 

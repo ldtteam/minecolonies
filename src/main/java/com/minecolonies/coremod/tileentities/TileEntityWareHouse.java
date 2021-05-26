@@ -51,7 +51,13 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
     @Override
     public boolean hasMatchingItemStackInWarehouse(@NotNull final ItemStack itemStack, final int count, final boolean ignoreNBT)
     {
-        int totalCountFound = 0;
+        return hasMatchingItemStackInWarehouse(itemStack, count, ignoreNBT, 0);
+    }
+
+    @Override
+    public boolean hasMatchingItemStackInWarehouse(@NotNull final ItemStack itemStack, final int count, final boolean ignoreNBT, final int leftOver)
+    {
+        int totalCountFound = 0 - leftOver;
         for (@NotNull final BlockPos pos : getBuilding().getContainers())
         {
             if (WorldUtil.isBlockLoaded(world, pos))

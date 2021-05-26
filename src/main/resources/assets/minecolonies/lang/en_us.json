@@ -1004,7 +1004,7 @@
   "com.minecolonies.coremod.progress.manual_employment_on": "§6 Workers are complaining about a long walk to their work. You can manually assign them to the closest houses if the option is turned on in the Town Hall settings.",
   "com.minecolonies.coremod.progress.ten_citizens_spawned": "§6 A growing colony increases the burdens on your settlers. You should consider upgrading your work huts.",
   "com.minecolonies.coremod.progress.twenty_building_levels": "§6 A barbarian spy had been caught next to your colony, and he seems to be from a bigger group! You should consider building Barracks to defend your colony.",
-  "com.minecolonies.coremod.progress.twenty_five_citizens_spawned": "§6 Your colony's population has grown to the limits of current management techniques. To accept more citizens, complete the research at the University.",
+  "com.minecolonies.coremod.progress.citizen_cap_met": "§6 Your colony's population has grown to the limits of current management techniques. To accept more citizens, complete the research at the University.",
   "com.minecolonies.coremod.progress.not_enough_jobs": "§6 Building more Houses than available jobs has a bad influence on your citizens' happiness.",
   "com.minecolonies.coremod.progress.newchild": "§6 A new child, %s, is now happily living in %s!",
   "com.minecolonies.coremod.progress.childgrow": "%s grew up and wants a job now.",
@@ -1977,6 +1977,7 @@
   "com.minecolonies.coremod.gui.tooldesc.scepterlumberjack": "Restrict the Forester's working area by left-clicking one corner and right-clicking the opposite corner with the tool.",
 
   "com.minecolonies.coremod.setting.minecolonies:fertilize": "Request Fertilizer",
+  "com.minecolonies.coremod.setting.minecolonies:warehousemin": "Min Warehouse Stock:",
 
   "com.minecolonies.coremod.gui.givetool": "Obtain Tool"
 }
