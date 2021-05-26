@@ -146,6 +146,8 @@ public class BuildingMechanic extends AbstractBuildingCrafter
         @Override
         public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
         {
+            if (!super.isRecipeCompatible(recipe)) return false;
+
             final Optional<Boolean> isRecipeAllowed = CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, MECHANIC);
             if (isRecipeAllowed.isPresent()) { return isRecipeAllowed.get(); }
 

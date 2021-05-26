@@ -9,7 +9,6 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IGenericRecipe;
-import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -150,6 +149,8 @@ public class BuildingSawmill extends AbstractBuildingCrafter
         @Override
         public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
         {
+            if (!super.isRecipeCompatible(recipe)) return false;
+
             final Optional<Boolean> isRecipeAllowed = CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, SAWMILL);
             if (isRecipeAllowed.isPresent()) return isRecipeAllowed.get();
 

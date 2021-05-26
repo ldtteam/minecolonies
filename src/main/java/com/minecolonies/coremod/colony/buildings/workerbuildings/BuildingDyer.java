@@ -249,6 +249,7 @@ public class BuildingDyer extends AbstractBuildingSmelterCrafter
         @Override
         public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
         {
+            if (!super.isRecipeCompatible(recipe)) return false;
             return CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, DYER).orElse(false);
         }
     }

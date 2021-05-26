@@ -180,6 +180,7 @@ public class BuildingGlassblower extends AbstractBuildingSmelterCrafter
         @Override
         public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
         {
+            if (!super.isRecipeCompatible(recipe)) return false;
             return CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, GLASS_BLOWER).orElse(false);
         }
     }

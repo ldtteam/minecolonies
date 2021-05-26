@@ -322,25 +322,17 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
      */
     protected boolean isRecipeCompatibleWithCraftingModule(final IToken<?> token)
     {
-        return this.getModules(ICraftingBuildingModule.class).stream()
-                .map(crafting -> Optional.ofNullable(GenericRecipe.of(token))
-                        .map(recipe -> isRecipeCompatibleWithCraftingModule(crafting, recipe))
-                        .orElse(false))
-                .reduce(false, (cur, next) -> cur || next);
-    }
+        final IGenericRecipe recipe = GenericRecipe.of(token);
+        if (recipe == null) return false;
 
-    /**
-     * @param crafting the crafting module
-     * @param recipe the recipe
-     * @return whether the recipe can be added according to the crafting module
-     */
-    protected static boolean isRecipeCompatibleWithCraftingModule(@NotNull final ICraftingBuildingModule crafting, @NotNull IGenericRecipe recipe)
-    {
-        if (recipe.getIntermediate() == Blocks.FURNACE)
+        for (final ICraftingBuildingModule module : this.getModules(ICraftingBuildingModule.class))
         {
-            return crafting.canLearnFurnaceRecipes() && crafting.isRecipeCompatible(recipe);
+            if (module.isRecipeCompatible(recipe))
+            {
+                return true;
+            }
         }
-        return crafting.canLearnCraftingRecipes() && crafting.isRecipeCompatible(recipe);
+        return false;
     }
 
     /**

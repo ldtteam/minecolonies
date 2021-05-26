@@ -323,6 +323,7 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
             for (final IRecipe<IInventory> recipe : recipeManager.getRecipes(IRecipeType.SMELTING).values())
             {
                 final IGenericRecipe genericRecipe = GenericRecipe.of(recipe);
+                assert genericRecipe != null;
                 if (this.crafting.isRecipeCompatible(genericRecipe))
                 {
                     recipes.add(genericRecipe);

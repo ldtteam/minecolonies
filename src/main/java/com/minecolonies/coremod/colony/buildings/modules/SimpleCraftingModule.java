@@ -1,8 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.modules;
 
 import com.minecolonies.api.colony.jobs.IJob;
-import com.minecolonies.api.crafting.IGenericRecipe;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -26,11 +24,5 @@ public class SimpleCraftingModule extends AbstractCraftingBuildingModule.Craftin
     public boolean canLearnLargeRecipes()
     {
         return false;
-    }
-
-    @Override
-    public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
-    {
-        return true;
     }
 }

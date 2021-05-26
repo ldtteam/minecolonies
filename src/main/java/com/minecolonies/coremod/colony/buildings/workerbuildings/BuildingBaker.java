@@ -294,6 +294,7 @@ public class BuildingBaker extends AbstractBuildingSmelterCrafter
         @Override
         public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
         {
+            if (!super.isRecipeCompatible(recipe)) return false;
             final Optional<Boolean> isRecipeAllowed = CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, BAKER);
             return isRecipeAllowed.orElse(false);
         }

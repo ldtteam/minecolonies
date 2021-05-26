@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.crafting.IGenericRecipe;
+import net.minecraft.block.Blocks;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import org.jetbrains.annotations.NotNull;
@@ -97,6 +98,13 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
 
         @Override
         public boolean canLearnLargeRecipes() { return true; }
+
+        @Override
+        public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
+        {
+            return canLearnCraftingRecipes() &&
+                    recipe.getIntermediate() == Blocks.AIR;
+        }
     }
 
     /** this module is for furnace-only users */
@@ -110,6 +118,13 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
 
         @Override
         public boolean canLearnLargeRecipes() { return false; }
+
+        @Override
+        public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
+        {
+            return canLearnFurnaceRecipes() &&
+                    recipe.getIntermediate() == Blocks.FURNACE;
+        }
     }
 
     /** this module is for those who can't be taught recipes but can still use custom recipes */
