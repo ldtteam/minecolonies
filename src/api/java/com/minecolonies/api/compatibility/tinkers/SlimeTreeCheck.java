@@ -10,6 +10,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.server.ServerWorld;
 import org.jetbrains.annotations.NotNull;
+import slimeknights.tconstruct.common.TinkerTags;
+import slimeknights.tconstruct.library.TinkerRegistries;
+import slimeknights.tconstruct.world.TinkerWorld;
 import slimeknights.tconstruct.world.block.*;
 
 import java.util.List;
@@ -133,39 +136,5 @@ public final class SlimeTreeCheck extends SlimeTreeProxy
     public static int getLeafVariant(@NotNull final BlockState leaf)
     {
         return new SlimeTreeCheck().getTinkersLeafVariant(leaf);
-    }
-
-    public static NonNullList<ItemStack> getDropsForLeaf(
-      @NotNull final IWorld world,
-      @NotNull final BlockPos pos,
-      @NotNull final BlockState blockState,
-      @NotNull final Block leaf)
-    {
-        if (isSlimeLeaf(leaf))
-        {
-            final NonNullList<ItemStack> list = NonNullList.create();
-            // Implementation is chance based, so repeat till we get an item
-            for (int i = 0; i < 100 && list.isEmpty(); i++)
-            {
-                List<ItemStack> drops = Block.getDrops(blockState, (ServerWorld) world, pos, null);
-                for (ItemStack itemStack : drops)
-                {
-                    if (SlimeSaplingBlock.getBlockFromItem(itemStack.getItem()) instanceof SlimeSaplingBlock)
-                    {
-                        list.add(itemStack);
-                    }
-                }
-            }
-            return list;
-        }
-        return NonNullList.create();
-    }
-
-    /**
-     *
-     */
-    public static Block getSlimeDirtBlock()
-    {
-        return new SlimeDirtBlock(AbstractBlock.Properties.create(null, (Function<BlockState, MaterialColor>) null));
     }
 }

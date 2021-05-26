@@ -442,7 +442,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
             }
         }
 
-        if (!job.getTree().hasLogs() && (!job.getTree().isSlimeTree() || !job.getTree().hasLeaves()) && (!job.getTree().isNetherTree() || !(job.getTree().hasLeaves())))
+        if (!job.getTree().hasLogs() && (!job.getTree().isNetherTree() || !(job.getTree().hasLeaves())))
         {
             if (hasNotDelayed(WAIT_BEFORE_SAPLING))
             {
@@ -836,13 +836,9 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
             final BlockPos pos = job.getTree().getStumpLocations().get(0);
             final Item sapling = getInventory().getStackInSlot(saplingSlot).getItem();
             final Block new_block;
-            if (sapling.isIn(fungi) || job.getTree().isSlimeTree())
+            if (sapling.isIn(fungi))
             {
-                if (job.getTree().isSlimeTree())
-                {
-                    new_block = Compatibility.getSlimeDirtBlock();
-                }
-                else if (sapling == Items.WARPED_FUNGUS)
+                if (sapling == Items.WARPED_FUNGUS)
                 {
                     new_block = Blocks.WARPED_NYLIUM;
                 }
@@ -851,10 +847,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
                     new_block = Blocks.CRIMSON_NYLIUM;
                 }
                 world.setBlockState(pos.down(), new_block.getDefaultState());
-                if (job.getTree().isNetherTree())
-                {
-                    getOwnBuilding().addNetherTree(pos);
-                }
+                getOwnBuilding().addNetherTree(pos);
             }
             if ((world.setBlockState(pos, block.getDefaultState()) && getInventory().getStackInSlot(saplingSlot) != null)
                   || Objects.equals(world.getBlockState(pos), block.getDefaultState()))

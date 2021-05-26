@@ -248,10 +248,6 @@ public class Tree
             {
                 list = (Compatibility.getDropsForDynamicLeaf(world, pos, blockState, A_LOT_OF_LUCK, block));
             }
-            /*else if (Compatibility.isSlimeLeaf(block))
-            {
-                list = (Compatibility.getDropsForSlimeLeaf(world, pos, blockState, block));
-            }*/
             else
             {
                 list.addAll(getSaplingsForLeaf((ServerWorld) world, pos));

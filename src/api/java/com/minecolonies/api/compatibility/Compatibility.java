@@ -134,11 +134,6 @@ public final class Compatibility
         return TinkersWeaponHelper.getToolLvl(stack);
     }
 
-    public static Block getSlimeDirtBlock()
-    {
-        return SlimeTreeCheck.getSlimeDirtBlock();
-    }
-
     /**
      * Check if Pams harvestcraft is installed.
      *
@@ -215,11 +210,6 @@ public final class Compatibility
     public static NonNullList<ItemStack> getDropsForDynamicLeaf(final IWorld world, final BlockPos pos, final BlockState blockState, final int fortune, final Block leaf)
     {
         return DynamicTreeCompat.getDropsForLeafCompat(world, pos, blockState, fortune, leaf);
-    }
-
-    public static NonNullList<ItemStack> getDropsForSlimeLeaf(final IWorld world, final BlockPos pos, final BlockState blockState, final Block leaf)
-    {
-        return SlimeTreeCheck.getDropsForLeaf(world, pos, blockState, leaf);
     }
 
     /**
