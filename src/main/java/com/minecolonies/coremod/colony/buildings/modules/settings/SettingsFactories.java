@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony.buildings.modules.settings;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.buildings.modules.settings.IBlockSettingFactory;
 import com.minecolonies.api.colony.buildings.modules.settings.IBoolSettingFactory;
+import com.minecolonies.api.colony.buildings.modules.settings.IIntSettingFactory;
 import com.minecolonies.api.colony.buildings.modules.settings.IStringSettingFactory;
 import com.minecolonies.api.colony.requestsystem.factory.FactoryVoidInput;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
@@ -275,6 +276,80 @@ public class SettingsFactories
         public short getSerializationId()
         {
             return 47;
+        }
+    }
+
+    /**
+     * Specific factory for the bool setting.
+     */
+    public static class IntSettingFactory implements IIntSettingFactory<IntSetting>
+    {
+        /**
+         * Compound tag for the value.
+         */
+        private static final String TAG_VALUE = "value";
+
+        /**
+         * Compound tag for the default.
+         */
+        private static final String TAG_DEFAULT = "default";
+
+        @NotNull
+        @Override
+        public TypeToken<IntSetting> getFactoryOutputType()
+        {
+            return TypeToken.of(IntSetting.class);
+        }
+
+        @NotNull
+        @Override
+        public TypeToken<FactoryVoidInput> getFactoryInputType()
+        {
+            return TypeConstants.FACTORYVOIDINPUT;
+        }
+
+        @NotNull
+        @Override
+        public IntSetting getNewInstance(final int value, final int def)
+        {
+            return new IntSetting(value, def);
+        }
+
+        @NotNull
+        @Override
+        public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final IntSetting storage)
+        {
+            final CompoundNBT compound = new CompoundNBT();
+            compound.putInt(TAG_VALUE, storage.getValue());
+            compound.putInt(TAG_DEFAULT, storage.getDefault());
+            return compound;
+        }
+
+        @NotNull
+        @Override
+        public IntSetting deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
+        {
+            return this.getNewInstance(nbt.getInt(TAG_VALUE), nbt.getInt(TAG_DEFAULT));
+        }
+
+        @Override
+        public void serialize(@NotNull final IFactoryController controller, @NotNull final IntSetting input, @NotNull final PacketBuffer packetBuffer)
+        {
+            packetBuffer.writeInt(input.getValue());
+            packetBuffer.writeInt(input.getDefault());
+        }
+
+        @NotNull
+        @Override
+        public IntSetting deserialize(@NotNull final IFactoryController controller, @NotNull final PacketBuffer buffer) throws Throwable
+        {
+            return this.getNewInstance(buffer.readInt(), buffer.readInt());
+        }
+
+        @Override
+        public short getSerializationId()
+        {
+            return 48;
         }
     }
 }

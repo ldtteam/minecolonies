@@ -8,9 +8,11 @@ import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
+import com.minecolonies.api.colony.requestsystem.requestable.INonExhaustiveDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Delivery;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Tuple;
@@ -153,6 +155,10 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
 
         final int totalRequested = request.getRequest().getCount();
         int totalAvailable = 0;
+        if (request.getRequest() instanceof INonExhaustiveDeliverable)
+        {
+            totalAvailable -= ((INonExhaustiveDeliverable) request.getRequest()).getLeftOver();
+        }
         for (final TileEntityWareHouse tile : wareHouses)
         {
             final List<Tuple<ItemStack, BlockPos>> inv = tile.getMatchingItemStacksInWarehouse(itemStack -> request.getRequest().matches(itemStack));
@@ -168,6 +174,11 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
         if (totalAvailable >= totalRequested || totalAvailable >= request.getRequest().getMinimumCount())
         {
             return Lists.newArrayList();
+        }
+
+        if (totalAvailable < 0)
+        {
+            totalAvailable = 0;
         }
 
         final int totalRemainingRequired = totalRequested - totalAvailable;
@@ -196,6 +207,10 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
         List<IRequest<?>> deliveries = Lists.newArrayList();
         int remainingCount = completedRequest.getRequest().getCount();
 
+        final Map<ItemStorage, Integer> storages = new HashMap<>();
+
+        final int keep = completedRequest.getRequest() instanceof INonExhaustiveDeliverable ? ((INonExhaustiveDeliverable) completedRequest.getRequest()).getLeftOver() : 0;
+
         tileentities:
         for (final TileEntityWareHouse wareHouse : wareHouses)
         {
@@ -207,22 +222,39 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
                     continue;
                 }
 
-                final ItemStack matchingStack = tuple.getA().copy();
-                matchingStack.setCount(Math.min(remainingCount, matchingStack.getCount()));
+                int leftOver = tuple.getA().getCount();
+                if (keep > 0)
+                {
+                    int kept = storages.getOrDefault(new ItemStorage(tuple.getA()), 0);
+                    if (kept < keep)
+                    {
+                        if (leftOver + kept <= keep)
+                        {
+                            storages.put(new ItemStorage(tuple.getA()), storages.getOrDefault(new ItemStorage(tuple.getA()), 0) + tuple.getA().getCount());
+                            continue;
+                        }
+                        int toKeep = (leftOver + kept) - keep;
+                        leftOver-=toKeep;
+                        storages.put(new ItemStorage(tuple.getA()), storages.getOrDefault(new ItemStorage(tuple.getA()), 0) + toKeep);
+                    }
+                }
 
-                final ItemStack deliveryStack = matchingStack.copy();
-                completedRequest.addDelivery(deliveryStack);
+                int count = Math.min(remainingCount, leftOver);
+                final ItemStack matchingStack = tuple.getA().copy();
+                matchingStack.setCount(count);
+
+                completedRequest.addDelivery(matchingStack);
 
                 final ILocation itemStackLocation = manager.getFactoryController().getNewInstance(TypeConstants.ILOCATION, tuple.getB(), wareHouse.getWorld().getDimensionKey());
 
                 final Delivery delivery =
-                  new Delivery(itemStackLocation, completedRequest.getRequester().getLocation(), deliveryStack, getDefaultDeliveryPriority(true));
+                  new Delivery(itemStackLocation, completedRequest.getRequester().getLocation(), matchingStack, getDefaultDeliveryPriority(true));
 
                 final IToken<?> requestToken =
                   manager.createRequest(manager.getFactoryController()
                                           .getNewInstance(TypeToken.of(this.getClass()), completedRequest.getRequester().getLocation(), completedRequest.getId()), delivery);
                 deliveries.add(manager.getRequestForToken(requestToken));
-                remainingCount -= ItemStackUtils.getSize(matchingStack);
+                remainingCount -= count;
 
                 if (remainingCount <= 0)
                 {
