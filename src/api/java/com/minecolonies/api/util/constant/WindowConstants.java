@@ -402,7 +402,7 @@ public final class WindowConstants
     public static final String IN_DELIVERY_AMOUNT        = "indeliveryamount";
     public static final String WORK_ORDER_NAME   = "buildingName";
     public static final String WORK_ORDER_POS    = "buildingPos";
-    public static final String WORK_ORDER_SELECT = "workOrderSelect";
+    public static final String WORK_ORDER_SELECT = "manage";
     public static final String WORK_ORDER_ID     = "orderId";
 
     public static final String GUIDE_RESOURCE_SUFFIX = ":gui/windowhutguide.xml";

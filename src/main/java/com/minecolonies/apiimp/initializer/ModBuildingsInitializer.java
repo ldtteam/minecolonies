@@ -96,6 +96,7 @@ public final class ModBuildingsInitializer
                                  .setBuildingViewProducer(() -> BuildingBuilder.View::new)
                                  .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.BUILDER_ID))
                                  .addBuildingModuleProducer(() -> new SettingsModule().with(BuildingBuilder.MODE, new StringSetting(BuildingBuilder.AUTO_SETTING, BuildingBuilder.MANUAL_SETTING)), SettingsModuleView::new)
+                                 .addBuildingModuleViewProducer(WorkOrderListModuleView::new)
                                  .createBuildingEntry();
 
         ModBuildings.chickenHerder = new BuildingEntry.Builder()

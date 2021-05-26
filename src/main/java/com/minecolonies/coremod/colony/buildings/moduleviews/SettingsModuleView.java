@@ -53,6 +53,12 @@ public class SettingsModuleView extends AbstractBuildingModuleView implements IS
         return settings;
     }
 
+    @Override
+    public <T extends ISetting> T getSetting(final ISettingKey<T> key)
+    {
+        return (T) settings.getOrDefault(key, null);
+    }
+
     @OnlyIn(Dist.CLIENT)
     @Override
     public Window getWindow()

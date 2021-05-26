@@ -1,0 +1,22 @@
+<window size="190 244" pause="false" lightbox="false">
+    <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
+    <label id="desc" size="130 11" pos="30 14" color="black" textalign="MIDDLE"/>
+
+    <switch id="switchpageWorkOrder" size="100% 100%">
+        <view>
+            <label size="148 11" pos="201 28" textalign="MIDDLE" label="§n§4$(com.minecolonies.coremod.gui.townHall.workorders):"/>
+
+            <list id="workOrders" size="164 154" pos="13 35">
+                <box size="100% 30" linewidth="2">
+                    <label id="buildingName" size="150 12" pos="2 2" color="black"/>
+                    <label id="buildingPos" size="50 12" pos="2 17" color="blue"/>
+                    <buttonimage id="manage"
+                                 size="64 17"
+                                 pos="80 13"
+                                 textcolor="black"
+                                 source="minecolonies:textures/gui/builderhut/builder_button_small.png"/>
+                </box>
+            </list>
+        </view>
+    </switch>
+</window>

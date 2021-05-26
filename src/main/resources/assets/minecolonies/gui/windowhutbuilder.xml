@@ -29,17 +29,6 @@
                 </box>
             </list>
         </view>
-        <view id="pageActions" size="100% 100%">
-            <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
-            <list id="workOrders" size="164 154" pos="13 35">
-                <box size="100% 30" linewidth="2">
-                    <label id="buildingName" size="50 12" pos="2 3" color="black"/>
-                    <label id="buildingPos" size="50 12" pos="2 17" color="blue"/>
-                    <buttonimage id="workOrderSelect" size="86 17" pos="68 7" textcolor="black" label="$(com.minecolonies.coremod.gui.builder.select)" source="minecolonies:textures/gui/builderhut/builder_button_medium.png"/>
-                    <label id="orderId" hidden="true"/>
-                </box>
-            </list>
-        </view>
     </switch>
     <buttonimage id="prevPage" size="18 10" pos="13 13" source="minecolonies:textures/gui/builderhut/turn_page_left.png"/>
     <buttonimage id="nextPage" size="18 10" pos="159 13" source="minecolonies:textures/gui/builderhut/turn_page_right.png"/>

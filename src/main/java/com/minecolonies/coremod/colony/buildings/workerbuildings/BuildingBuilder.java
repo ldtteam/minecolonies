@@ -141,32 +141,6 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
         return compound;
     }
 
-    @Override
-    public void serializeToView(@NotNull PacketBuffer buf)
-    {
-        super.serializeToView(buf);
-        if (getManualMode() && getMainCitizen() != null && !getMainCitizen().getJob(JobBuilder.class).hasWorkOrder())
-        {
-            final List<WorkOrderBuildDecoration> list = new ArrayList<>();
-            list.addAll(getColony().getWorkManager().getOrderedList(WorkOrderBuildRemoval.class, getPosition()));
-            // WorkOrderBuildDecoration is the superclass of BuildBuilding and thus returns both
-            list.addAll(getColony().getWorkManager().getOrderedList(WorkOrderBuildDecoration.class, getPosition()));
-
-            list.removeIf(order -> order instanceof WorkOrderBuildMiner);
-            list.removeIf(order -> order.isClaimed() && !order.getClaimedBy().equals(getPosition()));
-            list.removeIf(order -> order instanceof WorkOrderBuild && !(order instanceof WorkOrderBuildRemoval) &&
-                  !((WorkOrderBuild) order).canBuildIngoringDistance(getMainCitizen()));
-
-            buf.writeInt(list.size());
-
-            for (WorkOrderBuildDecoration order : list)
-            {
-                order.serializeViewNetworkData(buf);
-            }
-        }
-        buf.writeInt(0);
-    }
-
     /**
      * Set if mobs have been purged by this builder at his hut already today.
      *
@@ -309,14 +283,16 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
             return;
         }
 
-        if (citizen.getJob(JobBuilder.class).hasWorkOrder())
+        IWorkOrder wo = getColony().getWorkManager().getWorkOrder(orderId);
+        if (wo == null || (wo.getClaimedBy() != null && !wo.getClaimedBy().equals(getPosition())))
         {
             return;
         }
 
-        IWorkOrder wo = getColony().getWorkManager().getWorkOrder(orderId);
-        if (wo == null || (wo.getClaimedBy() != null && !wo.getClaimedBy().equals(getPosition())))
+        if (citizen.getJob(JobBuilder.class).hasWorkOrder())
         {
+            wo.setClaimedBy(citizen);
+            getColony().getWorkManager().setDirty(true);
             return;
         }
 
@@ -325,6 +301,8 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
             WorkOrderBuildDecoration bo = (WorkOrderBuildDecoration) wo;
             citizen.getJob(JobBuilder.class).setWorkOrder(bo);
             wo.setClaimedBy(citizen);
+            getColony().getWorkManager().setDirty(true);
+            markDirty();
         }
     }
 
@@ -350,11 +328,6 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
     public static class View extends AbstractBuildingBuilderView
     {
         /**
-         * The work orders to choose from in manual mode.
-         */
-        final List<WorkOrderView> orders = new ArrayList<>();
-
-        /**
          * Public constructor of the view, creates an instance of it.
          *
          * @param c the colony.
@@ -370,29 +343,6 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
         public Window getWindow()
         {
             return new WindowHutBuilderModule(this);
-        }
-
-        /**
-         * Gets the available work orders to choose from.
-         * 
-         * @return the available work orders to choose from.
-         */
-        public List<WorkOrderView> getBuildOrders()
-        {
-            return orders;
-        }
-
-        @Override
-        public void deserialize(@NotNull PacketBuffer buf)
-        {
-            super.deserialize(buf);
-            final int size = buf.readInt();
-            orders.clear();
-
-            for (int i = 0; i < size; i++)
-            {
-                orders.add(AbstractWorkOrder.createWorkOrderView(buf));
-            }
         }
     }
 }
