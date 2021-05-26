@@ -104,8 +104,6 @@ dependencies {
     implementation fg.deobf("mezz.jei:jei-1.16.4:${config.jei_version}")
     compileOnly fg.deobf("com.resourcefulbees:ResourcefulBees:${config.rb_version}")
     apiCompileOnly fg.deobf("com.resourcefulbees:ResourcefulBees:${config.rb_version}")
-    compileOnly fg.deobf("slimeknights.mantle:Mantle:1.16.5-${config.mantle_version}")
-    compileOnly fg.deobf("slimeknights.tconstruct:TConstruct:1.16.5-${config.tc_version}")
     apiCompileOnly fg.deobf("slimeknights.mantle:Mantle:1.16.5-${config.mantle_version}")
     apiCompileOnly fg.deobf("slimeknights.tconstruct:TConstruct:1.16.5-${config.tc_version}")
 
