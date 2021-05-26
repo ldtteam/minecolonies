@@ -12,8 +12,6 @@ import slimeknights.tconstruct.library.tools.nbt.ToolStack;
  */
 public final class ToolBrokenCheck
 {
-    private static final String STATS  = "Stats";
-    private static final String BROKEN = "Broken";
 
     /**
      * Checks to see if STACK is a tinker's tool, and if it is, it checks it's NBT tags to see if it's broken.

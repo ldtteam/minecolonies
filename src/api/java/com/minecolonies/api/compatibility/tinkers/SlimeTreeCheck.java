@@ -1,22 +1,9 @@
 package com.minecolonies.api.compatibility.tinkers;
 
-import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.material.MaterialColor;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.server.ServerWorld;
 import org.jetbrains.annotations.NotNull;
-import slimeknights.tconstruct.common.TinkerTags;
-import slimeknights.tconstruct.library.TinkerRegistries;
-import slimeknights.tconstruct.world.TinkerWorld;
 import slimeknights.tconstruct.world.block.*;
-
-import java.util.List;
-import java.util.function.Function;
 
 /**
  * This class is to store a check to see if a tree is a slime tree.
