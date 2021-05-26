@@ -117,16 +117,6 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
     }
 
     @Override
-    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
-    {
-        //Only the chests and racks because he shouldn't fill up the furnaces.
-        if (block instanceof ChestBlock || block instanceof BlockMinecoloniesRack)
-        {
-            addContainerPosition(pos);
-        }
-    }
-
-    @Override
     public void deserializeNBT(final CompoundNBT compound)
     {
         super.deserializeNBT(compound);
