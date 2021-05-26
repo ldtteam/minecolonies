@@ -33,7 +33,8 @@ public class EntryPoint
                                            .addNode(new CommandKillMonster().build())
                                            .addNode(new CommandKillPig().build())
                                            .addNode(new CommandKillRaider().build())
-                                           .addNode(new CommandKillSheep().build());
+                                           .addNode(new CommandKillSheep().build())
+                                           .addNode(new CommandKillPhantom().build());
 
         /**
          * Colony commands subtree
