@@ -1,8 +1,19 @@
 package com.minecolonies.api.compatibility.tinkers;
 
+import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.material.MaterialColor;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IWorld;
+import net.minecraft.world.server.ServerWorld;
 import org.jetbrains.annotations.NotNull;
+import slimeknights.tconstruct.world.block.*;
+
+import java.util.List;
+import java.util.function.Function;
 
 /**
  * This class is to store a check to see if a tree is a slime tree.
@@ -29,7 +40,7 @@ public final class SlimeTreeCheck extends SlimeTreeProxy
     @Override
     public boolean checkForTinkersSlimeBlock(@NotNull final Block block)
     {
-        return false;
+        return block instanceof StrippableLogBlock;
     }
 
     /**
@@ -41,7 +52,7 @@ public final class SlimeTreeCheck extends SlimeTreeProxy
     @Override
     public boolean checkForTinkersSlimeLeaves(@NotNull final Block block)
     {
-        return false;
+        return block instanceof SlimeLeavesBlock;
     }
 
     /**
@@ -53,7 +64,7 @@ public final class SlimeTreeCheck extends SlimeTreeProxy
     @Override
     public boolean checkForTinkersSlimeSapling(@NotNull final Block block)
     {
-        return false;
+        return block instanceof SlimeSaplingBlock;
     }
 
     /**
@@ -65,7 +76,7 @@ public final class SlimeTreeCheck extends SlimeTreeProxy
     @Override
     public boolean checkForTinkersSlimeDirtOrGrass(@NotNull final Block block)
     {
-        return false;
+        return block instanceof SlimeDirtBlock || block instanceof SlimeGrassBlock;
     }
 
     /**
@@ -77,7 +88,7 @@ public final class SlimeTreeCheck extends SlimeTreeProxy
     @Override
     public int getTinkersLeafVariant(@NotNull final BlockState leaf)
     {
-        return 0;
+        return ((SlimeLeavesBlock) leaf.getBlock()).getFoliageType().ordinal();
     }
 
     /**
@@ -122,5 +133,39 @@ public final class SlimeTreeCheck extends SlimeTreeProxy
     public static int getLeafVariant(@NotNull final BlockState leaf)
     {
         return new SlimeTreeCheck().getTinkersLeafVariant(leaf);
+    }
+
+    public static NonNullList<ItemStack> getDropsForLeaf(
+      @NotNull final IWorld world,
+      @NotNull final BlockPos pos,
+      @NotNull final BlockState blockState,
+      @NotNull final Block leaf)
+    {
+        if (isSlimeLeaf(leaf))
+        {
+            final NonNullList<ItemStack> list = NonNullList.create();
+            // Implementation is chance based, so repeat till we get an item
+            for (int i = 0; i < 100 && list.isEmpty(); i++)
+            {
+                List<ItemStack> drops = Block.getDrops(blockState, (ServerWorld) world, pos, null);
+                for (ItemStack itemStack : drops)
+                {
+                    if (SlimeSaplingBlock.getBlockFromItem(itemStack.getItem()) instanceof SlimeSaplingBlock)
+                    {
+                        list.add(itemStack);
+                    }
+                }
+            }
+            return list;
+        }
+        return NonNullList.create();
+    }
+
+    /**
+     *
+     */
+    public static Block getSlimeDirtBlock()
+    {
+        return new SlimeDirtBlock(AbstractBlock.Properties.create(null, (Function<BlockState, MaterialColor>) null));
     }
 }
