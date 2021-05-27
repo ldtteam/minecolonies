@@ -373,6 +373,7 @@ public class ClientEventHandler
                             final BlockPos pos = currentPosition.subtract(primaryOffset);
                             final BlockPos size = new BlockPos(blueprint.getSizeX(), blueprint.getSizeY(), blueprint.getSizeZ());
                             final BlockPos renderSize = pos.add(size).subtract(new BlockPos(1, 1, 1));
+                            blueprint.setRenderSource(buildingView.getID());
 
                             if (buildingView.getBuildingLevel() < buildingView.getBuildingMaxLevel())
                             {
