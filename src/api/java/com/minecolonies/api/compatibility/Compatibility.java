@@ -2,9 +2,7 @@ package com.minecolonies.api.compatibility;
 
 import com.minecolonies.api.compatibility.dynamictrees.DynamicTreeCompat;
 import com.minecolonies.api.compatibility.resourcefulbees.IBeehiveCompat;
-import com.minecolonies.api.compatibility.tinkers.SlimeTreeCheck;
-import com.minecolonies.api.compatibility.tinkers.TinkersWeaponHelper;
-import com.minecolonies.api.compatibility.tinkers.ToolBrokenCheck;
+import com.minecolonies.api.compatibility.tinkers.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.Item;
@@ -33,6 +31,8 @@ public final class Compatibility
     }
 
     public static IBeehiveCompat beeHiveCompat = new IBeehiveCompat() {};
+    public static SlimeTreeProxy   tinkersSlimeCompat = new SlimeTreeProxy();
+    public static TinkersToolProxy tinkersCompat      = new TinkersToolProxy();
 
     /**
      * This method checks to see if STACK is able to mine anything. It goes through all compatibility checks.
@@ -43,7 +43,7 @@ public final class Compatibility
      */
     public static boolean getMiningLevelCompatibility(@Nullable final ItemStack stack, @Nullable final String tool)
     {
-        return !ToolBrokenCheck.checkTinkersBroken(stack);
+        return !tinkersCompat.checkTinkersBroken(stack);
     }
 
     /**
@@ -54,7 +54,7 @@ public final class Compatibility
      */
     public static boolean isSlimeBlock(@NotNull final Block block)
     {
-        return SlimeTreeCheck.isSlimeBlock(block);
+        return tinkersSlimeCompat.checkForTinkersSlimeBlock(block);
     }
 
     /**
@@ -65,7 +65,7 @@ public final class Compatibility
      */
     public static boolean isSlimeLeaf(@NotNull final Block block)
     {
-        return SlimeTreeCheck.isSlimeLeaf(block);
+        return tinkersSlimeCompat.checkForTinkersSlimeLeaves(block);
     }
 
     /**
@@ -76,7 +76,7 @@ public final class Compatibility
      */
     public static boolean isSlimeSapling(@NotNull final Block block)
     {
-        return SlimeTreeCheck.isSlimeSapling(block);
+        return tinkersSlimeCompat.checkForTinkersSlimeSapling(block);
     }
 
     /**
@@ -87,7 +87,7 @@ public final class Compatibility
      */
     public static boolean isSlimeDirtOrGrass(@NotNull final Block block)
     {
-        return SlimeTreeCheck.isSlimeDirtOrGrass(block);
+        return tinkersSlimeCompat.checkForTinkersSlimeDirtOrGrass(block);
     }
 
     /**
@@ -98,7 +98,7 @@ public final class Compatibility
      */
     public static int getLeafVariant(@NotNull final BlockState leaf)
     {
-        return SlimeTreeCheck.getLeafVariant(leaf);
+        return tinkersSlimeCompat.getTinkersLeafVariant(leaf);
     }
 
     /**
@@ -109,7 +109,7 @@ public final class Compatibility
      */
     public static boolean isTinkersWeapon(@NotNull final ItemStack stack)
     {
-        return TinkersWeaponHelper.isTinkersSword(stack);
+        return tinkersCompat.isTinkersWeapon(stack);
     }
 
     /**
@@ -120,7 +120,7 @@ public final class Compatibility
      */
     public static double getAttackDamage(@NotNull final ItemStack stack)
     {
-        return TinkersWeaponHelper.getDamage(stack);
+        return tinkersCompat.getAttackDamage(stack);
     }
 
     /**
@@ -131,7 +131,7 @@ public final class Compatibility
      */
     public static int getToolLevel(@NotNull final ItemStack stack)
     {
-        return TinkersWeaponHelper.getToolLvl(stack);
+        return tinkersCompat.getToolLevel(stack);
     }
 
     /**

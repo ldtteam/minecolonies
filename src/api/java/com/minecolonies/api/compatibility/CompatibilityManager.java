@@ -3,13 +3,14 @@ package com.minecolonies.api.compatibility;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.minecolonies.api.MinecoloniesAPIProxy;
+import com.minecolonies.api.compatibility.tinkers.SlimeTreeCheck;
+import com.minecolonies.api.compatibility.tinkers.TinkersToolHelper;
 import com.minecolonies.api.crafting.CompostRecipe;
 import com.minecolonies.api.compatibility.resourcefulbees.*;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.*;
 import net.minecraft.block.*;
-import net.minecraft.enchantment.EnchantmentData;
 import net.minecraft.item.*;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.RecipeManager;
@@ -36,7 +37,6 @@ import java.util.stream.Collectors;
 import static com.minecolonies.api.util.ItemStackUtils.*;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_SAP_LEAF;
-import static net.minecraft.item.EnchantedBookItem.getEnchantedItemStack;
 
 /**
  * CompatibilityManager handling certain list and maps of itemStacks of certain types.
@@ -720,6 +720,11 @@ public class CompatibilityManager implements ICompatibilityManager
         if (ModList.get().isLoaded("resourcefulbees"))
         {
             Compatibility.beeHiveCompat = new ResourcefulBeesCompat();
+        }
+        if (ModList.get().isLoaded("tconstruct"))
+        {
+            Compatibility.tinkersCompat = new TinkersToolHelper();
+            Compatibility.tinkersSlimeCompat = new SlimeTreeCheck();
         }
     }
 }
