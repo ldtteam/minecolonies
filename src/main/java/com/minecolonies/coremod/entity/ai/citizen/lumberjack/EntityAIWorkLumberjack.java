@@ -442,7 +442,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
             }
         }
 
-        if (!job.getTree().hasLogs() && (!job.getTree().isSlimeTree() || !job.getTree().hasLeaves()) && (!job.getTree().isNetherTree() || !(job.getTree().hasLeaves())))
+        if (!job.getTree().hasLogs() && (!job.getTree().isNetherTree() || !(job.getTree().hasLeaves())))
         {
             if (hasNotDelayed(WAIT_BEFORE_SAPLING))
             {
@@ -512,16 +512,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
             }
             job.getTree().pollNextLog();
             worker.decreaseSaturationForContinuousAction();
-        }
-        else if (job.getTree().hasLeaves() && job.getTree().isSlimeTree())
-        {
-            //take first leaf from queue
-            final BlockPos leaf = job.getTree().peekNextLeaf();
-            if (!mineBlock(leaf, workFrom))
-            {
-                return getState();
-            }
-            job.getTree().pollNextLeaf();
         }
         else if (job.getTree().hasLeaves() && job.getTree().isNetherTree())
         {
@@ -759,8 +749,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         final BlockPos dirtLocation = new BlockPos(location.getX(), location.getY() - 1, location.getZ());
         final Block dirt = world.getBlockState(dirtLocation).getBlock();
 
-        if (saplingSlot != -1 && ((job.getTree().isSlimeTree() && Compatibility.isSlimeDirtOrGrass(dirt))
-                                    || (!job.getTree().isSlimeTree() && !Compatibility.isSlimeDirtOrGrass(dirt))))
+        if (saplingSlot != -1)
         {
             final ItemStack stack = getInventory().getStackInSlot(saplingSlot);
             worker.getCitizenItemHandler().setHeldItem(Hand.MAIN_HAND, saplingSlot);

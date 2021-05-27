@@ -3,6 +3,7 @@ package com.minecolonies.api.compatibility.tinkers;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import org.jetbrains.annotations.NotNull;
+import slimeknights.tconstruct.world.block.*;
 
 /**
  * This class is to store a check to see if a tree is a slime tree.
@@ -29,7 +30,7 @@ public final class SlimeTreeCheck extends SlimeTreeProxy
     @Override
     public boolean checkForTinkersSlimeBlock(@NotNull final Block block)
     {
-        return false;
+        return block instanceof StrippableLogBlock;
     }
 
     /**
@@ -41,7 +42,7 @@ public final class SlimeTreeCheck extends SlimeTreeProxy
     @Override
     public boolean checkForTinkersSlimeLeaves(@NotNull final Block block)
     {
-        return false;
+        return block instanceof SlimeLeavesBlock;
     }
 
     /**
@@ -53,7 +54,7 @@ public final class SlimeTreeCheck extends SlimeTreeProxy
     @Override
     public boolean checkForTinkersSlimeSapling(@NotNull final Block block)
     {
-        return false;
+        return block instanceof SlimeSaplingBlock;
     }
 
     /**
@@ -65,7 +66,7 @@ public final class SlimeTreeCheck extends SlimeTreeProxy
     @Override
     public boolean checkForTinkersSlimeDirtOrGrass(@NotNull final Block block)
     {
-        return false;
+        return block instanceof SlimeDirtBlock || block instanceof SlimeGrassBlock;
     }
 
     /**
@@ -77,7 +78,7 @@ public final class SlimeTreeCheck extends SlimeTreeProxy
     @Override
     public int getTinkersLeafVariant(@NotNull final BlockState leaf)
     {
-        return 0;
+        return ((SlimeLeavesBlock) leaf.getBlock()).getFoliageType().ordinal();
     }
 
     /**
