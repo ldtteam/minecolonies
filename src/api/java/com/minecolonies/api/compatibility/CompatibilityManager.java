@@ -3,6 +3,9 @@ package com.minecolonies.api.compatibility;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.minecolonies.api.MinecoloniesAPIProxy;
+import com.minecolonies.api.compatibility.tinkers.SlimeTreeCheck;
+import com.minecolonies.api.compatibility.tinkers.TinkersWeaponHelper;
+import com.minecolonies.api.compatibility.tinkers.ToolBrokenCheck;
 import com.minecolonies.api.crafting.CompostRecipe;
 import com.minecolonies.api.compatibility.resourcefulbees.*;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -720,6 +723,11 @@ public class CompatibilityManager implements ICompatibilityManager
         if (ModList.get().isLoaded("resourcefulbees"))
         {
             Compatibility.beeHiveCompat = new ResourcefulBeesCompat();
+        }
+        if (ModList.get().isLoaded("tconstruct"))
+        {
+            Compatibility.tinkersCompat = new TinkersWeaponHelper();
+            Compatibility.tinkersSlimeCompat = new SlimeTreeCheck();
         }
     }
 }

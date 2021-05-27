@@ -1,9 +1,8 @@
 package com.minecolonies.api.compatibility.tinkers;
 
 import com.minecolonies.api.util.ItemStackUtils;
-import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraftforge.fml.ModList;
 import org.jetbrains.annotations.Nullable;
 import slimeknights.tconstruct.library.tools.nbt.ToolStack;
 
@@ -21,6 +20,13 @@ public final class ToolBrokenCheck
      */
     public static boolean checkTinkersBroken(@Nullable final ItemStack stack)
     {
-        return !ItemStackUtils.isEmpty(stack) && ToolStack.copyFrom(stack).isBroken();
+        if (ModList.get().isLoaded("tconstruct"))
+        {
+            return !ItemStackUtils.isEmpty(stack) && ToolStack.copyFrom(stack).isBroken();
+        }
+        else
+        {
+            return false;
+        }
     }
 }
