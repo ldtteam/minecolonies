@@ -1,10 +1,7 @@
 package com.minecolonies.coremod.colony.buildings.modules.settings;
 
 import com.google.common.reflect.TypeToken;
-import com.minecolonies.api.colony.buildings.modules.settings.IBlockSettingFactory;
-import com.minecolonies.api.colony.buildings.modules.settings.IBoolSettingFactory;
-import com.minecolonies.api.colony.buildings.modules.settings.IIntSettingFactory;
-import com.minecolonies.api.colony.buildings.modules.settings.IStringSettingFactory;
+import com.minecolonies.api.colony.buildings.modules.settings.*;
 import com.minecolonies.api.colony.requestsystem.factory.FactoryVoidInput;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.util.constant.TypeConstants;
@@ -103,7 +100,7 @@ public class SettingsFactories
     /**
      * Specific factory for the bool setting.
      */
-    public static class StringSettingsFactory implements IStringSettingFactory<StringSetting>
+    public static abstract class AbstractStringSettingsFactory<T extends IStringSetting> implements IStringSettingFactory<T>
     {
         /**
          * Compound tag for the value.
@@ -117,13 +114,6 @@ public class SettingsFactories
 
         @NotNull
         @Override
-        public TypeToken<StringSetting> getFactoryOutputType()
-        {
-            return TypeToken.of(StringSetting.class);
-        }
-
-        @NotNull
-        @Override
         public TypeToken<FactoryVoidInput> getFactoryInputType()
         {
             return TypeConstants.FACTORYVOIDINPUT;
@@ -131,14 +121,7 @@ public class SettingsFactories
 
         @NotNull
         @Override
-        public StringSetting getNewInstance(final List<String> value, final int curr)
-        {
-            return new StringSetting(value, curr);
-        }
-
-        @NotNull
-        @Override
-        public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final StringSetting storage)
+        public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final IStringSetting storage)
         {
             final CompoundNBT compound = new CompoundNBT();
             compound.putInt(TAG_VALUE, storage.getCurrentIndex());
@@ -156,7 +139,7 @@ public class SettingsFactories
 
         @NotNull
         @Override
-        public StringSetting deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
+        public T deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
         {
             final int current = nbt.getInt(TAG_VALUE);
             final List<String> settings = new ArrayList<>();
@@ -170,7 +153,7 @@ public class SettingsFactories
         }
 
         @Override
-        public void serialize(@NotNull final IFactoryController controller, @NotNull final StringSetting input, @NotNull final PacketBuffer packetBuffer)
+        public void serialize(@NotNull final IFactoryController controller, @NotNull final IStringSetting input, @NotNull final PacketBuffer packetBuffer)
         {
             packetBuffer.writeInt(input.getCurrentIndex());
             packetBuffer.writeInt(input.getSettings().size());
@@ -182,7 +165,7 @@ public class SettingsFactories
 
         @NotNull
         @Override
-        public StringSetting deserialize(@NotNull final IFactoryController controller, @NotNull final PacketBuffer buffer) throws Throwable
+        public T deserialize(@NotNull final IFactoryController controller, @NotNull final PacketBuffer buffer) throws Throwable
         {
             final int currentIndex = buffer.readInt();
             final int size = buffer.readInt();
@@ -192,6 +175,26 @@ public class SettingsFactories
                 settings.add(buffer.readString(32767));
             }
             return this.getNewInstance(settings, currentIndex);
+        }
+    }
+
+    /**
+     * Specific factory for the bool setting.
+     */
+    public static class StringSettingsFactory extends AbstractStringSettingsFactory<StringSetting>
+    {
+        @NotNull
+        @Override
+        public TypeToken<StringSetting> getFactoryOutputType()
+        {
+            return TypeToken.of(StringSetting.class);
+        }
+
+        @NotNull
+        @Override
+        public StringSetting getNewInstance(final List<String> value, final int curr)
+        {
+            return new StringSetting(value, curr);
         }
 
         @Override
@@ -350,6 +353,32 @@ public class SettingsFactories
         public short getSerializationId()
         {
             return 48;
+        }
+    }
+
+    /**
+     * Specific factory for the bool setting.
+     */
+    public static class PlantationSettingsFactory extends AbstractStringSettingsFactory<PlantationSetting>
+    {
+        @NotNull
+        @Override
+        public TypeToken<PlantationSetting> getFactoryOutputType()
+        {
+            return TypeToken.of(PlantationSetting.class);
+        }
+
+        @NotNull
+        @Override
+        public PlantationSetting getNewInstance(final List<String> value, final int curr)
+        {
+            return new PlantationSetting(value, curr);
+        }
+
+        @Override
+        public short getSerializationId()
+        {
+            return 49;
         }
     }
 }

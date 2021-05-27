@@ -6,7 +6,6 @@ import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.modules.settings.BlockSetting;
 import com.minecolonies.coremod.colony.buildings.modules.settings.BoolSetting;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.util.constant.Constants;
@@ -14,11 +13,11 @@ import com.minecolonies.coremod.colony.buildings.BuildingMysticalSite;
 import com.minecolonies.coremod.colony.buildings.DefaultBuildingInstance;
 import com.minecolonies.coremod.colony.buildings.modules.*;
 import com.minecolonies.coremod.colony.buildings.modules.settings.IntSetting;
+import com.minecolonies.coremod.colony.buildings.modules.settings.PlantationSetting;
 import com.minecolonies.coremod.colony.buildings.modules.settings.StringSetting;
 import com.minecolonies.coremod.colony.buildings.moduleviews.*;
 import com.minecolonies.coremod.colony.buildings.views.EmptyView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
-import net.minecraft.item.BlockItem;
 import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
@@ -407,6 +406,7 @@ public final class ModBuildingsInitializer
                                     .setBuildingViewProducer(() -> BuildingPlantation.View::new)
                                     .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.PLANTATION_ID))
                                     .addBuildingModuleProducer(CrafterTaskModule::new, CrafterTaskModuleView::new)
+                                    .addBuildingModuleProducer(() -> new SettingsModule().with(BuildingPlantation.MODE, new PlantationSetting(Items.SUGAR_CANE.getTranslationKey(), Items.CACTUS.getTranslationKey(), Items.BAMBOO.getTranslationKey())), SettingsModuleView::new)
                                     .createBuildingEntry();
 
         ModBuildings.rabbitHutch = new BuildingEntry.Builder()

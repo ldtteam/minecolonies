@@ -26,7 +26,6 @@ import com.minecolonies.coremod.network.messages.server.colony.building.guard.Gu
 import com.minecolonies.coremod.network.messages.server.colony.building.guard.MobEntryChangeMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.home.AssignUnassignMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.miner.MinerSetLevelMessage;
-import com.minecolonies.coremod.network.messages.server.colony.building.plantation.PlantationSetPhaseMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.postbox.PostBoxRequestMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.university.TryResearchMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.warehouse.SortWarehouseMessage;
@@ -204,7 +203,6 @@ public class NetworkChannel
         registerMessage(++idx, HireSpiesMessage.class, HireSpiesMessage::new);
         registerMessage(++idx, AddMinimumStockToBuildingModuleMessage.class, AddMinimumStockToBuildingModuleMessage::new);
         registerMessage(++idx, RemoveMinimumStockFromBuildingModuleMessage.class, RemoveMinimumStockFromBuildingModuleMessage::new);
-        registerMessage(++idx, PlantationSetPhaseMessage.class, PlantationSetPhaseMessage::new);
         registerMessage(++idx, FieldPlotResizeMessage.class, FieldPlotResizeMessage::new);
         registerMessage(++idx, AdjustSkillCitizenMessage.class, AdjustSkillCitizenMessage::new);
         registerMessage(++idx, BuilderSelectWorkOrderMessage.class, BuilderSelectWorkOrderMessage::new);
