@@ -1,6 +1,10 @@
 package com.minecolonies.api.compatibility.tinkers;
 
 import com.minecolonies.api.util.ItemStackUtils;
+<<<<<<< HEAD
+=======
+import net.minecraft.inventory.Inventory;
+>>>>>>> 2c474acf7870c10226699c1b31243f024c0fcf79
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.ModList;
 import org.jetbrains.annotations.Nullable;

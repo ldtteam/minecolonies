@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.network.messages.server.colony.building.builder;
 
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import org.jetbrains.annotations.NotNull;
 
 import com.minecolonies.api.colony.IColony;
@@ -27,7 +28,7 @@ public class BuilderSelectWorkOrderMessage extends AbstractBuildingServerMessage
      * @param building View of the building to read data from.
      * @param workOrder workorder id.
      */
-    public BuilderSelectWorkOrderMessage(@NotNull final BuildingBuilder.View building, final int workOrder)
+    public BuilderSelectWorkOrderMessage(@NotNull final IBuildingView building, final int workOrder)
     {
         super(building);
         this.workOrder = workOrder;

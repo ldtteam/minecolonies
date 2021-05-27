@@ -12,6 +12,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -68,6 +69,19 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
 
         this.structureName = sn.toString();
         this.workOrderName = this.structureName;
+    }
+
+    @Override
+    public void serializeViewNetworkData(@NotNull final PacketBuffer buf)
+    {
+        buf.writeInt(id);
+        buf.writeInt(getPriority());
+        buf.writeBlockPos(getClaimedBy() == null ? BlockPos.ZERO : getClaimedBy());
+        buf.writeInt(getType().ordinal());
+        buf.writeString(get());
+        buf.writeBlockPos(buildingLocation == null ? BlockPos.ZERO : buildingLocation);
+        buf.writeInt(upgradeLevel);
+        //value is upgradeName and upgradeLevel for workOrderBuild
     }
 
     /**
@@ -139,27 +153,24 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
         //  - OR the WorkOrder is for the TownHall
         //  - OR the WorkOrder is not farther away than 100 blocks from any builder
 
-        return canBuildIngoringDistance(citizen)
+        final IBuilding building = citizen.getWorkBuilding();
+        return canBuildIngoringDistance(building.getPosition(), building.getBuildingLevel())
                        && citizen.getWorkBuilding().getPosition().distanceSq(this.getBuildingLocation()) <= MAX_DISTANCE_SQ;
     }
 
     /**
      * Checks if a builder may accept this workOrder while ignoring the distance to the builder.
-     * 
-     * @param citizen the builder who to check.
-     * @return Whether the builder may accept this workOrder.
+     * @param builderLocation position of the builders own hut.
+     * @param builderLevel level of the builders hut.
+     * @return true if so.
      */
-    public boolean canBuildIngoringDistance(@NotNull final ICitizenData citizen)
+    public boolean canBuildIngoringDistance(@NotNull final BlockPos builderLocation, final int builderLevel)
     {
         //  A Build WorkOrder may be fulfilled by a Builder as long as any ONE of the following is true:
         //  - The Builder's Work AbstractBuilding is built
         //  - OR the WorkOrder is for the Builder's Work AbstractBuilding
-        //  - OR the WorkOrder is for the TownHall
 
-        final int builderLevel = citizen.getWorkBuilding().getBuildingLevel();
-        return (builderLevel >= upgradeLevel || builderLevel == BuildingBuilder.MAX_BUILDING_LEVEL
-                  || (citizen.getWorkBuilding() != null && citizen.getWorkBuilding().getID().equals(buildingLocation))
-                  || isLocationTownhall(citizen.getColony(), buildingLocation));
+        return (builderLevel >= upgradeLevel || builderLevel == BuildingBuilder.MAX_BUILDING_LEVEL || (builderLocation.equals(buildingLocation)));
     }
 
     @Override
