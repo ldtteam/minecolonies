@@ -31,8 +31,8 @@ public final class Compatibility
     }
 
     public static IBeehiveCompat beeHiveCompat = new IBeehiveCompat() {};
-    public static SlimeTreeProxy tinkersSlimeCompat = new SlimeTreeProxy();
-    public static TinkersWeaponProxy tinkersCompat = new TinkersWeaponProxy();
+    public static SlimeTreeProxy   tinkersSlimeCompat = new SlimeTreeProxy();
+    public static TinkersToolProxy tinkersCompat      = new TinkersToolProxy();
 
     /**
      * This method checks to see if STACK is able to mine anything. It goes through all compatibility checks.
@@ -43,7 +43,7 @@ public final class Compatibility
      */
     public static boolean getMiningLevelCompatibility(@Nullable final ItemStack stack, @Nullable final String tool)
     {
-        return !ToolBrokenCheck.checkTinkersBroken(stack);
+        return !tinkersCompat.checkTinkersBroken(stack);
     }
 
     /**
