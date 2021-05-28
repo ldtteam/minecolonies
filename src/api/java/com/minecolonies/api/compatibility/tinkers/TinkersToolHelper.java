@@ -4,9 +4,9 @@ import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import slimeknights.tconstruct.library.tools.item.SwordCore;
 import slimeknights.tconstruct.library.tools.helper.ToolAttackUtil;
 import slimeknights.tconstruct.library.tools.nbt.ToolStack;
+import slimeknights.tconstruct.tools.item.small.SwordTool;
 
 /**
  * Class to check if certain tinkers items serve as weapons for the guards.
@@ -33,7 +33,7 @@ public final class TinkersToolHelper extends TinkersToolProxy
     @Override
     public boolean isTinkersWeapon(@NotNull final ItemStack stack)
     {
-        return !ItemStackUtils.isEmpty(stack) && stack.getItem() instanceof SwordCore;
+        return !ItemStackUtils.isEmpty(stack) && stack.getItem() instanceof SwordTool;
     }
 
     /**
