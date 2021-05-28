@@ -2,6 +2,7 @@
   "replace": false,
   "values": [
     "#forge:string",
-    "#minecraft:wool"
+    "#minecraft:wool",
+    "minecraft:rabbit_hide"
   ]
 }
