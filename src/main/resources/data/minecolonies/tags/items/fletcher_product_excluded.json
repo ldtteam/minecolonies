@@ -1,4 +1,7 @@
 {
   "replace": false,
-  "values": []
+  "values": [
+    "minecraft:book",
+    "minecraft:item_frame"
+  ]
 }
