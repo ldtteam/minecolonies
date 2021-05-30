@@ -1,14 +1,29 @@
 package com.minecolonies.api.compatibility.dynamictrees;
 
+import com.ferreusveritas.dynamictrees.blocks.branches.BranchBlock;
+import com.ferreusveritas.dynamictrees.blocks.branches.TrunkShellBlock;
+import com.ferreusveritas.dynamictrees.blocks.leaves.DynamicLeavesBlock;
+import com.ferreusveritas.dynamictrees.items.Seed;
+import com.ferreusveritas.dynamictrees.trees.Family;
+import com.minecolonies.api.util.Log;
+import com.mojang.authlib.GameProfile;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.common.util.FakePlayer;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public final class DynamicTreeCompat extends DynamicTreeProxy
 {
@@ -17,7 +32,9 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
 
     private static final String DYNAMIC_TREE_DAMAGE = "fallingtree";
 
-    private DynamicTreeCompat()
+    private static final Map<RegistryKey<World>, FakePlayer> fakePlayers = new HashMap<>();
+
+    public DynamicTreeCompat()
     {
         /*
          * Intentionally left empty.
@@ -30,7 +47,7 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
      * @return true
      */
     @Override
-    protected boolean isDynamicTreePresent()
+    public boolean isDynamicTreePresent()
     {
         return true;
     }
@@ -51,9 +68,9 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
      * @param block Block to check
      */
     @Override
-    protected boolean checkForDynamicTreeBlock(@NotNull final Block block)
+    public boolean checkForDynamicTreeBlock(@NotNull final Block block)
     {
-        return false;
+        return block instanceof BranchBlock;
     }
 
     /**
@@ -73,9 +90,9 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
      * @param block Block to check
      */
     @Override
-    protected boolean checkForDynamicLeavesBlock(final Block block)
+    public boolean checkForDynamicLeavesBlock(final Block block)
     {
-        return false;
+        return block instanceof DynamicLeavesBlock;
     }
 
     /**
@@ -96,9 +113,9 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
      * @return true if it is a shell block.
      */
     @Override
-    protected boolean checkForDynamicTrunkShellBlock(final Block block)
+    public boolean checkForDynamicTrunkShellBlock(final Block block)
     {
-        return false;
+        return block instanceof TrunkShellBlock;
     }
 
     /**
@@ -122,13 +139,23 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
      * @param leaf       The leaf to check
      */
     @Override
-    protected NonNullList<ItemStack> getDropsForLeaf(
+    public NonNullList<ItemStack> getDropsForLeaf(
       @NotNull final IWorld world,
       @NotNull final BlockPos pos,
       @NotNull final BlockState blockState,
       final int fortune,
       @NotNull final Block leaf)
     {
+        if (isDynamicLeavesBlock(leaf))
+        {
+            final NonNullList<ItemStack> list = NonNullList.create();
+            // Implementation is chance based, so repeat till we get an item
+            for (int i = 0; i < 100 && list.isEmpty(); i++)
+            {
+                list.addAll(((DynamicLeavesBlock) leaf).getDrops(blockState, (ServerWorld) world, pos, null));
+            }
+            return list;
+        }
         return NonNullList.create();
     }
 
@@ -153,9 +180,9 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
      * @param item Item to check
      */
     @Override
-    protected boolean checkForDynamicSapling(@NotNull final Item item)
+    public boolean checkForDynamicSapling(@NotNull final Item item)
     {
-        return false;
+        return item instanceof Seed;
     }
 
     /**
@@ -190,11 +217,40 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
      * @return Runnable to break the Tree
      */
     @Override
-    protected Runnable getTreeBreakActionCompat(@NotNull final World world, @NotNull final BlockPos blockToBreak, final ItemStack toolToUse, final BlockPos workerPos)
+    public Runnable getTreeBreakActionCompat(@NotNull final World world, @NotNull final BlockPos blockToBreak, final ItemStack toolToUse, final BlockPos workerPos)
     {
         return () ->
         {
+            final BlockState curBlockState = world.getBlockState(blockToBreak);
+            final Block curBlock = curBlockState.getBlock();
 
+            if (world.getServer() == null)
+            {
+                Log.getLogger().error("Minecolonies:DynamicTreeCompat unexpected null while trying to get World");
+                return;
+            }
+
+            final RegistryKey<World> dim = world.getDimensionKey();
+            FakePlayer fake = fakePlayers.get(dim);
+
+            if (fake == null)
+            {
+                fakePlayers.put(dim, new FakePlayer((ServerWorld) world,
+                  new GameProfile(UUID.randomUUID(), "minecolonies_LumberjackFake")));
+                fake = fakePlayers.get(dim);
+            }
+
+            if (workerPos != null)
+            {
+                fake.setPosition(workerPos.getX(), workerPos.getY(), workerPos.getZ());
+            }
+
+            if (toolToUse != null)
+            {
+                fake.setHeldItem(Hand.MAIN_HAND, toolToUse);
+            }
+
+            curBlock.removedByPlayer(curBlockState, world, blockToBreak, fake, true, world.getFluidState(blockToBreak));
         };
     }
 
@@ -221,9 +277,16 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
      * @return true if successful
      */
     @Override
-    protected boolean plantDynamicSaplingCompat(@NotNull final World world, @NotNull final BlockPos location, @NotNull final ItemStack saplingStack)
+    public boolean plantDynamicSaplingCompat(@NotNull final World world, @NotNull final BlockPos location, @NotNull final ItemStack saplingStack)
     {
-        return false;
+        if (saplingStack.getItem() instanceof Seed)
+        {
+            return ((Seed) saplingStack.getItem()).getSpecies().plantSapling(world, location);
+        }
+        else
+        {
+            return false;
+        }
     }
 
     /**
@@ -244,7 +307,8 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
      *
      * @return damageType
      */
-    public static String getDynamicTreeDamage()
+    @Override
+    public String getDynamicTreeDamage()
     {
         return DYNAMIC_TREE_DAMAGE;
     }
@@ -257,9 +321,38 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
      * @return true when same family
      */
     @Override
-    protected boolean hasFittingTreeFamilyCompat(@NotNull final BlockPos block1, @NotNull final BlockPos block2, @NotNull final IWorld world)
+    public boolean hasFittingTreeFamilyCompat(@NotNull final BlockPos block1, @NotNull final BlockPos block2, @NotNull final IWorld world)
     {
+        Family fam1 = getFamilyForBlock(block1, world);
+        Family fam2 = getFamilyForBlock(block2, world);
+
+        if (fam1 != null && fam2 != null)
+        {
+            return fam1 == fam2;
+        }
         return false;
+    }
+
+    /**
+     * Returns the dynamic tree family for the given block pos
+     *
+     * @param blockPos position
+     * @param world    world
+     * @return dynamic tree family
+     */
+    private static Family getFamilyForBlock(@NotNull final BlockPos blockPos, @NotNull final IWorld world)
+    {
+        final Block block = world.getBlockState(blockPos).getBlock();
+        if (block instanceof BranchBlock)
+        {
+            return ((BranchBlock) block).getFamily();
+        }
+        if (block instanceof DynamicLeavesBlock)
+        {
+            return ((DynamicLeavesBlock) block).getFamily(world.getBlockState(blockPos), world, blockPos);
+        }
+
+        return null;
     }
 
     /**

@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.WAREHOUSE_SORTED;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
-import static com.minecolonies.coremod.client.gui.huts.WindowHutBuilderModule.*;
+import static com.minecolonies.coremod.client.gui.modules.WindowBuilderResModule.*;
 
 /**
  * Window for the home building.
