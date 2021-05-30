@@ -3,14 +3,15 @@ package com.minecolonies.api.compatibility.tinkers;
 import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import slimeknights.tconstruct.library.tools.item.SwordCore;
+import org.jetbrains.annotations.Nullable;
 import slimeknights.tconstruct.library.tools.helper.ToolAttackUtil;
 import slimeknights.tconstruct.library.tools.nbt.ToolStack;
+import slimeknights.tconstruct.tools.item.small.SwordTool;
 
 /**
  * Class to check if certain tinkers items serve as weapons for the guards.
  */
-public final class TinkersWeaponHelper extends TinkersWeaponProxy
+public final class TinkersToolHelper extends TinkersToolProxy
 {
     /**
      * Check if a certain itemstack is a tinkers weapon.
@@ -20,7 +21,7 @@ public final class TinkersWeaponHelper extends TinkersWeaponProxy
      */
     public static boolean isTinkersSword(@NotNull final ItemStack stack)
     {
-        return new TinkersWeaponHelper().isTinkersWeapon(stack);
+        return new TinkersToolHelper().isTinkersWeapon(stack);
     }
 
     /**
@@ -32,7 +33,7 @@ public final class TinkersWeaponHelper extends TinkersWeaponProxy
     @Override
     public boolean isTinkersWeapon(@NotNull final ItemStack stack)
     {
-        return !ItemStackUtils.isEmpty(stack) && stack.getItem() instanceof SwordCore;
+        return !ItemStackUtils.isEmpty(stack) && stack.getItem() instanceof SwordTool;
     }
 
     /**
@@ -56,7 +57,7 @@ public final class TinkersWeaponHelper extends TinkersWeaponProxy
     @Override
     public int getToolLevel(@NotNull final ItemStack stack)
     {
-        if (ToolBrokenCheck.checkTinkersBroken(stack))
+        if (checkTinkersBroken(stack))
         {
             return -1;
         }
@@ -71,7 +72,7 @@ public final class TinkersWeaponHelper extends TinkersWeaponProxy
      */
     public static double getDamage(@NotNull final ItemStack stack)
     {
-        return new TinkersWeaponHelper().getAttackDamage(stack);
+        return new TinkersToolHelper().getAttackDamage(stack);
     }
 
     /**
@@ -82,6 +83,18 @@ public final class TinkersWeaponHelper extends TinkersWeaponProxy
      */
     public static int getToolLvl(@NotNull final ItemStack stack)
     {
-        return new TinkersWeaponHelper().getToolLevel(stack);
+        return new TinkersToolHelper().getToolLevel(stack);
+    }
+
+    /**
+     * Checks to see if STACK is a tinker's tool, and if it is, it checks it's NBT tags to see if it's broken.
+     *
+     * @param stack the item in question.
+     * @return boolean whether the stack is broken or not.
+     */
+    @Override
+    public boolean checkTinkersBroken(@Nullable final ItemStack stack)
+    {
+        return !ItemStackUtils.isEmpty(stack) && ToolStack.copyFrom(stack).isBroken();
     }
 }
