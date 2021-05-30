@@ -15,7 +15,7 @@ public class SlimeTreeProxy
      * @param block the block.
      * @return if the block is a slime block.
      */
-    protected boolean checkForTinkersSlimeBlock(@NotNull final Block block)
+    public boolean checkForTinkersSlimeBlock(@NotNull final Block block)
     {
         return false;
     }
@@ -26,7 +26,7 @@ public class SlimeTreeProxy
      * @param block the block.
      * @return if the block is a slime leaf.
      */
-    protected boolean checkForTinkersSlimeLeaves(@NotNull final Block block)
+    public boolean checkForTinkersSlimeLeaves(@NotNull final Block block)
     {
         return false;
     }
@@ -37,7 +37,7 @@ public class SlimeTreeProxy
      * @param block the block.
      * @return if the block is a slime sapling.
      */
-    protected boolean checkForTinkersSlimeSapling(@NotNull final Block block)
+    public boolean checkForTinkersSlimeSapling(@NotNull final Block block)
     {
         return false;
     }
@@ -48,7 +48,7 @@ public class SlimeTreeProxy
      * @param block the block.
      * @return if the block is a slime sapling.
      */
-    protected boolean checkForTinkersSlimeDirtOrGrass(@NotNull final Block block)
+    public boolean checkForTinkersSlimeDirtOrGrass(@NotNull final Block block)
     {
         return false;
     }

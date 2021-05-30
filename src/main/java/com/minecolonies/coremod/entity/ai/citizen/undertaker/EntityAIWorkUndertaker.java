@@ -10,6 +10,7 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.tileentities.TileEntityGrave;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.colony.GraveData;
 import com.minecolonies.coremod.colony.buildings.BuildingMysticalSite;
@@ -20,10 +21,11 @@ import com.minecolonies.coremod.colony.jobs.JobUndertaker;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.util.AdvancementUtils;
 import net.minecraft.block.*;
+import net.minecraft.item.Items;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
-import net.minecraft.util.Tuple;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
@@ -113,7 +115,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
             }
 
             final TileEntity entity = world.getTileEntity(currentGrave);
-            if (entity != null && entity instanceof TileEntityGrave)
+            if (entity instanceof TileEntityGrave)
             {
                 getOwnBuilding().setLastGraveData((GraveData) ((TileEntityGrave) entity).getGraveData());
                 return EMPTY_GRAVE;
@@ -226,7 +228,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
     {
         @Nullable final BuildingGraveyard buildingGraveyard = getOwnBuilding();
 
-        if (buildingGraveyard == null || checkForToolOrWeapon(ToolType.SHOVEL) || buildingGraveyard.getGraveToWorkOn() == null)
+        if (checkForToolOrWeapon(ToolType.SHOVEL) || buildingGraveyard.getGraveToWorkOn() == null)
         {
             return IDLE;
         }
@@ -236,6 +238,11 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         worker.setSprinting(worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(UNDERTAKER_RUN) > 0);
 
         @Nullable final BlockPos gravePos = buildingGraveyard.getGraveToWorkOn();
+
+        if (gravePos == null)
+        {
+            return IDLE;
+        }
 
         // Still moving to the block
         if (walkToBlock(gravePos, 3))
@@ -297,7 +304,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
     {
         @Nullable final BuildingGraveyard buildingGraveyard = getOwnBuilding();
 
-        if (buildingGraveyard == null || checkForToolOrWeapon(ToolType.SHOVEL) || buildingGraveyard.getLastGraveData() == null)
+        if (checkForToolOrWeapon(ToolType.SHOVEL) || buildingGraveyard.getLastGraveData() == null || buildingGraveyard.getGraveToWorkOn() == null)
         {
             return IDLE;
         }
@@ -305,6 +312,11 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         unequip();
 
         @Nullable final BlockPos gravePos = buildingGraveyard.getGraveToWorkOn();
+
+        if (gravePos == null)
+        {
+            return IDLE;
+        }
 
         // Still moving to the block
         if (walkToBlock(gravePos, 3))
@@ -326,6 +338,12 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
             shouldDumpInventory = true;
             final double chance = getResurrectChance(buildingGraveyard);
 
+            if (getTotemResurrectChance() > 0 && random.nextDouble() <= TOTEM_BREAK_CHANCE)
+            {
+                worker.getInventoryCitizen().extractItem(InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), Items.TOTEM_OF_UNDYING), 1, false);
+                worker.playSound(SoundEvents.ITEM_TOTEM_USE, 1.0f, 1.0f);
+            }
+
             if (chance >= random.nextDouble())
             {
                 final ICitizenData citizenData = buildingGraveyard.getColony().getCitizenManager().resurrectCivilianData(buildingGraveyard.getLastGraveData().getCitizenDataNBT(), true, world, gravePos);
@@ -344,18 +362,49 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
     /**
      * Calculate chance of resurrection from multiple factor: Undertaker Skill, Building Level, Research, Mystical Sites in the city
      *
-     * @param buildingGraveyard
+     * @param buildingGraveyard the building.
      * @return the chance of resurrection
      */
     private double getResurrectChance(@NotNull final BuildingGraveyard buildingGraveyard)
     {
+        double totemChance = getTotemResurrectChance();
         double chance = buildingGraveyard.getBuildingLevel() * RESURRECT_BUILDING_LVL_WEIGHT +
                 worker.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Mana) * RESURRECT_WORKER_MANA_LVL_WEIGHT +
-                worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(RESURRECT_CHANCE);
+                worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(RESURRECT_CHANCE) +
+                totemChance;
 
-        final double cap = MAX_RESURRECTION_CHANCE + worker.getCitizenColonyHandler().getColony().getBuildingManager().getMysticalSiteMaxBuildingLevel() * MAX_RESURRECTION_CHANCE_MYSTICAL_LVL_BONUS;
+        final double cap = MAX_RESURRECTION_CHANCE + worker.getCitizenColonyHandler().getColony().getBuildingManager().getMysticalSiteMaxBuildingLevel() * MAX_RESURRECTION_CHANCE_MYSTICAL_LVL_BONUS + totemChance;
         if (chance > cap) { chance = cap; }
         return chance;
+    }
+
+    /**
+     * Check for a totem of undying, the required research, and get the increased resurrection chance
+     *
+     * @return the chance increase that the totem provides
+     */
+    private double getTotemResurrectChance()
+    {
+        final int totems = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), Items.TOTEM_OF_UNDYING);
+
+        if (totems > 0)
+        {
+            AdvancementUtils.TriggerAdvancementPlayersForColony(worker.getCitizenColonyHandler().getColony(), playerMP -> AdvancementTriggers.UNDERTAKER_TOTEM.trigger(playerMP));
+        }
+
+        if (worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(USE_TOTEM) > 0)
+        {
+            if ( totems == 1 )
+            {
+                return SINGLE_TOTEM_RESURRECTION_CHANCE_BONUS;
+            }
+            else if ( totems > 1 )
+            {
+                return MULTIPLE_TOTEMS_RESURRECTION_CHANCE_BONUS;
+            }
+        }
+
+        return 0;
     }
 
     /**
@@ -368,7 +417,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
     {
         @Nullable final BuildingGraveyard buildingGraveyard = getOwnBuilding();
 
-        if (buildingGraveyard == null || checkForToolOrWeapon(ToolType.SHOVEL) || buildingGraveyard.getLastGraveData() == null)
+        if (checkForToolOrWeapon(ToolType.SHOVEL) || buildingGraveyard.getLastGraveData() == null)
         {
             return IDLE;
         }
@@ -380,7 +429,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
             burialPos = getOwnBuilding().getRandomFreeVisualGravePos();
         }
 
-        if(burialPos == null)
+        if(burialPos == null || burialPos.getA() == null)
         {
             //coudn't find a place to dig a grave
             LanguageHandler.sendPlayersMessage(buildingGraveyard.getColony().getImportantMessageEntityPlayers(),

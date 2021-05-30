@@ -4,12 +4,14 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.pathfinding.TreePathResult;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.entity.ai.citizen.lumberjack.Tree;
 import com.minecolonies.coremod.entity.pathfinding.Node;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.material.Material;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.vector.Vector3i;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,6 +28,11 @@ public class PathJobFindTree extends AbstractPathJob
     private static final double TIE_BREAKER = 0.951D;
 
     /**
+     * How much should be restricted area shrinked because of isTree check
+     */
+    private static final Vector3i AREA_SHRINK = new Vector3i(-1, 0, -1);
+
+    /**
      * The location of the hut of the lumberjack.
      */
     private final BlockPos hutLocation;
@@ -39,6 +46,11 @@ public class PathJobFindTree extends AbstractPathJob
      * The Colony the tree is in.
      */
     private final IColony colony;
+
+    /**
+     * Fake goal when using restricted area
+     */
+    private final BlockPos boxCenter;
 
     /**
      * AbstractPathJob constructor.
@@ -64,6 +76,7 @@ public class PathJobFindTree extends AbstractPathJob
         this.treesToNotCut = treesToCut;
         this.hutLocation = home;
         this.colony = colony;
+        this.boxCenter = null;
     }
 
     /**
@@ -84,14 +97,26 @@ public class PathJobFindTree extends AbstractPathJob
       final BlockPos home,
       final BlockPos startRestriction,
       final BlockPos endRestriction,
+      final BlockPos furthestRestriction,
       final List<ItemStorage> treesToCut,
       final IColony colony,
       final LivingEntity entity)
     {
-        super(world, startRestriction, endRestriction, new TreePathResult(), entity);
+        super(world,
+            start,
+            startRestriction,
+            endRestriction,
+            (int) Math.sqrt(BlockPosUtil.getDistanceSquared2D(home, furthestRestriction) * 1.5),
+            AREA_SHRINK,
+            false,
+            new TreePathResult(),
+            entity);
         this.treesToNotCut = treesToCut;
         this.hutLocation = home;
         this.colony = colony;
+
+        final BlockPos size = startRestriction.subtract(endRestriction);
+        this.boxCenter = endRestriction.add(size.getX()/2, size.getY()/2, size.getZ()/2);
     }
 
     @NotNull
@@ -104,12 +129,7 @@ public class PathJobFindTree extends AbstractPathJob
     @Override
     protected double computeHeuristic(@NotNull final BlockPos pos)
     {
-        final int dx = pos.getX() - hutLocation.getX();
-        final int dy = pos.getY() - hutLocation.getY();
-        final int dz = pos.getZ() - hutLocation.getZ();
-
-        //  Manhattan Distance with a 1/1000th tie-breaker - halved
-        return (Math.abs(dx) + Math.abs(dy) + Math.abs(dz)) * TIE_BREAKER;
+        return boxCenter == null ? pos.distanceSq(hutLocation) * TIE_BREAKER : BlockPosUtil.getDistanceSquared2D(pos, boxCenter);
     }
 
     @Override
@@ -128,7 +148,7 @@ public class PathJobFindTree extends AbstractPathJob
         else
         {
             final int dx = n.pos.getX() > n.parent.pos.getX() ? 1 : -1;
-            return isTree(n.pos.add(-dx, 0, 0)) || isTree(n.pos.add(0, 0, -1)) || isTree(n.pos.add(0, 0, +1));
+            return isTree(n.pos.add(dx, 0, 0)) || isTree(n.pos.add(0, 0, -1)) || isTree(n.pos.add(0, 0, 1));
         }
     }
 
@@ -152,6 +172,6 @@ public class PathJobFindTree extends AbstractPathJob
     @Override
     protected boolean isPassable(@NotNull final BlockState block, final BlockPos pos)
     {
-        return super.isPassable(block, pos) || block.getMaterial() == Material.LEAVES || Compatibility.isDynamicTrunkShell(block.getBlock());
+        return super.isPassable(block, pos) || (block.isIn(BlockTags.LEAVES) && isInRestrictedArea(pos)) || Compatibility.isDynamicTrunkShell(block.getBlock());
     }
 }

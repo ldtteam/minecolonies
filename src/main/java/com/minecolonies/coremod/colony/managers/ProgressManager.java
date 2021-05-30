@@ -99,9 +99,9 @@ public class ProgressManager implements IProgressManager
         {
             trigger(TEN_CITIZENS_SPAWNED);
         }
-        else if (total == 25)
+        else if (total == colony.getCitizenManager().getMaxCitizens())
         {
-            trigger(TWENTY_FIVE_CITIZENS_SPAWNED);
+            trigger(CITIZEN_CAP_MET);
         }
         else if (total >= 11 && employed >= 4)
         {

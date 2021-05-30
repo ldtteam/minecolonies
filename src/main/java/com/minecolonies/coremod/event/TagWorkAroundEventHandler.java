@@ -67,6 +67,7 @@ public class TagWorkAroundEventHandler
         public static void onRecipesUpdated(final RecipesUpdatedEvent event)
         {
             FurnaceRecipes.getInstance().loadRecipes(event.getRecipeManager());
+            IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().invalidateRecipes(event.getRecipeManager());
         }
     }
 

@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.client.gui.huts;
 
 import com.ldtteam.blockout.controls.*;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.client.gui.AbstractWindowWorkerModuleBuilding;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingSifter;
@@ -13,11 +12,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public class WindowHutSifterModule extends AbstractWindowWorkerModuleBuilding<BuildingSifter.View>
 {
-    /**
-     * The save button id.
-     */
-    private static final String BUTTON_SAVE = "save";
-
     /**
      * The id of the input field.
      */
@@ -39,11 +33,6 @@ public class WindowHutSifterModule extends AbstractWindowWorkerModuleBuilding<Bu
         super(building, Constants.MOD_ID + SIFTER_RESOURCE_SUFFIX);
         final TextField sifterSettingsInput = findPaneOfTypeByID(QTY_INPUT, TextField.class);
 
-        registerButton(BUTTON_SAVE, this::save);
-
-        final ButtonImage saveButton = findPaneOfTypeByID(BUTTON_SAVE, ButtonImage.class);
-        saveButton.setVisible(false);
-
         final Text label = findPaneOfTypeByID("maxSifted", Text.class);
         if (building.getMaxDailyQuantity() == Integer.MAX_VALUE)
         {
@@ -56,23 +45,6 @@ public class WindowHutSifterModule extends AbstractWindowWorkerModuleBuilding<Bu
 
         sifterSettingsInput.setText(String.valueOf(building.getCurrentDailyQuantity()));
         sifterSettingsInput.setEnabled(false);
-    }
-
-    /**
-     * Save the sifting mode.
-     */
-    private void save()
-    {
-        final TextField crushingSettingsInput = findPaneOfTypeByID(QTY_INPUT, TextField.class);
-        try
-        {
-            final int qty = Integer.parseInt(crushingSettingsInput.getText());
-            building.save(qty);
-        }
-        catch (final NumberFormatException ex)
-        {
-            Log.getLogger().warn("Wrong input!");
-        }
     }
 
     @NotNull

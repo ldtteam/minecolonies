@@ -9,11 +9,8 @@ import net.minecraft.state.EnumProperty;
 
 public abstract class AbstractBlockMinecoloniesRack<B extends AbstractBlockMinecoloniesRack<B>> extends AbstractBlockMinecolonies<B>
 {
-    public static final EnumProperty<RackType> VARIANT
-                                                            =
-      EnumProperty.create("variant", RackType.class);
-    public static final int                    DEFAULT_META = RackType.DEFAULT.getMetadata();
-    public static final int                    FULL_META    = RackType.FULL.getMetadata();
+    public static final EnumProperty<RackType> VARIANT = EnumProperty.create("variant", RackType.class);
+
     /**
      * The position it faces.
      */

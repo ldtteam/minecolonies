@@ -5,10 +5,12 @@
 
     <list id="resources" size="164 136" pos="13 50">
         <box size="100% 17" linewidth="2">
-            <itemicon id="resourceIcon" size="17 17" pos="0 0"/>
+            <itemicon id="resourceIcon" size="16 16" pos="0 0"/>
             <label id="resourceName" size="100 12" pos="20 1" color="white"/>
             <buttonimage label="$(com.minecolonies.coremod.gui.workerhuts.retrieveOn)" id="switch" pos="120 1" size="29 15"
                          source="minecolonies:textures/gui/builderhut/builder_button_very_small.png" textcolor="black"/>
         </box>
     </list>
+    <buttonimage label ="$(com.minecolonies.coremod.gui.workerhuts.resetdefault)" id="resetDefault" size="86 17" pos="50 194"
+                 source="minecolonies:textures/gui/builderhut/builder_button_medium.png" textcolor="black"/>
 </window>

@@ -1,0 +1,4 @@
+<window size="100% 100%" pause="false" lightbox="false">
+    <text id="desc" size="120 15" pos="5 10" color="black"/>
+    <input id="trigger" pos="120 10" size="29 15" textcolor="black"/>
+</window>

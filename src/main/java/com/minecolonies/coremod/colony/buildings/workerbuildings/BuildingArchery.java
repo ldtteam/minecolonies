@@ -89,6 +89,16 @@ public class BuildingArchery extends AbstractBuildingWorker
     }
 
     @Override
+    public void removeCitizen(final ICitizenData citizen)
+    {
+        if (isCitizenAssigned(citizen))
+        {
+            citizen.setHomeBuilding(null);
+        }
+        super.removeCitizen(citizen);
+    }
+
+    @Override
     public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
     {
         if (block == Blocks.TARGET)

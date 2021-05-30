@@ -4,12 +4,24 @@
     <switch id="switchpagePermissions" size="100% 100%">
         <view id="pageAddPlayer">
             <list id="users" size="148 171" pos="201 36">
-                <box size="100% 30" linewidth="2">
+                <box size="100% 35" linewidth="2">
                     <label id="name" size="100 11" pos="5 2" color="black"/>
                     <button id="removePlayer" size="11 11" pos="7 2" align="TOP_RIGHT" label="X" textscale="0.5"/>
-                    <button id="demote" size="11 11" pos="5 16" label="-" textscale="0.5"/>
-                    <button id="promote" size="11 11" pos="20 16" label="+" textscale="0.5"/>
-                    <label id="rank" size="50 11" pos="35 17" color="black"/>
+                    <label id="rank" size="129 11" pos="5 15" color="black" />
+                    <dropdown id="rankPicker"
+                              size="129 17"
+                              pos="2 15"
+                              maxContentHeight="100"
+                              dropDownSize="129 100"
+                              source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
+                              textcolor="black"
+                              scrollbarOffset="9 0"
+                              dropfixx="276">
+                        <view size="100% 15">
+                            <label id="id" size="100% 100%" label="" pos="0 0" textalign="MIDDLE"/>
+                            <buttonimage id="button" size="129 17" pos="0 0" source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png" textcolor="black"/>
+                        </view>
+                    </dropdown>
                 </box>
             </list>
 
@@ -18,49 +30,50 @@
             <button id="addPlayer" size="19 19" pos="130 76" label="+"/>
         </view>
         <view id="managePermissions">
-            <switch id="userGroups" size="148 171" pos="201 36">
-                <view id="officer">
-                    <list id="actionsofficer" size="148 171">
+            <switch id="permissionsManagement" size="148 171" pos="201 36">
+                <view id="permissionsList">
+                    <buttonimage id="permissionsModeToggle" label="Settings" size="129 17" pos="0 0" source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png" textcolor="black"/>
+                    <list id="rankList" size="148 150" pos="0 19">
                         <box size="100% 21" linewidth="2">
-                            <label id="name" size="110 18" pos="2 2" color="black"/>
-                            <button id="trigger" size="24 17" pos="2 2" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerhuts.retrieveOff)"/>
-                            <label id="index" pos="100 100"/>
+                            <label id="name" size="110 18" pos="2 2" color="black" />
+                            <button id="trigger" size="24 17" pos="2 2" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerhuts.retrieveOff)" />
+                            <label id="index" pos="100 100" />
                         </box>
                     </list>
                 </view>
-                <view id="friend">
-                    <list id="actionsfriend" size="148 171">
-                        <box size="100% 21" linewidth="2">
-                            <label id="name" size="110 18" pos="2 2" color="black"/>
-                            <button id="trigger" size="24 17" pos="2 2" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerhuts.retrieveOff)"/>
-                            <label id="index" pos="100 100"/>
-                        </box>
-                    </list>
-                </view>
-                <view id="neutral">
-                    <list id="actionsneutral" size="148 171">
-                        <box size="100% 21" linewidth="2">
-                            <label id="name" size="110 18" pos="2 2" color="black"/>
-                            <button id="trigger" size="24 17" pos="2 2" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerhuts.retrieveOff)"/>
-                            <label id="index" pos="100 100"/>
-                        </box>
-                    </list>
-                </view>
-                <view id="hostile">
-                    <list id="actionshostile" size="148 171">
-                        <box size="100% 21" linewidth="2">
-                            <label id="name" size="110 18" pos="2 2" color="black"/>
-                            <button id="trigger" size="24 17" pos="2 2" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerhuts.retrieveOff)"/>
-                            <label id="index" pos="100 100"/>
-                        </box>
-                    </list>
+                <view id="permissionsSettings">
+                    <buttonimage id="permissionsModeToggle" label="Permissions" size="129 17" pos="0 0" source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png" textcolor="black"/>
+                    <label id="rankType" size="50 11" pos="0 19" label="Type:" color="black" />
+                    <dropdown id="rankTypePicker"
+                              size="129 17"
+                              pos="0 32"
+                              maxContentHeight="100"
+                              dropDownSize="129 100"
+                              source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
+                              textcolor="black"
+                              scrollbarOffset="9 0"
+                              dropfixx="276">
+                        <view size="100% 15">
+                            <label id="id" size="100% 100%" label="" pos="0 0" textalign="MIDDLE"/>
+                            <buttonimage id="button" size="129 17" pos="0 0" source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png" textcolor="black"/>
+                        </view>
+                    </dropdown>
+                    <label id="isSubscriber" size="98 11" pos="0 52" label="Is Subscriber:" color="black" />
+                    <buttonimage id="setSubscriber" size="29 15" pos="100 52" color="black" label="$(com.minecolonies.coremod.gui.workerhuts.retrieveOff)" source="minecolonies:textures/gui/builderhut/builder_button_very_small.png" />
+                    <buttonimage id="removeRank" size="129 17" pos="0 70" label="$(com.minecolonies.coremod.gui.townhall.removerank)" source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png" textcolor="red" />
                 </view>
             </switch>
 
-            <button id="officerPage" size="60 15" pos="50 95" label="Officer"/>
-            <button id="friendPage" size="60 15" pos="50 115" label="Friend"/>
-            <button id="neutralPage" size="60 15" pos="50 135" label="Neutral"/>
-            <button id="hostilePage" size="60 15" pos="50 155" label="Hostile"/>
+            <list id="rankButtonList" size="148 100" pos="26 65">
+                <box size="100% 17" linewidth="0">
+                    <label id="rankId" />
+                    <button id="rankButton" size="120 15" pos="2 2" align="TOP_MIDDLE" />
+                </box>
+            </list>
+            <label size="148 11" pos="36 167" color="black" label="$(com.minecolonies.coremod.gui.townhall.addrank)"/>
+            <input id="addRankName" size="100 18" pos="36 179" maxlength="32"/>
+            <button id="buttonAddRank" size="19 19" pos="140 179" label="+"/>
+            <label id="rankNameError" size="148 11" pos="36 200" color="red" label="$(com.minecolonies.coremod.gui.townhall.invalidrankname)" />
         </view>
         <view id="freeBlockList">
             <label size="148 11" pos="201 24" color="black" label="$(com.minecolonies.coremod.gui.townHall.freeBlocks)"/>

@@ -6,10 +6,7 @@ import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
 import com.minecolonies.api.colony.managers.interfaces.*;
-import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.colony.permissions.IPermissions;
-import com.minecolonies.api.colony.permissions.Player;
-import com.minecolonies.api.colony.permissions.Rank;
+import com.minecolonies.api.colony.permissions.*;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
@@ -55,6 +52,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BANNER_PATTERNS;
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
@@ -320,15 +318,16 @@ public final class ColonyView implements IColonyView
         buf.writeString(colony.getStyle());
         buf.writeBoolean(colony.getRaiderManager().isRaided());
         buf.writeBoolean(colony.getRaiderManager().areSpiesEnabled());
+        // ToDo: rework ally system
         final List<IColony> allies = new ArrayList<>();
-        for (final Player player : colony.getPermissions().getPlayersByRank(Rank.OFFICER))
+        for (final Player player : colony.getPermissions().getFilteredPlayers(Rank::isColonyManager))
         {
             final IColony col = IColonyManager.getInstance().getIColonyByOwner(colony.getWorld(), player.getID());
             if (col != null)
             {
-                for (final Player owner : colony.getPermissions().getPlayersByRank(Rank.OWNER))
+                for (final Player owner : colony.getPermissions().getPlayersByRank(colony.getPermissions().getRankOwner()))
                 {
-                    if (col.getPermissions().getRank(owner.getID()) == Rank.OFFICER)
+                    if (col.getPermissions().getRank(owner.getID()).isColonyManager() && col.getID() != colony.getID())
                     {
                         allies.add(col);
                     }
@@ -347,14 +346,14 @@ public final class ColonyView implements IColonyView
         }
 
         final List<IColony> feuds = new ArrayList<>();
-        for (final Player player : colony.getPermissions().getPlayersByRank(Rank.HOSTILE))
+        for (final Player player : colony.getPermissions().getFilteredPlayers(Rank::isHostile))
         {
             final IColony col = IColonyManager.getInstance().getIColonyByOwner(colony.getWorld(), player.getID());
             if (col != null)
             {
-                for (final Player owner : colony.getPermissions().getPlayersByRank(Rank.OWNER))
+                for (final Player owner : colony.getPermissions().getPlayersByRank(colony.getPermissions().getRankOwner()))
                 {
-                    if (col.getPermissions().getRank(owner.getID()) == Rank.HOSTILE)
+                    if (col.getPermissions().getRank(owner.getID()).isHostile())
                     {
                         feuds.add(col);
                     }
@@ -678,7 +677,7 @@ public final class ColonyView implements IColonyView
     }
 
     /**
-     * removes a specific permission to a rank. If the permission was set, it sends a message to the server.
+     * removes a specific permission from a rank. If the permission was set, it sends a message to the server.
      *
      * @param rank   Rank to remove permission from.
      * @param action Action to remove permission of.

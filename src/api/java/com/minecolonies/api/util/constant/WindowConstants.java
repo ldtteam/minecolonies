@@ -106,16 +106,6 @@ public final class WindowConstants
     public static final String BUTTON_REMOVE_PLAYER = "removePlayer";
 
     /**
-     * Id of the promote player button in the GUI.
-     */
-    public static final String BUTTON_PROMOTE = "promote";
-
-    /**
-     * Id of the demote player button in the GUI.
-     */
-    public static final String BUTTON_DEMOTE = "demote";
-
-    /**
      * Id of the up button in the GUI.
      */
     public static final String BUTTON_UP = "plus";
@@ -291,26 +281,6 @@ public final class WindowConstants
     public static final String BUTTON_PERMISSION_EVENTS = "permissionEvents";
 
     /**
-     * The button to go to the officer permission settings page.
-     */
-    public static final String BUTTON_MANAGE_OFFICER = "officerPage";
-
-    /**
-     * The button to go to the friend permission settings page.
-     */
-    public static final String BUTTON_MANAGE_FRIEND = "friendPage";
-
-    /**
-     * The button to go to the neutral permission settings page.
-     */
-    public static final String BUTTON_MANAGE_NEUTRAL = "neutralPage";
-
-    /**
-     * The button to go to the hostile permission settings page.
-     */
-    public static final String BUTTON_MANAGE_HOSTILE = "hostilePage";
-
-    /**
      * The button to add a player or fakeplayer to a colony.
      */
     public static final String BUTTON_ADD_PLAYER_OR_FAKEPLAYER = "addfakeplayer";
@@ -331,31 +301,6 @@ public final class WindowConstants
     public static final String BUTTON_TRIGGER = "trigger";
 
     /**
-     * The id of the officer permission view.
-     */
-    public static final String VIEW_OFFICER = "officer";
-
-    /**
-     * The id of the officer permission view.
-     */
-    public static final String VIEW_FRIEND = "friend";
-
-    /**
-     * The id of the officer permission view.
-     */
-    public static final String VIEW_NEUTRAL = "neutral";
-
-    /**
-     * The id of the officer permission view.
-     */
-    public static final String VIEW_HOSTILE = "hostile";
-
-    /**
-     * The list of actions for a certain permission group.
-     */
-    public static final String LIST_ACTIONS = "actions";
-
-    /**
      * The list of free blocks to be interacted with.
      */
     public static final String LIST_FREE_BLOCKS = "blocks";
@@ -364,11 +309,6 @@ public final class WindowConstants
      * Key to get readable permission values.
      */
     public static final String KEY_TO_PERMISSIONS = "com.minecolonies.coremod.permission.";
-
-    /**
-     * Ignored index starts at this line, ignore this amount after this index.
-     */
-    public static final int IGNORE_INDEX = 3;
 
     /**
      * Button clicked to add a block to the colony to be freely interacted with.
@@ -462,7 +402,7 @@ public final class WindowConstants
     public static final String IN_DELIVERY_AMOUNT        = "indeliveryamount";
     public static final String WORK_ORDER_NAME   = "buildingName";
     public static final String WORK_ORDER_POS    = "buildingPos";
-    public static final String WORK_ORDER_SELECT = "workOrderSelect";
+    public static final String WORK_ORDER_SELECT = "manage";
     public static final String WORK_ORDER_ID     = "orderId";
 
     public static final String GUIDE_RESOURCE_SUFFIX = ":gui/windowhutguide.xml";
@@ -1123,6 +1063,30 @@ public final class WindowConstants
      */
     public static final String UPGRADE_PROGRESS_LABEL = "upgradeProgress";
 
+    public static final String TOWNHALL_RANK_BUTTON_LIST = "rankButtonList";
+    public static final String TOWNHALL_RANK_BUTTON      = "rankButton";
+    public static final String BUTTON_ADD_RANK = "buttonAddRank";
+    public static final String INPUT_ADDRANK_NAME = "addRankName";
+    public static final String BUTTON_EDIT_PLAYERRANK = "editPlayerRank";
+    public static final String BUTTON_REMOVE_RANK = "removeRank";
+    public static final String TOWNHALL_RANK_LIST = "rankList";
+    public static final String TOWNHALL_ADD_RANK_ERROR = "rankNameError";
+    public static final String TOWNHALL_PLAYER_NAME = "playerName";
+    public static final String TOWNHALL_RANK_PICKER = "rankPicker";
+    public static final String TOWNHALL_PERM_MANAGEMENT = "permissionsManagement";
+    public static final String TOWNHALL_PERM_LIST = "permissionsList";
+    public static final String TOWNHALL_PERM_SETTINGS = "permissionsSettings";
+    public static final String TOWNHALL_PERM_MODE_TOGGLE = "permissionsModeToggle";
+    public static final String TOWNHALL_BUTTON_MANAGER = "typeManager";
+    public static final String TOWNHALL_BUTTON_HOSTILE = "typeHostile";
+    public static final String TOWNHALL_BUTTON_NONE = "typeNone";
+    public static final String TOWNHALL_BUTTON_SUBSCRIBER = "setSubscriber";
+    public static final String TOWNHALL_SWITCH_PLAYER = "switchPlayer";
+    public static final String TOWNHALL_SWITCH_PLAYER_LIST = "playerList";
+    public static final String TOWNHALL_SWITCH_PLAYER_RANK = "playerEditRank";
+    public static final String TOWNHALL_USER_VIEW = "pageAddPlayer";
+    public static final String TOWNHALL_RANK_TYPE_PICKER = "rankTypePicker";
+
     /**
      * Input filter id.
      */
@@ -1139,6 +1103,11 @@ public final class WindowConstants
     public static final String BUTTON_SWITCH = "switch";
 
     /**
+     * Reset to default button Id.
+     */
+    public static final String BUTTON_RESET_DEFAULT = "resetDefault";
+
+    /**
      * String describing on for the gui.
      */
     public static final String ON = COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON;
@@ -1147,6 +1116,11 @@ public final class WindowConstants
      * String describing off for the gui.
      */
     public static final String OFF = COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF;
+
+    /**
+     * String describing switch for the gui.
+     */
+    public static final String SWITCH = "com.minecolonies.coremod.gui.workerhuts.switch";
 
     /**
      * Settings list ID.

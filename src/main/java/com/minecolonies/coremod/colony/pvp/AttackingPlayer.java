@@ -2,7 +2,6 @@ package com.minecolonies.coremod.colony.pvp;
 
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.entity.player.PlayerEntity;
@@ -61,12 +60,12 @@ public class AttackingPlayer
             return false;
         }
 
-        if (colony.getPermissions().getRank(guardColony.getPermissions().getOwner()) == Rank.HOSTILE)
+        if (colony.getPermissions().getRank(guardColony.getPermissions().getOwner()).isHostile())
         {
             return true;
         }
 
-        return guardColony.getPermissions().getRank(colony.getPermissions().getOwner()) == Rank.HOSTILE
+        return guardColony.getPermissions().getRank(colony.getPermissions().getOwner()).isHostile()
                  && guardColony.getRaiderManager().getColonyRaidLevel() <= colony.getRaiderManager().getColonyRaidLevel() * 2;
     }
 

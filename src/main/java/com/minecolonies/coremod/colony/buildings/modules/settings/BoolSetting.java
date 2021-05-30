@@ -6,9 +6,11 @@ import com.ldtteam.blockout.controls.ButtonImage;
 import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.Box;
 import com.ldtteam.blockout.views.View;
+import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.buildings.modules.settings.ISetting;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingsModuleView;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -72,7 +74,11 @@ public class BoolSetting implements ISetting
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void addHandlersToBox(final ISettingKey<?> key, final Pane pane, final ISettingsModuleView settingsModuleView)
+    public void addHandlersToBox(
+      final ISettingKey<?> key,
+      final Pane pane,
+      final ISettingsModuleView settingsModuleView,
+      final IBuildingView building, final Window window)
     {
         if (pane.findPaneOfTypeByID("box", Box.class).getChildren().isEmpty())
         {

@@ -6,7 +6,6 @@ import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.permissions.Player;
-import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.compatibility.CompatibilityManager;
 import com.minecolonies.api.compatibility.ICompatibilityManager;
 import com.minecolonies.api.crafting.IRecipeManager;
@@ -551,7 +550,7 @@ public final class ColonyManager implements IColonyManager
             for (@NotNull final IColonyView c : colonyViews.get(dimension))
             {
                 final Player p = c.getPlayers().get(owner);
-                if (p != null && p.getRank().equals(Rank.OWNER))
+                if (p != null && p.getRank().equals(c.getPermissions().getRankOwner()))
                 {
                     return c;
                 }

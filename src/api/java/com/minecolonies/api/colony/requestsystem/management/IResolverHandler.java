@@ -1,5 +1,6 @@
 package com.minecolonies.api.colony.requestsystem.management;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
@@ -162,4 +163,20 @@ public interface IResolverHandler
      * @param shouldTriggerReassign the predicate to determine whether a request should be reassigned
      */
     void onColonyUpdate(Predicate<IRequest<?>> shouldTriggerReassign);
+
+    /**
+     * Check if a resolver is in the progress of being removed.
+     * @param id the id of the resolver to check.
+     * @return true if so.
+     */
+    boolean isBeingRemoved(IToken<?> id);
+
+    /**
+     * Internal method that handles the removal of a single resolvers that is attached to a provider that is being removed.
+     *
+     * @param assignedResolvers The list of resolvers which are being removed.
+     * @param resolverToken     The id of the resolver which is being removed, needs to be part of the assignedResolvers list.
+     */
+    @VisibleForTesting
+    void processResolverForRemoval(final Collection<IToken<?>> assignedResolvers, final IToken<?> resolverToken);
 }

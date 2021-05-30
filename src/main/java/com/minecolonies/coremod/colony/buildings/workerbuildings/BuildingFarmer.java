@@ -5,21 +5,23 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.huts.WindowHutFarmerModule;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
+import com.minecolonies.coremod.colony.buildings.modules.settings.BoolSetting;
+import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.coremod.colony.jobs.JobFarmer;
 import com.minecolonies.coremod.network.messages.server.colony.building.farmer.AssignFieldMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.farmer.AssignmentModeMessage;
-import com.minecolonies.coremod.network.messages.server.colony.building.farmer.RequestFertilizerMessage;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -27,6 +29,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -44,6 +47,11 @@ import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_W
  */
 public class BuildingFarmer extends AbstractBuildingCrafter
 {
+    /**
+     * The beekeeper mode.
+     */
+    public static final ISettingKey<BoolSetting> FERTILIZE = new SettingKey<>(BoolSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "fertilize"));
+
     /**
      * Descriptive string of the profession.
      */
@@ -68,11 +76,6 @@ public class BuildingFarmer extends AbstractBuildingCrafter
      * NBT tag to store assign manually.
      */
     private static final String TAG_ASSIGN_MANUALLY = "assign";
-
-    /**
-     * NBT tag to store requestFert
-     */
-    private static final String TAG_REQUEST_FERTILIZER = "requestFert";
 
     /**
      * Flag used to be notified about block updates.
@@ -110,11 +113,6 @@ public class BuildingFarmer extends AbstractBuildingCrafter
      * Fields should be assigned manually to the farmer.
      */
     private boolean shouldAssignManually = false;
-
-    /**
-     * Farmer should request fertilizer
-     */
-    private boolean shouldRequestFertilizer = true;
 
     /**
      * Public constructor which instantiates the building.
@@ -258,11 +256,6 @@ public class BuildingFarmer extends AbstractBuildingCrafter
         }
         shouldAssignManually = compound.getBoolean(TAG_ASSIGN_MANUALLY);
 
-        if (compound.keySet().contains(TAG_REQUEST_FERTILIZER))
-        {
-            shouldRequestFertilizer = compound.getBoolean(TAG_REQUEST_FERTILIZER);
-        }
-
         if (compound.keySet().contains(LAST_FIELD_TAG))
         {
             final BlockPos pos = BlockPosUtil.read(compound, LAST_FIELD_TAG);
@@ -283,7 +276,6 @@ public class BuildingFarmer extends AbstractBuildingCrafter
         }
         compound.put(TAG_FIELDS, fieldTagList);
         compound.putBoolean(TAG_ASSIGN_MANUALLY, shouldAssignManually);
-        compound.putBoolean(TAG_REQUEST_FERTILIZER, shouldRequestFertilizer);
 
         if (lastField != null)
         {
@@ -427,7 +419,6 @@ public class BuildingFarmer extends AbstractBuildingCrafter
     {
         super.serializeToView(buf);
         buf.writeBoolean(shouldAssignManually);
-        buf.writeBoolean(shouldRequestFertilizer);
 
         int size = 0;
 
@@ -436,7 +427,7 @@ public class BuildingFarmer extends AbstractBuildingCrafter
 
         for (@NotNull final BlockPos field : fields)
         {
-            if (colony.getWorld().isAreaLoaded(field, 1))
+            if (WorldUtil.isBlockLoaded(getColony().getWorld(), field))
             {
                 final TileEntity scareCrow = getColony().getWorld().getTileEntity(field);
                 if (scareCrow instanceof ScarecrowTileEntity)
@@ -462,14 +453,6 @@ public class BuildingFarmer extends AbstractBuildingCrafter
         for (@NotNull final BlockPos field : cleanList)
         {
             buf.writeBlockPos(field);
-        }
-
-        for (final BlockPos pos : farmerFields)
-        {
-            if (!cleanList.contains(pos))
-            {
-                Log.getLogger().warn("Owning field not considered because not loaded: " + pos.toString());
-            }
         }
 
         buf.writeInt(farmerFields.size());
@@ -593,15 +576,7 @@ public class BuildingFarmer extends AbstractBuildingCrafter
      */
     public boolean requestFertilizer()
     {
-        return shouldRequestFertilizer;
-    }
-
-    /**
-     * Setter for request fertilizer
-     */
-    public void setRequestFertilizer(final boolean shouldRequestFertilizer)
-    {
-        this.shouldRequestFertilizer = shouldRequestFertilizer;
+        return getSetting(FERTILIZE).getValue();
     }
 
     @Override
@@ -623,11 +598,6 @@ public class BuildingFarmer extends AbstractBuildingCrafter
          * Checks if fields should be assigned manually.
          */
         private boolean shouldAssignFieldManually;
-
-        /**
-         * Checks if fertilizer should be requested
-         */
-        private boolean shouldRequestFertilizer;
 
         /**
          * Contains a view object of all the fields in the colony.
@@ -664,7 +634,6 @@ public class BuildingFarmer extends AbstractBuildingCrafter
             fields = new ArrayList<>();
             super.deserialize(buf);
             shouldAssignFieldManually = buf.readBoolean();
-            shouldRequestFertilizer = buf.readBoolean();
             final int size = buf.readInt();
             for (int i = 1; i <= size; i++)
             {
@@ -682,16 +651,6 @@ public class BuildingFarmer extends AbstractBuildingCrafter
         public boolean assignFieldManually()
         {
             return shouldAssignFieldManually;
-        }
-
-        /**
-         * Should the farmer request fertilizer
-         *
-         * @return true if yes
-         */
-        public boolean requestFertilizer()
-        {
-            return shouldRequestFertilizer;
         }
 
         /**
@@ -724,17 +683,6 @@ public class BuildingFarmer extends AbstractBuildingCrafter
         {
             Network.getNetwork().sendToServer(new AssignmentModeMessage(this, assignFieldManually));
             this.shouldAssignFieldManually = assignFieldManually;
-        }
-
-        /**
-         * Sets shouldRequestFertilizer in the view
-         *
-         * @param shouldRequestFertilizer variable to set
-         */
-        public void setRequestFertilizer(final boolean shouldRequestFertilizer)
-        {
-            Network.getNetwork().sendToServer(new RequestFertilizerMessage(this, shouldRequestFertilizer));
-            this.shouldRequestFertilizer = shouldRequestFertilizer;
         }
 
         /**

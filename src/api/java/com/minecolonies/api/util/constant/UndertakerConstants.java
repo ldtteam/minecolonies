@@ -39,6 +39,21 @@ public class UndertakerConstants
     public static final double MAX_RESURRECTION_CHANCE_MYSTICAL_LVL_BONUS = 0.005;
 
     /**
+     * The bonus to the resurrection chance for having a single totem of undying
+     */
+    public static final double SINGLE_TOTEM_RESURRECTION_CHANCE_BONUS = 0.05;
+
+    /**
+     * The bonus to the resurrection chance for having multiples totems of undying
+     */
+    public static final double MULTIPLE_TOTEMS_RESURRECTION_CHANCE_BONUS = 0.075;
+
+    /**
+     * The chance that a used totem of undying breaks on each resurrection attempt
+     */
+    public static final double TOTEM_BREAK_CHANCE = 0.01;
+
+    /**
      * Effort needed to empty a grave
      */
     public static final int EFFORT_EMPTY_GRAVE = 100;

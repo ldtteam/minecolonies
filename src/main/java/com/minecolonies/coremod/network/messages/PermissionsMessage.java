@@ -10,7 +10,6 @@ import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.network.PacketUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.permissions.Permissions;
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
@@ -24,6 +23,7 @@ import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 import java.util.UUID;
 
@@ -199,7 +199,7 @@ public class PermissionsMessage
         {
             buf.writeInt(colonyID);
             buf.writeString(type.name());
-            buf.writeString(rank.name());
+            buf.writeInt(rank.getId());
             buf.writeString(action.name());
             buf.writeString(dimension.getLocation().toString());
         }
@@ -209,9 +209,14 @@ public class PermissionsMessage
         {
             colonyID = buf.readInt();
             type = MessageType.valueOf(buf.readString(32767));
-            rank = Rank.valueOf(buf.readString(32767));
+            final int rankId = buf.readInt();
             action = Action.valueOf(buf.readString(32767));
             dimension = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(buf.readString(32767)));
+            final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, dimension);
+            if (colony != null)
+            {
+                rank = colony.getPermissions().getRanks().get(rankId);
+            }
         }
     }
 
@@ -278,15 +283,82 @@ public class PermissionsMessage
         {
             final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, dimension);
 
-            if (colony != null && colony.getPermissions().hasPermission(ctxIn.getSender(), Action.CAN_PROMOTE) && colony.getWorld() != null)
+            if (colony != null && colony.getPermissions().hasPermission(ctxIn.getSender(), Action.EDIT_PERMISSIONS) && colony.getWorld() != null)
             {
-                colony.getPermissions().addPlayer(playerName, Rank.NEUTRAL, colony.getWorld());
+                colony.getPermissions().addPlayer(playerName, colony.getPermissions().getRank(colony.getPermissions().NEUTRAL_RANK_ID), colony.getWorld());
             }
             else
             {
                 Log.getLogger().error(String.format(COLONY_DOES_NOT_EXIST, colonyID), new Exception());
             }
         }
+    }
+
+    /**
+     * Message class for adding a rank to the colony
+     */
+    public static class AddRank implements IMessage
+    {
+        /**
+         * the ID of the colony
+         */
+        private int colonyID;
+        /**
+         * the name of the new rank
+         */
+        private String rankName;
+        /**
+         * the dimension of the colony
+         */
+        private RegistryKey<World> dimension;
+
+        /**
+         * Empty public constructor
+         */
+        public AddRank()
+        {
+            super();
+        }
+
+        /**
+         * Constructor for adding a rank to the colony
+         * @param colony the colony to add the rank to
+         * @param name the name of the rank
+         */
+        public AddRank(@NotNull IColonyView colony, @NotNull String name)
+        {
+            super();
+            this.colonyID = colony.getID();
+            this.rankName = name;
+            this.dimension = colony.getDimension();
+        }
+
+        @Override
+        public void toBytes(PacketBuffer buf)
+        {
+            buf.writeInt(colonyID);
+            buf.writeString(rankName);
+            buf.writeString(dimension.getLocation().toString());
+        }
+
+        @Override
+        public void fromBytes(PacketBuffer buf)
+        {
+            this.colonyID = buf.readInt();
+            this.rankName = buf.readString(32767);
+            this.dimension = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(buf.readString(32767)));
+        }
+
+        @Override
+        public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+        {
+            final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, dimension);
+            if (colony != null && colony.getPermissions().hasPermission(ctxIn.getSender(), Action.EDIT_PERMISSIONS))
+            {
+                colony.getPermissions().addRank(rankName);
+            }
+        }
+
     }
 
     /**
@@ -357,9 +429,9 @@ public class PermissionsMessage
         {
             final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, dimension);
 
-            if (colony != null && colony.getPermissions().hasPermission(ctxIn.getSender(), Action.CAN_PROMOTE) && colony.getWorld() != null)
+            if (colony != null && colony.getPermissions().hasPermission(ctxIn.getSender(), Action.EDIT_PERMISSIONS) && colony.getWorld() != null)
             {
-                colony.getPermissions().addPlayer(id, playerName, Rank.NEUTRAL);
+                colony.getPermissions().addPlayer(id, playerName, colony.getPermissions().getRank(colony.getPermissions().NEUTRAL_RANK_ID));
             }
             else
             {
@@ -375,7 +447,7 @@ public class PermissionsMessage
     {
         private int  colonyID;
         private UUID playerID;
-        private Type type;
+        private Rank rank;
 
         /**
          * The dimension of the
@@ -395,24 +467,15 @@ public class PermissionsMessage
          *
          * @param colony Colony the rank is set in.
          * @param player UUID of the player to set rank.
-         * @param type   Promote or demote.
+         * @param rank   Rank to change to.
          */
-        public ChangePlayerRank(@NotNull final IColonyView colony, final UUID player, final Type type)
+        public ChangePlayerRank(@NotNull final IColonyView colony, final UUID player, final Rank rank)
         {
             super();
             this.colonyID = colony.getID();
             this.playerID = player;
-            this.type = type;
             this.dimension = colony.getDimension();
-        }
-
-        /**
-         * Possible type of action.
-         */
-        public enum Type
-        {
-            PROMOTE,
-            DEMOTE
+            this.rank = rank;
         }
 
         @Override
@@ -420,8 +483,8 @@ public class PermissionsMessage
         {
             buf.writeInt(colonyID);
             PacketUtils.writeUUID(buf, playerID);
-            buf.writeString(type.name());
             buf.writeString(dimension.getLocation().toString());
+            buf.writeInt(rank.getId());
         }
 
         @Override
@@ -429,15 +492,10 @@ public class PermissionsMessage
         {
             colonyID = buf.readInt();
             playerID = PacketUtils.readUUID(buf);
-            type = Type.valueOf(buf.readString(32767));
             dimension = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(buf.readString(32767)));
-        }
+            IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, dimension);
+            rank = colony.getPermissions().getRank(buf.readInt());
 
-        @Nullable
-        @Override
-        public LogicalSide getExecutionSide()
-        {
-            return LogicalSide.SERVER;
         }
 
         @Override
@@ -451,18 +509,10 @@ public class PermissionsMessage
                 return;
             }
             final PlayerEntity player = ctxIn.getSender();
-            if (colony.getPermissions().hasPermission(player, Action.EDIT_PERMISSIONS))
+            if (colony.getPermissions().hasPermission(player, Action.EDIT_PERMISSIONS) && rank != colony.getPermissions().getRank(colony.getPermissions().OWNER_RANK_ID))
             {
-                if (type == Type.PROMOTE && colony.getPermissions().getRank(player).ordinal() < colony.getPermissions().getRank(playerID).ordinal())
-                {
-                    colony.getPermissions().setPlayerRank(playerID, Permissions.getPromotionRank(colony.getPermissions().getRank(playerID)), colony.getWorld());
-                }
-                else if (type == Type.DEMOTE
-                           && (colony.getPermissions().getRank(player).ordinal() < colony.getPermissions().getRank(playerID).ordinal()
-                                 || player.getUniqueID().equals(playerID)))
-                {
-                    colony.getPermissions().setPlayerRank(playerID, Permissions.getDemotionRank(colony.getPermissions().getRank(playerID)), colony.getWorld());
-                }
+                Log.getLogger().error(rank.getName());
+                colony.getPermissions().setPlayerRank(playerID, rank, colony.getWorld());
             }
         }
     }
@@ -537,13 +587,236 @@ public class PermissionsMessage
             }
             final PlayerEntity player = ctxIn.getSender();
             final Player permissionsPlayer = colony.getPermissions().getPlayers().get(playerID);
-            if ((permissionsPlayer.getRank() == Rank.HOSTILE && colony.getPermissions().hasPermission(player, Action.EDIT_PERMISSIONS))
-                  || (permissionsPlayer.getRank() != Rank.HOSTILE
+            if ((permissionsPlayer.getRank().isHostile() && colony.getPermissions().hasPermission(player, Action.EDIT_PERMISSIONS))
+                  || (!permissionsPlayer.getRank().isHostile()
                         && colony.getPermissions().hasPermission(player, Action.EDIT_PERMISSIONS)
-                        && colony.getPermissions().getRank(player).ordinal() < colony.getPermissions().getRank(playerID).ordinal())
+                        && colony.getPermissions().getRank(player).isColonyManager())
                   || player.getUniqueID().equals(playerID))
             {
                 colony.getPermissions().removePlayer(playerID);
+            }
+        }
+    }
+
+    /**
+     * Message class for removing a rank from a colony
+     */
+    public static class RemoveRank implements IMessage
+    {
+        /**
+         * the colony ID
+         */
+        private int colonyId;
+        /**
+         * the rank ID
+         */
+        private int rankId;
+        /**
+         * the dimension of the colony
+         */
+        private RegistryKey<World> dimension;
+
+        /**
+         * Empty public constructor
+         */
+        public RemoveRank()
+        {
+            super();
+        }
+
+        /**
+         * Constructor for removing a rank from a colony
+         * @param colony the colony to remove the rank from
+         * @param rank the rank to remove
+         */
+        public RemoveRank(@NotNull final IColonyView colony, @NotNull final Rank rank)
+        {
+            super();
+            colonyId = colony.getID();
+            rankId = rank.getId();
+            dimension = colony.getDimension();
+        }
+
+        @Override
+        public void toBytes(@NotNull final PacketBuffer buf)
+        {
+            buf.writeInt(colonyId);
+            buf.writeInt(rankId);
+            buf.writeString(dimension.getLocation().toString());
+        }
+
+        @Override
+        public void fromBytes(@NotNull final PacketBuffer buf)
+        {
+            colonyId = buf.readInt();
+            rankId = buf.readInt();
+            dimension = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(buf.readString(32767)));
+        }
+
+        @Override
+        public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+        {
+            final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, dimension);
+            if (colony != null && colony.getPermissions().hasPermission(ctxIn.getSender(), Action.EDIT_PERMISSIONS))
+            {
+                colony.getPermissions().removeRank(colony.getPermissions().getRanks().get(rankId));
+            }
+        }
+    }
+
+    /**
+     * Message for changing the rank type of a given rank on a colony
+     */
+    public static class EditRankType implements IMessage
+    {
+        /**
+         * the colony id
+         */
+        private int colonyId;
+        /**
+         * the rank id
+         */
+        private int rankId;
+        /**
+         * the dimension
+         */
+        private RegistryKey<World> dimension;
+        /**
+         * the new rank type
+         */
+        private int rankType;
+
+        /**
+         * empty public constructor
+         */
+        public EditRankType() { super(); }
+
+        /**
+         * Constructor for changing the rank type
+         * @param colony the colony of the rank
+         * @param rank the rank
+         * @param rankType the new rank type
+         */
+        public EditRankType(@NotNull final IColonyView colony, @NotNull final Rank rank, @NotNull final int rankType)
+        {
+            this.colonyId = colony.getID();
+            this.rankId = rank.getId();
+            this.dimension = colony.getDimension();
+            this.rankType = rankType;
+        }
+
+        @Override
+        public void toBytes(final PacketBuffer buf)
+        {
+            buf.writeInt(colonyId);
+            buf.writeInt(rankId);
+            buf.writeString(dimension.getLocation().toString());
+            buf.writeInt(rankType);
+        }
+
+        @Override
+        public void fromBytes(final PacketBuffer buf)
+        {
+            this.colonyId = buf.readInt();
+            this.rankId = buf.readInt();
+            this.dimension = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(buf.readString(32767)));
+            this.rankType = buf.readInt();
+        }
+
+        @Override
+        public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+        {
+            final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, dimension);
+            if (colony != null && colony.getPermissions().hasPermission(ctxIn.getSender(), Action.EDIT_PERMISSIONS))
+            {
+                final Rank rank = colony.getPermissions().getRank(rankId);
+                switch (rankType)
+                {
+                    case 0:
+                        rank.setColonyManager(true);
+                        rank.setHostile(false);
+                        break;
+                    case 1:
+                        rank.setHostile(true);
+                        rank.setColonyManager(false);
+                        break;
+                    default:
+                        rank.setHostile(false);
+                        rank.setColonyManager(false);
+                        break;
+                }
+                colony.markDirty();
+            }
+        }
+    }
+
+    /**
+     * Message to change whether a rank is a subscriber to certain colony events
+     */
+    public static class SetSubscriber implements IMessage
+    {
+        /**
+         * the colony ID
+         */
+        private int colonyId;
+        /**
+         * the rank ID
+         */
+        private int rankId;
+        /**
+         * the dimension
+         */
+        private RegistryKey<World> dimension;
+        /**
+         * the new isSubscriber state
+         */
+        private boolean isSubscriber;
+
+        /**
+         * Empty public constructor
+         */
+        public SetSubscriber() { super(); }
+
+        /**
+         * Constructor to change whether the given rank is a subscriber
+         * @param colony the colony of the rank
+         * @param rank the rank
+         * @param isSubscriber whether the rank should be a subscriber
+         */
+        public SetSubscriber(@NotNull final IColonyView colony, @NotNull final Rank rank, @NotNull final boolean isSubscriber)
+        {
+            this.colonyId = colony.getID();
+            this.dimension = colony.getDimension();
+            this.rankId = rank.getId();
+            this.isSubscriber = isSubscriber;
+        }
+
+        @Override
+        public void toBytes(final PacketBuffer buf)
+        {
+            buf.writeInt(colonyId);
+            buf.writeString(dimension.getLocation().toString());
+            buf.writeInt(rankId);
+            buf.writeBoolean(isSubscriber);
+        }
+
+        @Override
+        public void fromBytes(final PacketBuffer buf)
+        {
+            this.colonyId = buf.readInt();
+            this.dimension = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(buf.readString(32767)));
+            this.rankId = buf.readInt();
+            this.isSubscriber = buf.readBoolean();
+        }
+
+        @Override
+        public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+        {
+            final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, dimension);
+            if (colony != null && colony.getPermissions().hasPermission(ctxIn.getSender(), Action.EDIT_PERMISSIONS))
+            {
+                colony.getPermissions().getRank(rankId).setSubscriber(isSubscriber);
+                colony.markDirty();
             }
         }
     }

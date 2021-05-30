@@ -59,10 +59,13 @@
   "minecolonies.config.listofplantables.comment": "The items and item-tags that the Florist can plant.",
 
   "item.minecolonies.scepterlumberjack": "Forest Tool",
-  "item.minecolonies.scepterlumberjack.usedstart": "First position set.",
-  "item.minecolonies.scepterlumberjack.usedend": "Second position set.",
-  "item.minecolonies.scepterlumberjack.restrictiontoobig": "Area %s is too large. Maximum restricted area for the Forester is %s blocks.",
-  "item.minecolonies.scepterlumberjack.restrictionset": "Forester restricted area set. Size is %s blocks. Max size is %s blocks.",
+  "item.minecolonies.scepterlumberjack.usedstart": "First position set. Click the same position to finish.",
+  "item.minecolonies.scepterlumberjack.usedend": "Second position set. Click the same position to finish.",
+  "item.minecolonies.scepterlumberjack.restrictiontoobig": "An area of %d blocks is too large. The maximum restricted area for the Forester is %d blocks.",
+  "item.minecolonies.scepterlumberjack.restrictionset": "Forester restricted area set (x: %d to %d, z: %d to %d, area: %d blocks). The max size is %d blocks.",
+  
+  "minecolonies.config.maxtreesize": "Max Tree Size",
+  "minecolonies.config.maxtreesize.comment": "Max log count in one tree for the Forester to check during their tree search.",
 
   "com.minecolonies.coremod.gui.workerhuts.togglerestrictionon": "Restriction (on)",
   "com.minecolonies.coremod.gui.workerhuts.togglerestrictionoff": "Restriction (off)",
@@ -478,6 +481,7 @@
   "com.minecolonies.coremod.gui.workerhuts.buildershut": "Builder's Hut",
   "com.minecolonies.coremod.gui.workerhuts.lumberjackhut": "Forester's Hut",
   "com.minecolonies.coremod.gui.workerhuts.mysticalsite": "Mystical Site",
+  "com.minecolonies.coremod.gui.workerhuts.florist": "Flower Shop",
 
   "com.minecolonies.coremod.gui.workerhuts.minerminenode": "Mine Level",
   "com.minecolonies.coremod.gui.workerhuts.minerguards": "Guards",
@@ -560,6 +564,9 @@
   "com.minecolonies.coremod.gui.townhall.rename.title": "Rename your Colony",
 
   "com.minecolonies.coremod.gui.townhall.addplayer": "Add Player:",
+  "com.minecolonies.coremod.gui.townhall.addrank": "Add Rank:",
+  "com.minecolonies.coremod.gui.townhall.removerank": "Remove Rank",
+  "com.minecolonies.coremod.gui.townhall.invalidrankname": "This rank name is invalid",
   "com.minecolonies.coremod.gui.townhall.addblock": "Add Block/Position:",
   "com.minecolonies.coremod.gui.townhall.permissions": "Permissions",
   "com.minecolonies.coremod.gui.townhall.togglespec": "Toggle Specialization",
@@ -574,6 +581,9 @@
   "com.minecolonies.coremod.gui.townhall.population.unemployed": "Unemployed: %d",
   "com.minecolonies.coremod.gui.townhall.population.childs": "Children: %d",
   "com.minecolonies.coremod.gui.townhall.currentspecialization": "Current Specialization:",
+  "com.minecolonies.coremod.gui.townhall.ranktype.colonymanager": "Colony Manager",
+  "com.minecolonies.coremod.gui.townhall.ranktype.hostile": "Hostile",
+  "com.minecolonies.coremod.gui.townhall.ranktype.none": "None",
 
   "com.minecolonies.coremod.gui.townhall.citizens": "Citizens",
   "com.minecolonies.coremod.gui.townhall.citizens.unemployed": "Unemployed",
@@ -606,9 +616,10 @@
 
   "com.minecolonies.coremod.gui.workerhuts.mobslist": "Mob Attack List",
 
-  "com.minecolonies.coremod.gui.builder.manual": "Manual Mode",
-  "com.minecolonies.coremod.gui.builder.automatic": "Automatic Mode",
-  "com.minecolonies.coremod.gui.builder.select": "Select",
+  "com.minecolonies.core.builder.setting.manual": "Manual Mode",
+  "com.minecolonies.core.builder.setting.automatic": "Automatic Mode",
+  "com.minecolonies.coremod.gui.builder.select": "Assign",
+  "com.minecolonies.coremod.gui.builder.cancel": "Cancel",
 
   "com.minecolonies.coremod.gui.workerhuts.minernode": "Nodes",
   "com.minecolonies.coremod.gui.hiring.off": "Automatic",
@@ -630,7 +641,6 @@
   "com.minecolonies.coremod.gui.inventory.scarecrow": "Scarecrow",
   "com.minecolonies.coremod.gui.workerhuts.farmerhut.fields": "Fields",
   "com.minecolonies.coremod.gui.workerhuts.farmerhut.assignmentmode": "Assign Fields to Farmer:",
-  "com.minecolonies.coremod.gui.workerhuts.farmerhut.requestfertilizer": "Allow Farmer to request Fertilizer",
 
   "com.minecolonies.coremod.job.undertaker": "Undertaker",
   "com.minecolonies.coremod.gui.workerhuts.graveyard": "Graveyard",
@@ -663,6 +673,7 @@
   "com.minecolonies.coremod.gui.workerhuts.modea": "Automatically",
   "com.minecolonies.coremod.gui.workerhuts.retrieveoff": "Off",
   "com.minecolonies.coremod.gui.workerhuts.retrieveon": "On",
+  "com.minecolonies.coremod.gui.workerhuts.resetdefault": "Reset to Default",
   "com.minecolonies.coremod.gui.workerhuts.task.guard": "Guard",
   "com.minecolonies.coremod.gui.workerhuts.task.patrol": "Patrol",
   "com.minecolonies.coremod.gui.workerhuts.task.patrolmine": "Patrol Mine",
@@ -993,9 +1004,9 @@
   "com.minecolonies.coremod.progress.manual_employment_on": "§6 Workers are complaining about a long walk to their work. You can manually assign them to the closest houses if the option is turned on in the Town Hall settings.",
   "com.minecolonies.coremod.progress.ten_citizens_spawned": "§6 A growing colony increases the burdens on your settlers. You should consider upgrading your work huts.",
   "com.minecolonies.coremod.progress.twenty_building_levels": "§6 A barbarian spy had been caught next to your colony, and he seems to be from a bigger group! You should consider building Barracks to defend your colony.",
-  "com.minecolonies.coremod.progress.twenty_five_citizens_spawned": "§6 Your colony's population has grown to the limits of current management techniques. To accept more citizens, complete the research at the University.",
+  "com.minecolonies.coremod.progress.citizen_cap_met": "§6 Your colony's population has grown to the limits of current management techniques. To accept more citizens, complete the research at the University.",
   "com.minecolonies.coremod.progress.not_enough_jobs": "§6 Building more Houses than available jobs has a bad influence on your citizens' happiness.",
-  "com.minecolonies.coremod.progress.newchild": "§6 A new child is now happily living in %s!",
+  "com.minecolonies.coremod.progress.newchild": "§6 A new child, %s, is now happily living in %s!",
   "com.minecolonies.coremod.progress.childgrow": "%s grew up and wants a job now.",
   "com.minecolonies.coremod.progress.hirecitizen": "§6 Your recruitment package was accepted and a new citizen arrived!",
 
@@ -1096,7 +1107,7 @@
 
   "com.minecolonies.coremod.gui.shepherd.autodye": "Random sheep dyeing:",
 
-  "com.minecolonies.coremod.general.canttakeequipped": "The only armor you have is what you're wearing. Put it in your inventory if you want to give it to me.",
+  "com.minecolonies.coremod.general.canttakeequipped": "The only item you have is what you're wearing or holding. Put it in your inventory if you want to give it to me.",
 
   "com.minecolonies.coremod.gui.workerhuts.siftersettings": "Daily limit progress",
   "com.minecolonies.coremod.gui.workerhuts.sifterinfo": "of %d allowed",
@@ -1295,6 +1306,9 @@
   "advancements.minecolonies.army_80.description": "An army of 80 is not a small obstacle",
   "advancements.minecolonies.build.all_towers.title": "Grand Garrison",
   "advancements.minecolonies.build.all_towers.description": "A mighty barracks to strike fear in the enemy - all upgrades, all towers",
+
+  "advancements.minecolonies.undertaker.totem.title": "A Powerful Artifact",
+  "advancements.minecolonies.undertaker.totem.description": "The Undertaker has been given a Totem of Undying to assist in Resurrection, but make sure you've done your research first!",
 
   "com.minecolonies.coremod.gui.chat.okay": "I will work on it!",
   "com.minecolonies.coremod.gui.chat.ignore": "That has to do for now!",
@@ -1693,6 +1707,7 @@
   "item.minecolonies.amazonegg": "Amazon Spawn Egg",
   "item.minecolonies.amazonchiefegg": "Amazon Leader Spawn Egg",
   "com.minecolonies.coremod.playerinvfull": "You can't pick up this item, as your inventory is full!",
+  "com.minecolonies.coremod.playerinvfull.hotbarinsert": " was dropped in front of you, as your inventory is full!",
 
   "com.minecolonies.coremod.gui.workerhuts.concretemixer": "Concrete Mixer's Hut",
   "com.minecolonies.coremod.job.concretemixer": "Concrete Mixer",
@@ -1738,11 +1753,11 @@
   "com.minecolonies.coremod.gui.chat.noguardnearwork": "There are no Guard or Barrack Towers near my workplace, so I don't feel safe there!",
   "com.minecolonies.coremod.gui.chat.noguardnearhome": "There are no Guard or Barrack Towers near my home, so I don't feel safe there!",
 
-  "com.minecolonies.coremod.gui.beekeeper.collectbottle": "Collect honey",
-  "com.minecolonies.coremod.gui.beekeeper.collectcomb": "Collect honeycomb",
-  "com.minecolonies.coremod.gui.beekeeper.collectboth": "Collect comb and honey",
+  "com.minecolonies.core.apiary.setting.honey": "Collect honey",
+  "com.minecolonies.core.apiary.setting.honeycomb": "Collect honeycomb",
+  "com.minecolonies.core.apiary.setting.both": "Collect comb and honey",
   "com.minecolonies.coremod.gui.beekeeper.addhives": "Get hive tool",
-  "entity.beekeeper.messagenohives": "There are no hives for me to work at!",
+  "entity.beekeeper.messagenohives": "Either there are no hives for me to work at, or you haven't assigned me any. Use the hive tool available from my hut to do so.",
   "entity.beekeeper.messagenobees": "I can't find any bees!",
 
   "com.minecolonies.coremod.gui.field.north": "Northward field size",
@@ -1923,5 +1938,18 @@
   "com.minecolonies.coremod.setting.minecolonies:breeding": "Breeding:",
   "com.minecolonies.coremod.setting.minecolonies:milking": "Milking:",
   "com.minecolonies.coremod.setting.minecolonies:dyeing": "Dyeing:",
-  "com.minecolonies.coremod.setting.minecolonies:shearing": "Shearing:"
+  "com.minecolonies.coremod.setting.minecolonies:shearing": "Shearing:",
+  "com.minecolonies.coremod.gui.workerhuts.switch": "Switch",
+  "com.minecolonies.coremod.gui.workerhuts.tools": "Selection Tools",
+  "com.minecolonies.coremod.gui.tooldesc.scepterbeekeeper": "Right-click a beehive with the tool to add it to the hut. Right-click any other block to discard the tool.",
+  "com.minecolonies.coremod.setting.minecolonies:replant": "Replanting:",
+  "com.minecolonies.coremod.setting.minecolonies:restrict": "Zoning Mode:",
+  "com.minecolonies.coremod.gui.tooldesc.scepterlumberjack": "Restrict the Forester's working area by left-clicking one corner and right-clicking the opposite corner with the tool.",
+
+  "com.minecolonies.coremod.setting.minecolonies:fertilize": "Request Fertilizer",
+  "com.minecolonies.coremod.setting.minecolonies:warehousemin": "Min Warehouse Stock:",
+
+  "com.minecolonies.coremod.gui.givetool": "Obtain Tool",
+  "com.minecolonies.coremod.gui.blocks.distance": "%d blocks"
+
 }

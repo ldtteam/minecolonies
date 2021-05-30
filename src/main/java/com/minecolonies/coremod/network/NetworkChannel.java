@@ -14,27 +14,19 @@ import com.minecolonies.coremod.network.messages.client.colony.building.guard.Gu
 import com.minecolonies.coremod.network.messages.server.*;
 import com.minecolonies.coremod.network.messages.server.colony.*;
 import com.minecolonies.coremod.network.messages.server.colony.building.*;
-import com.minecolonies.coremod.network.messages.server.colony.building.beekeeper.BeekeeperScepterMessage;
-import com.minecolonies.coremod.network.messages.server.colony.building.beekeeper.BeekeeperSetHarvestHoneycombsMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.GiveToolMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.builder.BuilderSelectWorkOrderMessage;
-import com.minecolonies.coremod.network.messages.server.colony.building.builder.BuilderSetManualModeMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.crusher.CrusherSetModeMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.enchanter.EnchanterWorkerSetMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.farmer.AssignFieldMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.farmer.AssignmentModeMessage;
-import com.minecolonies.coremod.network.messages.server.colony.building.farmer.RequestFertilizerMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.guard.GuardRecalculateMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.guard.GuardSetMinePosMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.guard.GuardTaskMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.guard.MobEntryChangeMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.home.AssignUnassignMessage;
-import com.minecolonies.coremod.network.messages.server.colony.building.lumberjack.LumberjackReplantSaplingToggleMessage;
-import com.minecolonies.coremod.network.messages.server.colony.building.lumberjack.LumberjackRestrictionToggleMessage;
-import com.minecolonies.coremod.network.messages.server.colony.building.lumberjack.LumberjackScepterMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.miner.MinerSetLevelMessage;
-import com.minecolonies.coremod.network.messages.server.colony.building.plantation.PlantationSetPhaseMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.postbox.PostBoxRequestMessage;
-import com.minecolonies.coremod.network.messages.server.colony.building.sifter.SifterSettingsMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.university.TryResearchMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.warehouse.SortWarehouseMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.warehouse.UpgradeWarehouseMessage;
@@ -137,7 +129,6 @@ public class NetworkChannel
         registerMessage(++idx, ColonyViewRemoveWorkOrderMessage.class, ColonyViewRemoveWorkOrderMessage::new);
         registerMessage(++idx, UpdateChunkCapabilityMessage.class, UpdateChunkCapabilityMessage::new);
         registerMessage(++idx, GuardMobAttackListMessage.class, GuardMobAttackListMessage::new);
-        registerMessage(++idx, BeekeeperSetHarvestHoneycombsMessage.class, BeekeeperSetHarvestHoneycombsMessage::new);
 
         //  Permission Request messages
         registerMessage(++idx, PermissionsMessage.Permission.class, PermissionsMessage.Permission::new);
@@ -145,6 +136,10 @@ public class NetworkChannel
         registerMessage(++idx, PermissionsMessage.RemovePlayer.class, PermissionsMessage.RemovePlayer::new);
         registerMessage(++idx, PermissionsMessage.ChangePlayerRank.class, PermissionsMessage.ChangePlayerRank::new);
         registerMessage(++idx, PermissionsMessage.AddPlayerOrFakePlayer.class, PermissionsMessage.AddPlayerOrFakePlayer::new);
+        registerMessage(++idx, PermissionsMessage.AddRank.class, PermissionsMessage.AddRank::new);
+        registerMessage(++idx, PermissionsMessage.RemoveRank.class, PermissionsMessage.RemoveRank::new);
+        registerMessage(++idx, PermissionsMessage.EditRankType.class, PermissionsMessage.EditRankType::new);
+        registerMessage(++idx, PermissionsMessage.SetSubscriber.class, PermissionsMessage.SetSubscriber::new);
 
         //  Colony Request messages
         registerMessage(++idx, BuildRequestMessage.class, BuildRequestMessage::new);
@@ -158,7 +153,6 @@ public class NetworkChannel
         registerMessage(++idx, WorkOrderChangeMessage.class, WorkOrderChangeMessage::new);
         registerMessage(++idx, AssignFieldMessage.class, AssignFieldMessage::new);
         registerMessage(++idx, AssignmentModeMessage.class, AssignmentModeMessage::new);
-        registerMessage(++idx, RequestFertilizerMessage.class, RequestFertilizerMessage::new);
         registerMessage(++idx, GuardTaskMessage.class, GuardTaskMessage::new);
         registerMessage(++idx, GuardSetMinePosMessage.class, GuardSetMinePosMessage::new);
         registerMessage(++idx, GuardRecalculateMessage.class, GuardRecalculateMessage::new);
@@ -168,13 +162,10 @@ public class NetworkChannel
         registerMessage(++idx, TransferItemsRequestMessage.class, TransferItemsRequestMessage::new);
         registerMessage(++idx, MarkBuildingDirtyMessage.class, MarkBuildingDirtyMessage::new);
         registerMessage(++idx, ChangeFreeToInteractBlockMessage.class, ChangeFreeToInteractBlockMessage::new);
-        registerMessage(++idx, LumberjackReplantSaplingToggleMessage.class, LumberjackReplantSaplingToggleMessage::new);
-        registerMessage(++idx, LumberjackRestrictionToggleMessage.class, LumberjackRestrictionToggleMessage::new);
-        registerMessage(++idx, LumberjackScepterMessage.class, LumberjackScepterMessage::new);
         registerMessage(++idx, CreateColonyMessage.class, CreateColonyMessage::new);
         registerMessage(++idx, ColonyDeleteOwnMessage.class, ColonyDeleteOwnMessage::new);
         registerMessage(++idx, ColonyViewRemoveMessage.class, ColonyViewRemoveMessage::new);
-        registerMessage(++idx, BeekeeperScepterMessage.class, BeekeeperScepterMessage::new);
+        registerMessage(++idx, GiveToolMessage.class, GiveToolMessage::new);
 
         registerMessage(++idx, ToggleHousingMessage.class, ToggleHousingMessage::new);
         registerMessage(++idx, ToggleMoveInMessage.class, ToggleMoveInMessage::new);
@@ -189,7 +180,6 @@ public class NetworkChannel
         registerMessage(++idx, TransferItemsToCitizenRequestMessage.class, TransferItemsToCitizenRequestMessage::new);
         registerMessage(++idx, UpdateRequestStateMessage.class, UpdateRequestStateMessage::new);
         registerMessage(++idx, BuildingSetStyleMessage.class, BuildingSetStyleMessage::new);
-        registerMessage(++idx, BuilderSetManualModeMessage.class, BuilderSetManualModeMessage::new);
         registerMessage(++idx, RecallSingleCitizenMessage.class, RecallSingleCitizenMessage::new);
         registerMessage(++idx, AssignFilterableItemMessage.class, AssignFilterableItemMessage::new);
         registerMessage(++idx, TeamColonyColorChangeMessage.class, TeamColonyColorChangeMessage::new);
@@ -201,7 +191,6 @@ public class NetworkChannel
         registerMessage(++idx, PostBoxRequestMessage.class, PostBoxRequestMessage::new);
         registerMessage(++idx, CrusherSetModeMessage.class, CrusherSetModeMessage::new);
         registerMessage(++idx, HireMercenaryMessage.class, HireMercenaryMessage::new);
-        registerMessage(++idx, SifterSettingsMessage.class, SifterSettingsMessage::new);
         registerMessage(++idx, HutRenameMessage.class, HutRenameMessage::new);
         registerMessage(++idx, BuildingHiringModeMessage.class, BuildingHiringModeMessage::new);
         registerMessage(++idx, DecorationBuildRequestMessage.class, DecorationBuildRequestMessage::new);
@@ -214,7 +203,6 @@ public class NetworkChannel
         registerMessage(++idx, HireSpiesMessage.class, HireSpiesMessage::new);
         registerMessage(++idx, AddMinimumStockToBuildingModuleMessage.class, AddMinimumStockToBuildingModuleMessage::new);
         registerMessage(++idx, RemoveMinimumStockFromBuildingModuleMessage.class, RemoveMinimumStockFromBuildingModuleMessage::new);
-        registerMessage(++idx, PlantationSetPhaseMessage.class, PlantationSetPhaseMessage::new);
         registerMessage(++idx, FieldPlotResizeMessage.class, FieldPlotResizeMessage::new);
         registerMessage(++idx, AdjustSkillCitizenMessage.class, AdjustSkillCitizenMessage::new);
         registerMessage(++idx, BuilderSelectWorkOrderMessage.class, BuilderSelectWorkOrderMessage::new);

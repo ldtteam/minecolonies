@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingPublicCrafter;
 import com.minecolonies.api.colony.jobs.IJob;
@@ -15,9 +16,11 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.ToolType;
-import com.minecolonies.coremod.client.gui.huts.WindowHutLumberjackModule;
+import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.modules.settings.BoolSetting;
+import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
 import com.minecolonies.coremod.util.AttributeModifierUtils;
 import net.minecraft.block.Block;
@@ -30,7 +33,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -51,9 +54,10 @@ import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_W
 public class BuildingLumberjack extends AbstractBuildingCrafter implements IBuildingPublicCrafter
 {
     /**
-     * NBT tag if the lj should replant saplings
+     * Replant setting.
      */
-    private static final String TAG_REPLANT = "shouldReplant";
+    public static final ISettingKey<BoolSetting> REPLANT = new SettingKey<>(BoolSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "replant"));
+    public static final ISettingKey<BoolSetting> RESTRICT = new SettingKey<>(BoolSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "restrict"));
 
     /**
      * NBT tag for lj restriction start
@@ -64,21 +68,6 @@ public class BuildingLumberjack extends AbstractBuildingCrafter implements IBuil
      * NBT tag for lj restriction end
      */
     private static final String TAG_RESTRICT_END = "endRestrictionPosition";
-
-    /**
-     * Nbt tag for restriction setting.
-     */
-    private static final String TAG_RESTRICT = "restrict";
-
-    /**
-     * Whether or not the LJ should replant saplings
-     */
-    private boolean replant = true;
-
-    /**
-     * Whether or not the LJ should be restricted
-     */
-    private boolean restrict = false;
 
     /**
      * The start position of the restricted area.
@@ -94,6 +83,7 @@ public class BuildingLumberjack extends AbstractBuildingCrafter implements IBuil
      * The maximum upgrade of the building.
      */
     private static final int    MAX_BUILDING_LEVEL = 5;
+
     /**
      * The job description.
      */
@@ -214,20 +204,6 @@ public class BuildingLumberjack extends AbstractBuildingCrafter implements IBuil
     {
         super.deserializeNBT(compound);
 
-        if (compound.keySet().contains(TAG_REPLANT))
-        {
-            replant = compound.getBoolean(TAG_REPLANT);
-        }
-        else
-        {
-            replant = true;
-        }
-
-        if (compound.keySet().contains(TAG_RESTRICT))
-        {
-            restrict = compound.getBoolean(TAG_RESTRICT);
-        }
-
         if (compound.keySet().contains(TAG_RESTRICT_START))
         {
             startRestriction = NBTUtil.readBlockPos(compound.getCompound(TAG_RESTRICT_START));
@@ -258,8 +234,6 @@ public class BuildingLumberjack extends AbstractBuildingCrafter implements IBuil
     {
         final CompoundNBT compound = super.serializeNBT();
 
-        compound.putBoolean(TAG_REPLANT, replant);
-
         if (startRestriction != null)
         {
             compound.put(TAG_RESTRICT_START, NBTUtil.writeBlockPos(startRestriction));
@@ -276,8 +250,6 @@ public class BuildingLumberjack extends AbstractBuildingCrafter implements IBuil
             BlockPosUtil.writeToListNBT(netherTreeBinCompoundList, pos);
         }
         compound.put(TAG_NETHER_TREE_LIST, netherTreeBinCompoundList);
-
-        compound.putBoolean(TAG_RESTRICT, restrict);
         return compound;
     }
 
@@ -323,15 +295,8 @@ public class BuildingLumberjack extends AbstractBuildingCrafter implements IBuil
     @Override
     public void openCraftingContainer(final ServerPlayerEntity player)
     {
+        // Noop
         return;
-    }
-
-    @Override
-    public void serializeToView(@NotNull final PacketBuffer buf)
-    {
-        super.serializeToView(buf);
-        buf.writeBoolean(replant);
-        buf.writeBoolean(restrict);
     }
 
     /**
@@ -341,18 +306,7 @@ public class BuildingLumberjack extends AbstractBuildingCrafter implements IBuil
      */
     public boolean shouldReplant()
     {
-        return replant;
-    }
-
-    /**
-     * Set whether or not LJ should replant saplings
-     *
-     * @param shouldReplant whether or not the LJ should replant
-     */
-    public void setShouldReplant(final boolean shouldReplant)
-    {
-        this.replant = shouldReplant;
-        markDirty();
+        return getSetting(REPLANT).getValue();
     }
 
     /**
@@ -362,26 +316,15 @@ public class BuildingLumberjack extends AbstractBuildingCrafter implements IBuil
      */
     public boolean shouldRestrict()
     {
-        if (restrict)
+        if (getSetting(RESTRICT).getValue())
         {
             if (startRestriction == null || endRestriction == null)
             {
-                restrict = false;
+                getSetting(RESTRICT).trigger();
                 markDirty();
             }
         }
-        return restrict;
-    }
-
-    /**
-     * Set whether or not LJ should replant saplings
-     *
-     * @param shouldRestrict whether or not the LJ should be restricted
-     */
-    public void setShouldRestrict(final boolean shouldRestrict)
-    {
-        this.restrict = shouldRestrict;
-        markDirty();
+        return getSetting(RESTRICT).getValue();
     }
 
     public void setRestrictedArea(final BlockPos startPosition, final BlockPos endPosition)
@@ -507,16 +450,6 @@ public class BuildingLumberjack extends AbstractBuildingCrafter implements IBuil
     public static class View extends AbstractBuildingWorker.View
     {
         /**
-         * Whether or not the LJ should replant saplings
-         */
-        public boolean shouldReplant = true;
-
-        /**
-         * Whether or not the LJ should be restricted
-         */
-        public boolean shouldRestrict = false;
-
-        /**
          * Public constructor of the view, creates an instance of it.
          *
          * @param c the colony.
@@ -527,19 +460,11 @@ public class BuildingLumberjack extends AbstractBuildingCrafter implements IBuil
             super(c, l);
         }
 
-        @Override
-        public void deserialize(@NotNull final PacketBuffer buf)
-        {
-            super.deserialize(buf);
-            shouldReplant = buf.readBoolean();
-            shouldRestrict = buf.readBoolean();
-        }
-
         @NotNull
         @Override
         public Window getWindow()
         {
-            return new WindowHutLumberjackModule(this);
+            return new WindowHutWorkerModulePlaceholder<>(this, LUMBERJACK);
         }
     }
 }

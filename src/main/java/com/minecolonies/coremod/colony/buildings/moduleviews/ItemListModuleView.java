@@ -109,6 +109,9 @@ public class ItemListModuleView extends AbstractBuildingModuleView implements II
     }
 
     @Override
+    public void clearItems() { listsOfItems.clear(); }
+
+    @Override
     public String getDesc()
     {
         return desc;

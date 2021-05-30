@@ -148,7 +148,7 @@ public class RequestHandler implements IRequestHandler
         for (@SuppressWarnings(RAWTYPES) final IRequestResolver resolver : resolvers)
         {
             //Skip when the resolver is in the blacklist.
-            if (resolverTokenBlackList.contains(resolver.getId()))
+            if (resolverTokenBlackList.contains(resolver.getId()) || manager.getResolverHandler().isBeingRemoved(resolver.getId()))
             {
                 continue;
             }

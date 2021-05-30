@@ -121,7 +121,8 @@ public interface IColony
      */
     default String getTeamName()
     {
-        return TEAM_COLONY_NAME + "_" + getDimension().getLocation().getPath() + "_" + getID();
+        final String dim = getDimension().getLocation().getPath();
+        return TEAM_COLONY_NAME + "_" + (dim.length() > 10 ? dim.hashCode() : dim) + "_" + getID();
     }
 
     /**

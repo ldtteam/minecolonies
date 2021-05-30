@@ -1,9 +1,6 @@
 package com.minecolonies.coremod.colony.permissions;
 
-import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.colony.permissions.IPermissions;
-import com.minecolonies.api.colony.permissions.Player;
-import com.minecolonies.api.colony.permissions.Rank;
+import com.minecolonies.api.colony.permissions.*;
 import com.minecolonies.api.network.PacketUtils;
 import com.minecolonies.api.util.Utils;
 import com.mojang.authlib.GameProfile;
@@ -14,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -24,8 +22,9 @@ public class PermissionsView implements IPermissions
     @NotNull
     private final Map<UUID, Player>  players     = new HashMap<>();
     @NotNull
-    private final Map<Rank, Integer> permissions = new EnumMap<>(Rank.class);
-    private       Rank               userRank    = Rank.NEUTRAL;
+    private final Map<Rank, Integer> permissions = new HashMap<>();
+    private       Rank               userRank;
+    private final Map<Integer, Rank> ranks = new LinkedHashMap<>();
 
     private UUID   colonyOwner;
     private String ownerName = "";
@@ -90,6 +89,15 @@ public class PermissionsView implements IPermissions
             .collect(Collectors.toSet()));
     }
 
+    @Override
+    public Set<Player> getFilteredPlayers(@NotNull final Predicate<Rank> predicate)
+    {
+        return Collections.unmodifiableSet(
+          this.players.values().stream()
+          .filter(player -> predicate.test(player.getRank()))
+          .collect(Collectors.toSet()));
+    }
+
     @NotNull
     public Map<Rank, Integer> getPermissions()
     {
@@ -117,7 +125,7 @@ public class PermissionsView implements IPermissions
      */
     public boolean hasPermission(final Rank rank, @NotNull final Action action)
     {
-        return (rank == Rank.OWNER && action != Action.GUARDS_ATTACK)
+        return (rank.getId() == OWNER_RANK_ID && action != Action.GUARDS_ATTACK)
                  || (permissions != null && action != null && permissions.containsKey(rank) && Utils.testFlag(permissions.get(rank), action.getFlag()));
     }
 
@@ -182,7 +190,7 @@ public class PermissionsView implements IPermissions
     {
         for (@NotNull final Map.Entry<UUID, Player> entry : players.entrySet())
         {
-            if (entry.getValue().getRank().equals(Rank.OWNER))
+            if (entry.getValue().getRank().equals(getRanks().get(OWNER_RANK_ID)))
             {
                 return entry;
             }
@@ -227,7 +235,14 @@ public class PermissionsView implements IPermissions
      */
     public void deserialize(@NotNull final PacketBuffer buf)
     {
-        userRank = Rank.valueOf(buf.readString(32767));
+        final int ranksSize = buf.readInt();
+        for (int i = 0; i < ranksSize; ++i)
+        {
+            final int id = buf.readInt();
+            final Rank rank = new Rank(id, buf.readString(32767), buf.readBoolean(), buf.readBoolean(), buf.readBoolean(), buf.readBoolean());
+            ranks.put(id, rank);
+        }
+        userRank = ranks.get(buf.readInt());
 
         //  Owners
         players.clear();
@@ -236,8 +251,8 @@ public class PermissionsView implements IPermissions
         {
             final UUID id = PacketUtils.readUUID(buf);
             final String name = buf.readString(32767);
-            final Rank rank = Rank.valueOf(buf.readString(32767));
-            if (rank == Rank.OWNER)
+            final Rank rank = ranks.get(buf.readInt());
+            if (rank.getId() == OWNER_RANK_ID)
             {
                 colonyOwner = id;
             }
@@ -250,7 +265,7 @@ public class PermissionsView implements IPermissions
         final int numPermissions = buf.readInt();
         for (int i = 0; i < numPermissions; ++i)
         {
-            final Rank rank = Rank.valueOf(buf.readString(32767));
+            final Rank rank = ranks.get(buf.readInt());
             final int flags = buf.readInt();
             permissions.put(rank, flags);
         }
@@ -269,6 +284,12 @@ public class PermissionsView implements IPermissions
     }
 
     @Override
+    public Rank getRank(final int id)
+    {
+        return ranks.get(id);
+    }
+
+    @Override
     public void restoreOwnerIfNull()
     {
         //Noop happens on the server side.
@@ -279,7 +300,7 @@ public class PermissionsView implements IPermissions
     public Rank getRank(final UUID id)
     {
         final Player player = players.get(id);
-        return player == null ? Rank.NEUTRAL : player.getRank();
+        return player == null ? ranks.get(NEUTRAL_RANK_ID) : player.getRank();
     }
 
     @Override
@@ -325,5 +346,53 @@ public class PermissionsView implements IPermissions
     public boolean isColonyMember(@NotNull final PlayerEntity player)
     {
         return players.containsKey(player.getUniqueID());
+    }
+
+    @Override
+    public Map<Integer, Rank> getRanks() { return ranks; }
+
+    @Override
+    public Rank getRankOwner()
+    {
+        return ranks.get(OWNER_RANK_ID);
+    }
+
+    @Override
+    public Rank getRankOfficer()
+    {
+        return ranks.get(OFFICER_RANK_ID);
+    }
+
+    @Override
+    public Rank getRankFriend()
+    {
+        return ranks.get(FRIEND_RANK_ID);
+    }
+
+    @Override
+    public Rank getRankNeutral()
+    {
+        return ranks.get(NEUTRAL_RANK_ID);
+    }
+
+    @Override
+    public Rank getRankHostile()
+    {
+        return ranks.get(HOSTILE_RANK_ID);
+    }
+
+    @Override
+    public void addRank(String name)
+    {
+    }
+
+    @Override
+    public void removeRank(Rank rank)
+    {
+        if (!rank.isInitial())
+        {
+            ranks.remove(rank.getId());
+            permissions.remove(rank);
+        }
     }
 }

@@ -9,6 +9,9 @@ import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.constant.IToolType;
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Food;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -16,14 +19,18 @@ import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.IItemHandler;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
@@ -2860,4 +2867,121 @@ public class InventoryUtils
         return foundSaturation > 0;
     }
 
+    /**
+     * Tries to put given itemstack in hotbar and select it, fails when player inventory is full, successes otherwise.
+     *
+     * @param itemStack   itemstack to put into player's inv
+     * @param player player entity
+     * @return true if item was put into player's inv, false if dropped
+     */
+    public static boolean putItemToHotbarAndSelectOrDrop(final ItemStack itemStack, final PlayerEntity player)
+    {
+        final PlayerInventory playerInv = player.inventory;
+
+        final int emptySlot = playerInv.getFirstEmptyStack();
+        if (emptySlot == -1) // try full inv first
+        {
+            player.dropItem(itemStack, false);
+            return false;
+        }
+        else
+        {
+            final int hotbarSlot = playerInv.getBestHotbarSlot();
+            final ItemStack curHotbarItem = playerInv.getStackInSlot(hotbarSlot);
+
+            // check if we need to make space first
+            if (!curHotbarItem.isEmpty())
+            {
+                playerInv.setInventorySlotContents(emptySlot, curHotbarItem);
+            }
+
+            playerInv.setInventorySlotContents(hotbarSlot, itemStack);
+            playerInv.currentItem = hotbarSlot;
+            playerInv.markDirty();
+            updateHeldItemFromServer(player);
+            return true;
+        }
+    }
+
+    /**
+     * Tries to put given itemstack in hotbar, fails when player inventory is full, successes otherwise.
+     * If fails sends a message to player about dropped item.
+     *
+     * @param itemStack   itemstack to put into player's inv
+     * @param player player entity
+     * @return true if item was put into player's inv, false if dropped
+     */
+    public static boolean putItemToHotbarAndSelectOrDropMessage(final ItemStack itemStack, final PlayerEntity player)
+    {
+        final boolean result = putItemToHotbarAndSelectOrDrop(itemStack, player);
+
+        if (!result)
+        {
+            player.sendMessage(itemStack.getDisplayName()
+                .deepCopy()
+                .append(new TranslationTextComponent("com.minecolonies.coremod.playerinvfull.hotbarinsert")), player.getUniqueID());
+        }
+        return result;
+    }
+
+    /**
+     * If item is already in inventory then it's moved to hotbar and returned.
+     * Else {@link #putItemToHotbarAndSelectOrDrop} is called with itemstack created from given factory.
+     *
+     * @param item             item to search for
+     * @param player           player inventory to check and use
+     * @param itemStackFactory factory for new item if not found
+     * @param messageOnDrop    if true message player when new item was dropped
+     * @return itemstack in hotbar or dropped in front of player
+     */
+    public static ItemStack getOrCreateItemAndPutToHotbarAndSelectOrDrop(final Item item,
+        final PlayerEntity player,
+        final Supplier<ItemStack> itemStackFactory,
+        final boolean messageOnDrop)
+    {
+        final PlayerInventory playerInv = player.inventory;
+
+        for (int slot = 0; slot < playerInv.mainInventory.size(); slot++)
+        {
+            final ItemStack itemSlot = playerInv.getStackInSlot(slot);
+            if (itemSlot.getItem() == item)
+            {
+                if (!PlayerInventory.isHotbar(slot))
+                {
+                    playerInv.pickItem(slot);
+                }
+                else
+                {
+                    playerInv.currentItem = slot;
+                }
+                playerInv.markDirty();
+                updateHeldItemFromServer(player);
+                return itemSlot;
+            }
+        }
+
+        final ItemStack newItem = itemStackFactory.get();
+        if (messageOnDrop)
+        {
+            putItemToHotbarAndSelectOrDropMessage(newItem, player);
+        }
+        else
+        {
+            putItemToHotbarAndSelectOrDrop(newItem, player);
+        }
+        return newItem;
+    }
+
+    /**
+     * Updates held item slot on client. Client autoupdates server once per tick.
+     *
+     * @param player player to sync
+     */
+    private static void updateHeldItemFromServer(final PlayerEntity player)
+    {
+        if (player instanceof ServerPlayerEntity)
+        {
+            ((ServerPlayerEntity) player).server.getPlayerList().sendInventory((ServerPlayerEntity) player);
+        }
+    }
 }

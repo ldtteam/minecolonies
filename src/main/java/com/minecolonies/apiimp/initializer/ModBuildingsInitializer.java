@@ -4,6 +4,7 @@ import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.items.ModItems;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.modules.settings.BoolSetting;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
@@ -11,13 +12,13 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.buildings.BuildingMysticalSite;
 import com.minecolonies.coremod.colony.buildings.DefaultBuildingInstance;
 import com.minecolonies.coremod.colony.buildings.modules.*;
-import com.minecolonies.coremod.colony.buildings.moduleviews.CrafterTaskModuleView;
-import com.minecolonies.coremod.colony.buildings.moduleviews.FloristFlowerListModuleView;
-import com.minecolonies.coremod.colony.buildings.moduleviews.ItemListModuleView;
-import com.minecolonies.coremod.colony.buildings.moduleviews.MinimumStockModuleView;
-import com.minecolonies.coremod.colony.buildings.moduleviews.SettingsModuleView;
+import com.minecolonies.coremod.colony.buildings.modules.settings.IntSetting;
+import com.minecolonies.coremod.colony.buildings.modules.settings.PlantationSetting;
+import com.minecolonies.coremod.colony.buildings.modules.settings.StringSetting;
+import com.minecolonies.coremod.colony.buildings.moduleviews.*;
 import com.minecolonies.coremod.colony.buildings.views.EmptyView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
+import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.registries.IForgeRegistry;
@@ -93,6 +94,8 @@ public final class ModBuildingsInitializer
                                  .setBuildingProducer(BuildingBuilder::new)
                                  .setBuildingViewProducer(() -> BuildingBuilder.View::new)
                                  .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.BUILDER_ID))
+                                 .addBuildingModuleProducer(() -> new SettingsModule().with(BuildingBuilder.MODE, new StringSetting(BuildingBuilder.AUTO_SETTING, BuildingBuilder.MANUAL_SETTING)), SettingsModuleView::new)
+                                 .addBuildingModuleViewProducer(WorkOrderListModuleView::new)
                                  .createBuildingEntry();
 
         ModBuildings.chickenHerder = new BuildingEntry.Builder()
@@ -118,7 +121,7 @@ public final class ModBuildingsInitializer
                                    .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.COMPOSTER_ID))
                                    .addBuildingModuleProducer(() -> new ItemListModule(COMPOSTABLE_LIST), () -> new ItemListModuleView(COMPOSTABLE_LIST, COM_MINECOLONIES_REQUESTS_COMPOSTABLE_UI, false,
                                      (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getCompostInputs()))
-                                   .addBuildingModuleProducer(() -> new SettingsModule().with(BuildingComposter.PRODUCE_DIRT, new BoolSetting(false)), SettingsModuleView::new)
+                                   .addBuildingModuleProducer(() -> new SettingsModule().with(BuildingComposter.PRODUCE_DIRT, new BoolSetting(false)).with(BuildingComposter.MIN, new IntSetting(16)), SettingsModuleView::new)
                                    .createBuildingEntry();
 
         ModBuildings.cook = new BuildingEntry.Builder()
@@ -170,6 +173,7 @@ public final class ModBuildingsInitializer
                                 .setBuildingViewProducer(() -> BuildingFarmer.View::new)
                                 .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.FARMER_ID))
                                 .addBuildingModuleProducer(CrafterTaskModule::new, CrafterTaskModuleView::new)
+                                .addBuildingModuleProducer(() -> new SettingsModule().with(BuildingFarmer.FERTILIZE, new BoolSetting(true)), SettingsModuleView::new)
                                 .createBuildingEntry();
 
         ModBuildings.fisherman = new BuildingEntry.Builder()
@@ -212,6 +216,8 @@ public final class ModBuildingsInitializer
                                     .addBuildingModuleProducer(() -> new ItemListModule(SAPLINGS_LIST), () -> new ItemListModuleView(SAPLINGS_LIST, COM_MINECOLONIES_REQUESTS_SAPLINGS, true,
                                       (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getCopyOfSaplings()))
                                     .addBuildingModuleProducer(CrafterTaskModule::new, CrafterTaskModuleView::new)
+                                    .addBuildingModuleProducer(() -> new SettingsModule().with(BuildingLumberjack.REPLANT, new BoolSetting(true)).with(BuildingLumberjack.RESTRICT, new BoolSetting(false)), SettingsModuleView::new)
+                                    .addBuildingModuleViewProducer(() -> new ToolModuleView(ModItems.scepterLumberjack))
                                     .createBuildingEntry();
 
         ModBuildings.miner = new BuildingEntry.Builder()
@@ -401,6 +407,7 @@ public final class ModBuildingsInitializer
                                     .setBuildingViewProducer(() -> BuildingPlantation.View::new)
                                     .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.PLANTATION_ID))
                                     .addBuildingModuleProducer(CrafterTaskModule::new, CrafterTaskModuleView::new)
+                                    .addBuildingModuleProducer(() -> new SettingsModule().with(BuildingPlantation.MODE, new PlantationSetting(Items.SUGAR_CANE.getTranslationKey(), Items.CACTUS.getTranslationKey(), Items.BAMBOO.getTranslationKey())), SettingsModuleView::new)
                                     .createBuildingEntry();
 
         ModBuildings.rabbitHutch = new BuildingEntry.Builder()
@@ -408,6 +415,7 @@ public final class ModBuildingsInitializer
                                      .setBuildingProducer(BuildingRabbitHutch::new)
                                      .setBuildingViewProducer(() -> BuildingRabbitHutch.View::new)
                                      .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.RABBIT_ID))
+                                     .addBuildingModuleProducer(() -> new SettingsModule().with(AbstractBuildingWorker.BREEDING, new BoolSetting(true)), SettingsModuleView::new)
                                      .createBuildingEntry();
 
         ModBuildings.concreteMixer = new BuildingEntry.Builder()
@@ -423,7 +431,10 @@ public final class ModBuildingsInitializer
                                    .setBuildingProducer(BuildingBeekeeper::new)
                                    .setBuildingViewProducer(() -> BuildingBeekeeper.View::new)
                                    .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.BEEKEEPER_ID))
-                                   .addBuildingModuleProducer(() -> new SettingsModule().with(BuildingBeekeeper.BREEDING, new BoolSetting(true)), SettingsModuleView::new)
+                                   .addBuildingModuleProducer(() -> new SettingsModule()
+                                                                      .with(AbstractBuildingWorker.BREEDING, new BoolSetting(true))
+                                                                      .with(BuildingBeekeeper.MODE, new StringSetting(BuildingBeekeeper.HONEYCOMB, BuildingBeekeeper.HONEY, BuildingBeekeeper.BOTH)), SettingsModuleView::new)
+                                   .addBuildingModuleViewProducer(() -> new ToolModuleView(ModItems.scepterBeekeeper))
                                    .createBuildingEntry();
 
         ModBuildings.mysticalSite = new BuildingEntry.Builder()

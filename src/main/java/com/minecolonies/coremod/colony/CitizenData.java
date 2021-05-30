@@ -572,6 +572,10 @@ public class CitizenData implements ICitizenData
     @Nullable
     public IBuildingWorker getWorkBuilding()
     {
+        if (job == null && workBuilding != null)
+        {
+            setWorkBuilding(null);
+        }
         return workBuilding;
     }
 

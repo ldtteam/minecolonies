@@ -1,9 +1,6 @@
 package com.minecolonies.api.util;
 
 import com.ldtteam.structurize.util.LanguageHandler;
-import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.block.AirBlock;
 import net.minecraft.block.Block;
@@ -31,7 +28,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.function.BiPredicate;
 
@@ -232,33 +228,6 @@ public final class BlockPosUtil
                  && !sender.getBlockState(blockPos).getMaterial().isLiquid()
                  && !sender.getBlockState(blockPos.down()).getMaterial().isLiquid()
                  && sender.getWorldBorder().contains(blockPos);
-    }
-
-
-    /**
-     * this find the building that the BlockPos bellong to
-     *
-     * @param world   the world
-     * @param pos for the current block
-     */
-    @Nullable
-    public static IBuilding findBuilding(final World world, final BlockPos pos)
-    {
-        final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, pos);
-        if(colony == null)
-        {
-            return null;
-        }
-
-        for(IBuilding building : colony.getBuildingManager().getBuildings().values())
-        {
-            if(building.isInBuilding(pos))
-            {
-                return building;
-            }
-        }
-
-        return null;
     }
 
     /**
@@ -784,5 +753,43 @@ public final class BlockPosUtil
     {
         return findAround(worldReader, start, 1, 1,
           (world, pos) -> world.getBlockState(pos).getMaterial() == Material.AIR && world.getBlockState(pos.up()).getMaterial() == Material.AIR);
+    }
+
+    /**
+     * Get the furthest corner from a pos.
+     * @param startPos the startpos.
+     * @param boxStart the box start.
+     * @param boxEnd the box end.
+     * @return the furthest corner.
+     */
+    public static BlockPos getFurthestCorner(final BlockPos startPos, final BlockPos boxStart, final BlockPos boxEnd)
+    {
+        final int minX = Math.min(boxStart.getX(), boxEnd.getX());
+        final int minZ = Math.min(boxStart.getZ(), boxEnd.getZ());
+        final int minY = Math.min(boxStart.getY(), boxEnd.getY());
+
+        final int maxX = Math.max(boxStart.getX(), boxEnd.getX());
+        final int maxZ = Math.max(boxStart.getZ(), boxEnd.getZ());
+        final int maxY = Math.max(boxStart.getY(), boxEnd.getY());
+
+        int cornerX = maxX;
+        if (Math.abs(startPos.getX() - minX) > Math.abs(startPos.getX() - maxX))
+        {
+            cornerX = minX;
+        }
+
+        int cornerY = maxY;
+        if (Math.abs(startPos.getY() - minY) > Math.abs(startPos.getY() - maxY))
+        {
+            cornerY = minY;
+        }
+
+        int cornerZ = maxZ;
+        if (Math.abs(startPos.getZ() - minZ) > Math.abs(startPos.getZ() - maxZ))
+        {
+            cornerZ = minZ;
+        }
+
+        return new BlockPos(cornerX, cornerY, cornerZ);
     }
 }
