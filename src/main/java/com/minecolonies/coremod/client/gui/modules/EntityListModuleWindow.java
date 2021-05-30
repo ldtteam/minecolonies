@@ -11,12 +11,10 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.client.gui.AbstractModuleWindow;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
@@ -142,9 +140,7 @@ public class EntityListModuleWindow extends AbstractModuleWindow
     private void reset()
     {
         final IEntityListModuleView module = building.getModuleViewMatching(IEntityListModuleView.class, view -> view.getId().equals(id));
-
         module.clearEntities();
-
         resourceList.refreshElementPanes();
     }
 
@@ -153,7 +149,7 @@ public class EntityListModuleWindow extends AbstractModuleWindow
      */
     private void updateResources()
     {
-        final Predicate<ResourceLocation> filterPredicate = res -> filter.isEmpty() || res.toString().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US));
+        final Predicate<ResourceLocation> filterPredicate = res -> filter.isEmpty() || ForgeRegistries.ENTITIES.getValue(res).getName().getString().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US)) || res.toString().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US));
         currentDisplayedList.clear();
         for (final ResourceLocation storage : groupedItemList)
         {
@@ -217,7 +213,7 @@ public class EntityListModuleWindow extends AbstractModuleWindow
             {
                 final ResourceLocation resource = currentDisplayedList.get(index);
                 final Text resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Text.class);
-                resourceLabel.setText(new TranslationTextComponent(resource.getPath()));
+                resourceLabel.setText(ForgeRegistries.ENTITIES.getValue(resource).getName());
                 resourceLabel.setColors(WHITE);
                 final boolean isAllowedItem  = building.getModuleViewMatching(IEntityListModuleView.class, view -> view.getId().equals(id)).isAllowedEntity(resource);
                 final Button switchButton = rowPane.findPaneOfTypeByID(BUTTON_SWITCH, Button.class);
