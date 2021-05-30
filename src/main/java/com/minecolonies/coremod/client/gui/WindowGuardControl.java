@@ -12,7 +12,6 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.network.messages.server.colony.GuardScepterMessage;
-import com.minecolonies.coremod.network.messages.server.colony.building.guard.GuardRecalculateMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.guard.GuardTaskMessage;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.util.ResourceLocation;
@@ -97,7 +96,6 @@ public class WindowGuardControl extends AbstractWindowSkeleton
         registerButton(GUI_BUTTON_PATROL_MODE, this::switchPatrolMode);
         registerButton(GUI_BUTTON_RETRIEVAL_MODE, this::switchRetrievalMode);
         registerButton(GUI_BUTTON_TRAINEE_MODE, this::switchTraineeMode);
-        registerButton(GUI_BUTTON_RECALCULATE, this::recalculate);
         registerButton(GUI_BUTTON_SET_TARGET, this::setTarget);
 
         registerButton(GUI_SWITCH_TASK_PATROL, this::switchTask);
@@ -340,15 +338,6 @@ public class WindowGuardControl extends AbstractWindowSkeleton
             LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.job.guard.tool.taskGuard");
         }
         window.close();
-    }
-
-    /**
-     * Recalculates the mob list.
-     */
-    private void recalculate()
-    {
-        Network.getNetwork().sendToServer(new GuardRecalculateMessage(building));
-        pullInfoFromHut();
     }
 
     /**

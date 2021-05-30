@@ -30,6 +30,7 @@ import static com.minecolonies.api.util.constant.BuildingConstants.FLORIST_FLOWE
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.ItemStackUtils.ISCOOKABLE;
 import static com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser.FUEL_LIST;
+import static com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards.HOSTILE_LIST;
 import static com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook.FOOD_EXCLUSION_LIST;
 import static com.minecolonies.coremod.entity.ai.citizen.composter.EntityAIWorkComposter.COMPOSTABLE_LIST;
 import static com.minecolonies.coremod.entity.ai.citizen.lumberjack.EntityAIWorkLumberjack.SAPLINGS_LIST;
@@ -80,6 +81,7 @@ public final class ModBuildingsInitializer
                                        .setBuildingViewProducer(() -> BuildingBarracksTower.View::new)
                                        .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.BARRACKS_TOWER_ID))
                                        .addBuildingModuleProducer(BedHandlingModule::new)
+                                       .addBuildingModuleViewProducer(() -> new ToolModuleView(ModItems.scepterGuard))
                                        .createBuildingEntry();
 
         ModBuildings.blacksmith = new BuildingEntry.Builder()
@@ -191,6 +193,8 @@ public final class ModBuildingsInitializer
                                     .setBuildingViewProducer(() -> BuildingGuardTower.View::new)
                                     .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.GUARD_TOWER_ID))
                                     .addBuildingModuleProducer(BedHandlingModule::new)
+                                    .addBuildingModuleViewProducer(() -> new ToolModuleView(ModItems.scepterGuard))
+                                    .addBuildingModuleProducer(() -> new EntityListModule(HOSTILE_LIST), () -> new EntityListModuleView(HOSTILE_LIST, COM_MINECOLONIES_HOSTILES, true))
                                     .createBuildingEntry();
 
         ModBuildings.home = new BuildingEntry.Builder()

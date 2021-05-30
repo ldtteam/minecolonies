@@ -56,18 +56,6 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
         super(c, l);
     }
 
-    @Override
-    public int getDefenceBonus()
-    {
-        return DEFENCE_BONUS;
-    }
-
-    @Override
-    public int getOffenceBonus()
-    {
-        return OFFENCE_BONUS;
-    }
-
     @NotNull
     @Override
     public String getSchematicName()

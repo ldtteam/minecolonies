@@ -82,7 +82,9 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_REQUESTS_COMPOSTABLE_UI                             = "com.minecolonies.gui.workerhuts.composter.compostables";
     @NonNls
-    public static final String COM_MINECOLONIES_REQUESTS_SAPLINGS                                   = "com.minecolonies.coremod.gui.workerhuts.saplingList";
+    public static final String COM_MINECOLONIES_REQUESTS_SAPLINGS                                   = "com.minecolonies.coremod.gui.workerhuts.saplinglist";
+    @NonNls
+    public static final String COM_MINECOLONIES_HOSTILES                                            = "com.minecolonies.coremod.gui.workerhuts.hostilelist";
     @NonNls
     public static final String COM_MINECOLONIES_REQUESTS_CRAFTING                                   = "com.minecolonies.coremod.request.crafting";
     @NonNls

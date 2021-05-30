@@ -2,9 +2,9 @@ package com.minecolonies.coremod.entity.ai.citizen.guard;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
-import com.minecolonies.api.colony.buildings.views.MobEntryView;
 import com.minecolonies.api.colony.guardtype.registry.ModGuardTypes;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
@@ -22,6 +22,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
+import com.minecolonies.coremod.colony.buildings.modules.EntityListModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.SittingEntity;
@@ -52,6 +53,7 @@ import static com.minecolonies.api.research.util.ResearchConstants.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.BIG_SATURATION_FACTOR;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
+import static com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards.HOSTILE_LIST;
 
 /**
  * Class taking of the abstract guard methods for all fighting AIs.
@@ -900,8 +902,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
             return true;
         }
 
-        final MobEntryView entry = buildingGuards.getMobsToAttack().get(entity.getType().getRegistryName());
-        if (entry != null && entry.shouldAttack())
+        if (IColonyManager.getInstance().getCompatibilityManager().getAllMonsters().contains(entity.getType().getRegistryName()) && !buildingGuards.getModuleMatching(EntityListModule.class, m -> m.getId().equals(HOSTILE_LIST)).isEntityInList(entity.getType().getRegistryName()))
         {
             return true;
         }

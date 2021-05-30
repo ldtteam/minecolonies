@@ -1,17 +1,12 @@
 package com.minecolonies.api.colony.buildings;
 
-import com.minecolonies.api.colony.buildings.views.MobEntryView;
 import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
-import java.util.Map;
 
 public interface IGuardBuilding extends IBuildingWorker
 {
@@ -65,20 +60,6 @@ public interface IGuardBuilding extends IBuildingWorker
     BlockPos getNextPatrolTarget(final boolean newTarget);
 
     /**
-     * Get an Defence bonus related to the building.
-     *
-     * @return an Integer.
-     */
-    int getDefenceBonus();
-
-    /**
-     * Get an Offence bonus related to the building.
-     *
-     * @return an Integer.
-     */
-    int getOffenceBonus();
-
-    /**
      * Called when a guard is at the current patrol point
      *
      * @param guard guard which arrived
@@ -105,8 +86,6 @@ public interface IGuardBuilding extends IBuildingWorker
      * @param job The job to set.
      */
     void setGuardType(GuardType job);
-
-    List<BlockPos> getPatrolTargets();
 
     /**
      * Get the guard's RetrieveOnLowHeath.
@@ -135,13 +114,6 @@ public interface IGuardBuilding extends IBuildingWorker
      * @param patrolManually true if manual.
      */
     void setPatrolManually(boolean patrolManually);
-
-    /**
-     * Whether the player will assign guards manually or not.
-     *
-     * @return true if so
-     */
-    boolean shallAssignManually();
 
     /**
      * Set whether the player is assigning guards manually.
@@ -177,20 +149,6 @@ public interface IGuardBuilding extends IBuildingWorker
      * @param guardPos the {@link BlockPos} to guard.
      */
     void setGuardPos(BlockPos guardPos);
-
-    /**
-     * Get the Map of mobs to attack.
-     *
-     * @return the map.
-     */
-    Map<ResourceLocation, MobEntryView> getMobsToAttack();
-
-    /**
-     * Set the Map of mobs to attack.
-     *
-     * @param list The new map.
-     */
-    void setMobsToAttack(List<MobEntryView> list);
 
     /**
      * Entity of player to follow or rally.

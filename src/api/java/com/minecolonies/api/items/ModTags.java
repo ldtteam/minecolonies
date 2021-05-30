@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.minecraft.block.Block;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
 import net.minecraft.tags.ITag;
 
@@ -30,6 +32,7 @@ public class ModTags
 
     public static ITag<Item> floristFlowers;
 
+    public static ITag<EntityType<?>> hostile;
 
     public static final Map<String, ITag<Item>> crafterProduct              = new HashMap<>();
     public static final Map<String, ITag<Item>> crafterProductExclusions    = new HashMap<>();

@@ -6,7 +6,6 @@ import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.blockout.views.SwitchView;
 import com.ldtteam.structurize.util.LanguageHandler;
-import com.minecolonies.api.colony.buildings.views.MobEntryView;
 import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.colony.guardtype.registry.IGuardTypeRegistry;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
@@ -15,9 +14,7 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.AbstractWindowWorkerModuleBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.network.messages.server.colony.GuardScepterMessage;
-import com.minecolonies.coremod.network.messages.server.colony.building.guard.GuardRecalculateMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.guard.GuardTaskMessage;
-import com.minecolonies.coremod.network.messages.server.colony.building.guard.MobEntryChangeMessage;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -25,7 +22,6 @@ import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
@@ -94,11 +90,6 @@ public class WindowHutGuardTowerModule extends AbstractWindowWorkerModuleBuildin
     private List<BlockPos> patrolTargets = new ArrayList<>();
 
     /**
-     * The Map of mobs we are allowed to attack.
-     */
-    private List<MobEntryView> mobsToAttack = new ArrayList<>();
-
-    /**
      * Constructor for the window of the worker building.
      *
      * @param building class extending {@link AbstractBuildingGuards.View}.
@@ -113,17 +104,11 @@ public class WindowHutGuardTowerModule extends AbstractWindowWorkerModuleBuildin
         registerButton(GUI_BUTTON_RETRIEVAL_MODE, this::switchRetrievalMode);
         registerButton(GUI_BUTTON_TRAINEE_MODE, this::switchTraineeMode);
         registerButton(GUI_BUTTON_SET_TARGET, this::setTarget);
-        registerButton(GUI_BUTTON_RECALCULATE, this::recalculate);
-        registerButton(BUTTON_GET_TOOL, this::getTool);
 
         registerButton(GUI_SWITCH_TASK_PATROL, this::switchTask);
         registerButton(GUI_SWITCH_TASK_FOLLOW, this::switchTask);
         registerButton(GUI_SWITCH_TASK_GUARD, this::switchTask);
         registerButton(GUI_SWITCH_TASK_MINE, this::switchTask);
-
-        registerButton(GUI_LIST_BUTTON_SWITCH, this::switchAttackMode);
-        registerButton(GUI_LIST_BUTTON_UP, this::updatePriority);
-        registerButton(GUI_LIST_BUTTON_DOWN, this::updatePriority);
 
         buttonTaskPatrol = this.findPaneOfTypeByID(GUI_SWITCH_TASK_PATROL, Button.class);
         buttonTaskFollow = this.findPaneOfTypeByID(GUI_SWITCH_TASK_FOLLOW, Button.class);
@@ -132,13 +117,6 @@ public class WindowHutGuardTowerModule extends AbstractWindowWorkerModuleBuildin
         buttonSetTarget = this.findPaneOfTypeByID(GUI_BUTTON_SET_TARGET, Button.class);
     }
 
-    /**
-     * Give the player directly the tool.
-     */
-    private void getTool()
-    {
-        givePlayerScepter(building.getTask());
-    }
 
     @Override
     public void onOpened()
@@ -194,35 +172,6 @@ public class WindowHutGuardTowerModule extends AbstractWindowWorkerModuleBuildin
         {
             buttonTaskMine.hide();
         }
-
-        final ScrollingList mobsList = findPaneOfTypeByID(GUI_ELEMENT_LIST_MOBS, ScrollingList.class);
-        mobsList.setDataProvider(new ScrollingList.DataProvider()
-        {
-            @Override
-            public int getElementCount()
-            {
-                return mobsToAttack.size();
-            }
-
-            @Override
-            public void updateElement(final int index, final Pane rowPane)
-            {
-                final String name = mobsToAttack.get(index).getName();
-
-                rowPane.findPaneOfTypeByID(GUI_LIST_ELEMENT_NAME, Text.class).setText(name);
-
-                final Button switchButton = rowPane.findPaneOfTypeByID(GUI_LIST_BUTTON_SWITCH, Button.class);
-
-                if (mobsToAttack.get(index).shouldAttack())
-                {
-                    switchButton.setText(GUI_SWITCH_ON);
-                }
-                else
-                {
-                    switchButton.setText(GUI_SWITCH_OFF);
-                }
-            }
-        });
     }
 
     @Override
@@ -252,12 +201,6 @@ public class WindowHutGuardTowerModule extends AbstractWindowWorkerModuleBuildin
                 pullInfoFromHut();
                 window.findPaneOfTypeByID(GUI_ELEMENT_LIST_LEVELS, ScrollingList.class).refreshElementPanes();
             }
-            else if (currentPage.equals(GUI_PAGE_MOB_ACTIONS))
-            {
-                pullInfoFromHut();
-                sortMobsToAttack();
-                window.findPaneOfTypeByID(GUI_ELEMENT_LIST_MOBS, ScrollingList.class).refreshElementPanes();
-            }
         }
     }
 
@@ -266,14 +209,6 @@ public class WindowHutGuardTowerModule extends AbstractWindowWorkerModuleBuildin
     public String getBuildingName()
     {
         return "com.minecolonies.coremod.gui.workerhuts.GuardTower";
-    }
-
-    /**
-     * Re-sorts the WorkOrders list according to the priorities inside the list.
-     */
-    private void sortMobsToAttack()
-    {
-        mobsToAttack.sort(Comparator.comparing(MobEntryView::getPriority, Comparator.reverseOrder()));
     }
 
     /**
@@ -356,79 +291,6 @@ public class WindowHutGuardTowerModule extends AbstractWindowWorkerModuleBuildin
     }
 
     /**
-     * Switches whether or not to attack a mob.
-     *
-     * @param button The Switch button clicked
-     */
-    private void switchAttackMode(@NotNull final Button button)
-    {
-        final Text idLabel = button.getParent().findPaneOfTypeByID("name", Text.class);
-
-        if (idLabel != null)
-        {
-            for (final MobEntryView entry : mobsToAttack)
-            {
-                if (entry.getName().equals(idLabel.getTextAsString()))
-                {
-                    entry.setShouldAttack(!entry.shouldAttack());
-                }
-            }
-            Network.getNetwork().sendToServer(new MobEntryChangeMessage(building, this.mobsToAttack));
-            window.findPaneOfTypeByID(GUI_ELEMENT_LIST_MOBS, ScrollingList.class).refreshElementPanes();
-        }
-    }
-
-    /**
-     * On Button click update the priority.
-     *
-     * @param button the clicked button.
-     */
-    private void updatePriority(@NotNull final Button button)
-    {
-        final Text idLabel = button.getParent().findPaneOfTypeByID("name", Text.class);
-        final String buttonLabel = button.getID();
-
-        for (final MobEntryView mobEntry : this.mobsToAttack)
-        {
-            if (mobEntry.getName().equals(idLabel.getTextAsString()))
-            {
-                if (buttonLabel.equals(GUI_LIST_BUTTON_UP) && mobEntry.getPriority() < mobsToAttack.size())
-                {
-                    for (final MobEntryView mobEntryView : this.mobsToAttack)
-                    {
-                        if (mobEntryView.getPriority() == mobEntry.getPriority() + 1)
-                        {
-                            mobEntry.setPriority(mobEntry.getPriority() + 1);
-                            mobEntryView.setPriority(mobEntryView.getPriority() - 1);
-                            break;
-                        }
-                    }
-                    sortMobsToAttack();
-                    Network.getNetwork().sendToServer(new MobEntryChangeMessage(building, this.mobsToAttack));
-                    window.findPaneOfTypeByID(GUI_ELEMENT_LIST_MOBS, ScrollingList.class).refreshElementPanes();
-                    return;
-                }
-                else if (buttonLabel.equals(GUI_LIST_BUTTON_DOWN) && mobEntry.getPriority() > 1)
-                {
-                    for (final MobEntryView mobEntryView : this.mobsToAttack)
-                    {
-                        if (mobEntryView.getPriority() == mobEntry.getPriority() - 1)
-                        {
-                            mobEntry.setPriority(mobEntry.getPriority() - 1);
-                            mobEntryView.setPriority(mobEntryView.getPriority() + 1);
-                            break;
-                        }
-                    }
-                    sortMobsToAttack();
-                    Network.getNetwork().sendToServer(new MobEntryChangeMessage(building, this.mobsToAttack));
-                    window.findPaneOfTypeByID(GUI_ELEMENT_LIST_MOBS, ScrollingList.class).refreshElementPanes();
-                    return;
-                }
-            }
-        }
-    }
-
-    /**
      * Retrieve all attributes from the building to display in GUI.
      */
     private void pullInfoFromHut()
@@ -441,7 +303,6 @@ public class WindowHutGuardTowerModule extends AbstractWindowWorkerModuleBuildin
         this.task = building.getTask();
         this.job = building.getGuardType();
         this.patrolTargets = building.getPatrolTargets();
-        this.mobsToAttack = building.getMobsToAttack();
     }
 
     /**
@@ -533,15 +394,6 @@ public class WindowHutGuardTowerModule extends AbstractWindowWorkerModuleBuildin
             LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.job.guard.tool.taskGuard");
         }
         window.close();
-    }
-
-    /**
-     * Recalculates the mob list.
-     */
-    private void recalculate()
-    {
-        Network.getNetwork().sendToServer(new GuardRecalculateMessage(building));
-        pullInfoFromHut();
     }
 
     /**
