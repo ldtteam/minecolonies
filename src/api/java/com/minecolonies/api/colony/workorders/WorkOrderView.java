@@ -41,6 +41,11 @@ public class WorkOrderView
     private BlockPos pos;
 
     /**
+     * Level it's being upgraded to.
+     */
+    private int upgradeLevel;
+
+    /**
      * Priority getter.
      *
      * @return the priority.
@@ -123,6 +128,22 @@ public class WorkOrderView
         type = WorkOrderType.values()[buf.readInt()];
         value = buf.readString(32767);
         pos = buf.readBlockPos();
+        upgradeLevel = buf.readInt();
+    }
+
+    /**
+     * Checks if a builder may accept this workOrder while ignoring the distance to the builder.
+     * @param builderLocation position of the builders own hut.
+     * @param builderLevel level of the builders hut.
+     * @return true if so.
+     */
+    public boolean canBuildIngoringDistance(@NotNull final BlockPos builderLocation, final int builderLevel)
+    {
+        //  A Build WorkOrder may be fulfilled by a Builder as long as any ONE of the following is true:
+        //  - The Builder's Work AbstractBuilding is built
+        //  - OR the WorkOrder is for the Builder's Work AbstractBuilding
+
+        return (builderLevel >= upgradeLevel || builderLevel == 5 || (builderLocation.equals(pos)));
     }
 
     /**

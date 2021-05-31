@@ -383,7 +383,7 @@ public final class WindowConstants
     /**
      * The builders gui file.
      */
-    public static final String HUT_BUILDER_RESOURCE_SUFFIX = ":gui/windowhutbuilder.xml";
+    public static final String HUT_BUILDER_RESOURCE_SUFFIX = ":gui/windowhutworkerplaceholder.xml";
     public static final String LIST_RESOURCES              = "resources";
 
     public static final String PAGE_RESOURCES              = "resourceActions";
@@ -402,7 +402,7 @@ public final class WindowConstants
     public static final String IN_DELIVERY_AMOUNT        = "indeliveryamount";
     public static final String WORK_ORDER_NAME   = "buildingName";
     public static final String WORK_ORDER_POS    = "buildingPos";
-    public static final String WORK_ORDER_SELECT = "workOrderSelect";
+    public static final String WORK_ORDER_SELECT = "manage";
     public static final String WORK_ORDER_ID     = "orderId";
 
     public static final String GUIDE_RESOURCE_SUFFIX = ":gui/windowhutguide.xml";
@@ -527,6 +527,7 @@ public final class WindowConstants
     public static final String LABEL_CONSTRUCTION_NAME = "constructionName";
     public static final String LABEL_CONSTRUCTION_POS  = "constructionPos";
     public static final String LABEL_PROGRESS          = "progress";
+    public static final String STEP_PROGRESS          = "stepprogress";
     public static final String LABEL_WORKERNAME        = "workerName";
 
     public static final String LABEL_PAGE_NUMBER = "pageNum";

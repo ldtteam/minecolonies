@@ -318,15 +318,15 @@ public class BuildingLumberjack extends AbstractBuildingCrafter implements IBuil
      */
     public boolean shouldRestrict()
     {
-        if (getSetting(REPLANT).getValue())
+        if (getSetting(RESTRICT).getValue())
         {
             if (startRestriction == null || endRestriction == null)
             {
-                getSetting(REPLANT).trigger();
+                getSetting(RESTRICT).trigger();
                 markDirty();
             }
         }
-        return getSetting(REPLANT).getValue();
+        return getSetting(RESTRICT).getValue();
     }
 
     public void setRestrictedArea(final BlockPos startPosition, final BlockPos endPosition)

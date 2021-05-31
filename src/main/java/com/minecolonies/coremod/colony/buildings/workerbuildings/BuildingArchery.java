@@ -95,7 +95,7 @@ public class BuildingArchery extends AbstractBuildingWorker
         {
             citizen.setHomeBuilding(null);
         }
-        super.removeAssignedCitizen(citizen);
+        super.removeCitizen(citizen);
     }
 
     @Override

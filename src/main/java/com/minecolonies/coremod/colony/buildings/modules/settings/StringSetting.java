@@ -6,9 +6,9 @@ import com.ldtteam.blockout.controls.ButtonImage;
 import com.ldtteam.blockout.views.Box;
 import com.ldtteam.blockout.views.View;
 import com.ldtteam.blockout.views.Window;
-import com.minecolonies.api.colony.buildings.modules.settings.ISetting;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingsModuleView;
+import com.minecolonies.api.colony.buildings.modules.settings.IStringSetting;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * Stores a string-list setting (Like enum, but easily serializable).
  */
-public class StringSetting implements ISetting
+public class StringSetting implements IStringSetting
 {
     /**
      * The value of the setting.
@@ -54,37 +54,25 @@ public class StringSetting implements ISetting
         this.currentIndex = currentIndex;
     }
 
-    /**
-     * Get the setting value.
-     * @return the current value.
-     */
+    @Override
     public String getValue()
     {
         return settings.get(currentIndex);
     }
 
-    /**
-     * Get the default value.
-     * @return the default value.
-     */
+    @Override
     public String getDefault()
     {
         return settings.get(0);
     }
 
-    /**
-     * Get the current index of the setting.
-     * @return the index.
-     */
+    @Override
     public int getCurrentIndex()
     {
         return currentIndex;
     }
 
-    /**
-     * Get the list of all settings.
-     * @return a copy of the list.
-     */
+    @Override
     public List<String> getSettings()
     {
         return new ArrayList<>(settings);

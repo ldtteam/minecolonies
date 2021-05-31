@@ -338,14 +338,6 @@ public enum AIWorkerState implements IAIState
     COOK_SERVE_FOOD_TO_CITIZEN(true),
 
     /*
-    ###Smelter###
-     */
-    /**
-     * Smelt stuff he finds in his hut to ingots.
-     */
-    SMELTER_SMELTING_ITEMS(false),
-
-    /*
 ### Herders ###
      */
 

@@ -582,7 +582,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             handleDebugOptions(currentNode);
             currentNode.setClosed();
 
-            final boolean isViablePosition = !xzRestricted || isInRestrictedArea(currentNode.pos);
+            final boolean isViablePosition = isInRestrictedArea(currentNode.pos);
 
             if (isViablePosition && isAtDestination(currentNode))
             {
@@ -1406,6 +1406,10 @@ public abstract class AbstractPathJob implements Callable<Path>
      */
     public boolean isInRestrictedArea(final BlockPos pos)
     {
+        if (!xzRestricted)
+        {
+            return true;
+        }
         return pos.getX() <= maxX && pos.getZ() <= maxZ && pos.getZ() >= minZ && pos.getX() >= minX;
     }
 }

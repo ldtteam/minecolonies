@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
@@ -13,12 +14,12 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
-import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.client.gui.huts.WindowHutPlantationModule;
+import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
+import com.minecolonies.coremod.colony.buildings.modules.settings.PlantationSetting;
+import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.coremod.colony.jobs.JobPlanter;
-import com.minecolonies.coremod.network.messages.server.colony.building.plantation.PlantationSetPhaseMessage;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.Item;
@@ -27,7 +28,7 @@ import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -48,6 +49,11 @@ import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_W
 public class BuildingPlantation extends AbstractBuildingCrafter
 {
     /**
+     * Settings key for the building mode.
+     */
+    public static final ISettingKey<PlantationSetting> MODE = new SettingKey<>(PlantationSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "mode"));
+
+    /**
      * Description string of the building.
      */
     private static final String PLANTATION = "plantation";
@@ -61,11 +67,6 @@ public class BuildingPlantation extends AbstractBuildingCrafter
      * The current phase (default sugarcane).
      */
     private Item currentPhase = Items.SUGAR_CANE;
-
-    /**
-     * The setting in the hut. If it's in the "pick 2 mode" this is the disabled mode else this is the only used one.
-     */
-    private Item setting = Items.SUGAR_CANE;
 
     /**
      * All the possible settings.
@@ -121,14 +122,6 @@ public class BuildingPlantation extends AbstractBuildingCrafter
             sand.add(NBTUtil.readBlockPos(sandPos.getCompound(i).getCompound(TAG_POS)));
         }
         this.currentPhase = ItemStack.read(compound.getCompound(TAG_CURRENT_PHASE)).getItem();
-        if (compound.keySet().contains(TAG_SETTING))
-        {
-            this.setting = ItemStack.read(compound.getCompound(TAG_SETTING)).getItem();
-        }
-        else
-        {
-            this.setting = this.currentPhase;
-        }
     }
 
     @Override
@@ -144,7 +137,6 @@ public class BuildingPlantation extends AbstractBuildingCrafter
         }
         compound.put(TAG_PLANTGROUND, sandCompoundList);
         compound.put(TAG_CURRENT_PHASE, new ItemStack(currentPhase).write(new CompoundNBT()));
-        compound.put(TAG_SETTING, new ItemStack(setting).write(new CompoundNBT()));
         return compound;
     }
 
@@ -219,34 +211,6 @@ public class BuildingPlantation extends AbstractBuildingCrafter
     }
 
     /**
-     * Set the current phase.
-     *
-     * @param phase the phase to set.
-     */
-    public void setSetting(final Item phase)
-    {
-        this.setting = phase;
-        this.currentPhase = this.setting;
-    }
-
-    @Override
-    public void serializeToView(@NotNull final PacketBuffer buf)
-    {
-        super.serializeToView(buf);
-        buf.writeItemStack(new ItemStack(setting));
-    }
-
-    /**
-     * Get the current phase.
-     *
-     * @return the current phase item.
-     */
-    public Item getCurrentPhase()
-    {
-        return currentPhase;
-    }
-
-    /**
      * Iterates over available plants
      * @return the item of the new or unchanged plant phase
      */
@@ -260,13 +224,31 @@ public class BuildingPlantation extends AbstractBuildingCrafter
             {
                 next = (next + 1) % settings.size();
             }
-            while (settings.get(next) == setting);
+            while (settings.get(next) == getSetting());
 
             currentPhase = settings.get(next);
             return currentPhase;
         }
 
-        return setting;
+        return getSetting();
+    }
+
+    private Item getSetting()
+    {
+        final String setting = getSetting(MODE).getValue();
+        if (setting.equals(Items.SUGAR_CANE.getTranslationKey()))
+        {
+            return Items.SUGAR_CANE;
+        }
+        if (setting.equals(Items.CACTUS.getTranslationKey()))
+        {
+            return Items.CACTUS;
+        }
+        if (setting.equals(Items.BAMBOO.getTranslationKey()))
+        {
+            return Items.BAMBOO;
+        }
+        return Items.SUGAR_CANE;
     }
 
     /**
@@ -274,16 +256,6 @@ public class BuildingPlantation extends AbstractBuildingCrafter
      */
     public static class View extends AbstractBuildingCrafter.View
     {
-        /**
-         * All possible phases.
-         */
-        private final List<Item> phases = Arrays.asList(Items.SUGAR_CANE, Items.CACTUS, Items.BAMBOO);
-
-        /**
-         * The current phase.
-         */
-        private Item setting;
-
         /**
          * Instantiate the plantation view.
          *
@@ -295,49 +267,11 @@ public class BuildingPlantation extends AbstractBuildingCrafter
             super(c, l);
         }
 
-        /**
-         * Get the list of all phases.
-         *
-         * @return the list.
-         */
-        public List<Item> getPhases()
-        {
-            return phases;
-        }
-
-        @Override
-        public void deserialize(@NotNull final PacketBuffer buf)
-        {
-            super.deserialize(buf);
-            this.setting = buf.readItemStack().getItem();
-        }
-
         @NotNull
         @Override
         public Window getWindow()
         {
-            return new WindowHutPlantationModule(this);
-        }
-
-        /**
-         * Get the current setting.
-         *
-         * @return the phase.
-         */
-        public Item getSetting()
-        {
-            return setting;
-        }
-
-        /**
-         * Set a new phase.
-         *
-         * @param phase the phase to set.
-         */
-        public void setPhase(final Item phase)
-        {
-            this.setting = phase;
-            Network.getNetwork().sendToServer(new PlantationSetPhaseMessage(this, phase));
+            return new WindowHutWorkerModulePlaceholder<>(this, PLANTATION);
         }
     }
 

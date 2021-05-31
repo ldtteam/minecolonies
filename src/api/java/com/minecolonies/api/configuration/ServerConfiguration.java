@@ -185,11 +185,11 @@ public class ServerConfiguration extends AbstractConfiguration
         builderPlaceConstructionTape = defineBoolean(builder, "builderplaceconstructiontape", true);
         allowInfiniteSupplyChests = defineBoolean(builder, "allowinfinitesupplychests", false);
         allowInfiniteColonies = defineBoolean(builder, "allowinfinitecolonies", false);
-        allowOtherDimColonies = defineBoolean(builder, "allowotherdimcolonies", false);
+        allowOtherDimColonies = defineBoolean(builder, "allowotherdimcolonies", true);
         citizenRespawnInterval = defineInteger(builder, "citizenrespawninterval", 60, CITIZEN_RESPAWN_INTERVAL_MIN, CITIZEN_RESPAWN_INTERVAL_MAX);
-        maxCitizenPerColony = defineInteger(builder, "maxcitizenpercolony", 150, 4, 500);
+        maxCitizenPerColony = defineInteger(builder, "maxcitizenpercolony", 250, 4, 500);
         builderInfiniteResources = defineBoolean(builder, "builderinfiniteresources", false);
-        limitToOneWareHousePerColony = defineBoolean(builder, "limittoonewarehousepercolony", true);
+        limitToOneWareHousePerColony = defineBoolean(builder, "limittoonewarehousepercolony", false);
         builderBuildBlockDelay = defineInteger(builder, "builderbuildblockdelay", 15, 1, 500);
         blockMiningDelayModifier = defineInteger(builder, "blockminingdelaymodifier", 500, 1, 10000);
         enableInDevelopmentFeatures = defineBoolean(builder, "enableindevelopmentfeatures", false);
@@ -214,7 +214,7 @@ public class ServerConfiguration extends AbstractConfiguration
         colonyLoadStrictness = defineInteger(builder, "colonyloadstrictness", 3, 1, 15);
         badVisitorsChance = defineInteger(builder, "badvisitorchance", 2, 1, 100);
         generateSupplyLoot = defineBoolean(builder, "generatesupplyloot", true);
-        maxTreeSize = defineInteger(builder, "maxtreesize", 256, 1, 1000);
+        maxTreeSize = defineInteger(builder, "maxtreesize", 400, 1, 1000);
 
         swapToCategory(builder, "research");
         researchCreativeCompletion = defineBoolean(builder, "researchcreativecompletion", true);
@@ -223,12 +223,12 @@ public class ServerConfiguration extends AbstractConfiguration
 
         swapToCategory(builder, "commands");
         
-        canPlayerUseRTPCommand = defineBoolean(builder, "canplayerusertpcommand", true);
+        canPlayerUseRTPCommand = defineBoolean(builder, "canplayerusertpcommand", false);
         canPlayerUseColonyTPCommand = defineBoolean(builder, "canplayerusecolonytpcommand", false);
         canPlayerUseAllyTHTeleport = defineBoolean(builder, "canplayeruseallytownhallteleport", true);
-        canPlayerUseHomeTPCommand = defineBoolean(builder, "canplayerusehometpcommand", true);
+        canPlayerUseHomeTPCommand = defineBoolean(builder, "canplayerusehometpcommand", false);
         canPlayerUseShowColonyInfoCommand = defineBoolean(builder, "canplayeruseshowcolonyinfocommand", true);
-        canPlayerUseKillCitizensCommand = defineBoolean(builder, "canplayerusekillcitizenscommand", true);
+        canPlayerUseKillCitizensCommand = defineBoolean(builder, "canplayerusekillcitizenscommand", false);
         canPlayerUseAddOfficerCommand = defineBoolean(builder, "canplayeruseaddofficercommand", true);
         canPlayerUseDeleteColonyCommand = defineBoolean(builder, "canplayerusedeletecolonycommand", true);
         numberOfAttemptsForSafeTP = defineInteger(builder, "numberofattemptsforsafetp", 4, 1, 10);
@@ -251,8 +251,8 @@ public class ServerConfiguration extends AbstractConfiguration
         spawnBarbarianSize = defineInteger(builder, "spawnbarbariansize", 5, MIN_SPAWN_BARBARIAN_HORDE_SIZE, MAX_SPAWN_BARBARIAN_HORDE_SIZE);
         maxBarbarianSize = defineInteger(builder, "maxBarbarianSize", 80, MIN_BARBARIAN_HORDE_SIZE, MAX_BARBARIAN_HORDE_SIZE);
         doBarbariansBreakThroughWalls = defineBoolean(builder, "dobarbariansbreakthroughwalls", true);
-        averageNumberOfNightsBetweenRaids = defineInteger(builder, "averagenumberofnightsbetweenraids", 12, 1, 50);
-        minimumNumberOfNightsBetweenRaids = defineInteger(builder, "minimumnumberofnightsbetweenraids", 8, 1, 30);
+        averageNumberOfNightsBetweenRaids = defineInteger(builder, "averagenumberofnightsbetweenraids", 14, 1, 50);
+        minimumNumberOfNightsBetweenRaids = defineInteger(builder, "minimumnumberofnightsbetweenraids", 10, 1, 30);
         mobAttackCitizens = defineBoolean(builder, "mobattackcitizens", true);
         shouldRaidersBreakDoors = defineBoolean(builder, "shouldraiderbreakdoors", true);
         citizenCallForHelp = defineBoolean(builder, "citizencallforhelp", true);
@@ -267,7 +267,7 @@ public class ServerConfiguration extends AbstractConfiguration
         swapToCategory(builder, "permissions");
 
         enableColonyProtection = defineBoolean(builder, "enablecolonyprotection", true);
-        turnOffExplosionsInColonies = defineEnum(builder, "turnoffexplosionsincolonies", Explosions.DAMAGE_NOTHING);
+        turnOffExplosionsInColonies = defineEnum(builder, "turnoffexplosionsincolonies", Explosions.DAMAGE_ENTITIES);
         specialPermGroup = defineList(builder, "specialpermgroup",
           Arrays.asList
                    ("_Raycoms_"),
@@ -497,9 +497,9 @@ public class ServerConfiguration extends AbstractConfiguration
         swapToCategory(builder, "pathfinding");
 
         pathfindingDebugVerbosity = defineInteger(builder, "pathfindingdebugverbosity", 0, 0, 10);
-        minimumRailsToPath = defineInteger(builder, "minimumrailstopath", 5, 5, 100);
+        minimumRailsToPath = defineInteger(builder, "minimumrailstopath", 8, 5, 100);
         pathfindingMaxThreadCount = defineInteger(builder, "pathfindingmaxthreadcount", 2, 1, 10);
-        pathfindingMaxNodes = defineInteger(builder, "pathfindingmaxnodes", 5000, 1, 10000);
+        pathfindingMaxNodes = defineInteger(builder, "pathfindingmaxnodes", 8000, 1, 10000);
 
         swapToCategory(builder, "requestSystem");
 
