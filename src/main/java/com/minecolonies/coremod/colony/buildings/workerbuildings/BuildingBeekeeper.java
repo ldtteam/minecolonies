@@ -8,8 +8,10 @@ import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
+import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
 import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.colony.buildings.modules.settings.StringSetting;
@@ -17,6 +19,9 @@ import net.minecraft.util.ResourceLocation;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobBeekeeper;
+
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
@@ -31,7 +36,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import static com.minecolonies.api.util.constant.BuildingConstants.BUILDING_FLOWER_LIST;
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 
@@ -225,6 +232,19 @@ public class BuildingBeekeeper extends AbstractBuildingWorker
     public int getMaximumHives()
     {
         return (int) Math.pow(2, getBuildingLevel() - 1);
+    }
+
+    /**
+     * Get a list of all the enabled flowers to use for breeding bees.
+     * 
+     * @return the flowers to use for the beekeeper.
+     */
+    public Set<Item> getAllowedFlowers()
+    {
+        return getModuleMatching(ItemListModule.class, m -> m.getId().equals(BUILDING_FLOWER_LIST)).getList().stream()
+                     .map(ItemStorage::getItemStack)
+                     .map(ItemStack::getItem)
+                     .collect(Collectors.toSet());
     }
 
     public static class View extends AbstractBuildingWorker.View

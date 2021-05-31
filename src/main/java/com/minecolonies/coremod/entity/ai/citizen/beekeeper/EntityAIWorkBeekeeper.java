@@ -1,6 +1,8 @@
 package com.minecolonies.coremod.entity.ai.citizen.beekeeper;
 
+import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
+import com.minecolonies.api.colony.requestsystem.requestable.StackList;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
@@ -70,6 +72,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
     private static final int DECIDING_DELAY   = 40;
     private static final int NO_ANIMALS_DELAY = 100;
     private static final int NO_HIVES_DELAY   = 100;
+    private static final int NO_FLOWERS_DELAY = 100;
     private static final int BREEDING_DELAY   = 40;
 
     /**
@@ -148,11 +151,21 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
                 return getState();
             }
         }
+
         if (!getOwnBuilding().getHarvestTypes().equals(BuildingBeekeeper.HONEYCOMB))
         {
             checkIfRequestForItemExistOrCreateAsynch(new ItemStack(Items.GLASS_BOTTLE));
         }
-        checkIfRequestForTagExistOrCreateAsynch(ItemTags.FLOWERS, 16);
+
+        Set<Item> allowedFlowers = getOwnBuilding().getAllowedFlowers();
+        if (!InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), (stack) -> allowedFlowers.contains(stack.getItem()))
+              && !InventoryUtils.hasItemInProvider(getOwnBuilding(), (stack) -> allowedFlowers.contains(stack.getItem()))
+              && !getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(StackList.class)))
+        {
+            worker.getCitizenData().createRequestAsync(new StackList(allowedFlowers.stream()
+                                                                                   .map((item) -> new ItemStack(item, 16))
+                                                                                   .collect(Collectors.toList()), COM_MINECOLONIES_COREMOD_REQUEST_FLOWERS, 16, 1));
+        }
 
         return DECIDE;
     }
@@ -188,6 +201,14 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
         {
             worker.getCitizenData().triggerInteraction(new StandardInteraction(new TranslationTextComponent(NO_HIVES), ChatPriority.BLOCKING));
             setDelay(NO_HIVES_DELAY);
+            return DECIDE;
+        }
+
+        if (getOwnBuilding().getAllowedFlowers().isEmpty())
+        {
+            System.out.println("test");
+            worker.getCitizenData().triggerInteraction(new StandardInteraction(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_BEEKEEPER_NOFLOWERS), ChatPriority.BLOCKING));
+            setDelay(NO_FLOWERS_DELAY);
             return DECIDE;
         }
 
@@ -242,7 +263,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
 
         final boolean hasBreedingItem =
           InventoryUtils.hasItemInItemHandler((worker.getInventoryCitizen()),
-            (ItemStack stack) -> stack.getItem().isIn(ItemTags.FLOWERS));
+            (ItemStack stack) -> getOwnBuilding().getAllowedFlowers().contains(stack.getItem()));
 
         if (getOwnBuilding().getSetting(BuildingBeekeeper.BREEDING).getValue() && !hasMaxAnimals(bees) && breedableAnimals >= NUM_OF_ANIMALS_TO_BREED && hasBreedingItem)
         {
@@ -494,7 +515,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
         if (checkIfRequestForTagExistOrCreateAsynch(ItemTags.FLOWERS, 2))
         {
             worker.getCitizenItemHandler()
-              .setHeldItem(hand, InventoryUtils.findFirstSlotInItemHandlerWith(getInventory(), stack -> stack.getItem().isIn(ItemTags.FLOWERS)));
+              .setHeldItem(hand, InventoryUtils.findFirstSlotInItemHandlerWith(getInventory(), stack -> getOwnBuilding().getAllowedFlowers().contains(stack.getItem())));
             return true;
         }
         return false;

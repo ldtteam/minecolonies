@@ -18,14 +18,18 @@ import com.minecolonies.coremod.colony.buildings.modules.settings.StringSetting;
 import com.minecolonies.coremod.colony.buildings.moduleviews.*;
 import com.minecolonies.coremod.colony.buildings.views.EmptyView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
+
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.registries.IForgeRegistry;
 
+import java.util.HashSet;
 import java.util.Set;
 
-import static com.minecolonies.api.util.constant.BuildingConstants.FLORIST_FLOWER_LIST;
+import static com.minecolonies.api.util.constant.BuildingConstants.BUILDING_FLOWER_LIST;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.ItemStackUtils.ISCOOKABLE;
 import static com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser.FUEL_LIST;
@@ -317,7 +321,7 @@ public final class ModBuildingsInitializer
                                  .setBuildingProducer(BuildingFlorist::new)
                                  .setBuildingViewProducer(() -> BuildingFlorist.View::new)
                                  .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.FLORIST_ID))
-                                 .addBuildingModuleProducer(() -> new ItemListModule(FLORIST_FLOWER_LIST), () -> new FloristFlowerListModuleView())
+                                 .addBuildingModuleProducer(() -> new ItemListModule(BUILDING_FLOWER_LIST), () -> new FloristFlowerListModuleView())
                                  .createBuildingEntry();
 
         ModBuildings.enchanter = new BuildingEntry.Builder()
@@ -434,6 +438,13 @@ public final class ModBuildingsInitializer
                                    .addBuildingModuleProducer(() -> new SettingsModule()
                                                                       .with(AbstractBuildingWorker.BREEDING, new BoolSetting(true))
                                                                       .with(BuildingBeekeeper.MODE, new StringSetting(BuildingBeekeeper.HONEYCOMB, BuildingBeekeeper.HONEY, BuildingBeekeeper.BOTH)), SettingsModuleView::new)
+                                   .addBuildingModuleProducer(() -> new ItemListModule(BUILDING_FLOWER_LIST),  () -> new ItemListModuleView(BUILDING_FLOWER_LIST, COM_MINECOLONIES_COREMOD_REQUEST_FLOWERS, false,
+                                     (buildingView) ->
+                                   {
+                                       Set<ItemStorage> flowers = new HashSet<>();
+                                       ItemTags.FLOWERS.getAllElements().forEach((item) -> flowers.add(new ItemStorage(new ItemStack(item))));
+                                       return flowers;
+                                   }))
                                    .addBuildingModuleViewProducer(() -> new ToolModuleView(ModItems.scepterBeekeeper))
                                    .createBuildingEntry();
 
