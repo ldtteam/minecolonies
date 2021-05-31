@@ -7,6 +7,8 @@ import com.minecolonies.coremod.client.gui.modules.WindowBuilderResModule;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -114,6 +116,7 @@ public class BuildingResourcesModuleView extends AbstractBuildingModuleView
         return totalStages;
     }
 
+    @OnlyIn(Dist.CLIENT)
     @Override
     public Window getWindow()
     {
