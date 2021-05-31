@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.compatibility.dynamictrees.DynamicTreeCompat;
 import com.minecolonies.api.compatibility.tinkers.SlimeTreeCheck;
 import com.minecolonies.api.compatibility.tinkers.TinkersToolHelper;
@@ -35,7 +34,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.ItemStackUtils.*;
@@ -737,32 +735,26 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     /**
-     * Gets a function returning all the possible foods for a cook building view.
+     * Gets all the possible foods for the cook.
      * 
-     * @return the function.
+     * @return a set of the foods.
      */
-    public static Function<IBuildingView, Set<ItemStorage>> getAllFoodsFunction()
+    public static Set<ItemStorage> getAllFoods()
     {
-        return (buildingView) ->
-        {
-            Set<ItemStorage> edibles = IColonyManager.getInstance().getCompatibilityManager().getEdibles();
-            edibles.removeIf(item -> ISCOOKABLE.test(item.getItemStack()));
-            return edibles;
-        };
+         Set<ItemStorage> edibles = IColonyManager.getInstance().getCompatibilityManager().getEdibles();
+         edibles.removeIf(item -> ISCOOKABLE.test(item.getItemStack()));
+         return edibles;
     }
 
     /**
-     * Gets a function returning all the possible flowers for a beekeeper building view.
+     * Gets all the possible flowers for the beekeeper.
      * 
-     * @return the function.
+     * @return a set of the flowers.
      */
-    public static Function<IBuildingView, Set<ItemStorage>> getAllFlowersFunction()
+    public static Set<ItemStorage> getAllBeekeeperFlowers()
     {
-        return (buildingView) ->
-        {
-            Set<ItemStorage> flowers = new HashSet<>();
-            ItemTags.FLOWERS.getAllElements().forEach((item) -> flowers.add(new ItemStorage(new ItemStack(item))));
-            return flowers;
-        };
+        Set<ItemStorage> flowers = new HashSet<>();
+        ItemTags.FLOWERS.getAllElements().forEach((item) -> flowers.add(new ItemStorage(new ItemStack(item))));
+        return flowers;
     }
 }
