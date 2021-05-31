@@ -149,7 +149,6 @@ public class JEIPlugin implements IModPlugin
     {
         if (!recipesLoaded)
         {
-            final WeakReference<JEIPlugin> weakPlugin = new WeakReference<>(this);
             final WeakReference<IJeiRuntime> weakRuntime = new WeakReference<>(jeiRuntime);
 
             MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,
@@ -161,12 +160,11 @@ public class JEIPlugin implements IModPlugin
                 // in JEI but it seems like the only way to get things to actually work.
                 if (!recipesLoaded)
                 {
-                    final JEIPlugin self = weakPlugin.get();
                     final IJeiRuntime runtime = weakRuntime.get();
-                    if (self != null && runtime != null)
+                    if (runtime != null)
                     {
                         final IRecipeManager jeiManager = runtime.getRecipeManager();
-                        self.populateRecipes((list, uid) ->
+                        populateRecipes((list, uid) ->
                         {
                             for (final Object recipe : list)
                             {
