@@ -37,6 +37,9 @@ repositories {
     maven {
         url 'https://dvs1.progwml6.com/files/maven/'
     }
+    maven {
+        url "http://harleyoconnor.com/maven"
+    }
 }
 
 apply plugin: 'net.minecraftforge.gradle'
@@ -106,6 +109,7 @@ dependencies {
     apiCompileOnly fg.deobf("com.resourcefulbees:ResourcefulBees:${config.rb_version}")
     apiCompileOnly fg.deobf("slimeknights.mantle:Mantle:1.16.5-${config.mantle_version}")
     apiCompileOnly fg.deobf("slimeknights.tconstruct:TConstruct:1.16.5-${config.tc_version}")
+    apiCompileOnly fg.deobf("com.ferreusveritas.dynamictrees:DynamicTrees-${config.minecraft_version}:${config.dt_version}")
 
     testImplementation  'junit:junit:4.12'
     testImplementation  "org.mockito:mockito-core:1.+"

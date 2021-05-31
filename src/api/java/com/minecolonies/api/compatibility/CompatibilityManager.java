@@ -3,6 +3,7 @@ package com.minecolonies.api.compatibility;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.minecolonies.api.MinecoloniesAPIProxy;
+import com.minecolonies.api.compatibility.dynamictrees.DynamicTreeCompat;
 import com.minecolonies.api.compatibility.tinkers.SlimeTreeCheck;
 import com.minecolonies.api.compatibility.tinkers.TinkersToolHelper;
 import com.minecolonies.api.crafting.CompostRecipe;
@@ -725,6 +726,10 @@ public class CompatibilityManager implements ICompatibilityManager
         {
             Compatibility.tinkersCompat = new TinkersToolHelper();
             Compatibility.tinkersSlimeCompat = new SlimeTreeCheck();
+        }
+        if (ModList.get().isLoaded("dynamictrees"))
+        {
+            Compatibility.dynamicTreesCompat = new DynamicTreeCompat();
         }
     }
 }

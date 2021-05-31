@@ -227,7 +227,7 @@ public class Tree
         BlockState blockState = world.getBlockState(pos);
         final Block block = blockState.getBlock();
 
-        if (block.isIn(BlockTags.LEAVES))
+        if (block.isIn(BlockTags.LEAVES) || Compatibility.isDynamicLeaf(block))
         {
             NonNullList<ItemStack> list = NonNullList.create();
 
@@ -261,7 +261,7 @@ public class Tree
                     continue;
                 }
 
-                if (stack.getItem().isIn(ItemTags.SAPLINGS))
+                if (stack.getItem().isIn(ItemTags.SAPLINGS) || (isDynamicTree() && Compatibility.isDynamicTreeSapling(stack)))
                 {
                     IColonyManager.getInstance().getCompatibilityManager().connectLeafToSapling(blockState, stack);
                     return stack;

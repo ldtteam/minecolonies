@@ -1952,6 +1952,7 @@
   "com.minecolonies.coremod.setting.minecolonies:warehousemin": "Min Warehouse Stock:",
 
   "com.minecolonies.coremod.gui.givetool": "Obtain Tool",
-  "com.minecolonies.coremod.gui.blocks.distance": "%d blocks"
-
+  "com.minecolonies.coremod.gui.blocks.distance": "%d blocks",
+  "com.minecolonies.coremod.gui.progress.step": "Step %d/%d",
+  "com.minecolonies.coremod.gui.progress.res": "Supplied %s / Used %s"
 }
