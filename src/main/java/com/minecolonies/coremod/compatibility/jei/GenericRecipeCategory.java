@@ -349,7 +349,7 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
         }
 
         // and even more recipes that can't be taught, but are just inherent in the worker AI
-        recipes.addAll(this.crafting.getAdditionalRecipesForDisplayPurposesOnly(this.job));
+        recipes.addAll(this.crafting.getAdditionalRecipesForDisplayPurposesOnly());
 
         return recipes.stream()
                 .sorted(Comparator.comparing(IGenericRecipe::getLevelSort)

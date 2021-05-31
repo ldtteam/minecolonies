@@ -11,6 +11,8 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -85,6 +87,13 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
             }
         }
         return Optional.empty();
+    }
+
+    @NotNull
+    @Override
+    public List<IGenericRecipe> getAdditionalRecipesForDisplayPurposesOnly()
+    {
+        return Collections.emptyList();
     }
 
     /** This module is for standard crafters (3x3 by default) */

@@ -96,12 +96,8 @@ public interface ICraftingBuildingModule extends IBuildingModule
      * This is intended for things that the worker AI can do by
      * itself without any explicit recipe (neither taught nor loaded).
      *
-     * @param job The job to use (typically from {@link #getCraftingJob()}).
      * @return The list of additional recipes.
      */
     @NotNull
-    default List<IGenericRecipe> getAdditionalRecipesForDisplayPurposesOnly(@NotNull final IJob<?> job)
-    {
-        return job.getAdditionalRecipesForDisplayPurposesOnly();
-    }
+    List<IGenericRecipe> getAdditionalRecipesForDisplayPurposesOnly();
 }

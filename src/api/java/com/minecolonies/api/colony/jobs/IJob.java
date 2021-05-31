@@ -5,8 +5,6 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import com.minecolonies.api.crafting.IGenericRecipe;
-import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.goal.GoalSelector;
@@ -17,7 +15,6 @@ import net.minecraft.util.DamageSource;
 import net.minecraftforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
 import java.util.Set;
 
 public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
@@ -82,16 +79,6 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
      */
     @SuppressWarnings("squid:S1452")
     AI generateAI();
-
-    /**
-     * Purely for display purposes (not used for actual requests or crafting), generate
-     * a list of "recipes" (input items used to produce output items) that are produced
-     * by this job or its AI in some fashion or another.
-     *
-     * @return A list of "recipes".
-     */
-    @NotNull
-    List<IGenericRecipe> getAdditionalRecipesForDisplayPurposesOnly();
 
     /**
      * Check if the citizen already checked for food in his chest today.
