@@ -7,9 +7,11 @@ import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
 
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.StringNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -23,8 +25,7 @@ public class EntityListModule extends AbstractBuildingModule implements IEntityL
     /**
      * Tag to store the mob list.
      */
-    private static final String TAG_MOBLIST = "moblist";
-    private static final String TAG_MOB = "mob";
+    private static final String TAG_MOBLIST = "newmoblist";
 
     /**
      * List of allowed items.
@@ -49,10 +50,10 @@ public class EntityListModule extends AbstractBuildingModule implements IEntityL
     @Override
     public void deserializeNBT(final CompoundNBT compound)
     {
-        final ListNBT filterableList = compound.getCompound(id).getList(TAG_MOBLIST, Constants.NBT.TAG_COMPOUND);
+        final ListNBT filterableList = compound.getCompound(id).getList(TAG_MOBLIST, Constants.NBT.TAG_STRING);
         for (int i = 0; i < filterableList.size(); ++i)
         {
-            mobsAllowed.add(new ResourceLocation(filterableList.getCompound(i).getString(TAG_MOB)));
+            mobsAllowed.add(new ResourceLocation(filterableList.getString(i)));
         }
     }
 
@@ -63,9 +64,7 @@ public class EntityListModule extends AbstractBuildingModule implements IEntityL
         @NotNull final ListNBT filteredMobs = new ListNBT();
         for (@NotNull final ResourceLocation mob : mobsAllowed)
         {
-            @NotNull final CompoundNBT mobCompound = new CompoundNBT();
-            mobCompound.putString(TAG_MOB, mob.toString());
-            filteredMobs.add(mobCompound);
+            filteredMobs.add(StringNBT.valueOf(mob.toString()));
         }
         moduleCompound.put(TAG_MOBLIST, filteredMobs);
         compound.put(id, moduleCompound);
@@ -109,7 +108,7 @@ public class EntityListModule extends AbstractBuildingModule implements IEntityL
         buf.writeInt(mobsAllowed.size());
         for (final ResourceLocation entity : mobsAllowed)
         {
-            buf.writeResourceLocation(entity);
+            buf.writeRegistryIdUnsafe(ForgeRegistries.ENTITIES, entity);
         }
     }
 

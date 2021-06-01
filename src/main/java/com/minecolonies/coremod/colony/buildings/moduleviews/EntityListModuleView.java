@@ -11,6 +11,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -110,7 +111,7 @@ public class EntityListModuleView extends AbstractBuildingModuleView implements 
 
         for (int j = 0; j < size; j++)
         {
-            listOfEntities.add(buf.readResourceLocation());
+            listOfEntities.add(buf.readRegistryIdUnsafe(ForgeRegistries.ENTITIES).getRegistryName());
         }
     }
 
