@@ -53,7 +53,11 @@ public class EntityListModule extends AbstractBuildingModule implements IEntityL
         final ListNBT filterableList = compound.getCompound(id).getList(TAG_MOBLIST, Constants.NBT.TAG_STRING);
         for (int i = 0; i < filterableList.size(); ++i)
         {
-            mobsAllowed.add(new ResourceLocation(filterableList.getString(i)));
+            final ResourceLocation res = new ResourceLocation(filterableList.getString(i));
+            if (ForgeRegistries.ENTITIES.containsKey(res)
+            {
+                mobsAllowed.add(res);
+            }
         }
     }
 
