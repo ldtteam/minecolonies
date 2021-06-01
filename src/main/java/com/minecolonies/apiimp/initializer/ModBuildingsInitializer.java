@@ -82,6 +82,7 @@ public final class ModBuildingsInitializer
                                        .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.BARRACKS_TOWER_ID))
                                        .addBuildingModuleProducer(BedHandlingModule::new)
                                        .addBuildingModuleViewProducer(() -> new ToolModuleView(ModItems.scepterGuard))
+                                       .addBuildingModuleProducer(() -> new EntityListModule(HOSTILE_LIST), () -> new EntityListModuleView(HOSTILE_LIST, COM_MINECOLONIES_HOSTILES, true))
                                        .createBuildingEntry();
 
         ModBuildings.blacksmith = new BuildingEntry.Builder()
