@@ -20,7 +20,6 @@ import com.minecolonies.coremod.network.messages.server.colony.building.enchante
 import com.minecolonies.coremod.network.messages.server.colony.building.farmer.AssignFieldMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.farmer.AssignmentModeMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.guard.GuardSetMinePosMessage;
-import com.minecolonies.coremod.network.messages.server.colony.building.guard.GuardTaskMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.home.AssignUnassignMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.miner.MinerSetLevelMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.postbox.PostBoxRequestMessage;
@@ -149,9 +148,7 @@ public class NetworkChannel
         registerMessage(++idx, WorkOrderChangeMessage.class, WorkOrderChangeMessage::new);
         registerMessage(++idx, AssignFieldMessage.class, AssignFieldMessage::new);
         registerMessage(++idx, AssignmentModeMessage.class, AssignmentModeMessage::new);
-        registerMessage(++idx, GuardTaskMessage.class, GuardTaskMessage::new);
         registerMessage(++idx, GuardSetMinePosMessage.class, GuardSetMinePosMessage::new);
-        registerMessage(++idx, GuardScepterMessage.class, GuardScepterMessage::new);
         registerMessage(++idx, RecallCitizenHutMessage.class, RecallCitizenHutMessage::new);
         registerMessage(++idx, TransferItemsRequestMessage.class, TransferItemsRequestMessage::new);
         registerMessage(++idx, MarkBuildingDirtyMessage.class, MarkBuildingDirtyMessage::new);

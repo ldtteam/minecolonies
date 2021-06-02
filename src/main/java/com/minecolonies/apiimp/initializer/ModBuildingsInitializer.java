@@ -5,17 +5,11 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.items.ModItems;
-import com.minecolonies.coremod.client.gui.huts.WindowHutBuilderModule;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.modules.settings.BoolSetting;
+import com.minecolonies.coremod.colony.buildings.*;
+import com.minecolonies.coremod.colony.buildings.modules.settings.*;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.colony.buildings.BuildingMysticalSite;
-import com.minecolonies.coremod.colony.buildings.DefaultBuildingInstance;
 import com.minecolonies.coremod.colony.buildings.modules.*;
-import com.minecolonies.coremod.colony.buildings.modules.settings.IntSetting;
-import com.minecolonies.coremod.colony.buildings.modules.settings.PlantationSetting;
-import com.minecolonies.coremod.colony.buildings.modules.settings.StringSetting;
 import com.minecolonies.coremod.colony.buildings.moduleviews.*;
 import com.minecolonies.coremod.colony.buildings.views.EmptyView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
@@ -83,6 +77,12 @@ public final class ModBuildingsInitializer
                                        .addBuildingModuleProducer(BedHandlingModule::new)
                                        .addBuildingModuleViewProducer(() -> new ToolModuleView(ModItems.scepterGuard))
                                        .addBuildingModuleProducer(() -> new EntityListModule(HOSTILE_LIST), () -> new EntityListModuleView(HOSTILE_LIST, COM_MINECOLONIES_HOSTILES, true))
+                                       .addBuildingModuleProducer(() -> new SettingsModule()
+                                                                          .with(AbstractBuildingGuards.GUARD_TASK, new GuardTaskSetting(GuardTaskSetting.PATROL, GuardTaskSetting.GUARD, GuardTaskSetting.FOLLOW))
+                                                                          .with(AbstractBuildingGuards.RETREAT, new BoolSetting(true))
+                                                                          .with(AbstractBuildingGuards.HIRE_TRAINEE, new BoolSetting(true))
+                                                                          .with(AbstractBuildingGuards.PATROL_MODE, new PatrolModeSetting())
+                                                                          .with(AbstractBuildingGuards.FOLLOW_MODE, new FollowModeSetting()), SettingsModuleView::new)
                                        .createBuildingEntry();
 
         ModBuildings.blacksmith = new BuildingEntry.Builder()
@@ -196,6 +196,12 @@ public final class ModBuildingsInitializer
                                     .addBuildingModuleProducer(BedHandlingModule::new)
                                     .addBuildingModuleViewProducer(() -> new ToolModuleView(ModItems.scepterGuard))
                                     .addBuildingModuleProducer(() -> new EntityListModule(HOSTILE_LIST), () -> new EntityListModuleView(HOSTILE_LIST, COM_MINECOLONIES_HOSTILES, true))
+                                    .addBuildingModuleProducer(() -> new SettingsModule()
+                                                                       .with(AbstractBuildingGuards.GUARD_TASK, new GuardTaskSetting())
+                                                                       .with(AbstractBuildingGuards.RETREAT, new BoolSetting(true))
+                                                                       .with(AbstractBuildingGuards.HIRE_TRAINEE, new BoolSetting(true))
+                                                                       .with(AbstractBuildingGuards.PATROL_MODE, new PatrolModeSetting())
+                                                                       .with(AbstractBuildingGuards.FOLLOW_MODE, new FollowModeSetting()), SettingsModuleView::new)
                                     .createBuildingEntry();
 
         ModBuildings.home = new BuildingEntry.Builder()

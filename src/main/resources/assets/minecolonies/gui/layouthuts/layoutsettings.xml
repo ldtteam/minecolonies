@@ -2,7 +2,7 @@
     <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
     <label id="desc" size="130 11" pos="30 14" color="black" textalign="MIDDLE"/>
 
-    <list id="settingslist" size="164 136" pos="13 50">
-        <box size="100% 34" linewidth="2" id="box"/>
+    <list id="settingslist" size="164 170" pos="13 40">
+        <box size="100% 36" linewidth="2" id="box"/>
     </list>
 </window>

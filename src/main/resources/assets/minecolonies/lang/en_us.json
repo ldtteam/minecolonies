@@ -679,11 +679,10 @@
   "com.minecolonies.coremod.gui.workerhuts.task.patrolmine": "Patrol Mine",
   "com.minecolonies.coremod.gui.workerhuts.calculate": "Recalculate List",
   "com.minecolonies.coremod.gui.workerhuts.task.follow": "Follow",
-  "com.minecolonies.coremod.gui.workerhuts.targetpatrol": "Set patrol positions",
-  "com.minecolonies.coremod.gui.workerhuts.targetguard": "Set guarding target",
+  "com.minecolonies.coremod.gui.workerhuts.targetpatrol": "Set positions",
+  "com.minecolonies.coremod.gui.workerhuts.targetguard": "Set target",
   "com.minecolonies.coremod.gui.workerhuts.followtight": "Tight grouping",
   "com.minecolonies.coremod.gui.workerhuts.followloose": "Loose grouping",
-  "com.minecolonies.coremod.gui.workerhuts.settarget": "Disabled",
   "com.minecolonies.coremod.gui.worherhuts.patrollingmine": "Patrolling Mine at %s.",
 
   "com.minecolonies.coremod.gui.workerhuts.nospace": "Please make space in your inventory to use this functionality.",
@@ -1946,7 +1945,7 @@
   "com.minecolonies.coremod.setting.minecolonies:replant": "Replanting:",
   "com.minecolonies.coremod.setting.minecolonies:restrict": "Zoning Mode:",
   "com.minecolonies.coremod.gui.tooldesc.scepterlumberjack": "Restrict the Forester's working area by left-clicking one corner and right-clicking the opposite corner with the tool.",
-  "com.minecolonies.coremod.gui.tooldesc.scepterguard": "Shift-right-click in the air to open the menu. Right click positions to mark as guard or patrol points. Right-click the same position to close and discard.",
+  "com.minecolonies.coremod.gui.tooldesc.scepterguard": "Left click positions to mark as guard or patrol points. Left-click the same position to close and discard.",
 
   "com.minecolonies.coremod.setting.minecolonies:fertilize": "Request Fertilizer",
   "com.minecolonies.coremod.setting.minecolonies:warehousemin": "Min Warehouse Stock:",
@@ -1954,5 +1953,19 @@
   "com.minecolonies.coremod.gui.givetool": "Obtain Tool",
   "com.minecolonies.coremod.gui.blocks.distance": "%d blocks",
   "com.minecolonies.coremod.gui.progress.step": "Step %d/%d",
-  "com.minecolonies.coremod.gui.progress.res": "Supplied %s / Used %s"
+  "com.minecolonies.coremod.gui.progress.res": "Supplied %s / Used %s",
+  "com.minecolonies.core.guard.setting.follow.tight": "Tight Grouping",
+  "com.minecolonies.core.guard.setting.follow.loose": "Loose Grouping",
+  "com.minecolonies.core.guard.setting.patrol.auto": "Automatic",
+  "com.minecolonies.core.guard.setting.patrol.manual": "Manual",
+  "com.minecolonies.core.guard.setting.patrol": "Patrol",
+  "com.minecolonies.core.guard.setting.guard": "Guard",
+  "com.minecolonies.core.guard.setting.follow": "Follow",
+  "com.minecolonies.core.guard.setting.patrol_mine": "Patrol Mine",
+
+  "com.minecolonies.coremod.setting.minecolonies:retreat": "Retreat on low health:",
+  "com.minecolonies.coremod.setting.minecolonies:hiretrainee": "Hire Trainee:",
+  "com.minecolonies.coremod.setting.minecolonies:patrolmode": "Patrol Mode:",
+  "com.minecolonies.coremod.setting.minecolonies:followmode": "Follow Mode:",
+  "com.minecolonies.coremod.setting.minecolonies:guardtask": "Task:"
 }

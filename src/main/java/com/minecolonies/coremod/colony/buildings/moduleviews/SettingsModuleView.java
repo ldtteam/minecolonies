@@ -17,8 +17,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Module containing all settings (client side).
@@ -28,7 +27,7 @@ public class SettingsModuleView extends AbstractBuildingModuleView implements IS
     /**
      * Map of setting id (string) to generic setting.
      */
-    final Map<ISettingKey<?>, ISetting> settings = new HashMap<>();
+    final Map<ISettingKey<?>, ISetting> settings = new LinkedHashMap<>();
 
     @Override
     public void deserialize(@NotNull final PacketBuffer buf)
@@ -51,6 +50,24 @@ public class SettingsModuleView extends AbstractBuildingModuleView implements IS
     public Map<ISettingKey<?>, ISetting> getSettings()
     {
         return settings;
+    }
+
+    /**
+     * Get a list of all valid settings.
+     * @return the list of settings.
+     */
+    public List<ISettingKey<?>> getActiveSettings()
+    {
+        final List<ISettingKey<?>> activeSettings = new ArrayList<>();
+        for (final Map.Entry<ISettingKey<?>, ISetting> setting : settings.entrySet())
+        {
+            if (setting.getValue().isActive(this))
+            {
+                activeSettings.add(setting.getKey());
+            }
+        }
+
+        return activeSettings;
     }
 
     @Override

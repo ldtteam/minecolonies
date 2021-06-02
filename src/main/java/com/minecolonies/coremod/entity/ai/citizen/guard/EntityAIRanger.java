@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.guard;
 
 import com.minecolonies.api.entity.ModEntities;
-import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.Skill;
@@ -15,6 +14,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
+import com.minecolonies.coremod.colony.buildings.modules.settings.GuardTaskSetting;
 import com.minecolonies.coremod.colony.jobs.JobRanger;
 import com.minecolonies.coremod.entity.pathfinding.MinecoloniesAdvancedPathNavigate;
 import com.minecolonies.coremod.entity.pathfinding.pathjobs.PathJobCanSee;
@@ -166,7 +166,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
             attackDist += worker.getPosY() - target.getPosY();
         }
 
-        if (buildingGuards.getTask() == GuardTask.GUARD)
+        if (buildingGuards.getTask().equals(GuardTaskSetting.GUARD))
         {
             attackDist += GUARD_BONUS_RANGE;
         }
@@ -263,7 +263,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
         }
 
         // Check if the target is too close
-        if (sqDistanceToEntity < RANGED_FLEE_SQDIST && buildingGuards.getTask() != GuardTask.GUARD)
+        if (sqDistanceToEntity < RANGED_FLEE_SQDIST && !buildingGuards.getTask().equals(GuardTaskSetting.GUARD))
         {
             tooCloseNumTicks++;
             strafingTime = -1;
@@ -540,7 +540,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
      */
     private boolean shouldStayCloseToPos()
     {
-        return buildingGuards.getTask() == GuardTask.GUARD || (buildingGuards.getTask() == GuardTask.PATROL && buildingGuards.shallPatrolManually());
+        return buildingGuards.getTask().equals(GuardTaskSetting.GUARD) || (buildingGuards.getTask().equals(GuardTaskSetting.PATROL) && buildingGuards.shallPatrolManually());
     }
 
     @Override

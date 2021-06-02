@@ -9,7 +9,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.coremod.client.gui.huts.WindowHutBarracksTowerModule;
+import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.util.AdvancementUtils;
 import com.minecolonies.coremod.util.ChunkDataHelper;
@@ -35,9 +35,6 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
      * Our constants. The Schematic names, Defence bonus, and Offence bonus.
      */
     private static final String SCHEMATIC_NAME = "barrackstower";
-    private static final int    DEFENCE_BONUS  = 0;
-    private static final int    OFFENCE_BONUS  = 5;
-    protected static final Boolean canGuardMine = false;
 
     /**
      * Position of the barracks for this tower.
@@ -162,13 +159,6 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
     }
 
     @Override
-    public void serializeToView(@NotNull final PacketBuffer buf)
-    {
-        super.serializeToView(buf);
-        buf.writeBoolean(canGuardMine);
-    }
-
-    @Override
     public int getMaxInhabitants()
     {
         return getBuildingLevel();
@@ -200,13 +190,6 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
             super(c, l);
         }
 
-        @Override
-        public void deserialize(@NotNull final PacketBuffer buf)
-        {
-            super.deserialize(buf);
-            canGuardMine = buf.readBoolean();
-        }
-
         /**
          * Check if it has enough workers.
          *
@@ -226,13 +209,7 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
         @Override
         public Window getWindow()
         {
-            return new WindowHutBarracksTowerModule(this);
-        }
-
-        @Override
-        public Boolean canGuardMine()
-        {
-            return canGuardMine;
+            return new WindowHutWorkerModulePlaceholder<>(this, getSchematicName());
         }
     }
 }

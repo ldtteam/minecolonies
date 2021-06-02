@@ -71,30 +71,32 @@ public class IntSetting implements ISetting
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void addHandlersToBox(
+    public void setupHandler(
       final ISettingKey<?> key,
       final Pane pane,
       final ISettingsModuleView settingsModuleView,
       final IBuildingView building, final Window window)
     {
-        if (pane.findPaneOfTypeByID("box", Box.class).getChildren().isEmpty())
-        {
-            Loader.createFromXMLFile("minecolonies:gui/layouthuts/layoutintsetting.xml", (View) pane);
-            pane.findPaneOfTypeByID("desc", Text.class).setText(new TranslationTextComponent("com.minecolonies.coremod.setting." + key.getUniqueId().toString()));
-            pane.findPaneOfTypeByID("trigger", TextField.class).setHandler(input -> {
+        Loader.createFromXMLFile("minecolonies:gui/layouthuts/layoutintsetting.xml", (View) pane);
+        pane.findPaneOfTypeByID("id", Text.class).setText(key.getUniqueId().toString());
+        pane.findPaneOfTypeByID("desc", Text.class).setText(new TranslationTextComponent("com.minecolonies.coremod.setting." + key.getUniqueId().toString()));
+        pane.findPaneOfTypeByID("trigger", TextField.class).setHandler(input -> {
 
-                try
-                {
-                    this.value = Integer.parseInt(input.getText());
-                    settingsModuleView.trigger(key);
-                }
-                catch (final NumberFormatException ex)
-                {
-                    //Noop
-                }
-            });
-        }
+            try
+            {
+                this.value = Integer.parseInt(input.getText());
+                settingsModuleView.trigger(key);
+            }
+            catch (final NumberFormatException ex)
+            {
+                //Noop
+            }
+        });
+    }
 
+    @Override
+    public void render(final ISettingKey<?> key, final Pane pane, final ISettingsModuleView settingsModuleView, final IBuildingView building, final Window window)
+    {
         final TextField field = pane.findPaneOfTypeByID("trigger", TextField.class);
         if (!field.getText().equals(String.valueOf(this.value)))
         {

@@ -9,13 +9,13 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.HiringMode;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
+import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.colony.guardtype.registry.IGuardTypeDataManager;
 import com.minecolonies.api.colony.guardtype.registry.IGuardTypeRegistry;
 import com.minecolonies.api.colony.guardtype.registry.ModGuardTypes;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
-import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.entity.ai.statemachine.AIOneTimeEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -25,7 +25,8 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.client.gui.huts.WindowHutGuardTowerModule;
+import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
+import com.minecolonies.coremod.colony.buildings.modules.settings.*;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.colony.jobs.JobArcherTraining;
@@ -67,17 +68,23 @@ import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_W
 @SuppressWarnings({"squid:MaximumInheritanceDepth", "squid:S1448"})
 public abstract class AbstractBuildingGuards extends AbstractBuildingWorker implements IGuardBuilding
 {
+    /**
+     * Settings.
+     */
+    public static final ISettingKey<BoolSetting> RETREAT = new SettingKey<>(BoolSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "retreat"));
+    public static final ISettingKey<BoolSetting>       HIRE_TRAINEE = new SettingKey<>(BoolSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "hiretrainee"));
+    public static final ISettingKey<PatrolModeSetting> PATROL_MODE  = new SettingKey<>(PatrolModeSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "patrolmode"));
+    public static final ISettingKey<FollowModeSetting> FOLLOW_MODE  = new SettingKey<>(FollowModeSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "followmode"));
+    public static final ISettingKey<GuardTaskSetting> GUARD_TASK  = new SettingKey<>(GuardTaskSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "guardtask"));
+
+
+    //manual patroll. retreat, hire from training
+
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
-    private static final String NBT_TASK           = "TASK";
     private static final String NBT_JOB            = "guardType";
-    private static final String NBT_ASSIGN         = "assign";
-    private static final String NBT_RETRIEVE       = "retrieve";
-    private static final String NBT_PATROL         = "patrol";
-    private static final String NBT_TIGHT_GROUPING = "tightGrouping";
     private static final String NBT_PATROL_TARGETS = "patrol targets";
     private static final String NBT_TARGET         = "target";
     private static final String NBT_GUARD          = "guard";
-    private static final String NBT_RECRUIT        = "recruitTrainees";
     private static final String NBT_MINE_POS       = "minePos";
 
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
@@ -105,28 +112,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     private static final int BASE_VISION_RANGE = 15;
 
     /**
-     * Whether the guardType will be assigned manually.
-     */
-    private boolean assignManually = false;
-
-    /**
-     * Whether to retrieve the guard on low health.
-     */
-    private boolean retrieveOnLowHealth = true;
-
-    /**
-     * Whether to patrol manually or not.
-     */
-    protected boolean patrolManually = false;
-
-    protected static final boolean canGuardMine = true;
-
-    /**
-     * The task of the guard, following the {@link GuardTask} enum.
-     */
-    private GuardTask task = GuardTask.PATROL;
-
-    /**
      * The position at which the guard should guard at.
      */
     private BlockPos guardPos = this.getID();
@@ -152,19 +137,9 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     private ILocation rallyLocation;
 
     /**
-     * Indicates if in Follow mode what type of follow is use. True - tight grouping, false - lose grouping.
-     */
-    private boolean tightGrouping;
-
-    /**
      * A temporary next patrol point, which gets consumed and used once
      */
     protected BlockPos tempNextPatrolPoint = null;
-
-    /**
-     * Whether or not to hire from the trainee facilities
-     */
-    private boolean      hireTrainees = true;
 
     /**
      * Pathing future for the next patrol target.
@@ -287,24 +262,9 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     {
         super.deserializeNBT(compound);
 
-        task = GuardTask.values()[compound.getInt(NBT_TASK)];
         final ResourceLocation jobName = new ResourceLocation(compound.getString(NBT_JOB));
+        //todo we need a settings recovery here.
         job = IGuardTypeDataManager.getInstance().getFrom(jobName);
-        assignManually = compound.getBoolean(NBT_ASSIGN);
-        retrieveOnLowHealth = compound.getBoolean(NBT_RETRIEVE);
-        patrolManually = compound.getBoolean(NBT_PATROL);
-        if(compound.contains(NBT_RECRUIT))
-        {
-            hireTrainees = compound.getBoolean(NBT_RECRUIT);
-        }
-        if (compound.keySet().contains(NBT_TIGHT_GROUPING))
-        {
-            tightGrouping = compound.getBoolean(NBT_TIGHT_GROUPING);
-        }
-        else
-        {
-            tightGrouping = true;
-        }
 
         final ListNBT wayPointTagList = compound.getList(NBT_PATROL_TARGETS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < wayPointTagList.size(); ++i)
@@ -325,14 +285,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     public CompoundNBT serializeNBT()
     {
         final CompoundNBT compound = super.serializeNBT();
-
-        compound.putInt(NBT_TASK, task.ordinal());
         compound.putString(NBT_JOB, job == null ? "" : job.getRegistryName().toString());
-        compound.putBoolean(NBT_ASSIGN, assignManually);
-        compound.putBoolean(NBT_RETRIEVE, retrieveOnLowHealth);
-        compound.putBoolean(NBT_PATROL, patrolManually);
-        compound.putBoolean(NBT_TIGHT_GROUPING, tightGrouping);
-        compound.putBoolean(NBT_RECRUIT, hireTrainees);
 
         @NotNull final ListNBT wayPointTagList = new ListNBT();
         for (@NotNull final BlockPos pos : patrolTargets)
@@ -377,12 +330,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     public void serializeToView(@NotNull final PacketBuffer buf)
     {
         super.serializeToView(buf);
-        buf.writeBoolean(assignManually);
-        buf.writeBoolean(retrieveOnLowHealth);
-        buf.writeBoolean(patrolManually);
-        buf.writeBoolean(tightGrouping);
-        buf.writeBoolean(hireTrainees);
-        buf.writeInt(task.ordinal());
         buf.writeString(job == null ? "" : job.getRegistryName().toString());
         buf.writeInt(patrolTargets.size());
 
@@ -390,8 +337,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         {
             buf.writeBlockPos(pos);
         }
-
-        buf.writeBlockPos(guardPos);
 
         buf.writeInt(this.getAssignedCitizen().size());
         for (final ICitizenData citizen : this.getAssignedCitizen())
@@ -408,34 +353,12 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         {
             buf.writeBoolean(false);
         }
-        buf.writeBoolean(canGuardMine);
     }
 
-    /**
-     * Get the guard's {@link GuardTask}.
-     *
-     * @return The task of the guard.
-     */
     @Override
-    public GuardTask getTask()
+    public String getTask()
     {
-        return this.task;
-    }
-
-    /**
-     * Set the guard's {@link GuardTask}.
-     *
-     * @param task The task to set.
-     */
-    @Override
-    public void setTask(final GuardTask task)
-    {
-        this.task = task;
-        if (task != GuardTask.MINE)
-        {
-            this.setMinePos(null);
-        }
-        this.markDirty();
+        return this.getSetting(GUARD_TASK).getValue();
     }
 
     @Override
@@ -466,7 +389,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         boolean hiredFromTraining = false;
 
         // If we have no active worker, attempt to grab one from the appropriate trainer
-        if (hireTrainees && !isFull() && ((getBuildingLevel() > 0 && isBuilt()))
+        if (getSetting(HIRE_TRAINEE).getValue() && !isFull() && ((getBuildingLevel() > 0 && isBuilt()))
               && (this.getHiringMode() == HiringMode.DEFAULT && !this.getColony().isManualHiring() || this.getHiringMode() == HiringMode.AUTO))
         {
             ICitizenData trainingCitizen = null;
@@ -495,7 +418,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             super.onColonyTick(colony); 
         }
 
-        if (patrolTimer > 0 && task == GuardTask.PATROL)
+        if (patrolTimer > 0 && getSetting(GUARD_TASK).getValue().equals(GuardTaskSetting.PATROL))
         {
             patrolTimer--;
             if (patrolTimer <= 0 && !getAssignedCitizen().isEmpty())
@@ -573,7 +496,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             return lastPatrolPoint;
         }
 
-        if (!patrolManually || patrolTargets == null || patrolTargets.isEmpty())
+        if (!getSetting(PATROL_MODE).getValue().equals(PatrolModeSetting.MANUAL) || patrolTargets == null || patrolTargets.isEmpty())
         {
             BlockPos pos = null;
             if (this.pathingFuture != null && this.pathingFuture.isDone())
@@ -707,43 +630,19 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     @Override
     public boolean shallRetrieveOnLowHealth()
     {
-        return retrieveOnLowHealth;
-    }
-
-    @Override
-    public void setRetrieveOnLowHealth(final boolean retrieve)
-    {
-        this.retrieveOnLowHealth = retrieve;
+        return getSetting(RETREAT).getValue();
     }
 
     @Override
     public boolean shallPatrolManually()
     {
-        return patrolManually;
-    }
-
-    @Override
-    public void setPatrolManually(final boolean patrolManually)
-    {
-        this.patrolManually = patrolManually;
-    }
-
-    @Override
-    public void setAssignManually(final boolean assignManually)
-    {
-        this.assignManually = assignManually;
+        return getSetting(PATROL_MODE).getValue().equals(PatrolModeSetting.MANUAL);
     }
 
     @Override
     public boolean isTightGrouping()
     {
-        return tightGrouping;
-    }
-
-    @Override
-    public void setTightGrouping(final boolean tightGrouping)
-    {
-        this.tightGrouping = tightGrouping;
+        return getSetting(FOLLOW_MODE).getValue().equals(FollowModeSetting.TIGHT);
     }
 
     @Override
@@ -761,7 +660,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     @Override
     public BlockPos getPositionToFollow()
     {
-        if (task.equals(GuardTask.FOLLOW) && followPlayer != null)
+        if (getSetting(GUARD_TASK).getValue().equals(GuardTaskSetting.FOLLOW) && followPlayer != null)
         {
             return new BlockPos(followPlayer.getPositionVec());
         }
@@ -939,57 +838,14 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     }
 
     /**
-     * set hiring from training facilities
-     */
-    public void setHireTrainees(boolean hireTrainees)
-    {
-        this.hireTrainees = hireTrainees;
-    }
-
-    /**
      * The client view for the Guard building.
      */
     public static class View extends AbstractBuildingWorker.View
     {
         /**
-         * Assign the guardType manually, knight, guard, or *Other* (Future usage)
-         */
-        private boolean assignManually = false;
-
-        /**
-         * Retrieve the guard on low health.
-         */
-        private boolean retrieveOnLowHealth = false;
-
-        /**
-         * Patrol manually or automatically.
-         */
-        private boolean patrolManually = false;
-
-        /**
-         * The {@link GuardTask} of the guard.
-         */
-        private GuardTask task = GuardTask.PATROL;
-
-        /**
-         * Position the guard should guard.
-         */
-        private BlockPos guardPos = this.getID();
-
-        /**
          * The {@link GuardType} of the guard
          */
         private GuardType guardType = null;
-
-        /**
-         * Indicates whether tight grouping is use or lose grouping.
-         */
-        private boolean tightGrouping = true;
-
-        /**
-         * Indicates whether to hire from trainee facilities first
-         */
-        private boolean hireTrainees = true;
 
         /**
          * The list of manual patrol targets.
@@ -1003,11 +859,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
          * Location of the assigned mine
          */
         private BlockPos minePos;
-
-        /**
-         * If the building can guard mines
-         */
-        protected boolean canGuardMine;
 
         /**
          * The client view constructor for the AbstractGuardBuilding.
@@ -1029,7 +880,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         @Override
         public Window getWindow()
         {
-            return new WindowHutGuardTowerModule(this);
+            return new WindowHutWorkerModulePlaceholder<>(this, getSchematicName());
         }
 
         /**
@@ -1047,13 +898,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         public void deserialize(@NotNull final PacketBuffer buf)
         {
             super.deserialize(buf);
-            assignManually = buf.readBoolean();
-            retrieveOnLowHealth = buf.readBoolean();
-            patrolManually = buf.readBoolean();
-            tightGrouping = buf.readBoolean();
-            hireTrainees = buf.readBoolean();
 
-            task = GuardTask.values()[buf.readInt()];
             final ResourceLocation jobId = new ResourceLocation(buf.readString(32767));
             guardType = IGuardTypeRegistry.getInstance().getValue(jobId);
 
@@ -1064,8 +909,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             {
                 patrolTargets.add(buf.readBlockPos());
             }
-
-            guardPos = buf.readBlockPos();
 
             guards.clear();
             final int numResidents = buf.readInt();
@@ -1082,8 +925,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             {
                 minePos = null;
             }
-
-            canGuardMine = buf.readBoolean();
         }
 
         @NotNull
@@ -1100,101 +941,9 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             return getGuardType().getSecondarySkill();
         }
 
-        public void setAssignManually(final boolean assignManually)
-        {
-            this.assignManually = assignManually;
-        }
-
-        public boolean isAssignManually()
-        {
-            return assignManually;
-        }
-
-        public void setRetrieveOnLowHealth(final boolean retrieveOnLowHealth)
-        {
-            this.retrieveOnLowHealth = retrieveOnLowHealth;
-        }
-
-        public boolean isRetrieveOnLowHealth()
-        {
-            return retrieveOnLowHealth;
-        }
-
-        /**
-         * Set whether to use tight grouping or lose grouping.
-         *
-         * @param tightGrouping - indicates if you are using tight grouping
-         */
-        public void setTightGrouping(final boolean tightGrouping)
-        {
-            this.tightGrouping = tightGrouping;
-        }
-
-        /**
-         * Returns whether tight grouping in Follow mode is being used.
-         *
-         * @return whether tight grouping is being used.
-         */
-        public boolean isTightGrouping()
-        {
-            return tightGrouping;
-        }
-
-        /**
-         * Is hiring from training facilities enabled
-         * @return
-         */
-        public boolean isHireTrainees()
-        {
-            return hireTrainees;
-        }
-
-        /**
-         * Set whether or not to hire from training facilities
-         */
-        public void setHireTrainees(final boolean hireTrainees)
-        {
-            this.hireTrainees = hireTrainees;
-        }
-
-        public void setPatrolManually(final boolean patrolManually)
-        {
-            this.patrolManually = patrolManually;
-        }
-
-        public boolean isPatrolManually()
-        {
-            return patrolManually;
-        }
-
-        public void setTask(final GuardTask task)
-        {
-            this.task = task;
-            if (task != GuardTask.MINE)
-            {
-                this.setMinePos(null);
-            }
-            this.getColony().markDirty();
-        }
-
-        public GuardTask getTask()
-        {
-            return task;
-        }
-
-        public BlockPos getGuardPos()
-        {
-            return guardPos;
-        }
-
         public GuardType getGuardType()
         {
             return guardType;
-        }
-
-        public void setGuardType(final GuardType job)
-        {
-            this.guardType = job;
         }
 
         public List<BlockPos> getPatrolTargets()
@@ -1213,10 +962,5 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
          * @param pos the position of the mine
          */
         public void setMinePos(BlockPos pos) { this.minePos = pos; }
-
-        public Boolean canGuardMine()
-        {
-            return canGuardMine;
-        }
     }
 }

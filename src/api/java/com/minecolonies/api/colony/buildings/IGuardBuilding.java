@@ -2,7 +2,6 @@ package com.minecolonies.api.colony.buildings;
 
 import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
-import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
@@ -37,18 +36,11 @@ public interface IGuardBuilding extends IBuildingWorker
     }
 
     /**
-     * Get the guard's {@link GuardTask}.
+     * Get the guard's task.
      *
      * @return The task of the guard.
      */
-    GuardTask getTask();
-
-    /**
-     * Set the guard's {@link GuardTask}.
-     *
-     * @param task The task to set.
-     */
-    void setTask(GuardTask task);
+    String getTask();
 
     /**
      * Returns a patrolTarget to patrol to.
@@ -93,14 +85,6 @@ public interface IGuardBuilding extends IBuildingWorker
      * @return if so.
      */
     boolean shallRetrieveOnLowHealth();
-
-    /**
-     * Set the guard's RetrieveOnLowHealth.
-     *
-     * @param retrieve true if retrieve.
-     */
-    void setRetrieveOnLowHealth(boolean retrieve);
-
     /**
      * Get whether the guard should patrol manually.
      *
@@ -109,32 +93,11 @@ public interface IGuardBuilding extends IBuildingWorker
     boolean shallPatrolManually();
 
     /**
-     * Set whether the guard should patrol manually.
-     *
-     * @param patrolManually true if manual.
-     */
-    void setPatrolManually(boolean patrolManually);
-
-    /**
-     * Set whether the player is assigning guards manually.
-     *
-     * @param assignManually true if so
-     */
-    void setAssignManually(boolean assignManually);
-
-    /**
      * Returns whether tight grouping in Follow mode is being used.
      *
      * @return whether tight grouping is being used.
      */
     boolean isTightGrouping();
-
-    /**
-     * Set whether to use tight grouping or lose grouping.
-     *
-     * @param tightGrouping - indicates if you are using tight grouping
-     */
-    void setTightGrouping(boolean tightGrouping);
 
     /**
      * Get the position the guard should guard.

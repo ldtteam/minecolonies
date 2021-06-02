@@ -86,7 +86,7 @@ public class BuildingGuardTower extends AbstractBuildingGuards
     @Override
     public boolean requiresManualTarget()
     {
-        return (!patrolManually || patrolTargets == null || patrolTargets.isEmpty() || tempNextPatrolPoint != null) && tempNextPatrolPoint == null;
+        return (!shallPatrolManually() || patrolTargets == null || patrolTargets.isEmpty() || tempNextPatrolPoint != null) && tempNextPatrolPoint == null;
     }
 
     @Override
