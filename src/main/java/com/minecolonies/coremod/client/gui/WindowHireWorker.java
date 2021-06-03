@@ -192,10 +192,31 @@ public class WindowHireWorker extends AbstractWindowSkeleton
         final int id = citizens.get(row).getId();
         @NotNull final ICitizenDataView citizen = citizens.get(row);
 
+        if (citizen.getWorkBuilding() != null) {
+            AbstractBuildingWorker.View other_building = (AbstractBuildingWorker.View) colony.getBuilding(citizen.getWorkBuilding());
+            other_building.removeWorkerId(id);
+            Network.getNetwork().sendToServer(new HireFireMessage(other_building, false, id));
+        }
+
         building.addWorkerId(id);
         Network.getNetwork().sendToServer(new HireFireMessage(this.building, true, id));
         citizen.setWorkBuilding(building.getPosition());
         onOpened();
+    }
+
+    /**
+     * Value to sort citizens in a WindowHireWorker
+     * current employees -> no job -> library/training -> other job
+     */
+    protected int getCitizenPriority(ICitizenDataView citizen) {
+        if (building.getPosition().equals(citizen.getWorkBuilding()))
+            return 0;
+        else if (citizen.getWorkBuilding() == null)
+            return 1;
+        else if (colony.getBuilding(citizen.getWorkBuilding()) instanceof IBuildingCanBeHiredFrom)
+            return 2;
+        else
+            return 3;
     }
 
     /**
@@ -208,16 +229,8 @@ public class WindowHireWorker extends AbstractWindowSkeleton
         //Removes all citizens which already have a job.
         citizens = colony.getCitizens().values().stream()
                      .filter(citizen -> !citizen.isChild())
-                     .filter(citizen ->  citizen.getWorkBuilding() == null || building.getPosition().equals(citizen.getWorkBuilding()) || colony.getBuilding(citizen.getWorkBuilding()) instanceof IBuildingCanBeHiredFrom).sorted(Comparator.comparing(ICitizenDataView::getName))
+                     .sorted(Comparator.comparing(this::getCitizenPriority).thenComparing(ICitizenDataView::getName))
                      .collect(Collectors.toList());
-
-        citizens.sort(
-                (c1, c2) -> {
-                    int i1 = building.getPosition().equals(c1.getWorkBuilding()) ? -1 : 0;
-                    int i2 = building.getPosition().equals(c2.getWorkBuilding()) ? -1 : 0;
-                    return Integer.compare(i1, i2);
-            }
-        );
     }
 
     /**
@@ -255,7 +268,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
 
                 final Button isPaused = rowPane.findPaneOfTypeByID(BUTTON_PAUSE, Button.class);
 
-                if ((citizen.getWorkBuilding() == null|| colony.getBuilding(citizen.getWorkBuilding()) instanceof IBuildingCanBeHiredFrom) && building.canAssign(citizen) && (building.getWorkerId().size() < building.getMaxInhabitants()) && !building.getWorkerId().contains(citizen.getId()))
+                if (!building.getPosition().equals(citizen.getWorkBuilding()) && building.canAssign(citizen) && (building.getWorkerId().size() < building.getMaxInhabitants()) && !building.getWorkerId().contains(citizen.getId()))
                 {
                     rowPane.findPaneOfTypeByID(BUTTON_FIRE, Button.class).off();
                     rowPane.findPaneOfTypeByID(BUTTON_DONE, Button.class).on();
