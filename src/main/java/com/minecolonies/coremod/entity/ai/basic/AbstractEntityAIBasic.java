@@ -20,7 +20,6 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.AIBlockingEventType;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.inventory.InventoryCitizen;
-import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.IToolType;
@@ -34,6 +33,7 @@ import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.Block;
+import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tags.BlockTags;
@@ -691,34 +691,19 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      * Check all chests in the workers hut for a required item.
      *
      * @param is the type of item requested (amount is ignored)
-     * @return true if a stack of that type was found
+     * @return true if a stack of that type was found and transferred.
      */
-    public boolean isInHut(@Nullable final ItemStack is)
+    public boolean checkAndTransferFromHut(@Nullable final ItemStack is)
     {
         @Nullable final IBuildingWorker building = getOwnBuilding();
-
-        boolean hasItem;
-        if (building != null)
+        for (final BlockPos pos : building.getContainers())
         {
-            for (final BlockPos pos : building.getContainers())
+            final TileEntity entity = world.getTileEntity(pos);
+            if (entity instanceof TileEntityRack && ((TileEntityRack) entity).hasItemStack(is, 1, false))
             {
-                final TileEntity entity = world.getTileEntity(pos);
-                if (entity instanceof TileEntityRack)
-                {
-                    if (((TileEntityRack) entity).hasItemStack(is, 1, false))
-                    {
-                        return true;
-                    }
-                }
-                else if (entity instanceof ChestTileEntity)
-                {
-                    hasItem = isInTileEntity(entity, is);
-
-                    if (hasItem)
-                    {
-                        return true;
-                    }
-                }
+                entity.getCapability(ITEM_HANDLER_CAPABILITY, null)
+                      .ifPresent((handler) ->  InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(handler, (stack) -> ItemStackUtils.compareItemStacksIgnoreStackSize(is, stack), getInventory()));
+                return true;
             }
         }
 
@@ -734,31 +719,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     protected final boolean walkToBlock(@NotNull final BlockPos stand)
     {
         return walkToBlock(stand, DEFAULT_RANGE_FOR_DELAY);
-    }
-
-    public boolean isInTileEntity(final AbstractTileEntityColonyBuilding entity, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
-    {
-        return isInTileEntity((TileEntity) entity, itemStackSelectionPredicate);
-    }
-
-    /**
-     * Finds the first @see ItemStack the type of {@code is}. It will be taken from the chest and placed in the worker inventory. Make sure that the worker stands next the chest to
-     * not break immersion. Also make sure to have inventory space for the stack.
-     *
-     * @param entity the tileEntity chest or building or rack.
-     * @param is     the itemStack.
-     * @return true if found the stack.
-     */
-    public boolean isInTileEntity(final TileEntity entity, final ItemStack is)
-    {
-        // TODO: is the itemstack size relevant?
-        return is != null
-                 && InventoryFunctions
-                      .matchFirstInProviderWithAction(
-                        entity,
-                        stack -> !ItemStackUtils.isEmpty(stack) && ItemStackUtils.compareItemStacksIgnoreStackSize(is, stack, true, true),
-                        this::takeItemStackFromProvider
-                      );
     }
 
     /**
@@ -791,29 +751,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     private void workOnBlock(@Nullable final BlockPos target, final int timeout)
     {
         this.currentWorkingLocation = target;
-    }
-
-    public boolean isInTileEntity(final AbstractTileEntityColonyBuilding entity, final ItemStack is)
-    {
-        return isInTileEntity((TileEntity) entity, is);
-    }
-
-    /**
-     * Finds the first @see ItemStack the type of {@code is}. It will be taken from the chest and placed in the worker inventory. Make sure that the worker stands next the chest to
-     * not break immersion. Also make sure to have inventory space for the stack.
-     *
-     * @param entity                      the tileEntity chest or building.
-     * @param itemStackSelectionPredicate the criteria.
-     * @return true if found the stack.
-     */
-    public boolean isInTileEntity(final TileEntity entity, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
-    {
-        return InventoryFunctions
-                 .matchFirstInProviderWithAction(
-                   entity,
-                   itemStackSelectionPredicate,
-                   this::takeItemStackFromProvider
-                 );
     }
 
     /**

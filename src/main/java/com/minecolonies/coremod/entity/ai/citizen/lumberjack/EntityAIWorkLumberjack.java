@@ -747,7 +747,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
 
         final int saplingSlot = findSaplingSlot();
         final BlockPos dirtLocation = new BlockPos(location.getX(), location.getY() - 1, location.getZ());
-        final Block dirt = world.getBlockState(dirtLocation).getBlock();
 
         if (saplingSlot != -1)
         {
@@ -783,7 +782,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
 
         if (timeWaited >= MAX_WAITING_TIME / 2 && !checkedInHut && !walkToBuilding())
         {
-            isInHut(job.getTree().getSapling());
+            checkAndTransferFromHut(job.getTree().getSapling());
             checkedInHut = true;
         }
 

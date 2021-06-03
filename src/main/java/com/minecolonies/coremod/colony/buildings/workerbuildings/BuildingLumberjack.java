@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
@@ -10,6 +11,7 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingPublicCrafter;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -128,42 +130,10 @@ public class BuildingLumberjack extends AbstractBuildingCrafter implements IBuil
     public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
     {
         final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep = new HashMap<>(super.getRequiredItemsAndAmount());
-
-        if (getMainCitizen() != null && getMainCitizen().getInventory() != null)
+        for (final ItemStorage sapling : IColonyManager.getInstance().getCompatibilityManager().getCopyOfSaplings())
         {
-            final int invSIze = getMainCitizen().getInventory().getSlots();
-            int keptStacks = 0;
-            for (int i = 0; i < invSIze; i++)
-            {
-                final ItemStack stack = getMainCitizen().getInventory().getStackInSlot(i);
-
-                if (ItemStackUtils.isEmpty(stack) || !ItemStackUtils.isStackSapling(stack))
-                {
-                    continue;
-                }
-
-                boolean isAlreadyInList = false;
-                for (final Map.Entry<Predicate<ItemStack>, Tuple<Integer, Boolean>> entry : toKeep.entrySet())
-                {
-                    if (entry.getKey().test(stack))
-                    {
-                        isAlreadyInList = true;
-                    }
-                }
-
-                if (!isAlreadyInList)
-                {
-                    toKeep.put(stack::isItemEqual, new Tuple<>(com.minecolonies.api.util.constant.Constants.STACKSIZE, true));
-                    keptStacks++;
-
-                    if (keptStacks >= getMaxBuildingLevel() * 2)
-                    {
-                        return toKeep;
-                    }
-                }
-            }
+            toKeep.put(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(sapling.getItemStack(), stack), new Tuple<>(com.minecolonies.api.util.constant.Constants.STACKSIZE, true));
         }
-
         return toKeep;
     }
 
