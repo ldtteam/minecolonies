@@ -40,7 +40,7 @@ public class PathJobFindTree extends AbstractPathJob
     /**
      * The list of trees the Lumberjack is supposed to cut.
      */
-    private final List<ItemStorage> treesToNotCut;
+    private final List<ItemStorage> excludedTrees;
 
     /**
      * The Colony the tree is in.
@@ -73,7 +73,7 @@ public class PathJobFindTree extends AbstractPathJob
       final LivingEntity entity)
     {
         super(world, start, start, range, new TreePathResult(), entity);
-        this.treesToNotCut = treesToCut;
+        this.excludedTrees = treesToCut;
         this.hutLocation = home;
         this.colony = colony;
         this.boxCenter = null;
@@ -87,7 +87,7 @@ public class PathJobFindTree extends AbstractPathJob
      * @param home             the position of the worker hut.
      * @param startRestriction start of the restricted area.
      * @param endRestriction   end of the restricted area.
-     * @param treesToCut       the trees the lj is supposed to cut.
+     * @param excludedTrees       the trees the lj is not supposed to cut.
      * @param entity           the entity.
      * @param colony           the colony.
      */
@@ -98,7 +98,7 @@ public class PathJobFindTree extends AbstractPathJob
       final BlockPos startRestriction,
       final BlockPos endRestriction,
       final BlockPos furthestRestriction,
-      final List<ItemStorage> treesToCut,
+      final List<ItemStorage> excludedTrees,
       final IColony colony,
       final LivingEntity entity)
     {
@@ -111,7 +111,7 @@ public class PathJobFindTree extends AbstractPathJob
             false,
             new TreePathResult(),
             entity);
-        this.treesToNotCut = treesToCut;
+        this.excludedTrees = excludedTrees;
         this.hutLocation = home;
         this.colony = colony;
 
@@ -154,7 +154,7 @@ public class PathJobFindTree extends AbstractPathJob
 
     private boolean isTree(final BlockPos pos)
     {
-        if (Tree.checkTree(world, pos, treesToNotCut) && Tree.checkIfInColonyAndNotInBuilding(pos, colony))
+        if (Tree.checkTree(world, pos, excludedTrees) && Tree.checkIfInColonyAndNotInBuilding(pos, colony))
         {
             getResult().treeLocation = pos;
             return true;

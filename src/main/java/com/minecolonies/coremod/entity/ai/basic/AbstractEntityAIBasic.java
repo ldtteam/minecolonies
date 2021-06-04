@@ -688,7 +688,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     }
 
     /**
-     * Check all chests in the workers hut for a required item.
+     * Check all racks in the workers hut for a required item.
+     * Transfer to worker if found.
      *
      * @param is the type of item requested (amount is ignored)
      * @return true if a stack of that type was found and transferred.

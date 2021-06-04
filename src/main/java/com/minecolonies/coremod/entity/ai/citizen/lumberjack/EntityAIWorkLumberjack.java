@@ -746,7 +746,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.planting"));
 
         final int saplingSlot = findSaplingSlot();
-        final BlockPos dirtLocation = new BlockPos(location.getX(), location.getY() - 1, location.getZ());
 
         if (saplingSlot != -1)
         {
