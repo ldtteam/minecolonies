@@ -3,9 +3,7 @@ package com.minecolonies.apiimp.initializer;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.ModBuildings;
-import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.items.ModItems;
-import com.minecolonies.coremod.client.gui.huts.WindowHutBuilderModule;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.modules.settings.BoolSetting;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
@@ -24,11 +22,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.registries.IForgeRegistry;
 
-import java.util.Set;
-
 import static com.minecolonies.api.util.constant.BuildingConstants.FLORIST_FLOWER_LIST;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
-import static com.minecolonies.api.util.ItemStackUtils.ISCOOKABLE;
 import static com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser.FUEL_LIST;
 import static com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook.FOOD_EXCLUSION_LIST;
 import static com.minecolonies.coremod.entity.ai.citizen.composter.EntityAIWorkComposter.COMPOSTABLE_LIST;
@@ -135,12 +130,7 @@ public final class ModBuildingsInitializer
                               .addBuildingModuleProducer(() -> new ItemListModule(FUEL_LIST), () -> new ItemListModuleView(FUEL_LIST, COM_MINECOLONIES_REQUESTS_BURNABLE, false,
                                 (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getFuel()))
                               .addBuildingModuleProducer(() -> new ItemListModule(FOOD_EXCLUSION_LIST), () -> new ItemListModuleView(FOOD_EXCLUSION_LIST, COM_MINECOLONIES_REQUESTS_FOOD, true,
-                                (buildingView) ->
-                                {
-                                    Set<ItemStorage> edibles = IColonyManager.getInstance().getCompatibilityManager().getEdibles();
-                                    edibles.removeIf(item -> ISCOOKABLE.test(item.getItemStack()));
-                                    return edibles;
-                                }))
+                                (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getEdibles()))
                               .addBuildingModuleViewProducer(CrafterTaskModuleView::new)
                               .createBuildingEntry();
 
