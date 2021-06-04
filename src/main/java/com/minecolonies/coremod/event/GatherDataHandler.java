@@ -14,6 +14,7 @@ public class GatherDataHandler
     public static void dataGeneratorSetup(final GatherDataEvent event)
     {
         final DataGenerator generator = event.getGenerator();
+        generator.addProvider(new HutBlockSchematicProvider(generator));
         generator.addProvider(new DefaultBlockLootTableProvider(generator));
         generator.addProvider(new DefaultSoundProvider(generator));
         generator.addProvider(new DefaultResearchProvider(generator));
