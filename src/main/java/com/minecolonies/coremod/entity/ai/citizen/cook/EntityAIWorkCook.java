@@ -354,7 +354,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
                     return null;
                 }
             }
-            return new Food(STACKSIZE, new ArrayList<>(allowedItems));
+            return new Food(STACKSIZE, allowedItems);
         }
         return new Food(STACKSIZE);
     }
