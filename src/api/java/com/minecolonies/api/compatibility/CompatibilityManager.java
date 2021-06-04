@@ -3,7 +3,6 @@ package com.minecolonies.api.compatibility;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.minecolonies.api.MinecoloniesAPIProxy;
-import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.compatibility.dynamictrees.DynamicTreeCompat;
 import com.minecolonies.api.compatibility.tinkers.SlimeTreeCheck;
 import com.minecolonies.api.compatibility.tinkers.TinkersToolHelper;
@@ -732,18 +731,6 @@ public class CompatibilityManager implements ICompatibilityManager
         {
             Compatibility.dynamicTreesCompat = new DynamicTreeCompat();
         }
-    }
-
-    /**
-     * Gets all the possible foods for the cook.
-     * 
-     * @return a set of the foods.
-     */
-    public static Set<ItemStorage> getAllFoods()
-    {
-         Set<ItemStorage> edibles = IColonyManager.getInstance().getCompatibilityManager().getEdibles();
-         edibles.removeIf(item -> ISCOOKABLE.test(item.getItemStack()));
-         return edibles;
     }
 
     /**

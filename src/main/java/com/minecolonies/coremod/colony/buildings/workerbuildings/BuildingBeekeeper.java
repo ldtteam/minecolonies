@@ -21,7 +21,6 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobBeekeeper;
 
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
@@ -242,8 +241,7 @@ public class BuildingBeekeeper extends AbstractBuildingWorker
     public Set<Item> getAllowedFlowers()
     {
         return getModuleMatching(ItemListModule.class, m -> m.getId().equals(BUILDING_FLOWER_LIST)).getList().stream()
-                     .map(ItemStorage::getItemStack)
-                     .map(ItemStack::getItem)
+                     .map(ItemStorage::getItem)
                      .collect(Collectors.toSet());
     }
 
