@@ -475,7 +475,7 @@ public class Tree
      * Check if the Lj is supposed to cut a tree.
      *
      * @param world         the world it is in.
-     * @param treesToNotCut the trees he is supposed to cut.
+     * @param treesToNotCut the trees he is not supposed to cut.
      * @param leafPos       the position a leaf is at.
      * @return false if not.
      */
