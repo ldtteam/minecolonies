@@ -4,12 +4,14 @@ import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.requestsystem.requestable.StackList;
 import com.minecolonies.api.compatibility.Compatibility;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TranslationConstants;
+import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBeekeeper;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.JobBeekeeper;
@@ -36,6 +38,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.api.util.constant.BuildingConstants.BUILDING_FLOWER_LIST;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
@@ -157,13 +160,14 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
             checkIfRequestForItemExistOrCreateAsynch(new ItemStack(Items.GLASS_BOTTLE));
         }
 
-        Set<Item> allowedFlowers = getOwnBuilding().getAllowedFlowers();
-        if (!InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), (stack) -> allowedFlowers.contains(stack.getItem()))
-              && !InventoryUtils.hasItemInProvider(getOwnBuilding(), (stack) -> allowedFlowers.contains(stack.getItem()))
+        List<ItemStorage> allowedFlowers = getOwnBuilding().getModuleMatching(ItemListModule.class, m -> m.getId().equals(BUILDING_FLOWER_LIST)).getList();;
+        if (!InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), (stack) -> allowedFlowers.contains(new ItemStorage(stack)))
+              && InventoryUtils.getCountFromBuilding(getOwnBuilding(), allowedFlowers) == 0
               && !getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(StackList.class)))
         {
             worker.getCitizenData().createRequestAsync(new StackList(allowedFlowers.stream()
-                                                                                   .map((item) -> new ItemStack(item, 16))
+                                                                                   .map((item) -> item.getItemStack())
+                                                                                   .peek((stack) -> stack.setCount(16))
                                                                                    .collect(Collectors.toList()), COM_MINECOLONIES_COREMOD_REQUEST_FLOWERS, 16, 1));
         }
 
@@ -204,7 +208,8 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
             return DECIDE;
         }
 
-        if (getOwnBuilding().getAllowedFlowers().isEmpty())
+        ItemListModule flowersModule = getOwnBuilding().getModuleMatching(ItemListModule.class, m -> m.getId().equals(BUILDING_FLOWER_LIST));
+        if (flowersModule.getList().isEmpty())
         {
             worker.getCitizenData().triggerInteraction(new StandardInteraction(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_BEEKEEPER_NOFLOWERS), ChatPriority.BLOCKING));
             setDelay(NO_FLOWERS_DELAY);
@@ -261,8 +266,8 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
                                              .count();
 
         final boolean hasBreedingItem =
-          InventoryUtils.hasItemInItemHandler((worker.getInventoryCitizen()),
-            (ItemStack stack) -> getOwnBuilding().getAllowedFlowers().contains(stack.getItem()));
+          InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(),
+            (stack) -> flowersModule.isItemInList(new ItemStorage(stack)));
 
         if (getOwnBuilding().getSetting(BuildingBeekeeper.BREEDING).getValue() && !hasMaxAnimals(bees) && breedableAnimals >= NUM_OF_ANIMALS_TO_BREED && hasBreedingItem)
         {
@@ -513,8 +518,9 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
     {
         if (checkIfRequestForTagExistOrCreateAsynch(ItemTags.FLOWERS, 2))
         {
+            ItemListModule flowersModule = getOwnBuilding().getModuleMatching(ItemListModule.class, m -> m.getId().equals(BUILDING_FLOWER_LIST));
             worker.getCitizenItemHandler()
-              .setHeldItem(hand, InventoryUtils.findFirstSlotInItemHandlerWith(getInventory(), stack -> getOwnBuilding().getAllowedFlowers().contains(stack.getItem())));
+              .setHeldItem(hand, InventoryUtils.findFirstSlotInItemHandlerWith(getInventory(), stack -> flowersModule.isItemInList(new ItemStorage(stack))));
             return true;
         }
         return false;
