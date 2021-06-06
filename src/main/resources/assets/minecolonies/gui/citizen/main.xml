@@ -1,21 +1,20 @@
-<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="190 244"
-        xsi:noNamespaceSchemaLocation="file:../../../../../../api/java/com/minecolonies/blockout/blockOut.xsd">
-    <image source="minecolonies:textures/gui/citizen/colonist_paper_sketch.png" size="190 244"/>
+<window size="210 244" pause="false" lightbox="false">
+    <layout source="minecolonies:gui/citizen/nav.xml"/>
 
-    <label id="name" size="164 11" color="black" pos="13 14" textalign="MIDDLE"/>
-    <image id="deco1" size="82 16" source="minecolonies:textures/gui/citizen/colonist_text_decor_down.png" pos="54 29"/>
+    <label id="name" size="164 11" color="black" pos="33 14" textalign="MIDDLE"/>
+    <image id="deco1" size="82 16" source="minecolonies:textures/gui/citizen/colonist_text_decor_down.png" pos="74 29"/>
 
-    <view id="healthBar" size="120 11" pos="35 42">
-        <label id="healthLabel" size="30 11" color="black" pos="115 10" text="44"/>
+    <view id="healthBar" size="120 11" pos="55 42">
+        <label id="healthLabel" size="30 11" color="black" pos="135 10" text="44"/>
     </view>
-    <view id="saturationBar" size="120 22" pos="35 54"/>
-    <view id="happinessBar" size="120 11" pos="35 75"/>
-    <label id="happinessLabel" size="30 11" color="black" pos="150 84"/>
+    <view id="saturationBar" size="120 22" pos="55 54"/>
+    <view id="happinessBar" size="120 11" pos="55 75"/>
+    <label id="happinessLabel" size="30 11" color="black" pos="170 84"/>
 
-    <label id="title" pos="13 104" size="69 11" color="black" textalign="MIDDLE_RIGHT"
+    <label id="title" pos="33 104" size="69 11" color="black" textalign="MIDDLE_RIGHT"
            label="§l$(com.minecolonies.coremod.gui.citizen.skills)"/>
 
-    <scrollgroup pos="13 117" size="105 100">
+    <scrollgroup pos="33 117" size="105 100">
         <view size="100% 13">
             <label pos="0 1" size="68 12" color="black" textalign="MIDDLE_RIGHT" label="$(com.minecolonies.coremod.gui.citizen.skills.athletics)"/>
             <image pos="70 2" size="9 9" onHoverId="athletics_bts" source="minecolonies:textures/entity/skills/small/athletics.png"/>
@@ -117,9 +116,9 @@
         </view>
     </scrollgroup>
 
-    <image id="statusicon" size="30 30" pos="138 110"/>
-    <image id="deco4" size="15 49" pos="137 194"
+    <image id="statusicon" size="30 30" pos="158 110"/>
+    <image id="deco4" size="15 49" pos="157 194"
            source="minecolonies:textures/gui/citizen/colonist_decor_up_ribbon_smaller.png"/>
-    <image id="gender" size="30 30" pos="130 189"
+    <image id="gender" size="30 30" pos="150 189"
            source="minecolonies:textures/gui/citizen/colonist_wax_male_smaller.png"/>
 </window>

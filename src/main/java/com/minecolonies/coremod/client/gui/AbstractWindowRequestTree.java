@@ -16,6 +16,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.client.gui.citizen.MainWindowCitizen;
 import com.minecolonies.coremod.colony.requestsystem.requesters.IBuildingBasedRequester;
 import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests;
 import com.minecolonies.coremod.network.messages.server.colony.UpdateRequestStateMessage;
@@ -110,7 +111,7 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
     {
         super.onOpened();
 
-        if (building != null)
+        if (building != null && resourceList != null)
         {
             updateRequests();
         }
@@ -415,7 +416,7 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
                 }
             }
 
-            if (this instanceof WindowCitizen && !((WindowCitizen) this).getCitizen().getInventory().hasSpace())
+            if (this instanceof MainWindowCitizen && !((MainWindowCitizen) this).getCitizen().getInventory().hasSpace())
             {
                 return false;
             }

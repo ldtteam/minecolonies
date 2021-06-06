@@ -1,47 +1,33 @@
-package com.minecolonies.coremod.client.gui;
+package com.minecolonies.coremod.client.gui.citizen;
 
-import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockout.Alignment;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.PaneBuilders;
-import com.ldtteam.blockout.controls.*;
-import com.ldtteam.blockout.views.SwitchView;
+import com.ldtteam.blockout.controls.Image;
+import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.View;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.ICitizenDataView;
-import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.colony.requestsystem.request.IRequest;
-import com.minecolonies.api.colony.requestsystem.request.RequestState;
-import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.entity.citizen.Skill;
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.HappinessConstants;
-import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.client.gui.AbstractWindowSkeleton;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLibrary;
-import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMessage;
-import com.minecolonies.coremod.network.messages.server.colony.UpdateRequestStateMessage;
-import com.minecolonies.coremod.network.messages.server.colony.citizen.AdjustSkillCitizenMessage;
-import com.minecolonies.coremod.network.messages.server.colony.citizen.TransferItemsToCitizenRequestMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.text.*;
-import net.minecraftforge.items.wrapper.InvWrapper;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
-import java.util.function.Predicate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_CANT_TAKE_EQUIPPED;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 import static com.minecolonies.coremod.client.gui.modules.WindowBuilderResModule.BLACK;
 import static com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenExperienceHandler.PRIMARY_DEPENDENCY_SHARE;
@@ -50,17 +36,15 @@ import static com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenExp
 /**
  * Window for the citizen.
  */
-public class WindowCitizen extends AbstractWindowRequestTree
+public class CitizenWindowUtils
 {
     /**
-     * The citizenData.View object.
+     * Private con to hide public.
      */
-    private final ICitizenDataView citizen;
-
-    /**
-     * Tick function for updating every second.
-     */
-    private int tick = 0;
+    private CitizenWindowUtils()
+    {
+        // Intentionally left empty.
+    }
 
     /**
      * Enum for the available hearts
@@ -100,93 +84,6 @@ public class WindowCitizen extends AbstractWindowRequestTree
             }
             this.prevHeart = prevHeart;
         }
-    }
-
-    /**
-     * Inventory of the player.
-     */
-    private final PlayerInventory inventory = this.mc.player.inventory;
-
-    /**
-     * Is the player in creative or not.
-     */
-    private final boolean isCreative = this.mc.player.isCreative();
-
-    /**
-     * Constructor to initiate the citizen windows.
-     *
-     * @param citizen citizen to bind the window to.
-     */
-    public WindowCitizen(final ICitizenDataView citizen)
-    {
-        super(citizen.getWorkBuilding(),
-          Constants.MOD_ID + CITIZEN_RESOURCE_SUFFIX,
-          IColonyManager.getInstance().getColonyView(citizen.getColonyId(), Minecraft.getInstance().world.getDimensionKey()));
-        this.citizen = citizen;
-
-        final Image statusIcon = findPaneOfTypeByID(STATUS_ICON, Image.class);
-        if (citizen.getVisibleStatus() == null)
-        {
-            statusIcon.setVisible(false);
-        }
-        else
-        {
-            statusIcon.setImage(citizen.getVisibleStatus().getIcon());
-            PaneBuilders.tooltipBuilder()
-                .append(new StringTextComponent(citizen.getVisibleStatus().getTranslatedText()))
-                .hoverPane(statusIcon)
-                .build();
-        }
-
-        updateJobPage(citizen, this, colony);
-    }
-
-    public ICitizenDataView getCitizen()
-    {
-        return citizen;
-    }
-
-    @Override
-    public boolean canFulFill()
-    {
-        return true;
-    }
-
-    @Override
-    public void onUpdate()
-    {
-        super.onUpdate();
-
-        if (tick++ == 20)
-        {
-            tick = 0;
-            createSkillContent(citizen, this);
-        }
-    }
-
-    /**
-     * Called when the gui is opened by an player.
-     */
-    @Override
-    public void onOpened()
-    {
-        super.onOpened();
-        findPaneOfTypeByID(WINDOW_ID_NAME, Text.class).setText(citizen.getName());
-
-        createHealthBar(citizen, findPaneOfTypeByID(WINDOW_ID_HEALTHBAR, View.class));
-        createSaturationBar(citizen, this);
-        createHappinessBar(citizen, this);
-        createSkillContent(citizen, this);
-        updateHappiness(citizen, this);
-
-        //Tool of class:§rwith minimal level:§rWood or Gold§r and§rwith maximal level:§rWood or Gold§r
-
-        if (citizen.isFemale())
-        {
-            findPaneOfTypeByID(WINDOW_ID_GENDER, Image.class).setImage(FEMALE_SOURCE);
-        }
-
-        setPage(false, 0);
     }
 
     /**
@@ -387,132 +284,6 @@ public class WindowCitizen extends AbstractWindowRequestTree
         }
     }
 
-    @Override
-    public ImmutableList<IRequest<?>> getOpenRequestsFromBuilding(final IBuildingView building)
-    {
-        return building.getOpenRequests(citizen);
-    }
-
-    /**
-     * Go to the request list.
-     */
-    public void goToRequestList()
-    {
-        findPaneOfTypeByID(VIEW_HEAD, SwitchView.class).nextView();
-        buttonPrevPage.off();
-        buttonNextPage.off();
-        pageNum.off();
-    }
-
-    /**
-     * Called when a button in the citizen has been clicked.
-     *
-     * @param button the clicked button.
-     */
-    @Override
-    public void onButtonClicked(@NotNull final Button button)
-    {
-        if (button.getID().contains(PLUS_PREFIX))
-        {
-            final String label = button.getID().replace(PLUS_PREFIX, "");
-            final Skill skill = Skill.valueOf(StringUtils.capitalize(label));
-
-            Network.getNetwork().sendToServer(new AdjustSkillCitizenMessage(colony, citizen, 1, skill));
-        }
-        else if (button.getID().contains(MINUS_PREFIX))
-        {
-            final String label = button.getID().replace(MINUS_PREFIX, "");
-            final Skill skill = Skill.valueOf(StringUtils.capitalize(label));
-
-            Network.getNetwork().sendToServer(new AdjustSkillCitizenMessage(colony, citizen, -1, skill));
-        }
-
-        switch (button.getID())
-        {
-            case BUTTON_REQUESTS:
-                goToRequestList();
-                break;
-            case BUTTON_BACK:
-                findPaneOfTypeByID(VIEW_HEAD, SwitchView.class).previousView();
-                pageNum.on();
-                setPage(true, 0);
-                break;
-            case INVENTORY_BUTTON_ID:
-                Network.getNetwork().sendToServer(new OpenInventoryMessage(colony, citizen.getName(), citizen.getEntityId()));
-                break;
-            default:
-                super.onButtonClicked(button);
-                break;
-        }
-    }
-
-    @Override
-    public void fulfill(@NotNull final IRequest<?> tRequest)
-    {
-        if (!(tRequest.getRequest() instanceof IDeliverable))
-        {
-            return;
-        }
-
-        @NotNull final IRequest<? extends IDeliverable> request = (IRequest<? extends IDeliverable>) tRequest;
-
-        final Predicate<ItemStack> requestPredicate = stack -> request.getRequest().matches(stack);
-        final int amount = request.getRequest().getCount();
-
-        final int count = InventoryUtils.getItemCountInItemHandler(new InvWrapper(inventory), requestPredicate);
-
-        if (!isCreative && count <= 0)
-        {
-            return;
-        }
-
-        // The itemStack size should not be greater than itemStack.getMaxStackSize, We send 1 instead
-        // and use quantity for the size
-        @NotNull final ItemStack itemStack;
-        if (isCreative)
-        {
-            itemStack = request.getDisplayStacks().stream().findFirst().orElse(ItemStack.EMPTY);
-        }
-        else
-        {
-            final List<Integer> slots = InventoryUtils.findAllSlotsInItemHandlerWith(new InvWrapper(inventory), requestPredicate);
-            final int invSize = inventory.getSizeInventory() - 5; // 4 armour slots + 1 shield slot
-            int slot = -1;
-            for (final Integer possibleSlot : slots)
-            {
-                if (possibleSlot < invSize)
-                {
-                    slot = possibleSlot;
-                    break;
-                }
-            }
-
-            if (slot == -1)
-            {
-                final ITextComponent chatMessage = new StringTextComponent("<" + citizen.getName() + "> " +
-                                                                             LanguageHandler.format(COM_MINECOLONIES_CANT_TAKE_EQUIPPED, citizen.getName()))
-                                                     .setStyle(Style.EMPTY.setBold(false).setFormatting(TextFormatting.WHITE)
-                                                     );
-                Minecraft.getInstance().player.sendMessage(chatMessage, Minecraft.getInstance().player.getUniqueID());
-
-                return; // We don't have one that isn't in our armour slot
-            }
-            itemStack = inventory.getStackInSlot(slot);
-        }
-
-
-        if (citizen.getWorkBuilding() != null)
-        {
-            colony.getBuilding(citizen.getWorkBuilding()).onRequestedRequestComplete(colony.getRequestManager(), tRequest);
-        }
-        Network.getNetwork().sendToServer(
-          new TransferItemsToCitizenRequestMessage(colony, citizen, itemStack, isCreative ? amount : Math.min(amount, count)));
-
-        final ItemStack copy = itemStack.copy();
-        copy.setCount(isCreative ? amount : Math.min(amount, count));
-        Network.getNetwork().sendToServer(new UpdateRequestStateMessage(colony, request.getId(), RequestState.OVERRULED, copy));
-    }
-
     /**
      * Update the display for the happiness.
      *
@@ -521,7 +292,6 @@ public class WindowCitizen extends AbstractWindowRequestTree
      */
     public static void updateHappiness(final ICitizenDataView citizen, final AbstractWindowSkeleton window)
     {
-        final View pane = window.findPaneOfTypeByID("happinessModifierView", View.class);
         window.findPaneOfTypeByID("happinessModifier", Text.class).setText(LanguageHandler.format("com.minecolonies.coremod.gui.happiness.happinessmodifier"));
         int yPos = 62;
         for (final String name : citizen.getHappinessHandler().getModifiers())
@@ -530,15 +300,15 @@ public class WindowCitizen extends AbstractWindowRequestTree
 
             final Image image = new Image();
             image.setSize(11, 11);
-            image.setPosition(25, yPos);
-            pane.addChild(image);
+            image.setPosition(45, yPos);
+            window.addChild(image);
 
             final Text label = new Text();
             label.setSize(136, 11);
-            label.setPosition(50, yPos);
+            label.setPosition(70, yPos);
             label.setColors(BLACK);
             label.setText(LanguageHandler.format("com.minecolonies.coremod.gui.townhall.happiness." + name));
-            pane.addChild(label);
+            window.addChild(label);
             PaneBuilders.tooltipBuilder().hoverPane(label).append(new TranslationTextComponent("com.minecolonies.coremod.gui.townhall.happiness.desc." + name)).build();
 
             if (value > 1.0)
@@ -585,7 +355,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
      * @param windowCitizen the window.
      * @param colony        the colony.
      */
-    private static void updateJobPage(final ICitizenDataView citizen, final WindowCitizen windowCitizen, final IColonyView colony)
+    public static void updateJobPage(final ICitizenDataView citizen, final JobWindowCitizen windowCitizen, final IColonyView colony)
     {
         final IBuildingView building = colony.getBuilding(citizen.getWorkBuilding());
 

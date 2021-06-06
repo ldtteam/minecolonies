@@ -1328,24 +1328,6 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public boolean isNeedToMourn()
-    {
-        return false;
-    }
-
-    @Override
-    public void setNeedToMourn(final boolean needToMourn, final String name)
-    {
-
-    }
-
-    @Override
-    public boolean isMourning()
-    {
-        return false;
-    }
-
-    @Override
     public boolean isColonyUnderAttack()
     {
         return false;
@@ -1443,6 +1425,12 @@ public final class ColonyView implements IColonyView
 
     @Override
     public IEventManager getEventManager()
+    {
+        return null;
+    }
+
+    @Override
+    public IReproductionManager getReproductionManager()
     {
         return null;
     }

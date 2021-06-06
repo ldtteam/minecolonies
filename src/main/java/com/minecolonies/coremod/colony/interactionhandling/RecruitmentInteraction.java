@@ -15,6 +15,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.colony.CitizenData;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -28,6 +29,7 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 import static com.minecolonies.api.util.constant.WindowConstants.CHAT_LABEL_ID;
 import static com.minecolonies.api.util.constant.WindowConstants.RESPONSE_BOX_ID;
@@ -166,6 +168,8 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
                     // Create and read new citizen
                     ICitizenData newCitizen = colony.getCitizenManager().createAndRegisterCivilianData();
                     newCitizen.deserializeNBT(data.serializeNBT());
+                    final Random random = new Random();
+                    newCitizen.setParents(CitizenData.generateName(random, random.nextBoolean(), colony), CitizenData.generateName(random, random.nextBoolean(), colony));
 
                     // Exchange entities
                     newCitizen.updateEntityIfNecessary();

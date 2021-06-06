@@ -10,6 +10,8 @@ import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.client.gui.citizen.CitizenWindowUtils;
+import com.minecolonies.coremod.client.gui.citizen.MainWindowCitizen;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.network.messages.server.colony.GuardScepterMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.guard.GuardRecalculateMessage;
@@ -174,7 +176,7 @@ public class WindowGuardControl extends AbstractWindowSkeleton
                     rowPane.findPaneOfTypeByID(NAME_LABEL, Text.class).setText(citizenDataView.getName());
                     rowPane.findPaneOfTypeByID(POSITION_LABEL, Text.class).setText(pos.getX() + " " + pos.getY() + " " + pos.getZ());
                     rowPane.findPaneOfTypeByID(LEVEL_LABEL, Text.class).setText("Level: " + citizenDataView.getCitizenSkillHandler().getJobModifier(building));
-                    WindowCitizen.createHealthBar(citizenDataView, rowPane.findPaneOfTypeByID(WINDOW_ID_HEALTHBAR, View.class));
+                    CitizenWindowUtils.createHealthBar(citizenDataView, rowPane.findPaneOfTypeByID(WINDOW_ID_HEALTHBAR, View.class));
                 }
             }
         });

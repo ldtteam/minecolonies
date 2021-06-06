@@ -202,26 +202,19 @@ public interface IBuildingManager
      * Calculate a good cook for a certain citizen.
      *
      * @param citizen the citizen.
+     * @param building the type of building.
      * @return the Position of it.
      */
-    BlockPos getBestRestaurant(final AbstractEntityCitizen citizen);
+    BlockPos getBestBuilding(final AbstractEntityCitizen citizen, final Class<? extends IBuilding> building);
 
     /**
-     * Calculate the closest graveyard that satisfy the given predicate for a certain citizen
+     * Calculate a good building for a certain pos.
      *
-     * @param citizen the citizen.
-     * @param predicate to validate the graveyard.
+     * @param pos the pos.
+     * @param building the building class type.
      * @return the Position of it.
      */
-    BlockPos getClosestGraveyard(AbstractEntityCitizen citizen, Predicate<Object> predicate);
-
-    /**
-     * Calculate a good hospital for a certain citizen.
-     *
-     * @param citizen the citizen.
-     * @return the Position of it.
-     */
-    BlockPos getBestHospital(AbstractEntityCitizen citizen);
+    BlockPos getBestBuilding(final BlockPos pos, final Class<? extends IBuilding> building);
 
     /**
      * Returns a random building in the colony, matching the filter predicate.
@@ -297,4 +290,10 @@ public interface IBuildingManager
      * @return true if within.
      */
     boolean isWithinBuildingZone(final Chunk chunk);
+
+    /**
+     * Get a house with a spare bed.
+     * @return the house or null.
+     */
+    IBuilding getHouseWithSpareBed();
 }

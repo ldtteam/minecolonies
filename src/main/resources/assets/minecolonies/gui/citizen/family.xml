@@ -1,0 +1,23 @@
+<window size="210 244" pause="false" lightbox="false">
+    <layout source="minecolonies:gui/citizen/nav.xml"/>
+
+    <label pos="80 15" size="136 11" color="black" label="$(com.minecolonies.coremod.gui.citizen.family.title):"/>
+    
+    <label size="164 11" pos="80 40" color="black"  label="$(com.minecolonies.coremod.gui.citizen.family.parents):"/>
+    <label id="parentA" size="164 11" pos="60 51" color="black"/>
+    <label id="parentB" size="164 11" pos="60 62" color="black"/>
+
+    <label size="164 11" pos="80 80" color="black"  label="$(com.minecolonies.coremod.gui.citizen.family.partner):"/>
+    <label id="partner" size="164 11" pos="80 95" color="black"/>
+
+    <label size="164 11" pos="80 120" color="black"  label="$(com.minecolonies.coremod.gui.citizen.family.siblings):"/>
+    <list id="siblings" size="164 40" pos="30 135">
+        <label id="name" size="164 11" pos="0 0" color="black"/>
+    </list>
+
+    <label size="164 11" pos="80 170" color="black"  label="$(com.minecolonies.coremod.gui.citizen.family.children):"/>
+    <list id="children" size="164 40" pos="30 175">
+        <label id="name" size="164 11" pos="0 0" color="black"/>
+    </list>
+
+</window>

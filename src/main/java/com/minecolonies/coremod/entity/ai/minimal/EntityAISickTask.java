@@ -224,7 +224,7 @@ public class EntityAISickTask extends Goal
             }
         }
 
-        final BlockPos hospitalPos = citizen.getCitizenColonyHandler().getColony().getBuildingManager().getBestHospital(citizen);
+        final BlockPos hospitalPos = citizen.getCitizenColonyHandler().getColony().getBuildingManager().getBestBuilding(citizen, BuildingHospital.class);
         final IColony colony = citizen.getCitizenColonyHandler().getColony();
         final IBuilding hospital = colony.getBuildingManager().getBuilding(hospitalPos);
 
@@ -336,7 +336,7 @@ public class EntityAISickTask extends Goal
 
         if (usedBed != null)
         {
-            final BlockPos hospitalPos = citizen.getCitizenColonyHandler().getColony().getBuildingManager().getBestHospital(citizen);
+            final BlockPos hospitalPos = citizen.getCitizenColonyHandler().getColony().getBuildingManager().getBestBuilding(citizen, BuildingHospital.class);
             final IColony colony = citizen.getCitizenColonyHandler().getColony();
             final IBuilding hospital = colony.getBuildingManager().getBuilding(hospitalPos);
             ((BuildingHospital) hospital).registerPatient(usedBed, 0);
@@ -359,7 +359,7 @@ public class EntityAISickTask extends Goal
     private DiseaseState waitForCure(final ICitizenData citizenData)
     {
         final IColony colony = citizenData.getColony();
-        placeToPath = colony.getBuildingManager().getBestHospital(citizen);
+        placeToPath = colony.getBuildingManager().getBestBuilding(citizen, BuildingHospital.class);
 
         if (placeToPath == null)
         {
@@ -385,7 +385,7 @@ public class EntityAISickTask extends Goal
 
         if (citizen.getCitizenSleepHandler().isAsleep())
         {
-            final BlockPos hospital = colony.getBuildingManager().getBestHospital(citizen);
+            final BlockPos hospital = colony.getBuildingManager().getBestBuilding(citizen, BuildingHospital.class);
             if (hospital != null)
             {
                 final IBuilding building = colony.getBuildingManager().getBuilding(hospital);
@@ -458,7 +458,7 @@ public class EntityAISickTask extends Goal
     private DiseaseState searchHospital(final ICitizenData citizenData)
     {
         final IColony colony = citizenData.getColony();
-        placeToPath = colony.getBuildingManager().getBestHospital(citizen);
+        placeToPath = colony.getBuildingManager().getBestBuilding(citizen, BuildingHospital.class);
 
         if (placeToPath == null)
         {

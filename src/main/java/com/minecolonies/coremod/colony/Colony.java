@@ -39,7 +39,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.DyeColor;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
@@ -154,6 +153,11 @@ public class Colony implements IColony
     private final IEventManager eventManager = new EventManager(this);
 
     /**
+     * Reproduction manager of the colony.
+     */
+    private final IReproductionManager reproductionManager = new ReproductionManager(this);
+
+    /**
      * Event description manager of the colony.
      */
     private final IEventDescriptionManager eventDescManager = new EventDescriptionManager(this);
@@ -259,16 +263,6 @@ public class Colony implements IColony
      * The colonies state machine
      */
     private final ITickRateStateMachine<ColonyState> colonyStateMachine;
-
-    /**
-     * Mournign parameters.
-     */
-    private boolean needToMourn = false;
-
-    /**
-     * If the colony is currently mourning
-     */
-    private boolean mourning = false;
 
     /**
      * If the colony is dirty.
@@ -437,6 +431,7 @@ public class Colony implements IColony
         buildingManager.onColonyTick(this);
         graveManager.onColonyTick(this);
         workManager.onColonyTick(this);
+        reproductionManager.onColonyTick(this);
 
         final long currTime = System.currentTimeMillis();
         if (lastOnlineTime != 0)
@@ -565,22 +560,10 @@ public class Colony implements IColony
             }
 
             citizenManager.updateCitizenSleep(false);
-
-            if (mourning)
-            {
-                mourning = false;
-                citizenManager.updateCitizenMourn(false);
-            }
         }
         else if (!isDay && WorldUtil.isDayTime(world))
         {
             isDay = true;
-            if (needToMourn)
-            {
-                needToMourn = false;
-                mourning = true;
-                citizenManager.updateCitizenMourn(true);
-            }
         }
         return false;
     }
@@ -711,17 +694,6 @@ public class Colony implements IColony
     {
         manualHiring = compound.getBoolean(TAG_MANUAL_HIRING);
         dimensionId = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(compound.getString(TAG_DIMENSION)));
-
-        if (compound.keySet().contains(TAG_NEED_TO_MOURN))
-        {
-            needToMourn = compound.getBoolean(TAG_NEED_TO_MOURN);
-            mourning = compound.getBoolean(TAG_MOURNING);
-        }
-        else
-        {
-            needToMourn = false;
-            mourning = false;
-        }
 
         mercenaryLastUse = compound.getLong(TAG_MERCENARY_TIME);
         additionalChildTime = compound.getInt(TAG_CHILD_TIME);
@@ -857,9 +829,6 @@ public class Colony implements IColony
         BlockPosUtil.write(compound, TAG_CENTER, center);
 
         compound.putBoolean(TAG_MANUAL_HIRING, manualHiring);
-        compound.putBoolean(TAG_NEED_TO_MOURN, needToMourn);
-        compound.putBoolean(TAG_MOURNING, mourning);
-
         compound.putLong(TAG_MERCENARY_TIME, mercenaryLastUse);
 
         compound.putInt(TAG_CHILD_TIME, additionalChildTime);
@@ -1574,6 +1543,12 @@ public class Colony implements IColony
     }
 
     @Override
+    public IReproductionManager getReproductionManager()
+    {
+        return reproductionManager;
+    }
+
+    @Override
     public IEventDescriptionManager getEventDescriptionManager()
     {
         return eventDescManager;
@@ -1654,44 +1629,6 @@ public class Colony implements IColony
             Log.getLogger().warn("Something went wrong persisting colony: " + id, e);
         }
         return this.colonyTag;
-    }
-
-    /**
-     * call to figure out if the colony needs to mourn.
-     *
-     * @return a boolean indicating the colony needs to mourn
-     */
-    @Override
-    public boolean isNeedToMourn()
-    {
-        return needToMourn;
-    }
-
-    /**
-     * Call to set if the colony needs to mourn or not.
-     *
-     * @param needToMourn indicate if the colony needs to mourn
-     * @param name        Name of citizen that died
-     */
-    @Override
-    public void setNeedToMourn(final boolean needToMourn, final String name)
-    {
-        this.needToMourn = needToMourn;
-        if (needToMourn)
-        {
-            LanguageHandler.sendPlayersMessage(getImportantMessageEntityPlayers(), COM_MINECOLONIES_COREMOD_MOURN, getName(), name);
-        }
-    }
-
-    /**
-     * Call to check if the colony is mourning.
-     *
-     * @return indicates if the colony is mourning
-     */
-    @Override
-    public boolean isMourning()
-    {
-        return mourning;
     }
 
     /**

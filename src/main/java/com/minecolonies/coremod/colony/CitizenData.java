@@ -18,10 +18,7 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
 import com.minecolonies.api.inventory.InventoryCitizen;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.interactionhandling.ServerCitizenInteraction;
@@ -29,6 +26,7 @@ import com.minecolonies.coremod.colony.interactionhandling.SimpleNotificationInt
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenHappinessHandler;
+import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenMournHandler;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenSkillHandler;
 import com.minecolonies.coremod.util.AttributeModifierUtils;
 import net.minecraft.entity.Entity;
@@ -38,6 +36,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
+import net.minecraft.nbt.IntNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Hand;
@@ -195,6 +194,11 @@ public class CitizenData implements ICitizenData
     private final CitizenHappinessHandler citizenHappinessHandler;
 
     /**
+     * The citizen happiness handler.
+     */
+    private final CitizenMournHandler citizenMournHandler;
+
+    /**
      * The citizen skill handler.
      */
     private final CitizenSkillHandler citizenSkillHandler;
@@ -235,6 +239,26 @@ public class CitizenData implements ICitizenData
     private BlockPos nextRespawnPos = null;
 
     /**
+     * Parents of the citizen.
+     */
+    private Tuple<String, String> parents = new Tuple<>("", "");
+
+    /**
+     * Alive children of the citizen
+     */
+    private List<Integer> children = new ArrayList<>();
+
+    /**
+     * Alive siblings of the citizen.
+     */
+    private List<Integer> siblings = new ArrayList<>();
+
+    /**
+     * Alive partner of the citizen.
+     */
+    private Integer partner = 0;
+
+    /**
      * Create a CitizenData given an ID. Used as a super-constructor or during loading.
      *
      * @param id     ID of the Citizen.
@@ -246,6 +270,7 @@ public class CitizenData implements ICitizenData
         this.colony = colony;
         inventory = new InventoryCitizen("Minecolonies Inventory", true, this);
         this.citizenHappinessHandler = new CitizenHappinessHandler(this);
+        this.citizenMournHandler = new CitizenMournHandler(this);
         this.citizenSkillHandler = new CitizenSkillHandler();
     }
 
@@ -365,7 +390,7 @@ public class CitizenData implements ICitizenData
         female = random.nextBoolean();
         textureSuffix = SUFFIXES.get(random.nextInt(SUFFIXES.size()));
         paused = false;
-        name = generateName(random);
+        name = generateName(random, female, getColony());
         textureId = random.nextInt(255);
 
         saturation = MAX_SATURATION;
@@ -425,9 +450,11 @@ public class CitizenData implements ICitizenData
      * Generates a random name from a set of names.
      *
      * @param rand Random object.
+     * @param female the gender
+     * @param colony the colony.
      * @return Name of the citizen.
      */
-    private String generateName(@NotNull final Random rand)
+    public static String generateName(@NotNull final Random rand, final boolean female, final IColony colony)
     {
         String citizenName;
         final String firstName;
@@ -464,17 +491,119 @@ public class CitizenData implements ICitizenData
         }
 
         // Check whether there's already a citizen with this name
-        for (final ICitizenData citizen : this.getColony().getCitizenManager().getCitizens())
+        for (final ICitizenData citizen : colony.getCitizenManager().getCitizens())
         {
             if (citizen != null && citizen.getName().equals(citizenName))
             {
                 // Oops - recurse this function and try again
-                citizenName = generateName(rand);
+                citizenName = generateName(rand, female, colony);
                 break;
             }
         }
 
         return citizenName;
+    }
+
+    /**
+     * Generates a random name considering both parent names.
+     *
+     * @param rand Random object.
+     */
+    public void generateName(@NotNull final Random rand, final String firstParentName, final String secondParentName)
+    {
+        String nameA = firstParentName;
+        String nameB = secondParentName;
+
+        String citizenName;
+        final String firstName;
+        final String middleInitial;
+        final String lastName;
+
+        if (firstParentName == null)
+        {
+            nameA = getRandomElement(rand, MineColonies.getConfig().getServer().lastNames.get().toArray(new String[0]));
+        }
+
+        if (secondParentName == null)
+        {
+            nameB = getRandomElement(rand, MineColonies.getConfig().getServer().lastNames.get().toArray(new String[0]));
+        }
+
+        final String[] firstParentNameSplit = nameA.split(" ");
+        final String[] secondParentNameSplit = nameB.split(" ");
+
+        int lastNameIndex = 1;
+        if (MineColonies.getConfig().getServer().useEasternNameOrder.get())
+        {
+            lastNameIndex = 0;
+        }
+        else if (MineColonies.getConfig().getServer().useMiddleInitial.get())
+        {
+            lastNameIndex = 2;
+        }
+
+        if (random.nextBoolean())
+        {
+            //todo this is failing, we're also not taking the middle name!
+            middleInitial = firstParentNameSplit[lastNameIndex].substring(0, 1);
+            lastName = secondParentNameSplit[lastNameIndex];
+        }
+        else
+        {
+            //todo this is failing, we're also not taking the middle name!
+            middleInitial = secondParentNameSplit[lastNameIndex].substring(0, 1);
+            lastName = firstParentNameSplit[lastNameIndex];
+        }
+
+        if (female)
+        {
+            firstName = getRandomElement(rand, MineColonies.getConfig().getServer().femaleFirstNames.get().toArray(new String[0]));
+        }
+        else
+        {
+            firstName = getRandomElement(rand, MineColonies.getConfig().getServer().maleFirstNames.get().toArray(new String[0]));
+        }
+
+        if(MineColonies.getConfig().getServer().useEasternNameOrder.get())
+        {
+            //For now, don't include middle names, as their rules (and presence) vary heavily by region.
+            citizenName = String.format("%s %s", lastName, firstName);
+        }
+        else
+        {
+            if (MineColonies.getConfig().getServer().useMiddleInitial.get())
+            {
+                citizenName = String.format("%s %s. %s", firstName, middleInitial, lastName);
+            }
+            else
+            {
+                citizenName = String.format("%s %s", firstName, lastName);
+            }
+        }
+
+        // Check whether there's already a citizen with this name
+        for (final ICitizenData citizen : this.getColony().getCitizenManager().getCitizens())
+        {
+            if (citizen != null && citizen.getName().equals(citizenName))
+            {
+                // Oops - recurse this function and try again
+                generateName(rand, firstParentName, secondParentName);
+                break;
+            }
+        }
+        this.name = citizenName;
+    }
+
+    @Override
+    public boolean isRelatedTo(final ICitizenData data)
+    {
+        return siblings.contains(data.getId()) || children.contains(data.getId()) || partner == data.getId() || parents.getA().equals(data.getName()) || parents.getB().equals(data.getName());
+    }
+
+    @Override
+    public boolean doesLiveWith(final ICitizenData data)
+    {
+        return data.getHomeBuilding() != null && getHomeBuilding() != null && data.getHomeBuilding().getPosition().equals(getHomeBuilding().getPosition());
     }
 
     @Override
@@ -490,10 +619,10 @@ public class CitizenData implements ICitizenData
     }
 
     @Override
-    public void setIsFemale(@NotNull final boolean isFemale)
+    public void setIsFemale(final boolean isFemale)
     {
         this.female = isFemale;
-        this.name = generateName(random);
+        this.name = generateName(random, isFemale, getColony());
         markDirty();
     }
 
@@ -740,6 +869,28 @@ public class CitizenData implements ICitizenData
         {
             job.serializeToView(buf);
         }
+
+        if (colony.getCitizenManager().getCivilian(partner) == null)
+        {
+            partner = 0;
+        }
+
+        siblings.removeIf(s -> colony.getCitizenManager().getCivilian(s) == null);
+        children.removeIf(c -> colony.getCitizenManager().getCivilian(c) == null);
+
+        buf.writeInt(partner);
+        buf.writeInt(siblings.size());
+        for (Integer sibling : siblings)
+        {
+            buf.writeInt(sibling);
+        }
+        buf.writeInt(children.size());
+        for (Integer child : children)
+        {
+            buf.writeInt(child);
+        }
+        buf.writeString(parents.getA());
+        buf.writeString(parents.getB());
     }
 
     @Override
@@ -822,6 +973,12 @@ public class CitizenData implements ICitizenData
     public CitizenHappinessHandler getCitizenHappinessHandler()
     {
         return citizenHappinessHandler;
+    }
+
+    @Override
+    public CitizenMournHandler getCitizenMournHandler()
+    {
+        return citizenMournHandler;
     }
 
     @Override
@@ -910,6 +1067,7 @@ public class CitizenData implements ICitizenData
         }
 
         citizenHappinessHandler.write(nbtTagCompound);
+        citizenMournHandler.write(nbtTagCompound);
 
         nbtTagCompound.put(TAG_INVENTORY, inventory.write(new ListNBT()));
         nbtTagCompound.putInt(TAG_HELD_ITEM_SLOT, inventory.getHeldItemSlot(Hand.MAIN_HAND));
@@ -929,6 +1087,24 @@ public class CitizenData implements ICitizenData
 
         nbtTagCompound.put(TAG_CHAT_OPTIONS, chatTagList);
         nbtTagCompound.putBoolean(TAG_IDLE, idle);
+
+        nbtTagCompound.putString(TAG_PARENT_A, parents.getA());
+        nbtTagCompound.putString(TAG_PARENT_B, parents.getB());
+
+        @NotNull final ListNBT siblingsNBT = new ListNBT();
+        for (final int sibling : siblings)
+        {
+            siblingsNBT.add(IntNBT.valueOf(sibling));
+        }
+        nbtTagCompound.put(TAG_SIBLINGS, siblingsNBT);
+
+        @NotNull final ListNBT childrenNBT = new ListNBT();
+        for (final int child : children)
+        {
+            childrenNBT.add(IntNBT.valueOf(child));
+        }
+        nbtTagCompound.put(TAG_CHILDREN, childrenNBT);
+        nbtTagCompound.putInt(TAG_PARTNER, partner);
 
         return nbtTagCompound;
     }
@@ -977,7 +1153,7 @@ public class CitizenData implements ICitizenData
 
         if (name.isEmpty())
         {
-            name = generateName(random);
+            name = generateName(random, isFemale(), getColony());
         }
 
         if (nbtTagCompound.keySet().contains(TAG_ASLEEP))
@@ -1006,6 +1182,7 @@ public class CitizenData implements ICitizenData
         }
 
         this.citizenHappinessHandler.read(nbtTagCompound);
+        this.citizenMournHandler.read(nbtTagCompound);
 
         if (nbtTagCompound.keySet().contains(TAG_LEVEL_MAP) && !nbtTagCompound.keySet().contains(TAG_NEW_SKILLS))
         {
@@ -1031,6 +1208,24 @@ public class CitizenData implements ICitizenData
         }
 
         this.idle = nbtTagCompound.getBoolean(TAG_IDLE);
+
+        final String parentA = nbtTagCompound.getString(TAG_PARENT_A);
+        final String parentB = nbtTagCompound.getString(TAG_PARENT_B);
+
+        this.parents = new Tuple<>(parentA, parentB);
+        @NotNull final ListNBT siblingsNBT = nbtTagCompound.getList(TAG_SIBLINGS, Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < siblingsNBT.size(); i++)
+        {
+            siblings.add(siblingsNBT.getInt(i));
+        }
+
+        @NotNull final ListNBT childrenNBT = nbtTagCompound.getList(TAG_CHILDREN, Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < childrenNBT.size(); i++)
+        {
+            children.add(childrenNBT.getInt(i));
+        }
+
+        nbtTagCompound.putInt(TAG_PARTNER, partner);
     }
 
     @Override
@@ -1253,4 +1448,63 @@ public class CitizenData implements ICitizenData
         }
     }
 
+    @Nullable
+    @Override
+    public ICitizenData getPartner()
+    {
+        return colony.getCitizenManager().getCivilian(partner);
+    }
+
+    @Override
+    public List<Integer> getChildren()
+    {
+        return new ArrayList<>(children);
+    }
+
+    @Override
+    public List<Integer> getSiblings()
+    {
+        return new ArrayList<>(siblings);
+    }
+
+    @Override
+    public Tuple<String, String> getParents()
+    {
+        return parents;
+    }
+
+    @Override
+    public void addSiblings(final Integer... siblings)
+    {
+        Collections.addAll(this.siblings, siblings);
+    }
+
+    @Override
+    public void addChildren(final Integer... children)
+    {
+        Collections.addAll(this.children, children);
+    }
+
+    @Override
+    public void setPartner(final int id)
+    {
+        this.partner = id;
+    }
+
+    @Override
+    public void onDeath(final Integer id)
+    {
+        this.children.remove(id);
+        this.siblings.remove(id);
+        if (this.partner.equals(id))
+        {
+            this.partner = 0;
+        }
+    }
+
+    @Override
+    public void setParents(final String firstParent, final String secondParent)
+    {
+        this.parents = new Tuple<>(firstParent, secondParent);
+    }
 }

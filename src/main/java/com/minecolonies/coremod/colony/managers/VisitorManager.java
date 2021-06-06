@@ -144,8 +144,7 @@ public class VisitorManager implements IVisitorManager
     }
 
     @Override
-    public void sendPackets(
-      @NotNull final Set<ServerPlayerEntity> closeSubscribers, @NotNull final Set<ServerPlayerEntity> newSubscribers)
+    public void sendPackets(@NotNull final Set<ServerPlayerEntity> closeSubscribers, @NotNull final Set<ServerPlayerEntity> newSubscribers)
     {
         Set<ServerPlayerEntity> players = new HashSet<>(newSubscribers);
         players.addAll(closeSubscribers);

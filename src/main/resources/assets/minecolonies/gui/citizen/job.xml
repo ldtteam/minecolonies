@@ -1,0 +1,24 @@
+<window size="210 244" pause="false" lightbox="false">
+    <layout source="minecolonies:gui/citizen/nav.xml"/>
+
+    <label id="jobLabel" pos="45 32" size="136 11" textalign="MIDDLE" color="black"/>
+    <text id="skillexplanation" pos="50 44" size="150 30" color="black"/>
+
+    <label id="primary" pos="65 74" size="136 11" color="black"/>
+    <image id="primaryimg" pos="50 74" size="11 11"/>
+
+    <label id="comp1" pos="65 86" size="136 11" color="black"/>
+    <image id="comp1img" pos="50 86" size="11 11"/>
+
+    <label id="adverse1" pos="65 98" size="136 11" color="black"/>
+    <image id="adverse1img" pos="50 98" size="11 11"/>
+
+    <label id="secondary" pos="65 124" size="136 11" color="black"/>
+    <image id="secondaryimg" pos="50 124" size="11 11"/>
+
+    <label id="comp2" pos="65 136" size="136 11" color="black"/>
+    <image id="comp2img" pos="50 136" size="11 11"/>
+
+    <label id="adverse2" pos="65 148" size="136 11" color="black"/>
+    <image id="adverse2img" pos="50 148" size="11 11"/>
+</window>

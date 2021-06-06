@@ -12,6 +12,7 @@ import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenHappinessHandler;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
 import com.minecolonies.api.inventory.InventoryCitizen;
+import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.interactionhandling.ServerCitizenInteraction;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenHappinessHandler;
@@ -27,10 +28,7 @@ import net.minecraft.util.text.ITextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_OFFHAND_HELD_ITEM_SLOT;
@@ -126,6 +124,26 @@ public class CitizenDataView implements ICitizenDataView
      * The citizens status icon
      */
     private VisibleCitizenStatus statusIcon;
+
+    /**
+     * Parents of the citizen.
+     */
+    private Tuple<String, String> parents = new Tuple<>("", "");
+
+    /**
+     * Alive children of the citizen
+     */
+    private List<Integer> children = new ArrayList<>();
+
+    /**
+     * Alive siblings of the citizen.
+     */
+    private List<Integer> siblings = new ArrayList<>();
+
+    /**
+     * Alive partner of the citizen.
+     */
+    private Integer partner;
 
     /**
      * Set View id.
@@ -305,6 +323,23 @@ public class CitizenDataView implements ICitizenDataView
             final IColonyView colonyView = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().world.getDimensionKey());
             jobView = IJobDataManager.getInstance().createViewFrom(colonyView, this, buf);
         }
+
+        partner = buf.readInt();
+        final int siblingsSize = buf.readInt();
+        for (int i = 0; i < siblingsSize; i++)
+        {
+            siblings.add(buf.readInt());
+        }
+
+        final int childrenSize = buf.readInt();
+        for (int i = 0; i < childrenSize; i++)
+        {
+            children.add(buf.readInt());
+        }
+
+        final String parentA = buf.readString();
+        final String parentB = buf.readString();
+        parents = new Tuple<>(parentA, parentB);
     }
 
     @Override
@@ -406,5 +441,30 @@ public class CitizenDataView implements ICitizenDataView
     public VisibleCitizenStatus getVisibleStatus()
     {
         return statusIcon;
+    }
+
+    @Nullable
+    @Override
+    public Integer getPartner()
+    {
+        return partner;
+    }
+
+    @Override
+    public List<Integer> getChildren()
+    {
+        return new ArrayList<>(children);
+    }
+
+    @Override
+    public List<Integer> getSiblings()
+    {
+        return new ArrayList<>(siblings);
+    }
+
+    @Override
+    public Tuple<String, String> getParents()
+    {
+        return parents;
     }
 }

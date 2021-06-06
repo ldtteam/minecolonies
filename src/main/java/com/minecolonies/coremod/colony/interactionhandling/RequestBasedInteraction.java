@@ -10,8 +10,8 @@ import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.Tuple;
-import com.minecolonies.coremod.client.gui.WindowCitizen;
 import com.minecolonies.coremod.client.gui.WindowRequestDetail;
+import com.minecolonies.coremod.client.gui.citizen.RequestWindowCitizen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -175,9 +175,8 @@ public class RequestBasedInteraction extends ServerCitizenInteraction
                 final IRequest<?> request = colony.getRequestManager().getRequestForToken(token);
                 if (request != null)
                 {
-                    final WindowCitizen windowCitizen = new WindowCitizen(data);
+                    final RequestWindowCitizen windowCitizen = new RequestWindowCitizen(data);
                     windowCitizen.open();
-                    windowCitizen.goToRequestList();
 
                     final WindowRequestDetail windowRequestDetail = new WindowRequestDetail(windowCitizen, request, data.getColonyId());
                     windowRequestDetail.open();

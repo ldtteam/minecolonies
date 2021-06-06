@@ -1,0 +1,232 @@
+package com.minecolonies.coremod.colony.managers;
+
+import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.MinecoloniesAPIProxy;
+import com.minecolonies.api.advancements.AdvancementTriggers;
+import com.minecolonies.api.colony.ICitizen;
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.ICivilianData;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.managers.interfaces.IReproductionManager;
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
+import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenBornEvent;
+import com.minecolonies.coremod.util.AdvancementUtils;
+import net.minecraft.util.math.BlockPos;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+/**
+ * Repo manager to spawn children.
+ */
+public class ReproductionManager implements IReproductionManager
+{
+    /**
+     * The time in seconds before the initial try to spawn
+     */
+    private static final int MIN_TIME_BEFORE_SPAWNTRY = 300;
+
+    /**
+     * Interval at which the childen are created, in ticks. Every 20 min it tries to spawn a child, 20min*60s*20ticks
+     */
+    private final static int CHILD_SPAWN_INTERVAL = 20 * 60;
+
+    /**
+     * Min necessary citizens for reproduction.
+     */
+    private static final int MIN_SIZE_FOR_REPRO   = 2;
+
+    /**
+     * The timer counting ticks to the next time creating a child
+     */
+    private int childCreationTimer;
+
+    /**
+     * The colony the manager belongs to.
+     */
+    private final Colony colony;
+
+    /**
+     * Random function for the manager to use.
+     */
+    private Random random = new Random();
+
+    /**
+     * Create a new reproduction manager.
+     * @param colony the colony to spawn kids for.
+     */
+    public ReproductionManager(final Colony colony)
+    {
+        this.colony = colony;
+
+        final Random rand = new Random();
+        childCreationTimer =rand.nextInt(CHILD_SPAWN_INTERVAL)+MIN_TIME_BEFORE_SPAWNTRY;
+    }
+
+    @Override
+    public void onColonyTick(@NotNull final IColony colony)
+    {
+        //if (building.getBuildingLevel() > 0 && (childCreationTimer -= TWENTYFIVESEC) <= 0)
+        {
+            //todo propperly regularly check, not all the time.
+            childCreationTimer =
+              (colony.getWorld().rand.nextInt(500) + CHILD_SPAWN_INTERVAL * (colony.getCitizenManager().getCurrentCitizenCount() / Math.max(4,
+                colony.getCitizenManager()
+                  .getMaxCitizens())));
+            trySpawnChild();
+        }
+    }
+
+    /**
+     * Try to spawn a new citizen as child. Mom / dad entities are required and chosen randomly in this hut. Childs inherit stats from their parents, avergaged +-2 Childs get
+     * assigned to a free housing slot in the colony to be raised there, if the house has an adult living there the child takes its name and gets raised by it.
+     */
+    public void trySpawnChild()
+    {
+        // Spawn a child when adults are present
+        if (colony.canMoveIn() && colony.getCitizenManager().getCurrentCitizenCount() < colony.getCitizenManager().getMaxCitizens() && colony.getCitizenManager().getCurrentCitizenCount() >= Math.min(MIN_SIZE_FOR_REPRO, MinecoloniesAPIProxy.getInstance().getConfig().getServer().initialCitizenAmount.get()))
+        {
+            if (!checkForBioParents())
+            {
+                return;
+            }
+
+            final IBuilding newHome = colony.getBuildingManager().getHouseWithSpareBed();
+            if (newHome == null)
+            {
+                return;
+            }
+
+            final List<ICitizenData> assignedCitizens = newHome.getAssignedCitizen();
+            assignedCitizens.removeIf(ICitizen::isChild);
+
+            final ICitizenData newCitizen = colony.getCitizenManager().createAndRegisterCivilianData();
+            ICitizenData firstParent;
+            ICitizenData secondParent;
+            if (!assignedCitizens.isEmpty())
+            {
+                firstParent = assignedCitizens.get(random.nextInt(assignedCitizens.size()));
+                secondParent = firstParent.getPartner();
+                if (secondParent == null)
+                {
+                    assignedCitizens.removeIf(cit -> cit.getPartner() != null || cit.getName().equals(firstParent.getName()));
+                    if (assignedCitizens.size() > 0 && random.nextBoolean())
+                    {
+                        secondParent = assignedCitizens.get(random.nextInt(assignedCitizens.size()));
+                    }
+                    else
+                    {
+                        final BlockPos altPos = colony.getBuildingManager().getRandomBuilding(b -> b.hasModule(LivingBuildingModule.class) && !b.getPosition().equals(newHome.getPosition()) && BlockPosUtil.getDistance2D(b.getPosition(), newHome.getPosition()) < 50);
+                        if (altPos != null)
+                        {
+                            final IBuilding building = colony.getBuildingManager().getBuilding(altPos);
+                            final List<ICitizenData> newAssignedCitizens = building.getAssignedCitizen();
+                            newAssignedCitizens.removeIf(cit -> cit.isChild() || cit.getPartner() != null);
+                            if (newAssignedCitizens.size() > 0)
+                            {
+                                secondParent = newAssignedCitizens.get(random.nextInt(newAssignedCitizens.size()));
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                firstParent = null;
+                secondParent = null;
+            }
+
+            //todo: 1 UI
+            //todo: 3 mourning
+
+            newCitizen.getCitizenSkillHandler().init(colony, firstParent, secondParent, random);
+            newCitizen.setIsChild(true);
+
+            final List<String> possibleSuffixes = new ArrayList<>();
+            if (firstParent != null)
+            {
+                newCitizen.addSiblings(firstParent.getChildren().toArray(new Integer[0]));
+                firstParent.addChildren(newCitizen.getId());
+                possibleSuffixes.add(firstParent.getTextureSuffix());
+            }
+
+            if (secondParent != null)
+            {
+                newCitizen.addSiblings(secondParent.getChildren().toArray(new Integer[0]));
+                secondParent.addChildren(newCitizen.getId());
+                possibleSuffixes.add(secondParent.getTextureSuffix());
+            }
+
+            newCitizen.setParents(firstParent == null ? "" : firstParent.getName(), secondParent == null ? "" : secondParent.getName());
+            newCitizen.generateName(random, firstParent == null ? "" : firstParent.getName(), secondParent == null ? "" : secondParent.getName());
+
+            newHome.assignCitizen(newCitizen);
+
+            if (possibleSuffixes.contains("_w") && possibleSuffixes.contains("_d"))
+            {
+                possibleSuffixes.add("_b");
+            }
+
+            newCitizen.setSuffix(possibleSuffixes.get(random.nextInt(possibleSuffixes.size())));
+
+            final int populationCount = colony.getCitizenManager().getCurrentCitizenCount();
+            AdvancementUtils.TriggerAdvancementPlayersForColony(colony, playerMP -> AdvancementTriggers.COLONY_POPULATION.trigger(playerMP, populationCount));
+
+            LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), "com.minecolonies.coremod.progress.newChild", newCitizen.getName(), colony.getName());
+            colony.getCitizenManager().spawnOrCreateCitizen(newCitizen, colony.getWorld(), newHome.getPosition());
+
+            colony.getEventDescriptionManager().addEventDescription(new CitizenBornEvent(newHome.getPosition(), newCitizen.getName()));
+        }
+    }
+
+    /**
+     * Check if there are potential biological parents in the colony.
+     * (At least one male/female citizen).
+     * @return true if so.
+     */
+    private boolean checkForBioParents()
+    {
+        boolean hasMale = false;
+        boolean hasFemale = false;
+
+        for (final ICitizenData data : colony.getCitizenManager().getCitizens())
+        {
+            if (data.isFemale())
+            {
+                hasFemale = true;
+            }
+            else
+            {
+                hasMale = true;
+            }
+
+            if (hasFemale && hasMale)
+            {
+                return true;
+            }
+        }
+
+        for (final ICivilianData data : colony.getVisitorManager().getCivilianDataMap().values())
+        {
+            if (data.isFemale())
+            {
+                hasFemale = true;
+            }
+            else
+            {
+                hasMale = true;
+            }
+
+            if (hasFemale && hasMale)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+}
