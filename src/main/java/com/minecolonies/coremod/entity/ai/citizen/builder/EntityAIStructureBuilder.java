@@ -6,6 +6,7 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.colony.buildings.modules.BuildingResourcesModule;
 import com.minecolonies.coremod.colony.buildings.utils.BuilderBucket;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
@@ -139,11 +140,12 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         final List<Tuple<Predicate<ItemStack>, Integer>> neededItemsList = new ArrayList<>();
 
         final BuilderBucket neededRessourcesMap = building.getRequiredResources();
+        final BuildingResourcesModule module = getOwnBuilding().getFirstModuleOccurance(BuildingResourcesModule.class);
         if (neededRessourcesMap != null)
         {
             for (final Map.Entry<String, Integer> entry : neededRessourcesMap.getResourceMap().entrySet())
             {
-                final BuildingBuilderResource res = building.getResourceFromIdentifier(entry.getKey());
+                final BuildingBuilderResource res = module.getResourceFromIdentifier(entry.getKey());
                 if (res != null)
                 {
                     int amount = entry.getValue();
@@ -186,10 +188,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     {
         if (!job.hasWorkOrder())
         {
-            if (getOwnBuilding().getManualMode())
-            {
-                return false;
-            }
             getOwnBuilding().searchWorkOrder();
             getOwnBuilding().setProgressPos(null, BuildingStructureHandler.Stage.CLEAR);
             return false;

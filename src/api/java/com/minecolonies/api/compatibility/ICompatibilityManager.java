@@ -10,6 +10,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.RecipeManager;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -97,6 +98,12 @@ public interface ICompatibilityManager
      * @return the list of plantables.
      */
     Set<ItemStorage> getCopyOfPlantables();
+
+    /**
+     * Get the set of all monsters.
+     * @return the set.
+     */
+    Set<ResourceLocation> getAllMonsters();
 
     /**
      * Get a random disease of the compat manager.

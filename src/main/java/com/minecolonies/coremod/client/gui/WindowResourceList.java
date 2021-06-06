@@ -17,6 +17,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.colony.buildings.moduleviews.BuildingResourcesModuleView;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.network.messages.server.colony.building.MarkBuildingDirtyMessage;
@@ -36,7 +37,8 @@ import java.util.List;
 import java.util.Map;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
-import static com.minecolonies.coremod.client.gui.huts.WindowHutBuilderModule.*;
+import static com.minecolonies.coremod.client.gui.modules.WindowBuilderResModule.*;
+
 import static com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource.RessourceAvailability.*;
 
 /**
@@ -84,7 +86,7 @@ public class WindowResourceList extends AbstractWindowSkeleton
         final IBuildingView newView = builder.getColony().getBuilding(builder.getID());
         if (newView instanceof BuildingBuilder.View)
         {
-            final BuildingBuilder.View updatedView = (BuildingBuilder.View) newView;
+            final BuildingResourcesModuleView moduleView = newView.getModuleView(BuildingResourcesModuleView.class);
             final PlayerInventory inventory = this.mc.player.inventory;
             final boolean isCreative = this.mc.player.isCreative();
 
@@ -95,7 +97,7 @@ public class WindowResourceList extends AbstractWindowSkeleton
             }
 
             resources.clear();
-            resources.addAll(updatedView.getResources().values());
+            resources.addAll(moduleView.getResources().values());
             for (final BuildingBuilderResource resource : resources)
             {
                 final int amountToSet;
@@ -184,12 +186,14 @@ public class WindowResourceList extends AbstractWindowSkeleton
             }
         });
 
+        final BuildingResourcesModuleView moduleView = builder.getModuleView(BuildingResourcesModuleView.class);
+
         //Make sure we have a fresh view
         Network.getNetwork().sendToServer(new MarkBuildingDirtyMessage(builder));
 
         findPaneOfTypeByID(LABEL_WORKERNAME, Text.class).setText(builder.getWorkerName());
-        findPaneOfTypeByID(LABEL_CONSTRUCTION_NAME, Text.class).setText(builder.getConstructionName());
-        findPaneOfTypeByID(LABEL_PROGRESS, Text.class).setText(builder.getProgress());
+        findPaneOfTypeByID(LABEL_CONSTRUCTION_NAME, Text.class).setText(moduleView.getConstructionName());
+        findPaneOfTypeByID(LABEL_PROGRESS, Text.class).setText(new TranslationTextComponent("com.minecolonies.coremod.gui.progress.res", moduleView.getProgress()));
     }
 
     /**

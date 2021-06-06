@@ -1,6 +1,7 @@
 package com.minecolonies.api.compatibility;
 
 import com.minecolonies.api.compatibility.dynamictrees.DynamicTreeCompat;
+import com.minecolonies.api.compatibility.dynamictrees.DynamicTreeProxy;
 import com.minecolonies.api.compatibility.resourcefulbees.IBeehiveCompat;
 import com.minecolonies.api.compatibility.tinkers.*;
 import net.minecraft.block.Block;
@@ -33,6 +34,7 @@ public final class Compatibility
     public static IBeehiveCompat beeHiveCompat = new IBeehiveCompat() {};
     public static SlimeTreeProxy   tinkersSlimeCompat = new SlimeTreeProxy();
     public static TinkersToolProxy tinkersCompat      = new TinkersToolProxy();
+    public static DynamicTreeProxy dynamicTreesCompat = new DynamicTreeProxy();
 
     /**
      * This method checks to see if STACK is able to mine anything. It goes through all compatibility checks.
@@ -151,7 +153,7 @@ public final class Compatibility
      */
     public static boolean isDynTreePresent()
     {
-        return DynamicTreeCompat.isDynTreePresent();
+        return dynamicTreesCompat.isDynamicTreePresent();
     }
 
     /**
@@ -161,7 +163,7 @@ public final class Compatibility
      */
     public static String getDynamicTreeDamage()
     {
-        return DynamicTreeCompat.getDynamicTreeDamage();
+        return dynamicTreesCompat.getDynamicTreeDamage();
     }
 
     /**
@@ -172,7 +174,7 @@ public final class Compatibility
      */
     public static boolean isDynamicBlock(final Block block)
     {
-        return DynamicTreeCompat.isDynamicTreeBlock(block);
+        return dynamicTreesCompat.checkForDynamicTreeBlock(block);
     }
 
     /**
@@ -183,7 +185,7 @@ public final class Compatibility
      */
     public static boolean isDynamicLeaf(final Block block)
     {
-        return DynamicTreeCompat.isDynamicLeavesBlock(block);
+        return dynamicTreesCompat.checkForDynamicLeavesBlock(block);
     }
 
     /**
@@ -194,7 +196,7 @@ public final class Compatibility
      */
     public static boolean isDynamicTrunkShell(final Block block)
     {
-        return DynamicTreeCompat.isDynamicTrunkShellBlock(block);
+        return dynamicTreesCompat.checkForDynamicTrunkShellBlock(block);
     }
 
     /**
@@ -209,7 +211,7 @@ public final class Compatibility
      */
     public static NonNullList<ItemStack> getDropsForDynamicLeaf(final IWorld world, final BlockPos pos, final BlockState blockState, final int fortune, final Block leaf)
     {
-        return DynamicTreeCompat.getDropsForLeafCompat(world, pos, blockState, fortune, leaf);
+        return dynamicTreesCompat.getDropsForLeaf(world, pos, blockState, fortune, leaf);
     }
 
     /**
@@ -222,7 +224,7 @@ public final class Compatibility
      */
     public static boolean plantDynamicSapling(final World world, final BlockPos location, final ItemStack sapling)
     {
-        return DynamicTreeCompat.plantDynamicSapling(world, location, sapling);
+        return dynamicTreesCompat.plantDynamicSaplingCompat(world, location, sapling);
     }
 
     /**
@@ -236,7 +238,7 @@ public final class Compatibility
      */
     public static Runnable getDynamicTreeBreakAction(final World world, final BlockPos blockToBreak, final ItemStack toolToUse, final BlockPos workerPos)
     {
-        return DynamicTreeCompat.getTreeBreakAction(world, blockToBreak, toolToUse, workerPos);
+        return dynamicTreesCompat.getTreeBreakActionCompat(world, blockToBreak, toolToUse, workerPos);
     }
 
     /**
@@ -247,7 +249,7 @@ public final class Compatibility
      */
     public static boolean isDynamicTreeSapling(final Item item)
     {
-        return DynamicTreeCompat.isDynamicTreeSapling(item);
+        return dynamicTreesCompat.checkForDynamicSapling(item);
     }
 
     /**
@@ -258,7 +260,7 @@ public final class Compatibility
      */
     public static boolean isDynamicTreeSapling(final ItemStack stack)
     {
-        return DynamicTreeCompat.isDynamicTreeSapling(stack.getItem());
+        return dynamicTreesCompat.checkForDynamicSapling(stack.getItem());
     }
 
     /**
@@ -271,7 +273,7 @@ public final class Compatibility
      */
     public static boolean isDynamicFamilyFitting(final BlockPos block1, final BlockPos block2, final IWorld world)
     {
-        return DynamicTreeCompat.hasFittingTreeFamily(block1, block2, world);
+        return dynamicTreesCompat.hasFittingTreeFamilyCompat(block1, block2, world);
     }
 
     /**

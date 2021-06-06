@@ -6,7 +6,6 @@ import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.jobs.IJob;
-import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -15,6 +14,8 @@ import com.minecolonies.coremod.client.gui.huts.WindowHutMinerModule;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
+import com.minecolonies.coremod.colony.buildings.modules.settings.GuardTaskSetting;
+import com.minecolonies.coremod.colony.buildings.moduleviews.SettingsModuleView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
@@ -708,7 +709,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         {
             assignedGuards = 0;
             final List<ICitizenDataView> guards = new ArrayList<>();
-            final List<IBuildingView> buildings = this.getColony().getBuildings().stream().filter(entry -> entry instanceof AbstractBuildingGuards.View && ((AbstractBuildingGuards.View) entry).getTask() == GuardTask.MINE).collect(Collectors.toList());
+            final List<IBuildingView> buildings = this.getColony().getBuildings().stream().filter(entry -> entry instanceof AbstractBuildingGuards.View && entry.getModuleView(SettingsModuleView.class).getSetting(AbstractBuildingGuards.GUARD_TASK).getValue().equals(GuardTaskSetting.PATROL_MINE)).collect(Collectors.toList());
             for (final IBuildingView building : buildings)
             {
                 final AbstractBuildingGuards.View guardbuilding = (AbstractBuildingGuards.View) building;

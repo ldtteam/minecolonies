@@ -227,7 +227,7 @@ public class Tree
         BlockState blockState = world.getBlockState(pos);
         final Block block = blockState.getBlock();
 
-        if (block.isIn(BlockTags.LEAVES))
+        if (block.isIn(BlockTags.LEAVES) || Compatibility.isDynamicLeaf(block))
         {
             NonNullList<ItemStack> list = NonNullList.create();
 
@@ -261,7 +261,7 @@ public class Tree
                     continue;
                 }
 
-                if (stack.getItem().isIn(ItemTags.SAPLINGS))
+                if (stack.getItem().isIn(ItemTags.SAPLINGS) || (isDynamicTree() && Compatibility.isDynamicTreeSapling(stack)))
                 {
                     IColonyManager.getInstance().getCompatibilityManager().connectLeafToSapling(blockState, stack);
                     return stack;
@@ -475,7 +475,7 @@ public class Tree
      * Check if the Lj is supposed to cut a tree.
      *
      * @param world         the world it is in.
-     * @param treesToNotCut the trees he is supposed to cut.
+     * @param treesToNotCut the trees he is not supposed to cut.
      * @param leafPos       the position a leaf is at.
      * @return false if not.
      */

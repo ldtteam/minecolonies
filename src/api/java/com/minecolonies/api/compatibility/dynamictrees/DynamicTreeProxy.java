@@ -19,7 +19,28 @@ public class DynamicTreeProxy
      *
      * @return true if so.
      */
-    protected boolean isDynamicTreePresent()
+    public boolean isDynamicTreePresent()
+    {
+        return false;
+    }
+
+    /**
+     * Returns the damageType string falling dynamic Tree's use
+     *
+     * @return damageType
+     */
+    public String getDynamicTreeDamage()
+    {
+        return "";
+    }
+
+    /**
+     * Default method for when dynamic Tree's mod is not present, returns false
+     *
+     * @param block Block to check
+     * @return false
+     */
+    public boolean checkForDynamicTreeBlock(final Block block)
     {
         return false;
     }
@@ -30,18 +51,7 @@ public class DynamicTreeProxy
      * @param block Block to check
      * @return false
      */
-    protected boolean checkForDynamicTreeBlock(final Block block)
-    {
-        return false;
-    }
-
-    /**
-     * Default method for when dynamic Tree's mod is not present, returns false
-     *
-     * @param block Block to check
-     * @return false
-     */
-    protected boolean checkForDynamicLeavesBlock(final Block block)
+    public boolean checkForDynamicLeavesBlock(final Block block)
     {
         return false;
     }
@@ -52,7 +62,7 @@ public class DynamicTreeProxy
      * @param block Block to check
      * @return false
      */
-    protected boolean checkForDynamicTrunkShellBlock(final Block block)
+    public boolean checkForDynamicTrunkShellBlock(final Block block)
     {
         return false;
     }
@@ -67,7 +77,7 @@ public class DynamicTreeProxy
      * @param fortune    the fortune effect.
      * @return {@link NonNullList} of {@link ItemStack} Drops
      */
-    protected NonNullList<ItemStack> getDropsForLeaf(
+    public NonNullList<ItemStack> getDropsForLeaf(
       final IWorld world,
       final BlockPos pos,
       final BlockState blockstate,
@@ -81,7 +91,7 @@ public class DynamicTreeProxy
      * @param item Block to check
      * @return false
      */
-    protected boolean checkForDynamicSapling(final Item item)
+    public boolean checkForDynamicSapling(final Item item)
     {
         return false;
     }
@@ -95,7 +105,7 @@ public class DynamicTreeProxy
      * @param workerPos    the pos of the worker
      * @return Null
      */
-    protected Runnable getTreeBreakActionCompat(final World world, final BlockPos blockToBreak, final ItemStack toolToUse, final BlockPos workerPos) {return null;}
+    public Runnable getTreeBreakActionCompat(final World world, final BlockPos blockToBreak, final ItemStack toolToUse, final BlockPos workerPos) {return null;}
 
     /**
      * Default method for trying to plant a dynamic sapling when the mod isnt present.
@@ -105,7 +115,7 @@ public class DynamicTreeProxy
      * @param sapling  the sapling stack.
      * @return false
      */
-    protected boolean plantDynamicSaplingCompat(final World world, final BlockPos location, final ItemStack sapling) {return false;}
+    public boolean plantDynamicSaplingCompat(final World world, final BlockPos location, final ItemStack sapling) {return false;}
 
     /**
      * Default method to check if two given blocks have the same Tree family
@@ -115,5 +125,5 @@ public class DynamicTreeProxy
      * @param world  the world it is in.
      * @return if compat exists.
      */
-    protected boolean hasFittingTreeFamilyCompat(final BlockPos block1, final BlockPos block2, final IWorld world) {return false;}
+    public boolean hasFittingTreeFamilyCompat(final BlockPos block1, final BlockPos block2, final IWorld world) {return false;}
 }

@@ -5,7 +5,6 @@ import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.ButtonImage;
 import com.ldtteam.blockout.controls.ItemIcon;
 import com.ldtteam.blockout.controls.Text;
-import com.ldtteam.blockout.views.Box;
 import com.ldtteam.blockout.views.View;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.buildings.modules.settings.ISetting;
@@ -38,6 +37,7 @@ public class BlockSetting implements ISetting
 
     /**
      * Create a new boolean setting.
+     *
      * @param init the initial value.
      */
     public BlockSetting(final BlockItem init)
@@ -48,8 +48,9 @@ public class BlockSetting implements ISetting
 
     /**
      * Create a new boolean setting.
+     *
      * @param value the value.
-     * @param def the default value.
+     * @param def   the default value.
      */
     public BlockSetting(final BlockItem value, final BlockItem def)
     {
@@ -59,6 +60,7 @@ public class BlockSetting implements ISetting
 
     /**
      * Get the setting value.
+     *
      * @return the set value.
      */
     public BlockItem getValue()
@@ -68,6 +70,7 @@ public class BlockSetting implements ISetting
 
     /**
      * Get the default value.
+     *
      * @return the default value.
      */
     public BlockItem getDefault()
@@ -77,6 +80,7 @@ public class BlockSetting implements ISetting
 
     /**
      * Set a new block value.
+     *
      * @param value the itemblock to set.
      */
     public void setValue(final BlockItem value)
@@ -86,25 +90,29 @@ public class BlockSetting implements ISetting
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void addHandlersToBox(
+    public void setupHandler(
       final ISettingKey<?> key,
       final Pane pane,
       final ISettingsModuleView settingsModuleView,
       final IBuildingView building, final Window window)
     {
-        if (pane.findPaneOfTypeByID("box", Box.class).getChildren().isEmpty())
-        {
-            Loader.createFromXMLFile("minecolonies:gui/layouthuts/layoutblocksetting.xml", (View) pane);
-            pane.findPaneOfTypeByID("desc", Text.class).setText(new TranslationTextComponent("com.minecolonies.coremod.setting." + key.getUniqueId().toString()));
 
-            pane.findPaneOfTypeByID("trigger", ButtonImage.class).setHandler(button -> new WindowSelectRes(
-              window,
-              building,
-              (stack) -> stack.getItem() instanceof BlockItem, (stack, qty) -> {
-                value = (BlockItem) stack.getItem();
-                settingsModuleView.trigger(key);
-            }, false).open());
-        }
+        Loader.createFromXMLFile("minecolonies:gui/layouthuts/layoutblocksetting.xml", (View) pane);
+        pane.findPaneOfTypeByID("id", Text.class).setText(key.getUniqueId().toString());
+        pane.findPaneOfTypeByID("desc", Text.class).setText(new TranslationTextComponent("com.minecolonies.coremod.setting." + key.getUniqueId().toString()));
+
+        pane.findPaneOfTypeByID("trigger", ButtonImage.class).setHandler(button -> new WindowSelectRes(
+          window,
+          building,
+          (stack) -> stack.getItem() instanceof BlockItem, (stack, qty) -> {
+            value = (BlockItem) stack.getItem();
+            settingsModuleView.trigger(key);
+        }, false).open());
+    }
+
+    @Override
+    public void render(final ISettingKey<?> key, final Pane pane, final ISettingsModuleView settingsModuleView, final IBuildingView building, final Window window)
+    {
         pane.findPaneOfTypeByID("icon", ItemIcon.class).setItem(new ItemStack(value));
         pane.findPaneOfTypeByID("trigger", ButtonImage.class).setText(new TranslationTextComponent(SWITCH));
     }

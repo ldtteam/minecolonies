@@ -4,7 +4,6 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.entity.ai.statemachine.AIOneTimeEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
@@ -12,6 +11,8 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
+import com.minecolonies.coremod.colony.buildings.modules.settings.FollowModeSetting;
+import com.minecolonies.coremod.colony.buildings.modules.settings.GuardTaskSetting;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard;
 import com.minecolonies.coremod.network.messages.client.VanillaParticleMessage;
@@ -104,9 +105,13 @@ public class ItemScrollGuardHelp extends AbstractItemScroll
                 colony.getCitizenManager().spawnOrCreateCivilian(citizenData, world, player.getPosition(), true);
                 citizenData.setNextRespawnPosition(buildingPos);
 
-                ((AbstractBuildingGuards) building).setTask(GuardTask.FOLLOW);
+                ((AbstractBuildingGuards) building).getSetting(AbstractBuildingGuards.GUARD_TASK).set(GuardTaskSetting.FOLLOW);
                 ((AbstractBuildingGuards) building).setPlayerToFollow(player);
-                ((AbstractBuildingGuards) building).setTightGrouping(true);
+                final FollowModeSetting grouping = ((AbstractBuildingGuards) building).getSetting(AbstractBuildingGuards.FOLLOW_MODE);
+                if (grouping.getValue().equals(FollowModeSetting.LOOSE))
+                {
+                    grouping.trigger();
+                }
 
                 citizenData.setSaturation(100);
 
@@ -121,7 +126,7 @@ public class ItemScrollGuardHelp extends AbstractItemScroll
                     {
                         if (world.getGameTime() - spawnTime > 0)
                         {
-                            ((AbstractBuildingGuards) building).setTask(GuardTask.PATROL);
+                            ((AbstractBuildingGuards) building).getSetting(AbstractBuildingGuards.GUARD_TASK).set(GuardTaskSetting.PATROL);
                             citizenData.getEntity().ifPresent(Entity::remove);
                             colony.getPackageManager().removeCloseSubscriber(player);
                             return true;

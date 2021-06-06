@@ -37,7 +37,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.minecolonies.api.util.constant.BuildingConstants.FLORIST_FLOWER_LIST;
+import static com.minecolonies.api.util.constant.BuildingConstants.BUILDING_FLOWER_LIST;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_PLANTGROUND;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
@@ -187,7 +187,7 @@ public class BuildingFlorist extends AbstractBuildingWorker
     public ItemStack getFlowerToGrow()
     {
         final List<ItemStorage> stacks = getPlantablesForBuildingLevel(getBuildingLevel()).stream()
-                                           .filter(stack -> !getModuleMatching(ItemListModule.class, m -> m.getId().equals(FLORIST_FLOWER_LIST)).isItemInList(stack))
+                                           .filter(stack -> !getModuleMatching(ItemListModule.class, m -> m.getId().equals(BUILDING_FLOWER_LIST)).isItemInList(stack))
                                            .collect(Collectors.toList());
         if (stacks.isEmpty())
         {
@@ -212,7 +212,6 @@ public class BuildingFlorist extends AbstractBuildingWorker
             case 1:
                 return IColonyManager.getInstance().getCompatibilityManager().getCopyOfPlantables().stream()
                          .filter(storage -> storage.getItem() == Items.POPPY || storage.getItem() == Items.DANDELION)
-                         .filter(itemStorage -> itemStorage.getItem().isIn(ItemTags.SMALL_FLOWERS))
                          .collect(Collectors.toSet());
             case 2:
                 return IColonyManager.getInstance().getCompatibilityManager().getCopyOfPlantables().stream()

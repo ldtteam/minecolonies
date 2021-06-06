@@ -883,7 +883,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     }
 
     @Override
-    public TreePathResult moveToTree(final BlockPos startRestriction, final BlockPos endRestriction, final double speed, final List<ItemStorage> treesToCut, final IColony colony)
+    public TreePathResult moveToTree(final BlockPos startRestriction, final BlockPos endRestriction, final double speed, final List<ItemStorage> excludedTrees, final IColony colony)
     {
         @NotNull final BlockPos start = AbstractPathJob.prepareStart(ourEntity);
         final BlockPos buildingPos = ((AbstractEntityCitizen) entity).getCitizenColonyHandler().getWorkBuilding().getPosition();
@@ -891,13 +891,13 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         final BlockPos furthestRestriction = BlockPosUtil.getFurthestCorner(start, startRestriction, endRestriction);
 
         final PathJobFindTree job =
-          new PathJobFindTree(CompatibilityUtils.getWorldFromEntity(entity), start, buildingPos, startRestriction, endRestriction, furthestRestriction, treesToCut, colony, ourEntity);
+          new PathJobFindTree(CompatibilityUtils.getWorldFromEntity(entity), start, buildingPos, startRestriction, endRestriction, furthestRestriction, excludedTrees, colony, ourEntity);
 
         return (TreePathResult) setPathJob(job, null, speed);
     }
 
     @Override
-    public TreePathResult moveToTree(final int range, final double speed, final List<ItemStorage> treesToCut, final IColony colony)
+    public TreePathResult moveToTree(final int range, final double speed, final List<ItemStorage> excludedTrees, final IColony colony)
     {
         @NotNull BlockPos start = AbstractPathJob.prepareStart(ourEntity);
         final BlockPos buildingPos = ((AbstractEntityCitizen) entity).getCitizenColonyHandler().getWorkBuilding().getPosition();
@@ -908,7 +908,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         }
 
         return (TreePathResult) setPathJob(
-          new PathJobFindTree(CompatibilityUtils.getWorldFromEntity(entity), start, buildingPos, range, treesToCut, colony, ourEntity), null, speed);
+          new PathJobFindTree(CompatibilityUtils.getWorldFromEntity(entity), start, buildingPos, range, excludedTrees, colony, ourEntity), null, speed);
     }
 
     @Nullable

@@ -55,8 +55,7 @@ import static com.minecolonies.api.research.util.ResearchConstants.CITIZEN_CAP;
 import static com.minecolonies.api.util.constant.Constants.TICKS_FOURTY_MIN;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
-import static com.minecolonies.coremod.client.gui.huts.WindowHutBuilderModule.BLACK;
-
+import static com.minecolonies.coremod.client.gui.modules.WindowBuilderResModule.*;
 /**
  * Window for the town hall.
  */

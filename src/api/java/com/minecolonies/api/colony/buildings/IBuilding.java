@@ -20,7 +20,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -65,6 +64,16 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
      */
     @NotNull
     <T extends IBuildingModule> List<T> getModules(Class<T> clazz);
+
+    /**
+     * Get a module matching a certain predicate.
+     * @param clazz the class of the module.
+     * @param modulePredicate the predicate to match.
+     * @param <T> the optional type.
+     * @return optional of the matching predicate (could be empty).
+     */
+    @NotNull
+    <T extends IBuildingModule> T getModuleMatching(Class<T> clazz, Predicate<? super T> modulePredicate);
 
     /**
      * Register a specific module to the building.

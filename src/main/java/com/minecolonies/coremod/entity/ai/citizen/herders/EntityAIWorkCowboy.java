@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.herders;
 
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
@@ -111,11 +112,11 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
         worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_COWBOY_MILKING));
         worker.getCitizenData().setVisibleStatus(HERD_COW);
 
-        if (!worker.getCitizenInventoryHandler().hasItemInInventory(getBreedingItem().getItem()) && isInHut(new ItemStack(Items.BUCKET, 1)))
+        if (!worker.getCitizenInventoryHandler().hasItemInInventory(getBreedingItem().getItem()) && InventoryUtils.getCountFromBuilding(getOwnBuilding(), new ItemStorage(new ItemStack(Items.BUCKET, 1))) > 1)
         {
             if (!walkToBuilding())
             {
-                isInTileEntity(getOwnBuilding().getTileEntity(), new ItemStack(Items.BUCKET, 1));
+                checkAndTransferFromHut(new ItemStack(Items.BUCKET, 1));
             }
             else
             {

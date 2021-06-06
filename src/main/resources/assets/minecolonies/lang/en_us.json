@@ -236,8 +236,6 @@
   "minecolonies.config.sifterdrops.comment": "List of materials a sifter can find from raw materials, as well as their weights.",
   "minecolonies.config.crusherproduction": "List of Crusher Production",
   "minecolonies.config.crusherproduction.comment": "List of materials a Crusher can reduce and what they convert into, separated by exclamation marks.",
-  "minecolonies.config.guardresourcelocations": "Guard-Targeted Mobs",
-  "minecolonies.config.guardresourcelocations.comment": "List of mobs Guards will target. They target all hostile mobs by default, but if a hostile mob isn't being targeted, try adding it here.",
   "minecolonies.config.fishingroddurabilityadjustt1": "Adjustment for T1 Fishing Huts",
   "minecolonies.config.fishingroddurabilityadjustt1.comment": "Offset for the maximum durability unenchanted rod a T1 Fishing Hut can use, compared to other wooden tools (59). Vanilla rods always work, but equivalents would need +6. Default value allows up to Thermal Foundation Silver  Anything below -59 will only allow vanilla rods.",
   "minecolonies.config.fishingroddurabilityadjustt2": "Adjustment for T2 Fishing Huts",
@@ -679,11 +677,10 @@
   "com.minecolonies.coremod.gui.workerhuts.task.patrolmine": "Patrol Mine",
   "com.minecolonies.coremod.gui.workerhuts.calculate": "Recalculate List",
   "com.minecolonies.coremod.gui.workerhuts.task.follow": "Follow",
-  "com.minecolonies.coremod.gui.workerhuts.targetpatrol": "Set patrol positions",
-  "com.minecolonies.coremod.gui.workerhuts.targetguard": "Set guarding target",
+  "com.minecolonies.coremod.gui.workerhuts.targetpatrol": "Set positions",
+  "com.minecolonies.coremod.gui.workerhuts.targetguard": "Set target",
   "com.minecolonies.coremod.gui.workerhuts.followtight": "Tight grouping",
   "com.minecolonies.coremod.gui.workerhuts.followloose": "Loose grouping",
-  "com.minecolonies.coremod.gui.workerhuts.settarget": "Disabled",
   "com.minecolonies.coremod.gui.worherhuts.patrollingmine": "Patrolling Mine at %s.",
 
   "com.minecolonies.coremod.gui.workerhuts.nospace": "Please make space in your inventory to use this functionality.",
@@ -773,6 +770,7 @@
   "com.minecolonies.coremod.bakery.nofurnace": "My work hut doesn't have any furnaces! Please repair it so I have some I can use!",
 
   "com.minecolonies.coremod.gui.workerhuts.saplinglist": "Saplings",
+  "com.minecolonies.coremod.gui.workerhuts.hostilelist": "Hostiles",
 
   "com.minecolonies.coremod.gui.townhall.housing": "Housing Assignment Mode:",
   "com.minecolonies.coremod.gui.townhall.movein": "Kids will be born:",
@@ -1077,6 +1075,7 @@
   "com.minecolonies.coremod.bakery.norecipe": "Please tell me which recipe you want me to bake!",
   "com.minecolonies.coremod.request.compostable": "Compostable",
   "com.minecolonies.coremod.request.fertilizer": "Fertilizer",
+  "com.minecolonies.coremod.request.flowers": "Flowers",
   "com.minecolonies.coremod.gui.workerhuts.composter": "Composter's Hut",
   "block.minecolonies.blockpostbox.name": "Postbox",
 
@@ -1756,6 +1755,7 @@
   "com.minecolonies.core.apiary.setting.honey": "Collect honey",
   "com.minecolonies.core.apiary.setting.honeycomb": "Collect honeycomb",
   "com.minecolonies.core.apiary.setting.both": "Collect comb and honey",
+  "com.minecolonies.coremod.beekeeper.noflowers": "Please tell me what kind of flowers I should feed to the Bees!",
   "com.minecolonies.coremod.gui.beekeeper.addhives": "Get hive tool",
   "entity.beekeeper.messagenohives": "Either there are no hives for me to work at, or you haven't assigned me any. Use the hive tool available from my hut to do so.",
   "entity.beekeeper.messagenobees": "I can't find any bees!",
@@ -1945,11 +1945,27 @@
   "com.minecolonies.coremod.setting.minecolonies:replant": "Replanting:",
   "com.minecolonies.coremod.setting.minecolonies:restrict": "Zoning Mode:",
   "com.minecolonies.coremod.gui.tooldesc.scepterlumberjack": "Restrict the Forester's working area by left-clicking one corner and right-clicking the opposite corner with the tool.",
+  "com.minecolonies.coremod.gui.tooldesc.scepterguard": "Left click positions to mark as guard or patrol points. Left-click the same position to close and discard.",
 
   "com.minecolonies.coremod.setting.minecolonies:fertilize": "Request Fertilizer",
   "com.minecolonies.coremod.setting.minecolonies:warehousemin": "Min Warehouse Stock:",
 
   "com.minecolonies.coremod.gui.givetool": "Obtain Tool",
-  "com.minecolonies.coremod.gui.blocks.distance": "%d blocks"
+  "com.minecolonies.coremod.gui.blocks.distance": "%d blocks",
+  "com.minecolonies.coremod.gui.progress.step": "Step %d/%d",
+  "com.minecolonies.coremod.gui.progress.res": "Supplied %s / Used %s",
+  "com.minecolonies.core.guard.setting.follow.tight": "Tight Grouping",
+  "com.minecolonies.core.guard.setting.follow.loose": "Loose Grouping",
+  "com.minecolonies.core.guard.setting.patrol.auto": "Automatic",
+  "com.minecolonies.core.guard.setting.patrol.manual": "Manual",
+  "com.minecolonies.core.guard.setting.patrol": "Patrol",
+  "com.minecolonies.core.guard.setting.guard": "Guard",
+  "com.minecolonies.core.guard.setting.follow": "Follow",
+  "com.minecolonies.core.guard.setting.patrol_mine": "Patrol Mine",
 
+  "com.minecolonies.coremod.setting.minecolonies:retreat": "Retreat on low health:",
+  "com.minecolonies.coremod.setting.minecolonies:hiretrainee": "Hire Trainee:",
+  "com.minecolonies.coremod.setting.minecolonies:patrolmode": "Patrol Mode:",
+  "com.minecolonies.coremod.setting.minecolonies:followmode": "Follow Mode:",
+  "com.minecolonies.coremod.setting.minecolonies:guardtask": "Task:"
 }

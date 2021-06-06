@@ -336,7 +336,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         }
         if (pathResult == null)
         {
-            final List<ItemStorage> copy = building.getModuleMatching(ItemListModule.class, m -> m.getId().equals(SAPLINGS_LIST)).getList();
             if (building.shouldRestrict())
             {
                 final BlockPos startPos = building.getStartRestriction();
@@ -346,7 +345,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
                     .moveToTree(startPos,
                         endPos,
                         1.0D,
-                        copy,
+                      building.getModuleMatching(ItemListModule.class, m -> m.getId().equals(SAPLINGS_LIST)).getList(),
                         worker.getCitizenColonyHandler().getColony());
             }
             else
@@ -354,7 +353,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
                 pathResult = worker.getNavigator()
                     .moveToTree(SEARCH_RANGE + searchIncrement,
                         1.0D,
-                        copy,
+                      building.getModuleMatching(ItemListModule.class, m -> m.getId().equals(SAPLINGS_LIST)).getList(),
                         worker.getCitizenColonyHandler().getColony());
             }
             return getState();
@@ -746,8 +745,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.planting"));
 
         final int saplingSlot = findSaplingSlot();
-        final BlockPos dirtLocation = new BlockPos(location.getX(), location.getY() - 1, location.getZ());
-        final Block dirt = world.getBlockState(dirtLocation).getBlock();
 
         if (saplingSlot != -1)
         {
@@ -783,7 +780,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
 
         if (timeWaited >= MAX_WAITING_TIME / 2 && !checkedInHut && !walkToBuilding())
         {
-            isInHut(job.getTree().getSapling());
+            checkAndTransferFromHut(job.getTree().getSapling());
             checkedInHut = true;
         }
 

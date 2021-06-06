@@ -3,8 +3,8 @@ package com.minecolonies.apiimp.initializer;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.Log;
 
-import com.minecolonies.api.util.TagUtils;
 import net.minecraft.block.Block;
+import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
 import net.minecraft.tags.ITag;
 import net.minecraft.tags.ITagCollectionSupplier;
@@ -54,6 +54,7 @@ public class ModTagsInitializer
     private static final ResourceLocation FUNGI = new ResourceLocation(MOD_ID, "fungi");
     private static final ResourceLocation INDESTRUCTIBLE = new ResourceLocation(MOD_ID, "indestructible");
     private static final ResourceLocation MESHES = new ResourceLocation(MOD_ID, "meshes");
+    private static final ResourceLocation HOSTILE = new ResourceLocation(MOD_ID, "hostile");
 
     public static void init(final ITagCollectionSupplier tagSupplier)
     {
@@ -69,6 +70,7 @@ public class ModTagsInitializer
         ModTags.oreChanceBlocks = getBlockTags(ORECHANCEBLOCKS, supplier);
         ModTags.colonyProtectionException = getBlockTags(COLONYPROTECTIONEXCEPTION, supplier);
         ModTags.indestructible = getBlockTags(INDESTRUCTIBLE, supplier);
+        ModTags.hostile = getEntityTags(HOSTILE, supplier);
 
         initCrafterRules("baker");
         initCrafterRules("blacksmith");
@@ -136,5 +138,16 @@ public class ModTagsInitializer
     private static ITag<Block> getBlockTags(final ResourceLocation resourceLocation, final ITagCollectionSupplier supplier)
     {
         return supplier.getBlockTags().getTagByID(resourceLocation);
+    }
+
+    /**
+     * Get the Tag<EntityType> from the underlying API
+     * @param resourceLocation The resource location specifying the tag ID
+     * @param supplier         The tag supplier providing the tag lookup.
+     * @return the tag collection
+     */
+    private static ITag<EntityType<?>> getEntityTags(final ResourceLocation resourceLocation, final ITagCollectionSupplier supplier)
+    {
+        return supplier.getEntityTypeTags().getTagByID(resourceLocation);
     }
 }

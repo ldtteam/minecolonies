@@ -155,4 +155,13 @@ public class WorkOrderView
     {
         return this.pos;
     }
+
+    /**
+     * Claim the view.
+     * @param position the pos of the claiming worker.
+     */
+    public void setClaimedBy(final BlockPos position)
+    {
+        this.claimedBy = position;
+    }
 }
