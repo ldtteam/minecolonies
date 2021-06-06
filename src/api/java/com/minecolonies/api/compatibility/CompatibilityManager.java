@@ -732,4 +732,16 @@ public class CompatibilityManager implements ICompatibilityManager
             Compatibility.dynamicTreesCompat = new DynamicTreeCompat();
         }
     }
+
+    /**
+     * Gets all the possible flowers for the beekeeper.
+     * 
+     * @return a set of the flowers.
+     */
+    public static Set<ItemStorage> getAllBeekeeperFlowers()
+    {
+        Set<ItemStorage> flowers = new HashSet<>();
+        ItemTags.FLOWERS.getAllElements().forEach((item) -> flowers.add(new ItemStorage(new ItemStack(item))));
+        return flowers;
+    }
 }

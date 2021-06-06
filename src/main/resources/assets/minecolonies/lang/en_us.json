@@ -1077,6 +1077,7 @@
   "com.minecolonies.coremod.bakery.norecipe": "Please tell me which recipe you want me to bake!",
   "com.minecolonies.coremod.request.compostable": "Compostable",
   "com.minecolonies.coremod.request.fertilizer": "Fertilizer",
+  "com.minecolonies.coremod.request.flowers": "Flowers",
   "com.minecolonies.coremod.gui.workerhuts.composter": "Composter's Hut",
   "block.minecolonies.blockpostbox.name": "Postbox",
 
@@ -1756,6 +1757,7 @@
   "com.minecolonies.core.apiary.setting.honey": "Collect honey",
   "com.minecolonies.core.apiary.setting.honeycomb": "Collect honeycomb",
   "com.minecolonies.core.apiary.setting.both": "Collect comb and honey",
+  "com.minecolonies.coremod.beekeeper.noflowers": "Please tell me what kind of flowers I should feed to the Bees!",
   "com.minecolonies.coremod.gui.beekeeper.addhives": "Get hive tool",
   "entity.beekeeper.messagenohives": "Either there are no hives for me to work at, or you haven't assigned me any. Use the hive tool available from my hut to do so.",
   "entity.beekeeper.messagenobees": "I can't find any bees!",

@@ -332,6 +332,10 @@ public final class TranslationConstants
     @NonNls
     public static final String FERTLIZER                                                            = "com.minecolonies.coremod.request.fertilizer";
     @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_REQUEST_FLOWERS                             = "com.minecolonies.coremod.request.flowers";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_BEEKEEPER_NOFLOWERS                         = "com.minecolonies.coremod.beekeeper.noflowers";
+    @NonNls
     public static final String FURNACE_USER_NO_FUEL                                                 = "com.minecolonies.coremod.furnaceuser.nofuel";
     @NonNls
     public static final String WORKER_AI_EXCEPTION                                                  = "com.minecolonies.coremod.worker.ai.exception";
