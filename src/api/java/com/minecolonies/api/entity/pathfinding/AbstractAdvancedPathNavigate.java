@@ -120,14 +120,14 @@ public abstract class AbstractAdvancedPathNavigate extends GroundPathNavigator
      * @param startRestriction the start of the restricted area.
      * @param endRestriction   the end of the restricted area.
      * @param speed            walking speed.
-     * @param treesToCut       the trees which should be cut.
+     * @param excludedTrees       the trees which should be cut.
      * @return the result of the search.
      */
     public abstract TreePathResult moveToTree(
       final BlockPos startRestriction,
       final BlockPos endRestriction,
       final double speed,
-      final List<ItemStorage> treesToCut,
+      final List<ItemStorage> excludedTrees,
       final IColony colony);
 
     /**
@@ -135,10 +135,10 @@ public abstract class AbstractAdvancedPathNavigate extends GroundPathNavigator
      *
      * @param range      in the range.
      * @param speed      walking speed.
-     * @param treesToCut the trees which should be cut.
+     * @param excludedTrees the trees which should be cut.
      * @return the result of the search.
      */
-    public abstract TreePathResult moveToTree(final int range, final double speed, final List<ItemStorage> treesToCut, final IColony colony);
+    public abstract TreePathResult moveToTree(final int range, final double speed, final List<ItemStorage> excludedTrees, final IColony colony);
 
     /**
      * Used to move a living ourEntity with a speed.

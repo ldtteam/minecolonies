@@ -187,7 +187,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     @Nullable
     public IRecipeStorage getFirstRecipe(final ItemStack stack)
     {
-        return getFirstRecipe(itemStack -> !itemStack.isEmpty() && itemStack.isItemEqual(stack));
+        return getFirstRecipe(itemStack -> !itemStack.isEmpty() && ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, true, true));
     }
 
     @Override
@@ -254,7 +254,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     @Override
     public IRecipeStorage getFirstFullFillableRecipe(final ItemStack tempStack, int count, final boolean considerReservation)
     {
-        return getFirstFullFillableRecipe(itemStack -> !itemStack.isEmpty() && itemStack.isItemEqual(tempStack), count * tempStack.getCount(), considerReservation);
+        return getFirstFullFillableRecipe(itemStack -> !itemStack.isEmpty() && ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, tempStack, true, true), count * tempStack.getCount(), considerReservation);
     }
 
     @Override
