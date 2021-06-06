@@ -2,8 +2,9 @@ package com.minecolonies.coremod.client.gui.modules;
 
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Text;
+import com.ldtteam.blockout.views.Box;
 import com.ldtteam.blockout.views.ScrollingList;
-import com.ldtteam.blockout.views.Window;
+import com.ldtteam.blockout.views.View;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.client.gui.AbstractModuleWindow;
@@ -11,10 +12,7 @@ import com.minecolonies.coremod.colony.buildings.moduleviews.SettingsModuleView;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
@@ -68,8 +66,6 @@ public class SettingsModuleWindow extends AbstractModuleWindow
      */
     private void updateSettingsList()
     {
-        final List<ISettingKey<?>> list = new ArrayList<>(moduleView.getSettings().keySet());
-
         settingsList.enable();
         settingsList.show();
 
@@ -83,7 +79,7 @@ public class SettingsModuleWindow extends AbstractModuleWindow
             @Override
             public int getElementCount()
             {
-                return list.size();
+                return moduleView.getActiveSettings().size();
             }
 
             /**
@@ -94,8 +90,17 @@ public class SettingsModuleWindow extends AbstractModuleWindow
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                final ISettingKey<?> key = list.get(index);
-                moduleView.getSettings().get(key).addHandlersToBox(key, rowPane, moduleView, building, SettingsModuleWindow.this);
+                final ISettingKey<?> key = moduleView.getActiveSettings().get(index);
+                if (rowPane.findPaneOfTypeByID("box", Box.class).getChildren().isEmpty())
+                {
+                    moduleView.getSettings().get(key).setupHandler(key, rowPane, moduleView, building, SettingsModuleWindow.this);
+                }
+                else if (!rowPane.findPaneOfTypeByID("id", Text.class).getText().getString().equals(key.getUniqueId().toString()))
+                {
+                    ((View) rowPane).getChildren().clear();
+                    moduleView.getSettings().get(key).setupHandler(key, rowPane, moduleView, building, SettingsModuleWindow.this);
+                }
+                moduleView.getSettings().get(key).render(key, rowPane, moduleView, building, SettingsModuleWindow.this);
             }
         });
     }

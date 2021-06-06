@@ -4,7 +4,6 @@ import com.ldtteam.blockout.Loader;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.ButtonImage;
 import com.ldtteam.blockout.controls.Text;
-import com.ldtteam.blockout.views.Box;
 import com.ldtteam.blockout.views.View;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.buildings.modules.settings.ISetting;
@@ -74,18 +73,21 @@ public class BoolSetting implements ISetting
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void addHandlersToBox(
+    public void setupHandler(
       final ISettingKey<?> key,
       final Pane pane,
       final ISettingsModuleView settingsModuleView,
       final IBuildingView building, final Window window)
     {
-        if (pane.findPaneOfTypeByID("box", Box.class).getChildren().isEmpty())
-        {
-            Loader.createFromXMLFile("minecolonies:gui/layouthuts/layoutboolsetting.xml", (View) pane);
-            pane.findPaneOfTypeByID("desc", Text.class).setText(new TranslationTextComponent("com.minecolonies.coremod.setting." + key.getUniqueId().toString()));
-            pane.findPaneOfTypeByID("trigger", ButtonImage.class).setHandler(button -> settingsModuleView.trigger(key));
-        }
+        Loader.createFromXMLFile("minecolonies:gui/layouthuts/layoutboolsetting.xml", (View) pane);
+        pane.findPaneOfTypeByID("id", Text.class).setText(key.getUniqueId().toString());
+        pane.findPaneOfTypeByID("desc", Text.class).setText(new TranslationTextComponent("com.minecolonies.coremod.setting." + key.getUniqueId().toString()));
+        pane.findPaneOfTypeByID("trigger", ButtonImage.class).setHandler(button -> settingsModuleView.trigger(key));
+    }
+
+    @Override
+    public void render(final ISettingKey<?> key, final Pane pane, final ISettingsModuleView settingsModuleView, final IBuildingView building, final Window window)
+    {
         pane.findPaneOfTypeByID("trigger", ButtonImage.class).setText(new TranslationTextComponent(value ? ON : OFF));
     }
 

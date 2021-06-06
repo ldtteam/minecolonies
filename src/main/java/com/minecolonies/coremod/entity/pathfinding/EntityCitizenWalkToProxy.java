@@ -2,13 +2,13 @@ package com.minecolonies.coremod.entity.pathfinding;
 
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
-import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.entity.ai.pathfinding.AbstractWalkToProxy;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.Vec2i;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
+import com.minecolonies.coremod.colony.buildings.modules.settings.GuardTaskSetting;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
@@ -75,7 +75,7 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
             if (building instanceof AbstractBuildingGuards)
             {
                 AbstractBuildingGuards guardbuilding = (AbstractBuildingGuards) building;
-                if (guardbuilding.getTask() == GuardTask.MINE && guardbuilding.getMinePos() != null)
+                if (guardbuilding.getTask().equals(GuardTaskSetting.PATROL_MINE) && guardbuilding.getMinePos() != null)
                 {
                     final IBuilding miner = citizen.getCitizenColonyHandler().getColony().getBuildingManager().getBuilding(guardbuilding.getMinePos());
                     if (miner instanceof BuildingMiner)

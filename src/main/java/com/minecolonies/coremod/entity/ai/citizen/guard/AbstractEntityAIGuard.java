@@ -2,13 +2,13 @@ package com.minecolonies.coremod.entity.ai.citizen.guard;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
-import com.minecolonies.api.colony.buildings.views.MobEntryView;
+import com.minecolonies.api.colony.buildings.modules.ISettingsModule;
 import com.minecolonies.api.colony.guardtype.registry.ModGuardTypes;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
-import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.entity.ai.statemachine.AIEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.AIOneTimeEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
@@ -22,6 +22,8 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
+import com.minecolonies.coremod.colony.buildings.modules.EntityListModule;
+import com.minecolonies.coremod.colony.buildings.modules.settings.GuardTaskSetting;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.SittingEntity;
@@ -52,6 +54,7 @@ import static com.minecolonies.api.research.util.ResearchConstants.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.BIG_SATURATION_FACTOR;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
+import static com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards.HOSTILE_LIST;
 
 /**
  * Class taking of the abstract guard methods for all fighting AIs.
@@ -525,7 +528,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     protected IAIState startWorkingAtOwnBuilding()
     {
         final ILocation rallyLocation = buildingGuards.getRallyLocation();
-        if ((rallyLocation != null && rallyLocation.isReachableFromLocation(worker.getLocation()) || !canBeInterrupted()) || (buildingGuards.getTask() == GuardTask.MINE && buildingGuards.getMinePos() != null))
+        if ((rallyLocation != null && rallyLocation.isReachableFromLocation(worker.getLocation()) || !canBeInterrupted()) || (buildingGuards.getTask().equals(GuardTaskSetting.PATROL_MINE) && buildingGuards.getMinePos() != null))
         {
             return PREPARING;
         }
@@ -622,12 +625,12 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
                 }
                 else
                 {
-                    buildingGuards.setTask(GuardTask.PATROL);
+                    buildingGuards.getFirstModuleOccurance(ISettingsModule.class).getSetting(AbstractBuildingGuards.GUARD_TASK).set(GuardTaskSetting.PATROL);
                 }
             }
             else
             {
-                buildingGuards.setTask(GuardTask.PATROL);
+                buildingGuards.getFirstModuleOccurance(ISettingsModule.class).getSetting(AbstractBuildingGuards.GUARD_TASK).set(GuardTaskSetting.PATROL);
             }
         }
         return GUARD_PATROL;
@@ -749,7 +752,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
             regularActionTimer = 0;
         }
 
-        if (rallyLocation != null || buildingGuards.getTask() == GuardTask.FOLLOW)
+        if (rallyLocation != null || buildingGuards.getTask().equals(GuardTaskSetting.FOLLOW))
         {
             worker.addPotionEffect(new EffectInstance(GLOW_EFFECT, GLOW_EFFECT_DURATION, GLOW_EFFECT_MULTIPLIER, false, false));
         }
@@ -765,13 +768,13 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
 
         switch (buildingGuards.getTask())
         {
-            case PATROL:
+            case GuardTaskSetting.PATROL:
                 return patrol();
-            case GUARD:
+            case GuardTaskSetting.GUARD:
                 return guard();
-            case FOLLOW:
+            case GuardTaskSetting.FOLLOW:
                 return follow();
-            case MINE:
+            case GuardTaskSetting.PATROL_MINE:
                 return patrolMine();
             default:
                 return PREPARING;
@@ -900,8 +903,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
             return true;
         }
 
-        final MobEntryView entry = buildingGuards.getMobsToAttack().get(entity.getType().getRegistryName());
-        if (entry != null && entry.shouldAttack())
+        if (IColonyManager.getInstance().getCompatibilityManager().getAllMonsters().contains(entity.getType().getRegistryName()) && !buildingGuards.getModuleMatching(EntityListModule.class, m -> m.getId().equals(HOSTILE_LIST)).isEntityInList(entity.getType().getRegistryName()))
         {
             return true;
         }
@@ -1106,10 +1108,10 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         }
         switch (buildingGuards.getTask())
         {
-            case PATROL:
-            case MINE:
+            case GuardTaskSetting.PATROL:
+            case GuardTaskSetting.PATROL_MINE:
                 return currentPatrolPoint != null ? currentPatrolPoint : worker.getPosition();
-            case FOLLOW:
+            case GuardTaskSetting.FOLLOW:
                 return buildingGuards.getPositionToFollow();
             default:
                 return buildingGuards.getGuardPos();
@@ -1129,10 +1131,10 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         }
         switch (buildingGuards.getTask())
         {
-            case PATROL:
-            case MINE:
+            case GuardTaskSetting.PATROL:
+            case GuardTaskSetting.PATROL_MINE:
                 return MAX_PATROL_DERIVATION;
-            case FOLLOW:
+            case GuardTaskSetting.FOLLOW:
                 return MAX_FOLLOW_DERIVATION;
             default:
                 return MAX_GUARD_DERIVATION + (buildingGuards.getGuardType() == ModGuardTypes.knight ? 20 : 0);
@@ -1171,7 +1173,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     @Override
     public boolean canBeInterrupted()
     {
-        if (fighttimer > 0 || getState() == GUARD_RALLY || target != null || buildingGuards.getRallyLocation() != null || buildingGuards.getTask() == GuardTask.FOLLOW)
+        if (fighttimer > 0 || getState() == GUARD_RALLY || target != null || buildingGuards.getRallyLocation() != null || buildingGuards.getTask().equals(GuardTaskSetting.FOLLOW))
         {
             return false;
         }
