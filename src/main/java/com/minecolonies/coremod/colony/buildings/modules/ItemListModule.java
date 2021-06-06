@@ -28,7 +28,7 @@ public class ItemListModule extends AbstractBuildingModule implements IItemListM
     /**
      * List of allowed items.
      */
-    private ImmutableList<ItemStorage> itemsAllowed;
+    private ImmutableList<ItemStorage> itemsAllowed = ImmutableList.of();
 
     /**
      * Unique id of this module.
