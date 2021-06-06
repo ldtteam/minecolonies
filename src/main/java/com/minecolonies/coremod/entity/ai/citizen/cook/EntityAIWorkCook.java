@@ -130,8 +130,8 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
         //Only return true if the item isn't queued for a recipe. 
         if(!getOwnBuilding().getIsCooking() )
         {
-            final List<ItemStorage> allowedItems = getOwnBuilding().getModuleMatching(ItemListModule.class, m -> m.getId().equals(FOOD_EXCLUSION_LIST)).getList();
-            return ItemStackUtils.ISCOOKABLE.test(stack) && !isItemStackForAssistant(stack) && !allowedItems.contains(new ItemStorage(MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getSmeltingResult(stack)));
+            return ItemStackUtils.ISCOOKABLE.test(stack) && !isItemStackForAssistant(stack)
+                     && !getOwnBuilding().getModuleMatching(ItemListModule.class, m -> m.getId().equals(FOOD_EXCLUSION_LIST)).isItemInList(new ItemStorage(MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getSmeltingResult(stack)));
         }
         return false;
     }
