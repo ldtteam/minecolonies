@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import static com.minecolonies.api.util.constant.Constants.TWENTYFIVESEC;
 import static com.minecolonies.coremod.colony.CitizenData.SUFFIXES;
 
 /**
@@ -67,15 +68,15 @@ public class ReproductionManager implements IReproductionManager
         this.colony = colony;
 
         final Random rand = new Random();
-        childCreationTimer =rand.nextInt(CHILD_SPAWN_INTERVAL)+MIN_TIME_BEFORE_SPAWNTRY;
+        childCreationTimer = rand.nextInt(CHILD_SPAWN_INTERVAL) + MIN_TIME_BEFORE_SPAWNTRY;
     }
 
     @Override
     public void onColonyTick(@NotNull final IColony colony)
     {
-        //if (building.getBuildingLevel() > 0 && (childCreationTimer -= TWENTYFIVESEC) <= 0)
+        if ( (childCreationTimer -= TWENTYFIVESEC) <= 0)
         {
-            //todo propperly regularly check, not all the time.
+            //todo make a propper time based on max number of citizens, the more citizens there are, and the more free spots, the more likely.
             childCreationTimer =
               (colony.getWorld().rand.nextInt(500) + CHILD_SPAWN_INTERVAL * (colony.getCitizenManager().getCurrentCitizenCount() / Math.max(4,
                 colony.getCitizenManager()
