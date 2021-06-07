@@ -107,11 +107,6 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
      */
     public boolean canResolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final AbstractBuilding building)
     {
-        if (building.getBuildingLevel() <= 0 || building.getAssignedCitizen().isEmpty())
-        {
-            return false;
-        }
-
         if (createsCraftingCycle(manager, request, request))
         {
             return false;
