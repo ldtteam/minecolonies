@@ -5,7 +5,7 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFlorist;
 import net.minecraft.client.Minecraft;
 
-import static com.minecolonies.api.util.constant.BuildingConstants.FLORIST_FLOWER_LIST;
+import static com.minecolonies.api.util.constant.BuildingConstants.BUILDING_FLOWER_LIST;
 import static com.minecolonies.api.util.constant.Constants.MAX_BUILDING_LEVEL;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
@@ -24,7 +24,7 @@ public class FloristFlowerListModuleView extends ItemListModuleView
      */
     public FloristFlowerListModuleView()
     {
-        super(FLORIST_FLOWER_LIST, FLORIST_FLOWER_DESC, true, (buildingView) -> BuildingFlorist.getPlantablesForBuildingLevel(buildingView.getBuildingLevel()));
+        super(BUILDING_FLOWER_LIST, FLORIST_FLOWER_DESC, true, (buildingView) -> BuildingFlorist.getPlantablesForBuildingLevel(buildingView.getBuildingLevel()));
     }
 
     @Override

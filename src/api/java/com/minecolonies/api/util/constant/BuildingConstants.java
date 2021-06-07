@@ -113,9 +113,9 @@ public final class BuildingConstants
     public static final int MAX_DEPTH_LEVEL_3 = 5;
 
     /**
-     * Florist flower list filter.
+     * Florist & Beekeeper flower list filter.
      */
-    public static final String FLORIST_FLOWER_LIST = "flowers";
+    public static final String BUILDING_FLOWER_LIST = "flowers";
 
     /**
      * Private constructor to hide implicit public one.

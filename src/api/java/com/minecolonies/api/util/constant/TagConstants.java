@@ -17,6 +17,7 @@ public final class TagConstants
     public static final ResourceLocation FUNGI = new ResourceLocation(MOD_ID, "fungi");
     public static final ResourceLocation INDESTRUCTIBLE = new ResourceLocation(MOD_ID, "indestructible");
     public static final ResourceLocation MESHES = new ResourceLocation(MOD_ID, "meshes");
+    public static final ResourceLocation HOSTILE = new ResourceLocation(MOD_ID, "hostile");
 
     /**
      * Private constructor to hide implicit public one.

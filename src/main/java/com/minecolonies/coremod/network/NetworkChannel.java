@@ -10,7 +10,6 @@ import com.minecolonies.coremod.colony.crafting.CustomRecipeManagerMessage;
 import com.minecolonies.coremod.network.messages.PermissionsMessage;
 import com.minecolonies.coremod.network.messages.client.*;
 import com.minecolonies.coremod.network.messages.client.colony.*;
-import com.minecolonies.coremod.network.messages.client.colony.building.guard.GuardMobAttackListMessage;
 import com.minecolonies.coremod.network.messages.server.*;
 import com.minecolonies.coremod.network.messages.server.colony.*;
 import com.minecolonies.coremod.network.messages.server.colony.building.*;
@@ -20,10 +19,7 @@ import com.minecolonies.coremod.network.messages.server.colony.building.crusher.
 import com.minecolonies.coremod.network.messages.server.colony.building.enchanter.EnchanterWorkerSetMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.farmer.AssignFieldMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.farmer.AssignmentModeMessage;
-import com.minecolonies.coremod.network.messages.server.colony.building.guard.GuardRecalculateMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.guard.GuardSetMinePosMessage;
-import com.minecolonies.coremod.network.messages.server.colony.building.guard.GuardTaskMessage;
-import com.minecolonies.coremod.network.messages.server.colony.building.guard.MobEntryChangeMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.home.AssignUnassignMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.miner.MinerSetLevelMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.postbox.PostBoxRequestMessage;
@@ -128,7 +124,6 @@ public class NetworkChannel
         registerMessage(++idx, ColonyViewWorkOrderMessage.class, ColonyViewWorkOrderMessage::new);
         registerMessage(++idx, ColonyViewRemoveWorkOrderMessage.class, ColonyViewRemoveWorkOrderMessage::new);
         registerMessage(++idx, UpdateChunkCapabilityMessage.class, UpdateChunkCapabilityMessage::new);
-        registerMessage(++idx, GuardMobAttackListMessage.class, GuardMobAttackListMessage::new);
 
         //  Permission Request messages
         registerMessage(++idx, PermissionsMessage.Permission.class, PermissionsMessage.Permission::new);
@@ -153,11 +148,7 @@ public class NetworkChannel
         registerMessage(++idx, WorkOrderChangeMessage.class, WorkOrderChangeMessage::new);
         registerMessage(++idx, AssignFieldMessage.class, AssignFieldMessage::new);
         registerMessage(++idx, AssignmentModeMessage.class, AssignmentModeMessage::new);
-        registerMessage(++idx, GuardTaskMessage.class, GuardTaskMessage::new);
         registerMessage(++idx, GuardSetMinePosMessage.class, GuardSetMinePosMessage::new);
-        registerMessage(++idx, GuardRecalculateMessage.class, GuardRecalculateMessage::new);
-        registerMessage(++idx, MobEntryChangeMessage.class, MobEntryChangeMessage::new);
-        registerMessage(++idx, GuardScepterMessage.class, GuardScepterMessage::new);
         registerMessage(++idx, RecallCitizenHutMessage.class, RecallCitizenHutMessage::new);
         registerMessage(++idx, TransferItemsRequestMessage.class, TransferItemsRequestMessage::new);
         registerMessage(++idx, MarkBuildingDirtyMessage.class, MarkBuildingDirtyMessage::new);
@@ -207,6 +198,7 @@ public class NetworkChannel
         registerMessage(++idx, AdjustSkillCitizenMessage.class, AdjustSkillCitizenMessage::new);
         registerMessage(++idx, BuilderSelectWorkOrderMessage.class, BuilderSelectWorkOrderMessage::new);
         registerMessage(++idx, TriggerSettingMessage.class, TriggerSettingMessage::new);
+        registerMessage(++idx, AssignFilterableEntityMessage.class, AssignFilterableEntityMessage::new);
 
         //Client side only
         registerMessage(++idx, BlockParticleEffectMessage.class, BlockParticleEffectMessage::new);

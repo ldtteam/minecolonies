@@ -12,10 +12,9 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.*;
 import net.minecraft.block.*;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
+import net.minecraft.entity.EntityClassification;
+import net.minecraft.entity.EntityType;
+import net.minecraft.item.*;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.RecipeManager;
 import net.minecraft.nbt.CompoundNBT;
@@ -27,6 +26,7 @@ import net.minecraft.state.Property;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.Tags;
@@ -147,6 +147,11 @@ public class CompatibilityManager implements ICompatibilityManager
     private final Set<BlockPos> freePositions = new HashSet<>();
 
     /**
+     * Hashmap of mobs we may or may not attack.
+     */
+    private Set<ResourceLocation> monsters = new HashSet<>();
+
+    /**
      * Instantiates the compatibilityManager.
      */
     public CompatibilityManager()
@@ -173,6 +178,7 @@ public class CompatibilityManager implements ICompatibilityManager
         diseaseList.clear();
         freeBlocks.clear();
         freePositions.clear();
+        monsters.clear();
 
         discoverAllItems();
 
@@ -181,25 +187,13 @@ public class CompatibilityManager implements ICompatibilityManager
         discoverPlantables();
         discoverFood();
         discoverFuel();
+        discoverMobs();
 
         discoverLuckyOres();
         discoverRecruitCosts();
         discoverDiseases();
         discoverFreeBlocksAndPos();
         discoverModCompat();
-    }
-
-    /**
-     * Create complete list of all existing items, client side only.
-     */
-    private void discoverAllItems()
-    {
-        final NonNullList<ItemStack> items = NonNullList.create();
-        for(Item item : ForgeRegistries.ITEMS.getValues())
-        {
-            items.add(new ItemStack(item));
-        }
-        allItems = ImmutableList.copyOf(items);
     }
 
     /**
@@ -430,7 +424,46 @@ public class CompatibilityManager implements ICompatibilityManager
         discoverCompostRecipes(recipeManager);
     }
 
+    @Override
+    public Set<ResourceLocation> getAllMonsters()
+    {
+        return new HashSet<>(monsters);
+    }
+
     //------------------------------- Private Utility Methods -------------------------------//
+
+    /**
+     * Calculate all monsters.
+     */
+    private void discoverMobs()
+    {
+        monsters = new HashSet<>();
+
+        for (final Map.Entry<RegistryKey<EntityType<?>>, EntityType<?>> entry : ForgeRegistries.ENTITIES.getEntries())
+        {
+            if (entry.getValue().getClassification() == EntityClassification.MONSTER)
+            {
+                monsters.add(entry.getKey().getLocation());
+            }
+            else if (ModTags.hostile.contains(entry.getValue()))
+            {
+                monsters.add(entry.getKey().getLocation());
+            }
+        }
+    }
+
+    /**
+     * Create complete list of all existing items, client side only.
+     */
+    private void discoverAllItems()
+    {
+        final NonNullList<ItemStack> items = NonNullList.create();
+        for(Item item : ForgeRegistries.ITEMS.getValues())
+        {
+            items.add(new ItemStack(item));
+        }
+        allItems = ImmutableList.copyOf(items);
+    }
 
     /**
      * Discover ores for the Smelter and Miners.
@@ -735,5 +768,17 @@ public class CompatibilityManager implements ICompatibilityManager
         {
             Compatibility.dynamicTreesCompat = new DynamicTreeCompat();
         }
+    }
+
+    /**
+     * Gets all the possible flowers for the beekeeper.
+     * 
+     * @return a set of the flowers.
+     */
+    public static Set<ItemStorage> getAllBeekeeperFlowers()
+    {
+        Set<ItemStorage> flowers = new HashSet<>();
+        ItemTags.FLOWERS.getAllElements().forEach((item) -> flowers.add(new ItemStorage(new ItemStack(item))));
+        return flowers;
     }
 }
