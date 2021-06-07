@@ -7,7 +7,6 @@ import com.ldtteam.structurize.util.BlockUtils;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.tileentities.TileEntityGrave;
-import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesGrave;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
@@ -73,7 +72,7 @@ public class GravePlacementHandler implements IPlacementHandler
         final List<ItemStack> itemList = new ArrayList<>();
         itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
 
-        for (final ItemStack stack : PlacementHandlers.getItemsFromTileEntity(tileEntityData, world, pos))
+        for (final ItemStack stack : PlacementHandlers.getItemsFromTileEntity(tileEntityData, blockState))
         {
             if (!ItemStackUtils.isEmpty(stack))
             {
