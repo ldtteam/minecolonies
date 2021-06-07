@@ -564,6 +564,7 @@ public class Colony implements IColony
         else if (!isDay && WorldUtil.isDayTime(world))
         {
             isDay = true;
+            citizenManager.onWakeUp();
         }
         return false;
     }

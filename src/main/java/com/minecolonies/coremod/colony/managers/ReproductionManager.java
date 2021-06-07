@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import static com.minecolonies.coremod.colony.CitizenData.SUFFIXES;
+
 /**
  * Repo manager to spawn children.
  */
@@ -126,7 +128,7 @@ public class ReproductionManager implements IReproductionManager
                         {
                             final IBuilding building = colony.getBuildingManager().getBuilding(altPos);
                             final List<ICitizenData> newAssignedCitizens = building.getAssignedCitizen();
-                            newAssignedCitizens.removeIf(cit -> cit.isChild() || cit.getPartner() != null);
+                            newAssignedCitizens.removeIf(cit -> cit.isChild() || cit.getPartner() != null && !cit.isRelatedTo(firstParent));
                             if (newAssignedCitizens.size() > 0)
                             {
                                 secondParent = newAssignedCitizens.get(random.nextInt(newAssignedCitizens.size()));
@@ -141,8 +143,11 @@ public class ReproductionManager implements IReproductionManager
                 secondParent = null;
             }
 
-            //todo: 1 UI
-            //todo: 3 mourning
+            if (secondParent != null)
+            {
+                firstParent.setPartner(secondParent.getId());
+                secondParent.setPartner(firstParent.getId());
+            }
 
             newCitizen.getCitizenSkillHandler().init(colony, firstParent, secondParent, random);
             newCitizen.setIsChild(true);
@@ -167,9 +172,23 @@ public class ReproductionManager implements IReproductionManager
 
             newHome.assignCitizen(newCitizen);
 
+            for (final int sibling : newCitizen.getSiblings())
+            {
+                final ICitizenData siblingData = colony.getCitizenManager().getCivilian(sibling);
+                if (siblingData != null)
+                {
+                    siblingData.addSiblings(newCitizen.getId());
+                }
+            }
+
             if (possibleSuffixes.contains("_w") && possibleSuffixes.contains("_d"))
             {
                 possibleSuffixes.add("_b");
+            }
+
+            if (possibleSuffixes.isEmpty())
+            {
+                possibleSuffixes.addAll(SUFFIXES);
             }
 
             newCitizen.setSuffix(possibleSuffixes.get(random.nextInt(possibleSuffixes.size())));

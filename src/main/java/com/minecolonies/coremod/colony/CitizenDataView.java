@@ -324,6 +324,9 @@ public class CitizenDataView implements ICitizenDataView
             jobView = IJobDataManager.getInstance().createViewFrom(colonyView, this, buf);
         }
 
+        children.clear();
+        siblings.clear();
+
         partner = buf.readInt();
         final int siblingsSize = buf.readInt();
         for (int i = 0; i < siblingsSize; i++)

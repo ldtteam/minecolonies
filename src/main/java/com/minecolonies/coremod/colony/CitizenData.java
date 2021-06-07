@@ -83,7 +83,7 @@ public class CitizenData implements ICitizenData
     /**
      * Possible texture suffixes.
      */
-    private static final List<String> SUFFIXES = Arrays.asList("_b", "_d", "_a", "_w");
+    public static final List<String> SUFFIXES = Arrays.asList("_b", "_d", "_a", "_w");
 
     /**
      * The unique citizen id.
@@ -246,12 +246,12 @@ public class CitizenData implements ICitizenData
     /**
      * Alive children of the citizen
      */
-    private List<Integer> children = new ArrayList<>();
+    private Set<Integer> children = new HashSet<>();
 
     /**
      * Alive siblings of the citizen.
      */
-    private List<Integer> siblings = new ArrayList<>();
+    private Set<Integer> siblings = new HashSet<>();
 
     /**
      * Alive partner of the citizen.
@@ -519,14 +519,14 @@ public class CitizenData implements ICitizenData
         final String middleInitial;
         final String lastName;
 
-        if (firstParentName == null)
+        if (firstParentName == null || firstParentName.isEmpty())
         {
-            nameA = getRandomElement(rand, MineColonies.getConfig().getServer().lastNames.get().toArray(new String[0]));
+            nameA = generateName(rand, rand.nextBoolean(), colony);
         }
 
-        if (secondParentName == null)
+        if (secondParentName == null || secondParentName.isEmpty())
         {
-            nameB = getRandomElement(rand, MineColonies.getConfig().getServer().lastNames.get().toArray(new String[0]));
+            nameB = generateName(rand, rand.nextBoolean(), colony);
         }
 
         final String[] firstParentNameSplit = nameA.split(" ");
@@ -544,13 +544,11 @@ public class CitizenData implements ICitizenData
 
         if (random.nextBoolean())
         {
-            //todo this is failing, we're also not taking the middle name!
             middleInitial = firstParentNameSplit[lastNameIndex].substring(0, 1);
             lastName = secondParentNameSplit[lastNameIndex];
         }
         else
         {
-            //todo this is failing, we're also not taking the middle name!
             middleInitial = secondParentNameSplit[lastNameIndex].substring(0, 1);
             lastName = firstParentNameSplit[lastNameIndex];
         }
@@ -1213,19 +1211,19 @@ public class CitizenData implements ICitizenData
         final String parentB = nbtTagCompound.getString(TAG_PARENT_B);
 
         this.parents = new Tuple<>(parentA, parentB);
-        @NotNull final ListNBT siblingsNBT = nbtTagCompound.getList(TAG_SIBLINGS, Constants.NBT.TAG_COMPOUND);
+        @NotNull final ListNBT siblingsNBT = nbtTagCompound.getList(TAG_SIBLINGS, Constants.NBT.TAG_INT);
         for (int i = 0; i < siblingsNBT.size(); i++)
         {
             siblings.add(siblingsNBT.getInt(i));
         }
 
-        @NotNull final ListNBT childrenNBT = nbtTagCompound.getList(TAG_CHILDREN, Constants.NBT.TAG_COMPOUND);
+        @NotNull final ListNBT childrenNBT = nbtTagCompound.getList(TAG_CHILDREN, Constants.NBT.TAG_INT);
         for (int i = 0; i < childrenNBT.size(); i++)
         {
             children.add(childrenNBT.getInt(i));
         }
 
-        nbtTagCompound.putInt(TAG_PARTNER, partner);
+        partner = nbtTagCompound.getInt(TAG_PARTNER);
     }
 
     @Override

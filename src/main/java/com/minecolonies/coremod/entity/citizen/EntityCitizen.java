@@ -1048,10 +1048,6 @@ public class EntityCitizen extends AbstractEntityCitizen
         if (citizenSleepHandler.isAsleep() && !citizenDiseaseHandler.isSick())
         {
             citizenSleepHandler.onWakeUp();
-            if (citizenData.getCitizenMournHandler().shouldMourn())
-            {
-                citizenData.getCitizenMournHandler().setMourning(true);
-            }
         }
 
         // Raining

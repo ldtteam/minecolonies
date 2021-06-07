@@ -159,4 +159,9 @@ public interface ICitizenManager extends IEntityManager
 
     @Override
     ICitizenData getCivilian(final int citizenId);
+
+    /**
+     * Called in the morning.
+     */
+    void onWakeUp();
 }

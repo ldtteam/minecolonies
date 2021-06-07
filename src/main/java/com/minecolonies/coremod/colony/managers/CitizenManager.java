@@ -615,7 +615,7 @@ public class CitizenManager implements ICitizenManager
         {
             if (mourn)
             {
-                if (!(citizen.getJob() instanceof AbstractJobGuard) && !(citizen.getJob() instanceof JobUndertaker) && citizen.isRelatedTo(data) || citizen.doesLiveWith(data))
+                if (!(citizen.getJob() instanceof AbstractJobGuard) && !(citizen.getJob() instanceof JobUndertaker) && (citizen.isRelatedTo(data) || citizen.doesLiveWith(data)))
                 {
                     citizen.getCitizenMournHandler().addDeceasedCitizen(data.getName());
                 }
@@ -656,5 +656,17 @@ public class CitizenManager implements ICitizenManager
         }
 
         this.areCitizensSleeping = true;
+    }
+
+    @Override
+    public void onWakeUp()
+    {
+        for (final ICitizenData citizenData : citizens.values())
+        {
+            if (citizenData.getCitizenMournHandler().shouldMourn())
+            {
+                citizenData.getCitizenMournHandler().setMourning(true);
+            }
+        }
     }
 }
