@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static com.minecolonies.api.util.constant.Constants.TWENTYFIVESEC;
+import static com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateConstants.MAX_TICKRATE;
 import static com.minecolonies.coremod.colony.CitizenData.SUFFIXES;
 
 /**
@@ -30,14 +30,14 @@ import static com.minecolonies.coremod.colony.CitizenData.SUFFIXES;
 public class ReproductionManager implements IReproductionManager
 {
     /**
-     * The time in seconds before the initial try to spawn
+     * The time in seconds before the initial try to spawn. 5 minutes between each attempt.
      */
-    private static final int MIN_TIME_BEFORE_SPAWNTRY = 300;
+    private static final int MIN_TIME_BEFORE_SPAWNTRY = 20 * 60 * 5;
 
     /**
-     * Interval at which the childen are created, in ticks. Every 20 min it tries to spawn a child, 20min*60s*20ticks
+     * Interval at which the childen are created, in ticks. Every 10 min it tries to spawn a child.
      */
-    private final static int CHILD_SPAWN_INTERVAL = 20 * 60;
+    private final static int CHILD_SPAWN_INTERVAL = 20 * 60 * 10;
 
     /**
      * Min necessary citizens for reproduction.
@@ -66,21 +66,15 @@ public class ReproductionManager implements IReproductionManager
     public ReproductionManager(final Colony colony)
     {
         this.colony = colony;
-
-        final Random rand = new Random();
-        childCreationTimer = rand.nextInt(CHILD_SPAWN_INTERVAL) + MIN_TIME_BEFORE_SPAWNTRY;
+        childCreationTimer = random.nextInt(CHILD_SPAWN_INTERVAL) + MIN_TIME_BEFORE_SPAWNTRY;
     }
 
     @Override
     public void onColonyTick(@NotNull final IColony colony)
     {
-        if ( (childCreationTimer -= TWENTYFIVESEC) <= 0)
+        if ( (childCreationTimer -= MAX_TICKRATE) <= 0)
         {
-            //todo make a propper time based on max number of citizens, the more citizens there are, and the more free spots, the more likely.
-            childCreationTimer =
-              (colony.getWorld().rand.nextInt(500) + CHILD_SPAWN_INTERVAL * (colony.getCitizenManager().getCurrentCitizenCount() / Math.max(4,
-                colony.getCitizenManager()
-                  .getMaxCitizens())));
+            childCreationTimer = (MIN_TIME_BEFORE_SPAWNTRY + random.nextInt(CHILD_SPAWN_INTERVAL)) * (colony.getCitizenManager().getCurrentCitizenCount() / Math.max(4, colony.getCitizenManager().getMaxCitizens()));
             trySpawnChild();
         }
     }
