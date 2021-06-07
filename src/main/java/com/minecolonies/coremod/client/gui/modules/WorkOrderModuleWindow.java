@@ -169,8 +169,8 @@ public class WorkOrderModuleWindow extends AbstractModuleWindow
 
         if (view.getClaimedBy().equals(buildingView.getPosition()))
         {
+            view.setClaimedBy(buildingView.getPosition());
             Network.getNetwork().sendToServer(new WorkOrderChangeMessage(buildingView, view.getId(), true, 0));
-
         }
         else
         {

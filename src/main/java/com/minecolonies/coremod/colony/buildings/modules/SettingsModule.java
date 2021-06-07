@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.modules;
 
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModule;
-import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
 import com.minecolonies.api.colony.buildings.modules.ISettingsModule;
 import com.minecolonies.api.colony.buildings.modules.settings.ISetting;
@@ -14,7 +13,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.Constants;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -25,7 +24,7 @@ public class SettingsModule extends AbstractBuildingModule implements IPersisten
     /**
      * Map of setting id (string) to generic setting.
      */
-    final Map<ISettingKey<?>, ISetting> settings = new HashMap<>();
+    final Map<ISettingKey<?>, ISetting> settings = new LinkedHashMap<>();
 
     @Override
     public <T extends ISetting> T getSetting(final ISettingKey<T> key)
@@ -50,7 +49,11 @@ public class SettingsModule extends AbstractBuildingModule implements IPersisten
             final CompoundNBT entryCompound = list.getCompound(i);
             final ResourceLocation key = new ResourceLocation(entryCompound.getString("key"));
             final ISetting setting = StandardFactoryController.getInstance().deserialize(entryCompound.getCompound("value"));
-            settings.put(new SettingKey<>(setting.getClass(), key), setting);
+            final ISettingKey<?> settingsKey = new SettingKey<>(setting.getClass(), key);
+            if (settings.containsKey(settingsKey))
+            {
+                settings.put(settingsKey, setting);
+            }
         }
     }
 

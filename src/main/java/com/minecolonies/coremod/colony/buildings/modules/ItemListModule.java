@@ -28,7 +28,7 @@ public class ItemListModule extends AbstractBuildingModule implements IItemListM
     /**
      * List of allowed items.
      */
-    private final List<ItemStorage> itemsAllowed = new ArrayList<>();
+    private ImmutableList<ItemStorage> itemsAllowed = ImmutableList.of();
 
     /**
      * Unique id of this module.
@@ -48,12 +48,13 @@ public class ItemListModule extends AbstractBuildingModule implements IItemListM
     @Override
     public void deserializeNBT(final CompoundNBT compound)
     {
+        final List<ItemStorage> allowedItems = new ArrayList<>();
         if (compound.contains(id))
         {
             final ListNBT filterableList = compound.getCompound(id).getList(TAG_ITEMLIST, Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < filterableList.size(); ++i)
             {
-                itemsAllowed.add(new ItemStorage(ItemStack.read(filterableList.getCompound(i))));
+                allowedItems.add(new ItemStorage(ItemStack.read(filterableList.getCompound(i))));
             }
         }
         else
@@ -72,7 +73,7 @@ public class ItemListModule extends AbstractBuildingModule implements IItemListM
                         final ListNBT filterableItems = listItem.getList(TAG_ITEMLIST, Constants.NBT.TAG_COMPOUND);
                         for (int j = 0; j < filterableItems.size(); ++j)
                         {
-                            itemsAllowed.add(new ItemStorage(ItemStack.read(filterableItems.getCompound(j))));
+                            allowedItems.add(new ItemStorage(ItemStack.read(filterableItems.getCompound(j))));
                         }
                     }
                 }
@@ -82,6 +83,7 @@ public class ItemListModule extends AbstractBuildingModule implements IItemListM
                 }
             }
         }
+        this.itemsAllowed = ImmutableList.copyOf(allowedItems);
     }
 
     @Override
@@ -102,7 +104,7 @@ public class ItemListModule extends AbstractBuildingModule implements IItemListM
     @Override
     public void addItem(final ItemStorage item)
     {
-        itemsAllowed.add(item);
+        this.itemsAllowed = ImmutableList.<ItemStorage>builder().addAll(itemsAllowed).add(item).build();
         markDirty();
     }
 
@@ -115,14 +117,16 @@ public class ItemListModule extends AbstractBuildingModule implements IItemListM
     @Override
     public void removeItem(final ItemStorage item)
     {
-        itemsAllowed.remove(item);
+        final List<ItemStorage> allowedItems = new ArrayList<>(itemsAllowed);
+        allowedItems.remove(item);
+        this.itemsAllowed = ImmutableList.copyOf(allowedItems);
         markDirty();
     }
 
     @Override
     public ImmutableList<ItemStorage> getList()
     {
-        return ImmutableList.copyOf(itemsAllowed);
+        return itemsAllowed;
     }
 
     @Override

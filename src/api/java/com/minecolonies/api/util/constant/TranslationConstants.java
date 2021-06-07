@@ -82,7 +82,9 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_REQUESTS_COMPOSTABLE_UI                             = "com.minecolonies.gui.workerhuts.composter.compostables";
     @NonNls
-    public static final String COM_MINECOLONIES_REQUESTS_SAPLINGS                                   = "com.minecolonies.coremod.gui.workerhuts.saplingList";
+    public static final String COM_MINECOLONIES_REQUESTS_SAPLINGS                                   = "com.minecolonies.coremod.gui.workerhuts.saplinglist";
+    @NonNls
+    public static final String COM_MINECOLONIES_HOSTILES                                            = "com.minecolonies.coremod.gui.workerhuts.hostilelist";
     @NonNls
     public static final String COM_MINECOLONIES_REQUESTS_CRAFTING                                   = "com.minecolonies.coremod.request.crafting";
     @NonNls
@@ -331,6 +333,10 @@ public final class TranslationConstants
     public static final String UNABLE_TO_ADD_RECIPE_MESSAGE                                         = "com.minecolonies.coremod.recipe.unable";
     @NonNls
     public static final String FERTLIZER                                                            = "com.minecolonies.coremod.request.fertilizer";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_REQUEST_FLOWERS                             = "com.minecolonies.coremod.request.flowers";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_BEEKEEPER_NOFLOWERS                         = "com.minecolonies.coremod.beekeeper.noflowers";
     @NonNls
     public static final String FURNACE_USER_NO_FUEL                                                 = "com.minecolonies.coremod.furnaceuser.nofuel";
     @NonNls

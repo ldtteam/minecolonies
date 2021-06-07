@@ -71,16 +71,6 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
         super(pos, colony);
     }
 
-    /**
-     * Get a module matching a certain predicate.
-     * @param clazz the class of the module.
-     * @param modulePredicate the predicate to match.
-     * @param <T> the optional type.
-     * @return optional of the matching predicate (could be empty).
-     */
-    @NotNull
-    public abstract <T extends IBuildingModule> T getModuleMatching(Class<T> clazz, Predicate<? super T> modulePredicate);
-
     @Override
     public void deserializeNBT(final CompoundNBT compound)
     {

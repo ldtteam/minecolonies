@@ -116,8 +116,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
         {
             return false;
         }
-        final List<ItemStorage> allowedItems = getOwnBuilding().getModuleMatching(ItemListModule.class, m -> m.getId().equals(ORE_LIST)).getList();
-        return !allowedItems.contains(new ItemStorage(stack));
+        return !getOwnBuilding().getModuleMatching(ItemListModule.class, m -> m.getId().equals(ORE_LIST)).isItemInList(new ItemStorage(stack));
     }
 
     @Override

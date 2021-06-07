@@ -216,6 +216,11 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
             return;
         }
 
+        if (getManualMode())
+        {
+            return;
+        }
+
         for (final WorkOrderBuildDecoration wo : list)
         {
             double distanceToBuilder = Double.MAX_VALUE;

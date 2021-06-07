@@ -133,7 +133,6 @@ public class ServerConfiguration extends AbstractConfiguration
      *  -------------------------------------------------------------------------------- */
 
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> enabledModTags;
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> guardResourceLocations;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> configListStudyItems;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> configListRecruitmentItems;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> luckyOres;
@@ -443,15 +442,11 @@ public class ServerConfiguration extends AbstractConfiguration
             "forge:string"),
           s -> s instanceof String);
 
-        guardResourceLocations = defineList(builder, "guardresourcelocations",
-          Arrays.asList
-                   ("minecraft:slime",
-                     "tconstruct:blueslime"),
-          s -> s instanceof String);
         configListStudyItems = defineList(builder, "configliststudyitems",
           Arrays.asList
                    ("minecraft:paper;400;100", "minecraft:book;600;10"),
           s -> s instanceof String);
+
         configListRecruitmentItems = defineList(builder, "configlistrecruitmentitems",
           Arrays.asList
                    ("minecraft:hay_block;2",
