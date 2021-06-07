@@ -11,14 +11,17 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.inventory.container.ContainerCrafting;
+import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
+import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.coremod.colony.jobs.JobDyer;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
@@ -36,6 +39,7 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -108,16 +112,12 @@ public class BuildingDyer extends AbstractBuildingSmelterCrafter
     @Override
     public boolean canRecipeBeAdded(final IToken<?> token)
     {
-
-        Optional<Boolean> isRecipeAllowed;
-
         if (!super.canRecipeBeAdded(token))
         {
             return false;
         }
 
-        isRecipeAllowed = super.canRecipeBeAddedBasedOnTags(token);
-        return isRecipeAllowed.orElse(false);
+        return isRecipeCompatibleWithCraftingModule(token);
     }
 
     @Override
@@ -234,6 +234,23 @@ public class BuildingDyer extends AbstractBuildingSmelterCrafter
         public Window getWindow()
         {
             return new WindowHutWorkerModulePlaceholder<>(this, DYER);
+        }
+    }
+
+    public static class CraftingModule extends AbstractCraftingBuildingModule.Crafting
+    {
+        @Nullable
+        @Override
+        public IJob<?> getCraftingJob()
+        {
+            return getMainBuildingJob().orElseGet(() -> new JobDyer(null));
+        }
+
+        @Override
+        public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
+        {
+            if (!super.isRecipeCompatible(recipe)) return false;
+            return CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, DYER).orElse(false);
         }
     }
 }

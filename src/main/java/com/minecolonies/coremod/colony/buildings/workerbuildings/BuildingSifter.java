@@ -12,11 +12,13 @@ import com.minecolonies.api.items.ModTags;
 import com.minecolonies.coremod.client.gui.huts.WindowHutSifterModule;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.coremod.colony.jobs.JobSifter;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CURRENT_DAILY;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_DAILY;
@@ -237,6 +239,16 @@ public class BuildingSifter extends AbstractBuildingWorker
         public Window getWindow()
         {
             return new WindowHutSifterModule(this);
+        }
+    }
+
+    public static class CraftingModule extends AbstractCraftingBuildingModule.Custom
+    {
+        @Nullable
+        @Override
+        public IJob<?> getCraftingJob()
+        {
+            return getMainBuildingJob().orElseGet(() -> new JobSifter(null));
         }
     }
 }

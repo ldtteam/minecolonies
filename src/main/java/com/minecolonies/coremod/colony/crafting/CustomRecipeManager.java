@@ -9,8 +9,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.MinecraftForge;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -252,5 +252,7 @@ public class CustomRecipeManager
                 //addRecipe(StandardFactoryController.getInstance().deserialize(buff.readCompoundTag()));
             }
         }
+
+        MinecraftForge.EVENT_BUS.post(new CustomRecipesReloadedEvent());
     }
 }

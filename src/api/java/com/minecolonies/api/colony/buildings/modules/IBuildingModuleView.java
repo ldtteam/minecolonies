@@ -26,6 +26,12 @@ public interface IBuildingModuleView
     IBuildingModuleView setBuildingView(final IBuildingView buildingView);
 
     /**
+     * Whether this module appears as a GUI page.
+     * @return true to show the GUI page.
+     */
+    default boolean isPageVisible() { return true; }
+
+    /**
      * Get the matching window for the module.
      * @return the window.
      */

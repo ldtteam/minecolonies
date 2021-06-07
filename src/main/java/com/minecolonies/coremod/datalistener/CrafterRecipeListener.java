@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.datalistener;
 
 import com.google.gson.*;
-import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.crafting.CustomRecipe;
 import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
@@ -85,7 +84,5 @@ public class CrafterRecipeListener extends JsonReloadListener
                 recipeManager.sendCustomRecipeManagerPackets(player);
             }
         }
-
-        IColonyManager.getInstance().getCompatibilityManager().invalidateRecipes(this.dataPackRegistries.getRecipeManager());
     }
 }
