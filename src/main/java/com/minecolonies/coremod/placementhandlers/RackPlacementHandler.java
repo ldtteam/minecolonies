@@ -81,7 +81,7 @@ public class RackPlacementHandler implements IPlacementHandler
         final List<ItemStack> itemList = new ArrayList<>();
         itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
 
-        for (final ItemStack stack : PlacementHandlers.getItemsFromTileEntity(tileEntityData, world, pos))
+        for (final ItemStack stack : PlacementHandlers.getItemsFromTileEntity(tileEntityData, blockState))
         {
             if (!ItemStackUtils.isEmpty(stack))
             {
