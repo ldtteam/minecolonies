@@ -31,7 +31,7 @@ public class StringSetting implements IStringSetting
     /**
      * Current index of the setting.
      */
-    private int currentIndex;
+    protected int currentIndex;
 
     /**
      * Create a new string list setting.
@@ -105,5 +105,11 @@ public class StringSetting implements IStringSetting
         {
             currentIndex = 0;
         }
+    }
+
+    @Override
+    public void set(final String value)
+    {
+        currentIndex = getSettings().indexOf(value);
     }
 }

@@ -85,4 +85,14 @@ public class SettingsModule extends AbstractBuildingModule implements IPersisten
             StandardFactoryController.getInstance().serialize(buf, setting.getValue());
         }
     }
+
+    @Override
+    public void updateSetting(final ISettingKey<?> settingKey, final ISetting value)
+    {
+        if (settings.containsKey(settingKey))
+        {
+            settings.put(settingKey, value);
+            value.onUpdate(building);
+        }
+    }
 }
