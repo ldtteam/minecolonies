@@ -582,8 +582,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             handleDebugOptions(currentNode);
             currentNode.setClosed();
 
-            final boolean isViablePosition = isInRestrictedArea(currentNode.pos);
-
+            final boolean isViablePosition = isInRestrictedArea(currentNode.pos) && isWalkableSurface(world.getBlockState(currentNode.pos.down()), currentNode.pos.down()) == SurfaceType.WALKABLE;
             if (isViablePosition && isAtDestination(currentNode))
             {
                 bestNode = currentNode;
@@ -594,8 +593,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             //  If this is the closest node to our destination, treat it as our best node
             final double nodeResultScore =
               getNodeResultScore(currentNode);
-            if (isViablePosition && nodeResultScore < bestNodeResultScore && !currentNode.isCornerNode()
-                  && isWalkableSurface(world.getBlockState(currentNode.pos.down()), currentNode.pos.down()) == SurfaceType.WALKABLE)
+            if (isViablePosition && nodeResultScore < bestNodeResultScore && !currentNode.isCornerNode())
             {
                 bestNode = currentNode;
                 bestNodeResultScore = nodeResultScore;
