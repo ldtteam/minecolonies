@@ -38,7 +38,7 @@ repositories {
         url 'https://dvs1.progwml6.com/files/maven/'
     }
     maven {
-        url "http://harleyoconnor.com/maven"
+        url "http://harleyoconnor.com/maven/"
     }
 }
 
