@@ -111,19 +111,4 @@ public class GuardTaskSetting extends StringSettingWithDesc
         }
         pane.findPaneOfTypeByID("trigger", ButtonImage.class).setText(new TranslationTextComponent(setting));
     }
-
-    /**
-     * Set the setting to a specific index.
-     * @param task the task to set.
-     */
-    public void set(final String task)
-    {
-        if (getSettings().contains(task))
-        {
-            while (!getValue().equals(task))
-            {
-                trigger();
-            }
-        }
-    }
 }

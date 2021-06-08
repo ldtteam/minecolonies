@@ -73,13 +73,6 @@ public interface IGuardBuilding extends IBuildingWorker
     GuardType getGuardType();
 
     /**
-     * Set the guard's {@link GuardType}.
-     *
-     * @param job The job to set.
-     */
-    void setGuardType(GuardType job);
-
-    /**
      * Get the guard's RetrieveOnLowHeath.
      *
      * @return if so.

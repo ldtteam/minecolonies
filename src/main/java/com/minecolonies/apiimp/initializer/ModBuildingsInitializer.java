@@ -8,7 +8,6 @@ import com.minecolonies.coremod.colony.buildings.*;
 import com.minecolonies.coremod.colony.buildings.modules.settings.*;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.compatibility.CompatibilityManager;
-import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.buildings.modules.*;
 import com.minecolonies.coremod.colony.buildings.moduleviews.*;
@@ -28,8 +27,6 @@ import static com.minecolonies.coremod.colony.buildings.workerbuildings.Building
 import static com.minecolonies.coremod.entity.ai.citizen.composter.EntityAIWorkComposter.COMPOSTABLE_LIST;
 import static com.minecolonies.coremod.entity.ai.citizen.lumberjack.EntityAIWorkLumberjack.SAPLINGS_LIST;
 import static com.minecolonies.coremod.entity.ai.citizen.smelter.EntityAIWorkSmelter.ORE_LIST;
-
-import java.util.Set;
 
 public final class ModBuildingsInitializer
 {
@@ -81,6 +78,7 @@ public final class ModBuildingsInitializer
                                        .addBuildingModuleViewProducer(() -> new ToolModuleView(ModItems.scepterGuard))
                                        .addBuildingModuleProducer(() -> new EntityListModule(HOSTILE_LIST), () -> new EntityListModuleView(HOSTILE_LIST, COM_MINECOLONIES_HOSTILES, true))
                                        .addBuildingModuleProducer(() -> new SettingsModule()
+                                                                          .with(AbstractBuildingGuards.JOB, new GuardJobSetting())
                                                                           .with(AbstractBuildingGuards.GUARD_TASK, new GuardTaskSetting(GuardTaskSetting.PATROL, GuardTaskSetting.GUARD, GuardTaskSetting.FOLLOW))
                                                                           .with(AbstractBuildingGuards.RETREAT, new BoolSetting(true))
                                                                           .with(AbstractBuildingGuards.HIRE_TRAINEE, new BoolSetting(true))
@@ -201,6 +199,7 @@ public final class ModBuildingsInitializer
                                     .addBuildingModuleViewProducer(() -> new ToolModuleView(ModItems.scepterGuard))
                                     .addBuildingModuleProducer(() -> new EntityListModule(HOSTILE_LIST), () -> new EntityListModuleView(HOSTILE_LIST, COM_MINECOLONIES_HOSTILES, true))
                                     .addBuildingModuleProducer(() -> new SettingsModule()
+                                                                       .with(AbstractBuildingGuards.JOB, new GuardJobSetting())
                                                                        .with(AbstractBuildingGuards.GUARD_TASK, new GuardTaskSetting())
                                                                        .with(AbstractBuildingGuards.RETREAT, new BoolSetting(true))
                                                                        .with(AbstractBuildingGuards.HIRE_TRAINEE, new BoolSetting(true))
