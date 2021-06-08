@@ -41,7 +41,7 @@ public class CitizenMournHandler implements ICitizenMournHandler
     public void read(final CompoundNBT compound)
     {
         isMourning = compound.getBoolean(TAG_MOURNING);
-        final ListNBT tag = compound.getList(TAG_DECEASED, Constants.NBT.TAG_COMPOUND);
+        final ListNBT tag = compound.getList(TAG_DECEASED, Constants.NBT.TAG_STRING);
         for (int i = 0; i < tag.size(); i++)
         {
             deceasedCitizens.add(tag.getString(i));

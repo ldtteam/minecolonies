@@ -1018,13 +1018,6 @@ public class EntityCitizen extends AbstractEntityCitizen
             return false;
         }
 
-        if (citizenData.getCitizenMournHandler().isMourning() && citizenData.getCitizenMournHandler().shouldMourn())
-        {
-            setVisibleStatusIfNone(MOURNING);
-            desiredActivity = DesiredActivity.MOURN;
-            return false;
-        }
-
         // Sleeping
         if (!WorldUtil.isPastTime(CompatibilityUtils.getWorldFromCitizen(this), NIGHT - 2000))
         {
@@ -1043,6 +1036,13 @@ public class EntityCitizen extends AbstractEntityCitizen
                 desiredActivity = DesiredActivity.SLEEP;
                 return false;
             }
+        }
+
+        if (citizenData.getCitizenMournHandler().isMourning() && citizenData.getCitizenMournHandler().shouldMourn())
+        {
+            setVisibleStatusIfNone(MOURNING);
+            desiredActivity = DesiredActivity.MOURN;
+            return false;
         }
 
         if (citizenSleepHandler.isAsleep() && !citizenDiseaseHandler.isSick())

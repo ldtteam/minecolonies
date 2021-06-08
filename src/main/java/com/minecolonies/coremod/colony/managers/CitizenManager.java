@@ -663,9 +663,17 @@ public class CitizenManager implements ICitizenManager
     {
         for (final ICitizenData citizenData : citizens.values())
         {
-            if (citizenData.getCitizenMournHandler().shouldMourn())
+            if (citizenData.getCitizenMournHandler().isMourning())
             {
-                citizenData.getCitizenMournHandler().setMourning(true);
+                citizenData.getCitizenMournHandler().clearDeceasedCitizen();
+                citizenData.getCitizenMournHandler().setMourning(false);
+            }
+            else
+            {
+                if (citizenData.getCitizenMournHandler().shouldMourn())
+                {
+                    citizenData.getCitizenMournHandler().setMourning(true);
+                }
             }
         }
     }
