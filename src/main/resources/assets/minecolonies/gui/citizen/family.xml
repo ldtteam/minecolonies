@@ -11,14 +11,14 @@
     <label id="partner" size="130 11" pos="50 95" color="black" textalign="MIDDLE"/>
 
     <label size="110 11" pos="90 120" color="black"  label="§n$(com.minecolonies.coremod.gui.citizen.family.siblings):§r"/>
-    <list id="siblings" size="130 60" pos="50 135">
+    <list id="siblings" size="130 33" pos="50 135">
         <box size="100% 11" linewidth="2">
             <label id="name" size="130 11" pos="0 0" color="black" textalign="MIDDLE"/>
         </box>
     </list>
 
     <label size="110 11" pos="90 170" color="black"  label="§n$(com.minecolonies.coremod.gui.citizen.family.children):§r"/>
-    <list id="children" size="130 40" pos="50 185">
+    <list id="children" size="130 33" pos="50 185">
         <box size="100% 11" linewidth="2">
             <label id="name" size="130 11" pos="0 0" color="black" textalign="MIDDLE"/>
         </box>
