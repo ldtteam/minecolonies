@@ -95,7 +95,14 @@ public class GuardTaskSetting extends StringSettingWithDesc
             targetButton.setVisible(true);
             if (setting.equals(PATROL))
             {
-                targetButton.setText(new TranslationTextComponent("com.minecolonies.coremod.gui.workerhuts.targetpatrol"));
+                if (!settingsModuleView.getSetting(AbstractBuildingGuards.PATROL_MODE).getValue().equals(PatrolModeSetting.MANUAL))
+                {
+                    targetButton.setVisible(false);
+                }
+                else
+                {
+                    targetButton.setText(new TranslationTextComponent("com.minecolonies.coremod.gui.workerhuts.targetpatrol"));
+                }
             }
             else
             {
