@@ -311,6 +311,7 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
                 if (recipe.getRecipeOutput().isEmpty()) continue;   // invalid or special recipes
 
                 final IGenericRecipe genericRecipe = GenericRecipeUtils.create(recipe);
+                if (genericRecipe.getInputs().isEmpty()) continue;
                 if (this.crafting.isRecipeCompatible(genericRecipe))
                 {
                     recipes.add(genericRecipe);
@@ -326,6 +327,7 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
                 if (recipe.getRecipeOutput().isEmpty()) continue;   // invalid or special recipes
                 final IGenericRecipe genericRecipe = GenericRecipe.of(recipe);
                 assert genericRecipe != null;
+                if (genericRecipe.getInputs().isEmpty()) continue;
                 if (this.crafting.isRecipeCompatible(genericRecipe))
                 {
                     recipes.add(genericRecipe);
