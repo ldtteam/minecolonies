@@ -13,15 +13,17 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.inventory.container.ContainerCrafting;
+import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.coremod.colony.jobs.JobBaker;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingProductionResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingRequestResolver;
@@ -42,9 +44,9 @@ import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraftforge.common.Tags;
 import net.minecraftforge.fml.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -183,43 +185,6 @@ public class BuildingBaker extends AbstractBuildingSmelterCrafter
     }
 
     @Override
-    public boolean canRecipeBeAdded(final IToken<?> token)
-    {
-
-        Optional<Boolean> isRecipeAllowed;
-
-        if (!super.canRecipeBeAdded(token))
-        {
-            return false;
-        }
-
-        isRecipeAllowed = super.canRecipeBeAddedBasedOnTags(token);
-        if (isRecipeAllowed.isPresent())
-        {
-            return isRecipeAllowed.get();
-        }
-        else
-        {
-            // Additional recipe rules
-
-            final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-
-            boolean hasWheat = false;
-            for (final ItemStorage input : storage.getCleanedInput())
-            {
-                if (Tags.Items.CROPS_WHEAT.contains(input.getItemStack().getItem()))
-                {
-                    hasWheat = true;
-                }
-            }
-
-            return hasWheat && ItemStackUtils.ISFOOD.test(storage.getPrimaryOutput());
-
-            // End Additional recipe rules
-        }
-    }
-
-    @Override
     public boolean addRecipe(final IToken<?> token)
     {
         final boolean recipeAdded = super.addRecipe(token);
@@ -314,6 +279,24 @@ public class BuildingBaker extends AbstractBuildingSmelterCrafter
         public Window getWindow()
         {
             return new WindowHutWorkerModulePlaceholder<>(this, "bakery");
+        }
+    }
+
+    public static class CraftingModule extends AbstractCraftingBuildingModule.Crafting
+    {
+        @Nullable
+        @Override
+        public IJob<?> getCraftingJob()
+        {
+            return getMainBuildingJob().orElseGet(() -> new JobBaker(null));
+        }
+
+        @Override
+        public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
+        {
+            if (!super.isRecipeCompatible(recipe)) return false;
+            final Optional<Boolean> isRecipeAllowed = CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, BAKER);
+            return isRecipeAllowed.orElse(false);
         }
     }
 }

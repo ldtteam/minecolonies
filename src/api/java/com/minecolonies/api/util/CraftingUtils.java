@@ -1,9 +1,15 @@
 package com.minecolonies.api.util;
 
+import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.items.ModTags;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tags.ITag;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Optional;
 
 /**
  * Utility class that handles crafting duties
@@ -57,5 +63,48 @@ public final class CraftingUtils
     {
         //Calculate the crafting count from the request and the storage output.
         return (int) Math.ceil(Math.max(count, ItemStackUtils.getSize(storage.getPrimaryOutput())) / (double) ItemStackUtils.getSize(storage.getPrimaryOutput()));
+    }
+
+    /**
+     * Checks the tags associated with the specified job to see whether
+     * the provided recipe includes products and/or ingredients that are
+     * marked as compatible or incompatible with this job.
+     *
+     * @param recipe The recipe to check.
+     * @param crafterJobName The name of the crafting job (defines which tags to check).
+     * @return True if the recipe is compatible, false if not compatible,
+     *         or empty if no decision either way.
+     */
+    public static Optional<Boolean> isRecipeCompatibleBasedOnTags(@NotNull final IGenericRecipe recipe, @NotNull final String crafterJobName)
+    {
+        // Check against excluded products
+        final ITag<Item> excludedProducts = ModTags.crafterProductExclusions.get(crafterJobName);
+        if (excludedProducts != null && recipe.matchesOutput(stack -> excludedProducts.contains(stack.getItem())))
+        {
+            return Optional.of(false);
+        }
+
+        // Check against allowed products
+        final ITag<Item> allowedProducts = ModTags.crafterProduct.get(crafterJobName);
+        if (allowedProducts != null && recipe.matchesOutput(stack -> allowedProducts.contains(stack.getItem())))
+        {
+            return Optional.of(true);
+        }
+
+        // Check against excluded ingredients
+        final ITag<Item> excludedIngredients = ModTags.crafterIngredientExclusions.get(crafterJobName);
+        if (excludedIngredients != null && recipe.matchesInput(stack -> excludedIngredients.contains(stack.getItem())))
+        {
+            return Optional.of(false);
+        }
+
+        // Check against allowed ingredients
+        final ITag<Item> allowedIngredients = ModTags.crafterIngredient.get(crafterJobName);
+        if (allowedIngredients != null && recipe.matchesInput(stack -> allowedIngredients.contains(stack.getItem())))
+        {
+            return Optional.of(true);
+        }
+
+        return Optional.empty();
     }
 }
