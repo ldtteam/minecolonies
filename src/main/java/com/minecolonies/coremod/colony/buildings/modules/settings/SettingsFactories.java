@@ -491,4 +491,30 @@ public class SettingsFactories
             return 53;
         }
     }
+
+    /**
+     * Specific factory for the string setting with desc.
+     */
+    public static class GuardJobSettingFactory extends AbstractStringSettingsFactory<GuardJobSetting>
+    {
+        @NotNull
+        @Override
+        public TypeToken<GuardJobSetting> getFactoryOutputType()
+        {
+            return TypeToken.of(GuardJobSetting.class);
+        }
+
+        @NotNull
+        @Override
+        public GuardJobSetting getNewInstance(final List<String> value, final int curr)
+        {
+            return new GuardJobSetting(value, curr);
+        }
+
+        @Override
+        public short getSerializationId()
+        {
+            return 54;
+        }
+    }
 }

@@ -95,7 +95,14 @@ public class GuardTaskSetting extends StringSettingWithDesc
             targetButton.setVisible(true);
             if (setting.equals(PATROL))
             {
-                targetButton.setText(new TranslationTextComponent("com.minecolonies.coremod.gui.workerhuts.targetpatrol"));
+                if (!settingsModuleView.getSetting(AbstractBuildingGuards.PATROL_MODE).getValue().equals(PatrolModeSetting.MANUAL))
+                {
+                    targetButton.setVisible(false);
+                }
+                else
+                {
+                    targetButton.setText(new TranslationTextComponent("com.minecolonies.coremod.gui.workerhuts.targetpatrol"));
+                }
             }
             else
             {
@@ -110,20 +117,5 @@ public class GuardTaskSetting extends StringSettingWithDesc
             targetButton.setVisible(false);
         }
         pane.findPaneOfTypeByID("trigger", ButtonImage.class).setText(new TranslationTextComponent(setting));
-    }
-
-    /**
-     * Set the setting to a specific index.
-     * @param task the task to set.
-     */
-    public void set(final String task)
-    {
-        if (getSettings().contains(task))
-        {
-            while (!getValue().equals(task))
-            {
-                trigger();
-            }
-        }
     }
 }

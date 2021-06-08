@@ -44,6 +44,11 @@ public class GuardType extends ForgeRegistryEntry<GuardType>
     private final String workerSoundName;
 
     /**
+     * The class of the job.
+     */
+    private final Class<IJob<?>> clazz;
+
+    /**
      * Constructor to create the type.
      *
      * @param guardJobProducer     the producer.
@@ -52,12 +57,16 @@ public class GuardType extends ForgeRegistryEntry<GuardType>
      * @param primarySkill         primary skill.
      * @param secondarySkill       secondary skill.
      * @param workerSoundName      worker sound name.
+     * @param clazz                  the class of the job.
      */
     public GuardType(
       final Function<ICitizenData, IJob<?>> guardJobProducer,
       final String jobTranslationKey,
       final String buttonTranslationKey,
-      final Skill primarySkill, final Skill secondarySkill, final String workerSoundName)
+      final Skill primarySkill,
+      final Skill secondarySkill,
+      final String workerSoundName,
+      final Class<IJob<?>> clazz)
     {
         super();
         this.guardJobProducer = guardJobProducer;
@@ -66,6 +75,7 @@ public class GuardType extends ForgeRegistryEntry<GuardType>
         this.primarySkill = primarySkill;
         this.secondarySkill = secondarySkill;
         this.workerSoundName = workerSoundName;
+        this.clazz = clazz;
     }
 
     /**
@@ -129,6 +139,16 @@ public class GuardType extends ForgeRegistryEntry<GuardType>
     }
 
     /**
+     * Check if the job is of this type.
+     * @param job the job to check.
+     * @return true if so.
+     */
+    public boolean isInstance(final IJob<?> job)
+    {
+        return this.clazz.isInstance(job);
+    }
+
+    /**
      * The builder.
      */
     public static class Builder
@@ -140,6 +160,7 @@ public class GuardType extends ForgeRegistryEntry<GuardType>
         private Skill                           secondarySkill;
         private String                          workerSoundName;
         private ResourceLocation                registryName;
+        private Class<IJob<?>>                  clazz;
 
         public Builder setGuardJobProducer(final Function<ICitizenData, IJob<?>> guardJobProducer)
         {
@@ -183,9 +204,15 @@ public class GuardType extends ForgeRegistryEntry<GuardType>
             return this;
         }
 
+        public Builder setClazz(final Class clazz)
+        {
+            this.clazz = clazz;
+            return this;
+        }
+
         public GuardType createGuardType()
         {
-            return new GuardType(guardJobProducer, jobTranslationKey, buttonTranslationKey, primarySkill, secondarySkill, workerSoundName).setRegistryName(registryName);
+            return new GuardType(guardJobProducer, jobTranslationKey, buttonTranslationKey, primarySkill, secondarySkill, workerSoundName, clazz).setRegistryName(registryName);
         }
     }
 }
