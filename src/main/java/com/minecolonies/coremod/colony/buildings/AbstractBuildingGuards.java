@@ -422,14 +422,17 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
                 startPatrolNext();
             }
         }
+    }
 
+    /**
+     * Called when the job setting changes.
+     */
+    public void onJobChange()
+    {
         for (final ICitizenData citizen : getAssignedCitizen())
         {
-            if (!getGuardType().isInstance(citizen.getJob()))
-            {
-                cancelAllRequestsOfCitizen(citizen);
-                citizen.setJob(createJob(citizen));
-            }
+            cancelAllRequestsOfCitizen(citizen);
+            citizen.setJob(createJob(citizen));
         }
     }
 

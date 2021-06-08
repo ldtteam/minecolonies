@@ -3,11 +3,13 @@ package com.minecolonies.coremod.colony.buildings.modules.settings;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.ButtonImage;
 import com.ldtteam.blockout.views.Window;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingsModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.colony.guardtype.registry.IGuardTypeRegistry;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
 
@@ -51,5 +53,14 @@ public class GuardJobSetting extends StringSettingWithDesc
     public GuardType getGuardType()
     {
         return IGuardTypeRegistry.getInstance().getValue(new ResourceLocation(getValue()));
+    }
+
+    @Override
+    public void onUpdate(final IBuilding building)
+    {
+        if (building instanceof AbstractBuildingGuards)
+        {
+            ((AbstractBuildingGuards) building).onJobChange();
+        }
     }
 }

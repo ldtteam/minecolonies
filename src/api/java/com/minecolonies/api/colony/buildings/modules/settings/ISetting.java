@@ -2,6 +2,7 @@ package com.minecolonies.api.colony.buildings.modules.settings;
 
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.views.Window;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 
 /**
@@ -50,4 +51,10 @@ public interface ISetting
     {
         return true;
     }
+
+    /**
+     * Called when updated.
+     * @param building the building its updated for.
+     */
+    default void onUpdate(IBuilding building) { };
 }
