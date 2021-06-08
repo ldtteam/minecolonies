@@ -308,6 +308,7 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
             {
                 if (!recipe.canFit(3, 3)) continue;
                 if (!this.crafting.canLearnLargeRecipes() && !recipe.canFit(2, 2)) continue;
+                if (recipe.getRecipeOutput().isEmpty()) continue;   // invalid or special recipes
 
                 final IGenericRecipe genericRecipe = GenericRecipeUtils.create(recipe);
                 if (this.crafting.isRecipeCompatible(genericRecipe))
@@ -322,6 +323,7 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
         {
             for (final IRecipe<IInventory> recipe : recipeManager.getRecipes(IRecipeType.SMELTING).values())
             {
+                if (recipe.getRecipeOutput().isEmpty()) continue;   // invalid or special recipes
                 final IGenericRecipe genericRecipe = GenericRecipe.of(recipe);
                 assert genericRecipe != null;
                 if (this.crafting.isRecipeCompatible(genericRecipe))
