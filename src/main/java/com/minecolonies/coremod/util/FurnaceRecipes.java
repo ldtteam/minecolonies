@@ -58,7 +58,8 @@ public class FurnaceRecipes implements IFurnaceRecipes
                           ImmutableList.of(new ItemStorage(smeltable)),
                           1,
                           recipe.getRecipeOutput(),
-                          Blocks.FURNACE);
+                          Blocks.FURNACE,
+                          recipe.getId());
 
                         recipes.put(storage.getCleanedInput().get(0), storage);
 

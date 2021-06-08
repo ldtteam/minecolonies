@@ -9,11 +9,14 @@ import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.entity.citizen.Skill;
+import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
+import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.modules.settings.PlantationSetting;
 import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.coremod.colony.jobs.JobPlanter;
@@ -31,6 +34,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -197,7 +201,7 @@ public class BuildingPlantation extends AbstractBuildingCrafter
             return false;
         }
 
-        return super.canRecipeBeAddedBasedOnTags(token).orElse(false);
+        return isRecipeCompatibleWithCraftingModule(token);
     }
 
     @Override
@@ -268,6 +272,24 @@ public class BuildingPlantation extends AbstractBuildingCrafter
         public Window getWindow()
         {
             return new WindowHutWorkerModulePlaceholder<>(this, PLANTATION);
+        }
+    }
+
+    public static class CraftingModule extends AbstractCraftingBuildingModule.Crafting
+    {
+        @Nullable
+        @Override
+        public IJob<?> getCraftingJob()
+        {
+            return getMainBuildingJob().orElseGet(() -> new JobPlanter(null));
+        }
+
+        @Override
+        public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
+        {
+            if (!super.isRecipeCompatible(recipe)) return false;
+            final Optional<Boolean> isRecipeAllowed = CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, PLANTATION);
+            return isRecipeAllowed.orElse(false);
         }
     }
 }

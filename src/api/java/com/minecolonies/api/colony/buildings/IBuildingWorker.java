@@ -119,10 +119,10 @@ public interface IBuildingWorker extends IBuilding
     /**
      * Check if a recipe can be added. This is only important for 3x3 crafting. Workers shall override this if necessary.
      *
-     * @param ignored the token of the recipe.
+     * @param token the token of the recipe.
      * @return true if so.
      */
-    boolean canRecipeBeAdded(IToken<?> ignored);
+    boolean canRecipeBeAdded(IToken<?> token);
 
     /**
      * Check if players can change the building's recipe list.

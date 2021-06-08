@@ -16,6 +16,7 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.huts.WindowHutEnchanterModule;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.coremod.colony.jobs.JobEnchanter;
 import com.minecolonies.coremod.network.messages.server.colony.building.enchanter.EnchanterWorkerSetMessage;
 import net.minecraft.nbt.CompoundNBT;
@@ -309,6 +310,16 @@ public class BuildingEnchanter extends AbstractBuildingCrafter
         {
             buildingToGatherFrom.remove(blockPos);
             Network.getNetwork().sendToServer(new EnchanterWorkerSetMessage(this, blockPos, false));
+        }
+    }
+
+    public static class CraftingModule extends AbstractCraftingBuildingModule.Custom
+    {
+        @Nullable
+        @Override
+        public IJob<?> getCraftingJob()
+        {
+            return getMainBuildingJob().orElseGet(() -> new JobEnchanter(null));
         }
     }
 }

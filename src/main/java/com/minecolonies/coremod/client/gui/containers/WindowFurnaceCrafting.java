@@ -76,6 +76,12 @@ public class WindowFurnaceCrafting extends ContainerScreen<ContainerCraftingFurn
         this.building = (AbstractBuildingSmelterCrafter.View) IColonyManager.getInstance().getBuildingView(playerInventory.player.world.getDimensionKey(), container.getPos());
     }
 
+    @NotNull
+    public AbstractBuildingSmelterCrafter.View getBuildingView()
+    {
+        return building;
+    }
+
     @Override
     protected void init()
     {

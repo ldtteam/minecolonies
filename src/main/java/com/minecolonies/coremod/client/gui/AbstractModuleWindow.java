@@ -60,6 +60,8 @@ public abstract class AbstractModuleWindow extends AbstractWindowSkeleton implem
 
         for (IBuildingModuleView view : building.getAllModuleViews())
         {
+            if (!view.isPageVisible()) continue;
+
             final ButtonImage image = new ButtonImage();
             image.setImage("minecolonies:textures/gui/modules/tab_side" + (random.nextInt(3) + 1) + ".png");
             image.setPosition(-20, 10 + offset);
