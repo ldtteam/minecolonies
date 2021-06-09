@@ -586,7 +586,7 @@ public class CitizenData implements ICitizenData
             {
                 // Oops - recurse this function and try again
                 generateName(rand, firstParentName, secondParentName);
-                break;
+                return;
             }
         }
         this.name = citizenName;
