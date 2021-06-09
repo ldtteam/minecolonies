@@ -18,6 +18,8 @@ import java.util.Random;
 
 import static com.minecolonies.api.util.constant.PathingConstants.DEBUG_VERBOSITY_NONE;
 
+import com.minecolonies.coremod.entity.pathfinding.pathjobs.AbstractPathJob.SurfaceType;
+
 /**
  * Job that handles random pathing.
  */
@@ -65,7 +67,7 @@ public class PathJobRandomPos extends AbstractPathJob
         this.maxDistToDest = range;
 
         final Tuple<Direction, Direction> dir = BlockPosUtil.getRandomDirectionTuple(random);
-        this.destination = start.offset(dir.getA(), minDistFromStart).offset(dir.getB(), minDistFromStart);
+        this.destination = start.relative(dir.getA(), minDistFromStart).relative(dir.getB(), minDistFromStart);
     }
 
     /**
@@ -108,14 +110,14 @@ public class PathJobRandomPos extends AbstractPathJob
     @Override
     protected double computeHeuristic(@NotNull final BlockPos pos)
     {
-        return Math.sqrt(destination.distanceSq(new BlockPos(pos.getX(), destination.getY(), pos.getZ())));
+        return Math.sqrt(destination.distSqr(new BlockPos(pos.getX(), destination.getY(), pos.getZ())));
     }
 
     @Override
     protected boolean isAtDestination(@NotNull final Node n)
     {
-        if ((minDistFromStart ==  1 || start.distanceSq(n.pos) > minDistFromStart * minDistFromStart) && isWalkableSurface(world.getBlockState(n.pos.down()), n.pos.down()) == SurfaceType.WALKABLE
-              && destination.distanceSq(n.pos) < this.maxDistToDest * this.maxDistToDest)
+        if ((minDistFromStart ==  1 || start.distSqr(n.pos) > minDistFromStart * minDistFromStart) && isWalkableSurface(world.getBlockState(n.pos.below()), n.pos.below()) == SurfaceType.WALKABLE
+              && destination.distSqr(n.pos) < this.maxDistToDest * this.maxDistToDest)
         {
             return true;
         }
@@ -126,7 +128,7 @@ public class PathJobRandomPos extends AbstractPathJob
     protected double getNodeResultScore(@NotNull final Node n)
     {
         //  For Result Score lower is better
-        return destination.distanceSq(n.pos);
+        return destination.distSqr(n.pos);
     }
 
     /**

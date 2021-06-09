@@ -239,7 +239,7 @@ public class PermissionsView implements IPermissions
         for (int i = 0; i < ranksSize; ++i)
         {
             final int id = buf.readInt();
-            final Rank rank = new Rank(id, buf.readString(32767), buf.readBoolean(), buf.readBoolean(), buf.readBoolean(), buf.readBoolean());
+            final Rank rank = new Rank(id, buf.readUtf(32767), buf.readBoolean(), buf.readBoolean(), buf.readBoolean(), buf.readBoolean());
             ranks.put(id, rank);
         }
         userRank = ranks.get(buf.readInt());
@@ -250,7 +250,7 @@ public class PermissionsView implements IPermissions
         for (int i = 0; i < numOwners; ++i)
         {
             final UUID id = PacketUtils.readUUID(buf);
-            final String name = buf.readString(32767);
+            final String name = buf.readUtf(32767);
             final Rank rank = ranks.get(buf.readInt());
             if (rank.getId() == OWNER_RANK_ID)
             {
@@ -280,7 +280,7 @@ public class PermissionsView implements IPermissions
     @NotNull
     public Rank getRank(@NotNull final PlayerEntity player)
     {
-        return getRank(player.getUniqueID());
+        return getRank(player.createPlayerUUID());
     }
 
     @Override
@@ -345,7 +345,7 @@ public class PermissionsView implements IPermissions
     @Override
     public boolean isColonyMember(@NotNull final PlayerEntity player)
     {
-        return players.containsKey(player.getUniqueID());
+        return players.containsKey(player.createPlayerUUID());
     }
 
     @Override

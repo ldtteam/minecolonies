@@ -121,7 +121,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
     {
         super(citizen.getWorkBuilding(),
           Constants.MOD_ID + CITIZEN_RESOURCE_SUFFIX,
-          IColonyManager.getInstance().getColonyView(citizen.getColonyId(), Minecraft.getInstance().world.getDimensionKey()));
+          IColonyManager.getInstance().getColonyView(citizen.getColonyId(), Minecraft.getInstance().level.dimension()));
         this.citizen = citizen;
 
         final Image statusIcon = findPaneOfTypeByID(STATUS_ICON, Image.class);
@@ -476,7 +476,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
         else
         {
             final List<Integer> slots = InventoryUtils.findAllSlotsInItemHandlerWith(new InvWrapper(inventory), requestPredicate);
-            final int invSize = inventory.getSizeInventory() - 5; // 4 armour slots + 1 shield slot
+            final int invSize = inventory.getContainerSize() - 5; // 4 armour slots + 1 shield slot
             int slot = -1;
             for (final Integer possibleSlot : slots)
             {
@@ -491,13 +491,13 @@ public class WindowCitizen extends AbstractWindowRequestTree
             {
                 final ITextComponent chatMessage = new StringTextComponent("<" + citizen.getName() + "> " +
                                                                              LanguageHandler.format(COM_MINECOLONIES_CANT_TAKE_EQUIPPED, citizen.getName()))
-                                                     .setStyle(Style.EMPTY.setBold(false).setFormatting(TextFormatting.WHITE)
+                                                     .setStyle(Style.EMPTY.withBold(false).withColor(TextFormatting.WHITE)
                                                      );
-                Minecraft.getInstance().player.sendMessage(chatMessage, Minecraft.getInstance().player.getUniqueID());
+                Minecraft.getInstance().player.sendMessage(chatMessage, Minecraft.getInstance().player.createPlayerUUID());
 
                 return; // We don't have one that isn't in our armour slot
             }
-            itemStack = inventory.getStackInSlot(slot);
+            itemStack = inventory.getItem(slot);
         }
 
 

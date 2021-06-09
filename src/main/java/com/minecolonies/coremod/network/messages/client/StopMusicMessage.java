@@ -39,7 +39,7 @@ public class StopMusicMessage implements IMessage
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
-        Minecraft.getInstance().getSoundHandler().stop();
-        Minecraft.getInstance().getMusicTicker().stop();
+        Minecraft.getInstance().getSoundManager().stop();
+        Minecraft.getInstance().getMusicManager().stopPlaying();
     }
 }

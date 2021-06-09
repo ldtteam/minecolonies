@@ -29,10 +29,10 @@ public class CommandCitizenReload implements IMCColonyOfficerCommand
     {
         // Colony
         final int colonyID = IntegerArgumentType.getInteger(context, COLONYID_ARG);
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getWorld().getDimensionKey());
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getLevel().dimension());
         if (colony == null)
         {
-            context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.colonyidnotfound", colonyID), true);
+            context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.colonyidnotfound", colonyID), true);
             return 0;
         }
 
@@ -40,12 +40,12 @@ public class CommandCitizenReload implements IMCColonyOfficerCommand
 
         if (citizenData == null)
         {
-            context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.citizeninfo.notfound"), true);
+            context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.citizeninfo.notfound"), true);
             return 0;
         }
 
         citizenData.updateEntityIfNecessary();
-        context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.citizenreload.success", citizenData.getId()), true);
+        context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.citizenreload.success", citizenData.getId()), true);
         return 1;
     }
 

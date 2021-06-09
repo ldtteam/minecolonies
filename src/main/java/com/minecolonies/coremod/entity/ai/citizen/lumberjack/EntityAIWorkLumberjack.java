@@ -252,7 +252,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
      */
     private boolean isStackLog(@Nullable final ItemStack stack)
     {
-        return !ItemStackUtils.isEmpty(stack) && stack.getItem() instanceof BlockItem && ((BlockItem) stack.getItem()).getBlock().isIn(BlockTags.LOGS);
+        return !ItemStackUtils.isEmpty(stack) && stack.getItem() instanceof BlockItem && ((BlockItem) stack.getItem()).getBlock().is(BlockTags.LOGS);
     }
 
     /**
@@ -341,7 +341,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
                 final BlockPos startPos = building.getStartRestriction();
                 final BlockPos endPos = building.getEndRestriction();
 
-                pathResult = worker.getNavigator()
+                pathResult = worker.getNavigation()
                     .moveToTree(startPos,
                         endPos,
                         1.0D,
@@ -350,7 +350,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
             }
             else
             {
-                pathResult = worker.getNavigator()
+                pathResult = worker.getNavigation()
                     .moveToTree(SEARCH_RANGE + searchIncrement,
                         1.0D,
                       building.getModuleMatching(ItemListModule.class, m -> m.getId().equals(SAPLINGS_LIST)).getList(),
@@ -489,8 +489,8 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
                 if (!mineBlock(log, workFrom, false, false, Compatibility.getDynamicTreeBreakAction(
                   world,
                   log,
-                  worker.getHeldItem(Hand.MAIN_HAND),
-                  worker.getPosition())))
+                  worker.getLastHandItem(Hand.MAIN_HAND),
+                  worker.blockPosition())))
                 {
                     return getState();
                 }
@@ -562,19 +562,19 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
      */
     public boolean walkToTree(final BlockPos workAt)
     {
-        if (workFrom == null || world.getBlockState(workFrom.up()).getBlock().isIn(BlockTags.SAPLINGS) || world.getBlockState(workFrom).getBlock().isIn(BlockTags.SAPLINGS))
+        if (workFrom == null || world.getBlockState(workFrom.above()).getBlock().is(BlockTags.SAPLINGS) || world.getBlockState(workFrom).getBlock().is(BlockTags.SAPLINGS))
         {
             workFrom = getWorkingPosition(workAt);
         }
 
-        if (MathUtils.twoDimDistance(worker.getPosition(), workFrom) <= MIN_WORKING_RANGE)
+        if (MathUtils.twoDimDistance(worker.blockPosition(), workFrom) <= MIN_WORKING_RANGE)
         {
             return true;
         }
 
         if (pathToTree == null || !pathToTree.isInProgress())
         {
-            pathToTree = ((MinecoloniesAdvancedPathNavigate) worker.getNavigator()).setPathJob(new PathJobMoveToWithPassable(world,
+            pathToTree = ((MinecoloniesAdvancedPathNavigate) worker.getNavigation()).setPathJob(new PathJobMoveToWithPassable(world,
               AbstractPathJob.prepareStart(worker),
               workAt,
               SEARCH_RANGE,
@@ -603,16 +603,16 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
      */
     private boolean checkIfStuck()
     {
-        if (!worker.getNavigator().noPath())
+        if (!worker.getNavigation().isDone())
         {
-            final Path path = worker.getNavigator().getPath();
+            final Path path = worker.getNavigation().getPath();
             if (path != null)
             {
-                if (path.getCurrentPathLength() > path.getCurrentPathIndex())
+                if (path.getNodeCount() > path.getNextNodeIndex())
                 {
                     return true;
                 }
-                return path.getCurrentPathLength() == 0;
+                return path.getNodeCount() == 0;
             }
             else
             {
@@ -627,30 +627,30 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
      */
     private void tryUnstuck()
     {
-        if (!worker.getNavigator().noPath())
+        if (!worker.getNavigation().isDone())
         {
-            Path path = worker.getNavigator().getPath();
+            Path path = worker.getNavigation().getPath();
             if (path != null)
             {
                 // Unstuck with path
                 final List<BlockPos> checkPositions = new ArrayList<>();
-                PathPoint next = path.getPathPointFromIndex(Math.min(path.getCurrentPathIndex() + 1, path.getCurrentPathLength() - 1));
+                PathPoint next = path.getNode(Math.min(path.getNextNodeIndex() + 1, path.getNodeCount() - 1));
 
                 // Blocks in front of the worker
                 for (int i = 0; i < 2; i++)
                 {
                     checkPositions.add(new BlockPos(next.x, next.y + i, next.z));
                 }
-                if (next.previous != null)
+                if (next.cameFrom != null)
                 {
-                    next = next.previous;
+                    next = next.cameFrom;
                     for (int i = 0; i < 2; i++)
                     {
                         checkPositions.add(new BlockPos(next.x, next.y + i, next.z));
                     }
-                    if (next.previous != null)
+                    if (next.cameFrom != null)
                     {
-                        next = next.previous;
+                        next = next.cameFrom;
                         for (int i = 0; i < 2; i++)
                         {
                             checkPositions.add(new BlockPos(next.x, next.y + i, next.z));
@@ -668,8 +668,8 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
 
         for (Direction direction : Direction.Plane.HORIZONTAL)
         {
-            checkPositions.add(new BlockPos(worker.getPosition().getX(), worker.getPosition().getY(), worker.getPosition().getZ()).offset(direction));
-            checkPositions.add(new BlockPos(worker.getPosition().getX(), worker.getPosition().getY() + 1, worker.getPosition().getZ()).offset(direction));
+            checkPositions.add(new BlockPos(worker.blockPosition().getX(), worker.blockPosition().getY(), worker.blockPosition().getZ()).relative(direction));
+            checkPositions.add(new BlockPos(worker.blockPosition().getX(), worker.blockPosition().getY() + 1, worker.blockPosition().getZ()).relative(direction));
         }
 
         mineIfEqualsBlockTag(checkPositions, BlockTags.LEAVES);
@@ -693,9 +693,9 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
                     currentPos.getY(),
                     currentPos.getZ(),
                     tag.toString(),
-                    world.getBlockState(currentPos).getBlock().isIn(tag)));
+                    world.getBlockState(currentPos).getBlock().is(tag)));
             }
-            if (world.getBlockState(currentPos).getBlock().isIn(tag))
+            if (world.getBlockState(currentPos).getBlock().is(tag))
             {
                 mineBlock(currentPos);
                 return true;
@@ -723,9 +723,9 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
      */
     private boolean isOnSapling()
     {
-        return world.getBlockState(worker.getPosition()).getBlock().isIn(BlockTags.SAPLINGS)
-                 || world.getBlockState(worker.getPosition().up()).getBlock().isIn(BlockTags.SAPLINGS)
-                 || world.getBlockState(worker.getPosition().down()).getBlock().isIn(BlockTags.SAPLINGS);
+        return world.getBlockState(worker.blockPosition()).getBlock().is(BlockTags.SAPLINGS)
+                 || world.getBlockState(worker.blockPosition().above()).getBlock().is(BlockTags.SAPLINGS)
+                 || world.getBlockState(worker.blockPosition().below()).getBlock().is(BlockTags.SAPLINGS);
     }
 
     /**
@@ -737,7 +737,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     private boolean plantSapling(@NotNull final BlockPos location)
     {
         final Block worldBlock = world.getBlockState(location).getBlock();
-        if (!(worldBlock instanceof AirBlock) && !(worldBlock.isIn(BlockTags.SAPLINGS)) && worldBlock != Blocks.SNOW)
+        if (!(worldBlock instanceof AirBlock) && !(worldBlock.is(BlockTags.SAPLINGS)) && worldBlock != Blocks.SNOW)
         {
             return true;
         }
@@ -755,7 +755,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
             {
                 Compatibility.plantDynamicSapling(world, location, stack);
                 getInventory().extractItem(saplingSlot, 1, false);
-                worker.swingArm(worker.getActiveHand());
+                worker.swing(worker.getUsedItemHand());
                 timeWaited = 0;
                 incrementActionsDoneAndDecSaturation();
                 setDelay(TIMEOUT_DELAY);
@@ -768,14 +768,14 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
 
                 final SoundType soundType = block.getSoundType(world.getBlockState(location), world, location, worker);
                 world.playSound(null,
-                  this.worker.getPosition(),
+                  this.worker.blockPosition(),
                   soundType.getPlaceSound(),
                   SoundCategory.BLOCKS,
                   soundType.getVolume(),
                   soundType.getPitch());
             }
 
-            worker.swingArm(worker.getActiveHand());
+            worker.swing(worker.getUsedItemHand());
         }
 
         if (timeWaited >= MAX_WAITING_TIME / 2 && !checkedInHut && !walkToBuilding())
@@ -801,14 +801,14 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         if (job.getTree() != null)
         {
             searchForItems(new AxisAlignedBB(job.getTree().getLocation())
-                             .expand(RANGE_HORIZONTAL_PICKUP, RANGE_VERTICAL_PICKUP, RANGE_HORIZONTAL_PICKUP)
-                             .expand(-RANGE_HORIZONTAL_PICKUP, -RANGE_VERTICAL_PICKUP, -RANGE_HORIZONTAL_PICKUP));
+                             .expandTowards(RANGE_HORIZONTAL_PICKUP, RANGE_VERTICAL_PICKUP, RANGE_HORIZONTAL_PICKUP)
+                             .expandTowards(-RANGE_HORIZONTAL_PICKUP, -RANGE_VERTICAL_PICKUP, -RANGE_HORIZONTAL_PICKUP));
         }
         else
         {
             searchForItems(worker.getBoundingBox()
-                             .expand(RANGE_HORIZONTAL_PICKUP, RANGE_VERTICAL_PICKUP, RANGE_HORIZONTAL_PICKUP)
-                             .expand(-RANGE_HORIZONTAL_PICKUP, -RANGE_VERTICAL_PICKUP, -RANGE_HORIZONTAL_PICKUP));
+                             .expandTowards(RANGE_HORIZONTAL_PICKUP, RANGE_VERTICAL_PICKUP, RANGE_HORIZONTAL_PICKUP)
+                             .expandTowards(-RANGE_HORIZONTAL_PICKUP, -RANGE_VERTICAL_PICKUP, -RANGE_HORIZONTAL_PICKUP));
         }
     }
 
@@ -833,7 +833,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
             final BlockPos pos = job.getTree().getStumpLocations().get(0);
             final Item sapling = getInventory().getStackInSlot(saplingSlot).getItem();
             final Block new_block;
-            if (sapling.isIn(fungi))
+            if (sapling.is(fungi))
             {
                 if (sapling == Items.WARPED_FUNGUS)
                 {
@@ -843,11 +843,11 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
                 {
                     new_block = Blocks.CRIMSON_NYLIUM;
                 }
-                world.setBlockState(pos.down(), new_block.getDefaultState());
+                world.setBlockAndUpdate(pos.below(), new_block.defaultBlockState());
                 getOwnBuilding().addNetherTree(pos);
             }
-            if ((world.setBlockState(pos, block.getDefaultState()) && getInventory().getStackInSlot(saplingSlot) != null)
-                  || Objects.equals(world.getBlockState(pos), block.getDefaultState()))
+            if ((world.setBlockAndUpdate(pos, block.defaultBlockState()) && getInventory().getStackInSlot(saplingSlot) != null)
+                  || Objects.equals(world.getBlockState(pos), block.defaultBlockState()))
             {
 
                 getInventory().extractItem(saplingSlot, 1, false);
@@ -879,7 +879,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         }
         else
         {
-            return job.getTree().getSapling().isItemEqual(stack);
+            return job.getTree().getSapling().sameItem(stack);
         }
     }
 

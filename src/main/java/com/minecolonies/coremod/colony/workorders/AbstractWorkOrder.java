@@ -149,7 +149,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
         }
         try
         {
-            if (compound.keySet().contains(TAG_TH_PRIORITY))
+            if (compound.getAllKeys().contains(TAG_TH_PRIORITY))
             {
                 order.setPriority(compound.getInt(TAG_TH_PRIORITY));
             }
@@ -175,12 +175,12 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     public void read(@NotNull final CompoundNBT compound, final IWorkManager manager)
     {
         id = compound.getInt(TAG_ID);
-        if (compound.keySet().contains(TAG_TH_PRIORITY))
+        if (compound.getAllKeys().contains(TAG_TH_PRIORITY))
         {
             priority = compound.getInt(TAG_TH_PRIORITY);
         }
 
-        if (compound.keySet().contains(TAG_CLAIMED_BY))
+        if (compound.getAllKeys().contains(TAG_CLAIMED_BY))
         {
             final int citizenId = compound.getInt(TAG_CLAIMED_BY);
             if (manager.getColony() != null)
@@ -192,7 +192,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
                 }
             }
         }
-        else if (compound.keySet().contains(TAG_CLAIMED_BY_BUILDING))
+        else if (compound.getAllKeys().contains(TAG_CLAIMED_BY_BUILDING))
         {
             claimedBy = BlockPosUtil.read(compound, TAG_CLAIMED_BY_BUILDING);
         }
@@ -406,7 +406,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
         buf.writeInt(priority);
         buf.writeBlockPos(claimedBy == null ? BlockPos.ZERO : claimedBy);
         buf.writeInt(getType().ordinal());
-        buf.writeString(get());
+        buf.writeUtf(get());
         buf.writeBlockPos(buildingLocation == null ? BlockPos.ZERO : buildingLocation);
         buf.writeInt(0);
         //value is upgradeName and upgradeLevel for workOrderBuild

@@ -31,9 +31,9 @@ public class ColonyPopulationTrigger extends AbstractCriterionTrigger<ColonyPopu
 
     @NotNull
     @Override
-    public ColonyPopulationCriterionInstance deserialize(@NotNull final JsonObject jsonObject, @NotNull final ConditionArrayParser conditionArrayParser)
+    public ColonyPopulationCriterionInstance createInstance(@NotNull final JsonObject jsonObject, @NotNull final ConditionArrayParser conditionArrayParser)
     {
-        final int populationCount = JSONUtils.getInt(jsonObject, "population_count");
+        final int populationCount = JSONUtils.getAsInt(jsonObject, "population_count");
         return new ColonyPopulationCriterionInstance(populationCount);
     }
 }

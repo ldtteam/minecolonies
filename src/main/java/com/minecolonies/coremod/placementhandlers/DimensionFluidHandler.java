@@ -21,6 +21,8 @@ import java.util.List;
 
 import static com.ldtteam.structurize.api.util.constant.Constants.UPDATE_FLAG;
 
+import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler.ActionProcessingResult;
+
 /**
  * Makes lava in the nether free and water everywhere else.
  */
@@ -72,8 +74,8 @@ public class DimensionFluidHandler implements IPlacementHandler
         {
             return ActionProcessingResult.PASS;
         }
-        world.setBlockState(pos, blockState, UPDATE_FLAG);
-        world.getPendingFluidTicks().scheduleTick(pos, blockState.getFluidState().getFluid(), blockState.getFluidState().getFluid().getTickRate(world));
+        world.setBlock(pos, blockState, UPDATE_FLAG);
+        world.getLiquidTicks().scheduleTick(pos, blockState.getFluidState().getType(), blockState.getFluidState().getType().getTickDelay(world));
         return ActionProcessingResult.SUCCESS;
     }
 }

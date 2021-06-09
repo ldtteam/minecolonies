@@ -50,7 +50,7 @@ public class PathJobFindWater extends AbstractPathJob
 
     private static double squareDistance(@NotNull final BlockPos currentPond, @NotNull final BlockPos nextPond)
     {
-        return currentPond.distanceSq(nextPond);
+        return currentPond.distSqr(nextPond);
     }
 
     @NotNull
@@ -103,20 +103,20 @@ public class PathJobFindWater extends AbstractPathJob
             return false;
         }
 
-        if (world.getBlockState(n.pos).getBlock() != Blocks.WATER && (!world.isAirBlock(n.pos) || world.getBlockState(n.pos).getBlock() != Blocks.WATER))
+        if (world.getBlockState(n.pos).getBlock() != Blocks.WATER && (!world.isEmptyBlock(n.pos) || world.getBlockState(n.pos).getBlock() != Blocks.WATER))
         {
             if (n.pos.getX() == n.parent.pos.getX())
             {
                 final int dz = n.pos.getZ() > n.parent.pos.getZ() ? 1 : -1;
-                return Pond.checkWater(world, n.pos.add(0, -1, dz), getResult()) || Pond.checkWater(world, n.pos.add(-1, -1, 0), getResult()) || Pond.checkWater(world,
-                  n.pos.add(1, -1, 0),
+                return Pond.checkWater(world, n.pos.relative(0, -1, dz), getResult()) || Pond.checkWater(world, n.pos.relative(-1, -1, 0), getResult()) || Pond.checkWater(world,
+                  n.pos.relative(1, -1, 0),
                   getResult());
             }
             else
             {
                 final int dx = n.pos.getX() > n.parent.pos.getX() ? 1 : -1;
-                return Pond.checkWater(world, n.pos.add(dx, -1, 0), getResult()) || Pond.checkWater(world, n.pos.add(0, -1, -1), getResult()) || Pond.checkWater(world,
-                  n.pos.add(0, -1, 1),
+                return Pond.checkWater(world, n.pos.relative(dx, -1, 0), getResult()) || Pond.checkWater(world, n.pos.relative(0, -1, -1), getResult()) || Pond.checkWater(world,
+                  n.pos.relative(0, -1, 1),
                   getResult());
             }
         }

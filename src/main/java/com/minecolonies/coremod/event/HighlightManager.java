@@ -33,7 +33,7 @@ public class HighlightManager
      * Render buffers.
      */
     public static final  RenderTypeBuffers        renderBuffers            = new RenderTypeBuffers();
-    private static final IRenderTypeBuffer.Impl   renderBuffer             = renderBuffers.getBufferSource();
+    private static final IRenderTypeBuffer.Impl   renderBuffer             = renderBuffers.bufferSource();
     private static final Supplier<IVertexBuilder> linesWithoutCullAndDepth = () -> renderBuffer.getBuffer(RenderUtils.LINES_GLINT);
 
     /**
@@ -46,7 +46,7 @@ public class HighlightManager
     {
         if (!HIGHLIGHT_MAP.isEmpty())
         {
-            final long worldTime = Minecraft.getInstance().world.getGameTime();
+            final long worldTime = Minecraft.getInstance().level.getGameTime();
             for (final Map.Entry<String, Tuple<BlockPos, Long>> entry : new ArrayList<>(HIGHLIGHT_MAP.entrySet()))
             {
                 if (entry.getValue().getB() <= worldTime)
@@ -59,6 +59,6 @@ public class HighlightManager
                 }
             }
         }
-        renderBuffer.finish();
+        renderBuffer.endBatch();
     }
 }

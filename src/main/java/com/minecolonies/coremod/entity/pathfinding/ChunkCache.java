@@ -80,7 +80,7 @@ public class ChunkCache implements IWorldReader
 
     @Nullable
     @Override
-    public TileEntity getTileEntity(@NotNull BlockPos pos)
+    public TileEntity getBlockEntity(@NotNull BlockPos pos)
     {
         return this.getTileEntity(pos, Chunk.CreateEntityType.CHECK); // Forge: don't modify world from other threads
     }
@@ -94,7 +94,7 @@ public class ChunkCache implements IWorldReader
         {
             return null;
         }
-        return this.chunkArray[i][j].getTileEntity(pos, createType);
+        return this.chunkArray[i][j].getBlockEntity(pos, createType);
     }
 
     @NotNull
@@ -117,7 +117,7 @@ public class ChunkCache implements IWorldReader
             }
         }
 
-        return Blocks.AIR.getDefaultState();
+        return Blocks.AIR.defaultBlockState();
     }
 
     @Override
@@ -139,11 +139,11 @@ public class ChunkCache implements IWorldReader
             }
         }
 
-        return Fluids.EMPTY.getDefaultState();
+        return Fluids.EMPTY.defaultFluidState();
     }
 
     @Override
-    public Biome getNoiseBiomeRaw(final int x, final int y, final int z)
+    public Biome getUncachedNoiseBiome(final int x, final int y, final int z)
     {
         return null;
     }
@@ -153,7 +153,7 @@ public class ChunkCache implements IWorldReader
      * blocks to still pass this check.
      */
     @Override
-    public boolean isAirBlock(BlockPos pos)
+    public boolean isEmptyBlock(BlockPos pos)
     {
         BlockState state = this.getBlockState(pos);
         return state.getBlock().isAir(state, this, pos);
@@ -167,13 +167,13 @@ public class ChunkCache implements IWorldReader
     }
 
     @Override
-    public boolean chunkExists(final int chunkX, final int chunkZ)
+    public boolean hasChunk(final int chunkX, final int chunkZ)
     {
         return false;
     }
 
     @Override
-    public BlockPos getHeight(final Heightmap.Type heightmapType, final BlockPos pos)
+    public BlockPos getHeightmapPos(final Heightmap.Type heightmapType, final BlockPos pos)
     {
         return null;
     }
@@ -185,7 +185,7 @@ public class ChunkCache implements IWorldReader
     }
 
     @Override
-    public int getSkylightSubtracted()
+    public int getSkyDarken()
     {
         return 0;
     }
@@ -203,26 +203,26 @@ public class ChunkCache implements IWorldReader
     }
 
     @Override
-    public boolean checkNoEntityCollision(@Nullable final Entity entityIn, final VoxelShape shape)
+    public boolean isUnobstructed(@Nullable final Entity entityIn, final VoxelShape shape)
     {
         return false;
     }
 
     @Override
-    public Stream<VoxelShape> func_230318_c_(
+    public Stream<VoxelShape> getEntityCollisions(
       @Nullable final Entity entity, final AxisAlignedBB axisAlignedBB, final Predicate<Entity> predicate)
     {
         return null;
     }
 
     @Override
-    public int getStrongPower(BlockPos pos, Direction direction)
+    public int getDirectSignal(BlockPos pos, Direction direction)
     {
-        return this.getBlockState(pos).getStrongPower(this, pos, direction);
+        return this.getBlockState(pos).getDirectSignal(this, pos, direction);
     }
 
     @Override
-    public boolean isRemote()
+    public boolean isClientSide()
     {
         return false;
     }
@@ -234,7 +234,7 @@ public class ChunkCache implements IWorldReader
     }
 
     @Override
-    public DimensionType getDimensionType()
+    public DimensionType dimensionType()
     {
         return null;
     }
@@ -245,13 +245,13 @@ public class ChunkCache implements IWorldReader
     }
 
     @Override
-    public float func_230487_a_(final Direction direction, final boolean b)
+    public float getShade(final Direction direction, final boolean b)
     {
         return 0;
     }
 
     @Override
-    public WorldLightManager getLightManager()
+    public WorldLightManager getLightEngine()
     {
         return null;
     }

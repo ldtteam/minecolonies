@@ -183,7 +183,7 @@ public class BuildingLumberjack extends AbstractBuildingCrafter implements IBuil
     {
         super.deserializeNBT(compound);
 
-        if (compound.keySet().contains(TAG_RESTRICT_START))
+        if (compound.getAllKeys().contains(TAG_RESTRICT_START))
         {
             startRestriction = NBTUtil.readBlockPos(compound.getCompound(TAG_RESTRICT_START));
         }
@@ -192,7 +192,7 @@ public class BuildingLumberjack extends AbstractBuildingCrafter implements IBuil
             startRestriction = null;
         }
 
-        if (compound.keySet().contains(TAG_RESTRICT_END))
+        if (compound.getAllKeys().contains(TAG_RESTRICT_END))
         {
             endRestriction = NBTUtil.readBlockPos(compound.getCompound(TAG_RESTRICT_END));
         }
@@ -359,13 +359,13 @@ public class BuildingLumberjack extends AbstractBuildingCrafter implements IBuil
                     if (rand < threshold)
                     {
                         final IGrowable growable = (IGrowable) block;
-                        if (growable.canGrow(world, pos, blockState, world.isRemote))
+                        if (growable.isValidBonemealTarget(world, pos, blockState, world.isClientSide))
                         {
-                            if (!world.isRemote)
+                            if (!world.isClientSide)
                             {
-                                if (growable.canUseBonemeal(world, world.rand, pos, blockState))
+                                if (growable.isBonemealSuccess(world, world.random, pos, blockState))
                                 {
-                                    growable.grow((ServerWorld) world, world.rand, pos, blockState);
+                                    growable.performBonemeal((ServerWorld) world, world.random, pos, blockState);
                                     return;
                                 }
                             }

@@ -149,13 +149,13 @@ public class CustomRecipeManager
         for (CustomRecipe recipe : recipeOutputMap.get(itemStack.getItem()))
         {
             // ItemStacks don't override equals, so have to use the static methods.
-            if (ItemStack.areItemStacksEqual(recipe.getPrimaryOutput(), itemStack))
+            if (ItemStack.matches(recipe.getPrimaryOutput(), itemStack))
             {
                 returnList.add(recipe);
             }
             for (ItemStack output : recipe.getAltOutputs())
             {
-                if (ItemStack.areItemStacksEqual(output, itemStack))
+                if (ItemStack.matches(output, itemStack))
                 {
                     returnList.add(recipe);
                 }

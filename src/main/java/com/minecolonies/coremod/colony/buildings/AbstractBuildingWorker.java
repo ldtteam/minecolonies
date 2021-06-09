@@ -141,7 +141,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             {
                 for (final ItemStack deliveryStack : request.getDeliveries())
                 {
-                    if (deliveryStack.isItemEqualIgnoreDurability(stack))
+                    if (deliveryStack.sameItemStackIgnoreDurability(stack))
                     {
                         return true;
                     }
@@ -290,13 +290,13 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         final int luck = (int)(((primarySkill + 1) * 2) - Math.pow((primarySkill + 1 ) / 10.0, 2));
 
         LootContext.Builder builder =  (new LootContext.Builder((ServerWorld) this.getColony().getWorld())
-        .withParameter(LootParameters.field_237457_g_, worker.getPositionVec())
+        .withParameter(LootParameters.ORIGIN, worker.position())
         .withParameter(LootParameters.THIS_ENTITY, worker)
-        .withParameter(LootParameters.TOOL, worker.getHeldItemMainhand())
+        .withParameter(LootParameters.TOOL, worker.getMainHandItem())
         .withRandom(worker.getRandom())
         .withLuck((float) luck));
 
-        return storage.fullfillRecipe(builder.build(RecipeStorage.recipeLootParameters), handlers);
+        return storage.fullfillRecipe(builder.create(RecipeStorage.recipeLootParameters), handlers);
     }
 
     @Override
@@ -442,13 +442,13 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
                 // Expected parameters for RECIPE_IMPROVED are Job, Result, Ingredient, Citizen
                 final TranslationTextComponent message = new TranslationTextComponent(RECIPE_IMPROVED + citizen.getRandom().nextInt(3),
                     new TranslationTextComponent(citizen.getJob().getName().toLowerCase()),
-                    recipe.getPrimaryOutput().getDisplayName(),
-                    reducedItem.getItemStack().getDisplayName(),
+                    recipe.getPrimaryOutput().getHoverName(),
+                    reducedItem.getItemStack().getHoverName(),
                     citizen.getName());
 
                 for(PlayerEntity player :colony.getMessagePlayerEntities())
                 {
-                    player.sendMessage(message, player.getUniqueID());
+                    player.sendMessage(message, player.createPlayerUUID());
                 }
             }
         }
@@ -517,7 +517,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
 
         for (final BlockPos pos : getContainers())
         {
-            final TileEntity entity = colony.getWorld().getTileEntity(pos);
+            final TileEntity entity = colony.getWorld().getBlockEntity(pos);
             if (entity != null)
             {
                 final LazyOptional<IItemHandler> handler = entity.getCapability(ITEM_HANDLER_CAPABILITY, null);
@@ -559,7 +559,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     {
         super.deserializeNBT(compound);
 
-        if (compound.keySet().contains(TAG_WORKER))
+        if (compound.getAllKeys().contains(TAG_WORKER))
         {
             try
             {
@@ -567,11 +567,11 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
                 for (int i = 0; i < workersTagList.size(); ++i)
                 {
                     final ICitizenData data;
-                    if (workersTagList.getCompound(i).keySet().contains(TAG_ID))
+                    if (workersTagList.getCompound(i).getAllKeys().contains(TAG_ID))
                     {
                         data = getColony().getCitizenManager().getCivilian(workersTagList.getCompound(i).getInt(TAG_ID));
                     }
-                    else if (workersTagList.getCompound(i).keySet().contains(TAG_WORKER_ID))
+                    else if (workersTagList.getCompound(i).getAllKeys().contains(TAG_WORKER_ID))
                     {
                         data = getColony().getCitizenManager().getCivilian(workersTagList.getCompound(i).getInt(TAG_WORKER_ID));
                     }
@@ -786,18 +786,18 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         buf.writeInt(storages.size());
         for (final IRecipeStorage storage : storages)
         {
-            buf.writeCompoundTag(StandardFactoryController.getInstance().serialize(storage));
+            buf.writeNbt(StandardFactoryController.getInstance().serialize(storage));
         }
 
         buf.writeBoolean(canCraftComplexRecipes());
         buf.writeInt(hiringMode.ordinal());
-        buf.writeString(this.getJobName());
+        buf.writeUtf(this.getJobName());
         buf.writeInt(getMaxInhabitants());
         buf.writeInt(getPrimarySkill().ordinal());
         buf.writeInt(getSecondarySkill().ordinal());
         buf.writeInt(getMaxInhabitants());
         buf.writeBoolean(isRecipeAlterationAllowed());
-        buf.writeString(getJobDisplayName());
+        buf.writeUtf(getJobDisplayName());
         buf.writeInt(getMaxRecipes());
     }
 
@@ -875,7 +875,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     @Override
     public boolean canEat(final ItemStack stack)
     {
-        if (stack.getItem().getFood().getHealing() >= getBuildingLevel())
+        if (stack.getItem().getFoodProperties().getNutrition() >= getBuildingLevel())
         {
             return true;
         }
@@ -1108,7 +1108,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             final int recipesSize = buf.readInt();
             for (int i = 0; i < recipesSize; i++)
             {
-                final IRecipeStorage storage = StandardFactoryController.getInstance().deserialize(buf.readCompoundTag());
+                final IRecipeStorage storage = StandardFactoryController.getInstance().deserialize(buf.readNbt());
                 if (storage != null)
                 {
                     recipes.add(storage);
@@ -1116,13 +1116,13 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             }
             this.canCraftComplexRecipes = buf.readBoolean();
             this.hiringMode = HiringMode.values()[buf.readInt()];
-            this.jobName = buf.readString(32767);
+            this.jobName = buf.readUtf(32767);
             this.maxInhabitants = buf.readInt();
             this.primary = Skill.values()[buf.readInt()];
             this.secondary = Skill.values()[buf.readInt()];
             this.maxInhabitants = buf.readInt();
             this.isRecipeAlterationAllowed = buf.readBoolean();
-            this.jobDisplayName = buf.readString();
+            this.jobDisplayName = buf.readUtf();
             this.maxRecipes=buf.readInt();
         }
 

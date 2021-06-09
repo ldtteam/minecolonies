@@ -31,6 +31,11 @@ public abstract class AbstractEntityNorsemen extends AbstractEntityMinecoloniesM
     private int textureId;
 
     /**
+     * Random object.
+     */
+    private final Random random = new Random();
+
+    /**
      * Constructor method for Abstract norsemen..
      *
      * @param type  the type.
@@ -47,20 +52,20 @@ public abstract class AbstractEntityNorsemen extends AbstractEntityMinecoloniesM
     {
         final SoundEvent soundevent = this.getAmbientSound();
 
-        if (soundevent != null && world.rand.nextInt(OUT_OF_ONE_HUNDRED) <= ONE)
+        if (soundevent != null && level.random.nextInt(OUT_OF_ONE_HUNDRED) <= ONE)
         {
-            this.playSound(soundevent, this.getSoundVolume(), this.getSoundPitch());
+            this.playSound(soundevent, this.getSoundVolume(), this.getVoicePitch());
         }
     }
 
     @Override
-    protected float getSoundPitch()
+    protected float getVoicePitch()
     {
-        return (this.rand.nextFloat() - this.rand.nextFloat()) * 0.1F + 1.0F;
+        return (this.random.nextFloat() - this.random.nextFloat()) * 0.1F + 1.0F;
     }
 
     @Override
-    public boolean canSpawn(final IWorld worldIn, final SpawnReason spawnReasonIn)
+    public boolean checkSpawnRules(final IWorld worldIn, final SpawnReason spawnReasonIn)
     {
         return true;
     }
@@ -77,9 +82,9 @@ public abstract class AbstractEntityNorsemen extends AbstractEntityMinecoloniesM
 
     @NotNull
     @Override
-    public AbstractAdvancedPathNavigate getNavigator()
+    public AbstractAdvancedPathNavigate getNavigation()
     {
-        AbstractAdvancedPathNavigate navigator = super.getNavigator();
+        AbstractAdvancedPathNavigate navigator = super.getNavigation();
         navigator.getPathingOptions().withStartSwimCost(2.5D).withSwimCost(1.1D);
         return navigator;
     }

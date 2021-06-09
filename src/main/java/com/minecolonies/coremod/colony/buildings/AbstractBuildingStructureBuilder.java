@@ -89,7 +89,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
         if (inventory)
         {
             final int hashCode = stack.hasTag() ? stack.getTag().hashCode() : 0;
-            final String key = stack.getTranslationKey() + "-" + hashCode;
+            final String key = stack.getDescriptionId() + "-" + hashCode;
             if (getRequiredResources() != null && getRequiredResources().getResourceMap().containsKey(key))
             {
                 final int qtyToKeep = getRequiredResources().getResourceMap().get(key);
@@ -253,7 +253,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     public void serializeToView(@NotNull final PacketBuffer buf)
     {
         super.serializeToView(buf);
-        buf.writeString((getMainCitizen() == null || colony.getCitizenManager().getCivilian(getMainCitizen().getId()) == null) ? "" : getMainCitizen().getName());
+        buf.writeUtf((getMainCitizen() == null || colony.getCitizenManager().getCivilian(getMainCitizen().getId()) == null) ? "" : getMainCitizen().getName());
     }
 
     /**
@@ -286,7 +286,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     public boolean hasResourceInBucket(final ItemStack stack)
     {
         final int hashCode = stack.hasTag() ? stack.getTag().hashCode() : 0;
-        final String key = stack.getTranslationKey() + "-" + hashCode;
+        final String key = stack.getDescriptionId() + "-" + hashCode;
         return getRequiredResources() != null && getRequiredResources().getResourceMap().containsKey(key);
     }
 

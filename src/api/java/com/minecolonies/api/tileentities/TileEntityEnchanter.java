@@ -49,18 +49,18 @@ public class TileEntityEnchanter extends TileEntityColonyBuilding
     {
         super.tick();
 
-        if (!world.isRemote)
+        if (!level.isClientSide)
         {
             return;
         }
 
         this.bookSpreadPrev = this.bookSpread;
         this.bookRotationPrev = this.bookRotation;
-        PlayerEntity player = this.world.getClosestPlayer(((float) this.pos.getX() + 0.5F), ((float) this.pos.getY() + 0.5F), ((float) this.pos.getZ() + 0.5F), 3.0D, false);
+        PlayerEntity player = this.level.getNearestPlayer(((float) this.worldPosition.getX() + 0.5F), ((float) this.worldPosition.getY() + 0.5F), ((float) this.worldPosition.getZ() + 0.5F), 3.0D, false);
         if (player != null)
         {
-            double playerXPos = player.getPosX() - (double) ((float) this.pos.getX() + 0.5F);
-            double playerZPos = player.getPosZ() - (double) ((float) this.pos.getZ() + 0.5F);
+            double playerXPos = player.getX() - (double) ((float) this.worldPosition.getX() + 0.5F);
+            double playerZPos = player.getZ() - (double) ((float) this.worldPosition.getZ() + 0.5F);
             this.tRot = (float) MathHelper.atan2(playerZPos, playerXPos);
             this.bookSpread += 0.1F;
             if (this.bookSpread < 0.5F || rand.nextInt(40) == 0)
@@ -109,8 +109,8 @@ public class TileEntityEnchanter extends TileEntityColonyBuilding
     }
 
     @Override
-    public void markDirty()
+    public void setChanged()
     {
-        WorldUtil.markChunkDirty(world, pos);
+        WorldUtil.markChunkDirty(level, worldPosition);
     }
 }

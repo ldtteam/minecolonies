@@ -162,6 +162,6 @@ public abstract class AbstractBuildingFurnaceUser extends AbstractBuildingWorker
      */
     public boolean isAllowedFuel(final ItemStack stack)
     {
-        return getModuleMatching(ItemListModule.class, m -> m.getId().equals(FUEL_LIST)).getList().stream().anyMatch(itemStack -> stack.isItemEqual(itemStack.getItemStack()));
+        return getModuleMatching(ItemListModule.class, m -> m.getId().equals(FUEL_LIST)).getList().stream().anyMatch(itemStack -> stack.sameItem(itemStack.getItemStack()));
     }
 }

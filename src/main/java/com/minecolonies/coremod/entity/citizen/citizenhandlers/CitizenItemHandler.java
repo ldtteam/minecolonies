@@ -61,9 +61,9 @@ public class CitizenItemHandler implements ICitizenItemHandler
     @Override
     public void tryPickupItemEntity(@NotNull final ItemEntity itemEntity)
     {
-        if (!CompatibilityUtils.getWorldFromCitizen(citizen).isRemote)
+        if (!CompatibilityUtils.getWorldFromCitizen(citizen).isClientSide)
         {
-            if (itemEntity.cannotPickup())
+            if (itemEntity.hasPickUpDelay())
             {
                 return;
             }
@@ -79,12 +79,12 @@ public class CitizenItemHandler implements ICitizenItemHandler
                 if (ItemStackUtils.isEmpty(resultStack) || ItemStackUtils.getSize(resultStack) != ItemStackUtils.getSize(compareStack))
                 {
                     CompatibilityUtils.getWorldFromCitizen(citizen).playSound(null,
-                      citizen.getPosition(),
-                      SoundEvents.ENTITY_ITEM_PICKUP,
+                      citizen.blockPosition(),
+                      SoundEvents.ITEM_PICKUP,
                       SoundCategory.AMBIENT,
                       (float) DEFAULT_VOLUME,
                       (float) ((citizen.getRandom().nextGaussian() * DEFAULT_PITCH_MULTIPLIER + 1.0D) * 2.0D));
-                    citizen.onItemPickup(itemEntity, ItemStackUtils.getSize(itemStack) - resultingStackSize);
+                    citizen.take(itemEntity, ItemStackUtils.getSize(itemStack) - resultingStackSize);
 
                     final ItemStack overrulingStack = itemStack.copy();
                     overrulingStack.setCount(ItemStackUtils.getSize(itemStack) - resultingStackSize);
@@ -113,7 +113,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
     @Override
     public void removeHeldItem()
     {
-        citizen.setItemStackToSlot(EquipmentSlotType.MAINHAND, ItemStackUtils.EMPTY);
+        citizen.setItemSlot(EquipmentSlotType.MAINHAND, ItemStackUtils.EMPTY);
     }
 
     /**
@@ -128,11 +128,11 @@ public class CitizenItemHandler implements ICitizenItemHandler
         citizen.getCitizenData().getInventory().setHeldItem(hand, slot);
         if (hand.equals(Hand.MAIN_HAND))
         {
-            citizen.setItemStackToSlot(EquipmentSlotType.MAINHAND, citizen.getCitizenData().getInventory().getStackInSlot(slot));
+            citizen.setItemSlot(EquipmentSlotType.MAINHAND, citizen.getCitizenData().getInventory().getStackInSlot(slot));
         }
         else if (hand.equals(Hand.OFF_HAND))
         {
-            citizen.setItemStackToSlot(EquipmentSlotType.OFFHAND, citizen.getCitizenData().getInventory().getStackInSlot(slot));
+            citizen.setItemSlot(EquipmentSlotType.OFFHAND, citizen.getCitizenData().getInventory().getStackInSlot(slot));
         }
     }
 
@@ -145,7 +145,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
     public void setMainHeldItem(final int slot)
     {
         citizen.getCitizenData().getInventory().setHeldItem(Hand.MAIN_HAND, slot);
-        citizen.setItemStackToSlot(EquipmentSlotType.MAINHAND, citizen.getCitizenData().getInventory().getStackInSlot(slot));
+        citizen.setItemSlot(EquipmentSlotType.MAINHAND, citizen.getCitizenData().getInventory().getStackInSlot(slot));
     }
 
     /**
@@ -181,20 +181,20 @@ public class CitizenItemHandler implements ICitizenItemHandler
             return;
         }
 
-        citizen.getLookController().setLookPosition(blockPos.getX(), blockPos.getY(), blockPos.getZ(), FACING_DELTA_YAW, citizen.getVerticalFaceSpeed());
+        citizen.getLookControl().setLookAt(blockPos.getX(), blockPos.getY(), blockPos.getZ(), FACING_DELTA_YAW, citizen.getMaxHeadXRot());
 
-        citizen.swingArm(citizen.getActiveHand());
+        citizen.swing(citizen.getUsedItemHand());
 
         final BlockState blockState = CompatibilityUtils.getWorldFromCitizen(citizen).getBlockState(blockPos);
         final Block block = blockState.getBlock();
         if (breakBlock)
         {
-            if (!CompatibilityUtils.getWorldFromCitizen(citizen).isRemote)
+            if (!CompatibilityUtils.getWorldFromCitizen(citizen).isClientSide)
             {
                 Network.getNetwork().sendToPosition(
                   new BlockParticleEffectMessage(blockPos, CompatibilityUtils.getWorldFromCitizen(citizen).getBlockState(blockPos), BlockParticleEffectMessage.BREAK_BLOCK),
                   new PacketDistributor.TargetPoint(
-                    blockPos.getX(), blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_SOUND_RANGE, citizen.world.getDimensionKey()));
+                    blockPos.getX(), blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_SOUND_RANGE, citizen.level.dimension()));
             }
             CompatibilityUtils.getWorldFromCitizen(citizen).playSound(null,
               blockPos,
@@ -204,19 +204,19 @@ public class CitizenItemHandler implements ICitizenItemHandler
               block.getSoundType(blockState, CompatibilityUtils.getWorldFromCitizen(citizen), blockPos, citizen).getPitch());
             WorldUtil.removeBlock(CompatibilityUtils.getWorldFromCitizen(citizen), blockPos, false);
 
-            damageItemInHand(citizen.getActiveHand(), 1);
+            damageItemInHand(citizen.getUsedItemHand(), 1);
         }
         else
         {
-            if (!CompatibilityUtils.getWorldFromCitizen(citizen).isRemote)
+            if (!CompatibilityUtils.getWorldFromCitizen(citizen).isClientSide)
             {
-                final BlockPos vector = blockPos.subtract(citizen.getPosition());
-                final Direction facing = Direction.getFacingFromVector(vector.getX(), vector.getY(), vector.getZ()).getOpposite();
+                final BlockPos vector = blockPos.subtract(citizen.blockPosition());
+                final Direction facing = Direction.getNearest(vector.getX(), vector.getY(), vector.getZ()).getOpposite();
 
                 Network.getNetwork().sendToPosition(
                   new BlockParticleEffectMessage(blockPos, CompatibilityUtils.getWorldFromCitizen(citizen).getBlockState(blockPos), facing.ordinal()),
                   new PacketDistributor.TargetPoint(blockPos.getX(),
-                    blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_PARTICLE_RANGE, citizen.world.getDimensionKey()));
+                    blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_PARTICLE_RANGE, citizen.level.dimension()));
             }
             CompatibilityUtils.getWorldFromCitizen(citizen).playSound(null,
               blockPos,
@@ -254,15 +254,15 @@ public class CitizenItemHandler implements ICitizenItemHandler
         //check if tool breaks
         if (citizen.getCitizenData()
               .getInventory()
-              .damageInventoryItem(citizen.getCitizenData().getInventory().getHeldItemSlot(hand), damage, citizen, item -> item.sendBreakAnimation(hand)))
+              .damageInventoryItem(citizen.getCitizenData().getInventory().getHeldItemSlot(hand), damage, citizen, item -> item.broadcastBreakEvent(hand)))
         {
             if (hand == Hand.MAIN_HAND)
             {
-                citizen.setItemStackToSlot(EquipmentSlotType.MAINHAND, ItemStackUtils.EMPTY);
+                citizen.setItemSlot(EquipmentSlotType.MAINHAND, ItemStackUtils.EMPTY);
             }
             else
             {
-                citizen.setItemStackToSlot(EquipmentSlotType.OFFHAND, ItemStackUtils.EMPTY);
+                citizen.setItemSlot(EquipmentSlotType.OFFHAND, ItemStackUtils.EMPTY);
             }
         }
     }
@@ -273,10 +273,10 @@ public class CitizenItemHandler implements ICitizenItemHandler
     @Override
     public void pickupItems()
     {
-        for (final ItemEntity item : CompatibilityUtils.getWorldFromCitizen(citizen).getLoadedEntitiesWithinAABB(ItemEntity.class,
-                                                             new AxisAlignedBB(citizen.getPosition())
-                                                               .expand(2.0F, 1.0F, 2.0F)
-                                                               .expand(-2.0F, -1.0F, -2.0F)))
+        for (final ItemEntity item : CompatibilityUtils.getWorldFromCitizen(citizen).getLoadedEntitiesOfClass(ItemEntity.class,
+                                                             new AxisAlignedBB(citizen.blockPosition())
+                                                               .expandTowards(2.0F, 1.0F, 2.0F)
+                                                               .expandTowards(-2.0F, -1.0F, -2.0F)))
         {
             if (item != null && item.isAlive())
             {
@@ -311,7 +311,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
     @Override
     public ItemEntity entityDropItem(@NotNull final ItemStack itemstack)
     {
-        return citizen.entityDropItem(itemstack, 0.0F);
+        return citizen.spawnAtLocation(itemstack, 0.0F);
     }
 
     /**
@@ -322,7 +322,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
     @Override
     public void updateArmorDamage(final double damage)
     {
-        for (final ItemStack stack : citizen.getArmorInventoryList())
+        for (final ItemStack stack : citizen.getArmorSlots())
         {
             if (ItemStackUtils.isEmpty(stack) || !(stack.getItem() instanceof ArmorItem))
             {
@@ -337,8 +337,8 @@ public class CitizenItemHandler implements ICitizenItemHandler
                 }
             }
 
-            stack.damageItem(Math.max(1, (int) (damage / 4)), citizen, (i) -> {
-                i.sendBreakAnimation(Hand.MAIN_HAND);
+            stack.hurtAndBreak(Math.max(1, (int) (damage / 4)), citizen, (i) -> {
+                i.broadcastBreakEvent(Hand.MAIN_HAND);
             });
         }
     }
@@ -360,9 +360,9 @@ public class CitizenItemHandler implements ICitizenItemHandler
         if (!ItemStackUtils.isEmpty(tool) && tool.isDamaged())
         {
             //2 xp to heal 1 dmg
-            final double dmgHealed = Math.min(localXp / 2, tool.getDamage());
+            final double dmgHealed = Math.min(localXp / 2, tool.getDamageValue());
             localXp -= dmgHealed * 2;
-            tool.setDamage(tool.getDamage() - (int) Math.ceil(dmgHealed));
+            tool.setDamageValue(tool.getDamageValue() - (int) Math.ceil(dmgHealed));
         }
 
         return localXp;

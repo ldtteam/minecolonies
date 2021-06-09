@@ -43,11 +43,11 @@ public class EntityLocation implements ILocation
             return;
         }
 
-        for (final ServerWorld world : ServerLifecycleHooks.getCurrentServer().worlds.values())
+        for (final ServerWorld world : ServerLifecycleHooks.getCurrentServer().levels.values())
         {
             try
             {
-                final Entity ent = world.getEntityByUuid(uuid);
+                final Entity ent = world.getEntity(uuid);
                 if (ent != null)
                 {
                     entity = new WeakReference<>(ent);
@@ -78,7 +78,7 @@ public class EntityLocation implements ILocation
         }
         else
         {
-            return entityRef.getPosition();
+            return entityRef.blockPosition();
         }
     }
 
@@ -99,7 +99,7 @@ public class EntityLocation implements ILocation
         }
         else
         {
-            return entityRef.getEntityWorld().getDimensionKey();
+            return entityRef.getCommandSenderWorld().dimension();
         }
     }
 
@@ -207,7 +207,7 @@ public class EntityLocation implements ILocation
         @Override
         public EntityLocation getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final Entity input)
         {
-            return new EntityLocation(input.getUniqueID());
+            return new EntityLocation(input.getUUID());
         }
 
         @Override
@@ -236,7 +236,7 @@ public class EntityLocation implements ILocation
      */
     public static void serialize(PacketBuffer buffer, EntityLocation location)
     {
-        buffer.writeUniqueId(location.uuid);
+        buffer.writeUUID(location.uuid);
     }
 
     /**
@@ -247,7 +247,7 @@ public class EntityLocation implements ILocation
      */
     public static EntityLocation deserialize(PacketBuffer buffer)
     {
-        final UUID uuid = buffer.readUniqueId();
+        final UUID uuid = buffer.readUUID();
 
         return new EntityLocation(uuid);
     }

@@ -35,11 +35,11 @@ public class OpenGuiWindowTrigger extends AbstractCriterionTrigger<OpenGuiWindow
 
     @NotNull
     @Override
-    public OpenGuiWindowCriterionInstance deserialize(@NotNull final JsonObject jsonObject, @NotNull final ConditionArrayParser conditionArrayParser)
+    public OpenGuiWindowCriterionInstance createInstance(@NotNull final JsonObject jsonObject, @NotNull final ConditionArrayParser conditionArrayParser)
     {
         if (jsonObject.has("window_resource_location"))
         {
-            final String windowResource = JSONUtils.getString(jsonObject, "window_resource_location");
+            final String windowResource = JSONUtils.getAsString(jsonObject, "window_resource_location");
             return new OpenGuiWindowCriterionInstance(windowResource);
         }
         return new OpenGuiWindowCriterionInstance();

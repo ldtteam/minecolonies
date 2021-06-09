@@ -15,10 +15,10 @@ public class ResourcefulBeesCompat implements IBeehiveCompat
     public List<ItemStack> getCombsFromHive(BlockPos pos, World world, int amount)
     {
         List<ItemStack> list = new ArrayList<>();
-        if (world.getTileEntity(pos) instanceof TieredBeehiveTileEntity)
+        if (world.getBlockEntity(pos) instanceof TieredBeehiveTileEntity)
         {
             //If we have a resourceful bees hive, we care about the items inside
-            TieredBeehiveTileEntity hive = (TieredBeehiveTileEntity) world.getTileEntity(pos);
+            TieredBeehiveTileEntity hive = (TieredBeehiveTileEntity) world.getBlockEntity(pos);
 
             while (hive.hasCombs())
             {

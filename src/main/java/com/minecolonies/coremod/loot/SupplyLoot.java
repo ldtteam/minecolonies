@@ -44,31 +44,31 @@ public class SupplyLoot
     protected void init()
     {
         // Camp
-        lootTables.put(LootTables.CHESTS_SPAWN_BONUS_CHEST, SUPPLY_CAMP_LT);
-        lootTables.put(LootTables.CHESTS_SIMPLE_DUNGEON, SUPPLY_CAMP_LT);
-        lootTables.put(LootTables.CHESTS_VILLAGE_VILLAGE_CARTOGRAPHER, SUPPLY_CAMP_LT);
-        lootTables.put(LootTables.CHESTS_VILLAGE_VILLAGE_MASON, SUPPLY_CAMP_LT);
-        lootTables.put(LootTables.CHESTS_VILLAGE_VILLAGE_DESERT_HOUSE, SUPPLY_CAMP_LT);
-        lootTables.put(LootTables.CHESTS_ABANDONED_MINESHAFT, SUPPLY_CAMP_LT);
-        lootTables.put(LootTables.CHESTS_STRONGHOLD_LIBRARY, SUPPLY_CAMP_LT);
-        lootTables.put(LootTables.CHESTS_STRONGHOLD_CROSSING, SUPPLY_CAMP_LT);
-        lootTables.put(LootTables.CHESTS_STRONGHOLD_CORRIDOR, SUPPLY_CAMP_LT);
-        lootTables.put(LootTables.CHESTS_DESERT_PYRAMID, SUPPLY_CAMP_LT);
-        lootTables.put(LootTables.CHESTS_JUNGLE_TEMPLE, SUPPLY_CAMP_LT);
-        lootTables.put(LootTables.CHESTS_IGLOO_CHEST, SUPPLY_CAMP_LT);
-        lootTables.put(LootTables.CHESTS_WOODLAND_MANSION, SUPPLY_CAMP_LT);
-        lootTables.put(LootTables.CHESTS_PILLAGER_OUTPOST, SUPPLY_CAMP_LT);
+        lootTables.put(LootTables.SPAWN_BONUS_CHEST, SUPPLY_CAMP_LT);
+        lootTables.put(LootTables.SIMPLE_DUNGEON, SUPPLY_CAMP_LT);
+        lootTables.put(LootTables.VILLAGE_CARTOGRAPHER, SUPPLY_CAMP_LT);
+        lootTables.put(LootTables.VILLAGE_MASON, SUPPLY_CAMP_LT);
+        lootTables.put(LootTables.VILLAGE_DESERT_HOUSE, SUPPLY_CAMP_LT);
+        lootTables.put(LootTables.ABANDONED_MINESHAFT, SUPPLY_CAMP_LT);
+        lootTables.put(LootTables.STRONGHOLD_LIBRARY, SUPPLY_CAMP_LT);
+        lootTables.put(LootTables.STRONGHOLD_CROSSING, SUPPLY_CAMP_LT);
+        lootTables.put(LootTables.STRONGHOLD_CORRIDOR, SUPPLY_CAMP_LT);
+        lootTables.put(LootTables.DESERT_PYRAMID, SUPPLY_CAMP_LT);
+        lootTables.put(LootTables.JUNGLE_TEMPLE, SUPPLY_CAMP_LT);
+        lootTables.put(LootTables.IGLOO_CHEST, SUPPLY_CAMP_LT);
+        lootTables.put(LootTables.WOODLAND_MANSION, SUPPLY_CAMP_LT);
+        lootTables.put(LootTables.PILLAGER_OUTPOST, SUPPLY_CAMP_LT);
 
         // Ship
-        lootTables.put(LootTables.CHESTS_UNDERWATER_RUIN_SMALL, SUPPLY_SHIP_LT);
-        lootTables.put(LootTables.CHESTS_UNDERWATER_RUIN_BIG, SUPPLY_SHIP_LT);
-        lootTables.put(LootTables.CHESTS_BURIED_TREASURE, SUPPLY_SHIP_LT);
-        lootTables.put(LootTables.CHESTS_SHIPWRECK_MAP, SUPPLY_SHIP_LT);
-        lootTables.put(LootTables.CHESTS_SHIPWRECK_SUPPLY, SUPPLY_SHIP_LT);
-        lootTables.put(LootTables.CHESTS_SHIPWRECK_TREASURE, SUPPLY_SHIP_LT);
-        lootTables.put(LootTables.CHESTS_VILLAGE_VILLAGE_FISHER, SUPPLY_SHIP_LT);
-        lootTables.put(LootTables.CHESTS_VILLAGE_VILLAGE_ARMORER, SUPPLY_SHIP_LT);
-        lootTables.put(LootTables.CHESTS_VILLAGE_VILLAGE_TEMPLE, SUPPLY_SHIP_LT);
+        lootTables.put(LootTables.UNDERWATER_RUIN_SMALL, SUPPLY_SHIP_LT);
+        lootTables.put(LootTables.UNDERWATER_RUIN_BIG, SUPPLY_SHIP_LT);
+        lootTables.put(LootTables.BURIED_TREASURE, SUPPLY_SHIP_LT);
+        lootTables.put(LootTables.SHIPWRECK_MAP, SUPPLY_SHIP_LT);
+        lootTables.put(LootTables.SHIPWRECK_SUPPLY, SUPPLY_SHIP_LT);
+        lootTables.put(LootTables.SHIPWRECK_TREASURE, SUPPLY_SHIP_LT);
+        lootTables.put(LootTables.VILLAGE_FISHER, SUPPLY_SHIP_LT);
+        lootTables.put(LootTables.VILLAGE_ARMORER, SUPPLY_SHIP_LT);
+        lootTables.put(LootTables.VILLAGE_TEMPLE, SUPPLY_SHIP_LT);
     }
 
     public static SupplyLoot getInstance()
@@ -89,7 +89,7 @@ public class SupplyLoot
     {
         if (MineColonies.getConfig().getServer().generateSupplyLoot.get() && lootTables.containsKey(event.getName()))
         {
-            event.getTable().addPool(LootPool.builder().addEntry(TableLootEntry.builder(lootTables.get(event.getName()))).name(MOD_ID + ":loot:" + event.getName()).build());
+            event.getTable().addPool(LootPool.lootPool().add(TableLootEntry.lootTableReference(lootTables.get(event.getName()))).name(MOD_ID + ":loot:" + event.getName()).build());
         }
     }
 }

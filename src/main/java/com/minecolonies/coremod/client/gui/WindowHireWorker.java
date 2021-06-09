@@ -332,11 +332,11 @@ public class WindowHireWorker extends AbstractWindowSkeleton
     {
         if (primary == current)
         {
-            return Style.EMPTY.applyFormatting(TextFormatting.GREEN).applyFormatting(TextFormatting.BOLD);
+            return Style.EMPTY.applyFormat(TextFormatting.GREEN).applyFormat(TextFormatting.BOLD);
         }
         if (secondary == current)
         {
-            return Style.EMPTY.applyFormatting(TextFormatting.YELLOW).applyFormatting(TextFormatting.ITALIC);
+            return Style.EMPTY.applyFormat(TextFormatting.YELLOW).applyFormat(TextFormatting.ITALIC);
         }
         return Style.EMPTY;
     }

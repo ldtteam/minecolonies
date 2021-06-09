@@ -121,11 +121,11 @@ public class JobKnight extends AbstractJobGuard<JobKnight>
             }
             final AbstractEntityCitizen worker = this.getCitizen().getEntity().get();
             worker.getCitizenItemHandler().setHeldItem(Hand.OFF_HAND, InventoryUtils.findFirstSlotInItemHandlerWith(this.getCitizen().getInventory(), Items.SHIELD));
-            worker.setActiveHand(Hand.OFF_HAND);
+            worker.startUsingItem(Hand.OFF_HAND);
 
             // Apply the colony Flag to the shield
             ItemStack shieldStack = worker.getInventoryCitizen().getHeldItem(Hand.OFF_HAND);
-            CompoundNBT nbt = shieldStack.getOrCreateChildTag("BlockEntityTag");
+            CompoundNBT nbt = shieldStack.getOrCreateTagElement("BlockEntityTag");
             nbt.put(TAG_BANNER_PATTERNS, worker.getCitizenColonyHandler().getColony().getColonyFlag());
 
             worker.decreaseSaturationForContinuousAction();

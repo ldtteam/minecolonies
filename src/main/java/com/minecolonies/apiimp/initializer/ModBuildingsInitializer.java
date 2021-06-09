@@ -455,7 +455,7 @@ public final class ModBuildingsInitializer
                                     .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.PLANTATION_ID))
                                     .addBuildingModuleProducer(BuildingPlantation.CraftingModule::new, CraftingModuleView::new)
                                     .addBuildingModuleViewProducer(CrafterTaskModuleView::new)
-                                    .addBuildingModuleProducer(() -> new SettingsModule().with(BuildingPlantation.MODE, new PlantationSetting(Items.SUGAR_CANE.getTranslationKey(), Items.CACTUS.getTranslationKey(), Items.BAMBOO.getTranslationKey())), SettingsModuleView::new)
+                                    .addBuildingModuleProducer(() -> new SettingsModule().with(BuildingPlantation.MODE, new PlantationSetting(Items.SUGAR_CANE.getDescriptionId(), Items.CACTUS.getDescriptionId(), Items.BAMBOO.getDescriptionId())), SettingsModuleView::new)
                                     .createBuildingEntry();
 
         ModBuildings.rabbitHutch = new BuildingEntry.Builder()

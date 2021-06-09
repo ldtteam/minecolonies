@@ -113,7 +113,7 @@ public class EntityAICitizenChild extends Goal
     {
         super();
         this.child = citizen;
-        super.setMutexFlags(EnumSet.of(Goal.Flag.MOVE));
+        super.setFlags(EnumSet.of(Goal.Flag.MOVE));
         stateMachine = new TickRateStateMachine<>(State.IDLE, this::handleAIException);
         stateMachine.addTransition(new AIEventTarget(AIBlockingEventType.STATE_BLOCKING, this::updateTimers, stateMachine::getState, 1));
         stateMachine.addTransition(new AIEventTarget(AIBlockingEventType.EVENT, this::tryGrowUp, () -> State.IDLE, 500));
@@ -187,9 +187,9 @@ public class EntityAICitizenChild extends Goal
 
         CompatibilityUtils.getWorldFromCitizen(child)
           // Search entities in radius
-          .getEntitiesInAABBexcluding(
+          .getEntities(
             child,
-            child.getBoundingBox().expand(
+            child.getBoundingBox().expandTowards(
               (double) START_FOLLOW_DISTANCE,
               1.0D,
               (double) START_FOLLOW_DISTANCE),
@@ -204,7 +204,7 @@ public class EntityAICitizenChild extends Goal
         {
             // Follow time 30-60seconds, in ticks
             actionTimer = rand.nextInt(30 * 20) + 30 * 20;
-            followStart = child.getPosition();
+            followStart = child.blockPosition();
 
             return true;
         }
@@ -221,13 +221,13 @@ public class EntityAICitizenChild extends Goal
         if (actionTimer <= 0 || followTarget.get() == null)
         {
             // run back to start position
-            child.getNavigator().moveToXYZ(followStart.getX(), followStart.getY(), followStart.getZ(), 1.0d);
+            child.getNavigation().moveToXYZ(followStart.getX(), followStart.getY(), followStart.getZ(), 1.0d);
 
             setDelayForNextAction();
             return State.IDLE;
         }
 
-        child.getNavigator().moveToLivingEntity(followTarget.get(), 1.0d);
+        child.getNavigation().moveToLivingEntity(followTarget.get(), 1.0d);
         return State.FOLLOWING;
     }
 
@@ -254,7 +254,7 @@ public class EntityAICitizenChild extends Goal
             final List<BlockPos> buildings = new ArrayList<>(child.getCitizenColonyHandler().getColony().getBuildingManager().getBuildings().keySet());
             visitHutPos = buildings.get(index);
 
-            visitingPath = child.getNavigator().moveToXYZ(visitHutPos.getX(), visitHutPos.getY(), visitHutPos.getZ(), 1.0d);
+            visitingPath = child.getNavigation().moveToXYZ(visitHutPos.getX(), visitHutPos.getY(), visitHutPos.getZ(), 1.0d);
         }
 
         // Visiting
@@ -263,13 +263,13 @@ public class EntityAICitizenChild extends Goal
             // Path got interrupted by sth
             if (visitingPath != null && !visitingPath.isInProgress())
             {
-                visitingPath = child.getNavigator().moveToXYZ(visitHutPos.getX(), visitHutPos.getY(), visitHutPos.getZ(), 1.0d);
+                visitingPath = child.getNavigation().moveToXYZ(visitHutPos.getX(), visitHutPos.getY(), visitHutPos.getZ(), 1.0d);
             }
 
             return State.VISITING;
         }
 
-        child.getNavigator().clearPath();
+        child.getNavigation().stop();
         visitingPath = null;
         visitHutPos = null;
         setDelayForNextAction();
@@ -294,7 +294,7 @@ public class EntityAICitizenChild extends Goal
 
         if (aiActiveTime >= MIN_ACTIVE_TIME)
         {
-            if (!child.isChild())
+            if (!child.isBaby())
             {
                 return true;
             }
@@ -304,7 +304,7 @@ public class EntityAICitizenChild extends Goal
             // 1/144 Chance to grow up, every 25 seconds = avg 1h. Set to half since this AI isnt always active, e.g. sleeping.  At 2h they directly grow
             if (rand.nextInt((int) (70 / growthModifier) + 1) == 0 || aiActiveTime > 70000 / growthModifier)
             {
-                child.getCitizenColonyHandler().getColony().getEventDescriptionManager().addEventDescription(new CitizenGrownUpEvent(child.getPosition(),
+                child.getCitizenColonyHandler().getColony().getEventDescriptionManager().addEventDescription(new CitizenGrownUpEvent(child.blockPosition(),
                       child.getCitizenData().getName()));
                 LanguageHandler.sendPlayersMessage(child.getCitizenColonyHandler().getColony().getMessagePlayerEntities(),
                   "com.minecolonies.coremod.progress.childGrow",
@@ -324,18 +324,18 @@ public class EntityAICitizenChild extends Goal
      * {@inheritDoc} Returns whether the Goal should begin execution. True when age less than 100, when a random (120) is chosen correctly, and when a citizen is nearby.
      */
     @Override
-    public boolean shouldExecute()
+    public boolean canUse()
     {
-        return child.isChild() && child.getCitizenData() != null;
+        return child.isBaby() && child.getCitizenData() != null;
     }
 
     /**
      * {@inheritDoc} Returns whether an in-progress Goal should continue executing.
      */
     @Override
-    public boolean shouldContinueExecuting()
+    public boolean canContinueToUse()
     {
-        if (child.getDesiredActivity() == DesiredActivity.SLEEP || !child.isChild() || child.getCitizenData() == null)
+        if (child.getDesiredActivity() == DesiredActivity.SLEEP || !child.isBaby() || child.getCitizenData() == null)
         {
             return false;
         }

@@ -48,13 +48,13 @@ public class GiveToolMessage extends AbstractBuildingServerMessage<AbstractBuild
     @Override
     protected void toBytesOverride(final PacketBuffer buf)
     {
-        buf.writeItemStack(new ItemStack(item, 1));
+        buf.writeItem(new ItemStack(item, 1));
     }
 
     @Override
     protected void fromBytesOverride(final PacketBuffer buf)
     {
-        item = buf.readItemStack().getItem();
+        item = buf.readItem().getItem();
     }
 
     @Override
@@ -71,6 +71,6 @@ public class GiveToolMessage extends AbstractBuildingServerMessage<AbstractBuild
         BlockPosUtil.write(compound, TAG_POS, building.getID());
         compound.putInt(TAG_ID, colony.getID());
 
-        player.inventory.markDirty();
+        player.inventory.setChanged();
     }
 }

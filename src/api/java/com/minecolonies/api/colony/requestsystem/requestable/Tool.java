@@ -95,7 +95,7 @@ public class Tool implements IDeliverable
         final IToolType type = ToolType.getToolType(nbt.getString(NBT_TYPE));
         final Integer minLevel = nbt.getInt(NBT_MIN_LEVEL);
         final Integer maxLevel = nbt.getInt(NBT_MAX_LEVEL);
-        final ItemStack result = ItemStack.read(nbt.getCompound(NBT_RESULT));
+        final ItemStack result = ItemStack.of(nbt.getCompound(NBT_RESULT));
 
         return new Tool(type, minLevel, maxLevel, result);
     }
@@ -109,13 +109,13 @@ public class Tool implements IDeliverable
      */
     public static void serialize(final IFactoryController controller, final PacketBuffer buffer, final Tool input)
     {
-        buffer.writeString(input.getToolClass().getName());
+        buffer.writeUtf(input.getToolClass().getName());
         buffer.writeInt(input.getMinLevel());
         buffer.writeInt(input.getMaxLevel());
         buffer.writeBoolean(!ItemStackUtils.isEmpty(input.result));
         if (!ItemStackUtils.isEmpty(input.result))
         {
-            buffer.writeItemStack(input.result);
+            buffer.writeItem(input.result);
         }
     }
 
@@ -128,10 +128,10 @@ public class Tool implements IDeliverable
      */
     public static Tool deserialize(final IFactoryController controller, final PacketBuffer buffer)
     {
-        final IToolType type = ToolType.getToolType(buffer.readString(32767));
+        final IToolType type = ToolType.getToolType(buffer.readUtf(32767));
         final int minLevel = buffer.readInt();
         final int maxLevel = buffer.readInt();
-        final ItemStack result = buffer.readBoolean() ? buffer.readItemStack() : ItemStack.EMPTY;
+        final ItemStack result = buffer.readBoolean() ? buffer.readItem() : ItemStack.EMPTY;
 
         return new Tool(type, minLevel, maxLevel, result);
     }
@@ -189,7 +189,7 @@ public class Tool implements IDeliverable
                                          && getToolClasses(stack).stream()
                                               .filter(s -> getToolClass().getName().equalsIgnoreCase(s))
                                               .map(ToolType::getToolType)
-                                              .anyMatch(t -> t != ToolType.NONE && (stack.getDamage() > 0 || !stack.isDamaged()) && ItemStackUtils.hasToolLevel(stack,
+                                              .anyMatch(t -> t != ToolType.NONE && (stack.getDamageValue() > 0 || !stack.isDamaged()) && ItemStackUtils.hasToolLevel(stack,
                                                 t,
                                                 getMinLevel(),
                                                 getMaxLevel()));
@@ -247,19 +247,19 @@ public class Tool implements IDeliverable
              * system.
              */
             final ArmorItem armor = (ArmorItem) stack.getItem();
-            if (armor.getEquipmentSlot() == EquipmentSlotType.CHEST)
+            if (armor.getSlot() == EquipmentSlotType.CHEST)
             {
                 set.add("chestplate");
             }
-            else if (armor.getEquipmentSlot() == EquipmentSlotType.FEET)
+            else if (armor.getSlot() == EquipmentSlotType.FEET)
             {
                 set.add("boots");
             }
-            else if (armor.getEquipmentSlot() == EquipmentSlotType.HEAD)
+            else if (armor.getSlot() == EquipmentSlotType.HEAD)
             {
                 set.add("helmet");
             }
-            else if (armor.getEquipmentSlot() == EquipmentSlotType.LEGS)
+            else if (armor.getSlot() == EquipmentSlotType.LEGS)
             {
                 set.add("leggings");
             }

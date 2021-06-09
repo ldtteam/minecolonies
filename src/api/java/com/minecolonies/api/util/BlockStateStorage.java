@@ -55,7 +55,7 @@ public class BlockStateStorage
                 if (state.hasProperty(prop))
                 {
                     hashCode += prop.hashCode();
-                    hashCode += state.get(prop).hashCode();
+                    hashCode += state.getValue(prop).hashCode();
                 }
             }
         }
@@ -67,7 +67,7 @@ public class BlockStateStorage
                 if (!compareProperties.contains(prop))
                 {
                     hashCode += prop.hashCode();
-                    hashCode += state.get(prop).hashCode();
+                    hashCode += state.getValue(prop).hashCode();
                 }
             }
         }
@@ -133,7 +133,7 @@ public class BlockStateStorage
                     return false;
                 }
 
-                if (!comparingToStorage.getState().get(prop).equals(state.get(prop)))
+                if (!comparingToStorage.getState().getValue(prop).equals(state.getValue(prop)))
                 {
                     return false;
                 }
@@ -148,7 +148,7 @@ public class BlockStateStorage
                     return false;
                 }
 
-                if (!comparingToStorage.getState().get(prop).equals(state.get(prop)))
+                if (!comparingToStorage.getState().getValue(prop).equals(state.getValue(prop)))
                 {
                     return false;
                 }

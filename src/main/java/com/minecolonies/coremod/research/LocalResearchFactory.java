@@ -74,7 +74,7 @@ public class LocalResearchFactory implements ILocalResearchFactory
     public void serialize(IFactoryController controller, ILocalResearch input, PacketBuffer packetBuffer)
     {
         packetBuffer.writeInt(input.getState().ordinal());
-        packetBuffer.writeString(input.getId().toString());
+        packetBuffer.writeUtf(input.getId().toString());
         packetBuffer.writeResourceLocation(input.getBranch());
         packetBuffer.writeInt(input.getProgress());
         packetBuffer.writeInt(input.getDepth());

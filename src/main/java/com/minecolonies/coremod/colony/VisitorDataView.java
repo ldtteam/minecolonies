@@ -37,7 +37,7 @@ public class VisitorDataView extends CitizenDataView implements IVisitorViewData
     public void deserialize(@NotNull final PacketBuffer buf)
     {
         super.deserialize(buf);
-        recruitmentCosts = buf.readItemStack();
+        recruitmentCosts = buf.readItem();
     }
 
     @Override

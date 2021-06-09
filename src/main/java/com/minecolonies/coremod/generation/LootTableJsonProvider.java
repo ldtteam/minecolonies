@@ -37,7 +37,7 @@ public abstract class LootTableJsonProvider implements IDataProvider
     protected abstract Map<ResourceLocation, LootTableJson> getLootTables();
 
     @Override
-    public void act(@NotNull final DirectoryCache cache) throws IOException
+    public void run(@NotNull final DirectoryCache cache) throws IOException
     {
         final Map<ResourceLocation, LootTableJson> lootTables = getLootTables();
 

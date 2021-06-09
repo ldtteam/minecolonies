@@ -111,7 +111,7 @@ public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteM
             ItemStack inputStack = currentRecipeStorage.getCleanedInput().get(0).getItemStack();
             if(CONCRETE.test(inputStack))
             {
-                slot = InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), s -> s.isItemEqual(inputStack));
+                slot = InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), s -> s.sameItem(inputStack));
             }
             else
             {
@@ -138,7 +138,7 @@ public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteM
                 walkTo = null; 
                 if (InventoryUtils.attemptReduceStackInItemHandler(worker.getInventoryCitizen(), stack, 1))
                 {
-                    world.setBlockState(posToPlace, block.getDefaultState().updatePostPlacement(Direction.DOWN, block.getDefaultState(), world, posToPlace, posToPlace), 0x03);
+                    world.setBlock(posToPlace, block.defaultBlockState().updateShape(Direction.DOWN, block.defaultBlockState(), world, posToPlace, posToPlace), 0x03);
                 }
                 return START_WORKING;
             }

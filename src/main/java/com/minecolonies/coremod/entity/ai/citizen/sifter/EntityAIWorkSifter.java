@@ -127,13 +127,13 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
                     setDelay(NO_MESH_DELAY);
                 }
             }
-            if (!ItemStackUtils.isEmpty(worker.getHeldItemMainhand()))
+            if (!ItemStackUtils.isEmpty(worker.getMainHandItem()))
             {
-                worker.setHeldItem(Hand.MAIN_HAND, ItemStack.EMPTY);
+                worker.setLastHandItem(Hand.MAIN_HAND, ItemStack.EMPTY);
             }
-            if (!ItemStackUtils.isEmpty(worker.getHeldItemOffhand()))
+            if (!ItemStackUtils.isEmpty(worker.getOffhandItem()))
             {
-                worker.setHeldItem(Hand.OFF_HAND, ItemStack.EMPTY);
+                worker.setLastHandItem(Hand.OFF_HAND, ItemStack.EMPTY);
             }
 
             progress = 0;
@@ -146,13 +146,13 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
                 .filter(item -> !ItemStackUtils.compareItemStacksIgnoreStackSize(item, meshItem, false, true))
                 .findFirst().orElse(ItemStack.EMPTY);
 
-        if (!inputItem.isEmpty() && (ItemStackUtils.isEmpty(worker.getHeldItemMainhand()) || ItemStackUtils.compareItemStacksIgnoreStackSize(worker.getHeldItemMainhand(), inputItem)))
+        if (!inputItem.isEmpty() && (ItemStackUtils.isEmpty(worker.getMainHandItem()) || ItemStackUtils.compareItemStacksIgnoreStackSize(worker.getMainHandItem(), inputItem)))
         {
-            worker.setHeldItem(Hand.MAIN_HAND, inputItem);
+            worker.setLastHandItem(Hand.MAIN_HAND, inputItem);
         }
-        if (!meshItem.isEmpty() && (ItemStackUtils.isEmpty(worker.getHeldItemOffhand()) || ItemStackUtils.compareItemStacksIgnoreStackSize(worker.getHeldItemOffhand(), meshItem, false, true)))
+        if (!meshItem.isEmpty() && (ItemStackUtils.isEmpty(worker.getOffhandItem()) || ItemStackUtils.compareItemStacksIgnoreStackSize(worker.getOffhandItem(), meshItem, false, true)))
         {
-            worker.setHeldItem(Hand.OFF_HAND, meshItem);
+            worker.setLastHandItem(Hand.OFF_HAND, meshItem);
         }
 
         WorkerUtil.faceBlock(getOwnBuilding().getPosition(), worker);
@@ -176,10 +176,10 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
         Network.getNetwork()
             .sendToTrackingEntity(new LocalizedParticleEffectMessage(meshItem, sifterBuilding.getID()), worker);
         Network.getNetwork()
-            .sendToTrackingEntity(new LocalizedParticleEffectMessage(inputItem, sifterBuilding.getID().down()), worker);
+            .sendToTrackingEntity(new LocalizedParticleEffectMessage(inputItem, sifterBuilding.getID().below()), worker);
         
-        worker.swingArm(Hand.MAIN_HAND);
-        SoundUtils.playSoundAtCitizen(world, getOwnBuilding().getID(), SoundEvents.ENTITY_LEASH_KNOT_BREAK);
+        worker.swing(Hand.MAIN_HAND);
+        SoundUtils.playSoundAtCitizen(world, getOwnBuilding().getID(), SoundEvents.LEASH_KNOT_BREAK);
         return getState();
     }
 }

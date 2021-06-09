@@ -73,7 +73,7 @@ public class WindowFurnaceCrafting extends ContainerScreen<ContainerCraftingFurn
     {
         super(container, playerInventory, iTextComponent);
         this.container = container;
-        this.building = (AbstractBuildingSmelterCrafter.View) IColonyManager.getInstance().getBuildingView(playerInventory.player.world.getDimensionKey(), container.getPos());
+        this.building = (AbstractBuildingSmelterCrafter.View) IColonyManager.getInstance().getBuildingView(playerInventory.player.level.dimension(), container.getPos());
     }
 
     @NotNull
@@ -86,11 +86,11 @@ public class WindowFurnaceCrafting extends ContainerScreen<ContainerCraftingFurn
     protected void init()
     {
         super.init();
-        final String buttonDisplay = building.canRecipeBeAdded() ? I18n.format("gui.done") : LanguageHandler.format("com.minecolonies.coremod.gui.recipe.full");
+        final String buttonDisplay = building.canRecipeBeAdded() ? I18n.get("gui.done") : LanguageHandler.format("com.minecolonies.coremod.gui.recipe.full");
         /*
          * The button to click done after finishing the recipe.
          */
-        final Button doneButton = new Button(guiLeft + BUTTON_X_OFFSET, guiTop + BUTTON_Y_POS, BUTTON_WIDTH, BUTTON_HEIGHT, new StringTextComponent(buttonDisplay), new OnButtonPress());
+        final Button doneButton = new Button(leftPos + BUTTON_X_OFFSET, topPos + BUTTON_Y_POS, BUTTON_WIDTH, BUTTON_HEIGHT, new StringTextComponent(buttonDisplay), new OnButtonPress());
         this.addButton(doneButton);
         if (!building.canRecipeBeAdded())
         {
@@ -106,8 +106,8 @@ public class WindowFurnaceCrafting extends ContainerScreen<ContainerCraftingFurn
             if (building.canRecipeBeAdded())
             {
                 final List<ItemStorage> input = new ArrayList<>();
-                input.add(new ItemStorage(container.inventorySlots.get(0).getStack()));
-                final ItemStack primaryOutput = container.inventorySlots.get(1).getStack().copy();
+                input.add(new ItemStorage(container.slots.get(0).getItem()));
+                final ItemStack primaryOutput = container.slots.get(1).getItem().copy();
 
                 if (!ItemStackUtils.isEmpty(primaryOutput))
                 {
@@ -121,11 +121,11 @@ public class WindowFurnaceCrafting extends ContainerScreen<ContainerCraftingFurn
      * Draws the background layer of this container (behind the items).
      */
     @Override
-    protected void drawGuiContainerBackgroundLayer(@NotNull final MatrixStack stack, final float partialTicks, final int mouseX, final int mouseY)
+    protected void renderBg(@NotNull final MatrixStack stack, final float partialTicks, final int mouseX, final int mouseY)
     {
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.minecraft.getTextureManager().bindTexture(CRAFTING_FURNACE);
-        this.blit(stack, this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
+        this.minecraft.getTextureManager().bind(CRAFTING_FURNACE);
+        this.blit(stack, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
     }
 
     @Override
@@ -133,6 +133,6 @@ public class WindowFurnaceCrafting extends ContainerScreen<ContainerCraftingFurn
     {
         this.renderBackground(stack);
         super.render(stack, x, y, z);
-        this.renderHoveredTooltip(stack, x, y);
+        this.renderTooltip(stack, x, y);
     }
 }

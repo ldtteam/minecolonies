@@ -37,7 +37,7 @@ public class GenericRecipe implements IGenericRecipe
     {
         if (recipe == null) return null;
         final List<List<ItemStack>> inputs = recipe.getIngredients().stream()
-                .map(ingredient -> Arrays.asList(ingredient.getMatchingStacks()))
+                .map(ingredient -> Arrays.asList(ingredient.getItems()))
                 .collect(Collectors.toList());
         final int size;
         final Block intermediate;
@@ -48,10 +48,10 @@ public class GenericRecipe implements IGenericRecipe
         }
         else
         {
-            size = recipe.canFit(2, 2) ? 2 : 3;
+            size = recipe.canCraftInDimensions(2, 2) ? 2 : 3;
             intermediate = Blocks.AIR;
         }
-        return new GenericRecipe(recipe.getRecipeOutput(), calculateSecondaryOutputs(recipe), inputs,
+        return new GenericRecipe(recipe.getResultItem(), calculateSecondaryOutputs(recipe), inputs,
                 size, intermediate, null, new ArrayList<>(), -1);
     }
 
@@ -230,14 +230,14 @@ public class GenericRecipe implements IGenericRecipe
             final CraftingInventory inv = new CraftingInventory(new Container(ContainerType.CRAFTING, 0)
             {
                 @Override
-                public boolean canInteractWith(@NotNull final PlayerEntity playerIn) { return false; }
+                public boolean stillValid(@NotNull final PlayerEntity playerIn) { return false; }
             }, 3, 3);
             for (int slot = 0; slot < inputs.size(); ++slot)
             {
-                final ItemStack[] stacks = inputs.get(slot).getMatchingStacks();
+                final ItemStack[] stacks = inputs.get(slot).getItems();
                 if (stacks.length > 0)
                 {
-                    inv.setInventorySlotContents(slot, stacks[0]);
+                    inv.setItem(slot, stacks[0]);
                 }
             }
             return ((ICraftingRecipe) recipe).getRemainingItems(inv).stream()

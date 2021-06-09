@@ -56,7 +56,7 @@ public class HutBlockSchematicProvider implements IDataProvider
     }
 
     @Override
-    public void act(@NotNull final DirectoryCache cache) throws IOException
+    public void run(@NotNull final DirectoryCache cache) throws IOException
     {
         final Path path = this.generator.getOutputFolder()
                 .resolve(Structures.SCHEMATICS_ASSET_PATH)
@@ -79,7 +79,7 @@ public class HutBlockSchematicProvider implements IDataProvider
     private Blueprint generateBlueprint(@NotNull final String name,
                                         @NotNull final AbstractBlockHut<?> block)
     {
-        final SingleBlockWorld world = new SingleBlockWorld(block.getDefaultState());
+        final SingleBlockWorld world = new SingleBlockWorld(block.defaultBlockState());
         final short size = 1;
         return BlueprintUtil.createBlueprint(world, BlockPos.ZERO, false, size, size, size, name, Optional.empty());
     }
@@ -98,7 +98,7 @@ public class HutBlockSchematicProvider implements IDataProvider
 
         public SingleBlockWorld(@NotNull final BlockState block)
         {
-            super(null, World.OVERWORLD, getDimensionType(DimensionType.OVERWORLD), null, false, false, 0);
+            super(null, World.OVERWORLD, getDimensionType(DimensionType.OVERWORLD_LOCATION), null, false, false, 0);
 
             this.block = block;
             this.entity = block.createTileEntity(this);
@@ -107,8 +107,8 @@ public class HutBlockSchematicProvider implements IDataProvider
         private static DimensionType getDimensionType(@NotNull final RegistryKey<DimensionType> key)
         {
             final DynamicRegistries.Impl reg = new DynamicRegistries.Impl();
-            DimensionType.registerTypes(reg);
-            return reg.func_230520_a_().getOrThrow(key);
+            DimensionType.registerBuiltin(reg);
+            return reg.dimensionTypes().getOrThrow(key);
         }
 
         @NotNull
@@ -119,12 +119,12 @@ public class HutBlockSchematicProvider implements IDataProvider
             {
                 return this.block;
             }
-            return Blocks.VOID_AIR.getDefaultState();
+            return Blocks.VOID_AIR.defaultBlockState();
         }
 
         @Nullable
         @Override
-        public TileEntity getTileEntity(@NotNull final BlockPos pos)
+        public TileEntity getBlockEntity(@NotNull final BlockPos pos)
         {
             if (pos.equals(BlockPos.ZERO))
             {
@@ -135,7 +135,7 @@ public class HutBlockSchematicProvider implements IDataProvider
 
         //region Not implemented
         @Override
-        public void notifyBlockUpdate(BlockPos pos, BlockState oldState, BlockState newState, int flags)
+        public void sendBlockUpdated(BlockPos pos, BlockState oldState, BlockState newState, int flags)
         {
             throw new NotImplementedException("");
         }
@@ -147,14 +147,14 @@ public class HutBlockSchematicProvider implements IDataProvider
         }
 
         @Override
-        public void playMovingSound(@Nullable PlayerEntity playerIn, Entity entityIn, SoundEvent eventIn, SoundCategory categoryIn, float volume, float pitch)
+        public void playSound(@Nullable PlayerEntity playerIn, Entity entityIn, SoundEvent eventIn, SoundCategory categoryIn, float volume, float pitch)
         {
             throw new NotImplementedException("");
        }
 
         @Nullable
         @Override
-        public Entity getEntityByID(int id)
+        public Entity getEntity(int id)
         {
             throw new NotImplementedException("");
         }
@@ -167,19 +167,19 @@ public class HutBlockSchematicProvider implements IDataProvider
         }
 
         @Override
-        public void registerMapData(MapData mapDataIn)
+        public void setMapData(MapData mapDataIn)
         {
             throw new NotImplementedException("");
         }
 
         @Override
-        public int getNextMapId()
+        public int getFreeMapId()
         {
             throw new NotImplementedException("");
         }
 
         @Override
-        public void sendBlockBreakProgress(int breakerId, BlockPos pos, int progress)
+        public void destroyBlockProgress(int breakerId, BlockPos pos, int progress)
         {
             throw new NotImplementedException("");
         }
@@ -197,55 +197,55 @@ public class HutBlockSchematicProvider implements IDataProvider
         }
 
         @Override
-        public ITagCollectionSupplier getTags()
+        public ITagCollectionSupplier getTagManager()
         {
             throw new NotImplementedException("");
         }
 
         @Override
-        public ITickList<Block> getPendingBlockTicks()
+        public ITickList<Block> getBlockTicks()
         {
             throw new NotImplementedException("");
         }
 
         @Override
-        public ITickList<Fluid> getPendingFluidTicks()
+        public ITickList<Fluid> getLiquidTicks()
         {
             throw new NotImplementedException("");
         }
 
         @Override
-        public AbstractChunkProvider getChunkProvider()
+        public AbstractChunkProvider getChunkSource()
         {
             throw new NotImplementedException("");
         }
 
         @Override
-        public void playEvent(@Nullable PlayerEntity player, int type, BlockPos pos, int data)
+        public void levelEvent(@Nullable PlayerEntity player, int type, BlockPos pos, int data)
         {
             throw new NotImplementedException("");
         }
 
         @Override
-        public DynamicRegistries func_241828_r()
+        public DynamicRegistries registryAccess()
         {
             throw new NotImplementedException("");
         }
 
         @Override
-        public float func_230487_a_(Direction p_230487_1_, boolean p_230487_2_)
+        public float getShade(Direction p_230487_1_, boolean p_230487_2_)
         {
             throw new NotImplementedException("");
         }
 
         @Override
-        public List<? extends PlayerEntity> getPlayers()
+        public List<? extends PlayerEntity> players()
         {
             throw new NotImplementedException("");
         }
 
         @Override
-        public Biome getNoiseBiomeRaw(int x, int y, int z)
+        public Biome getUncachedNoiseBiome(int x, int y, int z)
         {
             throw new NotImplementedException("");
         }

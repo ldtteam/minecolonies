@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.function.Consumer;
 
+import com.minecolonies.coremod.generation.CustomRecipeProvider.CustomRecipeBuilder;
+
 /** Datagen for concrete mixer crafterrecipes */
 public class DefaultConcreteMixerCraftingProvider extends CustomRecipeProvider
 {
@@ -43,7 +45,7 @@ public class DefaultConcreteMixerCraftingProvider extends CustomRecipeProvider
 
             if (powder == null || concrete == null || dye == null)
             {
-                throw new IllegalStateException("Missing items for " + color.getString());
+                throw new IllegalStateException("Missing items for " + color.getSerializedName());
             }
 
             final List<ItemStorage> customInput = new ArrayList<>(input);

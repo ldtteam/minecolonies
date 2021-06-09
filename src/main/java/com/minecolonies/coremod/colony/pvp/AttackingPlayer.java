@@ -128,7 +128,7 @@ public class AttackingPlayer
      */
     public void refreshList(final Colony colony)
     {
-        guards.removeIf(citizen -> citizen.isDead() || !colony.isCoordInColony(colony.getWorld(), citizen.getPosition()));
+        guards.removeIf(citizen -> citizen.isDead() || !colony.isCoordInColony(colony.getWorld(), citizen.blockPosition()));
     }
 
     @Override

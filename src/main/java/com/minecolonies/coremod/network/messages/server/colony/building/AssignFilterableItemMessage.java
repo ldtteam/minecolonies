@@ -59,8 +59,8 @@ public class AssignFilterableItemMessage extends AbstractBuildingServerMessage<A
     {
 
         this.assign = buf.readBoolean();
-        this.item = new ItemStorage(buf.readItemStack());
-        this.id = buf.readString(32767);
+        this.item = new ItemStorage(buf.readItem());
+        this.id = buf.readUtf(32767);
     }
 
     @Override
@@ -68,8 +68,8 @@ public class AssignFilterableItemMessage extends AbstractBuildingServerMessage<A
     {
 
         buf.writeBoolean(this.assign);
-        buf.writeItemStack(this.item.getItemStack());
-        buf.writeString(this.id);
+        buf.writeItem(this.item.getItemStack());
+        buf.writeUtf(this.id);
     }
 
     @Override

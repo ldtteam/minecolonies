@@ -66,8 +66,8 @@ public class PermissionEvent
         {
             this.id = uuid;
         }
-        this.name = buf.readString(32767);
-        this.action = Action.valueOf(buf.readString(32767));
+        this.name = buf.readUtf(32767);
+        this.action = Action.valueOf(buf.readUtf(32767));
         this.position = buf.readBlockPos();
     }
 
@@ -127,8 +127,8 @@ public class PermissionEvent
         {
             PacketUtils.writeUUID(buf, id);
         }
-        buf.writeString(name);
-        buf.writeString(action.toString());
+        buf.writeUtf(name);
+        buf.writeUtf(action.toString());
         buf.writeBlockPos(position);
     }
 

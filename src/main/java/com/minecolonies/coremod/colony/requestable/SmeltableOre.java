@@ -62,7 +62,7 @@ public class SmeltableOre implements IDeliverable
     public static SmeltableOre deserialize(final IFactoryController controller, final CompoundNBT compound)
     {
         final int count = compound.getInt(NBT_COUNT);
-        final ItemStack result = compound.keySet().contains(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_RESULT)) : ItemStackUtils.EMPTY;
+        final ItemStack result = compound.getAllKeys().contains(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_RESULT)) : ItemStackUtils.EMPTY;
 
         return new SmeltableOre(count, result);
     }
@@ -81,7 +81,7 @@ public class SmeltableOre implements IDeliverable
         buffer.writeBoolean(!ItemStackUtils.isEmpty(input.result));
         if (!ItemStackUtils.isEmpty(input.result))
         {
-            buffer.writeItemStack(input.result);
+            buffer.writeItem(input.result);
         }
     }
 
@@ -95,7 +95,7 @@ public class SmeltableOre implements IDeliverable
     public static SmeltableOre deserialize(final IFactoryController controller, final PacketBuffer buffer)
     {
         final int count = buffer.readInt();
-        final ItemStack result = buffer.readBoolean() ? buffer.readItemStack() : ItemStack.EMPTY;
+        final ItemStack result = buffer.readBoolean() ? buffer.readItem() : ItemStack.EMPTY;
 
         return new SmeltableOre(count, result);
     }

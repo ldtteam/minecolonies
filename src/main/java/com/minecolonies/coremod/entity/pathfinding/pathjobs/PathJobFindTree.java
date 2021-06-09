@@ -116,7 +116,7 @@ public class PathJobFindTree extends AbstractPathJob
         this.colony = colony;
 
         final BlockPos size = startRestriction.subtract(endRestriction);
-        this.boxCenter = endRestriction.add(size.getX()/2, size.getY()/2, size.getZ()/2);
+        this.boxCenter = endRestriction.relative(size.getX()/2, size.getY()/2, size.getZ()/2);
     }
 
     @NotNull
@@ -129,7 +129,7 @@ public class PathJobFindTree extends AbstractPathJob
     @Override
     protected double computeHeuristic(@NotNull final BlockPos pos)
     {
-        return boxCenter == null ? pos.distanceSq(hutLocation) * TIE_BREAKER : BlockPosUtil.getDistanceSquared2D(pos, boxCenter);
+        return boxCenter == null ? pos.distSqr(hutLocation) * TIE_BREAKER : BlockPosUtil.getDistanceSquared2D(pos, boxCenter);
     }
 
     @Override
@@ -143,12 +143,12 @@ public class PathJobFindTree extends AbstractPathJob
         if (n.pos.getX() == n.parent.pos.getX())
         {
             final int dz = n.pos.getZ() > n.parent.pos.getZ() ? 1 : -1;
-            return isTree(n.pos.add(0, 0, dz)) || isTree(n.pos.add(-1, 0, 0)) || isTree(n.pos.add(1, 0, 0));
+            return isTree(n.pos.relative(0, 0, dz)) || isTree(n.pos.relative(-1, 0, 0)) || isTree(n.pos.relative(1, 0, 0));
         }
         else
         {
             final int dx = n.pos.getX() > n.parent.pos.getX() ? 1 : -1;
-            return isTree(n.pos.add(dx, 0, 0)) || isTree(n.pos.add(0, 0, -1)) || isTree(n.pos.add(0, 0, 1));
+            return isTree(n.pos.relative(dx, 0, 0)) || isTree(n.pos.relative(0, 0, -1)) || isTree(n.pos.relative(0, 0, 1));
         }
     }
 
@@ -172,6 +172,6 @@ public class PathJobFindTree extends AbstractPathJob
     @Override
     protected boolean isPassable(@NotNull final BlockState block, final BlockPos pos)
     {
-        return super.isPassable(block, pos) || (block.isIn(BlockTags.LEAVES) && isInRestrictedArea(pos)) || Compatibility.isDynamicTrunkShell(block.getBlock());
+        return super.isPassable(block, pos) || (block.is(BlockTags.LEAVES) && isInRestrictedArea(pos)) || Compatibility.isDynamicTrunkShell(block.getBlock());
     }
 }

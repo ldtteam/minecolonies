@@ -28,7 +28,7 @@ public class RendererChiefAmazon extends AbstractRendererAmazon<AbstractEntityAm
 
     @NotNull
     @Override
-    public ResourceLocation getEntityTexture(final AbstractEntityAmazon entity)
+    public ResourceLocation getTextureLocation(final AbstractEntityAmazon entity)
     {
         return TEXTURE;
     }

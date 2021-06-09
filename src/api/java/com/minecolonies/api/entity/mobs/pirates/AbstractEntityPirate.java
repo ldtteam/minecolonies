@@ -47,14 +47,14 @@ public abstract class AbstractEntityPirate extends AbstractEntityMinecoloniesMob
     {
         final SoundEvent soundevent = this.getAmbientSound();
 
-        if (soundevent != null && world.rand.nextInt(OUT_OF_ONE_HUNDRED) <= ONE)
+        if (soundevent != null && level.random.nextInt(OUT_OF_ONE_HUNDRED) <= ONE)
         {
-            this.playSound(soundevent, this.getSoundVolume(), this.getSoundPitch());
+            this.playSound(soundevent, this.getSoundVolume(), this.getVoicePitch());
         }
     }
 
     @Override
-    public boolean canSpawn(final IWorld worldIn, final SpawnReason spawnReasonIn)
+    public boolean checkSpawnRules(final IWorld worldIn, final SpawnReason spawnReasonIn)
     {
         return true;
     }
@@ -71,9 +71,9 @@ public abstract class AbstractEntityPirate extends AbstractEntityMinecoloniesMob
 
     @NotNull
     @Override
-    public AbstractAdvancedPathNavigate getNavigator()
+    public AbstractAdvancedPathNavigate getNavigation()
     {
-        AbstractAdvancedPathNavigate navigator = super.getNavigator();
+        AbstractAdvancedPathNavigate navigator = super.getNavigation();
         navigator.getPathingOptions().withStartSwimCost(2.5D).withSwimCost(1.1D);
         return navigator;
     }

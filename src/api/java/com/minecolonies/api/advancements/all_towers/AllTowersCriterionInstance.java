@@ -12,6 +12,6 @@ public class AllTowersCriterionInstance extends CriterionInstance
 {
     public AllTowersCriterionInstance()
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_ALL_TOWERS), EntityPredicate.AndPredicate.ANY_AND);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_ALL_TOWERS), EntityPredicate.AndPredicate.ANY);
     }
 }

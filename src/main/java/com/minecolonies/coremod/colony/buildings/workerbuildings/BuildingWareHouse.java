@@ -104,7 +104,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
         {
             if (getColony().getWorld() != null)
             {
-                final TileEntity entity = getColony().getWorld().getTileEntity(pos);
+                final TileEntity entity = getColony().getWorld().getBlockEntity(pos);
                 if (entity instanceof TileEntityRack)
                 {
                     ((AbstractTileEntityRack) entity).setInWarehouse(true);
@@ -272,7 +272,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     {
         if (block instanceof BlockMinecoloniesRack)
         {
-            final TileEntity entity = world.getTileEntity(pos);
+            final TileEntity entity = world.getBlockEntity(pos);
             if (entity instanceof ChestTileEntity)
             {
                 handleBuildingOverChest(pos, (ChestTileEntity) entity, world, null);
@@ -296,23 +296,23 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     public static void handleBuildingOverChest(@NotNull final BlockPos pos, final ChestTileEntity chest, final World world, @Nullable final CompoundNBT tileEntityData)
     {
         final List<ItemStack> inventory = new ArrayList<>();
-        final int size = chest.getSizeInventory();
+        final int size = chest.getContainerSize();
         for (int slot = 0; slot < size; slot++)
         {
-            final ItemStack stack = chest.getStackInSlot(slot);
+            final ItemStack stack = chest.getItem(slot);
             if (!ItemStackUtils.isEmpty(stack))
             {
                 inventory.add(stack.copy());
             }
-            chest.removeStackFromSlot(slot);
+            chest.removeItemNoUpdate(slot);
         }
 
-        world.setBlockState(pos, ModBlocks.blockRack.getDefaultState(), 0x03);
+        world.setBlock(pos, ModBlocks.blockRack.defaultBlockState(), 0x03);
         if (tileEntityData != null)
         {
             handleTileEntityPlacement(tileEntityData, world, pos);
         }
-        final TileEntity entity = world.getTileEntity(pos);
+        final TileEntity entity = world.getBlockEntity(pos);
         if (entity instanceof TileEntityRack)
         {
             ((AbstractTileEntityRack) entity).setInWarehouse(true);
@@ -365,7 +365,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
         {
             for (final BlockPos pos : getContainers())
             {
-                final TileEntity entity = world.getTileEntity(pos);
+                final TileEntity entity = world.getBlockEntity(pos);
                 if (entity instanceof TileEntityRack && !(entity instanceof TileEntityColonyBuilding))
                 {
                     ((AbstractTileEntityRack) entity).upgradeItemStorage();

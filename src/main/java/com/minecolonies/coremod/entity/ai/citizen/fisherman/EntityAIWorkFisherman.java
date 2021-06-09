@@ -193,7 +193,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
     {
         if (checkForToolOrWeapon(ToolType.FISHINGROD))
         {
-            worker.setHeldItem(Hand.MAIN_HAND, ItemStackUtils.EMPTY);
+            worker.setLastHandItem(Hand.MAIN_HAND, ItemStackUtils.EMPTY);
             playNeedRodSound();
             return getState();
         }
@@ -206,7 +206,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
      */
     private void playNeedRodSound()
     {
-        SoundUtils.playSoundAtCitizenWith(world, worker.getPosition(), EventType.MISSING_EQUIPMENT, worker.getCitizenData());
+        SoundUtils.playSoundAtCitizenWith(world, worker.blockPosition(), EventType.MISSING_EQUIPMENT, worker.getCitizenData());
     }
 
     @Override
@@ -242,7 +242,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
      */
     private boolean hasFish()
     {
-        return InventoryUtils.hasItemInItemHandler(getInventory(), item -> item.getItem().isIn(ItemTags.FISHES));
+        return InventoryUtils.hasItemInItemHandler(getInventory(), item -> item.getItem().is(ItemTags.FISHES));
     }
 
     /**
@@ -253,8 +253,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
     private boolean hasRodButNotEquipped()
     {
         return InventoryUtils.hasItemInItemHandler(getInventory(), item -> item.getItem() instanceof FishingRodItem)
-                && worker.getHeldItemMainhand() != null
-                && !(worker.getHeldItemMainhand().getItem() instanceof FishingRodItem);
+                && worker.getMainHandItem() != null
+                && !(worker.getMainHandItem().getItem() instanceof FishingRodItem);
     }
 
     /**
@@ -307,7 +307,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
             return FISHERMAN_SEARCHING_WATER;
         }
 
-        if (world.getBlockState(worker.getPosition()).getMaterial().isLiquid())
+        if (world.getBlockState(worker.blockPosition()).getMaterial().isLiquid())
         {
             return START_WORKING;
         }
@@ -359,7 +359,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
 
             if (pathResult == null || !pathResult.isInProgress())
             {
-                pathResult = worker.getNavigator().moveToWater(SEARCH_RANGE, 1.0D, job.getPonds());
+                pathResult = worker.getNavigation().moveToWater(SEARCH_RANGE, 1.0D, job.getPonds());
             }
 
             return START_WORKING;
@@ -378,7 +378,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
     {
         if (pathResult == null)
         {
-            pathResult = worker.getNavigator().moveToWater(SEARCH_RANGE, 1.0D, job.getPonds());
+            pathResult = worker.getNavigation().moveToWater(SEARCH_RANGE, 1.0D, job.getPonds());
             return getState();
         }
         if (pathResult.failedToReachDestination())
@@ -469,7 +469,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
      */
     private void playCaughtFishSound()
     {
-        SoundUtils.playSoundAtCitizenWith(world, worker.getPosition(), EventType.SUCCESS, worker.getCitizenData());
+        SoundUtils.playSoundAtCitizenWith(world, worker.blockPosition(), EventType.SUCCESS, worker.getCitizenData());
     }
 
     /**
@@ -515,23 +515,23 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
      */
     private void throwRod()
     {
-        if (!world.isRemote)
+        if (!world.isClientSide)
         {
             WorkerUtil.faceBlock(job.getWater().getA(), worker);
             world.playSound(null,
-              this.worker.getPosition(),
-              SoundEvents.ENTITY_FISHING_BOBBER_THROW,
+              this.worker.blockPosition(),
+              SoundEvents.FISHING_BOBBER_THROW,
               SoundCategory.NEUTRAL,
               0.5F,
-              (float) (0.4D / (this.world.rand.nextFloat() * 0.4D + 0.8D)));
+              (float) (0.4D / (this.world.random.nextFloat() * 0.4D + 0.8D)));
             this.entityFishHook = (NewBobberEntity) ModEntities.FISHHOOK.create(world);
             this.entityFishHook.setAngler((EntityCitizen) worker,
-              EnchantmentHelper.getFishingLuckBonus(worker.getHeldItemMainhand()),
-              (int) (5 + (getPrimarySkillLevel() / LURE_SPEED_DIVIDER) + EnchantmentHelper.getFishingSpeedBonus(worker.getHeldItemMainhand())));
-            world.addEntity(this.entityFishHook);
+              EnchantmentHelper.getFishingLuckBonus(worker.getMainHandItem()),
+              (int) (5 + (getPrimarySkillLevel() / LURE_SPEED_DIVIDER) + EnchantmentHelper.getFishingSpeedBonus(worker.getMainHandItem())));
+            world.addFreshEntity(this.entityFishHook);
         }
 
-        worker.swingArm(worker.getActiveHand());
+        worker.swing(worker.getUsedItemHand());
     }
 
     /**
@@ -541,7 +541,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
      */
     private boolean isFishHookStuck()
     {
-        return (!entityFishHook.isInWater() && (entityFishHook.isOnGround() || entityFishHook.shouldStopFishing()) || !entityFishHook.addedToChunk) || !entityFishHook.isAlive() || entityFishHook.caughtEntity != null;
+        return (!entityFishHook.isInWater() && (entityFishHook.isOnGround() || entityFishHook.shouldStopFishing()) || !entityFishHook.inChunk) || !entityFishHook.isAlive() || entityFishHook.caughtEntity != null;
     }
 
     /**
@@ -570,18 +570,18 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
         //We really do have our Rod in our inventory?
         if (rodSlot == -1)
         {
-            worker.setHeldItem(Hand.MAIN_HAND, ItemStackUtils.EMPTY);
+            worker.setLastHandItem(Hand.MAIN_HAND, ItemStackUtils.EMPTY);
             return PREPARING;
         }
 
         //If there is no close water, try to move closer
-        if (!Utils.isBlockInRange(world, Blocks.WATER, (int) worker.getPosX(), (int) worker.getPosY(), (int) worker.getPosZ(), MIN_DISTANCE_TO_WATER))
+        if (!Utils.isBlockInRange(world, Blocks.WATER, (int) worker.getX(), (int) worker.getY(), (int) worker.getZ(), MIN_DISTANCE_TO_WATER))
         {
             return FISHERMAN_WALKING_TO_WATER;
         }
 
         //Check if Rod is held item if not put it as held item
-        if (worker.getHeldItemMainhand() == null || (worker.getHeldItemMainhand().getItem() != worker.getItemHandlerCitizen().getStackInSlot(rodSlot).getItem()))
+        if (worker.getMainHandItem() == null || (worker.getMainHandItem().getItem() != worker.getItemHandlerCitizen().getStackInSlot(rodSlot).getItem()))
         {
             equipRod();
             return getState();
@@ -637,7 +637,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
     {
         if (entityFishHook != null)
         {
-            worker.swingArm(worker.getActiveHand());
+            worker.swing(worker.getUsedItemHand());
             final int i = entityFishHook.getDamage();
             entityFishHook.remove();
             worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, i);

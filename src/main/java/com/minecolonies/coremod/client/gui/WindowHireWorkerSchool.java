@@ -47,7 +47,7 @@ public class WindowHireWorkerSchool extends WindowHireWorker
     {
         if (current == Skill.Intelligence)
         {
-            return Style.EMPTY.applyFormatting(TextFormatting.GREEN).applyFormatting(TextFormatting.BOLD);
+            return Style.EMPTY.applyFormat(TextFormatting.GREEN).applyFormat(TextFormatting.BOLD);
         }
         return super.createColor(primary, secondary, current);
     }

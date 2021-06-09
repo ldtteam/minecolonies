@@ -48,7 +48,7 @@ public class FieldPlotResizeMessage implements IMessage
     public void toBytes(PacketBuffer buf)
     {
         buf.writeInt(this.size);
-        buf.writeInt(this.direction.getHorizontalIndex());
+        buf.writeInt(this.direction.get2DDataValue());
         buf.writeBlockPos(this.pos);
     }
 
@@ -56,7 +56,7 @@ public class FieldPlotResizeMessage implements IMessage
     public void fromBytes(PacketBuffer buf)
     {
         this.size = buf.readInt();
-        this.direction = Direction.byHorizontalIndex(buf.readInt());
+        this.direction = Direction.from2DDataValue(buf.readInt());
         this.pos = buf.readBlockPos();
     }
 
@@ -67,7 +67,7 @@ public class FieldPlotResizeMessage implements IMessage
     @Override
     public void onExecute(NetworkEvent.Context ctxIn, boolean isLogicalServer)
     {
-        final TileEntity te = ctxIn.getSender().getEntityWorld().getTileEntity(this.pos);
+        final TileEntity te = ctxIn.getSender().getCommandSenderWorld().getBlockEntity(this.pos);
         if (te instanceof AbstractScarecrowTileEntity)
         {
             ((AbstractScarecrowTileEntity) te).setRadius(this.direction, this.size);

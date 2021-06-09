@@ -80,7 +80,7 @@ public abstract class AbstractTileEntityRack extends TileEntity implements IName
         public void setStackInSlot(final int slot, final @Nonnull ItemStack stack)
         {
             validateSlotIndex(slot);
-            final boolean changed = !ItemStack.areItemStacksEqual(stack, this.stacks.get(slot));
+            final boolean changed = !ItemStack.matches(stack, this.stacks.get(slot));
             this.stacks.set(slot, stack);
             if (changed)
             {
@@ -116,13 +116,13 @@ public abstract class AbstractTileEntityRack extends TileEntity implements IName
      */
     public void updateWarehouseIfAvailable(final ItemStack stack)
     {
-        if (!ItemStackUtils.isEmpty(stack) && world != null && !world.isRemote)
+        if (!ItemStackUtils.isEmpty(stack) && level != null && !level.isClientSide)
         {
             if (inWarehouse || !buildingPos.equals(BlockPos.ZERO))
             {
-                if (IColonyManager.getInstance().isCoordinateInAnyColony(world, pos))
+                if (IColonyManager.getInstance().isCoordinateInAnyColony(level, worldPosition))
                 {
-                    final IColony colony = IColonyManager.getInstance().getClosestColony(world, pos);
+                    final IColony colony = IColonyManager.getInstance().getClosestColony(level, worldPosition);
                     if (inWarehouse && colony != null && colony.getRequestManager() != null)
                     {
                         colony.getRequestManager().onColonyUpdate(request ->
@@ -203,9 +203,9 @@ public abstract class AbstractTileEntityRack extends TileEntity implements IName
      */
     public void setBuildingPos(final BlockPos pos)
     {
-        if (world != null && (buildingPos == null || !buildingPos.equals(pos)))
+        if (level != null && (buildingPos == null || !buildingPos.equals(pos)))
         {
-            markDirty();
+            setChanged();
         }
         this.buildingPos = pos;
     }
@@ -248,7 +248,7 @@ public abstract class AbstractTileEntityRack extends TileEntity implements IName
     public void setMain(final boolean main)
     {
         this.main = main;
-        markDirty();
+        setChanged();
     }
 
     /**
@@ -258,9 +258,9 @@ public abstract class AbstractTileEntityRack extends TileEntity implements IName
      */
     public void neighborChanged(final BlockPos newNeighbor)
     {
-        final TileEntity entity = world.getTileEntity(newNeighbor);
+        final TileEntity entity = level.getBlockEntity(newNeighbor);
 
-        if (relativeNeighbor == null && world.getBlockState(newNeighbor).getBlock() instanceof AbstractBlockMinecoloniesRack
+        if (relativeNeighbor == null && level.getBlockState(newNeighbor).getBlock() instanceof AbstractBlockMinecoloniesRack
               && !(entity instanceof AbstractTileEntityRack && ((AbstractTileEntityRack) entity).getOtherChest() != null))
         {
             if (!setNeighbor(newNeighbor))
@@ -276,16 +276,16 @@ public abstract class AbstractTileEntityRack extends TileEntity implements IName
                     this.main = true;
                     ((AbstractTileEntityRack) entity).setMain(false);
                 }
-                ((AbstractTileEntityRack) entity).setNeighbor(this.getPos());
+                ((AbstractTileEntityRack) entity).setNeighbor(this.getBlockPos());
 
-                entity.markDirty();
+                entity.setChanged();
             }
 
             updateItemStorage();
-            this.markDirty();
+            this.setChanged();
             updateBlockState();
         }
-        else if (relativeNeighbor != null && this.pos.subtract(relativeNeighbor).equals(newNeighbor) && world.getBlockState(newNeighbor).getBlock() != ModBlocks.blockRack)
+        else if (relativeNeighbor != null && this.worldPosition.subtract(relativeNeighbor).equals(newNeighbor) && level.getBlockState(newNeighbor).getBlock() != ModBlocks.blockRack)
         {
             this.relativeNeighbor = null;
             setSingle(true);

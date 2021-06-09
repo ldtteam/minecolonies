@@ -44,192 +44,192 @@ public class ModelEntityCowFarmerFemale extends CitizenModel<AbstractEntityCitiz
         ModelRenderer bagBot;
         ModelRenderer bipedChest;
 
-        textureWidth = 128;
-        textureHeight = 64;
+        texWidth = 128;
+        texHeight = 64;
 
-        bipedRightLeg = new ModelRenderer(this);
-        bipedRightLeg.setRotationPoint(-2.0F, 12.0F, 0.0F);
-        bipedRightLeg.setTextureOffset(0, 16).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, false);
+        rightLeg = new ModelRenderer(this);
+        rightLeg.setPos(-2.0F, 12.0F, 0.0F);
+        rightLeg.texOffs(0, 16).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, false);
 
-        bipedRightArm = new ModelRenderer(this);
-        bipedRightArm.setRotationPoint(-5.0F, 2.0F, 0.0F);
-        bipedRightArm.setTextureOffset(40, 16).addBox(-2.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F, 0.0F, true);
+        rightArm = new ModelRenderer(this);
+        rightArm.setPos(-5.0F, 2.0F, 0.0F);
+        rightArm.texOffs(40, 16).addBox(-2.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F, 0.0F, true);
 
-        bipedHead = new ModelRenderer(this);
-        bipedHead.setRotationPoint(0.0F, 0.0F, 0.0F);
-        bipedHead.setTextureOffset(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, 0.0F, false);
+        head = new ModelRenderer(this);
+        head.setPos(0.0F, 0.0F, 0.0F);
+        head.texOffs(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, 0.0F, false);
 
         headDetail = new ModelRenderer(this);
-        headDetail.setRotationPoint(0.0F, 0.0F, 1.0F);
-        bipedHead.addChild(headDetail);
-        headDetail.setTextureOffset(32, 0).addBox(-4.0F, -8.0F, -5.0F, 8.0F, 8.0F, 8.0F, 0.5F, false);
+        headDetail.setPos(0.0F, 0.0F, 1.0F);
+        head.addChild(headDetail);
+        headDetail.texOffs(32, 0).addBox(-4.0F, -8.0F, -5.0F, 8.0F, 8.0F, 8.0F, 0.5F, false);
 
         hair = new ModelRenderer(this);
-        hair.setRotationPoint(0.0F, 0.0F, 0.0F);
-        bipedHead.addChild(hair);
+        hair.setPos(0.0F, 0.0F, 0.0F);
+        head.addChild(hair);
 
 
         left_top_1 = new ModelRenderer(this);
-        left_top_1.setRotationPoint(0.0F, 0.0F, 0.0F);
+        left_top_1.setPos(0.0F, 0.0F, 0.0F);
         hair.addChild(left_top_1);
-        left_top_1.setTextureOffset(0, 32).addBox(-4.5F, -7.5F, -4.5F, 3.0F, 2.0F, 9.0F, 0.0F, true);
+        left_top_1.texOffs(0, 32).addBox(-4.5F, -7.5F, -4.5F, 3.0F, 2.0F, 9.0F, 0.0F, true);
 
         backhair = new ModelRenderer(this);
-        backhair.setRotationPoint(0.0F, 0.0F, 0.0F);
+        backhair.setPos(0.0F, 0.0F, 0.0F);
         hair.addChild(backhair);
-        backhair.setTextureOffset(74, 51).addBox(-2.5F, -7.5F, 3.5F, 5.0F, 7.0F, 1.0F, 0.0F, true);
+        backhair.texOffs(74, 51).addBox(-2.5F, -7.5F, 3.5F, 5.0F, 7.0F, 1.0F, 0.0F, true);
 
         hairbackTop_2 = new ModelRenderer(this);
-        hairbackTop_2.setRotationPoint(0.0F, 0.0F, -3.0F);
+        hairbackTop_2.setPos(0.0F, 0.0F, -3.0F);
         hair.addChild(hairbackTop_2);
-        hairbackTop_2.setTextureOffset(53, 55).addBox(-4.5F, -5.5F, -0.5F, 2.0F, 1.0F, 8.0F, 0.0F, true);
+        hairbackTop_2.texOffs(53, 55).addBox(-4.5F, -5.5F, -0.5F, 2.0F, 1.0F, 8.0F, 0.0F, true);
 
         hairbackTop_3 = new ModelRenderer(this);
-        hairbackTop_3.setRotationPoint(0.0F, 0.0F, -4.0F);
+        hairbackTop_3.setPos(0.0F, 0.0F, -4.0F);
         hair.addChild(hairbackTop_3);
-        hairbackTop_3.setTextureOffset(33, 55).addBox(-4.5F, -4.5F, 0.5F, 2.0F, 1.0F, 8.0F, 0.0F, true);
+        hairbackTop_3.texOffs(33, 55).addBox(-4.5F, -4.5F, 0.5F, 2.0F, 1.0F, 8.0F, 0.0F, true);
 
         hairBackTop_4 = new ModelRenderer(this);
-        hairBackTop_4.setRotationPoint(0.0F, 0.0F, 0.0F);
+        hairBackTop_4.setPos(0.0F, 0.0F, 0.0F);
         hair.addChild(hairBackTop_4);
-        hairBackTop_4.setTextureOffset(30, 42).addBox(-4.5F, -3.5F, 1.5F, 2.0F, 3.0F, 3.0F, 0.0F, true);
+        hairBackTop_4.texOffs(30, 42).addBox(-4.5F, -3.5F, 1.5F, 2.0F, 3.0F, 3.0F, 0.0F, true);
 
         hairTop_1 = new ModelRenderer(this);
-        hairTop_1.setRotationPoint(0.0F, 0.0F, 0.0F);
+        hairTop_1.setPos(0.0F, 0.0F, 0.0F);
         hair.addChild(hairTop_1);
-        hairTop_1.setTextureOffset(0, 43).addBox(-4.5F, -8.5F, -4.5F, 9.0F, 1.0F, 9.0F, 0.0F, true);
+        hairTop_1.texOffs(0, 43).addBox(-4.5F, -8.5F, -4.5F, 9.0F, 1.0F, 9.0F, 0.0F, true);
 
         hairTop_2 = new ModelRenderer(this);
-        hairTop_2.setRotationPoint(0.0F, 0.0F, 0.0F);
+        hairTop_2.setPos(0.0F, 0.0F, 0.0F);
         hair.addChild(hairTop_2);
-        hairTop_2.setTextureOffset(0, 54).addBox(2.5F, -7.5F, -4.5F, 2.0F, 1.0F, 9.0F, 0.0F, true);
+        hairTop_2.texOffs(0, 54).addBox(2.5F, -7.5F, -4.5F, 2.0F, 1.0F, 9.0F, 0.0F, true);
 
         hairLeftTop_1 = new ModelRenderer(this);
-        hairLeftTop_1.setRotationPoint(0.0F, 0.0F, 0.0F);
+        hairLeftTop_1.setPos(0.0F, 0.0F, 0.0F);
         hair.addChild(hairLeftTop_1);
-        hairLeftTop_1.setTextureOffset(13, 54).addBox(2.5F, -6.5F, -3.5F, 2.0F, 1.0F, 8.0F, 0.0F, true);
+        hairLeftTop_1.texOffs(13, 54).addBox(2.5F, -6.5F, -3.5F, 2.0F, 1.0F, 8.0F, 0.0F, true);
 
         hairLeftTop_2 = new ModelRenderer(this);
-        hairLeftTop_2.setRotationPoint(0.0F, 0.0F, 0.0F);
+        hairLeftTop_2.setPos(0.0F, 0.0F, 0.0F);
         hair.addChild(hairLeftTop_2);
-        hairLeftTop_2.setTextureOffset(17, 32).addBox(2.5F, -5.5F, -3.5F, 2.0F, 1.0F, 8.0F, 0.0F, true);
+        hairLeftTop_2.texOffs(17, 32).addBox(2.5F, -5.5F, -3.5F, 2.0F, 1.0F, 8.0F, 0.0F, true);
 
         hairLeftTop_3 = new ModelRenderer(this);
-        hairLeftTop_3.setRotationPoint(0.0F, 0.0F, 0.0F);
+        hairLeftTop_3.setPos(0.0F, 0.0F, 0.0F);
         hair.addChild(hairLeftTop_3);
-        hairLeftTop_3.setTextureOffset(17, 35).addBox(3.5F, -0.5F, 2.5F, 1.0F, 2.0F, 2.0F, 0.0F, true);
+        hairLeftTop_3.texOffs(17, 35).addBox(3.5F, -0.5F, 2.5F, 1.0F, 2.0F, 2.0F, 0.0F, true);
 
         hairLeftTop_4 = new ModelRenderer(this);
-        hairLeftTop_4.setRotationPoint(0.0F, -1.0F, 0.0F);
+        hairLeftTop_4.setPos(0.0F, -1.0F, 0.0F);
         hair.addChild(hairLeftTop_4);
-        hairLeftTop_4.setTextureOffset(30, 32).addBox(2.5F, -3.5F, 1.5F, 2.0F, 4.0F, 3.0F, 0.0F, true);
+        hairLeftTop_4.texOffs(30, 32).addBox(2.5F, -3.5F, 1.5F, 2.0F, 4.0F, 3.0F, 0.0F, true);
 
         hairLeftTop_5 = new ModelRenderer(this);
-        hairLeftTop_5.setRotationPoint(0.0F, 0.0F, 0.0F);
+        hairLeftTop_5.setPos(0.0F, 0.0F, 0.0F);
         hair.addChild(hairLeftTop_5);
-        hairLeftTop_5.setTextureOffset(15, 32).addBox(-1.5F, -7.5F, -4.5F, 4.0F, 1.0F, 1.0F, 0.0F, true);
+        hairLeftTop_5.texOffs(15, 32).addBox(-1.5F, -7.5F, -4.5F, 4.0F, 1.0F, 1.0F, 0.0F, true);
 
         hairbackbuttom1 = new ModelRenderer(this);
-        hairbackbuttom1.setRotationPoint(0.0F, 0.0F, 0.0F);
+        hairbackbuttom1.setPos(0.0F, 0.0F, 0.0F);
         hair.addChild(hairbackbuttom1);
-        hairbackbuttom1.setTextureOffset(58, 51).addBox(-3.5F, -0.5F, 3.5F, 7.0F, 3.0F, 1.0F, 0.0F, true);
+        hairbackbuttom1.texOffs(58, 51).addBox(-3.5F, -0.5F, 3.5F, 7.0F, 3.0F, 1.0F, 0.0F, true);
 
         ponytail_1 = new ModelRenderer(this);
-        ponytail_1.setRotationPoint(7.0F, 4.2F, 2.0F);
+        ponytail_1.setPos(7.0F, 4.2F, 2.0F);
         hair.addChild(ponytail_1);
         setRotationAngle(ponytail_1, -1.4486F, 0.0F, 0.0F);
 
 
         ponytail_2 = new ModelRenderer(this);
-        ponytail_2.setRotationPoint(6.0F, -1.0F, 0.0F);
+        ponytail_2.setPos(6.0F, -1.0F, 0.0F);
         hair.addChild(ponytail_2);
         setRotationAngle(ponytail_2, -1.0647F, 0.0F, 0.0F);
 
 
         ponytail_3 = new ModelRenderer(this);
-        ponytail_3.setRotationPoint(6.5F, 0.9F, 0.7F);
+        ponytail_3.setPos(6.5F, 0.9F, 0.7F);
         hair.addChild(ponytail_3);
         setRotationAngle(ponytail_3, -1.3613F, 0.0F, 0.0F);
 
 
         hairRightTop_1 = new ModelRenderer(this);
-        hairRightTop_1.setRotationPoint(0.0F, 0.0F, 0.0F);
+        hairRightTop_1.setPos(0.0F, 0.0F, 0.0F);
         hair.addChild(hairRightTop_1);
-        hairRightTop_1.setTextureOffset(1, 54).addBox(-4.5F, -0.5F, 2.5F, 1.0F, 2.0F, 2.0F, 0.0F, true);
+        hairRightTop_1.texOffs(1, 54).addBox(-4.5F, -0.5F, 2.5F, 1.0F, 2.0F, 2.0F, 0.0F, true);
 
         hairfrontTop_1 = new ModelRenderer(this);
-        hairfrontTop_1.setRotationPoint(0.0F, 0.0F, 0.0F);
+        hairfrontTop_1.setPos(0.0F, 0.0F, 0.0F);
         hair.addChild(hairfrontTop_1);
-        hairfrontTop_1.setTextureOffset(5, 32).addBox(2.5F, -6.5F, -4.5F, 1.0F, 1.0F, 1.0F, 0.0F, true);
+        hairfrontTop_1.texOffs(5, 32).addBox(2.5F, -6.5F, -4.5F, 1.0F, 1.0F, 1.0F, 0.0F, true);
 
         hairfrontTop_2 = new ModelRenderer(this);
-        hairfrontTop_2.setRotationPoint(0.0F, 0.0F, 0.0F);
+        hairfrontTop_2.setPos(0.0F, 0.0F, 0.0F);
         hair.addChild(hairfrontTop_2);
-        hairfrontTop_2.setTextureOffset(0, 32).addBox(-4.5F, -5.5F, -4.5F, 1.0F, 3.0F, 1.0F, 0.0F, true);
+        hairfrontTop_2.texOffs(0, 32).addBox(-4.5F, -5.5F, -4.5F, 1.0F, 3.0F, 1.0F, 0.0F, true);
 
         hairfrontTop_3 = new ModelRenderer(this);
-        hairfrontTop_3.setRotationPoint(0.0F, 0.0F, 0.0F);
+        hairfrontTop_3.setPos(0.0F, 0.0F, 0.0F);
         hair.addChild(hairfrontTop_3);
-        hairfrontTop_3.setTextureOffset(0, 37).addBox(3.5F, -6.5F, -4.5F, 1.0F, 3.0F, 1.0F, 0.0F, true);
+        hairfrontTop_3.texOffs(0, 37).addBox(3.5F, -6.5F, -4.5F, 1.0F, 3.0F, 1.0F, 0.0F, true);
 
-        bipedBody = new ModelRenderer(this);
-        bipedBody.setRotationPoint(0.0F, 0.0F, 0.0F);
-        bipedBody.setTextureOffset(16, 16).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, 0.0F, false);
+        body = new ModelRenderer(this);
+        body.setPos(0.0F, 0.0F, 0.0F);
+        body.texOffs(16, 16).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, 0.0F, false);
 
         backpack = new ModelRenderer(this);
-        backpack.setRotationPoint(0.0F, 0.0F, 0.0F);
-        bipedBody.addChild(backpack);
+        backpack.setPos(0.0F, 0.0F, 0.0F);
+        body.addChild(backpack);
 
 
         bagR = new ModelRenderer(this);
-        bagR.setRotationPoint(0.0F, 0.0F, 0.0F);
+        bagR.setPos(0.0F, 0.0F, 0.0F);
         backpack.addChild(bagR);
-        bagR.setTextureOffset(94, 4).addBox(3.0F, 0.0F, 3.0F, 1.0F, 9.0F, 3.0F, 0.0F, true);
+        bagR.texOffs(94, 4).addBox(3.0F, 0.0F, 3.0F, 1.0F, 9.0F, 3.0F, 0.0F, true);
 
         bagL = new ModelRenderer(this);
-        bagL.setRotationPoint(0.0F, 0.0F, 0.0F);
+        bagL.setPos(0.0F, 0.0F, 0.0F);
         backpack.addChild(bagL);
-        bagL.setTextureOffset(94, 16).addBox(-4.0F, 0.0F, 3.0F, 1.0F, 9.0F, 3.0F, 0.0F, true);
+        bagL.texOffs(94, 16).addBox(-4.0F, 0.0F, 3.0F, 1.0F, 9.0F, 3.0F, 0.0F, true);
 
         bagBack = new ModelRenderer(this);
-        bagBack.setRotationPoint(0.0F, 0.0F, 0.0F);
+        bagBack.setPos(0.0F, 0.0F, 0.0F);
         backpack.addChild(bagBack);
-        bagBack.setTextureOffset(102, 13).addBox(-3.0F, 0.0F, 2.0F, 6.0F, 9.0F, 1.0F, 0.0F, true);
+        bagBack.texOffs(102, 13).addBox(-3.0F, 0.0F, 2.0F, 6.0F, 9.0F, 1.0F, 0.0F, true);
 
         bagFront = new ModelRenderer(this);
-        bagFront.setRotationPoint(0.0F, 0.0F, 0.0F);
+        bagFront.setPos(0.0F, 0.0F, 0.0F);
         backpack.addChild(bagFront);
-        bagFront.setTextureOffset(102, 4).addBox(-3.0F, 1.0F, 6.0F, 6.0F, 8.0F, 1.0F, 0.0F, true);
+        bagFront.texOffs(102, 4).addBox(-3.0F, 1.0F, 6.0F, 6.0F, 8.0F, 1.0F, 0.0F, true);
 
         bagWheat = new ModelRenderer(this);
-        bagWheat.setRotationPoint(0.0F, 0.0F, 0.0F);
+        bagWheat.setPos(0.0F, 0.0F, 0.0F);
         backpack.addChild(bagWheat);
-        bagWheat.setTextureOffset(94, 0).addBox(-3.0F, 1.5F, 3.0F, 6.0F, 1.0F, 3.0F, 0.0F, true);
+        bagWheat.texOffs(94, 0).addBox(-3.0F, 1.5F, 3.0F, 6.0F, 1.0F, 3.0F, 0.0F, true);
 
         bagBot = new ModelRenderer(this);
-        bagBot.setRotationPoint(0.0F, 0.0F, 0.0F);
+        bagBot.setPos(0.0F, 0.0F, 0.0F);
         backpack.addChild(bagBot);
-        bagBot.setTextureOffset(102, 23).addBox(-3.0F, 9.0F, 3.0F, 6.0F, 1.0F, 3.0F, 0.0F, true);
+        bagBot.texOffs(102, 23).addBox(-3.0F, 9.0F, 3.0F, 6.0F, 1.0F, 3.0F, 0.0F, true);
 
         bipedChest = new ModelRenderer(this);
-        bipedChest.setRotationPoint(0.0F, 0.0F, 0.0F);
-        bipedBody.addChild(bipedChest);
+        bipedChest.setPos(0.0F, 0.0F, 0.0F);
+        body.addChild(bipedChest);
         setRotationAngle(bipedChest, -0.5934F, 0.0F, 0.0F);
-        bipedChest.setTextureOffset(40, 32).addBox(-3.5F, 2.7F, -0.5F, 7.0F, 3.0F, 4.0F, 0.0F, false);
+        bipedChest.texOffs(40, 32).addBox(-3.5F, 2.7F, -0.5F, 7.0F, 3.0F, 4.0F, 0.0F, false);
 
-        bipedLeftLeg = new ModelRenderer(this);
-        bipedLeftLeg.setRotationPoint(2.0F, 12.0F, 0.0F);
-        bipedLeftLeg.setTextureOffset(0, 16).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, true);
+        leftLeg = new ModelRenderer(this);
+        leftLeg.setPos(2.0F, 12.0F, 0.0F);
+        leftLeg.texOffs(0, 16).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, true);
 
-        bipedLeftArm = new ModelRenderer(this);
-        bipedLeftArm.setRotationPoint(5.0F, 2.0F, 0.0F);
-        bipedLeftArm.setTextureOffset(40, 16).addBox(-1.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F, 0.0F, false);
+        leftArm = new ModelRenderer(this);
+        leftArm.setPos(5.0F, 2.0F, 0.0F);
+        leftArm.texOffs(40, 16).addBox(-1.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F, 0.0F, false);
 
-        bipedHeadwear.showModel = false;
+        hat.visible = false;
     }
     public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z) {
-        modelRenderer.rotateAngleX = x;
-        modelRenderer.rotateAngleY = y;
-        modelRenderer.rotateAngleZ = z;
+        modelRenderer.xRot = x;
+        modelRenderer.yRot = y;
+        modelRenderer.zRot = z;
     }
 }

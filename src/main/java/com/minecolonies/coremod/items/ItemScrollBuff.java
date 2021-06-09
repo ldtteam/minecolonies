@@ -22,6 +22,8 @@ import java.util.List;
 
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 
+import net.minecraft.item.Item.Properties;
+
 /**
  * Magic scroll which applies a regeneration buff to the user and all citizens around
  */
@@ -40,9 +42,9 @@ public class ItemScrollBuff extends AbstractItemScroll
     @Override
     protected ItemStack onItemUseSuccess(final ItemStack itemStack, final World world, final ServerPlayerEntity player)
     {
-        if (world.rand.nextInt(8) > 0)
+        if (world.random.nextInt(8) > 0)
         {
-            for (final LivingEntity entity : world.getLoadedEntitiesWithinAABB(EntityCitizen.class, player.getBoundingBox().grow(15, 2, 15)))
+            for (final LivingEntity entity : world.getLoadedEntitiesOfClass(EntityCitizen.class, player.getBoundingBox().inflate(15, 2, 15)))
             {
                 addRegenerationWithParticles(entity);
             }
@@ -50,15 +52,15 @@ public class ItemScrollBuff extends AbstractItemScroll
             addRegenerationWithParticles(player);
             // Send to player additionally, as players do not track themselves
             Network.getNetwork()
-              .sendToPlayer(new VanillaParticleMessage(player.getPosX(), player.getPosY(), player.getPosZ(), ParticleTypes.HEART), player);
-            SoundUtils.playSoundForPlayer(player, SoundEvents.ENTITY_PLAYER_LEVELUP, 0.2f, 1.0f);
+              .sendToPlayer(new VanillaParticleMessage(player.getX(), player.getY(), player.getZ(), ParticleTypes.HEART), player);
+            SoundUtils.playSoundForPlayer(player, SoundEvents.PLAYER_LEVELUP, 0.2f, 1.0f);
         }
         else
         {
-            player.sendStatusMessage(new TranslationTextComponent("minecolonies.scroll.failed" + (world.rand.nextInt(FAIL_RESPONSES_TOTAL) + 1)).setStyle(Style.EMPTY.setFormatting(
+            player.displayClientMessage(new TranslationTextComponent("minecolonies.scroll.failed" + (world.random.nextInt(FAIL_RESPONSES_TOTAL) + 1)).setStyle(Style.EMPTY.withColor(
               TextFormatting.GOLD)), true);
-            player.addPotionEffect(new EffectInstance(Effects.BLINDNESS, TICKS_SECOND * 10));
-            SoundUtils.playSoundForPlayer(player, SoundEvents.ITEM_TOTEM_USE, 0.04f, 1.0f);
+            player.addEffect(new EffectInstance(Effects.BLINDNESS, TICKS_SECOND * 10));
+            SoundUtils.playSoundForPlayer(player, SoundEvents.TOTEM_USE, 0.04f, 1.0f);
         }
 
         itemStack.shrink(1);
@@ -72,18 +74,18 @@ public class ItemScrollBuff extends AbstractItemScroll
      */
     private void addRegenerationWithParticles(final LivingEntity entity)
     {
-        entity.addPotionEffect(new EffectInstance(Effects.REGENERATION, TICKS_SECOND * 60));
+        entity.addEffect(new EffectInstance(Effects.REGENERATION, TICKS_SECOND * 60));
         Network.getNetwork()
-          .sendToTrackingEntity(new VanillaParticleMessage(entity.getPosX(), entity.getPosY(), entity.getPosZ(), ParticleTypes.HEART),
+          .sendToTrackingEntity(new VanillaParticleMessage(entity.getX(), entity.getY(), entity.getZ(), ParticleTypes.HEART),
             entity);
     }
 
     @Override
-    public void addInformation(
+    public void appendHoverText(
       @NotNull final ItemStack stack, @Nullable final World worldIn, @NotNull final List<ITextComponent> tooltip, @NotNull final ITooltipFlag flagIn)
     {
         final IFormattableTextComponent guiHint = LanguageHandler.buildChatComponent("item.minecolonies.scroll_buff.tip");
-        guiHint.setStyle(Style.EMPTY.setFormatting(TextFormatting.DARK_GREEN));
+        guiHint.setStyle(Style.EMPTY.withColor(TextFormatting.DARK_GREEN));
         tooltip.add(guiHint);
     }
 

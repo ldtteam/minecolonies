@@ -16,7 +16,7 @@ public class PlaceStructureCriterionInstance extends CriterionInstance
 
     public PlaceStructureCriterionInstance()
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_STRUCTURE_PLACED), EntityPredicate.AndPredicate.ANY_AND);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_STRUCTURE_PLACED), EntityPredicate.AndPredicate.ANY);
     }
 
     /**
@@ -25,7 +25,7 @@ public class PlaceStructureCriterionInstance extends CriterionInstance
      */
     public PlaceStructureCriterionInstance(final String hutName)
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_STRUCTURE_PLACED), EntityPredicate.AndPredicate.ANY_AND);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_STRUCTURE_PLACED), EntityPredicate.AndPredicate.ANY);
 
         this.hutName = hutName;
     }
@@ -36,7 +36,7 @@ public class PlaceStructureCriterionInstance extends CriterionInstance
      */
     public PlaceStructureCriterionInstance(final StructureName structureName)
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_STRUCTURE_PLACED), EntityPredicate.AndPredicate.ANY_AND);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_STRUCTURE_PLACED), EntityPredicate.AndPredicate.ANY);
 
         this.structureName = structureName;
     }

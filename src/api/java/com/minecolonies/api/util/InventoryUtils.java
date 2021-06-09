@@ -116,7 +116,7 @@ public class InventoryUtils
      */
     public static Item getItemFromBlock(final Block block)
     {
-        return Item.getItemFromBlock(block);
+        return Item.byBlock(block);
     }
 
     /**
@@ -389,7 +389,7 @@ public class InventoryUtils
     }
 
     /**
-     * Adapted from {@link net.minecraft.entity.player.PlayerInventory#addItemStackToInventory(ItemStack)}.
+     * Adapted from {@link net.minecraft.entity.player.PlayerInventory#add(ItemStack)}.
      *
      * @param itemHandler              {@link IItemHandler} to add itemstack to.
      * @param itemStack                ItemStack to add.
@@ -736,7 +736,7 @@ public class InventoryUtils
         {
             if (WorldUtil.isBlockLoaded(world, pos))
             {
-                final TileEntity entity = world.getTileEntity(pos);
+                final TileEntity entity = world.getBlockEntity(pos);
                 if (entity instanceof TileEntityRack)
                 {
                     totalCount += ((TileEntityRack) entity).getAllContent().getOrDefault(stack, 0);
@@ -791,14 +791,14 @@ public class InventoryUtils
         {
             if (WorldUtil.isBlockLoaded(world, pos))
             {
-                final TileEntity entity = world.getTileEntity(pos);
+                final TileEntity entity = world.getBlockEntity(pos);
                 if (entity instanceof TileEntityRack)
                 {
                     totalCount += ((TileEntityRack) entity).getAllContent().getOrDefault(stack, 0);
                 }
                 else if (entity instanceof ChestTileEntity)
                 {
-                    totalCount += getItemCountInProvider(entity, itemStack -> itemStack.isItemEqual(stack.getItemStack()));
+                    totalCount += getItemCountInProvider(entity, itemStack -> itemStack.sameItem(stack.getItemStack()));
                 }
             }
         }
@@ -822,7 +822,7 @@ public class InventoryUtils
         {
             if (WorldUtil.isBlockLoaded(world, pos))
             {
-                final TileEntity entity = world.getTileEntity(pos);
+                final TileEntity entity = world.getBlockEntity(pos);
                 if (entity instanceof TileEntityRack)
                 {
                     totalCount += ((TileEntityRack) entity).getItemCount(predicate);
@@ -921,7 +921,7 @@ public class InventoryUtils
     }
 
     /**
-     * Adapted from {@link net.minecraft.entity.player.PlayerInventory#addItemStackToInventory(ItemStack)}.
+     * Adapted from {@link net.minecraft.entity.player.PlayerInventory#add(ItemStack)}.
      *
      * @param provider  {@link ICapabilityProvider} to add itemstack to.
      * @param itemStack ItemStack to add.
@@ -933,7 +933,7 @@ public class InventoryUtils
     }
 
     /**
-     * Adapted from {@link net.minecraft.entity.player.PlayerInventory#addItemStackToInventory(ItemStack)}.
+     * Adapted from {@link net.minecraft.entity.player.PlayerInventory#add(ItemStack)}.
      *
      * @param itemHandler {@link IItemHandler} to add itemstack to.
      * @param itemStack   ItemStack to add.
@@ -1007,7 +1007,7 @@ public class InventoryUtils
     }
 
     /**
-     * Adapted from {@link net.minecraft.entity.player.PlayerInventory#addItemStackToInventory(ItemStack)}.
+     * Adapted from {@link net.minecraft.entity.player.PlayerInventory#add(ItemStack)}.
      *
      * @param provider  {@link ICapabilityProvider} to add itemstack to.
      * @param itemStack ItemStack to add.
@@ -1031,7 +1031,7 @@ public class InventoryUtils
     }
 
     /**
-     * Adapted from {@link net.minecraft.entity.player.PlayerInventory#addItemStackToInventory(ItemStack)}.
+     * Adapted from {@link net.minecraft.entity.player.PlayerInventory#add(ItemStack)}.
      *
      * @param itemHandler {@link IItemHandler} to add itemstack to.
      * @param itemStack   ItemStack to add.
@@ -1080,7 +1080,7 @@ public class InventoryUtils
     }
 
     /**
-     * Adapted from {@link net.minecraft.entity.player.PlayerInventory#addItemStackToInventory(ItemStack)}.
+     * Adapted from {@link net.minecraft.entity.player.PlayerInventory#add(ItemStack)}.
      *
      * @param provider                 {@link ICapabilityProvider} to add itemstack to.
      * @param itemStack                ItemStack to add.
@@ -1759,7 +1759,7 @@ public class InventoryUtils
 
         for (int i = 0; i < targetHandler.getSlots(); i++)
         {
-            if (!ItemStackUtils.isEmpty(targetHandler.getStackInSlot(i)) && targetHandler.getStackInSlot(i).isItemEqual(sourceStack))
+            if (!ItemStackUtils.isEmpty(targetHandler.getStackInSlot(i)) && targetHandler.getStackInSlot(i).sameItem(sourceStack))
             {
                 sourceStack = targetHandler.insertItem(i, sourceStack, false);
                 if (ItemStackUtils.isEmpty(sourceStack))
@@ -1793,7 +1793,7 @@ public class InventoryUtils
 
         for (int i = 0; i < targetHandler.getSlots(); i++)
         {
-            if (!ItemStackUtils.isEmpty(targetHandler.getStackInSlot(i)) && targetHandler.getStackInSlot(i).isItemEqual(sourceStack))
+            if (!ItemStackUtils.isEmpty(targetHandler.getStackInSlot(i)) && targetHandler.getStackInSlot(i).sameItem(sourceStack))
             {
                 sourceStack = targetHandler.insertItem(i, sourceStack, false);
                 if (ItemStackUtils.isEmpty(sourceStack))
@@ -2128,7 +2128,7 @@ public class InventoryUtils
         while (i < list.size() && tries < maxTries)
         {
             final ItemStack stack = list.get(i);
-            final int slot = findFirstSlotInItemHandlerNotEmptyWith(handler, stack::isItemEqual);
+            final int slot = findFirstSlotInItemHandlerNotEmptyWith(handler, stack::sameItem);
 
             if (slot == -1)
             {
@@ -2395,8 +2395,8 @@ public class InventoryUtils
             final int randomSplitStackSize = random.nextInt(MAX_RANDOM_SPAWN) + MIN_RANDOM_SPAWN;
             final ItemEntity ItemEntity = new ItemEntity(worldIn, x + spawnX, y + spawnY, z + spawnZ, stack.split(randomSplitStackSize));
 
-            ItemEntity.setMotion(random.nextGaussian() * MOTION_MULTIPLIER, random.nextGaussian() * MOTION_MULTIPLIER + MOTION_Y_MIN, random.nextGaussian() * MOTION_MULTIPLIER);
-            worldIn.addEntity(ItemEntity);
+            ItemEntity.setDeltaMovement(random.nextGaussian() * MOTION_MULTIPLIER, random.nextGaussian() * MOTION_MULTIPLIER + MOTION_Y_MIN, random.nextGaussian() * MOTION_MULTIPLIER);
+            worldIn.addFreshEntity(ItemEntity);
         }
     }
 
@@ -2661,7 +2661,7 @@ public class InventoryUtils
     {
         for (int i = 0; i < invWrapper.getSlots(); i++)
         {
-            if (invWrapper.getStackInSlot(i).isItemEqual(itemStack))
+            if (invWrapper.getStackInSlot(i).sameItem(itemStack))
             {
                 invWrapper.getStackInSlot(i).shrink(quantity);
                 return;
@@ -2679,7 +2679,7 @@ public class InventoryUtils
      */
     public static boolean attemptReduceStackInItemHandler(final IItemHandler invWrapper, final ItemStack itemStack, final int quantity)
     {
-        if (getItemCountInItemHandler(invWrapper, stack -> !stack.isEmpty() && stack.isItemEqual(itemStack)) < quantity)
+        if (getItemCountInItemHandler(invWrapper, stack -> !stack.isEmpty() && stack.sameItem(itemStack)) < quantity)
         {
             return false;
         }
@@ -2688,7 +2688,7 @@ public class InventoryUtils
         for (int i = 0; i < invWrapper.getSlots(); i++)
         {
             final ItemStack stack = invWrapper.getStackInSlot(i);
-            if (stack.isItemEqual(itemStack))
+            if (stack.sameItem(itemStack))
             {
                 if (stack.getCount() >= qty)
                 {
@@ -2837,19 +2837,19 @@ public class InventoryUtils
                 if (!ItemStackUtils.isEmpty(stack) && foodPredicate.test(stack))
                 {
                     // Found food
-                    final Food itemFood = stack.getItem().getFood();
+                    final Food itemFood = stack.getItem().getFoodProperties();
                     if (itemFood == null)
                     {
                         continue;
                     }
 
-                    int amount = (int) Math.round(Math.ceil((requiredSaturation - foundSaturation) / (float) itemFood.getHealing()));
+                    int amount = (int) Math.round(Math.ceil((requiredSaturation - foundSaturation) / (float) itemFood.getNutrition()));
 
                     final ItemStack extractedFood;
                     if (amount > stack.getCount())
                     {
                         // Not enough yet
-                        foundSaturation += stack.getCount() * itemFood.getSaturation();
+                        foundSaturation += stack.getCount() * itemFood.getSaturationModifier();
                         extractedFood = handler.extractItem(i, stack.getCount(), false);
                     }
                     else
@@ -2896,26 +2896,26 @@ public class InventoryUtils
     {
         final PlayerInventory playerInv = player.inventory;
 
-        final int emptySlot = playerInv.getFirstEmptyStack();
+        final int emptySlot = playerInv.getFreeSlot();
         if (emptySlot == -1) // try full inv first
         {
-            player.dropItem(itemStack, false);
+            player.drop(itemStack, false);
             return false;
         }
         else
         {
-            final int hotbarSlot = playerInv.getBestHotbarSlot();
-            final ItemStack curHotbarItem = playerInv.getStackInSlot(hotbarSlot);
+            final int hotbarSlot = playerInv.getSuitableHotbarSlot();
+            final ItemStack curHotbarItem = playerInv.getItem(hotbarSlot);
 
             // check if we need to make space first
             if (!curHotbarItem.isEmpty())
             {
-                playerInv.setInventorySlotContents(emptySlot, curHotbarItem);
+                playerInv.setItem(emptySlot, curHotbarItem);
             }
 
-            playerInv.setInventorySlotContents(hotbarSlot, itemStack);
-            playerInv.currentItem = hotbarSlot;
-            playerInv.markDirty();
+            playerInv.setItem(hotbarSlot, itemStack);
+            playerInv.selected = hotbarSlot;
+            playerInv.setChanged();
             updateHeldItemFromServer(player);
             return true;
         }
@@ -2935,9 +2935,9 @@ public class InventoryUtils
 
         if (!result)
         {
-            player.sendMessage(itemStack.getDisplayName()
-                .deepCopy()
-                .append(new TranslationTextComponent("com.minecolonies.coremod.playerinvfull.hotbarinsert")), player.getUniqueID());
+            player.sendMessage(itemStack.getHoverName()
+                .copy()
+                .append(new TranslationTextComponent("com.minecolonies.coremod.playerinvfull.hotbarinsert")), player.getUUID());
         }
         return result;
     }
@@ -2959,20 +2959,20 @@ public class InventoryUtils
     {
         final PlayerInventory playerInv = player.inventory;
 
-        for (int slot = 0; slot < playerInv.mainInventory.size(); slot++)
+        for (int slot = 0; slot < playerInv.items.size(); slot++)
         {
-            final ItemStack itemSlot = playerInv.getStackInSlot(slot);
+            final ItemStack itemSlot = playerInv.getItem(slot);
             if (itemSlot.getItem() == item)
             {
-                if (!PlayerInventory.isHotbar(slot))
+                if (!PlayerInventory.isHotbarSlot(slot))
                 {
-                    playerInv.pickItem(slot);
+                    playerInv.pickSlot(slot);
                 }
                 else
                 {
-                    playerInv.currentItem = slot;
+                    playerInv.selected = slot;
                 }
-                playerInv.markDirty();
+                playerInv.setChanged();
                 updateHeldItemFromServer(player);
                 return itemSlot;
             }
@@ -2999,7 +2999,7 @@ public class InventoryUtils
     {
         if (player instanceof ServerPlayerEntity)
         {
-            ((ServerPlayerEntity) player).server.getPlayerList().sendInventory((ServerPlayerEntity) player);
+            ((ServerPlayerEntity) player).server.getPlayerList().sendAllPlayerInfo((ServerPlayerEntity) player);
         }
     }
 }

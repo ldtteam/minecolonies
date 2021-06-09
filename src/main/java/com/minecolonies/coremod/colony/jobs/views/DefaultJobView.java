@@ -44,7 +44,7 @@ public class DefaultJobView implements IJobView
     public void deserialize(final PacketBuffer buffer)
     {
         this.asyncRequests.clear();
-        this.name = buffer.readString(32767);
+        this.name = buffer.readUtf(32767);
         final int size = buffer.readInt();
         for (int i = 0; i < size; i++)
         {

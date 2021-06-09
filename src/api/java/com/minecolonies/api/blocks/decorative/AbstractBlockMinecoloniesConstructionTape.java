@@ -17,6 +17,8 @@ import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 import org.jetbrains.annotations.NotNull;
 
+import net.minecraft.block.AbstractBlock.Properties;
+
 public abstract class AbstractBlockMinecoloniesConstructionTape<B extends AbstractBlockMinecoloniesConstructionTape<B>> extends AbstractBlockMinecoloniesFalling<B>
   implements IWaterLoggable
 {
@@ -33,7 +35,7 @@ public abstract class AbstractBlockMinecoloniesConstructionTape<B extends Abstra
     /**
      * The default face for when there are no connections.
      */
-    public static final DirectionProperty FACING = HorizontalBlock.HORIZONTAL_FACING;
+    public static final DirectionProperty FACING = HorizontalBlock.FACING;
 
     /**
      * Implies that the tape should revert to a corner if there are no connections. Must be set explicitly. For use by the builder handler.
@@ -54,29 +56,29 @@ public abstract class AbstractBlockMinecoloniesConstructionTape<B extends Abstra
 
     private static int getMask(Direction facing)
     {
-        return 1 << facing.getHorizontalIndex();
+        return 1 << facing.get2DDataValue();
     }
 
     protected int getIndex(BlockState state)
     {
         return this.stateShapeMap.computeIntIfAbsent(state, (computeState) -> {
             int i = 0;
-            if (computeState.get(NORTH))
+            if (computeState.getValue(NORTH))
             {
                 i |= getMask(Direction.NORTH);
             }
 
-            if (computeState.get(EAST))
+            if (computeState.getValue(EAST))
             {
                 i |= getMask(Direction.EAST);
             }
 
-            if (computeState.get(SOUTH))
+            if (computeState.getValue(SOUTH))
             {
                 i |= getMask(Direction.SOUTH);
             }
 
-            if (computeState.get(WEST))
+            if (computeState.getValue(WEST))
             {
                 i |= getMask(Direction.WEST);
             }
@@ -88,7 +90,7 @@ public abstract class AbstractBlockMinecoloniesConstructionTape<B extends Abstra
     @Override
     public FluidState getFluidState(final BlockState state)
     {
-        return state.get(WATERLOGGED) ? Fluids.WATER.getStillFluidState(false) : super.getFluidState(state);
+        return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
     }
 
     protected VoxelShape[] makeShapes(float nodeWidth, float limbWidth, float nodeHeight, float limbBase, float limbTop)
@@ -98,11 +100,11 @@ public abstract class AbstractBlockMinecoloniesConstructionTape<B extends Abstra
         float limbStart = 8.0F - limbWidth;
         float limbEnd = 8.0F + limbWidth;
 
-        VoxelShape node = Block.makeCuboidShape(nodeStart, 0.0F, nodeStart, nodeEnd, nodeHeight, nodeEnd);
-        VoxelShape north = Block.makeCuboidShape(limbStart, limbBase, 0.0F, limbEnd, limbTop, limbEnd);
-        VoxelShape south = Block.makeCuboidShape(limbStart, limbBase, limbStart, limbEnd, limbTop, 16.0D);
-        VoxelShape west = Block.makeCuboidShape(0.0F, limbBase, limbStart, limbEnd, limbTop, limbEnd);
-        VoxelShape east = Block.makeCuboidShape(limbStart, limbBase, limbStart, 16.0D, limbTop, limbEnd);
+        VoxelShape node = Block.box(nodeStart, 0.0F, nodeStart, nodeEnd, nodeHeight, nodeEnd);
+        VoxelShape north = Block.box(limbStart, limbBase, 0.0F, limbEnd, limbTop, limbEnd);
+        VoxelShape south = Block.box(limbStart, limbBase, limbStart, limbEnd, limbTop, 16.0D);
+        VoxelShape west = Block.box(0.0F, limbBase, limbStart, limbEnd, limbTop, limbEnd);
+        VoxelShape east = Block.box(limbStart, limbBase, limbStart, 16.0D, limbTop, limbEnd);
         VoxelShape cornernw = VoxelShapes.or(north, east);
         VoxelShape cornerse = VoxelShapes.or(south, west);
 

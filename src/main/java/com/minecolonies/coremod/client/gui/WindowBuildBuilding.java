@@ -214,7 +214,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
                 .filter(build -> build instanceof AbstractBuildingBuilderView && !((AbstractBuildingBuilderView) build).getWorkerName().isEmpty()
                         && !(build instanceof BuildingMiner.View))
                 .map(build -> new Tuple<>(((AbstractBuildingBuilderView) build).getWorkerName(), build.getPosition()))
-                .sorted(Comparator.comparing(item -> item.getB().distanceSq(building.getPosition())))
+                .sorted(Comparator.comparing(item -> item.getB().distSqr(building.getPosition())))
                 .collect(Collectors.toList()));
 
         initBuilderNavigation();
@@ -268,7 +268,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
                                 : "com.minecolonies.coremod.gui.workerhuts.upgrade"));
         }
 
-        final World world = Minecraft.getInstance().world;
+        final World world = Minecraft.getInstance().level;
         resources.clear();
 
         final int nextLevel = building.getBuildingLevel() == building.getBuildingMaxLevel() ?
@@ -335,7 +335,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         {
             return;
         }
-        ItemStorage resource = resources.get(res.getTranslationKey());
+        ItemStorage resource = resources.get(res.getDescriptionId());
         if (resource == null)
         {
             resource = new ItemStorage(res);
@@ -345,7 +345,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         {
             resource.setAmount(resource.getAmount() + amount);
         }
-        resources.put(res.getTranslationKey(), resource);
+        resources.put(res.getDescriptionId(), resource);
     }
 
     /**
@@ -472,7 +472,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
                 final ItemStorage resource = tempRes.get(index);
                 final Text resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Text.class);
                 final Text quantityLabel = rowPane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Text.class);
-                resourceLabel.setText(resource.getItemStack().getDisplayName());
+                resourceLabel.setText(resource.getItemStack().getHoverName());
                 quantityLabel.setText(Integer.toString(resource.getAmount()));
                 resourceLabel.setColors(WHITE);
                 quantityLabel.setColors(WHITE);

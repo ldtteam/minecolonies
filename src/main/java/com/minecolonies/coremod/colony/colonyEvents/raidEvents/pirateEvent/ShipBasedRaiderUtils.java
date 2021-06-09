@@ -105,17 +105,17 @@ public final class ShipBasedRaiderUtils
     public static void setupSpawner(final BlockPos location, final World world, final EntityType<?> mob, final IColonyRaidEvent event, final int colonyId)
     {
         world.removeBlock(location, false);
-        world.setBlockState(location, Blocks.SPAWNER.getDefaultState());
+        world.setBlockAndUpdate(location, Blocks.SPAWNER.defaultBlockState());
         final MobSpawnerTileEntity spawner = new MobSpawnerTileEntity();
 
-        spawner.getSpawnerBaseLogic().activatingRangeFromPlayer = SPAWNER_DISTANCE;
-        spawner.getSpawnerBaseLogic().setEntityType(mob);
+        spawner.getSpawner().requiredPlayerRange = SPAWNER_DISTANCE;
+        spawner.getSpawner().setEntityId(mob);
         // Sets nbt for mobs to spawn, assumes colony in same dimension as mob.
-        spawner.getSpawnerBaseLogic().spawnData.getNbt().putInt(TAG_EVENT_ID, event.getID());
-        spawner.getSpawnerBaseLogic().spawnData.getNbt().putInt(TAG_COLONY_ID, colonyId);
+        spawner.getSpawner().nextSpawnData.getTag().putInt(TAG_EVENT_ID, event.getID());
+        spawner.getSpawner().nextSpawnData.getTag().putInt(TAG_COLONY_ID, colonyId);
 
         event.addSpawner(location);
-        world.setTileEntity(location, spawner);
+        world.setBlockEntity(location, spawner);
     }
 
     /**
@@ -141,7 +141,7 @@ public final class ShipBasedRaiderUtils
           structure = new CreativeBuildingStructureHandler(colony.getWorld(), spawnPoint, Structures.SCHEMATICS_PREFIX + SHIP_FOLDER + shipSize, new PlacementSettings(), true);
         structure.getBluePrint().rotateWithMirror(BlockPosUtil.getRotationFromRotations(rotation), Mirror.NONE, colony.getWorld());
 
-        return canPlaceShipAt(spawnPoint, structure.getBluePrint(), world) || canPlaceShipAt(spawnPoint.down(), structure.getBluePrint(), world);
+        return canPlaceShipAt(spawnPoint, structure.getBluePrint(), world) || canPlaceShipAt(spawnPoint.below(), structure.getBluePrint(), world);
     }
 
     /**
@@ -206,7 +206,7 @@ public final class ShipBasedRaiderUtils
             {
                 // Count surface waterblocks
                 if (!materials.contains(world.getBlockState(new BlockPos(from.getX() + (x * xDir), baseY, from.getZ() + (z * zDir))).getMaterial())
-                      || !world.isAirBlock(new BlockPos(from.getX() + (x * xDir), baseY + 1, from.getZ() + (z * zDir))))
+                      || !world.isEmptyBlock(new BlockPos(from.getX() + (x * xDir), baseY + 1, from.getZ() + (z * zDir))))
                 {
                     wrongMaterialBlocks++;
                     // Skip when we already found too many non water blocks
@@ -250,8 +250,8 @@ public final class ShipBasedRaiderUtils
               startPos,
               3,
               30,
-              (world, pos) -> (world.getBlockState(pos).isSolid() || world.getBlockState(pos).getMaterial().isLiquid()) && world.getBlockState(
-                pos.up()).getMaterial() == Material.AIR && world.getBlockState(pos.up(2)).getMaterial() == Material.AIR);
+              (world, pos) -> (world.getBlockState(pos).canOcclude() || world.getBlockState(pos).getMaterial().isLiquid()) && world.getBlockState(
+                pos.above()).getMaterial() == Material.AIR && world.getBlockState(pos.above(2)).getMaterial() == Material.AIR);
         }
 
         BlockPos diff = colony.getCenter().subtract(startPos);
@@ -264,7 +264,7 @@ public final class ShipBasedRaiderUtils
 
         for (int i = 0; i < accuracy; i++)
         {
-            tempPos = tempPos.add(diff);
+            tempPos = tempPos.relative(diff);
 
             if (BlockPosUtil.getDistanceSquared2D(maxDistancePos, tempPos) > sqMaxDist || BlockPosUtil.getDistanceSquared2D(tempPos, colony.getCenter()) < sqMinDist)
             {
@@ -295,9 +295,9 @@ public final class ShipBasedRaiderUtils
             {
                 for (int z = -radius; z <= radius; z++)
                 {
-                    if (world.getBlockState(spawnPos.add(x, y, z)).getBlock() instanceof AirBlock && world.getBlockState(spawnPos.add(x, y + 1, z)).getBlock() instanceof AirBlock)
+                    if (world.getBlockState(spawnPos.relative(x, y, z)).getBlock() instanceof AirBlock && world.getBlockState(spawnPos.relative(x, y + 1, z)).getBlock() instanceof AirBlock)
                     {
-                        return spawnPos.add(x, y, z);
+                        return spawnPos.relative(x, y, z);
                     }
                 }
             }

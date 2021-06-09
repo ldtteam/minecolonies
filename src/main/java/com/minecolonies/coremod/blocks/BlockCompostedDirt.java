@@ -16,6 +16,8 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.block.AbstractBlock.Properties;
+
 /**
  * Block that if activated with BoneMeal or Compost by an AI will produce flowers by intervals until it deactivates
  */
@@ -24,14 +26,14 @@ public class BlockCompostedDirt extends AbstractBlockMinecolonies<BlockComposted
     private static final String     BLOCK_NAME     = "composted_dirt";
     private static final float      BLOCK_HARDNESS = 5f;
     private static final float      RESISTANCE     = 1f;
-    private final static VoxelShape SHAPE          = VoxelShapes.create(0, 0, 0, 1, 1, 1);
+    private final static VoxelShape SHAPE          = VoxelShapes.box(0, 0, 0, 1, 1, 1);
 
     /**
      * The constructor of the block.
      */
     public BlockCompostedDirt()
     {
-        super(Properties.create(Material.EARTH).hardnessAndResistance(BLOCK_HARDNESS, RESISTANCE));
+        super(Properties.of(Material.DIRT).strength(BLOCK_HARDNESS, RESISTANCE));
         setRegistryName(BLOCK_NAME);
     }
 

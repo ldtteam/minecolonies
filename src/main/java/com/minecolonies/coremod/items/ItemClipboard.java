@@ -40,22 +40,22 @@ public class ItemClipboard extends AbstractItemMinecolonies
      */
     public ItemClipboard(final Item.Properties properties)
     {
-        super("clipboard", properties.maxStackSize(STACKSIZE).group(ModCreativeTabs.MINECOLONIES));
+        super("clipboard", properties.stacksTo(STACKSIZE).tab(ModCreativeTabs.MINECOLONIES));
     }
 
     @Override
     @NotNull
-    public ActionResultType onItemUse(final ItemUseContext ctx)
+    public ActionResultType useOn(final ItemUseContext ctx)
     {
-        final ItemStack clipboard = ctx.getPlayer().getHeldItem(ctx.getHand());
+        final ItemStack clipboard = ctx.getPlayer().getLastHandItem(ctx.getHand());
 
         final CompoundNBT compound = checkForCompound(clipboard);
-        final TileEntity entity = ctx.getWorld().getTileEntity(ctx.getPos());
+        final TileEntity entity = ctx.getLevel().getBlockEntity(ctx.getClickedPos());
 
         if (entity instanceof TileEntityColonyBuilding)
         {
             compound.putInt(TAG_COLONY, ((AbstractTileEntityColonyBuilding) entity).getColonyId());
-            if (!ctx.getWorld().isRemote)
+            if (!ctx.getLevel().isClientSide)
             {
                 LanguageHandler.sendPlayerMessage(
                         ctx.getPlayer(),
@@ -63,9 +63,9 @@ public class ItemClipboard extends AbstractItemMinecolonies
                         ((AbstractTileEntityColonyBuilding) entity).getColony().getName());
             }
         }
-        else if (ctx.getWorld().isRemote)
+        else if (ctx.getLevel().isClientSide)
         {
-            openWindow(compound, ctx.getWorld(), ctx.getPlayer());
+            openWindow(compound, ctx.getLevel(), ctx.getPlayer());
         }
 
         return ActionResultType.SUCCESS;
@@ -81,14 +81,14 @@ public class ItemClipboard extends AbstractItemMinecolonies
      */
     @Override
     @NotNull
-    public ActionResult<ItemStack> onItemRightClick(
+    public ActionResult<ItemStack> use(
             final World worldIn,
             final PlayerEntity playerIn,
             final Hand hand)
     {
-        final ItemStack clipboard = playerIn.getHeldItem(hand);
+        final ItemStack clipboard = playerIn.getLastHandItem(hand);
 
-        if (!worldIn.isRemote) {
+        if (!worldIn.isClientSide) {
             return new ActionResult<>(ActionResultType.SUCCESS, clipboard);
         }
 
@@ -116,14 +116,14 @@ public class ItemClipboard extends AbstractItemMinecolonies
      */
     private static void openWindow(CompoundNBT compound, World world, PlayerEntity player)
     {
-        if (compound.keySet().contains(TAG_COLONY))
+        if (compound.getAllKeys().contains(TAG_COLONY))
         {
-            final IColonyView colonyView = IColonyManager.getInstance().getColonyView(compound.getInt(TAG_COLONY), world.getDimensionKey());
+            final IColonyView colonyView = IColonyManager.getInstance().getColonyView(compound.getInt(TAG_COLONY), world.dimension());
             if (colonyView != null) MineColonies.proxy.openClipboardWindow(colonyView);
         }
         else
         {
-            player.sendStatusMessage(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_CLIPBOARD_NEED_COLONY), true);
+            player.displayClientMessage(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_CLIPBOARD_NEED_COLONY), true);
         }
     }
 }

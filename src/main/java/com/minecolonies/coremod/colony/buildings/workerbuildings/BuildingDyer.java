@@ -166,7 +166,7 @@ public class BuildingDyer extends AbstractBuildingSmelterCrafter
                 return null;
             }
             
-            final List<ItemStorage> woolItems = ItemTags.WOOL.getAllElements().stream()
+            final List<ItemStorage> woolItems = ItemTags.WOOL.getValues().stream()
                                                         .filter(item -> !item.equals(Items.WHITE_WOOL))
                                                         .map(i -> new ItemStorage(new ItemStack(i))).collect(Collectors.toList());
 

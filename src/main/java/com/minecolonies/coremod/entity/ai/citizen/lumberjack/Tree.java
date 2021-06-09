@@ -138,7 +138,7 @@ public class Tree
     public Tree(@NotNull final World world, @NotNull final BlockPos log)
     {
         final Block block = BlockPosUtil.getBlock(world, log);
-        if (block.isIn(BlockTags.LOGS) || Compatibility.isSlimeBlock(block) || Compatibility.isDynamicBlock(block))
+        if (block.is(BlockTags.LOGS) || Compatibility.isSlimeBlock(block) || Compatibility.isDynamicBlock(block))
         {
             isTree = true;
             woodBlocks = new LinkedList<>();
@@ -156,7 +156,7 @@ public class Tree
             woodBlocks.clear();
             slimeTree = Compatibility.isSlimeBlock(block);
             sapling = calcSapling(world);
-            if (sapling.getItem().isIn(fungi))
+            if (sapling.getItem().is(fungi))
             {
                 netherTree = true;
             }
@@ -227,7 +227,7 @@ public class Tree
         BlockState blockState = world.getBlockState(pos);
         final Block block = blockState.getBlock();
 
-        if (block.isIn(BlockTags.LEAVES) || Compatibility.isDynamicLeaf(block))
+        if (block.is(BlockTags.LEAVES) || Compatibility.isDynamicLeaf(block))
         {
             NonNullList<ItemStack> list = NonNullList.create();
 
@@ -261,14 +261,14 @@ public class Tree
                     continue;
                 }
 
-                if (stack.getItem().isIn(ItemTags.SAPLINGS))
+                if (stack.getItem().is(ItemTags.SAPLINGS) || (isDynamicTree() && Compatibility.isDynamicTreeSapling(stack)))
                 {
                     IColonyManager.getInstance().getCompatibilityManager().connectLeafToSapling(blockState, stack);
                     return stack;
                 }
             }
         }
-        else if (block.isIn(BlockTags.WART_BLOCKS))
+        else if (block.is(BlockTags.WART_BLOCKS))
         {
             if (block == Blocks.WARPED_WART_BLOCK)
             {
@@ -296,12 +296,12 @@ public class Tree
             list.addAll(state.getDrops(new LootContext.Builder(world)
                                          .withParameter(LootParameters.TOOL,
                                            new ItemStack(Items.WOODEN_AXE)).withLuck(100)
-                                         .withParameter(LootParameters.field_237457_g_, new Vector3d(position.getX(), position.getY(), position.getZ()))));
+                                         .withParameter(LootParameters.ORIGIN, new Vector3d(position.getX(), position.getY(), position.getZ()))));
             if (!list.isEmpty())
             {
                 for (ItemStack stack : list)
                 {
-                    if (stack.getItem().isIn(ItemTags.SAPLINGS))
+                    if (stack.getItem().is(ItemTags.SAPLINGS))
                     {
                         return list;
                     }
@@ -322,13 +322,13 @@ public class Tree
         // Find the closest leaf above, stay below max height
         for (int i = 1; (i + topLog.getY()) < 255 && i < 10; i++)
         {
-            final BlockState blockState = world.getBlockState(topLog.add(0, i, 0));
-            if (blockState.getBlock().isIn(BlockTags.LEAVES))
+            final BlockState blockState = world.getBlockState(topLog.relative(0, i, 0));
+            if (blockState.getBlock().is(BlockTags.LEAVES))
             {
-                return topLog.add(0, i, 0);
+                return topLog.relative(0, i, 0);
             }
         }
-        return topLog.add(0, 1, 0);
+        return topLog.relative(0, 1, 0);
     }
 
     /**
@@ -344,7 +344,7 @@ public class Tree
         //Is the first block a log?
         final BlockState state = world.getBlockState(pos);
         final Block block = state.getBlock();
-        if (!block.isIn(BlockTags.LOGS) && !Compatibility.isSlimeBlock(block) && !Compatibility.isDynamicBlock(block))
+        if (!block.is(BlockTags.LOGS) && !Compatibility.isSlimeBlock(block) && !Compatibility.isDynamicBlock(block))
         {
             return false;
         }
@@ -352,7 +352,7 @@ public class Tree
         // Only harvest nearly fully grown dynamic trees(8 max)
         if (Compatibility.isDynamicBlock(block)
               && BlockStateUtils.getPropertyByNameFromState(state, DYNAMICTREERADIUS) != null
-              && ((Integer) state.get(BlockStateUtils.getPropertyByNameFromState(state, DYNAMICTREERADIUS)) < MineColonies.getConfig().getServer().dynamicTreeHarvestSize.get()))
+              && ((Integer) state.getValue(BlockStateUtils.getPropertyByNameFromState(state, DYNAMICTREERADIUS)) < MineColonies.getConfig().getServer().dynamicTreeHarvestSize.get()))
         {
             return false;
         }
@@ -363,8 +363,8 @@ public class Tree
         final BlockPos basePos = baseAndTOp.getA();
 
         //Make sure tree is on solid ground and tree is not build above cobblestone.
-        return world.getBlockState(basePos.down()).getMaterial().isSolid()
-                 && world.getBlockState(basePos.down()).getBlock() != Blocks.COBBLESTONE
+        return world.getBlockState(basePos.below()).getMaterial().isSolid()
+                 && world.getBlockState(basePos.below()).getBlock() != Blocks.COBBLESTONE
                  && hasEnoughLeavesAndIsSupposedToCut(world, baseAndTOp.getB(), treesToNotCut);
     }
 
@@ -411,9 +411,9 @@ public class Tree
             {
                 for (int z = -1; z <= 1; z++)
                 {
-                    final BlockPos temp = log.add(x, y, z);
+                    final BlockPos temp = log.relative(x, y, z);
                     final Block block = world.getBlockState(temp).getBlock();
-                    if ((block.isIn(BlockTags.LOGS) || Compatibility.isSlimeBlock(block) || Compatibility.isDynamicBlock(block)) && !woodenBlocks.contains(temp))
+                    if ((block.is(BlockTags.LOGS) || Compatibility.isSlimeBlock(block) || Compatibility.isDynamicBlock(block)) && !woodenBlocks.contains(temp))
                     {
                         return getBottomAndTopLog(world, temp, woodenBlocks, bottom, top);
                     }
@@ -449,7 +449,7 @@ public class Tree
             {
                 for (int dy = -3; dy <= 1 + dynamicBonusY; dy++)
                 {
-                    final BlockPos leafPos = pos.add(dx, dy, dz);
+                    final BlockPos leafPos = pos.relative(dx, dy, dz);
                     if (world.getBlockState(leafPos).getMaterial().equals(Material.LEAVES) || BlockTags.WART_BLOCKS.contains(world.getBlockState(leafPos).getBlock()))
                     {
                         if (!checkedLeaves && !supposedToCut(world, treesToNotCut, leafPos))
@@ -532,7 +532,7 @@ public class Tree
 
         if (compound.contains(TAG_SAPLING))
         {
-            tree.sapling = ItemStack.read(compound.getCompound(TAG_SAPLING));
+            tree.sapling = ItemStack.of(compound.getCompound(TAG_SAPLING));
         }
         else
         {
@@ -601,7 +601,7 @@ public class Tree
     public void findLogs(@NotNull final World world)
     {
         addAndSearch(world, location);
-        woodBlocks.sort((c1, c2) -> (int) (c1.distanceSq(location) - c2.distanceSq(location)));
+        woodBlocks.sort((c1, c2) -> (int) (c1.distSqr(location) - c2.distSqr(location)));
         if (getStumpLocations().isEmpty())
         {
             fillTreeStumps(location.getY());
@@ -667,9 +667,9 @@ public class Tree
             {
                 for (int z = -1; z <= 1; z++)
                 {
-                    final BlockPos temp = log.add(x, y, z);
+                    final BlockPos temp = log.relative(x, y, z);
                     final Block block = BlockPosUtil.getBlock(world, temp);
-                    if ((block.isIn(BlockTags.LOGS) || Compatibility.isSlimeBlock(block)) && !woodBlocks.contains(temp))
+                    if ((block.is(BlockTags.LOGS) || Compatibility.isSlimeBlock(block)) && !woodBlocks.contains(temp))
                     {
                         addAndSearch(world, temp);
                     }
@@ -705,12 +705,12 @@ public class Tree
         }
         for (int locX = locXMin; locX <= locXMax; locX++)
         {
-            for (int locY = locYMin; locY < world.func_234938_ad_(); locY++)
+            for (int locY = locYMin; locY < world.getMaxBuildHeight(); locY++)
             {
                 for (int locZ = locZMin; locZ <= locZMax; locZ++)
                 {
                     final BlockPos leaf = new BlockPos(locX, locY, locZ);
-                    if (world.getBlockState(leaf).getMaterial() == Material.LEAVES || world.getBlockState(leaf).getBlock().isIn(BlockTags.WART_BLOCKS) || world.getBlockState(leaf).getBlock() == Blocks.SHROOMLIGHT)
+                    if (world.getBlockState(leaf).getMaterial() == Material.LEAVES || world.getBlockState(leaf).getBlock().is(BlockTags.WART_BLOCKS) || world.getBlockState(leaf).getBlock() == Blocks.SHROOMLIGHT)
                     {
                         leaves.add(leaf);
                     }
@@ -911,7 +911,7 @@ public class Tree
         compound.putBoolean(TAG_DYNAMIC_TREE, dynamicTree);
 
         CompoundNBT saplingNBT = new CompoundNBT();
-        sapling.write(saplingNBT);
+        sapling.save(saplingNBT);
 
         compound.put(TAG_SAPLING, saplingNBT);
         compound.putBoolean(TAG_NETHER_TREE, netherTree);

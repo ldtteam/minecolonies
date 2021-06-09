@@ -83,7 +83,7 @@ public class JEIPlugin implements IModPlugin
     {
         registration.addIngredientInfo(new ItemStack(ModBlocks.blockHutComposter.asItem()), VanillaTypes.ITEM, TranslationConstants.COM_MINECOLONIES_JEI_PREFIX + ModJobs.COMPOSTER_ID.getPath());
 
-        if (!Minecraft.getInstance().isIntegratedServerRunning())
+        if (!Minecraft.getInstance().isLocalServer())
         {
             // if we're not on an integrated server, we're on a dedicated server, and that
             // means that the CustomRecipes are not loaded yet, so we need to wait until

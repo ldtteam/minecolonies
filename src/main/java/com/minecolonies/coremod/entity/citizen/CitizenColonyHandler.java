@@ -91,11 +91,11 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
             return;
         }
 
-        final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, citizen.world);
+        final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, citizen.level);
 
         if (colony == null)
         {
-            Log.getLogger().warn(String.format("EntityCitizen '%s' unable to find Colony #%d", citizen.getUniqueID(), colonyId));
+            Log.getLogger().warn(String.format("EntityCitizen '%s' unable to find Colony #%d", citizen.getUUID(), colonyId));
             citizen.remove();
             return;
         }
@@ -111,25 +111,25 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
     @Override
     public void updateColonyClient()
     {
-        if (citizen.getDataManager().isDirty())
+        if (citizen.getEntityData().isDirty())
         {
             if (colonyId == 0)
             {
-                colonyId = citizen.getDataManager().get(DATA_COLONY_ID);
+                colonyId = citizen.getEntityData().get(DATA_COLONY_ID);
             }
 
             if (citizen.getCivilianID() == 0)
             {
-                citizen.setCitizenId(citizen.getDataManager().get(DATA_CITIZEN_ID));
+                citizen.setCitizenId(citizen.getEntityData().get(DATA_CITIZEN_ID));
             }
 
-            citizen.setFemale(citizen.getDataManager().get(DATA_IS_FEMALE) != 0);
-            citizen.setIsChild(citizen.getDataManager().get(DATA_IS_CHILD));
-            citizen.setModelId(BipedModelType.valueOf(citizen.getDataManager().get(DATA_MODEL)));
-            citizen.setTextureId(citizen.getDataManager().get(DATA_TEXTURE));
-            citizen.setRenderMetadata(citizen.getDataManager().get(DATA_RENDER_METADATA));
+            citizen.setFemale(citizen.getEntityData().get(DATA_IS_FEMALE) != 0);
+            citizen.setIsChild(citizen.getEntityData().get(DATA_IS_CHILD));
+            citizen.setModelId(BipedModelType.valueOf(citizen.getEntityData().get(DATA_MODEL)));
+            citizen.setTextureId(citizen.getEntityData().get(DATA_TEXTURE));
+            citizen.setRenderMetadata(citizen.getEntityData().get(DATA_RENDER_METADATA));
             citizen.setTexture();
-            citizen.getDataManager().setClean();
+            citizen.getEntityData().clearDirty();
         }
         citizen.updateArmSwingProg();
     }
@@ -155,7 +155,7 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
     @Nullable
     public IColony getColony()
     {
-        if (colony == null && !citizen.world.isRemote)
+        if (colony == null && !citizen.level.isClientSide)
         {
             registerWithColony(getColonyId(), citizen.getCivilianID());
         }
@@ -191,7 +191,7 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
         if (citizen.getCitizenData() != null && registered && colony != null)
         {
             colony.getCitizenManager().unregisterCivilian(citizen);
-            citizen.getCitizenData().setLastPosition(citizen.getPosition());
+            citizen.getCitizenData().setLastPosition(citizen.blockPosition());
         }
     }
 }

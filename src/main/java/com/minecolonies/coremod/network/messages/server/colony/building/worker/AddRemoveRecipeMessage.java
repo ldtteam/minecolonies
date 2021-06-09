@@ -134,19 +134,19 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
         if (remove)
         {
             building.removeRecipe(storage.getToken());
-            SoundUtils.playSuccessSound(player, player.getPosition());
+            SoundUtils.playSuccessSound(player, player.blockPosition());
         }
         else
         {
             final IToken<?> token = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage);
             if (!building.addRecipe(token))
             {
-                SoundUtils.playErrorSound(player, player.getPosition());
+                SoundUtils.playErrorSound(player, player.blockPosition());
                 LanguageHandler.sendPlayerMessage(player, UNABLE_TO_ADD_RECIPE_MESSAGE, building.getJobName());
             }
             else
             {
-                SoundUtils.playSuccessSound(player, player.getPosition());
+                SoundUtils.playSuccessSound(player, player.blockPosition());
                 AdvancementUtils.TriggerAdvancementPlayersForColony(colony, playerMP -> AdvancementTriggers.BUILDING_ADD_RECIPE.trigger(playerMP, this.storage));
                 LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.gui.recipe.done");
             }

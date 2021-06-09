@@ -63,7 +63,7 @@ public class GlobalResearchTreeMessage implements IMessage
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
-        if (Minecraft.getInstance().world != null)
+        if (Minecraft.getInstance().level != null)
         {
             IGlobalResearchTree.getInstance().handleGlobalResearchTreeMessage(treeBuffer);
         }

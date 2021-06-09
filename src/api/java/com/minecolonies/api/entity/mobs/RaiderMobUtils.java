@@ -144,7 +144,7 @@ public final class RaiderMobUtils
 
                 if (entity != null)
                 {
-                    entity.setPositionAndRotation(x + spawnDeviationX, y + 1.0, z + spawnDeviationZ, (float) MathHelper.wrapDegrees(world.rand.nextDouble() * WHOLE_CIRCLE), 0.0F);
+                    entity.absMoveTo(x + spawnDeviationX, y + 1.0, z + spawnDeviationZ, (float) MathHelper.wrapDegrees(world.random.nextDouble() * WHOLE_CIRCLE), 0.0F);
                     CompatibilityUtils.addEntity(world, entity);
                     entity.setColony(colony);
                     entity.setEventID(eventID);
@@ -170,42 +170,42 @@ public final class RaiderMobUtils
     {
         if (mob instanceof IMeleeBarbarianEntity || mob instanceof IMeleeNorsemenEntity || mob instanceof INorsemenChiefEntity)
         {
-            mob.setItemStackToSlot(EquipmentSlotType.MAINHAND, new ItemStack(Items.STONE_AXE));
+            mob.setItemSlot(EquipmentSlotType.MAINHAND, new ItemStack(Items.STONE_AXE));
         }
         else if (mob instanceof IPharaoEntity)
         {
-            mob.setItemStackToSlot(EquipmentSlotType.MAINHAND, new ItemStack(ModItems.pharaoscepter));
+            mob.setItemSlot(EquipmentSlotType.MAINHAND, new ItemStack(ModItems.pharaoscepter));
         }
         else if (mob instanceof IArcherMobEntity)
         {
-            mob.setItemStackToSlot(EquipmentSlotType.MAINHAND, new ItemStack(Items.BOW));
+            mob.setItemSlot(EquipmentSlotType.MAINHAND, new ItemStack(Items.BOW));
         }
         else if (mob instanceof IChiefBarbarianEntity)
         {
-            mob.setItemStackToSlot(EquipmentSlotType.MAINHAND, new ItemStack(ModItems.chiefSword));
-            mob.setItemStackToSlot(EquipmentSlotType.HEAD, new ItemStack(Items.CHAINMAIL_HELMET));
-            mob.setItemStackToSlot(EquipmentSlotType.CHEST, new ItemStack(Items.CHAINMAIL_CHESTPLATE));
-            mob.setItemStackToSlot(EquipmentSlotType.LEGS, new ItemStack(Items.CHAINMAIL_LEGGINGS));
-            mob.setItemStackToSlot(EquipmentSlotType.FEET, new ItemStack(Items.CHAINMAIL_BOOTS));
+            mob.setItemSlot(EquipmentSlotType.MAINHAND, new ItemStack(ModItems.chiefSword));
+            mob.setItemSlot(EquipmentSlotType.HEAD, new ItemStack(Items.CHAINMAIL_HELMET));
+            mob.setItemSlot(EquipmentSlotType.CHEST, new ItemStack(Items.CHAINMAIL_CHESTPLATE));
+            mob.setItemSlot(EquipmentSlotType.LEGS, new ItemStack(Items.CHAINMAIL_LEGGINGS));
+            mob.setItemSlot(EquipmentSlotType.FEET, new ItemStack(Items.CHAINMAIL_BOOTS));
         }
         else if (mob instanceof IPirateEntity)
         {
-            mob.setItemStackToSlot(EquipmentSlotType.MAINHAND, new ItemStack(ModItems.scimitar));
+            mob.setItemSlot(EquipmentSlotType.MAINHAND, new ItemStack(ModItems.scimitar));
             if (mob instanceof ICaptainPirateEntity)
             {
                 if (new Random().nextBoolean())
                 {
-                    mob.setItemStackToSlot(EquipmentSlotType.HEAD, new ItemStack(ModItems.pirateHelmet_1));
-                    mob.setItemStackToSlot(EquipmentSlotType.CHEST, new ItemStack(ModItems.pirateChest_1));
-                    mob.setItemStackToSlot(EquipmentSlotType.LEGS, new ItemStack(ModItems.pirateLegs_1));
-                    mob.setItemStackToSlot(EquipmentSlotType.FEET, new ItemStack(ModItems.pirateBoots_1));
+                    mob.setItemSlot(EquipmentSlotType.HEAD, new ItemStack(ModItems.pirateHelmet_1));
+                    mob.setItemSlot(EquipmentSlotType.CHEST, new ItemStack(ModItems.pirateChest_1));
+                    mob.setItemSlot(EquipmentSlotType.LEGS, new ItemStack(ModItems.pirateLegs_1));
+                    mob.setItemSlot(EquipmentSlotType.FEET, new ItemStack(ModItems.pirateBoots_1));
                 }
                 else
                 {
-                    mob.setItemStackToSlot(EquipmentSlotType.HEAD, new ItemStack(ModItems.pirateHelmet_2));
-                    mob.setItemStackToSlot(EquipmentSlotType.CHEST, new ItemStack(ModItems.pirateChest_2));
-                    mob.setItemStackToSlot(EquipmentSlotType.LEGS, new ItemStack(ModItems.pirateLegs_2));
-                    mob.setItemStackToSlot(EquipmentSlotType.FEET, new ItemStack(ModItems.pirateBoots_2));
+                    mob.setItemSlot(EquipmentSlotType.HEAD, new ItemStack(ModItems.pirateHelmet_2));
+                    mob.setItemSlot(EquipmentSlotType.CHEST, new ItemStack(ModItems.pirateChest_2));
+                    mob.setItemSlot(EquipmentSlotType.LEGS, new ItemStack(ModItems.pirateLegs_2));
+                    mob.setItemSlot(EquipmentSlotType.FEET, new ItemStack(ModItems.pirateBoots_2));
                 }
             }
         }
@@ -220,9 +220,9 @@ public final class RaiderMobUtils
      */
     public static List<AbstractEntityMinecoloniesMob> getBarbariansCloseToEntity(final Entity entity, final double distanceFromEntity)
     {
-        return CompatibilityUtils.getWorldFromEntity(entity).getLoadedEntitiesWithinAABB(
+        return CompatibilityUtils.getWorldFromEntity(entity).getLoadedEntitiesOfClass(
           AbstractEntityMinecoloniesMob.class,
-          entity.getBoundingBox().expand(
+          entity.getBoundingBox().expandTowards(
             distanceFromEntity,
             3.0D,
             distanceFromEntity),

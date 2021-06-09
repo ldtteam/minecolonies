@@ -37,14 +37,14 @@ public class BuildingAddRecipeTrigger extends AbstractCriterionTrigger<BuildingA
 
     @NotNull
     @Override
-    public BuildingAddRecipeCriterionInstance deserialize(@NotNull final JsonObject jsonObject, @NotNull final ConditionArrayParser jsonDeserializationContext)
+    public BuildingAddRecipeCriterionInstance createInstance(@NotNull final JsonObject jsonObject, @NotNull final ConditionArrayParser jsonDeserializationContext)
     {
         if (jsonObject.has("items"))
         {
-            final ItemPredicate[] outputItemPredicates = ItemPredicate.deserializeArray(jsonObject.get("items"));
+            final ItemPredicate[] outputItemPredicates = ItemPredicate.fromJsonArray(jsonObject.get("items"));
             if (jsonObject.has("crafting_size"))
             {
-                final int craftingSize = JSONUtils.getInt(jsonObject, "crafting_size");
+                final int craftingSize = JSONUtils.getAsInt(jsonObject, "crafting_size");
                 return new BuildingAddRecipeCriterionInstance(outputItemPredicates, craftingSize);
             }
             return new BuildingAddRecipeCriterionInstance(outputItemPredicates);

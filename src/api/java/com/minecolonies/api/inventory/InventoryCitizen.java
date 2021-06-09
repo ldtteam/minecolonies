@@ -273,7 +273,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
         {
             // The 4 parameter inner call from forge is for adding a callback to alter the damage caused,
             // but unlike its description does not actually damage the item(despite the same function name). So used to just calculate the damage.
-            stack.damageItem(stack.getItem().damageItem(stack, amount, entityIn, onBroken), entityIn, onBroken);
+            stack.hurtAndBreak(stack.getItem().damageItem(stack, amount, entityIn, onBroken), entityIn, onBroken);
 
             if (ItemStackUtils.isEmpty(stack))
             {
@@ -317,7 +317,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
 
         final ItemStack copy = stack.copy();
         final ItemStack inSlot = mainInventory.get(slot);
-        if (inSlot.getCount() >= inSlot.getMaxStackSize() || (!inSlot.isEmpty() && !inSlot.isItemEqual(copy)))
+        if (inSlot.getCount() >= inSlot.getMaxStackSize() || (!inSlot.isEmpty() && !inSlot.sameItem(copy)))
         {
             return copy;
         }
@@ -457,7 +457,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
             {
                 final CompoundNBT compoundNBT = new CompoundNBT();
                 compoundNBT.putByte("Slot", (byte) i);
-                (this.mainInventory.get(i)).write(compoundNBT);
+                (this.mainInventory.get(i)).save(compoundNBT);
                 nbtTagList.add(compoundNBT);
                 freeSlots--;
             }
@@ -487,7 +487,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
             final CompoundNBT compoundNBT = nbtTagList.getCompound(i);
 
             final int j = compoundNBT.getByte("Slot") & 255;
-            final ItemStack itemstack = ItemStack.read(compoundNBT);
+            final ItemStack itemstack = ItemStack.of(compoundNBT);
 
             if (!itemstack.isEmpty())
             {

@@ -91,13 +91,13 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
 
         for (BlockPos blockPos : containerList)
         {
-            final TileEntity rack = Minecraft.getInstance().world.getTileEntity(blockPos);
+            final TileEntity rack = Minecraft.getInstance().level.getBlockEntity(blockPos);
             if (rack instanceof TileEntityRack)
             {
                 if (((TileEntityRack) rack).hasItemStack(storage.getItemStack(), 1, false))
                 {
-                    HighlightManager.HIGHLIGHT_MAP.put("inventoryHighlight", new Tuple<>(blockPos, Minecraft.getInstance().world.getGameTime() + 120 * 20));
-                    Minecraft.getInstance().player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.locating"), Minecraft.getInstance().player.getUniqueID());
+                    HighlightManager.HIGHLIGHT_MAP.put("inventoryHighlight", new Tuple<>(blockPos, Minecraft.getInstance().level.getGameTime() + 120 * 20));
+                    Minecraft.getInstance().player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.locating"), Minecraft.getInstance().player.createPlayerUUID());
                     close();
                     return;
                 }
@@ -167,7 +167,7 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
 
         for (final BlockPos blockPos : containerList)
         {
-            final TileEntity rack = world.getTileEntity(blockPos);
+            final TileEntity rack = world.getBlockEntity(blockPos);
             if (rack instanceof TileEntityRack)
             {
                 final Map<ItemStorage, Integer> rackStorage = ((TileEntityRack) rack).getAllContent();
@@ -192,9 +192,9 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
             filterItems.add(storage);
         });
         final Predicate<ItemStorage> filterPredicate = stack -> filter.isEmpty()
-                                                                  || stack.getItemStack().getTranslationKey().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))
+                                                                  || stack.getItemStack().getDescriptionId().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))
                                                                   || stack.getItemStack()
-                                                                       .getDisplayName()
+                                                                       .getHoverName()
                                                                        .getString()
                                                                        .toLowerCase(Locale.US)
                                                                        .contains(filter.toLowerCase(Locale.US));
@@ -209,7 +209,7 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
             allItems.addAll(filterItems.stream().filter(filterPredicate).collect(Collectors.toList()));
         }
 
-        final Comparator<ItemStorage> compareByName = Comparator.comparing((ItemStorage o) -> o.getItemStack().getDisplayName().getString());
+        final Comparator<ItemStorage> compareByName = Comparator.comparing((ItemStorage o) -> o.getItemStack().getHoverName().getString());
         final Comparator<ItemStorage> compareByCount = Comparator.comparingInt(ItemStorage::getAmount);
         switch (sortDescriptor)
         {
@@ -264,7 +264,7 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
             {
                 final ItemStorage resource = allItems.get(index);
                 final Text resourceLabel = rowPane.findPaneOfTypeByID("ressourceStackName", Text.class);
-                final String name = resource.getItemStack().getDisplayName().getString();
+                final String name = resource.getItemStack().getHoverName().getString();
                 resourceLabel.setText(name.substring(0, Math.min(17, name.length())));
                 final Text qtys = rowPane.findPaneOfTypeByID("quantities", Text.class);
                 if(!Screen.hasShiftDown())

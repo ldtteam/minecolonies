@@ -110,7 +110,7 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker imp
         }
 
         final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep = super.getRequiredItemsAndAmount();
-        toKeep.putAll(requiredItems.entrySet().stream().collect(Collectors.toMap(key -> (stack -> stack.isItemEqualIgnoreDurability(key.getKey().getItemStack())), Map.Entry::getValue)));
+        toKeep.putAll(requiredItems.entrySet().stream().collect(Collectors.toMap(key -> (stack -> stack.sameItemStackIgnoreDurability(key.getKey().getItemStack())), Map.Entry::getValue)));
         return toKeep;
     }
 

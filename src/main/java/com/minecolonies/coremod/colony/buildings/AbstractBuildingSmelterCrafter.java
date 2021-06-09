@@ -116,7 +116,7 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractBuildingFur
         }
 
         final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep = new HashMap<>(super.getRequiredItemsAndAmount());
-        toKeep.putAll(requiredItems.entrySet().stream().collect(Collectors.toMap(key -> (stack -> stack.isItemEqualIgnoreDurability(key.getKey().getItemStack())), Map.Entry::getValue)));
+        toKeep.putAll(requiredItems.entrySet().stream().collect(Collectors.toMap(key -> (stack -> stack.sameItemStackIgnoreDurability(key.getKey().getItemStack())), Map.Entry::getValue)));
         return toKeep;
     }
 

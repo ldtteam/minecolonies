@@ -137,27 +137,27 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
         this.goalSelector.addGoal(4, new EntityAIInteractToggleAble(this, FENCE_TOGGLE, TRAP_TOGGLE, DOOR_TOGGLE));
         this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, MonsterEntity.class, 10, true, false, e -> e instanceof IMob && !(e instanceof LlamaEntity)));
 
-        this.forceSpawn = true;
+        this.forcedLoading = true;
         setCustomNameVisible(true);
-        this.enablePersistence();
+        this.setPersistenceRequired();
 
         final ItemStack mainhand = new ItemStack(Items.GOLDEN_SWORD, 1);
-        mainhand.addEnchantment(Enchantments.FIRE_ASPECT, 1);
-        this.setItemStackToSlot(EquipmentSlotType.MAINHAND, mainhand);
+        mainhand.enchant(Enchantments.FIRE_ASPECT, 1);
+        this.setItemSlot(EquipmentSlotType.MAINHAND, mainhand);
 
         final ItemStack helmet = new ItemStack(Items.DIAMOND_HELMET, 1);
-        helmet.addEnchantment(Enchantments.PROTECTION, 4);
-        this.setItemStackToSlot(EquipmentSlotType.HEAD, helmet);
+        helmet.enchant(Enchantments.ALL_DAMAGE_PROTECTION, 4);
+        this.setItemSlot(EquipmentSlotType.HEAD, helmet);
 
         final ItemStack chest = new ItemStack(Items.GOLDEN_CHESTPLATE, 1);
-        chest.addEnchantment(Enchantments.PROTECTION, 4);
-        this.setItemStackToSlot(EquipmentSlotType.CHEST, chest);
+        chest.enchant(Enchantments.ALL_DAMAGE_PROTECTION, 4);
+        this.setItemSlot(EquipmentSlotType.CHEST, chest);
 
         final ItemStack legs = new ItemStack(Items.CHAINMAIL_LEGGINGS, 1);
-        this.setItemStackToSlot(EquipmentSlotType.LEGS, legs);
+        this.setItemSlot(EquipmentSlotType.LEGS, legs);
 
         final ItemStack boots = new ItemStack(Items.CHAINMAIL_BOOTS, 1);
-        this.setItemStackToSlot(EquipmentSlotType.FEET, boots);
+        this.setItemSlot(EquipmentSlotType.FEET, boots);
 
         this.getAttribute(Attributes.FOLLOW_RANGE).setBaseValue(FOLLOW_RANGE);
         this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(0.3);
@@ -189,7 +189,7 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
      */
     private boolean shouldDespawn()
     {
-        if (world == null || world.getGameTime() - worldTimeAtSpawn > TICKS_FOURTY_MIN || colony == null || this.isInvisible())
+        if (level == null || level.getGameTime() - worldTimeAtSpawn > TICKS_FOURTY_MIN || colony == null || this.isInvisible())
         {
             this.remove();
             return true;
@@ -206,10 +206,10 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
     {
         if (worldTimeAtSpawn == 0)
         {
-            worldTimeAtSpawn = world.getGameTime();
+            worldTimeAtSpawn = level.getGameTime();
         }
 
-        return world != null && colony != null && isAlive() && !isInvisible();
+        return level != null && colony != null && isAlive() && !isInvisible();
     }
 
     /**
@@ -235,22 +235,22 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
             return false;
         }
 
-        if (!getNavigator().noPath())
+        if (!getNavigation().isDone())
         {
             return false;
         }
 
-        final BlockPos first = soldiers.get(0).getPosition().add(0, 0, 1);
-        final BlockPos last = soldiers.get(soldiers.size() - 1).getPosition().add(0, 0, 1);
+        final BlockPos first = soldiers.get(0).blockPosition().relative(0, 0, 1);
+        final BlockPos last = soldiers.get(soldiers.size() - 1).blockPosition().relative(0, 0, 1);
 
-        playSound(SoundEvents.ENTITY_EVOKER_CELEBRATE, 2.0f, 1.0f);
-        if (getPosition().equals(first))
+        playSound(SoundEvents.EVOKER_CELEBRATE, 2.0f, 1.0f);
+        if (blockPosition().equals(first))
         {
-            getNavigator().tryMoveToBlockPos(last, 0.5);
+            getNavigation().tryMoveToBlockPos(last, 0.5);
         }
         else
         {
-            getNavigator().tryMoveToBlockPos(first, 0.5);
+            getNavigation().tryMoveToBlockPos(first, 0.5);
         }
 
         return false;
@@ -260,9 +260,9 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
      * Get the blockpos pos.
      * @return a blockpos.
      */
-    public BlockPos getPosition()
+    public BlockPos blockPosition()
     {
-        return new BlockPos(this.getPositionVec());
+        return new BlockPos(this.position());
     }
 
     /**
@@ -300,30 +300,30 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
     @Override
     protected void playStepSound(final BlockPos pos, final BlockState blockIn)
     {
-        this.playSound(SoundEvents.ITEM_ARMOR_EQUIP_CHAIN, 0.45F, 1.0F);
+        this.playSound(SoundEvents.ARMOR_EQUIP_CHAIN, 0.45F, 1.0F);
     }
 
     @Override
-    public void writeAdditional(final CompoundNBT compound)
+    public void addAdditionalSaveData(final CompoundNBT compound)
     {
         compound.putLong(TAG_TIME, worldTimeAtSpawn);
         compound.putInt(TAG_COLONY_ID, this.colony == null ? 0 : colony.getID());
-        super.writeAdditional(compound);
+        super.addAdditionalSaveData(compound);
     }
 
     @Override
-    public void readAdditional(final CompoundNBT compound)
+    public void readAdditionalSaveData(final CompoundNBT compound)
     {
         worldTimeAtSpawn = compound.getLong(TAG_TIME);
-        if (compound.keySet().contains(TAG_COLONY_ID))
+        if (compound.getAllKeys().contains(TAG_COLONY_ID))
         {
             final int colonyId = compound.getInt(TAG_COLONY_ID);
             if (colonyId != 0)
             {
-                setColony(IColonyManager.getInstance().getColonyByWorld(colonyId, world));
+                setColony(IColonyManager.getInstance().getColonyByWorld(colonyId, level));
             }
         }
-        super.readAdditional(compound);
+        super.readAdditionalSaveData(compound);
     }
 
     @Override
@@ -344,9 +344,9 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
      */
     public static AttributeModifierMap.MutableAttribute getDefaultAttributes()
     {
-        return LivingEntity.registerAttributes()
-                 .createMutableAttribute(Attributes.ATTACK_DAMAGE, Attributes.ATTACK_DAMAGE.getDefaultValue())
-                 .createMutableAttribute(Attributes.FOLLOW_RANGE, BASE_PATHFINDING_RANGE);
+        return LivingEntity.createLivingAttributes()
+                 .add(Attributes.ATTACK_DAMAGE, Attributes.ATTACK_DAMAGE.getDefaultValue())
+                 .add(Attributes.FOLLOW_RANGE, BASE_PATHFINDING_RANGE);
     }
 
     @Override
@@ -370,23 +370,23 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
     }
 
     @Override
-    public boolean attackEntityFrom(final DamageSource source, final float damage)
+    public boolean hurt(final DamageSource source, final float damage)
     {
-        if (source.getTrueSource() instanceof LivingEntity)
+        if (source.getEntity() instanceof LivingEntity)
         {
-            this.setAttackTarget((LivingEntity) source.getTrueSource());
+            this.setTarget((LivingEntity) source.getEntity());
         }
-        return super.attackEntityFrom(source, damage);
+        return super.hurt(source, damage);
     }
 
     @Override
-    protected void collideWithEntity(final Entity entityIn)
+    protected void doPush(final Entity entityIn)
     {
         if (slapTimer == 0 && entityIn instanceof PlayerEntity)
         {
             slapTimer = SLAP_INTERVAL;
-            entityIn.attackEntityFrom(new EntityDamageSource("slap", this), 1.0f);
-            this.swingArm(Hand.OFF_HAND);
+            entityIn.hurt(new EntityDamageSource("slap", this), 1.0f);
+            this.swing(Hand.OFF_HAND);
         }
 
         if (slapTimer == 0 && entityIn instanceof EntityCitizen && colony != null && ((EntityCitizen) entityIn).isActive())
@@ -396,11 +396,11 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
             final ItemStack stack = handler.extractItem(rand.nextInt(handler.getSlots()), 5, false);
             if (!ItemStackUtils.isEmpty(stack))
             {
-                this.swingArm(Hand.OFF_HAND);
+                this.swing(Hand.OFF_HAND);
                 LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
                   "com.minecolonies.coremod.mercenary.mercenaryStealCitizen",
                   entityIn.getName().getString(),
-                  stack.getDisplayName().getString());
+                  stack.getHoverName().getString());
             }
         }
     }
@@ -421,22 +421,22 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
 
     @NotNull
     @Override
-    public AbstractAdvancedPathNavigate getNavigator()
+    public AbstractAdvancedPathNavigate getNavigation()
     {
         if (this.newNavigator == null)
         {
-            this.newNavigator = new MinecoloniesAdvancedPathNavigate(this, world);
-            this.navigator = newNavigator;
-            this.newNavigator.setCanSwim(true);
-            this.newNavigator.getNodeProcessor().setCanOpenDoors(true);
+            this.newNavigator = new MinecoloniesAdvancedPathNavigate(this, level);
+            this.navigation = newNavigator;
+            this.newNavigator.setCanFloat(true);
+            this.newNavigator.getNodeEvaluator().setCanOpenDoors(true);
         }
         return newNavigator;
     }
 
     @Override
-    public void livingTick()
+    public void aiStep()
     {
-        if (world != null && !world.isRemote)
+        if (level != null && !level.isClientSide)
         {
             stateMachine.tick();
         }
@@ -444,12 +444,12 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
         {
             slapTimer--;
         }
-        updateArmSwingProgress();
-        super.livingTick();
+        updateSwingTime();
+        super.aiStep();
     }
 
     @Override
-    public boolean preventDespawn()
+    public boolean requiresCustomPersistence()
     {
         return true;
     }
@@ -481,18 +481,18 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
         {
             final EntityMercenary merc = (EntityMercenary) ModEntities.MERCENARY.create(world);
             merc.setColony(colony);
-            merc.setPosition(spawn.getX() + i, spawn.getY(), spawn.getZ());
+            merc.setPos(spawn.getX() + i, spawn.getY(), spawn.getZ());
             merc.setDoSpawnEvent();
             soldiers.add(merc);
-            world.addEntity(merc);
+            world.addFreshEntity(merc);
         }
 
         // spawn leader for the event.
         final EntityMercenary merc = (EntityMercenary) ModEntities.MERCENARY.create(world);
         merc.setColony(colony);
-        merc.setPosition(spawn.getX(), spawn.getY(), spawn.getZ() + 1);
+        merc.setPos(spawn.getX(), spawn.getY(), spawn.getZ() + 1);
         merc.setLeader(soldiers);
-        world.addEntity(merc);
+        world.addFreshEntity(merc);
     }
 
     /**
@@ -512,13 +512,13 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
             height = buildingArea.getA().getY() + 1;
         }
 
-        spawn = spawn.add(0, height, 0);
+        spawn = spawn.relative(0, height, 0);
 
         for (int i = -3; i < 4; i++)
         {
-            if (isValidSpawnForMercenaries(colony.getWorld(), spawn.add(0, 0, i), amountOfMercenaries))
+            if (isValidSpawnForMercenaries(colony.getWorld(), spawn.relative(0, 0, i), amountOfMercenaries))
             {
-                spawn = spawn.add(0, 0, i);
+                spawn = spawn.relative(0, 0, i);
                 break;
             }
         }
@@ -538,7 +538,7 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
     {
         for (int i = 0; i < amountOfMercenaries; i++)
         {
-            if (!world.isAirBlock(spawn.up().add(i, 0, 0)) || !world.isAirBlock(spawn.up().add(i, 0, 1)))
+            if (!world.isEmptyBlock(spawn.above().offset(i, 0, 0)) || !world.isEmptyBlock(spawn.above().offset(i, 0, 1)))
             {
                 return false;
             }

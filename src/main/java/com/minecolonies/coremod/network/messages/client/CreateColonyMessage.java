@@ -68,7 +68,7 @@ public class CreateColonyMessage implements IMessage
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
         final ServerPlayerEntity sender = ctxIn.getSender();
-        final World world = ctxIn.getSender().world;
+        final World world = ctxIn.getSender().level;
 
         if (sender == null)
         {
@@ -84,7 +84,7 @@ public class CreateColonyMessage implements IMessage
         final IColony colony = IColonyManager.getInstance().getClosestColony(world, townHall);
 
         String style = Constants.DEFAULT_STYLE;
-        final TileEntity tileEntity = world.getTileEntity(townHall);
+        final TileEntity tileEntity = world.getBlockEntity(townHall);
 
         if (!(tileEntity instanceof TileEntityColonyBuilding))
         {
@@ -99,10 +99,10 @@ public class CreateColonyMessage implements IMessage
 
         if (MineColonies.getConfig().getServer().restrictColonyPlacement.get())
         {
-            final double spawnDistance = Math.sqrt(BlockPosUtil.getDistanceSquared2D(townHall, ((ServerWorld) world).getSpawnPoint()));
+            final double spawnDistance = Math.sqrt(BlockPosUtil.getDistanceSquared2D(townHall, ((ServerWorld) world).getSharedSpawnPos()));
             if (spawnDistance < MineColonies.getConfig().getServer().minDistanceFromWorldSpawn.get())
             {
-                if (!world.isRemote)
+                if (!world.isClientSide)
                 {
                     LanguageHandler.sendPlayerMessage(sender, CANT_PLACE_COLONY_TOO_CLOSE_TO_SPAWN, MineColonies.getConfig().getServer().minDistanceFromWorldSpawn.get());
                 }
@@ -110,7 +110,7 @@ public class CreateColonyMessage implements IMessage
             }
             else if (spawnDistance > MineColonies.getConfig().getServer().maxDistanceFromWorldSpawn.get())
             {
-                if (!world.isRemote)
+                if (!world.isClientSide)
                 {
                     LanguageHandler.sendPlayerMessage(sender, CANT_PLACE_COLONY_TOO_FAR_FROM_SPAWN, MineColonies.getConfig().getServer().maxDistanceFromWorldSpawn.get());
                 }

@@ -48,11 +48,11 @@ public interface ISimpleModelType extends IModelType
         String folder = DEFAULT_FOLDER;
         final int moddedTextureId = (entityCitizen.getTextureId() % getNumTextures()) + 1;
         final String textureIdentifier =
-          getTextureBase() + (entityCitizen.isFemale() ? "female" : "male") + moddedTextureId + entityCitizen.getRenderMetadata() + entityCitizen.getDataManager()
+          getTextureBase() + (entityCitizen.isFemale() ? "female" : "male") + moddedTextureId + entityCitizen.getRenderMetadata() + entityCitizen.getEntityData()
                                                                                                                                       .get(DATA_TEXTURE_SUFFIX);
         //TODO: We have to add style tags to the townhalls that will be used for this in the future.
         // - This will then become a switch case statement for this sake
-        final String style = entityCitizen.getDataManager().get(DATA_STYLE);
+        final String style = entityCitizen.getEntityData().get(DATA_STYLE);
         if (style.contains("medieval"))
         {
             folder = "medieval";

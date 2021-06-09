@@ -20,12 +20,12 @@ public class CommandKillSheep implements IMCOPCommand
     {
         entitiesKilled = 0;
 
-        context.getSource().getWorld().getEntities(EntityType.SHEEP, entity -> true).forEach(entity ->
+        context.getSource().getLevel().getEntities(EntityType.SHEEP, entity -> true).forEach(entity ->
         {
             entity.remove();
             entitiesKilled++;
         });
-        context.getSource().sendFeedback(new StringTextComponent(entitiesKilled + " entities killed"), true);
+        context.getSource().sendSuccess(new StringTextComponent(entitiesKilled + " entities killed"), true);
         return 1;
     }
 

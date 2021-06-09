@@ -54,7 +54,7 @@ public class ItemListModule extends AbstractBuildingModule implements IItemListM
             final ListNBT filterableList = compound.getCompound(id).getList(TAG_ITEMLIST, Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < filterableList.size(); ++i)
             {
-                allowedItems.add(new ItemStorage(ItemStack.read(filterableList.getCompound(i))));
+                allowedItems.add(new ItemStorage(ItemStack.of(filterableList.getCompound(i))));
             }
         }
         else
@@ -73,7 +73,7 @@ public class ItemListModule extends AbstractBuildingModule implements IItemListM
                         final ListNBT filterableItems = listItem.getList(TAG_ITEMLIST, Constants.NBT.TAG_COMPOUND);
                         for (int j = 0; j < filterableItems.size(); ++j)
                         {
-                            allowedItems.add(new ItemStorage(ItemStack.read(filterableItems.getCompound(j))));
+                            allowedItems.add(new ItemStorage(ItemStack.of(filterableItems.getCompound(j))));
                         }
                     }
                 }
@@ -94,7 +94,7 @@ public class ItemListModule extends AbstractBuildingModule implements IItemListM
         for (@NotNull final ItemStorage item : itemsAllowed)
         {
             @NotNull final CompoundNBT itemCompound = new CompoundNBT();
-            item.getItemStack().write(itemCompound);
+            item.getItemStack().save(itemCompound);
             filteredItems.add(itemCompound);
         }
         moduleCompound.put(TAG_ITEMLIST, filteredItems);
@@ -141,7 +141,7 @@ public class ItemListModule extends AbstractBuildingModule implements IItemListM
         buf.writeInt(itemsAllowed.size());
         for (final ItemStorage item : itemsAllowed)
         {
-            buf.writeItemStack(item.getItemStack());
+            buf.writeItem(item.getItemStack());
         }
     }
 

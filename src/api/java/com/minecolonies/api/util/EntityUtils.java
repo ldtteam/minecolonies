@@ -60,7 +60,7 @@ public final class EntityUtils
     {
         if (player instanceof FakePlayer)
         {
-            final PlayerEntity tempPlayer = world.getPlayerByUuid(player.getUniqueID());
+            final PlayerEntity tempPlayer = world.getPlayerByUUID(player.getUUID());
             if (tempPlayer != null)
             {
                 return tempPlayer;
@@ -78,7 +78,7 @@ public final class EntityUtils
      */
     public static Entity getPlayerByUUID(@NotNull final World world, @NotNull final UUID id)
     {
-        return world.getPlayerByUuid(id);
+        return world.getPlayerByUUID(id);
     }
 
     /**
@@ -91,7 +91,7 @@ public final class EntityUtils
     public static List<Entity> getEntitiesFromID(@NotNull final World world, @NotNull final List<Integer> ids)
     {
         return ids.stream()
-                 .map(world::getEntityByID)
+                 .map(world::getEntity)
                  .collect(Collectors.toList());
     }
 
@@ -133,7 +133,7 @@ public final class EntityUtils
     {
         for (int i = 1; i < AIR_SPACE_ABOVE_TO_CHECK; i++)
         {
-            if (solidOrLiquid(world, groundPosition.up(i)) || world.getBlockState(groundPosition.up(i)).getBlock().isIn(BlockTags.LEAVES))
+            if (solidOrLiquid(world, groundPosition.above(i)) || world.getBlockState(groundPosition.above(i)).getBlock().is(BlockTags.LEAVES))
             {
                 return false;
             }
@@ -169,7 +169,7 @@ public final class EntityUtils
     {
         return Utils.scanForBlockNearPoint(
           world,
-          nearPoint.down(),
+          nearPoint.below(),
           1,
           2,
           1,
@@ -207,7 +207,7 @@ public final class EntityUtils
      */
     public static boolean tryMoveLivingToXYZ(@NotNull final MobEntity living, final int x, final int y, final int z, final double speedFactor)
     {
-        return living.getNavigator().tryMoveToXYZ(x, y, z, speedFactor);
+        return living.getNavigation().moveTo(x, y, z, speedFactor);
     }
 
     /**
@@ -246,7 +246,7 @@ public final class EntityUtils
         if (!isLivingAtSite(entity, x, y, z, TELEPORT_RANGE))
         {
             BlockPos spawnPoint =
-              Utils.scanForBlockNearPoint(entity.getEntityWorld(),
+              Utils.scanForBlockNearPoint(entity.getCommandSenderWorld(),
                 new BlockPos(x, y, z),
                 SCAN_RADIUS, SCAN_RADIUS, SCAN_RADIUS, 2,
                 Blocks.AIR,
@@ -259,12 +259,12 @@ public final class EntityUtils
                 spawnPoint = new BlockPos(x, y, z);
             }
 
-            entity.setLocationAndAngles(
+            entity.moveTo(
               spawnPoint.getX() + MIDDLE_BLOCK_OFFSET,
               spawnPoint.getY(),
               spawnPoint.getZ() + MIDDLE_BLOCK_OFFSET,
-              entity.rotationYaw,
-              entity.rotationPitch);
+              entity.yRot,
+              entity.xRot);
             return true;
         }
 
@@ -282,10 +282,10 @@ public final class EntityUtils
     public static boolean isEntityAtPosition(final Entity entity, final World world, final Entity placer)
     {
         final List<ItemStorage> existingReq = ItemStackUtils.getListOfStackForEntity(entity, placer);
-        final BlockPos pos = new BlockPos(entity.getPosX(), entity.getPosY(), entity.getPosZ());
-        return world.getLoadedEntitiesWithinAABB(Entity.class, new AxisAlignedBB(pos.add(1, 1, 1), pos.add(-1, -1, -1)))
+        final BlockPos pos = new BlockPos(entity.getX(), entity.getY(), entity.getZ());
+        return world.getLoadedEntitiesOfClass(Entity.class, new AxisAlignedBB(pos.offset(1, 1, 1), pos.offset(-1, -1, -1)))
                  .stream()
-                 .anyMatch(ent -> ent.getPosX() == entity.getPosX() && ent.getPosY() == entity.getPosY() && ent.getPosZ() == entity.getPosZ() && ItemStackUtils.getListOfStackForEntity(entity, placer)
+                 .anyMatch(ent -> ent.getX() == entity.getX() && ent.getY() == entity.getY() && ent.getZ() == entity.getZ() && ItemStackUtils.getListOfStackForEntity(entity, placer)
                                                                                                                      .equals(existingReq));
     }
 
@@ -311,8 +311,8 @@ public final class EntityUtils
      */
     public static boolean isLivingAtSite(@NotNull final LivingEntity entityLiving, final int x, final int y, final int z, final int range)
     {
-        final BlockPos pos = new BlockPos(entityLiving.getPosX(), entityLiving.getPosY(), entityLiving.getPosZ());
-        return pos.distanceSq(new Vector3i(x, y, z)) < MathUtils.square(range);
+        final BlockPos pos = new BlockPos(entityLiving.getX(), entityLiving.getY(), entityLiving.getZ());
+        return pos.distSqr(new Vector3i(x, y, z)) < MathUtils.square(range);
     }
 
     /**
@@ -323,6 +323,6 @@ public final class EntityUtils
      */
     public static boolean isFlying(final LivingEntity target)
     {
-        return target != null && (target.isAirBorne || !target.isOnGround()) && target.fallDistance <= 0.1f && target.world.isAirBlock(target.getPosition().down(2));
+        return target != null && (target.hasImpulse || !target.isOnGround()) && target.fallDistance <= 0.1f && target.level.isEmptyBlock(target.blockPosition().below(2));
     }
 }

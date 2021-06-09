@@ -289,8 +289,8 @@ public class RaidManager implements IRaiderManager
 
             // No rotation till spawners are moved into schematics
             final int shipRotation = new Random().nextInt(3);
-            final String homeBiomePath = colony.getWorld().getBiome(colony.getCenter()).getCategory().getName();
-            final int rand = colony.getWorld().rand.nextInt(100);
+            final String homeBiomePath = colony.getWorld().getBiome(colony.getCenter()).getBiomeCategory().getName();
+            final int rand = colony.getWorld().random.nextInt(100);
             if ((raidType.isEmpty() && (homeBiomePath.contains(TAIGA_BIOME_ID) || rand < IGNORE_BIOME_CHANCE)
                    || raidType.equals(NorsemenRaidEvent.NORSEMEN_RAID_EVENT_TYPE_ID.getPath()))
                   && ShipBasedRaiderUtils.canSpawnShipAt(colony,
@@ -316,7 +316,7 @@ public class RaidManager implements IRaiderManager
             }
             else
             {
-                final String biomePath = colony.getWorld().getBiome(targetSpawnPoint).getCategory().getName().toLowerCase();
+                final String biomePath = colony.getWorld().getBiome(targetSpawnPoint).getBiomeCategory().getName().toLowerCase();
                 final HordeRaidEvent event;
                 if (((biomePath.contains(DESERT_BIOME_ID) || (rand > IGNORE_BIOME_CHANCE && rand < IGNORE_BIOME_CHANCE * 2))
                        && raidType.isEmpty()) || raidType.equals(EgyptianRaidEvent.EGYPTIAN_RAID_EVENT_TYPE_ID.getPath()))
@@ -368,7 +368,7 @@ public class RaidManager implements IRaiderManager
             if (WorldUtil.isEntityBlockLoaded(colony.getWorld(), building.getPosition()))
             {
                 amount++;
-                locationSum = locationSum.add(building.getPosition());
+                locationSum = locationSum.relative(building.getPosition());
             }
         }
 
@@ -381,7 +381,7 @@ public class RaidManager implements IRaiderManager
         // Calculate center on loaded buildings, to find a nice distance for raiders
         BlockPos calcCenter = new BlockPos(locationSum.getX() / amount, locationSum.getY() / amount, locationSum.getZ() / amount);
 
-        final Random random = colony.getWorld().rand;
+        final Random random = colony.getWorld().random;
 
         BlockPos spawnPos = null;
 
@@ -395,13 +395,13 @@ public class RaidManager implements IRaiderManager
         {
             if (i % 2 == 0)
             {
-                mainDir = new Tuple<>(mainDir.getA(), mainDir.getB().rotateY());
-                secondDir = new Tuple<>(secondDir.getA().rotateY(), secondDir.getB());
+                mainDir = new Tuple<>(mainDir.getA(), mainDir.getB().getClockWise());
+                secondDir = new Tuple<>(secondDir.getA().getClockWise(), secondDir.getB());
             }
             else
             {
-                mainDir = new Tuple<>(mainDir.getA().rotateY(), mainDir.getB());
-                secondDir = new Tuple<>(secondDir.getA(), secondDir.getB().rotateY());
+                mainDir = new Tuple<>(mainDir.getA().getClockWise(), mainDir.getB());
+                secondDir = new Tuple<>(secondDir.getA(), secondDir.getB().getClockWise());
             }
 
             spawnPos = findSpawnPointInDirections(calcCenter, mainDir, secondDir);
@@ -420,8 +420,8 @@ public class RaidManager implements IRaiderManager
           BlockPosUtil.getFloor(spawnPos, colony.getWorld()),
           3,
           30,
-          (world, pos) -> (world.getBlockState(pos).isSolid() || world.getBlockState(pos).getMaterial().isLiquid()) && world.getBlockState(
-            pos.up()).getMaterial() == Material.AIR && world.getBlockState(pos.up(2)).getMaterial() == Material.AIR);
+          (world, pos) -> (world.getBlockState(pos).canOcclude() || world.getBlockState(pos).getMaterial().isLiquid()) && world.getBlockState(
+            pos.above()).getMaterial() == Material.AIR && world.getBlockState(pos.above(2)).getMaterial() == Material.AIR);
     }
 
     /**
@@ -438,28 +438,28 @@ public class RaidManager implements IRaiderManager
       final Tuple<Direction, Direction> dir1,
       final Tuple<Direction, Direction> dir2)
     {
-        final Random random = colony.getWorld().rand;
+        final Random random = colony.getWorld().random;
 
         BlockPos spawnPos = new BlockPos(center);
 
-        while (spawnPos.distanceSq(center) < MIN_RAID_BLOCK_DIST_CENTER_SQ)
+        while (spawnPos.distSqr(center) < MIN_RAID_BLOCK_DIST_CENTER_SQ)
         {
             if (random.nextBoolean())
             {
-                spawnPos = spawnPos.offset(dir1.getA(), 16);
+                spawnPos = spawnPos.relative(dir1.getA(), 16);
             }
             else
             {
-                spawnPos = spawnPos.offset(dir2.getA(), 16);
+                spawnPos = spawnPos.relative(dir2.getA(), 16);
             }
 
             if (random.nextBoolean())
             {
-                spawnPos = spawnPos.offset(dir1.getB(), 16);
+                spawnPos = spawnPos.relative(dir1.getB(), 16);
             }
             else
             {
-                spawnPos = spawnPos.offset(dir2.getB(), 16);
+                spawnPos = spawnPos.relative(dir2.getB(), 16);
             }
         }
 
@@ -476,11 +476,11 @@ public class RaidManager implements IRaiderManager
                 {
                     if (areChunksLoadedForRaidSpawn(tempPos, dir1.getA(), dir2.getB()))
                     {
-                        if (isValidSpawnPoint(tempPos.offset(dir1.getA(), 16)))
+                        if (isValidSpawnPoint(tempPos.relative(dir1.getA(), 16)))
                         {
-                            spawnPos = tempPos.offset(dir1.getA(), 16);
+                            spawnPos = tempPos.relative(dir1.getA(), 16);
                         }
-                        tempPos = tempPos.offset(dir1.getA(), 16);
+                        tempPos = tempPos.relative(dir1.getA(), 16);
                     }
                     else
                     {
@@ -491,11 +491,11 @@ public class RaidManager implements IRaiderManager
                 {
                     if (areChunksLoadedForRaidSpawn(tempPos, dir2.getA(), dir1.getB()))
                     {
-                        if (isValidSpawnPoint(tempPos.offset(dir2.getA(), 16)))
+                        if (isValidSpawnPoint(tempPos.relative(dir2.getA(), 16)))
                         {
-                            spawnPos = tempPos.offset(dir2.getA(), 16);
+                            spawnPos = tempPos.relative(dir2.getA(), 16);
                         }
-                        tempPos = tempPos.offset(dir2.getA(), 16);
+                        tempPos = tempPos.relative(dir2.getA(), 16);
                     }
                     else
                     {
@@ -508,11 +508,11 @@ public class RaidManager implements IRaiderManager
                 {
                     if (areChunksLoadedForRaidSpawn(tempPos, dir1.getB(), dir2.getA()))
                     {
-                        if (isValidSpawnPoint(tempPos.offset(dir1.getB(), 16)))
+                        if (isValidSpawnPoint(tempPos.relative(dir1.getB(), 16)))
                         {
-                            spawnPos = tempPos.offset(dir1.getB(), 16);
+                            spawnPos = tempPos.relative(dir1.getB(), 16);
                         }
-                        tempPos = tempPos.offset(dir1.getB(), 16);
+                        tempPos = tempPos.relative(dir1.getB(), 16);
                     }
                     else
                     {
@@ -523,11 +523,11 @@ public class RaidManager implements IRaiderManager
                 {
                     if (areChunksLoadedForRaidSpawn(tempPos, dir2.getB(), dir1.getA()))
                     {
-                        if (isValidSpawnPoint(tempPos.offset(dir2.getB(), 16)))
+                        if (isValidSpawnPoint(tempPos.relative(dir2.getB(), 16)))
                         {
-                            spawnPos = tempPos.offset(dir2.getB(), 16);
+                            spawnPos = tempPos.relative(dir2.getB(), 16);
                         }
-                        tempPos = tempPos.offset(dir2.getB(), 16);
+                        tempPos = tempPos.relative(dir2.getB(), 16);
                     }
                     else
                     {
@@ -551,9 +551,9 @@ public class RaidManager implements IRaiderManager
      */
     private boolean areChunksLoadedForRaidSpawn(final BlockPos pos, final Direction dir1, final Direction dir2)
     {
-        return (WorldUtil.isBlockLoaded(colony.getWorld(), pos.offset(dir1, 16))
-                  && WorldUtil.isBlockLoaded(colony.getWorld(), pos.offset(dir1, 32))
-                  && WorldUtil.isBlockLoaded(colony.getWorld(), pos.offset(dir2, 16)));
+        return (WorldUtil.isBlockLoaded(colony.getWorld(), pos.relative(dir1, 16))
+                  && WorldUtil.isBlockLoaded(colony.getWorld(), pos.relative(dir1, 32))
+                  && WorldUtil.isBlockLoaded(colony.getWorld(), pos.relative(dir2, 16)));
     }
 
     /**
@@ -616,7 +616,7 @@ public class RaidManager implements IRaiderManager
     {
         return 1 + Math.min(MineColonies.getConfig().getServer().maxBarbarianSize.get(),
           (int) ((raidLevel / SPAWN_MODIFIER) * getRaidDifficultyModifier() * (1.0 + colony.getMessagePlayerEntities().size() * INCREASE_PER_PLAYER) * ((
-            colony.getWorld().rand.nextDouble() * 0.5d) + 0.75)));
+            colony.getWorld().random.nextDouble() * 0.5d) + 0.75)));
     }
 
     @Override
@@ -706,7 +706,7 @@ public class RaidManager implements IRaiderManager
             &&
             (
               raidThisNight(colony.getWorld(), colony)
-                || colony.getWorld().getBiome(colony.getCenter()).getCategory().getName().contains("desert") && colony.getWorld().isRaining()
+                || colony.getWorld().getBiome(colony.getCenter()).getBiomeCategory().getName().contains("desert") && colony.getWorld().isRaining()
             );
 
         if (MineColonies.getConfig().getServer().enableInDevelopmentFeatures.get())
@@ -755,7 +755,7 @@ public class RaidManager implements IRaiderManager
             return true;
         }
 
-        return world.rand.nextDouble() < 1.0 / (MineColonies.getConfig().getServer().averageNumberOfNightsBetweenRaids.get() - MineColonies.getConfig()
+        return world.random.nextDouble() < 1.0 / (MineColonies.getConfig().getServer().averageNumberOfNightsBetweenRaids.get() - MineColonies.getConfig()
                                                                                                                                  .getServer().minimumNumberOfNightsBetweenRaids.get());
     }
 
@@ -771,7 +771,7 @@ public class RaidManager implements IRaiderManager
             final Object[] buildingArray = buildingList.toArray();
             if (buildingArray.length != 0)
             {
-                final int rand = colony.getWorld().rand.nextInt(buildingArray.length);
+                final int rand = colony.getWorld().random.nextInt(buildingArray.length);
                 final IBuilding building = (IBuilding) buildingArray[rand];
                 lastBuilding = building.getPosition();
             }
@@ -829,7 +829,7 @@ public class RaidManager implements IRaiderManager
     @Override
     public void read(final CompoundNBT compound)
     {
-        if (compound.keySet().contains(TAG_RAIDABLE))
+        if (compound.getAllKeys().contains(TAG_RAIDABLE))
         {
             setCanHaveRaiderEvents(compound.getBoolean(TAG_RAIDABLE));
         }

@@ -86,7 +86,7 @@ public class Food implements IDeliverable
             for (@NotNull final ItemStorage item : food.exclusionList)
             {
                 @NotNull final CompoundNBT itemCompound = new CompoundNBT();
-                item.getItemStack().write(itemCompound);
+                item.getItemStack().save(itemCompound);
                 items.add(itemCompound);
             }
             compound.put(NBT_EXCLUSION, items);
@@ -104,7 +104,7 @@ public class Food implements IDeliverable
     public static Food deserialize(final IFactoryController controller, final CompoundNBT compound)
     {
         final int count = compound.getInt(NBT_COUNT);
-        final ItemStack result = compound.keySet().contains(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_RESULT)) : ItemStackUtils.EMPTY;
+        final ItemStack result = compound.getAllKeys().contains(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_RESULT)) : ItemStackUtils.EMPTY;
         final List<ItemStorage> items = new ArrayList<>();
 
         if (compound.contains(NBT_EXCLUSION))
@@ -112,7 +112,7 @@ public class Food implements IDeliverable
             final ListNBT filterableItems = compound.getList(NBT_EXCLUSION, Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < filterableItems.size(); ++i)
             {
-                items.add(new ItemStorage(ItemStack.read(filterableItems.getCompound(i))));
+                items.add(new ItemStorage(ItemStack.of(filterableItems.getCompound(i))));
             }
         }
 
@@ -133,13 +133,13 @@ public class Food implements IDeliverable
         buffer.writeBoolean(!ItemStackUtils.isEmpty(input.result));
         if (!ItemStackUtils.isEmpty(input.result))
         {
-            buffer.writeItemStack(input.result);
+            buffer.writeItem(input.result);
         }
 
         buffer.writeInt(input.exclusionList.size());
         for (ItemStorage item : input.exclusionList)
         {
-            buffer.writeItemStack(item.getItemStack());
+            buffer.writeItem(item.getItemStack());
         }
     }
 
@@ -152,13 +152,13 @@ public class Food implements IDeliverable
      */
     public static Food deserialize(final IFactoryController controller, final PacketBuffer buffer) {
         final int count = buffer.readInt();
-        final ItemStack result = buffer.readBoolean() ? buffer.readItemStack() : ItemStack.EMPTY;
+        final ItemStack result = buffer.readBoolean() ? buffer.readItem() : ItemStack.EMPTY;
 
         List<ItemStorage> items = new ArrayList<>();
         final int itemsCount = buffer.readInt();
         for (int i = 0; i < itemsCount; ++i)
         {
-            items.add(new ItemStorage(buffer.readItemStack()));
+            items.add(new ItemStorage(buffer.readItem()));
         }
 
         if (!items.isEmpty())

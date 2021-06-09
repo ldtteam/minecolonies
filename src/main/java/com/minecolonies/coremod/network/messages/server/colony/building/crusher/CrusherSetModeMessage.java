@@ -53,7 +53,7 @@ public class CrusherSetModeMessage extends AbstractBuildingServerMessage<Buildin
     {
 
         quantity = buf.readInt();
-        crusherMode = buf.readItemStack();
+        crusherMode = buf.readItem();
     }
 
     @Override
@@ -61,7 +61,7 @@ public class CrusherSetModeMessage extends AbstractBuildingServerMessage<Buildin
     {
 
         buf.writeInt(quantity);
-        buf.writeItemStack(crusherMode);
+        buf.writeItem(crusherMode);
     }
 
     @Override
@@ -78,7 +78,7 @@ public class CrusherSetModeMessage extends AbstractBuildingServerMessage<Buildin
         if (qty > building.getMaxDailyQuantity())
         {
             qty = building.getMaxDailyQuantity();
-            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.crusher.toomuch", qty), player.getUniqueID());
+            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.crusher.toomuch", qty), player.createPlayerUUID());
         }
         building.setCrusherMode(new ItemStorage(crusherMode), qty);
     }

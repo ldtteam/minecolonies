@@ -14,7 +14,7 @@ public class OpenGuiWindowCriterionInstance extends CriterionInstance
 
     public OpenGuiWindowCriterionInstance()
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_OPEN_GUI_WINDOW), EntityPredicate.AndPredicate.ANY_AND);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_OPEN_GUI_WINDOW), EntityPredicate.AndPredicate.ANY);
     }
 
     /**
@@ -23,7 +23,7 @@ public class OpenGuiWindowCriterionInstance extends CriterionInstance
      */
     public OpenGuiWindowCriterionInstance(final String windowResource)
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_OPEN_GUI_WINDOW), EntityPredicate.AndPredicate.ANY_AND);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_OPEN_GUI_WINDOW), EntityPredicate.AndPredicate.ANY);
 
         this.windowResource = windowResource;
     }

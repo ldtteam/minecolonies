@@ -148,7 +148,7 @@ public class BuildingGraveyard extends AbstractBuildingWorker
         {
             if (WorldUtil.isBlockLoaded(colony.getWorld(), currentGrave))
             {
-                final TileEntity tileEntity = getColony().getWorld().getTileEntity(currentGrave);
+                final TileEntity tileEntity = getColony().getWorld().getBlockEntity(currentGrave);
                 if (tileEntity instanceof TileEntityGrave)
                 {
                     return currentGrave;
@@ -175,13 +175,13 @@ public class BuildingGraveyard extends AbstractBuildingWorker
     {
         super.deserializeNBT(compound);
 
-        if (compound.keySet().contains(TAG_CURRENT_GRAVE))
+        if (compound.getAllKeys().contains(TAG_CURRENT_GRAVE))
         {
             currentGrave = BlockPosUtil.read(compound, TAG_CURRENT_GRAVE);
         }
 
         restingCitizen.clear();
-        if (compound.keySet().contains(TAG_RIP_CITIZEN_LIST))
+        if (compound.getAllKeys().contains(TAG_RIP_CITIZEN_LIST))
         {
             final ListNBT ripCitizen = compound.getList(TAG_RIP_CITIZEN_LIST, TAG_STRING);
             for (int i = 0; i < ripCitizen.size(); i++)
@@ -191,7 +191,7 @@ public class BuildingGraveyard extends AbstractBuildingWorker
             }
         }
 
-        if (compound.keySet().contains(TAG_GRAVE_DATA))
+        if (compound.getAllKeys().contains(TAG_GRAVE_DATA))
         {
             lastGraveData = new GraveData();
             lastGraveData.read(compound.getCompound(TAG_GRAVE_DATA));
@@ -236,7 +236,7 @@ public class BuildingGraveyard extends AbstractBuildingWorker
         {
             @NotNull final CompoundNBT graveCompound = new CompoundNBT();
             BlockPosUtil.write(graveCompound, TAG_VISUAL_GRAVES_BLOCKPOS, vgp.getA());
-            graveCompound.putString(TAG_VISUAL_GRAVES_FACING, vgp.getB().getName2());
+            graveCompound.putString(TAG_VISUAL_GRAVES_FACING, vgp.getB().getName());
             visualGraveTagList.add(graveCompound);
         }
         compound.put(TAG_VISUAL_GRAVES, visualGraveTagList);
@@ -297,7 +297,7 @@ public class BuildingGraveyard extends AbstractBuildingWorker
         {
             if (WorldUtil.isBlockLoaded(colony.getWorld(), grave))
             {
-                final TileEntity tileEntity = getColony().getWorld().getTileEntity(grave);
+                final TileEntity tileEntity = getColony().getWorld().getBlockEntity(grave);
                 if (tileEntity instanceof TileEntityGrave)
                 {
                     cleanList.add(grave);
@@ -316,7 +316,7 @@ public class BuildingGraveyard extends AbstractBuildingWorker
         buf.writeInt(restingCitizen.size());
         for (@NotNull final String citizenName : restingCitizen)
         {
-            buf.writeString(citizenName);
+            buf.writeUtf(citizenName);
         }
         buf.writeInt(restingCitizen.size());
     }
@@ -333,9 +333,9 @@ public class BuildingGraveyard extends AbstractBuildingWorker
             {
                 facing = Direction.NORTH; //prevent setting an invalid HorizontalDirection
             }
-            getColony().getWorld().setBlockState(positionAndDirection.getA(), ModBlocks.blockNamedGrave.getDefaultState().with(AbstractBlockMinecoloniesNamedGrave.FACING, facing));
+            getColony().getWorld().setBlockAndUpdate(positionAndDirection.getA(), ModBlocks.blockNamedGrave.defaultBlockState().setValue(AbstractBlockMinecoloniesNamedGrave.FACING, facing));
 
-            TileEntity tileEntity = getColony().getWorld().getTileEntity(positionAndDirection.getA());
+            TileEntity tileEntity = getColony().getWorld().getBlockEntity(positionAndDirection.getA());
             if (tileEntity instanceof TileEntityNamedGrave)
             {
                 final String firstName = StringUtils.split(lastGraveData.getCitizenName())[0];
@@ -370,7 +370,7 @@ public class BuildingGraveyard extends AbstractBuildingWorker
         super.registerBlockPosition(state, pos, world);
         if (state.getBlock() == ModBlocks.blockNamedGrave)
         {
-            visualGravePositions.add(new Tuple<>(pos, state.get(AbstractBlockMinecoloniesNamedGrave.FACING)));
+            visualGravePositions.add(new Tuple<>(pos, state.getValue(AbstractBlockMinecoloniesNamedGrave.FACING)));
         }
     }
 
@@ -454,7 +454,7 @@ public class BuildingGraveyard extends AbstractBuildingWorker
             final int sizeRIP = buf.readInt();
             for (int i = 1; i <= sizeRIP; i++)
             {
-                restingCitizen.add(buf.readString());
+                restingCitizen.add(buf.readUtf());
             }
         }
 

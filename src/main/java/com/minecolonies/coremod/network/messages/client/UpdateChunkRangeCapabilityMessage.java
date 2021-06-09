@@ -99,7 +99,7 @@ public class UpdateChunkRangeCapabilityMessage implements IMessage
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
-        final ClientWorld world = Minecraft.getInstance().world;
+        final ClientWorld world = Minecraft.getInstance().level;
         for (final ChunkCapData data : caps)
         {
             if (!WorldUtil.isChunkLoaded(world, new ChunkPos(data.x, data.z)))

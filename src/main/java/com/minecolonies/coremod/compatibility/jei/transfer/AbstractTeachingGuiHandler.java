@@ -17,6 +17,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+import mezz.jei.api.gui.handlers.IGhostIngredientHandler.Target;
+
 /**
  * Common base class for JEI teaching GUI extensions.
  */
@@ -73,11 +75,11 @@ public abstract class AbstractTeachingGuiHandler<W extends ContainerScreen<?>>
         final List<Target<I>> targets = new ArrayList<>();
         if (ingredient instanceof ItemStack)
         {
-            for (final Slot slot : gui.getContainer().inventorySlots)
+            for (final Slot slot : gui.getMenu().slots)
             {
-                if (!slot.isEnabled() || !isSupportedSlot(slot)) continue;
+                if (!slot.isActive() || !isSupportedSlot(slot)) continue;
 
-                final Rectangle2d bounds = new Rectangle2d(gui.getGuiLeft() + slot.xPos, gui.getGuiTop() + slot.yPos, 17, 17);
+                final Rectangle2d bounds = new Rectangle2d(gui.getGuiLeft() + slot.x, gui.getGuiTop() + slot.y, 17, 17);
 
                 targets.add(new Target<I>()
                 {
@@ -91,7 +93,7 @@ public abstract class AbstractTeachingGuiHandler<W extends ContainerScreen<?>>
                     @Override
                     public void accept(@NotNull I ingredient)
                     {
-                        slot.putStack((ItemStack) ingredient);
+                        slot.set((ItemStack) ingredient);
                         updateServer(gui);
                     }
                 });

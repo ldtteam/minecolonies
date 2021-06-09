@@ -163,7 +163,7 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
         newCitizen.setBedPos(building.getPosition());
         newCitizen.setHomeBuilding(building);
 
-        int recruitLevel = building.getColony().getWorld().rand.nextInt(10 * building.getBuildingLevel()) + 15;
+        int recruitLevel = building.getColony().getWorld().random.nextInt(10 * building.getBuildingLevel()) + 15;
         List<com.minecolonies.api.util.Tuple<Item, Integer>> recruitCosts = IColonyManager.getInstance().getCompatibilityManager().getRecruitmentCostsWeights();
 
         if (newCitizen.getName().contains("Ray"))
@@ -180,7 +180,7 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
         }
 
         building.getColony().getVisitorManager().spawnOrCreateCivilian(newCitizen, building.getColony().getWorld(), spawnPos, true);
-        Tuple<Item, Integer> cost = recruitCosts.get(building.getColony().getWorld().rand.nextInt(recruitCosts.size()));
+        Tuple<Item, Integer> cost = recruitCosts.get(building.getColony().getWorld().random.nextInt(recruitCosts.size()));
 
         building.getColony().getEventDescriptionManager().addEventDescription(new VisitorSpawnedEvent(spawnPos, newCitizen.getName()));
 
@@ -191,36 +191,36 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
             if (recruitLevel > LEATHER_SKILL_LEVEL)
             {
                 // Leather
-                citizenEntity.setItemStackToSlot(EquipmentSlotType.FEET, new ItemStack(Items.LEATHER_BOOTS));
+                citizenEntity.setItemSlot(EquipmentSlotType.FEET, new ItemStack(Items.LEATHER_BOOTS));
             }
             if (recruitLevel > GOLD_SKILL_LEVEL)
             {
                 // Gold
-                citizenEntity.setItemStackToSlot(EquipmentSlotType.FEET, new ItemStack(Items.GOLDEN_BOOTS));
+                citizenEntity.setItemSlot(EquipmentSlotType.FEET, new ItemStack(Items.GOLDEN_BOOTS));
             }
             if (recruitLevel > IRON_SKILL_LEVEL)
             {
                 if (cost.getB() <= 2)
                 {
-                    cost = recruitCosts.get(building.getColony().getWorld().rand.nextInt(recruitCosts.size()));
+                    cost = recruitCosts.get(building.getColony().getWorld().random.nextInt(recruitCosts.size()));
                 }
                 // Iron
-                citizenEntity.setItemStackToSlot(EquipmentSlotType.FEET, new ItemStack(Items.IRON_BOOTS));
+                citizenEntity.setItemSlot(EquipmentSlotType.FEET, new ItemStack(Items.IRON_BOOTS));
             }
             if (recruitLevel > DIAMOND_SKILL_LEVEL)
             {
                 if (cost.getB() <= 3)
                 {
-                    cost = recruitCosts.get(building.getColony().getWorld().rand.nextInt(recruitCosts.size()));
+                    cost = recruitCosts.get(building.getColony().getWorld().random.nextInt(recruitCosts.size()));
                 }
                 // Diamond
-                citizenEntity.setItemStackToSlot(EquipmentSlotType.FEET, new ItemStack(Items.DIAMOND_BOOTS));
+                citizenEntity.setItemSlot(EquipmentSlotType.FEET, new ItemStack(Items.DIAMOND_BOOTS));
             }
         }
 
         newCitizen.setRecruitCosts(new ItemStack(cost.getA(), (int)(recruitLevel * 3.0 / cost.getB())));
         newCitizen.triggerInteraction(new RecruitmentInteraction(new TranslationTextComponent(
-          "com.minecolonies.coremod.gui.chat.recruitstory" + (building.getColony().getWorld().rand.nextInt(MAX_STORY) + 1), newCitizen.getName().split(" ")[0]), ChatPriority.IMPORTANT));
+          "com.minecolonies.coremod.gui.chat.recruitstory" + (building.getColony().getWorld().random.nextInt(MAX_STORY) + 1), newCitizen.getName().split(" ")[0]), ChatPriority.IMPORTANT));
     }
 
     @Override
@@ -280,7 +280,7 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
 
         if (!positions.isEmpty())
         {
-            return positions.get(building.getColony().getWorld().rand.nextInt(positions.size()));
+            return positions.get(building.getColony().getWorld().random.nextInt(positions.size()));
         }
 
         return null;
@@ -314,7 +314,7 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
     {
         if (!getWorkPositions().isEmpty())
         {
-            return workPositions.get(building.getColony().getWorld().rand.nextInt(workPositions.size()));
+            return workPositions.get(building.getColony().getWorld().random.nextInt(workPositions.size()));
         }
         return null;
     }

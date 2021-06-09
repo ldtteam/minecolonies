@@ -279,7 +279,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
 
         if (this.levelUp)
         {
-            final TileEntity tileEntity = colony.getWorld().getTileEntity(buildingLocation);
+            final TileEntity tileEntity = colony.getWorld().getBlockEntity(buildingLocation);
             if (tileEntity instanceof TileEntityDecorationController)
             {
                 ((TileEntityDecorationController) tileEntity).setLevel(((TileEntityDecorationController) tileEntity).getLevel() + 1);

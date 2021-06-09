@@ -64,7 +64,7 @@ public class LocalizedParticleEffectMessage implements IMessage
     @Override
     public void fromBytes(@NotNull final PacketBuffer buf)
     {
-        stack = buf.readItemStack();
+        stack = buf.readItem();
         posX = buf.readDouble();
         posY = buf.readDouble();
         posZ = buf.readDouble();
@@ -73,7 +73,7 @@ public class LocalizedParticleEffectMessage implements IMessage
     @Override
     public void toBytes(@NotNull final PacketBuffer buf)
     {
-        buf.writeItemStack(stack);
+        buf.writeItem(stack);
         buf.writeDouble(posX);
         buf.writeDouble(posY);
         buf.writeDouble(posZ);
@@ -89,7 +89,7 @@ public class LocalizedParticleEffectMessage implements IMessage
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
-        final ClientWorld world = Minecraft.getInstance().world;
+        final ClientWorld world = Minecraft.getInstance().level;
         final ItemStack localStack = stack;
 
         for (int i = 0; i < 5; ++i)

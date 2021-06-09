@@ -252,7 +252,7 @@ public class CitizenDataView implements ICitizenDataView
     @Override
     public void deserialize(@NotNull final PacketBuffer buf)
     {
-        name = buf.readString(32767);
+        name = buf.readUtf(32767);
         female = buf.readBoolean();
         entityId = buf.readInt();
         paused = buf.readBoolean();
@@ -268,13 +268,13 @@ public class CitizenDataView implements ICitizenDataView
         saturation = buf.readDouble();
         happiness = buf.readDouble();
 
-        citizenSkillHandler.read(buf.readCompoundTag());
+        citizenSkillHandler.read(buf.readNbt());
 
-        job = buf.readString(32767);
+        job = buf.readUtf(32767);
 
         colonyId = buf.readInt();
 
-        final CompoundNBT compound = buf.readCompoundTag();
+        final CompoundNBT compound = buf.readNbt();
         inventory = new InventoryCitizen(this.name, true);
         final ListNBT ListNBT = compound.getList("inventory", 10);
         this.inventory.read(ListNBT);
@@ -287,7 +287,7 @@ public class CitizenDataView implements ICitizenDataView
         final int size = buf.readInt();
         for (int i = 0; i < size; i++)
         {
-            final CompoundNBT compoundNBT = buf.readCompoundTag();
+            final CompoundNBT compoundNBT = buf.readNbt();
             final ServerCitizenInteraction handler =
               (ServerCitizenInteraction) MinecoloniesAPIProxy.getInstance().getInteractionResponseHandlerDataManager().createFrom(this, compoundNBT);
             citizenChatOptions.put(handler.getInquiry(), handler);
@@ -295,14 +295,14 @@ public class CitizenDataView implements ICitizenDataView
 
         sortedInteractions = citizenChatOptions.values().stream().sorted(Comparator.comparingInt(e -> e.getPriority().getPriority())).collect(Collectors.toList());
 
-        citizenHappinessHandler.read(buf.readCompoundTag());
+        citizenHappinessHandler.read(buf.readNbt());
 
         int statusindex = buf.readInt();
         statusIcon = statusindex >= 0 ? VisibleCitizenStatus.getForId(statusindex) : null;
 
         if (buf.readBoolean())
         {
-            final IColonyView colonyView = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().world.getDimensionKey());
+            final IColonyView colonyView = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().level.dimension());
             jobView = IJobDataManager.getInstance().createViewFrom(colonyView, this, buf);
         }
     }

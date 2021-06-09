@@ -39,10 +39,10 @@ public class CommandCitizenTriggerWalkTo implements IMCColonyOfficerCommand
         final Entity sender = context.getSource().getEntity();
         // Colony
         final int colonyID = IntegerArgumentType.getInteger(context, COLONYID_ARG);
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, sender == null ? World.OVERWORLD : context.getSource().getWorld().getDimensionKey());
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, sender == null ? World.OVERWORLD : context.getSource().getLevel().dimension());
         if (colony == null)
         {
-            context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.colonyidnotfound", colonyID), true);
+            context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.colonyidnotfound", colonyID), true);
             return 0;
         }
 
@@ -50,7 +50,7 @@ public class CommandCitizenTriggerWalkTo implements IMCColonyOfficerCommand
 
         if (citizenData == null)
         {
-            context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.citizeninfo.notfound"), true);
+            context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.citizeninfo.notfound"), true);
             return 0;
         }
 
@@ -58,17 +58,17 @@ public class CommandCitizenTriggerWalkTo implements IMCColonyOfficerCommand
 
         if (!optionalEntityCitizen.isPresent())
         {
-            context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.citizeninfo.notloaded"), true);
+            context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.citizeninfo.notloaded"), true);
             return 0;
         }
 
         final AbstractEntityCitizen entityCitizen = optionalEntityCitizen.get();
-        final ILocationArgument targetLocation = Vec3Argument.getLocation(context, POS_ARG);
+        final ILocationArgument targetLocation = Vec3Argument.getCoordinates(context, POS_ARG);
         final BlockPos targetPos = targetLocation.getBlockPos(context.getSource());
 
-        if (context.getSource().getWorld() == entityCitizen.world)
+        if (context.getSource().getLevel() == entityCitizen.level)
         {
-            entityCitizen.getNavigator().tryMoveToXYZ(targetPos.getX(), targetPos.getY(), targetPos.getZ(), 1f);
+            entityCitizen.getNavigation().moveTo(targetPos.getX(), targetPos.getY(), targetPos.getZ(), 1f);
         }
 
         return 1;

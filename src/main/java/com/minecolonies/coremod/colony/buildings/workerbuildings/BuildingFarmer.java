@@ -131,10 +131,10 @@ public class BuildingFarmer extends AbstractBuildingCrafter
         final ItemStack stackPotatoe = new ItemStack(Items.POTATO);
         final ItemStack stackReed = new ItemStack(Items.BEETROOT_SEEDS);
 
-        keepX.put(stackSeed::isItemEqual, new Tuple<>(SEEDS_TO_KEEP, true));
-        keepX.put(stackCarrot::isItemEqual, new Tuple<>(SEEDS_TO_KEEP, true));
-        keepX.put(stackPotatoe::isItemEqual, new Tuple<>(SEEDS_TO_KEEP, true));
-        keepX.put(stackReed::isItemEqual, new Tuple<>(SEEDS_TO_KEEP, true));
+        keepX.put(stackSeed::sameItem, new Tuple<>(SEEDS_TO_KEEP, true));
+        keepX.put(stackCarrot::sameItem, new Tuple<>(SEEDS_TO_KEEP, true));
+        keepX.put(stackPotatoe::sameItem, new Tuple<>(SEEDS_TO_KEEP, true));
+        keepX.put(stackReed::sameItem, new Tuple<>(SEEDS_TO_KEEP, true));
         keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.HOE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
         keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.AXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
     }
@@ -167,7 +167,7 @@ public class BuildingFarmer extends AbstractBuildingCrafter
      */
     public void addFarmerFields(final BlockPos field)
     {
-        final TileEntity scareCrow = getColony().getWorld().getTileEntity(field);
+        final TileEntity scareCrow = getColony().getWorld().getBlockEntity(field);
         if (scareCrow instanceof ScarecrowTileEntity)
         {
             farmerFields.add(field);
@@ -218,7 +218,7 @@ public class BuildingFarmer extends AbstractBuildingCrafter
         }
         for (@NotNull final BlockPos field : fields)
         {
-            final TileEntity scareCrow = getColony().getWorld().getTileEntity(field);
+            final TileEntity scareCrow = getColony().getWorld().getBlockEntity(field);
             if (scareCrow instanceof ScarecrowTileEntity && ((ScarecrowTileEntity) scareCrow).needsWork())
             {
                 currentField = field;
@@ -236,7 +236,7 @@ public class BuildingFarmer extends AbstractBuildingCrafter
         {
             for (@NotNull final BlockPos field : farmerFields)
             {
-                final TileEntity scareCrow = getColony().getWorld().getTileEntity(field);
+                final TileEntity scareCrow = getColony().getWorld().getBlockEntity(field);
                 if (scareCrow instanceof ScarecrowTileEntity)
                 {
                     ((ScarecrowTileEntity) scareCrow).setOwner(citizen.getId());
@@ -259,7 +259,7 @@ public class BuildingFarmer extends AbstractBuildingCrafter
         }
         shouldAssignManually = compound.getBoolean(TAG_ASSIGN_MANUALLY);
 
-        if (compound.keySet().contains(LAST_FIELD_TAG))
+        if (compound.getAllKeys().contains(LAST_FIELD_TAG))
         {
             final BlockPos pos = BlockPosUtil.read(compound, LAST_FIELD_TAG);
             lastField = pos;
@@ -294,16 +294,16 @@ public class BuildingFarmer extends AbstractBuildingCrafter
         super.onDestroyed();
         for (@NotNull final BlockPos field : farmerFields)
         {
-            final TileEntity scareCrow = getColony().getWorld().getTileEntity(field);
+            final TileEntity scareCrow = getColony().getWorld().getBlockEntity(field);
             if (scareCrow instanceof ScarecrowTileEntity)
             {
                 ((ScarecrowTileEntity) scareCrow).setTaken(false);
                 ((ScarecrowTileEntity) scareCrow).setOwner(0);
 
                 getColony().getWorld()
-                  .notifyBlockUpdate(scareCrow.getPos(),
-                    getColony().getWorld().getBlockState(scareCrow.getPos()),
-                    getColony().getWorld().getBlockState(scareCrow.getPos()),
+                  .sendBlockUpdated(scareCrow.getBlockPos(),
+                    getColony().getWorld().getBlockState(scareCrow.getBlockPos()),
+                    getColony().getWorld().getBlockState(scareCrow.getBlockPos()),
                     BLOCK_UPDATE_FLAG);
             }
         }
@@ -371,11 +371,11 @@ public class BuildingFarmer extends AbstractBuildingCrafter
         final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep = new HashMap<>(super.getRequiredItemsAndAmount());
         for (final BlockPos field : farmerFields)
         {
-            final TileEntity scareCrow = getColony().getWorld().getTileEntity(field);
+            final TileEntity scareCrow = getColony().getWorld().getBlockEntity(field);
             if (scareCrow instanceof ScarecrowTileEntity && !ItemStackUtils.isEmpty(((ScarecrowTileEntity) scareCrow).getSeed()))
             {
                 final ItemStack seedStack = ((ScarecrowTileEntity) scareCrow).getSeed();
-                toKeep.put(seedStack::isItemEqual, new Tuple<>(SEEDS_TO_KEEP, true));
+                toKeep.put(seedStack::sameItem, new Tuple<>(SEEDS_TO_KEEP, true));
             }
         }
         return toKeep;
@@ -432,7 +432,7 @@ public class BuildingFarmer extends AbstractBuildingCrafter
         {
             if (WorldUtil.isBlockLoaded(getColony().getWorld(), field))
             {
-                final TileEntity scareCrow = getColony().getWorld().getTileEntity(field);
+                final TileEntity scareCrow = getColony().getWorld().getBlockEntity(field);
                 if (scareCrow instanceof ScarecrowTileEntity)
                 {
                     if (((ScarecrowTileEntity) scareCrow).isTaken())
@@ -468,7 +468,7 @@ public class BuildingFarmer extends AbstractBuildingCrafter
     {
         for (@NotNull final BlockPos field : farmerFields)
         {
-            final TileEntity scareCrow = getColony().getWorld().getTileEntity(field);
+            final TileEntity scareCrow = getColony().getWorld().getBlockEntity(field);
             if (scareCrow instanceof ScarecrowTileEntity)
             {
                 ((ScarecrowTileEntity) scareCrow).setNeedsWork(true);
@@ -489,13 +489,13 @@ public class BuildingFarmer extends AbstractBuildingCrafter
 
             for (@NotNull final BlockPos field : tempFields)
             {
-                final TileEntity scarecrow = world.getTileEntity(field);
+                final TileEntity scarecrow = world.getBlockEntity(field);
                 if (scarecrow instanceof ScarecrowTileEntity)
                 {
                     getColony().getWorld()
-                      .notifyBlockUpdate(scarecrow.getPos(),
-                        getColony().getWorld().getBlockState(scarecrow.getPos()),
-                        getColony().getWorld().getBlockState(scarecrow.getPos()),
+                      .sendBlockUpdated(scarecrow.getBlockPos(),
+                        getColony().getWorld().getBlockState(scarecrow.getBlockPos()),
+                        getColony().getWorld().getBlockState(scarecrow.getBlockPos()),
                         BLOCK_UPDATE_FLAG);
                     ((ScarecrowTileEntity) scarecrow).setTaken(true);
                     ((ScarecrowTileEntity) scarecrow).setOwner(getMainCitizen() != null? getMainCitizen().getId() : 0);
@@ -530,16 +530,16 @@ public class BuildingFarmer extends AbstractBuildingCrafter
      */
     public void freeField(final BlockPos position)
     {
-        final TileEntity scarecrow = getColony().getWorld().getTileEntity(position);
+        final TileEntity scarecrow = getColony().getWorld().getBlockEntity(position);
         if (scarecrow instanceof ScarecrowTileEntity)
         {
             farmerFields.remove(position);
             ((ScarecrowTileEntity) scarecrow).setTaken(false);
             ((ScarecrowTileEntity) scarecrow).setOwner(0);
             getColony().getWorld()
-              .notifyBlockUpdate(scarecrow.getPos(),
-                getColony().getWorld().getBlockState(scarecrow.getPos()),
-                getColony().getWorld().getBlockState(scarecrow.getPos()),
+              .sendBlockUpdated(scarecrow.getBlockPos(),
+                getColony().getWorld().getBlockState(scarecrow.getBlockPos()),
+                getColony().getWorld().getBlockState(scarecrow.getBlockPos()),
                 BLOCK_UPDATE_FLAG);
         }
     }
@@ -551,7 +551,7 @@ public class BuildingFarmer extends AbstractBuildingCrafter
      */
     public void assignField(final BlockPos position)
     {
-        final TileEntity scarecrow = getColony().getWorld().getTileEntity(position);
+        final TileEntity scarecrow = getColony().getWorld().getBlockEntity(position);
         if (scarecrow instanceof ScarecrowTileEntity)
         {
             ((ScarecrowTileEntity) scarecrow).setTaken(true);

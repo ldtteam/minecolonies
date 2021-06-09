@@ -119,7 +119,7 @@ public class WindowBannerPicker extends Screen
 
         this.colony = colony;
         this.window = hallWindow;
-        this.modelRender = BannerTileEntityRenderer.getModelRender();
+        this.modelRender = BannerTileEntityRenderer.makeFlag();
 
         /* Get all patterns, then remove excluded and item-required patterns */
         List<BannerPattern> exclusion = new ArrayList<>();
@@ -129,7 +129,7 @@ public class WindowBannerPicker extends Screen
         this.patterns.removeAll(exclusion);
 
         // Fetch the patterns as a List and not ListNBT
-        this.layers = BannerTileEntity.getPatternColorData(DyeColor.WHITE, colony.getColonyFlag());
+        this.layers = BannerTileEntity.createPatterns(DyeColor.WHITE, colony.getColonyFlag());
         // Remove the extra base layer created by the above function
         if (this.layers.size() > 1)
             this.layers.remove(0);
@@ -202,9 +202,9 @@ public class WindowBannerPicker extends Screen
                 pressed -> {
                     BannerPattern.Builder builder = new BannerPattern.Builder();
                     for (Pair<BannerPattern, DyeColor> pair : layers)
-                        builder.setPatternWithColor(pair.getFirst(), pair.getSecond());
+                        builder.addPattern(pair.getFirst(), pair.getSecond());
 
-                    colony.setColonyFlag(builder.buildNBT());
+                    colony.setColonyFlag(builder.toListTag());
                     window.open();
                 }
         ));
@@ -277,7 +277,7 @@ public class WindowBannerPicker extends Screen
         // Render the instructions
         this.drawCenteredString(stack,
                 this.font,
-                I18n.format("com.minecolonies.coremod.gui.flag.choose"),
+                I18n.get("com.minecolonies.coremod.gui.flag.choose"),
                 this.width /2,
                 16,
                 0xFFFFFF /* white */
@@ -289,7 +289,7 @@ public class WindowBannerPicker extends Screen
      */
     private void drawFlag()
     {
-        RenderHelper.setupGuiFlatDiffuseLighting();
+        RenderHelper.setupForFlatItems();
         double posX = (this.width + PATTERN_HEIGHT/2.0 * PATTERN_COLUMNS) / 2 + SIDE *2;
         double posY = (this.height) / 2.0;
 
@@ -310,14 +310,14 @@ public class WindowBannerPicker extends Screen
      */
     private void drawBannerPattern(BannerPattern pattern, int x, int y)
     {
-        RenderHelper.setupGuiFlatDiffuseLighting();
+        RenderHelper.setupForFlatItems();
 
         List<Pair<BannerPattern, DyeColor>> list = new ArrayList<>();
         list.add(new Pair<>(BannerPattern.BASE, DyeColor.GRAY));
         list.add(new Pair<>(pattern, DyeColor.WHITE));
 
         MatrixStack transform = new MatrixStack();
-        transform.push();
+        transform.pushPose();
         transform.translate(x+2.5, y + 29, 0.0D);
         transform.scale(10.0F, -11.0F, 1.0F);
         transform.translate(0.5D, 0.5D, 0.5D);
@@ -333,21 +333,21 @@ public class WindowBannerPicker extends Screen
      */
     public void renderBanner(MatrixStack transform, List<Pair<BannerPattern, DyeColor>> layers)
     {
-        this.modelRender.rotateAngleX = 0.0F;
-        this.modelRender.rotationPointY = -32.0F;
+        this.modelRender.xRot = 0.0F;
+        this.modelRender.y = -32.0F;
 
-        IRenderTypeBuffer.Impl source = this.minecraft.getRenderTypeBuffers().getBufferSource();
-        BannerTileEntityRenderer.func_230180_a_(
+        IRenderTypeBuffer.Impl source = this.minecraft.renderBuffers().bufferSource();
+        BannerTileEntityRenderer.renderPatterns(
                 transform,
                 source, 15728880,
                 OverlayTexture.NO_OVERLAY,
                 this.modelRender,
-                ModelBakery.LOCATION_BANNER_BASE,
+                ModelBakery.BANNER_BASE,
                 true,
                 layers
         );
-        transform.pop();
-        source.finish();
+        transform.popPose();
+        source.endBatch();
     }
 
     @Override

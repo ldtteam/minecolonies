@@ -31,7 +31,7 @@ public class RendererArcherPirate extends AbstractRendererPirate<AbstractEntityP
 
     @NotNull
     @Override
-    public ResourceLocation getEntityTexture(final AbstractEntityPirate entity)
+    public ResourceLocation getTextureLocation(final AbstractEntityPirate entity)
     {
         switch (entity.getTextureId())
         {

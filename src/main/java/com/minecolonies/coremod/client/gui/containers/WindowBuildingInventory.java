@@ -47,7 +47,7 @@ public class WindowBuildingInventory extends ContainerScreen<ContainerBuildingIn
         super(container, playerInventory, component);
         this.passEvents = false;
         this.inventoryRows = container.getSize();
-        this.ySize = 114 + this.inventoryRows * 18;
+        this.imageHeight = 114 + this.inventoryRows * 18;
     }
 
     @Override
@@ -55,31 +55,31 @@ public class WindowBuildingInventory extends ContainerScreen<ContainerBuildingIn
     {
         this.renderBackground(matrixStack);
         super.render(matrixStack, x, y, z);
-        this.renderHoveredTooltip(matrixStack, x, y);
+        this.renderTooltip(matrixStack, x, y);
     }
 
     /**
      * Draw the foreground layer for the GuiContainer (everything in front of the items)
      */
     @Override
-    protected void drawGuiContainerForegroundLayer(@NotNull final MatrixStack stack, int mouseX, int mouseY)
+    protected void renderLabels(@NotNull final MatrixStack stack, int mouseX, int mouseY)
     {
-        this.font.drawString(stack, this.title.getString(), 8.0F, 6.0F, 4210752);
-        this.font.drawString(stack, this.playerInventory.getDisplayName().getString(), 8.0F, (float) (this.ySize - 96 + 2), 4210752);
+        this.font.draw(stack, this.title.getString(), 8.0F, 6.0F, 4210752);
+        this.font.draw(stack, this.inventory.getDisplayName().getString(), 8.0F, (float) (this.imageHeight - 96 + 2), 4210752);
     }
 
     /**
      * Draws the background layer of this container (behind the items).
      */
     @Override
-    protected void drawGuiContainerBackgroundLayer(@NotNull MatrixStack stack, float partialTicks, int mouseX, int mouseY)
+    protected void renderBg(@NotNull MatrixStack stack, float partialTicks, int mouseX, int mouseY)
     {
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.minecraft.getTextureManager().bindTexture(TEXT);
-        int i = (this.width - this.xSize) / 2;
-        int j = (this.height - this.ySize) / 2;
-        blit(stack, i, j, 0, 0, this.xSize, this.inventoryRows * SLOT_OFFSET + SLOT_OFFSET - 1, TEXTURE_SIZE, TEXTURE_SIZE);
+        this.minecraft.getTextureManager().bind(TEXT);
+        int i = (this.width - this.imageWidth) / 2;
+        int j = (this.height - this.imageHeight) / 2;
+        blit(stack, i, j, 0, 0, this.imageWidth, this.inventoryRows * SLOT_OFFSET + SLOT_OFFSET - 1, TEXTURE_SIZE, TEXTURE_SIZE);
         blit(stack, i, j + this.inventoryRows * SLOT_OFFSET + SLOT_OFFSET - 1, 0,
-          TEXTURE_OFFSET, this.xSize, TEXTURE_HEIGHT, TEXTURE_SIZE, TEXTURE_SIZE);
+          TEXTURE_OFFSET, this.imageWidth, TEXTURE_HEIGHT, TEXTURE_SIZE, TEXTURE_SIZE);
     }
 }

@@ -51,7 +51,7 @@ public class BlockParticleEffectMessage implements IMessage
     public void fromBytes(@NotNull final PacketBuffer buf)
     {
         pos = buf.readBlockPos();
-        block = Block.getStateById(buf.readInt());
+        block = Block.stateById(buf.readInt());
         side = buf.readInt();
     }
 
@@ -59,7 +59,7 @@ public class BlockParticleEffectMessage implements IMessage
     public void toBytes(@NotNull final PacketBuffer buf)
     {
         buf.writeBlockPos(pos);
-        buf.writeInt(Block.getStateId(block));
+        buf.writeInt(Block.getId(block));
         buf.writeInt(side);
     }
 
@@ -75,11 +75,11 @@ public class BlockParticleEffectMessage implements IMessage
     {
         if (side == BREAK_BLOCK)
         {
-            Minecraft.getInstance().particles.addBlockDestroyEffects(pos, block);
+            Minecraft.getInstance().particleEngine.destroy(pos, block);
         }
         else
         {
-            Minecraft.getInstance().particles.addBlockHitEffects(pos, Direction.byIndex(side));
+            Minecraft.getInstance().particleEngine.crack(pos, Direction.from3DDataValue(side));
         }
     }
 }

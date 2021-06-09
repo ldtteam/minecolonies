@@ -30,7 +30,7 @@ public class MutableChunkPos extends ChunkPos
     }
 
     @Override
-    public long asLong()
+    public long toLong()
     {
         return asLong(this.mutableX, this.mutableZ);
     }
@@ -62,49 +62,49 @@ public class MutableChunkPos extends ChunkPos
     }
 
     @Override
-    public int getXStart()
+    public int getMinBlockX()
     {
         return this.mutableX << 4;
     }
 
     @Override
-    public int getZStart()
+    public int getMinBlockZ()
     {
         return this.mutableZ << 4;
     }
 
     @Override
-    public int getXEnd()
+    public int getMaxBlockX()
     {
         return (this.mutableX << 4) + 15;
     }
 
     @Override
-    public int getZEnd()
+    public int getMaxBlockZ()
     {
         return (this.mutableZ << 4) + 15;
     }
 
     @Override
-    public int getRegionCoordX()
+    public int getRegionX()
     {
         return this.mutableX >> 5;
     }
 
     @Override
-    public int getRegionCoordZ()
+    public int getRegionZ()
     {
         return this.mutableZ >> 5;
     }
 
     @Override
-    public int getRegionPositionX()
+    public int getRegionLocalX()
     {
         return this.mutableX & 31;
     }
 
     @Override
-    public int getRegionPositionZ()
+    public int getRegionLocalZ()
     {
         return this.mutableZ & 31;
     }

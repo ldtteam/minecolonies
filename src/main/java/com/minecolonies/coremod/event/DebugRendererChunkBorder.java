@@ -51,21 +51,21 @@ public class DebugRendererChunkBorder
     {
         final PlayerEntity player = Minecraft.getInstance().player;
 
-        if (player.getHeldItem(Hand.MAIN_HAND).getItem() != ModItems.buildTool.get())
+        if (player.getLastHandItem(Hand.MAIN_HAND).getItem() != ModItems.buildTool.get())
         {
             return;
         }
 
-        final World world = Minecraft.getInstance().world;
-        final IColonyView nearestColonyView = IColonyManager.getInstance().getClosestColonyView(world, player.getPosition());
+        final World world = Minecraft.getInstance().level;
+        final IColonyView nearestColonyView = IColonyManager.getInstance().getClosestColonyView(world, player.blockPosition());
 
         if (nearestColonyView == null)
         {
             return;
         }
 
-        final ChunkPos playerChunkPos = new ChunkPos(player.getPosition());
-        final int playerRenderDist = Math.max(Minecraft.getInstance().gameSettings.renderDistanceChunks - RENDER_DIST_THRESHOLD, 2);
+        final ChunkPos playerChunkPos = new ChunkPos(player.blockPosition());
+        final int playerRenderDist = Math.max(Minecraft.getInstance().options.renderDistance - RENDER_DIST_THRESHOLD, 2);
 
         if (lastColonyView != nearestColonyView || !lastPlayerChunk.equals(playerChunkPos))
         {
@@ -74,7 +74,7 @@ public class DebugRendererChunkBorder
 
             final Map<ChunkPos, Integer> coloniesMap = new HashMap<>();
             final Map<ChunkPos, Integer> chunkticketsMap = new HashMap<>();
-            final int range = Math.max(Minecraft.getInstance().gameSettings.renderDistanceChunks,
+            final int range = Math.max(Minecraft.getInstance().options.renderDistance,
                 MineColonies.getConfig().getServer().maxColonySize.get());
 
             for (int chunkX = -range; chunkX <= range; chunkX++)
@@ -84,7 +84,7 @@ public class DebugRendererChunkBorder
                     final Chunk chunk = world.getChunk(playerChunkPos.x + chunkX, playerChunkPos.z + chunkZ);
                     chunk.getCapability(CLOSE_COLONY_CAP, null).ifPresent(cap -> coloniesMap.put(chunk.getPos(), cap.getOwningColony()));
 
-                    if (nearestColonyView.getTicketedChunks().contains(chunk.getPos().asLong()))
+                    if (nearestColonyView.getTicketedChunks().contains(chunk.getPos().toLong()))
                     {
                         chunkticketsMap.put(chunk.getPos(), nearestColonyView.getID());
                     }
@@ -95,17 +95,17 @@ public class DebugRendererChunkBorder
                 }
             }
 
-            final BufferBuilder bufferbuilder = Tessellator.getInstance().getBuffer();
+            final BufferBuilder bufferbuilder = Tessellator.getInstance().getBuilder();
             colonies = draw(bufferbuilder, coloniesMap, nearestColonyView.getID(), playerChunkPos, playerRenderDist);
             chunktickets = draw(bufferbuilder, chunkticketsMap, nearestColonyView.getID(), playerChunkPos, playerRenderDist);
         }
 
-        final Vector3d currView = Minecraft.getInstance().getRenderManager().info.getProjectedView();
+        final Vector3d currView = Minecraft.getInstance().getEntityRenderDispatcher().camera.getPosition();
         final MatrixStack stack = event.getMatrixStack();
-        final Pair<DrawState, ByteBuffer> buffer = InputMappings.isKeyDown(Minecraft.getInstance().getMainWindow().getHandle(),
+        final Pair<DrawState, ByteBuffer> buffer = InputMappings.isKeyDown(Minecraft.getInstance().getWindow().getWindow(),
             GLFW.GLFW_KEY_LEFT_CONTROL) ? chunktickets : colonies;
 
-        stack.push();
+        stack.pushPose();
         stack.translate(-currView.x, -currView.y, -currView.z);
 
         RenderSystem.enableDepthTest();
@@ -118,8 +118,8 @@ public class DebugRendererChunkBorder
 
         RenderSystem.pushMatrix();
         RenderSystem.loadIdentity();
-        RenderSystem.multMatrix(stack.getLast().getMatrix());
-        WorldVertexBufferUploader.draw(buffer.getSecond(), buffer.getFirst().getDrawMode(), buffer.getFirst().getFormat(), buffer.getFirst().getVertexCount());
+        RenderSystem.multMatrix(stack.last().pose());
+        WorldVertexBufferUploader._end(buffer.getSecond(), buffer.getFirst().mode(), buffer.getFirst().format(), buffer.getFirst().vertexCount());
         RenderSystem.popMatrix();
 
         RenderSystem.lineWidth(1.0F);
@@ -127,7 +127,7 @@ public class DebugRendererChunkBorder
         RenderSystem.enableTexture();
         RenderSystem.shadeModel(7424);
 
-        stack.pop();
+        stack.popPose();
     }
 
     private static Pair<DrawState, ByteBuffer> draw(final BufferBuilder bufferbuilder,
@@ -149,10 +149,10 @@ public class DebugRendererChunkBorder
 
             final boolean isPlayerChunkX = colonyId == playerColonyId && chunkPos.x == playerChunkPos.x;
             final boolean isPlayerChunkZ = colonyId == playerColonyId && chunkPos.z == playerChunkPos.z;
-            final double minX = chunkPos.getXStart() + LINE_SHIFT;
-            final double maxX = chunkPos.getXEnd() + 1.0d - LINE_SHIFT;
-            final double minZ = chunkPos.getZStart() + LINE_SHIFT;
-            final double maxZ = chunkPos.getZEnd() + 1.0d - LINE_SHIFT;
+            final double minX = chunkPos.getMinBlockX() + LINE_SHIFT;
+            final double maxX = chunkPos.getMaxBlockX() + 1.0d - LINE_SHIFT;
+            final double minZ = chunkPos.getMinBlockZ() + LINE_SHIFT;
+            final double maxZ = chunkPos.getMaxBlockZ() + 1.0d - LINE_SHIFT;
             final int red;
             final int green;
             final int blue;
@@ -191,23 +191,23 @@ public class DebugRendererChunkBorder
             // vert lines
             if (north || west)
             {
-                bufferbuilder.pos(minX, 0, minZ).color(red, green, blue, alpha).endVertex();
-                bufferbuilder.pos(minX, CHUNK_HEIGHT, minZ).color(red, green, blue, alpha).endVertex();
+                bufferbuilder.vertex(minX, 0, minZ).color(red, green, blue, alpha).endVertex();
+                bufferbuilder.vertex(minX, CHUNK_HEIGHT, minZ).color(red, green, blue, alpha).endVertex();
             }
             if (north || east)
             {
-                bufferbuilder.pos(maxX, 0, minZ).color(red, green, blue, alpha).endVertex();
-                bufferbuilder.pos(maxX, CHUNK_HEIGHT, minZ).color(red, green, blue, alpha).endVertex();
+                bufferbuilder.vertex(maxX, 0, minZ).color(red, green, blue, alpha).endVertex();
+                bufferbuilder.vertex(maxX, CHUNK_HEIGHT, minZ).color(red, green, blue, alpha).endVertex();
             }
             if (south || west)
             {
-                bufferbuilder.pos(minX, 0, maxZ).color(red, green, blue, alpha).endVertex();
-                bufferbuilder.pos(minX, CHUNK_HEIGHT, maxZ).color(red, green, blue, alpha).endVertex();
+                bufferbuilder.vertex(minX, 0, maxZ).color(red, green, blue, alpha).endVertex();
+                bufferbuilder.vertex(minX, CHUNK_HEIGHT, maxZ).color(red, green, blue, alpha).endVertex();
             }
             if (south || east)
             {
-                bufferbuilder.pos(maxX, 0, maxZ).color(red, green, blue, alpha).endVertex();
-                bufferbuilder.pos(maxX, CHUNK_HEIGHT, maxZ).color(red, green, blue, alpha).endVertex();
+                bufferbuilder.vertex(maxX, 0, maxZ).color(red, green, blue, alpha).endVertex();
+                bufferbuilder.vertex(maxX, CHUNK_HEIGHT, maxZ).color(red, green, blue, alpha).endVertex();
             }
 
             // horizontal lines
@@ -217,21 +217,21 @@ public class DebugRendererChunkBorder
                 {
                     for (int shift = PLAYER_CHUNK_STEP; shift < CHUNK_SIZE; shift += PLAYER_CHUNK_STEP)
                     {
-                        bufferbuilder.pos(minX + shift, 0, minZ).color(red, green, blue, alpha).endVertex();
-                        bufferbuilder.pos(minX + shift, CHUNK_HEIGHT, minZ).color(red, green, blue, alpha).endVertex();
+                        bufferbuilder.vertex(minX + shift, 0, minZ).color(red, green, blue, alpha).endVertex();
+                        bufferbuilder.vertex(minX + shift, CHUNK_HEIGHT, minZ).color(red, green, blue, alpha).endVertex();
                     }
                     for (int y = PLAYER_CHUNK_STEP; y < CHUNK_HEIGHT; y += PLAYER_CHUNK_STEP)
                     {
-                        bufferbuilder.pos(minX, y, minZ).color(red, green, blue, alpha).endVertex();
-                        bufferbuilder.pos(maxX, y, minZ).color(red, green, blue, alpha).endVertex();
+                        bufferbuilder.vertex(minX, y, minZ).color(red, green, blue, alpha).endVertex();
+                        bufferbuilder.vertex(maxX, y, minZ).color(red, green, blue, alpha).endVertex();
                     }
                 }
                 else
                 {
                     for (int y = CHUNK_SIZE; y < CHUNK_HEIGHT; y += CHUNK_SIZE)
                     {
-                        bufferbuilder.pos(minX, y, minZ).color(red, green, blue, alpha).endVertex();
-                        bufferbuilder.pos(maxX, y, minZ).color(red, green, blue, alpha).endVertex();
+                        bufferbuilder.vertex(minX, y, minZ).color(red, green, blue, alpha).endVertex();
+                        bufferbuilder.vertex(maxX, y, minZ).color(red, green, blue, alpha).endVertex();
                     }
                 }
             }
@@ -241,21 +241,21 @@ public class DebugRendererChunkBorder
                 {
                     for (int shift = PLAYER_CHUNK_STEP; shift < CHUNK_SIZE; shift += PLAYER_CHUNK_STEP)
                     {
-                        bufferbuilder.pos(minX + shift, 0, maxZ).color(red, green, blue, alpha).endVertex();
-                        bufferbuilder.pos(minX + shift, CHUNK_HEIGHT, maxZ).color(red, green, blue, alpha).endVertex();
+                        bufferbuilder.vertex(minX + shift, 0, maxZ).color(red, green, blue, alpha).endVertex();
+                        bufferbuilder.vertex(minX + shift, CHUNK_HEIGHT, maxZ).color(red, green, blue, alpha).endVertex();
                     }
                     for (int y = PLAYER_CHUNK_STEP; y < CHUNK_HEIGHT; y += PLAYER_CHUNK_STEP)
                     {
-                        bufferbuilder.pos(minX, y, maxZ).color(red, green, blue, alpha).endVertex();
-                        bufferbuilder.pos(maxX, y, maxZ).color(red, green, blue, alpha).endVertex();
+                        bufferbuilder.vertex(minX, y, maxZ).color(red, green, blue, alpha).endVertex();
+                        bufferbuilder.vertex(maxX, y, maxZ).color(red, green, blue, alpha).endVertex();
                     }
                 }
                 else
                 {
                     for (int y = CHUNK_SIZE; y < CHUNK_HEIGHT; y += CHUNK_SIZE)
                     {
-                        bufferbuilder.pos(minX, y, maxZ).color(red, green, blue, alpha).endVertex();
-                        bufferbuilder.pos(maxX, y, maxZ).color(red, green, blue, alpha).endVertex();
+                        bufferbuilder.vertex(minX, y, maxZ).color(red, green, blue, alpha).endVertex();
+                        bufferbuilder.vertex(maxX, y, maxZ).color(red, green, blue, alpha).endVertex();
                     }
                 }
             }
@@ -265,21 +265,21 @@ public class DebugRendererChunkBorder
                 {
                     for (int shift = PLAYER_CHUNK_STEP; shift < CHUNK_SIZE; shift += PLAYER_CHUNK_STEP)
                     {
-                        bufferbuilder.pos(minX, 0, minZ + shift).color(red, green, blue, alpha).endVertex();
-                        bufferbuilder.pos(minX, CHUNK_HEIGHT, minZ + shift).color(red, green, blue, alpha).endVertex();
+                        bufferbuilder.vertex(minX, 0, minZ + shift).color(red, green, blue, alpha).endVertex();
+                        bufferbuilder.vertex(minX, CHUNK_HEIGHT, minZ + shift).color(red, green, blue, alpha).endVertex();
                     }
                     for (int y = PLAYER_CHUNK_STEP; y < CHUNK_HEIGHT; y += PLAYER_CHUNK_STEP)
                     {
-                        bufferbuilder.pos(minX, y, minZ).color(red, green, blue, alpha).endVertex();
-                        bufferbuilder.pos(minX, y, maxZ).color(red, green, blue, alpha).endVertex();
+                        bufferbuilder.vertex(minX, y, minZ).color(red, green, blue, alpha).endVertex();
+                        bufferbuilder.vertex(minX, y, maxZ).color(red, green, blue, alpha).endVertex();
                     }
                 }
                 else
                 {
                     for (int y = CHUNK_SIZE; y < CHUNK_HEIGHT; y += CHUNK_SIZE)
                     {
-                        bufferbuilder.pos(minX, y, minZ).color(red, green, blue, alpha).endVertex();
-                        bufferbuilder.pos(minX, y, maxZ).color(red, green, blue, alpha).endVertex();
+                        bufferbuilder.vertex(minX, y, minZ).color(red, green, blue, alpha).endVertex();
+                        bufferbuilder.vertex(minX, y, maxZ).color(red, green, blue, alpha).endVertex();
                     }
                 }
             }
@@ -289,31 +289,31 @@ public class DebugRendererChunkBorder
                 {
                     for (int shift = PLAYER_CHUNK_STEP; shift < CHUNK_SIZE; shift += PLAYER_CHUNK_STEP)
                     {
-                        bufferbuilder.pos(maxX, 0, minZ + shift).color(red, green, blue, alpha).endVertex();
-                        bufferbuilder.pos(maxX, CHUNK_HEIGHT, minZ + shift).color(red, green, blue, alpha).endVertex();
+                        bufferbuilder.vertex(maxX, 0, minZ + shift).color(red, green, blue, alpha).endVertex();
+                        bufferbuilder.vertex(maxX, CHUNK_HEIGHT, minZ + shift).color(red, green, blue, alpha).endVertex();
                     }
                     for (int y = PLAYER_CHUNK_STEP; y < CHUNK_HEIGHT; y += PLAYER_CHUNK_STEP)
                     {
-                        bufferbuilder.pos(maxX, y, minZ).color(red, green, blue, alpha).endVertex();
-                        bufferbuilder.pos(maxX, y, maxZ).color(red, green, blue, alpha).endVertex();
+                        bufferbuilder.vertex(maxX, y, minZ).color(red, green, blue, alpha).endVertex();
+                        bufferbuilder.vertex(maxX, y, maxZ).color(red, green, blue, alpha).endVertex();
                     }
                 }
                 else
                 {
                     for (int y = CHUNK_SIZE; y < CHUNK_HEIGHT; y += CHUNK_SIZE)
                     {
-                        bufferbuilder.pos(maxX, y, minZ).color(red, green, blue, alpha).endVertex();
-                        bufferbuilder.pos(maxX, y, maxZ).color(red, green, blue, alpha).endVertex();
+                        bufferbuilder.vertex(maxX, y, minZ).color(red, green, blue, alpha).endVertex();
+                        bufferbuilder.vertex(maxX, y, maxZ).color(red, green, blue, alpha).endVertex();
                     }
                 }
             }
         });
 
-        bufferbuilder.finishDrawing();
+        bufferbuilder.end();
 
         // create bytebuffer copy since buffer builder uses slice
-        final Pair<DrawState, ByteBuffer> preResult = bufferbuilder.getNextBuffer();
-        ByteBuffer temp = GLAllocation.createDirectByteBuffer(preResult.getSecond().capacity());
+        final Pair<DrawState, ByteBuffer> preResult = bufferbuilder.popNextBuffer();
+        ByteBuffer temp = GLAllocation.createByteBuffer(preResult.getSecond().capacity());
         ((Buffer) preResult.getSecond()).clear();
         ((Buffer) temp).clear();
         temp.put(preResult.getSecond());

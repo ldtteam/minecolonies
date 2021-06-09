@@ -79,7 +79,7 @@ public class Disease
         StringBuilder cureString = new StringBuilder();
         for (final ItemStack cureStack : cure)
         {
-            cureString.append(cureStack.getDisplayName().getString());
+            cureString.append(cureStack.getHoverName().getString());
             cureString.append("+");
         }
         cureString.deleteCharAt(cureString.length() - 1);

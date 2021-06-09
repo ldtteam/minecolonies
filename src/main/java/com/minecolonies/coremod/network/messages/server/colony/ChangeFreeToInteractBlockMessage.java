@@ -29,7 +29,7 @@ public class ChangeFreeToInteractBlockMessage extends AbstractColonyServerMessag
     /**
      * The blockState which can be freely interacted with.
      */
-    private BlockState block = Blocks.DIRT.getDefaultState();
+    private BlockState block = Blocks.DIRT.defaultBlockState();
 
     /**
      * The type of the
@@ -56,7 +56,7 @@ public class ChangeFreeToInteractBlockMessage extends AbstractColonyServerMessag
     {
         super(colony);
         this.pos = new BlockPos(0, 0, 0);
-        this.block = block.getDefaultState();
+        this.block = block.defaultBlockState();
         this.type = type;
         this.mode = MessageMode.BLOCK;
     }
@@ -72,7 +72,7 @@ public class ChangeFreeToInteractBlockMessage extends AbstractColonyServerMessag
     {
         super(colony);
         this.pos = pos;
-        this.block = Blocks.DIRT.getDefaultState();
+        this.block = Blocks.DIRT.defaultBlockState();
         this.type = type;
         this.mode = MessageMode.LOCATION;
     }
@@ -81,7 +81,7 @@ public class ChangeFreeToInteractBlockMessage extends AbstractColonyServerMessag
     public void fromBytesOverride(@NotNull final PacketBuffer buf)
     {
 
-        block = Block.getStateById(buf.readInt());
+        block = Block.stateById(buf.readInt());
         pos = buf.readBlockPos();
         type = MessageType.values()[buf.readInt()];
         mode = MessageMode.values()[buf.readInt()];
@@ -91,7 +91,7 @@ public class ChangeFreeToInteractBlockMessage extends AbstractColonyServerMessag
     public void toBytesOverride(@NotNull final PacketBuffer buf)
     {
 
-        buf.writeInt(Block.getStateId(block));
+        buf.writeInt(Block.getId(block));
         buf.writeBlockPos(pos);
         buf.writeInt(type.ordinal());
         buf.writeInt(mode.ordinal());

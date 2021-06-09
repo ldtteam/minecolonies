@@ -43,6 +43,8 @@ import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.RACK;
 
+import com.minecolonies.api.tileentities.AbstractTileEntityRack.RackInventory;
+
 /**
  * Tile entity for the warehouse shelves.
  */
@@ -163,8 +165,8 @@ public class TileEntityRack extends AbstractTileEntityRack
         }
 
         inventory = tempInventory;
-        final BlockState state = world.getBlockState(pos);
-        world.notifyBlockUpdate(pos, state, state, 0x03);
+        final BlockState state = level.getBlockState(worldPosition);
+        level.sendBlockUpdated(worldPosition, state, state, 0x03);
         invalidateCap();
     }
 
@@ -184,7 +186,7 @@ public class TileEntityRack extends AbstractTileEntityRack
     @Override
     public void updateItemStorage()
     {
-        if (world != null && !world.isRemote)
+        if (level != null && !level.isClientSide)
         {
             final boolean empty = content.isEmpty();
             updateContent();
@@ -193,7 +195,7 @@ public class TileEntityRack extends AbstractTileEntityRack
             {
                 updateBlockState();
             }
-            markDirty();
+            setChanged();
         }
     }
 
@@ -227,7 +229,7 @@ public class TileEntityRack extends AbstractTileEntityRack
     @Override
     public void updateBlockState()
     {
-        if (world != null && world.getBlockState(pos).getBlock() instanceof AbstractBlockMinecoloniesRack)
+        if (level != null && level.getBlockState(worldPosition).getBlock() instanceof AbstractBlockMinecoloniesRack)
         {
             if (!main && !single && getOtherChest() != null && !getOtherChest().isMain())
             {
@@ -240,30 +242,30 @@ public class TileEntityRack extends AbstractTileEntityRack
                 final BlockState typeNeighbor;
                 if (content.isEmpty() && (getOtherChest() == null || getOtherChest().isEmpty()))
                 {
-                    if (getOtherChest() != null && world.getBlockState(this.pos.subtract(relativeNeighbor)).getBlock() instanceof AbstractBlockMinecoloniesRack)
+                    if (getOtherChest() != null && level.getBlockState(this.worldPosition.subtract(relativeNeighbor)).getBlock() instanceof AbstractBlockMinecoloniesRack)
                     {
 
-                        typeHere = world.getBlockState(pos).with(AbstractBlockMinecoloniesRack.VARIANT, RackType.EMPTYAIR);
-                        typeNeighbor = world.getBlockState(this.pos.subtract(relativeNeighbor)).with(AbstractBlockMinecoloniesRack.VARIANT, RackType.DEFAULTDOUBLE)
-                                         .with(AbstractBlockMinecoloniesRack.FACING, BlockPosUtil.getFacing(pos, this.pos.subtract(relativeNeighbor)));
+                        typeHere = level.getBlockState(worldPosition).setValue(AbstractBlockMinecoloniesRack.VARIANT, RackType.EMPTYAIR);
+                        typeNeighbor = level.getBlockState(this.worldPosition.subtract(relativeNeighbor)).setValue(AbstractBlockMinecoloniesRack.VARIANT, RackType.DEFAULTDOUBLE)
+                                         .setValue(AbstractBlockMinecoloniesRack.FACING, BlockPosUtil.getFacing(worldPosition, this.worldPosition.subtract(relativeNeighbor)));
                     }
                     else
                     {
-                        typeHere = world.getBlockState(pos).with(AbstractBlockMinecoloniesRack.VARIANT, RackType.DEFAULT);
+                        typeHere = level.getBlockState(worldPosition).setValue(AbstractBlockMinecoloniesRack.VARIANT, RackType.DEFAULT);
                         typeNeighbor = null;
                     }
                 }
                 else
                 {
-                    if (getOtherChest() != null && world.getBlockState(this.pos.subtract(relativeNeighbor)).getBlock() instanceof AbstractBlockMinecoloniesRack)
+                    if (getOtherChest() != null && level.getBlockState(this.worldPosition.subtract(relativeNeighbor)).getBlock() instanceof AbstractBlockMinecoloniesRack)
                     {
-                        typeHere = world.getBlockState(pos).with(AbstractBlockMinecoloniesRack.VARIANT, RackType.EMPTYAIR);
-                        typeNeighbor = world.getBlockState(this.pos.subtract(relativeNeighbor)).with(AbstractBlockMinecoloniesRack.VARIANT, RackType.FULLDOUBLE)
-                                         .with(AbstractBlockMinecoloniesRack.FACING, BlockPosUtil.getFacing(pos, this.pos.subtract(relativeNeighbor)));
+                        typeHere = level.getBlockState(worldPosition).setValue(AbstractBlockMinecoloniesRack.VARIANT, RackType.EMPTYAIR);
+                        typeNeighbor = level.getBlockState(this.worldPosition.subtract(relativeNeighbor)).setValue(AbstractBlockMinecoloniesRack.VARIANT, RackType.FULLDOUBLE)
+                                         .setValue(AbstractBlockMinecoloniesRack.FACING, BlockPosUtil.getFacing(worldPosition, this.worldPosition.subtract(relativeNeighbor)));
                     }
                     else
                     {
-                        typeHere = world.getBlockState(pos).with(AbstractBlockMinecoloniesRack.VARIANT, RackType.FULL);
+                        typeHere = level.getBlockState(worldPosition).setValue(AbstractBlockMinecoloniesRack.VARIANT, RackType.FULL);
                         typeNeighbor = null;
                     }
                 }
@@ -274,15 +276,15 @@ public class TileEntityRack extends AbstractTileEntityRack
                     getOtherChest().setMain(false);
                 }
 
-                if (!world.getBlockState(pos).equals(typeHere))
+                if (!level.getBlockState(worldPosition).equals(typeHere))
                 {
-                    world.setBlockState(pos, typeHere);
+                    level.setBlockAndUpdate(worldPosition, typeHere);
                 }
                 if (typeNeighbor != null)
                 {
-                    if (!world.getBlockState(this.pos.subtract(relativeNeighbor)).equals(typeNeighbor))
+                    if (!level.getBlockState(this.worldPosition.subtract(relativeNeighbor)).equals(typeNeighbor))
                     {
-                        world.setBlockState(this.pos.subtract(relativeNeighbor), typeNeighbor);
+                        level.setBlockAndUpdate(this.worldPosition.subtract(relativeNeighbor), typeNeighbor);
                     }
                 }
             }
@@ -296,16 +298,16 @@ public class TileEntityRack extends AbstractTileEntityRack
     @Override
     public AbstractTileEntityRack getOtherChest()
     {
-        if (relativeNeighbor == null || world == null)
+        if (relativeNeighbor == null || level == null)
         {
             return null;
         }
-        final TileEntity tileEntity = world.getTileEntity(pos.subtract(relativeNeighbor));
+        final TileEntity tileEntity = level.getBlockEntity(worldPosition.subtract(relativeNeighbor));
         if (tileEntity instanceof TileEntityRack && !(tileEntity instanceof AbstractTileEntityColonyBuilding))
         {
-            if (!this.getPos().equals(((TileEntityRack) tileEntity).getNeighbor()))
+            if (!this.getBlockPos().equals(((TileEntityRack) tileEntity).getNeighbor()))
             {
-                ((AbstractTileEntityRack) tileEntity).setNeighbor(this.getPos());
+                ((AbstractTileEntityRack) tileEntity).setNeighbor(this.getBlockPos());
             }
             return (AbstractTileEntityRack) tileEntity;
         }
@@ -328,16 +330,16 @@ public class TileEntityRack extends AbstractTileEntityRack
     }
 
     @Override
-    public void read(final BlockState state, final CompoundNBT compound)
+    public void load(final BlockState state, final CompoundNBT compound)
     {
-        super.read(state, compound);
-        if (compound.keySet().contains(TAG_SIZE))
+        super.load(state, compound);
+        if (compound.getAllKeys().contains(TAG_SIZE))
         {
             size = compound.getInt(TAG_SIZE);
             inventory = createInventory(DEFAULT_SIZE + size * SLOT_PER_LINE);
         }
 
-        if (compound.keySet().contains(TAG_RELATIVE_NEIGHBOR))
+        if (compound.getAllKeys().contains(TAG_RELATIVE_NEIGHBOR))
         {
             relativeNeighbor = BlockPosUtil.read(compound, TAG_RELATIVE_NEIGHBOR);
         }
@@ -360,7 +362,7 @@ public class TileEntityRack extends AbstractTileEntityRack
             final CompoundNBT inventoryCompound = inventoryTagList.getCompound(i);
             if (!inventoryCompound.contains(TAG_EMPTY))
             {
-                final ItemStack stack = ItemStack.read(inventoryCompound);
+                final ItemStack stack = ItemStack.of(inventoryCompound);
                 inventory.setStackInSlot(i, stack);
             }
         }
@@ -379,9 +381,9 @@ public class TileEntityRack extends AbstractTileEntityRack
 
     @NotNull
     @Override
-    public CompoundNBT write(final CompoundNBT compound)
+    public CompoundNBT save(final CompoundNBT compound)
     {
-        super.write(compound);
+        super.save(compound);
         compound.putInt(TAG_SIZE, size);
 
         if (relativeNeighbor != null)
@@ -399,7 +401,7 @@ public class TileEntityRack extends AbstractTileEntityRack
             }
             else
             {
-                stack.write(inventoryCompound);
+                stack.save(inventoryCompound);
             }
             inventoryTagList.add(inventoryCompound);
         }
@@ -414,26 +416,26 @@ public class TileEntityRack extends AbstractTileEntityRack
     public SUpdateTileEntityPacket getUpdatePacket()
     {
         final CompoundNBT compound = new CompoundNBT();
-        return new SUpdateTileEntityPacket(this.pos, 0, this.write(compound));
+        return new SUpdateTileEntityPacket(this.worldPosition, 0, this.save(compound));
     }
 
     @NotNull
     @Override
     public CompoundNBT getUpdateTag()
     {
-        return this.write(new CompoundNBT());
+        return this.save(new CompoundNBT());
     }
 
     @Override
     public void onDataPacket(final NetworkManager net, final SUpdateTileEntityPacket packet)
     {
-        this.read(getBlockState(), packet.getNbtCompound());
+        this.load(getBlockState(), packet.getTag());
     }
 
     @Override
     public void handleUpdateTag(final BlockState state, final CompoundNBT tag)
     {
-        this.read(state, tag);
+        this.load(state, tag);
     }
 
     @Override
@@ -450,7 +452,7 @@ public class TileEntityRack extends AbstractTileEntityRack
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull final Capability<T> capability, final Direction dir)
     {
-        if (!removed && capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+        if (!remove && capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
         {
             if (lastOptional != null && lastOptional.isPresent())
             {
@@ -513,7 +515,7 @@ public class TileEntityRack extends AbstractTileEntityRack
         {
             return null;
         }
-        return pos.subtract(relativeNeighbor);
+        return worldPosition.subtract(relativeNeighbor);
     }
 
     /**
@@ -528,30 +530,30 @@ public class TileEntityRack extends AbstractTileEntityRack
         {
             setSingle(true);
             this.relativeNeighbor = null;
-            markDirty();
+            setChanged();
         }
         // Only allow horizontal neighbor's
-        else if (this.pos.subtract(neighbor).getY() == 0)
+        else if (this.worldPosition.subtract(neighbor).getY() == 0)
         {
-            this.relativeNeighbor = this.pos.subtract(neighbor);
+            this.relativeNeighbor = this.worldPosition.subtract(neighbor);
             setSingle(false);
-            markDirty();
+            setChanged();
             return true;
         }
         return false;
     }
 
     @Override
-    public void markDirty()
+    public void setChanged()
     {
-        WorldUtil.markChunkDirty(world, pos);
+        WorldUtil.markChunkDirty(level, worldPosition);
     }
 
     @Nullable
     @Override
     public Container createMenu(final int id, @NotNull final PlayerInventory inv, @NotNull final PlayerEntity player)
     {
-        return new ContainerRack(id, inv, getPos(), getOtherChest() == null ? BlockPos.ZERO : getOtherChest().getPos());
+        return new ContainerRack(id, inv, getBlockPos(), getOtherChest() == null ? BlockPos.ZERO : getOtherChest().getBlockPos());
     }
 
     @NotNull
@@ -582,16 +584,16 @@ public class TileEntityRack extends AbstractTileEntityRack
     }
 
     @Override
-    public void remove()
+    public void setRemoved()
     {
-        super.remove();
+        super.setRemoved();
         invalidateCap();
     }
 
     @Override
-    public void updateContainingBlockInfo()
+    public void clearCache()
     {
-        super.updateContainingBlockInfo();
+        super.clearCache();
         invalidateCap();
     }
 

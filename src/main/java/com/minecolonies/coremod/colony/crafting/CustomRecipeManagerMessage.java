@@ -61,7 +61,7 @@ public class CustomRecipeManagerMessage implements IMessage
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
-        if (Minecraft.getInstance().world != null)
+        if (Minecraft.getInstance().level != null)
         {
             CustomRecipeManager.getInstance().handleCustomRecipeManagerMessage(managerBuffer);
         }

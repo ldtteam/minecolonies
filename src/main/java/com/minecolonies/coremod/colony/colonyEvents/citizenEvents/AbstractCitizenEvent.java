@@ -81,14 +81,14 @@ public abstract class AbstractCitizenEvent implements ICitizenEventDescription
     public void serialize(PacketBuffer buf)
     {
         buf.writeBlockPos(eventPos);
-        buf.writeString(citizenName);
+        buf.writeUtf(citizenName);
     }
 
     @Override
     public void deserialize(PacketBuffer buf)
     {
         eventPos = buf.readBlockPos();
-        citizenName = buf.readString();
+        citizenName = buf.readUtf();
     }
 
     @Override

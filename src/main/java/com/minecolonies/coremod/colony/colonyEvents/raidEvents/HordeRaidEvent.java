@@ -191,7 +191,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
         normal.remove(entity);
 
         // Respawn as a new entity in a loaded chunk, if not too close.
-        respawns.add(new Tuple<>(entity.getType(), new BlockPos(entity.getPositionVec())));
+        respawns.add(new Tuple<>(entity.getType(), new BlockPos(entity.position())));
     }
 
     /**
@@ -238,7 +238,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
                 BlockPos spawn = BlockPosUtil.getRandomPosition(colony.getWorld(), pos, BlockPos.ZERO, 3, 7);
                 if (spawn != BlockPos.ZERO)
                 {
-                    colony.getWorld().setBlockState(spawn, Blocks.CAMPFIRE.getDefaultState());
+                    colony.getWorld().setBlockAndUpdate(spawn, Blocks.CAMPFIRE.defaultBlockState());
                     campFires.add(spawn);
                     break;
                 }
@@ -256,7 +256,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
 
         for (final BlockPos pos : campFires)
         {
-            colony.getWorld().setBlockState(pos, Blocks.AIR.getDefaultState());
+            colony.getWorld().setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
         }
 
         raidBar.setVisible(false);
@@ -294,7 +294,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
         {
             return null;
         }
-        return campFires.get(colony.getWorld().rand.nextInt(campFires.size()));
+        return campFires.get(colony.getWorld().random.nextInt(campFires.size()));
     }
 
     @Override
@@ -309,7 +309,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
 
         status = EventStatus.PREPARING;
         spawnCampFires(spawnPos);
-        final double dist = colony.getCenter().distanceSq(spawnPos);
+        final double dist = colony.getCenter().distSqr(spawnPos);
         if (dist < MIN_CENTER_DISTANCE * MIN_CENTER_DISTANCE)
         {
             campFireTime = 6;
@@ -409,16 +409,16 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
 
         for (final Entity entity : getEntities())
         {
-            if (!entity.isAlive() || !WorldUtil.isEntityBlockLoaded(colony.getWorld(), new BlockPos(entity.getPositionVec())))
+            if (!entity.isAlive() || !WorldUtil.isEntityBlockLoaded(colony.getWorld(), new BlockPos(entity.position())))
             {
                 entity.remove();
-                respawns.add(new Tuple<>(entity.getType(), new BlockPos(entity.getPositionVec())));
+                respawns.add(new Tuple<>(entity.getType(), new BlockPos(entity.position())));
                 continue;
             }
 
             if (colony.getRaiderManager().areSpiesEnabled())
             {
-                ((LivingEntity) entity).addPotionEffect(new EffectInstance(Effects.GLOWING, 550));
+                ((LivingEntity) entity).addEffect(new EffectInstance(Effects.GLOWING, 550));
             }
         }
     }

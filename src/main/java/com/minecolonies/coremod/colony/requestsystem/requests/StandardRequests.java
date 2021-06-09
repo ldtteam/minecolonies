@@ -75,7 +75,7 @@ public final class StandardRequests
         {
             final IFormattableTextComponent combined = new NonSiblingFormattingTextComponent();
             combined.append(new StringTextComponent(getRequest().getCount() + " "));
-            combined.append(getRequest().getStack().getDisplayName());
+            combined.append(getRequest().getStack().getHoverName());
             return combined;
         }
 
@@ -163,9 +163,9 @@ public final class StandardRequests
         public ItemTagRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final Tag requested)
         {
             super(requester, token, requested);
-            stacks = requested.getTag().getAllElements().stream().flatMap(item -> {
+            stacks = requested.getTag().getValues().stream().flatMap(item -> {
                 final NonNullList<ItemStack> list = NonNullList.create();
-                item.fillItemGroup(item.getGroup(), list);
+                item.fillItemCategory(item.getItemCategory(), list);
                 return list.stream();
             }).collect(Collectors.toList());
         }
@@ -173,9 +173,9 @@ public final class StandardRequests
         public ItemTagRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final RequestState state, @NotNull final Tag requested)
         {
             super(requester, token, state, requested);
-            stacks = requested.getTag().getAllElements().stream().flatMap(item -> {
+            stacks = requested.getTag().getValues().stream().flatMap(item -> {
                 final NonNullList<ItemStack> list = NonNullList.create();
-                item.fillItemGroup(item.getGroup(), list);
+                item.fillItemCategory(item.getItemCategory(), list);
                 return list.stream();
             }).collect(Collectors.toList());
         }
@@ -192,14 +192,14 @@ public final class StandardRequests
                                                                                                                      ("namedtag[", "").replace(':', '.').replace("]", "");
             final TranslationTextComponent tagText = new TranslationTextComponent(tagKey);
             // test the translated text; if there's a difference, the client has a matching translation key.
-            if (!tagText.getUnformattedComponentText().equals(tagKey))
+            if (!tagText.getContents().equals(tagKey))
             {
                 combined.append(new StringTextComponent("#").append(tagText));
             }
             // Otherwise, use the first item from request set if present, or the full tag identifier to assist debugging otherwise.
             else if (!stacks.isEmpty())
             {
-                combined.append(new StringTextComponent("#").append(stacks.get(0).getDisplayName()));
+                combined.append(new StringTextComponent("#").append(stacks.get(0).getHoverName()));
             }
             else
             {
@@ -240,7 +240,7 @@ public final class StandardRequests
         {
             final IFormattableTextComponent result = new NonSiblingFormattingTextComponent();
             result.append(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_REQUESTS_DELIVERY).append(new StringTextComponent(
-              getRequest().getStack().getCount() + " ")).append(getRequest().getStack().getTextComponent()));
+              getRequest().getStack().getCount() + " ")).append(getRequest().getStack().getHoverName()));
             return result;
         }
 
@@ -359,7 +359,7 @@ public final class StandardRequests
         @Override
         public final ITextComponent getShortDisplayString()
         {
-            return new TranslationTextComponent(TranslationConstants.REQUEST_CRAFTING_DISPLAY, new StringTextComponent(String.valueOf(getRequest().getMinCount())), getRequest().getStack().getTextComponent());
+            return new TranslationTextComponent(TranslationConstants.REQUEST_CRAFTING_DISPLAY, new StringTextComponent(String.valueOf(getRequest().getMinCount())), getRequest().getStack().getHoverName());
         }
 
         protected abstract String getTranslationKey();
@@ -598,7 +598,7 @@ public final class StandardRequests
                                                       .getCompatibilityManager()
                                                       .getListOfAllItems()
                                                       .stream()
-                                                      .filter(item -> item.getItem().isFood())
+                                                      .filter(item -> item.getItem().isEdible())
                                                       .collect(Collectors.toList()));
             }
 

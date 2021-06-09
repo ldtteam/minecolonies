@@ -36,7 +36,7 @@ public class DeepMineTrigger extends AbstractCriterionTrigger<CriterionListeners
 
     @NotNull
     @Override
-    public DeepMineCriterionInstance deserialize(@NotNull final JsonObject object, @NotNull final ConditionArrayParser conditions)
+    public DeepMineCriterionInstance createInstance(@NotNull final JsonObject object, @NotNull final ConditionArrayParser conditions)
     {
         return new DeepMineCriterionInstance();
     }

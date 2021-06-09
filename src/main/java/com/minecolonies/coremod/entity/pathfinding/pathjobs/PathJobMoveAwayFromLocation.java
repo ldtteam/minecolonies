@@ -78,7 +78,7 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
     @Override
     protected double computeHeuristic(@NotNull final BlockPos pos)
     {
-        return -avoid.distanceSq(pos);
+        return -avoid.distSqr(pos);
     }
 
     /**
@@ -90,7 +90,7 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
     @Override
     protected boolean isAtDestination(@NotNull final Node n)
     {
-        return Math.sqrt(avoid.distanceSq(n.pos)) > avoidDistance;
+        return Math.sqrt(avoid.distSqr(n.pos)) > avoidDistance;
     }
 
     /**
@@ -102,6 +102,6 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
     @Override
     protected double getNodeResultScore(@NotNull final Node n)
     {
-        return -avoid.distanceSq(n.pos);
+        return -avoid.distSqr(n.pos);
     }
 }

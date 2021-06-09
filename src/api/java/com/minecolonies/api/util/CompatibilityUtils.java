@@ -26,7 +26,7 @@ public final class CompatibilityUtils
      */
     public static World getWorldFromEntity(final Entity entity)
     {
-        return entity.world;
+        return entity.level;
     }
 
     public static World getWorldFromCitizen(final AbstractEntityCitizen baseEntityCitizen)
@@ -44,7 +44,7 @@ public final class CompatibilityUtils
      */
     public static void addEntity(final World world, final Entity entityToSpawn)
     {
-        world.addEntity(entityToSpawn);
+        world.addFreshEntity(entityToSpawn);
     }
 }
 

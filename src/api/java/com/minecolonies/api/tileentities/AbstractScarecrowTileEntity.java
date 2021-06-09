@@ -77,11 +77,11 @@ public abstract class AbstractScarecrowTileEntity extends TileEntity implements 
     public abstract boolean needsWork();
 
     @Override
-    public void markDirty()
+    public void setChanged()
     {
-        if (world != null)
+        if (level != null)
         {
-            WorldUtil.markChunkDirty(world, pos);
+            WorldUtil.markChunkDirty(level, worldPosition);
         }
     }
 

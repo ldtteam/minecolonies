@@ -112,8 +112,8 @@ public class BuildToolPasteMessage implements IMessage
     @Override
     public void fromBytes(@NotNull final PacketBuffer buf)
     {
-        structureName = buf.readString(32767);
-        workOrderName = buf.readString(32767);
+        structureName = buf.readUtf(32767);
+        workOrderName = buf.readUtf(32767);
 
         pos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
 
@@ -125,7 +125,7 @@ public class BuildToolPasteMessage implements IMessage
 
         complete = buf.readBoolean();
 
-        state = Block.getStateById(buf.readInt());
+        state = Block.stateById(buf.readInt());
     }
 
     /**
@@ -136,8 +136,8 @@ public class BuildToolPasteMessage implements IMessage
     @Override
     public void toBytes(@NotNull final PacketBuffer buf)
     {
-        buf.writeString(structureName);
-        buf.writeString(workOrderName);
+        buf.writeUtf(structureName);
+        buf.writeUtf(workOrderName);
 
         buf.writeInt(pos.getX());
         buf.writeInt(pos.getY());
@@ -151,7 +151,7 @@ public class BuildToolPasteMessage implements IMessage
 
         buf.writeBoolean(complete);
 
-        buf.writeInt(Block.getStateId(state));
+        buf.writeInt(Block.getId(state));
     }
 
     @Nullable
@@ -168,7 +168,7 @@ public class BuildToolPasteMessage implements IMessage
         final ServerPlayerEntity player = ctxIn.getSender();
         if (!Structures.hasMD5(sn))
         {
-            player.sendMessage(new StringTextComponent("Can not build " + workOrderName + ": schematic missing!"), player.getUniqueID());
+            player.sendMessage(new StringTextComponent("Can not build " + workOrderName + ": schematic missing!"), player.createPlayerUUID());
             return;
         }
 
@@ -177,19 +177,19 @@ public class BuildToolPasteMessage implements IMessage
             if (isHut)
             {
                 handleHut(CompatibilityUtils.getWorldFromEntity(player), player, sn, rotation, pos, mirror, state, complete);
-                final Blueprint blueprint = CreativeBuildingStructureHandler.loadAndPlaceStructureWithRotation(player.world, structureName,
+                final Blueprint blueprint = CreativeBuildingStructureHandler.loadAndPlaceStructureWithRotation(player.level, structureName,
                   pos, BlockPosUtil.getRotationFromRotations(rotation), mirror ? Mirror.FRONT_BACK : Mirror.NONE, !complete, player);
 
-                final TileEntity tileEntity = player.world.getTileEntity(pos);
+                final TileEntity tileEntity = player.level.getBlockEntity(pos);
                 if (tileEntity instanceof IBlueprintDataProvider && blueprint != null)
                 {
-                    final CompoundNBT teData = blueprint.getTileEntityData(tileEntity.getPos(), blueprint.getPrimaryBlockOffset());
+                    final CompoundNBT teData = blueprint.getTileEntityData(tileEntity.getBlockPos(), blueprint.getPrimaryBlockOffset());
                     if (teData != null && teData.contains(TAG_BLUEPRINTDATA))
                     {
                         ((IBlueprintDataProvider) tileEntity).readSchematicDataFromNBT(teData);
-                        Chunk chunk = (Chunk) tileEntity.getWorld().getChunk(tileEntity.getPos());
+                        Chunk chunk = (Chunk) tileEntity.getLevel().getChunk(tileEntity.getBlockPos());
                         PacketDistributor.TRACKING_CHUNK.with(() -> chunk).send(tileEntity.getUpdatePacket());
-                        tileEntity.markDirty();
+                        tileEntity.setChanged();
                     }
                 }
 
@@ -203,7 +203,7 @@ public class BuildToolPasteMessage implements IMessage
             }
             else
             {
-                StructurePlacementUtils.loadAndPlaceStructureWithRotation(ctxIn.getSender().world, structureName,
+                StructurePlacementUtils.loadAndPlaceStructureWithRotation(ctxIn.getSender().level, structureName,
                   pos, BlockPosUtil.getRotationFromRotations(rotation), mirror ? Mirror.FRONT_BACK : Mirror.NONE, !complete, ctxIn.getSender());
             }
         }
@@ -234,16 +234,16 @@ public class BuildToolPasteMessage implements IMessage
 
             final int slot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(new InvWrapper(player.inventory), searchPredicate);
 
-            if (slot != -1 && !ItemStackUtils.isEmpty(player.inventory.removeStackFromSlot(slot)))
+            if (slot != -1 && !ItemStackUtils.isEmpty(player.inventory.removeItemNoUpdate(slot)))
             {
                 if (player.getStats().getValue(Stats.ITEM_USED.get(ModItems.supplyChest)) < 1)
                 {
                     LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.progress.supplies_placed");
-                    player.addStat(Stats.ITEM_USED.get(ModItems.supplyChest), 1);
+                    player.awardStat(Stats.ITEM_USED.get(ModItems.supplyChest), 1);
                     AdvancementTriggers.PLACE_SUPPLY.trigger(player);
                 }
 
-                CreativeBuildingStructureHandler.loadAndPlaceStructureWithRotation(player.world, structureName,
+                CreativeBuildingStructureHandler.loadAndPlaceStructureWithRotation(player.level, structureName,
                   pos, BlockPosUtil.getRotationFromRotations(rotation), mirror ? Mirror.FRONT_BACK : Mirror.NONE, !complete, player);
             }
             else
@@ -261,7 +261,7 @@ public class BuildToolPasteMessage implements IMessage
      */
     private boolean isFreeInstantPlacementMH(ServerPlayerEntity playerEntity)
     {
-        final ItemStack mhItem = playerEntity.getHeldItemMainhand();
+        final ItemStack mhItem = playerEntity.getMainHandItem();
         return !ItemStackUtils.isEmpty(mhItem) && mhItem.getTag() != null && mhItem.getTag().getString(PLACEMENT_NBT).equals(INSTANT_PLACEMENT);
     }
 
@@ -297,7 +297,7 @@ public class BuildToolPasteMessage implements IMessage
         if (block != null && EventHandler.onBlockHutPlaced(world, player, block, buildPos))
         {
             world.destroyBlock(buildPos, true);
-            world.setBlockState(buildPos, state);
+            world.setBlockAndUpdate(buildPos, state);
             if (!complete)
             {
                 ((AbstractBlockHut<?>) block).onBlockPlacedByBuildTool(world, buildPos, world.getBlockState(buildPos), player, null, mirror, sn.getStyle());

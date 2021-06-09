@@ -4,6 +4,8 @@ import com.minecolonies.api.util.constant.Suppression;
 import net.minecraft.block.Block;
 import net.minecraftforge.registries.IForgeRegistry;
 
+import net.minecraft.block.AbstractBlock.Properties;
+
 public abstract class AbstractBlockMinecoloniesContainer<B extends AbstractBlockMinecoloniesContainer<B>> extends AbstractBlockMinecolonies<B>
 {
     public AbstractBlockMinecoloniesContainer(final Properties properties)

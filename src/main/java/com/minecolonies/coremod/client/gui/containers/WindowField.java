@@ -87,13 +87,13 @@ public class WindowField extends ContainerScreen<ContainerField>
     {
         super.init();
 
-        final int centerX = this.guiLeft + this.xSize / 2 + 1;
-        final int centerY = this.guiTop + this.ySize / 2;
+        final int centerX = this.leftPos + this.imageWidth / 2 + 1;
+        final int centerY = this.topPos + this.imageHeight / 2;
         for (Direction dir : Direction.Plane.HORIZONTAL)
         {
-            int xFromPolar = (int) Math.sin(Math.PI * (4 - dir.getHorizontalIndex()) / 2) * (BUTTON_SIDE_LENGTH);
-            int yFromPolar = (int) Math.cos(Math.PI * (4 - dir.getHorizontalIndex()) / 2) * (BUTTON_SIDE_LENGTH);
-            this.radii[dir.getHorizontalIndex()] = tileEntity.getRadius(dir);
+            int xFromPolar = (int) Math.sin(Math.PI * (4 - dir.get2DDataValue()) / 2) * (BUTTON_SIDE_LENGTH);
+            int yFromPolar = (int) Math.cos(Math.PI * (4 - dir.get2DDataValue()) / 2) * (BUTTON_SIDE_LENGTH);
+            this.radii[dir.get2DDataValue()] = tileEntity.getRadius(dir);
 
             // Some magic numbering to get the offsets right
             DirectionalButton db = new DirectionalButton(
@@ -101,7 +101,7 @@ public class WindowField extends ContainerScreen<ContainerField>
               centerY - 40 + yFromPolar - 12,
               BUTTON_SIDE_LENGTH,
               BUTTON_SIDE_LENGTH,
-              new StringTextComponent(String.valueOf(this.radii[dir.getHorizontalIndex()])),
+              new StringTextComponent(String.valueOf(this.radii[dir.get2DDataValue()])),
               dir
             );
             this.addButton(db);
@@ -109,20 +109,20 @@ public class WindowField extends ContainerScreen<ContainerField>
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(@NotNull final MatrixStack stack, final int mouseX, final int mouseY)
+    protected void renderLabels(@NotNull final MatrixStack stack, final int mouseX, final int mouseY)
     {
         if (!tileEntity.getOwner().isEmpty())
         {
-            this.font.drawString(stack, LanguageHandler.format("com.minecolonies.coremod.gui.field.worker", tileEntity.getOwner()), X_OFFSET, -Y_OFFSET * 2, 16777215 /* WHITE */);
+            this.font.draw(stack, LanguageHandler.format("com.minecolonies.coremod.gui.field.worker", tileEntity.getOwner()), X_OFFSET, -Y_OFFSET * 2, 16777215 /* WHITE */);
         }
 
-        this.font.drawString(stack, LanguageHandler.format("block.minecolonies.blockhutfield"), X_OFFSET, Y_OFFSET, TEXT_COLOR);
+        this.font.draw(stack, LanguageHandler.format("block.minecolonies.blockhutfield"), X_OFFSET, Y_OFFSET, TEXT_COLOR);
 
         for (Widget widget : this.buttons)
         {
             if (widget.isHovered())
             {
-                widget.renderToolTip(stack, mouseX - this.guiLeft, mouseY - this.guiTop);
+                widget.renderToolTip(stack, mouseX - this.leftPos, mouseY - this.topPos);
                 break;
             }
         }
@@ -136,13 +136,13 @@ public class WindowField extends ContainerScreen<ContainerField>
      * @param mouseY       the mouseY position.
      */
     @Override
-    protected void drawGuiContainerBackgroundLayer(@NotNull final MatrixStack stack, final float partialTicks, final int mouseX, final int mouseY)
+    protected void renderBg(@NotNull final MatrixStack stack, final float partialTicks, final int mouseX, final int mouseY)
     {
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        minecraft.getTextureManager().bindTexture(TEXTURE);
-        final int marginHorizontal = (width - xSize) / 2;
-        final int marginVertical = (height - ySize) / 2;
-        blit(stack, marginHorizontal, marginVertical, 0, 0, xSize, ySize);
+        minecraft.getTextureManager().bind(TEXTURE);
+        final int marginHorizontal = (width - imageWidth) / 2;
+        final int marginVertical = (height - imageHeight) / 2;
+        blit(stack, marginHorizontal, marginVertical, 0, 0, imageWidth, imageHeight);
     }
 
     @Override
@@ -150,7 +150,7 @@ public class WindowField extends ContainerScreen<ContainerField>
     {
         this.renderBackground(stack);
         super.render(stack, x, y, z);
-        this.renderHoveredTooltip(stack, x, y);
+        this.renderTooltip(stack, x, y);
     }
 
     /**
@@ -188,7 +188,7 @@ public class WindowField extends ContainerScreen<ContainerField>
         {
             if (this.clicked(mouseX, mouseY))
             {
-                int index = this.direction.getHorizontalIndex();
+                int index = this.direction.get2DDataValue();
                 int delta = this.isValidClickButton(button) ? 1 : -1;
 
                 // Perform the cycle
@@ -196,7 +196,7 @@ public class WindowField extends ContainerScreen<ContainerField>
                 if (radii[index] < 0) radii[index] = ScarecrowTileEntity.getMaxRange();
 
                 this.setMessage(new StringTextComponent(String.valueOf(radii[index])));
-                Network.getNetwork().sendToServer(new FieldPlotResizeMessage(radii[index], this.direction, tileEntity.getPos()));
+                Network.getNetwork().sendToServer(new FieldPlotResizeMessage(radii[index], this.direction, tileEntity.getBlockPos()));
 
                 return true;
             }
@@ -211,7 +211,7 @@ public class WindowField extends ContainerScreen<ContainerField>
          */
         public int getTextureXOffset()
         {
-            return this.textureX + 24 * Math.floorDiv(this.direction.getHorizontalIndex(), this.columns);
+            return this.textureX + 24 * Math.floorDiv(this.direction.get2DDataValue(), this.columns);
         }
 
         /**
@@ -221,7 +221,7 @@ public class WindowField extends ContainerScreen<ContainerField>
          */
         public int getTextureYOffset()
         {
-            return this.textureY + 72 * (this.direction.getHorizontalIndex() % this.columns);
+            return this.textureY + 72 * (this.direction.get2DDataValue() % this.columns);
         }
 
         /**
@@ -250,8 +250,8 @@ public class WindowField extends ContainerScreen<ContainerField>
         public void renderButton(@NotNull final MatrixStack stack, int mouseX, int mouseY, float partialTicks)
         {
             Minecraft minecraft = Minecraft.getInstance();
-            FontRenderer fontrenderer = minecraft.fontRenderer;
-            minecraft.getTextureManager().bindTexture(WindowField.TEXTURE);
+            FontRenderer fontrenderer = minecraft.font;
+            minecraft.getTextureManager().bind(WindowField.TEXTURE);
             RenderSystem.color4f(1.0F, 1.0F, 1.0F, this.alpha);
             int i = this.getYImage(this.isHovered());
             RenderSystem.enableBlend();
@@ -272,17 +272,17 @@ public class WindowField extends ContainerScreen<ContainerField>
         public void renderToolTip(@NotNull final MatrixStack stack, int mouseX, int mouseY)
         {
             // Don't render while they are dragging a stack around
-            if (!playerInventory.getItemStack().isEmpty())
+            if (!inventory.getCarried().isEmpty())
             {
                 return;
             }
 
             List<ITextProperties> lines = Lists.newArrayList(new StringTextComponent(
-              LanguageHandler.format("com.minecolonies.coremod.gui.field." + this.direction.getString())),
+              LanguageHandler.format("com.minecolonies.coremod.gui.field." + this.direction.getSerializedName())),
               new StringTextComponent(TextFormatting.GRAY + "" + TextFormatting.ITALIC + LanguageHandler.format(getDirectionalTranslationKey())
             ));
 
-            WindowField.this.renderTooltip(stack, LanguageMap.getInstance().func_244260_a(lines), mouseX, mouseY);
+            WindowField.this.renderTooltip(stack, LanguageMap.getInstance().getVisualOrder(lines), mouseX, mouseY);
         }
 
         /**
@@ -292,10 +292,10 @@ public class WindowField extends ContainerScreen<ContainerField>
          */
         public String getDirectionalTranslationKey()
         {
-            Direction[] looks = Direction.getFacingDirections(playerInventory.player);
+            Direction[] looks = Direction.orderedByNearest(inventory.player);
             Direction facing = looks[0].getAxis() == Direction.Axis.Y ? looks[1] : looks[0];
 
-            switch (facing.getOpposite().getHorizontalIndex() - this.direction.getHorizontalIndex())
+            switch (facing.getOpposite().get2DDataValue() - this.direction.get2DDataValue())
             {
                 case 1:
                 case -3:

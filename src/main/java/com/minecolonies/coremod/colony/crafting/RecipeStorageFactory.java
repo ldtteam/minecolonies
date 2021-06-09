@@ -113,11 +113,11 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
             inputTagList.add(neededRes);
         }
         compound.put(INPUT_TAG, inputTagList);
-        recipeStorage.getPrimaryOutput().write(compound);
+        recipeStorage.getPrimaryOutput().save(compound);
 
         if (recipeStorage.getIntermediate() != null)
         {
-            compound.put(BLOCK_TAG, NBTUtil.writeBlockState(recipeStorage.getIntermediate().getDefaultState()));
+            compound.put(BLOCK_TAG, NBTUtil.writeBlockState(recipeStorage.getIntermediate().defaultBlockState()));
         }
         compound.putInt(TAG_GRID, recipeStorage.getGridSize());
         compound.put(TAG_TOKEN, StandardFactoryController.getInstance().serialize(recipeStorage.getToken()));
@@ -131,7 +131,7 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
         for (@NotNull final ItemStack stack : recipeStorage.getAlternateOutputs())
         {
             @NotNull final CompoundNBT neededRes = new CompoundNBT();
-            stack.write(neededRes);
+            stack.save(neededRes);
             altOutputTagList.add(neededRes);
         }
         compound.put(ALTOUTPUT_TAG, altOutputTagList);
@@ -140,7 +140,7 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
         for (@NotNull final ItemStack stack : recipeStorage.getCraftingToolsAndSecondaryOutputs())
         {
             @NotNull final CompoundNBT neededRes = new CompoundNBT();
-            stack.write(neededRes);
+            stack.save(neededRes);
             secOutputTagList.add(neededRes);
         }
         compound.put(SECOUTPUT_TAG, secOutputTagList);
@@ -168,12 +168,12 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
             }
             else
             {
-                final ItemStorage newItem = new ItemStorage(ItemStack.read(inputTag));
+                final ItemStorage newItem = new ItemStorage(ItemStack.of(inputTag));
                 input.add(newItem);
             }
         }
 
-        final ItemStack primaryOutput = ItemStack.read(nbt);
+        final ItemStack primaryOutput = ItemStack.of(nbt);
 
         final Block intermediate = NBTUtil.readBlockState(nbt.getCompound(BLOCK_TAG)).getBlock();
 
@@ -190,7 +190,7 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
         for (int i = 0; i < altOutputTagList.size(); ++i)
         {
             final CompoundNBT altOutputTag = altOutputTagList.getCompound(i);
-            altOutputs.add(ItemStack.read(altOutputTag));
+            altOutputs.add(ItemStack.of(altOutputTag));
         }
 
         final ListNBT secOutputTagList = nbt.getList(SECOUTPUT_TAG, Constants.NBT.TAG_COMPOUND);
@@ -199,7 +199,7 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
         for (int i = 0; i < secOutputTagList.size(); ++i)
         {
             final CompoundNBT secOutputTag = secOutputTagList.getCompound(i);
-            secOutputs.add(ItemStack.read(secOutputTag));
+            secOutputs.add(ItemStack.of(secOutputTag));
         }
 
         final ResourceLocation lootTable = nbt.contains(LOOT_TAG) ? new ResourceLocation(nbt.getString(LOOT_TAG)) : null; 
@@ -212,12 +212,12 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
     {
         packetBuffer.writeVarInt(input.getInput().size());
         input.getInput().forEach(stack -> StandardFactoryController.getInstance().serialize(packetBuffer, stack));
-        packetBuffer.writeItemStack(input.getPrimaryOutput());
+        packetBuffer.writeItem(input.getPrimaryOutput());
 
         packetBuffer.writeBoolean(input.getIntermediate() != null);
         if (input.getIntermediate() != null)
         {
-            packetBuffer.writeVarInt(Block.getStateId(input.getIntermediate().getDefaultState()));
+            packetBuffer.writeVarInt(Block.getId(input.getIntermediate().defaultBlockState()));
         }
 
         packetBuffer.writeVarInt(input.getGridSize());
@@ -225,10 +225,10 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
         packetBuffer.writeResourceLocation(input.getRecipeType().getId());
 
         packetBuffer.writeVarInt(input.getAlternateOutputs().size());
-        input.getAlternateOutputs().forEach(stack -> packetBuffer.writeItemStack(stack));
+        input.getAlternateOutputs().forEach(stack -> packetBuffer.writeItem(stack));
 
         packetBuffer.writeVarInt(input.getCraftingToolsAndSecondaryOutputs().size());
-        input.getCraftingToolsAndSecondaryOutputs().forEach(stack -> packetBuffer.writeItemStack(stack));
+        input.getCraftingToolsAndSecondaryOutputs().forEach(stack -> packetBuffer.writeItem(stack));
 
         packetBuffer.writeBoolean(input.getLootTable() != null);
         if(input.getLootTable() != null)
@@ -256,8 +256,8 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
             input.add(StandardFactoryController.getInstance().deserialize(buffer));
         }
 
-        final ItemStack primaryOutput = buffer.readItemStack();
-        final Block intermediate = buffer.readBoolean() ? Block.getStateById(buffer.readVarInt()).getBlock() : Blocks.AIR;
+        final ItemStack primaryOutput = buffer.readItem();
+        final Block intermediate = buffer.readBoolean() ? Block.stateById(buffer.readVarInt()).getBlock() : Blocks.AIR;
         final int gridSize = buffer.readVarInt();
         final ResourceLocation type = buffer.readResourceLocation();
 
@@ -265,14 +265,14 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
         final int altOutputSize = buffer.readVarInt();
         for (int i = 0; i < altOutputSize; ++i)
         {
-            altOutputs.add(buffer.readItemStack());
+            altOutputs.add(buffer.readItem());
         }
 
         final List<ItemStack> secOutputs = new ArrayList<>();
         final int secOutputSize = buffer.readVarInt();
         for (int i = 0; i < secOutputSize; ++i)
         {
-            secOutputs.add(buffer.readItemStack());
+            secOutputs.add(buffer.readItem());
         }
 
         ResourceLocation lootTable = null;

@@ -115,7 +115,7 @@ public class PathResult<T extends Callable<Path>>
      */
     public int getPathLength()
     {
-        return path.getCurrentPathLength();
+        return path.getNodeCount();
     }
 
     /**

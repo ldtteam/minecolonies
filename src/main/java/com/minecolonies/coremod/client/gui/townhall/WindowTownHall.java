@@ -391,7 +391,7 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
             {
                 if (index >= 0 && index < textColors.size())
                 {
-                    return textColors.get(index).getFriendlyName();
+                    return textColors.get(index).getName();
                 }
                 return "";
             }
@@ -444,12 +444,12 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
         final int row = alliesList.getListElementIndexByPane(button);
         final CompactColonyReference ally = building.getColony().getAllies().get(row);
         final ITextComponent teleport = new StringTextComponent(LanguageHandler.format(DO_REALLY_WANNA_TP, ally.name))
-                                          .setStyle(Style.EMPTY.setBold(true).setFormatting(TextFormatting.GOLD).setClickEvent(
+                                          .setStyle(Style.EMPTY.withBold(true).withColor(TextFormatting.GOLD).withClickEvent(
                                             new ClickEventWithExecutable(ClickEvent.Action.RUN_COMMAND, "",
                                               () -> Network.getNetwork().sendToServer(new TeleportToColonyMessage(
                                                 ally.dimension, ally.id)))));
 
-        Minecraft.getInstance().player.sendMessage(teleport, Minecraft.getInstance().player.getUniqueID());
+        Minecraft.getInstance().player.sendMessage(teleport, Minecraft.getInstance().player.createPlayerUUID());
         this.close();
     }
 
@@ -1414,7 +1414,7 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
     private void openBannerPicker(@NotNull final Button button)
     {
         Screen window = new WindowBannerPicker(townHall.getColony(), this);
-        Minecraft.getInstance().execute(() -> Minecraft.getInstance().displayGuiScreen(window));
+        Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(window));
     }
 
     /**

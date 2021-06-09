@@ -53,22 +53,22 @@ public class CommandRaid implements IMCOPCommand
     {
         // Colony
         final int colonyID = IntegerArgumentType.getInteger(context, COLONYID_ARG);
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getWorld().getDimensionKey());
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getLevel().dimension());
         if (colony == null)
         {
-            context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.colonyidnotfound", colonyID), true);
+            context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.colonyidnotfound", colonyID), true);
             return 0;
         }
 
         if(StringArgumentType.getString(context, RAID_TIME_ARG).equals(RAID_NOW))
         {
             colony.getRaiderManager().raiderEvent(raidType);
-            context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.raidnow.success", colony.getName()), true);
+            context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.raidnow.success", colony.getName()), true);
         }
         else if(StringArgumentType.getString(context, RAID_TIME_ARG).equals(RAID_TONIGHT))
         {
             colony.getRaiderManager().setRaidNextNight(true, raidType);
-            context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.raidtonight.success", colony.getName()), true);
+            context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.raidtonight.success", colony.getName()), true);
         }
         return 1;
     }

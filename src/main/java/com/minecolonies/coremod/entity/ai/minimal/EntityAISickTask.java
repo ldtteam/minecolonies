@@ -43,6 +43,8 @@ import static com.minecolonies.api.util.constant.TranslationConstants.WAITING_FO
 import static com.minecolonies.coremod.entity.ai.minimal.EntityAISickTask.DiseaseState.*;
 import static com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenDiseaseHandler.SEEK_DOCTOR_HEALTH;
 
+import net.minecraft.entity.ai.goal.Goal.Flag;
+
 /**
  * The AI task for citizens to execute when they are supposed to eat.
  */
@@ -132,11 +134,11 @@ public class EntityAISickTask extends Goal
     {
         super();
         this.citizen = citizen;
-        this.setMutexFlags(EnumSet.of(Flag.MOVE));
+        this.setFlags(EnumSet.of(Flag.MOVE));
     }
 
     @Override
-    public boolean shouldExecute()
+    public boolean canUse()
     {
         if (citizen.getDesiredActivity() == DesiredActivity.SLEEP && !citizen.isSleeping())
         {
@@ -177,7 +179,7 @@ public class EntityAISickTask extends Goal
             job.setActive(false);
         }
 
-        citizen.addPotionEffect(new EffectInstance(Effects.SLOWNESS, TICKS_SECOND * 30));
+        citizen.addEffect(new EffectInstance(Effects.MOVEMENT_SLOWDOWN, TICKS_SECOND * 30));
         switch (currentState)
         {
             case CHECK_FOR_CURE:
@@ -239,12 +241,12 @@ public class EntityAISickTask extends Goal
             {
                 for (final BlockPos pos : ((BuildingHospital) hospital).getBedList())
                 {
-                    final World world = citizen.world;
+                    final World world = citizen.level;
                     BlockState state = world.getBlockState(pos);
-                    if (state.getBlock().isIn(BlockTags.BEDS)
-                          && !state.get(BedBlock.OCCUPIED)
-                          && state.get(BedBlock.PART).equals(BedPart.HEAD)
-                          && world.isAirBlock(pos.up()))
+                    if (state.getBlock().is(BlockTags.BEDS)
+                          && !state.getValue(BedBlock.OCCUPIED)
+                          && state.getValue(BedBlock.PART).equals(BedPart.HEAD)
+                          && world.isEmptyBlock(pos.above()))
                     {
                         usedBed = pos;
                         ((BuildingHospital) hospital).registerPatient(usedBed, citizen.getCivilianID());
@@ -292,14 +294,14 @@ public class EntityAISickTask extends Goal
         }
 
         final List<ItemStack> list = IColonyManager.getInstance().getCompatibilityManager().getDisease(citizen.getCitizenDiseaseHandler().getDisease()).getCure();
-        citizen.setHeldItem(Hand.MAIN_HAND, list.get(citizen.getRandom().nextInt(list.size())));
+        citizen.setLastHandItem(Hand.MAIN_HAND, list.get(citizen.getRandom().nextInt(list.size())));
 
 
-        citizen.swingArm(Hand.MAIN_HAND);
-        citizen.playSound(SoundEvents.BLOCK_NOTE_BLOCK_HARP, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPentatonic(citizen.getRandom()));
+        citizen.swing(Hand.MAIN_HAND);
+        citizen.playSound(SoundEvents.NOTE_BLOCK_HARP, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPentatonic(citizen.getRandom()));
         Network.getNetwork().sendToTrackingEntity(
           new CircleParticleEffectMessage(
-            citizen.getPositionVec().add(0, 2, 0),
+            citizen.position().add(0, 2, 0),
             ParticleTypes.HAPPY_VILLAGER,
             waitingTicks), citizen);
 
@@ -326,7 +328,7 @@ public class EntityAISickTask extends Goal
         {
             for (final ItemStack cure : disease.getCure())
             {
-                final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(citizen, stack -> stack.isItemEqual(cure));
+                final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(citizen, stack -> stack.sameItem(cure));
                 if (slot != -1)
                 {
                     citizenData.getInventory().extractItem(slot, 1, false);
@@ -343,7 +345,7 @@ public class EntityAISickTask extends Goal
             usedBed = null;
             citizen.getCitizenData().setBedPos(BlockPos.ZERO);
         }
-        citizen.setHeldItem(Hand.MAIN_HAND, ItemStack.EMPTY);
+        citizen.setLastHandItem(Hand.MAIN_HAND, ItemStack.EMPTY);
         citizenData.markDirty();
         citizen.getCitizenDiseaseHandler().cure();
         citizen.setHealth(citizen.getMaxHealth());
@@ -396,7 +398,7 @@ public class EntityAISickTask extends Goal
             }
         }
 
-        if (!citizen.getCitizenSleepHandler().isAsleep() && BlockPosUtil.getDistance2D(placeToPath, citizen.getPosition()) > MINIMUM_DISTANCE_TO_HOSPITAL)
+        if (!citizen.getCitizenSleepHandler().isAsleep() && BlockPosUtil.getDistance2D(placeToPath, citizen.blockPosition()) > MINIMUM_DISTANCE_TO_HOSPITAL)
         {
             return GO_TO_HOSPITAL;
         }
@@ -442,7 +444,7 @@ public class EntityAISickTask extends Goal
             return SEARCH_HOSPITAL;
         }
 
-        if (citizen.getCitizenSleepHandler().isAsleep() || (citizen.getNavigator().noPath() && citizen.isWorkerAtSiteWithMove(placeToPath, MIN_DIST_TO_HOSPITAL)))
+        if (citizen.getCitizenSleepHandler().isAsleep() || (citizen.getNavigation().isDone() && citizen.isWorkerAtSiteWithMove(placeToPath, MIN_DIST_TO_HOSPITAL)))
         {
             return WAIT_FOR_CURE;
         }
@@ -506,7 +508,7 @@ public class EntityAISickTask extends Goal
         final Disease disease = IColonyManager.getInstance().getCompatibilityManager().getDisease(id);
         for (final ItemStack cure : disease.getCure())
         {
-            final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(citizen, stack -> stack.isItemEqual(cure));
+            final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(citizen, stack -> stack.sameItem(cure));
             if (slot == -1)
             {
                 if (citizen.getCitizenDiseaseHandler().isSick())
@@ -528,15 +530,15 @@ public class EntityAISickTask extends Goal
     private void reset()
     {
         waitingTicks = 0;
-        citizen.stopActiveHand();
-        citizen.resetActiveHand();
-        citizen.setHeldItem(Hand.MAIN_HAND, ItemStack.EMPTY);
+        citizen.releaseUsingItem();
+        citizen.stopUsingItem();
+        citizen.setLastHandItem(Hand.MAIN_HAND, ItemStack.EMPTY);
         placeToPath = null;
         currentState = CHECK_FOR_CURE;
     }
 
     @Override
-    public void startExecuting()
+    public void start()
     {
         citizen.getCitizenData().setVisibleStatus(VisibleCitizenStatus.SICK);
     }

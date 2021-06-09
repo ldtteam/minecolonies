@@ -45,7 +45,7 @@ public class NorsemenRaidEvent extends HordeRaidEvent
     protected void updateRaidBar()
     {
         super.updateRaidBar();
-        raidBar.setCreateFog(true);
+        raidBar.setCreateWorldFog(true);
     }
 
     @Override
@@ -59,19 +59,19 @@ public class NorsemenRaidEvent extends HordeRaidEvent
 
         if (entity instanceof EntityNorsemenChief && boss.keySet().size() < horde.numberOfBosses)
         {
-            boss.put(entity, entity.getUniqueID());
+            boss.put(entity, entity.getUUID());
             return;
         }
 
         if (entity instanceof EntityNorsemenArcher && archers.keySet().size() < horde.numberOfArchers)
         {
-            archers.put(entity, entity.getUniqueID());
+            archers.put(entity, entity.getUUID());
             return;
         }
 
         if (entity instanceof EntityShieldmaiden && normal.keySet().size() < horde.numberOfRaiders)
         {
-            normal.put(entity, entity.getUniqueID());
+            normal.put(entity, entity.getUUID());
             return;
         }
 

@@ -80,7 +80,7 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
     @Override
     public String getTitle()
     {
-        return I18n.format(this.job.getName().toLowerCase());
+        return I18n.get(this.job.getName().toLowerCase());
     }
 
     @NotNull
@@ -114,13 +114,13 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
         for (final ITextProperties line : this.description)
         {
             final int x = 0;
-            mc.fontRenderer.func_238422_b_(matrixStack, LanguageMap.getInstance().func_241870_a(line), x, y, TextFormatting.BLACK.getColor());
-            y += mc.fontRenderer.FONT_HEIGHT + 2;
+            mc.font.draw(matrixStack, LanguageMap.getInstance().getVisualOrder(line), x, y, TextFormatting.BLACK.getColor());
+            y += mc.font.lineHeight + 2;
         }
 
         for (final InfoBlock block : this.infoBlocks)
         {
-            mc.fontRenderer.drawStringWithShadow(matrixStack, block.text, block.bounds.getX(), block.bounds.getY(), TextFormatting.YELLOW.getColor());
+            mc.font.drawShadow(matrixStack, block.text, block.bounds.getX(), block.bounds.getY(), TextFormatting.YELLOW.getColor());
         }
     }
 
@@ -151,16 +151,16 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
         for (final ITextComponent line : lines)
         {
             final String text = line.getString();
-            final int width = (int) mc.fontRenderer.getCharacterManager().func_238350_a_(text);
-            final int height = mc.fontRenderer.FONT_HEIGHT;
+            final int width = (int) mc.font.getSplitter().stringWidth(text);
+            final int height = mc.font.lineHeight;
             final int x = WIDTH - width;
             String tip = null;
             if (line instanceof TranslationTextComponent)
             {
                 final String key = ((TranslationTextComponent) line).getKey() + ".tip";
-                if (I18n.hasKey(key))
+                if (I18n.exists(key))
                 {
-                    tip = (new TranslationTextComponent(key, ((TranslationTextComponent) line).getFormatArgs())).getString();
+                    tip = (new TranslationTextComponent(key, ((TranslationTextComponent) line).getArgs())).getString();
                 }
             }
             result.add(new InfoBlock(text, tip, new Rectangle2d(x, y, width, height)));
@@ -186,10 +186,10 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
     @NotNull
     private static EntityCitizen createCitizenWithJob(@NotNull final IJob<?> job)
     {
-        final EntityCitizen citizen = new EntityCitizen(ModEntities.CITIZEN, Minecraft.getInstance().world);
+        final EntityCitizen citizen = new EntityCitizen(ModEntities.CITIZEN, Minecraft.getInstance().level);
         citizen.setFemale(citizen.getRandom().nextBoolean());
         citizen.setTextureId(citizen.getRandom().nextInt(255));
-        citizen.getDataManager().set(EntityCitizen.DATA_TEXTURE_SUFFIX, CitizenData.SUFFIXES.get(citizen.getRandom().nextInt(CitizenData.SUFFIXES.size())));
+        citizen.getEntityData().set(EntityCitizen.DATA_TEXTURE_SUFFIX, CitizenData.SUFFIXES.get(citizen.getRandom().nextInt(CitizenData.SUFFIXES.size())));
         citizen.setModelId(job.getModel());
         return citizen;
     }
@@ -206,7 +206,7 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
         final List<ITextProperties> lines = new ArrayList<>();
         for (final ITextProperties component : input)
         {
-            final Optional<String[]> expanded = component.getComponent(line -> Optional.of(line.split("\\\\n")));
+            final Optional<String[]> expanded = component.visit(line -> Optional.of(line.split("\\\\n")));
             expanded.ifPresent(e -> lines.addAll(Arrays.stream(e).map(StringTextComponent::new).collect(Collectors.toList())));
         }
         return lines;
@@ -219,7 +219,7 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
         final List<ITextProperties> lines = new ArrayList<>();
         for (final ITextProperties component : input)
         {
-            lines.addAll(mc.fontRenderer.getCharacterManager().func_238362_b_(component, WIDTH, Style.EMPTY));
+            lines.addAll(mc.font.getSplitter().splitLines(component, WIDTH, Style.EMPTY));
         }
         return lines;
     }

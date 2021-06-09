@@ -167,16 +167,16 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
 
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
                                  && itemStack.getItem() instanceof ArmorItem
-                                 && ((ArmorItem) itemStack.getItem()).getEquipmentSlot() == EquipmentSlotType.CHEST, new Tuple<>(1, true));
+                                 && ((ArmorItem) itemStack.getItem()).getSlot() == EquipmentSlotType.CHEST, new Tuple<>(1, true));
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
                                  && itemStack.getItem() instanceof ArmorItem
-                                 && ((ArmorItem) itemStack.getItem()).getEquipmentSlot() == EquipmentSlotType.HEAD, new Tuple<>(1, true));
+                                 && ((ArmorItem) itemStack.getItem()).getSlot() == EquipmentSlotType.HEAD, new Tuple<>(1, true));
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
                                  && itemStack.getItem() instanceof ArmorItem
-                                 && ((ArmorItem) itemStack.getItem()).getEquipmentSlot() == EquipmentSlotType.LEGS, new Tuple<>(1, true));
+                                 && ((ArmorItem) itemStack.getItem()).getSlot() == EquipmentSlotType.LEGS, new Tuple<>(1, true));
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
                                  && itemStack.getItem() instanceof ArmorItem
-                                 && ((ArmorItem) itemStack.getItem()).getEquipmentSlot() == EquipmentSlotType.FEET, new Tuple<>(1, true));
+                                 && ((ArmorItem) itemStack.getItem()).getSlot() == EquipmentSlotType.FEET, new Tuple<>(1, true));
 
         keepX.put(itemStack -> {
             if (ItemStackUtils.isEmpty(itemStack) || !(itemStack.getItem() instanceof ArrowItem))
@@ -310,12 +310,12 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             if (optCitizen.isPresent())
             {
                 AttributeModifierUtils.removeAllHealthModifiers(optCitizen.get());
-                optCitizen.get().setItemStackToSlot(EquipmentSlotType.CHEST, ItemStackUtils.EMPTY);
-                optCitizen.get().setItemStackToSlot(EquipmentSlotType.FEET, ItemStackUtils.EMPTY);
-                optCitizen.get().setItemStackToSlot(EquipmentSlotType.HEAD, ItemStackUtils.EMPTY);
-                optCitizen.get().setItemStackToSlot(EquipmentSlotType.LEGS, ItemStackUtils.EMPTY);
-                optCitizen.get().setItemStackToSlot(EquipmentSlotType.MAINHAND, ItemStackUtils.EMPTY);
-                optCitizen.get().setItemStackToSlot(EquipmentSlotType.OFFHAND, ItemStackUtils.EMPTY);
+                optCitizen.get().setItemSlot(EquipmentSlotType.CHEST, ItemStackUtils.EMPTY);
+                optCitizen.get().setItemSlot(EquipmentSlotType.FEET, ItemStackUtils.EMPTY);
+                optCitizen.get().setItemSlot(EquipmentSlotType.HEAD, ItemStackUtils.EMPTY);
+                optCitizen.get().setItemSlot(EquipmentSlotType.LEGS, ItemStackUtils.EMPTY);
+                optCitizen.get().setItemSlot(EquipmentSlotType.MAINHAND, ItemStackUtils.EMPTY);
+                optCitizen.get().setItemSlot(EquipmentSlotType.OFFHAND, ItemStackUtils.EMPTY);
             }
             citizen.setHomeBuilding(null);
         }
@@ -518,7 +518,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
                 }
                 this.pathingFuture = null;
             }
-            else if (colony.getWorld().rand.nextBoolean() || (this.pathingFuture != null && this.pathingFuture.isCancelled()))
+            else if (colony.getWorld().random.nextBoolean() || (this.pathingFuture != null && this.pathingFuture.isCancelled()))
             {
                 this.pathingFuture = Pathfinding.enqueue(new PathJobRandomPos(colony.getWorld(),lastPatrolPoint,10, 30,null));
             }
@@ -652,7 +652,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     {
         if (getSetting(GUARD_TASK).getValue().equals(GuardTaskSetting.FOLLOW) && followPlayer != null)
         {
-            return new BlockPos(followPlayer.getPositionVec());
+            return new BlockPos(followPlayer.position());
         }
 
         return this.getPosition();
@@ -690,10 +690,10 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
                 return null;
             }
 
-            final int size = player.inventory.getSizeInventory();
+            final int size = player.inventory.getContainerSize();
             for (int i = 0; i < size; i++)
             {
-                final ItemStack stack = player.inventory.getStackInSlot(i);
+                final ItemStack stack = player.inventory.getItem(i);
                 if (stack.getItem() instanceof ItemBannerRallyGuards)
                 {
                     if (((ItemBannerRallyGuards) (stack.getItem())).isActiveForGuardTower(stack, this))

@@ -8,6 +8,8 @@ import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.EnumProperty;
 import org.jetbrains.annotations.NotNull;
 
+import net.minecraft.block.AbstractBlock.Properties;
+
 public abstract class AbstractBlockBarrel<B extends AbstractBlockBarrel<B>> extends AbstractBlockMinecoloniesHorizontal<B>
 {
     public static final EnumProperty<BarrelType> VARIANT = EnumProperty.create("variant", BarrelType.class);
@@ -15,7 +17,7 @@ public abstract class AbstractBlockBarrel<B extends AbstractBlockBarrel<B>> exte
     /**
      * The position it faces.
      */
-    public static final DirectionProperty FACING = HorizontalBlock.HORIZONTAL_FACING;
+    public static final DirectionProperty FACING = HorizontalBlock.FACING;
 
     public AbstractBlockBarrel(final Properties properties)
     {
@@ -49,6 +51,6 @@ public abstract class AbstractBlockBarrel<B extends AbstractBlockBarrel<B>> exte
             type = BarrelType.DONE;
         }
 
-        return blockState.with(AbstractBlockBarrel.VARIANT, type).with(AbstractBlockBarrel.FACING, blockState.get(AbstractBlockBarrel.FACING));
+        return blockState.setValue(AbstractBlockBarrel.VARIANT, type).setValue(AbstractBlockBarrel.FACING, blockState.getValue(AbstractBlockBarrel.FACING));
     }
 }

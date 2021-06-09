@@ -34,14 +34,14 @@ public class ColonyViewRemoveMessage implements IMessage
     public void toBytes(final PacketBuffer buf)
     {
         buf.writeInt(id);
-        buf.writeString(dimension.getLocation().toString());
+        buf.writeUtf(dimension.location().toString());
     }
 
     @Override
     public void fromBytes(final PacketBuffer buf)
     {
         id = buf.readInt();
-        dimension = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(buf.readString(32767)));
+        dimension = RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)));
     }
 
     @Nullable

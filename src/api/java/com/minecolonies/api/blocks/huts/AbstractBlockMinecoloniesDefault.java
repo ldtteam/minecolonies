@@ -4,12 +4,14 @@ import com.minecolonies.api.blocks.AbstractBlockMinecoloniesContainer;
 import net.minecraft.block.HorizontalBlock;
 import net.minecraft.state.DirectionProperty;
 
+import net.minecraft.block.AbstractBlock.Properties;
+
 public abstract class AbstractBlockMinecoloniesDefault<B extends AbstractBlockMinecoloniesDefault<B>> extends AbstractBlockMinecoloniesContainer<B>
 {
     /**
      * The position it faces.
      */
-    public static final DirectionProperty FACING           = HorizontalBlock.HORIZONTAL_FACING;
+    public static final DirectionProperty FACING           = HorizontalBlock.FACING;
     /**
      * Hardness of the block.
      */

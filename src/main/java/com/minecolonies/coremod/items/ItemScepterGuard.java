@@ -39,37 +39,37 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
      */
     public ItemScepterGuard(final Item.Properties properties)
     {
-        super("scepterguard", properties.maxStackSize(1).maxDamage(2));
+        super("scepterguard", properties.stacksTo(1).durability(2));
     }
 
     @NotNull
     @Override
-    public ActionResultType onItemUse(final ItemUseContext ctx)
+    public ActionResultType useOn(final ItemUseContext ctx)
     {
         // if server world, do nothing
-        if (ctx.getWorld().isRemote)
+        if (ctx.getLevel().isClientSide)
         {
             return ActionResultType.FAIL;
         }
 
-        final ItemStack scepter = ctx.getPlayer().getHeldItem(ctx.getHand());
+        final ItemStack scepter = ctx.getPlayer().getLastHandItem(ctx.getHand());
         if (!scepter.hasTag())
         {
             scepter.setTag(new CompoundNBT());
         }
         final CompoundNBT compound = scepter.getTag();
 
-        if (compound.keySet().contains(TAG_LAST_POS))
+        if (compound.getAllKeys().contains(TAG_LAST_POS))
         {
             final BlockPos lastPos = BlockPosUtil.read(compound, TAG_LAST_POS);
-            if (lastPos.equals(ctx.getPos()))
+            if (lastPos.equals(ctx.getClickedPos()))
             {
-                ctx.getPlayer().inventory.removeStackFromSlot(ctx.getPlayer().inventory.currentItem);
+                ctx.getPlayer().inventory.removeItemNoUpdate(ctx.getPlayer().inventory.selected);
                 LanguageHandler.sendPlayerMessage(ctx.getPlayer(), "com.minecolonies.coremod.job.guard.toolDoubleClick");
                 return ActionResultType.FAIL;
             }
         }
-        return handleItemUsage(ctx.getWorld(), ctx.getPos(), compound, ctx.getPlayer());
+        return handleItemUsage(ctx.getLevel(), ctx.getClickedPos(), compound, ctx.getPlayer());
     }
 
     /**
@@ -84,7 +84,7 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
     @NotNull
     private static ActionResultType handleItemUsage(final World worldIn, final BlockPos pos, final CompoundNBT compound, final PlayerEntity playerIn)
     {
-        if (!compound.keySet().contains(TAG_ID))
+        if (!compound.getAllKeys().contains(TAG_ID))
         {
             return ActionResultType.FAIL;
         }
@@ -120,11 +120,11 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
         {
             LanguageHandler.sendPlayerMessage(playerIn, "com.minecolonies.coremod.job.guard.toolClickGuard", pos, name);
             tower.setGuardPos(pos);
-            playerIn.inventory.removeStackFromSlot(playerIn.inventory.currentItem);
+            playerIn.inventory.removeItemNoUpdate(playerIn.inventory.selected);
         }
         else
         {
-            if (!compound.keySet().contains(TAG_LAST_POS))
+            if (!compound.getAllKeys().contains(TAG_LAST_POS))
             {
                 tower.resetPatrolTargets();
             }

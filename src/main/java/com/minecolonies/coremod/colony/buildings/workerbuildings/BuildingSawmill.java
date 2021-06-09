@@ -163,7 +163,7 @@ public class BuildingSawmill extends AbstractBuildingCrafter
                 final ItemStack stack = stacks.get(0);
                 if (!ItemStackUtils.isEmpty(stack))
                 {
-                    if (stack.getItem().isIn(ItemTags.PLANKS) || stack.getItem().isIn(ItemTags.LOGS))
+                    if (stack.getItem().is(ItemTags.PLANKS) || stack.getItem().is(ItemTags.LOGS))
                     {
                         amountOfValidBlocks += stack.getCount();
                         continue;

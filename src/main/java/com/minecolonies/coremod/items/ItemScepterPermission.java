@@ -49,7 +49,7 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
      */
     public ItemScepterPermission(final Item.Properties properties)
     {
-        super("scepterpermission", properties.maxStackSize(1).maxDamage(2).group(ModCreativeTabs.MINECOLONIES));
+        super("scepterpermission", properties.stacksTo(1).durability(2).tab(ModCreativeTabs.MINECOLONIES));
     }
 
     @NotNull
@@ -91,25 +91,25 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
      */
     @Override
     @NotNull
-    public ActionResultType onItemUse(final ItemUseContext ctx)
+    public ActionResultType useOn(final ItemUseContext ctx)
     {
-        if (!ctx.getWorld().isRemote)
+        if (!ctx.getLevel().isClientSide)
         {
             return ActionResultType.SUCCESS;
         }
-        final ItemStack scepter = ctx.getPlayer().getHeldItem(ctx.getHand());
+        final ItemStack scepter = ctx.getPlayer().getLastHandItem(ctx.getHand());
         if (!scepter.hasTag())
         {
             scepter.setTag(new CompoundNBT());
         }
 
-        final IColonyView iColonyView = IColonyManager.getInstance().getClosestColonyView(ctx.getWorld(), ctx.getPos());
+        final IColonyView iColonyView = IColonyManager.getInstance().getClosestColonyView(ctx.getLevel(), ctx.getClickedPos());
         if (iColonyView == null)
         {
             return ActionResultType.FAIL;
         }
         final CompoundNBT compound = scepter.getTag();
-        return handleItemAction(compound, ctx.getPlayer(), ctx.getWorld(), ctx.getPos(), iColonyView);
+        return handleItemAction(compound, ctx.getPlayer(), ctx.getLevel(), ctx.getClickedPos(), iColonyView);
     }
 
     /**
@@ -122,13 +122,13 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
      */
     @Override
     @NotNull
-    public ActionResult<ItemStack> onItemRightClick(
+    public ActionResult<ItemStack> use(
       final World worldIn,
       final PlayerEntity playerIn,
       final Hand hand)
     {
-        final ItemStack scepter = playerIn.getHeldItem(hand);
-        if (worldIn.isRemote)
+        final ItemStack scepter = playerIn.getLastHandItem(hand);
+        if (worldIn.isClientSide)
         {
             return new ActionResult<>(ActionResultType.SUCCESS, scepter);
         }

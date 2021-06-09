@@ -51,13 +51,13 @@ public class BuildingSetStyleMessage extends AbstractBuildingServerMessage<IBuil
     @Override
     public void fromBytesOverride(@NotNull final PacketBuffer buf)
     {
-        style = buf.readString(32767);
+        style = buf.readUtf(32767);
     }
 
     @Override
     public void toBytesOverride(@NotNull final PacketBuffer buf)
     {
-        buf.writeString(style);
+        buf.writeUtf(style);
     }
 
     @Override
@@ -72,13 +72,13 @@ public class BuildingSetStyleMessage extends AbstractBuildingServerMessage<IBuil
             final LoadOnlyStructureHandler structure = new LoadOnlyStructureHandler(colony.getWorld(), building.getPosition(), workOrder.getStructureName(), new PlacementSettings(), true);
             structure.getBluePrint().rotateWithMirror(BlockPosUtil.getRotationFromRotations(workOrder.getRotation(colony.getWorld())), workOrder.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE, colony.getWorld());
 
-            CompoundNBT teData = structure.getBluePrint().getTileEntityData(building.getTileEntity().getPos(), structure.getBluePrint().getPrimaryBlockOffset());
+            CompoundNBT teData = structure.getBluePrint().getTileEntityData(building.getTileEntity().getBlockPos(), structure.getBluePrint().getPrimaryBlockOffset());
             if (teData != null && teData.contains(TAG_BLUEPRINTDATA))
             {
                 building.getTileEntity().readSchematicDataFromNBT(teData);
-                Chunk chunk = (Chunk) building.getTileEntity().getWorld().getChunk(building.getTileEntity().getPos());
+                Chunk chunk = (Chunk) building.getTileEntity().getLevel().getChunk(building.getTileEntity().getBlockPos());
                 PacketDistributor.TRACKING_CHUNK.with(() -> chunk).send(building.getTileEntity().getUpdatePacket());
-                building.getTileEntity().markDirty();
+                building.getTileEntity().setChanged();
                 building.calculateCorners();
             }
         }

@@ -118,7 +118,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
      */
     protected final boolean mineBlock(@NotNull final BlockPos blockToMine)
     {
-        return mineBlock(blockToMine, worker.getPosition());
+        return mineBlock(blockToMine, worker.blockPosition());
     }
 
     /**
@@ -172,7 +172,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
             return false;
         }
 
-        final ItemStack tool = worker.getHeldItemMainhand();
+        final ItemStack tool = worker.getMainHandItem();
 
         if (getDrops)
         {
@@ -186,10 +186,10 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
             List<ItemStack> localItems = new ArrayList<ItemStack>();
 
             //Checks to see if the equipped tool has Silk Touch AND if the blocktoMine has a viable Item SilkTouch can get.
-            if (silkTouch && Item.getItemFromBlock(BlockPosUtil.getBlock(world, blockToMine)) != null)
+            if (silkTouch && Item.byBlock(BlockPosUtil.getBlock(world, blockToMine)) != null)
             {
                 //Stores Silk Touch Block in localItems
-                final ItemStack silkItem = new ItemStack(Item.getItemFromBlock(BlockPosUtil.getBlock(world, blockToMine)), 1);
+                final ItemStack silkItem = new ItemStack(Item.byBlock(BlockPosUtil.getBlock(world, blockToMine)), 1);
                 localItems.add(silkItem);
             }
             //If Silk Touch doesn't work, get blocks with Fortune value as normal.
@@ -266,7 +266,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
             return true;
         }
 
-        if (walkToBlock(safeStand) && MathUtils.twoDimDistance(worker.getPosition(), safeStand) > MIN_WORKING_RANGE)
+        if (walkToBlock(safeStand) && MathUtils.twoDimDistance(worker.blockPosition(), safeStand) > MIN_WORKING_RANGE)
         {
             return true;
         }
@@ -284,9 +284,9 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
      */
     public int getBlockMiningDelay(@NotNull final Block block, @NotNull final BlockPos pos)
     {
-        if (worker.getHeldItemMainhand() == null)
+        if (worker.getMainHandItem() == null)
         {
-            return (int) world.getBlockState(pos).getBlockHardness(world, pos);
+            return (int) world.getBlockState(pos).getDestroySpeed(world, pos);
         }
 
         return MineColonies.getConfig().getServer().pvp_mode.get()
@@ -306,9 +306,9 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
         final double reduction = 1 - worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(BLOCK_BREAK_SPEED);
 
         return (int) (((MineColonies.getConfig().getServer().blockMiningDelayModifier.get() * Math.pow(LEVEL_MODIFIER, getBreakSpeedLevel() / 2.0))
-                         * (double) world.getBlockState(pos).getBlockHardness(world, pos) / (double) (worker.getHeldItemMainhand()
+                         * (double) world.getBlockState(pos).getDestroySpeed(world, pos) / (double) (worker.getMainHandItem()
                                                                                                         .getItem()
-                                                                                                        .getDestroySpeed(worker.getHeldItemMainhand(), block.getDefaultState())))
+                                                                                                        .getDestroySpeed(worker.getMainHandItem(), block.defaultBlockState())))
                         * reduction);
     }
 
@@ -327,8 +327,8 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
     public void fillItemsList()
     {
         searchForItems(worker.getBoundingBox()
-                         .expand(RANGE_HORIZONTAL_PICKUP, RANGE_VERTICAL_PICKUP, RANGE_HORIZONTAL_PICKUP)
-                         .expand(-RANGE_HORIZONTAL_PICKUP, -RANGE_VERTICAL_PICKUP, -RANGE_HORIZONTAL_PICKUP));
+                         .expandTowards(RANGE_HORIZONTAL_PICKUP, RANGE_VERTICAL_PICKUP, RANGE_HORIZONTAL_PICKUP)
+                         .expandTowards(-RANGE_HORIZONTAL_PICKUP, -RANGE_VERTICAL_PICKUP, -RANGE_HORIZONTAL_PICKUP));
     }
 
     /**
@@ -338,10 +338,10 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
      */
     public void searchForItems(final AxisAlignedBB boundingBox)
     {
-        items = world.getLoadedEntitiesWithinAABB(ItemEntity.class, boundingBox)
+        items = world.getLoadedEntitiesOfClass(ItemEntity.class, boundingBox)
                   .stream()
                   .filter(item -> item != null && item.isAlive() &&
-                                    (!item.getPersistentData().keySet().contains("PreventRemoteMovement") || !item.getPersistentData().getBoolean("PreventRemoteMovement")))
+                                    (!item.getPersistentData().getAllKeys().contains("PreventRemoteMovement") || !item.getPersistentData().getBoolean("PreventRemoteMovement")))
                   .map(BlockPosUtil::fromEntity)
                   .collect(Collectors.toList());
     }
@@ -352,14 +352,14 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
     public void gatherItems()
     {
         worker.setCanPickUpLoot(true);
-        if (worker.getNavigator().noPath() || worker.getNavigator().getPath() == null)
+        if (worker.getNavigation().isDone() || worker.getNavigation().getPath() == null)
         {
             final BlockPos pos = getAndRemoveClosestItemPosition();
             worker.isWorkerAtSiteWithMove(pos, ITEM_PICKUP_RANGE);
             return;
         }
 
-        final int currentIndex = worker.getNavigator().getPath().getCurrentPathIndex();
+        final int currentIndex = worker.getNavigation().getPath().getNextNodeIndex();
         //We moved a bit, not stuck
         if (currentIndex != previousIndex)
         {
@@ -373,7 +373,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
         if (stillTicks > STUCK_WAIT_TICKS)
         {
             //Skip this item
-            worker.getNavigator().clearPath();
+            worker.getNavigation().stop();
             if (items != null && !items.isEmpty())
             {
                 items.remove(0);
@@ -393,7 +393,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
 
         for (int i = 0; i < items.size(); i++)
         {
-            final double tempDistance = items.get(i).distanceSq(worker.getPosition());
+            final double tempDistance = items.get(i).distSqr(worker.blockPosition());
             if (tempDistance < distance)
             {
                 index = i;
@@ -411,7 +411,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
      */
     protected BlockPos findRandomPositionToWalkTo(final int range)
     {
-        return findRandomPositionToWalkTo(range, worker.getPosition());
+        return findRandomPositionToWalkTo(range, worker.blockPosition());
     }
 
     /**
@@ -435,7 +435,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
 
         if (pathResult.isPathReachingDestination())
         {
-            final BlockPos resultPos = pathResult.getPath().getFinalPathPoint().func_224759_a();
+            final BlockPos resultPos = pathResult.getPath().getEndNode().asBlockPos();
             pathResult = null;
             return resultPos;
         }
@@ -463,13 +463,13 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
      */
     protected PathResult getRandomNavigationPath(final int range, final BlockPos pos)
     {
-        if (pos == null || pos == worker.getPosition())
+        if (pos == null || pos == worker.blockPosition())
         {
-            return worker.getNavigator().moveToRandomPos(range, 1.0D);
+            return worker.getNavigation().moveToRandomPos(range, 1.0D);
         }
         else
         {
-            return worker.getNavigator().moveToRandomPosAroundX(range, 1.0D, pos);
+            return worker.getNavigation().moveToRandomPosAroundX(range, 1.0D, pos);
         }
     }
 

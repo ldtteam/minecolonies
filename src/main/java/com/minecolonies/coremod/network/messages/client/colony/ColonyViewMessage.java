@@ -70,7 +70,7 @@ public class ColonyViewMessage implements IMessage
         final PacketBuffer newBuf = new PacketBuffer(buf.retain());
         colonyId = newBuf.readInt();
         isNewSubscription = newBuf.readBoolean();
-        dim = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(newBuf.readString(32767)));
+        dim = RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(newBuf.readUtf(32767)));
         colonyBuffer = newBuf;
     }
 
@@ -79,7 +79,7 @@ public class ColonyViewMessage implements IMessage
     {
         buf.writeInt(colonyId);
         buf.writeBoolean(isNewSubscription);
-        buf.writeString(dim.getLocation().toString());
+        buf.writeUtf(dim.location().toString());
         buf.writeBytes(colonyBuffer);
     }
 
@@ -94,9 +94,9 @@ public class ColonyViewMessage implements IMessage
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
-        if (Minecraft.getInstance().world != null)
+        if (Minecraft.getInstance().level != null)
         {
-            IColonyManager.getInstance().handleColonyViewMessage(colonyId, colonyBuffer, Minecraft.getInstance().world, isNewSubscription, dim);
+            IColonyManager.getInstance().handleColonyViewMessage(colonyId, colonyBuffer, Minecraft.getInstance().level, isNewSubscription, dim);
         }
         colonyBuffer.release();
     }

@@ -40,7 +40,7 @@ public class MinimumStockModuleView extends AbstractBuildingModuleView  implemen
         final int size = buf.readInt();
         for (int i = 0; i < size; i++)
         {
-            minimumStock.add(new Tuple<>(new ItemStorage(buf.readItemStack()), buf.readInt()));
+            minimumStock.add(new Tuple<>(new ItemStorage(buf.readItem()), buf.readInt()));
         }
         reachedLimit = buf.readBoolean();
     }

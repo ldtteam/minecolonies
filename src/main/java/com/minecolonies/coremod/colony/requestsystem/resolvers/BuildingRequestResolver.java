@@ -186,7 +186,7 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
     @Override
     public Optional<IRequester> getBuilding(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
-        if (!manager.getColony().getWorld().isRemote)
+        if (!manager.getColony().getWorld().isClientSide)
         {
             return Optional.ofNullable(manager.getColony().getRequesterBuildingForPosition(getLocation().getInDimensionLocation()));
         }

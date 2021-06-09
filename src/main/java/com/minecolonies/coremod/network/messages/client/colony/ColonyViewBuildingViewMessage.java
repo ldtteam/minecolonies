@@ -57,7 +57,7 @@ public class ColonyViewBuildingViewMessage implements IMessage
     {
         colonyId = buf.readInt();
         buildingId = buf.readBlockPos();
-        dimension = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(buf.readString(32767)));
+        dimension = RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)));
         buildingData = new PacketBuffer(Unpooled.buffer(buf.readableBytes()));
         buf.readBytes(buildingData, buf.readableBytes());
     }
@@ -67,7 +67,7 @@ public class ColonyViewBuildingViewMessage implements IMessage
     {
         buf.writeInt(colonyId);
         buf.writeBlockPos(buildingId);
-        buf.writeString(dimension.getLocation().toString());
+        buf.writeUtf(dimension.location().toString());
         buf.writeBytes(buildingData);
     }
 

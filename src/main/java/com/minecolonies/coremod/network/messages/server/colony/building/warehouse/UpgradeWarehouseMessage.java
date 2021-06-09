@@ -52,15 +52,15 @@ public class UpgradeWarehouseMessage extends AbstractBuildingServerMessage<Build
             return;
         }
 
-        building.upgradeContainers(player.world);
+        building.upgradeContainers(player.level);
 
         final boolean isCreative = player.isCreative();
         if (!isCreative)
         {
             final int slot = InventoryUtils.
                                              findFirstSlotInItemHandlerWith(new InvWrapper(player.inventory),
-                                               itemStack -> itemStack.isItemEqual(new ItemStack(Blocks.EMERALD_BLOCK)));
-            player.inventory.decrStackSize(slot, 1);
+                                               itemStack -> itemStack.sameItem(new ItemStack(Blocks.EMERALD_BLOCK)));
+            player.inventory.removeItem(slot, 1);
         }
     }
 }

@@ -65,14 +65,14 @@ public class BlockStateUtils
 
         if (propertyOne != null && state2.hasProperty(propertyOne))
         {
-            return state1.get(propertyOne) == state2.get(propertyOne);
+            return state1.getValue(propertyOne) == state2.getValue(propertyOne);
         }
 
         final Property<?> propertyTwo = getPropertyByNameFromState(state2, propertyName);
 
         if (propertyOne != null && propertyTwo != null && state1.hasProperty(propertyOne) && state2.hasProperty(propertyTwo))
         {
-            return state1.get(propertyOne).toString().equals((state2.get(propertyTwo)).toString());
+            return state1.getValue(propertyOne).toString().equals((state2.getValue(propertyTwo)).toString());
         }
         return false;
     }
@@ -142,7 +142,7 @@ public class BlockStateUtils
             return state1 == state2;
         }
 
-        return state1.with(prop, state2.get(prop)) == state2;
+        return state1.setValue(prop, state2.getValue(prop)) == state2;
     }
 
     /**
@@ -176,7 +176,7 @@ public class BlockStateUtils
                 return false;
             }
 
-            if (state1.get(prop) != state2.get(prop))
+            if (state1.getValue(prop) != state2.getValue(prop))
             {
                 return false;
             }

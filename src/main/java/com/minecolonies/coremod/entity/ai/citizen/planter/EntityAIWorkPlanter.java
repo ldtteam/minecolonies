@@ -74,19 +74,19 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
             return START_WORKING;
         }
 
-        if (walkToBlock(workPos.up()))
+        if (walkToBlock(workPos.above()))
         {
             return getState();
         }
 
         final ItemStack currentStack = new ItemStack(getOwnBuilding().nextPlantPhase());
-        final int plantInInv = InventoryUtils.getItemCountInItemHandler((worker.getInventoryCitizen()), itemStack -> itemStack.isItemEqual(currentStack));
+        final int plantInInv = InventoryUtils.getItemCountInItemHandler((worker.getInventoryCitizen()), itemStack -> itemStack.sameItem(currentStack));
         if (plantInInv <= 0)
         {
             return START_WORKING;
         }
 
-        if (world.setBlockState(workPos.up(), BlockUtils.getBlockStateFromStack(currentStack)))
+        if (world.setBlockAndUpdate(workPos.above(), BlockUtils.getBlockStateFromStack(currentStack)))
         {
             InventoryUtils.reduceStackInItemHandler(worker.getInventoryCitizen(), currentStack);
         }
@@ -106,23 +106,23 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
             return START_WORKING;
         }
 
-        if (walkToBlock(workPos.up()))
+        if (walkToBlock(workPos.above()))
         {
             return getState();
         }
 
-        if (!holdEfficientTool(world.getBlockState(workPos.up()).getBlock(), workPos.up()))
+        if (!holdEfficientTool(world.getBlockState(workPos.above()).getBlock(), workPos.above()))
         {
             return START_WORKING;
         }
 
-        if (!(world.getBlockState(workPos.up()).getBlock() instanceof AirBlock))
+        if (!(world.getBlockState(workPos.above()).getBlock() instanceof AirBlock))
         {
-            mineBlock(workPos.up());
+            mineBlock(workPos.above());
             return getState();
         }
 
-        for (final ItemEntity item : world.getLoadedEntitiesWithinAABB(ItemEntity.class, new AxisAlignedBB(worker.getPosition()).expand(4.0F, 1.0F, 4.0F).expand(-4.0F, -1.0F, -4.0F)))
+        for (final ItemEntity item : world.getLoadedEntitiesOfClass(ItemEntity.class, new AxisAlignedBB(worker.blockPosition()).expandTowards(4.0F, 1.0F, 4.0F).expandTowards(-4.0F, -1.0F, -4.0F)))
         {
             if (item != null)
             {
@@ -176,8 +176,8 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
 
         final Item current = plantation.nextPlantPhase();
 
-        final int plantInBuilding = InventoryUtils.getCountFromBuilding(getOwnBuilding(), itemStack -> itemStack.isItemEqual(new ItemStack(current)));
-        final int plantInInv = InventoryUtils.getItemCountInItemHandler((worker.getInventoryCitizen()), itemStack -> itemStack.isItemEqual(new ItemStack(current)));
+        final int plantInBuilding = InventoryUtils.getCountFromBuilding(getOwnBuilding(), itemStack -> itemStack.sameItem(new ItemStack(current)));
+        final int plantInInv = InventoryUtils.getItemCountInItemHandler((worker.getInventoryCitizen()), itemStack -> itemStack.sameItem(new ItemStack(current)));
 
         if (plantInBuilding + plantInInv <= 0)
         {
@@ -187,13 +187,13 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
 
         if (plantInInv == 0 && plantInBuilding > 0)
         {
-            needsCurrently = new Tuple<>(itemStack -> itemStack.isItemEqual(new ItemStack(current)), Math.min(plantInBuilding, PLANT_TO_REQUEST));
+            needsCurrently = new Tuple<>(itemStack -> itemStack.sameItem(new ItemStack(current)), Math.min(plantInBuilding, PLANT_TO_REQUEST));
             return GATHERING_REQUIRED_MATERIALS;
         }
 
         for (final BlockPos pos : list)
         {
-            if (world.getBlockState(pos.up()).getBlock() instanceof AirBlock)
+            if (world.getBlockState(pos.above()).getBlock() instanceof AirBlock)
             {
                 this.workPos = pos;
                 return PLANTATION_PLANT;
@@ -225,8 +225,8 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
      */
     private boolean isAtLeastThreeHigh(final BlockPos pos)
     {
-        return !(world.getBlockState(pos.up(1)).getBlock() instanceof AirBlock)
-                 && !(world.getBlockState(pos.up(2)).getBlock() instanceof AirBlock)
-                 && !(world.getBlockState(pos.up(3)).getBlock() instanceof AirBlock);
+        return !(world.getBlockState(pos.above(1)).getBlock() instanceof AirBlock)
+                 && !(world.getBlockState(pos.above(2)).getBlock() instanceof AirBlock)
+                 && !(world.getBlockState(pos.above(3)).getBlock() instanceof AirBlock);
     }
 }

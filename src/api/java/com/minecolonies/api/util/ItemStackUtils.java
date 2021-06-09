@@ -130,13 +130,13 @@ public final class ItemStackUtils
     {
         try
         {
-            final Optional<EntityType<?>> type = EntityType.readEntityType(entityData);
+            final Optional<EntityType<?>> type = EntityType.by(entityData);
             if (type.isPresent())
             {
                 final Entity entity = type.get().create(world);
                 if (entity != null)
                 {
-                    entity.read(entityData);
+                    entity.load(entityData);
                     return entity;
                 }
             }
@@ -206,7 +206,7 @@ public final class ItemStackUtils
             final List<ItemStorage> request = new ArrayList<>();
             if (entity instanceof ItemFrameEntity)
             {
-                final ItemStack stack = ((ItemFrameEntity) entity).getDisplayedItem();
+                final ItemStack stack = ((ItemFrameEntity) entity).getItem();
                 if (!ItemStackUtils.isEmpty(stack))
                 {
                     ItemStackUtils.setSize(stack, 1);
@@ -217,8 +217,8 @@ public final class ItemStackUtils
             else if (entity instanceof ArmorStandEntity)
             {
                 request.add(new ItemStorage(entity.getPickedResult(new EntityRayTraceResult(placer))));
-                entity.getArmorInventoryList().forEach(item -> request.add(new ItemStorage(item)));
-                entity.getHeldEquipment().forEach(item -> request.add(new ItemStorage(item)));
+                entity.getArmorSlots().forEach(item -> request.add(new ItemStorage(item)));
+                entity.getHandSlots().forEach(item -> request.add(new ItemStorage(item)));
             }
 
             /*
@@ -293,7 +293,7 @@ public final class ItemStackUtils
             if (stack.getItem() instanceof HoeItem)
             {
                 final HoeItem hoeItem = (HoeItem) stack.getItem();
-                return hoeItem.getTier().getHarvestLevel();
+                return hoeItem.getTier().getLevel();
             }
         }
         else if (ToolType.SWORD.equals(toolType))
@@ -301,7 +301,7 @@ public final class ItemStackUtils
             if (stack.getItem() instanceof SwordItem)
             {
                 final SwordItem SwordItem = (SwordItem) stack.getItem();
-                return SwordItem.getTier().getHarvestLevel();
+                return SwordItem.getTier().getLevel();
             }
             else if (Compatibility.isTinkersWeapon(stack))
             {
@@ -316,7 +316,7 @@ public final class ItemStackUtils
             if (stack.getItem() instanceof ArmorItem)
             {
                 final ArmorItem ArmorItem = (ArmorItem) stack.getItem();
-                return getArmorLevel(ArmorItem.getArmorMaterial());
+                return getArmorLevel(ArmorItem.getMaterial());
             }
         }
         else if (stack.getItem() instanceof FishingRodItem)
@@ -448,7 +448,7 @@ public final class ItemStackUtils
         final Item item = stack.getItem();
         return item == Items.ITEM_FRAME
                  || item == Items.ARMOR_STAND
-                 || !Block.getBlockFromItem(item).getDefaultState().getMaterial().isSolid();
+                 || !Block.byItem(item).defaultBlockState().getMaterial().isSolid();
     }
 
     /*
@@ -483,24 +483,24 @@ public final class ItemStackUtils
      */
     private static int getArmorLevel(final IArmorMaterial material)
     {
-        final int damageReductionAmount = material.getDamageReductionAmount(EquipmentSlotType.CHEST);
-        if (damageReductionAmount <= ArmorMaterial.LEATHER.getDamageReductionAmount(EquipmentSlotType.CHEST))
+        final int damageReductionAmount = material.getDefenseForSlot(EquipmentSlotType.CHEST);
+        if (damageReductionAmount <= ArmorMaterial.LEATHER.getDefenseForSlot(EquipmentSlotType.CHEST))
         {
             return 0;
         }
-        else if (damageReductionAmount <= ArmorMaterial.GOLD.getDamageReductionAmount(EquipmentSlotType.CHEST) && material != ArmorMaterial.CHAIN)
+        else if (damageReductionAmount <= ArmorMaterial.GOLD.getDefenseForSlot(EquipmentSlotType.CHEST) && material != ArmorMaterial.CHAIN)
         {
             return 1;
         }
-        else if (damageReductionAmount <= ArmorMaterial.CHAIN.getDamageReductionAmount(EquipmentSlotType.CHEST))
+        else if (damageReductionAmount <= ArmorMaterial.CHAIN.getDefenseForSlot(EquipmentSlotType.CHEST))
         {
             return 2;
         }
-        else if (damageReductionAmount <= ArmorMaterial.IRON.getDamageReductionAmount(EquipmentSlotType.CHEST))
+        else if (damageReductionAmount <= ArmorMaterial.IRON.getDefenseForSlot(EquipmentSlotType.CHEST))
         {
             return 3;
         }
-        else if (damageReductionAmount <= ArmorMaterial.DIAMOND.getDamageReductionAmount(EquipmentSlotType.CHEST))
+        else if (damageReductionAmount <= ArmorMaterial.DIAMOND.getDefenseForSlot(EquipmentSlotType.CHEST))
         {
             return 4;
         }
@@ -520,16 +520,16 @@ public final class ItemStackUtils
         {
             return 1;
         }
-        if (!itemStack.isDamageable())
+        if (!itemStack.isDamageableItem())
         {
             return 5;
         }
         final int rodDurability = itemStack.getMaxDamage();
-        if (rodDurability <= (ItemTier.WOOD.getMaxUses() + MinecoloniesAPIProxy.getInstance().getConfig().getServer().fishingRodDurabilityAdjustT1.get()))
+        if (rodDurability <= (ItemTier.WOOD.getUses() + MinecoloniesAPIProxy.getInstance().getConfig().getServer().fishingRodDurabilityAdjustT1.get()))
         {
             return 1;
         }
-        else if (rodDurability <= (ItemTier.IRON.getMaxUses() + MinecoloniesAPIProxy.getInstance().getConfig().getServer().fishingRodDurabilityAdjustT2.get()))
+        else if (rodDurability <= (ItemTier.IRON.getUses() + MinecoloniesAPIProxy.getInstance().getConfig().getServer().fishingRodDurabilityAdjustT2.get()))
         {
             return 2;
         }
@@ -551,7 +551,7 @@ public final class ItemStackUtils
         int maxLevel = 0;
         if (itemStack != null)
         {
-            final ListNBT ListNBT = itemStack.getEnchantmentTagList();
+            final ListNBT ListNBT = itemStack.getEnchantmentTags();
 
             if (ListNBT != null)
             {
@@ -581,7 +581,7 @@ public final class ItemStackUtils
         int fortune = 0;
         if (tool.isEnchanted())
         {
-            final ListNBT t = tool.getEnchantmentTagList();
+            final ListNBT t = tool.getEnchantmentTags();
 
             for (int i = 0; i < t.size(); i++)
             {
@@ -604,7 +604,7 @@ public final class ItemStackUtils
         boolean hasSilk = false;
         if (tool.isEnchanted())
         {
-            final ListNBT t = tool.getEnchantmentTagList();
+            final ListNBT t = tool.getEnchantmentTags();
 
             for (int i = 0; i < t.size(); i++)
             {
@@ -739,7 +739,7 @@ public final class ItemStackUtils
             return 0;
         }
 
-        return stack.getMaxDamage() - stack.getDamage();
+        return stack.getMaxDamage() - stack.getDamageValue();
     }
 
 
@@ -784,7 +784,7 @@ public final class ItemStackUtils
             return false;
         }
 
-        if (itemStack1.getItem() == itemStack2.getItem() && (!matchDamage || itemStack1.getDamage() == itemStack2.getDamage()))
+        if (itemStack1.getItem() == itemStack2.getItem() && (!matchDamage || itemStack1.getDamageValue() == itemStack2.getDamageValue()))
         {
             if (!matchNBT)
             {
@@ -803,7 +803,7 @@ public final class ItemStackUtils
                 CompoundNBT nbt1 = itemStack1.getTag();
                 CompoundNBT nbt2 = itemStack2.getTag();
 
-                for(String key :nbt1.keySet())
+                for(String key :nbt1.getAllKeys())
                 {
                     if(!matchDamage && key.equals("Damage"))
                     {
@@ -815,7 +815,7 @@ public final class ItemStackUtils
                     }
                 }
                 
-                return nbt1.keySet().size() == nbt2.keySet().size();
+                return nbt1.getAllKeys().size() == nbt2.getAllKeys().size();
             }
             else
             {
@@ -891,7 +891,7 @@ public final class ItemStackUtils
     @NotNull
     public static ItemStack deserializeFromNBT(@NotNull final CompoundNBT compound)
     {
-        return ItemStack.read(compound);
+        return ItemStack.of(compound);
     }
 
     /**
@@ -907,7 +907,7 @@ public final class ItemStackUtils
             return false;
         }
 
-        return stack.getItem().isIn(ItemTags.SAPLINGS) || stack.getItem().isIn(fungi) || Compatibility.isDynamicTreeSapling(stack);
+        return stack.getItem().is(ItemTags.SAPLINGS) || stack.getItem().is(fungi) || Compatibility.isDynamicTreeSapling(stack);
     }
 
     /**
@@ -918,8 +918,8 @@ public final class ItemStackUtils
      */
     public static boolean hasSmeltableInFurnaceAndNoFuel(final FurnaceTileEntity entity)
     {
-        return !ItemStackUtils.isEmpty(entity.getStackInSlot(SMELTABLE_SLOT))
-                 && ItemStackUtils.isEmpty(entity.getStackInSlot(FUEL_SLOT));
+        return !ItemStackUtils.isEmpty(entity.getItem(SMELTABLE_SLOT))
+                 && ItemStackUtils.isEmpty(entity.getItem(FUEL_SLOT));
     }
 
     /**
@@ -930,8 +930,8 @@ public final class ItemStackUtils
      */
     public static boolean hasNeitherFuelNorSmeltAble(final FurnaceTileEntity entity)
     {
-        return ItemStackUtils.isEmpty(entity.getStackInSlot(SMELTABLE_SLOT))
-                 && ItemStackUtils.isEmpty(entity.getStackInSlot(FUEL_SLOT));
+        return ItemStackUtils.isEmpty(entity.getItem(SMELTABLE_SLOT))
+                 && ItemStackUtils.isEmpty(entity.getItem(FUEL_SLOT));
     }
 
     /**
@@ -942,8 +942,8 @@ public final class ItemStackUtils
      */
     public static boolean hasFuelInFurnaceAndNoSmeltable(final FurnaceTileEntity entity)
     {
-        return ItemStackUtils.isEmpty(entity.getStackInSlot(SMELTABLE_SLOT))
-                 && !ItemStackUtils.isEmpty(entity.getStackInSlot(FUEL_SLOT));
+        return ItemStackUtils.isEmpty(entity.getItem(SMELTABLE_SLOT))
+                 && !ItemStackUtils.isEmpty(entity.getItem(FUEL_SLOT));
     }
 
     /**
@@ -976,7 +976,7 @@ public final class ItemStackUtils
         {
             try
             {
-                stack.setTag(JsonToNBT.getTagFromJson(tag));
+                stack.setTag(JsonToNBT.parseTag(tag));
             }
             catch (CommandSyntaxException e1)
             {

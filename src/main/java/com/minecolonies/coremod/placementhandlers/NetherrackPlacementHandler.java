@@ -14,6 +14,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler.ActionProcessingResult;
+
 public class NetherrackPlacementHandler implements IPlacementHandler
 {
     @Override
@@ -31,7 +33,7 @@ public class NetherrackPlacementHandler implements IPlacementHandler
       boolean complete,
       BlockPos centerPos)
     {
-        return !world.setBlockState(pos, blockState, 3) ? ActionProcessingResult.DENY : ActionProcessingResult.SUCCESS;
+        return !world.setBlock(pos, blockState, 3) ? ActionProcessingResult.DENY : ActionProcessingResult.SUCCESS;
     }
 
     @Override

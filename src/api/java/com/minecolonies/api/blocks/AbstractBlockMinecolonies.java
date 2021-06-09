@@ -7,6 +7,8 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraftforge.registries.IForgeRegistry;
 
+import net.minecraft.block.AbstractBlock.Properties;
+
 public abstract class AbstractBlockMinecolonies<B extends AbstractBlockMinecolonies<B>> extends Block implements IBlockMinecolonies<B>
 {
     public AbstractBlockMinecolonies(final Properties properties)

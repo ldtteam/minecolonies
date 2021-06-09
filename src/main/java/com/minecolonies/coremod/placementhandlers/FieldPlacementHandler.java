@@ -17,6 +17,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler.ActionProcessingResult;
+
 public class FieldPlacementHandler implements IPlacementHandler
 {
     @Override
@@ -39,10 +41,10 @@ public class FieldPlacementHandler implements IPlacementHandler
             return ActionProcessingResult.SUCCESS;
         }
 
-        if (blockState.get(DoorBlock.HALF).equals(DoubleBlockHalf.LOWER))
+        if (blockState.getValue(DoorBlock.HALF).equals(DoubleBlockHalf.LOWER))
         {
-            world.setBlockState(pos, blockState.with(DoorBlock.HALF, DoubleBlockHalf.LOWER), 3);
-            world.setBlockState(pos.up(), blockState.with(DoorBlock.HALF, DoubleBlockHalf.UPPER), 3);
+            world.setBlock(pos, blockState.setValue(DoorBlock.HALF, DoubleBlockHalf.LOWER), 3);
+            world.setBlock(pos.above(), blockState.setValue(DoorBlock.HALF, DoubleBlockHalf.UPPER), 3);
         }
 
         return ActionProcessingResult.SUCCESS;
@@ -52,7 +54,7 @@ public class FieldPlacementHandler implements IPlacementHandler
     public List<ItemStack> getRequiredItems(@NotNull World world, @NotNull BlockPos pos, @NotNull BlockState blockState, @Nullable CompoundNBT tileEntityData, boolean complete)
     {
         List<ItemStack> itemList = new ArrayList<>();
-        if (blockState.get(DoorBlock.HALF).equals(DoubleBlockHalf.LOWER))
+        if (blockState.getValue(DoorBlock.HALF).equals(DoubleBlockHalf.LOWER))
         {
             itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
         }

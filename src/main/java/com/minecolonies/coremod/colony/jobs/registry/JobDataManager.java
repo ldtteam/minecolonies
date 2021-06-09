@@ -25,7 +25,7 @@ public final class JobDataManager implements IJobDataManager
       final ICitizenData citizen, @NotNull final CompoundNBT compound)
     {
         final ResourceLocation jobType =
-          compound.keySet().contains(NbtTagConstants.TAG_JOB_TYPE) ? new ResourceLocation(compound.getString(NbtTagConstants.TAG_JOB_TYPE)) : ModJobs.PLACEHOLDER_ID;
+          compound.getAllKeys().contains(NbtTagConstants.TAG_JOB_TYPE) ? new ResourceLocation(compound.getString(NbtTagConstants.TAG_JOB_TYPE)) : ModJobs.PLACEHOLDER_ID;
         final IJob<?> job = IJobRegistry.getInstance().getValue(jobType).getHandlerProducer().apply(citizen);
 
         if (job != null)
@@ -53,7 +53,7 @@ public final class JobDataManager implements IJobDataManager
     public IJobView createViewFrom(
       final IColonyView colony, final ICitizenDataView citizenDataView, final PacketBuffer networkBuffer)
     {
-        final ResourceLocation jobName = new ResourceLocation(networkBuffer.readString(32767));
+        final ResourceLocation jobName = new ResourceLocation(networkBuffer.readUtf(32767));
         final JobEntry entry = IJobRegistry.getInstance().getValue(jobName);
 
         if (entry == null)

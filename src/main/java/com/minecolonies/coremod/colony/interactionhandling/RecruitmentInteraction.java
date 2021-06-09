@@ -104,7 +104,7 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
                     colony.getCitizens().size() < colony.getCitizenCountLimit() ? "com.minecolonies.coremod.gui.chat.recruitcost"
                         : "com.minecolonies.coremod.gui.chat.nospacerecruit",
                     dataView.getName().split(" ")[0],
-                    recruitCost.getCount() + " " + recruitCost.getDisplayName().getString()))
+                    recruitCost.getCount() + " " + recruitCost.getHoverName().getString()))
                 .getText());
 
             int iconPosX = recruitButton.getX() + recruitButton.getWidth() - 28;
@@ -157,7 +157,7 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
                     data.setHomeBuilding(null);
                     data.setJob(null);
 
-                    if (colony.getWorld().rand.nextInt(100) <= MineColonies.getConfig().getServer().badVisitorsChance.get())
+                    if (colony.getWorld().random.nextInt(100) <= MineColonies.getConfig().getServer().badVisitorsChance.get())
                     {
                         LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(), "com.minecolonies.coremod.recruit.runaway", data.getName());
                         return;

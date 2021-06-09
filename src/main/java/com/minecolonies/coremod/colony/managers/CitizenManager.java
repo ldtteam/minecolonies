@@ -300,8 +300,8 @@ public class CitizenManager implements ICitizenManager
         }
         final EntityCitizen entity = (EntityCitizen) ModEntities.CITIZEN.create(world);
 
-        entity.setPosition(spawnPoint.getX() + HALF_BLOCK, spawnPoint.getY() + SLIGHTLY_UP, spawnPoint.getZ() + HALF_BLOCK);
-        world.addEntity(entity);
+        entity.setPos(spawnPoint.getX() + HALF_BLOCK, spawnPoint.getY() + SLIGHTLY_UP, spawnPoint.getZ() + HALF_BLOCK);
+        world.addFreshEntity(entity);
 
         entity.getCitizenColonyHandler().registerWithColony(citizenData.getColony().getID(), citizenData.getId());
 

@@ -78,7 +78,7 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
         buf.writeInt(getPriority());
         buf.writeBlockPos(getClaimedBy() == null ? BlockPos.ZERO : getClaimedBy());
         buf.writeInt(getType().ordinal());
-        buf.writeString(get());
+        buf.writeUtf(get());
         buf.writeBlockPos(buildingLocation == null ? BlockPos.ZERO : buildingLocation);
         buf.writeInt(upgradeLevel);
         //value is upgradeName and upgradeLevel for workOrderBuild
@@ -155,7 +155,7 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
 
         final IBuilding building = citizen.getWorkBuilding();
         return canBuildIngoringDistance(building.getPosition(), building.getBuildingLevel())
-                       && citizen.getWorkBuilding().getPosition().distanceSq(this.getBuildingLocation()) <= MAX_DISTANCE_SQ;
+                       && citizen.getWorkBuilding().getPosition().distSqr(this.getBuildingLocation()) <= MAX_DISTANCE_SQ;
     }
 
     /**
@@ -181,7 +181,7 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
                  .values()
                  .stream()
                  .noneMatch(building -> building instanceof BuildingBuilder && building.getMainCitizen() != null
-                                          && building.getPosition().distanceSq(this.getBuildingLocation()) <= MAX_DISTANCE_SQ);
+                                          && building.getPosition().distSqr(this.getBuildingLocation()) <= MAX_DISTANCE_SQ);
     }
 
     /**

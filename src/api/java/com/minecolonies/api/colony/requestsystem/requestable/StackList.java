@@ -218,17 +218,17 @@ public class StackList implements IConcreteDeliverable, INonExhaustiveDeliverabl
         for (int i = 0; i < neededResTagList.size(); ++i)
         {
             final CompoundNBT neededRes = neededResTagList.getCompound(i);
-            stacks.add(ItemStack.read(neededRes));
+            stacks.add(ItemStack.of(neededRes));
         }
 
         final boolean matchMeta = compound.getBoolean(NBT_MATCHMETA);
         final boolean matchNBT = compound.getBoolean(NBT_MATCHNBT);
         final boolean matchOreDic = compound.getBoolean(NBT_MATCHOREDIC);
-        final ItemStack result = compound.keySet().contains(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_RESULT)) : ItemStackUtils.EMPTY;
-        final String desc = compound.keySet().contains(TAG_DESCRIPTION) ? compound.getString(TAG_DESCRIPTION) : LIST_REQUEST_DISPLAY_STRING;
+        final ItemStack result = compound.getAllKeys().contains(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_RESULT)) : ItemStackUtils.EMPTY;
+        final String desc = compound.getAllKeys().contains(TAG_DESCRIPTION) ? compound.getString(TAG_DESCRIPTION) : LIST_REQUEST_DISPLAY_STRING;
         int count = stacks.isEmpty() ? 0 : stacks.get(0).getCount();
         int minCount = count;
-        if (compound.keySet().contains(NBT_COUNT))
+        if (compound.getAllKeys().contains(NBT_COUNT))
         {
             count = compound.getInt(NBT_COUNT);
             minCount = compound.getInt(NBT_MINCOUNT);
@@ -248,7 +248,7 @@ public class StackList implements IConcreteDeliverable, INonExhaustiveDeliverabl
     public static void serialize(final IFactoryController controller, final PacketBuffer buffer, final StackList input)
     {
         buffer.writeInt(input.theStacks.size());
-        input.theStacks.forEach(res -> buffer.writeItemStack(res));
+        input.theStacks.forEach(res -> buffer.writeItem(res));
 
         buffer.writeBoolean(input.matchMeta);
         buffer.writeBoolean(input.matchNBT);
@@ -257,9 +257,9 @@ public class StackList implements IConcreteDeliverable, INonExhaustiveDeliverabl
         buffer.writeBoolean(!ItemStackUtils.isEmpty(input.result));
         if (!ItemStackUtils.isEmpty(input.result))
         {
-            buffer.writeItemStack(input.result);
+            buffer.writeItem(input.result);
         }
-        buffer.writeString(input.description);
+        buffer.writeUtf(input.description);
         buffer.writeInt(input.getCount());
         buffer.writeInt(input.getMinimumCount());
         buffer.writeInt(input.getLeftOver());
@@ -279,14 +279,14 @@ public class StackList implements IConcreteDeliverable, INonExhaustiveDeliverabl
         final int stacksSize = buffer.readInt();
         for (int i = 0; i < stacksSize; ++i)
         {
-            stacks.add(buffer.readItemStack());
+            stacks.add(buffer.readItem());
         }
 
         final boolean matchMeta = buffer.readBoolean();
         final boolean matchNBT = buffer.readBoolean();
         final boolean matchOreDic = buffer.readBoolean();
-        final ItemStack result = buffer.readBoolean() ? buffer.readItemStack() : ItemStack.EMPTY;
-        final String desc = buffer.readString(32767);
+        final ItemStack result = buffer.readBoolean() ? buffer.readItem() : ItemStack.EMPTY;
+        final String desc = buffer.readUtf(32767);
         int count = buffer.readInt();
         int minCount = buffer.readInt();
         int leftOver = buffer.readInt();

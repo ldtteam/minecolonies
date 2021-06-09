@@ -136,7 +136,7 @@ public class EventHandler
     @SubscribeEvent
     public static void onEntityAdded(@NotNull final EntityJoinWorldEvent event)
     {
-        if (!event.getWorld().isRemote())
+        if (!event.getWorld().isClientSide())
         {
             if (MineColonies.getConfig().getServer().mobAttackCitizens.get() && (event.getEntity() instanceof IMob) && !(event.getEntity() instanceof LlamaEntity)
                   && !(event.getEntity() instanceof EndermanEntity))
@@ -157,11 +157,11 @@ public class EventHandler
     public static void onDebugOverlay(final RenderGameOverlayEvent.Text event)
     {
         final Minecraft mc = Minecraft.getInstance();
-        if (mc.gameSettings.showDebugInfo)
+        if (mc.options.renderDebug)
         {
-            final ClientWorld world = mc.world;
+            final ClientWorld world = mc.level;
             final ClientPlayerEntity player = mc.player;
-            final BlockPos pos = new BlockPos(player.getPositionVec());
+            final BlockPos pos = new BlockPos(player.position());
             IColony colony = IColonyManager.getInstance().getIColony(world, pos);
             if (colony == null)
             {
@@ -257,7 +257,7 @@ public class EventHandler
         if (event.getEntity() instanceof ServerPlayerEntity && !event.isCanceled())
         {
             final ServerPlayerEntity player = (ServerPlayerEntity) event.getEntity();
-            final Chunk oldChunk = player.world.getChunk(player.chunkCoordX, player.chunkCoordZ);
+            final Chunk oldChunk = player.level.getChunk(player.xChunk, player.zChunk);
             final IColonyTagCapability oldCloseColonies = oldChunk.getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
 
             if (oldCloseColonies != null)
@@ -265,7 +265,7 @@ public class EventHandler
                 // Remove visiting/subscriber from old colony
                 if (oldCloseColonies.getOwningColony() != 0)
                 {
-                    final IColony oldColony = IColonyManager.getInstance().getColonyByWorld(oldCloseColonies.getOwningColony(), player.world);
+                    final IColony oldColony = IColonyManager.getInstance().getColonyByWorld(oldCloseColonies.getOwningColony(), player.level);
                     if (oldColony != null)
                     {
                         oldColony.removeVisitingPlayer(player);
@@ -288,12 +288,12 @@ public class EventHandler
         {
             final ServerPlayerEntity player = (ServerPlayerEntity) event.getPlayer();
 
-            final Chunk newChunk = player.world.getChunk(player.chunkCoordX, player.chunkCoordZ);
+            final Chunk newChunk = player.level.getChunk(player.xChunk, player.zChunk);
             final IColonyTagCapability closeColonyCap = newChunk.getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
             if (closeColonyCap != null)
             {
                 // Add visiting/subscriber to new colony
-                final IColony newColony = IColonyManager.getInstance().getColonyByWorld(closeColonyCap.getOwningColony(), player.world);
+                final IColony newColony = IColonyManager.getInstance().getColonyByWorld(closeColonyCap.getOwningColony(), player.level);
                 if (newColony != null)
                 {
                     newColony.addVisitingPlayer(player);
@@ -312,9 +312,9 @@ public class EventHandler
     public static void onEnteringChunk(@NotNull final PlayerEvent.EnteringChunk event)
     {
         final Entity entity = event.getEntity();
-        final BlockPos pos = new BlockPos(entity.getPositionVec());
+        final BlockPos pos = new BlockPos(entity.position());
 
-        if (event.getOldChunkX() == 0 && event.getOldChunkZ() == 0 && pos.distanceSq(BlockPos.ZERO) > 100 * 100)
+        if (event.getOldChunkX() == 0 && event.getOldChunkZ() == 0 && pos.distSqr(BlockPos.ZERO) > 100 * 100)
         {
             return;
         }
@@ -322,10 +322,10 @@ public class EventHandler
         //  Add nearby players
         if (entity instanceof ServerPlayerEntity)
         {
-            final World world = entity.getEntityWorld();
+            final World world = entity.getCommandSenderWorld();
 
             final Chunk newChunk = world.getChunk(event.getNewChunkX(), event.getNewChunkZ());
-            ChunkDataHelper.loadChunk(newChunk, entity.world);
+            ChunkDataHelper.loadChunk(newChunk, entity.level);
 
             Network.getNetwork()
               .sendToPlayer(new UpdateChunkRangeCapabilityMessage(world,
@@ -404,7 +404,7 @@ public class EventHandler
         }
 
         final BlockPos pos = new BlockPos(event.getX(), event.getY(), event.getZ());
-        if (event.isSpawner() || event.getWorld().isRemote() || !WorldUtil.isEntityBlockLoaded(event.getWorld(), pos))
+        if (event.isSpawner() || event.getWorld().isClientSide() || !WorldUtil.isEntityBlockLoaded(event.getWorld(), pos))
         {
             return;
         }
@@ -452,11 +452,11 @@ public class EventHandler
             }
 
             // Add visiting/subscriber to colony we're logging into
-            final Chunk chunk = (Chunk) player.world.getChunk(new BlockPos(player.getPositionVec()));
+            final Chunk chunk = (Chunk) player.level.getChunk(new BlockPos(player.position()));
             final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
             if (cap != null && cap.getOwningColony() != 0)
             {
-                IColony colony = IColonyManager.getInstance().getColonyByDimension(cap.getOwningColony(), player.world.getDimensionKey());
+                IColony colony = IColonyManager.getInstance().getColonyByDimension(cap.getOwningColony(), player.level.dimension());
                 if (colony != null)
                 {
                     colony.addVisitingPlayer(player);
@@ -464,13 +464,13 @@ public class EventHandler
                 }
             }
 
-            final int size = player.inventory.getSizeInventory();
+            final int size = player.inventory.getContainerSize();
             for (int i = 0; i < size; i++)
             {
-                final ItemStack stack = player.inventory.getStackInSlot(i);
+                final ItemStack stack = player.inventory.getItem(i);
                 if (stack.getItem() instanceof ItemBannerRallyGuards)
                 {
-                    ItemBannerRallyGuards.broadcastPlayerToRally(stack, player.getServerWorld(), player);
+                    ItemBannerRallyGuards.broadcastPlayerToRally(stack, player.getLevel(), player);
                 }
             }
 
@@ -508,9 +508,9 @@ public class EventHandler
     {
         if (MineColonies.getConfig().getServer().pvp_mode.get() && event.getEntity() instanceof EntityCitizen)
         {
-            if (event.getEntity().world == null
-                  || !WorldUtil.isEntityChunkLoaded(event.getEntity().world, new ChunkPos(event.getNewChunkX(), event.getNewChunkZ()))
-                  || !WorldUtil.isEntityChunkLoaded(event.getEntity().world, new ChunkPos(event.getOldChunkX(), event.getOldChunkZ())))
+            if (event.getEntity().level == null
+                  || !WorldUtil.isEntityChunkLoaded(event.getEntity().level, new ChunkPos(event.getNewChunkX(), event.getNewChunkZ()))
+                  || !WorldUtil.isEntityChunkLoaded(event.getEntity().level, new ChunkPos(event.getOldChunkX(), event.getOldChunkZ())))
             {
                 return;
             }
@@ -518,14 +518,14 @@ public class EventHandler
             final EntityCitizen entityCitizen = (EntityCitizen) event.getEntity();
             if (entityCitizen.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard)
             {
-                final World world = entityCitizen.getEntityWorld();
+                final World world = entityCitizen.getCommandSenderWorld();
 
                 final Chunk chunk = world.getChunk(event.getNewChunkX(), event.getNewChunkZ());
                 final IColonyTagCapability chunkCapability = chunk.getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
                 if (chunkCapability != null && chunkCapability.getOwningColony() != 0
                       && entityCitizen.getCitizenColonyHandler().getColonyId() != chunkCapability.getOwningColony())
                 {
-                    final IColony colony = IColonyManager.getInstance().getColonyByWorld(chunkCapability.getOwningColony(), entityCitizen.world);
+                    final IColony colony = IColonyManager.getInstance().getColonyByWorld(chunkCapability.getOwningColony(), entityCitizen.level);
                     if (colony != null)
                     {
                         colony.addGuardToAttackers(entityCitizen, ((IGuardBuilding) entityCitizen.getCitizenColonyHandler().getWorkBuilding()).getPlayerToFollowOrRally());
@@ -550,15 +550,15 @@ public class EventHandler
 
         if (event.getState().getBlock() instanceof SpawnerBlock)
         {
-            final TileEntity spawner = event.getWorld().getTileEntity(event.getPos());
+            final TileEntity spawner = event.getWorld().getBlockEntity(event.getPos());
             if (spawner instanceof MobSpawnerTileEntity)
             {
                 final IColony colony = IColonyManager.getInstance()
-                                         .getColonyByDimension(((MobSpawnerTileEntity) spawner).getSpawnerBaseLogic().spawnData.getNbt().getInt(TAG_COLONY_ID),
-                                           world.getDimensionKey());
+                                         .getColonyByDimension(((MobSpawnerTileEntity) spawner).getSpawner().nextSpawnData.getTag().getInt(TAG_COLONY_ID),
+                                           world.dimension());
                 if (colony != null)
                 {
-                    colony.getEventManager().onTileEntityBreak(((MobSpawnerTileEntity) spawner).getSpawnerBaseLogic().spawnData.getNbt().getInt(TAG_EVENT_ID), spawner);
+                    colony.getEventManager().onTileEntityBreak(((MobSpawnerTileEntity) spawner).getSpawner().nextSpawnData.getTag().getInt(TAG_EVENT_ID), spawner);
                 }
             }
         }
@@ -591,7 +591,7 @@ public class EventHandler
             return;
         }
         else if ("pmardle".equalsIgnoreCase(event.getPlayer().getName().getString())
-                   && Block.getBlockFromItem(event.getItemStack().getItem()) instanceof SilverfishBlock)
+                   && Block.byItem(event.getItemStack().getItem()) instanceof SilverfishBlock)
         {
             LanguageHandler.sendPlayerMessage(event.getPlayer(), "Stop that you twat!!!");
             event.setCanceled(true);
@@ -605,9 +605,9 @@ public class EventHandler
             {
                 final List<ICitizenData> citizenList = colony.getCitizenManager().getCitizens();
                 final BlockState potentialBed = world.getBlockState(event.getPos());
-                if (potentialBed.getBlock() instanceof BedBlock && potentialBed.get(BedBlock.PART) == BedPart.FOOT)
+                if (potentialBed.getBlock() instanceof BedBlock && potentialBed.getValue(BedBlock.PART) == BedPart.FOOT)
                 {
-                    bedBlockPos = bedBlockPos.offset(world.getBlockState(event.getPos()).get(BedBlock.HORIZONTAL_FACING));
+                    bedBlockPos = bedBlockPos.relative(world.getBlockState(event.getPos()).getValue(BedBlock.FACING));
                 }
                 //Searches through the nearest Colony's Citizen and sees if the bed belongs to a Citizen, and if the Citizen is asleep
 
@@ -638,11 +638,11 @@ public class EventHandler
                 if (MineColonies.getConfig().getServer().suggestBuildToolPlacement.get())
                 {
                     final ItemStack stack = event.getItemStack();
-                    if (!stack.isEmpty() && !world.isRemote)
+                    if (!stack.isEmpty() && !world.isClientSide)
                     {
                         Network.getNetwork()
-                          .sendToPlayer(new OpenSuggestionWindowMessage(block.getDefaultState().with(AbstractBlockHut.FACING,
-                            event.getPlayer().getHorizontalFacing()), event.getPos().offset(event.getFace()), stack), (ServerPlayerEntity) player);
+                          .sendToPlayer(new OpenSuggestionWindowMessage(block.defaultBlockState().setValue(AbstractBlockHut.FACING,
+                            event.getPlayer().getDirection()), event.getPos().relative(event.getFace()), stack), (ServerPlayerEntity) player);
                     }
                     event.setCanceled(true);
                 }
@@ -652,16 +652,16 @@ public class EventHandler
 
         if (!event.isCanceled() && event.getItemStack().getItem() == ModItems.buildTool.get())
         {
-            if (event.getWorld().isRemote())
+            if (event.getWorld().isClientSide())
             {
                 if (event.getUseBlock() == Event.Result.DEFAULT && event.getFace() != null)
                 {
-                    final IColonyView view = IColonyManager.getInstance().getClosestColonyView(event.getWorld(), event.getPos().offset(event.getFace()));
+                    final IColonyView view = IColonyManager.getInstance().getClosestColonyView(event.getWorld(), event.getPos().relative(event.getFace()));
                     if (view != null && Settings.instance.getStyle().isEmpty())
                     {
                         Settings.instance.setStyle(view.getStyle());
                     }
-                    MineColonies.proxy.openBuildToolWindow(event.getPos().offset(event.getFace()));
+                    MineColonies.proxy.openBuildToolWindow(event.getPos().relative(event.getFace()));
                 }
             }
             event.setCanceled(true);
@@ -675,7 +675,7 @@ public class EventHandler
     @SubscribeEvent
     public static void onPlayerInteract(@NotNull final PlayerInteractEvent.RightClickItem event)
     {
-        if (!event.isCanceled() && event.getItemStack().getItem() == ModItems.buildTool.get() && event.getWorld().isRemote)
+        if (!event.isCanceled() && event.getItemStack().getItem() == ModItems.buildTool.get() && event.getWorld().isClientSide)
         {
             final IColonyView view = IColonyManager.getInstance().getClosestColonyView(event.getWorld(), event.getPos());
             if (view != null && Settings.instance.getStyle().isEmpty())
@@ -697,8 +697,8 @@ public class EventHandler
      */
     private static boolean playerRightClickInteract(@NotNull final PlayerEntity player, final World world, final BlockPos pos)
     {
-        return !player.isSneaking() || player.getHeldItemMainhand() == null || player.getHeldItemMainhand().getItem() == null
-                 || player.getHeldItemMainhand().getItem().doesSneakBypassUse(player.getHeldItemMainhand(), world, pos, player);
+        return !player.isShiftKeyDown() || player.getMainHandItem() == null || player.getMainHandItem().getItem() == null
+                 || player.getMainHandItem().getItem().doesSneakBypassUse(player.getMainHandItem(), world, pos, player);
     }
 
     /**
@@ -709,16 +709,16 @@ public class EventHandler
      */
     private static void handleEventCancellation(@NotNull final PlayerInteractEvent event, @NotNull final PlayerEntity player)
     {
-        final Block heldBlock = Block.getBlockFromItem(event.getItemStack().getItem());
+        final Block heldBlock = Block.byItem(event.getItemStack().getItem());
         if (heldBlock instanceof AbstractBlockHut || heldBlock instanceof BlockScarecrow)
         {
-            if (event.getWorld().isRemote())
+            if (event.getWorld().isClientSide())
             {
                 event.setCanceled(MineColonies.getConfig().getServer().suggestBuildToolPlacement.get());
             }
             else
             {
-                event.setCanceled(!onBlockHutPlaced(event.getWorld(), player, heldBlock, event.getPos().offset(event.getFace())));
+                event.setCanceled(!onBlockHutPlaced(event.getWorld(), player, heldBlock, event.getPos().relative(event.getFace())));
             }
         }
     }
@@ -792,7 +792,7 @@ public class EventHandler
 
         // Global events
         // Halloween ghost mode
-        if (event.getWorld().isRemote() && MineColonies.getConfig().getServer().holidayFeatures.get() &&
+        if (event.getWorld().isClientSide() && MineColonies.getConfig().getServer().holidayFeatures.get() &&
               (LocalDateTime.now().getDayOfMonth() == 31 && LocalDateTime.now().getMonth() == Month.OCTOBER
                  || LocalDateTime.now().getDayOfMonth() == 1 && LocalDateTime.now().getMonth() == Month.NOVEMBER
                  || LocalDateTime.now().getDayOfMonth() == 2 && LocalDateTime.now().getMonth() == Month.NOVEMBER))
@@ -809,11 +809,11 @@ public class EventHandler
     @SubscribeEvent
     public static void onWorldUnload(@NotNull final WorldEvent.Unload event)
     {
-        if (!event.getWorld().isRemote() && event.getWorld() instanceof World)
+        if (!event.getWorld().isClientSide() && event.getWorld() instanceof World)
         {
             IColonyManager.getInstance().onWorldUnload((World) event.getWorld());
         }
-        if (event.getWorld().isRemote())
+        if (event.getWorld().isClientSide())
         {
             IColonyManager.getInstance().resetColonyViews();
             Log.getLogger().info("Removed all colony views");
@@ -831,8 +831,8 @@ public class EventHandler
         LivingEntity entity = event.getEntityLiving();
         if (entity instanceof ZombieVillagerEntity && event.getOutcome() == EntityType.VILLAGER)
         {
-            final World world = entity.getEntityWorld();
-            final IColony colony = IColonyManager.getInstance().getIColony(world, entity.getPosition());
+            final World world = entity.getCommandSenderWorld();
+            final IColony colony = IColonyManager.getInstance().getIColony(world, entity.blockPosition());
             if (colony != null && colony.hasBuilding("tavern", 1, false))
             {
                 event.setCanceled(true);
@@ -846,33 +846,33 @@ public class EventHandler
                     visitorData.setBedPos(tavernPos);
                     tavern.getModules(TavernBuildingModule.class).forEach(mod -> mod.getExternalCitizens().add(visitorData.getId()));
 
-                    int recruitLevel = world.rand.nextInt(10 * tavern.getBuildingLevel()) + 15;
+                    int recruitLevel = world.random.nextInt(10 * tavern.getBuildingLevel()) + 15;
                     List<com.minecolonies.api.util.Tuple<Item, Integer>> recruitCosts = IColonyManager.getInstance().getCompatibilityManager().getRecruitmentCostsWeights();
 
                     visitorData.getCitizenSkillHandler().init(recruitLevel);
-                    colony.getVisitorManager().spawnOrCreateCivilian(visitorData, world, entity.getPosition(), false);
-                    colony.getEventDescriptionManager().addEventDescription(new VisitorSpawnedEvent(entity.getPosition(), visitorData.getName()));
+                    colony.getVisitorManager().spawnOrCreateCivilian(visitorData, world, entity.blockPosition(), false);
+                    colony.getEventDescriptionManager().addEventDescription(new VisitorSpawnedEvent(entity.blockPosition(), visitorData.getName()));
 
                     if (visitorData.getEntity().isPresent())
                     {
                         AbstractEntityCitizen visitorEntity = visitorData.getEntity().get();
                         for(EquipmentSlotType slotType : EquipmentSlotType.values())
                         {
-                            ItemStack itemstack = entity.getItemStackFromSlot(slotType);
-                            if (slotType.getSlotType() == EquipmentSlotType.Group.ARMOR && !itemstack.isEmpty())
+                            ItemStack itemstack = entity.getItemBySlot(slotType);
+                            if (slotType.getType() == EquipmentSlotType.Group.ARMOR && !itemstack.isEmpty())
                             {
-                                visitorEntity.setItemStackToSlot(slotType, itemstack);
+                                visitorEntity.setItemSlot(slotType, itemstack);
                             }
                         }
                     }
 
                     if (!entity.isSilent())
                     {
-                        world.playEvent((PlayerEntity) null, 1027, entity.getPosition(), 0);
+                        world.levelEvent((PlayerEntity) null, 1027, entity.blockPosition(), 0);
                     }
 
                     entity.remove();
-                    Tuple<Item, Integer> cost = recruitCosts.get(world.rand.nextInt(recruitCosts.size()));
+                    Tuple<Item, Integer> cost = recruitCosts.get(world.random.nextInt(recruitCosts.size()));
                     visitorData.setRecruitCosts(new ItemStack(cost.getA(), (int)(recruitLevel * 3.0 / cost.getB())));
                     visitorData.triggerInteraction(new RecruitmentInteraction(new TranslationTextComponent(
                             "com.minecolonies.coremod.gui.chat.recruitstorycured", visitorData.getName().split(" ")[0]), ChatPriority.IMPORTANT));

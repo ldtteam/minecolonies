@@ -62,13 +62,13 @@ public class ContainerCitizenInventory extends Container
         this.playerInventory = inv;
 
         final IColony colony;
-        if (inv.player.world.isRemote)
+        if (inv.player.level.isClientSide)
         {
-            colony = IColonyManager.getInstance().getColonyView(colonyId, inv.player.world.getDimensionKey());
+            colony = IColonyManager.getInstance().getColonyView(colonyId, inv.player.level.dimension());
         }
         else
         {
-            colony = IColonyManager.getInstance().getColonyByWorld(colonyId, inv.player.world);
+            colony = IColonyManager.getInstance().getColonyByWorld(colonyId, inv.player.level);
         }
 
         if (colony == null)
@@ -80,7 +80,7 @@ public class ContainerCitizenInventory extends Container
         final InventoryCitizen inventory;
         final BlockPos workBuilding;
 
-        if (inv.player.world.isRemote)
+        if (inv.player.level.isClientSide)
         {
             final ICitizenDataView data = ((IColonyView) colony).getCitizen(citizenId);
             inventory = data.getInventory();
@@ -123,17 +123,17 @@ public class ContainerCitizenInventory extends Container
                         PLAYER_INVENTORY_OFFSET_EACH + j * PLAYER_INVENTORY_OFFSET_EACH)
                       {
                           @Override
-                          public void putStack(@NotNull final ItemStack stack)
+                          public void set(@NotNull final ItemStack stack)
                           {
-                              if (workBuilding != null && !playerInventory.player.world.isRemote && !ItemStackUtils.isEmpty(stack))
+                              if (workBuilding != null && !playerInventory.player.level.isClientSide && !ItemStackUtils.isEmpty(stack))
                               {
-                                  final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, inv.player.world);
+                                  final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, inv.player.level);
                                   final IBuilding building = colony.getBuildingManager().getBuilding(workBuilding);
                                   final ICitizenData citizenData = colony.getCitizenManager().getCivilian(citizenId);
 
                                   building.overruleNextOpenRequestOfCitizenWithStack(citizenData, stack);
                               }
-                              super.putStack(stack);
+                              super.set(stack);
                           }
                       });
                     index++;
@@ -177,38 +177,38 @@ public class ContainerCitizenInventory extends Container
      */
     @NotNull
     @Override
-    public ItemStack transferStackInSlot(final PlayerEntity playerIn, final int index)
+    public ItemStack quickMoveStack(final PlayerEntity playerIn, final int index)
     {
-        final Slot slot = this.inventorySlots.get(index);
+        final Slot slot = this.slots.get(index);
 
-        if (slot == null || !slot.getHasStack())
+        if (slot == null || !slot.hasItem())
         {
             return ItemStackUtils.EMPTY;
         }
 
-        final ItemStack stackCopy = slot.getStack().copy();
+        final ItemStack stackCopy = slot.getItem().copy();
 
         final int maxIndex = this.inventorySize * INVENTORY_COLUMNS;
 
         if (index < maxIndex)
         {
-            if (!this.mergeItemStack(stackCopy, maxIndex, this.inventorySlots.size(), true))
+            if (!this.moveItemStackTo(stackCopy, maxIndex, this.slots.size(), true))
             {
                 return ItemStackUtils.EMPTY;
             }
         }
-        else if (!this.mergeItemStack(stackCopy, 0, maxIndex, false))
+        else if (!this.moveItemStackTo(stackCopy, 0, maxIndex, false))
         {
             return ItemStackUtils.EMPTY;
         }
 
         if (ItemStackUtils.getSize(stackCopy) == 0)
         {
-            slot.putStack(ItemStackUtils.EMPTY);
+            slot.set(ItemStackUtils.EMPTY);
         }
         else
         {
-            slot.putStack(stackCopy);
+            slot.set(stackCopy);
         }
 
         return stackCopy;
@@ -218,7 +218,7 @@ public class ContainerCitizenInventory extends Container
      * Determines whether supplied player can use this container
      */
     @Override
-    public boolean canInteractWith(@NotNull final PlayerEntity playerIn)
+    public boolean stillValid(@NotNull final PlayerEntity playerIn)
     {
         return true;
     }

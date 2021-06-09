@@ -98,7 +98,7 @@ public class WindowCrafting extends ContainerScreen<ContainerCrafting>
     public WindowCrafting(final ContainerCrafting container, final PlayerInventory playerInventory, final ITextComponent iTextComponent)
     {
         super(container, playerInventory, iTextComponent);
-        this.building = (AbstractBuildingWorker.View) IColonyManager.getInstance().getBuildingView(playerInventory.player.world.getDimensionKey(), container.getPos());
+        this.building = (AbstractBuildingWorker.View) IColonyManager.getInstance().getBuildingView(playerInventory.player.level.dimension(), container.getPos());
         completeCrafting = building.canCraftComplexRecipes();
     }
 
@@ -117,12 +117,12 @@ public class WindowCrafting extends ContainerScreen<ContainerCrafting>
     protected void init()
     {
         super.init();
-        final String buttonDisplay = building.canRecipeBeAdded() ? I18n.format("gui.done") : LanguageHandler.format("com.minecolonies.coremod.gui.recipe.full");
+        final String buttonDisplay = building.canRecipeBeAdded() ? I18n.get("gui.done") : LanguageHandler.format("com.minecolonies.coremod.gui.recipe.full");
         /*
          * The button to click done after finishing the recipe.
          */
         final Button
-          doneButton = new Button(guiLeft + BUTTON_X_OFFSET, guiTop + BUTTON_Y_POS, BUTTON_WIDTH, BUTTON_HEIGHT, new StringTextComponent(buttonDisplay), new WindowCrafting.OnButtonPress());
+          doneButton = new Button(leftPos + BUTTON_X_OFFSET, topPos + BUTTON_Y_POS, BUTTON_WIDTH, BUTTON_HEIGHT, new StringTextComponent(buttonDisplay), new WindowCrafting.OnButtonPress());
         this.addButton(doneButton);
         if (!building.canRecipeBeAdded())
         {
@@ -141,15 +141,15 @@ public class WindowCrafting extends ContainerScreen<ContainerCrafting>
 
                 for (int i = 0; i < (completeCrafting ? MAX_CRAFTING_GRID_SIZE : CRAFTING_GRID_SIZE); i++)
                 {
-                    final ItemStack stack = container.craftMatrix.getStackInSlot(i);
+                    final ItemStack stack = menu.craftMatrix.getItem(i);
                     final ItemStack copy = stack.copy();
                     ItemStackUtils.setSize(copy, 1);
 
                     input.add(new ItemStorage(copy));
                 }
 
-                final ItemStack primaryOutput = container.craftResult.getStackInSlot(0).getStack().copy();
-                final List<ItemStack> secondaryOutputs = container.getRemainingItems();
+                final ItemStack primaryOutput = menu.craftResult.getItem(0).getStack().copy();
+                final List<ItemStack> secondaryOutputs = menu.getRemainingItems();
 
                 if (!ItemStackUtils.isEmpty(primaryOutput))
                 {
@@ -163,27 +163,27 @@ public class WindowCrafting extends ContainerScreen<ContainerCrafting>
      * Draw the foreground layer for the GuiContainer (everything in front of the items)
      */
     @Override
-    protected void drawGuiContainerForegroundLayer(@NotNull final MatrixStack stack, final int mouseX, final int mouseY)
+    protected void renderLabels(@NotNull final MatrixStack stack, final int mouseX, final int mouseY)
     {
-        this.font.drawString(stack, I18n.format("container.crafting"), X_OFFSET, Y_OFFSET, GUI_COLOR);
+        this.font.draw(stack, I18n.get("container.crafting"), X_OFFSET, Y_OFFSET, GUI_COLOR);
     }
 
     /**
      * Draws the background layer of this container (behind the items).
      */
     @Override
-    protected void drawGuiContainerBackgroundLayer(@NotNull final MatrixStack stack, final float partialTicks, final int mouseX, final int mouseY)
+    protected void renderBg(@NotNull final MatrixStack stack, final float partialTicks, final int mouseX, final int mouseY)
     {
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         if (completeCrafting)
         {
-            this.minecraft.getTextureManager().bindTexture(CRAFTING_TABLE_GUI_TEXTURES3X3);
+            this.minecraft.getTextureManager().bind(CRAFTING_TABLE_GUI_TEXTURES3X3);
         }
         else
         {
-            this.minecraft.getTextureManager().bindTexture(CRAFTING_TABLE_GUI_TEXTURES);
+            this.minecraft.getTextureManager().bind(CRAFTING_TABLE_GUI_TEXTURES);
         }
-        this.blit(stack, this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
+        this.blit(stack, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
     }
 
     @Override
@@ -191,6 +191,6 @@ public class WindowCrafting extends ContainerScreen<ContainerCrafting>
     {
         this.renderBackground(stack);
         super.render(stack, x, y, z);
-        this.renderHoveredTooltip(stack, x, y);
+        this.renderTooltip(stack, x, y);
     }
 }

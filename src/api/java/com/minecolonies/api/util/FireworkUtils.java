@@ -41,16 +41,16 @@ public final class FireworkUtils
     public static void spawnFireworksAtAABBCorners(final Tuple<BlockPos, BlockPos> realaabb, final World world, final int explosionLevel)
     {
         final FireworkRocketEntity firework = new FireworkRocketEntity(world, realaabb.getB().getX(), realaabb.getB().getY(), realaabb.getB().getZ(), genFireworkItemStack(explosionLevel));
-        world.addEntity(firework);
+        world.addFreshEntity(firework);
 
         final FireworkRocketEntity fireworka = new FireworkRocketEntity(world, realaabb.getB().getX(), realaabb.getB().getY(), realaabb.getA().getZ(), genFireworkItemStack(explosionLevel));
-        world.addEntity(fireworka);
+        world.addFreshEntity(fireworka);
 
         final FireworkRocketEntity fireworkb = new FireworkRocketEntity(world, realaabb.getA().getX(), realaabb.getB().getY(), realaabb.getB().getZ(), genFireworkItemStack(explosionLevel));
-        world.addEntity(fireworkb);
+        world.addFreshEntity(fireworkb);
 
         final FireworkRocketEntity fireworkc = new FireworkRocketEntity(world, realaabb.getA().getX(), realaabb.getB().getY(), realaabb.getA().getZ(), genFireworkItemStack(explosionLevel));
-        world.addEntity(fireworkc);
+        world.addFreshEntity(fireworkc);
     }
 
     /**

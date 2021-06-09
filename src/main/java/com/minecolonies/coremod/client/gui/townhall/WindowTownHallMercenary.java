@@ -66,7 +66,7 @@ public class WindowTownHallMercenary extends Window implements ButtonHandler
         {
             colony.usedMercenaries();
             Network.getNetwork().sendToServer(new HireMercenaryMessage(colony));
-            Minecraft.getInstance().player.playSound(SoundEvents.ENTITY_LIGHTNING_BOLT_THUNDER, 1.0f, 1.0f);
+            Minecraft.getInstance().player.playSound(SoundEvents.LIGHTNING_BOLT_THUNDER, 1.0f, 1.0f);
         }
 
         this.close();

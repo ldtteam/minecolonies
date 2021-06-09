@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public final class ConstructionTapeHelper
 {
-    public static final DirectionProperty FACING    = HorizontalBlock.HORIZONTAL_FACING;
+    public static final DirectionProperty FACING    = HorizontalBlock.FACING;
     public static final BooleanProperty   CORNER    = BooleanProperty.create("corner");
 
     /**
@@ -60,7 +60,7 @@ public final class ConstructionTapeHelper
             return;
         }
 
-        final BlockState constructionTape = ModBlocks.blockConstructionTape.getDefaultState();
+        final BlockState constructionTape = ModBlocks.blockConstructionTape.defaultBlockState();
 
         final int x = Math.min(corners.getA().getX(), corners.getB().getX());
         final int y = Math.max(corners.getA().getY(), corners.getB().getY());
@@ -78,13 +78,13 @@ public final class ConstructionTapeHelper
                 working = firstValidPosition(new BlockPos(place.getX(), y, z), world, sizeY);
                 if (working != null)
                 {
-                    world.setBlockState(working, BlockConstructionTape.getPlacementState(constructionTape.with(CORNER, place.getX() == x), world, working, Direction.SOUTH));
+                    world.setBlockAndUpdate(working, BlockConstructionTape.getPlacementState(constructionTape.setValue(CORNER, place.getX() == x), world, working, Direction.SOUTH));
                 }
 
                 working = firstValidPosition(new BlockPos(place.getX(), y, z + sizeZ), world, sizeY);
                 if (working != null)
                 {
-                    world.setBlockState(working, BlockConstructionTape.getPlacementState(constructionTape.with(CORNER, place.getX() == x), world, working, Direction.NORTH));
+                    world.setBlockAndUpdate(working, BlockConstructionTape.getPlacementState(constructionTape.setValue(CORNER, place.getX() == x), world, working, Direction.NORTH));
                 }
             }
 
@@ -93,14 +93,14 @@ public final class ConstructionTapeHelper
                 working = firstValidPosition(new BlockPos(x, y, place.getZ()), world, sizeY);
                 if (working != null)
                 {
-                    world.setBlockState(working, BlockConstructionTape.getPlacementState(constructionTape.with(CORNER, place.getZ() == z), world, working, Direction.EAST));
+                    world.setBlockAndUpdate(working, BlockConstructionTape.getPlacementState(constructionTape.setValue(CORNER, place.getZ() == z), world, working, Direction.EAST));
                 }
 
                 working = firstValidPosition(new BlockPos(x + sizeX, y, place.getZ()), world, sizeY);
                 if (working != null)
                 {
-                    world.setBlockState(working,
-                      BlockConstructionTape.getPlacementState(constructionTape.with(CORNER, place.getZ() == z), world, working, place.getZ() == z ? Direction.SOUTH : Direction.WEST));
+                    world.setBlockAndUpdate(working,
+                      BlockConstructionTape.getPlacementState(constructionTape.setValue(CORNER, place.getZ() == z), world, working, place.getZ() == z ? Direction.SOUTH : Direction.WEST));
                 }
             }
 
@@ -110,7 +110,7 @@ public final class ConstructionTapeHelper
         working = firstValidPosition(new BlockPos(x + sizeX, y, z + sizeZ), world, sizeY);
         if (working != null)
         {
-            world.setBlockState(working, BlockConstructionTape.getPlacementState(constructionTape.with(CORNER, true), world, working, Direction.WEST));
+            world.setBlockAndUpdate(working, BlockConstructionTape.getPlacementState(constructionTape.setValue(CORNER, true), world, working, Direction.WEST));
         }
     }
 
@@ -128,11 +128,11 @@ public final class ConstructionTapeHelper
         {
             final BlockPos tempTarget = new BlockPos(target.getX(), target.getY() - i, target.getZ());
             final BlockState state = world.getBlockState(tempTarget);
-            final BlockState upState = world.getBlockState(tempTarget.up());
+            final BlockState upState = world.getBlockState(tempTarget.above());
 
-            if (state.isSolid() && !upState.isSolid() && (upState.getMaterial().isReplaceable() || upState.isAir(world, tempTarget.up())))
+            if (state.canOcclude() && !upState.canOcclude() && (upState.getMaterial().isReplaceable() || upState.isAir(world, tempTarget.above())))
             {
-                return tempTarget.up();
+                return tempTarget.above();
             }
         }
 

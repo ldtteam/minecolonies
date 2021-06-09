@@ -26,18 +26,18 @@ public class ItemCompost extends AbstractItemMinecolonies
      */
     public ItemCompost(final Item.Properties properties)
     {
-        super("compost", properties.maxStackSize(Constants.STACKSIZE).group(ModCreativeTabs.MINECOLONIES));
+        super("compost", properties.stacksTo(Constants.STACKSIZE).tab(ModCreativeTabs.MINECOLONIES));
     }
 
     @Override
-    public ActionResultType onItemUse(final ItemUseContext ctx)
+    public ActionResultType useOn(final ItemUseContext ctx)
     {
-        final ItemStack itemstack = ctx.getPlayer().getHeldItem(ctx.getHand());
-        if (applyBonemeal(itemstack, ctx.getWorld(), ctx.getPos(), ctx.getPlayer()))
+        final ItemStack itemstack = ctx.getPlayer().getLastHandItem(ctx.getHand());
+        if (applyBonemeal(itemstack, ctx.getLevel(), ctx.getClickedPos(), ctx.getPlayer()))
         {
-            if (!ctx.getWorld().isRemote)
+            if (!ctx.getLevel().isClientSide)
             {
-                ctx.getWorld().playEvent(2005, ctx.getPos(), 0);
+                ctx.getLevel().levelEvent(2005, ctx.getClickedPos(), 0);
             }
             return ActionResultType.SUCCESS;
         }
@@ -57,13 +57,13 @@ public class ItemCompost extends AbstractItemMinecolonies
             if (BlockState.getBlock() instanceof IGrowable)
             {
                 final IGrowable igrowable = (IGrowable) BlockState.getBlock();
-                if (igrowable.canGrow(worldIn, target, BlockState, worldIn.isRemote))
+                if (igrowable.isValidBonemealTarget(worldIn, target, BlockState, worldIn.isClientSide))
                 {
-                    if (!worldIn.isRemote)
+                    if (!worldIn.isClientSide)
                     {
-                        if (igrowable.canUseBonemeal(worldIn, worldIn.rand, target, BlockState))
+                        if (igrowable.isBonemealSuccess(worldIn, worldIn.random, target, BlockState))
                         {
-                            igrowable.grow((ServerWorld) worldIn, worldIn.rand, target, BlockState);
+                            igrowable.performBonemeal((ServerWorld) worldIn, worldIn.random, target, BlockState);
                         }
                         stack.shrink(1);
                     }

@@ -101,8 +101,8 @@ public class ClientEventHandler
      * Render buffers.
      */
     public static final RenderTypeBuffers renderBuffers = new RenderTypeBuffers();
-    private static final IRenderTypeBuffer.Impl renderBuffer = renderBuffers.getBufferSource();
-    private static final Supplier<IVertexBuilder> linesWithCullAndDepth = () -> renderBuffer.getBuffer(RenderType.getLines());
+    private static final IRenderTypeBuffer.Impl renderBuffer = renderBuffers.bufferSource();
+    private static final Supplier<IVertexBuilder> linesWithCullAndDepth = () -> renderBuffer.getBuffer(RenderType.lines());
     private static final Supplier<IVertexBuilder> linesWithoutCullAndDepth = () -> renderBuffer.getBuffer(RenderUtils.LINES_GLINT);
 
     /**
@@ -118,29 +118,29 @@ public class ClientEventHandler
             Pathfinding.debugDraw(event.getPartialTicks(), event.getMatrixStack());
         }
         final Blueprint structure = Settings.instance.getActiveStructure();
-        final ClientWorld world = Minecraft.getInstance().world;
+        final ClientWorld world = Minecraft.getInstance().level;
         final PlayerEntity player = Minecraft.getInstance().player;
         if (structure != null)
         {
             handleRenderStructure(event, world, player);
         }
 
-        if (player.getHeldItemMainhand().getItem() == ModItems.scepterGuard)
+        if (player.getMainHandItem().getItem() == ModItems.scepterGuard)
         {
             handleRenderScepterGuard(event, world, player);
         }
-        else if (player.getHeldItemMainhand().getItem() == ModItems.bannerRallyGuards)
+        else if (player.getMainHandItem().getItem() == ModItems.bannerRallyGuards)
         {
             handleRenderBannerRallyGuards(event, world, player);
         }
-        else if (player.getHeldItemMainhand().getItem() == com.ldtteam.structurize.items.ModItems.buildTool.get())
+        else if (player.getMainHandItem().getItem() == com.ldtteam.structurize.items.ModItems.buildTool.get())
         {
             handleRenderBuildTool(event, world, player);
         }
 
         DebugRendererChunkBorder.renderWorldLastEvent(event);
 
-        renderBuffer.finish();
+        renderBuffer.endBatch();
     }
 
     @SubscribeEvent(priority = EventPriority.HIGH)
@@ -151,10 +151,10 @@ public class ClientEventHandler
             return;
         }
 
-        if (event.getSound().getSoundLocation().getNamespace().equals(Constants.MOD_ID)
+        if (event.getSound().getLocation().getNamespace().equals(Constants.MOD_ID)
             && !MinecoloniesAPIProxy.getInstance().getConfig().getClient().citizenVoices.get())
         {
-            final String path = event.getSound().getSoundLocation().getPath();
+            final String path = event.getSound().getLocation().getPath();
             if (!path.startsWith(MOB_SOUND_EVENT_PREFIX))
             {
                 return;
@@ -184,10 +184,10 @@ public class ClientEventHandler
         {
             return;
         }
-        IColony colony = IMinecoloniesAPI.getInstance().getColonyManager().getIColony(event.getPlayer().world, event.getPlayer().getPosition());
+        IColony colony = IMinecoloniesAPI.getInstance().getColonyManager().getIColony(event.getPlayer().level, event.getPlayer().blockPosition());
         if(colony == null)
         {
-            colony = IMinecoloniesAPI.getInstance().getColonyManager().getIColonyByOwner(event.getPlayer().world, event.getPlayer());
+            colony = IMinecoloniesAPI.getInstance().getColonyManager().getIColonyByOwner(event.getPlayer().level, event.getPlayer());
         }
         handleCrafterRecipeTooltips(colony, event.getToolTip(), event.getItemStack().getItem());
         if(event.getItemStack().getItem() instanceof BlockItem)
@@ -226,18 +226,18 @@ public class ClientEventHandler
                 final IFormattableTextComponent reqLevelText = new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ITEM_BUILDLEVEL_TOOLTIP_GUI, crafterCapitalized, rec.getMinBuildingLevel());
                 if(colony != null && colony.hasBuilding(rec.getCrafter(), rec.getMinBuildingLevel(), true))
                 {
-                    reqLevelText.setStyle(Style.EMPTY.setFormatting(TextFormatting.AQUA));
+                    reqLevelText.setStyle(Style.EMPTY.withColor(TextFormatting.AQUA));
                 }
                 else
                 {
-                    reqLevelText.setStyle(Style.EMPTY.setFormatting(TextFormatting.RED));
+                    reqLevelText.setStyle(Style.EMPTY.withColor(TextFormatting.RED));
                 }
                 toolTip.add(reqLevelText);
             }
             else
             {
                 final IFormattableTextComponent reqBuildingTxt = new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ITEM_AVAILABLE_TOOLTIP_GUI, crafterCapitalized)
-                .setStyle(Style.EMPTY.setItalic(true).setFormatting(TextFormatting.GRAY));
+                .setStyle(Style.EMPTY.withItalic(true).withColor(TextFormatting.GRAY));
                 toolTip.add(reqBuildingTxt);
             }
             if(rec.getRequiredResearchId() != null)
@@ -268,7 +268,7 @@ public class ClientEventHandler
                     for (IGlobalResearch research : researches)
                     {
                         toolTip.add(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ITEM_REQUIRES_RESEARCH_TOOLTIP_GUI,
-                          research.getName()).setStyle(Style.EMPTY.setFormatting(researchFormat)));
+                          research.getName()).setStyle(Style.EMPTY.withColor(researchFormat)));
                     }
                 }
             }
@@ -295,8 +295,8 @@ public class ClientEventHandler
         }
         if (MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().getResearchForEffect(effectId) != null)
         {
-            tooltip.add(new TranslationTextComponent(TranslationConstants.HUT_NEEDS_RESEARCH_TOOLTIP_1, block.getBlock().getTranslatedName()));
-            tooltip.add(new TranslationTextComponent(TranslationConstants.HUT_NEEDS_RESEARCH_TOOLTIP_2, block.getBlock().getTranslatedName()));
+            tooltip.add(new TranslationTextComponent(TranslationConstants.HUT_NEEDS_RESEARCH_TOOLTIP_1, block.getBlock().getName()));
+            tooltip.add(new TranslationTextComponent(TranslationConstants.HUT_NEEDS_RESEARCH_TOOLTIP_2, block.getBlock().getName()));
         }
     }
 
@@ -314,7 +314,7 @@ public class ClientEventHandler
             return;
         }
 
-        final IColonyView colony = IColonyManager.getInstance().getClosestColonyView(world, new BlockPos(player.getPositionVec()));
+        final IColonyView colony = IColonyManager.getInstance().getClosestColonyView(world, new BlockPos(player.position()));
         if (colony == null)
         {
             return;
@@ -333,7 +333,7 @@ public class ClientEventHandler
                 }
                 final BlockPos currentPosition = buildingView.getPosition();
 
-                if (activePosition.withinDistance(currentPosition, PREVIEW_RANGE))
+                if (activePosition.closerThan(currentPosition, PREVIEW_RANGE))
                 {
                     if (blueprintCache.containsKey(currentPosition))
                     {
@@ -372,7 +372,7 @@ public class ClientEventHandler
                             final BlockPos primaryOffset = blueprint.getPrimaryBlockOffset();
                             final BlockPos pos = currentPosition.subtract(primaryOffset);
                             final BlockPos size = new BlockPos(blueprint.getSizeX(), blueprint.getSizeY(), blueprint.getSizeZ());
-                            final BlockPos renderSize = pos.add(size).subtract(new BlockPos(1, 1, 1));
+                            final BlockPos renderSize = pos.relative(size).subtract(new BlockPos(1, 1, 1));
                             blueprint.setRenderSource(buildingView.getID());
 
                             if (buildingView.getBuildingLevel() < buildingView.getBuildingMaxLevel())
@@ -419,7 +419,7 @@ public class ClientEventHandler
         final PlacementSettings settings = new PlacementSettings(Settings.instance.getMirror(), BlockPosUtil.getRotationFromRotations(Settings.instance.getRotation()));
         if (Settings.instance.getStructureName() != null && Settings.instance.getStructureName().contains(WAYPOINT_STRING))
         {
-            final IColonyView tempView = IColonyManager.getInstance().getClosestColonyView(world, new BlockPos(player.getPositionVec()));
+            final IColonyView tempView = IColonyManager.getInstance().getClosestColonyView(world, new BlockPos(player.position()));
             if (tempView != null)
             {
                 if (wayPointTemplate == null)
@@ -444,14 +444,14 @@ public class ClientEventHandler
     private static void handleRenderScepterGuard(@NotNull final RenderWorldLastEvent event, final ClientWorld world, final PlayerEntity player)
     {
         final PlacementSettings settings = new PlacementSettings(Settings.instance.getMirror(), BlockPosUtil.getRotationFromRotations(Settings.instance.getRotation()));
-        final ItemStack stack = player.getHeldItemMainhand();
+        final ItemStack stack = player.getMainHandItem();
         if (!stack.hasTag())
         {
             return;
         }
         final CompoundNBT compound = stack.getTag();
 
-        final IColonyView colony = IColonyManager.getInstance().getColonyView(compound.getInt(TAG_ID), player.world.getDimensionKey());
+        final IColonyView colony = IColonyManager.getInstance().getColonyView(compound.getInt(TAG_ID), player.level.dimension());
         if (colony == null)
         {
             return;
@@ -467,7 +467,7 @@ public class ClientEventHandler
 
         if (hut instanceof AbstractBuildingGuards.View)
         {
-            StructureClientHandler.renderStructureAtPosList(partolPointTemplate, event.getPartialTicks(),((AbstractBuildingGuards.View) hut).getPatrolTargets().stream().map(BlockPos::up).collect(Collectors.toList()), event.getMatrixStack());
+            StructureClientHandler.renderStructureAtPosList(partolPointTemplate, event.getPartialTicks(),((AbstractBuildingGuards.View) hut).getPatrolTargets().stream().map(BlockPos::above).collect(Collectors.toList()), event.getMatrixStack());
         }
     }
 
@@ -480,13 +480,13 @@ public class ClientEventHandler
      */
     private static void handleRenderBannerRallyGuards(@NotNull final RenderWorldLastEvent event, final ClientWorld world, final PlayerEntity player)
     {
-        final ItemStack stack = player.getHeldItemMainhand();
+        final ItemStack stack = player.getMainHandItem();
 
         final List<ILocation> guardTowers = ItemBannerRallyGuards.getGuardTowerLocations(stack);
 
         for (final ILocation guardTower : guardTowers)
         {
-            if (world.getDimensionKey() != guardTower.getDimension())
+            if (world.dimension() != guardTower.getDimension())
             {
                 RenderUtils.renderBox(guardTower.getInDimensionLocation(), guardTower.getInDimensionLocation(), 0, 0, 0, 1.0F, 0.002D, event.getMatrixStack(), linesWithCullAndDepth.get());
             }

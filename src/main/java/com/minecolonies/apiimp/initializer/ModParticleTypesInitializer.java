@@ -45,7 +45,7 @@ public class ModParticleTypesInitializer
         @SubscribeEvent
         public static void registerParticleFactories(ParticleFactoryRegisterEvent event)
         {
-            Minecraft.getInstance().particles.registerFactory(SLEEPINGPARTICLE_TYPE, SleepingParticle.Factory::new);
+            Minecraft.getInstance().particleEngine.register(SLEEPINGPARTICLE_TYPE, SleepingParticle.Factory::new);
         }
     }
 }

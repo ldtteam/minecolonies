@@ -35,7 +35,7 @@ public final class BuildingUtils
 
         if (slot != -1)
         {
-            return inventory.getStackInSlot(slot);
+            return inventory.getItem(slot);
         }
         return ItemStack.EMPTY;
     }

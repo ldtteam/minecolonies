@@ -19,7 +19,7 @@ public final class ColonyConstants
     /**
      * Specific ticket type for minecolonies tickets.
      */
-    public static final TicketType<ChunkPos> KEEP_LOADED_TYPE = TicketType.create(TICKET_ID, Comparator.comparingLong(ChunkPos::asLong));
+    public static final TicketType<ChunkPos> KEEP_LOADED_TYPE = TicketType.create(TICKET_ID, Comparator.comparingLong(ChunkPos::toLong));
 
     //  Settings
 

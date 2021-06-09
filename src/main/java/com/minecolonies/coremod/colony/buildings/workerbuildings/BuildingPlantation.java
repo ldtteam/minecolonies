@@ -104,7 +104,7 @@ public class BuildingPlantation extends AbstractBuildingCrafter
         super.registerBlockPosition(block, pos, world);
         if (block == Blocks.SAND)
         {
-            final Block down = world.getBlockState(pos.down()).getBlock();
+            final Block down = world.getBlockState(pos.below()).getBlock();
             if (down == Blocks.COBBLESTONE || down == Blocks.STONE_BRICKS)
             {
                 sand.add(pos);
@@ -121,7 +121,7 @@ public class BuildingPlantation extends AbstractBuildingCrafter
         {
             sand.add(NBTUtil.readBlockPos(sandPos.getCompound(i).getCompound(TAG_POS)));
         }
-        this.currentPhase = ItemStack.read(compound.getCompound(TAG_CURRENT_PHASE)).getItem();
+        this.currentPhase = ItemStack.of(compound.getCompound(TAG_CURRENT_PHASE)).getItem();
     }
 
     @Override
@@ -136,7 +136,7 @@ public class BuildingPlantation extends AbstractBuildingCrafter
             sandCompoundList.add(sandCompound);
         }
         compound.put(TAG_PLANTGROUND, sandCompoundList);
-        compound.put(TAG_CURRENT_PHASE, new ItemStack(currentPhase).write(new CompoundNBT()));
+        compound.put(TAG_CURRENT_PHASE, new ItemStack(currentPhase).save(new CompoundNBT()));
         return compound;
     }
 
@@ -157,7 +157,7 @@ public class BuildingPlantation extends AbstractBuildingCrafter
                       || (entry.getValue().contains("sugar") && currentPhase == Items.SUGAR_CANE)
                       || (entry.getValue().contains("cactus") && currentPhase == Items.CACTUS))
                 {
-                    filtered.add(getPosition().add(entry.getKey()));
+                    filtered.add(getPosition().relative(entry.getKey()));
                 }
             }
         }
@@ -236,15 +236,15 @@ public class BuildingPlantation extends AbstractBuildingCrafter
     private Item getSetting()
     {
         final String setting = getSetting(MODE).getValue();
-        if (setting.equals(Items.SUGAR_CANE.getTranslationKey()))
+        if (setting.equals(Items.SUGAR_CANE.getDescriptionId()))
         {
             return Items.SUGAR_CANE;
         }
-        if (setting.equals(Items.CACTUS.getTranslationKey()))
+        if (setting.equals(Items.CACTUS.getDescriptionId()))
         {
             return Items.CACTUS;
         }
-        if (setting.equals(Items.BAMBOO.getTranslationKey()))
+        if (setting.equals(Items.BAMBOO.getDescriptionId()))
         {
             return Items.BAMBOO;
         }

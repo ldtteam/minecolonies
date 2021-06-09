@@ -5,6 +5,8 @@ import net.minecraft.inventory.EquipmentSlotType;
 
 import static net.minecraft.enchantment.EnchantmentType.WEAPON;
 
+import net.minecraft.enchantment.Enchantment.Rarity;
+
 /**
  * Enchant for adding extra damage against raiders
  */
@@ -22,13 +24,13 @@ public class RaiderDamageEnchant extends Enchantment
     }
 
     @Override
-    public int getMinEnchantability(int enchantmentLevel)
+    public int getMinCost(int enchantmentLevel)
     {
         return 10;
     }
 
     @Override
-    public int getMaxEnchantability(int enchantmentLevel)
+    public int getMaxCost(int enchantmentLevel)
     {
         return 50;
     }

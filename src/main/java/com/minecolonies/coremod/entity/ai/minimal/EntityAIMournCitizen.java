@@ -17,6 +17,8 @@ import net.minecraft.util.math.BlockPos;
 
 import java.util.EnumSet;
 
+import net.minecraft.entity.ai.goal.Goal.Flag;
+
 /**
  * Citizen mourning goal. Has citizens randomly walk around townhall.
  */
@@ -71,7 +73,7 @@ public class EntityAIMournCitizen extends Goal
         super();
         this.citizen = citizen;
         this.speed = speed;
-        this.setMutexFlags(EnumSet.of(Flag.MOVE));
+        this.setFlags(EnumSet.of(Flag.MOVE));
 
         stateMachine = new TickRateStateMachine<>(MourningState.IDLE, e -> Log.getLogger().warn("Mourning AI threw exception:", e));
 
@@ -104,7 +106,7 @@ public class EntityAIMournCitizen extends Goal
     private MourningState walkToTownHall()
     {
         final BlockPos pos = getMournLocation();
-        citizen.getNavigator().moveToXYZ(pos.getX(), pos.getY(), pos.getZ(), this.speed);
+        citizen.getNavigation().moveToXYZ(pos.getX(), pos.getY(), pos.getZ(), this.speed);
         return MourningState.IDLE;
     }
 
@@ -114,7 +116,7 @@ public class EntityAIMournCitizen extends Goal
      */
     private MourningState wander()
     {
-        citizen.getNavigator().moveToRandomPos(10, this.speed);
+        citizen.getNavigation().moveToRandomPos(10, this.speed);
         return MourningState.IDLE;
     }
 
@@ -132,13 +134,13 @@ public class EntityAIMournCitizen extends Goal
 
         if (closestEntity == null)
         {
-            closestEntity = this.citizen.world.getClosestEntityWithinAABB(EntityCitizen.class,
+            closestEntity = this.citizen.level.getNearestEntity(EntityCitizen.class,
               EntityPredicate.DEFAULT,
               citizen,
-              citizen.getPosX(),
-              citizen.getPosY(),
-              citizen.getPosZ(),
-              citizen.getBoundingBox().grow(3.0D, 3.0D, 3.0D));
+              citizen.getX(),
+              citizen.getY(),
+              citizen.getZ(),
+              citizen.getBoundingBox().inflate(3.0D, 3.0D, 3.0D));
 
             if (closestEntity == null)
             {
@@ -146,7 +148,7 @@ public class EntityAIMournCitizen extends Goal
             }
         }
 
-        citizen.getLookController().setLookPosition(closestEntity.getPosX(), closestEntity.getPosY() + (double) closestEntity.getEyeHeight(), closestEntity.getPosZ(), (float) citizen.getHorizontalFaceSpeed(), (float) citizen.getVerticalFaceSpeed());
+        citizen.getLookControl().setLookAt(closestEntity.getX(), closestEntity.getY() + (double) closestEntity.getEyeHeight(), closestEntity.getZ(), (float) citizen.getMaxHeadYRot(), (float) citizen.getMaxHeadXRot());
         return MourningState.STARING;
     }
 
@@ -161,7 +163,7 @@ public class EntityAIMournCitizen extends Goal
             return MourningState.IDLE;
         }
 
-        if (!citizen.getNavigator().noPath())
+        if (!citizen.getNavigation().isDone())
         {
             return MourningState.IDLE;
         }
@@ -174,10 +176,10 @@ public class EntityAIMournCitizen extends Goal
             return MourningState.WALKING_TO_TOWNHALL;
         }
 
-        citizen.getLookController().setLookPosition(citizen.getPosX(), citizen.getPosY() - 10, citizen.getPosZ(), (float) citizen.getHorizontalFaceSpeed(),
-          (float) citizen.getVerticalFaceSpeed());
+        citizen.getLookControl().setLookAt(citizen.getX(), citizen.getY() - 10, citizen.getZ(), (float) citizen.getMaxHeadYRot(),
+          (float) citizen.getMaxHeadXRot());
 
-        if (BlockPosUtil.getDistance2D(this.citizen.getPosition(), getMournLocation()) > MIN_DESTINATION_TO_LOCATION)
+        if (BlockPosUtil.getDistance2D(this.citizen.blockPosition(), getMournLocation()) > MIN_DESTINATION_TO_LOCATION)
         {
             return MourningState.WALKING_TO_TOWNHALL;
         }
@@ -191,7 +193,7 @@ public class EntityAIMournCitizen extends Goal
     }
 
     @Override
-    public boolean shouldExecute()
+    public boolean canUse()
     {
         stateMachine.tick();
         return stateMachine.getState() != MourningState.IDLE;
@@ -204,7 +206,7 @@ public class EntityAIMournCitizen extends Goal
     }
 
     @Override
-    public void resetTask()
+    public void stop()
     {
         stateMachine.reset();
         citizen.getCitizenData().setVisibleStatus(null);
@@ -220,7 +222,7 @@ public class EntityAIMournCitizen extends Goal
         final IColony colony = citizen.getCitizenColonyHandler().getColony();
         if (colony == null || !colony.getBuildingManager().hasTownHall())
         {
-            return citizen.getHomePosition();
+            return citizen.getRestrictCenter();
         }
 
         return colony.getBuildingManager().getTownHall().getPosition();

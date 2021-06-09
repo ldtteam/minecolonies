@@ -23,12 +23,12 @@ public class CommandKillRaider implements IMCOPCommand
     {
         entitiesKilled = 0;
 
-        context.getSource().getWorld().getEntities().forEach(entity ->
+        context.getSource().getLevel().getEntities().forEach(entity ->
         {
             if (entity instanceof AbstractEntityMinecoloniesMob)
             {
                 final AbstractEntityMinecoloniesMob mob = (AbstractEntityMinecoloniesMob) entity;
-                mob.onDeath(new DamageSource("despawn"));
+                mob.die(new DamageSource("despawn"));
                 mob.remove();
 
                 final IColonyEvent event = mob.getColony().getEventManager().getEventByID(mob.getEventID());
@@ -41,7 +41,7 @@ public class CommandKillRaider implements IMCOPCommand
                 entitiesKilled++;
             }
         });
-        context.getSource().sendFeedback(new StringTextComponent(entitiesKilled + " entities killed"), true);
+        context.getSource().sendSuccess(new StringTextComponent(entitiesKilled + " entities killed"), true);
         return 1;
     }
 

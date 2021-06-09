@@ -33,13 +33,13 @@ public class ModContainerInitializers
     @SubscribeEvent
     public static void doClientStuff(final FMLClientSetupEvent event)
     {
-        ScreenManager.registerFactory(ModContainers.craftingFurnace, WindowFurnaceCrafting::new);
-        ScreenManager.registerFactory(ModContainers.craftingGrid, WindowCrafting::new);
+        ScreenManager.register(ModContainers.craftingFurnace, WindowFurnaceCrafting::new);
+        ScreenManager.register(ModContainers.craftingGrid, WindowCrafting::new);
 
-        ScreenManager.registerFactory(ModContainers.buildingInv, WindowBuildingInventory::new);
-        ScreenManager.registerFactory(ModContainers.citizenInv, WindowCitizenInventory::new);
-        ScreenManager.registerFactory(ModContainers.rackInv, WindowRack::new);
-        ScreenManager.registerFactory(ModContainers.graveInv, WindowGrave::new);
-        ScreenManager.registerFactory(ModContainers.field, WindowField::new);
+        ScreenManager.register(ModContainers.buildingInv, WindowBuildingInventory::new);
+        ScreenManager.register(ModContainers.citizenInv, WindowCitizenInventory::new);
+        ScreenManager.register(ModContainers.rackInv, WindowRack::new);
+        ScreenManager.register(ModContainers.graveInv, WindowGrave::new);
+        ScreenManager.register(ModContainers.field, WindowField::new);
     }
 }

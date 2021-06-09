@@ -46,7 +46,7 @@ public final class Pond
      */
     public static boolean checkWater(@NotNull final IWorldReader world, @NotNull final BlockPos water, final int width, final int length)
     {
-        if (world.getBlockState(water).getBlock() != Blocks.WATER || !world.isAirBlock(water.up()))
+        if (world.getBlockState(water).getBlock() != Blocks.WATER || !world.isEmptyBlock(water.above()))
         {
             return false;
         }

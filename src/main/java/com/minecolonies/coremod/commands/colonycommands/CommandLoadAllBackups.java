@@ -17,7 +17,7 @@ public class CommandLoadAllBackups implements IMCOPCommand
     public int onExecute(final CommandContext<CommandSource> context)
     {
         BackUpHelper.loadAllBackups();
-        context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.loadbackup.success"), true);
+        context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.loadbackup.success"), true);
         return 1;
     }
 

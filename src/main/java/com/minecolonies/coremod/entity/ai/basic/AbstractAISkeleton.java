@@ -19,6 +19,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.EnumSet;
 
+import net.minecraft.entity.ai.goal.Goal.Flag;
+
 /**
  * Skeleton class for worker ai. Here general target execution will be handled. No utility on this level!
  *
@@ -52,7 +54,7 @@ public abstract class AbstractAISkeleton<J extends IJob<?>> extends Goal
             throw new IllegalArgumentException("Cannot instantiate a AI from a Job that is attached to a Citizen without entity.");
         }
 
-        this.setMutexFlags(EnumSet.of(Goal.Flag.MOVE));
+        this.setFlags(EnumSet.of(Goal.Flag.MOVE));
         this.job = job;
         this.worker = this.job.getCitizen().getEntity().get();
         this.world = CompatibilityUtils.getWorldFromCitizen(this.worker);
@@ -86,7 +88,7 @@ public abstract class AbstractAISkeleton<J extends IJob<?>> extends Goal
      * @return true if execution is wanted.
      */
     @Override
-    public final boolean shouldExecute()
+    public final boolean canUse()
     {
         return worker.getDesiredActivity() == DesiredActivity.WORK;
     }
@@ -95,16 +97,16 @@ public abstract class AbstractAISkeleton<J extends IJob<?>> extends Goal
      * Returns whether an in-progress Goal should continue executing.
      */
     @Override
-    public final boolean shouldContinueExecuting()
+    public final boolean canContinueToUse()
     {
-        return super.shouldContinueExecuting();
+        return super.canContinueToUse();
     }
 
     /**
      * Execute a one shot task or start executing a continuous task.
      */
     @Override
-    public final void startExecuting()
+    public final void start()
     {
         worker.getCitizenStatusHandler().setStatus(Status.WORKING);
         worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
@@ -114,7 +116,7 @@ public abstract class AbstractAISkeleton<J extends IJob<?>> extends Goal
      * Resets the task.
      */
     @Override
-    public final void resetTask()
+    public final void stop()
     {
         resetAI();
         worker.getCitizenData().setVisibleStatus(null);
@@ -140,9 +142,9 @@ public abstract class AbstractAISkeleton<J extends IJob<?>> extends Goal
      * @param mutexBits the bits to flag this with.
      */
     @Override
-    public final void setMutexFlags(final EnumSet<Flag> mutexBits)
+    public final void setFlags(final EnumSet<Flag> mutexBits)
     {
-        super.setMutexFlags(mutexBits);
+        super.setFlags(mutexBits);
     }
 
     /**

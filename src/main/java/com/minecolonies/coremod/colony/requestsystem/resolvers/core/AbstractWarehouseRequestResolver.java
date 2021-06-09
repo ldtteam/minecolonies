@@ -81,7 +81,7 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
             }
         }
 
-        if (!manager.getColony().getWorld().isRemote)
+        if (!manager.getColony().getWorld().isClientSide)
         {
             if (!isRequestChainValid(manager, requestToCheck))
             {
@@ -139,7 +139,7 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
     @SuppressWarnings("squid:LeftCurlyBraceStartLineCheck")
     public List<IToken<?>> attemptResolveRequest(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
-        if (manager.getColony().getWorld().isRemote)
+        if (manager.getColony().getWorld().isClientSide)
         {
             return Lists.newArrayList();
         }
@@ -196,7 +196,7 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
     @Override
     public List<IRequest<?>> getFollowupRequestForCompletion(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> completedRequest)
     {
-        if (manager.getColony().getWorld().isRemote)
+        if (manager.getColony().getWorld().isClientSide)
         {
             return null;
         }
@@ -245,7 +245,7 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
 
                 completedRequest.addDelivery(matchingStack);
 
-                final ILocation itemStackLocation = manager.getFactoryController().getNewInstance(TypeConstants.ILOCATION, tuple.getB(), wareHouse.getWorld().getDimensionKey());
+                final ILocation itemStackLocation = manager.getFactoryController().getNewInstance(TypeConstants.ILOCATION, tuple.getB(), wareHouse.getLevel().dimension());
 
                 final Delivery delivery =
                   new Delivery(itemStackLocation, completedRequest.getRequester().getLocation(), matchingStack, getDefaultDeliveryPriority(true));
@@ -296,8 +296,8 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
 
         wareHouses.sort((w1, w2) ->
         {
-            final double dist1 = w1.getPosition().distanceSq(requesterPosition);
-            final double dist2 = w2.getPosition().distanceSq(requesterPosition);
+            final double dist1 = w1.getPosition().distSqr(requesterPosition);
+            final double dist2 = w2.getPosition().distSqr(requesterPosition);
             return Double.compare(dist1, dist2);
         });
 

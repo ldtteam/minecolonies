@@ -40,6 +40,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.minecolonies.coremod.compatibility.jei.JobBasedRecipeCategory.LootTableTooltipCallback;
+
 /**
  * The main JEI recipe category GUI implementation for IGenericRecipe.
  */
@@ -252,7 +254,7 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
 
         if (recipe.getIntermediate() != Blocks.AIR)
         {
-            final BlockState block = recipe.getIntermediate().getDefaultState();
+            final BlockState block = recipe.getIntermediate().defaultBlockState();
             RenderHelper.renderBlock(matrixStack, block, outputSlotX + 8, CITIZEN_Y + 6, 100, -30F, 30F, 16F);
         }
     }
@@ -267,7 +269,7 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
         {
             if (new Rectangle2d(CITIZEN_X + CITIZEN_W + 4, CITIZEN_Y - 2, 24, 24).contains((int) mouseX, (int) mouseY))
             {
-                tooltips.add(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_JEI_PREFIX + "intermediate.tip", recipe.getIntermediate().getTranslatedName()));
+                tooltips.add(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_JEI_PREFIX + "intermediate.tip", recipe.getIntermediate().getName()));
             }
         }
 
@@ -299,16 +301,16 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
     public List<IGenericRecipe> findRecipes()
     {
         final List<IGenericRecipe> recipes = new ArrayList<>();
-        final RecipeManager recipeManager = Minecraft.getInstance().world.getRecipeManager();
+        final RecipeManager recipeManager = Minecraft.getInstance().level.getRecipeManager();
 
         // vanilla shaped and shapeless crafting recipes
         if (this.crafting.canLearnCraftingRecipes())
         {
-            for (final IRecipe<CraftingInventory> recipe : recipeManager.getRecipes(IRecipeType.CRAFTING).values())
+            for (final IRecipe<CraftingInventory> recipe : recipeManager.byType(IRecipeType.CRAFTING).values())
             {
-                if (!recipe.canFit(3, 3)) continue;
-                if (!this.crafting.canLearnLargeRecipes() && !recipe.canFit(2, 2)) continue;
-                if (recipe.getRecipeOutput().isEmpty()) continue;   // invalid or special recipes
+                if (!recipe.canCraftInDimensions(3, 3)) continue;
+                if (!this.crafting.canLearnLargeRecipes() && !recipe.canCraftInDimensions(2, 2)) continue;
+                if (recipe.getResultItem().isEmpty()) continue;   // invalid or special recipes
 
                 final IGenericRecipe genericRecipe = GenericRecipeUtils.create(recipe);
                 if (genericRecipe.getInputs().isEmpty()) continue;
@@ -322,9 +324,9 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
         // vanilla furnace recipes (do we want to check smoking and blasting too?)
         if (this.crafting.canLearnFurnaceRecipes())
         {
-            for (final IRecipe<IInventory> recipe : recipeManager.getRecipes(IRecipeType.SMELTING).values())
+            for (final IRecipe<IInventory> recipe : recipeManager.byType(IRecipeType.SMELTING).values())
             {
-                if (recipe.getRecipeOutput().isEmpty()) continue;   // invalid or special recipes
+                if (recipe.getResultItem().isEmpty()) continue;   // invalid or special recipes
                 final IGenericRecipe genericRecipe = GenericRecipe.of(recipe);
                 assert genericRecipe != null;
                 if (genericRecipe.getInputs().isEmpty()) continue;

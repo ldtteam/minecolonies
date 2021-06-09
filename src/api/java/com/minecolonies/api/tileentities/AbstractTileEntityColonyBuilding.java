@@ -188,7 +188,7 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
     {
         if (corner1 == BlockPos.ZERO || corner2 == BlockPos.ZERO)
         {
-            return new Tuple<>(pos, pos);
+            return new Tuple<>(worldPosition, worldPosition);
         }
 
         return new Tuple<>(corner1, corner2);
@@ -202,17 +202,17 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
     }
 
     @Override
-    public void read(final BlockState state, @NotNull final CompoundNBT compound)
+    public void load(final BlockState state, @NotNull final CompoundNBT compound)
     {
-        super.read(state, compound);
+        super.load(state, compound);
         readSchematicDataFromNBT(compound);
     }
 
     @NotNull
     @Override
-    public CompoundNBT write(@NotNull final CompoundNBT compound)
+    public CompoundNBT save(@NotNull final CompoundNBT compound)
     {
-        super.write(compound);
+        super.save(compound);
         writeSchematicDataToNBT(compound);
         return compound;
     }
@@ -220,6 +220,6 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
     @Override
     public BlockPos getTilePos()
     {
-        return pos;
+        return worldPosition;
     }
 }

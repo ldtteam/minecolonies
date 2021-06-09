@@ -35,9 +35,9 @@ public class ArmyPopulationTrigger extends AbstractCriterionTrigger<ArmyPopulati
 
     @NotNull
     @Override
-    public ArmyPopulationCriterionInstance deserialize(@NotNull final JsonObject object, @NotNull final ConditionArrayParser conditions)
+    public ArmyPopulationCriterionInstance createInstance(@NotNull final JsonObject object, @NotNull final ConditionArrayParser conditions)
     {
-        final int populationCount = JSONUtils.getInt(object, "population_count");
+        final int populationCount = JSONUtils.getAsInt(object, "population_count");
         return new ArmyPopulationCriterionInstance(populationCount);
     }
 }

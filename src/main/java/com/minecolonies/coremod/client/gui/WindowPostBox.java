@@ -144,8 +144,8 @@ public class WindowPostBox extends AbstractWindowRequestTree
     private void updateResources()
     {
         final Predicate<ItemStack> filterPredicate = stack -> filter.isEmpty()
-                                                                || stack.getTranslationKey().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))
-                                                                || stack.getDisplayName().getString().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))
+                                                                || stack.getDescriptionId().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))
+                                                                || stack.getHoverName().getString().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))
                                                                 || (stack.getItem() instanceof EnchantedBookItem && EnchantedBookItem.getEnchantments(stack).getCompound(0).getString("id").contains(filter.toLowerCase(Locale.US)));
         allItems.clear();
         allItems.addAll(getBlockList(filterPredicate));
@@ -199,7 +199,7 @@ public class WindowPostBox extends AbstractWindowRequestTree
             {
                 final ItemStack resource = tempRes.get(index);
                 final Text resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Text.class);
-                resourceLabel.setText(resource.getDisplayName());
+                resourceLabel.setText(resource.getHoverName());
                 rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(resource);
             }
         });

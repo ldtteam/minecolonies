@@ -71,7 +71,7 @@ public class CompostParticleMessage implements IMessage
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
-        final ClientWorld world = Minecraft.getInstance().world;
+        final ClientWorld world = Minecraft.getInstance().level;
         final int amount = random.nextInt(15) + 1;
         final BlockState BlockState = world.getBlockState(pos);
         double d0;
@@ -86,7 +86,7 @@ public class CompostParticleMessage implements IMessage
                 d2 = random.nextGaussian() * 0.02D;
                 world.addParticle(ParticleTypes.HAPPY_VILLAGER,
                   (double) ((float) pos.getX() + random.nextFloat()),
-                  (double) pos.getY() + (double) random.nextFloat() * BlockState.getShape(world, pos).getBoundingBox().maxY,
+                  (double) pos.getY() + (double) random.nextFloat() * BlockState.getShape(world, pos).bounds().maxY,
                   (double) ((float) pos.getZ() + random.nextFloat()),
                   d0,
                   d1,

@@ -45,19 +45,19 @@ public abstract class CustomRecipeProvider implements IDataProvider
     }
 
     @Override
-    public void act(final DirectoryCache cache) throws IOException
+    public void run(final DirectoryCache cache) throws IOException
     {
         final Path path = this.generator.getOutputFolder();
         final Set<ResourceLocation> set = Sets.newHashSet();
         registerRecipes((recipe) ->
         {
-            if (!set.add(recipe.getID()))
+            if (!set.add(recipe.getId()))
             {
-                throw new IllegalStateException("Duplicate recipe " + recipe.getID());
+                throw new IllegalStateException("Duplicate recipe " + recipe.getId());
             }
             else
             {
-                saveRecipe(cache, recipe.getRecipeJson(), path.resolve("data/" + recipe.getID().getNamespace() + "/crafterrecipes/" + recipe.getID().getPath() + ".json"));
+                saveRecipe(cache, recipe.serializeRecipe(), path.resolve("data/" + recipe.getId().getNamespace() + "/crafterrecipes/" + recipe.getId().getPath() + ".json"));
             }
         });
     }
@@ -67,8 +67,8 @@ public abstract class CustomRecipeProvider implements IDataProvider
         try
         {
             final String json = GSON.toJson(jsonObject);
-            final String hash = HASH_FUNCTION.hashUnencodedChars(json).toString();
-            if (!Objects.equals(cache.getPreviousHash(recipeJson), hash) || !Files.exists(recipeJson))
+            final String hash = SHA1.hashUnencodedChars(json).toString();
+            if (!Objects.equals(cache.getHash(recipeJson), hash) || !Files.exists(recipeJson))
             {
                 Files.createDirectories(recipeJson.getParent());
 
@@ -78,7 +78,7 @@ public abstract class CustomRecipeProvider implements IDataProvider
                 }
             }
 
-            cache.recordHash(recipeJson, hash);
+            cache.putNew(recipeJson, hash);
         } catch (IOException ioexception) {
             LOGGER.error("Couldn't save recipe {}", recipeJson, ioexception);
         }
@@ -216,7 +216,7 @@ public abstract class CustomRecipeProvider implements IDataProvider
                 String name = itemStack.getItem().getRegistryName().toString();
                 // this could be incorrect for items with both damage and other NBT,
                 // but that should be rare, and this avoids some annoyance.
-                if (itemStack.hasTag() && !itemStack.isDamageable())
+                if (itemStack.hasTag() && !itemStack.isDamageableItem())
                 {
                     name += itemStack.getTag().toString();
                 }
@@ -241,7 +241,7 @@ public abstract class CustomRecipeProvider implements IDataProvider
                 String name = stack.getItem().getRegistryName().toString();
                 // this could be incorrect for items with both damage and other NBT,
                 // but that should be rare, and this avoids some annoyance.
-                if (stack.hasTag() && !stack.isDamageable())
+                if (stack.hasTag() && !stack.isDamageableItem())
                 {
                     name += stack.getTag().toString();
                 }
@@ -272,39 +272,39 @@ public abstract class CustomRecipeProvider implements IDataProvider
 
             @NotNull
             @Override
-            public JsonObject getRecipeJson()
+            public JsonObject serializeRecipe()
             {
                 return this.json;
             }
 
             @NotNull
             @Override
-            public ResourceLocation getID()
+            public ResourceLocation getId()
             {
                 return this.id;
             }
 
             @Override
-            public void serialize(@NotNull final JsonObject json)
+            public void serializeRecipeData(@NotNull final JsonObject json)
             {
             }
 
             @Override
-            public IRecipeSerializer<?> getSerializer()
-            {
-                return null;
-            }
-
-            @Nullable
-            @Override
-            public JsonObject getAdvancementJson()
+            public IRecipeSerializer<?> getType()
             {
                 return null;
             }
 
             @Nullable
             @Override
-            public ResourceLocation getAdvancementID()
+            public JsonObject serializeAdvancement()
+            {
+                return null;
+            }
+
+            @Nullable
+            @Override
+            public ResourceLocation getAdvancementId()
             {
                 return null;
             }

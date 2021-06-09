@@ -67,7 +67,7 @@ public class TransferItemsRequestMessage extends AbstractBuildingServerMessage<I
     @Override
     public void fromBytesOverride(@NotNull final PacketBuffer buf)
     {
-        itemStack = buf.readItemStack();
+        itemStack = buf.readItem();
         quantity = buf.readInt();
         attemptResolve = buf.readBoolean();
     }
@@ -75,7 +75,7 @@ public class TransferItemsRequestMessage extends AbstractBuildingServerMessage<I
     @Override
     public void toBytesOverride(@NotNull final PacketBuffer buf)
     {
-        buf.writeItemStack(itemStack);
+        buf.writeItem(itemStack);
         buf.writeInt(quantity);
         buf.writeBoolean(attemptResolve);
     }
@@ -134,7 +134,7 @@ public class TransferItemsRequestMessage extends AbstractBuildingServerMessage<I
         if (ItemStackUtils.isEmpty(remainingItemStack) || ItemStackUtils.getSize(remainingItemStack) != amountToTake)
         {
             //Only doing this at the moment as the additional chest do not detect new content
-            building.getTileEntity().markDirty();
+            building.getTileEntity().setChanged();
         }
 
         if (ItemStackUtils.isEmpty(remainingItemStack) || ItemStackUtils.getSize(remainingItemStack) != amountToTake)
@@ -147,7 +147,7 @@ public class TransferItemsRequestMessage extends AbstractBuildingServerMessage<I
                     final int slot =
                       InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.inventory),
                         stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack, true, true));
-                    final ItemStack itemsTaken = player.inventory.decrStackSize(slot, amountToRemoveFromPlayer);
+                    final ItemStack itemsTaken = player.inventory.removeItem(slot, amountToRemoveFromPlayer);
                     amountToRemoveFromPlayer -= ItemStackUtils.getSize(itemsTaken);
                 }
             }

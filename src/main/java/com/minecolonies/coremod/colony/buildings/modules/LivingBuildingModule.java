@@ -61,7 +61,7 @@ public class LivingBuildingModule extends AbstractBuildingModule implements IAss
     @Override
     public void deserializeNBT(final CompoundNBT compound)
     {
-        if (compound.keySet().contains(TAG_RESIDENTS))
+        if (compound.getAllKeys().contains(TAG_RESIDENTS))
         {
             final int[] residentIds = compound.getIntArray(TAG_RESIDENTS);
             for (final int citizenId : residentIds)
@@ -138,7 +138,7 @@ public class LivingBuildingModule extends AbstractBuildingModule implements IAss
         if (building.getBuildingLevel() > 0 && (childCreationTimer -= TWENTYFIVESEC) <= 0)
         {
             childCreationTimer =
-              (colony.getWorld().rand.nextInt(500) + CHILD_SPAWN_INTERVAL * (colony.getCitizenManager().getCurrentCitizenCount() / Math.max(4,
+              (colony.getWorld().random.nextInt(500) + CHILD_SPAWN_INTERVAL * (colony.getCitizenManager().getCurrentCitizenCount() / Math.max(4,
                 colony.getCitizenManager()
                   .getMaxCitizens())));
             trySpawnChild();

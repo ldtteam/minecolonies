@@ -41,16 +41,16 @@ public class CommandCitizenKill implements IMCColonyOfficerCommand
     {
         // Colony
         final int colonyID = IntegerArgumentType.getInteger(context, COLONYID_ARG);
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getWorld().getDimensionKey());
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getLevel().dimension());
         if (colony == null)
         {
-            context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.colonyidnotfound", colonyID), true);
+            context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.colonyidnotfound", colonyID), true);
             return 0;
         }
 
-        if (!context.getSource().hasPermissionLevel(OP_PERM_LEVEL) && !MineColonies.getConfig().getServer().canPlayerUseKillCitizensCommand.get())
+        if (!context.getSource().hasPermission(OP_PERM_LEVEL) && !MineColonies.getConfig().getServer().canPlayerUseKillCitizensCommand.get())
         {
-            context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.notenabledinconfig"), true);
+            context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.notenabledinconfig"), true);
             return 0;
         }
 
@@ -58,7 +58,7 @@ public class CommandCitizenKill implements IMCColonyOfficerCommand
 
         if (citizenData == null)
         {
-            context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.citizeninfo.notfound"), true);
+            context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.citizeninfo.notfound"), true);
             return 0;
         }
 
@@ -66,17 +66,17 @@ public class CommandCitizenKill implements IMCColonyOfficerCommand
 
         if (!optionalEntityCitizen.isPresent())
         {
-            context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.citizeninfo.notloaded"), true);
+            context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.citizeninfo.notloaded"), true);
             return 0;
         }
 
-        context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.citizeninfo.desc", citizenData.getId(), citizenData.getName()), true);
-        final BlockPos position = optionalEntityCitizen.get().getPosition();
-        context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.citizeninfo.pos", position.getX(), position.getY(), position.getZ()), true);
+        context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.citizeninfo.desc", citizenData.getId(), citizenData.getName()), true);
+        final BlockPos position = optionalEntityCitizen.get().blockPosition();
+        context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.citizeninfo.pos", position.getX(), position.getY(), position.getZ()), true);
         context.getSource()
-          .sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.citizenkill.success", position.getX(), position.getY(), position.getZ()), true);
+          .sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.citizenkill.success", position.getX(), position.getY(), position.getZ()), true);
 
-        optionalEntityCitizen.get().onDeath(CONSOLE_DAMAGE_SOURCE);
+        optionalEntityCitizen.get().die(CONSOLE_DAMAGE_SOURCE);
 
         return 1;
     }

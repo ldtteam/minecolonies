@@ -36,11 +36,11 @@ public final class ServerUtils
     @Nullable
     public static PlayerEntity getPlayerFromUUID(@NotNull final World world, @NotNull final UUID id)
     {
-        for (int i = 0; i < world.getPlayers().size(); ++i)
+        for (int i = 0; i < world.players().size(); ++i)
         {
-            if (id.equals((world.getPlayers().get(i)).getGameProfile().getId()))
+            if (id.equals((world.players().get(i)).getGameProfile().getId()))
             {
-                return world.getPlayers().get(i);
+                return world.players().get(i);
             }
         }
         return null;
@@ -62,7 +62,7 @@ public final class ServerUtils
         }
         @NotNull final List<PlayerEntity> players = new ArrayList<>();
 
-        for (final Object o : world.getPlayers())
+        for (final Object o : world.players())
         {
             if (o instanceof PlayerEntity)
             {
@@ -140,7 +140,7 @@ public final class ServerUtils
         final List<ServerPlayerEntity> allPlayers = world.getServer().getPlayerList().getPlayers();
         for (@NotNull final ServerPlayerEntity player : allPlayers)
         {
-            if (player.getUniqueID().equals(uuid))
+            if (player.createPlayerUUID().equals(uuid))
             {
                 return player;
             }

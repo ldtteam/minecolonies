@@ -104,7 +104,7 @@ public final class ChunkDataHelper
         final int closeColony = chunk.getCapability(CLOSE_COLONY_CAP, null).map(IColonyTagCapability::getOwningColony).orElse(0);
         if (closeColony != 0)
         {
-            final IColony colony = IColonyManager.getInstance().getColonyByDimension(closeColony, world.getDimensionKey());
+            final IColony colony = IColonyManager.getInstance().getColonyByDimension(closeColony, world.dimension());
             if (colony != null)
             {
                 colony.addLoadedChunk(ChunkPos.asLong(chunk.getPos().x, chunk.getPos().z), chunk);
@@ -123,7 +123,7 @@ public final class ChunkDataHelper
         final int closeColony = chunk.getCapability(CLOSE_COLONY_CAP, null).map(IColonyTagCapability::getOwningColony).orElse(0);
         if (closeColony != 0)
         {
-            final IColony colony = IColonyManager.getInstance().getColonyByDimension(closeColony, world.getDimensionKey());
+            final IColony colony = IColonyManager.getInstance().getColonyByDimension(closeColony, world.dimension());
             if (colony != null)
             {
                 colony.removeLoadedChunk(ChunkPos.asLong(chunk.getPos().x, chunk.getPos().z));
@@ -276,7 +276,7 @@ public final class ChunkDataHelper
                 }
 
                 final BlockPos pos = new BlockPos(i * BLOCKS_PER_CHUNK, 0, j * BLOCKS_PER_CHUNK);
-                if (!force && maxColonySize != 0 && pos.distanceSq(colonyCenterCompare) > Math.pow(maxColonySize * BLOCKS_PER_CHUNK, 2))
+                if (!force && maxColonySize != 0 && pos.distSqr(colonyCenterCompare) > Math.pow(maxColonySize * BLOCKS_PER_CHUNK, 2))
                 {
                     Log.getLogger()
                       .debug(
@@ -292,7 +292,7 @@ public final class ChunkDataHelper
 
                 areAllChunksAdded = false;
 
-                @NotNull final ChunkLoadStorage newStorage = new ChunkLoadStorage(colonyId, ChunkPos.asLong(i, j), dimension.getLocation(), center);
+                @NotNull final ChunkLoadStorage newStorage = new ChunkLoadStorage(colonyId, ChunkPos.asLong(i, j), dimension.location(), center);
                 chunkManager.addChunkStorage(i, j, newStorage);
             }
         }
@@ -355,7 +355,7 @@ public final class ChunkDataHelper
                 }
 
                 final boolean owning = i >= chunkX - range && j >= chunkZ - range && i <= chunkX + range && j <= chunkZ + range;
-                @NotNull final ChunkLoadStorage newStorage = new ChunkLoadStorage(colonyId, ChunkPos.asLong(i, j), add, dimension.getLocation(), owning);
+                @NotNull final ChunkLoadStorage newStorage = new ChunkLoadStorage(colonyId, ChunkPos.asLong(i, j), add, dimension.location(), owning);
                 chunkManager.addChunkStorage(i, j, newStorage);
             }
         }
@@ -432,7 +432,7 @@ public final class ChunkDataHelper
 
         if (add)
         {
-            final IColony colony = IColonyManager.getInstance().getColonyByDimension(id, world.getDimensionKey());
+            final IColony colony = IColonyManager.getInstance().getColonyByDimension(id, world.dimension());
             if (colony != null)
             {
                 colony.addLoadedChunk(ChunkPos.asLong(chunk.getPos().x, chunk.getPos().z), chunk);

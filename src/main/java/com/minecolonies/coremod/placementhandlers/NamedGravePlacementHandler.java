@@ -15,6 +15,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 
+import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler.ActionProcessingResult;
+
 public class NamedGravePlacementHandler implements IPlacementHandler
 {
     @Override
@@ -40,7 +42,7 @@ public class NamedGravePlacementHandler implements IPlacementHandler
 
         if (complete)
         {
-            world.setBlockState(pos, blockState);
+            world.setBlockAndUpdate(pos, blockState);
             return ActionProcessingResult.SUCCESS;
         }
 

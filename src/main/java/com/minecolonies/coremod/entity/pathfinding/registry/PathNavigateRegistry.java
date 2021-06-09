@@ -15,7 +15,7 @@ import java.util.function.Predicate;
 
 public class PathNavigateRegistry implements IPathNavigateRegistry
 {
-    private static final Function<MobEntity, AbstractAdvancedPathNavigate> DEFAULT = (entityLiving -> new MinecoloniesAdvancedPathNavigate(entityLiving, entityLiving.world));
+    private static final Function<MobEntity, AbstractAdvancedPathNavigate> DEFAULT = (entityLiving -> new MinecoloniesAdvancedPathNavigate(entityLiving, entityLiving.level));
 
     private final Map<Predicate<MobEntity>, Function<MobEntity, AbstractAdvancedPathNavigate>> registry = Maps.newLinkedHashMap();
 

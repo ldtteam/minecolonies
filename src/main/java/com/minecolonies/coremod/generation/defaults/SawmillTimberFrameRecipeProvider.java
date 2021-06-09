@@ -21,6 +21,8 @@ import java.util.stream.Collectors;
 import static com.ldtteam.structurize.api.util.constant.Constants.MOD_ID;
 import static com.ldtteam.structurize.items.ModItems.buildTool;
 
+import com.minecolonies.coremod.generation.CustomRecipeProvider.CustomRecipeBuilder;
+
 public class SawmillTimberFrameRecipeProvider extends CustomRecipeProvider
 {
     public SawmillTimberFrameRecipeProvider(final DataGenerator generatorIn)
@@ -35,7 +37,7 @@ public class SawmillTimberFrameRecipeProvider extends CustomRecipeProvider
         {
             for (final TimberFrameCentreType centreType : TimberFrameCentreType.values())
             {
-                    final String id = String.format("%s_%s_timber_frame", frameType.getString(), centreType.getString());
+                    final String id = String.format("%s_%s_timber_frame", frameType.getSerializedName(), centreType.getSerializedName());
                     final ItemStorage frame = new ItemStorage(new ItemStack(frameType.getMaterial(), 1));
                     final ItemStorage centre = new ItemStorage(new ItemStack(centreType.getMaterial()));
 

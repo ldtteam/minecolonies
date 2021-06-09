@@ -137,8 +137,8 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
             return IDLE;
         }
 
-        worker.setHeldItem(Hand.MAIN_HAND, ItemStack.EMPTY);
-        final long distance = BlockPosUtil.getDistance2D(worker.getPosition(), getOwnBuilding().getPosition());
+        worker.setLastHandItem(Hand.MAIN_HAND, ItemStack.EMPTY);
+        final long distance = BlockPosUtil.getDistance2D(worker.blockPosition(), getOwnBuilding().getPosition());
         if (distance > MAX_DISTANCE && walkToBuilding())
         {
             return DECIDE;
@@ -200,7 +200,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
             return getState();
         }
 
-        final TileEntity entity = world.getTileEntity(compostPosition);
+        final TileEntity entity = world.getBlockEntity(compostPosition);
         if (entity instanceof TileEntityCompostedDirt)
         {
             @Nullable final ItemStack stack = getOwnBuilding().getFlowerToGrow();
@@ -285,9 +285,9 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
     {
         for (final BlockPos pos : getOwnBuilding().getPlantGround())
         {
-            if (!world.isAirBlock(pos.up()))
+            if (!world.isEmptyBlock(pos.above()))
             {
-                return pos.up();
+                return pos.above();
             }
         }
         return null;
@@ -304,7 +304,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
         {
             if (WorldUtil.isEntityBlockLoaded(world, pos))
             {
-                final TileEntity entity = world.getTileEntity(pos);
+                final TileEntity entity = world.getBlockEntity(pos);
                 if (entity instanceof TileEntityCompostedDirt)
                 {
                     if (!((TileEntityCompostedDirt) entity).isComposted())

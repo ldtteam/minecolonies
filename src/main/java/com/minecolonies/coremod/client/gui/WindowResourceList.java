@@ -64,7 +64,7 @@ public class WindowResourceList extends AbstractWindowSkeleton
     public WindowResourceList(final int colonyId, final BlockPos buildingPos)
     {
         super(Constants.MOD_ID + RESOURCE_SCROLL_RESOURCE_SUFFIX);
-        final IColonyView colonyView = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().world.getDimensionKey());
+        final IColonyView colonyView = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().level.dimension());
         if (colonyView != null)
         {
             final IBuildingView buildingView = colonyView.getBuilding(buildingPos);
@@ -109,7 +109,7 @@ public class WindowResourceList extends AbstractWindowSkeleton
                 {
                     amountToSet =
                       InventoryUtils.getItemCountInItemHandler(new InvWrapper(inventory),
-                        stack -> !ItemStackUtils.isEmpty(stack) && stack.isItemEqual(resource.getItemStack()));
+                        stack -> !ItemStackUtils.isEmpty(stack) && stack.sameItem(resource.getItemStack()));
                 }
                 resource.setPlayerAmount(amountToSet);
 
@@ -156,7 +156,7 @@ public class WindowResourceList extends AbstractWindowSkeleton
         final ClientPlayerEntity player =Minecraft.getInstance().player;
         if (this.builder == null)
         {
-            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.resourcescroll.nobuilder"), player.getUniqueID());
+            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.resourcescroll.nobuilder"), player.createPlayerUUID());
             close();
             return;
         }
@@ -167,7 +167,7 @@ public class WindowResourceList extends AbstractWindowSkeleton
         final ScrollingList resourceList = findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class);
         if (resourceList == null)
         {
-            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.resourcescroll.null"), player.getUniqueID());
+            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.resourcescroll.null"), player.createPlayerUUID());
             close();
             return;
         }

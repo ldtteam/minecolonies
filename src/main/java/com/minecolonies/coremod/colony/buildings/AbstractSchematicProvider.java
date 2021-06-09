@@ -83,7 +83,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     @Override
     public int hashCode()
     {
-        return (int) (31 * this.getID().toLong());
+        return (int) (31 * this.getID().asLong());
     }
 
     @Override
@@ -144,7 +144,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
 
         isBuildingMirrored = compound.getBoolean(TAG_MIRROR);
 
-        if (compound.keySet().contains(TAG_CORNER1) && !compound.keySet().contains(TAG_CORNER3))
+        if (compound.getAllKeys().contains(TAG_CORNER1) && !compound.getAllKeys().contains(TAG_CORNER3))
         {
             this.pos1 = BlockPosUtil.read(compound, TAG_CORNER1);
             this.pos2 = BlockPosUtil.read(compound, TAG_CORNER2);
@@ -252,8 +252,8 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
                         return 0;
                     }
 
-                    final int structureRotation = structureState.get(AbstractBlockHut.FACING).getHorizontalIndex();
-                    final int worldRotation = colony.getWorld().getBlockState(this.location).get(AbstractBlockHut.FACING).getHorizontalIndex();
+                    final int structureRotation = structureState.getValue(AbstractBlockHut.FACING).get2DDataValue();
+                    final int worldRotation = colony.getWorld().getBlockState(this.location).getValue(AbstractBlockHut.FACING).get2DDataValue();
 
                     if (structureRotation <= worldRotation)
                     {

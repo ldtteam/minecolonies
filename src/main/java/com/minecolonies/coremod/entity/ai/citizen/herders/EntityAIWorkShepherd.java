@@ -93,7 +93,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
         final IAIState result = super.decideWhatToDo();
 
         final List<SheepEntity> animals = new ArrayList<>(searchForAnimals());
-        final SheepEntity shearingSheep = animals.stream().filter(sheepie -> !sheepie.getSheared() && !sheepie.isChild()).findFirst().orElse(null);
+        final SheepEntity shearingSheep = animals.stream().filter(sheepie -> !sheepie.isSheared() && !sheepie.isBaby()).findFirst().orElse(null);
 
         if (getOwnBuilding().getSetting(BuildingShepherd.SHEARING).getValue() && result.equals(START_WORKING) && shearingSheep != null)
         {
@@ -136,32 +136,32 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
             return PREPARING;
         }
 
-        final SheepEntity sheep = sheeps.stream().filter(sheepie -> !sheepie.getSheared()).findFirst().orElse(null);
+        final SheepEntity sheep = sheeps.stream().filter(sheepie -> !sheepie.isSheared()).findFirst().orElse(null);
 
-        if (worker.getHeldItemMainhand() != null && sheep != null)
+        if (worker.getMainHandItem() != null && sheep != null)
         {
             if (walkingToAnimal(sheep))
             {
                 return getState();
             }
 
-            int enchantmentLevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, worker.getHeldItemMainhand());
+            int enchantmentLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.BLOCK_FORTUNE, worker.getMainHandItem());
             enchantmentLevel *= Math.max(1.0, (getPrimarySkillLevel() / 5.0));
 
-            worker.swingArm(Hand.MAIN_HAND);
+            worker.swing(Hand.MAIN_HAND);
 
             final List<ItemStack> items = new ArrayList<>();
-            if (!this.world.isRemote)
+            if (!this.world.isClientSide)
             {
                 sheep.setSheared(true);
                 int qty = 1 + worker.getRandom().nextInt(enchantmentLevel + 1);
 
                 for(int j = 0; j < qty; ++j)
                 {
-                    items.add(new ItemStack(WOOL_BY_COLOR.get(sheep.getFleeceColor())));
+                    items.add(new ItemStack(ITEM_BY_DYE.get(sheep.getColor())));
                 }
             }
-            sheep.playSound(SoundEvents.ENTITY_SHEEP_SHEAR, 1.0F, 1.0F);
+            sheep.playSound(SoundEvents.SHEEP_SHEAR, 1.0F, 1.0F);
 
             dyeSheepChance(sheep);
 
@@ -190,12 +190,12 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
         {
             final int chanceToDye = worker.getCitizenColonyHandler().getWorkBuilding().getBuildingLevel();
 
-            final int rand = world.rand.nextInt(HUNDRED_PERCENT_CHANCE);
+            final int rand = world.random.nextInt(HUNDRED_PERCENT_CHANCE);
 
             if (rand <= chanceToDye)
             {
-                final int dyeInt = world.rand.nextInt(NUMBER_OF_DYE_POSSIBILITIES);
-                sheep.setFleeceColor(DyeColor.byId(dyeInt));
+                final int dyeInt = world.random.nextInt(NUMBER_OF_DYE_POSSIBILITIES);
+                sheep.setColor(DyeColor.byId(dyeInt));
             }
         }
     }

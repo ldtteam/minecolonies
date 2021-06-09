@@ -23,14 +23,14 @@ public class CommandExportColony implements IMCOPCommand
     {
         final int colonyId = IntegerArgumentType.getInteger(context, COLONYID_ARG);
         BackUpHelper.backupColonyData();
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, context.getSource().getWorld().getDimensionKey());
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, context.getSource().getLevel().dimension());
         if (colony == null)
         {
-            context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.colonyidnotfound", colonyId), true);
+            context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.colonyidnotfound", colonyId), true);
             return 0;
         }
 
-        context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.export.success", BackUpHelper.exportColony(colony)), true);
+        context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.export.success", BackUpHelper.exportColony(colony)), true);
         return 1;
     }
 

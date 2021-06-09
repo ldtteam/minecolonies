@@ -33,14 +33,14 @@ public class ClickGuiButtonTrigger extends AbstractCriterionTrigger<ClickGuiButt
 
     @NotNull
     @Override
-    public ClickGuiButtonCriterionInstance deserialize(@NotNull final JsonObject jsonObject, @NotNull final ConditionArrayParser conditionArrayParser)
+    public ClickGuiButtonCriterionInstance createInstance(@NotNull final JsonObject jsonObject, @NotNull final ConditionArrayParser conditionArrayParser)
     {
         if (jsonObject.has("button_id"))
         {
-            final String buttonId = JSONUtils.getString(jsonObject, "button_id");
+            final String buttonId = JSONUtils.getAsString(jsonObject, "button_id");
             if (jsonObject.has("window_resource_location"))
             {
-                final String windowResource = JSONUtils.getString(jsonObject, "window_resource_location");
+                final String windowResource = JSONUtils.getAsString(jsonObject, "window_resource_location");
                 return new ClickGuiButtonCriterionInstance(buttonId, windowResource);
             }
             return new ClickGuiButtonCriterionInstance(buttonId);

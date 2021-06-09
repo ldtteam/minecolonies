@@ -100,7 +100,7 @@ public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher, Bu
         final List<AbstractEntityCitizen> pupils = WorldUtil.getEntitiesWithinBuilding(world,
           AbstractEntityCitizen.class,
           getOwnBuilding(),
-          cit -> cit.isChild() && cit.ridingEntity != null && cit.getCitizenJobHandler().getColonyJob() instanceof JobPupil);
+          cit -> cit.isBaby() && cit.vehicle != null && cit.getCitizenJobHandler().getColonyJob() instanceof JobPupil);
         if (pupils.size() > 0)
         {
             pupilToTeach = pupils.get(worker.getRandom().nextInt(pupils.size()));
@@ -112,24 +112,24 @@ public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher, Bu
 
     private IAIState teach()
     {
-        if (pupilToTeach == null || pupilToTeach.ridingEntity == null)
+        if (pupilToTeach == null || pupilToTeach.vehicle == null)
         {
             return START_WORKING;
         }
         worker.getCitizenData().setVisibleStatus(TEACHING_ICON);
 
-        if (walkToBlock(pupilToTeach.getPosition()))
+        if (walkToBlock(pupilToTeach.blockPosition()))
         {
             return getState();
         }
 
-        if (maxSittingTicks == 0 || worker.ridingEntity == null)
+        if (maxSittingTicks == 0 || worker.vehicle == null)
         {
             // Sit for 2-100 seconds, modified by Skill.Mana
             final int jobModifier = (int) (100 / Math.max(1, getSecondarySkillLevel() / 2.0));
             maxSittingTicks = worker.getRandom().nextInt(jobModifier / 2) + jobModifier / 2;
 
-            SittingEntity.sitDown(worker.getPosition(), worker, maxSittingTicks * 20);
+            SittingEntity.sitDown(worker.blockPosition(), worker, maxSittingTicks * 20);
         }
 
         sittingTicks++;
@@ -138,10 +138,10 @@ public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher, Bu
             return getState();
         }
 
-        if (worker.ridingEntity != null)
+        if (worker.vehicle != null)
         {
             worker.stopRiding();
-            worker.setPosition(worker.getPosX(), worker.getPosY() + 1, worker.getPosZ());
+            worker.setPos(worker.getX(), worker.getY() + 1, worker.getZ());
         }
 
         final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), PAPER);

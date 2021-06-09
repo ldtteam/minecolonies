@@ -54,7 +54,7 @@ public class PostBoxRequestMessage extends AbstractBuildingServerMessage<PostBox
     public void toBytesOverride(@NotNull final PacketBuffer buf)
     {
 
-        buf.writeItemStack(itemStack);
+        buf.writeItem(itemStack);
         buf.writeBoolean(deliverAvailable);
         buf.writeInt(reqQuantity);
     }
@@ -63,7 +63,7 @@ public class PostBoxRequestMessage extends AbstractBuildingServerMessage<PostBox
     public void fromBytesOverride(@NotNull final PacketBuffer buf)
     {
 
-        itemStack = buf.readItemStack();
+        itemStack = buf.readItem();
         deliverAvailable = buf.readBoolean();
         reqQuantity = buf.readInt();
     }

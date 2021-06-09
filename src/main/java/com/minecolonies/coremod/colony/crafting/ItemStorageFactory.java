@@ -66,7 +66,7 @@ public class ItemStorageFactory implements IItemStorageFactory
     {
         final CompoundNBT compound = new CompoundNBT();
         @NotNull CompoundNBT stackTag = new CompoundNBT();
-        storage.getItemStack().write(stackTag);
+        storage.getItemStack().save(stackTag);
         compound.put(TAG_STACK, stackTag);
         compound.putInt(TAG_SIZE, storage.getAmount());
         compound.putBoolean(TAG_SHOULDIGNOREDAMAGE, storage.ignoreDamageValue());
@@ -78,7 +78,7 @@ public class ItemStorageFactory implements IItemStorageFactory
     @Override
     public ItemStorage deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
     {
-        final ItemStack stack = ItemStack.read(nbt.getCompound(TAG_STACK));
+        final ItemStack stack = ItemStack.of(nbt.getCompound(TAG_STACK));
         final int size = nbt.getInt(TAG_SIZE);
         final boolean ignoreNBT = nbt.getBoolean(TAG_SHOULDIGNORENBT);
         final boolean ignoreDamage = nbt.getBoolean(TAG_SHOULDIGNOREDAMAGE);
@@ -88,7 +88,7 @@ public class ItemStorageFactory implements IItemStorageFactory
     @Override
     public void serialize(IFactoryController controller, ItemStorage input, PacketBuffer packetBuffer)
     {
-        packetBuffer.writeItemStack(input.getItemStack());
+        packetBuffer.writeItem(input.getItemStack());
         packetBuffer.writeVarInt(input.getAmount());
         packetBuffer.writeBoolean(input.ignoreDamageValue());
         packetBuffer.writeBoolean(input.ignoreNBT());
@@ -97,7 +97,7 @@ public class ItemStorageFactory implements IItemStorageFactory
     @Override
     public ItemStorage deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
     {
-        final ItemStack stack = buffer.readItemStack();
+        final ItemStack stack = buffer.readItem();
         final int size = buffer.readVarInt();
         final boolean ignoreDamage = buffer.readBoolean();
         final boolean ignoreNBT = buffer.readBoolean();

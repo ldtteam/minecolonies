@@ -17,10 +17,10 @@ import org.jetbrains.annotations.NotNull;
  */
 public class BlockPostBox extends AbstractBlockHut<BlockPostBox> implements IRSComponentBlock
 {
-    private static final VoxelShape SHAPE_NORTH = Block.makeCuboidShape(0.0D, 0.0D, 0.0D, 16.0D, 16.0D, 8.0D);
-    private static final VoxelShape SHAPE_EAST  = Block.makeCuboidShape(8.0D, 0.0D, 0.0D, 16.0D, 16.0D, 16.0D);
-    private static final VoxelShape SHAPE_SOUTH = Block.makeCuboidShape(0.0D, 0.0D, 8.0D, 16.0D, 16.0D, 16.0D);
-    private static final VoxelShape SHAPE_WEST  = Block.makeCuboidShape(0.0D, 0.0D, 0.0D, 8.0D, 16.0D, 16.0D);
+    private static final VoxelShape SHAPE_NORTH = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 16.0D, 8.0D);
+    private static final VoxelShape SHAPE_EAST  = Block.box(8.0D, 0.0D, 0.0D, 16.0D, 16.0D, 16.0D);
+    private static final VoxelShape SHAPE_SOUTH = Block.box(0.0D, 0.0D, 8.0D, 16.0D, 16.0D, 16.0D);
+    private static final VoxelShape SHAPE_WEST  = Block.box(0.0D, 0.0D, 0.0D, 8.0D, 16.0D, 16.0D);
 
     @NotNull
     @Override
@@ -40,7 +40,7 @@ public class BlockPostBox extends AbstractBlockHut<BlockPostBox> implements IRSC
     public VoxelShape getShape(
       final BlockState state, final IBlockReader worldIn, final BlockPos pos, final ISelectionContext context)
     {
-        switch (state.get(FACING))
+        switch (state.getValue(FACING))
         {
             case NORTH:
                 return SHAPE_NORTH;

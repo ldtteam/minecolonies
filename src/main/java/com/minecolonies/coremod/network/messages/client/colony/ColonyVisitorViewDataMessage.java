@@ -73,7 +73,7 @@ public class ColonyVisitorViewDataMessage implements IMessage
     public void fromBytes(@NotNull final PacketBuffer buf)
     {
         colonyId = buf.readInt();
-        dimension = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(buf.readString(32767)));
+        dimension = RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)));
         refresh = buf.readBoolean();
 
         final IColonyView colony = IColonyManager.getInstance().getColonyView(colonyId, dimension);
@@ -99,7 +99,7 @@ public class ColonyVisitorViewDataMessage implements IMessage
     public void toBytes(@NotNull final PacketBuffer buf)
     {
         buf.writeInt(colonyId);
-        buf.writeString(dimension.getLocation().toString());
+        buf.writeUtf(dimension.location().toString());
         buf.writeBoolean(refresh);
         buf.writeInt(visitors.size());
 

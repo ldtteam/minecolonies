@@ -143,7 +143,7 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
             {
                 final ItemStack is = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(costParts[0], costParts[1])));
                 is.setCount(Integer.parseInt(costParts[2]));
-                if (compound.hasUniqueId(TAG_COST_NBT))
+                if (compound.hasUUID(TAG_COST_NBT))
                 {
                     is.setTag(compound.getCompound(TAG_COST_NBT));
                 }
@@ -153,11 +153,11 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         NBTUtils.streamCompound(nbt.getList(TAG_REQS, Constants.NBT.TAG_COMPOUND)).
              forEach(compound ->
                      research.addRequirement(Objects.requireNonNull(IResearchRequirementRegistry.getInstance()
-                                                                      .getValue(ResourceLocation.tryCreate(compound.getString(TAG_REQ_TYPE)))).readFromNBT(compound.getCompound(TAG_REQ_ITEM))));
+                                                                      .getValue(ResourceLocation.tryParse(compound.getString(TAG_REQ_TYPE)))).readFromNBT(compound.getCompound(TAG_REQ_ITEM))));
 
         NBTUtils.streamCompound(nbt.getList(TAG_EFFECTS, Constants.NBT.TAG_COMPOUND)).forEach(compound ->
             research.addEffect(Objects.requireNonNull(IResearchEffectRegistry.getInstance()
-                                                        .getValue(ResourceLocation.tryCreate(compound.getString(TAG_EFFECT_TYPE)))).readFromNBT(compound.getCompound(TAG_EFFECT_ITEM))));
+                                                        .getValue(ResourceLocation.tryParse(compound.getString(TAG_EFFECT_TYPE)))).readFromNBT(compound.getCompound(TAG_EFFECT_ITEM))));
 
         NBTUtils.streamCompound(nbt.getList(TAG_CHILDS, Constants.NBT.TAG_COMPOUND)).forEach(compound -> research.addChild(new ResourceLocation(compound.getString(TAG_RESEARCH_CHILD))));
         return research;
@@ -169,13 +169,13 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         packetBuffer.writeResourceLocation(input.getParent());
         packetBuffer.writeResourceLocation(input.getId());
         packetBuffer.writeResourceLocation(input.getBranch());
-        packetBuffer.writeString(input.getName().getKey());
+        packetBuffer.writeUtf(input.getName().getKey());
         packetBuffer.writeVarInt(input.getDepth());
         packetBuffer.writeVarInt(input.getSortOrder());
         packetBuffer.writeBoolean(input.hasOnlyChild());
-        packetBuffer.writeItemStack(input.getIconItemStack());
+        packetBuffer.writeItem(input.getIconItemStack());
         packetBuffer.writeResourceLocation(input.getIconTextureResourceLocation());
-        packetBuffer.writeString(input.getSubtitle().getKey());
+        packetBuffer.writeUtf(input.getSubtitle().getKey());
         packetBuffer.writeBoolean(input.isInstant());
         packetBuffer.writeBoolean(input.isAutostart());
         packetBuffer.writeBoolean(input.isImmutable());
@@ -189,13 +189,13 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         for(IResearchRequirement req : input.getResearchRequirement())
         {
             packetBuffer.writeResourceLocation(req.getRegistryEntry().getRegistryName());
-            packetBuffer.writeCompoundTag(req.writeToNBT());
+            packetBuffer.writeNbt(req.writeToNBT());
         }
         packetBuffer.writeVarInt(input.getEffects().size());
         for(IResearchEffect<?> effect : input.getEffects())
         {
             packetBuffer.writeResourceLocation(effect.getRegistryEntry().getRegistryName());
-            packetBuffer.writeCompoundTag(effect.writeToNBT());
+            packetBuffer.writeNbt(effect.writeToNBT());
         }
         packetBuffer.writeVarInt(input.getChildren().size());
         for (ResourceLocation child : input.getChildren())
@@ -211,13 +211,13 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         final ResourceLocation parent = buffer.readResourceLocation();
         final ResourceLocation id = buffer.readResourceLocation();
         final ResourceLocation branch = buffer.readResourceLocation();
-        final TranslationTextComponent desc = new TranslationTextComponent(buffer.readString());
+        final TranslationTextComponent desc = new TranslationTextComponent(buffer.readUtf());
         final int depth = buffer.readVarInt();
         final int sortOrder = buffer.readVarInt();
         final boolean hasOnlyChild = buffer.readBoolean();
-        final ItemStack iconStack = buffer.readItemStack();
+        final ItemStack iconStack = buffer.readItem();
         final ResourceLocation iconTexture = buffer.readResourceLocation();
-        final TranslationTextComponent subtitle = new TranslationTextComponent(buffer.readString());
+        final TranslationTextComponent subtitle = new TranslationTextComponent(buffer.readUtf());
         final boolean instant = buffer.readBoolean();
         final boolean autostart = buffer.readBoolean();
         final boolean immutable = buffer.readBoolean();
@@ -235,14 +235,14 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         for(int i = 0; i < reqCount; i++)
         {
             final ResourceLocation reqId = buffer.readResourceLocation();
-            research.addRequirement(Objects.requireNonNull(IResearchRequirementRegistry.getInstance().getValue(reqId)).readFromNBT(buffer.readCompoundTag()));
+            research.addRequirement(Objects.requireNonNull(IResearchRequirementRegistry.getInstance().getValue(reqId)).readFromNBT(buffer.readNbt()));
         }
 
         final int effectCount = buffer.readVarInt();
         for(int i = 0; i < effectCount; i++)
         {
             final ResourceLocation effectId = buffer.readResourceLocation();
-            research.addEffect(Objects.requireNonNull(IResearchEffectRegistry.getInstance().getValue(effectId)).readFromNBT(buffer.readCompoundTag()));
+            research.addEffect(Objects.requireNonNull(IResearchEffectRegistry.getInstance().getValue(effectId)).readFromNBT(buffer.readNbt()));
         }
 
         final int childCount = buffer.readVarInt();

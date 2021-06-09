@@ -136,9 +136,9 @@ public class ScarecrowTileEntity extends AbstractScarecrowTileEntity
      */
     public void setRadius(Direction direction, int radius)
     {
-        this.radii[direction.getHorizontalIndex()] = radius;
-        markDirty();
-        world.notifyBlockUpdate(this.getPos(), this.getBlockState(), this.getBlockState(), 2);
+        this.radii[direction.get2DDataValue()] = radius;
+        setChanged();
+        level.sendBlockUpdated(this.getBlockPos(), this.getBlockState(), this.getBlockState(), 2);
     }
 
     /**
@@ -147,7 +147,7 @@ public class ScarecrowTileEntity extends AbstractScarecrowTileEntity
      */
     public int getRadius(Direction direction)
     {
-        return radii[direction.getHorizontalIndex()];
+        return radii[direction.get2DDataValue()];
     }
 
     /**
@@ -160,7 +160,7 @@ public class ScarecrowTileEntity extends AbstractScarecrowTileEntity
     @Override
     public boolean isNoPartOfField(@NotNull final World world, @NotNull final BlockPos position)
     {
-        return world.isAirBlock(position) || isValidDelimiter(world.getBlockState(position.up()).getBlock());
+        return world.isEmptyBlock(position) || isValidDelimiter(world.getBlockState(position.above()).getBlock());
     }
 
     /**
@@ -207,7 +207,7 @@ public class ScarecrowTileEntity extends AbstractScarecrowTileEntity
     public void setTaken(final boolean taken)
     {
         this.taken = taken;
-        markDirty();
+        setChanged();
     }
 
     @Override
@@ -242,7 +242,7 @@ public class ScarecrowTileEntity extends AbstractScarecrowTileEntity
     public void setFieldStage(final ScarecrowFieldStage fieldStage)
     {
         this.fieldStage = fieldStage;
-        markDirty();
+        setChanged();
     }
 
     /**
@@ -265,7 +265,7 @@ public class ScarecrowTileEntity extends AbstractScarecrowTileEntity
     public void setNeedsWork(final boolean needsWork)
     {
         this.doesNeedWork = needsWork;
-        markDirty();
+        setChanged();
     }
 
     /**
@@ -287,7 +287,7 @@ public class ScarecrowTileEntity extends AbstractScarecrowTileEntity
     @Override
     public BlockPos getPosition()
     {
-        return getPos();
+        return getBlockPos();
     }
 
     /**
@@ -333,7 +333,7 @@ public class ScarecrowTileEntity extends AbstractScarecrowTileEntity
                 owner = colony.getCitizenManager().getCivilian(ownerId).getName();
             }
         }
-        markDirty();
+        setChanged();
     }
 
     /**
@@ -357,7 +357,7 @@ public class ScarecrowTileEntity extends AbstractScarecrowTileEntity
                 owner = tempColony.getCitizen(ownerId).getName();
             }
         }
-        markDirty();
+        setChanged();
     }
 
     /**
@@ -378,7 +378,7 @@ public class ScarecrowTileEntity extends AbstractScarecrowTileEntity
     {
         final CompoundNBT compound = new CompoundNBT();
 
-        this.write(compound);
+        this.save(compound);
         if (colony != null)
         {
             compound.putInt(TAG_COLONY_ID, colony.getID());
@@ -390,30 +390,30 @@ public class ScarecrowTileEntity extends AbstractScarecrowTileEntity
     @Override
     public CompoundNBT getUpdateTag()
     {
-        return write(new CompoundNBT());
+        return save(new CompoundNBT());
     }
 
     @Override
     public void onDataPacket(final NetworkManager net, final SUpdateTileEntityPacket packet)
     {
-        final CompoundNBT compound = packet.getNbtCompound();
-        this.read(getBlockState(), compound);
-        if (compound.keySet().contains(TAG_COLONY_ID))
+        final CompoundNBT compound = packet.getTag();
+        this.load(getBlockState(), compound);
+        if (compound.getAllKeys().contains(TAG_COLONY_ID))
         {
-            setOwner(ownerId, IColonyManager.getInstance().getColonyView(compound.getInt(TAG_COLONY_ID), world.getDimensionKey()));
+            setOwner(ownerId, IColonyManager.getInstance().getColonyView(compound.getInt(TAG_COLONY_ID), level.dimension()));
         }
     }
 
     /////////////--------------------------- End Synchronization-area ---------------------------- /////////////
 
     @Override
-    public void read(final BlockState state, final CompoundNBT compound)
+    public void load(final BlockState state, final CompoundNBT compound)
     {
         final ListNBT inventoryTagList = compound.getList(TAG_INVENTORY, TAG_COMPOUND);
         for (int i = 0; i < inventoryTagList.size(); ++i)
         {
             final CompoundNBT inventoryCompound = inventoryTagList.getCompound(i);
-            final ItemStack stack = ItemStack.read(inventoryCompound);
+            final ItemStack stack = ItemStack.of(inventoryCompound);
             if (ItemStackUtils.getSize(stack) <= 0)
             {
                 inventory.setStackInSlot(i, ItemStackUtils.EMPTY);
@@ -433,12 +433,12 @@ public class ScarecrowTileEntity extends AbstractScarecrowTileEntity
         ownerId = compound.getInt(TAG_OWNER);
         setOwner(ownerId);
 
-        super.read(state, compound);
+        super.load(state, compound);
     }
 
     @NotNull
     @Override
-    public CompoundNBT write(final CompoundNBT compound)
+    public CompoundNBT save(final CompoundNBT compound)
     {
         @NotNull final ListNBT inventoryTagList = new ListNBT();
         for (int slot = 0; slot < inventory.getSlots(); slot++)
@@ -447,11 +447,11 @@ public class ScarecrowTileEntity extends AbstractScarecrowTileEntity
             final ItemStack stack = inventory.getStackInSlot(slot);
             if (stack == ItemStackUtils.EMPTY)
             {
-                new ItemStack(Blocks.AIR, 0).write(inventoryCompound);
+                new ItemStack(Blocks.AIR, 0).save(inventoryCompound);
             }
             else
             {
-                stack.write(inventoryCompound);
+                stack.save(inventoryCompound);
             }
             inventoryTagList.add(inventoryCompound);
         }
@@ -469,7 +469,7 @@ public class ScarecrowTileEntity extends AbstractScarecrowTileEntity
             compound.putInt(TAG_COLONY_ID, colony.getID());
         }
 
-        return super.write(compound);
+        return super.save(compound);
     }
 
     /**
@@ -503,7 +503,7 @@ public class ScarecrowTileEntity extends AbstractScarecrowTileEntity
     @Override
     public Container createMenu(final int id, @NotNull final PlayerInventory inv, @NotNull final PlayerEntity player)
     {
-        return new ContainerField(id, inv, getPos());
+        return new ContainerField(id, inv, getBlockPos());
     }
 
     @NotNull

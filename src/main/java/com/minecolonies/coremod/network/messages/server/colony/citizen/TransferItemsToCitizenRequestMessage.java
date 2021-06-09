@@ -70,7 +70,7 @@ public class TransferItemsToCitizenRequestMessage extends AbstractColonyServerMe
     public void fromBytesOverride(@NotNull final PacketBuffer buf)
     {
         citizenId = buf.readInt();
-        itemStack = buf.readItemStack();
+        itemStack = buf.readItem();
         quantity = buf.readInt();
     }
 
@@ -78,7 +78,7 @@ public class TransferItemsToCitizenRequestMessage extends AbstractColonyServerMe
     public void toBytesOverride(@NotNull final PacketBuffer buf)
     {
         buf.writeInt(citizenId);
-        buf.writeItemStack(itemStack);
+        buf.writeItem(itemStack);
         buf.writeInt(quantity);
     }
 
@@ -163,7 +163,7 @@ public class TransferItemsToCitizenRequestMessage extends AbstractColonyServerMe
             {
                 final int slot =
                   InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.inventory), stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack));
-                final ItemStack itemsTaken = player.inventory.decrStackSize(slot, amountToRemoveFromPlayer);
+                final ItemStack itemsTaken = player.inventory.removeItem(slot, amountToRemoveFromPlayer);
                 amountToRemoveFromPlayer -= ItemStackUtils.getSize(itemsTaken);
             }
         }

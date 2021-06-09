@@ -134,7 +134,7 @@ public class BuildingManager implements IBuildingManager
             }
         }
 
-        if (compound.keySet().contains(TAG_NEW_FIELDS))
+        if (compound.getAllKeys().contains(TAG_NEW_FIELDS))
         {
             // Fields before Buildings, because the Farmer needs them.
             final ListNBT fieldTagList = compound.getList(TAG_NEW_FIELDS, Constants.NBT.TAG_COMPOUND);
@@ -261,9 +261,9 @@ public class BuildingManager implements IBuildingManager
         {
             if (WorldUtil.isBlockLoaded(colony.getWorld(), pos))
             {
-                if (colony.getWorld().getTileEntity(pos) instanceof ScarecrowTileEntity)
+                if (colony.getWorld().getBlockEntity(pos) instanceof ScarecrowTileEntity)
                 {
-                    final ScarecrowTileEntity scarecrow = (ScarecrowTileEntity) colony.getWorld().getTileEntity(pos);
+                    final ScarecrowTileEntity scarecrow = (ScarecrowTileEntity) colony.getWorld().getBlockEntity(pos);
                     if (scarecrow == null)
                     {
                         removeField(pos);
@@ -312,7 +312,7 @@ public class BuildingManager implements IBuildingManager
         {
             if (building.getBuildingLevel() > 0 && building.getTileEntity() != null)
             {
-                final double tempDist = building.getPosition().distanceSq(pos);
+                final double tempDist = building.getPosition().distSqr(pos);
                 if (wareHouse == null || tempDist < dist)
                 {
                     dist = tempDist;
@@ -419,7 +419,7 @@ public class BuildingManager implements IBuildingManager
     {
         for (@NotNull final BlockPos pos : fields)
         {
-            final TileEntity field = world.getTileEntity(pos);
+            final TileEntity field = world.getBlockEntity(pos);
             if (field instanceof ScarecrowTileEntity && !((ScarecrowTileEntity) field).isTaken())
             {
                 return (ScarecrowTileEntity) field;
@@ -541,7 +541,7 @@ public class BuildingManager implements IBuildingManager
         {
             if (building instanceof BuildingCook && building.getBuildingLevel() > 0)
             {
-                final double localDistance = building.getPosition().distanceSq(citizen.getPosition());
+                final double localDistance = building.getPosition().distSqr(citizen.blockPosition());
                 if (localDistance < distance)
                 {
                     distance = localDistance;
@@ -561,7 +561,7 @@ public class BuildingManager implements IBuildingManager
         {
             if (building instanceof BuildingGraveyard && building.getBuildingLevel() > 0 && (predicate == null || predicate.test((BuildingGraveyard)building)))
             {
-                final double localDistance = building.getPosition().distanceSq(citizen.getPosition());
+                final double localDistance = building.getPosition().distSqr(citizen.blockPosition());
                 if (localDistance < distance)
                 {
                     distance = localDistance;
@@ -581,7 +581,7 @@ public class BuildingManager implements IBuildingManager
         {
             if (building instanceof BuildingHospital && building.getBuildingLevel() > 0)
             {
-                final double localDistance = building.getPosition().distanceSq(citizen.getPosition());
+                final double localDistance = building.getPosition().distSqr(citizen.blockPosition());
                 if (localDistance < distance)
                 {
                     distance = localDistance;
@@ -813,7 +813,7 @@ public class BuildingManager implements IBuildingManager
         {
             if (colony.hasTownHall())
             {
-                if (colony.getWorld() != null && !colony.getWorld().isRemote)
+                if (colony.getWorld() != null && !colony.getWorld().isClientSide)
                 {
                     LanguageHandler.sendPlayerMessage(player, "tile.blockhuttownhall.messageplacedalready");
                 }

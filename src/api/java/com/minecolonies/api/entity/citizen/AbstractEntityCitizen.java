@@ -55,18 +55,18 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      */
     private Map<String, String> textureMapping = new HashMap<>();
 
-    public static final DataParameter<Integer>  DATA_LEVEL           = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.VARINT);
-    public static final DataParameter<Integer>  DATA_TEXTURE         = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.VARINT);
-    public static final DataParameter<Integer>  DATA_IS_FEMALE       = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.VARINT);
-    public static final DataParameter<Integer>  DATA_COLONY_ID       = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.VARINT);
-    public static final DataParameter<Integer>  DATA_CITIZEN_ID      = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.VARINT);
-    public static final DataParameter<String>   DATA_MODEL           = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.STRING);
-    public static final DataParameter<String>   DATA_RENDER_METADATA = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.STRING);
-    public static final DataParameter<Boolean>  DATA_IS_ASLEEP       = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.BOOLEAN);
-    public static final DataParameter<Boolean>  DATA_IS_CHILD        = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.BOOLEAN);
-    public static final DataParameter<BlockPos> DATA_BED_POS         = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.BLOCK_POS);
-    public static final DataParameter<String>   DATA_STYLE           = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.STRING);
-    public static final DataParameter<String>   DATA_TEXTURE_SUFFIX  = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.STRING);
+    public static final DataParameter<Integer>  DATA_LEVEL           = EntityDataManager.defineId(AbstractEntityCitizen.class, DataSerializers.INT);
+    public static final DataParameter<Integer>  DATA_TEXTURE         = EntityDataManager.defineId(AbstractEntityCitizen.class, DataSerializers.INT);
+    public static final DataParameter<Integer>  DATA_IS_FEMALE       = EntityDataManager.defineId(AbstractEntityCitizen.class, DataSerializers.INT);
+    public static final DataParameter<Integer>  DATA_COLONY_ID       = EntityDataManager.defineId(AbstractEntityCitizen.class, DataSerializers.INT);
+    public static final DataParameter<Integer>  DATA_CITIZEN_ID      = EntityDataManager.defineId(AbstractEntityCitizen.class, DataSerializers.INT);
+    public static final DataParameter<String>   DATA_MODEL           = EntityDataManager.defineId(AbstractEntityCitizen.class, DataSerializers.STRING);
+    public static final DataParameter<String>   DATA_RENDER_METADATA = EntityDataManager.defineId(AbstractEntityCitizen.class, DataSerializers.STRING);
+    public static final DataParameter<Boolean>  DATA_IS_ASLEEP       = EntityDataManager.defineId(AbstractEntityCitizen.class, DataSerializers.BOOLEAN);
+    public static final DataParameter<Boolean>  DATA_IS_CHILD        = EntityDataManager.defineId(AbstractEntityCitizen.class, DataSerializers.BOOLEAN);
+    public static final DataParameter<BlockPos> DATA_BED_POS         = EntityDataManager.defineId(AbstractEntityCitizen.class, DataSerializers.BLOCK_POS);
+    public static final DataParameter<String>   DATA_STYLE           = EntityDataManager.defineId(AbstractEntityCitizen.class, DataSerializers.STRING);
+    public static final DataParameter<String>   DATA_TEXTURE_SUFFIX  = EntityDataManager.defineId(AbstractEntityCitizen.class, DataSerializers.STRING);
 
     /**
      * The default model.
@@ -127,10 +127,10 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      */
     public static AttributeModifierMap.MutableAttribute getDefaultAttributes()
     {
-        return LivingEntity.registerAttributes()
-                 .createMutableAttribute(Attributes.MAX_HEALTH, BASE_MAX_HEALTH)
-                 .createMutableAttribute(Attributes.MOVEMENT_SPEED, BASE_MOVEMENT_SPEED)
-                 .createMutableAttribute(Attributes.FOLLOW_RANGE, BASE_PATHFINDING_RANGE);
+        return LivingEntity.createLivingAttributes()
+                 .add(Attributes.MAX_HEALTH, BASE_MAX_HEALTH)
+                 .add(Attributes.MOVEMENT_SPEED, BASE_MOVEMENT_SPEED)
+                 .add(Attributes.FOLLOW_RANGE, BASE_PATHFINDING_RANGE);
     }
 
     public GoalSelector getTasks()
@@ -140,7 +140,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
 
     public int getTicksExisted()
     {
-        return ticksExisted;
+        return tickCount;
     }
 
     @Nullable
@@ -151,9 +151,9 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     }
 
     @NotNull
-    public BlockPos getPosition()
+    public BlockPos blockPosition()
     {
-        return new BlockPos(getPosX(), getPosY(), getPosZ());
+        return new BlockPos(getX(), getY(), getZ());
     }
 
     /**
@@ -169,63 +169,63 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      * Disable vanilla steering logic for villagers
      */
     @Override
-    public boolean canPassengerSteer()
+    public boolean isControlledByLocalInstance()
     {
         return false;
     }
 
     public float getPreviousRotationPitch()
     {
-        return prevRotationPitch;
+        return xRotO;
     }
 
     public float getPreviousRotationYaw()
     {
-        return prevRotationYaw;
+        return yRotO;
     }
 
     public float getPreviousRenderYawOffset()
     {
-        return prevRenderYawOffset;
+        return yBodyRotO;
     }
 
     public float getRenderYawOffset()
     {
-        return renderYawOffset;
+        return yBodyRot;
     }
 
     public double getPreviousPosX()
     {
-        return prevPosX;
+        return xo;
     }
 
     public double getPreviousPosY()
     {
-        return prevPosY;
+        return yo;
     }
 
     public double getPreviousPosZ()
     {
-        return prevPosZ;
+        return zo;
     }
 
     @NotNull
     @Override
-    public ActionResultType applyPlayerInteraction(final PlayerEntity player, final Vector3d vec, final Hand hand)
+    public ActionResultType interactAt(final PlayerEntity player, final Vector3d vec, final Hand hand)
     {
-        if (!player.world.isRemote())
+        if (!player.level.isClientSide())
         {
-            SoundUtils.playSoundAtCitizenWith(CompatibilityUtils.getWorldFromCitizen(this), this.getPosition(), EventType.INTERACTION, this.getCitizenData());
+            SoundUtils.playSoundAtCitizenWith(CompatibilityUtils.getWorldFromCitizen(this), this.blockPosition(), EventType.INTERACTION, this.getCitizenData());
         }
 
-        return super.applyPlayerInteraction(player, vec, hand);
+        return super.interactAt(player, vec, hand);
     }
 
     /**
      * Returns false if the newer Entity AI code should be run.
      */
     @Override
-    public boolean isAIDisabled()
+    public boolean isNoAi()
     {
         return false;
     }
@@ -235,7 +235,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      */
     public void setTexture()
     {
-        if (!CompatibilityUtils.getWorldFromCitizen(this).isRemote)
+        if (!CompatibilityUtils.getWorldFromCitizen(this).isClientSide)
         {
             return;
         }
@@ -263,8 +263,8 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
         if (texture == null
               || textureDirty
               || !texture.getPath().contains(renderMeta)
-              || !texture.getPath().contains(textureMapping.getOrDefault(getDataManager().get(DATA_STYLE), "default"))
-              || !texture.getPath().contains(getDataManager().get(DATA_TEXTURE_SUFFIX)))
+              || !texture.getPath().contains(textureMapping.getOrDefault(getEntityData().get(DATA_STYLE), "default"))
+              || !texture.getPath().contains(getEntityData().get(DATA_TEXTURE_SUFFIX)))
         {
             setTexture();
         }
@@ -306,25 +306,25 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      */
     @Nullable
     @Override
-    public AgeableEntity func_241840_a(final ServerWorld world, final AgeableEntity parent)
+    public AgeableEntity getBreedOffspring(final ServerWorld world, final AgeableEntity parent)
     {
         return null;
     }
 
     @Override
-    protected void registerData()
+    protected void defineSynchedData()
     {
-        super.registerData();
-        dataManager.register(DATA_TEXTURE_SUFFIX, "_b");
-        dataManager.register(DATA_TEXTURE, 0);
-        dataManager.register(DATA_LEVEL, 0);
-        dataManager.register(DATA_STYLE, "default");
-        dataManager.register(DATA_IS_FEMALE, 0);
-        dataManager.register(DATA_MODEL, BipedModelType.SETTLER.name());
-        dataManager.register(DATA_RENDER_METADATA, "");
-        dataManager.register(DATA_IS_ASLEEP, false);
-        dataManager.register(DATA_IS_CHILD, false);
-        dataManager.register(DATA_BED_POS, new BlockPos(0, 0, 0));
+        super.defineSynchedData();
+        entityData.define(DATA_TEXTURE_SUFFIX, "_b");
+        entityData.define(DATA_TEXTURE, 0);
+        entityData.define(DATA_LEVEL, 0);
+        entityData.define(DATA_STYLE, "default");
+        entityData.define(DATA_IS_FEMALE, 0);
+        entityData.define(DATA_MODEL, BipedModelType.SETTLER.name());
+        entityData.define(DATA_RENDER_METADATA, "");
+        entityData.define(DATA_IS_ASLEEP, false);
+        entityData.define(DATA_IS_CHILD, false);
+        entityData.define(DATA_BED_POS, new BlockPos(0, 0, 0));
     }
 
     /**
@@ -349,13 +349,13 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
 
     @NotNull
     @Override
-    public AbstractAdvancedPathNavigate getNavigator()
+    public AbstractAdvancedPathNavigate getNavigation()
     {
         if (this.pathNavigate == null)
         {
             this.pathNavigate = IPathNavigateRegistry.getInstance().getNavigateFor(this);
-            this.navigator = pathNavigate;
-            this.pathNavigate.setCanSwim(true);
+            this.navigation = pathNavigate;
+            this.pathNavigate.setCanFloat(true);
             this.pathNavigate.getPathingOptions().setEnterDoors(true);
             this.pathNavigate.getPathingOptions().setCanOpenDoors(true);
             this.pathNavigate.setStuckHandler(PathingStuckHandler.createStuckHandler().withTeleportOnFullStuck().withTeleportSteps(5));
@@ -369,7 +369,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      * @param entityIn entity to collide with
      */
     @Override
-    public void applyEntityCollision(@NotNull final Entity entityIn)
+    public void push(@NotNull final Entity entityIn)
     {
         if ((collisionCounter += 2) > COLL_THRESHOLD)
         {
@@ -380,13 +380,13 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
 
             return;
         }
-        super.applyEntityCollision(entityIn);
+        super.push(entityIn);
     }
 
     @Override
-    public void livingTick()
+    public void aiStep()
     {
-        super.livingTick();
+        super.aiStep();
         if (collisionCounter > 0)
         {
             collisionCounter--;
@@ -401,7 +401,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      */
     public void setOwnRotation(final float yaw, final float pitch)
     {
-        this.setRotation(yaw, pitch);
+        this.setRot(yaw, pitch);
     }
 
     /**
@@ -426,7 +426,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
             return;
         }
         this.renderMetadata = renderMetadata;
-        dataManager.set(DATA_RENDER_METADATA, getRenderMetadata());
+        entityData.set(DATA_RENDER_METADATA, getRenderMetadata());
     }
 
     /**
@@ -447,7 +447,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     public void setTextureId(final int textureId)
     {
         this.textureId = textureId;
-        dataManager.set(DATA_TEXTURE, textureId);
+        entityData.set(DATA_TEXTURE, textureId);
     }
 
     /**
@@ -467,18 +467,18 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      */
     public Random getRandom()
     {
-        return rand;
+        return random;
     }
 
     public int getOffsetTicks()
     {
-        return this.ticksExisted + OFFSET_TICK_MULTIPLIER * this.getEntityId();
+        return this.tickCount + OFFSET_TICK_MULTIPLIER * this.getId();
     }
 
     @Override
-    public boolean isActiveItemStackBlocking()
+    public boolean isBlocking()
     {
-        return getActiveItemStack().getItem() instanceof ShieldItem;
+        return getUseItem().getItem() instanceof ShieldItem;
     }
 
     /**
@@ -488,27 +488,27 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      */
     public int getRecentlyHit()
     {
-        return recentlyHit;
+        return lastHurtByPlayerTime;
     }
 
     /**
      * Entities treat being on ladders as not on ground; this breaks navigation logic.
      */
     @Override
-    protected void updateFallState(final double y, final boolean onGroundIn, @NotNull final BlockState state, @NotNull final BlockPos pos)
+    protected void checkFallDamage(final double y, final boolean onGroundIn, @NotNull final BlockState state, @NotNull final BlockPos pos)
     {
         if (!onGround)
         {
-            final int px = MathHelper.floor(getPosX());
-            final int py = (int) getPosY();
-            final int pz = MathHelper.floor(getPosZ());
+            final int px = MathHelper.floor(getX());
+            final int py = (int) getY();
+            final int pz = MathHelper.floor(getZ());
 
             this.onGround =
-              CompatibilityUtils.getWorldFromCitizen(this).getBlockState(new BlockPos(px, py, pz)).getBlock().isLadder(world.getBlockState(
-                new BlockPos(px, py, pz)), world, new BlockPos(px, py, pz), this);
+              CompatibilityUtils.getWorldFromCitizen(this).getBlockState(new BlockPos(px, py, pz)).getBlock().isLadder(level.getBlockState(
+                new BlockPos(px, py, pz)), level, new BlockPos(px, py, pz), this);
         }
 
-        super.updateFallState(y, onGroundIn, state, pos);
+        super.checkFallDamage(y, onGroundIn, state, pos);
     }
 
     /**
@@ -516,7 +516,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      */
     public void updateArmSwingProg()
     {
-        this.updateArmSwingProgress();
+        this.updateSwingTime();
     }
 
     /**
@@ -526,7 +526,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      */
     public boolean checkCanDropLoot()
     {
-        return canDropLoot();
+        return shouldDropExperience();
     }
 
     /**

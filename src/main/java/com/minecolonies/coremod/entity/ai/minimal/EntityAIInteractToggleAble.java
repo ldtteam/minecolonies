@@ -87,12 +87,12 @@ public class EntityAIInteractToggleAble extends Goal
         super();
         this.entity = entityIn;
         this.toggleAbles = Arrays.asList(toggleAbles);
-        if (!(entityIn.getNavigator() instanceof GroundPathNavigator))
+        if (!(entityIn.getNavigation() instanceof GroundPathNavigator))
         {
             throw new IllegalArgumentException("Unsupported mob type for EntityAIInteractToggleAble");
         }
 
-        offSet = entityIn.world.rand.nextInt(20);
+        offSet = entityIn.level.random.nextInt(20);
     }
 
     /**
@@ -101,10 +101,10 @@ public class EntityAIInteractToggleAble extends Goal
      * @return true or false depending on the conditions.
      */
     @Override
-    public boolean shouldExecute()
+    public boolean canUse()
     {
         // Reactive check for detected collisions
-        if (this.entity.collidedHorizontally || entity.collidedVertically && !entity.isOnGround())
+        if (this.entity.horizontalCollision || entity.verticalCollision && !entity.isOnGround())
         {
             return checkPath();
         }
@@ -126,7 +126,7 @@ public class EntityAIInteractToggleAble extends Goal
      */
     private boolean checkPath()
     {
-        @NotNull final GroundPathNavigator pathnavigateground = (GroundPathNavigator) this.entity.getNavigator();
+        @NotNull final GroundPathNavigator pathnavigateground = (GroundPathNavigator) this.entity.getNavigation();
         final Path path = pathnavigateground.getPath();
         checkPathBlocksCollided(path);
         return !toggleAblePositions.isEmpty();
@@ -139,24 +139,24 @@ public class EntityAIInteractToggleAble extends Goal
      */
     private void checkPathBlocksCollided(final Path path)
     {
-        if (path == null || path.isFinished())
+        if (path == null || path.isDone())
         {
             resetAll();
             return;
         }
 
-        final int maxLengthToCheck = Math.min(path.getCurrentPathIndex() + LENGTH_TO_CHECK, path.getCurrentPathLength());
-        for (int i = Math.max(0, path.getCurrentPathIndex() - 1); i < maxLengthToCheck; i++)
+        final int maxLengthToCheck = Math.min(path.getNextNodeIndex() + LENGTH_TO_CHECK, path.getNodeCount());
+        for (int i = Math.max(0, path.getNextNodeIndex() - 1); i < maxLengthToCheck; i++)
         {
-            if (i == path.getCurrentPathLength() - 1)
+            if (i == path.getNodeCount() - 1)
             {
                 // Reached path end
                 return;
             }
 
             // We need current + next to determine the move direction to find out whether sth is blocking in that way
-            final PathPoint current = path.getPathPointFromIndex(i);
-            final PathPoint next = path.getPathPointFromIndex(i + 1);
+            final PathPoint current = path.getNode(i);
+            final PathPoint next = path.getNode(i + 1);
 
             // Skip same nodes
             if (next.x == current.x && next.y == current.y && next.z == current.z)
@@ -173,7 +173,7 @@ public class EntityAIInteractToggleAble extends Goal
             }
             else
             {
-                dir = Direction.getFacingFromVector(next.x - current.x, 0, next.z - current.z);
+                dir = Direction.getNearest(next.x - current.x, 0, next.z - current.z);
             }
 
             // Check necessary height levels
@@ -199,15 +199,15 @@ public class EntityAIInteractToggleAble extends Goal
             return;
         }
 
-        final BlockState state = entity.world.getBlockState(pos);
-        if (this.entity.getDistanceSq(pos.getX(), this.entity.getPosY(), pos.getZ()) <= MIN_DISTANCE && isValidBlockState(state))
+        final BlockState state = entity.level.getBlockState(pos);
+        if (this.entity.distanceToSqr(pos.getX(), this.entity.getY(), pos.getZ()) <= MIN_DISTANCE && isValidBlockState(state))
         {
             // See if current pos collision shape can fit our entity in
-            final VoxelShape collisionShape = state.getCollisionShape(entity.world, pos);
-            dir = dir.rotateY();
-            if (collisionShape.getStart(dir.getAxis()) + 0.1 < entity.getWidth() && collisionShape.getEnd(dir.getAxis()) + 0.1 + entity.getWidth() > 1)
+            final VoxelShape collisionShape = state.getCollisionShape(entity.level, pos);
+            dir = dir.getClockWise();
+            if (collisionShape.min(dir.getAxis()) + 0.1 < entity.getBbWidth() && collisionShape.max(dir.getAxis()) + 0.1 + entity.getBbWidth() > 1)
             {
-                toggleAblePositions.put(pos, state.get(BlockStateProperties.OPEN));
+                toggleAblePositions.put(pos, state.getValue(BlockStateProperties.OPEN));
             }
         }
     }
@@ -219,45 +219,45 @@ public class EntityAIInteractToggleAble extends Goal
      */
     private boolean checkPathBlocksBelow()
     {
-        @NotNull final GroundPathNavigator pathnavigateground = (GroundPathNavigator) this.entity.getNavigator();
+        @NotNull final GroundPathNavigator pathnavigateground = (GroundPathNavigator) this.entity.getNavigation();
         final Path path = pathnavigateground.getPath();
 
-        if (path == null || path.isFinished())
+        if (path == null || path.isDone())
         {
             resetAll();
             return false;
         }
 
-        final int maxLengthToCheck = Math.min(path.getCurrentPathIndex() + LENGTH_TO_CHECK, path.getCurrentPathLength());
-        for (int i = Math.max(0, path.getCurrentPathIndex() - 1); i < maxLengthToCheck; ++i)
+        final int maxLengthToCheck = Math.min(path.getNextNodeIndex() + LENGTH_TO_CHECK, path.getNodeCount());
+        for (int i = Math.max(0, path.getNextNodeIndex() - 1); i < maxLengthToCheck; ++i)
         {
-            final PathPoint pathpoint = path.getPathPointFromIndex(i);
+            final PathPoint pathpoint = path.getNode(i);
 
             for (int level = 0; level < getHeightToCheck(path, i); level++)
             {
                 BlockPos pos = new BlockPos(pathpoint.x, pathpoint.y + level, pathpoint.z);
 
                 // We only allows blocks we're on or right above
-                if (!entity.getPosition().equals(pos) && !entity.getPosition().down().equals(pos))
+                if (!entity.blockPosition().equals(pos) && !entity.blockPosition().below().equals(pos))
                 {
                     continue;
                 }
 
-                BlockState state = entity.world.getBlockState(pos);
-                if (this.entity.getDistanceSq(pos.getX(), entity.getPosY(), pos.getZ()) <= MIN_DISTANCE && isValidBlockState(state))
+                BlockState state = entity.level.getBlockState(pos);
+                if (this.entity.distanceToSqr(pos.getX(), entity.getY(), pos.getZ()) <= MIN_DISTANCE && isValidBlockState(state))
                 {
                     if (level > 0)
                     {
                         // Above current pathing node, so need to use this toggleable block
-                        toggleAblePositions.put(pos, entity.world.getBlockState(pos).get(BlockStateProperties.OPEN));
+                        toggleAblePositions.put(pos, entity.level.getBlockState(pos).getValue(BlockStateProperties.OPEN));
                     }
-                    else if (i < path.getCurrentPathLength() - 1)
+                    else if (i < path.getNodeCount() - 1)
                     {
                         // Check if the next pathing node is below
-                        final PathPoint nextPoint = path.getPathPointFromIndex(i + 1);
+                        final PathPoint nextPoint = path.getNode(i + 1);
                         if (pos.getX() == nextPoint.x && pos.getY() > nextPoint.y && pos.getZ() == nextPoint.z)
                         {
-                            toggleAblePositions.put(pos, entity.world.getBlockState(pos).get(BlockStateProperties.OPEN));
+                            toggleAblePositions.put(pos, entity.level.getBlockState(pos).getValue(BlockStateProperties.OPEN));
                         }
                     }
                 }
@@ -276,24 +276,24 @@ public class EntityAIInteractToggleAble extends Goal
      */
     private int getHeightToCheck(final Path path, final int index)
     {
-        if (path == null || index < 0 || index >= path.getCurrentPathLength())
+        if (path == null || index < 0 || index >= path.getNodeCount())
         {
             return DEFAULT_HEIGHT_TO_CHECK;
         }
 
-        final PathPoint current = path.getPathPointFromIndex(index);
+        final PathPoint current = path.getNode(index);
 
         int prevDist = 0;
         if (index > 0)
         {
-            final PathPoint prev = path.getPathPointFromIndex(index - 1);
+            final PathPoint prev = path.getNode(index - 1);
             prevDist = prev.y - current.y;
         }
 
         int nextDist = 0;
-        if (index + 1 < path.getCurrentPathLength())
+        if (index + 1 < path.getNodeCount())
         {
-            final PathPoint next = path.getPathPointFromIndex(index + 1);
+            final PathPoint next = path.getNode(index + 1);
             nextDist = next.y - current.y;
         }
 
@@ -306,7 +306,7 @@ public class EntityAIInteractToggleAble extends Goal
      * @return true or false.
      */
     @Override
-    public boolean shouldContinueExecuting()
+    public boolean canContinueToUse()
     {
         return !toggleAblePositions.isEmpty();
     }
@@ -320,10 +320,10 @@ public class EntityAIInteractToggleAble extends Goal
         {
             for (final ToggleAble toggleAble : toggleAbles)
             {
-                final BlockState state = entity.world.getBlockState(pos);
+                final BlockState state = entity.level.getBlockState(pos);
                 if (toggleAble.isBlockToggleAble(state))
                 {
-                    toggleAble.toggleBlockClosed(state, entity.world, pos);
+                    toggleAble.toggleBlockClosed(state, entity.level, pos);
                     break;
                 }
             }
@@ -378,7 +378,7 @@ public class EntityAIInteractToggleAble extends Goal
         while (it.hasNext())
         {
             final BlockPos pos = it.next();
-            final BlockState state = entity.world.getBlockState(pos);
+            final BlockState state = entity.level.getBlockState(pos);
 
             // Recheck validity maybe the block changed
             if (!isValidBlockState(state))
@@ -387,15 +387,15 @@ public class EntityAIInteractToggleAble extends Goal
                 continue;
             }
 
-            if (this.entity.getDistanceSq(pos.getX(), pos.getY(), pos.getZ()) > MAX_DISTANCE)
+            if (this.entity.distanceToSqr(pos.getX(), pos.getY(), pos.getZ()) > MAX_DISTANCE)
             {
                 it.remove();
-                final BlockState blockState = entity.world.getBlockState(pos);
+                final BlockState blockState = entity.level.getBlockState(pos);
                 for (final ToggleAble toggleAble : toggleAbles)
                 {
                     if (toggleAble.isBlockToggleAble(blockState))
                     {
-                        toggleAble.toggleBlockClosed(blockState, entity.world, pos);
+                        toggleAble.toggleBlockClosed(blockState, entity.level, pos);
                         break;
                     }
                 }
@@ -407,14 +407,14 @@ public class EntityAIInteractToggleAble extends Goal
 
         if (!posList.isEmpty())
         {
-            final BlockPos chosen = posList.get(entity.world.rand.nextInt(posList.size()));
+            final BlockPos chosen = posList.get(entity.level.random.nextInt(posList.size()));
             {
-                final BlockState state = entity.world.getBlockState(chosen);
+                final BlockState state = entity.level.getBlockState(chosen);
                 for (final ToggleAble toggleAble : toggleAbles)
                 {
                     if (toggleAble.isBlockToggleAble(state))
                     {
-                        toggleAble.toggleBlock(state, entity.world, chosen);
+                        toggleAble.toggleBlock(state, entity.level, chosen);
                         break;
                     }
                 }
@@ -468,13 +468,13 @@ public class EntityAIInteractToggleAble extends Goal
         @Override
         public void toggleBlock(final BlockState state, final World world, final BlockPos pos)
         {
-            WorldUtil.setBlockState(world, pos, state.func_235896_a_(BlockStateProperties.OPEN));
+            WorldUtil.setBlockState(world, pos, state.cycle(BlockStateProperties.OPEN));
         }
 
         @Override
         public void toggleBlockClosed(final BlockState state, final World world, final BlockPos pos)
         {
-            WorldUtil.setBlockState(world, pos, state.with(BlockStateProperties.OPEN, false));
+            WorldUtil.setBlockState(world, pos, state.setValue(BlockStateProperties.OPEN, false));
         }
     }
 
@@ -492,13 +492,13 @@ public class EntityAIInteractToggleAble extends Goal
         @Override
         public void toggleBlock(final BlockState state, final World world, final BlockPos pos)
         {
-            WorldUtil.setBlockState(world, pos, state.func_235896_a_(BlockStateProperties.OPEN));
+            WorldUtil.setBlockState(world, pos, state.cycle(BlockStateProperties.OPEN));
         }
 
         @Override
         public void toggleBlockClosed(final BlockState state, final World world, final BlockPos pos)
         {
-            WorldUtil.setBlockState(world, pos, state.with(BlockStateProperties.OPEN, false));
+            WorldUtil.setBlockState(world, pos, state.setValue(BlockStateProperties.OPEN, false));
         }
     }
 
@@ -519,28 +519,28 @@ public class EntityAIInteractToggleAble extends Goal
             // Custom vanilla doors opening logic
             if (state.getBlock().getClass() == DoorBlock.class)
             {
-                final boolean isOpening = !state.get(BlockStateProperties.OPEN);
-                WorldUtil.setBlockState(world, pos, state.with(OPEN, isOpening), 10);
+                final boolean isOpening = !state.getValue(BlockStateProperties.OPEN);
+                WorldUtil.setBlockState(world, pos, state.setValue(OPEN, isOpening), 10);
 
-                final BlockPos otherPos = state.get(BlockStateProperties.DOUBLE_BLOCK_HALF) == DoubleBlockHalf.LOWER ? pos.up() : pos.down();
+                final BlockPos otherPos = state.getValue(BlockStateProperties.DOUBLE_BLOCK_HALF) == DoubleBlockHalf.LOWER ? pos.above() : pos.below();
                 final BlockState otherState = world.getBlockState(otherPos);
                 if (otherState.getBlock().getClass() == DoorBlock.class)
                 {
-                    WorldUtil.setBlockState(world, otherPos, otherState.with(OPEN, isOpening), 10);
+                    WorldUtil.setBlockState(world, otherPos, otherState.setValue(OPEN, isOpening), 10);
                 }
 
                 ((DoorBlock) state.getBlock()).playSound(world, pos, isOpening);
             }
             else
             {
-                ((DoorBlock) state.getBlock()).openDoor(world, state, pos, !state.get(BlockStateProperties.OPEN));
+                ((DoorBlock) state.getBlock()).setOpen(world, state, pos, !state.getValue(BlockStateProperties.OPEN));
             }
         }
 
         @Override
         public void toggleBlockClosed(final BlockState state, final World world, final BlockPos pos)
         {
-            ((DoorBlock) state.getBlock()).openDoor(world, state, pos, false);
+            ((DoorBlock) state.getBlock()).setOpen(world, state, pos, false);
         }
     }
 }

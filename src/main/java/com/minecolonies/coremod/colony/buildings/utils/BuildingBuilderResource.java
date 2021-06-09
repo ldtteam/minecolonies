@@ -75,7 +75,7 @@ public class BuildingBuilderResource extends ItemStorage
     @Override
     public String toString()
     {
-        final int itemId = Item.getIdFromItem(getItem());
+        final int itemId = Item.getId(getItem());
         final int hashCode = getItemStack().hasTag() ? getItemStack().getTag().hashCode() : 0;
         return getName() + "(p:"
                  + amountPlayer + " a:"
@@ -89,7 +89,7 @@ public class BuildingBuilderResource extends ItemStorage
     public String getName()
     {
         //It is the bet way ?
-        return getItemStack().getDisplayName().getString();
+        return getItemStack().getHoverName().getString();
     }
 
     public RessourceAvailability getAvailabilityStatus()

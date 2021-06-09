@@ -140,19 +140,19 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
      */
     private void updateColonyReferences()
     {
-        if (colony == null && getWorld() != null)
+        if (colony == null && getLevel() != null)
         {
             if (colonyId == 0)
             {
-                colony = IColonyManager.getInstance().getColonyByPosFromWorld(getWorld(), this.getPos());
+                colony = IColonyManager.getInstance().getColonyByPosFromWorld(getLevel(), this.getBlockPos());
             }
             else
             {
-                colony = IColonyManager.getInstance().getColonyByWorld(colonyId, getWorld());
+                colony = IColonyManager.getInstance().getColonyByWorld(colonyId, getLevel());
             }
 
             // It's most probably previewed building, please don't spam it here.
-            if (colony == null && !getWorld().isRemote)
+            if (colony == null && !getLevel().isClientSide)
             {
                 //log on the server
                 //Log.getLogger().info(String.format("TileEntityColonyBuilding at %s:[%d,%d,%d] had colony.",getWorld().getWorldInfo().getWorldName(), pos.getX(), pos.getY(), pos.getZ()));
@@ -162,7 +162,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
         if (building == null && colony != null)
         {
             building = colony.getBuildingManager().getBuilding(getPosition());
-            if (building != null && (getWorld() == null || !getWorld().isRemote))
+            if (building != null && (getLevel() == null || !getLevel().isClientSide))
             {
                 building.setTileEntity(this);
             }
@@ -177,7 +177,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     @Override
     public BlockPos getPosition()
     {
-        return pos;
+        return worldPosition;
     }
 
     /**
@@ -197,9 +197,9 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
         {
             for (final BlockPos pos : theBuilding.getContainers())
             {
-                if (WorldUtil.isBlockLoaded(world, pos))
+                if (WorldUtil.isBlockLoaded(level, pos))
                 {
-                    final TileEntity entity = getWorld().getTileEntity(pos);
+                    final TileEntity entity = getLevel().getBlockEntity(pos);
                     if (entity instanceof AbstractTileEntityRack)
                     {
                         if (((AbstractTileEntityRack) entity).hasItemStack(notEmptyPredicate))
@@ -227,13 +227,13 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     {
         colony = c;
         colonyId = c.getID();
-        markDirty();
+        setChanged();
     }
 
     @Override
-    public void markDirty()
+    public void setChanged()
     {
-        super.markDirty();
+        super.setChanged();
         if (building != null)
         {
             building.markDirty();
@@ -244,7 +244,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     public SUpdateTileEntityPacket getUpdatePacket()
     {
         final CompoundNBT compound = new CompoundNBT();
-        write(compound);
+        save(compound);
         return new SUpdateTileEntityPacket(this.getPosition(), 0, compound);
     }
 
@@ -252,19 +252,19 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     @Override
     public CompoundNBT getUpdateTag()
     {
-        return write(new CompoundNBT());
+        return save(new CompoundNBT());
     }
 
     @Override
     public void handleUpdateTag(final BlockState state, final CompoundNBT tag)
     {
-        this.read(state, tag);
+        this.load(state, tag);
     }
 
     @Override
     public void onDataPacket(final NetworkManager net, final SUpdateTileEntityPacket packet)
     {
-        final CompoundNBT compound = packet.getNbtCompound();
+        final CompoundNBT compound = packet.getTag();
         colonyId = compound.getInt(TAG_COLONY);
         super.onDataPacket(net, packet);
     }
@@ -312,7 +312,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
         {
             return super.getDisplayName();
         }
-        return new StringTextComponent(LanguageHandler.format(getBlockState().getBlock().getTranslationKey() + ".name"));
+        return new StringTextComponent(LanguageHandler.format(getBlockState().getBlock().getDescriptionId() + ".name"));
     }
 
     /**
@@ -323,30 +323,30 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     @Override
     public IBuildingView getBuildingView()
     {
-        final IColonyView c = IColonyManager.getInstance().getColonyView(colonyId, world.getDimensionKey());
+        final IColonyView c = IColonyManager.getInstance().getColonyView(colonyId, level.dimension());
         return c == null ? null : c.getBuilding(getPosition());
     }
 
     @Override
-    public void read(final BlockState state, @NotNull final CompoundNBT compound)
+    public void load(final BlockState state, @NotNull final CompoundNBT compound)
     {
-        super.read(state, compound);
-        if (compound.keySet().contains(TAG_COLONY))
+        super.load(state, compound);
+        if (compound.getAllKeys().contains(TAG_COLONY))
         {
             colonyId = compound.getInt(TAG_COLONY);
         }
         mirror = compound.getBoolean(TAG_MIRROR);
         style = compound.getString(TAG_STYLE);
         registryName = new ResourceLocation(compound.getString(TAG_BUILDING_TYPE));
-        buildingPos = pos;
+        buildingPos = worldPosition;
         single = true;
     }
 
     @NotNull
     @Override
-    public CompoundNBT write(@NotNull final CompoundNBT compound)
+    public CompoundNBT save(@NotNull final CompoundNBT compound)
     {
-        super.write(compound);
+        super.save(compound);
         compound.putInt(TAG_COLONY, colonyId);
         compound.putBoolean(TAG_MIRROR, mirror);
         compound.putString(TAG_STYLE, style);
@@ -362,16 +362,16 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
             combinedInv.invalidate();
             combinedInv = null;
         }
-        if (!getWorld().isRemote && colonyId == 0)
+        if (!getLevel().isClientSide && colonyId == 0)
         {
-            final IColony tempColony = IColonyManager.getInstance().getColonyByPosFromWorld(getWorld(), this.getPosition());
+            final IColony tempColony = IColonyManager.getInstance().getColonyByPosFromWorld(getLevel(), this.getPosition());
             if (tempColony != null)
             {
                 colonyId = tempColony.getID();
             }
         }
 
-        if (!getWorld().isRemote && colonyId != 0 && colony == null)
+        if (!getLevel().isClientSide && colonyId != 0 && colony == null)
         {
             updateColonyReferences();
         }
@@ -467,7 +467,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     @Override
     public <T> LazyOptional<T> getCapability(@NotNull final Capability<T> capability, @Nullable final Direction side)
     {
-        if (!removed && capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && getBuilding() != null)
+        if (!remove && capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && getBuilding() != null)
         {
             if (combinedInv == null)
             {
@@ -478,9 +478,9 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
                 {
                     for (final BlockPos pos : building.getContainers())
                     {
-                        if (WorldUtil.isBlockLoaded(world, pos) && !pos.equals(this.pos))
+                        if (WorldUtil.isBlockLoaded(world, pos) && !pos.equals(this.worldPosition))
                         {
-                            final TileEntity te = world.getTileEntity(pos);
+                            final TileEntity te = world.getBlockEntity(pos);
                             if (te != null)
                             {
                                 if (te instanceof AbstractTileEntityRack)
@@ -492,7 +492,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
                                             handlers.add((IItemHandlerModifiable) theCap);
                                         }
                                     });
-                                    ((AbstractTileEntityRack) te).setBuildingPos(this.getPos());
+                                    ((AbstractTileEntityRack) te).setBuildingPos(this.getBlockPos());
                                 }
                                 else
                                 {
@@ -515,6 +515,6 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     @Override
     public Container createMenu(final int id, @NotNull final PlayerInventory inv, @NotNull final PlayerEntity player)
     {
-        return new ContainerBuildingInventory(id, inv, colonyId, getPos());
+        return new ContainerBuildingInventory(id, inv, colonyId, getBlockPos());
     }
 }

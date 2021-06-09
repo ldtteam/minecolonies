@@ -16,7 +16,7 @@ public class CitizenEatFoodCriterionInstance extends CriterionInstance
 
     public CitizenEatFoodCriterionInstance()
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CITIZEN_EAT_FOOD), EntityPredicate.AndPredicate.ANY_AND);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CITIZEN_EAT_FOOD), EntityPredicate.AndPredicate.ANY);
     }
 
     /**
@@ -25,7 +25,7 @@ public class CitizenEatFoodCriterionInstance extends CriterionInstance
      */
     public CitizenEatFoodCriterionInstance(final ItemPredicate[] itemPredicates)
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CITIZEN_EAT_FOOD), EntityPredicate.AndPredicate.ANY_AND);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CITIZEN_EAT_FOOD), EntityPredicate.AndPredicate.ANY);
 
         this.itemPredicates = itemPredicates;
     }
@@ -41,7 +41,7 @@ public class CitizenEatFoodCriterionInstance extends CriterionInstance
         {
             for (ItemPredicate itemPredicate : itemPredicates)
             {
-                if (itemPredicate.test(foodItemStack))
+                if (itemPredicate.matches(foodItemStack))
                 {
                     return true;
                 }

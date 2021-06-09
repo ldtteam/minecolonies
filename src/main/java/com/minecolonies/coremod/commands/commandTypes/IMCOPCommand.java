@@ -17,7 +17,7 @@ public interface IMCOPCommand extends IMCCommand
     @Override
     default boolean checkPreCondition(final CommandContext<CommandSource> context)
     {
-        if (context.getSource().hasPermissionLevel(OP_PERM_LEVEL))
+        if (context.getSource().hasPermission(OP_PERM_LEVEL))
         {
             return true;
         }

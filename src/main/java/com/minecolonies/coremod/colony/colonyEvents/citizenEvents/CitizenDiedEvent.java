@@ -76,14 +76,14 @@ public class CitizenDiedEvent extends AbstractCitizenEvent
     public void serialize(PacketBuffer buf)
     {
         super.serialize(buf);
-        buf.writeString(deathCause);
+        buf.writeUtf(deathCause);
     }
 
     @Override
     public void deserialize(PacketBuffer buf)
     {
         super.deserialize(buf);
-        deathCause = buf.readString();
+        deathCause = buf.readUtf();
     }
 
     /**

@@ -34,28 +34,28 @@ public class SleepingParticle extends SpriteTexturedParticle
         super(worldIn, xCoordIn, yCoordIn, zCoordIn, xSpeedIn, ySpeedIn, zSpeedIn);
 
         //this.setSprite(Minecraft.getInstance().getTextureMap().getSprite(SLEEPING_TEXTURE));
-        selectSpriteWithAge(spriteSet);
-        this.motionX = xSpeedIn * 0.5;
-        this.motionY = ySpeedIn;
-        this.motionZ = zSpeedIn;
+        setSpriteFromAge(spriteSet);
+        this.xd = xSpeedIn * 0.5;
+        this.yd = ySpeedIn;
+        this.zd = zSpeedIn;
         this.coordX = xCoordIn;
         this.coordY = yCoordIn;
         this.coordZ = zCoordIn;
-        this.prevPosX = xCoordIn;
-        this.prevPosY = yCoordIn;
-        this.prevPosZ = zCoordIn;
-        this.posX = this.prevPosX;
-        this.posY = this.prevPosY;
-        this.posZ = this.prevPosZ;
+        this.xo = xCoordIn;
+        this.yo = yCoordIn;
+        this.zo = zCoordIn;
+        this.x = this.xo;
+        this.y = this.yo;
+        this.z = this.zo;
         // Slight color variance
-        float f = this.rand.nextFloat() * 0.6F + 0.4F;
-        this.particleRed = 0.9F * f;
-        this.particleGreen = 0.9F * f;
-        this.particleBlue = f;
+        float f = this.random.nextFloat() * 0.6F + 0.4F;
+        this.rCol = 0.9F * f;
+        this.gCol = 0.9F * f;
+        this.bCol = f;
         // particles max age in ticks, random causes them to appear a bit more dynamic, as they get faster/slower with shorter/longer lifetime
-        this.maxAge = (int) (Math.random() * 30.0D) + 40;
+        this.lifetime = (int) (Math.random() * 30.0D) + 40;
         // starting scale to fit
-        this.particleScale = (float) ((0.8 * Math.sin(0) + 1.3) * 0.1);
+        this.quadSize = (float) ((0.8 * Math.sin(0) + 1.3) * 0.1);
     }
 
     /**
@@ -64,28 +64,28 @@ public class SleepingParticle extends SpriteTexturedParticle
 
     public void tick()
     {
-        this.prevPosX = this.posX;
-        this.prevPosY = this.posY;
-        this.prevPosZ = this.posZ;
+        this.xo = this.x;
+        this.yo = this.y;
+        this.zo = this.z;
 
-        float f = (float) this.age / (float) this.maxAge;
+        float f = (float) this.age / (float) this.lifetime;
 
         // Scale smaller/bigger in a similar rate to snoring
-        particleScale = (float) ((0.8 * Math.sin(f * 4) + 1.3) * 0.1);
+        quadSize = (float) ((0.8 * Math.sin(f * 4) + 1.3) * 0.1);
 
         // Moves the particle in relation to movespeed and age
-        this.posX = this.coordX + this.motionX * f;
-        this.posY = this.coordY + this.motionY * f;
-        this.posZ = this.coordZ + this.motionZ * f;
+        this.x = this.coordX + this.xd * f;
+        this.y = this.coordY + this.yd * f;
+        this.z = this.coordZ + this.zd * f;
 
-        if (this.age++ >= this.maxAge)
+        if (this.age++ >= this.lifetime)
         {
-            this.setExpired();
+            this.remove();
         }
     }
 
     @Override
-    public int getBrightnessForRender(float partialTick)
+    public int getLightColor(float partialTick)
     {
         return LIGHT_LEVEL;
     }
@@ -106,7 +106,7 @@ public class SleepingParticle extends SpriteTexturedParticle
         }
 
         @Override
-        public Particle makeParticle(BasicParticleType particleType, ClientWorld world, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed)
+        public Particle createParticle(BasicParticleType particleType, ClientWorld world, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed)
         {
             return new SleepingParticle(spriteSet, world, x, y, z, xSpeed, ySpeed, zSpeed);
         }

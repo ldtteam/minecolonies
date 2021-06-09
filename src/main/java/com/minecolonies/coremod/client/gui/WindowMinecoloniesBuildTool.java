@@ -72,7 +72,7 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
         if (structureName.isHut())
             Network.getNetwork().sendToServer(msg);
         else
-            Minecraft.getInstance().enqueue(new WindowBuildDecoration(msg, Settings.instance.getPosition(), structureName)::open);
+            Minecraft.getInstance().tell(new WindowBuildDecoration(msg, Settings.instance.getPosition(), structureName)::open);
     }
 
     @Override
@@ -119,7 +119,7 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
 
         if (schemName.contains("supplyship") || schemName.contains("nethership"))
         {
-            if (ItemSupplyChestDeployer.canShipBePlaced(Minecraft.getInstance().world, Settings.instance.getPosition(),
+            if (ItemSupplyChestDeployer.canShipBePlaced(Minecraft.getInstance().level, Settings.instance.getPosition(),
               Settings.instance.getActiveStructure(),
               placementErrorList,
               Minecraft.getInstance().player))
@@ -133,7 +133,7 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
         }
         else if (schemName.contains("supplycamp"))
         {
-            if (ItemSupplyCampDeployer.canCampBePlaced(Minecraft.getInstance().world, Settings.instance.getPosition(),
+            if (ItemSupplyCampDeployer.canCampBePlaced(Minecraft.getInstance().level, Settings.instance.getPosition(),
               new BlockPos(Settings.instance.getActiveStructure().getSizeX(), Settings.instance.getActiveStructure().getSizeY(), Settings.instance.getActiveStructure().getSizeZ()),
               placementErrorList,
               Minecraft.getInstance().player))
@@ -162,7 +162,7 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
                 switch (placementErrorType)
                 {
                     case NOT_WATER:
-                        final String dim = WorldUtil.isNetherType(Minecraft.getInstance().world)
+                        final String dim = WorldUtil.isNetherType(Minecraft.getInstance().level)
                                 ? TranslationConstants.SUPPLY_CAMP_INVALID_NOT_LAVA_MESSAGE_KEY
                                 : TranslationConstants.SUPPLY_CAMP_INVALID_NOT_WATER_MESSAGE_KEY;
                         errorMessage = String.format(dim, outputList);

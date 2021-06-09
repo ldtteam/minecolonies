@@ -79,7 +79,7 @@ public abstract class AbstractColonyServerMessage implements IMessage
     @Override
     public final void toBytes(final PacketBuffer buf)
     {
-        buf.writeString(dimensionId.getLocation().toString());
+        buf.writeUtf(dimensionId.location().toString());
         buf.writeInt(colonyId);
         toBytesAbstractOverride(buf);
         toBytesOverride(buf);
@@ -97,7 +97,7 @@ public abstract class AbstractColonyServerMessage implements IMessage
     @Override
     public final void fromBytes(final PacketBuffer buf)
     {
-        this.dimensionId = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(buf.readString(32767)));
+        this.dimensionId = RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)));
         this.colonyId = buf.readInt();
         fromBytesAbstractOverride(buf);
         fromBytesOverride(buf);
@@ -126,7 +126,7 @@ public abstract class AbstractColonyServerMessage implements IMessage
                 LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.item.permissionscepter.permission.deny");
                 return;
             }
-            else if (ownerOnly() && (player == null || colony.getPermissions().getOwner().equals(player.getUniqueID())))
+            else if (ownerOnly() && (player == null || colony.getPermissions().getOwner().equals(player.createPlayerUUID())))
             {
                 if (player == null)
                 {

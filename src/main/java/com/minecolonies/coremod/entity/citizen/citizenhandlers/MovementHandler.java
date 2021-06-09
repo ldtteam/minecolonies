@@ -36,12 +36,12 @@ public class MovementHandler extends MovementController
     @Override
     public void tick()
     {
-        if (this.action == net.minecraft.entity.ai.controller.MovementController.Action.STRAFE)
+        if (this.operation == net.minecraft.entity.ai.controller.MovementController.Action.STRAFE)
         {
             final float speedAtt = (float) speedAtr.getValue();
-            float speed = (float) this.speed * speedAtt;
-            float forward = this.moveForward;
-            float strafe = this.moveStrafe;
+            float speed = (float) this.speedModifier * speedAtt;
+            float forward = this.strafeForwards;
+            float strafe = this.strafeRight;
             float totalMovement = MathHelper.sqrt(forward * forward + strafe * strafe);
             if (totalMovement < 1.0F)
             {
@@ -51,72 +51,72 @@ public class MovementHandler extends MovementController
             totalMovement = speed / totalMovement;
             forward = forward * totalMovement;
             strafe = strafe * totalMovement;
-            final float sinRotation = MathHelper.sin(this.mob.rotationYaw * ((float) Math.PI / 180F));
-            final float cosRotation = MathHelper.cos(this.mob.rotationYaw * ((float) Math.PI / 180F));
+            final float sinRotation = MathHelper.sin(this.mob.yRot * ((float) Math.PI / 180F));
+            final float cosRotation = MathHelper.cos(this.mob.yRot * ((float) Math.PI / 180F));
             final float rot1 = forward * cosRotation - strafe * sinRotation;
             final float rot2 = strafe * cosRotation + forward * sinRotation;
-            final PathNavigator pathnavigator = this.mob.getNavigator();
+            final PathNavigator pathnavigator = this.mob.getNavigation();
 
-            final NodeProcessor nodeprocessor = pathnavigator.getNodeProcessor();
-            if (nodeprocessor.getPathNodeType(this.mob.world,
-              MathHelper.floor(this.mob.getPosX() + (double) rot1),
-              MathHelper.floor(this.mob.getPosY()),
-              MathHelper.floor(this.mob.getPosZ() + (double) rot2)) != PathNodeType.WALKABLE)
+            final NodeProcessor nodeprocessor = pathnavigator.getNodeEvaluator();
+            if (nodeprocessor.getBlockPathType(this.mob.level,
+              MathHelper.floor(this.mob.getX() + (double) rot1),
+              MathHelper.floor(this.mob.getY()),
+              MathHelper.floor(this.mob.getZ() + (double) rot2)) != PathNodeType.WALKABLE)
             {
-                this.moveForward = 1.0F;
-                this.moveStrafe = 0.0F;
+                this.strafeForwards = 1.0F;
+                this.strafeRight = 0.0F;
                 speed = speedAtt;
             }
 
-            this.mob.setAIMoveSpeed(speed);
-            this.mob.setMoveForward(this.moveForward);
-            this.mob.setMoveStrafing(this.moveStrafe);
-            this.action = net.minecraft.entity.ai.controller.MovementController.Action.WAIT;
+            this.mob.setSpeed(speed);
+            this.mob.setZza(this.strafeForwards);
+            this.mob.setXxa(this.strafeRight);
+            this.operation = net.minecraft.entity.ai.controller.MovementController.Action.WAIT;
         }
-        else if (this.action == net.minecraft.entity.ai.controller.MovementController.Action.MOVE_TO)
+        else if (this.operation == net.minecraft.entity.ai.controller.MovementController.Action.MOVE_TO)
         {
-            this.action = net.minecraft.entity.ai.controller.MovementController.Action.WAIT;
-            final double xDif = this.posX - this.mob.getPosX();
-            final double zDif = this.posZ - this.mob.getPosZ();
-            final double yDif = this.posY - this.mob.getPosY();
+            this.operation = net.minecraft.entity.ai.controller.MovementController.Action.WAIT;
+            final double xDif = this.wantedX - this.mob.getX();
+            final double zDif = this.wantedZ - this.mob.getZ();
+            final double yDif = this.wantedY - this.mob.getY();
             final double dist = xDif * xDif + yDif * yDif + zDif * zDif;
             if (dist < (double) 2.5000003E-7F)
             {
-                this.mob.setMoveForward(0.0F);
+                this.mob.setZza(0.0F);
                 return;
             }
 
             final float range = (float) (MathHelper.atan2(zDif, xDif) * (double) (180F / (float) Math.PI)) - 90.0F;
-            this.mob.rotationYaw = this.limitAngle(this.mob.rotationYaw, range, 90.0F);
-            this.mob.setAIMoveSpeed((float) (this.speed * speedAtr.getValue()));
-            final BlockPos blockpos = new BlockPos(this.mob.getPositionVec());
-            final BlockState blockstate = this.mob.world.getBlockState(blockpos);
+            this.mob.yRot = this.rotlerp(this.mob.yRot, range, 90.0F);
+            this.mob.setSpeed((float) (this.speedModifier * speedAtr.getValue()));
+            final BlockPos blockpos = new BlockPos(this.mob.position());
+            final BlockState blockstate = this.mob.level.getBlockState(blockpos);
             final Block block = blockstate.getBlock();
-            final VoxelShape voxelshape = blockstate.getCollisionShape(this.mob.world, blockpos);
-            if ((yDif > (double) this.mob.stepHeight && xDif * xDif + zDif * zDif < (double) Math.max(1.0F, this.mob.getWidth()))
-                  || (!voxelshape.isEmpty() && this.mob.getPosY() < voxelshape.getEnd(Direction.Axis.Y) + (double) blockpos.getY() && !block.isIn(BlockTags.DOORS) && !block.isIn(
-              BlockTags.FENCES) && !block.isIn(BlockTags.FENCE_GATES))
-                       && !block.isLadder(blockstate, this.mob.world, blockpos, this.mob))
+            final VoxelShape voxelshape = blockstate.getCollisionShape(this.mob.level, blockpos);
+            if ((yDif > (double) this.mob.maxUpStep && xDif * xDif + zDif * zDif < (double) Math.max(1.0F, this.mob.getBbWidth()))
+                  || (!voxelshape.isEmpty() && this.mob.getY() < voxelshape.max(Direction.Axis.Y) + (double) blockpos.getY() && !block.is(BlockTags.DOORS) && !block.is(
+              BlockTags.FENCES) && !block.is(BlockTags.FENCE_GATES))
+                       && !block.isLadder(blockstate, this.mob.level, blockpos, this.mob))
             {
-                this.mob.getJumpController().setJumping();
-                this.action = net.minecraft.entity.ai.controller.MovementController.Action.JUMPING;
+                this.mob.getJumpControl().jump();
+                this.operation = net.minecraft.entity.ai.controller.MovementController.Action.JUMPING;
             }
         }
-        else if (this.action == net.minecraft.entity.ai.controller.MovementController.Action.JUMPING)
+        else if (this.operation == net.minecraft.entity.ai.controller.MovementController.Action.JUMPING)
         {
-            this.mob.setAIMoveSpeed((float) (this.speed * speedAtr.getValue()));
+            this.mob.setSpeed((float) (this.speedModifier * speedAtr.getValue()));
 
             // Avoid beeing stuck in jumping while in liquids
-            final BlockPos blockpos = new BlockPos(this.mob.getPositionVec());
-            final BlockState blockstate = this.mob.world.getBlockState(blockpos);
+            final BlockPos blockpos = new BlockPos(this.mob.position());
+            final BlockState blockstate = this.mob.level.getBlockState(blockpos);
             if (this.mob.isOnGround() || blockstate.getMaterial().isLiquid())
             {
-                this.action = net.minecraft.entity.ai.controller.MovementController.Action.WAIT;
+                this.operation = net.minecraft.entity.ai.controller.MovementController.Action.WAIT;
             }
         }
         else
         {
-            this.mob.setMoveForward(0.0F);
+            this.mob.setZza(0.0F);
         }
     }
 }

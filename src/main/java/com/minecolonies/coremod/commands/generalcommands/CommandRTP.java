@@ -58,14 +58,14 @@ public class CommandRTP implements IMCCommand
 
         GameProfile profile = GameProfileArgument.getGameProfiles(context, PLAYERNAME_ARG).stream().findFirst().orElse(null);
 
-        if (profile == null || context.getSource().getServer().getPlayerList().getPlayerByUUID(profile.getId()) == null)
+        if (profile == null || context.getSource().getServer().getPlayerList().getPlayer(profile.getId()) == null)
         {
             // could not find player with given name.
             LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.playernotfound", profile != null ? profile.getName() : "null");
             return 0;
         }
 
-        rtp(context.getSource().getServer().getPlayerList().getPlayerByUUID(profile.getId()));
+        rtp(context.getSource().getServer().getPlayerList().getPlayer(profile.getId()));
         return 1;
     }
 
@@ -83,7 +83,7 @@ public class CommandRTP implements IMCCommand
             LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.rtp.notallowed");
             return false;
         }
-        else if (!MineColonies.getConfig().getServer().allowOtherDimColonies.get() && context.getSource().getWorld().getDimensionKey() != World.OVERWORLD)
+        else if (!MineColonies.getConfig().getServer().allowOtherDimColonies.get() && context.getSource().getLevel().dimension() != World.OVERWORLD)
         {
             LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.rtp.wrongdim");
             return false;
@@ -104,16 +104,16 @@ public class CommandRTP implements IMCCommand
             /* this math is to get negative numbers */
             final int x = getRandCoordinate();
             final int z = getRandCoordinate();
-            final BlockPos spawnPoint = ((ServerWorld) player.getEntityWorld()).getSpawnPoint();
-            if (player.getEntityWorld().getWorldBorder().getSize()
-                  < BlockPosUtil.getDistance2D(spawnPoint, spawnPoint.add(x, 0, z)))
+            final BlockPos spawnPoint = ((ServerWorld) player.getCommandSenderWorld()).getSharedSpawnPos();
+            if (player.getCommandSenderWorld().getWorldBorder().getAbsoluteMaxSize()
+                  < BlockPosUtil.getDistance2D(spawnPoint, spawnPoint.relative(x, 0, z)))
             {
                 continue;
             }
 
             final BlockPos tpPos = new BlockPos(x, STARTING_Y, z);
 
-            final IColony colony = IColonyManager.getInstance().getClosestColony(player.getEntityWorld(), tpPos);
+            final IColony colony = IColonyManager.getInstance().getClosestColony(player.getCommandSenderWorld(), tpPos);
             /* Check for a close by colony*/
             if (colony != null
                   && BlockPosUtil.getDistance2D(colony.getCenter(), tpPos) < MineColonies.getConfig().getServer().maxColonySize.get() * 32)
@@ -122,7 +122,7 @@ public class CommandRTP implements IMCCommand
             }
 
             /*Search for a ground position*/
-            final BlockPos groundPosition = BlockPosUtil.findLand(tpPos, player.getEntityWorld());
+            final BlockPos groundPosition = BlockPosUtil.findLand(tpPos, player.getCommandSenderWorld());
 
             /*If no position found*/
             if (groundPosition == null)
@@ -130,10 +130,10 @@ public class CommandRTP implements IMCCommand
                 continue;
             }
 
-            if (BlockPosUtil.isPositionSafe(player.getEntityWorld(), groundPosition.down()))
+            if (BlockPosUtil.isPositionSafe(player.getCommandSenderWorld(), groundPosition.below()))
             {
                 player.setHealth(player.getMaxHealth());
-                player.setPositionAndUpdate(groundPosition.getX(), groundPosition.getY() + SAFETY_DROP, groundPosition.getZ());
+                player.teleportTo(groundPosition.getX(), groundPosition.getY() + SAFETY_DROP, groundPosition.getZ());
                 player.setHealth(player.getMaxHealth());
 
                 LanguageHandler.sendPlayerMessage(player, "com.minecolonies.command.rtp.success");

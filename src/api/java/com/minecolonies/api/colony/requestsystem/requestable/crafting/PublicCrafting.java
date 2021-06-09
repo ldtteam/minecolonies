@@ -71,7 +71,7 @@ public class PublicCrafting extends AbstractCrafting
      */
     public static void serialize(final IFactoryController controller, final PacketBuffer buffer, final PublicCrafting input)
     {
-        buffer.writeItemStack(input.getStack());
+        buffer.writeItem(input.getStack());
         buffer.writeInt(input.getCount());
     }
 
@@ -84,7 +84,7 @@ public class PublicCrafting extends AbstractCrafting
      */
     public static PublicCrafting deserialize(final IFactoryController controller, final PacketBuffer buffer)
     {
-        final ItemStack stack = buffer.readItemStack();
+        final ItemStack stack = buffer.readItem();
         final int count = buffer.readInt();
 
         return new PublicCrafting(stack, count);

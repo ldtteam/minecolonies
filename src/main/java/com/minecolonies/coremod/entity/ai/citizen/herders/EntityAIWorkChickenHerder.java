@@ -90,13 +90,13 @@ public class EntityAIWorkChickenHerder extends AbstractEntityAIHerder<JobChicken
     protected void butcherAnimal(@Nullable final AnimalEntity animal)
     {
         worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_HERDER_BUTCHERING));
-        if (animal != null && !walkingToAnimal(animal) && !ItemStackUtils.isEmpty(worker.getHeldItemMainhand()))
+        if (animal != null && !walkingToAnimal(animal) && !ItemStackUtils.isEmpty(worker.getMainHandItem()))
         {
-            worker.swingArm(Hand.MAIN_HAND);
+            worker.swing(Hand.MAIN_HAND);
 
             if (worker.getRandom().nextInt(1 + (ONE_HUNDRED_PERCENT - getSecondarySkillLevel()) / 5) <= 1)
             {
-                animal.attackEntityFrom(new NamedDamageSource(worker.getName().getString(), worker), (float) getButcheringAttackDamage());
+                animal.hurt(new NamedDamageSource(worker.getName().getString(), worker), (float) getButcheringAttackDamage());
                 worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, 1);
             }
         }

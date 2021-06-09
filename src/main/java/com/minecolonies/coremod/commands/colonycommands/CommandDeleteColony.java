@@ -32,26 +32,26 @@ public class CommandDeleteColony implements IMCColonyOfficerCommand
     @Override
     public int onExecute(final CommandContext<CommandSource> context)
     {
-        if (!context.getSource().hasPermissionLevel(OP_PERM_LEVEL) && !MineColonies.getConfig().getServer().canPlayerUseDeleteColonyCommand.get())
+        if (!context.getSource().hasPermission(OP_PERM_LEVEL) && !MineColonies.getConfig().getServer().canPlayerUseDeleteColonyCommand.get())
         {
-            context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.notenabledinconfig"), true);
+            context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.notenabledinconfig"), true);
             return 0;
         }
 
         // Colony
         final int colonyID = IntegerArgumentType.getInteger(context, COLONYID_ARG);
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getWorld().getDimensionKey());
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getLevel().dimension());
         if (colony == null)
         {
-            context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.colonyidnotfound", colonyID), true);
+            context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.colonyidnotfound", colonyID), true);
             return 0;
         }
 
         final boolean deleteBuildings = BoolArgumentType.getBool(context, DELETE_BUILDNGS_ARG);
 
         BackUpHelper.backupColonyData();
-        IColonyManager.getInstance().deleteColonyByDimension(colonyID, deleteBuildings, context.getSource().getWorld().getDimensionKey());
-        context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.delete.success", colony.getName()), true);
+        IColonyManager.getInstance().deleteColonyByDimension(colonyID, deleteBuildings, context.getSource().getLevel().dimension());
+        context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.delete.success", colony.getName()), true);
         return 1;
     }
 

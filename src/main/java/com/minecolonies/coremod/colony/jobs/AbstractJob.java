@@ -130,14 +130,14 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
     public void deserializeNBT(final CompoundNBT compound)
     {
         this.asyncRequests.clear();
-        if (compound.keySet().contains(TAG_ASYNC_REQUESTS))
+        if (compound.getAllKeys().contains(TAG_ASYNC_REQUESTS))
         {
             this.asyncRequests.addAll(NBTUtils.streamCompound(compound.getList(TAG_ASYNC_REQUESTS, Constants.NBT.TAG_COMPOUND))
                                         .map(StandardFactoryController.getInstance()::deserialize)
                                         .map(o -> (IToken<?>) o)
                                         .collect(Collectors.toSet()));
         }
-        if (compound.keySet().contains(TAG_ACTIONS_DONE))
+        if (compound.getAllKeys().contains(TAG_ACTIONS_DONE))
         {
             actionsDone = compound.getInt(TAG_ACTIONS_DONE);
         }
@@ -146,8 +146,8 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
     @Override
     public void serializeToView(final PacketBuffer buffer)
     {
-        buffer.writeString(getJobRegistryEntry().getRegistryName().toString());
-        buffer.writeString(getName());
+        buffer.writeUtf(getJobRegistryEntry().getRegistryName().toString());
+        buffer.writeUtf(getName());
         buffer.writeInt(getAsyncRequests().size());
         for (final IToken<?> token : getAsyncRequests())
         {
@@ -193,7 +193,7 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
             return;
         }
 
-        tasks.goals.stream().filter(goal -> goal.getGoal() instanceof AbstractAISkeleton).forEach(goal -> tasks.removeGoal(goal.getGoal()));
+        tasks.availableGoals.stream().filter(goal -> goal.getGoal() instanceof AbstractAISkeleton).forEach(goal -> tasks.removeGoal(goal.getGoal()));
         workerAI = new WeakReference<>(tempAI);
         tasks.addGoal(TASK_PRIORITY, tempAI);
     }

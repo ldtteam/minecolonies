@@ -105,9 +105,9 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
     @Override
     public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
     {
-        if (block instanceof CarvedPumpkinBlock && world.getBlockState(pos.down()).getBlock() instanceof HayBlock)
+        if (block instanceof CarvedPumpkinBlock && world.getBlockState(pos.below()).getBlock() instanceof HayBlock)
         {
-            fightingPos.add(pos.down());
+            fightingPos.add(pos.below());
         }
         super.registerBlockPosition(block, pos, world);
     }

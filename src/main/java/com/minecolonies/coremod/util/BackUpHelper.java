@@ -74,31 +74,31 @@ public final class BackUpHelper
         try (FileOutputStream fos = new FileOutputStream(getBackupSaveLocation(new Date())))
         {
             @NotNull final File saveDir =
-              new File(ServerLifecycleHooks.getCurrentServer().func_240776_a_(FolderName.DOT).toFile(), FILENAME_MINECOLONIES_PATH);
+              new File(ServerLifecycleHooks.getCurrentServer().getWorldPath(FolderName.ROOT).toFile(), FILENAME_MINECOLONIES_PATH);
             final ZipOutputStream zos = new ZipOutputStream(fos);
 
-            for (final RegistryKey<World> dimensionType : ServerLifecycleHooks.getCurrentServer().worlds.keySet())
+            for (final RegistryKey<World> dimensionType : ServerLifecycleHooks.getCurrentServer().levels.keySet())
             {
                 for (int i = 1; i <= IColonyManager.getInstance().getTopColonyId() + 1; i++)
                 {
-                    @NotNull final File file = new File(saveDir, getFolderForDimension(dimensionType.getLocation()) + String.format(FILENAME_COLONY, i));
-                    @NotNull final File fileDeleted = new File(saveDir, getFolderForDimension(dimensionType.getLocation()) + String.format(FILENAME_COLONY_DELETED, i));
+                    @NotNull final File file = new File(saveDir, getFolderForDimension(dimensionType.location()) + String.format(FILENAME_COLONY, i));
+                    @NotNull final File fileDeleted = new File(saveDir, getFolderForDimension(dimensionType.location()) + String.format(FILENAME_COLONY_DELETED, i));
                     if (file.exists())
                     {
                         // mark existing files
                         if (IColonyManager.getInstance().getColonyByDimension(i, dimensionType) == null)
                         {
                             markColonyDeleted(i, dimensionType);
-                            addToZipFile(getFolderForDimension(dimensionType.getLocation()) + String.format(FILENAME_COLONY_DELETED, i), zos, saveDir);
+                            addToZipFile(getFolderForDimension(dimensionType.location()) + String.format(FILENAME_COLONY_DELETED, i), zos, saveDir);
                         }
                         else
                         {
-                            addToZipFile(getFolderForDimension(dimensionType.getLocation()) + String.format(FILENAME_COLONY, i), zos, saveDir);
+                            addToZipFile(getFolderForDimension(dimensionType.location()) + String.format(FILENAME_COLONY, i), zos, saveDir);
                         }
                     }
                     else if (fileDeleted.exists())
                     {
-                        addToZipFile(getFolderForDimension(dimensionType.getLocation()) + String.format(FILENAME_COLONY_DELETED, i), zos, saveDir);
+                        addToZipFile(getFolderForDimension(dimensionType.location()) + String.format(FILENAME_COLONY_DELETED, i), zos, saveDir);
                     }
                 }
             }
@@ -144,15 +144,15 @@ public final class BackUpHelper
      */
     public static void loadMissingColonies()
     {
-        @NotNull final File saveDir = new File(ServerLifecycleHooks.getCurrentServer().func_240776_a_(FolderName.DOT).toFile(), FILENAME_MINECOLONIES_PATH);
+        @NotNull final File saveDir = new File(ServerLifecycleHooks.getCurrentServer().getWorldPath(FolderName.ROOT).toFile(), FILENAME_MINECOLONIES_PATH);
 
-        for (final RegistryKey<World> dimensionType : ServerLifecycleHooks.getCurrentServer().worlds.keySet())
+        for (final RegistryKey<World> dimensionType : ServerLifecycleHooks.getCurrentServer().levels.keySet())
         {
             int missingFilesInRow = 0;
             for (int i = 1; i <= MAX_COLONY_LOAD && missingFilesInRow < 5; i++)
             {
                 // Check non-deleted files for colony id + dim
-                @NotNull final File file = new File(saveDir, getFolderForDimension(dimensionType.getLocation()) + String.format(FILENAME_COLONY, i));
+                @NotNull final File file = new File(saveDir, getFolderForDimension(dimensionType.location()) + String.format(FILENAME_COLONY, i));
                 if (file.exists())
                 {
                     missingFilesInRow = 0;
@@ -180,7 +180,7 @@ public final class BackUpHelper
     private static File getBackupSaveLocation(final Date date)
     {
         @NotNull final File saveDir =
-          new File(ServerLifecycleHooks.getCurrentServer().func_240776_a_(FolderName.DOT).toFile(), FILENAME_MINECOLONIES_PATH);
+          new File(ServerLifecycleHooks.getCurrentServer().getWorldPath(FolderName.ROOT).toFile(), FILENAME_MINECOLONIES_PATH);
         return new File(saveDir, String.format(FILENAME_MINECOLONIES_BACKUP, new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss").format(date)));
     }
 
@@ -228,7 +228,7 @@ public final class BackUpHelper
     @NotNull
     public static File getSaveLocation()
     {
-        @NotNull final File saveDir = new File(ServerLifecycleHooks.getCurrentServer().func_240776_a_(FolderName.DOT).toFile(), FILENAME_MINECOLONIES_PATH);
+        @NotNull final File saveDir = new File(ServerLifecycleHooks.getCurrentServer().getWorldPath(FolderName.ROOT).toFile(), FILENAME_MINECOLONIES_PATH);
         return new File(saveDir, FILENAME_MINECOLONIES);
     }
 
@@ -286,12 +286,12 @@ public final class BackUpHelper
 
         @NotNull final File file = getSaveLocation();
         saveNBTToPath(file, compound);
-        @NotNull final File saveDir = new File(ServerLifecycleHooks.getCurrentServer().func_240776_a_(FolderName.DOT).toFile(), FILENAME_MINECOLONIES_PATH);
+        @NotNull final File saveDir = new File(ServerLifecycleHooks.getCurrentServer().getWorldPath(FolderName.ROOT).toFile(), FILENAME_MINECOLONIES_PATH);
         for (final IColony colony : IColonyManager.getInstance().getAllColonies())
         {
             final CompoundNBT colonyCompound = new CompoundNBT();
             colony.write(colonyCompound);
-            saveNBTToPath(new File(saveDir, getFolderForDimension(colony.getDimension().getLocation()) + String.format(FILENAME_COLONY, colony.getID())), colonyCompound);
+            saveNBTToPath(new File(saveDir, getFolderForDimension(colony.getDimension().location()) + String.format(FILENAME_COLONY, colony.getID())), colonyCompound);
         }
     }
 
@@ -304,11 +304,11 @@ public final class BackUpHelper
     public static void markColonyDeleted(final int colonyID, final RegistryKey<World> dimensionID)
     {
         @NotNull final File saveDir =
-          new File(ServerLifecycleHooks.getCurrentServer().func_240776_a_(FolderName.DOT).toFile(), FILENAME_MINECOLONIES_PATH);
-        final File toDelete = new File(saveDir, getFolderForDimension(dimensionID.getLocation()) + String.format(FILENAME_COLONY, colonyID));
+          new File(ServerLifecycleHooks.getCurrentServer().getWorldPath(FolderName.ROOT).toFile(), FILENAME_MINECOLONIES_PATH);
+        final File toDelete = new File(saveDir, getFolderForDimension(dimensionID.location()) + String.format(FILENAME_COLONY, colonyID));
         if (toDelete.exists())
         {
-            final String fileName = getFolderForDimension(dimensionID.getLocation()) + String.format(FILENAME_COLONY_DELETED, colonyID);
+            final String fileName = getFolderForDimension(dimensionID.location()) + String.format(FILENAME_COLONY_DELETED, colonyID);
             new File(saveDir, fileName).delete();
             toDelete.renameTo(new File(saveDir, fileName));
         }
@@ -319,12 +319,12 @@ public final class BackUpHelper
      */
     public static void loadAllBackups()
     {
-        @NotNull final File saveDir = new File(ServerLifecycleHooks.getCurrentServer().func_240776_a_(FolderName.DOT).toFile(), FILENAME_MINECOLONIES_PATH);
+        @NotNull final File saveDir = new File(ServerLifecycleHooks.getCurrentServer().getWorldPath(FolderName.ROOT).toFile(), FILENAME_MINECOLONIES_PATH);
 
-        ServerLifecycleHooks.getCurrentServer().worlds.keySet().forEach(dimensionType -> {
+        ServerLifecycleHooks.getCurrentServer().levels.keySet().forEach(dimensionType -> {
             for (int i = 1; i <= IColonyManager.getInstance().getTopColonyId() + 1; i++)
             {
-                @NotNull final File file = new File(saveDir, getFolderForDimension(dimensionType.getLocation()) + String.format(FILENAME_COLONY, i));
+                @NotNull final File file = new File(saveDir, getFolderForDimension(dimensionType.location()) + String.format(FILENAME_COLONY, i));
                 if (file.exists())
                 {
                     loadColonyBackup(i, dimensionType, false, false);
@@ -354,14 +354,14 @@ public final class BackUpHelper
      */
     public static void loadColonyBackup(final int colonyId, final RegistryKey<World> dimension, boolean loadDeleted, boolean claimChunks)
     {
-        @NotNull final File saveDir = new File(ServerLifecycleHooks.getCurrentServer().func_240776_a_(FolderName.DOT).toFile(), FILENAME_MINECOLONIES_PATH);
-        @NotNull final File backupFile = new File(saveDir, getFolderForDimension(dimension.getLocation()) + String.format(FILENAME_COLONY, colonyId));
+        @NotNull final File saveDir = new File(ServerLifecycleHooks.getCurrentServer().getWorldPath(FolderName.ROOT).toFile(), FILENAME_MINECOLONIES_PATH);
+        @NotNull final File backupFile = new File(saveDir, getFolderForDimension(dimension.location()) + String.format(FILENAME_COLONY, colonyId));
         CompoundNBT compound = loadNBTFromPath(backupFile);
         if (compound == null)
         {
             if (loadDeleted)
             {
-                compound = loadNBTFromPath(new File(saveDir, String.format(getFolderForDimension(dimension.getLocation()) + String.format(FILENAME_COLONY_DELETED, colonyId))));
+                compound = loadNBTFromPath(new File(saveDir, String.format(getFolderForDimension(dimension.location()) + String.format(FILENAME_COLONY_DELETED, colonyId))));
             }
             if (compound == null)
             {
@@ -378,7 +378,7 @@ public final class BackUpHelper
         else
         {
             Log.getLogger().warn("Colony:" + colonyId + " is missing, loading backup!");
-            final World colonyWorld = ServerLifecycleHooks.getCurrentServer().getWorld(dimension);
+            final World colonyWorld = ServerLifecycleHooks.getCurrentServer().getLevel(dimension);
             final Colony loadedColony = Colony.loadColony(compound, colonyWorld);
             if (loadedColony == null || colonyWorld == null)
             {
@@ -419,7 +419,7 @@ public final class BackUpHelper
     public static String exportColony(final IColony colony)
     {
         final MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
-        final File topworldDir = server.func_240776_a_(FolderName.DOT).toFile();
+        final File topworldDir = server.getWorldPath(FolderName.ROOT).toFile();
         final File minecraftDir = new File(topworldDir.getAbsolutePath().replace(topworldDir.getPath(), ""));
 
         final String worldname = topworldDir.getParent().replace("." + File.separator, "");
@@ -430,7 +430,7 @@ public final class BackUpHelper
             final ZipOutputStream zos = new ZipOutputStream(fos);
 
             // Save region content for Colony
-            final File regionDir = new File(DimensionType.getDimensionFolder(colony.getDimension(), server.func_240776_a_(FolderName.DOT).toFile()), REGION_FOLDER);
+            final File regionDir = new File(DimensionType.getStorageFolder(colony.getDimension(), server.getWorldPath(FolderName.ROOT).toFile()), REGION_FOLDER);
 
             int maxX = Integer.MIN_VALUE;
             int minX = Integer.MAX_VALUE;
@@ -488,18 +488,18 @@ public final class BackUpHelper
             }
 
             // Save colony.dat backup
-            final File file = new File(saveDir, getFolderForDimension(colony.getDimension().getLocation()) + String.format(FILENAME_COLONY, colony.getID()));
-            final File fileDeleted = new File(saveDir, getFolderForDimension(colony.getDimension().getLocation()) + String.format(FILENAME_COLONY_DELETED, colony.getID()));
+            final File file = new File(saveDir, getFolderForDimension(colony.getDimension().location()) + String.format(FILENAME_COLONY, colony.getID()));
+            final File fileDeleted = new File(saveDir, getFolderForDimension(colony.getDimension().location()) + String.format(FILENAME_COLONY_DELETED, colony.getID()));
             if (file.exists())
             {
                 addFileToZipWithPath(
-                  minecoloniesZipDir + File.separator + getFolderForDimension(colony.getDimension().getLocation()) + String.format(FILENAME_COLONY, colony.getID()), zos, file);
+                  minecoloniesZipDir + File.separator + getFolderForDimension(colony.getDimension().location()) + String.format(FILENAME_COLONY, colony.getID()), zos, file);
             }
 
             if (fileDeleted.exists())
             {
                 addFileToZipWithPath(
-                  minecoloniesZipDir + File.separator + getFolderForDimension(colony.getDimension().getLocation()) + String.format(FILENAME_COLONY_DELETED, colony.getID()),
+                  minecoloniesZipDir + File.separator + getFolderForDimension(colony.getDimension().location()) + String.format(FILENAME_COLONY_DELETED, colony.getID()),
                   zos,
                   file);
             }

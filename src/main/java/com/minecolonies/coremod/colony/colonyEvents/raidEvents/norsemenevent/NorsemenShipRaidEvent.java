@@ -57,7 +57,7 @@ public class NorsemenShipRaidEvent extends AbstractShipRaidEvent
     protected void updateRaidBar()
     {
         super.updateRaidBar();
-        raidBar.setCreateFog(true);
+        raidBar.setCreateWorldFog(true);
     }
 
     /**

@@ -212,9 +212,9 @@ public class WindowClipBoard extends AbstractWindowSkeleton
             requests.removeIf(req -> asyncRequest.contains(req.getId()));
         }
 
-        final BlockPos playerPos = new BlockPos(Minecraft.getInstance().player.getPositionVec());
+        final BlockPos playerPos = new BlockPos(Minecraft.getInstance().player.position());
         requests.sort(Comparator.comparing((IRequest<?> request) -> request.getRequester().getLocation().getInDimensionLocation()
-                                                                      .distanceSq(new Vector3i(playerPos.getX(), playerPos.getY(), playerPos.getZ())))
+                                                                      .distSqr(new Vector3i(playerPos.getX(), playerPos.getY(), playerPos.getZ())))
                         .thenComparingInt((IRequest<?> request) -> request.getId().hashCode()));
 
         return ImmutableList.copyOf(requests);

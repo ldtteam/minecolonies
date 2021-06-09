@@ -77,7 +77,7 @@ public interface IMCCommand
      */
     default boolean checkPreCondition(final CommandContext<CommandSource> context)
     {
-        return context.getSource().getEntity() instanceof PlayerEntity || context.getSource().hasPermissionLevel(OP_PERM_LEVEL);
+        return context.getSource().getEntity() instanceof PlayerEntity || context.getSource().hasPermission(OP_PERM_LEVEL);
     }
 
     /**
@@ -102,7 +102,7 @@ public interface IMCCommand
             return false;
         }
 
-        return player.getServer().getPlayerList().canSendCommands(player.getGameProfile());
+        return player.getServer().getPlayerList().isOp(player.getGameProfile());
     }
 
     interface ICommandCallbackBuilder<S>

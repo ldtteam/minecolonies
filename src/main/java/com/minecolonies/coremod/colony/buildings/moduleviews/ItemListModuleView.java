@@ -125,7 +125,7 @@ public class ItemListModuleView extends AbstractBuildingModuleView implements II
 
         for (int j = 0; j < size; j++)
         {
-            listsOfItems.add(new ItemStorage(buf.readItemStack()));
+            listsOfItems.add(new ItemStorage(buf.readItem()));
         }
     }
 

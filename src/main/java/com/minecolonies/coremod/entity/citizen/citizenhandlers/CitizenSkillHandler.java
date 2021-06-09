@@ -237,7 +237,7 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
         {
             final AbstractEntityCitizen citizen = data.getEntity().get();
             Network.getNetwork()
-              .sendToTrackingEntity(new VanillaParticleMessage(citizen.getPosX(), citizen.getPosY(), citizen.getPosZ(), ParticleTypes.HAPPY_VILLAGER),
+              .sendToTrackingEntity(new VanillaParticleMessage(citizen.getX(), citizen.getY(), citizen.getZ(), ParticleTypes.HAPPY_VILLAGER),
                 data.getEntity().get());
         }
 

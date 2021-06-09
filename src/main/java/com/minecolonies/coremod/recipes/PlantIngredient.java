@@ -16,6 +16,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.stream.Stream;
 
+import net.minecraft.item.crafting.Ingredient.IItemList;
+import net.minecraft.item.crafting.Ingredient.SingleItemList;
+
 /**
  * An ingredient that can be used in a vanilla recipe to match plantable items.
  *

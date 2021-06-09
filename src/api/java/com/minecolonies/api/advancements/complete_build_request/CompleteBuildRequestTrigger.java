@@ -34,14 +34,14 @@ public class CompleteBuildRequestTrigger extends AbstractCriterionTrigger<Comple
 
     @NotNull
     @Override
-    public CompleteBuildRequestCriterionInstance deserialize(@NotNull final JsonObject jsonObject, @NotNull final ConditionArrayParser jsonDeserializationContext)
+    public CompleteBuildRequestCriterionInstance createInstance(@NotNull final JsonObject jsonObject, @NotNull final ConditionArrayParser jsonDeserializationContext)
     {
         if (jsonObject.has("hut_name"))
         {
-            final String hutName = JSONUtils.getString(jsonObject, "hut_name");
+            final String hutName = JSONUtils.getAsString(jsonObject, "hut_name");
             if (jsonObject.has("level"))
             {
-                final int level = JSONUtils.getInt(jsonObject, "level");
+                final int level = JSONUtils.getAsInt(jsonObject, "level");
                 return new CompleteBuildRequestCriterionInstance(hutName, level);
             }
             return new CompleteBuildRequestCriterionInstance(hutName);
@@ -49,10 +49,10 @@ public class CompleteBuildRequestTrigger extends AbstractCriterionTrigger<Comple
 
         if (jsonObject.has("structure_name"))
         {
-            final StructureName structureName = new StructureName(JSONUtils.getString(jsonObject, "structure_name"));
+            final StructureName structureName = new StructureName(JSONUtils.getAsString(jsonObject, "structure_name"));
             if (jsonObject.has("structure_name"))
             {
-                final int level = JSONUtils.getInt(jsonObject, "level");
+                final int level = JSONUtils.getAsInt(jsonObject, "level");
                 return new CompleteBuildRequestCriterionInstance(structureName, level);
             }
             return new CompleteBuildRequestCriterionInstance(structureName);

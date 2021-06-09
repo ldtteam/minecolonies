@@ -242,7 +242,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
         }
 
         //The miner shouldn't search for a save position. Just let him build from where he currently is.
-        return worker.isWorkerAtSiteWithMove(workFrom, STANDARD_WORKING_RANGE) || MathUtils.twoDimDistance(worker.getPosition(), workFrom) < MIN_WORKING_RANGE;
+        return worker.isWorkerAtSiteWithMove(workFrom, STANDARD_WORKING_RANGE) || MathUtils.twoDimDistance(worker.blockPosition(), workFrom) < MIN_WORKING_RANGE;
     }
 
     /**
@@ -443,7 +443,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
 
         if (!mineBlock(blockToMine, getCurrentWorkingPosition()))
         {
-            worker.swingArm(Hand.MAIN_HAND);
+            worker.swing(Hand.MAIN_HAND);
             return getState();
         }
         worker.decreaseSaturationForContinuousAction();
@@ -463,7 +463,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
     {
         final BuildingStructureHandler<J, B> structure;
         IBuilding colonyBuilding = worker.getCitizenColonyHandler().getColony().getBuildingManager().getBuilding(position);
-        final TileEntity entity = world.getTileEntity(position);
+        final TileEntity entity = world.getBlockEntity(position);
 
         if (removal)
         {
@@ -526,19 +526,19 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
     {
         for (final ItemStack stack : itemList)
         {
-            if (!InventoryUtils.hasItemInItemHandler(placer.getInventory(), stack1 -> stack.isItemEqual(stack1)) && !placer.getOwnBuilding().hasResourceInBucket(stack))
+            if (!InventoryUtils.hasItemInItemHandler(placer.getInventory(), stack1 -> stack.sameItem(stack1)) && !placer.getOwnBuilding().hasResourceInBucket(stack))
             {
                 return RECALC;
             }
         }
 
         final List<ItemStack> foundStacks = InventoryUtils.filterItemHandler(placer.getWorker().getInventoryCitizen(),
-          itemStack -> itemList.stream().anyMatch(targetStack -> targetStack.isItemEqual(itemStack)));
+          itemStack -> itemList.stream().anyMatch(targetStack -> targetStack.sameItem(itemStack)));
         if (force)
         {
             for (final ItemStack foundStack : new ArrayList<>(foundStacks))
             {
-                final Optional<ItemStack> opt = itemList.stream().filter(targetStack -> targetStack.isItemEqual(foundStack)).findFirst();
+                final Optional<ItemStack> opt = itemList.stream().filter(targetStack -> targetStack.sameItem(foundStack)).findFirst();
                 if (opt.isPresent())
                 {
                     final ItemStack stack = opt.get();
@@ -553,7 +553,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
         }
         else
         {
-            itemList.removeIf(itemStack -> ItemStackUtils.isEmpty(itemStack) || foundStacks.stream().anyMatch(target -> target.isItemEqual(itemStack)));
+            itemList.removeIf(itemStack -> ItemStackUtils.isEmpty(itemStack) || foundStacks.stream().anyMatch(target -> target.sameItem(itemStack)));
         }
         itemList.removeIf(itemstack -> itemstack.getItem() instanceof BlockItem && isBlockFree(((BlockItem) itemstack.getItem()).getBlock()));
 
@@ -681,7 +681,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
         final Blueprint blueprint = structurePlacer.getB().getBluePrint();
 
         final BlockPos leftCorner = structurePlacer.getB().getWorldPos().subtract(blueprint.getPrimaryBlockOffset());
-        searchForItems(new AxisAlignedBB(leftCorner, leftCorner.add(blueprint.getSizeX(), blueprint.getSizeY(), blueprint.getSizeZ())));
+        searchForItems(new AxisAlignedBB(leftCorner, leftCorner.offset(blueprint.getSizeX(), blueprint.getSizeY(), blueprint.getSizeZ())));
     }
 
     /**
@@ -714,8 +714,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
     public static boolean isBlockFree(@Nullable final Block block)
     {
         return block == null
-                 || BlockUtils.isWater(block.getDefaultState())
-                 || block.isIn(BlockTags.LEAVES)
+                 || BlockUtils.isWater(block.defaultBlockState())
+                 || block.is(BlockTags.LEAVES)
                  || block == ModBlocks.blockDecorationPlaceholder;
     }
 

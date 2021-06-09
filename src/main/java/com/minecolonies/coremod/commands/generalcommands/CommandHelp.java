@@ -30,10 +30,10 @@ public class CommandHelp implements IMCCommand
             return 0;
         }
 
-        context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.help.wiki"), true);
-        context.getSource().sendFeedback(((IFormattableTextComponent) ForgeHooks.newChatWithLinks(wikiUrl)).append(new StringTextComponent("\n")), true);
-        context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.help.discord"), true);
-        context.getSource().sendFeedback(ForgeHooks.newChatWithLinks(discordUrl), true);
+        context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.help.wiki"), true);
+        context.getSource().sendSuccess(((IFormattableTextComponent) ForgeHooks.newChatWithLinks(wikiUrl)).append(new StringTextComponent("\n")), true);
+        context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.help.discord"), true);
+        context.getSource().sendSuccess(ForgeHooks.newChatWithLinks(discordUrl), true);
 
         return 1;
     }

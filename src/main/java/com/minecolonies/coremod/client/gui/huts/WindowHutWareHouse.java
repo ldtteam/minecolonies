@@ -149,7 +149,7 @@ public class WindowHutWareHouse extends AbstractWindowModuleBuilding<BuildingWar
                     resourceLabel.hide();
                     resourceMissingLabel.hide();
                     neededLabel.hide();
-                    addButton.setText(new StringTextComponent("X").setStyle(Style.EMPTY.setFormatting(TextFormatting.DARK_RED)));
+                    addButton.setText(new StringTextComponent("X").setStyle(Style.EMPTY.withColor(TextFormatting.DARK_RED)));
                     PaneBuilders.tooltipBuilder()
                         .append(new TranslationTextComponent("com.minecolonies.coremod.gui.warehouse.upgrade.disabled.1", building.getBuildingMaxLevel()))
                         .appendNL(new TranslationTextComponent("com.minecolonies.coremod.gui.warehouse.upgrade.disabled.2", building.getBuildingMaxLevel()))

@@ -135,14 +135,14 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         final ItemStack stackCobble = new ItemStack(Blocks.COBBLESTONE);
         final ItemStack stackDirt = new ItemStack(Blocks.DIRT);
 
-        keepX.put(stackLadder::isItemEqual, new Tuple<>(STACKSIZE, true));
-        keepX.put(stackFence::isItemEqual, new Tuple<>(STACKSIZE, true));
-        keepX.put(stackTorch::isItemEqual, new Tuple<>(STACKSIZE, true));
-        keepX.put(stackCobble::isItemEqual, new Tuple<>(STACKSIZE, true));
+        keepX.put(stackLadder::sameItem, new Tuple<>(STACKSIZE, true));
+        keepX.put(stackFence::sameItem, new Tuple<>(STACKSIZE, true));
+        keepX.put(stackTorch::sameItem, new Tuple<>(STACKSIZE, true));
+        keepX.put(stackCobble::sameItem, new Tuple<>(STACKSIZE, true));
 
-        keepX.put(stack -> stack.getItem().isIn(ItemTags.SLABS), new Tuple<>(STACKSIZE, true));
-        keepX.put(stack -> stack.getItem().isIn(ItemTags.PLANKS), new Tuple<>(STACKSIZE, true));
-        keepX.put(stackDirt::isItemEqual, new Tuple<>(STACKSIZE, true));
+        keepX.put(stack -> stack.getItem().is(ItemTags.SLABS), new Tuple<>(STACKSIZE, true));
+        keepX.put(stack -> stack.getItem().is(ItemTags.PLANKS), new Tuple<>(STACKSIZE, true));
+        keepX.put(stackDirt::sameItem, new Tuple<>(STACKSIZE, true));
         keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.PICKAXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
         keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.SHOVEL, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
         keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.AXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
@@ -220,11 +220,11 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         vectorX = compound.getInt(TAG_VECTORX);
         vectorZ = compound.getInt(TAG_VECTORZ);
 
-        if (compound.keySet().contains(TAG_ACTIVE))
+        if (compound.getAllKeys().contains(TAG_ACTIVE))
         {
             activeNode = Node.createFromNBT(compound.getCompound(TAG_ACTIVE));
         }
-        else if (compound.keySet().contains(TAG_OLD))
+        else if (compound.getAllKeys().contains(TAG_OLD))
         {
             oldNode = Node.createFromNBT(compound.getCompound(TAG_OLD));
         }

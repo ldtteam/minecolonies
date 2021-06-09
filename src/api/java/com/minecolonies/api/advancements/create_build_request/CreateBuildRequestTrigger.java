@@ -38,14 +38,14 @@ public class CreateBuildRequestTrigger extends AbstractCriterionTrigger<CreateBu
     }
 
     @Override
-    public CreateBuildRequestCriterionInstance deserialize(final JsonObject jsonObject, final ConditionArrayParser conditionArrayParser)
+    public CreateBuildRequestCriterionInstance createInstance(final JsonObject jsonObject, final ConditionArrayParser conditionArrayParser)
     {
         if (jsonObject.has("hut_name"))
         {
-            final String hutName = JSONUtils.getString(jsonObject, "hut_name");
+            final String hutName = JSONUtils.getAsString(jsonObject, "hut_name");
             if (jsonObject.has("level"))
             {
-                final int level = JSONUtils.getInt(jsonObject, "level");
+                final int level = JSONUtils.getAsInt(jsonObject, "level");
                 return new CreateBuildRequestCriterionInstance(hutName, level);
             }
             return new CreateBuildRequestCriterionInstance(hutName);
@@ -53,10 +53,10 @@ public class CreateBuildRequestTrigger extends AbstractCriterionTrigger<CreateBu
 
         if (jsonObject.has("structure_name"))
         {
-            final StructureName structureName = new StructureName(JSONUtils.getString(jsonObject, "structure_name"));
+            final StructureName structureName = new StructureName(JSONUtils.getAsString(jsonObject, "structure_name"));
             if (jsonObject.has("structure_name"))
             {
-                final int level = JSONUtils.getInt(jsonObject, "level");
+                final int level = JSONUtils.getAsInt(jsonObject, "level");
                 return new CreateBuildRequestCriterionInstance(structureName, level);
             }
             return new CreateBuildRequestCriterionInstance(structureName);

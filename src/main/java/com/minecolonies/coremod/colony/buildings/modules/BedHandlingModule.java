@@ -60,9 +60,9 @@ public class BedHandlingModule extends AbstractBuildingModule implements IModule
         BlockPos registrationPosition = pos;
         if (blockState.getBlock() instanceof BedBlock)
         {
-            if (blockState.get(BedBlock.PART) == BedPart.FOOT)
+            if (blockState.getValue(BedBlock.PART) == BedPart.FOOT)
             {
-                registrationPosition = registrationPosition.offset(blockState.get(BedBlock.HORIZONTAL_FACING));
+                registrationPosition = registrationPosition.relative(blockState.getValue(BedBlock.FACING));
             }
 
             bedList.add(registrationPosition);
@@ -89,10 +89,10 @@ public class BedHandlingModule extends AbstractBuildingModule implements IModule
             final BlockState state = world.getBlockState(pos);
             if (WorldUtil.isBlockLoaded(world, pos)
                   && state.getBlock() instanceof BedBlock
-                  && state.get(BedBlock.OCCUPIED)
-                  && state.get(BedBlock.PART).equals(BedPart.HEAD))
+                  && state.getValue(BedBlock.OCCUPIED)
+                  && state.getValue(BedBlock.PART).equals(BedPart.HEAD))
             {
-                world.setBlockState(pos, state.with(BedBlock.OCCUPIED, false), 0x03);
+                world.setBlock(pos, state.setValue(BedBlock.OCCUPIED, false), 0x03);
             }
         }
     }

@@ -98,7 +98,7 @@ public class WindowBuilderResModule extends AbstractModuleWindow
             {
                 amountToSet =
                   InventoryUtils.getItemCountInItemHandler(new InvWrapper(inventory),
-                    stack -> !ItemStackUtils.isEmpty(stack) && stack.isItemEqual(resource.getItemStack()));
+                    stack -> !ItemStackUtils.isEmpty(stack) && stack.sameItem(resource.getItemStack()));
             }
             resource.setPlayerAmount(amountToSet);
             supplied += Math.min(resource.getAvailable(), resource.getAmount());

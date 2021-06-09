@@ -18,7 +18,7 @@ public class ArmyPopulationCriterionInstance extends CriterionInstance
      */
     public ArmyPopulationCriterionInstance(final int populationCount)
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_ARMY_POPULATION), EntityPredicate.AndPredicate.ANY_AND);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_ARMY_POPULATION), EntityPredicate.AndPredicate.ANY);
 
         this.populationCount = populationCount;
     }

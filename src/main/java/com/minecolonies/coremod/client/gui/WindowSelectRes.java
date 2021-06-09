@@ -80,7 +80,7 @@ public class WindowSelectRes extends AbstractWindowSkeleton
             this.findPaneOfTypeByID("qtylabel", Text.class).hide();
         }
         this.findPaneOfTypeByID("resourceIcon", ItemIcon.class).setItem(new ItemStack(Items.AIR));
-        this.findPaneOfTypeByID("resourceName", Text.class).setText(new ItemStack(Items.AIR).getDisplayName());
+        this.findPaneOfTypeByID("resourceName", Text.class).setText(new ItemStack(Items.AIR).getHoverName());
         this.test = test;
         this.consumer = consumer;
     }
@@ -95,7 +95,7 @@ public class WindowSelectRes extends AbstractWindowSkeleton
         final int row = this.resourceList.getListElementIndexByPane(button);
         final ItemStack to = this.allItems.get(row);
         this.findPaneOfTypeByID("resourceIcon", ItemIcon.class).setItem(to);
-        this.findPaneOfTypeByID("resourceName", Text.class).setText(to.getDisplayName());
+        this.findPaneOfTypeByID("resourceName", Text.class).setText(to.getHoverName());
     }
 
     /**
@@ -140,9 +140,9 @@ public class WindowSelectRes extends AbstractWindowSkeleton
         this.allItems.clear();
         this.allItems.addAll(ImmutableList.copyOf(StreamSupport.stream(Spliterators.spliteratorUnknownSize(ForgeRegistries.ITEMS.iterator(), Spliterator.ORDERED), false)
                                                     .map(ItemStack::new)
-                                                    .filter((stack) -> (test.test(stack) && (this.filter.isEmpty() || stack.getTranslationKey().toLowerCase(Locale.US)
+                                                    .filter((stack) -> (test.test(stack) && (this.filter.isEmpty() || stack.getDescriptionId().toLowerCase(Locale.US)
                                                                                                                         .contains(this.filter.toLowerCase(Locale.US))
-                                                                                                                   || stack.getDisplayName().getString().toLowerCase(Locale.US)
+                                                                                                                   || stack.getHoverName().getString().toLowerCase(Locale.US)
                                                                                                                         .contains(filter.toLowerCase(Locale.US)))))
                                                     .collect(Collectors.toList())));
         this.updateResourceList();
@@ -181,7 +181,7 @@ public class WindowSelectRes extends AbstractWindowSkeleton
             {
                 final ItemStack resource = tempRes.get(index);
                 final Text resourceLabel = rowPane.findPaneOfTypeByID("resourceName", Text.class);
-                resourceLabel.setText(resource.getDisplayName());
+                resourceLabel.setText(resource.getHoverName());
                 resourceLabel.setColors(WHITE);
                 rowPane.findPaneOfTypeByID("resourceIcon", ItemIcon.class).setItem(resource);
             }

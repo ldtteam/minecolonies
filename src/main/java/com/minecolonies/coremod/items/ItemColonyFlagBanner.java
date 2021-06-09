@@ -27,6 +27,8 @@ import java.util.List;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
+import net.minecraft.item.Item.Properties;
+
 /**
  * This item represents the colony flag banner, both wall and floor blocks.
  * Allows duplication of other banner pattern lists to its own default
@@ -35,7 +37,7 @@ public class ItemColonyFlagBanner extends BannerItem
 {
     public ItemColonyFlagBanner(String name, ItemGroup tab, Properties properties)
     {
-        this(ModBlocks.blockColonyBanner, ModBlocks.blockColonyWallBanner, properties.maxStackSize(16).group(tab));
+        this(ModBlocks.blockColonyBanner, ModBlocks.blockColonyWallBanner, properties.stacksTo(16).tab(tab));
         setRegistryName(Constants.MOD_ID, name);
     }
 
@@ -46,12 +48,12 @@ public class ItemColonyFlagBanner extends BannerItem
 
     @NotNull
     @Override
-    public ActionResultType onItemUse(ItemUseContext context)
+    public ActionResultType useOn(ItemUseContext context)
     {
         // Duplicate the patterns of the banner that was clicked on
-        TileEntity te = context.getWorld().getTileEntity(context.getPos());
-        BlockState state = context.getWorld().getBlockState(context.getPos());
-        ItemStack stack = context.getPlayer().getHeldItemMainhand();
+        TileEntity te = context.getLevel().getBlockEntity(context.getClickedPos());
+        BlockState state = context.getLevel().getBlockState(context.getClickedPos());
+        ItemStack stack = context.getPlayer().getMainHandItem();
 
         if (te instanceof BannerTileEntity || te instanceof TileEntityColonyFlag)
         {
@@ -63,7 +65,7 @@ public class ItemColonyFlagBanner extends BannerItem
             }
             else
             {
-                source = (context.getWorld().isRemote ? ((TileEntityColonyFlag) te).getItemClient() : ((TileEntityColonyFlag) te).getItemServer())
+                source = (context.getLevel().isClientSide ? ((TileEntityColonyFlag) te).getItemClient() : ((TileEntityColonyFlag) te).getItemServer())
                            .getTag().getCompound("BlockEntityTag");
             }
 
@@ -79,18 +81,18 @@ public class ItemColonyFlagBanner extends BannerItem
                 patternList.add(0, nbt);
             }
 
-            CompoundNBT tag = stack.getOrCreateChildTag("BlockEntityTag");
+            CompoundNBT tag = stack.getOrCreateTagElement("BlockEntityTag");
             tag.put(TAG_BANNER_PATTERNS, patternList);
 
             return ActionResultType.SUCCESS;
         }
-        return super.onItemUse(context);
+        return super.useOn(context);
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn)
+    public void appendHoverText(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn)
     {
-        super.addInformation(stack, worldIn, tooltip, flagIn);
+        super.appendHoverText(stack, worldIn, tooltip, flagIn);
 
         // Remove the base, as they have no translations (Mojang were lazy. Or maybe saving space?)
         if (tooltip.size() > 1) tooltip.remove(1);

@@ -337,7 +337,7 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
                     if(!displayStacks.isEmpty())
                     {
                         rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Text.class).setText(
-                          request.getDisplayStacks().get((lifeCount / LIFE_COUNT_DIVIDER) % displayStacks.size()).getDisplayName());
+                          request.getDisplayStacks().get((lifeCount / LIFE_COUNT_DIVIDER) % displayStacks.size()).getHoverName());
                     }
                 }
                 else

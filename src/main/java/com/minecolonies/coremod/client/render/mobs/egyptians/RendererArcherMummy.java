@@ -26,7 +26,7 @@ public class RendererArcherMummy extends AbstractRendererEgyptian<AbstractEntity
     }
 
     @Override
-    public ResourceLocation getEntityTexture(final AbstractEntityEgyptian entity)
+    public ResourceLocation getTextureLocation(final AbstractEntityEgyptian entity)
     {
         return TEXTURE;
     }

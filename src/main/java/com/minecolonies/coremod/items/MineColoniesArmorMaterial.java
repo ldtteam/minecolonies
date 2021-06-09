@@ -43,31 +43,31 @@ public class MineColoniesArmorMaterial implements IArmorMaterial
     }
 
     @Override
-    public int getDurability(@NotNull final EquipmentSlotType equipmentSlotType)
+    public int getDurabilityForSlot(@NotNull final EquipmentSlotType equipmentSlotType)
     {
         return MAX_DAMAGE_ARRAY[equipmentSlotType.getIndex()] * this.maxDamageFactor;
     }
 
     @Override
-    public int getDamageReductionAmount(@NotNull final EquipmentSlotType equipmentSlotType)
+    public int getDefenseForSlot(@NotNull final EquipmentSlotType equipmentSlotType)
     {
         return this.damageReductionAmountArray[equipmentSlotType.getIndex()];
     }
 
     @Override
-    public int getEnchantability()
+    public int getEnchantmentValue()
     {
         return enchantability;
     }
 
     @Override
-    public SoundEvent getSoundEvent()
+    public SoundEvent getEquipSound()
     {
         return soundEvent;
     }
 
     @Override
-    public Ingredient getRepairMaterial()
+    public Ingredient getRepairIngredient()
     {
         return this.repairMaterial;
     }

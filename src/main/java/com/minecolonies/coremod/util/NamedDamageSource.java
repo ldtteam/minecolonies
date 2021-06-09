@@ -27,9 +27,9 @@ public class NamedDamageSource extends EntityDamageSource
 
     @NotNull
     @Override
-    public ITextComponent getDeathMessage(LivingEntity entityLivingBaseIn)
+    public ITextComponent getLocalizedDeathMessage(LivingEntity entityLivingBaseIn)
     {
-        return new TranslationTextComponent(this.damageType, entityLivingBaseIn.getName());
+        return new TranslationTextComponent(this.msgId, entityLivingBaseIn.getName());
     }
 
     /**
@@ -37,7 +37,7 @@ public class NamedDamageSource extends EntityDamageSource
      *
      * @return false
      */
-    public boolean isDifficultyScaled()
+    public boolean scalesWithDifficulty()
     {
         return false;
     }

@@ -159,23 +159,23 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements
     {
         super(type, world);
         worldTimeAtSpawn = world.getGameTime();
-        this.enablePersistence();
+        this.setPersistenceRequired();
         this.goalSelector = new CustomGoalSelector(this.goalSelector);
         this.targetSelector = new CustomGoalSelector(this.targetSelector);
-        this.experienceValue = BARBARIAN_EXP_DROP;
+        this.xpReward = BARBARIAN_EXP_DROP;
         RaiderMobUtils.setupMobAi(this);
         this.setInvulnerable(true);
         RaiderMobUtils.setEquipment(this);
     }
 
     @Override
-    public void applyEntityCollision(@NotNull final Entity entityIn)
+    public void push(@NotNull final Entity entityIn)
     {
         if (invulTime > 0 || (collisionCounter += 3) > COLL_THRESHOLD)
         {
             return;
         }
-        super.applyEntityCollision(entityIn);
+        super.push(entityIn);
     }
 
     @Override
@@ -183,16 +183,16 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements
     {
         super.playAmbientSound();
         final SoundEvent soundevent = this.getAmbientSound();
-        if (soundevent != null && world.rand.nextInt(OUT_OF_ONE_HUNDRED) <= ONE)
+        if (soundevent != null && level.random.nextInt(OUT_OF_ONE_HUNDRED) <= ONE)
         {
-            this.playSound(soundevent, this.getSoundVolume(), this.getSoundPitch());
+            this.playSound(soundevent, this.getSoundVolume(), this.getVoicePitch());
         }
     }
 
     @Override
-    public boolean canDespawn(final double distanceToClosestPlayer)
+    public boolean removeWhenFarAway(final double distanceToClosestPlayer)
     {
-        return shouldDespawn() || (world != null && world.isAreaLoaded(this.getPosition(), 3) && getColony() == null);
+        return shouldDespawn() || (level != null && level.isAreaLoaded(this.blockPosition(), 3) && getColony() == null);
     }
 
     /**
@@ -209,19 +209,19 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements
      */
     private boolean shouldDespawn()
     {
-        return worldTimeAtSpawn != 0 && (world.getGameTime() - worldTimeAtSpawn) >= TICKS_TO_DESPAWN;
+        return worldTimeAtSpawn != 0 && (level.getGameTime() - worldTimeAtSpawn) >= TICKS_TO_DESPAWN;
     }
 
     @NotNull
     @Override
-    public AbstractAdvancedPathNavigate getNavigator()
+    public AbstractAdvancedPathNavigate getNavigation()
     {
         if (this.newNavigator == null)
         {
             this.newNavigator = IPathNavigateRegistry.getInstance().getNavigateFor(this);
-            this.navigator = newNavigator;
-            this.newNavigator.setCanSwim(true);
-            this.newNavigator.getNodeProcessor().setCanEnterDoors(true);
+            this.navigation = newNavigator;
+            this.newNavigator.setCanFloat(true);
+            this.newNavigator.getNodeEvaluator().setCanPassDoors(true);
             newNavigator.getPathingOptions().withJumpDropCost(1.1D);
             PathingStuckHandler stuckHandler = PathingStuckHandler.createStuckHandler()
                                                  .withTakeDamageOnStuck(0.4f)
@@ -299,14 +299,14 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements
     }
 
     @Override
-    public void writeAdditional(final CompoundNBT compound)
+    public void addAdditionalSaveData(final CompoundNBT compound)
     {
         compound.putLong(TAG_TIME, worldTimeAtSpawn);
         compound.putInt(TAG_STUCK_COUNTER, stuckCounter);
         compound.putInt(TAG_LADDER_COUNTER, ladderCounter);
         compound.putInt(TAG_COLONY_ID, this.colony == null ? 0 : colony.getID());
         compound.putInt(TAG_EVENT_ID, eventID);
-        super.writeAdditional(compound);
+        super.addAdditionalSaveData(compound);
     }
 
     /**
@@ -321,7 +321,7 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements
     }
 
     @Override
-    public void readAdditional(final CompoundNBT compound)
+    public void readAdditionalSaveData(final CompoundNBT compound)
     {
         worldTimeAtSpawn = compound.getLong(TAG_TIME);
         stuckCounter = compound.getInt(TAG_STUCK_COUNTER);
@@ -332,7 +332,7 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements
             final int colonyId = compound.getInt(TAG_COLONY_ID);
             if (colonyId != 0)
             {
-                setColony(IColonyManager.getInstance().getColonyByWorld(colonyId, world));
+                setColony(IColonyManager.getInstance().getColonyByWorld(colonyId, level));
             }
         }
 
@@ -341,11 +341,11 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements
             this.remove();
         }
 
-        super.readAdditional(compound);
+        super.readAdditionalSaveData(compound);
     }
 
     @Override
-    public void livingTick()
+    public void aiStep()
     {
         if (invulTime > 0)
         {
@@ -361,9 +361,9 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements
             collisionCounter--;
         }
 
-        if (world.isRemote)
+        if (level.isClientSide)
         {
-            super.livingTick();
+            super.aiStep();
             return;
         }
 
@@ -371,12 +371,12 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements
         {
             if (worldTimeAtSpawn == 0)
             {
-                worldTimeAtSpawn = world.getGameTime();
+                worldTimeAtSpawn = level.getGameTime();
             }
 
             if (shouldDespawn())
             {
-                this.onDeath(new DamageSource("despawn"));
+                this.die(new DamageSource("despawn"));
                 this.remove();
                 return;
             }
@@ -390,12 +390,12 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements
             {
                 currentCount = COUNTDOWN_SECOND_MULTIPLIER * TIME_TO_COUNTDOWN;
 
-                if (!this.getHeldItemMainhand().isEmpty() && SPEED_EFFECT != null && this.getHeldItemMainhand().getItem() instanceof IChiefSwordItem
+                if (!this.getMainHandItem().isEmpty() && SPEED_EFFECT != null && this.getMainHandItem().getItem() instanceof IChiefSwordItem
                       && MinecoloniesAPIProxy.getInstance().getConfig().getServer().barbarianHordeDifficulty.get() >= BARBARIAN_HORDE_DIFFICULTY_FIVE)
                 {
                     RaiderMobUtils.getBarbariansCloseToEntity(this, SPEED_EFFECT_DISTANCE)
-                      .stream().filter(entity -> !entity.isPotionActive(Effects.SPEED))
-                      .forEach(entity -> entity.addPotionEffect(new EffectInstance(Effects.SPEED, SPEED_EFFECT_DURATION, SPEED_EFFECT_MULTIPLIER)));
+                      .stream().filter(entity -> !entity.hasEffect(Effects.MOVEMENT_SPEED))
+                      .forEach(entity -> entity.addEffect(new EffectInstance(Effects.MOVEMENT_SPEED, SPEED_EFFECT_DURATION, SPEED_EFFECT_MULTIPLIER)));
                 }
             }
             else
@@ -405,12 +405,12 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements
         }
         currentTick++;
 
-        super.livingTick();
+        super.aiStep();
     }
 
     @org.jetbrains.annotations.Nullable
     @Override
-    public ILivingEntityData onInitialSpawn(
+    public ILivingEntityData finalizeSpawn(
       final IServerWorld worldIn,
       final DifficultyInstance difficultyIn,
       final SpawnReason reason,
@@ -418,13 +418,13 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements
       @org.jetbrains.annotations.Nullable final CompoundNBT dataTag)
     {
         RaiderMobUtils.setEquipment(this);
-        return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+        return super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
     }
 
     @Override
     public void remove()
     {
-        if (!world.isRemote && colony != null && eventID > 0)
+        if (!level.isClientSide && colony != null && eventID > 0)
         {
             colony.getEventManager().unregisterEntity(this, eventID);
         }
@@ -457,19 +457,19 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements
     }
 
     @Override
-    public void onDeath(@NotNull final DamageSource cause)
+    public void die(@NotNull final DamageSource cause)
     {
-        super.onDeath(cause);
-        if (!world.isRemote && getColony() != null)
+        super.die(cause);
+        if (!level.isClientSide && getColony() != null)
         {
             getColony().getEventManager().onEntityDeath(this, eventID);
         }
     }
 
     @Override
-    public boolean attackEntityFrom(@NotNull final DamageSource damageSource, final float damage)
+    public boolean hurt(@NotNull final DamageSource damageSource, final float damage)
     {
-        if (damageSource.getImmediateSource() == null)
+        if (damageSource.getDirectEntity() == null)
         {
             if (envDamageImmunity)
             {
@@ -485,7 +485,7 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements
                 return false;
             }
         }
-        else if (!world.isRemote())
+        else if (!level.isClientSide())
         {
             final IColonyEvent event = colony.getEventManager().getEventByID(eventID);
             if (event instanceof IColonyCampFireRaidEvent)
@@ -493,20 +493,20 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements
                 ((IColonyCampFireRaidEvent) event).setCampFireTime(0);
             }
 
-            final Entity source = damageSource.getTrueSource();
+            final Entity source = damageSource.getEntity();
             if (source instanceof PlayerEntity)
             {
-                final float raiderDamageEnchantLevel = EnchantmentHelper.getEnchantmentLevel(ModEnchants.raiderDamage, ((PlayerEntity) source).getHeldItemMainhand());
+                final float raiderDamageEnchantLevel = EnchantmentHelper.getItemEnchantmentLevel(ModEnchants.raiderDamage, ((PlayerEntity) source).getMainHandItem());
 
                 // Up to 7 damage are converted to health scaling damage, 7 is the damage of a diamond sword
                 float baseScalingDamage = Math.min(damage, MAX_SCALED_DAMAGE);
                 float totalWithScaled =
                   Math.max(damage, (damage - baseScalingDamage) + baseScalingDamage * HP_PERCENT_PER_DMG * this.getMaxHealth() * (1 + (raiderDamageEnchantLevel / 5)));
-                return super.attackEntityFrom(damageSource, totalWithScaled);
+                return super.hurt(damageSource, totalWithScaled);
             }
         }
 
-        return super.attackEntityFrom(damageSource, damage);
+        return super.hurt(damageSource, damage);
     }
 
     /**
@@ -515,13 +515,13 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements
      */
     public static AttributeModifierMap.MutableAttribute getDefaultAttributes()
     {
-        return LivingEntity.registerAttributes()
-                 .createMutableAttribute(MOB_ATTACK_DAMAGE)
-                 .createMutableAttribute(Attributes.MAX_HEALTH)
-                 .createMutableAttribute(Attributes.ARMOR)
-                 .createMutableAttribute(Attributes.MOVEMENT_SPEED, MOVEMENT_SPEED)
-                 .createMutableAttribute(Attributes.FOLLOW_RANGE, FOLLOW_RANGE * 2)
-                 .createMutableAttribute(Attributes.ATTACK_DAMAGE, Attributes.ATTACK_DAMAGE.getDefaultValue());
+        return LivingEntity.createLivingAttributes()
+                 .add(MOB_ATTACK_DAMAGE)
+                 .add(Attributes.MAX_HEALTH)
+                 .add(Attributes.ARMOR)
+                 .add(Attributes.MOVEMENT_SPEED, MOVEMENT_SPEED)
+                 .add(Attributes.FOLLOW_RANGE, FOLLOW_RANGE * 2)
+                 .add(Attributes.ATTACK_DAMAGE, Attributes.ATTACK_DAMAGE.getDefaultValue());
     }
 
     /**
@@ -541,9 +541,9 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements
      * Get the position (blckpos)
      * @return the pos.
      */
-    public BlockPos getPosition()
+    public BlockPos blockPosition()
     {
-        return new BlockPos(getPosX(), getPosY(), getPosZ());
+        return new BlockPos(getX(), getY(), getZ());
     }
 
     public int getEventID()
@@ -599,7 +599,7 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements
 
         if (difficulty >= TEAM_DIFFICULTY)
         {
-            world.getScoreboard().addPlayerToTeam(getScoreboardName(), checkOrCreateTeam());
+            level.getScoreboard().addPlayerToTeam(getScoreboardName(), checkOrCreateTeam());
         }
 
         this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(baseHealth);
@@ -613,12 +613,12 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements
      */
     private ScorePlayerTeam checkOrCreateTeam()
     {
-        if (this.world.getScoreboard().getTeam(getTeamName()) == null)
+        if (this.level.getScoreboard().getPlayerTeam(getTeamName()) == null)
         {
-            this.world.getScoreboard().createTeam(getTeamName());
-            this.world.getScoreboard().getTeam(getTeamName()).setAllowFriendlyFire(false);
+            this.level.getScoreboard().addPlayerTeam(getTeamName());
+            this.level.getScoreboard().getPlayerTeam(getTeamName()).setAllowFriendlyFire(false);
         }
-        return this.world.getScoreboard().getTeam(getTeamName());
+        return this.level.getScoreboard().getPlayerTeam(getTeamName());
     }
 
     /**

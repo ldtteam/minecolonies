@@ -42,7 +42,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Abstract class for all minecolonies blocks.
  * <p>
- * The method {@link AbstractBlockHut#getName()} is abstract.
+ * The method {@link AbstractBlockHut#getBlockName()} is abstract.
  * <p>
  * All AbstractBlockHut[something] should extend this class.
  */
@@ -57,7 +57,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     /**
      * The direction the block is facing.
      */
-    public static final DirectionProperty FACING = HorizontalBlock.HORIZONTAL_FACING;
+    public static final DirectionProperty FACING = HorizontalBlock.FACING;
 
     /**
      * The default hardness.
@@ -72,7 +72,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     /**
      * Smaller shape.
      */
-    private static final VoxelShape SHAPE = VoxelShapes.create(0.1, 0.1, 0.1, 0.9, 0.9, 0.9);
+    private static final VoxelShape SHAPE = VoxelShapes.box(0.1, 0.1, 0.1, 0.9, 0.9, 0.9);
 
     /**
      * The hut's lower-case building-registry-compatible name.
@@ -86,14 +86,14 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
      */
     public AbstractBlockHut()
     {
-        super(Properties.create(Material.WOOD).hardnessAndResistance(HARDNESS, RESISTANCE).notSolid());
-        setRegistryName(getName());
-        this.setDefaultState(this.getDefaultState().with(FACING, Direction.NORTH));
-        this.name = getName();
+        super(Properties.of(Material.WOOD).strength(HARDNESS, RESISTANCE).noOcclusion());
+        setRegistryName(getBlockName());
+        this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH));
+        this.name = getBlockName();
     }
 
     @Override
-    public float getPlayerRelativeBlockHardness(final BlockState state, @NotNull final PlayerEntity player, @NotNull final IBlockReader world, @NotNull final BlockPos pos)
+    public float getDestroyProgress(final BlockState state, @NotNull final PlayerEntity player, @NotNull final IBlockReader world, @NotNull final BlockPos pos)
     {
         return MinecoloniesAPIProxy.getInstance().getConfig().getServer().pvp_mode.get() ? 1/(HARDNESS * HARDNESS_PVP_FACTOR) : 1/HARDNESS;
     }
@@ -107,10 +107,10 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
      */
     public AbstractBlockHut(final Properties properties)
     {
-        super(properties.notSolid());
-        setRegistryName(getName());
-        this.setDefaultState(this.getDefaultState().with(FACING, Direction.NORTH));
-        this.name = getName();
+        super(properties.noOcclusion());
+        setRegistryName(getBlockName());
+        this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH));
+        this.name = getBlockName();
     }
 
     /**
@@ -118,7 +118,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
      *
      * @return Name of the block.
      */
-    public abstract String getName();
+    public abstract String getBlockName();
 
     @Nullable
     @Override
@@ -151,7 +151,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
 
     @NotNull
     @Override
-    public ActionResultType onBlockActivated(
+    public ActionResultType use(
       final BlockState state,
       final World worldIn,
       final BlockPos pos,
@@ -162,9 +162,9 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
        /*
         If the world is client, open the gui of the building
          */
-        if (worldIn.isRemote)
+        if (worldIn.isClientSide)
         {
-            @Nullable final IBuildingView building = IColonyManager.getInstance().getBuildingView(worldIn.getDimensionKey(), pos);
+            @Nullable final IBuildingView building = IColonyManager.getInstance().getBuildingView(worldIn.dimension(), pos);
 
             if (building == null)
             {
@@ -184,7 +184,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
                 return ActionResultType.FAIL;
             }
 
-            building.openGui(player.isSneaking());
+            building.openGui(player.isShiftKeyDown());
         }
         return ActionResultType.SUCCESS;
     }
@@ -193,15 +193,15 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     @Override
     public BlockState getStateForPlacement(final BlockItemUseContext context)
     {
-        @NotNull final Direction facing = (context.getPlayer() == null) ? Direction.NORTH : Direction.fromAngle(context.getPlayer().rotationYaw);
-        return this.getDefaultState().with(FACING, facing);
+        @NotNull final Direction facing = (context.getPlayer() == null) ? Direction.NORTH : Direction.fromYRot(context.getPlayer().yRot);
+        return this.defaultBlockState().setValue(FACING, facing);
     }
 
     @NotNull
     @Override
     public BlockState rotate(final BlockState state, final Rotation rot)
     {
-        return state.with(FACING, rot.rotate(state.get(FACING)));
+        return state.setValue(FACING, rot.rotate(state.getValue(FACING)));
     }
 
     /**
@@ -214,22 +214,22 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
      * @param state   the state the placed block is in.
      * @param placer  the player placing the block.
      * @param stack   the itemstack from where the block was placed.
-     * @see Block#onBlockPlacedBy(World, BlockPos, BlockState, LivingEntity, ItemStack)
+     * @see Block#setPlacedBy(World, BlockPos, BlockState, LivingEntity, ItemStack)
      */
     @Override
-    public void onBlockPlacedBy(@NotNull final World worldIn, @NotNull final BlockPos pos, final BlockState state, final LivingEntity placer, final ItemStack stack)
+    public void setPlacedBy(@NotNull final World worldIn, @NotNull final BlockPos pos, final BlockState state, final LivingEntity placer, final ItemStack stack)
     {
-        super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
+        super.setPlacedBy(worldIn, pos, state, placer, stack);
 
         /*
         Only work on server side
         */
-        if (worldIn.isRemote)
+        if (worldIn.isClientSide)
         {
             return;
         }
 
-        final TileEntity tileEntity = worldIn.getTileEntity(pos);
+        final TileEntity tileEntity = worldIn.getBlockEntity(pos);
         if (tileEntity instanceof TileEntityColonyBuilding)
         {
             @NotNull final TileEntityColonyBuilding hut = (TileEntityColonyBuilding) tileEntity;
@@ -248,7 +248,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     }
 
     @Override
-    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder)
+    protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder)
     {
         builder.add(FACING);
     }
@@ -265,20 +265,20 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
      * @param stack   the itemstack from where the block was placed.
      * @param mirror  the mirror used.
      * @param style   the style of the building
-     * @see Block#onBlockPlacedBy(World, BlockPos, BlockState, LivingEntity, ItemStack)
+     * @see Block#setPlacedBy(World, BlockPos, BlockState, LivingEntity, ItemStack)
      */
-    public void onBlockPlacedByBuildTool(
+    public void setPlacedByBuildTool(
       @NotNull final World worldIn, @NotNull final BlockPos pos,
       final BlockState state, final LivingEntity placer, final ItemStack stack, final boolean mirror, final String style)
     {
-        final TileEntity tileEntity = worldIn.getTileEntity(pos);
+        final TileEntity tileEntity = worldIn.getBlockEntity(pos);
         if (tileEntity instanceof AbstractTileEntityColonyBuilding)
         {
             ((AbstractTileEntityColonyBuilding) tileEntity).setMirror(mirror);
             ((AbstractTileEntityColonyBuilding) tileEntity).setStyle(style);
         }
 
-        onBlockPlacedBy(worldIn, pos, state, placer, stack);
+        setPlacedBy(worldIn, pos, state, placer, stack);
     }
 
     @Override

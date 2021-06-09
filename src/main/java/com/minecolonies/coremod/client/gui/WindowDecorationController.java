@@ -53,7 +53,7 @@ public class WindowDecorationController extends AbstractWindowSkeleton
     /**
      * The world the player of the GUI is in.
      */
-    private final World world = Minecraft.getInstance().world;
+    private final World world = Minecraft.getInstance().level;
 
     /**
      * If the player opening the GUI is an isCreative.
@@ -68,7 +68,7 @@ public class WindowDecorationController extends AbstractWindowSkeleton
     public WindowDecorationController(final BlockPos b)
     {
         super(Constants.MOD_ID + HUT_NAME_RESOURCE_SUFFIX);
-        this.controller = (TileEntityDecorationController) world.getTileEntity(b);
+        this.controller = (TileEntityDecorationController) world.getBlockEntity(b);
         registerButton(BUTTON_BUILD, this::confirmClicked);
         registerButton(BUTTON_REPAIR, this::repairClicked);
         registerButton(BUTTON_DONE, this::doneClicked);
@@ -80,13 +80,13 @@ public class WindowDecorationController extends AbstractWindowSkeleton
         final TextField textFieldLevel = findPaneOfTypeByID(INPUT_LEVEL, TextField.class);
         textFieldLevel.setText(String.valueOf(controller.getLevel()));
 
-        final IColonyView view = IColonyManager.getInstance().getClosestColonyView(world, controller.getPos());
+        final IColonyView view = IColonyManager.getInstance().getClosestColonyView(world, controller.getBlockPos());
 
         final Button buttonBuild = findPaneOfTypeByID(BUTTON_BUILD, Button.class);
 
         if (view != null)
         {
-            final Optional<WorkOrderView> wo = view.getWorkOrders().stream().filter(w -> w.getPos().equals(this.controller.getPos())).findFirst();
+            final Optional<WorkOrderView> wo = view.getWorkOrders().stream().filter(w -> w.getPos().equals(this.controller.getBlockPos())).findFirst();
             if (wo.isPresent())
             {
 
@@ -172,7 +172,7 @@ public class WindowDecorationController extends AbstractWindowSkeleton
             try
             {
                 final int level = Integer.parseInt(levelString);
-                Network.getNetwork().sendToServer(new DecorationControllerUpdateMessage(controller.getPos(), name, level));
+                Network.getNetwork().sendToServer(new DecorationControllerUpdateMessage(controller.getBlockPos(), name, level));
                 controller.setSchematicName(name);
                 controller.setLevel(level);
                 close();
@@ -190,7 +190,7 @@ public class WindowDecorationController extends AbstractWindowSkeleton
     private void confirmClicked()
     {
         Network.getNetwork()
-          .sendToServer(new DecorationBuildRequestMessage(controller.getPos(), controller.getSchematicName(), controller.getLevel() + 1, world.getDimensionKey()));
+          .sendToServer(new DecorationBuildRequestMessage(controller.getBlockPos(), controller.getSchematicName(), controller.getLevel() + 1, world.dimension()));
         close();
     }
 
@@ -200,7 +200,7 @@ public class WindowDecorationController extends AbstractWindowSkeleton
     private void repairClicked()
     {
         Network.getNetwork()
-          .sendToServer(new DecorationBuildRequestMessage(controller.getPos(), controller.getSchematicName(), controller.getLevel(), world.getDimensionKey()));
+          .sendToServer(new DecorationBuildRequestMessage(controller.getBlockPos(), controller.getSchematicName(), controller.getLevel(), world.dimension()));
         close();
     }
 }

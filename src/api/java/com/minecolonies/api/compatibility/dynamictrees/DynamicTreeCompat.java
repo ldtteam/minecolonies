@@ -227,7 +227,7 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
                 return;
             }
 
-            final RegistryKey<World> dim = world.getDimensionKey();
+            final RegistryKey<World> dim = world.dimension();
             FakePlayer fake = fakePlayers.get(dim);
 
             if (fake == null)
@@ -239,12 +239,12 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
 
             if (workerPos != null)
             {
-                fake.setPosition(workerPos.getX(), workerPos.getY(), workerPos.getZ());
+                fake.setPos(workerPos.getX(), workerPos.getY(), workerPos.getZ());
             }
 
             if (toolToUse != null)
             {
-                fake.setHeldItem(Hand.MAIN_HAND, toolToUse);
+                fake.getItemInHand(Hand.MAIN_HAND, toolToUse);
             }
 
             curBlock.removedByPlayer(curBlockState, world, blockToBreak, fake, true, world.getFluidState(blockToBreak));

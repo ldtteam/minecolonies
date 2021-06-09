@@ -123,7 +123,7 @@ public class InteractionValidatorInitializer
                       final World world = colony.getWorld();
                       if (world != null)
                       {
-                          final TileEntity tileEntity = world.getTileEntity(pos);
+                          final TileEntity tileEntity = world.getBlockEntity(pos);
                           if (tileEntity instanceof ScarecrowTileEntity)
                           {
                               return ((ScarecrowTileEntity) tileEntity).getSeed() == null;

@@ -38,27 +38,27 @@ public class RenderHelper
     {
         final Minecraft mc = Minecraft.getInstance();
 
-        matrixStack.push();
+        matrixStack.pushPose();
         matrixStack.translate(x, y, z);
         matrixStack.scale(-scale, -scale, -scale);
         matrixStack.translate(-0.5F, -0.5F, 0);
 
-        matrixStack.rotate(Vector3f.XP.rotationDegrees(pitch));
+        matrixStack.mulPose(Vector3f.XP.rotationDegrees(pitch));
 
         matrixStack.translate(0.5F, 0, -0.5F);
-        matrixStack.rotate(Vector3f.YP.rotationDegrees(yaw));
+        matrixStack.mulPose(Vector3f.YP.rotationDegrees(yaw));
         matrixStack.translate(-0.5F, 0, 0.5F);
 
-        matrixStack.push();
+        matrixStack.pushPose();
         matrixStack.translate(0, 0, -1);
 
-        mc.getTextureManager().bindTexture(PlayerContainer.LOCATION_BLOCKS_TEXTURE);
-        final IRenderTypeBuffer.Impl buffers = Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
-        mc.getBlockRendererDispatcher().renderBlock(block, matrixStack, buffers, 0x00F000F0, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
-        buffers.finish();
-        matrixStack.pop();
+        mc.getTextureManager().bind(PlayerContainer.BLOCK_ATLAS);
+        final IRenderTypeBuffer.Impl buffers = Minecraft.getInstance().renderBuffers().bufferSource();
+        mc.getBlockRenderer().renderBlock(block, matrixStack, buffers, 0x00F000F0, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
+        buffers.endBatch();
+        matrixStack.popPose();
 
-        matrixStack.pop();
+        matrixStack.popPose();
     }
 
     /**
@@ -75,41 +75,41 @@ public class RenderHelper
                                     final double yaw, final double pitch, final LivingEntity livingEntity)
     {
         final Minecraft mc = Minecraft.getInstance();
-        if (livingEntity.world == null) livingEntity.world = mc.world;
+        if (livingEntity.level == null) livingEntity.level = mc.level;
         final float yawAngle = (float) Math.atan(yaw / 40.0F);
         final float pitchAngle = (float) Math.atan(pitch / 40.0F);
-        matrixStack.push();
+        matrixStack.pushPose();
         matrixStack.translate((float) x, (float) y, 1050.0F);
         matrixStack.scale(1.0F, 1.0F, -1.0F);
         matrixStack.translate(0.0D, 0.0D, 1000.0D);
         matrixStack.scale((float) scale, (float) scale, (float) scale);
         final Quaternion pitchRotation = Vector3f.XP.rotationDegrees(pitchAngle * 20.0F);
-        matrixStack.rotate(Vector3f.ZP.rotationDegrees(180.0F));
-        matrixStack.rotate(pitchRotation);
-        final float oldYawOffset = livingEntity.renderYawOffset;
-        final float oldYaw = livingEntity.rotationYaw;
-        final float oldPitch = livingEntity.rotationPitch;
-        final float oldPrevYawHead = livingEntity.prevRotationYawHead;
-        final float oldYawHead = livingEntity.rotationYawHead;
-        livingEntity.renderYawOffset = 180.0F + yawAngle * 20.0F;
-        livingEntity.rotationYaw = 180.0F + yawAngle * 40.0F;
-        livingEntity.rotationPitch = -pitchAngle * 20.0F;
-        livingEntity.rotationYawHead = livingEntity.rotationYaw;
-        livingEntity.prevRotationYawHead = livingEntity.rotationYaw;
-        final EntityRendererManager entityrenderermanager = mc.getRenderManager();
-        pitchRotation.conjugate();
-        entityrenderermanager.setCameraOrientation(pitchRotation);
+        matrixStack.mulPose(Vector3f.ZP.rotationDegrees(180.0F));
+        matrixStack.mulPose(pitchRotation);
+        final float oldYawOffset = livingEntity.yBodyRot;
+        final float oldYaw = livingEntity.yRot;
+        final float oldPitch = livingEntity.xRot;
+        final float oldPrevYawHead = livingEntity.yHeadRotO;
+        final float oldYawHead = livingEntity.yHeadRot;
+        livingEntity.yBodyRot = 180.0F + yawAngle * 20.0F;
+        livingEntity.yRot = 180.0F + yawAngle * 40.0F;
+        livingEntity.xRot = -pitchAngle * 20.0F;
+        livingEntity.yHeadRot = livingEntity.yRot;
+        livingEntity.yHeadRotO = livingEntity.yRot;
+        final EntityRendererManager entityrenderermanager = mc.getEntityRenderDispatcher();
+        pitchRotation.conj();
+        entityrenderermanager.overrideCameraOrientation(pitchRotation);
         entityrenderermanager.setRenderShadow(false);
-        final IRenderTypeBuffer.Impl buffers = mc.getRenderTypeBuffers().getBufferSource();
-        RenderSystem.runAsFancy(() -> entityrenderermanager.renderEntityStatic(livingEntity, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F, matrixStack, buffers, 0x00F000F0));
-        buffers.finish();
+        final IRenderTypeBuffer.Impl buffers = mc.renderBuffers().bufferSource();
+        RenderSystem.runAsFancy(() -> entityrenderermanager.render(livingEntity, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F, matrixStack, buffers, 0x00F000F0));
+        buffers.endBatch();
         entityrenderermanager.setRenderShadow(true);
-        livingEntity.renderYawOffset = oldYawOffset;
-        livingEntity.rotationYaw = oldYaw;
-        livingEntity.rotationPitch = oldPitch;
-        livingEntity.prevRotationYawHead = oldPrevYawHead;
-        livingEntity.rotationYawHead = oldYawHead;
-        matrixStack.pop();
+        livingEntity.yBodyRot = oldYawOffset;
+        livingEntity.yRot = oldYaw;
+        livingEntity.xRot = oldPitch;
+        livingEntity.yHeadRotO = oldPrevYawHead;
+        livingEntity.yHeadRot = oldYawHead;
+        matrixStack.popPose();
     }
 
     /**
@@ -123,14 +123,14 @@ public class RenderHelper
      */
     public static void scissor(final MatrixStack matrixStack, int x, int y, int w, int h)
     {
-        final double scale = Minecraft.getInstance().getMainWindow().getGuiScaleFactor();
+        final double scale = Minecraft.getInstance().getWindow().getGuiScale();
         final double[] xyzTranslation = getGLTranslation(matrixStack, scale);
         x *= scale;
         y *= scale;
         w *= scale;
         h *= scale;
         final int scissorX = Math.round(Math.round(xyzTranslation[0] + x));
-        final int scissorY = Math.round(Math.round(Minecraft.getInstance().getMainWindow().getHeight() - y - h - xyzTranslation[1]));
+        final int scissorY = Math.round(Math.round(Minecraft.getInstance().getWindow().getScreenHeight() - y - h - xyzTranslation[1]));
         final int scissorW = Math.round(w);
         final int scissorH = Math.round(h);
         RenderSystem.enableScissor(scissorX, scissorY, scissorW, scissorH);
@@ -146,9 +146,9 @@ public class RenderHelper
 
     private static double[] getGLTranslation(final MatrixStack matrixStack, final double scale)
     {
-        final Matrix4f matrix = matrixStack.getLast().getMatrix();
+        final Matrix4f matrix = matrixStack.last().pose();
         final FloatBuffer buf = BufferUtils.createFloatBuffer(16);
-        matrix.write(buf);
+        matrix.store(buf);
         // { x, y, z }
         return new double[]
         {

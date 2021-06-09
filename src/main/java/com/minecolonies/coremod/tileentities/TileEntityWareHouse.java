@@ -60,9 +60,9 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
         int totalCountFound = 0 - leftOver;
         for (@NotNull final BlockPos pos : getBuilding().getContainers())
         {
-            if (WorldUtil.isBlockLoaded(world, pos))
+            if (WorldUtil.isBlockLoaded(level, pos))
             {
-                final TileEntity entity = getWorld().getTileEntity(pos);
+                final TileEntity entity = getLevel().getBlockEntity(pos);
                 if (entity instanceof TileEntityRack && !((AbstractTileEntityRack) entity).isEmpty())
                 {
                     totalCountFound += ((AbstractTileEntityRack) entity).getCount(itemStack, true, ignoreNBT);
@@ -75,7 +75,7 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
                 if (entity instanceof ChestTileEntity)
                 {
                     totalCountFound += InventoryUtils.getItemCountInItemHandler(entity.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null),
-                      item -> item.isItemEqualIgnoreDurability(itemStack) && item.getCount() >= itemStack.getCount());
+                      item -> item.sameItemStackIgnoreDurability(itemStack) && item.getCount() >= itemStack.getCount());
                     if (totalCountFound >= count)
                     {
                         return true;
@@ -96,7 +96,7 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
         {
             for (@NotNull final BlockPos pos : getBuilding().getContainers())
             {
-                final TileEntity entity = getWorld().getTileEntity(pos);
+                final TileEntity entity = getLevel().getBlockEntity(pos);
                 if (entity instanceof TileEntityRack && !((AbstractTileEntityRack) entity).isEmpty() && ((AbstractTileEntityRack) entity).getItemCount(itemStackSelectionPredicate) > 0)
                 {
                     final TileEntityRack rack = (TileEntityRack) entity;
@@ -132,9 +132,9 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
             @Nullable final TileEntity chest = searchRightChestForStack(stack);
             if (chest == null)
             {
-                if(world.getGameTime() - lastNotification > TICKS_FIVE_MIN)
+                if(level.getGameTime() - lastNotification > TICKS_FIVE_MIN)
                 {
-                    lastNotification = world.getGameTime();
+                    lastNotification = level.getGameTime();
                     if(getBuilding().getBuildingLevel() == getBuilding().getMaxBuildingLevel())
                     {
                         LanguageHandler.sendPlayersMessage(getColony().getMessagePlayerEntities(), COM_MINECOLONIES_COREMOD_WAREHOUSE_FULL_MAX_UPGRADE);
@@ -163,7 +163,7 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
     {
         for (@NotNull final BlockPos pos : getBuilding().getContainers())
         {
-            final TileEntity entity = getWorld().getTileEntity(pos);
+            final TileEntity entity = getLevel().getBlockEntity(pos);
             if (isInRack(stack, entity, false) || isInChest(stack, entity, false))
             {
                 return entity;
@@ -215,7 +215,7 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
     {
         for (@NotNull final BlockPos pos : getBuilding().getContainers())
         {
-            final TileEntity entity = getWorld().getTileEntity(pos);
+            final TileEntity entity = getLevel().getBlockEntity(pos);
             if (isInRack(stack, entity, true) || isInChest(stack, entity, true))
             {
                 return entity;
@@ -236,7 +236,7 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
         TileEntity emptiestChest = null;
         for (@NotNull final BlockPos pos : getBuilding().getContainers())
         {
-            final TileEntity entity = getWorld().getTileEntity(pos);
+            final TileEntity entity = getLevel().getBlockEntity(pos);
             if (entity == null)
             {
                 getBuilding().removeContainerPosition(pos);
@@ -259,7 +259,7 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
             }
             else if (entity instanceof ChestTileEntity && InventoryUtils.getFirstOpenSlotFromProvider(entity) != -1)
             {
-                tempFreeSlots = ((ChestTileEntity) entity).getSizeInventory() - InventoryUtils.getAmountOfStacksInProvider(entity);
+                tempFreeSlots = ((ChestTileEntity) entity).getContainerSize() - InventoryUtils.getAmountOfStacksInProvider(entity);
                 if (freeSlots < tempFreeSlots)
                 {
                     freeSlots = tempFreeSlots;

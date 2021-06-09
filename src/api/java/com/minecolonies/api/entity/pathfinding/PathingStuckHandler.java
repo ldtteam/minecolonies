@@ -139,7 +139,7 @@ public class PathingStuckHandler implements IStuckHandler
         }
 
         final double distanceToGoal =
-          navigator.getOurEntity().getPositionVec().distanceTo(new Vector3d(navigator.getDesiredPos().getX(), navigator.getDesiredPos().getY(), navigator.getDesiredPos().getZ()));
+          navigator.getOurEntity().position().distanceTo(new Vector3d(navigator.getDesiredPos().getX(), navigator.getDesiredPos().getY(), navigator.getDesiredPos().getZ()));
 
         // Close enough to be considered at the goal
         if (distanceToGoal < MIN_TARGET_DIST)
@@ -166,7 +166,7 @@ public class PathingStuckHandler implements IStuckHandler
 
         prevDestination = navigator.getDesiredPos();
 
-        if (navigator.getPath() == null || navigator.getPath().isFinished())
+        if (navigator.getPath() == null || navigator.getPath().isDone())
         {
             // With no path reset the last path index point to -1
             lastPathIndex = -1;
@@ -180,16 +180,16 @@ public class PathingStuckHandler implements IStuckHandler
         }
         else
         {
-            if (navigator.getPath().getCurrentPathIndex() == lastPathIndex)
+            if (navigator.getPath().getNextNodeIndex() == lastPathIndex)
             {
                 // Stuck when we have a path, but are not progressing on it
                 tryUnstuck(navigator);
             }
             else
             {
-                if (lastPathIndex != -1 && navigator.getPath().getTarget().distanceSq(prevDestination) < 25)
+                if (lastPathIndex != -1 && navigator.getPath().getTarget().distSqr(prevDestination) < 25)
                 {
-                    progressedNodes = navigator.getPath().getCurrentPathIndex() > lastPathIndex ? progressedNodes + 1 : progressedNodes - 1;
+                    progressedNodes = navigator.getPath().getNextNodeIndex() > lastPathIndex ? progressedNodes + 1 : progressedNodes - 1;
 
                     if (progressedNodes > 5)
                     {
@@ -200,9 +200,9 @@ public class PathingStuckHandler implements IStuckHandler
             }
         }
 
-        lastPathIndex = navigator.getPath() != null ? navigator.getPath().getCurrentPathIndex() : -1;
+        lastPathIndex = navigator.getPath() != null ? navigator.getPath().getNextNodeIndex() : -1;
 
-        hadPath = navigator.getPath() != null && !navigator.getPath().isFinished();
+        hadPath = navigator.getPath() != null && !navigator.getPath().isDone();
     }
 
     /**
@@ -221,7 +221,7 @@ public class PathingStuckHandler implements IStuckHandler
     private void completeStuckAction(final AbstractAdvancedPathNavigate navigator)
     {
         final BlockPos desired = navigator.getDesiredPos();
-        final World world = navigator.getOurEntity().world;
+        final World world = navigator.getOurEntity().level;
         final MobEntity entity = navigator.getOurEntity();
 
         if (canTeleportGoal)
@@ -229,34 +229,34 @@ public class PathingStuckHandler implements IStuckHandler
             for (final Direction dir : directions)
             {
                 // need two air
-                if (world.isAirBlock(desired.offset(dir)) && world.isAirBlock(desired.offset(dir).up()))
+                if (world.isEmptyBlock(desired.relative(dir)) && world.isEmptyBlock(desired.relative(dir).above()))
                 {
                     // Teleport
-                    entity.setPositionAndUpdate(desired.offset(dir).getX() + 0.5d, desired.offset(dir).getY(), desired.offset(dir).getZ() + 0.5d);
+                    entity.teleportTo(desired.relative(dir).getX() + 0.5d, desired.relative(dir).getY(), desired.relative(dir).getZ() + 0.5d);
                     break;
                 }
             }
         }
         if (takeDamageOnCompleteStuck)
         {
-            entity.attackEntityFrom(new EntityDamageSource("Stuck-damage", entity), entity.getMaxHealth() * damagePct);
+            entity.hurt(new EntityDamageSource("Stuck-damage", entity), entity.getMaxHealth() * damagePct);
         }
 
         if (completeStuckBlockBreakRange > 0)
         {
-            final Direction facing = BlockPosUtil.getFacing(new BlockPos(entity.getPositionVec()), navigator.getDesiredPos());
+            final Direction facing = BlockPosUtil.getFacing(new BlockPos(entity.position()), navigator.getDesiredPos());
 
             for (int i = 1; i <= completeStuckBlockBreakRange; i++)
             {
-                if (!world.isAirBlock(new BlockPos(entity.getPositionVec()).offset(facing, i)) || !world.isAirBlock(new BlockPos(entity.getPositionVec()).offset(facing, i).up()))
+                if (!world.isEmptyBlock(new BlockPos(entity.position()).relative(facing, i)) || !world.isEmptyBlock(new BlockPos(entity.position()).relative(facing, i).above()))
                 {
-                    breakBlocksAhead(world, new BlockPos(entity.getPositionVec()).offset(facing, i - 1), facing);
+                    breakBlocksAhead(world, new BlockPos(entity.position()).relative(facing, i - 1), facing);
                     break;
                 }
             }
         }
 
-        navigator.clearPath();
+        navigator.stop();
         resetGlobalStuckTimers();
     }
 
@@ -275,7 +275,7 @@ public class PathingStuckHandler implements IStuckHandler
         {
             stuckLevel++;
             delayToNextUnstuckAction = 600;
-            navigator.clearPath();
+            navigator.stop();
             return;
         }
 
@@ -284,8 +284,8 @@ public class PathingStuckHandler implements IStuckHandler
         {
             stuckLevel++;
             delayToNextUnstuckAction = 300;
-            navigator.clearPath();
-            navigator.moveAwayFromXYZ(new BlockPos(navigator.getOurEntity().getPositionVec()), 10, 1.0f);
+            navigator.stop();
+            navigator.moveAwayFromXYZ(new BlockPos(navigator.getOurEntity().position()), 10, 1.0f);
             return;
         }
 
@@ -295,11 +295,11 @@ public class PathingStuckHandler implements IStuckHandler
             if (hadPath && teleportRange > 0)
             {
                 delayToNextUnstuckAction = 100;
-                int index = navigator.getPath().getCurrentPathIndex() + teleportRange;
-                if (index < navigator.getPath().getCurrentPathLength())
+                int index = navigator.getPath().getNextNodeIndex() + teleportRange;
+                if (index < navigator.getPath().getNodeCount())
                 {
-                    final PathPoint togo = navigator.getPath().getPathPointFromIndex(index);
-                    navigator.getOurEntity().setPositionAndUpdate(togo.x + 0.5d, togo.y, togo.z + 0.5d);
+                    final PathPoint togo = navigator.getPath().getNode(index);
+                    navigator.getOurEntity().teleportTo(togo.x + 0.5d, togo.y, togo.z + 0.5d);
                     delayToNextUnstuckAction = 300;
                 }
             }
@@ -368,23 +368,23 @@ public class PathingStuckHandler implements IStuckHandler
     private void breakBlocksAhead(final World world, final BlockPos start, final Direction facing)
     {
         // Above entity
-        if (!world.isAirBlock(start.up(3)))
+        if (!world.isEmptyBlock(start.above(3)))
         {
-            setAirIfPossible(world, start.up(3));
+            setAirIfPossible(world, start.above(3));
             return;
         }
 
         // In goal direction
-        if (!world.isAirBlock(start.offset(facing)))
+        if (!world.isEmptyBlock(start.relative(facing)))
         {
-            setAirIfPossible(world, start.offset(facing));
+            setAirIfPossible(world, start.relative(facing));
             return;
         }
 
         // Goal direction up
-        if (!world.isAirBlock(start.up().offset(facing)))
+        if (!world.isEmptyBlock(start.above().relative(facing)))
         {
-            setAirIfPossible(world, start.up().offset(facing));
+            setAirIfPossible(world, start.above().relative(facing));
         }
     }
 
@@ -400,7 +400,7 @@ public class PathingStuckHandler implements IStuckHandler
         {
             return;
         }
-        world.setBlockState(pos, Blocks.AIR.getDefaultState());
+        world.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
     }
 
     /**
@@ -410,19 +410,19 @@ public class PathingStuckHandler implements IStuckHandler
      */
     private void placeLadders(final AbstractAdvancedPathNavigate navigator)
     {
-        final World world = navigator.getOurEntity().world;
+        final World world = navigator.getOurEntity().level;
         final MobEntity entity = navigator.getOurEntity();
 
-        BlockPos entityPos = new BlockPos(entity.getPositionVec());
+        BlockPos entityPos = new BlockPos(entity.position());
 
         while (world.getBlockState(entityPos).getBlock() == Blocks.LADDER)
         {
-            entityPos = entityPos.up();
+            entityPos = entityPos.above();
         }
 
         tryPlaceLadderAt(world, entityPos);
-        tryPlaceLadderAt(world, entityPos.up());
-        tryPlaceLadderAt(world, entityPos.up(2));
+        tryPlaceLadderAt(world, entityPos.above());
+        tryPlaceLadderAt(world, entityPos.above(2));
     }
 
     /**
@@ -432,10 +432,10 @@ public class PathingStuckHandler implements IStuckHandler
      */
     private void placeLeaves(final AbstractAdvancedPathNavigate navigator)
     {
-        final World world = navigator.getOurEntity().world;
+        final World world = navigator.getOurEntity().level;
         final MobEntity entity = navigator.getOurEntity();
 
-        final Direction badFacing = BlockPosUtil.getFacing(new BlockPos(entity.getPositionVec()), navigator.getDesiredPos()).getOpposite();
+        final Direction badFacing = BlockPosUtil.getFacing(new BlockPos(entity.position()), navigator.getDesiredPos()).getOpposite();
 
         for (final Direction dir : directions)
         {
@@ -444,9 +444,9 @@ public class PathingStuckHandler implements IStuckHandler
                 continue;
             }
 
-            if (world.isAirBlock(new BlockPos(entity.getPositionVec()).down().offset(dir)))
+            if (world.isEmptyBlock(new BlockPos(entity.position()).below().relative(dir)))
             {
-                world.setBlockState(new BlockPos(entity.getPositionVec()).down().offset(dir), Blocks.ACACIA_LEAVES.getDefaultState());
+                world.setBlockAndUpdate(new BlockPos(entity.position()).below().relative(dir), Blocks.ACACIA_LEAVES.defaultBlockState());
             }
         }
     }
@@ -458,12 +458,12 @@ public class PathingStuckHandler implements IStuckHandler
      */
     private void breakBlocks(final AbstractAdvancedPathNavigate navigator)
     {
-        final World world = navigator.getOurEntity().world;
+        final World world = navigator.getOurEntity().level;
         final MobEntity entity = navigator.getOurEntity();
 
-        final Direction facing = BlockPosUtil.getFacing(new BlockPos(entity.getPositionVec()), navigator.getDesiredPos());
+        final Direction facing = BlockPosUtil.getFacing(new BlockPos(entity.position()), navigator.getDesiredPos());
 
-        breakBlocksAhead(world, new BlockPos(entity.getPositionVec()), facing);
+        breakBlocksAhead(world, new BlockPos(entity.position()), facing);
     }
 
     /**
@@ -475,14 +475,14 @@ public class PathingStuckHandler implements IStuckHandler
     private void tryPlaceLadderAt(final World world, final BlockPos pos)
     {
         final BlockState state = world.getBlockState(pos);
-        if (state.getBlock() != Blocks.LADDER && !state.isSolid() && world.getFluidState(pos).isEmpty())
+        if (state.getBlock() != Blocks.LADDER && !state.canOcclude() && world.getFluidState(pos).isEmpty())
         {
             for (final Direction dir : directions)
             {
-                final BlockState toPlace = Blocks.LADDER.getDefaultState().with(LadderBlock.FACING, dir.getOpposite());
-                if (world.getBlockState(pos.offset(dir)).getMaterial().isSolid() && Blocks.LADDER.isValidPosition(toPlace, world, pos))
+                final BlockState toPlace = Blocks.LADDER.defaultBlockState().setValue(LadderBlock.FACING, dir.getOpposite());
+                if (world.getBlockState(pos.relative(dir)).getMaterial().isSolid() && Blocks.LADDER.canSurvive(toPlace, world, pos))
                 {
-                    world.setBlockState(pos, toPlace);
+                    world.setBlockAndUpdate(pos, toPlace);
                     break;
                 }
             }

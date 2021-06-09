@@ -69,7 +69,7 @@ public class CommandPruneWorld implements IMCOPCommand
     {
         if (arg < 3)
         {
-            context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.prune.next", arg + 1), true);
+            context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.prune.next", arg + 1), true);
             return 0;
         }
 
@@ -77,10 +77,10 @@ public class CommandPruneWorld implements IMCOPCommand
 
         int deleteCount = 0;
 
-        for (final World world : ServerLifecycleHooks.getCurrentServer().getWorlds())
+        for (final World world : ServerLifecycleHooks.getCurrentServer().getAllLevels())
         {
             // Local save folder for this word
-            final File saveDir = new File(DimensionType.getDimensionFolder(world.getDimensionKey(), world.getServer().func_240776_a_(FolderName.DOT).toFile()), REGION_FOLDER);
+            final File saveDir = new File(DimensionType.getStorageFolder(world.dimension(), world.getServer().getWorldPath(FolderName.ROOT).toFile()), REGION_FOLDER);
 
             // Colony list for this world
             List<IColony> colonies = new ArrayList<>();
@@ -113,19 +113,19 @@ public class CommandPruneWorld implements IMCOPCommand
                     {
                         if (!currentRegion.delete())
                         {
-                            context.getSource().sendFeedback(new StringTextComponent("Could not delete file:" + currentRegion.getPath()), true);
+                            context.getSource().sendSuccess(new StringTextComponent("Could not delete file:" + currentRegion.getPath()), true);
                         }
                         else
                         {
                             deleteCount++;
-                            context.getSource().sendFeedback(new StringTextComponent("Deleted file:" + currentRegion.getPath()), true);
+                            context.getSource().sendSuccess(new StringTextComponent("Deleted file:" + currentRegion.getPath()), true);
                         }
                     }
                 }
             }
         }
 
-        context.getSource().sendFeedback(new StringTextComponent("Successfully deleted " + deleteCount + " regions!"), true);
+        context.getSource().sendSuccess(new StringTextComponent("Successfully deleted " + deleteCount + " regions!"), true);
         return 0;
     }
 

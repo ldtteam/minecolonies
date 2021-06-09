@@ -139,7 +139,7 @@ public final class GenericRecipeUtils
 
         public IngredientStacks(final Ingredient ingredient)
         {
-            this.stacks = Collections.unmodifiableList(Arrays.stream(ingredient.getMatchingStacks())
+            this.stacks = Collections.unmodifiableList(Arrays.stream(ingredient.getItems())
                     .filter(stack -> !stack.isEmpty())
                     .map(ItemStack::copy)
                     .collect(Collectors.toList()));

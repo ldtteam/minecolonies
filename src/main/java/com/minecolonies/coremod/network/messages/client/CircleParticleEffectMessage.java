@@ -96,7 +96,7 @@ public class CircleParticleEffectMessage implements IMessage
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
-        final ClientWorld world = Minecraft.getInstance().world;
+        final ClientWorld world = Minecraft.getInstance().level;
 
         double x = 1.0 * Math.cos(stage * 45.0) + posX;
         double z = 1.0 * Math.sin(stage * 45.0) + posZ;

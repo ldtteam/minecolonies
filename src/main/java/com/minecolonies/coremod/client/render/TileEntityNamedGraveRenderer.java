@@ -41,7 +41,7 @@ public class TileEntityNamedGraveRenderer extends TileEntityRenderer<TileEntityN
      */
     private static final int ROTATE_WEST = 3;
 
-    private final int textColor = NativeImage.getCombined(0, 220, 220, 220);
+    private final int textColor = NativeImage.combine(0, 220, 220, 220);
 
     public TileEntityNamedGraveRenderer(TileEntityRendererDispatcher rendererDispatcher)
     {
@@ -52,20 +52,20 @@ public class TileEntityNamedGraveRenderer extends TileEntityRenderer<TileEntityN
     @Override
     public void render(@NotNull final TileEntityNamedGrave tileEntity, final float partialTicks, final MatrixStack matrixStack, @NotNull final IRenderTypeBuffer buffer, final int combinedLight, final int combinedOverlay)
     {
-        matrixStack.push();
+        matrixStack.pushPose();
 
         if(tileEntity != null)
         {
-            final BlockState state = tileEntity.getWorld().getBlockState(tileEntity.getPos());
+            final BlockState state = tileEntity.getLevel().getBlockState(tileEntity.getBlockPos());
             if (state.getBlock() == ModBlocks.blockNamedGrave)
             {
-                final Direction facing = state.get(AbstractBlockMinecoloniesDefault.FACING);
+                final Direction facing = state.getValue(AbstractBlockMinecoloniesDefault.FACING);
                 switch (facing)
                 {
                     case NORTH:
                         matrixStack.translate(0.5f, 1.18F, 0.48F); //in front of the center point of the name plate
                         matrixStack.scale(0.006F, -0.006F, 0.006F); //size of the text font
-                        matrixStack.rotate(Vector3f.YP.rotationDegrees(BASIC_ROTATION * ROTATE_NORTH));
+                        matrixStack.mulPose(Vector3f.YP.rotationDegrees(BASIC_ROTATION * ROTATE_NORTH));
                         break;
                     case SOUTH:
                         matrixStack.translate(0.5f, 1.18F, 0.54F); //in front of the center point of the name plate
@@ -76,12 +76,12 @@ public class TileEntityNamedGraveRenderer extends TileEntityRenderer<TileEntityN
                     case EAST:
                         matrixStack.translate(0.54f, 1.18F, 0.5F); //in front of the center point of the name plate
                         matrixStack.scale(0.006F, -0.006F, 0.006F); //size of the text font
-                        matrixStack.rotate(Vector3f.YP.rotationDegrees(BASIC_ROTATION * ROTATE_EAST));
+                        matrixStack.mulPose(Vector3f.YP.rotationDegrees(BASIC_ROTATION * ROTATE_EAST));
                         break;
                     case WEST:
                         matrixStack.translate(0.48f, 1.18F, 0.5F); //in front of the center point of the name plate
                         matrixStack.scale(0.006F, -0.006F, 0.006F); //size of the text font
-                        matrixStack.rotate(Vector3f.YP.rotationDegrees(BASIC_ROTATION * ROTATE_WEST));
+                        matrixStack.mulPose(Vector3f.YP.rotationDegrees(BASIC_ROTATION * ROTATE_WEST));
                         break;
                 }
 
@@ -100,7 +100,7 @@ public class TileEntityNamedGraveRenderer extends TileEntityRenderer<TileEntityN
         }
 
         // restore the original transformation matrix + normals matrix
-        matrixStack.pop();
+        matrixStack.popPose();
     }
 
     private void renderText(final MatrixStack matrixStack, final IRenderTypeBuffer buffer, final int combinedLight, String text, final int line)
@@ -111,20 +111,20 @@ public class TileEntityNamedGraveRenderer extends TileEntityRenderer<TileEntityN
             text = text.substring(0, maxSize);
         }
 
-        final IReorderingProcessor iReorderingProcessor = IReorderingProcessor.fromString(text, Style.EMPTY);
+        final IReorderingProcessor iReorderingProcessor = IReorderingProcessor.forward(text, Style.EMPTY);
         if (iReorderingProcessor != null)
         {
-            final FontRenderer fontRenderer = this.renderDispatcher.getFontRenderer();
+            final FontRenderer fontRenderer = this.renderer.getFont();
 
-            float x = (float) (-fontRenderer.func_243245_a(iReorderingProcessor) / 2); //render width of text divided by 2
-            fontRenderer.func_238416_a_(iReorderingProcessor, x, line * 10f,
-                    textColor, false, matrixStack.getLast().getMatrix(), buffer, false, 0, combinedLight);
+            float x = (float) (-fontRenderer.width(iReorderingProcessor) / 2); //render width of text divided by 2
+            fontRenderer.drawInBatch(iReorderingProcessor, x, line * 10f,
+                    textColor, false, matrixStack.last().pose(), buffer, false, 0, combinedLight);
         }
     }
 
     // this should be true for tileentities which render globally (no render bounding box), such as beacons.
     @Override
-    public boolean isGlobalRenderer(TileEntityNamedGrave tileEntityMBE21)
+    public boolean shouldRenderOffScreen(TileEntityNamedGrave tileEntityMBE21)
     {
         return false;
     }

@@ -23,6 +23,8 @@ import java.util.List;
 import static com.ldtteam.structurize.placement.handlers.placement.PlacementHandlers.handleTileEntityPlacement;
 import static com.minecolonies.api.util.constant.Constants.UPDATE_FLAG;
 
+import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler.ActionProcessingResult;
+
 public class GravePlacementHandler implements IPlacementHandler
 {
     @Override
@@ -46,13 +48,13 @@ public class GravePlacementHandler implements IPlacementHandler
             return ActionProcessingResult.SUCCESS;
         }
 
-        world.setBlockState(pos, blockState, UPDATE_FLAG);
+        world.setBlock(pos, blockState, UPDATE_FLAG);
         if (tileEntityData != null)
         {
             handleTileEntityPlacement(tileEntityData, world, pos, settings);
         }
 
-        TileEntity entity = world.getTileEntity(pos);
+        TileEntity entity = world.getBlockEntity(pos);
         if (entity instanceof TileEntityGrave)
         {
             ((TileEntityGrave) entity).updateBlockState();

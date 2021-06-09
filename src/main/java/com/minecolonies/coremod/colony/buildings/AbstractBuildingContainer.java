@@ -82,11 +82,11 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
             final CompoundNBT containerCompound = containerTagList.getCompound(i);
             containerList.add(NBTUtil.readBlockPos(containerCompound));
         }
-        if (compound.keySet().contains(TAG_PRIO))
+        if (compound.getAllKeys().contains(TAG_PRIO))
         {
             this.unscaledPickUpPriority = compound.getInt(TAG_PRIO);
         }
-        if (compound.keySet().contains(TAG_PRIO_STATE))
+        if (compound.getAllKeys().contains(TAG_PRIO_STATE))
         {
             // This was the old int representation of Pickup:Never
             if (compound.getInt(TAG_PRIO_STATE) == 0)
@@ -159,7 +159,7 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
     {
         if (block instanceof AbstractBlockHut)
         {
-            final TileEntity entity = world.getTileEntity(pos);
+            final TileEntity entity = world.getBlockEntity(pos);
             if (entity instanceof TileEntityColonyBuilding)
             {
                 ((TileEntityColonyBuilding) entity).setStyle(this.getStyle());
@@ -175,7 +175,7 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
             addContainerPosition(pos);
             if (block instanceof BlockMinecoloniesRack)
             {
-                final TileEntity entity = world.getTileEntity(pos);
+                final TileEntity entity = world.getBlockEntity(pos);
                 if (entity instanceof TileEntityRack)
                 {
                     ((TileEntityRack) entity).setBuildingPos(this.getID());

@@ -101,7 +101,7 @@ public class BuildingBarracks extends AbstractBuilding
         {
             for (final BlockPos tower : towers)
             {
-                world.setBlockState(tower, Blocks.AIR.getDefaultState());
+                world.setBlockAndUpdate(tower, Blocks.AIR.defaultBlockState());
             }
         }
         super.onDestroyed();
@@ -123,14 +123,14 @@ public class BuildingBarracks extends AbstractBuilding
         {
             if (world.getBlockState(pos).getBlock() != ModBlocks.blockHutBarracksTower)
             {
-                world.setBlockState(pos, ModBlocks.blockHutBarracksTower.getDefaultState().with(BlockBarracksTowerSubstitution.FACING, block.get(AbstractBlockHut.FACING)));
-                final TileEntity tile = world.getTileEntity(pos);
+                world.setBlockAndUpdate(pos, ModBlocks.blockHutBarracksTower.defaultBlockState().setValue(BlockBarracksTowerSubstitution.FACING, block.getValue(AbstractBlockHut.FACING)));
+                final TileEntity tile = world.getBlockEntity(pos);
                 if (tile instanceof TileEntityColonyBuilding)
                 {
                     ((TileEntityColonyBuilding) tile).setMirror(this.isMirrored());
                     ((TileEntityColonyBuilding) tile).setStyle(this.getStyle());
                 }
-                getColony().getBuildingManager().addNewBuilding((TileEntityColonyBuilding) world.getTileEntity(pos), world);
+                getColony().getBuildingManager().addNewBuilding((TileEntityColonyBuilding) world.getBlockEntity(pos), world);
             }
             final IBuilding building = getColony().getBuildingManager().getBuilding(pos);
             if (building instanceof BuildingBarracksTower)
@@ -148,7 +148,7 @@ public class BuildingBarracks extends AbstractBuilding
     @Override
     public void onColonyTick(@NotNull final IColony colony)
     {
-        if (colony.getWorld().isRemote)
+        if (colony.getWorld().isClientSide)
         {
             return;
         }

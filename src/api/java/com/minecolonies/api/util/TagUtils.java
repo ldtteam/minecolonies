@@ -20,20 +20,20 @@ public final class TagUtils
     /**
      * Get a tag for items.
      * @param resourceLocation the unique id.
-     * @return the tag or an empty placeholder if not existant.
+     * @return the tag or an empty placeholder if not existent.
      */
     public static ITag<Item> getItem(final ResourceLocation resourceLocation)
     {
-        return ItemTags.getCollection().getTagByID(resourceLocation);
+        return ItemTags.getAllTags().getTag(resourceLocation);
     }
 
     /**
      * Get a tag for items.
      * @param resourceLocation the unique id.
-     * @return the tag or an empty placeholder if not existant.
+     * @return the tag or an empty placeholder if not existent.
      */
     public static ITag<Block> getBlock(final ResourceLocation resourceLocation)
     {
-        return BlockTags.getCollection().getTagByID(resourceLocation);
+        return BlockTags.getAllTags().getTag(resourceLocation);
     }
 }

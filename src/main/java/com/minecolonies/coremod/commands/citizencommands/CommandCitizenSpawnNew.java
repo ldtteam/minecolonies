@@ -27,15 +27,15 @@ public class CommandCitizenSpawnNew implements IMCOPCommand
     {
         // Colony
         final int colonyID = IntegerArgumentType.getInteger(context, COLONYID_ARG);
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getWorld().getDimensionKey());
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getLevel().dimension());
         if (colony == null)
         {
-            context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.colonyidnotfound", colonyID), true);
+            context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.colonyidnotfound", colonyID), true);
             return 0;
         }
 
         context.getSource()
-          .sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.citizenspawn.success",
+          .sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.citizenspawn.success",
             colony.getCitizenManager().spawnOrCreateCivilian(null, colony.getWorld(), null, true).getName()), true);
         return 1;
     }

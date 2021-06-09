@@ -249,7 +249,7 @@ public class GlobalResearchTree implements IGlobalResearchTree
         for(Map.Entry<ResourceLocation, IGlobalResearchBranch> branch : branchDatas.entrySet())
         {
             buf.writeResourceLocation(branch.getKey());
-            buf.writeCompoundTag(branch.getValue().writeToNBT());
+            buf.writeNbt(branch.getValue().writeToNBT());
         }
     }
 
@@ -269,7 +269,7 @@ public class GlobalResearchTree implements IGlobalResearchTree
         for (int i = 0; i < researchTree.entrySet().size(); i++)
         {
             ResourceLocation branchId = buf.readResourceLocation();
-            branchDatas.put(branchId, new GlobalResearchBranch(buf.readCompoundTag()));
+            branchDatas.put(branchId, new GlobalResearchBranch(buf.readNbt()));
         }
         return null;
     }
@@ -327,7 +327,7 @@ public class GlobalResearchTree implements IGlobalResearchTree
             {
                 try
                 {
-                    stack.setTag(JsonToNBT.getTagFromJson(tag));
+                    stack.setTag(JsonToNBT.parseTag(tag));
                     outputList.add(new ItemStorage(stack, false, false));
                 }
                 catch (CommandSyntaxException parseException)

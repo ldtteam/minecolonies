@@ -113,7 +113,7 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
     public void deserializeNBT(final CompoundNBT compound)
     {
         super.deserializeNBT(compound);
-        if (compound.keySet().contains(TAG_WORK_ORDER))
+        if (compound.getAllKeys().contains(TAG_WORK_ORDER))
         {
             workOrderId = compound.getInt(TAG_WORK_ORDER);
         }
@@ -126,17 +126,17 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
     {
         getWorkOrder().onCompleted(getCitizen().getColony(), this.getCitizen());
 
-        final TileEntity tileEntity = getColony().getWorld().getTileEntity(getWorkOrder().getBuildingLocation());
+        final TileEntity tileEntity = getColony().getWorld().getBlockEntity(getWorkOrder().getBuildingLocation());
 
         if (tileEntity instanceof IBlueprintDataProvider)
         {
-            CompoundNBT teData = blueprint.getTileEntityData(tileEntity.getPos(), blueprint.getPrimaryBlockOffset());
+            CompoundNBT teData = blueprint.getTileEntityData(tileEntity.getBlockPos(), blueprint.getPrimaryBlockOffset());
             if (teData != null && teData.contains(TAG_BLUEPRINTDATA))
             {
                 ((IBlueprintDataProvider) tileEntity).readSchematicDataFromNBT(teData);
-                Chunk chunk = (Chunk) tileEntity.getWorld().getChunk(tileEntity.getPos());
+                Chunk chunk = (Chunk) tileEntity.getLevel().getChunk(tileEntity.getBlockPos());
                 PacketDistributor.TRACKING_CHUNK.with(() -> chunk).send(tileEntity.getUpdatePacket());
-                tileEntity.markDirty();
+                tileEntity.setChanged();
             }
         }
 

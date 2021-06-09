@@ -74,7 +74,7 @@ public class JobEnchanter extends AbstractJobCrafter<EntityAIWorkEnchanter, JobE
     public void deserializeNBT(final CompoundNBT compound)
     {
         super.deserializeNBT(compound);
-        if (compound.keySet().contains(TAG_BUILDING_TO_DRAIN))
+        if (compound.getAllKeys().contains(TAG_BUILDING_TO_DRAIN))
         {
             this.posToDrainFrom = BlockPosUtil.read(compound, TAG_BUILDING_TO_DRAIN);
         }

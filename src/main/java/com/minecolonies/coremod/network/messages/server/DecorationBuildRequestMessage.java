@@ -83,18 +83,18 @@ public class DecorationBuildRequestMessage implements IMessage
     public void fromBytes(@NotNull final PacketBuffer buf)
     {
         this.pos = buf.readBlockPos();
-        this.name = buf.readString(32767);
+        this.name = buf.readUtf(32767);
         this.level = buf.readInt();
-        this.dimension = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(buf.readString(32767)));
+        this.dimension = RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)));
     }
 
     @Override
     public void toBytes(@NotNull final PacketBuffer buf)
     {
         buf.writeBlockPos(this.pos);
-        buf.writeString(this.name);
+        buf.writeUtf(this.name);
         buf.writeInt(this.level);
-        buf.writeString(this.dimension.getLocation().toString());
+        buf.writeUtf(this.dimension.location().toString());
     }
 
     @Nullable
@@ -120,7 +120,7 @@ public class DecorationBuildRequestMessage implements IMessage
             return;
         }
 
-        final TileEntity entity = player.getEntityWorld().getTileEntity(pos);
+        final TileEntity entity = player.getCommandSenderWorld().getBlockEntity(pos);
         if (entity instanceof TileEntityDecorationController)
         {
             final Optional<Map.Entry<Integer, IWorkOrder>> wo = colony.getWorkManager().getWorkOrders().entrySet().stream()
@@ -150,8 +150,8 @@ public class DecorationBuildRequestMessage implements IMessage
                         return;
                     }
 
-                    final int structureRotation = structureState.get(BlockDecorationController.HORIZONTAL_FACING).getHorizontalIndex();
-                    final int worldRotation = colony.getWorld().getBlockState(this.pos).get(BlockDecorationController.HORIZONTAL_FACING).getHorizontalIndex();
+                    final int structureRotation = structureState.getValue(BlockDecorationController.FACING).get2DDataValue();
+                    final int worldRotation = colony.getWorld().getBlockState(this.pos).getValue(BlockDecorationController.FACING).get2DDataValue();
 
                     if (structureRotation <= worldRotation)
                     {
@@ -164,12 +164,12 @@ public class DecorationBuildRequestMessage implements IMessage
                 }
             }
 
-            final BlockState state = player.getEntityWorld().getBlockState(pos);
+            final BlockState state = player.getCommandSenderWorld().getBlockState(pos);
             final WorkOrderBuildDecoration order = new WorkOrderBuildDecoration(name + level,
               name + level,
               difference,
               pos,
-              state.get(BlockDecorationController.MIRROR));
+              state.getValue(BlockDecorationController.MIRROR));
 
             if (level != ((TileEntityDecorationController) entity).getLevel())
             {

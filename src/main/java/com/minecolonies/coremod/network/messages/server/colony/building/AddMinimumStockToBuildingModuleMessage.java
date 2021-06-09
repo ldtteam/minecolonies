@@ -50,14 +50,14 @@ public class AddMinimumStockToBuildingModuleMessage extends AbstractBuildingServ
     @Override
     public void fromBytesOverride(@NotNull final PacketBuffer buf)
     {
-        itemStack = buf.readItemStack();
+        itemStack = buf.readItem();
         quantity = buf.readInt();
     }
 
     @Override
     public void toBytesOverride(@NotNull final PacketBuffer buf)
     {
-        buf.writeItemStack(itemStack);
+        buf.writeItem(itemStack);
         buf.writeInt(quantity);
     }
 

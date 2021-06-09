@@ -36,7 +36,7 @@ public class CitizenResurrectTrigger extends AbstractCriterionTrigger<CriterionL
 
     @NotNull
     @Override
-    public CitizenResurrectCriterionInstance deserialize(@NotNull final JsonObject object, @NotNull final ConditionArrayParser conditions)
+    public CitizenResurrectCriterionInstance createInstance(@NotNull final JsonObject object, @NotNull final ConditionArrayParser conditions)
     {
         return new CitizenResurrectCriterionInstance();
     }

@@ -25,21 +25,21 @@ import net.minecraft.world.IWorldReader;
  */
 public class BlockColonyFlagBanner extends AbstractColonyFlagBanner<BlockColonyFlagBanner>
 {
-    public static final IntegerProperty ROTATION = BlockStateProperties.ROTATION_0_15;
-    private static final VoxelShape SHAPE = Block.makeCuboidShape(4.0D, 0.0D, 4.0D, 12.0D, 16.0D, 12.0D);
+    public static final IntegerProperty ROTATION = BlockStateProperties.ROTATION_16;
+    private static final VoxelShape SHAPE = Block.box(4.0D, 0.0D, 4.0D, 12.0D, 16.0D, 12.0D);
 
     public BlockColonyFlagBanner()
     {
         super();
         setRegistryName(REGISTRY_NAME);
 
-        this.setDefaultState(this.stateContainer.getBaseState().with(ROTATION, Integer.valueOf(0)));
+        this.registerDefaultState(this.stateDefinition.any().setValue(ROTATION, Integer.valueOf(0)));
     }
 
     @Override
-    public boolean isValidPosition(BlockState state, IWorldReader worldIn, BlockPos pos)
+    public boolean canSurvive(BlockState state, IWorldReader worldIn, BlockPos pos)
     {
-        return worldIn.getBlockState(pos.down()).getMaterial().isSolid();
+        return worldIn.getBlockState(pos.below()).getMaterial().isSolid();
     }
 
     @Override
@@ -51,32 +51,32 @@ public class BlockColonyFlagBanner extends AbstractColonyFlagBanner<BlockColonyF
     @Override
     public BlockState getStateForPlacement(BlockItemUseContext context)
     {
-        return this.getDefaultState()
-                .with(ROTATION, Integer.valueOf(MathHelper.floor((double)((180.0F + context.getPlacementYaw()) * 16.0F / 360.0F) + 0.5D) & 15));
+        return this.defaultBlockState()
+                .setValue(ROTATION, Integer.valueOf(MathHelper.floor((double)((180.0F + context.getRotation()) * 16.0F / 360.0F) + 0.5D) & 15));
     }
 
     @Override
-    public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos)
+    public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos)
     {
-        return facing == Direction.DOWN && !stateIn.isValidPosition(worldIn, currentPos)
-                ? Blocks.AIR.getDefaultState()
-                : super.updatePostPlacement(stateIn, facing, facingState, worldIn, currentPos, facingPos);
+        return facing == Direction.DOWN && !stateIn.canSurvive(worldIn, currentPos)
+                ? Blocks.AIR.defaultBlockState()
+                : super.updateShape(stateIn, facing, facingState, worldIn, currentPos, facingPos);
     }
 
     @Override
     public BlockState rotate(BlockState state, Rotation rot)
     {
-        return state.with(ROTATION, Integer.valueOf(rot.rotate(state.get(ROTATION), 16)));
+        return state.setValue(ROTATION, Integer.valueOf(rot.rotate(state.getValue(ROTATION), 16)));
     }
 
     @Override
     public BlockState mirror(BlockState state, Mirror mirrorIn)
     {
-        return state.with(ROTATION, Integer.valueOf(mirrorIn.mirrorRotation(state.get(ROTATION), 16)));
+        return state.setValue(ROTATION, Integer.valueOf(mirrorIn.mirror(state.getValue(ROTATION), 16)));
     }
 
     @Override
-    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
         builder.add(ROTATION);
     }
 }

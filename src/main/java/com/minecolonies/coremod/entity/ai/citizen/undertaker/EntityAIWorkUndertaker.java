@@ -114,7 +114,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
                 return getState();
             }
 
-            final TileEntity entity = world.getTileEntity(currentGrave);
+            final TileEntity entity = world.getBlockEntity(currentGrave);
             if (entity instanceof TileEntityGrave)
             {
                 getOwnBuilding().setLastGraveData((GraveData) ((TileEntityGrave) entity).getGraveData());
@@ -188,7 +188,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
             return getState();
         }
 
-        final TileEntity entity = world.getTileEntity(gravePos);
+        final TileEntity entity = world.getBlockEntity(gravePos);
         if (entity instanceof TileEntityGrave)
         {
             if (((TileEntityGrave) entity).isEmpty())
@@ -203,7 +203,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
 
             if(effortCounter < EFFORT_EMPTY_GRAVE)
             {
-                worker.swingArm(Hand.MAIN_HAND);
+                worker.swing(Hand.MAIN_HAND);
                 effortCounter += getPrimarySkillLevel();
                 return getState();
             }
@@ -252,7 +252,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
 
         worker.setSprinting(false);
 
-        final TileEntity entity = world.getTileEntity(gravePos);
+        final TileEntity entity = world.getBlockEntity(gravePos);
         if (entity instanceof TileEntityGrave)
         {
             //at position
@@ -282,8 +282,8 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
             if (mineBlock(position))
             {
                 equipShovel();
-                worker.swingArm(worker.getActiveHand());
-                world.setBlockState(position, Blocks.AIR.getDefaultState());
+                worker.swing(worker.getUsedItemHand());
+                world.setBlockAndUpdate(position, Blocks.AIR.defaultBlockState());
                 worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, 1);
                 worker.decreaseSaturationForContinuousAction();
                 getOwnBuilding().ClearCurrentGrave();
@@ -324,12 +324,12 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
             return getState();
         }
 
-        final TileEntity entity = world.getTileEntity(gravePos);
+        final TileEntity entity = world.getBlockEntity(gravePos);
         if (entity instanceof TileEntityGrave)
         {
             if (effortCounter < EFFORT_RESURRECT)
             {
-                worker.swingArm(Hand.MAIN_HAND);
+                worker.swing(Hand.MAIN_HAND);
                 effortCounter += getSecondarySkillLevel();
                 return getState();
             }
@@ -341,7 +341,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
             if (getTotemResurrectChance() > 0 && random.nextDouble() <= TOTEM_BREAK_CHANCE)
             {
                 worker.getInventoryCitizen().extractItem(InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), Items.TOTEM_OF_UNDYING), 1, false);
-                worker.playSound(SoundEvents.ITEM_TOTEM_USE, 1.0f, 1.0f);
+                worker.playSound(SoundEvents.TOTEM_USE, 1.0f, 1.0f);
             }
 
             if (chance >= random.nextDouble())
@@ -351,7 +351,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
                 worker.getCitizenColonyHandler().getColony().setNeedToMourn(false, buildingGraveyard.getLastGraveData().getCitizenName());
                 AdvancementUtils.TriggerAdvancementPlayersForColony(worker.getCitizenColonyHandler().getColony(), playerMP -> AdvancementTriggers.CITIZEN_RESURRECT.trigger(playerMP));
                 buildingGraveyard.setLastGraveData(null);
-                world.setBlockState(gravePos, Blocks.AIR.getDefaultState());
+                world.setBlockAndUpdate(gravePos, Blocks.AIR.defaultBlockState());
                 return INVENTORY_FULL;
             }
         }
@@ -445,7 +445,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         if(effortCounter < EFFORT_BURY)
         {
             equipShovel();
-            worker.swingArm(Hand.MAIN_HAND);
+            worker.swing(Hand.MAIN_HAND);
             effortCounter += getPrimarySkillLevel();
             return getState();
         }

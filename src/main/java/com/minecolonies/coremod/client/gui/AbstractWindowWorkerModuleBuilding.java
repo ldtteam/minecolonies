@@ -179,7 +179,7 @@ public abstract class AbstractWindowWorkerModuleBuilding<B extends AbstractBuild
             return;
         }
         final BlockPos pos = building.getPosition();
-        Minecraft.getInstance().player.openContainer((INamedContainerProvider) Minecraft.getInstance().world.getTileEntity(pos));
+        Minecraft.getInstance().player.openMenu((INamedContainerProvider) Minecraft.getInstance().level.getBlockEntity(pos));
         Network.getNetwork().sendToServer(new OpenCraftingGUIMessage(building));
     }
 

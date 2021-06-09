@@ -28,13 +28,13 @@ public class AmazonModel<T extends AbstractEntityAmazon> extends BipedModel<Abst
     }
 
     @Override
-    public void setRotationAngles(@NotNull final AbstractEntityAmazon entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
+    public void setupAnim(@NotNull final AbstractEntityAmazon entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
-        super.setRotationAngles(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
-        bipedHead.rotationPointY -= 3;
-        bipedRightLeg.rotationPointY -= 3.5;
-        bipedLeftLeg.rotationPointY -= 3.5;
-        bipedRightArm.rotationPointY -= 2;
-        bipedLeftArm.rotationPointY -= 2;
+        super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+        head.y -= 3;
+        rightLeg.y -= 3.5;
+        leftLeg.y -= 3.5;
+        rightArm.y -= 2;
+        leftArm.y -= 2;
     }
 }

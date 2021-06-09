@@ -100,7 +100,7 @@ public final class CreativeBuildingStructureHandler extends CreativeStructureHan
     {
         return itemStack == null
                  || itemStack.isEmpty()
-                 || itemStack.getItem().isIn(ItemTags.LEAVES)
+                 || itemStack.getItem().is(ItemTags.LEAVES)
                  || itemStack.getItem() == new ItemStack(ModBlocks.blockDecorationPlaceholder, 1).getItem();
     }
 

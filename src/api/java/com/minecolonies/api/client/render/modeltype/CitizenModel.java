@@ -20,17 +20,17 @@ public class CitizenModel<T extends AbstractEntityCitizen> extends BipedModel<Ab
     }
 
     @Override
-    public void setRotationAngles(@NotNull final AbstractEntityCitizen citizen, float f1, float f2, float f3, float f4, float f5)
+    public void setupAnim(@NotNull final AbstractEntityCitizen citizen, float f1, float f2, float f3, float f4, float f5)
     {
-        super.setRotationAngles(citizen, f1, f2, f3, f4, f5);
-        if (bipedBody.rotateAngleX == 0)
+        super.setupAnim(citizen, f1, f2, f3, f4, f5);
+        if (body.xRot == 0)
         {
-            bipedBody.rotateAngleX = getActualRotation();
+            body.xRot = getActualRotation();
         }
 
-        if (bipedHead.rotateAngleX == 0)
+        if (head.xRot == 0)
         {
-            bipedHead.rotateAngleX = getActualRotation();
+            head.xRot = getActualRotation();
         }
     }
 

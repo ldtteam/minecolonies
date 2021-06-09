@@ -267,9 +267,9 @@ public class BuildingCrusher extends AbstractBuildingCrafter
         this.dailyQuantity = compound.getInt(TAG_DAILY);
         this.currentDailyQuantity = compound.getInt(TAG_CURRENT_DAILY);
 
-        if (compound.keySet().contains(TAG_CRUSHER_MODE))
+        if (compound.getAllKeys().contains(TAG_CRUSHER_MODE))
         {
-            this.crusherMode = new ItemStorage(ItemStack.read(compound.getCompound(TAG_CRUSHER_MODE)));
+            this.crusherMode = new ItemStorage(ItemStack.of(compound.getCompound(TAG_CRUSHER_MODE)));
         }
 
         this.oneByOne = compound.getBoolean(TAG_CRUSHER_RATIO);
@@ -286,7 +286,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
         if (crusherMode != null)
         {
             final CompoundNBT crusherModeNBT = new CompoundNBT();
-            crusherMode.getItemStack().write(crusherModeNBT);
+            crusherMode.getItemStack().save(crusherModeNBT);
             compound.put(TAG_CRUSHER_MODE, crusherModeNBT);
         }
 
@@ -312,14 +312,14 @@ public class BuildingCrusher extends AbstractBuildingCrafter
         else
         {
             buf.writeBoolean(true);
-            buf.writeItemStack(crusherMode.getItemStack());
+            buf.writeItem(crusherMode.getItemStack());
         }
         buf.writeInt(dailyQuantity);
 
         buf.writeInt(crusherRecipes.size());
         for (final ItemStorage storage : crusherRecipes.keySet())
         {
-            buf.writeItemStack(storage.getItemStack());
+            buf.writeItem(storage.getItemStack());
         }
     }
 
@@ -367,7 +367,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
 
             if (buf.readBoolean())
             {
-                crusherMode = new ItemStorage(buf.readItemStack());
+                crusherMode = new ItemStorage(buf.readItem());
             }
             dailyQuantity = buf.readInt();
             crusherModes.clear();
@@ -375,7 +375,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
             final int size = buf.readInt();
             for (int i = 0; i < size; i++)
             {
-                crusherModes.add(new ItemStorage(buf.readItemStack()));
+                crusherModes.add(new ItemStorage(buf.readItem()));
             }
         }
 

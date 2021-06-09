@@ -4,6 +4,8 @@ import com.minecolonies.api.creativetab.ModCreativeTabs;
 
 import org.jetbrains.annotations.NotNull;
 
+import net.minecraft.item.Item.Properties;
+
 /**
  * Class handling Sifter Mesh.
  */
@@ -18,6 +20,6 @@ public class ItemSifterMesh extends AbstractItemMinecolonies
         @NotNull final String name,
         final Properties properties)
     {
-        super(name, properties.group(ModCreativeTabs.MINECOLONIES));
+        super(name, properties.tab(ModCreativeTabs.MINECOLONIES));
     }
 }

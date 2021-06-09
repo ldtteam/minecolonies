@@ -12,12 +12,14 @@ import java.util.OptionalDouble;
 
 import static net.minecraft.client.renderer.vertex.DefaultVertexFormats.*;
 
+import net.minecraft.client.renderer.RenderType.State;
+
 /**
  * Holding all kind of render types of minecolonies
  */
 public final class MRenderTypes extends RenderType
 {
-    private static final VertexFormat format = new VertexFormat(ImmutableList.of(POSITION_3F, TEX_2F, TEX_2SB));
+    private static final VertexFormat format = new VertexFormat(ImmutableList.of(ELEMENT_POSITION, ELEMENT_UV0, ELEMENT_UV2));
 
     /**
      * Private constructor to hide implicit one.
@@ -44,13 +46,13 @@ public final class MRenderTypes extends RenderType
      */
     public static RenderType customTextRenderer(@NotNull final ResourceLocation resourceLocation)
     {
-        final State state = State.getBuilder()
-                              .texture(new RenderState.TextureState(resourceLocation, false, false))//Texture state
-                              .alpha(RenderState.HALF_ALPHA)
-                              .depthTest(RenderState.DEPTH_ALWAYS)
-                              .build(true);
+        final State state = State.builder()
+                              .setTextureState(new RenderState.TextureState(resourceLocation, false, false))//Texture state
+                              .setAlphaState(RenderState.MIDWAY_ALPHA)
+                              .setDepthTestState(RenderState.NO_DEPTH_TEST)
+                              .createCompositeState(true);
 
-        return makeType("custommctextrenderer", format, 7, 256, true, false, state);
+        return create("custommctextrenderer", format, 7, 256, true, false, state);
     }
 
     /**
@@ -60,7 +62,7 @@ public final class MRenderTypes extends RenderType
      */
     public static RenderType customLineRenderer()
     {
-        return makeType("minecolonieslines", DefaultVertexFormats.POSITION_COLOR, 1, 256,
-          State.getBuilder().line(new RenderState.LineState(OptionalDouble.empty())).build(false));
+        return create("minecolonieslines", DefaultVertexFormats.POSITION_COLOR, 1, 256,
+          State.builder().setLineState(new RenderState.LineState(OptionalDouble.empty())).createCompositeState(false));
     }
 }

@@ -86,7 +86,7 @@ public class BuildingBaker extends AbstractBuildingSmelterCrafter
             for (final ItemStorage itemStorage : storage.getCleanedInput())
             {
                 final ItemStack stack = itemStorage.getItemStack();
-                keepX.put(stack::isItemEqual, new Tuple<>(RECIPE_INPUT_HOLD, false));
+                keepX.put(stack::sameItem, new Tuple<>(RECIPE_INPUT_HOLD, false));
             }
         }
     }
