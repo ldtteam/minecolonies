@@ -148,12 +148,9 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
     {
         if (isDynamicLeavesBlock(leaf))
         {
+            ItemStack stack = ((DynamicLeavesBlock) leaf).getFamily(blockState, world, pos).getCommonSpecies().getSeedStack(1);
             final NonNullList<ItemStack> list = NonNullList.create();
-            // Implementation is chance based, so repeat till we get an item
-            for (int i = 0; i < 100 && list.isEmpty(); i++)
-            {
-                list.addAll(((DynamicLeavesBlock) leaf).getDrops(blockState, (ServerWorld) world, pos, null));
-            }
+            list.add(stack);
             return list;
         }
         return NonNullList.create();
@@ -281,7 +278,7 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
     {
         if (saplingStack.getItem() instanceof Seed)
         {
-            return ((Seed) saplingStack.getItem()).getSpecies().plantSapling(world, location);
+            return ((Seed) saplingStack.getItem()).getSpecies().plantSapling(world, location, false);
         }
         else
         {
