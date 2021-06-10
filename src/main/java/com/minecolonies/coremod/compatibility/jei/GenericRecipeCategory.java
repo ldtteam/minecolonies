@@ -210,6 +210,17 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
             }
         }
 
+        boolean showLootTooltip = true;
+        if (drops.isEmpty())
+        {
+            // this is a temporary workaround for cases where we currently fail to load the loot table
+            // (mostly when it's in a datapack).  assume that someone has set the alternate-outputs
+            // appropriately, but we can't display the percentage chances.
+            showLootTooltip = false;
+            drops.addAll(recipe.getAdditionalOutputs().stream()
+                    .map(stack -> new LootTableAnalyzer.LootDrop(Collections.singletonList(stack), 0, false))
+                    .collect(Collectors.toList()));
+        }
         if (!drops.isEmpty())
         {
             final int initialColumns = LOOT_SLOTS_W / this.slot.getWidth();
@@ -220,7 +231,10 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
             y = CITIZEN_Y + CITIZEN_H - rows * this.slot.getHeight() + 1;
             int c = 0;
 
-            guiItemStacks.addTooltipCallback(new LootTableTooltipCallback(slot, drops));
+            if (showLootTooltip)
+            {
+                guiItemStacks.addTooltipCallback(new LootTableTooltipCallback(slot, drops));
+            }
             for (final LootTableAnalyzer.LootDrop drop : drops)
             {
                 guiItemStacks.init(slot, true, x, y);
