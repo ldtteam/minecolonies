@@ -354,7 +354,7 @@
 
   "entity.worker.inventoryfullchestfull": "Please make space in my chests/racks. I am not able to dump my inventory.",
 
-  "entity.builder.messagebuildstart": " I've started work on %s!",
+  "entity.builder.messagebuildstart": ": I've started work on %s!",
   "entity.builder.messagebuildcomplete": ": I've finished building the %s at %s %s %s!",
   "entity.builder.messagebuildcomplete_manual": ": I've finished building the %s at %s %s %s. You can assign me another task now!",
   "entity.builder.messageremovalcomplete": ": I've finished deconstructing building %s! §6 To move the building while retaining its current level, use the 'Pick Up' button on the building's 'Build Options' GUI.",
@@ -1999,6 +1999,7 @@
   "com.minecolonies.coremod.setting.minecolonies:patrolmode": "Patrol Mode:",
   "com.minecolonies.coremod.setting.minecolonies:followmode": "Follow Mode:",
   "com.minecolonies.coremod.setting.minecolonies:guardtask": "Task:",
+  "com.minecolonies.coremod.setting.minecolonies:guardjob": "Job:",
 
   "com.minecolonies.coremod.gui.citizen.family": "Family",
   "com.minecolonies.coremod.gui.citizen.job": "Job",

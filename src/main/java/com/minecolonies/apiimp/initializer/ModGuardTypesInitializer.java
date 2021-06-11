@@ -29,6 +29,7 @@ public final class ModGuardTypesInitializer
                                  .setWorkerSoundName("archer")
                                  .setGuardJobProducer(JobKnight::new)
                                  .setRegistryName(ModGuardTypes.KNIGHT_ID)
+                                 .setClazz(JobKnight.class)
                                  .createGuardType();
 
         ModGuardTypes.ranger = new GuardType.Builder()
@@ -39,6 +40,7 @@ public final class ModGuardTypesInitializer
                                  .setWorkerSoundName("archer")
                                  .setGuardJobProducer(JobRanger::new)
                                  .setRegistryName(ModGuardTypes.RANGER_ID)
+                                 .setClazz(JobRanger.class)
                                  .createGuardType();
 
         reg.register(ModGuardTypes.knight);

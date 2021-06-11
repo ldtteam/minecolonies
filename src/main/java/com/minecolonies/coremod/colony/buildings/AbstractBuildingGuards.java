@@ -11,7 +11,6 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.guardtype.GuardType;
-import com.minecolonies.api.colony.guardtype.registry.IGuardTypeDataManager;
 import com.minecolonies.api.colony.guardtype.registry.IGuardTypeRegistry;
 import com.minecolonies.api.colony.guardtype.registry.ModGuardTypes;
 import com.minecolonies.api.colony.jobs.IJob;
@@ -27,6 +26,7 @@ import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.coremod.colony.buildings.modules.settings.*;
+import com.minecolonies.coremod.colony.buildings.moduleviews.SettingsModuleView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.colony.jobs.JobArcherTraining;
@@ -71,6 +71,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     /**
      * Settings.
      */
+    public static final ISettingKey<GuardJobSetting> JOB = new SettingKey<>(GuardJobSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "guardjob"));
     public static final ISettingKey<BoolSetting> RETREAT = new SettingKey<>(BoolSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "retreat"));
     public static final ISettingKey<BoolSetting>       HIRE_TRAINEE = new SettingKey<>(BoolSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "hiretrainee"));
     public static final ISettingKey<PatrolModeSetting> PATROL_MODE  = new SettingKey<>(PatrolModeSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "patrolmode"));
@@ -115,11 +116,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
      * The position at which the guard should guard at.
      */
     private BlockPos guardPos = this.getID();
-
-    /**
-     * The guardType of the guard, Any possible {@link GuardType}.
-     */
-    private GuardType job = null;
 
     /**
      * The list of manual patrol targets.
@@ -262,9 +258,10 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     {
         super.deserializeNBT(compound);
 
-        final ResourceLocation jobName = new ResourceLocation(compound.getString(NBT_JOB));
-        //todo we need a settings recovery here.
-        job = IGuardTypeDataManager.getInstance().getFrom(jobName);
+        if (compound.contains(NBT_JOB))
+        {
+            getSetting(JOB).set(compound.getString(NBT_JOB));
+        }
 
         final ListNBT wayPointTagList = compound.getList(NBT_PATROL_TARGETS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < wayPointTagList.size(); ++i)
@@ -285,7 +282,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     public CompoundNBT serializeNBT()
     {
         final CompoundNBT compound = super.serializeNBT();
-        compound.putString(NBT_JOB, job == null ? "" : job.getRegistryName().toString());
 
         @NotNull final ListNBT wayPointTagList = new ListNBT();
         for (@NotNull final BlockPos pos : patrolTargets)
@@ -330,7 +326,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     public void serializeToView(@NotNull final PacketBuffer buf)
     {
         super.serializeToView(buf);
-        buf.writeString(job == null ? "" : job.getRegistryName().toString());
         buf.writeInt(patrolTargets.size());
 
         for (final BlockPos pos : patrolTargets)
@@ -398,9 +393,9 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             for(ICitizenData trainee:colony.getCitizenManager().getCitizens())
             {
                 if((this.getGuardType() == ModGuardTypes.ranger && trainee.getJob() instanceof JobArcherTraining) || (this.getGuardType() == ModGuardTypes.knight && trainee.getJob() instanceof JobCombatTraining)
-                    &&  trainee.getCitizenSkillHandler().getLevel(job.getPrimarySkill()) > maxSkill)
+                    &&  trainee.getCitizenSkillHandler().getLevel(getGuardType().getPrimarySkill()) > maxSkill)
                 {
-                    maxSkill = trainee.getCitizenSkillHandler().getLevel(job.getPrimarySkill());
+                    maxSkill = trainee.getCitizenSkillHandler().getLevel(getGuardType().getPrimarySkill());
                     trainingCitizen = trainee;
                 }
             }
@@ -426,6 +421,18 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
                 // Next patrol point
                 startPatrolNext();
             }
+        }
+    }
+
+    /**
+     * Called when the job setting changes.
+     */
+    public void onJobChange()
+    {
+        for (final ICitizenData citizen : getAssignedCitizen())
+        {
+            cancelAllRequestsOfCitizen(citizen);
+            citizen.setJob(createJob(citizen));
         }
     }
 
@@ -593,24 +600,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     @Override
     public GuardType getGuardType()
     {
-        if (job == null)
-        {
-            final List<GuardType> guardTypes = new ArrayList<>(IGuardTypeRegistry.getInstance().getValues());
-            job = guardTypes.get(new Random().nextInt(guardTypes.size()));
-        }
-        return this.job;
-    }
-
-    @Override
-    public void setGuardType(final GuardType job)
-    {
-        this.job = job;
-        for (final ICitizenData citizen : getAssignedCitizen())
-        {
-            cancelAllRequestsOfCitizen(citizen);
-            citizen.setJob(createJob(citizen));
-        }
-        this.markDirty();
+        return getSetting(JOB).getGuardType();
     }
 
     @NotNull
@@ -801,14 +791,14 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     @Override
     public Skill getPrimarySkill()
     {
-        return job.getPrimarySkill();
+        return getGuardType().getPrimarySkill();
     }
 
     @NotNull
     @Override
     public Skill getSecondarySkill()
     {
-        return job.getSecondarySkill();
+        return getGuardType().getSecondarySkill();
     }
 
     /**
@@ -842,11 +832,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
      */
     public static class View extends AbstractBuildingWorker.View
     {
-        /**
-         * The {@link GuardType} of the guard
-         */
-        private GuardType guardType = null;
-
         /**
          * The list of manual patrol targets.
          */
@@ -899,9 +884,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         {
             super.deserialize(buf);
 
-            final ResourceLocation jobId = new ResourceLocation(buf.readString(32767));
-            guardType = IGuardTypeRegistry.getInstance().getValue(jobId);
-
             final int targetSize = buf.readInt();
             patrolTargets = new ArrayList<>();
 
@@ -941,9 +923,13 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             return getGuardType().getSecondarySkill();
         }
 
+        /**
+         * Get the current guard type.
+         * @return the type.
+         */
         public GuardType getGuardType()
         {
-            return guardType;
+            return IGuardTypeRegistry.getInstance().getValue(new ResourceLocation(getModuleView(SettingsModuleView.class).getSetting(JOB).getValue()));
         }
 
         public List<BlockPos> getPatrolTargets()

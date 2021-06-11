@@ -23,4 +23,11 @@ public interface ISettingsModule extends IBuildingModule
      * @return the setting.
      */
     <T extends ISetting> T getSetting(final ISettingKey<T> key);
+
+    /**
+     * Update a given settings value.
+     * @param settingKey the given key.
+     * @param value the value.
+     */
+    void updateSetting(ISettingKey<?> settingKey, ISetting value);
 }

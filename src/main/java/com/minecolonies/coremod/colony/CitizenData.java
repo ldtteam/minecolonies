@@ -763,8 +763,10 @@ public class CitizenData implements ICitizenData
             colony.getCitizenManager().spawnOrCreateCivilian(this, colony.getWorld(), nextRespawnPos, true);
             nextRespawnPos = null;
         }
-
-        colony.getCitizenManager().spawnOrCreateCivilian(this, colony.getWorld(), lastPosition, true);
+        else
+        {
+            colony.getCitizenManager().spawnOrCreateCivilian(this, colony.getWorld(), lastPosition, true);
+        }
     }
 
     @Override
