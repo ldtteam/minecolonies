@@ -90,7 +90,8 @@ public class EntityAIMournCitizen extends Goal
     {
         if (citizen.getDesiredActivity() == DesiredActivity.MOURN && this.citizen.getRandom().nextInt(AVERAGE_MOURN_TIME) < 1)
         {
-            this.citizen.setMourning(false);
+            this.citizen.getCitizenData().getCitizenMournHandler().clearDeceasedCitizen();
+            this.citizen.getCitizenData().getCitizenMournHandler().setMourning(false);
             citizen.getCitizenData().setVisibleStatus(null);
             return true;
         }

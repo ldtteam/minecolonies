@@ -9,7 +9,7 @@ import com.minecolonies.api.colony.interactionhandling.IChatPriority;
 import com.minecolonies.api.colony.interactionhandling.InteractionValidatorRegistry;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.client.gui.WindowCitizen;
+import com.minecolonies.coremod.client.gui.citizen.MainWindowCitizen;
 import com.minecolonies.coremod.network.messages.server.colony.InteractionResponse;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -146,7 +146,7 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
     {
         if (((TranslationTextComponent) response).getKey().equals("com.minecolonies.coremod.gui.chat.skipchitchat"))
         {
-            final WindowCitizen windowCitizen = new WindowCitizen(data);
+            final MainWindowCitizen windowCitizen = new MainWindowCitizen(data);
             windowCitizen.open();
         }
 

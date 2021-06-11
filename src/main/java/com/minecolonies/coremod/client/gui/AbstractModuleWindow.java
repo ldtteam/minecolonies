@@ -31,7 +31,7 @@ public abstract class AbstractModuleWindow extends AbstractWindowSkeleton implem
     {
         super(res);
         this.buildingView = building;
-        final Random random = new Random();
+        final Random random = new Random(building.getID().hashCode());
         int offset = 0;
 
         //todo We have to move this to 0 as soon as we're finished with modularization and remove the switch views in favor of a sidenav xml.

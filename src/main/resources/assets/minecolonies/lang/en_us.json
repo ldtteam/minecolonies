@@ -477,7 +477,7 @@
   "com.minecolonies.coremod.gui.workerhuts.homehut": "House",
   "com.minecolonies.coremod.gui.workerhuts.tavern": "Tavern",
   "com.minecolonies.coremod.gui.workerhuts.buildershut": "Builder's Hut",
-  "com.minecolonies.coremod.gui.workerhuts.lumberjackhut": "Forester's Hut",
+  "com.minecolonies.coremod.gui.workerhuts.lumberjack": "Forester's Hut",
   "com.minecolonies.coremod.gui.workerhuts.mysticalsite": "Mystical Site",
   "com.minecolonies.coremod.gui.workerhuts.florist": "Flower Shop",
 
@@ -2000,4 +2000,17 @@
   "com.minecolonies.coremod.setting.minecolonies:followmode": "Follow Mode:",
   "com.minecolonies.coremod.setting.minecolonies:guardtask": "Task:",
   "com.minecolonies.coremod.setting.minecolonies:guardjob": "Job:",
+
+  "com.minecolonies.coremod.gui.citizen.family": "Family",
+  "com.minecolonies.coremod.gui.citizen.job": "Job",
+  "com.minecolonies.coremod.gui.citizen.inventory": "Inventory",
+  "com.minecolonies.coremod.gui.citizen.main": "Info",
+  "com.minecolonies.coremod.gui.citizen.happiness": "Happiness",
+
+  "com.minecolonies.coremod.gui.citizen.family.title": "Family Tree",
+  "com.minecolonies.coremod.gui.citizen.family.parents": "Parents",
+  "com.minecolonies.coremod.gui.citizen.family.partner": "Partner",
+  "com.minecolonies.coremod.gui.citizen.family.siblings": "Siblings",
+  "com.minecolonies.coremod.gui.citizen.family.children": "Children",
+  "com.minecolonies.coremod.gui.citizen.family.unknown": "Unknown"
 }

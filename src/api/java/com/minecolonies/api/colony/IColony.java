@@ -265,6 +265,13 @@ public interface IColony
     IEventManager getEventManager();
 
     /**
+     * Get the reproduction manager of the colony.
+     *
+     * @return the reproduction manager.
+     */
+    IReproductionManager getReproductionManager();
+
+    /**
      * Get the event description manager of the colony.
      *
      * @return the event description manager.
@@ -316,12 +323,6 @@ public interface IColony
     long getMercenaryUseTime();
 
     CompoundNBT getColonyTag();
-
-    boolean isNeedToMourn();
-
-    void setNeedToMourn(boolean needToMourn, String name);
-
-    boolean isMourning();
 
     boolean isColonyUnderAttack();
 

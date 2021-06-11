@@ -25,6 +25,7 @@ import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.*;
+import com.minecolonies.coremod.client.gui.citizen.CitizenWindowUtils;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;
@@ -1222,8 +1223,8 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
         findPaneByID(CITIZEN_INFO).show();
         button.disable();
         final ICitizenDataView view = citizens.get(row);
-        WindowCitizen.createHappinessBar(view, this);
-        WindowCitizen.createSkillContent(view, this);
+        CitizenWindowUtils.createHappinessBar(view, this);
+        CitizenWindowUtils.createSkillContent(view, this);
         findPaneOfTypeByID(JOB_LABEL, Text.class).setText(
           "§l" + LanguageHandler.format(view.getJob().trim().isEmpty() ? COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_CITIZEN_UNEMPLOYED : view.getJob()));
         findPaneOfTypeByID(HIDDEN_CITIZEN_ID, Text.class).setText(String.valueOf(view.getId()));

@@ -19,7 +19,6 @@ public final class Constants
     public static final int    MAX_BUILDING_LEVEL               = 5;
     public static final int    TICKS_SECOND                     = 20;
     public static final int    SECONDS_A_MINUTE                 = 60;
-    public static final int    TWENTYFIVESEC                    = 25;
     public static final int    STACKSIZE                        = 64;
     public static final int    MAX_BARBARIAN_HORDE_SIZE         = 400;
     public static final int    MIN_BARBARIAN_HORDE_SIZE         = 6;

@@ -430,18 +430,6 @@ public class VisitorCitizen extends AbstractEntityCitizen
     }
 
     @Override
-    public boolean isMourning()
-    {
-        return false;
-    }
-
-    @Override
-    public void setMourning(final boolean mourning)
-    {
-
-    }
-
-    @Override
     public float getRotationYaw()
     {
         return rotationYaw;

@@ -25,6 +25,7 @@ import com.minecolonies.coremod.blocks.huts.BlockHutWareHouse;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.BuildingMysticalSite;
+import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.modules.TavernBuildingModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
@@ -337,6 +338,22 @@ public class BuildingManager implements IBuildingManager
         return false;
     }
 
+    @Override
+    public IBuilding getHouseWithSpareBed()
+    {
+        for (final IBuilding building : buildings.values())
+        {
+            if (building.hasModule(LivingBuildingModule.class))
+            {
+                if (building.getAssignedCitizen().size() < building.getMaxInhabitants())
+                {
+                    return building;
+                }
+            }
+        }
+        return null;
+    }
+
     @NotNull
     @Override
     public Map<BlockPos, IBuilding> getBuildings()
@@ -533,15 +550,21 @@ public class BuildingManager implements IBuildingManager
     }
 
     @Override
-    public BlockPos getBestRestaurant(final AbstractEntityCitizen citizen)
+    public BlockPos getBestBuilding(final AbstractEntityCitizen citizen, final Class<? extends IBuilding> clazz)
+    {
+        return getBestBuilding(citizen.getPosition(), clazz);
+    }
+
+    @Override
+    public BlockPos getBestBuilding(final BlockPos citizen, final Class<? extends IBuilding> clazz)
     {
         double distance = Double.MAX_VALUE;
         BlockPos goodCook = null;
         for (final IBuilding building : buildings.values())
         {
-            if (building instanceof BuildingCook && building.getBuildingLevel() > 0)
+            if (clazz.isInstance(building) && building.getBuildingLevel() > 0)
             {
-                final double localDistance = building.getPosition().distanceSq(citizen.getPosition());
+                final double localDistance = building.getPosition().distanceSq(citizen);
                 if (localDistance < distance)
                 {
                     distance = localDistance;
@@ -550,46 +573,6 @@ public class BuildingManager implements IBuildingManager
             }
         }
         return goodCook;
-    }
-
-    @Override
-    public BlockPos getClosestGraveyard(final AbstractEntityCitizen citizen, final Predicate<Object> predicate)
-    {
-        double distance = Double.MAX_VALUE;
-        BlockPos graveyard = null;
-        for (final IBuilding building : citizen.getCitizenColonyHandler().getColony().getBuildingManager().getBuildings().values())
-        {
-            if (building instanceof BuildingGraveyard && building.getBuildingLevel() > 0 && (predicate == null || predicate.test((BuildingGraveyard)building)))
-            {
-                final double localDistance = building.getPosition().distanceSq(citizen.getPosition());
-                if (localDistance < distance)
-                {
-                    distance = localDistance;
-                    graveyard = building.getPosition();
-                }
-            }
-        }
-        return graveyard;
-    }
-
-    @Override
-    public BlockPos getBestHospital(final AbstractEntityCitizen citizen)
-    {
-        double distance = Double.MAX_VALUE;
-        BlockPos goodHospital = null;
-        for (final IBuilding building :  buildings.values())
-        {
-            if (building instanceof BuildingHospital && building.getBuildingLevel() > 0)
-            {
-                final double localDistance = building.getPosition().distanceSq(citizen.getPosition());
-                if (localDistance < distance)
-                {
-                    distance = localDistance;
-                    goodHospital = building.getPosition();
-                }
-            }
-        }
-        return goodHospital;
     }
 
     @Override

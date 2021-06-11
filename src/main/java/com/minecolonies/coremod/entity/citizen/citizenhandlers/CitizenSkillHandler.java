@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.citizen.citizenhandlers;
 
 import com.google.common.collect.ImmutableMap;
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -17,6 +18,7 @@ import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,16 +36,6 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
      * Chance to level up intelligence.
      */
     private static final int CHANCE_TO_LEVEL = 50;
-
-    /**
-     * Defines how much child stats very from parents average(+ or -).
-     */
-    private static final int CHILD_STATS_VARIANCE = 3;
-
-    /**
-     * Max inheritance of stats.
-     */
-    private static final int MAX_INHERITANCE = 10;
 
     /**
      * Skill map.
@@ -71,9 +63,30 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
     }
 
     @Override
-    public void init(@NotNull final ICitizenData mom, @NotNull final ICitizenData dad, final Random rand)
+    public void init(@NotNull final IColony colony, @Nullable final ICitizenData firstParent, @Nullable final ICitizenData secondParent, final Random rand)
     {
-        final int levelCap = (int) mom.getColony().getOverallHappiness();
+        ICitizenData roleModelA;
+        ICitizenData roleModelB;
+
+        if (firstParent == null)
+        {
+            roleModelA = colony.getCitizenManager().getRandomCitizen();
+        }
+        else
+        {
+            roleModelA = firstParent;
+        }
+
+        if (secondParent == null)
+        {
+            roleModelB = colony.getCitizenManager().getRandomCitizen();
+        }
+        else
+        {
+            roleModelB = secondParent;
+        }
+
+        final int levelCap = (int) colony.getOverallHappiness();
         init(levelCap);
 
         final int bonusPoints = 25 + rand.nextInt(25);
@@ -81,17 +94,17 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
         int totalPoints = 0;
         for (final Skill skill : Skill.values())
         {
-            final int momLevel = mom.getCitizenSkillHandler().getSkills().get(skill).getA();
-            final int dadLevel = dad.getCitizenSkillHandler().getSkills().get(skill).getA();
-            totalPoints += momLevel + dadLevel;
+            final int firstRoleModelLevel = roleModelA.getCitizenSkillHandler().getSkills().get(skill).getA();
+            final int secondRoleModelLevel = roleModelB.getCitizenSkillHandler().getSkills().get(skill).getA();
+            totalPoints += firstRoleModelLevel + secondRoleModelLevel;
         }
 
         for (final Skill skill : Skill.values())
         {
-            final double momLevel = mom.getCitizenSkillHandler().getSkills().get(skill).getA();
-            final double dadLevel = dad.getCitizenSkillHandler().getSkills().get(skill).getA();
+            final double firstRoleModelLevel = roleModelA.getCitizenSkillHandler().getSkills().get(skill).getA();
+            final double secondRoleModelLevel = roleModelB.getCitizenSkillHandler().getSkills().get(skill).getA();
 
-            int newPoints = (int) (((momLevel + dadLevel) / totalPoints) * bonusPoints);
+            int newPoints = (int) (((firstRoleModelLevel + secondRoleModelLevel) / totalPoints) * bonusPoints);
 
             skillMap.put(skill, new Tuple<>(skillMap.get(skill).getA() + newPoints, 0.0D));
         }

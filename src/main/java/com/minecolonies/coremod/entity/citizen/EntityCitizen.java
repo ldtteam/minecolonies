@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.entity.citizen;
 
 import com.ldtteam.structurize.util.LanguageHandler;
-import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
@@ -27,19 +26,14 @@ import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.inventory.container.ContainerCitizenInventory;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.sounds.EventType;
-import com.minecolonies.api.tileentities.TileEntityGrave;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.blocks.BlockMinecoloniesGrave;
-import com.minecolonies.api.colony.GraveData;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingGraveyard;
 import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenDiedEvent;
 import com.minecolonies.coremod.colony.jobs.*;
 import com.minecolonies.coremod.entity.SittingEntity;
-import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard;
 import com.minecolonies.coremod.entity.ai.minimal.*;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.*;
@@ -168,10 +162,6 @@ public class EntityCitizen extends AbstractEntityCitizen
      * The path-result of trying to move away
      */
     private PathResult             moveAwayPath;
-    /**
-     * Indicate if the citizen is mourning or not.
-     */
-    private boolean          mourning            = false;
     /**
      * IsChild flag
      */
@@ -423,8 +413,6 @@ public class EntityCitizen extends AbstractEntityCitizen
             compound.putInt(TAG_COLONY_ID, citizenColonyHandler.getColony().getID());
             compound.putInt(TAG_CITIZEN, citizenData.getId());
         }
-        compound.putBoolean(TAG_MOURNING, mourning);
-
         citizenDiseaseHandler.write(compound);
     }
 
@@ -436,12 +424,6 @@ public class EntityCitizen extends AbstractEntityCitizen
         citizenStatusHandler.setStatus(Status.values()[compound.getInt(TAG_STATUS)]);
         citizenColonyHandler.setColonyId(compound.getInt(TAG_COLONY_ID));
         citizenId = compound.getInt(TAG_CITIZEN);
-
-        if (compound.keySet().contains(TAG_MOURNING))
-        {
-            mourning = compound.getBoolean(TAG_MOURNING);
-        }
-
         citizenDiseaseHandler.read(compound);
     }
 
@@ -1036,13 +1018,6 @@ public class EntityCitizen extends AbstractEntityCitizen
             return false;
         }
 
-        if (getCitizenColonyHandler().getColony().isMourning() && mourning && !(citizenJobHandler.getColonyJob() instanceof JobUndertaker))
-        {
-            setVisibleStatusIfNone(MOURNING);
-            desiredActivity = DesiredActivity.MOURN;
-            return false;
-        }
-
         // Sleeping
         if (!WorldUtil.isPastTime(CompatibilityUtils.getWorldFromCitizen(this), NIGHT - 2000))
         {
@@ -1061,6 +1036,13 @@ public class EntityCitizen extends AbstractEntityCitizen
                 desiredActivity = DesiredActivity.SLEEP;
                 return false;
             }
+        }
+
+        if (citizenData.getCitizenMournHandler().isMourning() && citizenData.getCitizenMournHandler().shouldMourn())
+        {
+            setVisibleStatusIfNone(MOURNING);
+            desiredActivity = DesiredActivity.MOURN;
+            return false;
         }
 
         if (citizenSleepHandler.isAsleep() && !citizenDiseaseHandler.isSick())
@@ -1127,28 +1109,6 @@ public class EntityCitizen extends AbstractEntityCitizen
         return MineColonies.getConfig().getServer().workersAlwaysWorkInRain.get() ||
                  getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(WORKING_IN_RAIN) > 0 ||
                  (citizenColonyHandler.getWorkBuilding() != null && citizenColonyHandler.getWorkBuilding().canWorkDuringTheRain());
-    }
-
-    /**
-     * Returns a value that indicate if the citizen is in mourning.
-     *
-     * @return indicate if the citizen is mouring
-     */
-    @Override
-    public boolean isMourning()
-    {
-        return mourning;
-    }
-
-    /**
-     * Call this to set if the citizen should mourn or not.
-     *
-     * @param mourning indicate if the citizen should mourn
-     */
-    @Override
-    public void setMourning(final boolean mourning)
-    {
-        this.mourning = mourning;
     }
 
     @Override
@@ -1454,10 +1414,9 @@ public class EntityCitizen extends AbstractEntityCitizen
             }
             triggerDeathAchievement(damageSource, citizenJobHandler.getColonyJob());
             citizenChatHandler.notifyDeath(damageSource);
-            if (!(citizenJobHandler.getColonyJob() instanceof AbstractJobGuard)
-                  && (damageSource != DamageSource.IN_WALL))
+            if (!(citizenJobHandler.getColonyJob() instanceof AbstractJobGuard))
             {
-                citizenColonyHandler.getColony().setNeedToMourn(true, citizenData.getName());
+                citizenColonyHandler.getColony().getCitizenManager().updateCitizenMourn(citizenData, true);
             }
 
             if(citizenColonyHandler.getColony().isCoordInColony(world, getPosition()))

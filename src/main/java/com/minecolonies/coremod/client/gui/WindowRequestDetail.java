@@ -13,6 +13,7 @@ import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.coremod.client.gui.citizen.MainWindowCitizen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.item.ItemStack;
@@ -203,13 +204,13 @@ public class WindowRequestDetail extends Window implements ButtonHandler
 
         //Checks if fulfill button should be displayed
         Pane fulfillButton = this.window.getChildren().stream().filter(pane -> pane.getID().equals(REQUEST_FULLFIL)).findFirst().get();
-        if ((this.prevWindow instanceof WindowCitizen && !((WindowCitizen) prevWindow).fulfillable(request)) || this.prevWindow instanceof WindowClipBoard)
+        if ((this.prevWindow instanceof MainWindowCitizen && !((MainWindowCitizen) prevWindow).fulfillable(request)) || this.prevWindow instanceof WindowClipBoard)
         {
             fulfillButton.hide();
         }
         //Checks if cancel button should be displayed
         Pane cancelButton = this.window.getChildren().stream().filter(pane -> pane.getID().equals(REQUEST_CANCEL)).findFirst().get();
-        if (this.prevWindow instanceof WindowCitizen && !((WindowCitizen) prevWindow).cancellable(request))
+        if (this.prevWindow instanceof MainWindowCitizen && !((MainWindowCitizen) prevWindow).cancellable(request))
         {
             cancelButton.hide();
         }
@@ -225,17 +226,17 @@ public class WindowRequestDetail extends Window implements ButtonHandler
     {
         if (button.getID().equals(REQUEST_FULLFIL))
         {
-            if (this.prevWindow instanceof WindowCitizen)
+            if (this.prevWindow instanceof MainWindowCitizen)
             {
-                ((WindowCitizen) this.prevWindow).fulfill(request);
+                ((MainWindowCitizen) this.prevWindow).fulfill(request);
             }
             this.window.close();
         }
         else if (button.getID().equals(REQUEST_CANCEL))
         {
-            if (this.prevWindow instanceof WindowCitizen)
+            if (this.prevWindow instanceof MainWindowCitizen)
             {
-                ((WindowCitizen) this.prevWindow).cancel(request);
+                ((MainWindowCitizen) this.prevWindow).cancel(request);
             }
             this.window.close();
         }

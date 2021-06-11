@@ -1,11 +1,13 @@
 package com.minecolonies.api.entity.citizen.citizenhandlers;
 
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.entity.citizen.Skill;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Tuple;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 import java.util.Random;
@@ -23,13 +25,13 @@ public interface ICitizenSkillHandler
     void init(final int levelCap);
 
     /**
-     * Initiate a citizen with parent citizen datas.
+     * Initiate a citizen with parent citizen data.
      *
-     * @param mom  the mother data.
-     * @param dad  the father data.
+     * @param firstParent  the first parent data.
+     * @param secondParent  the second parent data.
      * @param rand random var.
      */
-    void init(@NotNull final ICitizenData mom, @NotNull final ICitizenData dad, Random rand);
+    void init(@NotNull final IColony colony, @Nullable final ICitizenData firstParent, @Nullable final ICitizenData secondParent, Random rand);
 
     /**
      * Write the handler to NBT.

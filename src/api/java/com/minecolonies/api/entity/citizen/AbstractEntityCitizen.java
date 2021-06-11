@@ -694,20 +694,6 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      */
     public abstract boolean isIdlingAtJob();
 
-    /**
-     * Returns a value that indicate if the citizen is in mourning.
-     *
-     * @return indicate if the citizen is mouring
-     */
-    public abstract boolean isMourning();
-
-    /**
-     * Call this to set if the citizen should mourn or not.
-     *
-     * @param mourning indicate if the citizen should mourn
-     */
-    public abstract void setMourning(boolean mourning);
-
     public abstract float getRotationYaw();
 
     public abstract float getRotationPitch();

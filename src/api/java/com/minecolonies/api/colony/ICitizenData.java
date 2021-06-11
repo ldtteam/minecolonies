@@ -6,12 +6,15 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenHappinessHandler;
+import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenMournHandler;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
+import com.minecolonies.api.util.Tuple;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
@@ -140,6 +143,13 @@ public interface ICitizenData extends ICivilianData
     ICitizenHappinessHandler getCitizenHappinessHandler();
 
     /**
+     * The Handler for the citizens mourning.
+     *
+     * @return the instance of the handler
+     */
+    ICitizenMournHandler getCitizenMournHandler();
+
+    /**
      * Get the citizen skill handler.
      *
      * @return the handler.
@@ -256,4 +266,83 @@ public interface ICitizenData extends ICivilianData
      * @return true if so
      */
     boolean needsBetterFood();
+
+    /**
+     * Get the partner of the citizen.
+     * @return the partner or null if non existent.
+     */
+    @Nullable
+    ICitizenData getPartner();
+
+    /**
+     * Get the list of children of a citizen.
+     * @return the citizen ids.
+     */
+    List<Integer> getChildren();
+
+    /**
+     * Get the list of children of a citizen.
+     * @return the citizen ids.
+     */
+    List<Integer> getSiblings();
+
+    /**
+     * Get the names of the parents.
+     * @return the name.
+     */
+    Tuple<String, String> getParents();
+
+    /**
+     * Add one or more siblings to a citizen.
+     * @param siblings the ids of the siblings.
+     */
+    void addSiblings(final Integer...siblings);
+
+    /**
+     * Add one or more children to a citizen.
+     * @param children the ids of the children.
+     */
+    void addChildren(final Integer...children);
+
+    /**
+     * Set a new partner to the citizen.
+     * @param id the partner id.
+     */
+    void setPartner(final int id);
+
+    /**
+     * On death of a citizen this is invoked on the related citizens.
+     * @param id the id of the citizen.
+     */
+    void onDeath(final Integer id);
+
+    /**
+     * Set the parents of the citizen.
+     * @param firstParent the parent name.
+     * @param secondParent second parent name.
+     */
+    void setParents(final String firstParent, final String secondParent);
+
+    /**
+     * Generate the name of the citizen.
+     * @param rand used random func.
+     * @param firstParentName name of the first parent.
+     * @param secondParentName name of the second parent.
+     * @return true on success.
+     */
+    void generateName(@NotNull final Random rand, final String firstParentName, final String secondParentName);
+
+    /**
+     * Check if the two citizens are related.
+     * @param data the data of the citizen.
+     * @return true if so.
+     */
+    boolean isRelatedTo(ICitizenData data);
+
+    /**
+     * Check if the two citizens live together.
+     * @param data the data of the other citizen.
+     * @return true if so.
+     */
+    boolean doesLiveWith(ICitizenData data);
 }
