@@ -54,6 +54,12 @@ public abstract class AbstractBuildingView implements IBuildingView
     private final BlockPos location;
 
     /**
+     * Parent building location.
+     */
+    @NotNull
+    private BlockPos parent = BlockPos.ZERO;
+
+    /**
      * The building level.
      */
     private int buildingLevel = 0;
@@ -167,6 +173,13 @@ public abstract class AbstractBuildingView implements IBuildingView
     @Override
     @NotNull
     public BlockPos getPosition()
+    {
+        return location;
+    }
+
+    @Override
+    @NotNull
+    public BlockPos getParent()
     {
         return location;
     }
@@ -403,6 +416,8 @@ public abstract class AbstractBuildingView implements IBuildingView
         {
             module.deserialize(buf);
         }
+
+        parent = buf.readBlockPos();
     }
 
     private void loadRequestSystemFromNBT(final CompoundNBT compound)

@@ -8,15 +8,10 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Mirror;
-import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.fml.network.NetworkEvent;
-import net.minecraftforge.fml.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
-
-import static com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider.TAG_BLUEPRINTDATA;
 
 /**
  * Message to set the style of a building.
@@ -72,15 +67,6 @@ public class BuildingSetStyleMessage extends AbstractBuildingServerMessage<IBuil
             final LoadOnlyStructureHandler structure = new LoadOnlyStructureHandler(colony.getWorld(), building.getPosition(), workOrder.getStructureName(), new PlacementSettings(), true);
             structure.getBluePrint().rotateWithMirror(BlockPosUtil.getRotationFromRotations(workOrder.getRotation(colony.getWorld())), workOrder.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE, colony.getWorld());
 
-            CompoundNBT teData = structure.getBluePrint().getTileEntityData(building.getTileEntity().getPos(), structure.getBluePrint().getPrimaryBlockOffset());
-            if (teData != null && teData.contains(TAG_BLUEPRINTDATA))
-            {
-                building.getTileEntity().readSchematicDataFromNBT(teData);
-                Chunk chunk = (Chunk) building.getTileEntity().getWorld().getChunk(building.getTileEntity().getPos());
-                PacketDistributor.TRACKING_CHUNK.with(() -> chunk).send(building.getTileEntity().getUpdatePacket());
-                building.getTileEntity().markDirty();
-                building.calculateCorners();
-            }
         }
     }
 }

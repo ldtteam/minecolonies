@@ -39,6 +39,11 @@ public final class ColonyUtils
       final int rotation,
       final boolean isMirrored)
     {
+        if (blueprint == null)
+        {
+            return new Tuple<>(pos, pos);
+        }
+
         blueprint.rotateWithMirror(BlockPosUtil.getRotationFromRotations(rotation), isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, world);
         final BlockPos zeroPos = pos.subtract(blueprint.getPrimaryBlockOffset());
 

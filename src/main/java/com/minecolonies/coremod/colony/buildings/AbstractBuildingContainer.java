@@ -29,7 +29,10 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.getMaxBuildingPriority;
@@ -167,6 +170,8 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
                 if (building != null)
                 {
                     building.setStyle(this.getStyle());
+                    building.setParent(getID());
+                    addChild(pos);
                 }
             }
         }

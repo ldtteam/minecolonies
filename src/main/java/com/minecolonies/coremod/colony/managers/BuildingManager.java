@@ -5,8 +5,8 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.IRSComponent;
 import com.minecolonies.api.colony.buildings.IMysticalSite;
+import com.minecolonies.api.colony.buildings.IRSComponent;
 import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
@@ -456,6 +456,7 @@ public class BuildingManager implements IBuildingManager
             {
                 addBuilding(building);
                 tileEntity.setBuilding(building);
+                building.upgradeBuildingLevelToSchematicData();
 
                 Log.getLogger().info(String.format("Colony %d - new AbstractBuilding for %s at %s",
                   colony.getID(),
@@ -475,7 +476,6 @@ public class BuildingManager implements IBuildingManager
                 if (world != null && !(building instanceof IRSComponent))
                 {
                     building.onPlacement();
-                    building.calculateCorners();
 
                     ConstructionTapeHelper.placeConstructionTape(building.getCorners(), world);
                 }
@@ -817,5 +817,15 @@ public class BuildingManager implements IBuildingManager
         }
 
         return true;
+    }
+
+    @Override
+    public void onBuildingUpgradeComplete(@Nullable final IBuilding building, final int level)
+    {
+        if (building != null)
+        {
+            colony.getCitizenManager().calculateMaxCitizens();
+            markBuildingsDirty();
+        }
     }
 }

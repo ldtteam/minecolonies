@@ -279,6 +279,7 @@
   "block.minecolonies.gate_iron": "Iron Gate",
   "block.minecolonies.gate_wood.name": "Wooden Gate",
   "block.minecolonies.gate_wood": "Wooden Gate",
+  "block.minecolonies.blockhut.breakwarn.children": "Breaking this block will also break all other contained buildings within",
 
   "tile.blockhut.messagenopermission": "You don't have permission to open huts in %s.",
   "tile.blockhut.messagenopermissionplace": "You don't have permission to place huts in %s.",

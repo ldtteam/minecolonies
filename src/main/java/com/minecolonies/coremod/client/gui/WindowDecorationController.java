@@ -75,7 +75,7 @@ public class WindowDecorationController extends AbstractWindowSkeleton
         registerButton(BUTTON_CANCEL, this::cancelClicked);
 
         final TextField textFieldName = findPaneOfTypeByID(INPUT_NAME, TextField.class);
-        textFieldName.setText(controller.getSchematicName());
+        textFieldName.setText(controller.getSchematicName().substring(0, controller.getSchematicName().length() - 1));
 
         final TextField textFieldLevel = findPaneOfTypeByID(INPUT_LEVEL, TextField.class);
         textFieldLevel.setText(String.valueOf(controller.getLevel()));
@@ -173,7 +173,7 @@ public class WindowDecorationController extends AbstractWindowSkeleton
             {
                 final int level = Integer.parseInt(levelString);
                 Network.getNetwork().sendToServer(new DecorationControllerUpdateMessage(controller.getPos(), name, level));
-                controller.setSchematicName(name);
+                controller.setSchematicName(name + level);
                 controller.setLevel(level);
                 close();
             }

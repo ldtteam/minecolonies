@@ -225,6 +225,13 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
      */
     private void updateStyles()
     {
+        if (building.getParent() != BlockPos.ZERO)
+        {
+            styles = new ArrayList<>();
+            styles.add(building.getColony().getBuilding(building.getParent()).getStyle());
+            return;
+        }
+
         styles = Structures.getStylesFor(building.getSchematicName());
         int newIndex = styles.indexOf(building.getStyle());
         if (newIndex == -1)

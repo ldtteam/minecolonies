@@ -5,6 +5,7 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.permissions.Action;
@@ -13,7 +14,6 @@ import com.minecolonies.api.items.ItemBlockHut;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.HorizontalBlock;
@@ -26,7 +26,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
+import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.shapes.ISelectionContext;
@@ -35,7 +38,6 @@ import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.registries.IForgeRegistry;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -80,6 +82,11 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     private final String name;
 
     /**
+     * The timepoint of the last chat warning message
+     */
+    private long lastBreakTickWarn = 0;
+
+    /**
      * Constructor for a hut block.
      * <p>
      * Registers the block, sets the creative tab, as well as the resistance and the hardness.
@@ -95,6 +102,13 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     @Override
     public float getPlayerRelativeBlockHardness(final BlockState state, @NotNull final PlayerEntity player, @NotNull final IBlockReader world, @NotNull final BlockPos pos)
     {
+        final IBuilding building = IColonyManager.getInstance().getBuilding(player.world, pos);
+        if (building != null && !building.getChildren().isEmpty() && (lastBreakTickWarn - player.world.getGameTime() > 100))
+        {
+            lastBreakTickWarn = player.world.getGameTime();
+            LanguageHandler.sendPlayerMessage(player, "block.minecolonies.blockhut.breakwarn.children");
+        }
+
         return MinecoloniesAPIProxy.getInstance().getConfig().getServer().pvp_mode.get() ? 1/(HARDNESS * HARDNESS_PVP_FACTOR) : 1/HARDNESS;
     }
 

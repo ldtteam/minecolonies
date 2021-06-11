@@ -377,6 +377,15 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         onDestroyed();
         colony.getBuildingManager().removeBuilding(this, colony.getPackageManager().getCloseSubscribers());
         getColony().getRequestManager().getDataStoreManager().remove(this.rsDataStoreToken);
+
+        for (final BlockPos childpos : getChildren())
+        {
+            final IBuilding building = colony.getBuildingManager().getBuilding(childpos);
+            if (building != null)
+            {
+                building.destroy();
+            }
+        }
     }
 
     @Override
@@ -449,7 +458,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     {
         for (@NotNull final WorkOrderBuildBuilding o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuildBuilding.class))
         {
-            if (o.getBuildingLocation().equals(getID()))
+            if (o.getSchematicLocation().equals(getID()))
             {
                 return;
             }
@@ -602,7 +611,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     {
         for (@NotNull final WorkOrderBuildBuilding o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuildBuilding.class))
         {
-            if (o.getBuildingLocation().equals(getID()))
+            if (o.getSchematicLocation().equals(getID()))
             {
                 return o.getUpgradeLevel();
             }
@@ -610,7 +619,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
 
         for (@NotNull final WorkOrderBuildRemoval o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuildRemoval.class))
         {
-            if (o.getBuildingLocation().equals(getID()))
+            if (o.getSchematicLocation().equals(getID()))
             {
                 return 0;
             }
@@ -629,7 +638,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     {
         for (@NotNull final WorkOrderBuild o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuild.class))
         {
-            if (o.getBuildingLocation().equals(getID()) && (o instanceof WorkOrderBuildBuilding || o instanceof WorkOrderBuildRemoval))
+            if (o.getSchematicLocation().equals(getID()) && (o instanceof WorkOrderBuildBuilding || o instanceof WorkOrderBuildRemoval))
             {
                 colony.getWorkManager().removeWorkOrder(o.getID());
                 markDirty();
@@ -709,6 +718,8 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         buf.writeBoolean(isDeconstructed());
 
         getModules(IPersistentModule.class).forEach(module -> module.serializeToView(buf));
+
+        buf.writeBlockPos(getParent());
     }
 
 
@@ -935,6 +946,13 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public void calculateCorners()
     {
+        final AbstractTileEntityColonyBuilding te = getTileEntity();
+        if (te != null && !te.getSchematicName().isEmpty())
+        {
+            setCorners(te.getInWorldCorners().getA(), te.getInWorldCorners().getB());
+            return;
+        }
+
         final WorkOrderBuildBuilding workOrder = new WorkOrderBuildBuilding(this, Math.max(1, getBuildingLevel()));
         final LoadOnlyStructureHandler wrapper = new LoadOnlyStructureHandler(colony.getWorld(), getPosition(), workOrder.getStructureName(), new PlacementSettings(), true);
         if (!wrapper.hasBluePrint())

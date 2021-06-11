@@ -2,6 +2,7 @@ package com.minecolonies.api.tileentities;
 
 import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingContainer;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.InventoryFunctions;
@@ -184,7 +185,7 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
     }
 
     @Override
-    public Tuple<BlockPos, BlockPos> getCornerPositions()
+    public Tuple<BlockPos, BlockPos> getSchematicCorners()
     {
         if (corner1 == BlockPos.ZERO || corner2 == BlockPos.ZERO)
         {
@@ -195,7 +196,7 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
     }
 
     @Override
-    public void setCorners(final BlockPos pos1, final BlockPos pos2)
+    public void setSchematicCorners(final BlockPos pos1, final BlockPos pos2)
     {
         corner1 = pos1;
         corner2 = pos2;
@@ -206,6 +207,24 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
     {
         super.read(state, compound);
         readSchematicDataFromNBT(compound);
+    }
+
+    @Override
+    public void readSchematicDataFromNBT(CompoundNBT originalCompound)
+    {
+        final String old = getSchematicName();
+        IBlueprintDataProvider.super.readSchematicDataFromNBT(originalCompound);
+
+        if (world == null || world.isRemote || getColony() == null || getColony().getBuildingManager() == null)
+        {
+            return;
+        }
+
+        final IBuilding building = getColony().getBuildingManager().getBuilding(pos);
+        if (building != null)
+        {
+            building.onUpgradeSchematicTo(old, getSchematicName(), this);
+        }
     }
 
     @NotNull

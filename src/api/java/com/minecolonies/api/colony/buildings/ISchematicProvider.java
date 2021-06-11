@@ -1,9 +1,12 @@
 package com.minecolonies.api.colony.buildings;
 
+import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.INBTSerializable;
+
+import java.util.Set;
 
 public interface ISchematicProvider extends INBTSerializable<CompoundNBT>
 {
@@ -35,6 +38,16 @@ public interface ISchematicProvider extends INBTSerializable<CompoundNBT>
      * @return {@code BlockPos} of the current object.
      */
     BlockPos getID();
+
+    BlockPos getParent();
+
+    void setParent(BlockPos pos);
+
+    Set<BlockPos> getChildren();
+
+    void addChild(BlockPos pos);
+
+    void removeChild(BlockPos pos);
 
     /**
      * Returns the rotation of the current building.
@@ -125,4 +138,12 @@ public interface ISchematicProvider extends INBTSerializable<CompoundNBT>
      * Set the building as deconstructed.
      */
     void setDeconstructed();
+
+    /**
+     * Called when the old schematic is updated to a new one
+     *
+     * @param oldSchematic
+     * @param newSchematic
+     */
+    void onUpgradeSchematicTo(final String oldSchematic, final String newSchematic, final IBlueprintDataProvider blueprintDataProvider);
 }

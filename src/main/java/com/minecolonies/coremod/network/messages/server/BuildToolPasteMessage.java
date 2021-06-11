@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.network.messages.server;
 
 import com.ldtteam.structures.blueprints.v1.Blueprint;
-import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.placement.StructurePlacementUtils;
@@ -27,25 +26,20 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.stats.Stats;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
-import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Predicate;
 
-import static com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider.TAG_BLUEPRINTDATA;
 import static com.minecolonies.api.util.constant.Constants.INSTANT_PLACEMENT;
 import static com.minecolonies.api.util.constant.Constants.PLACEMENT_NBT;
 
@@ -180,23 +174,9 @@ public class BuildToolPasteMessage implements IMessage
                 final Blueprint blueprint = CreativeBuildingStructureHandler.loadAndPlaceStructureWithRotation(player.world, structureName,
                   pos, BlockPosUtil.getRotationFromRotations(rotation), mirror ? Mirror.FRONT_BACK : Mirror.NONE, !complete, player);
 
-                final TileEntity tileEntity = player.world.getTileEntity(pos);
-                if (tileEntity instanceof IBlueprintDataProvider && blueprint != null)
-                {
-                    final CompoundNBT teData = blueprint.getTileEntityData(tileEntity.getPos(), blueprint.getPrimaryBlockOffset());
-                    if (teData != null && teData.contains(TAG_BLUEPRINTDATA))
-                    {
-                        ((IBlueprintDataProvider) tileEntity).readSchematicDataFromNBT(teData);
-                        Chunk chunk = (Chunk) tileEntity.getWorld().getChunk(tileEntity.getPos());
-                        PacketDistributor.TRACKING_CHUNK.with(() -> chunk).send(tileEntity.getUpdatePacket());
-                        tileEntity.markDirty();
-                    }
-                }
-
                 @Nullable final IBuilding building = IColonyManager.getInstance().getBuilding(CompatibilityUtils.getWorldFromEntity(player), pos);
                 if (building != null)
                 {
-                    building.onUpgradeComplete(building.getBuildingLevel());
                     final WorkOrderBuildBuilding workOrder = new WorkOrderBuildBuilding(building, 1);
                     ConstructionTapeHelper.removeConstructionTape(workOrder, CompatibilityUtils.getWorldFromEntity(player));
                 }
@@ -362,7 +342,6 @@ public class BuildToolPasteMessage implements IMessage
             if (!(building instanceof IRSComponent))
             {
                 ConstructionTapeHelper.removeConstructionTape(building.getCorners(), world);
-                building.calculateCorners();
             }
 
             building.setIsMirrored(mirror);
