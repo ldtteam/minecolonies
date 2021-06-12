@@ -192,7 +192,7 @@ public final class ModJobsInitializer
 
         ModJobs.enchanter = new JobEntry.Builder()
                               .setJobProducer(JobEnchanter::new)
-                              .setJobViewProducer(() -> DefaultJobView::new)
+                              .setJobViewProducer(() -> CrafterJobView::new)
                               .setRegistryName(ModJobs.ENCHANTER_ID)
                               .createJobEntry();
 

@@ -880,12 +880,12 @@ public class CitizenData implements ICitizenData
 
         buf.writeInt(partner);
         buf.writeInt(siblings.size());
-        for (Integer sibling : siblings)
+        for (int sibling : siblings)
         {
             buf.writeInt(sibling);
         }
         buf.writeInt(children.size());
-        for (Integer child : children)
+        for (int child : children)
         {
             buf.writeInt(child);
         }
