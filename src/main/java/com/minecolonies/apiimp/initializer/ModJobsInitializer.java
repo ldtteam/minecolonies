@@ -180,7 +180,7 @@ public final class ModJobsInitializer
 
         ModJobs.sifter = new JobEntry.Builder()
                            .setJobProducer(JobSifter::new)
-                           .setJobViewProducer(() -> DefaultJobView::new)
+                           .setJobViewProducer(() -> CrafterJobView::new)
                            .setRegistryName(ModJobs.SIFTER_ID)
                            .createJobEntry();
 
