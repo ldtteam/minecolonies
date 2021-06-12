@@ -111,7 +111,7 @@ public class ReproductionManager implements IReproductionManager
                 secondParent = firstParent.getPartner();
                 if (secondParent == null)
                 {
-                    assignedCitizens.removeIf(cit -> cit.getPartner() != null || cit.getName().equals(firstParent.getName()));
+                    assignedCitizens.removeIf(cit -> cit.isChild() || cit.getPartner() != null || cit.getName().equals(firstParent.getName()) || cit.isRelatedTo(firstParent));
                     if (assignedCitizens.size() > 0 && random.nextBoolean())
                     {
                         secondParent = assignedCitizens.get(random.nextInt(assignedCitizens.size()));
@@ -123,7 +123,7 @@ public class ReproductionManager implements IReproductionManager
                         {
                             final IBuilding building = colony.getBuildingManager().getBuilding(altPos);
                             final List<ICitizenData> newAssignedCitizens = building.getAssignedCitizen();
-                            newAssignedCitizens.removeIf(cit -> cit.isChild() || cit.getPartner() != null && !cit.isRelatedTo(firstParent));
+                            newAssignedCitizens.removeIf(cit -> cit.isChild() || cit.getPartner() != null || cit.isRelatedTo(firstParent));
                             if (newAssignedCitizens.size() > 0)
                             {
                                 secondParent = newAssignedCitizens.get(random.nextInt(newAssignedCitizens.size()));
