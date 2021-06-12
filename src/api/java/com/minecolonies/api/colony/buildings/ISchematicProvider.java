@@ -39,14 +39,35 @@ public interface ISchematicProvider extends INBTSerializable<CompoundNBT>
      */
     BlockPos getID();
 
+    /**
+     * Get the parent building position
+     *
+     * @return
+     */
     BlockPos getParent();
 
+    /**
+     * Set the parent building position
+     * @param pos
+     */
     void setParent(BlockPos pos);
 
+    /**
+     * Get the child building positions
+     * @return
+     */
     Set<BlockPos> getChildren();
 
+    /**
+     * Add a child building position
+     * @param pos
+     */
     void addChild(BlockPos pos);
 
+    /**
+     * Remove a child building position
+     * @param pos
+     */
     void removeChild(BlockPos pos);
 
     /**

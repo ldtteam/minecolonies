@@ -181,7 +181,7 @@ public abstract class AbstractBuildingView implements IBuildingView
     @NotNull
     public BlockPos getParent()
     {
-        return location;
+        return parent;
     }
 
     /**
@@ -380,6 +380,7 @@ public abstract class AbstractBuildingView implements IBuildingView
         workOrderLevel = buf.readInt();
         style = buf.readString(32767);
         schematicName = buf.readString(32767);
+        parent = buf.readBlockPos();
         customName = buf.readString(32767);
 
         rotation = buf.readInt();
@@ -416,8 +417,6 @@ public abstract class AbstractBuildingView implements IBuildingView
         {
             module.deserialize(buf);
         }
-
-        parent = buf.readBlockPos();
     }
 
     private void loadRequestSystemFromNBT(final CompoundNBT compound)

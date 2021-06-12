@@ -174,9 +174,11 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
     private void confirmClicked()
     {
         if (building.getBuildingLevel() > 0
-            && !building.getStyle().equals(styles.get(stylesDropDownList.getSelectedIndex()))
-            && !building.isDeconstructed())
+              && !building.getStyle().equals(styles.get(stylesDropDownList.getSelectedIndex()))
+              && !building.isDeconstructed())
+        {
             return;
+        }
 
         final BlockPos builder = buildersDropDownList.getSelectedIndex() == 0 ? BlockPos.ZERO : builders.get(buildersDropDownList.getSelectedIndex()).getB();
 
@@ -211,11 +213,11 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         builders.clear();
         builders.add(new Tuple<>(LanguageHandler.format("com.minecolonies.coremod.job.Builder") + ":", BlockPos.ZERO));
         builders.addAll(building.getColony().getBuildings().stream()
-                .filter(build -> build instanceof AbstractBuildingBuilderView && !((AbstractBuildingBuilderView) build).getWorkerName().isEmpty()
-                        && !(build instanceof BuildingMiner.View))
-                .map(build -> new Tuple<>(((AbstractBuildingBuilderView) build).getWorkerName(), build.getPosition()))
-                .sorted(Comparator.comparing(item -> item.getB().distanceSq(building.getPosition())))
-                .collect(Collectors.toList()));
+                          .filter(build -> build instanceof AbstractBuildingBuilderView && !((AbstractBuildingBuilderView) build).getWorkerName().isEmpty()
+                                             && !(build instanceof BuildingMiner.View))
+                          .map(build -> new Tuple<>(((AbstractBuildingBuilderView) build).getWorkerName(), build.getPosition()))
+                          .sorted(Comparator.comparing(item -> item.getB().distanceSq(building.getPosition())))
+                          .collect(Collectors.toList()));
 
         initBuilderNavigation();
     }
@@ -225,18 +227,27 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
      */
     private void updateStyles()
     {
-        if (building.getParent() != BlockPos.ZERO)
+        if (!building.getParent().equals(BlockPos.ZERO) && building.getColony().getBuilding(building.getParent()) != null)
         {
             styles = new ArrayList<>();
             styles.add(building.getColony().getBuilding(building.getParent()).getStyle());
-            return;
+            if (!styles.isEmpty())
+            {
+                stylesDropDownList.setSelectedIndex(0);
+            }
         }
-
-        styles = Structures.getStylesFor(building.getSchematicName());
-        int newIndex = styles.indexOf(building.getStyle());
-        if (newIndex == -1)
+        else
         {
-            newIndex = 0;
+            styles = Structures.getStylesFor(building.getSchematicName());
+            if (!styles.isEmpty())
+            {
+                int newIndex = styles.indexOf(building.getStyle());
+                if (newIndex == -1)
+                {
+                    newIndex = 0;
+                }
+                stylesDropDownList.setSelectedIndex(newIndex);
+            }
         }
 
         final boolean enabled;
@@ -252,7 +263,6 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         findPaneOfTypeByID(BUTTON_PREVIOUS_STYLE_ID, Button.class).setEnabled(enabled);
         findPaneOfTypeByID(DROPDOWN_STYLE_ID, DropDownList.class).setEnabled(enabled);
         findPaneOfTypeByID(BUTTON_NEXT_STYLE_ID, Button.class).setEnabled(enabled);
-        stylesDropDownList.setSelectedIndex(newIndex);
     }
 
     /**
@@ -265,14 +275,14 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
             return;
         }
         // Ensure the player cannot change a style of an already constructed building
-        if (building.getBuildingLevel() > 0 )
+        if (building.getBuildingLevel() > 0)
         {
             findPaneOfTypeByID(BUTTON_BUILD, Button.class).setText(
-                    LanguageHandler.format(
-                            !building.getStyle().equals(styles.get(stylesDropDownList.getSelectedIndex()))
-                            && !building.isDeconstructed()
-                                ? "com.minecolonies.coremod.gui.workerhuts.bad_style"
-                                : "com.minecolonies.coremod.gui.workerhuts.upgrade"));
+              LanguageHandler.format(
+                !building.getStyle().equals(styles.get(stylesDropDownList.getSelectedIndex()))
+                  && !building.isDeconstructed()
+                  ? "com.minecolonies.coremod.gui.workerhuts.bad_style"
+                  : "com.minecolonies.coremod.gui.workerhuts.upgrade"));
         }
 
         final World world = Minecraft.getInstance().world;

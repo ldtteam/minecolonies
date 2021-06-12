@@ -692,6 +692,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         buf.writeInt(getCurrentWorkOrderLevel());
         buf.writeString(getStyle());
         buf.writeString(this.getSchematicName());
+        buf.writeBlockPos(getParent());
         buf.writeString(this.getCustomBuildingName());
 
         buf.writeInt(getRotation());
@@ -718,8 +719,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         buf.writeBoolean(isDeconstructed());
 
         getModules(IPersistentModule.class).forEach(module -> module.serializeToView(buf));
-
-        buf.writeBlockPos(getParent());
     }
 
 
