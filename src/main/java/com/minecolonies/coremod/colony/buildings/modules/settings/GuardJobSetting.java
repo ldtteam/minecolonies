@@ -10,6 +10,7 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.colony.guardtype.registry.IGuardTypeRegistry;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
 
@@ -56,7 +57,7 @@ public class GuardJobSetting extends StringSettingWithDesc
     }
 
     @Override
-    public void onUpdate(final IBuilding building)
+    public void onUpdate(final IBuilding building, final ServerPlayerEntity sender)
     {
         if (building instanceof AbstractBuildingGuards)
         {

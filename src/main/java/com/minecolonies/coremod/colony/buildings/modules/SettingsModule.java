@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.buildings.modules.settings.ISetting;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.PacketBuffer;
@@ -87,12 +88,12 @@ public class SettingsModule extends AbstractBuildingModule implements IPersisten
     }
 
     @Override
-    public void updateSetting(final ISettingKey<?> settingKey, final ISetting value)
+    public void updateSetting(final ISettingKey<?> settingKey, final ISetting value, final ServerPlayerEntity sender)
     {
         if (settings.containsKey(settingKey))
         {
             settings.put(settingKey, value);
-            value.onUpdate(building);
+            value.onUpdate(building, sender);
         }
     }
 }
