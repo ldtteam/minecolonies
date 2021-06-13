@@ -129,12 +129,14 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         registerButton(BUTTON_MOVE_BUILDING, this::moveBuildingClicked);
 
         final Button buttonBuild = findPaneOfTypeByID(BUTTON_BUILD, Button.class);
+        final IBuildingView parentBuilding = c.getBuilding(building.getParent());
+
         if (building.getBuildingLevel() == 0)
         {
             buttonBuild.setText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.build"));
             findPaneOfTypeByID(BUTTON_MOVE_BUILDING, Button.class).hide();
         }
-        else if (building.getBuildingLevel() == building.getBuildingMaxLevel())
+        else if (building.getBuildingLevel() == building.getBuildingMaxLevel() || (parentBuilding != null && building.getBuildingLevel() == parentBuilding.getBuildingLevel()))
         {
             buttonBuild.hide();
         }

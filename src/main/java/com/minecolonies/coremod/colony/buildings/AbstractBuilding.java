@@ -796,7 +796,10 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.unlocktoupgrade"), player.getUniqueID());
             return;
         }
-        if (getBuildingLevel() < getMaxBuildingLevel())
+
+        final IBuilding parentBuilding = colony.getBuildingManager().getBuilding(getParent());
+
+        if (getBuildingLevel() < getMaxBuildingLevel() && (parentBuilding == null || getBuildingLevel() < parentBuilding.getBuildingLevel()))
         {
             requestWorkOrder(getBuildingLevel() + 1, builder, false);
         }

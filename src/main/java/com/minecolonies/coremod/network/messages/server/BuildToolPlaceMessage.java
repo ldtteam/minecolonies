@@ -379,7 +379,6 @@ public class BuildToolPlaceMessage implements IMessage
 
             if (!(building instanceof IRSComponent))
             {
-                ConstructionTapeHelper.removeConstructionTape(building.getCorners(), world);
                 ConstructionTapeHelper.placeConstructionTape(building.getCorners(), world);
             }
 

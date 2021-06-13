@@ -41,7 +41,6 @@ import com.minecolonies.coremod.network.messages.client.UpdateChunkCapabilityMes
 import com.minecolonies.coremod.network.messages.client.UpdateChunkRangeCapabilityMessage;
 import com.minecolonies.coremod.util.ChunkClientDataHelper;
 import com.minecolonies.coremod.util.ChunkDataHelper;
-
 import net.minecraft.block.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
@@ -762,6 +761,11 @@ public class EventHandler
             else
             {
                 LanguageHandler.sendPlayerMessage(player, "tile.blockhut.messagetoofarfromtownhall");
+            }
+
+            if (player.isCreative())
+            {
+                return true;
             }
             return false;
         }

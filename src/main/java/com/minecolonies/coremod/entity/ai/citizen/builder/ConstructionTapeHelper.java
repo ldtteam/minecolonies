@@ -55,13 +55,14 @@ public final class ConstructionTapeHelper
      * @param corners the corner positions.
      * @param world   the world.
      */
-    public static void placeConstructionTape(final Tuple<BlockPos, BlockPos> corners, @NotNull final World world)
+    public static void placeConstructionTape(final Tuple<BlockPos, BlockPos> orgCorners, @NotNull final World world)
     {
         if (!MineColonies.getConfig().getServer().builderPlaceConstructionTape.get())
         {
             return;
         }
 
+        final Tuple<BlockPos, BlockPos> corners = new Tuple<>(orgCorners.getA().add(-1, 0, -1), orgCorners.getB().add(1, 0, 1));
         final BlockState constructionTape = ModBlocks.blockConstructionTape.getDefaultState();
 
         final int x = Math.min(corners.getA().getX(), corners.getB().getX());
@@ -165,8 +166,10 @@ public final class ConstructionTapeHelper
      * @param corners the corner positions.
      * @param world   the world.
      */
-    public static void removeConstructionTape(final Tuple<BlockPos, BlockPos> corners, @NotNull final World world)
+    public static void removeConstructionTape(final Tuple<BlockPos, BlockPos> orgCorners, @NotNull final World world)
     {
+        final Tuple<BlockPos, BlockPos> corners = new Tuple<>(orgCorners.getA().add(-1, 0, -1), orgCorners.getB().add(1, 0, 1));
+
         final int x1 = corners.getA().getX();
         final int x3 = corners.getB().getX();
         final int z1 = corners.getA().getZ();

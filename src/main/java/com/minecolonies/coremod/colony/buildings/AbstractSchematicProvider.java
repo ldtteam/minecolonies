@@ -164,10 +164,9 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
 
         isBuildingMirrored = compound.getBoolean(TAG_MIRROR);
 
-        if (compound.keySet().contains(TAG_CORNER1) && !compound.keySet().contains(TAG_CORNER3))
+        if (compound.keySet().contains(TAG_CORNER1) && compound.keySet().contains(TAG_CORNER2))
         {
-            this.pos1 = BlockPosUtil.read(compound, TAG_CORNER1);
-            this.pos2 = BlockPosUtil.read(compound, TAG_CORNER2);
+            setCorners(BlockPosUtil.read(compound, TAG_CORNER1), BlockPosUtil.read(compound, TAG_CORNER2));
         }
 
         if (compound.contains(TAG_HEIGHT))
@@ -228,8 +227,16 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     @Override
     public void setCorners(final BlockPos pos1, final BlockPos pos2)
     {
-        this.pos1 = pos1;
-        this.pos2 = pos2;
+        if (pos1.getX() + pos1.getZ() < pos2.getX() + pos2.getZ())
+        {
+            this.pos1 = pos1;
+            this.pos2 = pos2;
+        }
+        else
+        {
+            this.pos1 = pos2;
+            this.pos2 = pos1;
+        }
     }
 
     @Override

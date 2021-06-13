@@ -210,7 +210,7 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
     }
 
     @Override
-    public void readSchematicDataFromNBT(CompoundNBT originalCompound)
+    public void readSchematicDataFromNBT(final CompoundNBT originalCompound)
     {
         final String old = getSchematicName();
         IBlueprintDataProvider.super.readSchematicDataFromNBT(originalCompound);
