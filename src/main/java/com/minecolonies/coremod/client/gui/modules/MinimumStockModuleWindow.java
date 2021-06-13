@@ -116,7 +116,6 @@ public class MinimumStockModuleWindow extends AbstractModuleWindow
     {
         resourceList.enable();
         resourceList.show();
-        final List<Tuple<ItemStorage, Integer>> tempRes = new ArrayList<>(moduleView.getStock());
 
         //Creates a dataProvider for the unemployed resourceList.
         resourceList.setDataProvider(new ScrollingList.DataProvider()
@@ -128,7 +127,7 @@ public class MinimumStockModuleWindow extends AbstractModuleWindow
             @Override
             public int getElementCount()
             {
-                return tempRes.size();
+                return moduleView.getStock().size();
             }
 
             /**
@@ -139,11 +138,11 @@ public class MinimumStockModuleWindow extends AbstractModuleWindow
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                final ItemStack resource = tempRes.get(index).getA().getItemStack().copy();
+                final ItemStack resource = moduleView.getStock().get(index).getA().getItemStack().copy();
                 resource.setCount(resource.getMaxStackSize());
 
                 rowPane.findPaneOfTypeByID(RESOURCE_NAME, Text.class).setText(resource.getDisplayName());
-                rowPane.findPaneOfTypeByID(QUANTITY_LABEL, Text.class).setText(String.valueOf(tempRes.get(index).getB()));
+                rowPane.findPaneOfTypeByID(QUANTITY_LABEL, Text.class).setText(String.valueOf(moduleView.getStock().get(index).getB()));
                 rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(resource);
             }
         });
