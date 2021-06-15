@@ -8,6 +8,7 @@ import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.DropDownList;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.structures.helpers.Settings;
+import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.network.messages.SchematicRequestMessage;
@@ -37,6 +38,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
@@ -126,17 +128,18 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         registerButton(BUTTON_BUILD, this::confirmClicked);
         registerButton(BUTTON_CANCEL, this::cancelClicked);
         registerButton(BUTTON_REPAIR, this::repairClicked);
-        registerButton(BUTTON_MOVE_BUILDING, this::moveBuildingClicked);
+        registerButton(BUTTON_DECONSTRUCT_BUILDING, this::deconstructBuildingClicked);
 
         final Button buttonBuild = findPaneOfTypeByID(BUTTON_BUILD, Button.class);
         final IBuildingView parentBuilding = c.getBuilding(building.getParent());
 
-        if (building.getBuildingLevel() == 0)
+        if (building.getBuildingLevel() == 0 || parentBuilding != null)
         {
             buttonBuild.setText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.build"));
-            findPaneOfTypeByID(BUTTON_MOVE_BUILDING, Button.class).hide();
+            findPaneOfTypeByID(BUTTON_DECONSTRUCT_BUILDING, Button.class).hide();
         }
-        else if (building.getBuildingLevel() == building.getBuildingMaxLevel() || (parentBuilding != null && building.getBuildingLevel() == parentBuilding.getBuildingLevel()))
+
+        if (building.getBuildingLevel() == building.getBuildingMaxLevel() || (parentBuilding != null && building.getBuildingLevel() == parentBuilding.getBuildingLevel()))
         {
             buttonBuild.hide();
         }
@@ -147,14 +150,14 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
 
         if (building.isDeconstructed())
         {
-            findPaneOfTypeByID(BUTTON_MOVE_BUILDING, Button.class).setText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.pickup"));
+            findPaneOfTypeByID(BUTTON_DECONSTRUCT_BUILDING, Button.class).setText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.pickup"));
         }
     }
 
     /**
      * When the move building button has been clicked.
      */
-    private void moveBuildingClicked()
+    private void deconstructBuildingClicked()
     {
         final BlockPos builder = buildersDropDownList.getSelectedIndex() == 0 ? BlockPos.ZERO : builders.get(buildersDropDownList.getSelectedIndex()).getB();
         Network.getNetwork().sendToServer(new BuildingSetStyleMessage(building, styles.get(stylesDropDownList.getSelectedIndex())));
@@ -290,10 +293,25 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         final World world = Minecraft.getInstance().world;
         resources.clear();
 
-        final int nextLevel = building.getBuildingLevel() == building.getBuildingMaxLevel() ?
-                                building.getBuildingMaxLevel() : (building.getBuildingLevel() + 1);
+        final IBuildingView parentBuilding = building.getColony().getBuilding(building.getParent());
+        int nextLevel = building.getBuildingLevel();
+        if (building.getBuildingLevel() < building.getBuildingMaxLevel() && (parentBuilding == null || building.getBuildingLevel() < parentBuilding.getBuildingLevel()))
+        {
+            nextLevel = building.getBuildingLevel() + 1;
+        }
+
+        final TileEntity tile = world.getTileEntity(building.getID());
+        String schematicName = building.getSchematicName();
+        if (tile instanceof IBlueprintDataProvider)
+        {
+            if (!((IBlueprintDataProvider) tile).getSchematicName().isEmpty())
+            {
+                schematicName = ((IBlueprintDataProvider) tile).getSchematicName().replaceAll("\\d$", "");
+            }
+        }
+
         final StructureName sn = new StructureName(Structures.SCHEMATICS_PREFIX, styles.get(stylesDropDownList.getSelectedIndex()),
-          building.getSchematicName() + nextLevel);
+          schematicName + nextLevel);
         final LoadOnlyStructureHandler structure = new LoadOnlyStructureHandler(world, building.getPosition(), sn.toString(), new PlacementSettings(), true);
         final String md5 = Structures.getMD5(sn.toString());
         if (!structure.hasBluePrint() || !structure.isCorrectMD5(md5))
@@ -317,6 +335,12 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
             {
                 Log.getLogger().error("WindowMinecoloniesBuildTool: Need to download schematic on a standalone client/server. This should never happen", new Exception());
             }
+        }
+
+        if (!structure.hasBluePrint())
+        {
+            findPaneOfTypeByID(BUTTON_BUILD, Button.class).hide();
+            return;
         }
 
         structure.getBluePrint().rotateWithMirror(BlockPosUtil.getRotationFromRotations(building.getRotation()), building.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE, world);

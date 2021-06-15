@@ -235,6 +235,10 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @NotNull
     public String getCustomBuildingName()
     {
+        if (customName.isEmpty())
+        {
+            return getSchematicName();
+        }
         return this.customName;
     }
 

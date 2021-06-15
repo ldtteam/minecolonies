@@ -4,7 +4,10 @@ import com.ldtteam.blockout.Color;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.PaneBuilders;
 import com.ldtteam.blockout.controls.*;
-import com.ldtteam.blockout.views.*;
+import com.ldtteam.blockout.views.DropDownList;
+import com.ldtteam.blockout.views.ScrollingList;
+import com.ldtteam.blockout.views.SwitchView;
+import com.ldtteam.blockout.views.View;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.CompactColonyReference;
@@ -24,7 +27,8 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.client.gui.*;
+import com.minecolonies.coremod.client.gui.AbstractWindowModuleBuilding;
+import com.minecolonies.coremod.client.gui.WindowBannerPicker;
 import com.minecolonies.coremod.client.gui.citizen.CitizenWindowUtils;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
@@ -56,7 +60,7 @@ import static com.minecolonies.api.research.util.ResearchConstants.CITIZEN_CAP;
 import static com.minecolonies.api.util.constant.Constants.TICKS_FOURTY_MIN;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
-import static com.minecolonies.coremod.client.gui.modules.WindowBuilderResModule.*;
+import static com.minecolonies.coremod.client.gui.modules.WindowBuilderResModule.BLACK;
 /**
  * Window for the town hall.
  */
@@ -1318,9 +1322,7 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
                     }
                 }
 
-                final String[] split = workOrder.get().split("/");
-
-                rowPane.findPaneOfTypeByID(WORK_LABEL, Text.class).setText(split[split.length - 1]);
+                rowPane.findPaneOfTypeByID(WORK_LABEL, Text.class).setText(workOrder.getDisplayName());
                 rowPane.findPaneOfTypeByID(ASSIGNEE_LABEL, Text.class).setText(claimingCitizen);
                 rowPane.findPaneOfTypeByID(HIDDEN_WORKORDER_ID, Text.class).setText(Integer.toString(workOrder.getId()));
             }

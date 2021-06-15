@@ -73,14 +73,15 @@ public final class CreativeBuildingStructureHandler extends CreativeStructureHan
     {
         super.triggerSuccess(pos, list, placement);
         final BlockPos worldPos = getProgressPosInWorld(pos);
+
+        final CompoundNBT teData = getBluePrint().getTileEntityData(worldPos, pos);
+        if (teData != null && teData.contains(TAG_BLUEPRINTDATA))
+        {
+            ((IBlueprintDataProvider) getWorld().getTileEntity(worldPos)).readSchematicDataFromNBT(teData);
+        }
+
         if (building != null)
         {
-            final CompoundNBT teData = getBluePrint().getTileEntityData(worldPos, pos);
-            if (teData != null && teData.contains(TAG_BLUEPRINTDATA))
-            {
-                ((IBlueprintDataProvider) getWorld().getTileEntity(worldPos)).readSchematicDataFromNBT(teData);
-            }
-
             building.registerBlockPosition(getBluePrint().getBlockState(pos), worldPos, this.getWorld());
         }
     }

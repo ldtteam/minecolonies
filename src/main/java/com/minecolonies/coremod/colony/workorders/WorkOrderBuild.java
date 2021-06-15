@@ -35,6 +35,11 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
     private String upgradeName;
 
     /**
+     * The displayed name of the workorder
+     */
+    private String displayName = "";
+
+    /**
      * Unused constructor for reflection.
      */
     public WorkOrderBuild()
@@ -78,6 +83,17 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
         StructureName sn = new StructureName(Structures.SCHEMATICS_PREFIX, building.getStyle(), this.getUpgradeName());
         this.structureName = sn.toString();
         this.workOrderName = this.structureName;
+
+        if (!building.getParent().equals(BlockPos.ZERO))
+        {
+            final IBuilding parentBuilding = building.getColony().getBuildingManager().getBuilding(building.getParent());
+            if (parentBuilding != null)
+            {
+                displayName = parentBuilding.getCustomBuildingName() + "/";
+            }
+        }
+
+        displayName += building.getCustomBuildingName() + level;
     }
 
     @Override
@@ -87,7 +103,8 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
         buf.writeInt(getPriority());
         buf.writeBlockPos(getClaimedBy() == null ? BlockPos.ZERO : getClaimedBy());
         buf.writeInt(getType().ordinal());
-        buf.writeString(get());
+        buf.writeString(upgradeName);
+        buf.writeString(getDisplayName());
         buf.writeBlockPos(buildingLocation == null ? BlockPos.ZERO : buildingLocation);
         buf.writeInt(upgradeLevel);
         //value is upgradeName and upgradeLevel for workOrderBuild
@@ -206,9 +223,9 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
     }
 
     @Override
-    protected String get()
+    public String getDisplayName()
     {
-        return upgradeName;
+        return displayName;
     }
 
     @Override

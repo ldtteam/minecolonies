@@ -161,7 +161,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
     }
 
     @Override
-    protected String get()
+    public String getDisplayName()
     {
         return workOrderName;
     }
@@ -245,7 +245,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
             {
                 LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(), COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECOCOMPLETE,
                         citizen.getName(),
-                        this.getName(),
+                  this.getDisplayName(),
                         position.getX(),
                         position.getY(),
                         position.getZ());
@@ -257,7 +257,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
                     LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
                           COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECOCOMPLETE_MANUAL,
                           citizen.getName(),
-                            this.getName(),
+                      this.getDisplayName(),
                             position.getX(),
                             position.getY(),
                             position.getZ());
@@ -267,7 +267,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
                     LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
                           COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECOCOMPLETE,
                           citizen.getName(),
-                            this.getName(),
+                      this.getDisplayName(),
                             position.getX(),
                             position.getY(),
                             position.getZ());

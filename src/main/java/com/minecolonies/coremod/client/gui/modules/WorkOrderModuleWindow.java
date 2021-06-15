@@ -11,11 +11,9 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.AbstractModuleWindow;
 import com.minecolonies.coremod.colony.buildings.moduleviews.SettingsModuleView;
-import com.minecolonies.coremod.colony.buildings.moduleviews.ToolModuleView;
 import com.minecolonies.coremod.colony.buildings.moduleviews.WorkOrderListModuleView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.network.messages.server.colony.WorkOrderChangeMessage;
-import com.minecolonies.coremod.network.messages.server.colony.building.MarkBuildingDirtyMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.builder.BuilderSelectWorkOrderMessage;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -144,7 +142,7 @@ public class WorkOrderModuleWindow extends AbstractModuleWindow
     {
         final WorkOrderView order = workOrders.get(index);
 
-        rowPane.findPaneOfTypeByID(WORK_ORDER_NAME, Text.class).setText(order.get());
+        rowPane.findPaneOfTypeByID(WORK_ORDER_NAME, Text.class).setText(order.getDisplayName());
         rowPane.findPaneOfTypeByID(WORK_ORDER_POS, Text.class).setText(new TranslationTextComponent("com.minecolonies.coremod.gui.blocks.distance", BlockPosUtil.getDistance2D(order.getPos(), buildingView.getPosition())));
 
         if (order.getClaimedBy().equals(buildingView.getPosition()))

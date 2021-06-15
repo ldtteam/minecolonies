@@ -187,11 +187,6 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
     @Override
     public Tuple<BlockPos, BlockPos> getSchematicCorners()
     {
-        if (corner1 == BlockPos.ZERO || corner2 == BlockPos.ZERO)
-        {
-            return new Tuple<>(pos, pos);
-        }
-
         return new Tuple<>(corner1, corner2);
     }
 

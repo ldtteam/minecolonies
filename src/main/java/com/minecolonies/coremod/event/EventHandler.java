@@ -634,7 +634,7 @@ public class EventHandler
                     return;
                 }
 
-                if (MineColonies.getConfig().getServer().suggestBuildToolPlacement.get())
+                if (MineColonies.getConfig().getServer().suggestBuildToolPlacement.get() && !(player.isCreative() && player.isSneaking()))
                 {
                     final ItemStack stack = event.getItemStack();
                     if (!stack.isEmpty() && !world.isRemote)
