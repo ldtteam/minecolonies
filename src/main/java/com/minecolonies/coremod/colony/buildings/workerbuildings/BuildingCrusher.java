@@ -11,7 +11,6 @@ import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
@@ -58,7 +57,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
     private static final int MAX_BUILDING_LEVEL = 5;
 
     /**
-     * His crusherRecipes.
+     * Their crusherRecipes.
      */
     private final Map<ItemStorage, IRecipeStorage> crusherRecipes = new HashMap<>();
 
@@ -109,17 +108,18 @@ public class BuildingCrusher extends AbstractBuildingCrafter
      */
     private void loadCrusherMode()
     {
-        this.recipes.clear();
-        checkForWorkerSpecificRecipes();
+        final CraftingModule module =  getFirstModuleOccurance(CraftingModule.class);
+        module.clearRecipes();
+        module.checkForWorkerSpecificRecipes();
 
         this.crusherRecipes.clear();
 
         final ImmutableMap<IToken<?>, IRecipeStorage> recipes = IColonyManager.getInstance().getRecipeManager().getRecipes();
-        for (final IToken<?> token : this.recipes)
+        for (final IToken<?> token : module.getRecipes())
         {
             final IRecipeStorage storage = recipes.get(token);
             if (storage == null) continue; //wat
-            
+
             final ItemStorage key = storage.getCleanedInput().get(0);
             if (this.crusherMode == null)
             {
@@ -164,16 +164,6 @@ public class BuildingCrusher extends AbstractBuildingCrafter
     public String getJobName()
     {
         return CRUSHER_DESC;
-    }
-
-    @Override
-    public boolean isRecipeAlterationAllowed() { return false; }
-
-    @Override
-    public boolean canRecipeBeAdded(@NotNull final IToken<?> token)
-    {
-        if (!super.canRecipeBeAdded(token)) return false;
-        return isRecipeCompatibleWithCraftingModule(token);
     }
 
     @Override

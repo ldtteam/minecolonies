@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony.requestsystem.resolvers.core;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
+import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
@@ -94,7 +95,8 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
           buildingWorker,
           request.getRequest().getStack(),
           request.getRequest().getCount(),
-          request.getRequest().getMinCount());
+          request.getRequest().getMinCount(),
+          request.getRequest().getRecipeStorage());
     }
 
     @Nullable
@@ -103,20 +105,27 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
       @NotNull final AbstractBuildingWorker building,
       final ItemStack stack,
       final int count,
-      final int minCount)
+      final int minCount,
+      final IToken<?> recipeId)
     {
+        final ICraftingBuildingModule module = building.getCraftingModuleForRecipe(recipeId);
+        if (module == null)
+        {
+            return null;
+        }
+
         if (!canBuildingCraftStack(manager, building, stack))
         {
             return null;
         }
 
-        final IRecipeStorage fullfillableCrafting = building.getFirstFullFillableRecipe(stack, count, true);
+        final IRecipeStorage fullfillableCrafting = module.getFirstFullFillableRecipe(itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack), count, true);
         if (fullfillableCrafting != null)
         {
             return ImmutableList.of();
         }
 
-        final IRecipeStorage craftableCrafting = building.getFirstRecipe(stack);
+        final IRecipeStorage craftableCrafting = module.getFirstRecipe(stack);
         if (craftableCrafting == null)
         {
             return null;
@@ -218,7 +227,13 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
     public void resolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends C> request, @NotNull final AbstractBuilding building)
     {
         final AbstractBuildingWorker buildingWorker = (AbstractBuildingWorker) building;
-        final IRecipeStorage storage = buildingWorker.getFirstFullFillableRecipe(request.getRequest().getStack(), request.getRequest().getCount(), false);
+        final ICraftingBuildingModule module = buildingWorker.getCraftingModuleForRecipe(request.getId());
+        if (module == null)
+        {
+            manager.updateRequestState(request.getId(), RequestState.FAILED);
+            return;
+        }
+        final IRecipeStorage storage = module.getFirstFullFillableRecipe(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, request.getRequest().getStack()), request.getRequest().getCount(), false);
 
         if (storage == null)
         {
@@ -229,7 +244,7 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
         final int craftingCount = CraftingUtils.calculateMaxCraftingCount(request.getRequest().getCount(), storage);
         for (int i = 0; i < craftingCount; i++)
         {
-            buildingWorker.fullFillRecipe(storage);
+            module.fullFillRecipe(storage);
         }
 
         manager.updateRequestState(request.getId(), RequestState.RESOLVED);

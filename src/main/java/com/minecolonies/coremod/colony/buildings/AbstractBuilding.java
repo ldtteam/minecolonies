@@ -1845,24 +1845,4 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     }
 
     //------------------------- !END! RequestSystem handling for minecolonies buildings -------------------------//
-
-    @Override
-    public void openCraftingContainer(final ServerPlayerEntity player)
-    {
-        NetworkHooks.openGui(player, new INamedContainerProvider()
-        {
-            @Override
-            public ITextComponent getDisplayName()
-            {
-                return new StringTextComponent("Crafting GUI");
-            }
-
-            @NotNull
-            @Override
-            public Container createMenu(final int id, @NotNull final PlayerInventory inv, @NotNull final PlayerEntity player)
-            {
-                return new ContainerCrafting(id, inv, false, getID());
-            }
-        }, buffer -> new PacketBuffer(buffer.writeBoolean(false)).writeBlockPos(getID()));
-    }
 }

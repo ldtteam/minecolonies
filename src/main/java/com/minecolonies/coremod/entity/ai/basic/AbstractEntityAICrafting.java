@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
 import com.google.common.collect.ImmutableList;
-import com.minecolonies.api.colony.buildings.IBuildingWorker;
+import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingPublicCrafter;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
@@ -20,7 +20,6 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.LootContext;
-import net.minecraft.loot.LootParameterSet;
 import net.minecraft.loot.LootParameters;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
@@ -69,7 +68,10 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
      */
     protected IRecipeStorage currentRecipeStorage;
 
-    private DamageSource playerDamageSource; 
+    /**
+     * Player damage source.
+     */
+    private DamageSource playerDamageSource;
 
     /**
      * The number of actions a crafting "success" is worth. By default, that's 1 action for 1 crafting success. Override this in your subclass to make crafting recipes worth more
@@ -168,8 +170,15 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
         {
             return START_WORKING;
         }
-        final IBuildingWorker buildingWorker = getOwnBuilding();
-        currentRecipeStorage = buildingWorker.getFirstFullFillableRecipe(stack -> stack.isItemEqual(currentTask.getRequest().getStack()), 1, false);
+
+        final ICraftingBuildingModule module = getOwnBuilding().getCraftingModuleForRecipe(currentTask.getRequest().getRecipeStorage());
+        if (module == null)
+        {
+            job.finishRequest(false);
+            incrementActionsDone(getActionRewardForCraftingSuccess());
+            return START_WORKING;
+        }
+        currentRecipeStorage = module.getFirstFullFillableRecipe(stack -> stack.isItemEqual(currentTask.getRequest().getStack()), 1, false);
         if (currentRecipeStorage == null)
         {
             job.finishRequest(false);
@@ -360,7 +369,12 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
                 if (job.getCraftCounter() >= job.getMaxCraftingCount())
                 {
                     incrementActionsDone(getActionRewardForCraftingSuccess());
-                    getOwnBuilding().improveRecipe(currentRecipeStorage, job.getCraftCounter(), worker.getCitizenData());
+                    final ICraftingBuildingModule module = getOwnBuilding().getCraftingModuleForRecipe(currentRecipeStorage.getToken());
+                    if (module != null)
+                    {
+                        module.improveRecipe(currentRecipeStorage, job.getCraftCounter(), worker.getCitizenData());
+                    }
+
                     currentRecipeStorage = null;
                     resetValues();
 
@@ -455,7 +469,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
 
     /**
      * get the LootContextBuilder for 
-     * @param includekiller true for killer-based parameters
+     * @param includeKiller true for killer-based parameters
      * @return the LootContext to use for crafting
      */
     protected LootContext getLootContext(boolean includeKiller)

@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Provides a view of the builder building class.
  */
-public abstract class AbstractBuildingBuilderView extends AbstractBuildingWorker.View
+public abstract class AbstractBuildingBuilderView extends AbstractBuildingWorkerView
 {
     /**
      * The name of the worker at this building.

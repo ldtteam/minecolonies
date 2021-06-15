@@ -13,9 +13,9 @@ import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.crafting.MultiOutputRecipe;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.constant.TypeConstants;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingProductionResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingRequestResolver;
@@ -24,7 +24,7 @@ import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraft
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.items.IItemHandler;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -37,8 +37,6 @@ import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT
  */
 public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker implements IBuildingPublicCrafter
 {
-
-
     /**
      * Instantiates a new crafter building.
      *
@@ -150,7 +148,7 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker imp
                 for (final IToken<?> taskToken : assignedTasks)
                 {
                     final IRequest<? extends PublicCrafting> request = (IRequest<? extends PublicCrafting>) colony.getRequestManager().getRequestForToken(taskToken);
-                    final IRecipeStorage recipeStorage = getFirstRecipe(request.getRequest().getStack());
+                    final IRecipeStorage recipeStorage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(request.getRequest().getRecipeStorage());
                     if (recipeStorage != null)
                     {
                         recipes.add(new Tuple<>(recipeStorage, request.getRequest().getCount()));
@@ -162,25 +160,6 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker imp
     }
 
     @Override
-    public IRecipeStorage getFirstFullFillableRecipe(final Predicate<ItemStack> stackPredicate, final int count, final boolean considerReservation)
-    {
-        for (final IToken<?> token : recipes)
-        {
-            final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-            if (storage != null && (stackPredicate.test(storage.getPrimaryOutput()) || storage.getAlternateOutputs().stream().anyMatch(i -> stackPredicate.test(i))))
-            {
-                final List<IItemHandler> handlers = getHandlers();
-                IRecipeStorage toTest = storage.getRecipeType() instanceof MultiOutputRecipe ? storage.getClassicForMultiOutput(stackPredicate) : storage;
-                if (toTest.canFullFillRecipe(count, considerReservation ? reservedStacks() : Collections.emptyMap(), handlers.toArray(new IItemHandler[0])))
-                {
-                    return toTest;
-                }
-            }
-        }
-        return null;
-    }
-
-    @Override
     public boolean canCraftComplexRecipes()
     {
         return true;
@@ -189,7 +168,7 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker imp
     /**
      * Crafter building View.
      */
-    public static class View extends AbstractBuildingWorker.View
+    public static class View extends AbstractBuildingWorkerView
     {
         /**
          * Instantiate the crafter view.
@@ -205,17 +184,12 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker imp
     }
 
     @Override
-    protected Optional<Boolean> canRecipeBeAddedBasedOnTags(final IToken token)
-    {
-        return super.canRecipeBeAddedBasedOnTags(token);
-    }
-
-    @Override
     public Skill getCraftSpeedSkill()
     {
         return getSecondarySkill();
     }
 
+    @NotNull
     @Override
     public Skill getRecipeImprovementSkill()
     {

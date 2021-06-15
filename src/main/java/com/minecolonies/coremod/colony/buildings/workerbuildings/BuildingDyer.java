@@ -15,7 +15,6 @@ import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
-import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
@@ -24,19 +23,10 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.coremod.colony.jobs.JobDyer;
 import net.minecraft.block.Blocks;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -110,106 +100,15 @@ public class BuildingDyer extends AbstractBuildingSmelterCrafter
     }
 
     @Override
-    public boolean canRecipeBeAdded(final IToken<?> token)
-    {
-        if (!super.canRecipeBeAdded(token))
-        {
-            return false;
-        }
-
-        return isRecipeCompatibleWithCraftingModule(token);
-    }
-
-    @Override
     public boolean canCraftComplexRecipes()
     {
         return true;
     }
 
     @Override
-    public void openCraftingContainer(final ServerPlayerEntity player)
-    {
-        NetworkHooks.openGui(player, new INamedContainerProvider()
-        {
-            @Override
-            public ITextComponent getDisplayName()
-            {
-                return new StringTextComponent("Crafting GUI");
-            }
-
-            @NotNull
-            @Override
-            public Container createMenu(final int id, @NotNull final PlayerInventory inv, @NotNull final PlayerEntity player)
-            {
-                return new ContainerCrafting(id, inv, canCraftComplexRecipes(), getID());
-            }
-        }, buffer -> new PacketBuffer(buffer.writeBoolean(canCraftComplexRecipes())).writeBlockPos(getID()));
-    }
-
-    @Override
     public BuildingEntry getBuildingRegistryEntry()
     {
         return ModBuildings.dyer;
-    }
-
-    @Override
-    public IRecipeStorage getFirstRecipe(Predicate<ItemStack> stackPredicate)
-    {
-        IRecipeStorage recipe = super.getFirstRecipe(stackPredicate);
-
-        if(recipe == null && stackPredicate.test(new ItemStack(Items.WHITE_WOOL)))
-        {
-            final HashMap<ItemStorage, Integer> inventoryCounts = new HashMap<>();
-
-            if (!colony.getBuildingManager().hasWarehouse())
-            {
-                return null;
-            }
-            
-            final List<ItemStorage> woolItems = ItemTags.WOOL.getAllElements().stream()
-                                                        .filter(item -> !item.equals(Items.WHITE_WOOL))
-                                                        .map(i -> new ItemStorage(new ItemStack(i))).collect(Collectors.toList());
-
-            for(ItemStorage color : woolItems)
-            {
-                for(IBuilding wareHouse: colony.getBuildingManager().getWareHouses())
-                {
-                    final int colorCount = InventoryUtils.getCountFromBuilding(wareHouse, color);
-                    inventoryCounts.put(color, inventoryCounts.getOrDefault(color, 0) + colorCount);
-                }
-            }
-
-            ItemStorage woolToUse = inventoryCounts.entrySet().stream().min(java.util.Map.Entry.comparingByValue(Comparator.reverseOrder())).get().getKey();
-
-            recipe = StandardFactoryController.getInstance().getNewInstance(
-                TypeConstants.RECIPE,
-                StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-                ImmutableList.of(woolToUse, new ItemStorage(new ItemStack(Items.WHITE_DYE, 1))),
-                1,
-                new ItemStack(Items.WHITE_WOOL, 1),
-                Blocks.AIR);
-        }
-        return recipe;
-    }
-
-    @Override
-    public IRecipeStorage getFirstFullFillableRecipe(Predicate<ItemStack> stackPredicate, int count, final boolean considerReservation)
-    {
-        IRecipeStorage recipe =  super.getFirstFullFillableRecipe(stackPredicate, count, considerReservation);
-
-        if(recipe == null)
-        {
-            final IRecipeStorage storage = getFirstRecipe(stackPredicate);
-            if (storage != null && stackPredicate.test(storage.getPrimaryOutput()))
-            {
-                final List<IItemHandler> handlers = getHandlers();
-                if (storage.canFullFillRecipe(count, Collections.emptyMap(), handlers.toArray(new IItemHandler[0])))
-                {
-                    return storage;
-                }
-            }
-        }
-        return recipe;        
     }
 
     /**
@@ -252,5 +151,77 @@ public class BuildingDyer extends AbstractBuildingSmelterCrafter
             if (!super.isRecipeCompatible(recipe)) return false;
             return CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, DYER).orElse(false);
         }
+
+        @Override
+        public boolean canRecipeBeAdded(@NotNull final IToken<?> token)
+        {
+            if (!super.canRecipeBeAdded(token))
+            {
+                return false;
+            }
+
+            return isRecipeCompatibleWithCraftingModule(token);
+        }
+
+        @Override
+        public IRecipeStorage getFirstFullFillableRecipe(Predicate<ItemStack> stackPredicate, int count, final boolean considerReservation)
+        {
+            IRecipeStorage recipe =  super.getFirstFullFillableRecipe(stackPredicate, count, considerReservation);
+
+            if(recipe == null)
+            {
+                final IRecipeStorage storage = getFirstRecipe(stackPredicate);
+                if (storage != null && stackPredicate.test(storage.getPrimaryOutput()))
+                {
+                    final List<IItemHandler> handlers = building.getHandlers();
+                    if (storage.canFullFillRecipe(count, Collections.emptyMap(), handlers.toArray(new IItemHandler[0])))
+                    {
+                        return storage;
+                    }
+                }
+            }
+            return recipe;
+        }
+
+        @Override
+        public IRecipeStorage getFirstRecipe(Predicate<ItemStack> stackPredicate)
+        {
+            IRecipeStorage recipe = super.getFirstRecipe(stackPredicate);
+
+            if(recipe == null && stackPredicate.test(new ItemStack(Items.WHITE_WOOL)))
+            {
+                final HashMap<ItemStorage, Integer> inventoryCounts = new HashMap<>();
+
+                if (!building.getColony().getBuildingManager().hasWarehouse())
+                {
+                    return null;
+                }
+
+                final List<ItemStorage> woolItems = ItemTags.WOOL.getAllElements().stream()
+                                                      .filter(item -> !item.equals(Items.WHITE_WOOL))
+                                                      .map(i -> new ItemStorage(new ItemStack(i))).collect(Collectors.toList());
+
+                for(ItemStorage color : woolItems)
+                {
+                    for(IBuilding wareHouse: building.getColony().getBuildingManager().getWareHouses())
+                    {
+                        final int colorCount = InventoryUtils.getCountFromBuilding(wareHouse, color);
+                        inventoryCounts.put(color, inventoryCounts.getOrDefault(color, 0) + colorCount);
+                    }
+                }
+
+                ItemStorage woolToUse = inventoryCounts.entrySet().stream().min(java.util.Map.Entry.comparingByValue(Comparator.reverseOrder())).get().getKey();
+
+                recipe = StandardFactoryController.getInstance().getNewInstance(
+                  TypeConstants.RECIPE,
+                  StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+                  ImmutableList.of(woolToUse, new ItemStorage(new ItemStack(Items.WHITE_DYE, 1))),
+                  1,
+                  new ItemStack(Items.WHITE_WOOL, 1),
+                  Blocks.AIR);
+            }
+            return recipe;
+        }
+
     }
 }

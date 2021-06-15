@@ -13,6 +13,7 @@ import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.colony.jobs.JobFisherman;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
@@ -126,7 +127,7 @@ public class BuildingFisherman extends AbstractBuildingWorker
     /**
      * Provides a view of the fisherman building class.
      */
-    public static class View extends AbstractBuildingWorker.View
+    public static class View extends AbstractBuildingWorkerView
     {
         /**
          * Public constructor of the view, creates an instance of it.

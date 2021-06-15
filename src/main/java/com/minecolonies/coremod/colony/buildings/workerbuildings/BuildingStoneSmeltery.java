@@ -7,7 +7,6 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
-import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.CraftingUtils;
@@ -81,17 +80,6 @@ public class BuildingStoneSmeltery extends AbstractBuildingSmelterCrafter
     public Skill getSecondarySkill()
     {
         return Skill.Dexterity;
-    }
-
-    @Override
-    public boolean canRecipeBeAdded(final IToken<?> token)
-    {
-        if (!super.canRecipeBeAdded(token))
-        {
-            return false;
-        }
-
-        return isRecipeCompatibleWithCraftingModule(token);
     }
 
     @Override

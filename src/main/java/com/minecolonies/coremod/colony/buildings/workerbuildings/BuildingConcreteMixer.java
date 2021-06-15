@@ -189,12 +189,6 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
     }
 
     @Override
-    public boolean canRecipeBeAdded(final IToken<?> token)
-    {
-        return false;
-    }
-
-    @Override
     public BuildingEntry getBuildingRegistryEntry()
     {
         return ModBuildings.concreteMixer;
@@ -302,6 +296,12 @@ public class BuildingConcreteMixer extends AbstractBuildingCrafter
         public IJob<?> getCraftingJob()
         {
             return getMainBuildingJob().orElseGet(() -> new JobConcreteMixer(null));
+        }
+
+        @Override
+        public boolean canRecipeBeAdded(@NotNull final IToken<?> token)
+        {
+            return false;
         }
     }
 }

@@ -21,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CURRENT_DAILY;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_DAILY;
 
 /**
  * Class of the sifter building.

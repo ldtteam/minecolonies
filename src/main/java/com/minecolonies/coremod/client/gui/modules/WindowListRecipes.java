@@ -1,28 +1,29 @@
-package com.minecolonies.coremod.client.gui;
+package com.minecolonies.coremod.client.gui.modules;
 
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Button;
-import com.ldtteam.blockout.controls.ButtonHandler;
+import com.ldtteam.blockout.controls.ButtonImage;
 import com.ldtteam.blockout.controls.ItemIcon;
 import com.ldtteam.blockout.controls.Text;
-import com.ldtteam.blockout.views.Box;
 import com.ldtteam.blockout.views.ScrollingList;
-import com.ldtteam.blockout.views.Window;
 import com.ldtteam.structurize.util.LanguageHandler;
-import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.IRecipeStorage;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.client.gui.AbstractModuleWindow;
+import com.minecolonies.coremod.colony.buildings.moduleviews.CraftingModuleView;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
+import com.minecolonies.coremod.network.messages.server.colony.building.OpenCraftingGUIMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.worker.AddRemoveRecipeMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.worker.ChangeRecipePriorityMessage;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
@@ -30,7 +31,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 /**
  * Window for the hiring or firing of a worker.
  */
-public class WindowListRecipes extends Window implements ButtonHandler
+public class WindowListRecipes extends AbstractModuleWindow
 {
     /**
      * Id of the recipe list in the GUI.
@@ -43,11 +44,6 @@ public class WindowListRecipes extends Window implements ButtonHandler
     private static final String RECIPE_STATUS="recipestatus";
 
     /**
-     * Link to the xml file of the window.
-     */
-    private static final String BUILDING_NAME_RESOURCE_SUFFIX = ":gui/windowlistrecipes.xml";
-
-    /**
      * The output item icon.
      */
     private static final String OUTPUT_ICON = "output";
@@ -58,54 +54,99 @@ public class WindowListRecipes extends Window implements ButtonHandler
     private static final String RESOURCE = "res%d";
 
     /**
-     * Contains all the recipes.
+     * The view of the current module.
      */
-    private final List<IRecipeStorage> recipes = new ArrayList<>();
-
-    /**
-     * The view of the current building.
-     */
-    private final AbstractBuildingWorker.View building;
+    private final CraftingModuleView module;
 
     /**
      * List of recipes which can be assigned.
      */
     private final ScrollingList recipeList;
 
+    /**
+     * Button to access the crafting grid.
+     */
+    private static final String BUTTON_CRAFTING = "crafting";
+
+    /**
+     * The recipe status.
+     */
     private final Text recipeStatus;
+
     /**
      * Life count.
      */
     private int lifeCount = 0;
 
     /**
-     * Constructor for the window when the player wants to see the list of a building's recipes.
-     *
-     * @param c          the colony view.
-     * @param buildingId the building position.
+     * The constructor of the window.
+     * @param view the building view.
+     * @param name the layout file.
      */
-    public WindowListRecipes(final IColonyView c, final BlockPos buildingId)
+    public WindowListRecipes(final IBuildingView view, final String name, final CraftingModuleView module)
     {
-        super(Constants.MOD_ID + BUILDING_NAME_RESOURCE_SUFFIX);
-        this.building = (AbstractBuildingWorker.View) c.getBuilding(buildingId);
+        super(view, name);
+        this.module = module;
         recipeList = findPaneOfTypeByID(RECIPE_LIST, ScrollingList.class);
         recipeStatus = findPaneOfTypeByID(RECIPE_STATUS, Text.class);
-        updateRecipes();
+
+        findPaneOfTypeByID(BUTTON_CRAFTING, ButtonImage.class).setVisible(module.isRecipeAlterationAllowed());
+
+        super.registerButton(BUTTON_CRAFTING, this::craftingClicked);
+        super.registerButton(BUTTON_REMOVE, this::removeClicked);
+        super.registerButton(BUTTON_FORWARD, this::forwardClicked);
+        super.registerButton(BUTTON_BACKWARD, this::backwardClicked);
     }
 
     /**
-     * Clears and resets/updates all recipes.
+     * Backwards clicked in the button.
+     * @param button the clicked button.
      */
-    private void updateRecipes()
+    private void backwardClicked(final Button button)
     {
-        recipes.clear();
-        recipes.addAll(building.getRecipes());
+        final int row = recipeList.getListElementIndexByPane(button);
+        Network.getNetwork().sendToServer(new ChangeRecipePriorityMessage(buildingView, row, false, module.getId()));
+    }
+
+    /**
+     * Forward clicked.
+     * @param button the clicked button.
+     */
+    private void forwardClicked(final Button button)
+    {
+        final int row = recipeList.getListElementIndexByPane(button);
+        Network.getNetwork().sendToServer(new ChangeRecipePriorityMessage(buildingView, row, true, module.getId()));
+    }
+
+    /**
+     * On remove recipe clicked.
+     * @param button the clicked button.
+     */
+    private void removeClicked(final Button button)
+    {
+        final int row = recipeList.getListElementIndexByPane(button);
+        final IRecipeStorage data = module.getRecipes().get(row);
+        Network.getNetwork().sendToServer(new AddRemoveRecipeMessage(buildingView, true, data, module.getId()));
+    }
+
+    /**
+     * If crafting is clicked this happens. Override if needed.
+     */
+    public void craftingClicked()
+    {
+        if (!module.isRecipeAlterationAllowed())
+        {
+            // This should never happen, because the button is hidden. But if someone glitches into the interface, stop him here.
+            return;
+        }
+        final BlockPos pos = buildingView.getPosition();
+        Minecraft.getInstance().player.openContainer((INamedContainerProvider) Minecraft.getInstance().world.getTileEntity(pos));
+        Network.getNetwork().sendToServer(new OpenCraftingGUIMessage((AbstractBuildingView) buildingView, module.getId()));
     }
 
     @Override
     public void onOpened()
     {
-        updateRecipes();
         recipeList.enable();
         recipeList.show();
 
@@ -115,18 +156,18 @@ public class WindowListRecipes extends Window implements ButtonHandler
             @Override
             public int getElementCount()
             {
-                return recipes.size();
+                return module.getRecipes().size();
             }
 
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                @NotNull final IRecipeStorage recipe = recipes.get(index);
+                @NotNull final IRecipeStorage recipe = module.getRecipes().get(index);
                 final ItemIcon icon = rowPane.findPaneOfTypeByID(OUTPUT_ICON, ItemIcon.class);
                 List<ItemStack> displayStacks = recipe.getRecipeType().getOutputDisplayStacks();
                 icon.setItem(displayStacks.get((lifeCount / LIFE_COUNT_DIVIDER) % (displayStacks.size())));
 
-                if (!building.isRecipeAlterationAllowed())
+                if (!module.canLearnCraftingRecipes())
                 {
                     final Button removeButton = rowPane.findPaneOfTypeByID(BUTTON_REMOVE, Button.class);
                     if (removeButton != null)
@@ -179,38 +220,11 @@ public class WindowListRecipes extends Window implements ButtonHandler
     public void onUpdate()
     {
         super.onUpdate();
-        updateRecipes();
         if (!Screen.hasShiftDown())
         {
             lifeCount++;
         }
-        recipeStatus.setText(LanguageHandler.format(TranslationConstants.RECIPE_STATUS,building.getRecipes().size(), building.getMaxRecipes()));
+        recipeStatus.setText(LanguageHandler.format(TranslationConstants.RECIPE_STATUS, module.getRecipes().size(), module.getMaxRecipes()));
         window.findPaneOfTypeByID(RECIPE_LIST, ScrollingList.class).refreshElementPanes();
-    }
-
-    @Override
-    public void onButtonClicked(@NotNull final Button button)
-    {
-        final int row = recipeList.getListElementIndexByPane(button);
-        if (button.getID().equals(BUTTON_REMOVE) && building.isRecipeAlterationAllowed())
-        {
-            final IRecipeStorage data = recipes.get(row);
-            building.removeRecipe(row);
-            Network.getNetwork().sendToServer(new AddRemoveRecipeMessage(building, true, data));
-        }
-        else if (button.getID().equals(BUTTON_FORWARD))
-        {
-            building.switchIndex(row, row - 1);
-            Network.getNetwork().sendToServer(new ChangeRecipePriorityMessage(building, row, true));
-        }
-        else if (button.getID().equals(BUTTON_BACKWARD))
-        {
-            building.switchIndex(row + 1, row);
-            Network.getNetwork().sendToServer(new ChangeRecipePriorityMessage(building, row, false));
-        }
-        else if (button.getID().equals(BUTTON_CANCEL))
-        {
-            building.openGui(false);
-        }
     }
 }

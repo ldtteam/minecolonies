@@ -16,6 +16,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.network.messages.server.colony.building.HireFireMessage;
 import com.minecolonies.coremod.network.messages.server.colony.citizen.PauseCitizenMessage;
 import com.minecolonies.coremod.network.messages.server.colony.citizen.RestartCitizenMessage;
@@ -44,7 +45,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
     /**
      * The view of the current building.
      */
-    protected final AbstractBuildingWorker.View building;
+    protected final AbstractBuildingWorkerView building;
 
     /**
      * The colony.
@@ -71,7 +72,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
     {
         super(Constants.MOD_ID + HIRE_WORKER_SUFFIX);
         this.colony = c;
-        building = (AbstractBuildingWorker.View) colony.getBuilding(buildingId);
+        building = (AbstractBuildingWorkerView) colony.getBuilding(buildingId);
 
         citizenList = findPaneOfTypeByID(CITIZEN_LIST_UNEMP, ScrollingList.class);
 

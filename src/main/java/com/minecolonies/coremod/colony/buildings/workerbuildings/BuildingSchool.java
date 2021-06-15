@@ -14,6 +14,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.coremod.client.gui.huts.WindowHutSchoolModule;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.colony.jobs.JobPupil;
 import com.minecolonies.coremod.colony.jobs.JobTeacher;
 import net.minecraft.block.Block;
@@ -285,7 +286,7 @@ public class BuildingSchool extends AbstractBuildingWorker
     /**
      * ClientSide representation of the building.
      */
-    public static class View extends AbstractBuildingWorker.View
+    public static class View extends AbstractBuildingWorkerView
     {
         /**
          * Check if this building has a teacher.

@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingPublicCrafter;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
@@ -13,23 +14,14 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
-import com.minecolonies.api.inventory.container.ContainerCraftingFurnace;
 import com.minecolonies.api.util.constant.TypeConstants;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingProductionResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingRequestResolver;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraftforge.fml.network.NetworkHooks;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.List;
@@ -91,7 +83,7 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractBuildingFur
                     final IRequest<? extends PublicCrafting> request = (IRequest<? extends PublicCrafting>) colony.getRequestManager().getRequestForToken(taskToken);
                     if (request != null)
                     {
-                        final IRecipeStorage recipeStorage = getFirstRecipe(request.getRequest().getStack());
+                        final IRecipeStorage recipeStorage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(request.getRequest().getRecipeStorage());
                         if (recipeStorage != null)
                         {
                             for (final ItemStorage itemStorage : recipeStorage.getCleanedInput())
@@ -132,31 +124,10 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractBuildingFur
         return getSecondarySkill();
     }
 
-    @Override
-    public void openCraftingContainer(final ServerPlayerEntity player)
-    {
-        NetworkHooks.openGui(player, new INamedContainerProvider()
-        {
-            @Override
-            public ITextComponent getDisplayName()
-            {
-                return new StringTextComponent("Furnace Crafting GUI");
-            }
-
-            @NotNull
-            @Override
-            public Container createMenu(final int id, @NotNull final PlayerInventory inv, @NotNull final PlayerEntity player)
-            {
-                return new ContainerCraftingFurnace(id, inv, getID());
-            }
-        }, getID());
-    }
-
-
     /**
      * Crafter building View.
      */
-    public static class View extends AbstractBuildingWorker.View
+    public static class View extends AbstractBuildingWorkerView
     {
         /**
          * Instantiate the crafter view.
@@ -168,8 +139,5 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractBuildingFur
         {
             super(c, l);
         }
-
     }
-
-
 }

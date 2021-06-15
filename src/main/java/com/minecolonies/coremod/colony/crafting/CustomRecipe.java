@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
+import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.*;
@@ -535,7 +536,7 @@ public class CustomRecipe
     /**
      * Check if a precursor recipe is missing from the building.
      * @param building      The building which would contain the precursor recipe.
-     * @return              True if a precusor recipe was required and not present.
+     * @return              True if a precursor recipe was required and not present.
      */
     private boolean isPrecursorRecipeMissing(IBuildingWorker building)
     {
@@ -543,16 +544,19 @@ public class CustomRecipe
         {
             final IRecipeStorage compareStorage = this.getRecipeStorage();
             final ResourceLocation recipeSource = this.getRecipeId();
-            for (IToken<?> recipeToken : building.getRecipes())
+            for (final ICraftingBuildingModule module : building.getModules(ICraftingBuildingModule.class))
             {
-                final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(recipeToken);
-                if ((storage.getRecipeSource() != null && storage.getRecipeSource().equals(recipeSource)) || (
-                  ItemStackUtils.compareItemStacksIgnoreStackSize(storage.getPrimaryOutput(), compareStorage.getPrimaryOutput(), false, true) &&
-                  storage.getCleanedInput().containsAll(compareStorage.getCleanedInput())
-                    && compareStorage.getCleanedInput()
-                         .containsAll(storage.getCleanedInput())))
+                for (IToken<?> recipeToken : module.getRecipes())
                 {
-                    return false;
+                    final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(recipeToken);
+                    if ((storage.getRecipeSource() != null && storage.getRecipeSource().equals(recipeSource)) || (
+                      ItemStackUtils.compareItemStacksIgnoreStackSize(storage.getPrimaryOutput(), compareStorage.getPrimaryOutput(), false, true) &&
+                        storage.getCleanedInput().containsAll(compareStorage.getCleanedInput())
+                        && compareStorage.getCleanedInput()
+                             .containsAll(storage.getCleanedInput())))
+                    {
+                        return false;
+                    }
                 }
             }
             return true;

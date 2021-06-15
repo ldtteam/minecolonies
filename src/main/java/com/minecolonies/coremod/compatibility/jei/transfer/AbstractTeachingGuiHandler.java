@@ -3,6 +3,7 @@ package com.minecolonies.coremod.compatibility.jei.transfer;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.moduleviews.CraftingModuleView;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.compatibility.jei.GenericRecipeCategory;
 import mezz.jei.api.gui.handlers.IGhostIngredientHandler;
 import mezz.jei.api.gui.handlers.IGuiContainerHandler;
@@ -43,7 +44,7 @@ public abstract class AbstractTeachingGuiHandler<W extends ContainerScreen<?>>
     protected abstract void updateServer(@NotNull W gui);
 
     @Nullable
-    protected GenericRecipeCategory getRecipeCategory(@NotNull final AbstractBuildingWorker.View view)
+    protected GenericRecipeCategory getRecipeCategory(@NotNull final AbstractBuildingWorkerView view)
     {
         for (final CraftingModuleView moduleView : view.getModuleViews(CraftingModuleView.class))
         {

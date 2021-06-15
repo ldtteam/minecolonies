@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.sifter;
 
+import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
@@ -109,7 +110,8 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
             return INVENTORY_FULL;
         }
 
-        currentRecipeStorage = sifterBuilding.getFirstFullFillableRecipe(ItemStackUtils::isEmpty, 1, false);
+        final ICraftingBuildingModule module = getOwnBuilding().getFirstModuleOccurance(BuildingSifter.CraftingModule.class);
+        currentRecipeStorage = module.getFirstFullFillableRecipe(ItemStackUtils::isEmpty, 1, false);
 
         if (currentRecipeStorage == null)
         {

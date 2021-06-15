@@ -2,14 +2,15 @@ package com.minecolonies.coremod.client.gui.huts;
 
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.client.gui.AbstractWindowWorkerModuleBuilding;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Window for worker. Placeholder for many different jobs.
  *
- * @param <B> Object extending {@link com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker.View}.
+ * @param <B> Object extending {@link AbstractBuildingWorkerView}.
  */
-public class WindowHutWorkerModulePlaceholder<B extends com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker.View> extends AbstractWindowWorkerModuleBuilding<B>
+public class WindowHutWorkerModulePlaceholder<B extends AbstractBuildingWorkerView> extends AbstractWindowWorkerModuleBuilding<B>
 {
     private static final String WORKER_PLACEHOLDER_RESOURCE_SUFFIX = ":gui/windowhutworkerplaceholder.xml";
     private final        String name;
@@ -17,7 +18,7 @@ public class WindowHutWorkerModulePlaceholder<B extends com.minecolonies.coremod
     /**
      * Window for worker placeholder. Used by buildings not listed above this file.
      *
-     * @param building AbstractBuilding extending {@link com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker.View}.
+     * @param building AbstractBuilding extending {@link AbstractBuildingWorkerView}.
      * @param name     Name of the the view (resource).
      */
     public WindowHutWorkerModulePlaceholder(final B building, final String name)

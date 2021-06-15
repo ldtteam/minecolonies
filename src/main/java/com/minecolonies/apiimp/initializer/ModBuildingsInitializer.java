@@ -355,7 +355,7 @@ public final class ModBuildingsInitializer
                                  .setBuildingProducer(BuildingFlorist::new)
                                  .setBuildingViewProducer(() -> BuildingFlorist.View::new)
                                  .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.FLORIST_ID))
-                                 .addBuildingModuleProducer(() -> new ItemListModule(BUILDING_FLOWER_LIST), () -> new FloristFlowerListModuleView())
+                                 .addBuildingModuleProducer(() -> new ItemListModule(BUILDING_FLOWER_LIST), FloristFlowerListModuleView::new)
                                  .addBuildingModuleProducer(MinimumStockModule::new, MinimumStockModuleView::new)
                                  .createBuildingEntry();
 
@@ -398,6 +398,7 @@ public final class ModBuildingsInitializer
                                 .addBuildingModuleProducer(MinimumStockModule::new, MinimumStockModuleView::new)
                                 .createBuildingEntry();
 
+        //todo glassblower needs smelting
         ModBuildings.glassblower = new BuildingEntry.Builder()
                                      .setBuildingBlock(ModBlocks.blockHutGlassblower)
                                      .setBuildingProducer(BuildingGlassblower::new)
@@ -409,6 +410,7 @@ public final class ModBuildingsInitializer
                                      .addBuildingModuleViewProducer(CrafterTaskModuleView::new)
                                      .createBuildingEntry();
 
+        //todo dyer needs smelting
         ModBuildings.dyer = new BuildingEntry.Builder()
                               .setBuildingBlock(ModBlocks.blockHutDyer)
                               .setBuildingProducer(BuildingDyer::new)
@@ -467,6 +469,7 @@ public final class ModBuildingsInitializer
                                      .addBuildingModuleProducer(() -> new SettingsModule().with(AbstractBuildingWorker.BREEDING, new BoolSetting(true)), SettingsModuleView::new)
                                      .createBuildingEntry();
 
+        //todo we want two here, one custom for the concrete placement, and one crafting for the normal crafting of the powder.
         ModBuildings.concreteMixer = new BuildingEntry.Builder()
                                        .setBuildingBlock(ModBlocks.blockHutConcreteMixer)
                                        .setBuildingProducer(BuildingConcreteMixer::new)

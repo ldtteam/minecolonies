@@ -33,7 +33,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
@@ -191,7 +190,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
     private IAIState enchant()
     {
         // this assumes that the only empty-output (pure loot table) recipes are for ancient tome -> enchanted book
-        currentRecipeStorage = getOwnBuilding().getFirstFullFillableRecipe(ItemStackUtils::isEmpty, 1, false);
+        currentRecipeStorage = getOwnBuilding().getFirstModuleOccurance(BuildingEnchanter.CraftingModule.class).getFirstFullFillableRecipe(ItemStackUtils::isEmpty, 1, false);
         if (currentRecipeStorage == null)
         {
             progressTicks = 0;
