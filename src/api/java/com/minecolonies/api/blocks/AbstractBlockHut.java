@@ -103,13 +103,13 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     public float getPlayerRelativeBlockHardness(final BlockState state, @NotNull final PlayerEntity player, @NotNull final IBlockReader world, @NotNull final BlockPos pos)
     {
         final IBuilding building = IColonyManager.getInstance().getBuilding(player.world, pos);
-        if (building != null && !building.getChildren().isEmpty() && (lastBreakTickWarn - player.world.getGameTime() > 100))
+        if (building != null && !building.getChildren().isEmpty() && (player.world.getGameTime() - lastBreakTickWarn) < 100)
         {
             lastBreakTickWarn = player.world.getGameTime();
             LanguageHandler.sendPlayerMessage(player, "block.minecolonies.blockhut.breakwarn.children");
         }
 
-        return MinecoloniesAPIProxy.getInstance().getConfig().getServer().pvp_mode.get() ? 1/(HARDNESS * HARDNESS_PVP_FACTOR) : 1/HARDNESS;
+        return (MinecoloniesAPIProxy.getInstance().getConfig().getServer().pvp_mode.get() ? 1 / (HARDNESS * HARDNESS_PVP_FACTOR) : 1 / HARDNESS) / 30;
     }
 
     /**

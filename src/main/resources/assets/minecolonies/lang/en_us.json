@@ -596,7 +596,7 @@
   "com.minecolonies.coremod.gui.townhall.feuds": "Feuds:",
   "com.minecolonies.coremod.gui.townhall.tp": "Do you really want to teleport to %s? [YES]",
 
-  "com.minecolonies.coremod.workorderadded": "Build request created for colony %s!",
+  "com.minecolonies.coremod.workorderadded": "Build request created for %s at colony %s!",
   "com.minecolonies.coremod.decoorderadded": "Decoration request created for colony %s!",
 
   "com.minecolonies.coremod.gui.hiring.on": "Manual",

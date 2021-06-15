@@ -207,6 +207,7 @@ public class MineColonies
         Log.getLogger().warn("FMLLoadCompleteEvent");
         PlacementHandlerInitializer.initHandlers();
         RequestSystemInitializer.onPostInit();
+        //SchematicFixerUtil.fixSchematics();
     }
 
     /**

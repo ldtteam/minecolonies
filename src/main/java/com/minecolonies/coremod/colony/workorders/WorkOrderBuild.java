@@ -25,6 +25,7 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
 {
     private static final String TAG_UPGRADE_LEVEL = "upgradeLevel";
     private static final String TAG_UPGRADE_NAME  = "upgrade";
+    private static final String TAG_DISP_NAME     = "displayname";
 
     /**
      * Max distance a builder can have from the building site.
@@ -132,6 +133,7 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
         super.read(compound, manager);
         upgradeLevel = compound.getInt(TAG_UPGRADE_LEVEL);
         upgradeName = compound.getString(TAG_UPGRADE_NAME);
+        displayName = compound.getString(TAG_DISP_NAME);
     }
 
     /**
@@ -145,6 +147,7 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
         super.write(compound);
         compound.putInt(TAG_UPGRADE_LEVEL, upgradeLevel);
         compound.putString(TAG_UPGRADE_NAME, upgradeName);
+        compound.putString(TAG_DISP_NAME, displayName);
     }
 
     @Override
@@ -225,6 +228,11 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
     @Override
     public String getDisplayName()
     {
+        if (displayName.isEmpty())
+        {
+            return upgradeName;
+        }
+
         return displayName;
     }
 
