@@ -6,11 +6,13 @@ import com.ldtteam.blockout.controls.ButtonImage;
 import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.View;
 import com.ldtteam.blockout.views.Window;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingsModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.moduleviews.ToolModuleView;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -117,5 +119,14 @@ public class GuardTaskSetting extends StringSettingWithDesc
             targetButton.setVisible(false);
         }
         pane.findPaneOfTypeByID("trigger", ButtonImage.class).setText(new TranslationTextComponent(setting));
+    }
+
+    @Override
+    public void onUpdate(final IBuilding building, final ServerPlayerEntity sender)
+    {
+        if (building instanceof AbstractBuildingGuards && getValue().equals(FOLLOW))
+        {
+            ((AbstractBuildingGuards) building).setPlayerToFollow(sender);
+        }
     }
 }
