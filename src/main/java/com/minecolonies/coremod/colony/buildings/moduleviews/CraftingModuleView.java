@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.crafting.IRecipeStorage;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.client.gui.modules.WindowListRecipes;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.api.distmarker.Dist;
@@ -117,13 +118,13 @@ public class CraftingModuleView extends AbstractBuildingModuleView
     @OnlyIn(Dist.CLIENT)
     public Window getWindow()
     {
-        return new WindowListRecipes(buildingView, ":gui/layouthuts/layoutlistrecipes.xml", this);
+        return new WindowListRecipes(buildingView, Constants.MOD_ID + ":gui/layouthuts/layoutlistrecipes.xml", this);
     }
 
     @Override
     public String getIcon()
     {
-        return "crafting";
+        return id;
     }
 
     @Override

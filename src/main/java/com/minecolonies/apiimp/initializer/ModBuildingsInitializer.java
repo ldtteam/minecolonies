@@ -291,7 +291,7 @@ public final class ModBuildingsInitializer
                                   .setBuildingProducer(BuildingSmeltery::new)
                                   .setBuildingViewProducer(() -> BuildingSmeltery.View::new)
                                   .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.SMELTERY_ID))
-                                  .addBuildingModuleProducer(BuildingSmeltery.SmeltingModule::new, CraftingModuleView::new)
+                                  .addBuildingModuleProducer(BuildingSmeltery.SmeltingModule::new, SmelterModuleView::new)
                                   .addBuildingModuleProducer(() -> new ItemListModule(FUEL_LIST), () -> new ItemListModuleView(FUEL_LIST, COM_MINECOLONIES_REQUESTS_BURNABLE, false,
                                     (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getFuel()))
                                   .addBuildingModuleProducer(MinimumStockModule::new, MinimumStockModuleView::new)
@@ -405,6 +405,7 @@ public final class ModBuildingsInitializer
                                      .setBuildingViewProducer(() -> BuildingGlassblower.View::new)
                                      .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.GLASSBLOWER_ID))
                                      .addBuildingModuleProducer(BuildingGlassblower.CraftingModule::new, CraftingModuleView::new)
+                                     .addBuildingModuleProducer(BuildingGlassblower.SmeltingModule::new, CraftingModuleView::new)
                                      .addBuildingModuleProducer(() -> new ItemListModule(FUEL_LIST), () -> new ItemListModuleView(FUEL_LIST, COM_MINECOLONIES_REQUESTS_BURNABLE, false,
                                        (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getFuel()))
                                      .addBuildingModuleViewProducer(CrafterTaskModuleView::new)

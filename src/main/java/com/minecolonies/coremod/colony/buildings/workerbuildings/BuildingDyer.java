@@ -153,17 +153,6 @@ public class BuildingDyer extends AbstractBuildingSmelterCrafter
         }
 
         @Override
-        public boolean canRecipeBeAdded(@NotNull final IToken<?> token)
-        {
-            if (!super.canRecipeBeAdded(token))
-            {
-                return false;
-            }
-
-            return isRecipeCompatibleWithCraftingModule(token);
-        }
-
-        @Override
         public IRecipeStorage getFirstFullFillableRecipe(Predicate<ItemStack> stackPredicate, int count, final boolean considerReservation)
         {
             IRecipeStorage recipe =  super.getFirstFullFillableRecipe(stackPredicate, count, considerReservation);

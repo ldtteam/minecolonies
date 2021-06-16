@@ -30,6 +30,7 @@ public class BuildingGlassblower extends AbstractBuildingSmelterCrafter
      * Description string of the building.
      */
     private static final String GLASS_BLOWER = "glassblower";
+    private static final String GLASS_BLOWER_SMELTING = "glassblower-smelting";
 
     /**
      * Instantiates a new stone smeltery building.
@@ -143,17 +144,25 @@ public class BuildingGlassblower extends AbstractBuildingSmelterCrafter
             }
             return CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, GLASS_BLOWER).orElse(false);
         }
+    }
+
+    public static class SmeltingModule extends AbstractCraftingBuildingModule.Smelting
+    {
+        @Nullable
+        @Override
+        public IJob<?> getCraftingJob()
+        {
+            return getMainBuildingJob().orElseGet(() -> new JobGlassblower(null));
+        }
 
         @Override
-        public boolean canRecipeBeAdded(@NotNull final IToken<?> token)
+        public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
         {
-            if (!super.canRecipeBeAdded(token))
+            if (!super.isRecipeCompatible(recipe))
             {
                 return false;
             }
-
-            checkForWorkerSpecificRecipes();
-            return isRecipeCompatibleWithCraftingModule(token);
+            return CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, GLASS_BLOWER_SMELTING).orElse(false);
         }
     }
 }
