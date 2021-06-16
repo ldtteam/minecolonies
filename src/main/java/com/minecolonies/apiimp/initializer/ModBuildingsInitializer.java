@@ -398,7 +398,6 @@ public final class ModBuildingsInitializer
                                 .addBuildingModuleProducer(MinimumStockModule::new, MinimumStockModuleView::new)
                                 .createBuildingEntry();
 
-        //todo glassblower needs smelting
         ModBuildings.glassblower = new BuildingEntry.Builder()
                                      .setBuildingBlock(ModBlocks.blockHutGlassblower)
                                      .setBuildingProducer(BuildingGlassblower::new)

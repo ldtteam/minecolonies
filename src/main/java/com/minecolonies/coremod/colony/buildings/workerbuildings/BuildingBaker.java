@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
-import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenData;
@@ -12,7 +11,6 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingPublicCrafter;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
-import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.IRecipeStorage;
@@ -30,11 +28,13 @@ import com.minecolonies.coremod.util.FurnaceRecipes;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 /**
  * Building for the bakery.
@@ -171,12 +171,17 @@ public class BuildingBaker extends AbstractBuildingFurnaceUser implements IBuild
         @Override
         public Window getWindow()
         {
-            return new WindowHutWorkerModulePlaceholder<>(this, "bakery");
+            return new WindowHutWorkerModulePlaceholder<>(this, BAKER);
         }
     }
 
     public static class CraftingModule extends AbstractCraftingBuildingModule.Crafting
     {
+        /**
+         * Always try to keep at least 2 stacks of recipe inputs in the inventory and in the worker chest.
+         */
+        private static final int RECIPE_INPUT_HOLD = 128;
+
         @Nullable
         @Override
         public IJob<?> getCraftingJob()
@@ -224,6 +229,23 @@ public class BuildingBaker extends AbstractBuildingFurnaceUser implements IBuild
             }
 
             return recipeAdded;
+        }
+
+        @Override
+        public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
+        {
+            final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> map = super.getRequiredItemsAndAmount();
+            for (final IToken<?> token : getRecipes())
+            {
+                final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
+                for (final ItemStorage itemStorage : storage.getCleanedInput())
+                {
+                    final ItemStack stack = itemStorage.getItemStack();
+                    map.put(stack::isItemEqual, new Tuple<>(RECIPE_INPUT_HOLD, false));
+                }
+            }
+
+            return map;
         }
     }
 

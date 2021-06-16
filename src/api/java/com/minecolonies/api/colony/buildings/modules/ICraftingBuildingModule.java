@@ -109,8 +109,17 @@ public interface ICraftingBuildingModule extends IBuildingModule
      */
     boolean isVisible();
 
+    /**
+     * Get a list of all recipes of this module.
+     * @return the list of recipes.
+     */
     List<IToken<?>> getRecipes();
 
+    /**
+     * Get the first recipe where the output matches this stack.
+     * @param stack the output stack to match.
+     * @return the recipe or null.
+     */
     @Nullable
     IRecipeStorage getFirstRecipe(ItemStack stack);
 
@@ -133,7 +142,17 @@ public interface ICraftingBuildingModule extends IBuildingModule
      */
     IRecipeStorage getFirstFullFillableRecipe(Predicate<ItemStack> stackPredicate, final int count, final boolean considerReservation);
 
+    /**
+     * Fulfill the recipe.
+     * @param storage the recipe storage to fulfill.
+     * @return true if successful.
+     */
     boolean fullFillRecipe(IRecipeStorage storage);
+
+    /**
+     * Updates existing requests, if they match the recipes available at this worker
+     */
+    void updateWorkerAvailableForRecipes();
 
     /**
      * Replace one current recipe with a new one
@@ -157,6 +176,11 @@ public interface ICraftingBuildingModule extends IBuildingModule
      */
     void addRecipeToList(IToken<?> token, boolean atTop);
 
+    /**
+     * Switch the order of two recipes.
+     * @param i the first recipe.
+     * @param j the second recipe.
+     */
     void switchOrder(int i, int j);
 
     /**
@@ -189,7 +213,7 @@ public interface ICraftingBuildingModule extends IBuildingModule
     void removeRecipe(IToken<?> token);
 
     /**
-     * Check for worker specific recipes and add them if necessary.
+     * Updates existing requests, if they match the recipes available at this worker
      */
     void checkForWorkerSpecificRecipes();
 

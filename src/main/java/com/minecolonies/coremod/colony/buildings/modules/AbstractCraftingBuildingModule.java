@@ -59,8 +59,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.RECIPE_IMP
  * "policy classes" (inner classes) to specify the type of crafting supported.  The policy
  * classes don't provide any "real" implementation, they just configure this one.
  */
-public abstract class AbstractCraftingBuildingModule extends AbstractBuildingModule implements ICraftingBuildingModule, IPersistentModule, ICreatesResolversModule,
-                                                                                                 IHasRequiredItemsModule
+public abstract class AbstractCraftingBuildingModule extends AbstractBuildingModule implements ICraftingBuildingModule, IPersistentModule, ICreatesResolversModule, IHasRequiredItemsModule
 {
     /**
      * The base chance for a recipe to be improved. This is modified by worker skill and the number of items crafted
@@ -141,6 +140,14 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
     {
         final IGenericRecipe recipe = GenericRecipe.of(token);
         if (recipe == null) return false;
+        for (final CustomRecipe rec : CustomRecipeManager.getInstance().getRecipes(building.getJobName()))
+        {
+            if (rec.getRecipeStorage().equals(IColonyManager.getInstance().getRecipeManager().getRecipes().get(token)))
+            {
+                return true;
+            }
+        }
+
         return isRecipeCompatible(recipe);
     }
 
@@ -500,13 +507,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         return Optional.empty();
     }
 
-    /**
-     * Has a chance to reduce the resource requirements for the recipe in this building
-     *
-     * @param recipe the recipe we're possibly improving
-     * @param count the number of items (chances)
-     * @param citizen The citizen, as the primary skill can improve the chances
-     */
+    @Override
     public void improveRecipe(IRecipeStorage recipe, int count, ICitizenData citizen)
     {
         final List<ItemStorage> inputs = recipe.getCleanedInput().stream().sorted(Comparator.comparingInt(ItemStorage::getAmount).reversed()).collect(Collectors.toList());
@@ -670,9 +671,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         return storage.fullfillRecipe(builder.build(RecipeStorage.recipeLootParameters), handlers);
     }
 
-    /**
-     * Updates existing requests, if they match the recipes available at this worker
-     */
+    @Override
     public void updateWorkerAvailableForRecipes()
     {
         for (final IToken<?> token : recipes)
