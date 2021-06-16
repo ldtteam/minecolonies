@@ -46,10 +46,12 @@ import java.util.stream.Collectors;
 @OnlyIn(Dist.CLIENT)
 public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe>
 {
-    public GenericRecipeCategory(@NotNull final BuildingEntry building, @NotNull final IJob<?> job,
-                                 @NotNull final ICraftingBuildingModule crafting, @NotNull final IGuiHelper guiHelper)
+    public GenericRecipeCategory(@NotNull final BuildingEntry building,
+                                 @NotNull final IJob<?> job,
+                                 @NotNull final ICraftingBuildingModule crafting,
+                                 @NotNull final IGuiHelper guiHelper)
     {
-        super(job, getCatalyst(building), guiHelper);
+        super(job, Objects.requireNonNull(crafting.getUid()), getCatalyst(building), guiHelper);
 
         this.building = building;
         this.crafting = crafting;

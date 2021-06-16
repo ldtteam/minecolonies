@@ -2,10 +2,12 @@ package com.minecolonies.api.colony.buildings.modules;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -47,14 +49,23 @@ public interface ICraftingBuildingModule extends IBuildingModule
      * citizen working at the current building, or an abstract
      * job not yet associated with any particular citizen.
      *
-     * Every unique module (across all building types) must return
-     * a unique job -- it is not permitted for the same job to be
-     * shared by two modules, as that creates an ambiguity.
+     * It is permitted for two crafting module types to return
+     * the same job but in that case {@link #getId()} must return
+     * different ids.
      *
      * @return The crafting job, or null if there is no such job.
      */
     @Nullable
     IJob<?> getCraftingJob();
+
+    /**
+     * Gets an id *suffix* for this particular crafting module, to
+     * disambiguate between multiple modules with the same job.
+     * This is not unique by itself.
+     * @return The disambiguating id suffix.
+     */
+    @NotNull
+    String getId();
 
     /**
      * Check if this building type can learn (or otherwise process)
@@ -188,4 +199,31 @@ public interface ICraftingBuildingModule extends IBuildingModule
      * @param citizenData the citizen running it.
      */
     void improveRecipe(IRecipeStorage currentRecipeStorage, int craftCounter, ICitizenData citizenData);
+
+    /**
+     * Gets a unique identifier for this crafting module, based on
+     * the job and disambiguation suffix.  May be null where there
+     * was no job.
+     * @return The unique id or null.
+     */
+    @Nullable
+    default ResourceLocation getUid()
+    {
+        final IJob<?> job = getCraftingJob();
+        if (job == null) return null;
+
+        final JobEntry entry = job.getJobRegistryEntry();
+        return getUid(entry, getId());
+    }
+
+    /**
+     * Formats a crafting module unique identifier based on a job entry and disambiguation suffix.
+     * @return The unique id.
+     */
+    @NotNull
+    static ResourceLocation getUid(@NotNull final JobEntry job, @NotNull final String id)
+    {
+        final ResourceLocation jobId = job.getRegistryName();
+        return new ResourceLocation(jobId.getNamespace(), jobId.getPath() + "/" + id);
+    }
 }

@@ -673,6 +673,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         return Collections.emptyList();
     }
 
+    @NotNull
     public abstract String getId();
 
     /** This module is for standard crafters (3x3 by default) */
@@ -708,6 +709,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
          * Get a string identifier to this.
          * @return the id.
          */
+        @NotNull
         public String getId()
         {
             return "crafting";
@@ -747,6 +749,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
          * Get a string identifier to this.
          * @return the id.
          */
+        @NotNull
         public String getId()
         {
             return "smelting";
@@ -783,6 +786,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
          * Get a string identifier to this.
          * @return the id.
          */
+        @NotNull
         public String getId()
         {
             return "custom";

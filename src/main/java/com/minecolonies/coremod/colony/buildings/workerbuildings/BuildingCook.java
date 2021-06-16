@@ -462,6 +462,7 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
         @Override
         public boolean canLearnCraftingRecipes()
         {
+            if (building == null) return true;  // because it can learn at *some* level
             return building.getBuildingLevel() >= 3;
         }
 

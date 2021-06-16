@@ -71,7 +71,6 @@ public class JEIPlugin implements IModPlugin
                         if (job != null)
                         {
                             final GenericRecipeCategory category = new GenericRecipeCategory(building, job, crafting, guiHelper);
-                            if (category.equals())
                             categories.add(category);
                             registration.addRecipeCategories(category);
                         }
