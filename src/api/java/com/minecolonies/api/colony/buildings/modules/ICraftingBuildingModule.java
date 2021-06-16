@@ -103,6 +103,12 @@ public interface ICraftingBuildingModule extends IBuildingModule
      */
     boolean isRecipeCompatible(@NotNull IGenericRecipe recipe);
 
+    /**
+     * Check if the module on the client side should be displayed.
+     * @return true if so.
+     */
+    boolean isVisible();
+
     List<IToken<?>> getRecipes();
 
     @Nullable

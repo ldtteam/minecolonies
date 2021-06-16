@@ -1,7 +1,5 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
-import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockout.views.Window;
 import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
 import com.minecolonies.api.MinecoloniesAPIProxy;
@@ -10,10 +8,10 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingPublicCrafter;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
-import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.IRecipeStorage;
@@ -21,9 +19,8 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
 import com.minecolonies.coremod.colony.buildings.modules.MinimumStockModule;
@@ -31,10 +28,6 @@ import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerVie
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.coremod.colony.jobs.JobCook;
 import com.minecolonies.coremod.colony.jobs.JobCookAssistant;
-import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingProductionResolver;
-import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingRequestResolver;
-import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingProductionResolver;
-import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingRequestResolver;
 import com.minecolonies.coremod.util.FurnaceRecipes;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -46,7 +39,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.ItemStackUtils.ISFOOD;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
@@ -57,7 +49,7 @@ import static com.minecolonies.api.util.constant.Suppression.OVERRIDE_EQUALS;
  * Class of the cook building.
  */
 @SuppressWarnings(OVERRIDE_EQUALS)
-public class BuildingCook extends AbstractBuildingSmelterCrafter
+public class BuildingCook extends AbstractBuildingFurnaceUser implements IBuildingPublicCrafter
 {
     /**
      * The cook string.
@@ -294,12 +286,6 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
     }
 
     @Override
-    public boolean canCraftComplexRecipes()
-    {
-        return true;
-    }
-
-    @Override
     public boolean canBeGathered()
     {
         return super.canBeGathered() &&
@@ -307,24 +293,6 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
                    .map(c -> c.getJob(AbstractJobCrafter.class))
                    .filter(Objects::nonNull)
                    .allMatch(AbstractJobCrafter::hasTask);
-    }
-
-    @Override
-    public ImmutableCollection<IRequestResolver<?>> createResolvers()
-    {
-        final Collection<IRequestResolver<?>> supers =
-          super.createResolvers().stream()
-            .filter(r -> !(r instanceof PrivateWorkerCraftingProductionResolver || r instanceof PrivateWorkerCraftingRequestResolver))
-            .collect(Collectors.toList());
-        final ImmutableList.Builder<IRequestResolver<?>> builder = ImmutableList.builder();
-
-        builder.addAll(supers);
-        builder.add(new PublicWorkerCraftingRequestResolver(getRequester().getLocation(),
-          getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
-        builder.add(new PublicWorkerCraftingProductionResolver(getRequester().getLocation(),
-          getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
-
-        return builder.build();
     }
 
     @NotNull
@@ -404,6 +372,12 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
         }
     }
 
+    @Override
+    public Skill getCraftSpeedSkill()
+    {
+        return getSecondarySkill();
+    }
+
     /**
      * BuildingCook View.
      */
@@ -463,6 +437,12 @@ public class BuildingCook extends AbstractBuildingSmelterCrafter
         public boolean canLearnCraftingRecipes()
         {
             if (building == null) return true;  // because it can learn at *some* level
+            return building.getBuildingLevel() >= 3;
+        }
+
+        @Override
+        public boolean isVisible()
+        {
             return building.getBuildingLevel() >= 3;
         }
 

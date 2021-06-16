@@ -254,7 +254,7 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
             final IRecipeStorage craftableCrafting = module.getFirstRecipe(stackPrecicate);
             if (craftableCrafting == null)
             {
-                return null;
+                continue;
             }
             return createRequestsForRecipe(manager, craftableCrafting, count, minCount);
         }

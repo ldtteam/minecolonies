@@ -3,14 +3,14 @@ package com.minecolonies.coremod.colony.buildings.modules;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModule;
-import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
-import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
-import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
+import com.minecolonies.api.colony.buildings.modules.*;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
+import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
+import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
+import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.*;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -23,6 +23,9 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.crafting.CustomRecipe;
 import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
+import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
+import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingProductionResolver;
+import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingRequestResolver;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -32,6 +35,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.Constants;
@@ -55,7 +59,8 @@ import static com.minecolonies.api.util.constant.TranslationConstants.RECIPE_IMP
  * "policy classes" (inner classes) to specify the type of crafting supported.  The policy
  * classes don't provide any "real" implementation, they just configure this one.
  */
-public abstract class AbstractCraftingBuildingModule extends AbstractBuildingModule implements ICraftingBuildingModule, IPersistentModule
+public abstract class AbstractCraftingBuildingModule extends AbstractBuildingModule implements ICraftingBuildingModule, IPersistentModule, ICreatesResolversModule,
+                                                                                                 IHasRequiredItemsModule
 {
     /**
      * The base chance for a recipe to be improved. This is modified by worker skill and the number of items crafted
@@ -142,10 +147,12 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
     @Override
     public void serializeNBT(@NotNull final CompoundNBT compound)
     {
+        final CompoundNBT moduleCompound = new CompoundNBT();
         @NotNull final ListNBT recipesTagList = recipes.stream()
                                                   .map(iToken -> StandardFactoryController.getInstance().serialize(iToken))
                                                   .collect(NBTUtils.toListNBT());
-        compound.put(TAG_NEW_RECIPES, recipesTagList);
+        moduleCompound.put(TAG_NEW_RECIPES, recipesTagList);
+        compound.put(getId(), moduleCompound);
     }
 
     @Override
@@ -153,11 +160,12 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
     {
         if (compound.contains(TAG_RECIPES))
         {
+            //todo remove in 1.17
             final ListNBT recipesTags = compound.getList(TAG_RECIPES, Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < recipesTags.size(); i++)
             {
                 final IToken<?> token = StandardFactoryController.getInstance().deserialize(recipesTags.getCompound(i));
-                if (!recipes.contains(token) && isRecipeCompatibleWithCraftingModule(token))
+                if (!recipes.contains(token))
                 {
                     recipes.add(token);
                     IColonyManager.getInstance().getRecipeManager().registerUse(token);
@@ -166,7 +174,8 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         }
         else
         {
-            final ListNBT recipesTags = compound.getList(TAG_NEW_RECIPES, Constants.NBT.TAG_COMPOUND);
+            final CompoundNBT compoundNBT = compound.getCompound(getId());
+            final ListNBT recipesTags = compoundNBT.getList(TAG_NEW_RECIPES, Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < recipesTags.size(); i++)
             {
                 final IToken<?> token = StandardFactoryController.getInstance().deserialize(recipesTags.getCompound(i));
@@ -201,7 +210,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         for (final IToken<?> token : new ArrayList<>(recipes))
         {
             final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-            if (storage == null || (storage.getRecipeSource() != null && !crafterRecipes.containsKey(storage.getRecipeSource())))
+            if (storage == null || (storage.getRecipeSource() != null && !crafterRecipes.containsKey(storage.getRecipeSource())) || !isRecipeCompatibleWithCraftingModule(token))
             {
                 removeRecipe(token);
             }
@@ -218,6 +227,90 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         }
         buf.writeInt(getMaxRecipes());
         buf.writeString(getId());
+        buf.writeBoolean(isVisible());
+    }
+
+    @Override
+    public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
+    {
+        final Map<ItemStorage, Tuple<Integer, Boolean>> requiredItems = new HashMap<>();
+        for (final Tuple<IRecipeStorage, Integer> recipeStorage : getPendingRequestQueue())
+        {
+            for (final ItemStorage itemStorage : recipeStorage.getA().getCleanedInput())
+            {
+                int amount = itemStorage.getAmount() * recipeStorage.getB();
+                if (requiredItems.containsKey(itemStorage))
+                {
+                    amount += requiredItems.get(itemStorage).getA();
+                }
+                requiredItems.put(itemStorage, new Tuple<>(amount, false));
+            }
+
+            final ItemStorage output = new ItemStorage(recipeStorage.getA().getPrimaryOutput());
+            int amount = output.getAmount() * recipeStorage.getB();
+            if (requiredItems.containsKey(output))
+            {
+                amount += requiredItems.get(output).getA();
+            }
+            requiredItems.put(output, new Tuple<>(amount, false));
+        }
+
+        return new HashMap<>(requiredItems.entrySet()
+                               .stream()
+                               .collect(Collectors.toMap(key -> (stack -> stack.isItemEqualIgnoreDurability(key.getKey().getItemStack())), Map.Entry::getValue)));
+    }
+
+    @Override
+    public Map<ItemStorage, Integer> reservedStacks()
+    {
+        final Map<ItemStorage, Integer> recipeOutputs = new HashMap<>();
+        for (final Tuple<IRecipeStorage, Integer> recipeStorage : getPendingRequestQueue())
+        {
+            for (final ItemStorage itemStorage : recipeStorage.getA().getCleanedInput())
+            {
+                int amount = itemStorage.getAmount() * recipeStorage.getB();
+                if (recipeOutputs.containsKey(itemStorage))
+                {
+                    amount += recipeOutputs.get(itemStorage);
+                }
+                recipeOutputs.put(itemStorage, amount);
+            }
+        }
+        return recipeOutputs;
+    }
+
+    /**
+     * Get a list of all recipeStorages of the pending requests in the crafters queues.
+     * @return the list.
+     */
+    private List<Tuple<IRecipeStorage, Integer>> getPendingRequestQueue()
+    {
+        final List<Tuple<IRecipeStorage, Integer>> recipes = new ArrayList<>();
+        for (final ICitizenData citizen : building.getAssignedCitizen())
+        {
+            if (citizen.getJob() instanceof AbstractJobCrafter)
+            {
+                final List<IToken<?>> assignedTasks = new ArrayList<>(citizen.getJob(AbstractJobCrafter.class).getAssignedTasks());
+                assignedTasks.addAll(citizen.getJob(AbstractJobCrafter.class).getTaskQueue());
+
+                for (final IToken<?> taskToken : assignedTasks)
+                {
+                    final IRequest<? extends PublicCrafting> request = (IRequest<? extends PublicCrafting>) building.getColony().getRequestManager().getRequestForToken(taskToken);
+                    final IRecipeStorage recipeStorage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(request.getRequest().getRecipeStorage());
+                    if (recipeStorage != null)
+                    {
+                        recipes.add(new Tuple<>(recipeStorage, request.getRequest().getCount()));
+                    }
+                }
+            }
+        }
+        return recipes;
+    }
+
+    @Override
+    public boolean isVisible()
+    {
+        return true;
     }
 
     @Override
@@ -671,6 +764,18 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
     public List<IGenericRecipe> getAdditionalRecipesForDisplayPurposesOnly()
     {
         return Collections.emptyList();
+    }
+
+    @Override
+    public List<IRequestResolver<?>> createResolvers()
+    {
+        final List<IRequestResolver<?>> resolvers = new ArrayList<>();
+        resolvers.add(new PublicWorkerCraftingRequestResolver(building.getRequester().getLocation(),
+          building.getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
+        resolvers.add(new PublicWorkerCraftingProductionResolver(building.getRequester().getLocation(),
+          building.getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
+
+        return resolvers;
     }
 
     @NotNull

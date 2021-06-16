@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingPublicCrafter;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
@@ -20,14 +21,10 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.colony.jobs.JobBaker;
-import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingProductionResolver;
-import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingRequestResolver;
-import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingProductionResolver;
-import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingRequestResolver;
 import com.minecolonies.coremod.util.FurnaceRecipes;
 
 import net.minecraft.block.Blocks;
@@ -38,12 +35,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Building for the bakery.
  */
-public class BuildingBaker extends AbstractBuildingSmelterCrafter
+public class BuildingBaker extends AbstractBuildingFurnaceUser implements IBuildingPublicCrafter
 {
     /**
      * General bakery description key.
@@ -108,24 +104,6 @@ public class BuildingBaker extends AbstractBuildingSmelterCrafter
         return new JobBaker(citizen);
     }
 
-    @Override
-    public ImmutableCollection<IRequestResolver<?>> createResolvers()
-    {
-        final Collection<IRequestResolver<?>> supers =
-          super.createResolvers().stream()
-            .filter(r -> !(r instanceof PrivateWorkerCraftingProductionResolver || r instanceof PrivateWorkerCraftingRequestResolver))
-            .collect(Collectors.toList());
-        final ImmutableList.Builder<IRequestResolver<?>> builder = ImmutableList.builder();
-
-        builder.addAll(supers);
-        builder.add(new PublicWorkerCraftingRequestResolver(getRequester().getLocation(),
-          getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
-        builder.add(new PublicWorkerCraftingProductionResolver(getRequester().getLocation(),
-          getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
-
-        return builder.build();
-    }
-
     /**
      * The name of the bakery's job.
      *
@@ -136,12 +114,6 @@ public class BuildingBaker extends AbstractBuildingSmelterCrafter
     public String getJobName()
     {
         return BAKER;
-    }
-
-    @Override
-    public boolean canCraftComplexRecipes()
-    {
-        return true;
     }
 
     @NotNull
@@ -253,5 +225,11 @@ public class BuildingBaker extends AbstractBuildingSmelterCrafter
 
             return recipeAdded;
         }
+    }
+
+    @Override
+    public Skill getCraftSpeedSkill()
+    {
+        return getSecondarySkill();
     }
 }

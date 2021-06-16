@@ -6,13 +6,15 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingPublicCrafter;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.colony.jobs.JobStoneSmeltery;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +25,7 @@ import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT
 /**
  * Class of the stone smeltery building.
  */
-public class BuildingStoneSmeltery extends AbstractBuildingSmelterCrafter
+public class BuildingStoneSmeltery extends AbstractBuildingFurnaceUser implements IBuildingPublicCrafter
 {
     /**
      * Description string of the building.
@@ -88,10 +90,16 @@ public class BuildingStoneSmeltery extends AbstractBuildingSmelterCrafter
         return ModBuildings.stoneSmelter;
     }
 
+    @Override
+    public Skill getCraftSpeedSkill()
+    {
+        return getSecondarySkill();
+    }
+
     /**
      * Stone smeltery View.
      */
-    public static class View extends AbstractBuildingSmelterCrafter.View
+    public static class View extends AbstractBuildingWorkerView
     {
 
         /**

@@ -16,8 +16,9 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.huts.WindowHutCrusherModule;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.colony.jobs.JobCrusher;
 import com.minecolonies.coremod.network.messages.server.colony.building.crusher.CrusherSetModeMessage;
 import net.minecraft.item.ItemStack;
@@ -39,7 +40,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 /**
  * Class of the crusher building.
  */
-public class BuildingCrusher extends AbstractBuildingCrafter
+public class BuildingCrusher extends AbstractBuildingWorker
 {
     /**
      * The multiplier to define the max craft per day.
@@ -164,12 +165,6 @@ public class BuildingCrusher extends AbstractBuildingCrafter
     public String getJobName()
     {
         return CRUSHER_DESC;
-    }
-
-    @Override
-    public boolean canCraftComplexRecipes()
-    {
-        return false;
     }
 
     @NotNull
@@ -322,7 +317,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
     /**
      * BuildingCrusher View.
      */
-    public static class View extends AbstractBuildingCrafter.View
+    public static class View extends AbstractBuildingWorkerView
     {
         /**
          * Daily quantity to produce.

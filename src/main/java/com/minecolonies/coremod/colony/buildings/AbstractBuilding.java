@@ -29,7 +29,6 @@ import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestR
 import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
@@ -53,10 +52,6 @@ import net.minecraft.block.AirBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -67,12 +62,10 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.fml.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -1841,7 +1834,16 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public Map<ItemStorage, Integer> reservedStacks()
     {
-        return Collections.emptyMap();
+        final Map<ItemStorage, Integer> map = new HashMap<>();
+        for (final IHasRequiredItemsModule module : getModules(IHasRequiredItemsModule.class))
+        {
+            for (final Map.Entry<ItemStorage, Integer> content : module.reservedStacks().entrySet())
+            {
+                final int current = map.getOrDefault(content.getKey(), 0);
+                map.put(content.getKey(), current + content.getValue());
+            }
+        }
+        return map;
     }
 
     //------------------------- !END! RequestSystem handling for minecolonies buildings -------------------------//

@@ -185,6 +185,12 @@ public class BuildingSmeltery extends AbstractBuildingFurnaceUser
             return false;
         }
 
+        @Override
+        public boolean isVisible()
+        {
+            return false;
+        }
+
         @NotNull
         @Override
         public List<IGenericRecipe> getAdditionalRecipesForDisplayPurposesOnly()

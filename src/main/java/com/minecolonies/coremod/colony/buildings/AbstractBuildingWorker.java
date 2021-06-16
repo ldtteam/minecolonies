@@ -7,6 +7,8 @@ import com.minecolonies.api.colony.buildings.HiringMode;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
+import com.minecolonies.api.colony.buildings.modules.ICreatesResolversModule;
+import com.minecolonies.api.colony.buildings.modules.IHasRequiredItemsModule;
 import com.minecolonies.api.colony.buildings.modules.ISettingsModule;
 import com.minecolonies.api.colony.buildings.modules.settings.ISetting;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
@@ -37,11 +39,13 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.lwjgl.system.CallbackI;
 
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_MAXIMUM;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
@@ -128,6 +132,10 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         {
             toKeep.put(stack -> ItemStackUtils.CAN_EAT.test(stack) && canEat(stack), new Tuple<>(getBuildingLevel() * 2, true));
         }
+        for (final IHasRequiredItemsModule module : getModules(IHasRequiredItemsModule.class))
+        {
+            toKeep.putAll(module.getRequiredItemsAndAmount());
+        }
         return toKeep;
     }
 
@@ -135,7 +143,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     @Override
     public Skill getRecipeImprovementSkill()
     {
-        return getSecondarySkill();
+        return getPrimarySkill();
     }
 
     @Override
@@ -342,19 +350,20 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     @Override
     public ImmutableCollection<IRequestResolver<?>> createResolvers()
     {
-        return ImmutableList.of(
-            new BuildingRequestResolver(getRequester().getLocation(), getColony().getRequestManager()
+        final ImmutableList.Builder<IRequestResolver<?>> builder = ImmutableList.builder();
+        builder.add(new BuildingRequestResolver(getRequester().getLocation(), getColony().getRequestManager()
                                                                         .getFactoryController().getNewInstance(TypeConstants.ITOKEN)),
             new PrivateWorkerCraftingRequestResolver(getRequester().getLocation(), getColony().getRequestManager()
                                                                         .getFactoryController().getNewInstance(TypeConstants.ITOKEN)),
             new PrivateWorkerCraftingProductionResolver(getRequester().getLocation(), getColony().getRequestManager()
                                                                         .getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
-    }
 
-    @Override
-    public boolean canCraftComplexRecipes()
-    {
-        return false;
+        for (final ICreatesResolversModule module : getModules(ICreatesResolversModule.class))
+        {
+            builder.addAll(module.createResolvers());
+        }
+
+        return builder.build();
     }
 
     @Override
@@ -386,6 +395,12 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             jobDisplayName = createJob(null).getName();
         }
         return jobDisplayName;
+    }
+
+    @Override
+    public int getMaxBuildingLevel()
+    {
+        return CONST_DEFAULT_MAX_BUILDING_LEVEL;
     }
 
     /**

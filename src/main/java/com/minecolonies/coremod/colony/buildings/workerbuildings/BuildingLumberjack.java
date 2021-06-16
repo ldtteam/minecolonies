@@ -20,7 +20,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
 import com.minecolonies.coremod.colony.buildings.modules.settings.BoolSetting;
@@ -57,7 +57,7 @@ import static com.minecolonies.coremod.entity.ai.citizen.lumberjack.EntityAIWork
 /**
  * The lumberjacks building.
  */
-public class BuildingLumberjack extends AbstractBuildingCrafter implements IBuildingPublicCrafter
+public class BuildingLumberjack extends AbstractBuildingWorker implements IBuildingPublicCrafter
 {
     /**
      * Replant setting.
@@ -250,12 +250,6 @@ public class BuildingLumberjack extends AbstractBuildingCrafter implements IBuil
     public Skill getSecondarySkill()
     {
         return Skill.Focus;
-    }
-
-    @Override
-    public boolean canCraftComplexRecipes()
-    {
-        return false;
     }
 
     /**

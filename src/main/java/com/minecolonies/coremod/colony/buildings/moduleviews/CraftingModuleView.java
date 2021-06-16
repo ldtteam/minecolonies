@@ -48,6 +48,11 @@ public class CraftingModuleView extends AbstractBuildingModuleView
      */
     private int maxRecipes;
 
+    /**
+     * Check if the page should be displayed.
+     */
+    private boolean isVisible = false;
+
     @Override
     public void deserialize(@NotNull PacketBuffer buf)
     {
@@ -77,6 +82,7 @@ public class CraftingModuleView extends AbstractBuildingModuleView
         }
         this.maxRecipes = buf.readInt();
         this.id = buf.readString(32767);
+        this.isVisible = buf.readBoolean();
     }
 
     /**
@@ -112,6 +118,12 @@ public class CraftingModuleView extends AbstractBuildingModuleView
     public String getId()
     {
         return this.id;
+    }
+
+    @Override
+    public boolean isPageVisible()
+    {
+        return isVisible;
     }
 
     @Override

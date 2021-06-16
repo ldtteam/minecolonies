@@ -8,9 +8,9 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingPublicCrafter;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
-import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -19,8 +19,9 @@ import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.colony.jobs.JobDyer;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
@@ -40,7 +41,7 @@ import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT
 /**
  * Class of the dyer building.
  */
-public class BuildingDyer extends AbstractBuildingSmelterCrafter
+public class BuildingDyer extends AbstractBuildingFurnaceUser implements IBuildingPublicCrafter
 {
     /**
      * Description string of the building.
@@ -100,21 +101,21 @@ public class BuildingDyer extends AbstractBuildingSmelterCrafter
     }
 
     @Override
-    public boolean canCraftComplexRecipes()
-    {
-        return true;
-    }
-
-    @Override
     public BuildingEntry getBuildingRegistryEntry()
     {
         return ModBuildings.dyer;
     }
 
+    @Override
+    public Skill getCraftSpeedSkill()
+    {
+        return getSecondarySkill();
+    }
+
     /**
      * Dyer View.
      */
-    public static class View extends AbstractBuildingSmelterCrafter.View
+    public static class View extends AbstractBuildingWorkerView
     {
 
         /**

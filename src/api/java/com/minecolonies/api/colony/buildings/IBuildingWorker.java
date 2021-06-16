@@ -80,13 +80,6 @@ public interface IBuildingWorker extends IBuilding
     boolean canWorkDuringTheRain();
 
     /**
-     * Check if a building can craft complex recipes.
-     *
-     * @return true if so.
-     */
-    boolean canCraftComplexRecipes();
-
-    /**
      * Primary skill getter.
      *
      * @return the primary skill.
