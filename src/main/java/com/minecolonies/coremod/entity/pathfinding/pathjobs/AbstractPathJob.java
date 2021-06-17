@@ -303,7 +303,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         }
 
         BlockState down = CompatibilityUtils.getWorldFromEntity(entity).getBlockState(pos.down());
-        while (!bs.getMaterial().blocksMovement() && !down.getMaterial().blocksMovement() && !down.getBlock().isLadder(down, entity.getEntityWorld(), pos.down(), entity))
+        while (bs.getFluidState().isEmpty() && !bs.getMaterial().blocksMovement() && !down.getMaterial().blocksMovement() && !down.getBlock().isLadder(down, entity.getEntityWorld(), pos.down(), entity))
         {
             pos.move(Direction.DOWN, 1);
             bs = down;
@@ -319,7 +319,7 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         if (entity.isInWater())
         {
-            while (bs.getMaterial().isLiquid())
+            while (!bs.getFluidState().isEmpty())
             {
                 pos.setPos(pos.getX(), pos.getY() + 1, pos.getZ());
                 bs = CompatibilityUtils.getWorldFromEntity(entity).getBlockState(pos);
