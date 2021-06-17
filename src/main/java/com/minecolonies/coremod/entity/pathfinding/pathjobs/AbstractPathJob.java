@@ -12,7 +12,6 @@ import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.blocks.BlockDecorationController;
-import com.minecolonies.coremod.colony.buildings.modules.settings.BlockSetting;
 import com.minecolonies.coremod.entity.pathfinding.ChunkCache;
 import com.minecolonies.coremod.entity.pathfinding.Node;
 import com.minecolonies.coremod.entity.pathfinding.PathPointExtended;
