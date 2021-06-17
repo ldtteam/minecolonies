@@ -794,6 +794,10 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
     @Override
     public String getCustomRecipeKey()
     {
+        if (getCraftingJob() == null)
+        {
+            return "";
+        }
         return Objects.requireNonNull(getCraftingJob()).getJobRegistryEntry().getRegistryName().getPath()
                 + "_" + getId();
     }
