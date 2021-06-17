@@ -167,7 +167,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         @NotNull final ListNBT recipesTagList = recipes.stream()
                                                   .map(iToken -> StandardFactoryController.getInstance().serialize(iToken))
                                                   .collect(NBTUtils.toListNBT());
-        moduleCompound.put(TAG_NEW_RECIPES, recipesTagList);
+        moduleCompound.put(TAG_NEW_RECIPES + getId(), recipesTagList);
         compound.put(getId(), moduleCompound);
     }
 
@@ -191,7 +191,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         else
         {
             final CompoundNBT compoundNBT = compound.getCompound(getId());
-            final ListNBT recipesTags = compoundNBT.getList(TAG_NEW_RECIPES, Constants.NBT.TAG_COMPOUND);
+            final ListNBT recipesTags = compoundNBT.getList(TAG_NEW_RECIPES + getId(), Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < recipesTags.size(); i++)
             {
                 final IToken<?> token = StandardFactoryController.getInstance().deserialize(recipesTags.getCompound(i));
