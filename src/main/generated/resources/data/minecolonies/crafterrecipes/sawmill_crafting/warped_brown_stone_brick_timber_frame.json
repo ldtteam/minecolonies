@@ -1,0 +1,57 @@
+{
+  "type": "recipe",
+  "crafter": "sawmill_crafting",
+  "inputs": [
+    {
+      "item": "minecraft:warped_planks"
+    },
+    {
+      "item": "structurize:brown_stone_bricks"
+    },
+    {
+      "item": "structurize:sceptergold"
+    }
+  ],
+  "alternate-output": [
+    {
+      "item": "structurize:double_crossed_warped_brown_stone_brick_timber_frame",
+      "count": 4
+    },
+    {
+      "item": "structurize:framed_warped_brown_stone_brick_timber_frame",
+      "count": 4
+    },
+    {
+      "item": "structurize:side_framed_warped_brown_stone_brick_timber_frame",
+      "count": 4
+    },
+    {
+      "item": "structurize:up_gated_warped_brown_stone_brick_timber_frame",
+      "count": 4
+    },
+    {
+      "item": "structurize:down_gated_warped_brown_stone_brick_timber_frame",
+      "count": 4
+    },
+    {
+      "item": "structurize:one_crossed_lr_warped_brown_stone_brick_timber_frame",
+      "count": 4
+    },
+    {
+      "item": "structurize:one_crossed_rl_warped_brown_stone_brick_timber_frame",
+      "count": 4
+    },
+    {
+      "item": "structurize:horizontal_plain_warped_brown_stone_brick_timber_frame",
+      "count": 4
+    },
+    {
+      "item": "structurize:side_framed_horizontal_warped_brown_stone_brick_timber_frame",
+      "count": 4
+    }
+  ],
+  "result": "structurize:plain_warped_brown_stone_brick_timber_frame",
+  "count": 4,
+  "must-exist": true,
+  "intermediate": "minecraft:air"
+}

@@ -1,0 +1,19 @@
+{
+  "type": "recipe",
+  "crafter": "enchanter_custom",
+  "min-building-level": 3,
+  "max-building-level": 3,
+  "inputs": [
+    {
+      "item": "minecolonies:ancienttome",
+      "matchType": "ignore"
+    }
+  ],
+  "additional-output": [
+    {
+      "item": "minecraft:enchanted_book"
+    }
+  ],
+  "loot-table": "minecolonies:recipes/enchanter3",
+  "intermediate": "minecraft:air"
+}

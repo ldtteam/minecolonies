@@ -1,0 +1,57 @@
+{
+  "type": "recipe",
+  "crafter": "sawmill_crafting",
+  "inputs": [
+    {
+      "item": "minecraft:acacia_planks"
+    },
+    {
+      "item": "structurize:brown_stone_bricks"
+    },
+    {
+      "item": "structurize:sceptergold"
+    }
+  ],
+  "alternate-output": [
+    {
+      "item": "structurize:double_crossed_acacia_brown_stone_brick_timber_frame",
+      "count": 4
+    },
+    {
+      "item": "structurize:framed_acacia_brown_stone_brick_timber_frame",
+      "count": 4
+    },
+    {
+      "item": "structurize:side_framed_acacia_brown_stone_brick_timber_frame",
+      "count": 4
+    },
+    {
+      "item": "structurize:up_gated_acacia_brown_stone_brick_timber_frame",
+      "count": 4
+    },
+    {
+      "item": "structurize:down_gated_acacia_brown_stone_brick_timber_frame",
+      "count": 4
+    },
+    {
+      "item": "structurize:one_crossed_lr_acacia_brown_stone_brick_timber_frame",
+      "count": 4
+    },
+    {
+      "item": "structurize:one_crossed_rl_acacia_brown_stone_brick_timber_frame",
+      "count": 4
+    },
+    {
+      "item": "structurize:horizontal_plain_acacia_brown_stone_brick_timber_frame",
+      "count": 4
+    },
+    {
+      "item": "structurize:side_framed_horizontal_acacia_brown_stone_brick_timber_frame",
+      "count": 4
+    }
+  ],
+  "result": "structurize:plain_acacia_brown_stone_brick_timber_frame",
+  "count": 4,
+  "must-exist": true,
+  "intermediate": "minecraft:air"
+}
