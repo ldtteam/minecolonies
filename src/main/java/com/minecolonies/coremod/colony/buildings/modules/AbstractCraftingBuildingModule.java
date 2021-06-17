@@ -150,7 +150,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
      */
     private boolean isPreTaughtRecipe(final IToken<?> token)
     {
-        for (final CustomRecipe rec : CustomRecipeManager.getInstance().getRecipes(building.getJobName() + "_" + getId()))
+        for (final CustomRecipe rec : CustomRecipeManager.getInstance().getRecipes(getCustomRecipeKey()))
         {
             if (rec.getRecipeStorage().equals(IColonyManager.getInstance().getRecipeManager().getRecipes().get(token)))
             {
@@ -357,7 +357,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
     public void checkForWorkerSpecificRecipes()
     {
         final IRecipeManager recipeManager = IColonyManager.getInstance().getRecipeManager();
-        for(final CustomRecipe newRecipe : CustomRecipeManager.getInstance().getRecipes(building.getJobName() + "_" + getId()))
+        for(final CustomRecipe newRecipe : CustomRecipeManager.getInstance().getRecipes(getCustomRecipeKey()))
         {
             final IRecipeStorage recipeStorage = newRecipe.getRecipeStorage();
             final IToken<?> recipeToken = recipeManager.checkOrAddRecipe(recipeStorage);
@@ -789,6 +789,14 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
 
     @NotNull
     public abstract String getId();
+
+    @NotNull
+    @Override
+    public String getCustomRecipeKey()
+    {
+        return Objects.requireNonNull(getCraftingJob()).getJobRegistryEntry().getRegistryName().getPath()
+                + "_" + getId();
+    }
 
     /** This module is for standard crafters (3x3 by default) */
     public abstract static class Crafting extends AbstractCraftingBuildingModule

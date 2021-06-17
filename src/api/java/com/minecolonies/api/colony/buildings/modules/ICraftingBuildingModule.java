@@ -68,6 +68,15 @@ public interface ICraftingBuildingModule extends IBuildingModule
     String getId();
 
     /**
+     * Gets the unique key for recipes intended for this crafting
+     * module in the CustomRecipeManager.
+     * Precondition: getCraftingJob() returns non-null.
+     * @return The unique key.
+     */
+    @NotNull
+    String getCustomRecipeKey();
+
+    /**
      * Check if this building type can learn (or otherwise process)
      * vanilla crafting recipes of some kind.
      *
