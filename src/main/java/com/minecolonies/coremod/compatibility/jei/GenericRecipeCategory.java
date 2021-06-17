@@ -2,7 +2,6 @@ package com.minecolonies.coremod.compatibility.jei;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
@@ -39,7 +38,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -354,18 +352,7 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
         }
 
         // custom MineColonies additional recipes
-        final String craftingJobName = this.job.getJobRegistryEntry().getRegistryName().getPath();
-        final Set<CustomRecipe> customRecipes = new HashSet<>();
-        for (final Supplier<IBuildingModule> moduleProducer : this.building.getModuleProducers())
-        {
-            final IBuildingModule module = moduleProducer.get();
-            if (module instanceof ICraftingBuildingModule)
-            {
-                customRecipes.addAll(CustomRecipeManager.getInstance().getRecipes(craftingJobName + "_" + ((ICraftingBuildingModule) module).getId()));
-            }
-        }
-
-        for (final CustomRecipe customRecipe : customRecipes)
+        for (final CustomRecipe customRecipe : CustomRecipeManager.getInstance().getRecipes(this.crafting.getCustomRecipeKey()))
         {
             final IRecipeStorage recipeStorage = customRecipe.getRecipeStorage();
             if (!recipeStorage.getAlternateOutputs().isEmpty())
