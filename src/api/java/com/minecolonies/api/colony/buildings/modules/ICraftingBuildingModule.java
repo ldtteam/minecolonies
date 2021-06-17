@@ -140,7 +140,7 @@ public interface ICraftingBuildingModule extends IBuildingModule
      * @param considerReservation if reservations should be considered.
      * @return the recipe or null.
      */
-    IRecipeStorage getFirstFullFillableRecipe(Predicate<ItemStack> stackPredicate, final int count, final boolean considerReservation);
+    IRecipeStorage getFirstFulfillableRecipe(Predicate<ItemStack> stackPredicate, final int count, final boolean considerReservation);
 
     /**
      * Fulfill the recipe.

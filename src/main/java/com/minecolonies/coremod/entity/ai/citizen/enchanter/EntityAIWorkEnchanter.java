@@ -190,7 +190,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
     private IAIState enchant()
     {
         // this assumes that the only empty-output (pure loot table) recipes are for ancient tome -> enchanted book
-        currentRecipeStorage = getOwnBuilding().getFirstModuleOccurance(BuildingEnchanter.CraftingModule.class).getFirstFullFillableRecipe(ItemStackUtils::isEmpty, 1, false);
+        currentRecipeStorage = getOwnBuilding().getFirstModuleOccurance(BuildingEnchanter.CraftingModule.class).getFirstFulfillableRecipe(ItemStackUtils::isEmpty, 1, false);
         if (currentRecipeStorage == null)
         {
             progressTicks = 0;

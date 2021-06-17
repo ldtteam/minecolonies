@@ -1,6 +1,6 @@
 {
   "type" : "recipe",
-  "crafter": "fletcher",
+  "crafter": "fletcher_crafting",
   "inputs": [
     {
         "item" : "minecraft:gravel",

@@ -111,7 +111,7 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
         }
 
         final ICraftingBuildingModule module = getOwnBuilding().getFirstModuleOccurance(BuildingSifter.CraftingModule.class);
-        currentRecipeStorage = module.getFirstFullFillableRecipe(ItemStackUtils::isEmpty, 1, false);
+        currentRecipeStorage = module.getFirstFulfillableRecipe(ItemStackUtils::isEmpty, 1, false);
 
         if (currentRecipeStorage == null)
         {

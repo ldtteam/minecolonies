@@ -73,6 +73,7 @@ public class ModTagsInitializer
         initCrafterRules("fletcher");
         initCrafterRules("glassblower");
         initCrafterRules("glassblower_smelting");
+        initCrafterRules("dyer_smelting");
         initCrafterRules("lumberjack");
         initCrafterRules("mechanic");
         initCrafterRules("plantation");

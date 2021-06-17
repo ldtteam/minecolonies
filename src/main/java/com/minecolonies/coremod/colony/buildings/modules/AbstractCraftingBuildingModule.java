@@ -140,6 +140,16 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
     {
         final IGenericRecipe recipe = GenericRecipe.of(token);
         if (recipe == null) return false;
+        return isRecipeCompatible(recipe);
+    }
+
+    /**
+     * Check if the recipe is a pre-taught recipe through datapack.
+     * @param token the recipe to check.
+     * @return true if so.
+     */
+    private boolean isPreTaughtRecipe(final IToken<?> token)
+    {
         for (final CustomRecipe rec : CustomRecipeManager.getInstance().getRecipes(building.getJobName()))
         {
             if (rec.getRecipeStorage().equals(IColonyManager.getInstance().getRecipeManager().getRecipes().get(token)))
@@ -147,8 +157,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
                 return true;
             }
         }
-
-        return isRecipeCompatible(recipe);
+        return false;
     }
 
     @Override
@@ -217,7 +226,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         for (final IToken<?> token : new ArrayList<>(recipes))
         {
             final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-            if (storage == null || (storage.getRecipeSource() != null && !crafterRecipes.containsKey(storage.getRecipeSource())) || !isRecipeCompatibleWithCraftingModule(token))
+            if (storage == null || (storage.getRecipeSource() != null && !crafterRecipes.containsKey(storage.getRecipeSource())) || (!isRecipeCompatibleWithCraftingModule(token) && !isPreTaughtRecipe(token)))
             {
                 removeRecipe(token);
             }
@@ -347,7 +356,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
     public void checkForWorkerSpecificRecipes()
     {
         final IRecipeManager recipeManager = IColonyManager.getInstance().getRecipeManager();
-        for(final CustomRecipe newRecipe : CustomRecipeManager.getInstance().getRecipes(building.getJobName()))
+        for(final CustomRecipe newRecipe : CustomRecipeManager.getInstance().getRecipes(building.getJobName() + "_" + getId()))
         {
             final IRecipeStorage recipeStorage = newRecipe.getRecipeStorage();
             final IToken<?> recipeToken = recipeManager.checkOrAddRecipe(recipeStorage);
@@ -627,7 +636,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
     }
 
     @Override
-    public IRecipeStorage getFirstFullFillableRecipe(final Predicate<ItemStack> stackPredicate, final int count, final boolean considerReservation)
+    public IRecipeStorage getFirstFulfillableRecipe(final Predicate<ItemStack> stackPredicate, final int count, final boolean considerReservation)
     {
         for (final IToken<?> token : recipes)
         {

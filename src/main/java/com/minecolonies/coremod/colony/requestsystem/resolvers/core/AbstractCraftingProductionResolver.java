@@ -119,7 +119,7 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
             return null;
         }
 
-        final IRecipeStorage fullfillableCrafting = module.getFirstFullFillableRecipe(itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack), count, true);
+        final IRecipeStorage fullfillableCrafting = module.getFirstFulfillableRecipe(itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack), count, true);
         if (fullfillableCrafting != null)
         {
             return ImmutableList.of();
@@ -233,7 +233,7 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
             manager.updateRequestState(request.getId(), RequestState.FAILED);
             return;
         }
-        final IRecipeStorage storage = module.getFirstFullFillableRecipe(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, request.getRequest().getStack()), request.getRequest().getCount(), false);
+        final IRecipeStorage storage = module.getFirstFulfillableRecipe(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, request.getRequest().getStack()), request.getRequest().getCount(), false);
 
         if (storage == null)
         {

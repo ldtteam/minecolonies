@@ -1,6 +1,6 @@
 {
   "type" : "recipe",
-  "crafter": "farmer",
+  "crafter": "farmer_crafting",
   "inputs": [
     {
         "item" : "minecraft:pumpkin",

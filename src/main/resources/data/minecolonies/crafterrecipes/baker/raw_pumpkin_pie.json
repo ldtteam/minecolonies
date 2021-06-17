@@ -1,6 +1,6 @@
 {
   "type" : "recipe",
-  "crafter": "baker",
+  "crafter": "baker_smelting",
   "inputs": [
     {
         "item" : "minecraft:pumpkin",

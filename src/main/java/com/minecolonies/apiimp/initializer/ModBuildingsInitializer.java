@@ -410,13 +410,13 @@ public final class ModBuildingsInitializer
                                      .addBuildingModuleViewProducer(CrafterTaskModuleView::new)
                                      .createBuildingEntry();
 
-        //todo dyer needs smelting
         ModBuildings.dyer = new BuildingEntry.Builder()
                               .setBuildingBlock(ModBlocks.blockHutDyer)
                               .setBuildingProducer(BuildingDyer::new)
                               .setBuildingViewProducer(() -> BuildingDyer.View::new)
                               .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.DYER_ID))
                               .addBuildingModuleProducer(BuildingDyer.CraftingModule::new, CraftingModuleView::new)
+                              .addBuildingModuleProducer(BuildingDyer.SmeltingModule::new, CraftingModuleView::new)
                               .addBuildingModuleProducer(() -> new ItemListModule(FUEL_LIST), () -> new ItemListModuleView(FUEL_LIST, COM_MINECOLONIES_REQUESTS_BURNABLE, false,
                                 (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getFuel()))
                               .addBuildingModuleViewProducer(CrafterTaskModuleView::new)

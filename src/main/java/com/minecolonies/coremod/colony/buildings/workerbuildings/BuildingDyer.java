@@ -47,6 +47,7 @@ public class BuildingDyer extends AbstractBuildingFurnaceUser implements IBuildi
      * Description string of the building.
      */
     private static final String DYER = "dyer";
+    private static final String DYER_SMELTING = "dyer_smelting";
 
     /**
      * Instantiates a new dyer building.
@@ -152,27 +153,7 @@ public class BuildingDyer extends AbstractBuildingFurnaceUser implements IBuildi
             if (!super.isRecipeCompatible(recipe)) return false;
             return CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, DYER).orElse(false);
         }
-
-        @Override
-        public IRecipeStorage getFirstFullFillableRecipe(Predicate<ItemStack> stackPredicate, int count, final boolean considerReservation)
-        {
-            IRecipeStorage recipe =  super.getFirstFullFillableRecipe(stackPredicate, count, considerReservation);
-
-            if(recipe == null)
-            {
-                final IRecipeStorage storage = getFirstRecipe(stackPredicate);
-                if (storage != null && stackPredicate.test(storage.getPrimaryOutput()))
-                {
-                    final List<IItemHandler> handlers = building.getHandlers();
-                    if (storage.canFullFillRecipe(count, Collections.emptyMap(), handlers.toArray(new IItemHandler[0])))
-                    {
-                        return storage;
-                    }
-                }
-            }
-            return recipe;
-        }
-
+        
         @Override
         public IRecipeStorage getFirstRecipe(Predicate<ItemStack> stackPredicate)
         {
@@ -212,6 +193,25 @@ public class BuildingDyer extends AbstractBuildingFurnaceUser implements IBuildi
             }
             return recipe;
         }
+    }
 
+    public static class SmeltingModule extends AbstractCraftingBuildingModule.Smelting
+    {
+        @Nullable
+        @Override
+        public IJob<?> getCraftingJob()
+        {
+            return getMainBuildingJob().orElseGet(() -> new JobDyer(null));
+        }
+
+        @Override
+        public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
+        {
+            if (!super.isRecipeCompatible(recipe))
+            {
+                return false;
+            }
+            return CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, DYER_SMELTING).orElse(false);
+        }
     }
 }

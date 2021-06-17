@@ -178,7 +178,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
             incrementActionsDone(getActionRewardForCraftingSuccess());
             return START_WORKING;
         }
-        currentRecipeStorage = module.getFirstFullFillableRecipe(stack -> stack.isItemEqual(currentTask.getRequest().getStack()), 1, false);
+        currentRecipeStorage = module.getFirstFulfillableRecipe(stack -> stack.isItemEqual(currentTask.getRequest().getStack()), 1, false);
         if (currentRecipeStorage == null)
         {
             job.finishRequest(false);

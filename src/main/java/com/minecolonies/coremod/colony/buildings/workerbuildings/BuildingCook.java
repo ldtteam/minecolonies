@@ -535,10 +535,10 @@ public class BuildingCook extends AbstractBuildingFurnaceUser implements IBuildi
         }
 
         @Override
-        public IRecipeStorage getFirstFullFillableRecipe(final Predicate<ItemStack> stackPredicate, final int count, final boolean considerReservation)
+        public IRecipeStorage getFirstFulfillableRecipe(final Predicate<ItemStack> stackPredicate, final int count, final boolean considerReservation)
         {
             //Try to fulfill normally
-            IRecipeStorage storage = super.getFirstFullFillableRecipe(stackPredicate, count, considerReservation);
+            IRecipeStorage storage = super.getFirstFulfillableRecipe(stackPredicate, count, considerReservation);
 
             //Couldn't fulfill normally, let's try to fulfill with a temporary smelting recipe.
             if(storage == null)
