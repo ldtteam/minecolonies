@@ -150,7 +150,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
      */
     private boolean isPreTaughtRecipe(final IToken<?> token)
     {
-        for (final CustomRecipe rec : CustomRecipeManager.getInstance().getRecipes(building.getJobName()))
+        for (final CustomRecipe rec : CustomRecipeManager.getInstance().getRecipes(building.getJobName() + "_" + getId()))
         {
             if (rec.getRecipeStorage().equals(IColonyManager.getInstance().getRecipeManager().getRecipes().get(token)))
             {
@@ -222,10 +222,11 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         buf.writeBoolean(this.canLearnLargeRecipes());
 
         final List<IRecipeStorage> storages = new ArrayList<>();
-        final Map<ResourceLocation, CustomRecipe> crafterRecipes = CustomRecipeManager.getInstance().getAllRecipes().getOrDefault(building.getJobName(), Collections.emptyMap());
+        final Map<ResourceLocation, CustomRecipe> crafterRecipes = CustomRecipeManager.getInstance().getAllRecipes().getOrDefault(building.getJobName() + "_" + getId(), Collections.emptyMap());
         for (final IToken<?> token : new ArrayList<>(recipes))
         {
             final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
+
             if (storage == null || (storage.getRecipeSource() != null && !crafterRecipes.containsKey(storage.getRecipeSource())) || (!isRecipeCompatibleWithCraftingModule(token) && !isPreTaughtRecipe(token)))
             {
                 removeRecipe(token);
