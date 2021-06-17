@@ -148,6 +148,9 @@ public class BuildingBarracks extends AbstractBuilding
     @Override
     public void onColonyTick(@NotNull final IColony colony)
     {
+
+        super.onColonyTick(colony);
+
         if (colony.getWorld().isRemote)
         {
             return;
