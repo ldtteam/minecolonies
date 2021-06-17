@@ -26,7 +26,6 @@
     "minecraft:daylight_detector",
     "minecraft:dried_kelp_block",
     "minecraft:honey_block",
-    "minecraft:honeycomb_block",
-    "minecraft:diamond"
+    "minecraft:honeycomb_block"
   ]
 }

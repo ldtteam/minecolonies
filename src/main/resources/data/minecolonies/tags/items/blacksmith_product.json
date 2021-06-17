@@ -3,6 +3,7 @@
   "values": [
     "#forge:nuggets",
     "#forge:ingots",
-    "minecraft:shears"
+    "minecraft:shears",
+    "minecraft:diamond"
   ]
 }
