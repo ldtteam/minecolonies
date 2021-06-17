@@ -12,6 +12,7 @@ import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.blocks.BlockDecorationController;
+import com.minecolonies.coremod.colony.buildings.modules.settings.BlockSetting;
 import com.minecolonies.coremod.entity.pathfinding.ChunkCache;
 import com.minecolonies.coremod.entity.pathfinding.Node;
 import com.minecolonies.coremod.entity.pathfinding.PathPointExtended;
@@ -725,7 +726,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         {
             startNode.setLadder();
         }
-        else if (world.getBlockState(start.down()).getMaterial().isLiquid())
+        else if (isLiquid(world.getBlockState(start.down())))
         {
             startNode.setSwimming();
         }
@@ -738,6 +739,16 @@ public abstract class AbstractPathJob implements Callable<Path>
         ++totalNodesAdded;
 
         return startNode;
+    }
+
+    /**
+     * Check if this is a liquid state for swimming.
+     * @param state the state to check.
+     * @return true if so.
+     */
+    public boolean isLiquid(final BlockState state)
+    {
+        return state.getMaterial().isLiquid() || (!state.getMaterial().blocksMovement() && !state.getFluidState().isEmpty());
     }
 
     /**
@@ -1088,7 +1099,7 @@ public abstract class AbstractPathJob implements Callable<Path>
     {
         final boolean isSwimming = parent != null && parent.isSwimming();
 
-        if (below.getMaterial().isLiquid())
+        if (isLiquid(below))
         {
             return handleInLiquid(pos, below, isSwimming);
         }
@@ -1114,7 +1125,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         for (int i = 2; i <= 10; i++)
         {
             final BlockState below = world.getBlockState(pos.down(i));
-            if (isWalkableSurface(below, pos) == SurfaceType.WALKABLE && i <= 3 || below.getMaterial().isLiquid())
+            if (isWalkableSurface(below, pos) == SurfaceType.WALKABLE && i <= 3 || isLiquid(below))
             {
                 //  Level path
                 return pos.getY() - i + 1;
@@ -1234,7 +1245,7 @@ public abstract class AbstractPathJob implements Callable<Path>
                 return false;
             }
 
-            return hereState.getMaterial().isLiquid() && !isPassable(pos, false);
+            return isLiquid(hereState) && !isPassable(pos, false);
         }
         return false;
     }
@@ -1291,7 +1302,7 @@ public abstract class AbstractPathJob implements Callable<Path>
                 final VoxelShape shape = block.getCollisionShape(world, pos);
                 return isLadder(block.getBlock(), pos) ||
                          ((shape.isEmpty() || shape.getEnd(Direction.Axis.Y) <= 0.1)
-                         && !block.getMaterial().isLiquid()
+                         && !isLiquid((block))
                          && (block.getBlock() != Blocks.SNOW || block.get(SnowBlock.LAYERS) == 1)
                          && block.getBlock() != Blocks.SWEET_BERRY_BUSH);
             }
