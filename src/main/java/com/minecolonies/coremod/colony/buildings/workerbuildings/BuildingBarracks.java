@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.blocks.ModBlocks;
@@ -27,14 +28,19 @@ import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
+import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
 
 /**
  * Building class for the Barracks.
@@ -160,10 +166,10 @@ public class BuildingBarracks extends AbstractBuilding
         {
             if (!colony.getRaiderManager().areSpiesEnabled())
             {
-                final int amount = InventoryUtils.getItemCountInItemHandler(this.getTileEntity().getInventory(), Items.GOLD_INGOT);
+                final int amount = InventoryUtils.getItemCountInItemHandlers(getHandlers(), i -> i.getItem().equals(Items.GOLD_INGOT));
                 if (amount >= SPIES_GOLD_COST)
                 {
-                    InventoryUtils.removeStackFromItemHandler(tileEntity.getInventory(), new ItemStack(Items.GOLD_INGOT, SPIES_GOLD_COST), SPIES_GOLD_COST);
+                    InventoryUtils.removeStackFromItemHandlers(getHandlers(), new ItemStack(Items.GOLD_INGOT, SPIES_GOLD_COST), SPIES_GOLD_COST);
                     colony.getRaiderManager().setSpiesEnabled(true);
                     colony.markDirty();
                 }
@@ -229,6 +235,20 @@ public class BuildingBarracks extends AbstractBuilding
     public List<BlockPos> getTowers()
     {
         return towers;
+    }
+
+    public List<IItemHandler> getHandlers(){
+        final Set<IItemHandler> handlers = new HashSet<>();
+        for (final BlockPos pos : getContainers())
+        {
+            final TileEntity entity = colony.getWorld().getTileEntity(pos);
+            if (entity != null)
+            {
+                final LazyOptional<IItemHandler> handler = entity.getCapability(ITEM_HANDLER_CAPABILITY, null);
+                handler.ifPresent(handlers::add);
+            }
+        }
+        return ImmutableList.copyOf(handlers);
     }
 
     /**
