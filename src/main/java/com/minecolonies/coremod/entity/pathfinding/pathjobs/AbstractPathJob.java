@@ -303,7 +303,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         }
 
         BlockState down = CompatibilityUtils.getWorldFromEntity(entity).getBlockState(pos.down());
-        while (bs.getFluidState().isEmpty() && !bs.getMaterial().blocksMovement() && !down.getMaterial().blocksMovement() && !down.getBlock().isLadder(down, entity.getEntityWorld(), pos.down(), entity))
+        while (!bs.getMaterial().blocksMovement() && !down.getMaterial().blocksMovement() && !down.getBlock().isLadder(down, entity.getEntityWorld(), pos.down(), entity) && bs.getFluidState().isEmpty())
         {
             pos.move(Direction.DOWN, 1);
             bs = down;
