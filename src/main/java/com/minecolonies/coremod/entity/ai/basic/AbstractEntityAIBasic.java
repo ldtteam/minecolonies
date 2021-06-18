@@ -1148,7 +1148,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      */
     private void requestTool(@NotNull final BlockState target, final BlockPos pos)
     {
-        final IToolType toolType = WorkerUtil.getBestToolForBlock(world.getBlockState(pos), target.getBlockHardness(world, pos));
+        final IToolType toolType = WorkerUtil.getBestToolForBlock(target, target.getBlockHardness(world, pos));
         final int required = WorkerUtil.getCorrectHarvestLevelForBlock(target);
         if (getOwnBuilding().getMaxToolLevel() < required && worker.getCitizenData() != null)
         {
@@ -1188,7 +1188,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      */
     protected int getMostEfficientTool(@NotNull final BlockState target, final BlockPos pos)
     {
-        final IToolType toolType = WorkerUtil.getBestToolForBlock(world.getBlockState(pos), target.getBlockHardness(world, pos));
+        final IToolType toolType = WorkerUtil.getBestToolForBlock(target, target.getBlockHardness(world, pos));
         final int required = WorkerUtil.getCorrectHarvestLevelForBlock(target);
 
         if (toolType == ToolType.NONE)
