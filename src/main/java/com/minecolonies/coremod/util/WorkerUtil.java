@@ -172,13 +172,13 @@ public final class WorkerUtil
     /**
      * Get a Tooltype for a certain block. We need this because minecraft has a lot of blocks which have strange or no required tool.
      *
-     * @param target        the target block.
+     * @param state         the target BlockState.
      * @param blockHardness the hardness.
      * @return the toolType to use.
      */
-    public static IToolType getBestToolForBlock(final Block target, float blockHardness)
+    public static IToolType getBestToolForBlock(final BlockState state, float blockHardness)
     {
-        final net.minecraftforge.common.ToolType forgeTool = target.getHarvestTool(target.getDefaultState());
+        final net.minecraftforge.common.ToolType forgeTool = state.getHarvestTool();
 
         String toolName = "";
         if (forgeTool == null)
@@ -190,7 +190,7 @@ public final class WorkerUtil
                     if (tool.getB() != null && tool.getB().getItem() instanceof ToolItem)
                     {
                         final ToolItem toolItem = (ToolItem) tool.getB().getItem();
-                        if (tool.getB().getDestroySpeed(target.getDefaultState()) >= toolItem.getTier().getEfficiency())
+                        if (tool.getB().getDestroySpeed(state) >= toolItem.getTier().getEfficiency())
                         {
                             toolName = tool.getA().getName();
                             break;
@@ -206,11 +206,11 @@ public final class WorkerUtil
 
         final IToolType toolType = ToolType.getToolType(toolName);
 
-        if (toolType == ToolType.NONE && target.getDefaultState().getMaterial() == Material.WOOD)
+        if (toolType == ToolType.NONE && state.getMaterial() == Material.WOOD)
         {
             return ToolType.AXE;
         }
-        else if (target instanceof GlazedTerracottaBlock)
+        else if (state.getBlock() instanceof GlazedTerracottaBlock)
         {
             return ToolType.PICKAXE;
         }
