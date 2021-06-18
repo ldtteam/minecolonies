@@ -2218,37 +2218,6 @@ public class InventoryUtils
     }
 
     /**
-     * Force remove a stack with a certain amount between several Itemhandlers
-     *
-     * @param handlers the itemHandlers.
-     * @param input   the stack to remove.
-     * @param count   the amount to remove.
-     */
-    public static void removeStackFromItemHandlers(final List<IItemHandler> handlers, final ItemStack input, final int count)
-    {
-        final ItemStack workingStack = input.copy();
-        int localCount = count;
-        int tries = 0;
-        for (final IItemHandler handler : handlers) {
-            while (tries < count) {
-                final int slot = findFirstSlotInItemHandlerNotEmptyWith(handler, stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(workingStack, stack));
-                if (slot == -1) {
-                    break;
-                }
-
-                final int removedSize = ItemStackUtils.getSize(handler.extractItem(slot, localCount, false));
-
-                if (removedSize == count) {
-                    return;
-                } else {
-                    localCount -= removedSize;
-                }
-                tries++;
-            }
-        }
-    }
-
-    /**
      * Check if a certain item is in the provider but without the provider being full.
      *
      * @param provider the provider to check.

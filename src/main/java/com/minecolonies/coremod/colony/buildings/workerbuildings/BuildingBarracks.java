@@ -156,9 +156,7 @@ public class BuildingBarracks extends AbstractBuilding
     @Override
     public void onColonyTick(@NotNull final IColony colony)
     {
-
         super.onColonyTick(colony);
-
         if (colony.getWorld().isRemote)
         {
             return;
@@ -168,9 +166,8 @@ public class BuildingBarracks extends AbstractBuilding
         {
             if (!colony.getRaiderManager().areSpiesEnabled())
             {
-                if (InventoryUtils.getItemCountInItemHandler(this.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElseGet(null),
-                        stack -> stack.isItemEqual(new ItemStack(Items.GOLD_INGOT, SPIES_GOLD_COST))) >= SPIES_GOLD_COST){
-                    InventoryUtils.removeStackFromItemHandler(this.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElseGet(null), new ItemStack(Items.GOLD_INGOT, SPIES_GOLD_COST), SPIES_GOLD_COST);
+                if (InventoryUtils.tryRemoveStackFromItemHandler(this.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElseGet(null), new ItemStack(Items.GOLD_INGOT, SPIES_GOLD_COST)))
+                {
                     colony.getRaiderManager().setSpiesEnabled(true);
                     colony.markDirty();
                 }
