@@ -40,6 +40,11 @@ import java.util.function.Supplier;
 @mezz.jei.api.JeiPlugin
 public class JEIPlugin implements IModPlugin
 {
+    public JEIPlugin()
+    {
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, CustomRecipesReloadedEvent.class, this::onCustomRecipesReloaded);
+    }
+
     @NotNull
     @Override
     public ResourceLocation getPluginUid()
@@ -49,6 +54,7 @@ public class JEIPlugin implements IModPlugin
 
     private final List<GenericRecipeCategory> categories = new ArrayList<>();
     private boolean recipesLoaded;
+    private WeakReference<IJeiRuntime> weakRuntime;
 
     @Override
     public void registerCategories(@NotNull final IRecipeCategoryRegistration registration)
@@ -83,17 +89,16 @@ public class JEIPlugin implements IModPlugin
     {
         registration.addIngredientInfo(new ItemStack(ModBlocks.blockHutComposter.asItem()), VanillaTypes.ITEM, TranslationConstants.COM_MINECOLONIES_JEI_PREFIX + ModJobs.COMPOSTER_ID.getPath());
 
-        if (!Minecraft.getInstance().isIntegratedServerRunning())
+        if (!recipesLoaded && !Minecraft.getInstance().isIntegratedServerRunning())
         {
             // if we're not on an integrated server, we're on a dedicated server, and that
             // means that the CustomRecipes are not loaded yet, so we need to wait until
-            // later before we can populate the recipes.
+            // later before we can populate the recipes -- unless we have received that event already.
             //
             // TODO this whole drama could probably go away if we loaded the CustomRecipes into
             //      the vanilla RecipeManager instead (and then they'd get automatically synced
             //      too) -- but that will probably have to wait for 1.17 since it would break all
             //      the datapacks.
-            recipesLoaded = false;
             return;
         }
 
@@ -147,35 +152,34 @@ public class JEIPlugin implements IModPlugin
     @Override
     public void onRuntimeAvailable(@NotNull final IJeiRuntime jeiRuntime)
     {
-        if (!recipesLoaded)
-        {
-            final WeakReference<IJeiRuntime> weakRuntime = new WeakReference<>(jeiRuntime);
+        this.weakRuntime = new WeakReference<>(jeiRuntime);
+    }
 
-            MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false,
-                    CustomRecipesReloadedEvent.class, event ->
+    private void onCustomRecipesReloaded(@NotNull final CustomRecipesReloadedEvent event)
+    {
+        // if this happens after JEI has loaded, it means we're on a dedicated server and
+        // we couldn't register the recipes above since they weren't loaded yet, so we
+        // need to load them now.  this uses a deprecated API in JEI but it seems like the
+        // only way to get things to actually work.  just to make life more difficult,
+        // though, some mods (such as JER) can change the order things happen, so this
+        // can actually happen first (but that's ok, it means we can load the recipes in
+        // the usual place once we know that happened).
+        if (weakRuntime != null && !recipesLoaded && !categories.isEmpty())
+        {
+            final IJeiRuntime runtime = weakRuntime.get();
+            if (runtime != null)
             {
-                // if the recipes are still not loaded at this point, it means we're on a
-                // dedicated server, and we had to wait for the custom recipes to be populated
-                // before we could load the JEI recipes properly.  this uses a deprecated API
-                // in JEI but it seems like the only way to get things to actually work.
-                if (!recipesLoaded)
+                final IRecipeManager jeiManager = runtime.getRecipeManager();
+                populateRecipes((list, uid) ->
                 {
-                    final IJeiRuntime runtime = weakRuntime.get();
-                    if (runtime != null)
+                    for (final Object recipe : list)
                     {
-                        final IRecipeManager jeiManager = runtime.getRecipeManager();
-                        populateRecipes((list, uid) ->
-                        {
-                            for (final Object recipe : list)
-                            {
-                                //noinspection deprecation
-                                jeiManager.addRecipe(recipe, uid);
-                            }
-                        });
+                        //noinspection deprecation
+                        jeiManager.addRecipe(recipe, uid);
                     }
-                    recipesLoaded = true;
-                }
-            });
+                });
+            }
         }
+        recipesLoaded = true;
     }
 }
