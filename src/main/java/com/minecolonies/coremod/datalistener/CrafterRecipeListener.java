@@ -74,6 +74,8 @@ public class CrafterRecipeListener extends JsonReloadListener
             }
         }
 
+        recipeManager.buildLootData(dataPackRegistries.getLootTableManager());
+
         final int totalRecipes = recipeManager.getAllRecipes().values().stream().mapToInt(Map::size).sum();
         Log.getLogger().info("Loaded " + totalRecipes + " recipes for " + recipeManager.getAllRecipes().size() + " crafters");
 
