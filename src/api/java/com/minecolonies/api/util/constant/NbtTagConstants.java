@@ -274,7 +274,7 @@ public final class NbtTagConstants
     /**
      * NBTTag to store the recipes list.
      */
-    public static final String TAG_RECIPES = "oldRecipes";
+    public static final String TAG_RECIPES = "recipes";
 
     /**
      * NBTTag to store the recipes list.
