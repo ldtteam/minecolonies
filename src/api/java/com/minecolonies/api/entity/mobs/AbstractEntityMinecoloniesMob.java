@@ -29,6 +29,7 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.common.util.ITeleporter;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -309,13 +310,13 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements
         super.writeAdditional(compound);
     }
 
+
     /**
-     * We override this method and execute no code to avoid citizens travelling to the nether.
-     *
+     * Prevent raiders from travelling to other dimensions through portals.
      */
     @Nullable
     @Override
-    public Entity changeDimension(final ServerWorld p_241206_1_)
+    public Entity changeDimension(@NotNull final ServerWorld serverWorld, @NotNull final ITeleporter teleporter)
     {
         return null;
     }

@@ -143,13 +143,6 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
         return ticksExisted;
     }
 
-    @Nullable
-    @Override
-    public Entity changeDimension(final ServerWorld p_241206_1_)
-    {
-        return null;
-    }
-
     @NotNull
     public BlockPos getPosition()
     {
