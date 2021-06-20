@@ -413,10 +413,22 @@ public final class BlockPosUtil
      */
     public static List<ItemStack> getBlockDrops(@NotNull final World world, @NotNull final BlockPos coords, final int fortune, final ItemStack stack, final LivingEntity entity)
     {
-        return world.getBlockState(coords).getDrops(new LootContext.Builder((ServerWorld) world)
-                                                      .withLuck(fortune)
-                                                      .withParameter(LootParameters.field_237457_g_, entity.getPositionVec())
-                                                      .withParameter(LootParameters.TOOL, stack));
+        final TileEntity te = world.getTileEntity(coords);
+        if (te == null)
+        {
+            return world.getBlockState(coords).getDrops(new LootContext.Builder((ServerWorld) world)
+                                                          .withLuck(fortune)
+                                                          .withParameter(LootParameters.field_237457_g_, entity.getPositionVec())
+                                                          .withParameter(LootParameters.TOOL, stack));
+        }
+        else
+        {
+            return world.getBlockState(coords).getDrops(new LootContext.Builder((ServerWorld) world)
+                                                          .withLuck(fortune)
+                                                          .withParameter(LootParameters.BLOCK_ENTITY, te)
+                                                          .withParameter(LootParameters.field_237457_g_, entity.getPositionVec())
+                                                          .withParameter(LootParameters.TOOL, stack));
+        }
     }
 
     /**
