@@ -1,100 +1,65 @@
-package com.minecolonies.coremod.compatibility.jei;
+package com.minecolonies.coremod.colony.crafting;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.minecolonies.api.util.Log;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.client.Minecraft;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.loot.LootPredicateManager;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.LootTableManager;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.JsonToNBT;
-import net.minecraft.resources.IResourcePack;
-import net.minecraft.resources.ResourcePackType;
-import net.minecraft.resources.SimpleReloadableResourceManager;
-import net.minecraft.resources.VanillaPack;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Unit;
-import net.minecraft.util.Util;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
-import net.minecraftforge.fml.packs.ModFileResourcePack;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 /**
- * This class is essentially an attempt to cope with JEI running client-side but loot tables
- * mostly only existing server-side.  (And most of their data structure is private and non-
- * iterable, and requires a LootContext, which can also only be created server-side.)  In
- * theory another option to manage this whole thing would be to calculate the loot tables
- * on the server and then sync the needed info to the client, but I'm not sure where the
- * best hooks to do that would be -- and we'd either have to be able to guarantee that they
- * all arrive before JEI initialization, or we'd have to block the client thread while waiting
- * for server packets (which is frowned on).  (And there's still the problem of iteration.)
+ * Utility helper that analyzes a loot table to determine a likely list of drops, along with
+ * their drop rate, for presentation in JEI (and perhaps other purposes).  This is just
+ * informational and in particular shouldn't be used to actually generate loot -- due to
+ * constraints with how loot tables are stored this can only produce an approximation of a
+ * subset of possible loot results.  Good enough to be indicative but that's all.
  * Currently it only supports a very limited set of conditions and properties; just enough
  * for current usage by MineColonies recipes.  If tables are extended with additional
  * conditions or properties then this would have to be adjusted to cope as well.
  */
 public final class LootTableAnalyzer
 {
-    private static LootTableManager manager;
-
     private LootTableAnalyzer() { }
 
-    @NotNull
-    public static LootTableManager getManager(@Nullable final World world)
+    private static JsonObject getLootTableJson(@NotNull final LootTableManager lootTableManager,
+                                               @NotNull final ResourceLocation lootTableId)
     {
-        if (world == null || world.getServer() == null)
+        final LootTable lootTable = lootTableManager.getLootTableFromLocation(lootTableId);
+        return LootTableManager.toJson(lootTable).getAsJsonObject();
+    }
+
+    public static List<LootDrop> toDrops(@NotNull final LootTableManager lootTableManager,
+                                         @NotNull final ResourceLocation lootTableId)
+    {
+        try
         {
-            if (manager == null)
-            {
-                manager = new LootTableManager(new LootPredicateManager());
-
-                // TODO a significant weakness of this approach is that it only loads
-                //      the loot tables present in the mod datapacks; it can't see any
-                //      modifications made in server or modpack datapacks.
-                final SimpleReloadableResourceManager serverResourceManger = new SimpleReloadableResourceManager(ResourcePackType.SERVER_DATA);
-                final List<IResourcePack> packs = new LinkedList<>();
-                packs.add(new VanillaPack("minecraft"));
-                for (final ModFileInfo mod : ModList.get().getModFiles())
-                {
-                    packs.add(new ModFileResourcePack(mod.getFile()));
-                }
-                packs.forEach(serverResourceManger::addResourcePack);
-                serverResourceManger.addReloadListener(manager);
-
-                final CompletableFuture<Unit> completableFuture = serverResourceManger.reloadResourcesAndThen(Util.getServerExecutor(), Minecraft.getInstance(), packs, CompletableFuture.completedFuture(Unit.INSTANCE));
-                Minecraft.getInstance().driveUntil(completableFuture::isDone);
-            }
-            return manager;
+            final JsonObject lootTableJson = getLootTableJson(lootTableManager, lootTableId);
+            return toDrops(lootTableManager, lootTableJson);
         }
-        return world.getServer().getLootTableManager();
+        catch (final JsonParseException ex)
+        {
+            Log.getLogger().error(String.format("Failed to parse loot table from %s",
+                    lootTableId.toString()), ex);
+            return Collections.emptyList();
+        }
     }
 
-    public static JsonObject getLootTableJson(@NotNull final LootTable table)
-    {
-        return LootTableManager.toJson(table).getAsJsonObject();
-    }
-
-    public static JsonObject getLootTableJson(@NotNull final ResourceLocation tableId)
-    {
-        final LootTable table = getManager(null).getLootTableFromLocation(tableId);
-        return getLootTableJson(table);
-    }
-
-    public static List<LootDrop> toDrops(@NotNull final JsonObject lootTableJson)
+    public static List<LootDrop> toDrops(@NotNull final LootTableManager lootTableManager,
+                                         @NotNull final JsonObject lootTableJson)
     {
         final List<LootDrop> drops = new ArrayList<>();
 
@@ -125,7 +90,6 @@ public final class LootTableAnalyzer
                     final Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(JSONUtils.getString(entryJson, "name")));
                     final float weight = JSONUtils.getFloat(entryJson, "weight", 1);
                     final boolean variableQuality = JSONUtils.getFloat(entryJson, "quality", 0) != 0;
-                    CompoundNBT tag = null;
                     final ItemStack stack = new ItemStack(item);
                     if (entryJson.has("functions"))
                     {
@@ -137,7 +101,7 @@ public final class LootTableAnalyzer
                 else if (type.equals("minecraft:loot_table"))
                 {
                     final ResourceLocation table = new ResourceLocation(JSONUtils.getString(entryJson, "name"));
-                    drops.addAll(toDrops(getLootTableJson(table)));
+                    drops.addAll(toDrops(lootTableManager, table));
                 }
             }
         }
@@ -213,6 +177,32 @@ public final class LootTableAnalyzer
         public int hashCode()
         {
             return Objects.hash(probability, variableQuality);
+        }
+
+        /** Copy a LootDrop to a packet buffer */
+        public void serialize(@NotNull final PacketBuffer buffer)
+        {
+            buffer.writeVarInt(stacks.size());
+            for (final ItemStack stack : stacks)
+            {
+                buffer.writeItemStack(stack);
+            }
+            buffer.writeFloat(probability);
+            buffer.writeBoolean(variableQuality);
+        }
+
+        /** Recover a LootDrop from a packet buffer */
+        public static LootDrop deserialize(@NotNull final PacketBuffer buffer)
+        {
+            final int size = buffer.readVarInt();
+            final List<ItemStack> stacks = new ArrayList<>(size);
+            for (int i = 0; i < size; ++i)
+            {
+                stacks.add(buffer.readItemStack());
+            }
+            final float probability = buffer.readFloat();
+            final boolean variableQuality = buffer.readBoolean();
+            return new LootDrop(stacks, probability, variableQuality);
         }
     }
 }

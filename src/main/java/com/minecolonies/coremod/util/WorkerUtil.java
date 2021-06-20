@@ -134,18 +134,6 @@ public final class WorkerUtil
     }
 
     /**
-     * Attempt to move to XYZ. True when found and destination is set.
-     *
-     * @param citizen     Citizen to move to XYZ.
-     * @param destination Chunk coordinate of the distance.
-     * @return True when found, and destination is set, otherwise false.
-     */
-    public static PathResult moveLivingToXYZ(@NotNull final AbstractEntityCitizen citizen, @NotNull final BlockPos destination)
-    {
-        return citizen.getNavigator().moveToXYZ(destination.getX(), destination.getY(), destination.getZ(), 1.0);
-    }
-
-    /**
      * Recalls the citizen, notifies player if not successful.
      *
      * @param spawnPoint the spawnPoint.
@@ -172,13 +160,13 @@ public final class WorkerUtil
     /**
      * Get a Tooltype for a certain block. We need this because minecraft has a lot of blocks which have strange or no required tool.
      *
-     * @param target        the target block.
+     * @param state         the target BlockState.
      * @param blockHardness the hardness.
      * @return the toolType to use.
      */
-    public static IToolType getBestToolForBlock(final Block target, float blockHardness)
+    public static IToolType getBestToolForBlock(final BlockState state, float blockHardness)
     {
-        final net.minecraftforge.common.ToolType forgeTool = target.getHarvestTool(target.getDefaultState());
+        final net.minecraftforge.common.ToolType forgeTool = state.getHarvestTool();
 
         String toolName = "";
         if (forgeTool == null)
@@ -190,7 +178,7 @@ public final class WorkerUtil
                     if (tool.getB() != null && tool.getB().getItem() instanceof ToolItem)
                     {
                         final ToolItem toolItem = (ToolItem) tool.getB().getItem();
-                        if (tool.getB().getDestroySpeed(target.getDefaultState()) >= toolItem.getTier().getEfficiency())
+                        if (tool.getB().getDestroySpeed(state) >= toolItem.getTier().getEfficiency())
                         {
                             toolName = tool.getA().getName();
                             break;
@@ -206,11 +194,11 @@ public final class WorkerUtil
 
         final IToolType toolType = ToolType.getToolType(toolName);
 
-        if (toolType == ToolType.NONE && target.getDefaultState().getMaterial() == Material.WOOD)
+        if (toolType == ToolType.NONE && state.getMaterial() == Material.WOOD)
         {
             return ToolType.AXE;
         }
-        else if (target instanceof GlazedTerracottaBlock)
+        else if (state.getBlock() instanceof GlazedTerracottaBlock)
         {
             return ToolType.PICKAXE;
         }
@@ -223,30 +211,16 @@ public final class WorkerUtil
      * @param target the target block.
      * @return the required harvestLevel.
      */
-    public static int getCorrectHavestLevelForBlock(final Block target)
+    public static int getCorrectHarvestLevelForBlock(final BlockState target)
     {
-        final int required = target.getHarvestLevel(target.getDefaultState());
+        final int required = target.getHarvestLevel();
 
-        if ((required < 0 && target.getDefaultState().getMaterial() == Material.WOOD)
-              || target instanceof GlazedTerracottaBlock)
+        if ((required < 0 && target.getMaterial() == Material.WOOD)
+              || target.getBlock() instanceof GlazedTerracottaBlock)
         {
             return 0;
         }
         return required;
-    }
-
-    /**
-     * Returns whether or not a citizen is heading to a specific location.
-     *
-     * @param citizen Citizen you want to check
-     * @param x       X-coordinate
-     * @param z       Z-coordinate
-     * @return True if citizen heads to (x, z), otherwise false
-     */
-    public static boolean isPathingTo(@NotNull final AbstractEntityCitizen citizen, final int x, final int z)
-    {
-        final PathPoint pathpoint = citizen.getNavigator().getPath().getFinalPathPoint();
-        return pathpoint != null && pathpoint.x == x && pathpoint.z == z;
     }
 
     /**

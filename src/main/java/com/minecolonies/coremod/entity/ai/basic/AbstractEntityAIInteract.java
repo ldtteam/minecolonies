@@ -258,7 +258,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
      */
     private boolean checkMiningLocation(@NotNull final BlockPos blockToMine, @NotNull final BlockPos safeStand)
     {
-        final Block curBlock = world.getBlockState(blockToMine).getBlock();
+        final BlockState curBlock = world.getBlockState(blockToMine);
 
         if (!holdEfficientTool(curBlock, blockToMine))
         {
@@ -278,37 +278,37 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
     /**
      * Calculate how long it takes to mine this block.
      *
-     * @param block the block type
+     * @param state the blockstate
      * @param pos   coordinate
      * @return the delay in ticks
      */
-    public int getBlockMiningDelay(@NotNull final Block block, @NotNull final BlockPos pos)
+    public int getBlockMiningDelay(@NotNull final BlockState state, @NotNull final BlockPos pos)
     {
         if (worker.getHeldItemMainhand() == null)
         {
-            return (int) world.getBlockState(pos).getBlockHardness(world, pos);
+            return (int) state.getBlockHardness(world, pos);
         }
 
         return MineColonies.getConfig().getServer().pvp_mode.get()
                  ? MineColonies.getConfig().getServer().blockMiningDelayModifier.get() / 2
-                 : calculateWorkerMiningDelay(block, pos);
+                 : calculateWorkerMiningDelay(state, pos);
     }
 
     /**
      * Calculate the worker mining delay for a block at a pos.
      *
-     * @param block the block.
+     * @param state the blockstate.
      * @param pos   the pos.
      * @return the mining delay of the worker.
      */
-    private int calculateWorkerMiningDelay(@NotNull final Block block, @NotNull final BlockPos pos)
+    private int calculateWorkerMiningDelay(@NotNull final BlockState state, @NotNull final BlockPos pos)
     {
         final double reduction = 1 - worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(BLOCK_BREAK_SPEED);
 
         return (int) (((MineColonies.getConfig().getServer().blockMiningDelayModifier.get() * Math.pow(LEVEL_MODIFIER, getBreakSpeedLevel() / 2.0))
                          * (double) world.getBlockState(pos).getBlockHardness(world, pos) / (double) (worker.getHeldItemMainhand()
                                                                                                         .getItem()
-                                                                                                        .getDestroySpeed(worker.getHeldItemMainhand(), block.getDefaultState())))
+                                                                                                        .getDestroySpeed(worker.getHeldItemMainhand(), state)))
                         * reduction);
     }
 
