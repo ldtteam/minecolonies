@@ -395,6 +395,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
         this.style = style;
         cachedRotation = -1;
         this.markDirty();
+        getTileEntity().setStyle(style);
     }
 
     @Override

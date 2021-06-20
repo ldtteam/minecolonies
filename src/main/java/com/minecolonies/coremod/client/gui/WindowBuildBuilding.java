@@ -42,6 +42,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.TriPredicate;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
@@ -139,7 +140,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
             findPaneOfTypeByID(BUTTON_DECONSTRUCT_BUILDING, Button.class).hide();
         }
 
-        if (building.getBuildingLevel() == building.getBuildingMaxLevel() || (parentBuilding != null && building.getBuildingLevel() == parentBuilding.getBuildingLevel()))
+        if (building.getBuildingLevel() == building.getBuildingMaxLevel() || (parentBuilding != null && building.getBuildingLevel() >= parentBuilding.getBuildingLevel()))
         {
             buttonBuild.hide();
         }
@@ -150,7 +151,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
 
         if (building.isDeconstructed())
         {
-            findPaneOfTypeByID(BUTTON_DECONSTRUCT_BUILDING, Button.class).setText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.pickup"));
+            findPaneOfTypeByID(BUTTON_DECONSTRUCT_BUILDING, Button.class).setText(new TranslationTextComponent("com.minecolonies.coremod.gui.workerhuts.pickup"));
         }
     }
 
@@ -160,7 +161,6 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
     private void deconstructBuildingClicked()
     {
         final BlockPos builder = buildersDropDownList.getSelectedIndex() == 0 ? BlockPos.ZERO : builders.get(buildersDropDownList.getSelectedIndex()).getB();
-        Network.getNetwork().sendToServer(new BuildingSetStyleMessage(building, styles.get(stylesDropDownList.getSelectedIndex())));
         Network.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.Mode.REMOVE, builder));
         cancelClicked();
     }
@@ -178,13 +178,6 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
      */
     private void confirmClicked()
     {
-        if (building.getBuildingLevel() > 0
-              && !building.getStyle().equals(styles.get(stylesDropDownList.getSelectedIndex()))
-              && !building.isDeconstructed())
-        {
-            return;
-        }
-
         final BlockPos builder = buildersDropDownList.getSelectedIndex() == 0 ? BlockPos.ZERO : builders.get(buildersDropDownList.getSelectedIndex()).getB();
 
         Network.getNetwork().sendToServer(new BuildingSetStyleMessage(building, styles.get(stylesDropDownList.getSelectedIndex())));
@@ -205,7 +198,6 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
     private void repairClicked()
     {
         final BlockPos builder = buildersDropDownList.getSelectedIndex() == 0 ? BlockPos.ZERO : builders.get(buildersDropDownList.getSelectedIndex()).getB();
-        Network.getNetwork().sendToServer(new BuildingSetStyleMessage(building, building.getStyle()));
         Network.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.Mode.REPAIR, builder));
         cancelClicked();
     }
@@ -243,7 +235,16 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         }
         else
         {
-            styles = Structures.getStylesFor(building.getSchematicName());
+            if (building.getBuildingLevel() == 0)
+            {
+                styles = Structures.getStylesFor(building.getSchematicName());
+            }
+            else
+            {
+                styles = new ArrayList<>();
+                styles.add(building.getStyle());
+            }
+
             if (!styles.isEmpty())
             {
                 int newIndex = styles.indexOf(building.getStyle());
@@ -262,7 +263,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         }
         else
         {
-            enabled = styles.size() > 1;
+            enabled = true;
         }
 
         findPaneOfTypeByID(BUTTON_PREVIOUS_STYLE_ID, Button.class).setEnabled(enabled);
@@ -278,16 +279,6 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         if (stylesDropDownList.getSelectedIndex() == -1)
         {
             return;
-        }
-        // Ensure the player cannot change a style of an already constructed building
-        if (building.getBuildingLevel() > 0)
-        {
-            findPaneOfTypeByID(BUTTON_BUILD, Button.class).setText(
-              LanguageHandler.format(
-                !building.getStyle().equals(styles.get(stylesDropDownList.getSelectedIndex()))
-                  && !building.isDeconstructed()
-                  ? "com.minecolonies.coremod.gui.workerhuts.bad_style"
-                  : "com.minecolonies.coremod.gui.workerhuts.upgrade"));
         }
 
         final World world = Minecraft.getInstance().world;
