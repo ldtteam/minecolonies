@@ -156,10 +156,10 @@ public final class ShipBasedRaiderUtils
     {
         final BlockPos zeroPos = pos.subtract(ship.getPrimaryBlockOffset());
 
-        return isSurfaceAreaMostlyMaterial(Lists.newArrayList(Material.WATER, Material.ICE), world, pos.getY(),
+        return isSurfaceAreaMostlyMaterial(Lists.newArrayList(Material.WATER, Material.ICE, Material.OCEAN_PLANT), world, pos.getY(),
           zeroPos,
           new BlockPos(zeroPos.getX() + ship.getSizeX() - 1, zeroPos.getY(), zeroPos.getZ() + ship.getSizeZ() - 1),
-          0.9);
+          0.99);
     }
 
     /**
