@@ -468,11 +468,10 @@ public class EntityAIEatTask extends Goal
         restaurantPos = colony.getBuildingManager().getBestBuilding(citizen, BuildingCook.class);
         if (citizenData.getSaturation() == 0.0)
         {
-
             final IJob<?> job = citizen.getCitizenJobHandler().getColonyJob();
-            if (job != null && job.isActive())
+            if (job != null && citizenData.isActive())
             {
-                job.setActive(false);
+                citizenData.setActive(false);
             }
 
             if (restaurantPos == null)
@@ -486,7 +485,11 @@ public class EntityAIEatTask extends Goal
             return IDLE;
         }
 
-
+        final IJob<?> job = citizen.getCitizenJobHandler().getColonyJob();
+        if (job != null && citizenData.isActive())
+        {
+            citizenData.setActive(false);
+        }
         return GO_TO_RESTAURANT;
     }
 

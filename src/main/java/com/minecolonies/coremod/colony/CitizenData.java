@@ -55,6 +55,7 @@ import java.util.stream.Collectors;
 import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.*;
 import static com.minecolonies.api.research.util.ResearchConstants.HEALTH_BOOST;
 import static com.minecolonies.api.research.util.ResearchConstants.WALKING;
+import static com.minecolonies.api.util.constant.BuildingConstants.TAG_ACTIVE;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.ItemStackUtils.*;
@@ -257,6 +258,16 @@ public class CitizenData implements ICitizenData
      * Alive partner of the citizen.
      */
     private Integer partner = 0;
+
+    /**
+     * If the dman is currently active.
+     */
+    private boolean active = false;
+
+    /**
+     * The inactivity timer.
+     */
+    private int inactivityTimer = -1;
 
     /**
      * Create a CitizenData given an ID. Used as a super-constructor or during loading.
@@ -1105,6 +1116,7 @@ public class CitizenData implements ICitizenData
         }
         nbtTagCompound.put(TAG_CHILDREN, childrenNBT);
         nbtTagCompound.putInt(TAG_PARTNER, partner);
+        nbtTagCompound.putBoolean(TAG_ACTIVE, this.active);
 
         return nbtTagCompound;
     }
@@ -1226,6 +1238,7 @@ public class CitizenData implements ICitizenData
         }
 
         partner = nbtTagCompound.getInt(TAG_PARTNER);
+        this.active = nbtTagCompound.getBoolean(TAG_ACTIVE);
     }
 
     @Override
@@ -1234,6 +1247,12 @@ public class CitizenData implements ICitizenData
         if (!getEntity().isPresent() || !getEntity().get().isAlive())
         {
             return;
+        }
+
+        if (!active && job != null && inactivityTimer != -1 && ++inactivityTimer >= job.getInactivityLimit())
+        {
+            job.triggerActivityChangeAction(this.active);
+            inactivityTimer = -1;
         }
 
         final List<IInteractionResponseHandler> toRemove = new ArrayList<>();
@@ -1446,6 +1465,30 @@ public class CitizenData implements ICitizenData
               stack -> CAN_EAT.test(stack) && this.getWorkBuilding().canEat(stack));
             return slotBadFood != -1 && slotGoodFood == -1;
         }
+    }
+
+    @Override
+    public boolean isActive()
+    {
+        return active;
+    }
+
+    @Override
+    public void setActive(final boolean active)
+    {
+        if (active && !this.active)
+        {
+            if (job != null)
+            {
+                job.triggerActivityChangeAction(active);
+            }
+            inactivityTimer = -1;
+        }
+        else if (!active && this.active)
+        {
+            inactivityTimer = 0;
+        }
+        this.active = active;
     }
 
     @Nullable
