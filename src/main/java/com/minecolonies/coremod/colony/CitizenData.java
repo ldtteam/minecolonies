@@ -260,9 +260,9 @@ public class CitizenData implements ICitizenData
     private Integer partner = 0;
 
     /**
-     * If the dman is currently active.
+     * If the job is currently active.
      */
-    private boolean active = false;
+    private boolean isWorking = false;
 
     /**
      * The inactivity timer.
@@ -1116,7 +1116,7 @@ public class CitizenData implements ICitizenData
         }
         nbtTagCompound.put(TAG_CHILDREN, childrenNBT);
         nbtTagCompound.putInt(TAG_PARTNER, partner);
-        nbtTagCompound.putBoolean(TAG_ACTIVE, this.active);
+        nbtTagCompound.putBoolean(TAG_ACTIVE, this.isWorking);
 
         return nbtTagCompound;
     }
@@ -1238,7 +1238,7 @@ public class CitizenData implements ICitizenData
         }
 
         partner = nbtTagCompound.getInt(TAG_PARTNER);
-        this.active = nbtTagCompound.getBoolean(TAG_ACTIVE);
+        this.isWorking = nbtTagCompound.getBoolean(TAG_ACTIVE);
     }
 
     @Override
@@ -1249,9 +1249,9 @@ public class CitizenData implements ICitizenData
             return;
         }
 
-        if (!active && job != null && inactivityTimer != -1 && ++inactivityTimer >= job.getInactivityLimit())
+        if (!isWorking && job != null && inactivityTimer != -1 && ++inactivityTimer >= job.getInactivityLimit())
         {
-            job.triggerActivityChangeAction(this.active);
+            job.triggerActivityChangeAction(this.isWorking);
             inactivityTimer = -1;
         }
 
@@ -1468,27 +1468,27 @@ public class CitizenData implements ICitizenData
     }
 
     @Override
-    public boolean isActive()
+    public boolean isWorking()
     {
-        return active;
+        return isWorking;
     }
 
     @Override
-    public void setActive(final boolean active)
+    public void setWorking(final boolean isWorking)
     {
-        if (active && !this.active)
+        if (isWorking && !this.isWorking)
         {
             if (job != null)
             {
-                job.triggerActivityChangeAction(active);
+                job.triggerActivityChangeAction(isWorking);
             }
             inactivityTimer = -1;
         }
-        else if (!active && this.active)
+        else if (!isWorking && this.isWorking)
         {
             inactivityTimer = 0;
         }
-        this.active = active;
+        this.isWorking = isWorking;
     }
 
     @Nullable

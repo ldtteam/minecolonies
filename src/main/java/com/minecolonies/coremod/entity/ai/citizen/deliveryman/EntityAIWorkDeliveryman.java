@@ -622,7 +622,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         final IWareHouse wareHouse = getAndCheckWareHouse();
         if (wareHouse != null)
         {
-            worker.getCitizenData().setActive(true);
+            worker.getCitizenData().setWorking(true);
             if (wareHouse.getTileEntity() == null)
             {
                 return false;
@@ -632,7 +632,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             }
         }
 
-        worker.getCitizenData().setActive(false);
+        worker.getCitizenData().setWorking(false);
         if (worker.getCitizenData() != null)
         {
             worker.getCitizenData()

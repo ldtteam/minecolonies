@@ -347,20 +347,20 @@ public interface ICitizenData extends ICivilianData
     boolean doesLiveWith(ICitizenData data);
 
     /**
-     * Set if the worker can currently work.
+     * Set if the worker is currently working actively.
      *
      * @param b true if so.
      */
-    default void setActive(final boolean b)
+    default void setWorking(final boolean b)
     {
         //noop
     }
 
     /**
-     * Check if the job is actually set as active.
+     * Check if the worker is currently actively working.
      * @return true if so.
      */
-    default boolean isActive()
+    default boolean isWorking()
     {
         return true;
     }

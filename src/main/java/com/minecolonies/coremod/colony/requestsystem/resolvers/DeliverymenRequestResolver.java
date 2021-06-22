@@ -72,7 +72,7 @@ public abstract class DeliverymenRequestResolver<R extends IRequestable> extends
             {
                 for (final ICitizenData data : building.getAssignedCitizen())
                 {
-                    if (data.isActive())
+                    if (data.isWorking())
                     {
                         citizenList.add(data);
                     }
@@ -97,7 +97,7 @@ public abstract class DeliverymenRequestResolver<R extends IRequestable> extends
         Tuple<Double, Integer> bestScore = null;
         for (final ICitizenData citizen : getResolveAbleDeliverymen(manager))
         {
-            if (citizen.isActive())
+            if (citizen.isWorking())
             {
                 Tuple<Double, Integer> localScore = ((JobDeliveryman) citizen.getJob()).getScoreForDelivery(request);
                 if (bestScore == null || localScore.getA() < bestScore.getA())

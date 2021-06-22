@@ -371,7 +371,7 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
     @Override
     public void onRemoval()
     {
-        getCitizen().setActive(false);
+        getCitizen().setWorking(false);
         try
         {
             cancelAssignedRequests();

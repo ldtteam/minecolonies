@@ -469,9 +469,9 @@ public class EntityAIEatTask extends Goal
         if (citizenData.getSaturation() == 0.0)
         {
             final IJob<?> job = citizen.getCitizenJobHandler().getColonyJob();
-            if (job != null && citizenData.isActive())
+            if (job != null && citizenData.isWorking())
             {
-                citizenData.setActive(false);
+                citizenData.setWorking(false);
             }
 
             if (restaurantPos == null)
@@ -486,9 +486,9 @@ public class EntityAIEatTask extends Goal
         }
 
         final IJob<?> job = citizen.getCitizenJobHandler().getColonyJob();
-        if (job != null && citizenData.isActive())
+        if (job != null && citizenData.isWorking())
         {
-            citizenData.setActive(false);
+            citizenData.setWorking(false);
         }
         return GO_TO_RESTAURANT;
     }
