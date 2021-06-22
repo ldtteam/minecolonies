@@ -2,6 +2,8 @@
   "replace": false,
   "values": [
     "#forge:nuggets",
-    "#forge:ingots"
+    "#forge:ingots",
+    "minecraft:diamond_block",
+    "minecraft:emerald_block"
   ]
 }
