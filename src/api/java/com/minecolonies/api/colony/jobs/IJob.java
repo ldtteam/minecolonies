@@ -241,7 +241,7 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
     void serializeToView(final PacketBuffer buffer);
 
     /**
-     * Get the time limit after which the job considers itself inactive.
+     * Get the time limit in seconds after which the job considers itself inactive.
      * @return the limit, or -1 if not applicable.
      */
     default int getInactivityLimit()

@@ -265,7 +265,7 @@ public class CitizenData implements ICitizenData
     private boolean isWorking = false;
 
     /**
-     * The inactivity timer.
+     * The inactivity timer in seconds.
      */
     private int inactivityTimer = -1;
 
