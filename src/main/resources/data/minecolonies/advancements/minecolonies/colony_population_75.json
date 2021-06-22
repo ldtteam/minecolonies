@@ -18,7 +18,7 @@
     "population_5": {
       "trigger": "minecolonies:colony_population",
       "conditions": {
-        "population_count": 50
+        "population_count": 75
       }
     }
   }
