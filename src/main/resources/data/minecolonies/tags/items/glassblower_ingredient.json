@@ -2,7 +2,6 @@
   "replace": false,
   "values": [
     "#forge:glass",
-    "#forge:glass_panes",
-    "minecraft:glass_bottle"
+    "#forge:glass_panes"
   ]
 }

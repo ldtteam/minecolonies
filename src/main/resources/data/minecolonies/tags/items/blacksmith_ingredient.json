@@ -3,6 +3,7 @@
   "values": [
     "#forge:nuggets",
     "#forge:ingots",
-    "#forge:storage_blocks"
+    "minecraft:diamond_block",
+    "minecraft:emerald_block"
   ]
 }
