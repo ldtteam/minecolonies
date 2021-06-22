@@ -37,18 +37,6 @@ public class BuildingGuardTower extends AbstractBuildingGuards
         super(c, l);
     }
 
-    @Override
-    public int getDefenceBonus()
-    {
-        return DEFENCE_BONUS;
-    }
-
-    @Override
-    public int getOffenceBonus()
-    {
-        return OFFENCE_BONUS;
-    }
-
     @NotNull
     @Override
     public String getSchematicName()
@@ -98,7 +86,7 @@ public class BuildingGuardTower extends AbstractBuildingGuards
     @Override
     public boolean requiresManualTarget()
     {
-        return (!patrolManually || patrolTargets == null || patrolTargets.isEmpty() || tempNextPatrolPoint != null) && tempNextPatrolPoint == null;
+        return (!shallPatrolManually() || patrolTargets == null || patrolTargets.isEmpty() || tempNextPatrolPoint != null) && tempNextPatrolPoint == null;
     }
 
     @Override

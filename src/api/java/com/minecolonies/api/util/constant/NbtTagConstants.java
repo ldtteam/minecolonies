@@ -62,6 +62,7 @@ public final class NbtTagConstants
     public static final String TAG_PASTEABLE              = "isPasteable";
     public static final String TAG_NEED_TO_MOURN          = "needToMourn";
     public static final String TAG_MOURNING               = "mourning";
+    public static final String TAG_DECEASED               = "deceased";
     public static final String TAG_PAUSED                 = "paused";
     public static final String TAG_CHILD                  = "child";
     public static final String TAG_CHILD_TIME             = "childTime";
@@ -77,6 +78,12 @@ public final class NbtTagConstants
     public static final String TAG_PURGED_MOBS            = "purgedMobs";
     public static final String TAG_MANUAL_JOB_SELECTION   = "manualMode";
     public static final String TAG_RESERVED               = "reserved";
+
+    public static final String TAG_PARENT_A = "parentA";
+    public static final String TAG_PARENT_B = "parentB";
+    public static final String TAG_SIBLINGS = "siblings";
+    public static final String TAG_CHILDREN = "children";
+    public static final String TAG_PARTNER  = "partner";
 
     /**
      * Event tags

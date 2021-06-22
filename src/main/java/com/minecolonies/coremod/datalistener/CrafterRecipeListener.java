@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.datalistener;
 
 import com.google.gson.*;
-import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.crafting.CustomRecipe;
 import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
@@ -74,8 +74,12 @@ public class CrafterRecipeListener extends JsonReloadListener
             }
         }
 
+        recipeManager.buildLootData(dataPackRegistries.getLootTableManager());
+
         final int totalRecipes = recipeManager.getAllRecipes().values().stream().mapToInt(Map::size).sum();
         Log.getLogger().info("Loaded " + totalRecipes + " recipes for " + recipeManager.getAllRecipes().size() + " crafters");
+
+        IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().invalidateRecipes(dataPackRegistries.getRecipeManager());
 
         MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
         if(server != null)
@@ -85,7 +89,5 @@ public class CrafterRecipeListener extends JsonReloadListener
                 recipeManager.sendCustomRecipeManagerPackets(player);
             }
         }
-
-        IColonyManager.getInstance().getCompatibilityManager().invalidateRecipes(this.dataPackRegistries.getRecipeManager());
     }
 }

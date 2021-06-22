@@ -111,7 +111,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
             return getState();
         }
 
-        if (!holdEfficientTool(world.getBlockState(workPos.up()).getBlock(), workPos.up()))
+        if (!holdEfficientTool(world.getBlockState(workPos.up()), workPos.up()))
         {
             return START_WORKING;
         }

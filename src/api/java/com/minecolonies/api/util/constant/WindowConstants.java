@@ -383,7 +383,7 @@ public final class WindowConstants
     /**
      * The builders gui file.
      */
-    public static final String HUT_BUILDER_RESOURCE_SUFFIX = ":gui/windowhutbuilder.xml";
+    public static final String HUT_BUILDER_RESOURCE_SUFFIX = ":gui/windowhutworkerplaceholder.xml";
     public static final String LIST_RESOURCES              = "resources";
 
     public static final String PAGE_RESOURCES              = "resourceActions";
@@ -527,19 +527,35 @@ public final class WindowConstants
     public static final String LABEL_CONSTRUCTION_NAME = "constructionName";
     public static final String LABEL_CONSTRUCTION_POS  = "constructionPos";
     public static final String LABEL_PROGRESS          = "progress";
+    public static final String STEP_PROGRESS          = "stepprogress";
     public static final String LABEL_WORKERNAME        = "workerName";
 
     public static final String LABEL_PAGE_NUMBER = "pageNum";
 
     /**
-     * The label to find the inventory button.
+     * The label to find the gui of the citizen.
      */
-    public static final String INVENTORY_BUTTON_ID = "inventory";
+    public static final String CITIZEN_MAIN_RESOURCE_SUFFIX = ":gui/citizen/main.xml";
 
     /**
      * The label to find the gui of the citizen.
      */
-    public static final String CITIZEN_RESOURCE_SUFFIX = ":gui/citizen/windowcitizen.xml";
+    public static final String CITIZEN_REQ_RESOURCE_SUFFIX = ":gui/citizen/requests.xml";
+
+    /**
+     * The label to find the gui of the citizen.
+     */
+    public static final String CITIZEN_HAP_RESOURCE_SUFFIX = ":gui/citizen/happiness.xml";
+
+    /**
+     * The label to find the gui of the citizen.
+     */
+    public static final String CITIZEN_JOB_RESOURCE_SUFFIX = ":gui/citizen/job.xml";
+
+    /**
+     * The label to find the gui of the citizen.
+     */
+    public static final String CITIZEN_FAM_RESOURCE_SUFFIX = ":gui/citizen/family.xml";
 
     /**
      * Id of the resource add button.

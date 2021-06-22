@@ -46,6 +46,7 @@ import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CITIZENS;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 import static com.minecolonies.api.util.constant.TranslationConstants.ALL_CITIZENS_ARE_SLEEPING;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_MOURN;
 
 public class CitizenManager implements ICitizenManager
 {
@@ -603,13 +604,25 @@ public class CitizenManager implements ICitizenManager
     }
 
     @Override
-    public void updateCitizenMourn(final boolean mourn)
+    public void updateCitizenMourn(final ICitizenData data, final boolean mourn)
     {
+        if (mourn)
+        {
+            LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), COM_MINECOLONIES_COREMOD_MOURN, colony.getName(), data.getName());
+        }
+
         for (final ICitizenData citizen : getCitizens())
         {
-            if (citizen.getEntity().isPresent() && !(citizen.getJob() instanceof AbstractJobGuard) && !(citizen.getJob() instanceof JobUndertaker))
+            if (mourn)
             {
-                citizen.getEntity().get().setMourning(mourn);
+                if (!(citizen.getJob() instanceof AbstractJobGuard) && !(citizen.getJob() instanceof JobUndertaker) && (citizen.isRelatedTo(data) || citizen.doesLiveWith(data)))
+                {
+                    citizen.getCitizenMournHandler().addDeceasedCitizen(data.getName());
+                }
+            }
+            else
+            {
+                citizen.getCitizenMournHandler().removeDeceasedCitizen(data.getName());
             }
         }
     }
@@ -643,5 +656,25 @@ public class CitizenManager implements ICitizenManager
         }
 
         this.areCitizensSleeping = true;
+    }
+
+    @Override
+    public void onWakeUp()
+    {
+        for (final ICitizenData citizenData : citizens.values())
+        {
+            if (citizenData.getCitizenMournHandler().isMourning())
+            {
+                citizenData.getCitizenMournHandler().clearDeceasedCitizen();
+                citizenData.getCitizenMournHandler().setMourning(false);
+            }
+            else
+            {
+                if (citizenData.getCitizenMournHandler().shouldMourn())
+                {
+                    citizenData.getCitizenMournHandler().setMourning(true);
+                }
+            }
+        }
     }
 }

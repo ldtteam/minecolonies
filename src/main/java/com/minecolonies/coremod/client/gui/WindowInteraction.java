@@ -8,6 +8,7 @@ import com.ldtteam.blockout.views.Box;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.coremod.client.gui.citizen.MainWindowCitizen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
@@ -49,7 +50,7 @@ public class WindowInteraction extends AbstractWindowSkeleton
      */
     public WindowInteraction(final ICitizenDataView citizen)
     {
-        super(Constants.MOD_ID + INTERACTION_RESOURCE_SUFFIX, new WindowCitizen(citizen));
+        super(Constants.MOD_ID + INTERACTION_RESOURCE_SUFFIX, new MainWindowCitizen(citizen));
         this.citizen = citizen;
         this.interactions = citizen.getOrderedInteractions();
     }

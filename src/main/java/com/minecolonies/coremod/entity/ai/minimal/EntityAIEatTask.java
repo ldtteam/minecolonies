@@ -375,7 +375,7 @@ public class EntityAIEatTask extends Goal
     {
         final ICitizenData citizenData = citizen.getCitizenData();
         final IColony colony = citizenData.getColony();
-        restaurantPos = colony.getBuildingManager().getBestRestaurant(citizen);
+        restaurantPos = colony.getBuildingManager().getBestBuilding(citizen, BuildingCook.class);
 
         if (restaurantPos == null)
         {
@@ -465,7 +465,7 @@ public class EntityAIEatTask extends Goal
     {
         final ICitizenData citizenData = citizen.getCitizenData();
         final IColony colony = citizenData.getColony();
-        restaurantPos = colony.getBuildingManager().getBestRestaurant(citizen);
+        restaurantPos = colony.getBuildingManager().getBestBuilding(citizen, BuildingCook.class);
         if (citizenData.getSaturation() == 0.0)
         {
 

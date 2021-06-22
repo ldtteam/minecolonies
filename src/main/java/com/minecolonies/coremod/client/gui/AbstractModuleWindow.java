@@ -31,7 +31,7 @@ public abstract class AbstractModuleWindow extends AbstractWindowSkeleton implem
     {
         super(res);
         this.buildingView = building;
-        final Random random = new Random();
+        final Random random = new Random(building.getID().hashCode());
         int offset = 0;
 
         //todo We have to move this to 0 as soon as we're finished with modularization and remove the switch views in favor of a sidenav xml.
@@ -60,6 +60,8 @@ public abstract class AbstractModuleWindow extends AbstractWindowSkeleton implem
 
         for (IBuildingModuleView view : building.getAllModuleViews())
         {
+            if (!view.isPageVisible()) continue;
+
             final ButtonImage image = new ButtonImage();
             image.setImage("minecolonies:textures/gui/modules/tab_side" + (random.nextInt(3) + 1) + ".png");
             image.setPosition(-20, 10 + offset);

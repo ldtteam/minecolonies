@@ -7,12 +7,16 @@ import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.loot.LootTableManager;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.MinecraftForge;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Manager class for tracking Custom recipes during load and use
@@ -40,6 +44,11 @@ public class CustomRecipeManager
      * This list will be processed on first access of the custom recipe list after load, and will be emptied.
      */
     private final List<ResourceLocation> removedRecipes = new ArrayList<>();
+
+    /**
+     * The collection of related loot table drops (for informational purposes, not loot gen).
+     */
+    private final Map<ResourceLocation, List<LootTableAnalyzer.LootDrop>> lootTables = new HashMap<>();
 
     private CustomRecipeManager()
     {
@@ -183,6 +192,20 @@ public class CustomRecipeManager
         return returnList;
     }
 
+    /**
+     * Gets the loot drops (if any) associated with a particular recipe.  These are just
+     * informational and shouldn't be used to actually generate loot.
+     * @param lootTableId The loot table id of the recipe.
+     * @return The loot drops.
+     */
+    @NotNull
+    public List<LootTableAnalyzer.LootDrop> getLootDrops(@Nullable final ResourceLocation lootTableId)
+    {
+        if (lootTableId == null) return Collections.emptyList();
+
+        return lootTables.getOrDefault(lootTableId, Collections.emptyList());
+    }
+
     private void removeRecipes()
     {
         if (!removedRecipes.isEmpty())
@@ -197,6 +220,22 @@ public class CustomRecipeManager
 
             removedRecipes.clear();
         }
+    }
+
+    /**
+     * Analyses and builds an approximate list of possible loot drops from registered recipes.
+     * @param lootTableManager the loot table manager
+     */
+    public void buildLootData(@NotNull final LootTableManager lootTableManager)
+    {
+        lootTables.clear();
+        lootTables.putAll(recipeMap.values().stream()
+                .flatMap(r -> r.values().stream())
+                .map(CustomRecipe::getLootTable)
+                .filter(Objects::nonNull)
+                .distinct()
+                .collect(Collectors.toConcurrentMap(Function.identity(),
+                        id -> LootTableAnalyzer.toDrops(lootTableManager, id))));
     }
 
     /**
@@ -232,6 +271,17 @@ public class CustomRecipeManager
                 //recipeMgrPacketBuffer.writeCompoundTag(StandardFactoryController.getInstance().serialize(recipe));
             }
         }
+
+        recipeMgrPacketBuffer.writeVarInt(lootTables.size());
+        for (final Map.Entry<ResourceLocation, List<LootTableAnalyzer.LootDrop>> lootEntry : lootTables.entrySet())
+        {
+            recipeMgrPacketBuffer.writeResourceLocation(lootEntry.getKey());
+            recipeMgrPacketBuffer.writeVarInt(lootEntry.getValue().size());
+            for (final LootTableAnalyzer.LootDrop drop : lootEntry.getValue())
+            {
+                drop.serialize(recipeMgrPacketBuffer);
+            }
+        }
     }
 
     /**
@@ -242,6 +292,7 @@ public class CustomRecipeManager
     {
         recipeOutputMap.clear();
         recipeMap.clear();
+        lootTables.clear();
 
         for (int crafterNum = buff.readVarInt(); crafterNum > 0; crafterNum--)
         {
@@ -252,5 +303,19 @@ public class CustomRecipeManager
                 //addRecipe(StandardFactoryController.getInstance().deserialize(buff.readCompoundTag()));
             }
         }
+
+        for (int lootNum = buff.readVarInt(); lootNum > 0; --lootNum)
+        {
+            final ResourceLocation id = buff.readResourceLocation();
+            int count = buff.readVarInt();
+            final List<LootTableAnalyzer.LootDrop> drops = new ArrayList<>(count);
+            for (; count > 0; --count)
+            {
+                drops.add(LootTableAnalyzer.LootDrop.deserialize(buff));
+            }
+            lootTables.put(id, drops);
+        }
+
+        MinecraftForge.EVENT_BUS.post(new CustomRecipesReloadedEvent());
     }
 }

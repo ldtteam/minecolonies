@@ -4,23 +4,17 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
-import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.coremod.client.gui.WindowGuardControl;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
-import net.minecraft.client.Minecraft;
+import com.minecolonies.coremod.colony.buildings.modules.settings.GuardTaskSetting;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -78,42 +72,6 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
         return handleItemUsage(ctx.getWorld(), ctx.getPos(), compound, ctx.getPlayer());
     }
 
-    @NotNull
-    @Override
-    public ActionResult<ItemStack> onItemRightClick(final World worldIn, final PlayerEntity playerIn, @NotNull final Hand hand)
-    {
-        final ItemStack stack = playerIn.getHeldItem(hand);
-        if (!stack.hasTag())
-        {
-            stack.setTag(new CompoundNBT());
-        }
-        final CompoundNBT compound = stack.getTag();
-
-        if (worldIn.isRemote && compound != null)
-        {
-            if (!compound.keySet().contains(TAG_ID))
-            {
-                return ActionResult.resultConsume(stack);
-            }
-            final IColonyView colony = IColonyManager.getInstance().getColonyView(compound.getInt(TAG_ID), Minecraft.getInstance().world.getDimensionKey());
-            if (colony == null)
-            {
-
-                return ActionResult.resultConsume(stack);
-            }
-            final BlockPos guardTower = BlockPosUtil.read(compound, TAG_POS);
-            final IBuildingView hut = colony.getBuilding(guardTower);
-
-            if (hut instanceof AbstractBuildingGuards.View && playerIn.isSneaking())
-            {
-                final WindowGuardControl window = new WindowGuardControl((AbstractBuildingGuards.View) hut);
-                window.open();
-            }
-        }
-
-        return ActionResult.resultSuccess(stack);
-    }
-
     /**
      * Handles the usage of the item.
      *
@@ -150,7 +108,6 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
             return ActionResultType.FAIL;
         }
 
-        final GuardTask task = GuardTask.values()[compound.getInt("task")];
         final ICitizenData citizen = tower.getMainCitizen();
 
         String name = "";
@@ -159,7 +116,7 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
             name = " " + citizen.getName();
         }
 
-        if (task.equals(GuardTask.GUARD))
+        if (((AbstractBuildingGuards) hut).getSetting(AbstractBuildingGuards.GUARD_TASK).getValue().equals(GuardTaskSetting.GUARD))
         {
             LanguageHandler.sendPlayerMessage(playerIn, "com.minecolonies.coremod.job.guard.toolClickGuard", pos, name);
             tower.setGuardPos(pos);

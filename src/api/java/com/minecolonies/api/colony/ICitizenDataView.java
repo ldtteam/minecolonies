@@ -5,9 +5,11 @@ import com.minecolonies.api.colony.jobs.IJobView;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenHappinessHandler;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
+import com.minecolonies.api.util.Tuple;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -155,4 +157,29 @@ public interface ICitizenDataView extends ICitizen
      */
     @Nullable
     IJobView getJobView();
+
+    /**
+     * Get the partner of the citizen.
+     * @return the partner or null if non existent.
+     */
+    @Nullable
+    Integer getPartner();
+
+    /**
+     * Get the list of children of a citizen.
+     * @return the citizen ids.
+     */
+    List<Integer> getChildren();
+
+    /**
+     * Get the list of children of a citizen.
+     * @return the citizen ids.
+     */
+    List<Integer> getSiblings();
+
+    /**
+     * Get the names of the parents.
+     * @return the name.
+     */
+    Tuple<String, String> getParents();
 }

@@ -30,6 +30,7 @@ import net.minecraftforge.items.IItemHandler;
 import java.util.List;
 
 import static com.minecolonies.api.util.ItemStackUtils.*;
+import static com.minecolonies.api.util.constant.BuildingConstants.BUILDING_FLOWER_LIST;
 import static com.minecolonies.api.util.constant.CitizenConstants.LOW_SATURATION;
 import static com.minecolonies.api.util.constant.HappinessConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
@@ -64,11 +65,11 @@ public class InteractionValidatorInitializer
           citizen -> citizen.getSaturation() == 0 && citizen.isChild() && citizen.needsBetterFood());
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(NO_RESTAURANT),
           citizen -> citizen.getColony() != null && citizen.getSaturation() <= LOW_SATURATION && citizen.getEntity().isPresent()
-                       && citizen.getColony().getBuildingManager().getBestRestaurant(citizen.getEntity().get()) == null
+                       && citizen.getColony().getBuildingManager().getBestBuilding(citizen.getEntity().get(), BuildingCook.class) == null
                        && InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(citizen.getInventory(), ISFOOD) == -1);
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(NO_HOSPITAL),
           citizen -> citizen.getColony() != null && citizen.getEntity().isPresent() && citizen.getEntity().get().getCitizenDiseaseHandler().isSick()
-                       && citizen.getColony().getBuildingManager().getBestHospital(citizen.getEntity().get()) == null);
+                       && citizen.getColony().getBuildingManager().getBestBuilding(citizen.getEntity().get(), BuildingHospital.class) == null);
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(WAITING_FOR_CURE),
           citizen -> citizen.getColony() != null && citizen.getEntity().isPresent() && !citizen.getEntity().get().getCitizenDiseaseHandler().getDisease().isEmpty());
 
@@ -147,7 +148,7 @@ public class InteractionValidatorInitializer
                       final World world = colony.getWorld();
                       if (world != null)
                       {
-                          return workBuilding.getMaxToolLevel() < WorkerUtil.getCorrectHavestLevelForBlock(world.getBlockState(pos).getBlock());
+                          return workBuilding.getMaxToolLevel() < WorkerUtil.getCorrectHarvestLevelForBlock(world.getBlockState(pos));
                       }
                   }
               }
@@ -286,5 +287,9 @@ public class InteractionValidatorInitializer
 
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(NO + SLEPTTONIGHT),
           citizen -> !(citizen.getJob() instanceof AbstractJobGuard) && citizen.getCitizenHappinessHandler().getModifier(SLEPTTONIGHT).getDays() <= 0);
+
+        InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_BEEKEEPER_NOFLOWERS),
+          citizen -> citizen.getWorkBuilding() instanceof BuildingBeekeeper
+                       && ((BuildingBeekeeper) citizen.getWorkBuilding()).getModuleMatching(ItemListModule.class, m -> m.getId().equals(BUILDING_FLOWER_LIST)).getList().isEmpty());
     }
 }

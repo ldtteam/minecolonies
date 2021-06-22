@@ -180,7 +180,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
             }
             if (!itemList.isEmpty())
             {
-                worker.getCitizenData().createRequestAsync(new StackList(itemList, COM_MINECOLONIES_REQUESTS_COMPOSTABLE, Constants.STACKSIZE * getOwnBuilding().getBarrels().size(), 1, 64));
+                worker.getCitizenData().createRequestAsync(new StackList(itemList, COM_MINECOLONIES_REQUESTS_COMPOSTABLE, Constants.STACKSIZE * getOwnBuilding().getBarrels().size(), 1, getOwnBuilding().getSetting(BuildingComposter.MIN).getValue()));
             }
         }
 

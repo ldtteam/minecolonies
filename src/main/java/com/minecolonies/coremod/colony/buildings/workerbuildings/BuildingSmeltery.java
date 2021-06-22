@@ -8,20 +8,34 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
+import com.minecolonies.api.compatibility.ICompatibilityManager;
+import com.minecolonies.api.crafting.GenericRecipe;
+import com.minecolonies.api.crafting.IGenericRecipe;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.coremod.colony.jobs.JobSmelter;
+import com.minecolonies.coremod.util.FurnaceRecipes;
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.item.ArmorItem;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.SwordItem;
 import net.minecraft.item.ToolItem;
-import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
 import static com.minecolonies.api.util.constant.Constants.*;
@@ -152,6 +166,52 @@ public class BuildingSmeltery extends AbstractBuildingFurnaceUser
         public Window getWindow()
         {
             return new WindowHutWorkerModulePlaceholder<>(this, "smelter");
+        }
+    }
+
+    public static class SmeltingModule extends AbstractCraftingBuildingModule.Smelting
+    {
+        @Nullable
+        @Override
+        public IJob<?> getCraftingJob()
+        {
+            return getMainBuildingJob().orElseGet(() -> new JobSmelter(null));
+        }
+
+        @Override
+        public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
+        {
+            // all "recipes" are handled by the AI, and queried via the job
+            return false;
+        }
+
+        @NotNull
+        @Override
+        public List<IGenericRecipe> getAdditionalRecipesForDisplayPurposesOnly()
+        {
+            final List<IGenericRecipe> recipes = new ArrayList<>(super.getAdditionalRecipesForDisplayPurposesOnly());
+
+            final ICompatibilityManager compatibility = IColonyManager.getInstance().getCompatibilityManager();
+            for (final ItemStack stack : compatibility.getListOfAllItems())
+            {
+                if (ItemStackUtils.IS_SMELTABLE.and(compatibility::isOre).test(stack))
+                {
+                    final ItemStack output = FurnaceRecipes.getInstance().getSmeltingResult(stack);
+                    recipes.add(createSmeltingRecipe(new ItemStorage(stack), output, Blocks.FURNACE));
+                }
+            }
+            return recipes;
+        }
+
+        private static IGenericRecipe createSmeltingRecipe(final ItemStorage input, final ItemStack output, final Block intermediate)
+        {
+            return GenericRecipe.of(StandardFactoryController.getInstance().getNewInstance(
+                    TypeConstants.RECIPE,
+                    StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+                    Collections.singletonList(input),
+                    1,
+                    output,
+                    intermediate));
         }
     }
 }

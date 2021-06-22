@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.ldtteam.blockout.Color;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.PaneBuilders;
 import com.ldtteam.blockout.controls.*;
@@ -13,6 +12,7 @@ import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.coremod.client.gui.citizen.RequestWindowCitizen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.item.ItemStack;
@@ -32,11 +32,6 @@ import static com.minecolonies.coremod.colony.requestsystem.requests.AbstractReq
  */
 public class WindowRequestDetail extends Window implements ButtonHandler
 {
-    /**
-     * Black color.
-     */
-    private static final int BLACK = Color.getByName("black", 0);
-
     /**
      * Link to the xml file of the window.
      */
@@ -66,11 +61,6 @@ public class WindowRequestDetail extends Window implements ButtonHandler
      * Location string.
      */
     private static final String LIST_ELEMENT_ID_REQUEST_LOCATION = "targetLocation";
-
-    /**
-     * Y offset each text line.
-     */
-    private static final int Y_OFFSET_EACH_TEXTFIELD = 10;
 
     /**
      * Resolver string.
@@ -203,13 +193,13 @@ public class WindowRequestDetail extends Window implements ButtonHandler
 
         //Checks if fulfill button should be displayed
         Pane fulfillButton = this.window.getChildren().stream().filter(pane -> pane.getID().equals(REQUEST_FULLFIL)).findFirst().get();
-        if ((this.prevWindow instanceof WindowCitizen && !((WindowCitizen) prevWindow).fulfillable(request)) || this.prevWindow instanceof WindowClipBoard)
+        if ((this.prevWindow instanceof RequestWindowCitizen && !((RequestWindowCitizen) prevWindow).fulfillable(request)) || this.prevWindow instanceof WindowClipBoard)
         {
             fulfillButton.hide();
         }
         //Checks if cancel button should be displayed
         Pane cancelButton = this.window.getChildren().stream().filter(pane -> pane.getID().equals(REQUEST_CANCEL)).findFirst().get();
-        if (this.prevWindow instanceof WindowCitizen && !((WindowCitizen) prevWindow).cancellable(request))
+        if (this.prevWindow instanceof RequestWindowCitizen && !((RequestWindowCitizen) prevWindow).cancellable(request))
         {
             cancelButton.hide();
         }
@@ -225,17 +215,17 @@ public class WindowRequestDetail extends Window implements ButtonHandler
     {
         if (button.getID().equals(REQUEST_FULLFIL))
         {
-            if (this.prevWindow instanceof WindowCitizen)
+            if (this.prevWindow instanceof RequestWindowCitizen)
             {
-                ((WindowCitizen) this.prevWindow).fulfill(request);
+                ((RequestWindowCitizen) this.prevWindow).fulfill(request);
             }
             this.window.close();
         }
         else if (button.getID().equals(REQUEST_CANCEL))
         {
-            if (this.prevWindow instanceof WindowCitizen)
+            if (this.prevWindow instanceof RequestWindowCitizen)
             {
-                ((WindowCitizen) this.prevWindow).cancel(request);
+                ((RequestWindowCitizen) this.prevWindow).cancel(request);
             }
             this.window.close();
         }

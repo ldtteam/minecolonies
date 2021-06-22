@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.buildings.HiringMode;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.buildings.IBuildingWorkerView;
+import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.ISettingsModule;
 import com.minecolonies.api.colony.buildings.modules.settings.ISetting;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
@@ -16,11 +17,7 @@ import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import com.minecolonies.api.crafting.ClassicRecipe;
-import com.minecolonies.api.crafting.IRecipeStorage;
-import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.crafting.MultiOutputRecipe;
-import com.minecolonies.api.crafting.RecipeStorage;
+import com.minecolonies.api.crafting.*;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.inventory.container.ContainerCrafting;
@@ -187,7 +184,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     @Nullable
     public IRecipeStorage getFirstRecipe(final ItemStack stack)
     {
-        return getFirstRecipe(itemStack -> !itemStack.isEmpty() && itemStack.isItemEqual(stack));
+        return getFirstRecipe(itemStack -> !itemStack.isEmpty() && ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, true, true));
     }
 
     @Override
@@ -254,7 +251,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     @Override
     public IRecipeStorage getFirstFullFillableRecipe(final ItemStack tempStack, int count, final boolean considerReservation)
     {
-        return getFirstFullFillableRecipe(itemStack -> !itemStack.isEmpty() && itemStack.isItemEqual(tempStack), count * tempStack.getCount(), considerReservation);
+        return getFirstFullFillableRecipe(itemStack -> !itemStack.isEmpty() && ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, tempStack, true, true), count * tempStack.getCount(), considerReservation);
     }
 
     @Override
@@ -314,9 +311,28 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     }
 
     @Override
-    public boolean canRecipeBeAdded(final IToken<?> ignored)
+    public boolean canRecipeBeAdded(final IToken<?> token)
     {
-        return hasSpaceForMoreRecipes();
+        return hasSpaceForMoreRecipes() && isRecipeCompatibleWithCraftingModule(token);
+    }
+
+    /**
+     * @param token the recipe token
+     * @return whether the recipe can be added according to the crafting module (or false if there's no module)
+     */
+    protected boolean isRecipeCompatibleWithCraftingModule(final IToken<?> token)
+    {
+        final IGenericRecipe recipe = GenericRecipe.of(token);
+        if (recipe == null) return false;
+
+        for (final ICraftingBuildingModule module : this.getModules(ICraftingBuildingModule.class))
+        {
+            if (module.isRecipeCompatible(recipe))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -753,7 +769,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             buf.writeInt(data == null ? 0 : data.getId());
         }
         final List<IRecipeStorage> storages = new ArrayList<>();
-        Map<ResourceLocation, CustomRecipe> crafterRecipes = CustomRecipeManager.getInstance().getAllRecipes().get(getJobName());
+        final Map<ResourceLocation, CustomRecipe> crafterRecipes = CustomRecipeManager.getInstance().getAllRecipes().getOrDefault(getJobName(), Collections.emptyMap());
         for (final IToken<?> token : new ArrayList<>(recipes))
         {
             final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
@@ -871,10 +887,11 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
      */
     public void checkForWorkerSpecificRecipes()
     {
+        final IRecipeManager recipeManager = IColonyManager.getInstance().getRecipeManager();
         for(final CustomRecipe newRecipe : CustomRecipeManager.getInstance().getRecipes(getJobName()))
         {
             final IRecipeStorage recipeStorage = newRecipe.getRecipeStorage();
-            final IToken<?> recipeToken = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(recipeStorage);
+            final IToken<?> recipeToken = recipeManager.checkOrAddRecipe(recipeStorage);
 
             if(newRecipe.isValidForBuilding(this))
             {
@@ -887,7 +904,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
                         duplicateFound = token;
                         break;
                     }
-                    final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
+                    final IRecipeStorage storage = recipeManager.getRecipes().get(token);
 
                     //Let's verify that this recipe doesn't exist in an improved form
                     if(storage != null && storage.getPrimaryOutput().equals(recipeStorage.getPrimaryOutput(), true))
@@ -948,7 +965,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
                     final List<ItemStack> alternates = recipeStorage.getAlternateOutputs();
                     for(IToken<?> token : this.getRecipes())
                     {
-                        final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
+                        final IRecipeStorage storage = recipeManager.getRecipes().get(token);
                         if(storage.getRecipeType() instanceof ClassicRecipe && ItemStackUtils.compareItemStackListIgnoreStackSize(alternates, storage.getPrimaryOutput(), false, true))
                         {
                             removeRecipe(token);

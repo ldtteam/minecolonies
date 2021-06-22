@@ -8,6 +8,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHospital;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.goal.Goal;
@@ -267,7 +268,7 @@ public class EntityAICitizenAvoidEntity extends Goal
             fleeingCounter = 0;
 
             return !(citizen.getHealth() <= SEEK_DOCTOR_HEALTH) || citizen.getCitizenColonyHandler().getColony() == null
-                     || citizen.getCitizenColonyHandler().getColony().getBuildingManager().getBestHospital(citizen) == null;
+                     || citizen.getCitizenColonyHandler().getColony().getBuildingManager().getBestBuilding(citizen, BuildingHospital.class) == null;
         }
         return false;
     }
@@ -280,7 +281,7 @@ public class EntityAICitizenAvoidEntity extends Goal
     {
         stateMachine.tick();
         if (citizen.getHealth() <= SEEK_DOCTOR_HEALTH && citizen.getCitizenColonyHandler().getColony() != null
-              && citizen.getCitizenColonyHandler().getColony().getBuildingManager().getBestHospital(citizen) != null)
+              && citizen.getCitizenColonyHandler().getColony().getBuildingManager().getBestBuilding(citizen, BuildingHospital.class) != null)
         {
             return false;
         }

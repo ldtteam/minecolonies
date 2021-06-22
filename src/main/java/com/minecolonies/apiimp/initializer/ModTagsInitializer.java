@@ -2,15 +2,15 @@ package com.minecolonies.apiimp.initializer;
 
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.Log;
-
-import com.minecolonies.api.util.TagUtils;
 import net.minecraft.block.Block;
+import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
 import net.minecraft.tags.ITag;
 import net.minecraft.tags.ITagCollectionSupplier;
 import net.minecraft.util.ResourceLocation;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
+import static com.minecolonies.api.util.constant.TagConstants.*;
 
 public class ModTagsInitializer
 {
@@ -44,17 +44,6 @@ public class ModTagsInitializer
      */
     private static ITagCollectionSupplier supplier;
 
-    private static final ResourceLocation DECORATION_ITEMS = new ResourceLocation(MOD_ID, "decoblocks");
-    private static final ResourceLocation CONCRETE_POWDER = new ResourceLocation(MOD_ID, "concrete_powder");
-    private static final ResourceLocation CONCRETE_BLOCK  = new ResourceLocation(MOD_ID, "concrete");
-    private static final ResourceLocation PATHING_BLOCKS = new ResourceLocation(MOD_ID, "pathblocks");
-    private static final ResourceLocation FLORIST_FLOWERS = new ResourceLocation(MOD_ID, "florist_flowers");
-    private static final ResourceLocation ORECHANCEBLOCKS = new ResourceLocation(MOD_ID, "orechanceblocks");
-    private static final ResourceLocation COLONYPROTECTIONEXCEPTION = new ResourceLocation(MOD_ID, "protectionexception");
-    private static final ResourceLocation FUNGI = new ResourceLocation(MOD_ID, "fungi");
-    private static final ResourceLocation INDESTRUCTIBLE = new ResourceLocation(MOD_ID, "indestructible");
-    private static final ResourceLocation MESHES = new ResourceLocation(MOD_ID, "meshes");
-
     public static void init(final ITagCollectionSupplier tagSupplier)
     {
         supplier = tagSupplier;
@@ -69,6 +58,7 @@ public class ModTagsInitializer
         ModTags.oreChanceBlocks = getBlockTags(ORECHANCEBLOCKS, supplier);
         ModTags.colonyProtectionException = getBlockTags(COLONYPROTECTIONEXCEPTION, supplier);
         ModTags.indestructible = getBlockTags(INDESTRUCTIBLE, supplier);
+        ModTags.hostile = getEntityTags(HOSTILE, supplier);
 
         initCrafterRules("baker");
         initCrafterRules("blacksmith");
@@ -136,5 +126,16 @@ public class ModTagsInitializer
     private static ITag<Block> getBlockTags(final ResourceLocation resourceLocation, final ITagCollectionSupplier supplier)
     {
         return supplier.getBlockTags().getTagByID(resourceLocation);
+    }
+
+    /**
+     * Get the Tag<EntityType> from the underlying API
+     * @param resourceLocation The resource location specifying the tag ID
+     * @param supplier         The tag supplier providing the tag lookup.
+     * @return the tag collection
+     */
+    private static ITag<EntityType<?>> getEntityTags(final ResourceLocation resourceLocation, final ITagCollectionSupplier supplier)
+    {
+        return supplier.getEntityTypeTags().getTagByID(resourceLocation);
     }
 }

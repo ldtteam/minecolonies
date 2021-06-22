@@ -143,13 +143,6 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
         return ticksExisted;
     }
 
-    @Nullable
-    @Override
-    public Entity changeDimension(final ServerWorld p_241206_1_)
-    {
-        return null;
-    }
-
     @NotNull
     public BlockPos getPosition()
     {
@@ -693,20 +686,6 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      * @return true if so.
      */
     public abstract boolean isIdlingAtJob();
-
-    /**
-     * Returns a value that indicate if the citizen is in mourning.
-     *
-     * @return indicate if the citizen is mouring
-     */
-    public abstract boolean isMourning();
-
-    /**
-     * Call this to set if the citizen should mourn or not.
-     *
-     * @param mourning indicate if the citizen should mourn
-     */
-    public abstract void setMourning(boolean mourning);
 
     public abstract float getRotationYaw();
 

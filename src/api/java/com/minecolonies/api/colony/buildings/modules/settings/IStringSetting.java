@@ -30,4 +30,10 @@ public interface IStringSetting extends ISetting
      * @return a copy of the list.
      */
     List<String> getSettings();
+
+    /**
+     * Set the setting to a specific index.
+     * @param value the value to set.
+     */
+    void set(final String value);
 }

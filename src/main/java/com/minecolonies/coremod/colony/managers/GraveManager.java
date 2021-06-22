@@ -21,7 +21,6 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -143,7 +142,6 @@ public class GraveManager implements IGraveManager
      * @param pos position of the TileEntityGrave to add.
      * @return the grave that was created and added.
      */
-    @Nullable
     @Override
     public boolean addNewGrave(@NotNull final BlockPos pos)
     {

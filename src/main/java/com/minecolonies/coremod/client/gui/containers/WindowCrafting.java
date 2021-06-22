@@ -102,6 +102,17 @@ public class WindowCrafting extends ContainerScreen<ContainerCrafting>
         completeCrafting = building.canCraftComplexRecipes();
     }
 
+    @NotNull
+    public AbstractBuildingWorker.View getBuildingView()
+    {
+        return building;
+    }
+
+    public boolean isCompleteCrafting()
+    {
+        return completeCrafting;
+    }
+
     @Override
     protected void init()
     {

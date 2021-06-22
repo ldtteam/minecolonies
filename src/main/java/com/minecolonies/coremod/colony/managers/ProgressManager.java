@@ -133,7 +133,7 @@ public class ProgressManager implements IProgressManager
         {
             trigger(FOOD_PROD_BUILT);
         }
-        else if (totalHousing == 4 && (building instanceof BuildingTownHall || building.hasModule(LivingBuildingModule.class)))
+        else if (totalHousing == 4 && building.hasModule(LivingBuildingModule.class))
         {
             trigger(ALL_CITIZENS_HOMED);
         }

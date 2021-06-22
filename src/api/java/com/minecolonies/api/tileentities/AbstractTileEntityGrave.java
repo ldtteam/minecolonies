@@ -1,6 +1,5 @@
 package com.minecolonies.api.tileentities;
 
-import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IGraveData;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.tileentity.TileEntityType;

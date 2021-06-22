@@ -247,6 +247,14 @@ public class ItemStorage
     }
 
     @Override
+    public String toString()
+    {
+        final ItemStack stack = this.stack.copy();
+        stack.setCount(this.amount);
+        return stack.toString();
+    }
+
+    @Override
     public int hashCode()
     {
         //Only use the stack itself for the has, equals will handle the broader attributes

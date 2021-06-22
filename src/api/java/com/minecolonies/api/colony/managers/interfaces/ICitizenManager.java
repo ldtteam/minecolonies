@@ -129,7 +129,7 @@ public interface ICitizenManager extends IEntityManager
      *
      * @param mourn boolean to indicate if citizen should mourn or not
      */
-    void updateCitizenMourn(final boolean mourn);
+    void updateCitizenMourn(final ICitizenData data, final boolean mourn);
 
     /**
      * Call this to set all citizens asleep
@@ -159,4 +159,9 @@ public interface ICitizenManager extends IEntityManager
 
     @Override
     ICitizenData getCivilian(final int citizenId);
+
+    /**
+     * Called in the morning.
+     */
+    void onWakeUp();
 }

@@ -30,7 +30,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
@@ -752,6 +751,25 @@ public class InventoryUtils
                     return Integer.MAX_VALUE;
                 }
             }
+        }
+
+        return totalCount;
+    }
+
+    /**
+     * Count the number of items of different types a building has.
+     * 
+     * @param provider the building to check.
+     * @param stacks   the stacks to check for.
+     * @return Amount of occurrences of stacks that match the given stacks.
+     */
+    public static int getCountFromBuilding(@NotNull final IBuilding provider, @NotNull final List<ItemStorage> stacks)
+    {
+        int totalCount = 0;
+
+        for (ItemStorage stack : stacks)
+        {
+            totalCount += getCountFromBuilding(provider, stack);
         }
 
         return totalCount;

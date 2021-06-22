@@ -1,0 +1,4 @@
+<window size="210 244" pause="false" lightbox="false">
+    <layout source="minecolonies:gui/citizen/nav.xml"/>
+        <label id="happinessModifier" pos="45 32" size="136 11" textalign="MIDDLE" color="black"/>
+</window>

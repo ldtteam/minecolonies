@@ -86,6 +86,11 @@ public final class StandardFactoryControllerInitializer
         StandardFactoryController.getInstance().registerNewFactory(new SettingsFactories.PlantationSettingsFactory());
         StandardFactoryController.getInstance().registerNewFactory(new SettingsFactories.BlockSettingFactory());
         StandardFactoryController.getInstance().registerNewFactory(new SettingsFactories.IntSettingFactory());
+        StandardFactoryController.getInstance().registerNewFactory(new SettingsFactories.StringWithDescSettingsFactory());
+        StandardFactoryController.getInstance().registerNewFactory(new SettingsFactories.PatrolModeSettingFactory());
+        StandardFactoryController.getInstance().registerNewFactory(new SettingsFactories.GuardTaskSettingFactory());
+        StandardFactoryController.getInstance().registerNewFactory(new SettingsFactories.FollowModeSettingFactory());
+        StandardFactoryController.getInstance().registerNewFactory(new SettingsFactories.GuardJobSettingFactory());
 
         StandardFactoryController.getInstance().registerNewTypeOverrideHandler(new TypeTokenFactory.TypeTokenSubTypeOverrideHandler());
 

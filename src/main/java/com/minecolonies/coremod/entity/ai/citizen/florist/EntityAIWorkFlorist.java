@@ -16,6 +16,7 @@ import com.minecolonies.coremod.colony.jobs.JobFlorist;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.tileentities.TileEntityCompostedDirt;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Hand;
@@ -265,12 +266,12 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
     /**
      * Calculate how long it takes to mine this block.
      *
-     * @param block the block type
+     * @param state the blockstate
      * @param pos   coordinate
      * @return the delay in ticks
      */
     @Override
-    public int getBlockMiningDelay(@NotNull final Block block, @NotNull final BlockPos pos)
+    public int getBlockMiningDelay(@NotNull final BlockState state, @NotNull final BlockPos pos)
     {
         return BASE_BLOCK_MINING_DELAY * (int) (1 + Math.max(0, MAX_BONUS - PER_LEVEL_BONUS * (getSecondarySkillLevel() / 2.0)));
     }

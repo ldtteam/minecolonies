@@ -26,7 +26,7 @@ public class SettingsFactories
     /**
      * Specific factory for the bool setting.
      */
-    public static class BoolSettingFactory implements IBoolSettingFactory<BoolSetting>
+    public abstract static class AbstractBoolSettingFactory <T extends BoolSetting> implements IBoolSettingFactory<T>
     {
         /**
          * Compound tag for the value.
@@ -40,13 +40,6 @@ public class SettingsFactories
 
         @NotNull
         @Override
-        public TypeToken<BoolSetting> getFactoryOutputType()
-        {
-            return TypeToken.of(BoolSetting.class);
-        }
-
-        @NotNull
-        @Override
         public TypeToken<FactoryVoidInput> getFactoryInputType()
         {
             return TypeConstants.FACTORYVOIDINPUT;
@@ -54,14 +47,14 @@ public class SettingsFactories
 
         @NotNull
         @Override
-        public BoolSetting getNewInstance(final boolean value, final boolean def)
+        public T deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
         {
-            return new BoolSetting(value, def);
+            return this.getNewInstance(nbt.getBoolean(TAG_VALUE), nbt.getBoolean(TAG_DEFAULT));
         }
 
         @NotNull
         @Override
-        public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final BoolSetting storage)
+        public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final T storage)
         {
             final CompoundNBT compound = new CompoundNBT();
             compound.putBoolean(TAG_VALUE, storage.getValue());
@@ -69,15 +62,8 @@ public class SettingsFactories
             return compound;
         }
 
-        @NotNull
         @Override
-        public BoolSetting deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
-        {
-            return this.getNewInstance(nbt.getBoolean(TAG_VALUE), nbt.getBoolean(TAG_DEFAULT));
-        }
-
-        @Override
-        public void serialize(@NotNull final IFactoryController controller, @NotNull final BoolSetting input, @NotNull final PacketBuffer packetBuffer)
+        public void serialize(@NotNull final IFactoryController controller, @NotNull final T input, @NotNull final PacketBuffer packetBuffer)
         {
             packetBuffer.writeBoolean(input.getValue());
             packetBuffer.writeBoolean(input.getDefault());
@@ -85,9 +71,29 @@ public class SettingsFactories
 
         @NotNull
         @Override
-        public BoolSetting deserialize(@NotNull final IFactoryController controller, @NotNull final PacketBuffer buffer) throws Throwable
+        public T deserialize(@NotNull final IFactoryController controller, @NotNull final PacketBuffer buffer) throws Throwable
         {
             return this.getNewInstance(buffer.readBoolean(), buffer.readBoolean());
+        }
+    }
+
+    /**
+     * Specific factory for the bool setting.
+     */
+    public static class BoolSettingFactory extends AbstractBoolSettingFactory<BoolSetting>
+    {
+        @NotNull
+        @Override
+        public TypeToken<BoolSetting> getFactoryOutputType()
+        {
+            return TypeToken.of(BoolSetting.class);
+        }
+
+        @NotNull
+        @Override
+        public BoolSetting getNewInstance(final boolean value, final boolean def)
+        {
+            return new BoolSetting(value, def);
         }
 
         @Override
@@ -357,7 +363,7 @@ public class SettingsFactories
     }
 
     /**
-     * Specific factory for the bool setting.
+     * Specific factory for the plantation setting.
      */
     public static class PlantationSettingsFactory extends AbstractStringSettingsFactory<PlantationSetting>
     {
@@ -379,6 +385,136 @@ public class SettingsFactories
         public short getSerializationId()
         {
             return 49;
+        }
+    }
+
+    /**
+     * Specific factory for the string setting with desc.
+     */
+    public static class StringWithDescSettingsFactory extends AbstractStringSettingsFactory<StringSettingWithDesc>
+    {
+        @NotNull
+        @Override
+        public TypeToken<StringSettingWithDesc> getFactoryOutputType()
+        {
+            return TypeToken.of(StringSettingWithDesc.class);
+        }
+
+        @NotNull
+        @Override
+        public StringSettingWithDesc getNewInstance(final List<String> value, final int curr)
+        {
+            return new StringSettingWithDesc(value, curr);
+        }
+
+        @Override
+        public short getSerializationId()
+        {
+            return 50;
+        }
+    }
+
+    /**
+     * Specific factory for the string setting with desc.
+     */
+    public static class PatrolModeSettingFactory extends AbstractStringSettingsFactory<PatrolModeSetting>
+    {
+        @NotNull
+        @Override
+        public TypeToken<PatrolModeSetting> getFactoryOutputType()
+        {
+            return TypeToken.of(PatrolModeSetting.class);
+        }
+
+        @NotNull
+        @Override
+        public PatrolModeSetting getNewInstance(final List<String> value, final int curr)
+        {
+            return new PatrolModeSetting(value, curr);
+        }
+
+        @Override
+        public short getSerializationId()
+        {
+            return 51;
+        }
+    }
+
+    /**
+     * Specific factory for the string setting with desc.
+     */
+    public static class GuardTaskSettingFactory extends AbstractStringSettingsFactory<GuardTaskSetting>
+    {
+        @NotNull
+        @Override
+        public TypeToken<GuardTaskSetting> getFactoryOutputType()
+        {
+            return TypeToken.of(GuardTaskSetting.class);
+        }
+
+        @NotNull
+        @Override
+        public GuardTaskSetting getNewInstance(final List<String> value, final int curr)
+        {
+            return new GuardTaskSetting(value, curr);
+        }
+
+        @Override
+        public short getSerializationId()
+        {
+            return 52;
+        }
+    }
+
+    /**
+     * Specific factory for the string setting with desc.
+     */
+    public static class FollowModeSettingFactory extends AbstractStringSettingsFactory<FollowModeSetting>
+    {
+        @NotNull
+        @Override
+        public TypeToken<FollowModeSetting> getFactoryOutputType()
+        {
+            return TypeToken.of(FollowModeSetting.class);
+        }
+
+        @NotNull
+        @Override
+        public FollowModeSetting getNewInstance(final List<String> value, final int curr)
+        {
+            return new FollowModeSetting(value, curr);
+        }
+
+        @Override
+        public short getSerializationId()
+        {
+            return 53;
+        }
+    }
+
+    /**
+     * Specific factory for the string setting with desc.
+     */
+    public static class GuardJobSettingFactory extends AbstractStringSettingsFactory<GuardJobSetting>
+    {
+        @NotNull
+        @Override
+        public TypeToken<GuardJobSetting> getFactoryOutputType()
+        {
+            return TypeToken.of(GuardJobSetting.class);
+        }
+
+        @NotNull
+        @Override
+        public GuardJobSetting getNewInstance(final List<String> value, final int curr)
+        {
+            return new GuardJobSetting(value, curr);
+        }
+
+        @Override
+        public short getSerializationId()
+        {
+            return 54;
         }
     }
 }
