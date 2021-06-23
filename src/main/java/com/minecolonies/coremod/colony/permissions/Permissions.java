@@ -314,17 +314,19 @@ public class Permissions implements IPermissions
             {
                 final CompoundNBT permissionsCompound = permissionsTagList.getCompound(i);
                 final Rank rank = ranks.get(permissionsCompound.getInt(TAG_RANK));
-
-                final ListNBT flagsTagList = permissionsCompound.getList(TAG_FLAGS, net.minecraftforge.common.util.Constants.NBT.TAG_STRING);
-
-                int flags = 0;
-
-                for (int j = 0; j < flagsTagList.size(); ++j)
+                if (rank != null)
                 {
-                    final String flag = flagsTagList.getString(j);
-                    flags = Utils.setFlag(flags, Action.valueOf(flag).getFlag());
+                    final ListNBT flagsTagList = permissionsCompound.getList(TAG_FLAGS, net.minecraftforge.common.util.Constants.NBT.TAG_STRING);
+
+                    int flags = 0;
+
+                    for (int j = 0; j < flagsTagList.size(); ++j)
+                    {
+                        final String flag = flagsTagList.getString(j);
+                        flags = Utils.setFlag(flags, Action.valueOf(flag).getFlag());
+                    }
+                    permissionMap.put(rank, flags);
                 }
-                permissionMap.put(rank, flags);
             }
 
             if (compound.contains(TAG_OWNER))
@@ -519,7 +521,10 @@ public class Permissions implements IPermissions
         for (@NotNull final Map.Entry<Rank, Integer> entry : permissionMap.entrySet())
         {
             @NotNull final CompoundNBT permissionsCompound = new CompoundNBT();
-            permissionsCompound.putInt(TAG_RANK, entry.getKey().getId());
+            if (entry.getKey() != null)
+            {
+                permissionsCompound.putInt(TAG_RANK, entry.getKey().getId());
+            }
 
             @NotNull final ListNBT flagsTagList = new ListNBT();
             for (@NotNull final Action action : Action.values())
