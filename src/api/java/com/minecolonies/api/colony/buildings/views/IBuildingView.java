@@ -17,7 +17,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Suppression.GENERIC_WILDCARD;
@@ -39,6 +38,13 @@ public interface IBuildingView extends IRequester
      */
     @NotNull
     BlockPos getPosition();
+
+    /**
+     * Get the parent building
+     *
+     * @return
+     */
+    BlockPos getParent();
 
     /**
      * Get the current level of the building.

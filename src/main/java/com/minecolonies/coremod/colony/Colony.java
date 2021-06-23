@@ -68,7 +68,8 @@ import java.util.*;
 import static com.minecolonies.api.colony.ColonyState.*;
 import static com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateConstants.MAX_TICKRATE;
 import static com.minecolonies.api.util.constant.ColonyConstants.*;
-import static com.minecolonies.api.util.constant.Constants.*;
+import static com.minecolonies.api.util.constant.Constants.DEFAULT_STYLE;
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
@@ -1384,23 +1385,6 @@ public class Colony implements IColony
         for (final ServerPlayerEntity player : packageManager.getCloseSubscribers())
         {
             Network.getNetwork().sendToPlayer(new ColonyViewRemoveWorkOrderMessage(this, orderId), player);
-        }
-    }
-
-    /**
-     * Performed when a building of this colony finished his upgrade state.
-     *
-     * @param building The upgraded building.
-     * @param level    The new level.
-     */
-    @Override
-    public void onBuildingUpgradeComplete(@Nullable final IBuilding building, final int level)
-    {
-        if (building != null)
-        {
-            building.onUpgradeComplete(level);
-            citizenManager.calculateMaxCitizens();
-            this.markDirty();
         }
     }
 

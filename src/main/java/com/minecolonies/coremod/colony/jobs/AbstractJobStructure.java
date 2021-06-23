@@ -9,8 +9,8 @@ import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.server.ServerWorld;
 import org.jetbrains.annotations.Nullable;
 
 import static com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider.TAG_BLUEPRINTDATA;
@@ -126,17 +126,26 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
     {
         getWorkOrder().onCompleted(getCitizen().getColony(), this.getCitizen());
 
-        final TileEntity tileEntity = getColony().getWorld().getTileEntity(getWorkOrder().getBuildingLocation());
-
-        if (tileEntity instanceof IBlueprintDataProvider)
+        final CompoundNBT[][][] tileEntityData = blueprint.getTileEntities();
+        for (short x = 0; x < blueprint.getSizeX(); x++)
         {
-            CompoundNBT teData = blueprint.getTileEntityData(tileEntity.getPos(), blueprint.getPrimaryBlockOffset());
-            if (teData != null && teData.contains(TAG_BLUEPRINTDATA))
+            for (short y = 0; y < blueprint.getSizeY(); y++)
             {
-                ((IBlueprintDataProvider) tileEntity).readSchematicDataFromNBT(teData);
-                Chunk chunk = (Chunk) tileEntity.getWorld().getChunk(tileEntity.getPos());
-                PacketDistributor.TRACKING_CHUNK.with(() -> chunk).send(tileEntity.getUpdatePacket());
-                tileEntity.markDirty();
+                for (short z = 0; z < blueprint.getSizeZ(); z++)
+                {
+                    final CompoundNBT compoundNBT = tileEntityData[y][z][x];
+                    if (compoundNBT != null && compoundNBT.contains(TAG_BLUEPRINTDATA))
+                    {
+                        final BlockPos tePos = getWorkOrder().getSchematicLocation().subtract(blueprint.getPrimaryBlockOffset()).add(x, y, z);
+                        final TileEntity te = getColony().getWorld().getTileEntity(tePos);
+                        if (te instanceof IBlueprintDataProvider)
+                        {
+                            ((IBlueprintDataProvider) te).readSchematicDataFromNBT(compoundNBT);
+                            ((ServerWorld) getColony().getWorld()).getChunkProvider().markBlockChanged(tePos);
+                            te.markDirty();
+                        }
+                    }
+                }
             }
         }
 

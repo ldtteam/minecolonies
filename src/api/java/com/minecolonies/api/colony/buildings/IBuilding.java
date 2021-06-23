@@ -419,6 +419,11 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
     boolean isInBuilding(@NotNull final BlockPos pos);
 
     /**
+     * Upgrades the buildings level to fit its schematic data
+     */
+    void upgradeBuildingLevelToSchematicData();
+
+    /**
      * Get a map of all open requests by type.
      * @return the map.
      */

@@ -23,7 +23,12 @@ public class WorkOrderView
     /**
      * Its description.
      */
-    private String value;
+    private String schematicName;
+
+    /**
+     * Its description.
+     */
+    private String displayName;
 
     /**
      * The type (defined by an enum).
@@ -70,9 +75,19 @@ public class WorkOrderView
      *
      * @return the value String.
      */
-    public String get()
+    public String getSchematicName()
     {
-        return value.replaceAll("schematics/(?:decorations/)?", "");
+        return schematicName.replaceAll("schematics/(?:decorations/)?", "");
+    }
+
+    /**
+     * Return the display name
+     *
+     * @return
+     */
+    public String getDisplayName()
+    {
+        return displayName;
     }
 
     /**
@@ -126,7 +141,8 @@ public class WorkOrderView
         priority = buf.readInt();
         claimedBy = buf.readBlockPos();
         type = WorkOrderType.values()[buf.readInt()];
-        value = buf.readString(32767);
+        schematicName = buf.readString(32767);
+        displayName = buf.readString(32767);
         pos = buf.readBlockPos();
         upgradeLevel = buf.readInt();
     }
