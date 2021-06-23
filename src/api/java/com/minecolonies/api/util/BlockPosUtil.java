@@ -24,9 +24,11 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.function.BiPredicate;
@@ -154,6 +156,42 @@ public final class BlockPosUtil
         coordsCompound.putInt("y", pos.getY());
         coordsCompound.putInt("z", pos.getZ());
         tagList.add(coordsCompound);
+    }
+
+    /**
+     * Write a list of positions to a compound
+     *
+     * @param compoundNBT compound to save the list on
+     * @param tagname     key to save the list on
+     * @param positions   block positions to write
+     */
+    public static void writePosListToNBT(final CompoundNBT compoundNBT, final String tagname, final List<BlockPos> positions)
+    {
+        ListNBT listNBT = new ListNBT();
+        for (final BlockPos pos : positions)
+        {
+            writeToListNBT(listNBT, pos);
+        }
+        compoundNBT.put(tagname, listNBT);
+    }
+
+    /**
+     * Reads a list of block positions from NBT
+     *
+     * @param compoundNBT compound the list is in
+     * @param tagname     key of the list
+     * @return list of block positions
+     */
+    public static List<BlockPos> readPosListFromNBT(final CompoundNBT compoundNBT, final String tagname)
+    {
+        final List<BlockPos> result = new ArrayList<>();
+        ListNBT listNBT = compoundNBT.getList(tagname, Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < listNBT.size(); i++)
+        {
+            result.add(readFromListNBT(listNBT, i));
+        }
+
+        return result;
     }
 
     /**
@@ -415,6 +453,7 @@ public final class BlockPosUtil
     {
         return world.getBlockState(coords).getDrops(new LootContext.Builder((ServerWorld) world)
                                                       .withLuck(fortune)
+                                                      .withNullableParameter(LootParameters.BLOCK_ENTITY, world.getTileEntity(coords))
                                                       .withParameter(LootParameters.field_237457_g_, entity.getPositionVec())
                                                       .withParameter(LootParameters.TOOL, stack));
     }

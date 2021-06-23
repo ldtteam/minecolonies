@@ -33,7 +33,7 @@ import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.Block;
-import net.minecraft.inventory.ItemStackHelper;
+import net.minecraft.block.BlockState;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tags.BlockTags;
@@ -1123,11 +1123,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      * <p>
      * If we have no tool for the job, we will request on, return immediately.
      *
-     * @param target the block to mine
+     * @param target the BlockState to mine
      * @param pos    the pos to mine
      * @return true if we have a tool for the job
      */
-    public final boolean holdEfficientTool(@NotNull final Block target, final BlockPos pos)
+    public final boolean holdEfficientTool(@NotNull final BlockState target, final BlockPos pos)
     {
         final int bestSlot = getMostEfficientTool(target, pos);
         if (bestSlot >= 0)
@@ -1143,17 +1143,17 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     /**
      * Request the appropriate tool for this block.
      *
-     * @param target the block to mine
+     * @param target the blockstate to mine
      * @param pos    the pos to mine
      */
-    private void requestTool(@NotNull final Block target, final BlockPos pos)
+    private void requestTool(@NotNull final BlockState target, final BlockPos pos)
     {
-        final IToolType toolType = WorkerUtil.getBestToolForBlock(target, target.getDefaultState().getBlockHardness(world, pos));
-        final int required = WorkerUtil.getCorrectHavestLevelForBlock(target);
+        final IToolType toolType = WorkerUtil.getBestToolForBlock(target, target.getBlockHardness(world, pos));
+        final int required = WorkerUtil.getCorrectHarvestLevelForBlock(target);
         if (getOwnBuilding().getMaxToolLevel() < required && worker.getCitizenData() != null)
         {
             worker.getCitizenData().triggerInteraction(new PosBasedInteraction(
-              new TranslationTextComponent(BUILDING_LEVEL_TOO_LOW, new ItemStack(target).getDisplayName(), pos.getX(), pos.getY(), pos.getZ()),
+              new TranslationTextComponent(BUILDING_LEVEL_TOO_LOW, new ItemStack(target.getBlock()).getDisplayName(), pos.getX(), pos.getY(), pos.getZ()),
               ChatPriority.IMPORTANT,
               new TranslationTextComponent(BUILDING_LEVEL_TOO_LOW),
               pos));
@@ -1182,14 +1182,14 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     /**
      * Calculates the most efficient tool to use on that block.
      *
-     * @param target the Block type to mine
+     * @param target the BlockState to mine
      * @param pos    the pos it is at.
      * @return the slot with the best tool
      */
-    protected int getMostEfficientTool(@NotNull final Block target, final BlockPos pos)
+    protected int getMostEfficientTool(@NotNull final BlockState target, final BlockPos pos)
     {
-        final IToolType toolType = WorkerUtil.getBestToolForBlock(target, target.getDefaultState().getBlockHardness(world, pos));
-        final int required = WorkerUtil.getCorrectHavestLevelForBlock(target);
+        final IToolType toolType = WorkerUtil.getBestToolForBlock(target, target.getBlockHardness(world, pos));
+        final int required = WorkerUtil.getCorrectHarvestLevelForBlock(target);
 
         if (toolType == ToolType.NONE)
         {

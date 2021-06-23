@@ -249,7 +249,7 @@ public class WorkManager implements IWorkManager
             {
                 if (or instanceof WorkOrderBuildDecoration)
                 {
-                    if (((WorkOrderBuildDecoration) or).getBuildingLocation().equals(((WorkOrderBuildDecoration) order).buildingLocation)
+                    if (((WorkOrderBuildDecoration) or).getSchematicLocation().equals(((WorkOrderBuildDecoration) order).buildingLocation)
                           && ((WorkOrderBuildDecoration) or).getStructureName().equals(((WorkOrderBuildDecoration) order).getStructureName()))
                     {
                         Log.getLogger().warn("Avoiding adding duplicate workOrder");
@@ -263,8 +263,8 @@ public class WorkManager implements IWorkManager
                 LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
                   OUT_OF_COLONY,
                   ((WorkOrderBuildDecoration) order).getName(),
-                  ((WorkOrderBuildDecoration) order).getBuildingLocation().getX(),
-                  ((WorkOrderBuildDecoration) order).getBuildingLocation().getZ());
+                  ((WorkOrderBuildDecoration) order).getSchematicLocation().getX(),
+                  ((WorkOrderBuildDecoration) order).getSchematicLocation().getZ());
                 return;
             }
         }
@@ -306,9 +306,9 @@ public class WorkManager implements IWorkManager
     {
         final World world = colony.getWorld();
         final Tuple<BlockPos, BlockPos> corners
-          = ColonyUtils.calculateCorners(order.getBuildingLocation(),
+          = ColonyUtils.calculateCorners(order.getSchematicLocation(),
           world,
-          new LoadOnlyStructureHandler(world, order.getBuildingLocation(), order.getStructureName(), new PlacementSettings(), true).getBluePrint(),
+          new LoadOnlyStructureHandler(world, order.getSchematicLocation(), order.getStructureName(), new PlacementSettings(), true).getBluePrint(),
           order.getRotation(world),
           order.isMirrored());
 

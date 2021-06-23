@@ -120,14 +120,7 @@ public class GlobalResearchTree implements IGlobalResearchTree
         }
         for (IResearchEffect<?> effect : research.getEffects())
         {
-            if(researchEffectsIds.containsKey(effect.getId()))
-            {
-                researchEffectsIds.get(effect.getId()).add(research);
-            }
-            else
-            {
-                researchEffectsIds.put(effect.getId(), new HashSet<IGlobalResearch>());
-            }
+            researchEffectsIds.computeIfAbsent(effect.getId(), id -> new HashSet<>()).add(research);
         }
         if (research.isAutostart())
         {
@@ -192,6 +185,10 @@ public class GlobalResearchTree implements IGlobalResearchTree
             for(Map.Entry<ResourceLocation, Map<ResourceLocation, IGlobalResearch>> branch : researchTree.entrySet())
             {
                 branch.getValue().remove(reset);
+            }
+            for (final Set<IGlobalResearch> effectResearches : researchEffectsIds.values())
+            {
+                effectResearches.removeIf(r -> r.getId().equals(reset));
             }
         }
         reloadableResearch.clear();
@@ -258,6 +255,7 @@ public class GlobalResearchTree implements IGlobalResearchTree
     {
         researchTree.clear();
         branchDatas.clear();
+        researchEffectsIds.clear();
         for (int branchNum = buf.readVarInt(); branchNum > 0; branchNum--)
         {
             for(int researchNum = buf.readVarInt(); researchNum > 0; researchNum--)

@@ -15,7 +15,6 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilde
 import com.minecolonies.coremod.colony.buildings.utils.BuilderBucket;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.entity.ai.util.BuildingStructureHandler;
 import net.minecraft.item.ItemStack;
@@ -27,7 +26,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CURR_STAGE;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_TOTAL_STAGES;
 import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
 
 /**
@@ -91,7 +91,7 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
             final WorkOrderBuildDecoration workOrderBuildDecoration = structureBuilderJob.getWorkOrder();
             if (workOrderBuildDecoration != null)
             {
-                final String name = workOrderBuildDecoration instanceof WorkOrderBuild ? ((WorkOrderBuild) workOrderBuildDecoration).getUpgradeName() : workOrderBuildDecoration.getName();
+                final String name = workOrderBuildDecoration.getDisplayName();
                 buf.writeString(name);
 
                 buf.writeDouble(workOrderBuildDecoration.getAmountOfRes() == 0 ? 0 : qty / workOrderBuildDecoration.getAmountOfRes());

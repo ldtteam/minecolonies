@@ -1,6 +1,8 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.google.common.collect.ImmutableSet;
 import com.ldtteam.structures.blueprints.v1.Blueprint;
+import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.util.PlacementSettings;
@@ -8,16 +10,22 @@ import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ISchematicProvider;
+import com.minecolonies.api.colony.managers.interfaces.IBuildingManager;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.api.util.Log;
 import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
@@ -73,6 +81,16 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
      * The building area box of this building
      */
     private AxisAlignedBB buildingArea = null;
+
+    /**
+     * Parent schematic this is in
+     */
+    private BlockPos parentSchematic = BlockPos.ZERO;
+
+    /**
+     * Child schematics within this
+     */
+    private Set<BlockPos> childSchematics = ImmutableSet.of();
 
     public AbstractSchematicProvider(final BlockPos pos, final IColony colony)
     {
@@ -130,6 +148,8 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
 
         compound.putBoolean(TAG_DECONSTRUCTED, isDeconstructed);
 
+        BlockPosUtil.write(compound, TAG_PARENT_SCHEM, parentSchematic);
+        BlockPosUtil.writePosListToNBT(compound, TAG_CHILD_SCHEM, new ArrayList<>(childSchematics));
         return compound;
     }
 
@@ -144,10 +164,9 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
 
         isBuildingMirrored = compound.getBoolean(TAG_MIRROR);
 
-        if (compound.keySet().contains(TAG_CORNER1) && !compound.keySet().contains(TAG_CORNER3))
+        if (compound.keySet().contains(TAG_CORNER1) && compound.keySet().contains(TAG_CORNER2))
         {
-            this.pos1 = BlockPosUtil.read(compound, TAG_CORNER1);
-            this.pos2 = BlockPosUtil.read(compound, TAG_CORNER2);
+            setCorners(BlockPosUtil.read(compound, TAG_CORNER1), BlockPosUtil.read(compound, TAG_CORNER2));
         }
 
         if (compound.contains(TAG_HEIGHT))
@@ -168,6 +187,9 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
         {
             this.isDeconstructed = false;
         }
+
+        parentSchematic = BlockPosUtil.read(compound, TAG_PARENT_SCHEM);
+        childSchematics = ImmutableSet.copyOf(BlockPosUtil.readPosListFromNBT(compound, TAG_CHILD_SCHEM));
     }
 
     private void deserializerStructureInformationFrom(final CompoundNBT compound)
@@ -205,8 +227,16 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     @Override
     public void setCorners(final BlockPos pos1, final BlockPos pos2)
     {
-        this.pos1 = pos1;
-        this.pos2 = pos2;
+        if (pos1.getX() + pos1.getZ() < pos2.getX() + pos2.getZ())
+        {
+            this.pos1 = pos1;
+            this.pos2 = pos2;
+        }
+        else
+        {
+            this.pos1 = pos2;
+            this.pos2 = pos1;
+        }
     }
 
     @Override
@@ -224,6 +254,73 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     {
         // Location doubles as ID.
         return location;
+    }
+
+    @Override
+    public BlockPos getParent()
+    {
+        final IBuilding building = colony.getBuildingManager().getBuilding(parentSchematic);
+        if (building != null)
+        {
+            if (!building.getChildren().contains(getID()))
+            {
+                building.addChild(getID());
+            }
+        }
+
+        return parentSchematic;
+    }
+
+    @Override
+    public void setParent(final BlockPos pos)
+    {
+        if (!pos.equals(getID()))
+        {
+            parentSchematic = pos;
+        }
+    }
+
+    @Override
+    public Set<BlockPos> getChildren()
+    {
+        // Validate childs existance
+        final IBuildingManager manager = colony.getBuildingManager();
+        List<BlockPos> toRemove = null;
+
+        for (final BlockPos pos : childSchematics)
+        {
+            if (manager.getBuilding(pos) == null)
+            {
+                if (toRemove == null)
+                {
+                    toRemove = new ArrayList<>();
+                }
+                toRemove.add(pos);
+            }
+        }
+
+        if (toRemove != null)
+        {
+            final Set<BlockPos> oldPositions = new HashSet<>(this.childSchematics);
+            oldPositions.removeAll(toRemove);
+            this.childSchematics = ImmutableSet.copyOf(oldPositions);
+        }
+
+        return childSchematics;
+    }
+
+    @Override
+    public void addChild(final BlockPos pos)
+    {
+        childSchematics = ImmutableSet.<BlockPos>builder().addAll(childSchematics).add(pos).build();
+    }
+
+    @Override
+    public void removeChild(final BlockPos pos)
+    {
+        final Set<BlockPos> oldPositions = new HashSet<>(childSchematics);
+        oldPositions.remove(pos);
+        childSchematics = ImmutableSet.copyOf(oldPositions);
     }
 
     @Override
@@ -280,6 +377,15 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     @Override
     public String getStyle()
     {
+        if (parentSchematic != BlockPos.ZERO)
+        {
+            final IBuilding building = colony.getBuildingManager().getBuilding(parentSchematic);
+            if (building != null)
+            {
+                return building.getStyle();
+            }
+        }
+
         return style;
     }
 
@@ -289,6 +395,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
         this.style = style;
         cachedRotation = -1;
         this.markDirty();
+        getTileEntity().setStyle(style);
     }
 
     @Override
@@ -329,5 +436,43 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
         return positionVec.getX() >= corners.getA().getX() - 1 && positionVec.getX() <= corners.getB().getX() + 1
                  && positionVec.getY() >= corners.getA().getY() - 1 && positionVec.getY() <= corners.getB().getY() + 1
                  && positionVec.getZ() >= corners.getA().getZ() - 1 && positionVec.getZ() <= corners.getB().getZ() + 1;
+    }
+
+    @Override
+    public void upgradeBuildingLevelToSchematicData()
+    {
+        final TileEntity tileEntity = colony.getWorld().getTileEntity(getID());
+        if (tileEntity instanceof IBlueprintDataProvider)
+        {
+            final IBlueprintDataProvider blueprintDataProvider = (IBlueprintDataProvider) tileEntity;
+            if (blueprintDataProvider.getSchematicName().isEmpty())
+            {
+                return;
+            }
+
+            setCorners(blueprintDataProvider.getInWorldCorners().getA(), blueprintDataProvider.getInWorldCorners().getB());
+
+            int level = 0;
+            try
+            {
+                level = Integer.parseInt(blueprintDataProvider.getSchematicName().substring(blueprintDataProvider.getSchematicName().length() - 1));
+            }
+            catch (NumberFormatException e)
+            {
+
+            }
+
+            if (level > 0 && level >= getBuildingLevel() && level <= getMaxBuildingLevel())
+            {
+                onUpgradeComplete(level);
+                setBuildingLevel(level);
+            }
+        }
+    }
+
+    @Override
+    public void onUpgradeSchematicTo(final String oldSchematic, final String newSchematic, final IBlueprintDataProvider blueprintDataProvider)
+    {
+        upgradeBuildingLevelToSchematicData();
     }
 }

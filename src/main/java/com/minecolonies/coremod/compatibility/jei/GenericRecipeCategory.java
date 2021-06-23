@@ -1,7 +1,5 @@
 package com.minecolonies.coremod.compatibility.jei;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
 import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
@@ -9,10 +7,10 @@ import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.crafting.CustomRecipe;
 import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
+import com.minecolonies.coremod.colony.crafting.LootTableAnalyzer;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.IRecipeLayout;
@@ -295,20 +293,10 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
         return recipe.getLootTable() != null && recipe.getPrimaryOutput().isEmpty();
     }
 
-    private static List<LootTableAnalyzer.LootDrop> getLootDrops(@NotNull final ResourceLocation lootTable)
+    private static List<LootTableAnalyzer.LootDrop> getLootDrops(@NotNull final ResourceLocation lootTableId)
     {
-        try
-        {
-            final JsonObject lootTableJson = LootTableAnalyzer.getLootTableJson(lootTable);
-            final List<LootTableAnalyzer.LootDrop> drops = LootTableAnalyzer.toDrops(lootTableJson);
-            return drops.size() > 18 ? LootTableAnalyzer.consolidate(drops) : drops;
-        }
-        catch (final JsonParseException ex)
-        {
-            Log.getLogger().error(String.format("Failed to parse loot table from %s",
-                    lootTable.toString()), ex);
-            return Collections.emptyList();
-        }
+        final List<LootTableAnalyzer.LootDrop> drops = CustomRecipeManager.getInstance().getLootDrops(lootTableId);
+        return drops.size() > 18 ? LootTableAnalyzer.consolidate(drops) : drops;
     }
 
     @NotNull

@@ -1,6 +1,5 @@
 package com.minecolonies.api.colony;
 
-import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.managers.interfaces.*;
 import com.minecolonies.api.colony.permissions.IPermissions;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
@@ -203,8 +202,6 @@ public interface IColony
      */
     @NotNull
     List<PlayerEntity> getMessagePlayerEntities();
-
-    void onBuildingUpgradeComplete(@Nullable IBuilding building, int level);
 
     @NotNull
     default List<BlockPos> getWayPoints(@NotNull BlockPos position, @NotNull BlockPos target)

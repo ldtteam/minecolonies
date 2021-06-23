@@ -294,7 +294,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
                     rowPane.findPaneOfTypeByID(BUTTON_RESTART, Button.class).off();
                 }
 
-                final StringTextComponent intermString = new StringTextComponent(" | ");
+                final StringTextComponent intermString = new StringTextComponent(" ");
                 final TextBuilder textBuilder = PaneBuilders.textBuilder();
                 textBuilder.append(new StringTextComponent(""));
                 int skillCount = citizen.getCitizenSkillHandler().getSkills().entrySet().size();

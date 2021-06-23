@@ -147,7 +147,7 @@ public class InteractionValidatorInitializer
                       final World world = colony.getWorld();
                       if (world != null)
                       {
-                          return workBuilding.getMaxToolLevel() < WorkerUtil.getCorrectHavestLevelForBlock(world.getBlockState(pos).getBlock());
+                          return workBuilding.getMaxToolLevel() < WorkerUtil.getCorrectHarvestLevelForBlock(world.getBlockState(pos));
                       }
                   }
               }

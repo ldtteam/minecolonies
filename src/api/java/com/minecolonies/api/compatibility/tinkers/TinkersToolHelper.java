@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import slimeknights.tconstruct.library.tools.helper.ToolAttackUtil;
 import slimeknights.tconstruct.library.tools.nbt.ToolStack;
+import slimeknights.tconstruct.library.tools.stat.ToolStats;
 import slimeknights.tconstruct.tools.item.small.SwordTool;
 
 /**
@@ -45,7 +46,7 @@ public final class TinkersToolHelper extends TinkersToolProxy
     @Override
     public double getAttackDamage(@NotNull final ItemStack stack)
     {
-        return ToolAttackUtil.getActualDamage(ToolStack.copyFrom(stack), null);
+        return ToolStack.copyFrom(stack).getStats().getFloat(ToolStats.ATTACK_DAMAGE);
     }
 
     /**
@@ -61,7 +62,7 @@ public final class TinkersToolHelper extends TinkersToolProxy
         {
             return -1;
         }
-        return (ToolStack.copyFrom(stack).getStats().getHarvestLevel());
+        return (ToolStack.copyFrom(stack).getStats().getInt(ToolStats.HARVEST_LEVEL));
     }
 
     /**

@@ -1,19 +1,20 @@
 package com.minecolonies.coremod.colony;
 
 import com.minecolonies.api.colony.*;
-import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
 import com.minecolonies.api.colony.managers.interfaces.*;
-import com.minecolonies.api.colony.permissions.*;
+import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.colony.permissions.IPermissions;
+import com.minecolonies.api.colony.permissions.Player;
+import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.colony.workorders.WorkOrderView;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.items.ItemBlockHut;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.research.IResearchManager;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -31,7 +32,6 @@ import com.minecolonies.coremod.network.messages.server.colony.ColonyFlagChangeM
 import com.minecolonies.coremod.network.messages.server.colony.TownHallRenameMessage;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.DyeColor;
 import net.minecraft.nbt.CompoundNBT;
@@ -52,7 +52,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BANNER_PATTERNS;
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
@@ -1240,12 +1239,6 @@ public final class ColonyView implements IColonyView
     public List<PlayerEntity> getMessagePlayerEntities()
     {
         return new ArrayList<>();
-    }
-
-    @Override
-    public void onBuildingUpgradeComplete(@Nullable final IBuilding building, final int level)
-    {
-
     }
 
     @Override

@@ -202,7 +202,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
             return false;
         }
 
-        final IBuilding building = job.getColony().getBuildingManager().getBuilding(wo.getBuildingLocation());
+        final IBuilding building = job.getColony().getBuildingManager().getBuilding(wo.getSchematicLocation());
         if (building == null && wo instanceof WorkOrderBuild && !(wo instanceof WorkOrderBuildRemoval))
         {
             job.complete();
@@ -234,7 +234,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     {
         if (getOwnBuilding().getBuildingLevel() >= LEVEL_TO_PURGE_MOBS && job.getWorkOrder() instanceof WorkOrderBuildBuilding)
         {
-            final BlockPos buildingPos = job.getWorkOrder().getBuildingLocation();
+            final BlockPos buildingPos = job.getWorkOrder().getSchematicLocation();
             final IBuilding building = worker.getCitizenColonyHandler().getColony().getBuildingManager().getBuilding(buildingPos);
             if (building != null)
             {
@@ -310,9 +310,9 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     }
 
     @Override
-    public int getBlockMiningDelay(@NotNull final Block block, @NotNull final BlockPos pos)
+    public int getBlockMiningDelay(@NotNull final BlockState state, @NotNull final BlockPos pos)
     {
-        final int initialDelay = super.getBlockMiningDelay(block, pos);
+        final int initialDelay = super.getBlockMiningDelay(state, pos);
 
         if (pos.getY() > DEPTH_LEVEL_0 || !MineColonies.getConfig().getServer().restrictBuilderUnderground.get())
         {
