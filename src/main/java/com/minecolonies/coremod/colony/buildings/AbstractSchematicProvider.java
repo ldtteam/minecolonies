@@ -69,8 +69,8 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     /**
      * Corners of the building.
      */
-    private BlockPos pos1 = null;
-    private BlockPos pos2 = null;
+    private BlockPos lowerCorner  = null;
+    private BlockPos higherCorner = null;
 
     /**
      * Cached rotation.
@@ -139,8 +139,8 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
         compound.putBoolean(TAG_MIRROR, isBuildingMirrored);
 
         getCorners();
-        BlockPosUtil.write(compound, TAG_CORNER1, this.pos1);
-        BlockPosUtil.write(compound, TAG_CORNER2, this.pos2);
+        BlockPosUtil.write(compound, TAG_CORNER1, this.lowerCorner);
+        BlockPosUtil.write(compound, TAG_CORNER2, this.higherCorner);
 
         compound.putInt(TAG_HEIGHT, this.height);
 
@@ -227,18 +227,18 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     @Override
     public void setCorners(final BlockPos pos1, final BlockPos pos2)
     {
-        this.pos1 = new BlockPos(Math.min(pos1.getX(), pos2.getX()), Math.min(pos1.getY(), pos2.getY()), Math.min(pos1.getZ(), pos2.getZ()));
-        this.pos2 = new BlockPos(Math.max(pos1.getX(), pos2.getX()), Math.max(pos1.getY(), pos2.getY()), Math.max(pos1.getZ(), pos2.getZ()));
+        this.lowerCorner = new BlockPos(Math.min(pos1.getX(), pos2.getX()), Math.min(pos1.getY(), pos2.getY()), Math.min(pos1.getZ(), pos2.getZ()));
+        this.higherCorner = new BlockPos(Math.max(pos1.getX(), pos2.getX()), Math.max(pos1.getY(), pos2.getY()), Math.max(pos1.getZ(), pos2.getZ()));
     }
 
     @Override
     public Tuple<BlockPos, BlockPos> getCorners()
     {
-        if (pos1 == null || pos2 == null)
+        if (lowerCorner == null || higherCorner == null)
         {
             this.calculateCorners();
         }
-        return new Tuple<>(pos1, pos2);
+        return new Tuple<>(lowerCorner, higherCorner);
     }
 
     @Override
