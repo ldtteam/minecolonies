@@ -30,7 +30,7 @@ import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.ldtteam.structurize.placement.BlueprintIterator.NULL_POS;
+import static com.ldtteam.structurize.placement.AbstractBlueprintIterator.NULL_POS;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.IDLE;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.PICK_UP_RESIDUALS;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
@@ -197,7 +197,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         StructurePhasePlacementResult result;
         final WorkerLoadOnlyStructureHandler structure =
           new WorkerLoadOnlyStructureHandler(world, structurePlacer.getB().getWorldPos(), structurePlacer.getB().getBluePrint(), new PlacementSettings(), true, this);
-        final StructurePlacer placer = new StructurePlacer(structure);
+        final StructurePlacer placer = new StructurePlacer(structure, job.getWorkOrder().getIteratorType());
 
         if (requestProgress == null)
         {

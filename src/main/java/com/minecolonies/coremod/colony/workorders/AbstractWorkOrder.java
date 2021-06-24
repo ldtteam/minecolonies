@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony.workorders;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.ldtteam.structurize.Structurize;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.workorders.IWorkManager;
@@ -37,13 +38,15 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     private static final String TAG_ID                  = "id";
     private static final String TAG_CLAIMED_BY          = "claimedBy";
     private static final String TAG_CLAIMED_BY_BUILDING = "claimedByBuilding";
+    private static final String TAG_ITERATOR            = "iterator";
 
     /**
      * Bimap of workOrder from string to class.
      */
     @NotNull
     private static final BiMap<String, Class<? extends IWorkOrder>> nameToClassBiMap = HashBiMap.create();
-    /**
+
+    /*
      * WorkOrder registry.
      */
     static
@@ -81,11 +84,25 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     protected BlockPos buildingLocation;
 
     /**
+     * Used iterator type in structurize.
+     */
+    private String iteratorType;
+
+    /**
      * Default constructor; we also start with a new id and replace it during loading; this greatly simplifies creating subclasses.
      */
     public AbstractWorkOrder()
     {
-        //Should be overridden
+        this.iteratorType = Structurize.getConfig().getServer().iteratorType.get();
+    }
+
+    /**
+     * Get the used iteratortype.
+     * @return the used type.
+     */
+    public String getIteratorType()
+    {
+        return iteratorType;
     }
 
     /**
@@ -197,6 +214,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
             claimedBy = BlockPosUtil.read(compound, TAG_CLAIMED_BY_BUILDING);
         }
         buildingLocation = BlockPosUtil.read(compound, TAG_BUILDING);
+        iteratorType = compound.getString(TAG_ITERATOR);
     }
 
     /**
@@ -377,6 +395,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
             BlockPosUtil.write(compound, TAG_CLAIMED_BY_BUILDING, claimedBy);
         }
         BlockPosUtil.write(compound, TAG_BUILDING, buildingLocation);
+        compound.putString(TAG_ITERATOR, iteratorType);
     }
 
     /**
