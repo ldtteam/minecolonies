@@ -309,8 +309,8 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
                 for (final IToken<?> taskToken : assignedTasks)
                 {
                     final IRequest<? extends PublicCrafting> request = (IRequest<? extends PublicCrafting>) building.getColony().getRequestManager().getRequestForToken(taskToken);
-                    final IRecipeStorage recipeStorage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(request.getRequest().getRecipeStorage());
-                    if (this.recipes.contains(request.getRequest().getRecipeStorage()) && recipeStorage != null)
+                    final IRecipeStorage recipeStorage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(request.getRequest().getRecipeID());
+                    if (this.recipes.contains(request.getRequest().getRecipeID()) && recipeStorage != null)
                     {
                         recipes.add(new Tuple<>(recipeStorage, request.getRequest().getCount()));
                     }

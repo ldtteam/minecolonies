@@ -69,7 +69,7 @@ public class PrivateWorkerCraftingProductionResolver extends AbstractCraftingPro
 
         final AbstractBuildingWorker buildingWorker = (AbstractBuildingWorker) building;
 
-        final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(request.getRequest().getRecipeStorage());
+        final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(request.getRequest().getRecipeID());
 
         if (storage == null)
         {
@@ -77,7 +77,7 @@ public class PrivateWorkerCraftingProductionResolver extends AbstractCraftingPro
             return;
         }
 
-        final ICraftingBuildingModule module = buildingWorker.getCraftingModuleForRecipe(request.getRequest().getRecipeStorage());
+        final ICraftingBuildingModule module = buildingWorker.getCraftingModuleForRecipe(request.getRequest().getRecipeID());
         if (module == null)
         {
             manager.updateRequestState(request.getId(), RequestState.FAILED);

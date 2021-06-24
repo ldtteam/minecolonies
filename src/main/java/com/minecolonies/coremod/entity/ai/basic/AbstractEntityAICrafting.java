@@ -171,7 +171,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
             return START_WORKING;
         }
 
-        final ICraftingBuildingModule module = getOwnBuilding().getCraftingModuleForRecipe(currentTask.getRequest().getRecipeStorage());
+        final ICraftingBuildingModule module = getOwnBuilding().getCraftingModuleForRecipe(currentTask.getRequest().getRecipeID());
         if (module == null)
         {
             job.finishRequest(false);

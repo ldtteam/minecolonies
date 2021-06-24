@@ -16,7 +16,9 @@ public abstract class AbstractCrafting implements IRequestable
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
     protected static final String NBT_STACK     = "Stack";
     protected static final String NBT_COUNT     = "Count";
-    protected static final String NBT_MIN_COUNT = "Count";
+    protected static final String NBT_MIN_COUNT = "MinCount";
+    protected static final String NBT_TOKEN     = "Token";
+
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
 
     /**
@@ -93,7 +95,7 @@ public abstract class AbstractCrafting implements IRequestable
      * The recipe storage id.
      * @return the id.
      */
-    public IToken<?> getRecipeStorage()
+    public IToken<?> getRecipeID()
     {
         return recipeToken;
     }

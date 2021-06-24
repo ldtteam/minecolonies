@@ -48,7 +48,7 @@ public class PrivateCrafting extends AbstractCrafting
         compound.put(NBT_STACK, input.getStack().serializeNBT());
         compound.putInt(NBT_COUNT, input.getCount());
         compound.putInt(NBT_MIN_COUNT, input.getMinCount());
-        StandardFactoryController.getInstance().serialize(input.getRecipeStorage());
+        StandardFactoryController.getInstance().serialize(input.getRecipeID());
 
         return compound;
     }
@@ -82,7 +82,7 @@ public class PrivateCrafting extends AbstractCrafting
         buffer.writeItemStack(input.getStack());
         buffer.writeInt(input.getCount());
         buffer.writeInt(input.getMinCount());
-        StandardFactoryController.getInstance().serialize(buffer, input.getRecipeStorage());
+        StandardFactoryController.getInstance().serialize(buffer, input.getRecipeID());
     }
 
     /**

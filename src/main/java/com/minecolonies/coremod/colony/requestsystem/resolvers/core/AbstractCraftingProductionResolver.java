@@ -96,7 +96,7 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
           request.getRequest().getStack(),
           request.getRequest().getCount(),
           request.getRequest().getMinCount(),
-          request.getRequest().getRecipeStorage());
+          request.getRequest().getRecipeID());
     }
 
     @Nullable
