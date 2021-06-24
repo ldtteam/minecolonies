@@ -5,14 +5,13 @@ import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import java.util.List;
 
 /**
- * Interface describing core building stats.
- * The first core stats module that is found in the building will define the values.
+ * Interface for modules that creates resolvers.
  */
 public interface ICreatesResolversModule extends IBuildingModule
 {
     /**
-     * Get the max number of inhabitants this module allows.
-     * @return the modules max number of assigned citizens.
+     * Get a list of resolvers for this building.
+     * @return the list of resolvers.
      */
     List<IRequestResolver<?>> createResolvers();
 }

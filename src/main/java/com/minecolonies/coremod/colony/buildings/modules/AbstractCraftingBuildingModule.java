@@ -48,7 +48,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.research.util.ResearchConstants.RECIPES;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_NEW_RECIPES;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_RECIPES;
 import static com.minecolonies.api.util.constant.TranslationConstants.RECIPE_IMPROVED;
 
@@ -146,11 +145,14 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
     /**
      * Check if the recipe is a pre-taught recipe through datapack.
      * @param token the recipe to check.
+     * @param crafterRecipes the list of custom recipes.
      * @return true if so.
      */
-    private boolean isPreTaughtRecipe(final IToken<?> token)
+    private boolean isPreTaughtRecipe(
+      final IToken<?> token,
+      final Map<ResourceLocation, CustomRecipe> crafterRecipes)
     {
-        for (final CustomRecipe rec : CustomRecipeManager.getInstance().getRecipes(getCustomRecipeKey()))
+        for (final CustomRecipe rec : crafterRecipes.values())
         {
             if (rec.getRecipeStorage().equals(IColonyManager.getInstance().getRecipeManager().getRecipes().get(token)))
             {
@@ -167,39 +169,32 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         @NotNull final ListNBT recipesTagList = recipes.stream()
                                                   .map(iToken -> StandardFactoryController.getInstance().serialize(iToken))
                                                   .collect(NBTUtils.toListNBT());
-        moduleCompound.put(TAG_NEW_RECIPES + getId(), recipesTagList);
+        moduleCompound.put(TAG_RECIPES, recipesTagList);
         compound.put(getId(), moduleCompound);
     }
 
     @Override
     public void deserializeNBT(CompoundNBT compound)
     {
+        final ListNBT recipesTags;
         if (compound.contains(TAG_RECIPES))
         {
             //todo remove in 1.17
-            final ListNBT recipesTags = compound.getList(TAG_RECIPES, Constants.NBT.TAG_COMPOUND);
-            for (int i = 0; i < recipesTags.size(); i++)
-            {
-                final IToken<?> token = StandardFactoryController.getInstance().deserialize(recipesTags.getCompound(i));
-                if (!recipes.contains(token))
-                {
-                    recipes.add(token);
-                    IColonyManager.getInstance().getRecipeManager().registerUse(token);
-                }
-            }
+            recipesTags = compound.getList(TAG_RECIPES, Constants.NBT.TAG_COMPOUND);
         }
         else
         {
             final CompoundNBT compoundNBT = compound.getCompound(getId());
-            final ListNBT recipesTags = compoundNBT.getList(TAG_NEW_RECIPES + getId(), Constants.NBT.TAG_COMPOUND);
-            for (int i = 0; i < recipesTags.size(); i++)
+            recipesTags = compoundNBT.getList(TAG_RECIPES, Constants.NBT.TAG_COMPOUND);
+        }
+
+        for (int i = 0; i < recipesTags.size(); i++)
+        {
+            final IToken<?> token = StandardFactoryController.getInstance().deserialize(recipesTags.getCompound(i));
+            if (!recipes.contains(token))
             {
-                final IToken<?> token = StandardFactoryController.getInstance().deserialize(recipesTags.getCompound(i));
-                if (!recipes.contains(token))
-                {
-                    recipes.add(token);
-                    IColonyManager.getInstance().getRecipeManager().registerUse(token);
-                }
+                recipes.add(token);
+                IColonyManager.getInstance().getRecipeManager().registerUse(token);
             }
         }
     }
@@ -222,12 +217,13 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         buf.writeBoolean(this.canLearnLargeRecipes());
 
         final List<IRecipeStorage> storages = new ArrayList<>();
-        final Map<ResourceLocation, CustomRecipe> crafterRecipes = CustomRecipeManager.getInstance().getAllRecipes().getOrDefault(building.getJobName() + "_" + getId(), Collections.emptyMap());
+        final Map<ResourceLocation, CustomRecipe> crafterRecipes = CustomRecipeManager.getInstance().getAllRecipes().getOrDefault(getCustomRecipeKey(), Collections.emptyMap());
         for (final IToken<?> token : new ArrayList<>(recipes))
         {
             final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
 
-            if (storage == null || (storage.getRecipeSource() != null && !crafterRecipes.containsKey(storage.getRecipeSource())) || (!isRecipeCompatibleWithCraftingModule(token) && !isPreTaughtRecipe(token)))
+            //todo remove preTaught check in 1.17
+            if (storage == null || (storage.getRecipeSource() != null && !crafterRecipes.containsKey(storage.getRecipeSource())) || (!isRecipeCompatibleWithCraftingModule(token) && !isPreTaughtRecipe(token, crafterRecipes)))
             {
                 removeRecipe(token);
             }
@@ -314,7 +310,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
                 {
                     final IRequest<? extends PublicCrafting> request = (IRequest<? extends PublicCrafting>) building.getColony().getRequestManager().getRequestForToken(taskToken);
                     final IRecipeStorage recipeStorage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(request.getRequest().getRecipeStorage());
-                    if (recipeStorage != null)
+                    if (this.recipes.contains(request.getRequest().getRecipeStorage()) && recipeStorage != null)
                     {
                         recipes.add(new Tuple<>(recipeStorage, request.getRequest().getCount()));
                     }
@@ -821,16 +817,6 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
                     recipe.getIntermediate() == Blocks.AIR;
         }
 
-        @Override
-        public boolean canRecipeBeAdded(@NotNull final IToken<?> token)
-        {
-            if (!super.canRecipeBeAdded(token))
-            {
-                return false;
-            }
-            return isRecipeCompatibleWithCraftingModule(token);
-        }
-
         /**
          * Get a string identifier to this.
          * @return the id.
@@ -861,16 +847,6 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
                     recipe.getIntermediate() == Blocks.FURNACE;
         }
 
-        @Override
-        public boolean canRecipeBeAdded(@NotNull final IToken<?> token)
-        {
-            if (!super.canRecipeBeAdded(token))
-            {
-                return false;
-            }
-            return isRecipeCompatibleWithCraftingModule(token);
-        }
-
         /**
          * Get a string identifier to this.
          * @return the id.
@@ -894,19 +870,8 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         @Override
         public boolean canLearnLargeRecipes() { return false; }
 
-        //todo need to implement this in the respective workers
         @Override
         public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe) { return false; }
-
-        @Override
-        public boolean canRecipeBeAdded(@NotNull final IToken<?> token)
-        {
-            if (!super.canRecipeBeAdded(token))
-            {
-                return false;
-            }
-            return isRecipeCompatibleWithCraftingModule(token);
-        }
 
         /**
          * Get a string identifier to this.

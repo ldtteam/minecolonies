@@ -454,12 +454,7 @@ public class BuildingCook extends AbstractBuildingFurnaceUser implements IBuildi
                 return false;
             }
 
-            if (!super.canRecipeBeAdded(token))
-            {
-                return false;
-            }
-
-            return isRecipeCompatibleWithCraftingModule(token);
+            return super.canRecipeBeAdded(token);
         }
 
         /**
