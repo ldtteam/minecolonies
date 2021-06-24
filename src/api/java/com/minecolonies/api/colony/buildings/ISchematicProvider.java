@@ -27,6 +27,7 @@ public interface ISchematicProvider extends INBTSerializable<CompoundNBT>
 
     /**
      * Get all the corners of the building based on the schematic.
+     * This is the lowest corner (x,y,z) and the highest corner (x,y,z).
      *
      * @return the corners.
      */
