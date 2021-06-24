@@ -61,7 +61,7 @@ public class PublicCrafting extends AbstractCrafting
     {
         final ItemStack stack = ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_STACK));
         final int count = compound.getInt(NBT_COUNT);
-        IToken<?> token = null
+        IToken<?> token = null;
         if (compound.contains(NBT_TOKEN))
         {
             token = StandardFactoryController.getInstance().deserialize(compound.getCompound(NBT_TOKEN));
