@@ -227,16 +227,8 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     @Override
     public void setCorners(final BlockPos pos1, final BlockPos pos2)
     {
-        if (pos1.getX() + pos1.getZ() < pos2.getX() + pos2.getZ())
-        {
-            this.pos1 = pos1;
-            this.pos2 = pos2;
-        }
-        else
-        {
-            this.pos1 = pos2;
-            this.pos2 = pos1;
-        }
+        this.pos1 = new BlockPos(Math.min(pos1.getX(), pos2.getX()), Math.min(pos1.getY(), pos2.getY()), Math.min(pos1.getZ(), pos2.getZ()));
+        this.pos2 = new BlockPos(Math.max(pos1.getX(), pos2.getX()), Math.max(pos1.getY(), pos2.getY()), Math.max(pos1.getZ(), pos2.getZ()));
     }
 
     @Override
