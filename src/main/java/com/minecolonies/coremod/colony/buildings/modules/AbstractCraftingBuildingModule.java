@@ -144,17 +144,19 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
 
     /**
      * Check if the recipe is a pre-taught recipe through datapack.
-     * @param token the recipe to check.
+     * @param storage the recipe to check.
      * @param crafterRecipes the list of custom recipes.
      * @return true if so.
      */
     private boolean isPreTaughtRecipe(
-      final IToken<?> token,
+      final IRecipeStorage storage,
       final Map<ResourceLocation, CustomRecipe> crafterRecipes)
     {
+        final ItemStack one = storage.getPrimaryOutput();
         for (final CustomRecipe rec : crafterRecipes.values())
         {
-            if (rec.getRecipeStorage().equals(IColonyManager.getInstance().getRecipeManager().getRecipes().get(token)))
+            final ItemStack two = rec.getRecipeStorage().getPrimaryOutput();
+            if (ItemStackUtils.compareItemStacksIgnoreStackSize(one, two) && one.getCount() == two.getCount())
             {
                 return true;
             }
@@ -223,7 +225,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
             final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
 
             //todo remove preTaught check in 1.17
-            if (storage == null || (storage.getRecipeSource() != null && !crafterRecipes.containsKey(storage.getRecipeSource())) || (!isRecipeCompatibleWithCraftingModule(token) && !isPreTaughtRecipe(token, crafterRecipes)))
+            if (storage == null || (storage.getRecipeSource() != null && !crafterRecipes.containsKey(storage.getRecipeSource())) || (!isRecipeCompatibleWithCraftingModule(token) && !isPreTaughtRecipe(storage, crafterRecipes)))
             {
                 removeRecipe(token);
             }
