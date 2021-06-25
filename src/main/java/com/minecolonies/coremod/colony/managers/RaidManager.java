@@ -118,7 +118,7 @@ public class RaidManager implements IRaiderManager
     /**
      * The dynamic difficulty of raids for this colony
      */
-    private int raidDifficulty = MIN_RAID_DIFFICULTY;
+    private int raidDifficulty = 5;
 
     /**
      * Whether there will be a raid in this colony tonight.
