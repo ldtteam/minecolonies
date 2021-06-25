@@ -142,7 +142,7 @@ public class CraftingModuleView extends AbstractBuildingModuleView
     @Override
     public String getDesc()
     {
-        return "com.minecolonies.coremod.gui.workerhuts." + id ;
+        return "com.minecolonies.coremod.gui.workerhuts.recipe." + id ;
     }
 
     public List<IRecipeStorage> getRecipes()
