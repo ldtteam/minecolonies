@@ -457,62 +457,6 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         recipes.clear();
     }
 
-    /**
-     * @param token the token of the recipe storage.
-     * @return whether the recipe can bee added based on tokens.
-     */
-    protected Optional<Boolean> canRecipeBeAddedBasedOnTags(final IToken<?> token)
-    {
-        final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-        return canRecipeBeAddedBasedOnTags(storage);
-    }
-
-    /**
-     * @param storage the recipe storage to check.
-     * @return whether the recipe can bee added based on tokens.
-     */
-    protected Optional<Boolean> canRecipeBeAddedBasedOnTags(final IRecipeStorage storage)
-    {
-        if (storage == null)
-        {
-            return Optional.of(false);
-        }
-
-        final String crafterName = building.getJobName().toLowerCase();
-
-        // Check against excluded products
-        if (ModTags.crafterProductExclusions.containsKey(crafterName) && ModTags.crafterProductExclusions.get(crafterName).contains(storage.getPrimaryOutput().getItem()))
-        {
-            return Optional.of(false);
-        }
-
-        // Check against allowed products
-        if (ModTags.crafterProduct.containsKey(crafterName) && ModTags.crafterProduct.get(crafterName).contains(storage.getPrimaryOutput().getItem()))
-        {
-            return Optional.of(true);
-        }
-
-        // Check against excluded ingredients
-        for (final ItemStorage stack : storage.getInput())
-        {
-            if (ModTags.crafterIngredientExclusions.containsKey(crafterName) && ModTags.crafterIngredientExclusions.get(crafterName).contains(stack.getItem()))
-            {
-                return Optional.of(false);
-            }
-        }
-
-        // Check against allowed ingredients
-        for (final ItemStorage stack : storage.getInput())
-        {
-            if (ModTags.crafterIngredient.containsKey(crafterName) && ModTags.crafterIngredient.get(crafterName).contains(stack.getItem()))
-            {
-                return Optional.of(true);
-            }
-        }
-
-        return Optional.empty();
-    }
-
     @Override
     public void improveRecipe(IRecipeStorage recipe, int count, ICitizenData citizen)
     {

@@ -520,8 +520,8 @@ public class BuildingCook extends AbstractBuildingFurnaceUser implements IBuildi
 
             //If we didn't have a stored recipe, see if there is a smelting recipe that is also a food output, and use it.
             storage = FurnaceRecipes.getInstance().getFirstSmeltingRecipeByResult(stackPredicate);
-            Optional<Boolean> validRecipe =  canRecipeBeAddedBasedOnTags(storage);
-            if(storage != null && ISFOOD.test(storage.getPrimaryOutput().getStack()) && (!validRecipe.isPresent() || validRecipe.get()))
+            boolean validRecipe = isRecipeCompatibleWithCraftingModule(storage.getToken());
+            if(storage != null && ISFOOD.test(storage.getPrimaryOutput().getStack()) && validRecipe)
             {
                 return storage;
             }

@@ -709,23 +709,5 @@ public class BuildingFarmer extends AbstractBuildingWorker implements IBuildingP
             if (!super.isRecipeCompatible(recipe)) return false;
             return CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, FARMER).orElse(false);
         }
-
-        @Override
-        public boolean canRecipeBeAdded(@NotNull final IToken<?> token)
-        {
-            if (!super.canRecipeBeAdded(token))
-            {
-                return false;
-            }
-            Optional<Boolean> isRecipeAllowed;
-
-            if (!super.canRecipeBeAdded(token))
-            {
-                return false;
-            }
-
-            isRecipeAllowed = super.canRecipeBeAddedBasedOnTags(token);
-            return isRecipeAllowed.orElse(false);
-        }
     }
 }
