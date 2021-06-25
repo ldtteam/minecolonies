@@ -13,6 +13,7 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -520,8 +521,7 @@ public class BuildingCook extends AbstractBuildingFurnaceUser implements IBuildi
 
             //If we didn't have a stored recipe, see if there is a smelting recipe that is also a food output, and use it.
             storage = FurnaceRecipes.getInstance().getFirstSmeltingRecipeByResult(stackPredicate);
-            boolean validRecipe = isRecipeCompatibleWithCraftingModule(storage.getToken());
-            if(storage != null && ISFOOD.test(storage.getPrimaryOutput().getStack()) && validRecipe)
+            if(storage != null && ISFOOD.test(storage.getPrimaryOutput().getStack()) && isRecipeCompatible(GenericRecipe.of(storage)))
             {
                 return storage;
             }
