@@ -267,7 +267,7 @@ public class CitizenData implements ICitizenData
     /**
      * The inactivity timer in seconds.
      */
-    private int inactivityTimer = -1;
+    private int inactivityTimer = DISABLED;
 
     /**
      * Create a CitizenData given an ID. Used as a super-constructor or during loading.
@@ -1249,10 +1249,10 @@ public class CitizenData implements ICitizenData
             return;
         }
 
-        if (!isWorking && job != null && inactivityTimer != -1 && ++inactivityTimer >= job.getInactivityLimit())
+        if (!isWorking && job != null && inactivityTimer != DISABLED && ++inactivityTimer >= job.getInactivityLimit())
         {
             job.triggerActivityChangeAction(this.isWorking);
-            inactivityTimer = -1;
+            inactivityTimer = DISABLED;
         }
 
         final List<IInteractionResponseHandler> toRemove = new ArrayList<>();
@@ -1482,7 +1482,7 @@ public class CitizenData implements ICitizenData
             {
                 job.triggerActivityChangeAction(isWorking);
             }
-            inactivityTimer = -1;
+            inactivityTimer = DISABLED;
         }
         else if (!isWorking && this.isWorking)
         {
