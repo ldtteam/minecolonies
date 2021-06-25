@@ -116,9 +116,14 @@ public class RaidManager implements IRaiderManager
     private static final int IGNORE_BIOME_CHANCE = 2;
 
     /**
+     * THe initial raid difficulty
+     */
+    private static final int INITIAL_RAID_DIFFICULTY = 5;
+
+    /**
      * The dynamic difficulty of raids for this colony
      */
-    private int raidDifficulty = 5;
+    private int raidDifficulty = INITIAL_RAID_DIFFICULTY;
 
     /**
      * Whether there will be a raid in this colony tonight.
@@ -126,14 +131,24 @@ public class RaidManager implements IRaiderManager
     private boolean raidTonight = false;
 
     /**
+     * Initial value for having barb events
+     */
+    private static boolean INITIAL_CAN_HAVE_BARB_EVENTS = true;
+
+    /**
      * Whether or not this colony may have Raider events. (set via command)
      */
-    private boolean haveBarbEvents = true;
+    private boolean haveBarbEvents = INITIAL_CAN_HAVE_BARB_EVENTS;
+
+    /**
+     * Initial nights since the last raid
+     */
+    private static final int INITIAL_NIGHTS_SINCE_LAST_RAID = 0;
 
     /**
      * The amount of nights since the last raid.
      */
-    private int nightsSinceLastRaid = 0;
+    private int nightsSinceLastRaid = INITIAL_NIGHTS_SINCE_LAST_RAID;
 
     /**
      * Last raider spawnpoints.
@@ -161,14 +176,24 @@ public class RaidManager implements IRaiderManager
     private int buildingPosUsage = 0;
 
     /**
+     * The initially lost citizens
+     */
+    private static final int INITIAL_LOST_CITIZENS = 0;
+
+    /**
      * The amount of citizens lost in a raid, two for normal citizens one for guards
      */
-    private int lostCitizens = 0;
+    private int lostCitizens = INITIAL_LOST_CITIZENS;
+
+    /**
+     * The initial next raid type
+     */
+    private static final String INITIAL_NEXT_RAID_TYPE = "";
 
     /**
      * The next raidType, or "" if the next raid should be determined from biome.
      */
-    private String nextForcedType = "";
+    private String nextForcedType = INITIAL_NEXT_RAID_TYPE;
 
     /**
      * Creates the RaidManager for a colony.
