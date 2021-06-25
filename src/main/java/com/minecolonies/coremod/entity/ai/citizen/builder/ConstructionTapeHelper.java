@@ -7,7 +7,9 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.blocks.decorative.BlockConstructionTape;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.util.ColonyUtils;
-import net.minecraft.block.*;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.HorizontalBlock;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.util.Direction;
@@ -39,9 +41,9 @@ public final class ConstructionTapeHelper
     public static void placeConstructionTape(@NotNull final WorkOrderBuildDecoration workOrder, @NotNull final World world)
     {
         final Tuple<BlockPos, BlockPos> corners
-          = ColonyUtils.calculateCorners(workOrder.getBuildingLocation(),
+          = ColonyUtils.calculateCorners(workOrder.getSchematicLocation(),
           world,
-          new LoadOnlyStructureHandler(world, workOrder.getBuildingLocation(), workOrder.getStructureName(), new PlacementSettings(), true).getBluePrint(),
+          new LoadOnlyStructureHandler(world, workOrder.getSchematicLocation(), workOrder.getStructureName(), new PlacementSettings(), true).getBluePrint(),
           workOrder.getRotation(world),
           workOrder.isMirrored());
         placeConstructionTape(corners, world);
@@ -53,13 +55,14 @@ public final class ConstructionTapeHelper
      * @param corners the corner positions.
      * @param world   the world.
      */
-    public static void placeConstructionTape(final Tuple<BlockPos, BlockPos> corners, @NotNull final World world)
+    public static void placeConstructionTape(final Tuple<BlockPos, BlockPos> orgCorners, @NotNull final World world)
     {
         if (!MineColonies.getConfig().getServer().builderPlaceConstructionTape.get())
         {
             return;
         }
 
+        final Tuple<BlockPos, BlockPos> corners = new Tuple<>(orgCorners.getA().add(-1, 0, -1), orgCorners.getB().add(1, 0, 1));
         final BlockState constructionTape = ModBlocks.blockConstructionTape.getDefaultState();
 
         final int x = Math.min(corners.getA().getX(), corners.getB().getX());
@@ -148,10 +151,10 @@ public final class ConstructionTapeHelper
     public static void removeConstructionTape(@NotNull final WorkOrderBuildDecoration workOrder, @NotNull final World world)
     {
         final LoadOnlyStructureHandler structure =
-          new LoadOnlyStructureHandler(world, workOrder.getBuildingLocation(), workOrder.getStructureName(), new PlacementSettings(), true);
+          new LoadOnlyStructureHandler(world, workOrder.getSchematicLocation(), workOrder.getStructureName(), new PlacementSettings(), true);
         if (structure.hasBluePrint())
         {
-            final Tuple<BlockPos, BlockPos> corners = ColonyUtils.calculateCorners(workOrder.getBuildingLocation(), world,
+            final Tuple<BlockPos, BlockPos> corners = ColonyUtils.calculateCorners(workOrder.getSchematicLocation(), world,
               structure.getBluePrint(), workOrder.getRotation(world), workOrder.isMirrored());
             removeConstructionTape(corners, world);
         }
@@ -163,8 +166,10 @@ public final class ConstructionTapeHelper
      * @param corners the corner positions.
      * @param world   the world.
      */
-    public static void removeConstructionTape(final Tuple<BlockPos, BlockPos> corners, @NotNull final World world)
+    public static void removeConstructionTape(final Tuple<BlockPos, BlockPos> orgCorners, @NotNull final World world)
     {
+        final Tuple<BlockPos, BlockPos> corners = new Tuple<>(orgCorners.getA().add(-1, 0, -1), orgCorners.getB().add(1, 0, 1));
+
         final int x1 = corners.getA().getX();
         final int x3 = corners.getB().getX();
         final int z1 = corners.getA().getZ();

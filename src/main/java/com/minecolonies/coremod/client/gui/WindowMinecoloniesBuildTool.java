@@ -57,22 +57,26 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
     @Override
     public void place(final StructureName structureName)
     {
-        final BlockPos offset =Settings.instance.getActiveStructure().getPrimaryBlockOffset();
+        final BlockPos offset = Settings.instance.getActiveStructure().getPrimaryBlockOffset();
         final BlockState state = Settings.instance.getActiveStructure().getBlockState(offset).getBlockState();
 
         BuildToolPlaceMessage msg = new BuildToolPlaceMessage(
-                structureName.toString(),
-                structureName.toString(),
-                Settings.instance.getPosition(),
-                Settings.instance.getRotation(),
-                structureName.isHut(),
-                Settings.instance.getMirror(),
-                state);
+          structureName.toString(),
+          structureName.toString(),
+          Settings.instance.getPosition(),
+          Settings.instance.getRotation(),
+          structureName.isHut(),
+          Settings.instance.getMirror(),
+          state);
 
         if (structureName.isHut())
+        {
             Network.getNetwork().sendToServer(msg);
+        }
         else
+        {
             Minecraft.getInstance().enqueue(new WindowBuildDecoration(msg, Settings.instance.getPosition(), structureName)::open);
+        }
     }
 
     @Override
@@ -93,22 +97,16 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
         final BlockPos offset = Settings.instance.getActiveStructure().getPrimaryBlockOffset();
         ;
         final BlockState state = Settings.instance.getActiveStructure().getBlockState(offset).getBlockState();
-        if (name.isHut() || Settings.instance.getStaticSchematicName() != null && !Settings.instance.getStaticSchematicName().isEmpty())
-        {
-            Network.getNetwork().sendToServer(new BuildToolPasteMessage(
-              name.toString(),
-              name.toString(),
-              Settings.instance.getPosition(),
-              Settings.instance.getRotation(),
-              name.isHut(),
-              Settings.instance.getMirror(),
-              complete,
-              state));
-        }
-        else
-        {
-            super.paste(name, complete);
-        }
+
+        Network.getNetwork().sendToServer(new BuildToolPasteMessage(
+          name.toString(),
+          name.toString(),
+          Settings.instance.getPosition(),
+          Settings.instance.getRotation(),
+          name.isHut(),
+          Settings.instance.getMirror(),
+          complete,
+          state));
     }
 
     @Override
@@ -163,8 +161,8 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
                 {
                     case NOT_WATER:
                         final String dim = WorldUtil.isNetherType(Minecraft.getInstance().world)
-                                ? TranslationConstants.SUPPLY_CAMP_INVALID_NOT_LAVA_MESSAGE_KEY
-                                : TranslationConstants.SUPPLY_CAMP_INVALID_NOT_WATER_MESSAGE_KEY;
+                                             ? TranslationConstants.SUPPLY_CAMP_INVALID_NOT_LAVA_MESSAGE_KEY
+                                             : TranslationConstants.SUPPLY_CAMP_INVALID_NOT_WATER_MESSAGE_KEY;
                         errorMessage = String.format(dim, outputList);
                         LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, errorMessage, outputList);
                         break;

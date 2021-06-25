@@ -293,7 +293,8 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
 
     private static List<LootTableAnalyzer.LootDrop> getLootDrops(@NotNull final ResourceLocation lootTableId)
     {
-        return CustomRecipeManager.getInstance().getLootDrops(lootTableId);
+        final List<LootTableAnalyzer.LootDrop> drops = CustomRecipeManager.getInstance().getLootDrops(lootTableId);
+        return drops.size() > 18 ? LootTableAnalyzer.consolidate(drops) : drops;
     }
 
     @NotNull

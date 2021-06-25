@@ -11,10 +11,8 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
-import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
 import com.minecolonies.coremod.util.AdvancementUtils;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -163,7 +161,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
     }
 
     @Override
-    protected String get()
+    public String getDisplayName()
     {
         return workOrderName;
     }
@@ -241,13 +239,13 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
             AdvancementUtils.TriggerAdvancementPlayersForColony(colony, player ->
                 AdvancementTriggers.COMPLETE_BUILD_REQUEST.trigger(player, structureName, 0));
 
-            BlockPos position = this.getBuildingLocation();
+            BlockPos position = this.getSchematicLocation();
 
             if (citizen.getName().isEmpty())
             {
                 LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(), COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECOCOMPLETE,
                         citizen.getName(),
-                        this.getName(),
+                  this.getDisplayName(),
                         position.getX(),
                         position.getY(),
                         position.getZ());
@@ -259,7 +257,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
                     LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
                           COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECOCOMPLETE_MANUAL,
                           citizen.getName(),
-                            this.getName(),
+                      this.getDisplayName(),
                             position.getX(),
                             position.getY(),
                             position.getZ());
@@ -269,20 +267,11 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
                     LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
                           COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECOCOMPLETE,
                           citizen.getName(),
-                            this.getName(),
+                      this.getDisplayName(),
                             position.getX(),
                             position.getY(),
                             position.getZ());
                 }
-            }
-        }
-
-        if (this.levelUp)
-        {
-            final TileEntity tileEntity = colony.getWorld().getTileEntity(buildingLocation);
-            if (tileEntity instanceof TileEntityDecorationController)
-            {
-                ((TileEntityDecorationController) tileEntity).setLevel(((TileEntityDecorationController) tileEntity).getLevel() + 1);
             }
         }
     }
@@ -302,7 +291,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
      *
      * @return ID of the building.
      */
-    public BlockPos getBuildingLocation()
+    public BlockPos getSchematicLocation()
     {
         return buildingLocation;
     }

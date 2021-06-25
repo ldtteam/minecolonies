@@ -54,6 +54,12 @@ public abstract class AbstractBuildingView implements IBuildingView
     private final BlockPos location;
 
     /**
+     * Parent building location.
+     */
+    @NotNull
+    private BlockPos parent = BlockPos.ZERO;
+
+    /**
      * The building level.
      */
     private int buildingLevel = 0;
@@ -169,6 +175,13 @@ public abstract class AbstractBuildingView implements IBuildingView
     public BlockPos getPosition()
     {
         return location;
+    }
+
+    @Override
+    @NotNull
+    public BlockPos getParent()
+    {
+        return parent;
     }
 
     /**
@@ -367,6 +380,7 @@ public abstract class AbstractBuildingView implements IBuildingView
         workOrderLevel = buf.readInt();
         style = buf.readString(32767);
         schematicName = buf.readString(32767);
+        parent = buf.readBlockPos();
         customName = buf.readString(32767);
 
         rotation = buf.readInt();
