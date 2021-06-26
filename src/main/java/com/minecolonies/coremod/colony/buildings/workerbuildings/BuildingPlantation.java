@@ -143,10 +143,9 @@ public class BuildingPlantation extends AbstractBuildingCrafter
     /**
      * Get a list of positions to check for crops for the current phase.
      *
-     * @param world the world.
      * @return the list of positions.
      */
-    public List<BlockPos> getPosForPhase(final World world)
+    public List<BlockPos> getPosForPhase()
     {
         final List<BlockPos> filtered = new ArrayList<>();
         if (tileEntity != null && !tileEntity.getPositionedTags().isEmpty())

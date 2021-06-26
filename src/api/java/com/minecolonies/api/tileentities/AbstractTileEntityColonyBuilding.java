@@ -18,6 +18,7 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -188,6 +189,25 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
     public Tuple<BlockPos, BlockPos> getSchematicCorners()
     {
         return new Tuple<>(corner1, corner2);
+    }
+
+    /**
+     * Get the list of positions with a given tag.
+     * @param tag the tag.
+     * @return an empty list if not found.
+     */
+    public List<BlockPos> getPosWithTag(final String tag)
+    {
+        final List<BlockPos> list = new ArrayList<>();
+        for (final Map.Entry<BlockPos, List<String>> entry : tagPosMap.entrySet())
+        {
+            if (entry.getValue().contains(tag))
+            {
+                list.add(entry.getKey());
+            }
+        }
+
+        return list;
     }
 
     @Override

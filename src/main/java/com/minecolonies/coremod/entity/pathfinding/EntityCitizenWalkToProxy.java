@@ -105,6 +105,8 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
         //If his current working level is null, we have nothing to worry about.
         if (level != null)
         {
+            final BlockPos vector = building.getLadderLocation().subtract(building.getCobbleLocation());
+
             final int levelDepth = level.getDepth() + 2;
             final int targetY = target.getY();
             final int workerY = citizen.getPosition().getY();
@@ -141,9 +143,9 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
 
                 addToProxyList(
                   new BlockPos(
-                    ladderPos.getX() + building.getVectorX() * OTHER_SIDE_OF_SHAFT,
+                    ladderPos.getX() + vector.getX() * OTHER_SIDE_OF_SHAFT,
                     level.getDepth(),
-                    ladderPos.getZ() + building.getVectorZ() * OTHER_SIDE_OF_SHAFT));
+                    ladderPos.getZ() + vector.getZ() * OTHER_SIDE_OF_SHAFT));
                 return getProxy(target, citizen.getPosition(), distanceToPath);
 
                 //If he already is at ladder location, the closest node automatically will be his hut block.
@@ -161,17 +163,17 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
                 {
                     addToProxyList(
                       new BlockPos(
-                        ladderPos.getX() + building.getVectorX(),
+                        ladderPos.getX() + vector.getX(),
                         level.getDepth() + (buildingPos.getY() - level.getDepth()) / 2,
-                        ladderPos.getZ() + building.getVectorZ()));
+                        ladderPos.getZ() + vector.getZ()));
                 }
 
                 //Then add the ladder position as the latest node.
                 addToProxyList(
                   new BlockPos(
-                    ladderPos.getX() + building.getVectorX() * OTHER_SIDE_OF_SHAFT,
+                    ladderPos.getX() + vector.getX() * OTHER_SIDE_OF_SHAFT,
                     level.getDepth(),
-                    ladderPos.getZ() + building.getVectorZ() * OTHER_SIDE_OF_SHAFT));
+                    ladderPos.getZ() + vector.getZ() * OTHER_SIDE_OF_SHAFT));
 
                 if (building.getActiveNode() != null && building.getActiveNode().getParent() != null)
                 {

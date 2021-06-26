@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.citizen.Skill;
+import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
@@ -83,29 +84,9 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
     private int currentLevel = 0;
 
     /**
-     * The position of the start of the shaft.
-     */
-    private BlockPos shaftStart;
-
-    /**
-     * Ladder orientation in x.
-     */
-    private int vectorX = 1;
-
-    /**
-     * Ladder orientation in y.
-     */
-    private int vectorZ = 1;
-
-    /**
      * The location of the topmost ladder in the shaft.
      */
     private BlockPos ladderLocation;
-
-    /**
-     * True if a ladder is found.
-     */
-    private boolean foundLadder = false;
 
     /**
      * The id of the activeNode node.
@@ -217,9 +198,6 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         startingLevelShaft = compound.getInt(TAG_STARTING_LEVEL);
         clearedShaft = compound.getBoolean(TAG_CLEARED);
 
-        vectorX = compound.getInt(TAG_VECTORX);
-        vectorZ = compound.getInt(TAG_VECTORZ);
-
         if (compound.keySet().contains(TAG_ACTIVE))
         {
             activeNode = Node.createFromNBT(compound.getCompound(TAG_ACTIVE));
@@ -232,10 +210,6 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         currentLevel = compound.getInt(TAG_CURRENT_LEVEL);
 
         ladderLocation = BlockPosUtil.read(compound, TAG_LLOCATION);
-
-        foundLadder = compound.getBoolean(TAG_LADDER);
-
-        shaftStart = BlockPosUtil.read(compound, TAG_SLOCATION);
         cobbleLocation = BlockPosUtil.read(compound, TAG_CLOCATION);
 
         startingLevelNode = compound.getInt(TAG_SN);
@@ -253,8 +227,6 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         final CompoundNBT compound = super.serializeNBT();
         compound.putInt(TAG_STARTING_LEVEL, startingLevelShaft);
         compound.putBoolean(TAG_CLEARED, clearedShaft);
-        compound.putInt(TAG_VECTORX, vectorX);
-        compound.putInt(TAG_VECTORZ, vectorZ);
         if (activeNode != null)
         {
             final CompoundNBT nodeCompound = new CompoundNBT();
@@ -269,12 +241,10 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
             compound.put(TAG_OLD, nodeCompound);
         }
         compound.putInt(TAG_CURRENT_LEVEL, currentLevel);
-        compound.putBoolean(TAG_LADDER, foundLadder);
         compound.putInt(TAG_SN, startingLevelNode);
 
-        if (shaftStart != null && cobbleLocation != null)
+        if (cobbleLocation != null)
         {
-            BlockPosUtil.write(compound, TAG_SLOCATION, shaftStart);
             BlockPosUtil.write(compound, TAG_CLOCATION, cobbleLocation);
         }
 
@@ -432,77 +402,12 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
      */
     public BlockPos getLadderLocation()
     {
+        if (ladderLocation == null)
+        {
+            loadLadderPos();
+        }
+
         return ladderLocation;
-    }
-
-    /**
-     * Setter of the ladder location.
-     *
-     * @param ladderLocation the new ladder location.
-     */
-    public void setLadderLocation(final BlockPos ladderLocation)
-    {
-        this.ladderLocation = ladderLocation;
-    }
-
-    /**
-     * Checks if a ladder has been found already.
-     *
-     * @return true if so.
-     */
-    public boolean hasFoundLadder()
-    {
-        return foundLadder;
-    }
-
-    /**
-     * Setter for the foundLadder.
-     *
-     * @param foundLadder the boolean.
-     */
-    public void setFoundLadder(final boolean foundLadder)
-    {
-        this.foundLadder = foundLadder;
-    }
-
-    /**
-     * Getter of the X-vector.
-     *
-     * @return the vectorX.
-     */
-    public int getVectorX()
-    {
-        return vectorX;
-    }
-
-    /**
-     * Setter of the X-vector.
-     *
-     * @param vectorX the vector to set +1 or -1.
-     */
-    public void setVectorX(final int vectorX)
-    {
-        this.vectorX = vectorX;
-    }
-
-    /**
-     * Getter of the Z-vector.
-     *
-     * @return the vectorZ.
-     */
-    public int getVectorZ()
-    {
-        return vectorZ;
-    }
-
-    /**
-     * Setter of the Z-vector.
-     *
-     * @param vectorZ the vector to set +1 or -1.
-     */
-    public void setVectorZ(final int vectorZ)
-    {
-        this.vectorZ = vectorZ;
     }
 
     /**
@@ -512,27 +417,32 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
      */
     public BlockPos getCobbleLocation()
     {
+        if (cobbleLocation == null)
+        {
+            loadLadderPos();
+        }
+
         return cobbleLocation;
     }
 
-    /**
-     * Setter for the cobbleLocation.
-     *
-     * @param pos the location to set.
-     */
-    public void setCobbleLocation(final BlockPos pos)
+    @Override
+    public void setTileEntity(final AbstractTileEntityColonyBuilding te)
     {
-        this.cobbleLocation = pos;
+        super.setTileEntity(te);
+        loadLadderPos();
     }
 
-    /**
-     * Setter of the shaftStart.
-     *
-     * @param pos the location.
-     */
-    public void setShaftStart(final BlockPos pos)
+    private void loadLadderPos()
     {
-        this.shaftStart = pos;
+        final List<BlockPos> cobblePos = tileEntity.getPosWithTag("cobble");
+        final List<BlockPos> ladderPos = tileEntity.getPosWithTag("ladder");
+        if (cobblePos.isEmpty() || ladderPos.isEmpty())
+        {
+            updateTEDataFromSchematic();
+            return;
+        }
+        cobbleLocation = getPosition().add(cobblePos.get(0));
+        ladderLocation = getPosition().add(ladderPos.get(0));
     }
 
     /**
