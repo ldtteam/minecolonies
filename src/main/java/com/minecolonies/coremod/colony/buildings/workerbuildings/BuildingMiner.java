@@ -34,9 +34,7 @@ import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.*;
@@ -435,8 +433,9 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
 
     private void loadLadderPos()
     {
-        final Set<BlockPos> cobblePos = tileEntity.getWorldTagNamePosMap().get("cobble");
-        final Set<BlockPos> ladderPos = tileEntity.getWorldTagNamePosMap().get("ladder");
+        final Map<String, Set<BlockPos>> map = tileEntity.getWorldTagNamePosMap();
+        final Set<BlockPos> cobblePos = map.getOrDefault("cobble", new HashSet<>());
+        final Set<BlockPos> ladderPos = map.getOrDefault("ladder", new HashSet<>());
         if (cobblePos.isEmpty() || ladderPos.isEmpty())
         {
             updateTEDataFromSchematic();
