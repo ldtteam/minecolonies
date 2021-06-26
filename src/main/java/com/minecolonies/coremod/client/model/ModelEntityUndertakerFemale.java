@@ -78,7 +78,6 @@ public class ModelEntityUndertakerFemale extends CitizenModel<AbstractEntityCiti
         bipedLeftLeg.setRotationPoint(1.9F, 12.0F, 0.0F);
         bipedLeftLeg.setTextureOffset(16, 48).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, true);
         bipedLeftLeg.setTextureOffset(0, 48).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.25F, false);
-		
 	bipedHeadwear.showModel = false;
     }
 
