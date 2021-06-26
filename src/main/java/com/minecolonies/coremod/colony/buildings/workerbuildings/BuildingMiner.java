@@ -36,6 +36,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.*;
@@ -434,15 +435,15 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
 
     private void loadLadderPos()
     {
-        final List<BlockPos> cobblePos = tileEntity.getPosWithTag("cobble");
-        final List<BlockPos> ladderPos = tileEntity.getPosWithTag("ladder");
+        final Set<BlockPos> cobblePos = tileEntity.getWorldTagNamePosMap().get("cobble");
+        final Set<BlockPos> ladderPos = tileEntity.getWorldTagNamePosMap().get("ladder");
         if (cobblePos.isEmpty() || ladderPos.isEmpty())
         {
             updateTEDataFromSchematic();
             return;
         }
-        cobbleLocation = getPosition().add(cobblePos.get(0));
-        ladderLocation = getPosition().add(ladderPos.get(0));
+        cobbleLocation = cobblePos.iterator().next();
+        ladderLocation = ladderPos.iterator().next();
     }
 
     /**
