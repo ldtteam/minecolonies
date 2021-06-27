@@ -333,8 +333,20 @@ public class EntityAIEatTask extends Goal
     {
         if (eatPos == null || timeOutWalking++ > 400)
         {
-            timeOutWalking = 0;
-            return EAT;
+            if (hasFood())
+            {
+                timeOutWalking = 0;
+                return EAT;
+            }
+            else
+            {
+                waitingTicks++;
+                if (waitingTicks > SECONDS_A_MINUTE * MINUTES_WAITING_TIME)
+                {
+                    waitingTicks = 0;
+                    return GET_FOOD_YOURSELF;
+                }
+            }
         }
 
         if (citizen.isWorkerAtSiteWithMove(eatPos, 1))
@@ -342,6 +354,16 @@ public class EntityAIEatTask extends Goal
             SittingEntity.sitDown(eatPos, citizen, TICKS_SECOND * 60);
             // Delay till they start eating
             timeOutWalking += 10;
+
+            if (!hasFood())
+            {
+                waitingTicks++;
+                if (waitingTicks > SECONDS_A_MINUTE * MINUTES_WAITING_TIME)
+                {
+                    waitingTicks = 0;
+                    return GET_FOOD_YOURSELF;
+                }
+            }
         }
 
         return GO_TO_EAT_POS;
@@ -387,24 +409,16 @@ public class EntityAIEatTask extends Goal
             return GO_TO_RESTAURANT;
         }
 
-        if (hasFood())
+
+        eatPos = findPlaceToEat();
+        if (eatPos != null)
         {
-            eatPos = findPlaceToEat();
-            if (eatPos != null)
-            {
-                return GO_TO_EAT_POS;
-            }
-            else
-            {
-                return EAT;
-            }
+            return GO_TO_EAT_POS;
         }
 
-        waitingTicks++;
-        if (waitingTicks > SECONDS_A_MINUTE * MINUTES_WAITING_TIME)
+        if (hasFood())
         {
-            waitingTicks = 0;
-            return GET_FOOD_YOURSELF;
+            return EAT;
         }
 
         return WAIT_FOR_FOOD;
@@ -465,10 +479,21 @@ public class EntityAIEatTask extends Goal
     {
         final ICitizenData citizenData = citizen.getCitizenData();
         final IColony colony = citizenData.getColony();
-        restaurantPos = colony.getBuildingManager().getBestBuilding(citizen, BuildingCook.class);
+        if (citizenData.getWorkBuilding() != null)
+        {
+            restaurantPos = colony.getBuildingManager().getBestBuilding(citizenData.getWorkBuilding().getPosition(), BuildingCook.class);
+        }
+        else if (citizenData.getHomeBuilding() != null)
+        {
+            restaurantPos = colony.getBuildingManager().getBestBuilding(citizenData.getHomeBuilding().getPosition(), BuildingCook.class);
+        }
+        else
+        {
+            restaurantPos = colony.getBuildingManager().getBestBuilding(citizen, BuildingCook.class);
+        }
+
         if (citizenData.getSaturation() == 0.0)
         {
-
             final IJob<?> job = citizen.getCitizenJobHandler().getColonyJob();
             if (job != null && job.isActive())
             {
