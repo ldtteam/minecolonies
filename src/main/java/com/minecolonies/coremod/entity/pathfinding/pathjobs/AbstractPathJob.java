@@ -1291,7 +1291,7 @@ public abstract class AbstractPathJob implements Callable<Path>
                 {
                     final BlockPos parentPos = parent == null ? start : parent.pos;
                     final BlockPos dir = pos.subtract(parentPos);
-                    if (dir.getY() != 0)
+                    if (dir.getY() != 0 && dir.getX() == 0 && dir.getZ() == 0)
                     {
                         return true;
                     }
