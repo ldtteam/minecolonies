@@ -385,7 +385,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
             final BlockInfo info = blueprint.getBlockInfoAsMap().getOrDefault(blueprint.getPrimaryBlockOffset(), null);
             if (info.getTileEntityData() != null)
             {
-                te.readSchematicDataFromNBT(info.getTileEntityData());
+                te.updateSchematicDataFromNbt(info.getTileEntityData());
             }
         }
     }

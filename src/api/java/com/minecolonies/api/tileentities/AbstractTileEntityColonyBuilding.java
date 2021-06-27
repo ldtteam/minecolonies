@@ -216,6 +216,15 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
         this.version = compound.getInt(TAG_VERSION);
     }
 
+    /**
+     * Update the schematic data from nbt.
+     * @param originalCompound the compound to read.
+     */
+    public void updateSchematicDataFromNbt(final CompoundNBT originalCompound)
+    {
+        IBlueprintDataProvider.super.readSchematicDataFromNBT(originalCompound);
+    }
+
     @Override
     public void readSchematicDataFromNBT(final CompoundNBT originalCompound)
     {
