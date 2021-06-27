@@ -356,7 +356,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     {
         super.sendCompletionMessage(wo);
 
-        final String structureName = job.getBlueprint().getName();
         final BlockPos position = wo.getSchematicLocation();
         if (getOwnBuilding().getManualMode())
         {
@@ -375,7 +374,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
                 {
                     worker.getCitizenChatHandler().sendLocalizedChat(
                       COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE_MANUAL,
-                      structureName,
+                      wo.getDisplayName(),
                       position.getX(),
                       position.getY(),
                       position.getZ());
@@ -395,7 +394,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
 
         if (wo instanceof WorkOrderBuildBuilding)
         {
-            worker.getCitizenChatHandler().sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE, structureName, position.getX(), position.getY(), position.getZ());
+            worker.getCitizenChatHandler().sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE, wo.getDisplayName(), position.getX(), position.getY(), position.getZ());
         }
         else
         {
