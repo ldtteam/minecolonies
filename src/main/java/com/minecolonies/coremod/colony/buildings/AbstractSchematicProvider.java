@@ -367,6 +367,11 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
      */
     protected void updateTEDataFromSchematic()
     {
+        if (buildingLevel <= 0)
+        {
+            return;
+        }
+
         final TileEntityColonyBuilding te = (TileEntityColonyBuilding) getColony().getWorld().getTileEntity(getPosition());
         final String structureName;
         if (te.getSchematicName().isEmpty())
@@ -385,7 +390,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
             final BlockInfo info = blueprint.getBlockInfoAsMap().getOrDefault(blueprint.getPrimaryBlockOffset(), null);
             if (info.getTileEntityData() != null)
             {
-                te.updateSchematicDataFromNbt(info.getTileEntityData());
+                te.readSchematicDataFromNBT(info.getTileEntityData());
             }
         }
     }
