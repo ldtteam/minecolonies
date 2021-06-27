@@ -23478,6 +23478,104 @@
       }
     ]
   },
+  "mob.mercenary.attack": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/mercenary/attack/attack1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/mercenary/attack/attack2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/mercenary/attack/attack3",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/mercenary/attack/attack4",
+        "stream": false
+      }
+    ]
+  },
+  "mob.mercenary.celebrate": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/mercenary/celebrate/celebrate1",
+        "stream": false
+      }
+    ]
+  },
+  "mob.mercenary.die": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/mercenary/die/death1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/mercenary/die/death2",
+        "stream": false
+      }
+    ]
+  },
+  "mob.mercenary.hurt": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/mercenary/hurt/hurt1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/mercenary/hurt/hurt2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/mercenary/hurt/hurt3",
+        "stream": false
+      }
+    ]
+  },
+  "mob.mercenary.say": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/mercenary/say/say1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/mercenary/say/say2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/mercenary/say/say3",
+        "stream": false
+      }
+    ]
+  },
+  "mob.mercenary.step": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/mercenary/step/step1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/mercenary/step/step2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/mercenary/step/step3",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/mercenary/step/step4",
+        "stream": false
+      }
+    ]
+  },
   "raid.raid_alert": {
     "category": "record",
     "sounds": [
