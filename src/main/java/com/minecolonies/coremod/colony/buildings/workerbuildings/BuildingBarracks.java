@@ -27,6 +27,7 @@ import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.items.CapabilityItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -148,6 +149,7 @@ public class BuildingBarracks extends AbstractBuilding
     @Override
     public void onColonyTick(@NotNull final IColony colony)
     {
+        super.onColonyTick(colony);
         if (colony.getWorld().isRemote)
         {
             return;
@@ -157,10 +159,8 @@ public class BuildingBarracks extends AbstractBuilding
         {
             if (!colony.getRaiderManager().areSpiesEnabled())
             {
-                final int amount = InventoryUtils.getItemCountInItemHandler(this.getTileEntity().getInventory(), Items.GOLD_INGOT);
-                if (amount >= SPIES_GOLD_COST)
+                if (InventoryUtils.tryRemoveStackFromItemHandler(this.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElseGet(null), new ItemStack(Items.GOLD_INGOT, SPIES_GOLD_COST)))
                 {
-                    InventoryUtils.removeStackFromItemHandler(tileEntity.getInventory(), new ItemStack(Items.GOLD_INGOT, SPIES_GOLD_COST), SPIES_GOLD_COST);
                     colony.getRaiderManager().setSpiesEnabled(true);
                     colony.markDirty();
                 }

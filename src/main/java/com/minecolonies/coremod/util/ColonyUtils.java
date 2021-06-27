@@ -39,11 +39,16 @@ public final class ColonyUtils
       final int rotation,
       final boolean isMirrored)
     {
+        if (blueprint == null)
+        {
+            return new Tuple<>(pos, pos);
+        }
+
         blueprint.rotateWithMirror(BlockPosUtil.getRotationFromRotations(rotation), isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, world);
         final BlockPos zeroPos = pos.subtract(blueprint.getPrimaryBlockOffset());
 
-        final BlockPos pos1 = new BlockPos(zeroPos.getX() - 1, zeroPos.getY(), zeroPos.getZ() - 1);
-        final BlockPos pos2 = new BlockPos(zeroPos.getX() + blueprint.getSizeX(), zeroPos.getY() + blueprint.getSizeY(), zeroPos.getZ() + blueprint.getSizeZ());
+        final BlockPos pos1 = new BlockPos(zeroPos.getX(), zeroPos.getY(), zeroPos.getZ());
+        final BlockPos pos2 = new BlockPos(zeroPos.getX() + blueprint.getSizeX() - 1, zeroPos.getY() + blueprint.getSizeY() - 1, zeroPos.getZ() + blueprint.getSizeZ() - 1);
 
         return new Tuple<>(pos1, pos2);
     }

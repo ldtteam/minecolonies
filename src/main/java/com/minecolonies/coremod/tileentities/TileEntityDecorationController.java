@@ -154,7 +154,7 @@ public class TileEntityDecorationController extends TileEntity implements IBluep
     }
 
     @Override
-    public Tuple<BlockPos, BlockPos> getCornerPositions()
+    public Tuple<BlockPos, BlockPos> getSchematicCorners()
     {
         if (corner1 == BlockPos.ZERO || corner2 == BlockPos.ZERO)
         {
@@ -165,7 +165,7 @@ public class TileEntityDecorationController extends TileEntity implements IBluep
     }
 
     @Override
-    public void setCorners(final BlockPos pos1, final BlockPos pos2)
+    public void setSchematicCorners(final BlockPos pos1, final BlockPos pos2)
     {
         corner1 = pos1;
         corner2 = pos2;

@@ -20,7 +20,10 @@ import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.coremod.colony.buildings.modules.settings.StringSetting;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
-import com.minecolonies.coremod.colony.workorders.*;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuildRemoval;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
@@ -31,8 +34,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_PURGED_MOBS;
+import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
 /**
  * The builders building.
@@ -241,7 +244,7 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
 
                 if (!job.hasWorkOrder() && wo instanceof WorkOrderBuild && ((WorkOrderBuild) wo).canBuild(otherBuilder))
                 {
-                    final double distance = otherBuilder.getWorkBuilding().getID().distanceSq(wo.getBuildingLocation());
+                    final double distance = otherBuilder.getWorkBuilding().getID().distanceSq(wo.getSchematicLocation());
                     if (distance < distanceToBuilder)
                     {
                         distanceToBuilder = distance;
@@ -249,7 +252,7 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
                 }
             }
 
-            if (citizen.getWorkBuilding().getID().distanceSq(wo.getBuildingLocation()) < distanceToBuilder)
+            if (citizen.getWorkBuilding().getID().distanceSq(wo.getSchematicLocation()) < distanceToBuilder)
             {
                 citizen.getJob(JobBuilder.class).setWorkOrder(wo);
                 wo.setClaimedBy(citizen);

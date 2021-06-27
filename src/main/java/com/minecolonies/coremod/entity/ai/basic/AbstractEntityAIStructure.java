@@ -47,7 +47,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-import static com.ldtteam.structurize.placement.BlueprintIterator.NULL_POS;
+import static com.ldtteam.structurize.placement.AbstractBlueprintIterator.NULL_POS;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.research.util.ResearchConstants.BLOCK_PLACE_SPEED;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
@@ -503,12 +503,21 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
 
         job.setBlueprint(structure.getBluePrint());
         job.getBlueprint().rotateWithMirror(BlockPosUtil.getRotationFromRotations(rotateTimes), isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, world);
-        structurePlacer = new Tuple<>(new StructurePlacer(structure), structure);
+        setStructurePlacer(structure);
 
         if (getProgressPos() != null)
         {
             structure.setStage(getProgressPos().getB());
         }
+    }
+
+    /**
+     * Set the structure placer.
+     * @param structure the placer.
+     */
+    public void setStructurePlacer(final BuildingStructureHandler<J, B> structure)
+    {
+        structurePlacer = new Tuple<>(new StructurePlacer(structure), structure);
     }
 
     /**

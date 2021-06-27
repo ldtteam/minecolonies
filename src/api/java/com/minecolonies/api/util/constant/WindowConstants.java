@@ -514,7 +514,7 @@ public final class WindowConstants
     /**
      * This button will remove the currently rendered structure.
      */
-    public static final String BUTTON_MOVE_BUILDING = "reposition";
+    public static final String BUTTON_DECONSTRUCT_BUILDING = "reposition";
 
     /**
      * Icons used to display the happiness

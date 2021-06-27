@@ -7,12 +7,13 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.workorders.IWorkManager;
-import com.minecolonies.api.util.Log;
+import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -24,6 +25,7 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
 {
     private static final String TAG_UPGRADE_LEVEL = "upgradeLevel";
     private static final String TAG_UPGRADE_NAME  = "upgrade";
+    private static final String TAG_DISP_NAME     = "displayname";
 
     /**
      * Max distance a builder can have from the building site.
@@ -32,6 +34,11 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
 
     private int    upgradeLevel;
     private String upgradeName;
+
+    /**
+     * The displayed name of the workorder
+     */
+    private String displayName = "";
 
     /**
      * Unused constructor for reflection.
@@ -52,23 +59,42 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
         super();
         this.buildingLocation = building.getID();
         this.upgradeLevel = level;
-        this.upgradeName = building.getSchematicName() + level;
+
+        final TileEntity buildingTE = building.getColony().getWorld().getTileEntity(buildingLocation);
+        if (buildingTE instanceof AbstractTileEntityColonyBuilding)
+        {
+            if (!((AbstractTileEntityColonyBuilding) buildingTE).getSchematicName().isEmpty())
+            {
+                this.upgradeName = ((AbstractTileEntityColonyBuilding) buildingTE).getSchematicName().replaceAll("\\d$", "") + level;
+            }
+            else
+            {
+                this.upgradeName = building.getSchematicName() + level;
+            }
+        }
+        else
+        {
+            this.upgradeName = building.getSchematicName() + level;
+        }
         this.buildingRotation = building.getRotation();
         this.isBuildingMirrored = building.getTileEntity() == null ? building.isMirrored() : building.getTileEntity().isMirrored();
         this.cleared = level > 1;
 
         //normalize the structureName
         StructureName sn = new StructureName(Structures.SCHEMATICS_PREFIX, building.getStyle(), this.getUpgradeName());
-        if (building.getTileEntity() != null && !building.getTileEntity().getStyle().isEmpty())
-        {
-            final String previousStructureName = sn.toString();
-            sn = new StructureName(Structures.SCHEMATICS_PREFIX, building.getTileEntity().getStyle(), this.getUpgradeName());
-            Log.getLogger().info("WorkOrderBuild at location " + this.buildingLocation + " is using " + sn + " instead of " + previousStructureName);
-        }
-
-
         this.structureName = sn.toString();
         this.workOrderName = this.structureName;
+
+        if (!building.getParent().equals(BlockPos.ZERO))
+        {
+            final IBuilding parentBuilding = building.getColony().getBuildingManager().getBuilding(building.getParent());
+            if (parentBuilding != null)
+            {
+                displayName = parentBuilding.getCustomBuildingName() + "/";
+            }
+        }
+
+        displayName += building.getCustomBuildingName() + level;
     }
 
     @Override
@@ -78,7 +104,8 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
         buf.writeInt(getPriority());
         buf.writeBlockPos(getClaimedBy() == null ? BlockPos.ZERO : getClaimedBy());
         buf.writeInt(getType().ordinal());
-        buf.writeString(get());
+        buf.writeString(upgradeName);
+        buf.writeString(getDisplayName());
         buf.writeBlockPos(buildingLocation == null ? BlockPos.ZERO : buildingLocation);
         buf.writeInt(upgradeLevel);
         //value is upgradeName and upgradeLevel for workOrderBuild
@@ -106,6 +133,7 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
         super.read(compound, manager);
         upgradeLevel = compound.getInt(TAG_UPGRADE_LEVEL);
         upgradeName = compound.getString(TAG_UPGRADE_NAME);
+        displayName = compound.getString(TAG_DISP_NAME);
     }
 
     /**
@@ -119,6 +147,7 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
         super.write(compound);
         compound.putInt(TAG_UPGRADE_LEVEL, upgradeLevel);
         compound.putString(TAG_UPGRADE_NAME, upgradeName);
+        compound.putString(TAG_DISP_NAME, displayName);
     }
 
     @Override
@@ -155,7 +184,7 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
 
         final IBuilding building = citizen.getWorkBuilding();
         return canBuildIngoringDistance(building.getPosition(), building.getBuildingLevel())
-                       && citizen.getWorkBuilding().getPosition().distanceSq(this.getBuildingLocation()) <= MAX_DISTANCE_SQ;
+                 && citizen.getWorkBuilding().getPosition().distanceSq(this.getSchematicLocation()) <= MAX_DISTANCE_SQ;
     }
 
     /**
@@ -181,7 +210,7 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
                  .values()
                  .stream()
                  .noneMatch(building -> building instanceof BuildingBuilder && building.getMainCitizen() != null
-                                          && building.getPosition().distanceSq(this.getBuildingLocation()) <= MAX_DISTANCE_SQ);
+                                          && building.getPosition().distanceSq(this.getSchematicLocation()) <= MAX_DISTANCE_SQ);
     }
 
     /**
@@ -197,9 +226,14 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
     }
 
     @Override
-    protected String get()
+    public String getDisplayName()
     {
-        return upgradeName;
+        if (displayName.isEmpty())
+        {
+            return upgradeName;
+        }
+
+        return displayName;
     }
 
     @Override
@@ -213,7 +247,7 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
     {
         if (!readingFromNbt && colony != null && colony.getWorld() != null)
         {
-            final IBuilding building = colony.getBuildingManager().getBuilding(this.getBuildingLocation());
+            final IBuilding building = colony.getBuildingManager().getBuilding(this.getSchematicLocation());
             if (building != null)
             {
                 ConstructionTapeHelper.placeConstructionTape(building.getCorners(), colony.getWorld());
@@ -224,7 +258,7 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
     @Override
     public void onRemoved(final IColony colony)
     {
-        final IBuilding building = colony.getBuildingManager().getBuilding(getBuildingLocation());
+        final IBuilding building = colony.getBuildingManager().getBuilding(getSchematicLocation());
         if (building != null)
         {
             building.markDirty();
@@ -235,15 +269,6 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
     private static boolean isLocationTownhall(@NotNull final IColony colony, final BlockPos buildingLocation)
     {
         return colony.hasTownHall() && colony.getBuildingManager().getTownHall() != null && colony.getBuildingManager().getTownHall().getID().equals(buildingLocation);
-    }
-
-    @Override
-    public void onCompleted(final IColony colony, ICitizenData citizen)
-    {
-        super.onCompleted(colony, citizen);
-        final BlockPos buildingLocation = getBuildingLocation();
-        final IBuilding building = colony.getBuildingManager().getBuilding(buildingLocation);
-        colony.onBuildingUpgradeComplete(building, getUpgradeLevel());
     }
 
     /**
