@@ -4,7 +4,6 @@ import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingContainer;
-import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityRack;
@@ -193,6 +192,10 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
     public void setTileEntity(final AbstractTileEntityColonyBuilding te)
     {
         tileEntity = te;
+        if (te.isOutdated())
+        {
+            updateTEDataFromSchematic();
+        }
     }
 
     //------------------------- !Start! Capabilities handling for minecolonies buildings -------------------------//
