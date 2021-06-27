@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.builder;
 
+import com.ldtteam.structurize.placement.StructurePlacer;
 import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
@@ -202,7 +203,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
             return false;
         }
 
-        final IBuilding building = job.getColony().getBuildingManager().getBuilding(wo.getBuildingLocation());
+        final IBuilding building = job.getColony().getBuildingManager().getBuilding(wo.getSchematicLocation());
         if (building == null && wo instanceof WorkOrderBuild && !(wo instanceof WorkOrderBuildRemoval))
         {
             job.complete();
@@ -210,6 +211,12 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         }
 
         return true;
+    }
+
+    @Override
+    public void setStructurePlacer(final BuildingStructureHandler<JobBuilder, BuildingBuilder> structure)
+    {
+        structurePlacer = new Tuple<>(new StructurePlacer(structure, job.getWorkOrder().getIteratorType()), structure);
     }
 
     @Override
@@ -234,7 +241,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     {
         if (getOwnBuilding().getBuildingLevel() >= LEVEL_TO_PURGE_MOBS && job.getWorkOrder() instanceof WorkOrderBuildBuilding)
         {
-            final BlockPos buildingPos = job.getWorkOrder().getBuildingLocation();
+            final BlockPos buildingPos = job.getWorkOrder().getSchematicLocation();
             final IBuilding building = worker.getCitizenColonyHandler().getColony().getBuildingManager().getBuilding(buildingPos);
             if (building != null)
             {

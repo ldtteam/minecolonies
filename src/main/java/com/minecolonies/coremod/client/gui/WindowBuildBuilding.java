@@ -8,6 +8,7 @@ import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.DropDownList;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.structures.helpers.Settings;
+import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.network.messages.SchematicRequestMessage;
@@ -37,9 +38,11 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.TriPredicate;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
@@ -49,7 +52,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.ldtteam.structurize.placement.BlueprintIterator.NULL_POS;
+import static com.ldtteam.structurize.placement.AbstractBlueprintIterator.NULL_POS;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
@@ -126,15 +129,18 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         registerButton(BUTTON_BUILD, this::confirmClicked);
         registerButton(BUTTON_CANCEL, this::cancelClicked);
         registerButton(BUTTON_REPAIR, this::repairClicked);
-        registerButton(BUTTON_MOVE_BUILDING, this::moveBuildingClicked);
+        registerButton(BUTTON_DECONSTRUCT_BUILDING, this::deconstructBuildingClicked);
 
         final Button buttonBuild = findPaneOfTypeByID(BUTTON_BUILD, Button.class);
-        if (building.getBuildingLevel() == 0)
+        final IBuildingView parentBuilding = c.getBuilding(building.getParent());
+
+        if (building.getBuildingLevel() == 0 || parentBuilding != null)
         {
             buttonBuild.setText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.build"));
-            findPaneOfTypeByID(BUTTON_MOVE_BUILDING, Button.class).hide();
+            findPaneOfTypeByID(BUTTON_DECONSTRUCT_BUILDING, Button.class).hide();
         }
-        else if (building.getBuildingLevel() == building.getBuildingMaxLevel())
+
+        if (building.getBuildingLevel() == building.getBuildingMaxLevel() || (parentBuilding != null && building.getBuildingLevel() >= parentBuilding.getBuildingLevel()))
         {
             buttonBuild.hide();
         }
@@ -145,17 +151,16 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
 
         if (building.isDeconstructed())
         {
-            findPaneOfTypeByID(BUTTON_MOVE_BUILDING, Button.class).setText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.pickup"));
+            findPaneOfTypeByID(BUTTON_DECONSTRUCT_BUILDING, Button.class).setText(new TranslationTextComponent("com.minecolonies.coremod.gui.workerhuts.pickup"));
         }
     }
 
     /**
      * When the move building button has been clicked.
      */
-    private void moveBuildingClicked()
+    private void deconstructBuildingClicked()
     {
         final BlockPos builder = buildersDropDownList.getSelectedIndex() == 0 ? BlockPos.ZERO : builders.get(buildersDropDownList.getSelectedIndex()).getB();
-        Network.getNetwork().sendToServer(new BuildingSetStyleMessage(building, styles.get(stylesDropDownList.getSelectedIndex())));
         Network.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.Mode.REMOVE, builder));
         cancelClicked();
     }
@@ -173,11 +178,6 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
      */
     private void confirmClicked()
     {
-        if (building.getBuildingLevel() > 0
-            && !building.getStyle().equals(styles.get(stylesDropDownList.getSelectedIndex()))
-            && !building.isDeconstructed())
-            return;
-
         final BlockPos builder = buildersDropDownList.getSelectedIndex() == 0 ? BlockPos.ZERO : builders.get(buildersDropDownList.getSelectedIndex()).getB();
 
         Network.getNetwork().sendToServer(new BuildingSetStyleMessage(building, styles.get(stylesDropDownList.getSelectedIndex())));
@@ -198,7 +198,6 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
     private void repairClicked()
     {
         final BlockPos builder = buildersDropDownList.getSelectedIndex() == 0 ? BlockPos.ZERO : builders.get(buildersDropDownList.getSelectedIndex()).getB();
-        Network.getNetwork().sendToServer(new BuildingSetStyleMessage(building, building.getStyle()));
         Network.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.Mode.REPAIR, builder));
         cancelClicked();
     }
@@ -211,11 +210,11 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         builders.clear();
         builders.add(new Tuple<>(LanguageHandler.format("com.minecolonies.coremod.job.Builder") + ":", BlockPos.ZERO));
         builders.addAll(building.getColony().getBuildings().stream()
-                .filter(build -> build instanceof AbstractBuildingBuilderView && !((AbstractBuildingBuilderView) build).getWorkerName().isEmpty()
-                        && !(build instanceof BuildingMiner.View))
-                .map(build -> new Tuple<>(((AbstractBuildingBuilderView) build).getWorkerName(), build.getPosition()))
-                .sorted(Comparator.comparing(item -> item.getB().distanceSq(building.getPosition())))
-                .collect(Collectors.toList()));
+                          .filter(build -> build instanceof AbstractBuildingBuilderView && !((AbstractBuildingBuilderView) build).getWorkerName().isEmpty()
+                                             && !(build instanceof BuildingMiner.View))
+                          .map(build -> new Tuple<>(((AbstractBuildingBuilderView) build).getWorkerName(), build.getPosition()))
+                          .sorted(Comparator.comparing(item -> item.getB().distanceSq(building.getPosition())))
+                          .collect(Collectors.toList()));
 
         initBuilderNavigation();
     }
@@ -225,11 +224,36 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
      */
     private void updateStyles()
     {
-        styles = Structures.getStylesFor(building.getSchematicName());
-        int newIndex = styles.indexOf(building.getStyle());
-        if (newIndex == -1)
+        if (!building.getParent().equals(BlockPos.ZERO) && building.getColony().getBuilding(building.getParent()) != null)
         {
-            newIndex = 0;
+            styles = new ArrayList<>();
+            styles.add(building.getColony().getBuilding(building.getParent()).getStyle());
+            if (!styles.isEmpty())
+            {
+                stylesDropDownList.setSelectedIndex(0);
+            }
+        }
+        else
+        {
+            if (building.getBuildingLevel() == 0)
+            {
+                styles = Structures.getStylesFor(building.getSchematicName());
+            }
+            else
+            {
+                styles = new ArrayList<>();
+                styles.add(building.getStyle());
+            }
+
+            if (!styles.isEmpty())
+            {
+                int newIndex = styles.indexOf(building.getStyle());
+                if (newIndex == -1)
+                {
+                    newIndex = 0;
+                }
+                stylesDropDownList.setSelectedIndex(newIndex);
+            }
         }
 
         final boolean enabled;
@@ -239,13 +263,12 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         }
         else
         {
-            enabled = styles.size() > 1;
+            enabled = true;
         }
 
         findPaneOfTypeByID(BUTTON_PREVIOUS_STYLE_ID, Button.class).setEnabled(enabled);
         findPaneOfTypeByID(DROPDOWN_STYLE_ID, DropDownList.class).setEnabled(enabled);
         findPaneOfTypeByID(BUTTON_NEXT_STYLE_ID, Button.class).setEnabled(enabled);
-        stylesDropDownList.setSelectedIndex(newIndex);
     }
 
     /**
@@ -257,24 +280,29 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         {
             return;
         }
-        // Ensure the player cannot change a style of an already constructed building
-        if (building.getBuildingLevel() > 0 )
-        {
-            findPaneOfTypeByID(BUTTON_BUILD, Button.class).setText(
-                    LanguageHandler.format(
-                            !building.getStyle().equals(styles.get(stylesDropDownList.getSelectedIndex()))
-                            && !building.isDeconstructed()
-                                ? "com.minecolonies.coremod.gui.workerhuts.bad_style"
-                                : "com.minecolonies.coremod.gui.workerhuts.upgrade"));
-        }
 
         final World world = Minecraft.getInstance().world;
         resources.clear();
 
-        final int nextLevel = building.getBuildingLevel() == building.getBuildingMaxLevel() ?
-                                building.getBuildingMaxLevel() : (building.getBuildingLevel() + 1);
+        final IBuildingView parentBuilding = building.getColony().getBuilding(building.getParent());
+        int nextLevel = building.getBuildingLevel();
+        if (building.getBuildingLevel() < building.getBuildingMaxLevel() && (parentBuilding == null || building.getBuildingLevel() < parentBuilding.getBuildingLevel()))
+        {
+            nextLevel = building.getBuildingLevel() + 1;
+        }
+
+        final TileEntity tile = world.getTileEntity(building.getID());
+        String schematicName = building.getSchematicName();
+        if (tile instanceof IBlueprintDataProvider)
+        {
+            if (!((IBlueprintDataProvider) tile).getSchematicName().isEmpty())
+            {
+                schematicName = ((IBlueprintDataProvider) tile).getSchematicName().replaceAll("\\d$", "");
+            }
+        }
+
         final StructureName sn = new StructureName(Structures.SCHEMATICS_PREFIX, styles.get(stylesDropDownList.getSelectedIndex()),
-          building.getSchematicName() + nextLevel);
+          schematicName + nextLevel);
         final LoadOnlyStructureHandler structure = new LoadOnlyStructureHandler(world, building.getPosition(), sn.toString(), new PlacementSettings(), true);
         final String md5 = Structures.getMD5(sn.toString());
         if (!structure.hasBluePrint() || !structure.isCorrectMD5(md5))
@@ -298,6 +326,12 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
             {
                 Log.getLogger().error("WindowMinecoloniesBuildTool: Need to download schematic on a standalone client/server. This should never happen", new Exception());
             }
+        }
+
+        if (!structure.hasBluePrint())
+        {
+            findPaneOfTypeByID(BUTTON_BUILD, Button.class).hide();
+            return;
         }
 
         structure.getBluePrint().rotateWithMirror(BlockPosUtil.getRotationFromRotations(building.getRotation()), building.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE, world);

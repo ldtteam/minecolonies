@@ -8,8 +8,6 @@ import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.tileentities.AbstractScarecrowTileEntity;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
-import com.minecolonies.api.tileentities.AbstractTileEntityGrave;
-import com.mojang.serialization.RecordBuilder;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -296,4 +294,12 @@ public interface IBuildingManager
      * @return the house or null.
      */
     IBuilding getHouseWithSpareBed();
+
+    /**
+     * Performed when a building of this colony finished his upgrade state.
+     *
+     * @param building The upgraded building.
+     * @param level    The new level.
+     */
+    void onBuildingUpgradeComplete(@Nullable IBuilding building, int level);
 }

@@ -39,7 +39,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.ldtteam.structurize.placement.BlueprintIterator.NULL_POS;
+import static com.ldtteam.structurize.placement.AbstractBlueprintIterator.NULL_POS;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 public class WindowBuildDecoration extends AbstractWindowSkeleton
@@ -100,7 +100,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
 
         findPaneOfTypeByID(BUTTON_BUILD, Button.class)
                 .setText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.build"));
-        findPaneOfTypeByID(BUTTON_MOVE_BUILDING, Button.class).hide();
+        findPaneOfTypeByID(BUTTON_DECONSTRUCT_BUILDING, Button.class).hide();
         findPaneOfTypeByID(BUTTON_REPAIR, Button.class).hide();
         findPaneOfTypeByID(BUTTON_NEXT_STYLE_ID, Button.class).hide();
         findPaneOfTypeByID(BUTTON_PREVIOUS_STYLE_ID, Button.class).hide();

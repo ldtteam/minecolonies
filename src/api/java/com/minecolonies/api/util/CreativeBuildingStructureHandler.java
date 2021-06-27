@@ -2,6 +2,7 @@ package com.minecolonies.api.util;
 
 import com.ldtteam.structures.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.api.util.Log;
+import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
 import com.ldtteam.structurize.management.Manager;
 import com.ldtteam.structurize.placement.StructurePlacer;
 import com.ldtteam.structurize.placement.structure.CreativeStructureHandler;
@@ -17,6 +18,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
@@ -26,6 +28,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+
+import static com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider.TAG_BLUEPRINTDATA;
 
 /**
  * Minecolonies specific creative structure handler. Main difference related to registering blocks to colonies.
@@ -69,6 +73,13 @@ public final class CreativeBuildingStructureHandler extends CreativeStructureHan
     {
         super.triggerSuccess(pos, list, placement);
         final BlockPos worldPos = getProgressPosInWorld(pos);
+
+        final CompoundNBT teData = getBluePrint().getTileEntityData(worldPos, pos);
+        if (teData != null && teData.contains(TAG_BLUEPRINTDATA))
+        {
+            ((IBlueprintDataProvider) getWorld().getTileEntity(worldPos)).readSchematicDataFromNBT(teData);
+        }
+
         if (building != null)
         {
             building.registerBlockPosition(getBluePrint().getBlockState(pos), worldPos, this.getWorld());

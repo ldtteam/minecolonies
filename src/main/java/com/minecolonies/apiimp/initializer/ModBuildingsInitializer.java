@@ -69,6 +69,7 @@ public final class ModBuildingsInitializer
                                   .setBuildingProducer(BuildingBarracks::new)
                                   .setBuildingViewProducer(() -> BuildingBarracks.View::new)
                                   .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.BARRACKS_ID))
+                                  .addBuildingModuleProducer(MinimumStockModule::new, MinimumStockModuleView::new)
                                   .createBuildingEntry();
 
         ModBuildings.barracksTower = new BuildingEntry.Builder()

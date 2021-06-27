@@ -75,7 +75,7 @@ public class ItemPharaoScepter extends BowItem
                     ArrowItem arrowitem = (ArrowItem) Items.ARROW;
                     AbstractArrowEntity abstractarrowentity = arrowitem.createArrow(worldIn, new ItemStack(arrowitem, 1), playerentity);
                     abstractarrowentity = customArrow(abstractarrowentity);
-                    abstractarrowentity.shoot(playerentity.rotationPitch, playerentity.rotationYaw, 0.0F, speed * 3.0F, 1.0F);
+                    abstractarrowentity.func_234612_a_(playerentity, playerentity.rotationPitch, playerentity.rotationYaw, 0.0F, speed * 3.0F, 1.0F);
                     if (speed == 1.0F)
                     {
                         abstractarrowentity.setIsCritical(true);
