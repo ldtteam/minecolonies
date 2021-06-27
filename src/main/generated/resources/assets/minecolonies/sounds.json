@@ -23484,6 +23484,18 @@
       {
         "name": "minecolonies:mob/mercenary/attack/attack1",
         "stream": false
+      },
+      {
+        "name": "minecolonies:mob/mercenary/attack/attack2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/mercenary/attack/attack3",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/mercenary/attack/attack4",
+        "stream": false
       }
     ]
   },
@@ -23548,6 +23560,18 @@
     "sounds": [
       {
         "name": "minecolonies:mob/mercenary/step/step1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/mercenary/step/step2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/mercenary/step/step3",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/mercenary/step/step4",
         "stream": false
       }
     ]
