@@ -3,10 +3,8 @@ package com.minecolonies.api.crafting;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Log;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.inventory.container.Container;
@@ -245,7 +243,7 @@ public class GenericRecipe implements IGenericRecipe
                     inv.setInventorySlotContents(slot, stacks[0]);
                 }
             }
-            if (((ICraftingRecipe) recipe).matches(inv, Minecraft.getInstance().world))
+            if (((ICraftingRecipe) recipe).matches(inv, null))
             {
                 return ((ICraftingRecipe) recipe).getRemainingItems(inv).stream()
                         .filter(ItemStackUtils::isNotEmpty)
