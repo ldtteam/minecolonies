@@ -777,6 +777,10 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         @NotNull final PathPoint[] points = new PathPoint[pathLength];
         points[0] = new PathPointExtended(node.pos);
+        if (debugDrawEnabled)
+        {
+            addPathNodeToDebug(node);
+        }
 
         @Nullable Node nextInPath = null;
         @Nullable PathPoint next = null;
