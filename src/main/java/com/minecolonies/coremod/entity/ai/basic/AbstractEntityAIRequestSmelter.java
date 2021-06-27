@@ -17,7 +17,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import net.minecraft.block.Blocks;
@@ -44,7 +44,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 /**
  * Crafts furnace stone related block when needed.
  */
-public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafter<?, J>, B extends AbstractBuildingSmelterCrafter> extends AbstractEntityAICrafting<J, B>
+public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafter<?, J>, B extends AbstractBuildingFurnaceUser> extends AbstractEntityAICrafting<J, B>
 {
     /**
      * Base xp gain for the smelter.

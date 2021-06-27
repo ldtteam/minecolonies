@@ -44,10 +44,12 @@ import java.util.stream.Collectors;
 @OnlyIn(Dist.CLIENT)
 public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe>
 {
-    public GenericRecipeCategory(@NotNull final BuildingEntry building, @NotNull final IJob<?> job,
-                                 @NotNull final ICraftingBuildingModule crafting, @NotNull final IGuiHelper guiHelper)
+    public GenericRecipeCategory(@NotNull final BuildingEntry building,
+                                 @NotNull final IJob<?> job,
+                                 @NotNull final ICraftingBuildingModule crafting,
+                                 @NotNull final IGuiHelper guiHelper)
     {
-        super(job, getCatalyst(building), guiHelper);
+        super(job, Objects.requireNonNull(crafting.getUid()), getCatalyst(building), guiHelper);
 
         this.building = building;
         this.crafting = crafting;
@@ -325,9 +327,7 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
         }
 
         // custom MineColonies additional recipes
-        final String craftingJobName = this.job.getJobRegistryEntry().getRegistryName().getPath();
-        final Set<CustomRecipe> customRecipes = CustomRecipeManager.getInstance().getRecipes(craftingJobName);
-        for (final CustomRecipe customRecipe : customRecipes)
+        for (final CustomRecipe customRecipe : CustomRecipeManager.getInstance().getRecipes(this.crafting.getCustomRecipeKey()))
         {
             final IRecipeStorage recipeStorage = customRecipe.getRecipeStorage();
             if (!recipeStorage.getAlternateOutputs().isEmpty())

@@ -1,6 +1,6 @@
 {
   "type": "recipe",
-  "crafter": "mechanic",
+  "crafter": "mechanic_crafting",
   "inputs": [
     {
       "item": "minecraft:oak_log",

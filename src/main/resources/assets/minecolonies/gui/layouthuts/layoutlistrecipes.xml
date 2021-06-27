@@ -1,11 +1,11 @@
-<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" pause="true"
-        lightbox="true"
-        xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockout/blockOut.xsd">
+<window size="190 244" pause="false" lightbox="false">
+    <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
+    <label size="130 11" pos="30 14" textalign="MIDDLE" color="black"
+           label="$(com.minecolonies.coremod.gui.workerhuts.listrecipes)"/>
 
-    <label size="100% 11" pos="0 50" textalign="TOP_MIDDLE" color="white" label="$(com.minecolonies.coremod.gui.workerhuts.listRecipes)"/>
-    <label size="100% 11" pos="0 70" textalign="TOP_MIDDLE" color="white" id="recipestatus" />
-    <list id="recipes" size="70% 100" pos="60 90" align="TOP_MIDDLE">
-        <view size="70% 50">
+    <label size="100% 11" pos="70 30"  color="black" id="recipestatus" />
+    <list id="recipes" size="85% 150" pos="20 40">
+        <view size="100% 50">
             <itemicon id="output" size="16 16" pos="80 17"/>
             <box id="3x3" size="100% 50" linewidth="2">
                 <itemicon id="res1" size="16 16" pos="20 1"/>
@@ -22,8 +22,12 @@
             </box>
             <button id="up" size="15 15" label="↥" pos="0 0"/>
             <button id="down" size="15 15" label="↧" pos="0 15"/>
-            <button id="remove" size="45 15" pos="125 3" label="$(com.minecolonies.coremod.gui.recipe.remove)"/>
+            <button id="remove" size="45 15" pos="105 3" label="$(com.minecolonies.coremod.gui.recipe.remove)"/>
         </view>
     </list>
-    <button id="cancel" size="200 20" pos="110 194" label="$(gui.cancel)"/>
+
+
+    <buttonimage id="crafting" size="129 17" pos="30 200" textcolor="black"
+                 source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
+                 label="$(com.minecolonies.coremod.gui.workerhuts.crafting)"/>
 </window>

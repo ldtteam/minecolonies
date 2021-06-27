@@ -15,6 +15,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.util.AttributeModifierUtils;
 import net.minecraft.entity.ai.attributes.Attributes;
@@ -128,7 +129,7 @@ public class BuildingDeliveryman extends AbstractBuildingWorker implements IBuil
     /**
      * BuildingDeliveryman View.
      */
-    public static class View extends AbstractBuildingWorker.View
+    public static class View extends AbstractBuildingWorkerView
     {
         /**
          * Instantiate the deliveryman view.

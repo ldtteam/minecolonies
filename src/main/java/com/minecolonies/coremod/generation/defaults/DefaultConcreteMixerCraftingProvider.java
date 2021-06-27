@@ -49,12 +49,12 @@ public class DefaultConcreteMixerCraftingProvider extends CustomRecipeProvider
             final List<ItemStorage> customInput = new ArrayList<>(input);
             customInput.add(new ItemStorage(new ItemStack(dye)));
 
-            CustomRecipeBuilder.create(ModJobs.CONCRETE_ID.getPath(), powder.getRegistryName().getPath())
+            CustomRecipeBuilder.create(ModJobs.CONCRETE_ID.getPath() + "_custom", powder.getRegistryName().getPath())
                     .inputs(customInput)
                     .result(new ItemStack(powder, 8))
                     .build(consumer);
 
-            CustomRecipeBuilder.create(ModJobs.CONCRETE_ID.getPath(), concrete.getRegistryName().getPath())
+            CustomRecipeBuilder.create(ModJobs.CONCRETE_ID.getPath() + "_custom", concrete.getRegistryName().getPath())
                     .inputs(Collections.singletonList(new ItemStorage(new ItemStack(powder))))
                     .result(new ItemStack(concrete))
                     //.intermediate(Blocks.WATER)

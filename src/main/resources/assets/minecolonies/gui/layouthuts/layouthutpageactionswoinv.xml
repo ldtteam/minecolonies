@@ -30,11 +30,4 @@
     <buttonimage id="forcePickup" size="129 17" pos="30 154" textcolor="black"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
                  label="$(com.minecolonies.coremod.gui.workerhuts.forcepickup)"/>
-
-    <buttonimage id="recipelist" size="129 17" pos="30 174" textcolor="black"
-                 source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
-                 label="$(com.minecolonies.coremod.gui.workerhuts.listRecipes)"/>
-    <buttonimage id="crafting" size="129 17" pos="30 192" textcolor="black"
-                 source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
-                 label="$(com.minecolonies.coremod.gui.workerhuts.crafting)"/>
 </window>

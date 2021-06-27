@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingPublicCrafter;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IGenericRecipe;
@@ -18,10 +19,11 @@ import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.huts.WindowHutFarmerModule;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.modules.settings.BoolSetting;
 import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.colony.jobs.JobFarmer;
 import com.minecolonies.coremod.network.messages.server.colony.building.farmer.AssignFieldMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.farmer.AssignmentModeMessage;
@@ -48,7 +50,7 @@ import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_W
 /**
  * Class which handles the farmer building.
  */
-public class BuildingFarmer extends AbstractBuildingCrafter
+public class BuildingFarmer extends AbstractBuildingWorker implements IBuildingPublicCrafter
 {
     /**
      * The beekeeper mode.
@@ -331,27 +333,6 @@ public class BuildingFarmer extends AbstractBuildingCrafter
     }
 
     @Override
-    public boolean canRecipeBeAdded(final IToken<?> token)
-    {
-
-        Optional<Boolean> isRecipeAllowed;
-
-        if (!super.canRecipeBeAdded(token))
-        {
-            return false;
-        }
-
-        isRecipeAllowed = super.canRecipeBeAddedBasedOnTags(token);
-        return isRecipeAllowed.orElse(false);
-    }    
-    
-    @Override
-    public boolean canCraftComplexRecipes()
-    {
-        return true;
-    }
-
-    @Override
     public boolean canBeGathered()
     {
         // Normal crafters are only gatherable when they have a task, i.e. while producing stuff.
@@ -595,7 +576,7 @@ public class BuildingFarmer extends AbstractBuildingCrafter
     /**
      * Provides a view of the farmer building class.
      */
-    public static class View extends AbstractBuildingCrafter.View
+    public static class View extends AbstractBuildingWorkerView
     {
         /**
          * Checks if fields should be assigned manually.

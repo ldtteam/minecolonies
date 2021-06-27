@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingPublicCrafter;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.citizen.Skill;
@@ -14,9 +15,9 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.huts.WindowHutEnchanterModule;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.colony.jobs.JobEnchanter;
 import com.minecolonies.coremod.network.messages.server.colony.building.enchanter.EnchanterWorkerSetMessage;
 import net.minecraft.nbt.CompoundNBT;
@@ -36,7 +37,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 /**
  * The enchanter building.
  */
-public class BuildingEnchanter extends AbstractBuildingCrafter
+public class BuildingEnchanter extends AbstractBuildingWorker implements IBuildingPublicCrafter
 {
     /**
      * Enchanter.
@@ -223,13 +224,6 @@ public class BuildingEnchanter extends AbstractBuildingCrafter
         return buildings.get(random.nextInt(buildings.size()));
     }
 
-    @Override
-    public boolean addRecipe(IToken<?> token)
-    {
-        // Enchanter only has custom recipes for now
-        return false;
-    }
-
     /**
      * Set the building as gathered.
      *
@@ -243,7 +237,7 @@ public class BuildingEnchanter extends AbstractBuildingCrafter
     /**
      * The client side representation of the building.
      */
-    public static class View extends AbstractBuildingWorker.View
+    public static class View extends AbstractBuildingWorkerView
     {
         /**
          * List of buildings the enchanter gathers experience from.
@@ -320,6 +314,13 @@ public class BuildingEnchanter extends AbstractBuildingCrafter
         public IJob<?> getCraftingJob()
         {
             return getMainBuildingJob().orElseGet(() -> new JobEnchanter(null));
+        }
+
+        @Override
+        public boolean addRecipe(IToken<?> token)
+        {
+            // Enchanter only has custom recipes for now
+            return false;
         }
     }
 }

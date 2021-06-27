@@ -14,6 +14,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.colony.jobs.JobStudent;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -251,7 +252,7 @@ public class BuildingLibrary extends AbstractBuildingWorker
     /**
      * ClientSide representation of the building.
      */
-    public static class View extends AbstractBuildingWorker.View implements IBuildingCanBeHiredFrom
+    public static class View extends AbstractBuildingWorkerView implements IBuildingCanBeHiredFrom
     {
         /**
          * Instantiates the view of the building.
@@ -268,7 +269,7 @@ public class BuildingLibrary extends AbstractBuildingWorker
         @Override
         public Window getWindow()
         {
-            return new WindowHutWorkerModulePlaceholder<AbstractBuildingWorker.View>(this, LIBRARY_HUT_NAME);
+            return new WindowHutWorkerModulePlaceholder<AbstractBuildingWorkerView>(this, LIBRARY_HUT_NAME);
         }
 
         /**

@@ -1,6 +1,6 @@
 {
   "type" : "recipe",
-  "crafter": "dyer",
+  "crafter": "dyer_crafting",
   "inputs": [
     {
         "item" : "minecraft:prismarine",

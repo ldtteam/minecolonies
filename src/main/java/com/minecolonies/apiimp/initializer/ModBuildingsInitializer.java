@@ -356,7 +356,7 @@ public final class ModBuildingsInitializer
                                  .setBuildingProducer(BuildingFlorist::new)
                                  .setBuildingViewProducer(() -> BuildingFlorist.View::new)
                                  .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.FLORIST_ID))
-                                 .addBuildingModuleProducer(() -> new ItemListModule(BUILDING_FLOWER_LIST), () -> new FloristFlowerListModuleView())
+                                 .addBuildingModuleProducer(() -> new ItemListModule(BUILDING_FLOWER_LIST), FloristFlowerListModuleView::new)
                                  .addBuildingModuleProducer(MinimumStockModule::new, MinimumStockModuleView::new)
                                  .createBuildingEntry();
 
@@ -405,6 +405,7 @@ public final class ModBuildingsInitializer
                                      .setBuildingViewProducer(() -> BuildingGlassblower.View::new)
                                      .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.GLASSBLOWER_ID))
                                      .addBuildingModuleProducer(BuildingGlassblower.CraftingModule::new, CraftingModuleView::new)
+                                     .addBuildingModuleProducer(BuildingGlassblower.SmeltingModule::new, CraftingModuleView::new)
                                      .addBuildingModuleProducer(() -> new ItemListModule(FUEL_LIST), () -> new ItemListModuleView(FUEL_LIST, COM_MINECOLONIES_REQUESTS_BURNABLE, false,
                                        (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getFuel()))
                                      .addBuildingModuleViewProducer(CrafterTaskModuleView::new)
@@ -416,6 +417,7 @@ public final class ModBuildingsInitializer
                               .setBuildingViewProducer(() -> BuildingDyer.View::new)
                               .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.DYER_ID))
                               .addBuildingModuleProducer(BuildingDyer.CraftingModule::new, CraftingModuleView::new)
+                              .addBuildingModuleProducer(BuildingDyer.SmeltingModule::new, CraftingModuleView::new)
                               .addBuildingModuleProducer(() -> new ItemListModule(FUEL_LIST), () -> new ItemListModuleView(FUEL_LIST, COM_MINECOLONIES_REQUESTS_BURNABLE, false,
                                 (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getFuel()))
                               .addBuildingModuleViewProducer(CrafterTaskModuleView::new)
@@ -468,6 +470,7 @@ public final class ModBuildingsInitializer
                                      .addBuildingModuleProducer(() -> new SettingsModule().with(AbstractBuildingWorker.BREEDING, new BoolSetting(true)), SettingsModuleView::new)
                                      .createBuildingEntry();
 
+        //todo we want two here, one custom for the concrete placement, and one crafting for the normal crafting of the powder.
         ModBuildings.concreteMixer = new BuildingEntry.Builder()
                                        .setBuildingBlock(ModBlocks.blockHutConcreteMixer)
                                        .setBuildingProducer(BuildingConcreteMixer::new)
