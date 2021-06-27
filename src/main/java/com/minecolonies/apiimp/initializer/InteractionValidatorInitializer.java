@@ -251,7 +251,6 @@ public class InteractionValidatorInitializer
               return false;
           });
 
-
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(NEEDS_BETTER_HUT),
           citizen -> {
 
@@ -263,6 +262,7 @@ public class InteractionValidatorInitializer
               }
               return false;
           });
+
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(WORKER_AI_EXCEPTION),
           citizen -> citizen.getJob() != null && ((AbstractEntityAIBasic<?, ?>) citizen.getJob().getWorkerAI()).getExceptionTimer() > 1);
 
@@ -291,5 +291,11 @@ public class InteractionValidatorInitializer
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_BEEKEEPER_NOFLOWERS),
           citizen -> citizen.getWorkBuilding() instanceof BuildingBeekeeper
                        && ((BuildingBeekeeper) citizen.getWorkBuilding()).getModuleMatching(ItemListModule.class, m -> m.getId().equals(BUILDING_FLOWER_LIST)).getList().isEmpty());
+
+        InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_RAINING),
+          citizen -> citizen.getEntity().isPresent() && citizen.getEntity().get().getEntityWorld().isRaining());
+
+        InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_RAID),
+                citizen -> citizen.getEntity().isPresent() && citizen.getColony().getRaiderManager().isRaided());
     }
 }
