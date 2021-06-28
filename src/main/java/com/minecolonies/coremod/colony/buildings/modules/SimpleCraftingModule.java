@@ -1,7 +1,11 @@
 package com.minecolonies.coremod.colony.buildings.modules;
 
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * This module is used for the buildings that only support simple
@@ -18,6 +22,12 @@ public class SimpleCraftingModule extends AbstractCraftingBuildingModule.Craftin
         // the building may have a job, but it's not a dedicated crafting job.
         // this hides the building from JEI.
         return null;
+    }
+
+    @Override
+    public List<IRequestResolver<?>> createResolvers()
+    {
+        return Collections.emptyList();
     }
 
     @Override

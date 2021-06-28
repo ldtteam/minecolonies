@@ -29,7 +29,7 @@ public class BuildingEntry extends ForgeRegistryEntry<BuildingEntry>
     private final BiFunction<IColony, BlockPos, IBuilding> buildingProducer;
 
     private List<Supplier<IBuildingModule>>     buildingModuleProducers;
-    private List<Supplier<IBuildingModuleView>> buildingModuleViewProducers;
+    private List<Supplier<Supplier<IBuildingModuleView>>> buildingModuleViewProducers;
 
     /**
      * A builder class for {@link BuildingEntry}.
@@ -40,7 +40,7 @@ public class BuildingEntry extends ForgeRegistryEntry<BuildingEntry>
         private BiFunction<IColony, BlockPos, IBuilding>                   buildingProducer;
         private Supplier<BiFunction<IColonyView, BlockPos, IBuildingView>> buildingViewProducer;
         private List<Supplier<IBuildingModule>>     buildingModuleProducers     = new ArrayList<>();
-        private List<Supplier<IBuildingModuleView>> buildingModuleViewProducers = new ArrayList<>();
+        private List<Supplier<Supplier<IBuildingModuleView>>> buildingModuleViewProducers = new ArrayList<>();
         private ResourceLocation                    registryName;
 
         /**
@@ -123,7 +123,7 @@ public class BuildingEntry extends ForgeRegistryEntry<BuildingEntry>
          * @param moduleViewProducer the module view producer.
          * @return the builder again.
          */
-        public Builder addBuildingModuleViewProducer(final Supplier<IBuildingModuleView> moduleViewProducer)
+        public Builder addBuildingModuleViewProducer(final Supplier<Supplier<IBuildingModuleView>> moduleViewProducer)
         {
             buildingModuleViewProducers.add(moduleViewProducer);
             return this;
@@ -132,9 +132,10 @@ public class BuildingEntry extends ForgeRegistryEntry<BuildingEntry>
         /**
          * Add a building module producer.
          * @param moduleProducer the module producer.
+         * @param moduleViewProducer the module view producer, indirected to avoid classloading issues.
          * @return the builder again.
          */
-        public Builder addBuildingModuleProducer(final Supplier<IBuildingModule> moduleProducer, final Supplier<IBuildingModuleView> moduleViewProducer)
+        public Builder addBuildingModuleProducer(final Supplier<IBuildingModule> moduleProducer, final Supplier<Supplier<IBuildingModuleView>> moduleViewProducer)
         {
             buildingModuleProducers.add(moduleProducer);
             buildingModuleViewProducers.add(moduleViewProducer);
@@ -162,23 +163,23 @@ public class BuildingEntry extends ForgeRegistryEntry<BuildingEntry>
     public IBuildingView produceBuildingView(final BlockPos position, final IColonyView colony)
     {
         final IBuildingView buildingView = buildingViewProducer.get().apply(colony, position);
-        for (final Supplier<IBuildingModuleView> module : buildingModuleViewProducers)
+        for (final Supplier<Supplier<IBuildingModuleView>> module : buildingModuleViewProducers)
         {
-            buildingView.registerModule(module.get());
+            buildingView.registerModule(module.get().get());
         }
         return buildingView;
     }
 
     public List<Supplier<IBuildingModule>> getModuleProducers() { return buildingModuleProducers; }
 
-    public List<Supplier<IBuildingModuleView>> getModuleViewProducers() { return buildingModuleViewProducers; }
+    public List<Supplier<Supplier<IBuildingModuleView>>> getModuleViewProducers() { return buildingModuleViewProducers; }
 
     private BuildingEntry(
       final AbstractBlockHut<?> buildingBlock,
       final BiFunction<IColony, BlockPos, IBuilding> buildingProducer,
       final Supplier<BiFunction<IColonyView, BlockPos, IBuildingView>> buildingViewProducer,
       List<Supplier<IBuildingModule>> buildingModuleProducers,
-      List<Supplier<IBuildingModuleView>> buildingModuleViewProducers)
+      List<Supplier<Supplier<IBuildingModuleView>>> buildingModuleViewProducers)
     {
         super();
         this.buildingBlock = buildingBlock;
