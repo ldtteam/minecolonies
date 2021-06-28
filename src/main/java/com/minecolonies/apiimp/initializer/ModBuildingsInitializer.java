@@ -356,7 +356,7 @@ public final class ModBuildingsInitializer
                                  .setBuildingProducer(BuildingFlorist::new)
                                  .setBuildingViewProducer(() -> BuildingFlorist.View::new)
                                  .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.FLORIST_ID))
-                                 .addBuildingModuleProducer(() -> new ItemListModule(BUILDING_FLOWER_LIST), FloristFlowerListModuleView::new)
+                                 .addBuildingModuleProducer(() -> new ItemListModule(BUILDING_FLOWER_LIST), () -> new FloristFlowerListModuleView())
                                  .addBuildingModuleProducer(MinimumStockModule::new, MinimumStockModuleView::new)
                                  .createBuildingEntry();
 
