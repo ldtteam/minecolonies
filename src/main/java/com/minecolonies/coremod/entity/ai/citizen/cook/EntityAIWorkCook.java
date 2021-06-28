@@ -326,7 +326,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
     {
         if(this.assistantTests.isEmpty())
         {
-            this.assistantTests.addAll(getOwnBuilding().getAssistantItems());
+            this.assistantTests.addAll(getOwnBuilding().getFirstModuleOccurance(BuildingCook.CraftingModule.class).getAssistantItems());
         }
 
         return ItemStackUtils.compareItemStackListIgnoreStackSize(new ArrayList<>(assistantTests), stack, true, true);

@@ -184,7 +184,7 @@ public final class ItemStackUtils
      */
     public static List<ItemStorage> getListOfStackForEntityInfo(final CompoundNBT entityData, final World world, final AbstractEntityCitizen placer)
     {
-        if (placer instanceof Entity)
+        if (placer != null)
         {
             return getListOfStackForEntityInfo(entityData, world, (Entity) placer);
         }
@@ -714,7 +714,6 @@ public final class ItemStackUtils
      * @param stack to get the size from
      * @return the size of the stack
      */
-    @NotNull
     public static int getSize(@NotNull final ItemStack stack)
     {
         if (ItemStackUtils.isEmpty(stack))
@@ -731,7 +730,6 @@ public final class ItemStackUtils
      * @param stack to get the size from
      * @return the size of the stack
      */
-    @NotNull
     public static int getDurability(@NotNull final ItemStack stack)
     {
         if (ItemStackUtils.isEmpty(stack))
@@ -865,7 +863,6 @@ public final class ItemStackUtils
      * @param stack to set the size to
      * @param size  of the stack
      */
-    @NotNull
     public static void setSize(@NotNull final ItemStack stack, final int size)
     {
         stack.setCount(size);

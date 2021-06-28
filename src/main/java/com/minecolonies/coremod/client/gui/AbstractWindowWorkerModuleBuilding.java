@@ -2,28 +2,25 @@ package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Button;
-import com.ldtteam.blockout.controls.ButtonImage;
 import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.network.messages.server.colony.building.ChangeDeliveryPriorityMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.ForcePickupMessage;
-import com.minecolonies.coremod.network.messages.server.colony.building.OpenCraftingGUIMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.worker.RecallCitizenMessage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Abstract class for window for worker building.
  *
- * @param <B> Class extending {@link AbstractBuildingWorker.View}
+ * @param <B> Class extending {@link AbstractBuildingWorkerView}
  */
-public abstract class AbstractWindowWorkerModuleBuilding<B extends AbstractBuildingWorker.View> extends AbstractWindowModuleBuilding<B>
+public abstract class AbstractWindowWorkerModuleBuilding<B extends AbstractBuildingWorkerView> extends AbstractWindowModuleBuilding<B>
 {
     /**
      * Id of the hire/fire button in the GUI.
@@ -61,16 +58,6 @@ public abstract class AbstractWindowWorkerModuleBuilding<B extends AbstractBuild
     private static final String BUILDER_HUT_NAME = "com.minecolonies.coremod.gui.workerhuts.buildersHut";
 
     /**
-     * Button to access the crafting grid.
-     */
-    private static final String BUTTON_CRAFTING = "crafting";
-
-    /**
-     * Button to access the recipe list.
-     */
-    private static final String BUTTON_RECIPES_LIST = "recipelist";
-
-    /**
      * Button to increase delivery prio.
      */
     private static final String BUTTON_DP_UP = "deliveryPrioUp";
@@ -93,7 +80,7 @@ public abstract class AbstractWindowWorkerModuleBuilding<B extends AbstractBuild
     /**
      * Constructor for the window of the worker building.
      *
-     * @param building class extending {@link AbstractBuildingWorker.View}.
+     * @param building class extending {@link AbstractBuildingWorkerView}.
      * @param resource Resource of the window.
      */
     protected AbstractWindowWorkerModuleBuilding(final B building, final String resource)
@@ -102,18 +89,9 @@ public abstract class AbstractWindowWorkerModuleBuilding<B extends AbstractBuild
 
         super.registerButton(BUTTON_HIRE, this::hireClicked);
         super.registerButton(BUTTON_RECALL, this::recallClicked);
-        super.registerButton(BUTTON_CRAFTING, this::craftingClicked);
-        super.registerButton(BUTTON_RECIPES_LIST, this::recipeListClicked);
         super.registerButton(BUTTON_DP_UP, this::deliveryPrioUp);
         super.registerButton(BUTTON_DP_DOWN, this::deliveryPrioDown);
         super.registerButton(BUTTON_FORCE_PICKUP, this::forcePickup);
-
-        // The recipe list is visible when the user can alter recipes, or when the building has at least one recipe (regardless of allowRecipeAlterations())
-        // The thought behind this is to show users player-thaught recipes and also built-in recipes.
-        // But if it's a building that simply does not use recipes, we hide this button to make it less confusing for newer players.
-        findPaneOfTypeByID(BUTTON_RECIPES_LIST, ButtonImage.class).setVisible(building.isRecipeAlterationAllowed() || !building.getRecipes().isEmpty());
-
-        findPaneOfTypeByID(BUTTON_CRAFTING, ButtonImage.class).setVisible(building.isRecipeAlterationAllowed());
     }
 
     private void updatePriorityLabel()
@@ -152,35 +130,6 @@ public abstract class AbstractWindowWorkerModuleBuilding<B extends AbstractBuild
     private void forcePickup()
     {
         Network.getNetwork().sendToServer(new ForcePickupMessage(building));
-    }
-
-    private void recipeListClicked()
-    {
-        if (!building.isRecipeAlterationAllowed() && building.getRecipes().isEmpty())
-        {
-            /**
-             * @see #onOpened() for the reasoning behind this.
-             */
-            // This should never happen, because the button is hidden. But if someone glitches into the interface, stop him here.
-            return;
-        }
-        @NotNull final WindowListRecipes window = new WindowListRecipes(building.getColony(), building.getPosition());
-        window.open();
-    }
-
-    /**
-     * If crafting is clicked this happens. Override if needed.
-     */
-    public void craftingClicked()
-    {
-        if (!building.isRecipeAlterationAllowed())
-        {
-            // This should never happen, because the button is hidden. But if someone glitches into the interface, stop him here.
-            return;
-        }
-        final BlockPos pos = building.getPosition();
-        Minecraft.getInstance().player.openContainer((INamedContainerProvider) Minecraft.getInstance().world.getTileEntity(pos));
-        Network.getNetwork().sendToServer(new OpenCraftingGUIMessage(building));
     }
 
     /**

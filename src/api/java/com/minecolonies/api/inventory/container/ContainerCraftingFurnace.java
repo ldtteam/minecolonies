@@ -45,6 +45,11 @@ public class ContainerCraftingFurnace extends Container
     public final BlockPos buildingPos;
 
     /**
+     * The module id.
+     */
+    private String moduleId;
+
+    /**
      * Deserialize packet buffer to container instance.
      *
      * @param windowId     the id of the window.
@@ -55,7 +60,8 @@ public class ContainerCraftingFurnace extends Container
     public static ContainerCraftingFurnace fromPacketBuffer(final int windowId, final PlayerInventory inv, final PacketBuffer packetBuffer)
     {
         final BlockPos tePos = packetBuffer.readBlockPos();
-        return new ContainerCraftingFurnace(windowId, inv, tePos);
+        final String moduleId = packetBuffer.readString(32767);
+        return new ContainerCraftingFurnace(windowId, inv, tePos, moduleId);
     }
 
     /**
@@ -65,12 +71,12 @@ public class ContainerCraftingFurnace extends Container
      * @param inv      the player inventory.
      * @param pos      te world pos
      */
-    public ContainerCraftingFurnace(final int windowId, final PlayerInventory inv, final BlockPos pos)
+    public ContainerCraftingFurnace(final int windowId, final PlayerInventory inv, final BlockPos pos, final String moduleId)
     {
         super(ModContainers.craftingFurnace, windowId);
+        this.moduleId = moduleId;
         this.furnaceInventory = new IItemHandlerModifiable()
         {
-
             ItemStack input = ItemStack.EMPTY;
             ItemStack output = ItemStack.EMPTY;
 
@@ -394,5 +400,14 @@ public class ContainerCraftingFurnace extends Container
     public BlockPos getPos()
     {
         return buildingPos;
+    }
+
+    /**
+     * Get the module if of the container.
+     * @return the module id.
+     */
+    public String getModuleId()
+    {
+        return this.moduleId;
     }
 }

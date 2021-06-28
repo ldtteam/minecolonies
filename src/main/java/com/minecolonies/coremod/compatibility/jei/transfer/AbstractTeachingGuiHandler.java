@@ -1,9 +1,11 @@
 package com.minecolonies.coremod.compatibility.jei.transfer;
 
+import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.moduleviews.CraftingModuleView;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.compatibility.jei.GenericRecipeCategory;
+import com.minecolonies.coremod.compatibility.jei.JobBasedRecipeCategory;
 import mezz.jei.api.gui.handlers.IGhostIngredientHandler;
 import mezz.jei.api.gui.handlers.IGuiContainerHandler;
 import mezz.jei.api.registration.IGuiHandlerRegistration;
@@ -11,11 +13,15 @@ import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.renderer.Rectangle2d;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Common base class for JEI teaching GUI extensions.
@@ -24,11 +30,12 @@ public abstract class AbstractTeachingGuiHandler<W extends ContainerScreen<?>>
         implements IGuiContainerHandler<W>, IGhostIngredientHandler<W>
 {
     @NotNull
-    private final List<GenericRecipeCategory> categories;
+    private final Map<ResourceLocation, GenericRecipeCategory> categories;
 
     protected AbstractTeachingGuiHandler(@NotNull final List<GenericRecipeCategory> categories)
     {
-        this.categories = categories;
+        this.categories = categories.stream()
+                .collect(Collectors.toMap(JobBasedRecipeCategory::getUid, Function.identity()));
     }
 
     public void register(@NotNull final IGuiHandlerRegistration registration)
@@ -43,7 +50,7 @@ public abstract class AbstractTeachingGuiHandler<W extends ContainerScreen<?>>
     protected abstract void updateServer(@NotNull W gui);
 
     @Nullable
-    protected GenericRecipeCategory getRecipeCategory(@NotNull final AbstractBuildingWorker.View view)
+    protected GenericRecipeCategory getRecipeCategory(@NotNull final AbstractBuildingWorkerView view)
     {
         for (final CraftingModuleView moduleView : view.getModuleViews(CraftingModuleView.class))
         {
@@ -52,12 +59,11 @@ public abstract class AbstractTeachingGuiHandler<W extends ContainerScreen<?>>
             final JobEntry jobEntry = moduleView.getJobEntry();
             if (jobEntry != null)
             {
-                for (GenericRecipeCategory category : this.categories)
+                final ResourceLocation uid = ICraftingBuildingModule.getUid(jobEntry, moduleView.getId());
+                final GenericRecipeCategory category = this.categories.get(uid);
+                if (category != null)
                 {
-                    if (category.getJob().getJobRegistryEntry().getRegistryName().equals(jobEntry.getRegistryName()))
-                    {
-                        return category;
-                    }
+                    return category;
                 }
             }
         }

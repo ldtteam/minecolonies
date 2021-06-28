@@ -1,6 +1,6 @@
 {
   "type" : "recipe",
-  "crafter": "stonemason",
+  "crafter": "stonemason_crafting",
   "inputs": [
     {
         "item" : "minecraft:flint",

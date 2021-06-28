@@ -55,6 +55,7 @@ import java.util.stream.Collectors;
 import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.*;
 import static com.minecolonies.api.research.util.ResearchConstants.HEALTH_BOOST;
 import static com.minecolonies.api.research.util.ResearchConstants.WALKING;
+import static com.minecolonies.api.util.constant.BuildingConstants.TAG_ACTIVE;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.ItemStackUtils.*;
@@ -257,6 +258,16 @@ public class CitizenData implements ICitizenData
      * Alive partner of the citizen.
      */
     private Integer partner = 0;
+
+    /**
+     * If the job is currently active.
+     */
+    private boolean isWorking = false;
+
+    /**
+     * The inactivity timer in seconds.
+     */
+    private int inactivityTimer = DISABLED;
 
     /**
      * Create a CitizenData given an ID. Used as a super-constructor or during loading.
@@ -1105,6 +1116,7 @@ public class CitizenData implements ICitizenData
         }
         nbtTagCompound.put(TAG_CHILDREN, childrenNBT);
         nbtTagCompound.putInt(TAG_PARTNER, partner);
+        nbtTagCompound.putBoolean(TAG_ACTIVE, this.isWorking);
 
         return nbtTagCompound;
     }
@@ -1226,6 +1238,7 @@ public class CitizenData implements ICitizenData
         }
 
         partner = nbtTagCompound.getInt(TAG_PARTNER);
+        this.isWorking = nbtTagCompound.getBoolean(TAG_ACTIVE);
     }
 
     @Override
@@ -1234,6 +1247,12 @@ public class CitizenData implements ICitizenData
         if (!getEntity().isPresent() || !getEntity().get().isAlive())
         {
             return;
+        }
+
+        if (!isWorking && job != null && inactivityTimer != DISABLED && ++inactivityTimer >= job.getInactivityLimit())
+        {
+            job.triggerActivityChangeAction(this.isWorking);
+            inactivityTimer = DISABLED;
         }
 
         final List<IInteractionResponseHandler> toRemove = new ArrayList<>();
@@ -1446,6 +1465,30 @@ public class CitizenData implements ICitizenData
               stack -> CAN_EAT.test(stack) && this.getWorkBuilding().canEat(stack));
             return slotBadFood != -1 && slotGoodFood == -1;
         }
+    }
+
+    @Override
+    public boolean isWorking()
+    {
+        return isWorking;
+    }
+
+    @Override
+    public void setWorking(final boolean isWorking)
+    {
+        if (isWorking && !this.isWorking)
+        {
+            if (job != null)
+            {
+                job.triggerActivityChangeAction(isWorking);
+            }
+            inactivityTimer = DISABLED;
+        }
+        else if (!isWorking && this.isWorking)
+        {
+            inactivityTimer = 0;
+        }
+        this.isWorking = isWorking;
     }
 
     @Nullable

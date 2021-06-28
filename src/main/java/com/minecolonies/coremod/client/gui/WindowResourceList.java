@@ -98,6 +98,9 @@ public class WindowResourceList extends AbstractWindowSkeleton
 
             resources.clear();
             resources.addAll(moduleView.getResources().values());
+
+            double supplied = 0;
+            double total = 0;
             for (final BuildingBuilderResource resource : resources)
             {
                 final int amountToSet;
@@ -121,6 +124,14 @@ public class WindowResourceList extends AbstractWindowSkeleton
                         resource.setAmountInDelivery(resource.getAmountInDelivery() + delivery.getStack().getCount());
                     }
                 }
+                supplied += Math.min(resource.getAvailable(), resource.getAmount());
+
+                total += resource.getAmount();
+            }
+
+            if (total > 0)
+            {
+                findPaneOfTypeByID(LABEL_PROGRESS, Text.class).setText(new TranslationTextComponent("com.minecolonies.coremod.gui.progress.res", (int) ((supplied / total) * 100) + "%", moduleView.getProgress() + "%"));
             }
 
             resources.sort(new BuildingBuilderResource.ResourceComparator(NOT_NEEDED, HAVE_ENOUGH, IN_DELIVERY, NEED_MORE, DONT_HAVE));
@@ -193,7 +204,6 @@ public class WindowResourceList extends AbstractWindowSkeleton
 
         findPaneOfTypeByID(LABEL_WORKERNAME, Text.class).setText(builder.getWorkerName());
         findPaneOfTypeByID(LABEL_CONSTRUCTION_NAME, Text.class).setText(moduleView.getConstructionName());
-        findPaneOfTypeByID(LABEL_PROGRESS, Text.class).setText(new TranslationTextComponent("com.minecolonies.coremod.gui.progress.res", moduleView.getProgress()));
     }
 
     /**

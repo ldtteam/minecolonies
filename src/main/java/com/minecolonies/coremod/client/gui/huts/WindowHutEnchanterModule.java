@@ -10,6 +10,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.client.gui.AbstractWindowWorkerModuleBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingEnchanter;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -73,7 +74,7 @@ public class WindowHutEnchanterModule extends AbstractWindowWorkerModuleBuilding
         super.onOpened();
         selectedBuildings = building.getBuildingsToGatherFrom();
         allBuildings = building.getColony().getBuildings().stream()
-                         .filter(b -> b instanceof AbstractBuildingWorker.View && !(b instanceof BuildingEnchanter.View))
+                         .filter(b -> b instanceof AbstractBuildingWorkerView && !(b instanceof BuildingEnchanter.View))
                          .sorted((b1, b2) -> (int) (BlockPosUtil.getDistance2D(building.getPosition(), b1.getPosition()) - BlockPosUtil.getDistance2D(building.getPosition(),
                            b2.getPosition())))
                          .collect(Collectors.toList());
@@ -91,7 +92,7 @@ public class WindowHutEnchanterModule extends AbstractWindowWorkerModuleBuilding
             {
                 IBuildingView buildingView = allBuildings.get(index);
                 String text = "";
-                if (buildingView instanceof AbstractBuildingWorker.View)
+                if (buildingView instanceof AbstractBuildingWorkerView)
                 {
                     text += buildingView.getCustomName().isEmpty() ? buildingView.getSchematicName() : buildingView.getCustomName();
                     text += " " + BlockPosUtil.getDistance2D(building.getPosition(), buildingView.getPosition()) + "m";

@@ -8,7 +8,8 @@ import com.minecolonies.api.inventory.container.ContainerCraftingFurnace;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
+import com.minecolonies.coremod.colony.buildings.moduleviews.CraftingModuleView;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.network.messages.server.colony.building.worker.AddRemoveRecipeMessage;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -60,7 +61,12 @@ public class WindowFurnaceCrafting extends ContainerScreen<ContainerCraftingFurn
     /**
      * The building assigned to this.
      */
-    private final AbstractBuildingSmelterCrafter.View building;
+    private final AbstractBuildingWorkerView building;
+
+    /**
+     * The module this crafting window is for.
+     */
+    private final CraftingModuleView module;
 
     /**
      * Create a crafting gui window.
@@ -73,11 +79,12 @@ public class WindowFurnaceCrafting extends ContainerScreen<ContainerCraftingFurn
     {
         super(container, playerInventory, iTextComponent);
         this.container = container;
-        this.building = (AbstractBuildingSmelterCrafter.View) IColonyManager.getInstance().getBuildingView(playerInventory.player.world.getDimensionKey(), container.getPos());
+        this.building = (AbstractBuildingWorkerView) IColonyManager.getInstance().getBuildingView(playerInventory.player.world.getDimensionKey(), container.getPos());
+        this.module = building.getModuleViewMatching(CraftingModuleView.class, v -> v.getId().equals(container.getModuleId()));
     }
 
     @NotNull
-    public AbstractBuildingSmelterCrafter.View getBuildingView()
+    public AbstractBuildingWorkerView getBuildingView()
     {
         return building;
     }
@@ -86,13 +93,13 @@ public class WindowFurnaceCrafting extends ContainerScreen<ContainerCraftingFurn
     protected void init()
     {
         super.init();
-        final String buttonDisplay = building.canRecipeBeAdded() ? I18n.format("gui.done") : LanguageHandler.format("com.minecolonies.coremod.gui.recipe.full");
+        final String buttonDisplay = module.canLearnFurnaceRecipes() ? I18n.format("gui.done") : LanguageHandler.format("com.minecolonies.coremod.gui.recipe.full");
         /*
          * The button to click done after finishing the recipe.
          */
         final Button doneButton = new Button(guiLeft + BUTTON_X_OFFSET, guiTop + BUTTON_Y_POS, BUTTON_WIDTH, BUTTON_HEIGHT, new StringTextComponent(buttonDisplay), new OnButtonPress());
         this.addButton(doneButton);
-        if (!building.canRecipeBeAdded())
+        if (!module.canLearnFurnaceRecipes())
         {
             doneButton.active = false;
         }
@@ -103,7 +110,7 @@ public class WindowFurnaceCrafting extends ContainerScreen<ContainerCraftingFurn
         @Override
         public void onPress(@NotNull final Button button)
         {
-            if (building.canRecipeBeAdded())
+            if (module.canLearnFurnaceRecipes())
             {
                 final List<ItemStorage> input = new ArrayList<>();
                 input.add(new ItemStorage(container.inventorySlots.get(0).getStack()));
@@ -111,7 +118,7 @@ public class WindowFurnaceCrafting extends ContainerScreen<ContainerCraftingFurn
 
                 if (!ItemStackUtils.isEmpty(primaryOutput))
                 {
-                    Network.getNetwork().sendToServer(new AddRemoveRecipeMessage(building, input, 1, primaryOutput, ImmutableList.of(), false));
+                    Network.getNetwork().sendToServer(new AddRemoveRecipeMessage(building, input, 1, primaryOutput, ImmutableList.of(), false, module.getId()));
                 }
             }
         }

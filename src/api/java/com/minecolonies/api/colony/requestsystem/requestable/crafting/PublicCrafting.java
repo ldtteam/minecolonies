@@ -1,7 +1,9 @@
 package com.minecolonies.api.colony.requestsystem.requestable.crafting;
 
 import com.google.common.reflect.TypeToken;
+import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
@@ -26,9 +28,9 @@ public class PublicCrafting extends AbstractCrafting
      * @param stack the required stack.
      * @param count the crafting count.
      */
-    public PublicCrafting(@NotNull final ItemStack stack, final int count)
+    public PublicCrafting(@NotNull final ItemStack stack, final int count, final IToken<?> recipeToken)
     {
-        super(stack, count, count);
+        super(stack, count, count, recipeToken);
     }
 
     /**
@@ -43,7 +45,8 @@ public class PublicCrafting extends AbstractCrafting
         final CompoundNBT compound = new CompoundNBT();
         compound.put(NBT_STACK, input.getStack().serializeNBT());
         compound.putInt(NBT_COUNT, input.getCount());
-
+        final CompoundNBT tokenCompound = StandardFactoryController.getInstance().serialize(input.getRecipeID());
+        compound.put(NBT_TOKEN, tokenCompound);
         return compound;
     }
 
@@ -58,8 +61,12 @@ public class PublicCrafting extends AbstractCrafting
     {
         final ItemStack stack = ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_STACK));
         final int count = compound.getInt(NBT_COUNT);
-
-        return new PublicCrafting(stack, count);
+        IToken<?> token = null;
+        if (compound.contains(NBT_TOKEN))
+        {
+            token = StandardFactoryController.getInstance().deserialize(compound.getCompound(NBT_TOKEN));
+        }
+        return new PublicCrafting(stack, count, token);
     }
 
     /**
@@ -73,6 +80,7 @@ public class PublicCrafting extends AbstractCrafting
     {
         buffer.writeItemStack(input.getStack());
         buffer.writeInt(input.getCount());
+        StandardFactoryController.getInstance().serialize(buffer, input.getRecipeID());
     }
 
     /**
@@ -86,8 +94,9 @@ public class PublicCrafting extends AbstractCrafting
     {
         final ItemStack stack = buffer.readItemStack();
         final int count = buffer.readInt();
+        final IToken<?> token = StandardFactoryController.getInstance().deserialize(buffer);
 
-        return new PublicCrafting(stack, count);
+        return new PublicCrafting(stack, count, token);
     }
 
     @Override

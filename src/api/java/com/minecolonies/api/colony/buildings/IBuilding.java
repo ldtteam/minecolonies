@@ -92,7 +92,7 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
     /**
      * Executed when a new day start.
      */
-    void onWakeUp();
+    default void onWakeUp() { }
 
     /**
      * Executed every time when citizen finish inventory cleanup called after citizen got paused. Use for cleaning a state only.
@@ -392,13 +392,6 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
      * @return a list of itemstorages.
      */
     Map<ItemStorage, Integer> reservedStacks();
-
-    /**
-     * Open the right crafting container.
-     *
-     * @param player the player opening it.
-     */
-    void openCraftingContainer(final ServerPlayerEntity player);
 
     /**
      * Process time the colony was offline.

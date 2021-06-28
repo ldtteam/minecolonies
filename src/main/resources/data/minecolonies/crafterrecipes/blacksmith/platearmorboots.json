@@ -1,6 +1,6 @@
 {
   "type" : "recipe",
-  "crafter": "blacksmith",
+  "crafter": "blacksmith_crafting",
   "inputs": [
     {
       "item" : "minecraft:iron_ingot",

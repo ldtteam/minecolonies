@@ -44,7 +44,7 @@ public class SawmillTimberFrameRecipeProvider extends CustomRecipeProvider
                                                       .collect(Collectors.toList());
 
 
-                    CustomRecipeBuilder.create("sawmill", id)
+                    CustomRecipeBuilder.create("sawmill_crafting", id)
                       .inputs(Lists.newArrayList(frame, centre, new ItemStorage(new ItemStack(buildTool.get()))))
                       .alternateOutputs(results.subList(1, results.size()))
                       .result(results.get(0))

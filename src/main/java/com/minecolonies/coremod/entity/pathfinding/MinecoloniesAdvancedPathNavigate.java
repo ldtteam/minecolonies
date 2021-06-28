@@ -763,7 +763,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             Vector3d next = this.currentPath.getVectorFromIndex(this.entity, i);
             if (Math.abs(this.entity.getPosX() - next.x) < (double) this.maxDistanceToWaypoint - Math.abs(this.entity.getPosY() - (next.y)) * 0.1
                   && Math.abs(this.entity.getPosZ() - next.z) < (double) this.maxDistanceToWaypoint - Math.abs(this.entity.getPosY() - (next.y)) * 0.1 &&
-                  Math.abs(this.entity.getPosY() - (next.y - 0.5f)) < 1.0D)
+                  Math.abs(this.entity.getPosY() - next.y) < 1.0D)
             {
                 this.currentPath.incrementPathIndex();
                 wentAhead = true;

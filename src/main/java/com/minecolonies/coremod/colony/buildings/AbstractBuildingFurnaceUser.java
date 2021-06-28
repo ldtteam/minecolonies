@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony.buildings;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
 import net.minecraft.block.Block;
 import net.minecraft.block.FurnaceBlock;
@@ -162,6 +163,10 @@ public abstract class AbstractBuildingFurnaceUser extends AbstractBuildingWorker
      */
     public boolean isAllowedFuel(final ItemStack stack)
     {
-        return getModuleMatching(ItemListModule.class, m -> m.getId().equals(FUEL_LIST)).getList().stream().anyMatch(itemStack -> stack.isItemEqual(itemStack.getItemStack()));
+        if (ItemStackUtils.isEmpty(stack))
+        {
+            return false;
+        }
+        return getModuleMatching(ItemListModule.class, m -> m.getId().equals(FUEL_LIST)).isItemInList(new ItemStorage(stack));
     }
 }

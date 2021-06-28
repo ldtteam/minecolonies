@@ -15,6 +15,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.colony.jobs.JobCombatTraining;
 import net.minecraft.block.*;
 import net.minecraft.nbt.CompoundNBT;
@@ -314,7 +315,7 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
     /**
      * The client view for the bakery building.
      */
-    public static class View extends AbstractBuildingWorker.View implements IBuildingCanBeHiredFrom
+    public static class View extends AbstractBuildingWorkerView implements IBuildingCanBeHiredFrom
     {
         /**
          * The client view constructor for the AbstractGuardBuilding.

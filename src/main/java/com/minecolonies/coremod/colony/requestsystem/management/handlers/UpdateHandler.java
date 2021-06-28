@@ -17,6 +17,7 @@ public class UpdateHandler implements IUpdateHandler
     @VisibleForTesting
     private static final List<IUpdateStep> UPDATE_STEPS = Lists.newArrayList(
       new InitialUpdate(),
+      //todo purge in 1.17
       new CraftingUpdate(),
       new ResetRSToFixBuildingId(),
       new ResetRSToAddDelivermanPickups(),
@@ -25,7 +26,9 @@ public class UpdateHandler implements IUpdateHandler
       new ResetRSToAddSecondWarehouseResolver(),
       new ResetRSToAddBaker(),
       new ResetRSForDeliveryResolverChange(),
-      new ResetRSToFixLumberjack()
+      new ResetRSToFixLumberjack(),
+      new ResetRSToFixRecipeHandling(),
+      new ResetRSToFixPrivatePublic()
     );
 
     private final IStandardRequestManager manager;

@@ -113,6 +113,13 @@ public final class ModSoundEvents
 
         registry.register(RaidSounds.DESERT_RAID);
         registry.register(RaidSounds.DESERT_RAID_WARNING);
+
+        registry.register(MercenarySounds.mercenaryAttack);
+        registry.register(MercenarySounds.mercenaryCelebrate);
+        registry.register(MercenarySounds.mercenaryDie);
+        registry.register(MercenarySounds.mercenaryHurt);
+        registry.register(MercenarySounds.mercenarySay);
+        registry.register(MercenarySounds.mercenaryStep);
     }
 
     /**

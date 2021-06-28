@@ -18,8 +18,8 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.colony.jobs.JobSmelter;
 import com.minecolonies.coremod.util.FurnaceRecipes;
 import net.minecraft.block.Block;
@@ -148,7 +148,7 @@ public class BuildingSmeltery extends AbstractBuildingFurnaceUser
     /**
      * Smelter building View.
      */
-    public static class View extends AbstractBuildingWorker.View
+    public static class View extends AbstractBuildingWorkerView
     {
         /**
          * Instantiate the smeltery view.
@@ -182,6 +182,12 @@ public class BuildingSmeltery extends AbstractBuildingFurnaceUser
         public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
         {
             // all "recipes" are handled by the AI, and queried via the job
+            return false;
+        }
+
+        @Override
+        public boolean isVisible()
+        {
             return false;
         }
 

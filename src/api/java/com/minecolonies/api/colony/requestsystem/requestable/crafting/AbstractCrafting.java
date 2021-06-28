@@ -1,6 +1,7 @@
 package com.minecolonies.api.colony.requestsystem.requestable.crafting;
 
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -15,7 +16,9 @@ public abstract class AbstractCrafting implements IRequestable
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
     protected static final String NBT_STACK     = "Stack";
     protected static final String NBT_COUNT     = "Count";
-    protected static final String NBT_MIN_COUNT = "Count";
+    protected static final String NBT_MIN_COUNT = "MinCount";
+    protected static final String NBT_TOKEN     = "Token";
+
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
 
     /**
@@ -35,17 +38,24 @@ public abstract class AbstractCrafting implements IRequestable
     private final int minCount;
 
     /**
+     * The token associated to the crafting request.
+     */
+    private final IToken<?> recipeToken;
+
+    /**
      * Create a Stack deliverable.
      *
      * @param stack    the required stack.
      * @param count    the crafting count.
      * @param minCount the min crafting count.
+     * @param recipeToken the associated recipe token.
      */
-    public AbstractCrafting(@NotNull final ItemStack stack, final int count, final int minCount)
+    public AbstractCrafting(@NotNull final ItemStack stack, final int count, final int minCount, final IToken<?> recipeToken)
     {
         this.theStack = stack.copy();
         this.count = count;
         this.minCount = minCount;
+        this.recipeToken = recipeToken;
 
         if (ItemStackUtils.isEmpty(stack))
         {
@@ -79,6 +89,15 @@ public abstract class AbstractCrafting implements IRequestable
     public int getMinCount()
     {
         return minCount;
+    }
+
+    /**
+     * The recipe storage id.
+     * @return the id.
+     */
+    public IToken<?> getRecipeID()
+    {
+        return recipeToken;
     }
 
     @Override
