@@ -4,6 +4,7 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
+import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.IPermissions;
@@ -32,6 +33,7 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenDiedEvent;
+import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.*;
 import com.minecolonies.coremod.entity.SittingEntity;
 import com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard;
@@ -63,7 +65,6 @@ import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -1013,6 +1014,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
         if (getCitizenColonyHandler().getColony().getRaiderManager().isRaided())
         {
+            citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_RAID), ChatPriority.CHITCHAT));
             setVisibleStatusIfNone(RAIDED);
             desiredActivity = DesiredActivity.SLEEP;
             return false;
@@ -1056,6 +1058,10 @@ public class EntityCitizen extends AbstractEntityCitizen
             citizenStatusHandler.setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.waiting"),
               new TranslationTextComponent("com.minecolonies.coremod.status.rainStop"));
             setVisibleStatusIfNone(BAD_WEATHER);
+            if (!citizenData.getColony().getRaiderManager().isRaided())
+            {
+                citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_RAINING), ChatPriority.CHITCHAT));
+            }
             desiredActivity = DesiredActivity.SLEEP;
             return false;
         }

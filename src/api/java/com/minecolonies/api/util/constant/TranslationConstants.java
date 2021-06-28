@@ -416,6 +416,10 @@ public final class TranslationConstants
     @NonNls
     public static final String DEMANDS                                                              = "com.minecolonies.coremod.entity.citizen.demands.";
     @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_RAINING                      = "com.minecolonies.coremod.entity.citizen.raining";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_RAID                         = "com.minecolonies.coremod.entity.citizen.raid";
+    @NonNls
     public static final String WAREHOUSE_SORTED                                                     = "com.minecolonies.coremod.gui.warehouse.sorted";
     @NonNls
     public static final String ALL_CITIZENS_ARE_SLEEPING                                            = "com.minecolonies.coremod.entity.citizen.sleep";
