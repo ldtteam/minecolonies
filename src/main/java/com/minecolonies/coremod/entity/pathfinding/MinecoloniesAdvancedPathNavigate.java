@@ -244,6 +244,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         }
 
         // The following block replaces mojangs super.tick(). Why you may ask? Because it's broken, that's why.
+        // The moveHelper won't move up if standing in a block with an empty bounding box (put grass, 1 layer snow, mushroom in front of a solid block and have them try jump up).
         if (!this.noPath())
         {
             if (this.canNavigate())
@@ -281,6 +282,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
 
     /**
      * Similar to WalkNodeProcessor.getGroundY but not broken.
+     * This checks if the block below the position we're trying to move to reaches into the block above, if so, it has to aim a little bit higher.
      * @param world the world.
      * @param pos the position to check.
      * @return the next y level to go to.
@@ -289,7 +291,11 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     {
         final BlockPos blockpos = pos.down();
         final VoxelShape voxelshape = world.getBlockState(blockpos).getCollisionShape(world, blockpos);
-        return (double)blockpos.getY() + (voxelshape.isEmpty() ? 1.0D : voxelshape.getEnd(Direction.Axis.Y));
+        if (voxelshape.isEmpty() || voxelshape.getEnd(Direction.Axis.Y) < 1.0)
+        {
+            return pos.getY();
+        }
+        return blockpos.getY() + voxelshape.getEnd(Direction.Axis.Y);
     }
 
     @Nullable
