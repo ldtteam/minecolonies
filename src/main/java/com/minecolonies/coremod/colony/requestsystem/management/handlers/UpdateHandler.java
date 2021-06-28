@@ -27,7 +27,8 @@ public class UpdateHandler implements IUpdateHandler
       new ResetRSToAddBaker(),
       new ResetRSForDeliveryResolverChange(),
       new ResetRSToFixLumberjack(),
-      new ResetRSToFixRecipeHandling()
+      new ResetRSToFixRecipeHandling(),
+      new ResetRSToFixPrivatePublic()
     );
 
     private final IStandardRequestManager manager;
