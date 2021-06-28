@@ -690,7 +690,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         buf.writeString(getStyle());
         buf.writeString(this.getSchematicName());
         buf.writeBlockPos(getParent());
-        buf.writeString(this.getCustomBuildingName());
+        buf.writeString(this.customName);
 
         buf.writeInt(getRotation());
         buf.writeBoolean(isMirrored());
