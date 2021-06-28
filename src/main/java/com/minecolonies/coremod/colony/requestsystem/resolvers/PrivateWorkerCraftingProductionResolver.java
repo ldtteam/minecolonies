@@ -83,8 +83,7 @@ public class PrivateWorkerCraftingProductionResolver extends AbstractCraftingPro
             manager.updateRequestState(request.getId(), RequestState.FAILED);
             return;
         }
-        final int craftingCount = CraftingUtils.calculateMaxCraftingCount(request.getRequest().getCount(), storage);
-        for (int i = 0; i < craftingCount; i++)
+        for (int i = 0; i < request.getRequest().getCount(); i++)
         {
             module.fullFillRecipe(storage);
         }
