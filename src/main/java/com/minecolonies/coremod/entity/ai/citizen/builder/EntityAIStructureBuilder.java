@@ -2,7 +2,9 @@ package com.minecolonies.coremod.entity.ai.citizen.builder;
 
 import com.ldtteam.structurize.placement.StructurePlacer;
 import com.ldtteam.structurize.util.BlockUtils;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.*;
@@ -12,12 +14,10 @@ import com.minecolonies.coremod.colony.buildings.utils.BuilderBucket;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuildRemoval;
+import com.minecolonies.coremod.colony.workorders.*;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructureWithWorkOrder;
 import com.minecolonies.coremod.entity.ai.util.BuildingStructureHandler;
+import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenChatHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
@@ -33,6 +33,8 @@ import java.util.function.Predicate;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.MIN_OPEN_SLOTS;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECOCOMPLETE;
 
 /**
  * AI class for the builder. Manages building and repairing buildings.
@@ -347,5 +349,61 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     protected int getActionsDoneUntilDumping()
     {
         return ACTIONS_UNTIL_DUMP;
+    }
+
+    @Override
+    protected void sendCompletionMessage(final WorkOrderBuildDecoration wo)
+    {
+        super.sendCompletionMessage(wo);
+
+        final BlockPos position = wo.getSchematicLocation();
+        if (getOwnBuilding().getManualMode())
+        {
+            boolean hasInQueue = false;
+            for (final IWorkOrder workorder : getOwnBuilding().getColony().getWorkManager().getWorkOrders().values())
+            {
+                if (workorder.getID() != wo.getID() && workorder.isClaimedBy(worker.getCitizenData()))
+                {
+                    hasInQueue = true;
+                }
+            }
+
+            if (!hasInQueue)
+            {
+                if (wo instanceof WorkOrderBuildBuilding)
+                {
+                    worker.getCitizenChatHandler().sendLocalizedChat(
+                      COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE_MANUAL,
+                      wo.getDisplayName(),
+                      position.getX(),
+                      position.getY(),
+                      position.getZ());
+                }
+                else
+                {
+                    worker.getCitizenChatHandler().sendLocalizedChat(
+                      COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECOCOMPLETE_MANUAL,
+                      wo.getDisplayName(),
+                      position.getX(),
+                      position.getY(),
+                      position.getZ());
+                }
+                return;
+            }
+        }
+
+        if (wo instanceof WorkOrderBuildBuilding)
+        {
+            worker.getCitizenChatHandler().sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE, wo.getDisplayName(), position.getX(), position.getY(), position.getZ());
+        }
+        else
+        {
+            worker.getCitizenChatHandler().sendLocalizedChat(
+              COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECOCOMPLETE,
+              wo.getDisplayName(),
+              position.getX(),
+              position.getY(),
+              position.getZ());
+        }
     }
 }

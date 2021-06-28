@@ -4,6 +4,7 @@ import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
 import com.ldtteam.structurize.placement.BlockPlacementResult;
 import com.ldtteam.structurize.placement.StructurePhasePlacementResult;
 import com.ldtteam.structurize.placement.StructurePlacer;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -322,15 +323,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
 
         if (wo instanceof WorkOrderBuildBuilding)
         {
-            BlockPos position = wo.getSchematicLocation();
-            if (getOwnBuilding() instanceof BuildingBuilder && ((BuildingBuilder) getOwnBuilding()).getManualMode())
-            {
-            	worker.getCitizenChatHandler().sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE_MANUAL, structureName, position.getX(), position.getY(), position.getZ());
-            }
-            else
-            {
-                worker.getCitizenChatHandler().sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE, structureName, position.getX(), position.getY(), position.getZ());
-            }
+            sendCompletionMessage(wo);
 
             WorkOrderBuild wob = (WorkOrderBuild) wo;
             String buildingName = wo.getStructureName();
@@ -348,6 +341,10 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             buildingName = buildingName.substring(buildingName.indexOf('/') + 1, buildingName.lastIndexOf('/')) + " " +
                   buildingName.substring(buildingName.lastIndexOf('/') + 1, buildingName.indexOf(String.valueOf(wob.getUpgradeLevel())));
             job.getColony().getEventDescriptionManager().addEventDescription(new BuildingDeconstructedEvent(wo.getSchematicLocation(), buildingName, wob.getUpgradeLevel()));
+        }
+        else
+        {
+            sendCompletionMessage(wo);
         }
 
         if (wo == null)
@@ -399,6 +396,15 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             }
         }
         getOwnBuilding().resetNeededResources();
+    }
+
+    /**
+     * Send a completion message to the colony if necessary.
+     * @param wo the completed workorder.
+     */
+    protected void sendCompletionMessage(final WorkOrderBuildDecoration wo)
+    {
+        //noop
     }
 
     @Override

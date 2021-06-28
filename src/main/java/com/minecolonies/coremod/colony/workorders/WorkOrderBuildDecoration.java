@@ -9,7 +9,6 @@ import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.util.AdvancementUtils;
 import net.minecraft.nbt.CompoundNBT;
@@ -19,8 +18,6 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_LEVEL;
 import static com.minecolonies.api.util.constant.Suppression.UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED;
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECOCOMPLETE;
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECOCOMPLETE_MANUAL;
 
 /**
  * A work order that the build can take to build decorations.
@@ -238,41 +235,6 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
         {
             AdvancementUtils.TriggerAdvancementPlayersForColony(colony, player ->
                 AdvancementTriggers.COMPLETE_BUILD_REQUEST.trigger(player, structureName, 0));
-
-            BlockPos position = this.getSchematicLocation();
-
-            if (citizen.getName().isEmpty())
-            {
-                LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(), COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECOCOMPLETE,
-                        citizen.getName(),
-                  this.getDisplayName(),
-                        position.getX(),
-                        position.getY(),
-                        position.getZ());
-            }
-            else
-            {
-                if (citizen.getWorkBuilding() instanceof BuildingBuilder && ((BuildingBuilder) citizen.getWorkBuilding()).getManualMode())
-                {
-                    LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
-                          COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECOCOMPLETE_MANUAL,
-                          citizen.getName(),
-                      this.getDisplayName(),
-                            position.getX(),
-                            position.getY(),
-                            position.getZ());
-                }
-                else
-                {
-                    LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
-                          COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECOCOMPLETE,
-                          citizen.getName(),
-                      this.getDisplayName(),
-                            position.getX(),
-                            position.getY(),
-                            position.getZ());
-                }
-            }
         }
     }
 
