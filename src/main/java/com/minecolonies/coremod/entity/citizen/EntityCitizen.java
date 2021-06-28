@@ -1060,7 +1060,7 @@ public class EntityCitizen extends AbstractEntityCitizen
             setVisibleStatusIfNone(BAD_WEATHER);
             if (!citizenData.getColony().getRaiderManager().isRaided())
             {
-            	citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_RAINING), ChatPriority.CHITCHAT));
+                citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_RAINING), ChatPriority.CHITCHAT));
             }
             desiredActivity = DesiredActivity.SLEEP;
             return false;
