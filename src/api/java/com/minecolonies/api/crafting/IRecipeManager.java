@@ -18,6 +18,14 @@ public interface IRecipeManager
     ImmutableMap<IToken<?>, IRecipeStorage> getRecipes();
 
     /**
+     * Get a recipe from the storage.
+     *
+     * @param token the unique token.
+     * @return the recipe.
+     */
+    IRecipeStorage getRecipe(final IToken<?> token);
+
+    /**
      * Add a recipe to the map.
      *
      * @param storage the recipe to add

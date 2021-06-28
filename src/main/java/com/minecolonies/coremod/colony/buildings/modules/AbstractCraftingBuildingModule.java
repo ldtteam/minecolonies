@@ -557,10 +557,40 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
 
         if(foundRecipe != null && foundRecipe.getRecipeType() instanceof MultiOutputRecipe)
         {
-            foundRecipe = foundRecipe.getClassicForMultiOutput(stackPredicate);
+            IToken<?> token = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(foundRecipe.getClassicForMultiOutput(stackPredicate));
+            foundRecipe = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
         }
 
         return foundRecipe;
+    }
+
+    @Override
+    public boolean holdsRecipe(final IToken<?> token)
+    {
+        if (recipes.contains(token))
+        {
+            return true;
+        }
+
+        final IRecipeStorage storageIn = IColonyManager.getInstance().getRecipeManager().getRecipe(token);
+        if (storageIn == null)
+        {
+            return false;
+        }
+
+        for (final IToken<?> localToken : recipes)
+        {
+            final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipe(localToken);
+            if (storage != null && storage.getRecipeType() instanceof MultiOutputRecipe)
+            {
+                if (storageIn.equals(storage.getClassicForMultiOutput(storageIn.getPrimaryOutput())))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     /**
