@@ -1,7 +1,9 @@
 package com.minecolonies.api.colony.requestsystem.requestable.crafting;
 
 import com.google.common.reflect.TypeToken;
+import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
@@ -18,8 +20,7 @@ public class PrivateCrafting extends AbstractCrafting
     /**
      * Set of type tokens belonging to this class.
      */
-    private final static Set<TypeToken<?>>
-      TYPE_TOKENS = ReflectionUtils.getSuperClasses(TypeToken.of(PrivateCrafting.class)).stream().filter(type -> !type.equals(TypeConstants.OBJECT)).collect(Collectors.toSet());
+    private final static Set<TypeToken<?>> TYPE_TOKENS = ReflectionUtils.getSuperClasses(TypeToken.of(PrivateCrafting.class)).stream().filter(type -> !type.equals(TypeConstants.OBJECT)).collect(Collectors.toSet());
 
     /**
      * Create a Stack deliverable.
@@ -27,10 +28,11 @@ public class PrivateCrafting extends AbstractCrafting
      * @param stack    the required stack.
      * @param count    the crafting count.
      * @param minCount the min count.
+     * @param recipeToken the recipe token.
      */
-    public PrivateCrafting(@NotNull final ItemStack stack, final int count, final int minCount)
+    public PrivateCrafting(@NotNull final ItemStack stack, final int count, final int minCount, final IToken<?> recipeToken)
     {
-        super(stack, count, minCount);
+        super(stack, count, minCount, recipeToken);
     }
 
     /**
@@ -46,6 +48,7 @@ public class PrivateCrafting extends AbstractCrafting
         compound.put(NBT_STACK, input.getStack().serializeNBT());
         compound.putInt(NBT_COUNT, input.getCount());
         compound.putInt(NBT_MIN_COUNT, input.getMinCount());
+        StandardFactoryController.getInstance().serialize(input.getRecipeID());
 
         return compound;
     }
@@ -62,8 +65,9 @@ public class PrivateCrafting extends AbstractCrafting
         final ItemStack stack = ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_STACK));
         final int count = compound.getInt(NBT_COUNT);
         final int minCount = compound.getInt(NBT_MIN_COUNT);
+        final IToken<?> token = StandardFactoryController.getInstance().deserialize(compound);
 
-        return new PrivateCrafting(stack, count, minCount == 0 ? count : minCount);
+        return new PrivateCrafting(stack, count, minCount == 0 ? count : minCount, token);
     }
 
     /**
@@ -78,6 +82,7 @@ public class PrivateCrafting extends AbstractCrafting
         buffer.writeItemStack(input.getStack());
         buffer.writeInt(input.getCount());
         buffer.writeInt(input.getMinCount());
+        StandardFactoryController.getInstance().serialize(buffer, input.getRecipeID());
     }
 
     /**
@@ -92,8 +97,9 @@ public class PrivateCrafting extends AbstractCrafting
         final ItemStack stack = buffer.readItemStack();
         final int count = buffer.readInt();
         final int minCount = buffer.readInt();
+        final IToken<?> token = StandardFactoryController.getInstance().deserialize(buffer);
 
-        return new PrivateCrafting(stack, count, minCount == 0 ? count : minCount);
+        return new PrivateCrafting(stack, count, minCount == 0 ? count : minCount, token);
     }
 
     @Override

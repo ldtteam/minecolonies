@@ -391,7 +391,7 @@ public class DefaultEnchanterCraftingProvider implements IDataProvider
 
             for (int buildingLevel = 1; buildingLevel <= MAX_BUILDING_LEVEL; ++buildingLevel)
             {
-                CustomRecipeBuilder.create(ModJobs.ENCHANTER_ID.getPath(), "tome" + buildingLevel)
+                CustomRecipeBuilder.create(ModJobs.ENCHANTER_ID.getPath() + "_custom", "tome" + buildingLevel)
                         .minBuildingLevel(buildingLevel)
                         .maxBuildingLevel(buildingLevel)
                         .inputs(tome)

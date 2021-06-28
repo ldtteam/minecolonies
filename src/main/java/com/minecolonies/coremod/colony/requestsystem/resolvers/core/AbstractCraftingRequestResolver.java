@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony.requestsystem.resolvers.core;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
+import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
@@ -25,10 +26,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
-
 
 import static com.minecolonies.api.util.constant.Constants.MAX_CRAFTING_CYCLE_DEPTH;
 import static com.minecolonies.api.research.util.ResearchConstants.CITIZEN_INV_SLOTS;
@@ -126,10 +127,13 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
         // If this building is resolving a generic food request, then only allow it to resolve non-smeltables. 
         if(building instanceof AbstractBuildingWorker)
         {
-            final IRecipeStorage recipe = ((AbstractBuildingWorker) building).getFirstRecipe(itemStack -> request.getRequest().matches(itemStack));
-            if( recipe != null && recipe.getIntermediate() != Blocks.FURNACE)
+            for (final ICraftingBuildingModule module : building.getModules(ICraftingBuildingModule.class))
             {
-                return canBuildingCraftStack((AbstractBuildingWorker) building, itemStack -> request.getRequest().matches(itemStack));
+                final IRecipeStorage recipe = module.getFirstRecipe(itemStack -> request.getRequest().matches(itemStack));
+                if (recipe != null && recipe.getIntermediate() != Blocks.FURNACE)
+                {
+                    return canBuildingCraftStack((AbstractBuildingWorker) building, itemStack -> request.getRequest().matches(itemStack));
+                }
             }
         }
 
@@ -245,13 +249,17 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
       final int count,
       final int minCount)
     {
-        final IRecipeStorage craftableCrafting = building.getFirstRecipe(stackPrecicate);
-        if (craftableCrafting == null)
+        for (final ICraftingBuildingModule module : building.getModules(ICraftingBuildingModule.class))
         {
-            return null;
+            final IRecipeStorage craftableCrafting = module.getFirstRecipe(stackPrecicate);
+            if (craftableCrafting == null)
+            {
+                continue;
+            }
+            return createRequestsForRecipe(manager, craftableCrafting, count, minCount);
         }
 
-        return createRequestsForRecipe(manager, craftableCrafting, count, minCount);
+        return null;
     }
 
     /**
@@ -310,7 +318,7 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
         List<IToken<?>> requests = new ArrayList<>();
         while(recipeExecutionsCount > 0)
         {
-            requests.add(manager.createRequest(this, createNewRequestableForStack(requestStack.copy(), Math.min(batchSize, recipeExecutionsCount), Math.max(1, Math.min(batchSize, minRecipeExecutionsCount)))));
+            requests.add(manager.createRequest(this, createNewRequestableForStack(requestStack.copy(), Math.min(batchSize, recipeExecutionsCount), Math.max(1, Math.min(batchSize, minRecipeExecutionsCount)),  recipeRequest.getToken())));
             recipeExecutionsCount -= batchSize;
             minRecipeExecutionsCount  = minRecipeExecutionsCount > batchSize ? minRecipeExecutionsCount - batchSize : 0; 
         }
@@ -326,7 +334,7 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
      * @param minCount the min count to fulfill.
      * @return the requestable.
      */
-    protected abstract IRequestable createNewRequestableForStack(ItemStack stack, final int count, final int minCount);
+    protected abstract IRequestable createNewRequestableForStack(ItemStack stack, final int count, final int minCount, final IToken<?> recipeId);
 
     @Override
     public void resolveRequest(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)

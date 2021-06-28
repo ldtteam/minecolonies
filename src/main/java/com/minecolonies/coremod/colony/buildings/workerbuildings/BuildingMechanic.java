@@ -6,14 +6,15 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingPublicCrafter;
 import com.minecolonies.api.colony.jobs.IJob;
-import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.colony.jobs.JobMechanic;
 import net.minecraft.block.HopperBlock;
 import net.minecraft.item.BlockItem;
@@ -30,7 +31,7 @@ import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT
 /**
  * Class of the mechanic building.
  */
-public class BuildingMechanic extends AbstractBuildingCrafter
+public class BuildingMechanic extends AbstractBuildingWorker implements IBuildingPublicCrafter
 {
     /**
      * Description string of the building.
@@ -90,17 +91,6 @@ public class BuildingMechanic extends AbstractBuildingCrafter
     }
 
     @Override
-    public boolean canRecipeBeAdded(final IToken<?> token)
-    {
-        if (!super.canRecipeBeAdded(token))
-        {
-            return false;
-        }
-
-        return isRecipeCompatibleWithCraftingModule(token);
-    }
-
-    @Override
     public BuildingEntry getBuildingRegistryEntry()
     {
         return ModBuildings.mechanic;
@@ -109,7 +99,7 @@ public class BuildingMechanic extends AbstractBuildingCrafter
     /**
      * Mechanic View.
      */
-    public static class View extends AbstractBuildingCrafter.View
+    public static class View extends AbstractBuildingWorkerView
     {
 
         /**

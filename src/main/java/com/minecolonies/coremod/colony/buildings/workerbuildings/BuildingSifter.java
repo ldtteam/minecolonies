@@ -6,13 +6,14 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingPublicCrafter;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.coremod.client.gui.huts.WindowHutSifterModule;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.colony.jobs.JobSifter;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
@@ -21,12 +22,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CURRENT_DAILY;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_DAILY;
 
 /**
  * Class of the sifter building.
  */
-public class BuildingSifter extends AbstractBuildingWorker
+public class BuildingSifter extends AbstractBuildingWorker implements IBuildingPublicCrafter
 {
     /**
      * The multiplier to define the max craft per day.
@@ -86,12 +86,6 @@ public class BuildingSifter extends AbstractBuildingWorker
     public String getJobName()
     {
         return SIFTER_DESC;
-    }
-
-    @Override
-    public boolean canCraftComplexRecipes()
-    {
-        return false;
     }
 
     @NotNull
@@ -185,7 +179,7 @@ public class BuildingSifter extends AbstractBuildingWorker
     /**
      * BuildingSifter View.
      */
-    public static class View extends AbstractBuildingCrafter.View
+    public static class View extends AbstractBuildingWorkerView
     {
         /**
          * Maximum possible daily quantity

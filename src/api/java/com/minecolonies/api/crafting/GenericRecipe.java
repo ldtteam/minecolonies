@@ -230,7 +230,10 @@ public class GenericRecipe implements IGenericRecipe
             final CraftingInventory inv = new CraftingInventory(new Container(ContainerType.CRAFTING, 0)
             {
                 @Override
-                public boolean canInteractWith(@NotNull final PlayerEntity playerIn) { return false; }
+                public boolean canInteractWith(@NotNull final PlayerEntity playerIn)
+                {
+                    return false;
+                }
             }, 3, 3);
             for (int slot = 0; slot < inputs.size(); ++slot)
             {
@@ -240,10 +243,13 @@ public class GenericRecipe implements IGenericRecipe
                     inv.setInventorySlotContents(slot, stacks[0]);
                 }
             }
-            return ((ICraftingRecipe) recipe).getRemainingItems(inv).stream()
-                    .filter(ItemStackUtils::isNotEmpty)
-                    .filter(stack -> stack.getItem() != buildTool.get())  // this is filtered out of the inputs too
-                    .collect(Collectors.toList());
+            if (((ICraftingRecipe) recipe).matches(inv, null))
+            {
+                return ((ICraftingRecipe) recipe).getRemainingItems(inv).stream()
+                        .filter(ItemStackUtils::isNotEmpty)
+                        .filter(stack -> stack.getItem() != buildTool.get())  // this is filtered out of the inputs too
+                        .collect(Collectors.toList());
+            }
         }
         return Collections.emptyList();
     }

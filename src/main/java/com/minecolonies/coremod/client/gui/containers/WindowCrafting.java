@@ -7,7 +7,8 @@ import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.moduleviews.CraftingModuleView;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.network.messages.server.colony.building.worker.AddRemoveRecipeMessage;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -81,12 +82,17 @@ public class WindowCrafting extends ContainerScreen<ContainerCrafting>
     /**
      * The building the window belongs to.
      */
-    private final AbstractBuildingWorker.View building;
+    private final AbstractBuildingWorkerView building;
 
     /**
      * Check if the GUI should display for 9 or 4 slots.
      */
     private final boolean completeCrafting;
+
+    /**
+     * The module view.
+     */
+    private final CraftingModuleView module;
 
     /**
      * Create a crafting gui window.
@@ -98,12 +104,13 @@ public class WindowCrafting extends ContainerScreen<ContainerCrafting>
     public WindowCrafting(final ContainerCrafting container, final PlayerInventory playerInventory, final ITextComponent iTextComponent)
     {
         super(container, playerInventory, iTextComponent);
-        this.building = (AbstractBuildingWorker.View) IColonyManager.getInstance().getBuildingView(playerInventory.player.world.getDimensionKey(), container.getPos());
-        completeCrafting = building.canCraftComplexRecipes();
+        this.building = (AbstractBuildingWorkerView) IColonyManager.getInstance().getBuildingView(playerInventory.player.world.getDimensionKey(), container.getPos());
+        this.module = building.getModuleViewMatching(CraftingModuleView.class, v -> v.getId().equals(container.getModuleId()));
+        completeCrafting = module.canLearnLargeRecipes();
     }
 
     @NotNull
-    public AbstractBuildingWorker.View getBuildingView()
+    public AbstractBuildingWorkerView getBuildingView()
     {
         return building;
     }
@@ -117,14 +124,14 @@ public class WindowCrafting extends ContainerScreen<ContainerCrafting>
     protected void init()
     {
         super.init();
-        final String buttonDisplay = building.canRecipeBeAdded() ? I18n.format("gui.done") : LanguageHandler.format("com.minecolonies.coremod.gui.recipe.full");
+        final String buttonDisplay = module.canLearnCraftingRecipes() ? I18n.format("gui.done") : LanguageHandler.format("com.minecolonies.coremod.gui.recipe.full");
         /*
          * The button to click done after finishing the recipe.
          */
         final Button
           doneButton = new Button(guiLeft + BUTTON_X_OFFSET, guiTop + BUTTON_Y_POS, BUTTON_WIDTH, BUTTON_HEIGHT, new StringTextComponent(buttonDisplay), new WindowCrafting.OnButtonPress());
         this.addButton(doneButton);
-        if (!building.canRecipeBeAdded())
+        if (!module.canLearnCraftingRecipes())
         {
             doneButton.active = false;
         }
@@ -135,7 +142,7 @@ public class WindowCrafting extends ContainerScreen<ContainerCrafting>
         @Override
         public void onPress(final Button button)
         {
-            if (building.canRecipeBeAdded())
+            if (module.canLearnCraftingRecipes())
             {
                 final List<ItemStorage> input = new LinkedList<>();
 
@@ -153,7 +160,7 @@ public class WindowCrafting extends ContainerScreen<ContainerCrafting>
 
                 if (!ItemStackUtils.isEmpty(primaryOutput))
                 {
-                    Network.getNetwork().sendToServer(new AddRemoveRecipeMessage(building, input, completeCrafting ? 3 : 2, primaryOutput, secondaryOutputs, false));
+                    Network.getNetwork().sendToServer(new AddRemoveRecipeMessage(building, input, completeCrafting ? 3 : 2, primaryOutput, secondaryOutputs, false, module.getId()));
                 }
             }
         }

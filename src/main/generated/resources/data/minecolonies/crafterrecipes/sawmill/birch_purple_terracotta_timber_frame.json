@@ -1,6 +1,6 @@
 {
   "type": "recipe",
-  "crafter": "sawmill",
+  "crafter": "sawmill_crafting",
   "inputs": [
     {
       "item": "minecraft:birch_planks"

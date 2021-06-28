@@ -15,7 +15,6 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
 import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
 import com.minecolonies.coremod.colony.jobs.*;
@@ -52,10 +51,10 @@ public class InteractionValidatorInitializer
     public static void init()
     {
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(FURNACE_USER_NO_FUEL),
-          citizen -> citizen.getWorkBuilding() instanceof AbstractBuildingSmelterCrafter
-                       && ((AbstractBuildingSmelterCrafter) citizen.getWorkBuilding()).getModuleMatching(ItemListModule.class, m -> m.getId().equals(FUEL_LIST)).getList().isEmpty());
+          citizen -> citizen.getWorkBuilding() instanceof AbstractBuildingFurnaceUser
+                       && citizen.getWorkBuilding().getModuleMatching(ItemListModule.class, m -> m.getId().equals(FUEL_LIST)).getList().isEmpty());
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(BAKER_HAS_NO_FURNACES_MESSAGE),
-          citizen -> citizen.getWorkBuilding() instanceof AbstractBuildingSmelterCrafter && ((AbstractBuildingSmelterCrafter) citizen.getWorkBuilding()).getFurnaces().isEmpty());
+          citizen -> citizen.getWorkBuilding() instanceof AbstractBuildingFurnaceUser && ((AbstractBuildingFurnaceUser) citizen.getWorkBuilding()).getFurnaces().isEmpty());
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(RAW_FOOD),
           citizen -> InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(citizen.getInventory(), ISCOOKABLE) != -1
                        && InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(citizen.getInventory(), stack -> CAN_EAT.test(stack) && (citizen.getWorkBuilding() == null || citizen.getWorkBuilding().canEat(stack))) == -1);

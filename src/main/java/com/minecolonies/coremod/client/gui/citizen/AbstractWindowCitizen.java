@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.AbstractWindowRequestTree;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLibrary;
 import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMessage;
 import net.minecraft.client.Minecraft;
@@ -51,7 +52,7 @@ public abstract class AbstractWindowCitizen extends AbstractWindowRequestTree
 
         final IBuildingView building = colony.getBuilding(citizen.getWorkBuilding());
 
-        if (building instanceof AbstractBuildingWorker.View && !(building instanceof BuildingLibrary.View))
+        if (building instanceof AbstractBuildingWorkerView && !(building instanceof BuildingLibrary.View))
         {
             findPaneByID("jobTab").setVisible(true);
             findPaneByID("jobIcon").setVisible(true);

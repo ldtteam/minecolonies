@@ -237,4 +237,9 @@ public final class CitizenConstants
      * The minimum range the builder has to reach in order to construct or clear.
      */
     public static final int MIN_WORKING_RANGE = 12;
+
+    /**
+     * Disabled timer.
+     */
+    public static final int DISABLED         = -1;
 }

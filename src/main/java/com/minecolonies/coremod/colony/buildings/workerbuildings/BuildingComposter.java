@@ -18,6 +18,7 @@ import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
 import com.minecolonies.coremod.colony.buildings.modules.settings.BoolSetting;
 import com.minecolonies.coremod.colony.buildings.modules.settings.IntSetting;
 import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.colony.jobs.JobComposter;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.CompoundNBT;
@@ -188,7 +189,7 @@ public class BuildingComposter extends AbstractBuildingWorker
     /**
      * The client side representation of the building.
      */
-    public static class View extends AbstractBuildingWorker.View
+    public static class View extends AbstractBuildingWorkerView
     {
         /**
          * Instantiates the view of the building.

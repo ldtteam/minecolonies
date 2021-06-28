@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
-import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenData;
@@ -9,52 +8,38 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingPublicCrafter;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
-import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
-import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.colony.jobs.JobBaker;
-import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingProductionResolver;
-import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingRequestResolver;
-import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingProductionResolver;
-import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingRequestResolver;
 import com.minecolonies.coremod.util.FurnaceRecipes;
 
 import net.minecraft.block.Blocks;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraftforge.fml.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.function.Predicate;
 
 /**
  * Building for the bakery.
  */
-public class BuildingBaker extends AbstractBuildingSmelterCrafter
+public class BuildingBaker extends AbstractBuildingFurnaceUser implements IBuildingPublicCrafter
 {
     /**
      * General bakery description key.
@@ -67,11 +52,6 @@ public class BuildingBaker extends AbstractBuildingSmelterCrafter
     private static final int BAKER_HUT_MAX_LEVEL = 5;
 
     /**
-     * Always try to keep at least 2 stacks of recipe inputs in the inventory and in the worker chest.
-     */
-    private static final int RECIPE_INPUT_HOLD = 128;
-
-    /**
      * Constructor for the bakery building.
      *
      * @param c Colony the building is in.
@@ -80,15 +60,6 @@ public class BuildingBaker extends AbstractBuildingSmelterCrafter
     public BuildingBaker(final IColony c, final BlockPos l)
     {
         super(c, l);
-        for (final IToken<?> token : getRecipes())
-        {
-            final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-            for (final ItemStorage itemStorage : storage.getCleanedInput())
-            {
-                final ItemStack stack = itemStorage.getItemStack();
-                keepX.put(stack::isItemEqual, new Tuple<>(RECIPE_INPUT_HOLD, false));
-            }
-        }
     }
 
     /**
@@ -133,45 +104,6 @@ public class BuildingBaker extends AbstractBuildingSmelterCrafter
         return new JobBaker(citizen);
     }
 
-    @Override
-    public ImmutableCollection<IRequestResolver<?>> createResolvers()
-    {
-        final Collection<IRequestResolver<?>> supers =
-          super.createResolvers().stream()
-            .filter(r -> !(r instanceof PrivateWorkerCraftingProductionResolver || r instanceof PrivateWorkerCraftingRequestResolver))
-            .collect(Collectors.toList());
-        final ImmutableList.Builder<IRequestResolver<?>> builder = ImmutableList.builder();
-
-        builder.addAll(supers);
-        builder.add(new PublicWorkerCraftingRequestResolver(getRequester().getLocation(),
-          getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
-        builder.add(new PublicWorkerCraftingProductionResolver(getRequester().getLocation(),
-          getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
-
-        return builder.build();
-    }
-
-    @Override
-    public void openCraftingContainer(final ServerPlayerEntity player)
-    {
-        NetworkHooks.openGui(player, new INamedContainerProvider()
-        {
-            @NotNull
-            @Override
-            public ITextComponent getDisplayName()
-            {
-                return new StringTextComponent("Crafting GUI");
-            }
-
-            @NotNull
-            @Override
-            public Container createMenu(final int id, @NotNull final PlayerInventory inv, @NotNull final PlayerEntity player)
-            {
-                return new ContainerCrafting(id, inv, canCraftComplexRecipes(), getID());
-            }
-        }, buffer -> new PacketBuffer(buffer.writeBoolean(canCraftComplexRecipes())).writeBlockPos(getID()));
-    }
-
     /**
      * The name of the bakery's job.
      *
@@ -182,45 +114,6 @@ public class BuildingBaker extends AbstractBuildingSmelterCrafter
     public String getJobName()
     {
         return BAKER;
-    }
-
-    @Override
-    public boolean addRecipe(final IToken<?> token)
-    {
-        final boolean recipeAdded = super.addRecipe(token);
-
-        if(recipeAdded)
-        {
-            final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-
-            ItemStack smeltResult = FurnaceRecipes.getInstance().getSmeltingResult(storage.getPrimaryOutput());
-
-            if(smeltResult != null)
-            {
-                final IRecipeStorage smeltingRecipe =  StandardFactoryController.getInstance().getNewInstance(
-                    TypeConstants.RECIPE,
-                    StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-                    ImmutableList.of(new ItemStorage(storage.getPrimaryOutput().copy())),
-                    1,
-                    smeltResult,
-                    Blocks.FURNACE);
-                    addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(smeltingRecipe), false);
-            }
-        }
-
-        return recipeAdded;
-    }
-
-    @Override
-    public boolean canCraftComplexRecipes()
-    {
-        return true;
-    }
-
-    @Override
-    public boolean isRecipeAlterationAllowed()
-    {
-        return getBuildingLevel() >= 3;
     }
 
     @NotNull
@@ -256,7 +149,7 @@ public class BuildingBaker extends AbstractBuildingSmelterCrafter
     /**
      * The client view for the bakery building.
      */
-    public static class View extends AbstractBuildingWorker.View
+    public static class View extends AbstractBuildingWorkerView
     {
         /**
          * The client view constructor for the bakery building.
@@ -278,12 +171,17 @@ public class BuildingBaker extends AbstractBuildingSmelterCrafter
         @Override
         public Window getWindow()
         {
-            return new WindowHutWorkerModulePlaceholder<>(this, "bakery");
+            return new WindowHutWorkerModulePlaceholder<>(this, BAKER);
         }
     }
 
     public static class CraftingModule extends AbstractCraftingBuildingModule.Crafting
     {
+        /**
+         * Always try to keep at least 2 stacks of recipe inputs in the inventory and in the worker chest.
+         */
+        private static final int RECIPE_INPUT_HOLD = 128;
+
         @Nullable
         @Override
         public IJob<?> getCraftingJob()
@@ -298,5 +196,62 @@ public class BuildingBaker extends AbstractBuildingSmelterCrafter
             final Optional<Boolean> isRecipeAllowed = CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, BAKER);
             return isRecipeAllowed.orElse(false);
         }
+
+        @Override
+        public boolean canLearnCraftingRecipes()
+        {
+            if (building == null) return true;  // because it can learn at *some* level
+            return building.getBuildingLevel() >= 3;
+        }
+
+        @Override
+        public boolean addRecipe(final IToken<?> token)
+        {
+            final boolean recipeAdded = super.addRecipe(token);
+
+            if(recipeAdded)
+            {
+                final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
+
+                ItemStack smeltResult = FurnaceRecipes.getInstance().getSmeltingResult(storage.getPrimaryOutput());
+
+                if(smeltResult != null)
+                {
+                    final IRecipeStorage smeltingRecipe =  StandardFactoryController.getInstance().getNewInstance(
+                      TypeConstants.RECIPE,
+                      StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+                      ImmutableList.of(new ItemStorage(storage.getPrimaryOutput().copy())),
+                      1,
+                      smeltResult,
+                      Blocks.FURNACE);
+                    addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(smeltingRecipe), false);
+                }
+            }
+
+            return recipeAdded;
+        }
+
+        @Override
+        public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
+        {
+            final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> map = super.getRequiredItemsAndAmount();
+            for (final IToken<?> token : getRecipes())
+            {
+                final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
+                for (final ItemStorage itemStorage : storage.getCleanedInput())
+                {
+                    final ItemStack stack = itemStorage.getItemStack();
+                    map.put(stack::isItemEqual, new Tuple<>(RECIPE_INPUT_HOLD, false));
+                }
+            }
+
+            return map;
+        }
+    }
+
+    @Override
+    public Skill getCraftSpeedSkill()
+    {
+        return getSecondarySkill();
     }
 }

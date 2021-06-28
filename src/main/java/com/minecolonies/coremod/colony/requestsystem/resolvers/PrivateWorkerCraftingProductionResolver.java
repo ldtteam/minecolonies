@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.colony.requestsystem.resolvers;
 
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
@@ -66,7 +68,8 @@ public class PrivateWorkerCraftingProductionResolver extends AbstractCraftingPro
         manager.updateRequestState(request.getId(), RequestState.FINALIZING);
 
         final AbstractBuildingWorker buildingWorker = (AbstractBuildingWorker) building;
-        final IRecipeStorage storage = buildingWorker.getFirstFullFillableRecipe(request.getRequest().getStack(), 1, false);
+
+        final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(request.getRequest().getRecipeID());
 
         if (storage == null)
         {
@@ -74,10 +77,16 @@ public class PrivateWorkerCraftingProductionResolver extends AbstractCraftingPro
             return;
         }
 
+        final ICraftingBuildingModule module = buildingWorker.getCraftingModuleForRecipe(request.getRequest().getRecipeID());
+        if (module == null)
+        {
+            manager.updateRequestState(request.getId(), RequestState.FAILED);
+            return;
+        }
         final int craftingCount = CraftingUtils.calculateMaxCraftingCount(request.getRequest().getCount(), storage);
         for (int i = 0; i < craftingCount; i++)
         {
-            buildingWorker.fullFillRecipe(storage);
+            module.fullFillRecipe(storage);
         }
 
         manager.updateRequestState(request.getId(), RequestState.RESOLVED);

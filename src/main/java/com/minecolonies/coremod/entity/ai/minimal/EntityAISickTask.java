@@ -174,7 +174,7 @@ public class EntityAISickTask extends Goal
         final IJob<?> job = citizen.getCitizenJobHandler().getColonyJob();
         if (job != null)
         {
-            job.setActive(false);
+            citizenData.setWorking(false);
         }
 
         citizen.addPotionEffect(new EffectInstance(Effects.SLOWNESS, TICKS_SECOND * 30));

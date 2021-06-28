@@ -1,6 +1,6 @@
 {
   "type": "recipe",
-  "crafter": "concretemixer",
+  "crafter": "concretemixer_custom",
   "inputs": [
     {
       "item": "minecraft:yellow_concrete_powder"

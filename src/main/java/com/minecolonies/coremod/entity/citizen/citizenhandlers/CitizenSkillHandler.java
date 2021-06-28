@@ -10,6 +10,7 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.network.messages.client.VanillaParticleMessage;
 import com.minecolonies.coremod.util.ExperienceUtils;
 import net.minecraft.nbt.CompoundNBT;
@@ -276,10 +277,10 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
     @Override
     public int getJobModifier(@NotNull final IBuildingView workBuilding)
     {
-        if (workBuilding instanceof AbstractBuildingWorker.View)
+        if (workBuilding instanceof AbstractBuildingWorkerView)
         {
-            final Skill primary = ((AbstractBuildingWorker.View) workBuilding).getPrimarySkill();
-            final Skill secondary = ((AbstractBuildingWorker.View) workBuilding).getSecondarySkill();
+            final Skill primary = ((AbstractBuildingWorkerView) workBuilding).getPrimarySkill();
+            final Skill secondary = ((AbstractBuildingWorkerView) workBuilding).getSecondarySkill();
             return (getLevel(primary) + getLevel(secondary)) / 4;
         }
         return 0;

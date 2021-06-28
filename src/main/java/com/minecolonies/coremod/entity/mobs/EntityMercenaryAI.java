@@ -7,22 +7,16 @@ import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRat
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import com.minecolonies.api.entity.pathfinding.PathResult;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Log;
+import com.minecolonies.api.sounds.MercenarySounds;
+import com.minecolonies.api.util.*;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.Hand;
-import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.IItemHandler;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class EntityMercenaryAI extends Goal
 {
@@ -240,7 +234,7 @@ public class EntityMercenaryAI extends Goal
         if (distance < MELEE_ATTACK_DIST && attacktimer == 0)
         {
             entity.swingArm(Hand.MAIN_HAND);
-            entity.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, 0.55f, 1.0f);
+            entity.playSound(MercenarySounds.mercenaryAttack, 0.55f, 1.0f);
             entity.getAttackTarget().attackEntityFrom(new EntityDamageSource(entity.getType().getTranslationKey(), entity), 15);
             entity.getAttackTarget().setFire(3);
             attacktimer = ATTACK_DELAY;

@@ -1,11 +1,18 @@
 package com.minecolonies.api.colony.buildings.modules;
 
+import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IGenericRecipe;
+import com.minecolonies.api.crafting.IRecipeStorage;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * This module represents the ability for a building to generate
@@ -42,14 +49,32 @@ public interface ICraftingBuildingModule extends IBuildingModule
      * citizen working at the current building, or an abstract
      * job not yet associated with any particular citizen.
      *
-     * Every unique module (across all building types) must return
-     * a unique job -- it is not permitted for the same job to be
-     * shared by two modules, as that creates an ambiguity.
+     * It is permitted for two crafting module types to return
+     * the same job but in that case {@link #getId()} must return
+     * different ids.
      *
      * @return The crafting job, or null if there is no such job.
      */
     @Nullable
     IJob<?> getCraftingJob();
+
+    /**
+     * Gets an id *suffix* for this particular crafting module, to
+     * disambiguate between multiple modules with the same job.
+     * This is not unique by itself.
+     * @return The disambiguating id suffix.
+     */
+    @NotNull
+    String getId();
+
+    /**
+     * Gets the unique key for recipes intended for this crafting
+     * module in the CustomRecipeManager.
+     * Precondition: getCraftingJob() returns non-null.
+     * @return The unique key.
+     */
+    @NotNull
+    String getCustomRecipeKey();
 
     /**
      * Check if this building type can learn (or otherwise process)
@@ -88,6 +113,86 @@ public interface ICraftingBuildingModule extends IBuildingModule
     boolean isRecipeCompatible(@NotNull IGenericRecipe recipe);
 
     /**
+     * Check if the module on the client side should be displayed.
+     * @return true if so.
+     */
+    boolean isVisible();
+
+    /**
+     * Get a list of all recipes of this module.
+     * @return the list of recipes.
+     */
+    List<IToken<?>> getRecipes();
+
+    /**
+     * Get the first recipe where the output matches this stack.
+     * @param stack the output stack to match.
+     * @return the recipe or null.
+     */
+    @Nullable
+    IRecipeStorage getFirstRecipe(ItemStack stack);
+
+    /**
+     * Check if is the worker has the knowledge to craft something.
+     *
+     * @param stackPredicate the predicate to check for fullfillment.
+     * @return the recipe storage if so.
+     */
+    @Nullable
+    IRecipeStorage getFirstRecipe(Predicate<ItemStack> stackPredicate);
+
+    /**
+     * Get a fullfillable recipe to execute.
+     *
+     * @param stackPredicate the predicate to check for fullfillment.
+     * @param count          the count to produce.
+     * @param considerReservation if reservations should be considered.
+     * @return the recipe or null.
+     */
+    IRecipeStorage getFirstFulfillableRecipe(Predicate<ItemStack> stackPredicate, final int count, final boolean considerReservation);
+
+    /**
+     * Fulfill the recipe.
+     * @param storage the recipe storage to fulfill.
+     * @return true if successful.
+     */
+    boolean fullFillRecipe(IRecipeStorage storage);
+
+    /**
+     * Updates existing requests, if they match the recipes available at this worker
+     */
+    void updateWorkerAvailableForRecipes();
+
+    /**
+     * Replace one current recipe with a new one
+     * @param oldRecipe the recipe to replace
+     * @param newRecipe the new version
+     */
+    void replaceRecipe(IToken<?> oldRecipe, IToken<?> newRecipe);
+
+    /**
+     * Check if a recipe can be added. This is only important for 3x3 crafting. Workers shall override this if necessary.
+     *
+     * @param token the token of the recipe.
+     * @return true if so.
+     */
+    boolean canRecipeBeAdded(IToken<?> token);
+
+    /**
+     * Add a recipe to the list of recipes.
+     *
+     * @param token the token to add.
+     */
+    void addRecipeToList(IToken<?> token, boolean atTop);
+
+    /**
+     * Switch the order of two recipes.
+     * @param i the first recipe.
+     * @param j the second recipe.
+     */
+    void switchOrder(int i, int j);
+
+    /**
      * Generates any additional special recipes supported by this
      * crafter.  Unlike the above, these are not added to the
      * building's learned recipe list; they are only used for
@@ -100,4 +205,64 @@ public interface ICraftingBuildingModule extends IBuildingModule
      */
     @NotNull
     List<IGenericRecipe> getAdditionalRecipesForDisplayPurposesOnly();
+
+    /**
+     * Add a recipe to the building.
+     *
+     * @param token the id of the recipe.
+     * @return true if successful
+     */
+    boolean addRecipe(IToken<?> token);
+
+    /**
+     * Remove a recipe of the building.
+     *
+     * @param token the id of the recipe.
+     */
+    void removeRecipe(IToken<?> token);
+
+    /**
+     * Updates existing requests, if they match the recipes available at this worker
+     */
+    void checkForWorkerSpecificRecipes();
+
+    /**
+     * Clear the list of recipes.
+     */
+    void clearRecipes();
+
+    /**
+     * Randomly improve a certain recipe.
+     * @param currentRecipeStorage the recipe to improve.
+     * @param craftCounter the craft counter.
+     * @param citizenData the citizen running it.
+     */
+    void improveRecipe(IRecipeStorage currentRecipeStorage, int craftCounter, ICitizenData citizenData);
+
+    /**
+     * Gets a unique identifier for this crafting module, based on
+     * the job and disambiguation suffix.  May be null where there
+     * was no job.
+     * @return The unique id or null.
+     */
+    @Nullable
+    default ResourceLocation getUid()
+    {
+        final IJob<?> job = getCraftingJob();
+        if (job == null) return null;
+
+        final JobEntry entry = job.getJobRegistryEntry();
+        return getUid(entry, getId());
+    }
+
+    /**
+     * Formats a crafting module unique identifier based on a job entry and disambiguation suffix.
+     * @return The unique id.
+     */
+    @NotNull
+    static ResourceLocation getUid(@NotNull final JobEntry job, @NotNull final String id)
+    {
+        final ResourceLocation jobId = job.getRegistryName();
+        return new ResourceLocation(jobId.getNamespace(), jobId.getPath() + "/" + id);
+    }
 }

@@ -38,7 +38,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.getPlayerActionPriority;
-import static com.minecolonies.api.util.constant.BuildingConstants.TAG_ACTIVE;
 import static com.minecolonies.api.util.constant.BuildingConstants.TAG_ONGOING;
 import static com.minecolonies.api.util.constant.CitizenConstants.SKILL_BONUS_ADD;
 import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
@@ -55,11 +54,6 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
      * Walking speed bonus per level
      */
     public static final double BONUS_SPEED_PER_LEVEL = 0.003;
-
-    /**
-     * If the dman is currently active.
-     */
-    private boolean active = false;
 
     /**
      * Old field for backwards compatibility.
@@ -129,7 +123,6 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
     {
         final CompoundNBT compound = super.serializeNBT();
         compound.put(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE, StandardFactoryController.getInstance().serialize(rsDataStoreToken));
-        compound.putBoolean(TAG_ACTIVE, this.active);
         return compound;
     }
 
@@ -146,7 +139,6 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
         {
             setupRsDataStore();
         }
-        this.active = compound.getBoolean(TAG_ACTIVE);
         this.ongoingDeliveries = compound.getInt(TAG_ONGOING);
     }
 
@@ -177,6 +169,32 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
     private LinkedList<IToken<?>> getTaskQueueFromDataStore()
     {
         return getDataStore().getQueue();
+    }
+
+    @Override
+    public int getInactivityLimit()
+    {
+        return 60 * 10;
+    }
+
+    @Override
+    public void triggerActivityChangeAction(final boolean newState)
+    {
+        try
+        {
+            if (newState)
+            {
+                getColony().getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof Delivery || request.getRequest() instanceof Pickup);
+            }
+            else
+            {
+                cancelAssignedRequests();
+            }
+        }
+        catch (final Exception ex)
+        {
+            Log.getLogger().warn("Active Triggered resulted in exception", ex);
+        }
     }
 
     /**
@@ -333,28 +351,6 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
         return ImmutableList.copyOf(getTaskQueueFromDataStore());
     }
 
-    @Override
-    public void setActive(final boolean b)
-    {
-        try
-        {
-            if (!b && active)
-            {
-                this.active = b;
-                cancelAssignedRequests();
-            }
-            else if (!active && b)
-            {
-                this.active = b;
-                getColony().getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof Delivery || request.getRequest() instanceof Pickup);
-            }
-        }
-        catch (final Exception ex)
-        {
-            Log.getLogger().warn("Active Triggered resulted in exception", ex);
-        }
-    }
-
     private void cancelAssignedRequests()
     {
         for (final IToken<?> t : getTaskQueue())
@@ -375,7 +371,7 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
     @Override
     public void onRemoval()
     {
-        this.active = false;
+        getCitizen().setWorking(false);
         try
         {
             cancelAssignedRequests();
@@ -386,12 +382,6 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
         }
 
         getColony().getRequestManager().getDataStoreManager().remove(this.rsDataStoreToken);
-    }
-
-    @Override
-    public boolean isActive()
-    {
-        return this.active;
     }
 
     /**

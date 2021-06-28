@@ -73,6 +73,11 @@ public class ContainerCrafting extends Container
     private final BlockPos pos;
 
     /**
+     * The module id of the container.
+     */
+    private final String moduleId;
+
+    /**
      * Deserialize packet buffer to container instance.
      *
      * @param windowId     the id of the window.
@@ -84,7 +89,8 @@ public class ContainerCrafting extends Container
     {
         final boolean complete = packetBuffer.readBoolean();
         final BlockPos tePos = packetBuffer.readBlockPos();
-        return new ContainerCrafting(windowId, inv, complete, tePos);
+        final String moduleId = packetBuffer.readString(32767);
+        return new ContainerCrafting(windowId, inv, complete, tePos, moduleId);
     }
 
     /**
@@ -92,11 +98,12 @@ public class ContainerCrafting extends Container
      *
      * @param windowId the window id.
      * @param inv      the inventory.
-     * @param extra    some extra data.
+     * @param moduleId the module id.
      */
-    public ContainerCrafting(final int windowId, final PlayerInventory inv, final boolean complete, final BlockPos pos)
+    public ContainerCrafting(final int windowId, final PlayerInventory inv, final boolean complete, final BlockPos pos, final String moduleId)
     {
         super(ModContainers.craftingGrid, windowId);
+        this.moduleId = moduleId;
         this.world = inv.player.world;
         this.inv = inv;
         this.complete = complete;
@@ -410,5 +417,14 @@ public class ContainerCrafting extends Container
             }
         }
         return remainingItems;
+    }
+
+    /**
+     * Getter for the module id.
+     * @return the id.
+     */
+    public String getModuleId()
+    {
+        return this.moduleId;
     }
 }

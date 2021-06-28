@@ -3,10 +3,10 @@ package com.minecolonies.coremod.compatibility.jei;
 import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
-import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.crafting.CustomRecipe;
 import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
@@ -44,10 +44,12 @@ import java.util.stream.Collectors;
 @OnlyIn(Dist.CLIENT)
 public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe>
 {
-    public GenericRecipeCategory(@NotNull final BuildingEntry building, @NotNull final IJob<?> job,
-                                 @NotNull final ICraftingBuildingModule crafting, @NotNull final IGuiHelper guiHelper)
+    public GenericRecipeCategory(@NotNull final BuildingEntry building,
+                                 @NotNull final IJob<?> job,
+                                 @NotNull final ICraftingBuildingModule crafting,
+                                 @NotNull final IGuiHelper guiHelper)
     {
-        super(job, getCatalyst(building), guiHelper);
+        super(job, Objects.requireNonNull(crafting.getUid()), getCatalyst(building), guiHelper);
 
         this.building = building;
         this.crafting = crafting;
@@ -310,14 +312,8 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
             {
                 if (!recipe.canFit(3, 3)) continue;
                 if (!this.crafting.canLearnLargeRecipes() && !recipe.canFit(2, 2)) continue;
-                if (recipe.getRecipeOutput().isEmpty()) continue;   // invalid or special recipes
 
-                final IGenericRecipe genericRecipe = GenericRecipeUtils.create(recipe);
-                if (genericRecipe.getInputs().isEmpty()) continue;
-                if (this.crafting.isRecipeCompatible(genericRecipe))
-                {
-                    recipes.add(genericRecipe);
-                }
+                tryAddingVanillaRecipe(recipes, recipe);
             }
         }
 
@@ -326,21 +322,12 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
         {
             for (final IRecipe<IInventory> recipe : recipeManager.getRecipes(IRecipeType.SMELTING).values())
             {
-                if (recipe.getRecipeOutput().isEmpty()) continue;   // invalid or special recipes
-                final IGenericRecipe genericRecipe = GenericRecipe.of(recipe);
-                assert genericRecipe != null;
-                if (genericRecipe.getInputs().isEmpty()) continue;
-                if (this.crafting.isRecipeCompatible(genericRecipe))
-                {
-                    recipes.add(genericRecipe);
-                }
+                tryAddingVanillaRecipe(recipes, recipe);
             }
         }
 
         // custom MineColonies additional recipes
-        final String craftingJobName = this.job.getJobRegistryEntry().getRegistryName().getPath();
-        final Set<CustomRecipe> customRecipes = CustomRecipeManager.getInstance().getRecipes(craftingJobName);
-        for (final CustomRecipe customRecipe : customRecipes)
+        for (final CustomRecipe customRecipe : CustomRecipeManager.getInstance().getRecipes(this.crafting.getCustomRecipeKey()))
         {
             final IRecipeStorage recipeStorage = customRecipe.getRecipeStorage();
             if (!recipeStorage.getAlternateOutputs().isEmpty())
@@ -361,5 +348,26 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
                 .sorted(Comparator.comparing(IGenericRecipe::getLevelSort)
                     .thenComparing(r -> r.getPrimaryOutput().getItem().getRegistryName()))
                 .collect(Collectors.toList());
+    }
+
+    private void tryAddingVanillaRecipe(@NotNull final List<IGenericRecipe> recipes,
+                                        @NotNull final IRecipe<?> recipe)
+    {
+        if (recipe.getRecipeOutput().isEmpty()) return;     // invalid or special recipes
+
+        try
+        {
+            final IGenericRecipe genericRecipe = GenericRecipeUtils.create(recipe);
+            if (genericRecipe.getInputs().isEmpty()) return;
+
+            if (this.crafting.isRecipeCompatible(genericRecipe))
+            {
+                recipes.add(genericRecipe);
+            }
+        }
+        catch (final Exception ex)
+        {
+            Log.getLogger().warn("Error evaluating recipe " + recipe.getId() + "; ignoring.", ex);
+        }
     }
 }
