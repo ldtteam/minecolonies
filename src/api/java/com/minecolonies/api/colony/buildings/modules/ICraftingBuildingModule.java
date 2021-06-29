@@ -265,4 +265,11 @@ public interface ICraftingBuildingModule extends IBuildingModule
         final ResourceLocation jobId = job.getRegistryName();
         return new ResourceLocation(jobId.getNamespace(), jobId.getPath() + "/" + id);
     }
+
+    /**
+     * Check if the recipe it part of this module.
+     * @param token the recipe token to check.
+     * @return true if so.
+     */
+    boolean holdsRecipe(IToken<?> token);
 }

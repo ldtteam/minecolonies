@@ -416,14 +416,14 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
 
     /**
      * Get the right module for the recipe.
-     * @param recipeStorage the recipe trying to be fulfilled.
+     * @param token the recipe trying to be fulfilled.
      * @return the matching module.
      */
-    public ICraftingBuildingModule getCraftingModuleForRecipe(final IToken<?> recipeStorage)
+    public ICraftingBuildingModule getCraftingModuleForRecipe(final IToken<?> token)
     {
         for (final ICraftingBuildingModule module: getModules(ICraftingBuildingModule.class))
         {
-            if (module.getRecipes().contains(recipeStorage))
+            if (module.holdsRecipe(token))
             {
                 return module;
             }

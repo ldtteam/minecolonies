@@ -53,6 +53,12 @@ public class StandardRecipeManager implements IRecipeManager
     }
 
     @Override
+    public IRecipeStorage getRecipe(final IToken<?> token)
+    {
+        return recipes.get(token);
+    }
+
+    @Override
     public IToken<?> addRecipe(final IRecipeStorage storage)
     {
         recipes.put(storage.getToken(), storage);
