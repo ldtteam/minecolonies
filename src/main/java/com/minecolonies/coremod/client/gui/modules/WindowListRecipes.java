@@ -85,8 +85,6 @@ public class WindowListRecipes extends AbstractModuleWindow
      */
     public WindowListRecipes(final IBuildingView view, final String name, final CraftingModuleView module)
     {
-        //todo remove button is not visible -> only display remove button on non custom windows
-        //todo move all pre-existing recipes to custom.
         super(view, name);
         this.module = module;
         recipeList = findPaneOfTypeByID(RECIPE_LIST, ScrollingList.class);
@@ -94,7 +92,6 @@ public class WindowListRecipes extends AbstractModuleWindow
 
         findPaneOfTypeByID(BUTTON_CRAFTING, ButtonImage.class).setVisible(module.isRecipeAlterationAllowed());
         findPaneOfTypeByID("recipestatus", Text.class).setVisible(module.isRecipeAlterationAllowed());
-
 
         super.registerButton(BUTTON_CRAFTING, this::craftingClicked);
         super.registerButton(BUTTON_REMOVE, this::removeClicked);
@@ -171,7 +168,7 @@ public class WindowListRecipes extends AbstractModuleWindow
                 List<ItemStack> displayStacks = recipe.getRecipeType().getOutputDisplayStacks();
                 icon.setItem(displayStacks.get((lifeCount / LIFE_COUNT_DIVIDER) % (displayStacks.size())));
 
-                if (!module.canLearnCraftingRecipes())
+                if (!module.canLearnCraftingRecipes() && !module.canLearnFurnaceRecipes())
                 {
                     final Button removeButton = rowPane.findPaneOfTypeByID(BUTTON_REMOVE, Button.class);
                     if (removeButton != null)
