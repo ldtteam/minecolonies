@@ -17,10 +17,13 @@ import java.util.List;
 import static com.minecolonies.api.entity.pathfinding.PathingStuckHandler.HORIZONTAL_DIRS;
 
 /**
- *
+ * Special raider pathfinding, can go through blocks and place ladders, is finished when reaching close to the intended spawn and is a legit spawn point.
  */
 public class PathJobRaiderPathing extends AbstractPathJob
 {
+    /**
+     * Cost for moving through a block
+     */
     private final double THROUGH_BLOCK_COST = 30;
 
     /**
