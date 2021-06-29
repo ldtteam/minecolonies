@@ -213,12 +213,9 @@ public class CitizenManager implements ICitizenManager
             players.addAll(newSubscribers);
             for (@NotNull final ICitizenData citizen : citizens.values())
             {
-                if (citizen.getEntity().isPresent())
+                if (citizen.isDirty() || !newSubscribers.isEmpty())
                 {
-                    if (citizen.isDirty() || !newSubscribers.isEmpty())
-                    {
-                        players.forEach(player -> Network.getNetwork().sendToPlayer(new ColonyViewCitizenViewMessage(colony, citizen), player));
-                    }
+                    players.forEach(player -> Network.getNetwork().sendToPlayer(new ColonyViewCitizenViewMessage(colony, citizen), player));
                 }
             }
         }
