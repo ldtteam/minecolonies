@@ -14,7 +14,6 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
-import net.minecraft.pathfinding.Path;
 import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.api.distmarker.Dist;
@@ -92,9 +91,9 @@ public final class Pathfinding
      * @param job PathJob
      * @return a Future containing the Path
      */
-    public static Future<Path> enqueue(@NotNull final AbstractPathJob job)
+    public static void enqueue(@NotNull final AbstractPathJob job)
     {
-        return getExecutor().submit(job);
+        job.getResult().startJob(getExecutor());
     }
 
     /**

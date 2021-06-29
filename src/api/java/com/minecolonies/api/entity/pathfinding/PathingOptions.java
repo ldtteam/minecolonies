@@ -141,4 +141,16 @@ public class PathingOptions
         traverseToggleAbleCost = toggleCost;
         return this;
     }
+
+    public PathingOptions withCanSwim(final boolean canswim)
+    {
+        setCanSwim(canswim);
+        return this;
+    }
+
+    public PathingOptions withCanEnterDoors(final boolean canEnter)
+    {
+        setEnterDoors(canEnter);
+        return this;
+    }
 }
