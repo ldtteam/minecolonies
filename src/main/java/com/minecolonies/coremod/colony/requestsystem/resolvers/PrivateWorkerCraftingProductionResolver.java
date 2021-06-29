@@ -9,7 +9,6 @@ import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PrivateCrafting;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
-import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractCraftingProductionResolver;
@@ -83,8 +82,7 @@ public class PrivateWorkerCraftingProductionResolver extends AbstractCraftingPro
             manager.updateRequestState(request.getId(), RequestState.FAILED);
             return;
         }
-        final int craftingCount = CraftingUtils.calculateMaxCraftingCount(request.getRequest().getCount(), storage);
-        for (int i = 0; i < craftingCount; i++)
+        for (int i = 0; i < request.getRequest().getCount(); i++)
         {
             module.fullFillRecipe(storage);
         }
