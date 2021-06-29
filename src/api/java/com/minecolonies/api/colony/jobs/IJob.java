@@ -207,13 +207,6 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
     void onRemoval();
 
     /**
-     * Set if the worker can currently work.
-     *
-     * @param b true if so.
-     */
-    void setActive(final boolean b);
-
-    /**
      * Check if the particular job ignores a particular damage type.
      *
      * @param damageSource the damage source to check.
@@ -236,12 +229,6 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
     boolean pickupSuccess(@NotNull ItemStack pickedUpStack);
 
     /**
-     * Check if the job is actually set as active.
-     * @return true if so.
-     */
-    boolean isActive();
-
-    /**
      * Process time the colony was offline.
      * @param time the time in seconds.
      */
@@ -252,4 +239,22 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
      * @param buffer the buffer to serialize it to.
      */
     void serializeToView(final PacketBuffer buffer);
+
+    /**
+     * Get the time limit in seconds after which the job considers itself inactive.
+     * @return the limit, or -1 if not applicable.
+     */
+    default int getInactivityLimit()
+    {
+        return -1;
+    }
+
+    /**
+     * Trigger a job based action on activity change (active -> inactive, or inactive -> active).
+     * @param newState the new state (true for active, false for inactive).
+     */
+    default void triggerActivityChangeAction(boolean newState)
+    {
+        //noop.
+    }
 }

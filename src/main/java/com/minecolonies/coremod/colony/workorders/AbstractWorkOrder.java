@@ -425,10 +425,10 @@ public abstract class AbstractWorkOrder implements IWorkOrder
         buf.writeInt(priority);
         buf.writeBlockPos(claimedBy == null ? BlockPos.ZERO : claimedBy);
         buf.writeInt(getType().ordinal());
+        buf.writeString("");
         buf.writeString(getDisplayName());
         buf.writeBlockPos(buildingLocation == null ? BlockPos.ZERO : buildingLocation);
         buf.writeInt(0);
-        //value is upgradeName and upgradeLevel for workOrderBuild
     }
 
     /**

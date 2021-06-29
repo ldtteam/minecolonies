@@ -6,14 +6,15 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingPublicCrafter;
 import com.minecolonies.api.colony.jobs.IJob;
-import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.colony.jobs.JobStonemason;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -24,17 +25,12 @@ import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT
 /**
  * Class of the stonemason building.
  */
-public class BuildingStonemason extends AbstractBuildingCrafter
+public class BuildingStonemason extends AbstractBuildingWorker implements IBuildingPublicCrafter
 {
     /**
      * Description string of the building.
      */
     private static final String STONEMASON = "stonemason";
-
-    /**
-     * The min percentage something has to have out of stone to be craftable by this worker.
-     */
-    private static final double MIN_PERCENTAGE_TO_CRAFT = 0.75;
 
     /**
      * Instantiates a new stonemason building.
@@ -89,17 +85,6 @@ public class BuildingStonemason extends AbstractBuildingCrafter
     }
 
     @Override
-    public boolean canRecipeBeAdded(final IToken<?> token)
-    {
-        if (!super.canRecipeBeAdded(token))
-        {
-            return false;
-        }
-
-        return isRecipeCompatibleWithCraftingModule(token);
-    }
-
-    @Override
     public BuildingEntry getBuildingRegistryEntry()
     {
         return ModBuildings.stoneMason;
@@ -108,7 +93,7 @@ public class BuildingStonemason extends AbstractBuildingCrafter
     /**
      * Crafter building View.
      */
-    public static class View extends AbstractBuildingCrafter.View
+    public static class View extends AbstractBuildingWorkerView
     {
 
         /**

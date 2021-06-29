@@ -274,7 +274,7 @@ public class DefaultSifterCraftingProvider implements IDataProvider
                             .filter(entry -> entry.getType().equals(EntryTypeEnum.ITEM))
                             .map(entry -> ForgeRegistries.ITEMS.getValue(new ResourceLocation(entry.getName())));
 
-                    CustomRecipeBuilder.create(ModJobs.SIFTER_ID.getPath(), name)
+                    CustomRecipeBuilder.create(ModJobs.SIFTER_ID.getPath() + "_custom", name)
                             .inputs(Stream.of(
                                     new ItemStorage(new ItemStack(inputEntry.getKey())),
                                     new ItemStorage(new ItemStack(mesh.getMesh()), true, false))

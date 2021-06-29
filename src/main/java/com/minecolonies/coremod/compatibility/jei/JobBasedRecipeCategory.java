@@ -32,6 +32,7 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
 {
     protected static final ResourceLocation TEXTURE = new ResourceLocation(Constants.MOD_ID, "textures/gui/jei_recipe.png");
     @NotNull protected final IJob<?> job;
+    @NotNull private final ResourceLocation uid;
     @NotNull private final IDrawableStatic background;
     @NotNull private final IDrawable icon;
     @NotNull protected final IDrawableStatic slot;
@@ -47,9 +48,13 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
     protected static final int CITIZEN_W = 47;
     protected static final int CITIZEN_H = 71;
 
-    protected JobBasedRecipeCategory(@NotNull final IJob<?> job, @NotNull final ItemStack icon, @NotNull final IGuiHelper guiHelper)
+    protected JobBasedRecipeCategory(@NotNull final IJob<?> job,
+                                     @NotNull final ResourceLocation uid,
+                                     @NotNull final ItemStack icon,
+                                     @NotNull final IGuiHelper guiHelper)
     {
         this.job = job;
+        this.uid = uid;
 
         this.background = guiHelper.createDrawable(TEXTURE, 0, 0, WIDTH, HEIGHT);
         this.icon = guiHelper.createDrawableIngredient(icon);
@@ -74,7 +79,7 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
     @Override
     public ResourceLocation getUid()
     {
-        return Objects.requireNonNull(this.job.getJobRegistryEntry().getRegistryName());
+        return this.uid;
     }
 
     @NotNull

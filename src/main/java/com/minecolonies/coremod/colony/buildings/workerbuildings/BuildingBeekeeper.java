@@ -13,6 +13,7 @@ import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder
 import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.colony.buildings.modules.settings.StringSetting;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import net.minecraft.util.ResourceLocation;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
@@ -228,7 +229,7 @@ public class BuildingBeekeeper extends AbstractBuildingWorker
         return (int) Math.pow(2, getBuildingLevel() - 1);
     }
 
-    public static class View extends AbstractBuildingWorker.View
+    public static class View extends AbstractBuildingWorkerView
     {
         /**
          * Creates a building view.

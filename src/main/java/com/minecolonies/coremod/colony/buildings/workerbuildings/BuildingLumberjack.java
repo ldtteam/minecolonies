@@ -20,12 +20,12 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
 import com.minecolonies.coremod.colony.buildings.modules.settings.BoolSetting;
 import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
 import com.minecolonies.coremod.util.AttributeModifierUtils;
 import net.minecraft.block.Block;
@@ -33,7 +33,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.IGrowable;
 import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -58,7 +57,7 @@ import static com.minecolonies.coremod.entity.ai.citizen.lumberjack.EntityAIWork
 /**
  * The lumberjacks building.
  */
-public class BuildingLumberjack extends AbstractBuildingCrafter implements IBuildingPublicCrafter
+public class BuildingLumberjack extends AbstractBuildingWorker implements IBuildingPublicCrafter
 {
     /**
      * Replant setting.
@@ -253,31 +252,6 @@ public class BuildingLumberjack extends AbstractBuildingCrafter implements IBuil
         return Skill.Focus;
     }
 
-    @Override
-    public boolean canCraftComplexRecipes()
-    {
-        return false;
-    }
-
-    @Override
-    public boolean isRecipeAlterationAllowed()
-    {
-        return false;
-    }
-
-    @Override
-    public boolean canRecipeBeAdded(final IToken<?> token)
-    {
-        return false;
-    }
-
-    @Override
-    public void openCraftingContainer(final ServerPlayerEntity player)
-    {
-        // Noop
-        return;
-    }
-
     /**
      * Whether or not the LJ should replant saplings.
      *
@@ -426,7 +400,7 @@ public class BuildingLumberjack extends AbstractBuildingCrafter implements IBuil
     /**
      * Provides a view of the lumberjack building class.
      */
-    public static class View extends AbstractBuildingWorker.View
+    public static class View extends AbstractBuildingWorkerView
     {
         /**
          * Public constructor of the view, creates an instance of it.
@@ -454,6 +428,12 @@ public class BuildingLumberjack extends AbstractBuildingCrafter implements IBuil
         public IJob<?> getCraftingJob()
         {
             return getMainBuildingJob().orElseGet(() -> new JobLumberjack(null));
+        }
+
+        @Override
+        public boolean canRecipeBeAdded(@NotNull final IToken<?> token)
+        {
+            return false;
         }
     }
 }

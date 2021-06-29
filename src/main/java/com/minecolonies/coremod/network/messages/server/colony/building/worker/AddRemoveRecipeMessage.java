@@ -5,7 +5,6 @@ import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
-import com.minecolonies.api.colony.buildings.IBuildingWorkerView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
@@ -13,6 +12,7 @@ import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
+import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
 import com.minecolonies.coremod.util.AdvancementUtils;
 import net.minecraft.block.Blocks;
@@ -42,6 +42,11 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
     private IRecipeStorage storage;
 
     /**
+     * Type of the owning module.
+     */
+    private String id;
+
+    /**
      * Empty default constructor.
      */
     public AddRemoveRecipeMessage()
@@ -52,15 +57,17 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
     /**
      * Create a message to add or remove recipes.
      *
-     * @param storage  the recipe storage.
-     * @param remove   true if remove.
      * @param building the building we're executing on.
+     * @param remove   true if remove.
+     * @param storage  the recipe storage.
+     * @param id the unique id of the module.
      */
-    public AddRemoveRecipeMessage(final IBuildingWorkerView building, final boolean remove, final IRecipeStorage storage)
+    public AddRemoveRecipeMessage(final IBuildingView building, final boolean remove, final IRecipeStorage storage, final String id)
     {
         super(building);
         this.remove = remove;
         this.storage = storage;
+        this.id = id;
     }
 
     /**
@@ -72,7 +79,7 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
      * @param remove        true if remove.
      * @param building      the building we're executing on.
      */
-    public AddRemoveRecipeMessage(final IBuildingView building, final List<ItemStorage> input, final int gridSize, final ItemStack primaryOutput, final List<ItemStack> additionalOutputs, final boolean remove)
+    public AddRemoveRecipeMessage(final IBuildingView building, final List<ItemStorage> input, final int gridSize, final ItemStack primaryOutput, final List<ItemStack> additionalOutputs, final boolean remove, final String id)
     {
         super(building);
         this.remove = remove;
@@ -94,6 +101,7 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
               gridSize,
               primaryOutput, Blocks.AIR, null, null, null, additionalOutputs);
         }
+        this.id = id;
     }
 
     /**
@@ -104,9 +112,9 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
     @Override
     public void fromBytesOverride(@NotNull final PacketBuffer buf)
     {
-
         storage = StandardFactoryController.getInstance().deserialize(buf);
         remove = buf.readBoolean();
+        this.id = buf.readString(32767);
     }
 
     /**
@@ -117,9 +125,9 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
     @Override
     public void toBytesOverride(@NotNull final PacketBuffer buf)
     {
-
         StandardFactoryController.getInstance().serialize(buf, storage);
         buf.writeBoolean(remove);
+        buf.writeString(id);
     }
 
     @Override
@@ -131,15 +139,16 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
             return;
         }
 
+        final AbstractCraftingBuildingModule module = building.getModuleMatching(AbstractCraftingBuildingModule.class, m -> m.getId().equals(id));
         if (remove)
         {
-            building.removeRecipe(storage.getToken());
+            module.removeRecipe(storage.getToken());
             SoundUtils.playSuccessSound(player, player.getPosition());
         }
         else
         {
             final IToken<?> token = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage);
-            if (!building.addRecipe(token))
+            if (!module.addRecipe(token))
             {
                 SoundUtils.playErrorSound(player, player.getPosition());
                 LanguageHandler.sendPlayerMessage(player, UNABLE_TO_ADD_RECIPE_MESSAGE, building.getJobName());

@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.requestsystem.resolvers;
 
 import com.minecolonies.api.colony.buildings.IBuildingWorkerView;
+import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
@@ -93,12 +94,19 @@ public class PublicWorkerCraftingRequestResolver extends AbstractCraftingRequest
     @Override
     public boolean canBuildingCraftStack(@NotNull final AbstractBuildingWorker building, final Predicate<ItemStack> stackPredicate)
     {
-        return building.getFirstRecipe(stackPredicate) != null;
+        for (final ICraftingBuildingModule module : building.getModules(ICraftingBuildingModule.class))
+        {
+            if (module.getFirstRecipe(stackPredicate) != null)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
-    protected IRequestable createNewRequestableForStack(final ItemStack stack, final int count, final int minCount)
+    protected IRequestable createNewRequestableForStack(final ItemStack stack, final int count, final int minCount, final IToken<?> recipeStorage)
     {
-        return new PublicCrafting(stack, count);
+        return new PublicCrafting(stack, count, recipeStorage);
     }
 }

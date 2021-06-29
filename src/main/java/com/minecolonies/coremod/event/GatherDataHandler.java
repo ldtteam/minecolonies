@@ -21,6 +21,5 @@ public class GatherDataHandler
         generator.addProvider(new DefaultSifterCraftingProvider(generator));
         generator.addProvider(new DefaultEnchanterCraftingProvider(generator));
         generator.addProvider(new DefaultConcreteMixerCraftingProvider(generator));
-        generator.addProvider(new DefaultGlassblowerCraftingProvider(generator));
     }
 }

@@ -6,26 +6,17 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingPublicCrafter;
 import com.minecolonies.api.colony.jobs.IJob;
-import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.entity.citizen.Skill;
-import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.colony.jobs.JobGlassblower;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraftforge.fml.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,12 +25,13 @@ import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT
 /**
  * Class of the glassblower building.
  */
-public class BuildingGlassblower extends AbstractBuildingSmelterCrafter
+public class BuildingGlassblower extends AbstractBuildingFurnaceUser implements IBuildingPublicCrafter
 {
     /**
      * Description string of the building.
      */
     private static final String GLASS_BLOWER = "glassblower";
+    private static final String GLASS_BLOWER_SMELTING = "glassblower_smelting";
 
     /**
      * Instantiates a new stone smeltery building.
@@ -94,48 +86,9 @@ public class BuildingGlassblower extends AbstractBuildingSmelterCrafter
     }
 
     @Override
-    public boolean canRecipeBeAdded(final IToken<?> token)
-    {
-        if (!super.canRecipeBeAdded(token))
-        {
-            return false;
-        }
-
-        checkForWorkerSpecificRecipes();
-
-        return isRecipeCompatibleWithCraftingModule(token);
-    }
-
-    @Override
     public void onColonyTick(@NotNull final IColony colony)
     {
         super.onColonyTick(colony);
-    }
-
-    @Override
-    public boolean canCraftComplexRecipes()
-    {
-        return true;
-    }
-
-    @Override
-    public void openCraftingContainer(final ServerPlayerEntity player)
-    {
-        NetworkHooks.openGui(player, new INamedContainerProvider()
-        {
-            @Override
-            public ITextComponent getDisplayName()
-            {
-                return new StringTextComponent("Crafting GUI");
-            }
-
-            @NotNull
-            @Override
-            public Container createMenu(final int id, @NotNull final PlayerInventory inv, @NotNull final PlayerEntity player)
-            {
-                return new ContainerCrafting(id, inv, canCraftComplexRecipes(), getID());
-            }
-        }, buffer -> new PacketBuffer(buffer.writeBoolean(canCraftComplexRecipes())).writeBlockPos(getID()));
     }
 
     @Override
@@ -144,10 +97,16 @@ public class BuildingGlassblower extends AbstractBuildingSmelterCrafter
         return ModBuildings.glassblower;
     }
 
+    @Override
+    public Skill getCraftSpeedSkill()
+    {
+        return getSecondarySkill();
+    }
+
     /**
      * Stone smeltery View.
      */
-    public static class View extends AbstractBuildingSmelterCrafter.View
+    public static class View extends AbstractBuildingWorkerView
     {
         /**
          * Instantiate the stone smeltery view.
@@ -180,8 +139,31 @@ public class BuildingGlassblower extends AbstractBuildingSmelterCrafter
         @Override
         public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
         {
-            if (!super.isRecipeCompatible(recipe)) return false;
+            if (!super.isRecipeCompatible(recipe))
+            {
+                return false;
+            }
             return CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, GLASS_BLOWER).orElse(false);
+        }
+    }
+
+    public static class SmeltingModule extends AbstractCraftingBuildingModule.Smelting
+    {
+        @Nullable
+        @Override
+        public IJob<?> getCraftingJob()
+        {
+            return getMainBuildingJob().orElseGet(() -> new JobGlassblower(null));
+        }
+
+        @Override
+        public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
+        {
+            if (!super.isRecipeCompatible(recipe))
+            {
+                return false;
+            }
+            return CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, GLASS_BLOWER_SMELTING).orElse(false);
         }
     }
 }

@@ -1,6 +1,6 @@
 {
   "type": "recipe",
-  "crafter": "enchanter",
+  "crafter": "enchanter_custom",
   "min-building-level": 4,
   "max-building-level": 4,
   "inputs": [
