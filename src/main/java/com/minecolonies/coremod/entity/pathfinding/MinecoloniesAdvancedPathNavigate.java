@@ -20,6 +20,7 @@ import net.minecraft.block.LadderBlock;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.network.DebugPacketSender;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathFinder;
 import net.minecraft.pathfinding.PathPoint;
@@ -28,7 +29,9 @@ import net.minecraft.state.properties.RailShape;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -233,7 +236,40 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         {
             return;
         }
-        super.tick();
+
+        ++this.totalTicks;
+        if (this.tryUpdatePath)
+        {
+            this.updatePath();
+        }
+
+        // The following block replaces mojangs super.tick(). Why you may ask? Because it's broken, that's why.
+        // The moveHelper won't move up if standing in a block with an empty bounding box (put grass, 1 layer snow, mushroom in front of a solid block and have them try jump up).
+        if (!this.noPath())
+        {
+            if (this.canNavigate())
+            {
+                this.pathFollow();
+            }
+            else if (this.currentPath != null && !this.currentPath.isFinished())
+            {
+                Vector3d vector3d = this.getEntityPosition();
+                Vector3d vector3d1 = this.currentPath.getPosition(this.entity);
+                if (vector3d.y > vector3d1.y && !this.entity.isOnGround() && MathHelper.floor(vector3d.x) == MathHelper.floor(vector3d1.x) && MathHelper.floor(vector3d.z) == MathHelper.floor(vector3d1.z))
+                {
+                    this.currentPath.incrementPathIndex();
+                }
+            }
+
+            DebugPacketSender.sendPath(this.world, this.entity, this.currentPath, this.maxDistanceToWaypoint);
+            if (!this.noPath())
+            {
+                Vector3d vector3d2 = this.currentPath.getPosition(this.entity);
+                BlockPos blockpos = new BlockPos(vector3d2);
+                this.entity.getMoveHelper().setMoveTo(vector3d2.x, this.world.getBlockState(blockpos.down()).isAir() ? vector3d2.y : getSmartGroundY(this.world, blockpos), vector3d2.z, this.speed);
+            }
+        }
+        // End of super.tick.
 
         if (pathResult != null && noPath())
         {
@@ -242,6 +278,24 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         }
 
         stuckHandler.checkStuck(this);
+    }
+
+    /**
+     * Similar to WalkNodeProcessor.getGroundY but not broken.
+     * This checks if the block below the position we're trying to move to reaches into the block above, if so, it has to aim a little bit higher.
+     * @param world the world.
+     * @param pos the position to check.
+     * @return the next y level to go to.
+     */
+    public static double getSmartGroundY(final IBlockReader world, final BlockPos pos)
+    {
+        final BlockPos blockpos = pos.down();
+        final VoxelShape voxelshape = world.getBlockState(blockpos).getCollisionShape(world, blockpos);
+        if (voxelshape.isEmpty() || voxelshape.getEnd(Direction.Axis.Y) < 1.0)
+        {
+            return pos.getY();
+        }
+        return blockpos.getY() + voxelshape.getEnd(Direction.Axis.Y);
     }
 
     @Nullable
