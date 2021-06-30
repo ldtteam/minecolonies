@@ -296,5 +296,11 @@ public class InteractionValidatorInitializer
 
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_RAID),
           citizen -> citizen.getEntity().isPresent() && citizen.getColony().getRaiderManager().isRaided());
+
+        InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(CITIZEN_NOT_GUARD_NEAR_WORK),
+          citizen -> citizen.getWorkBuilding() != null && !citizen.getWorkBuilding().isGuardBuildingNear());
+
+        InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(CITIZEN_NOT_GUARD_NEAR_HOME),
+          citizen -> citizen.getHomeBuilding() != null && !citizen.getHomeBuilding().isGuardBuildingNear());
     }
 }
