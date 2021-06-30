@@ -29,7 +29,7 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
      * Version of the TE data.
      */
     private static final String TAG_VERSION = "version";
-    private static final int VERSION = 1;
+    private static final int    VERSION     = 2;
 
     /**
      * Corner positions of schematic, relative to te pos.

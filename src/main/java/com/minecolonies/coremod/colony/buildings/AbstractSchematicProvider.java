@@ -19,6 +19,7 @@ import com.minecolonies.api.util.Log;
 import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Mirror;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -387,6 +388,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
         final Blueprint blueprint = structure.getBluePrint();
         if (blueprint != null)
         {
+            blueprint.rotateWithMirror(BlockPosUtil.getRotationFromRotations(getRotation()), isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE, colony.getWorld());
             final BlockInfo info = blueprint.getBlockInfoAsMap().getOrDefault(blueprint.getPrimaryBlockOffset(), null);
             if (info.getTileEntityData() != null)
             {
