@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.IGuardBuilding;
 import com.minecolonies.api.colony.buildings.IMysticalSite;
 import com.minecolonies.api.colony.buildings.IRSComponent;
 import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
@@ -23,11 +24,12 @@ import com.minecolonies.coremod.blocks.huts.BlockHutTavern;
 import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
 import com.minecolonies.coremod.blocks.huts.BlockHutWareHouse;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.BuildingMysticalSite;
 import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.modules.TavernBuildingModule;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFarmer;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewBuildingViewMessage;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewRemoveBuildingMessage;
@@ -610,18 +612,10 @@ public class BuildingManager implements IBuildingManager
             return true;
         }
 
-        final Chunk chunk = colony.getWorld().getChunk(building.getPosition().getX() >> 4, building.getPosition().getZ() >> 4);
-        final IColonyTagCapability closeCap = chunk.getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
-
-        if (closeCap == null || closeCap.getAllClaimingBuildings().isEmpty() || !closeCap.getAllClaimingBuildings().containsKey(colony.getID()))
+        for (final IBuilding colonyBuilding : getBuildings().values())
         {
-            return false;
-        }
-
-        for (final BlockPos buildingPos : closeCap.getAllClaimingBuildings().get(colony.getID()))
-        {
-            final IBuilding guardbuilding = colony.getBuildingManager().getBuilding(buildingPos);
-            if (guardbuilding instanceof AbstractBuildingGuards || guardbuilding instanceof BuildingBarracks)
+            if (colonyBuilding instanceof IGuardBuilding && (colonyBuilding.getClaimRadius(colonyBuilding.getBuildingLevel()) * 16) > building.getID()
+                                                                                                                                        .manhattanDistance(colonyBuilding.getID()))
             {
                 return true;
             }

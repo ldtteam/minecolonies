@@ -22,7 +22,7 @@ import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.interactionhandling.ServerCitizenInteraction;
-import com.minecolonies.coremod.colony.interactionhandling.SimpleNotificationInteraction;
+import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenHappinessHandler;
@@ -55,10 +55,12 @@ import java.util.stream.Collectors;
 import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.*;
 import static com.minecolonies.api.research.util.ResearchConstants.HEALTH_BOOST;
 import static com.minecolonies.api.research.util.ResearchConstants.WALKING;
+import static com.minecolonies.api.util.ItemStackUtils.CAN_EAT;
 import static com.minecolonies.api.util.constant.BuildingConstants.TAG_ACTIVE;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
-import static com.minecolonies.api.util.ItemStackUtils.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.CITIZEN_NOT_GUARD_NEAR_HOME;
+import static com.minecolonies.api.util.constant.TranslationConstants.CITIZEN_NOT_GUARD_NEAR_WORK;
 
 /**
  * Extra data for Citizens.
@@ -1435,12 +1437,16 @@ public class CitizenData implements ICitizenData
 
         if (workBuilding != null && !workBuilding.isGuardBuildingNear() && !WorldUtil.isPeaceful(colony.getWorld()))
         {
-            triggerInteraction(new SimpleNotificationInteraction(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.noguardnearwork"), ChatPriority.CHITCHAT));
+            triggerInteraction(new StandardInteraction(new TranslationTextComponent(CITIZEN_NOT_GUARD_NEAR_WORK),
+              new TranslationTextComponent(CITIZEN_NOT_GUARD_NEAR_WORK),
+              ChatPriority.CHITCHAT));
         }
 
         if (homeBuilding != null && !homeBuilding.isGuardBuildingNear() && !WorldUtil.isPeaceful(colony.getWorld()))
         {
-            triggerInteraction(new SimpleNotificationInteraction(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.noguardnearhome"), ChatPriority.CHITCHAT));
+            triggerInteraction(new StandardInteraction(new TranslationTextComponent(CITIZEN_NOT_GUARD_NEAR_HOME),
+              new TranslationTextComponent(CITIZEN_NOT_GUARD_NEAR_HOME),
+              ChatPriority.CHITCHAT));
         }
     }
 
