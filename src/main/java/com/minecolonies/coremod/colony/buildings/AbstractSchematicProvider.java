@@ -5,12 +5,14 @@ import com.ldtteam.structures.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
+import com.ldtteam.structurize.util.BlockInfo;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ISchematicProvider;
 import com.minecolonies.api.colony.managers.interfaces.IBuildingManager;
+import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.api.util.Log;
@@ -18,7 +20,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -76,11 +77,6 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
      * Cached rotation.
      */
     public int cachedRotation = -1;
-
-    /**
-     * The building area box of this building
-     */
-    private AxisAlignedBB buildingArea = null;
 
     /**
      * Parent schematic this is in
@@ -364,6 +360,39 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
         }
 
         return 0;
+    }
+
+    /**
+     * Load updated TE data from the schematic if missing.
+     */
+    protected void updateTEDataFromSchematic()
+    {
+        if (buildingLevel <= 0)
+        {
+            return;
+        }
+
+        final TileEntityColonyBuilding te = (TileEntityColonyBuilding) getColony().getWorld().getTileEntity(getPosition());
+        final String structureName;
+        if (te.getSchematicName().isEmpty())
+        {
+            structureName = new StructureName(Structures.SCHEMATICS_PREFIX, style, this.getSchematicName() + Math.max(1, buildingLevel)).toString();
+        }
+        else
+        {
+            structureName = new StructureName(Structures.SCHEMATICS_PREFIX, style, te.getSchematicName()).toString();
+        }
+
+        final LoadOnlyStructureHandler structure = new LoadOnlyStructureHandler(colony.getWorld(), getPosition(), structureName, new PlacementSettings(), true);
+        final Blueprint blueprint = structure.getBluePrint();
+        if (blueprint != null)
+        {
+            final BlockInfo info = blueprint.getBlockInfoAsMap().getOrDefault(blueprint.getPrimaryBlockOffset(), null);
+            if (info.getTileEntityData() != null)
+            {
+                te.readSchematicDataFromNBT(info.getTileEntityData());
+            }
+        }
     }
 
     @Override

@@ -1387,6 +1387,19 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      */
     public boolean checkIfRequestForItemExistOrCreate(@NotNull final ItemStack stack)
     {
+        return checkIfRequestForItemExistOrCreate(stack, stack.getCount(), stack.getCount());
+    }
+
+    /**
+     * Check if a stack has been requested already or is in the inventory. If not in the inventory and not requested already, create request
+     *
+     * @param stack the requested stack.
+     * @param count count to request.
+     * @param minCount the min count to fulfill.
+     * @return true if in the inventory, else false.
+     */
+    public boolean checkIfRequestForItemExistOrCreate(@NotNull final ItemStack stack, final int count, final int minCount)
+    {
         if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(),
           s -> ItemStackUtils.compareItemStacksIgnoreStackSize(s, stack)))
         {
@@ -1398,7 +1411,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
               && getOwnBuilding().getCompletedRequestsOfTypeFiltered(worker.getCitizenData(), TypeConstants.DELIVERABLE,
           (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(stack)).isEmpty())
         {
-            final Stack stackRequest = new Stack(stack);
+            final Stack stackRequest = new Stack(stack, count, minCount);
             worker.getCitizenData().createRequest(stackRequest);
         }
 

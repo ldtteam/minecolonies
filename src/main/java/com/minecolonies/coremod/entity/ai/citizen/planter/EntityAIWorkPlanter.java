@@ -164,7 +164,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
 
         final BuildingPlantation plantation = getOwnBuilding();
 
-        final List<BlockPos> list = plantation.getPosForPhase(world);
+        final List<BlockPos> list = plantation.getPosForPhase();
         for (final BlockPos pos : list)
         {
             if (isAtLeastThreeHigh(pos))
