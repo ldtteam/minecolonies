@@ -150,6 +150,7 @@ public class BuildingManager implements IBuildingManager
 
     /**
      * Set the max chunk direction this building is in.
+     *
      * @param b the max chunk dir.
      */
     private void setMaxChunk(final IBuilding b)
@@ -374,11 +375,11 @@ public class BuildingManager implements IBuildingManager
     public int getMysticalSiteMaxBuildingLevel()
     {
         int maxLevel = 0;
-        if(hasMysticalSite())
+        if (hasMysticalSite())
         {
-            for(final IMysticalSite mysticalSite : mysticalSites)
+            for (final IMysticalSite mysticalSite : mysticalSites)
             {
-                if(mysticalSite.getBuildingLevel() > maxLevel)
+                if (mysticalSite.getBuildingLevel() > maxLevel)
                 {
                     maxLevel = mysticalSite.getBuildingLevel();
                 }
@@ -614,8 +615,8 @@ public class BuildingManager implements IBuildingManager
 
         for (final IBuilding colonyBuilding : getBuildings().values())
         {
-            if (colonyBuilding instanceof IGuardBuilding && (colonyBuilding.getClaimRadius(colonyBuilding.getBuildingLevel()) * 16) > building.getID()
-                                                                                                                                        .manhattanDistance(colonyBuilding.getID()))
+            if (colonyBuilding instanceof IGuardBuilding
+                  && (colonyBuilding.getClaimRadius(colonyBuilding.getBuildingLevel()) * 16) > building.getID().manhattanDistance(colonyBuilding.getID()))
             {
                 return true;
             }
