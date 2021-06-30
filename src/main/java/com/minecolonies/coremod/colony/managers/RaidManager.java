@@ -299,6 +299,7 @@ public class RaidManager implements IRaiderManager
         }
 
         nightsSinceLastRaid = 0;
+        raidTonight = false;
         amount = (int) Math.ceil((float) amount / spawnPoints.size());
 
         for (final BlockPos targetSpawnPoint : spawnPoints)
