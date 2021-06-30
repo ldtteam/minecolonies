@@ -131,12 +131,6 @@ public class BuildingStoneSmeltery extends AbstractBuildingFurnaceUser implement
         }
 
         @Override
-        public boolean canLearnLargeRecipes()
-        {
-            return true;
-        }
-
-        @Override
         public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
         {
             if (!super.isRecipeCompatible(recipe)) return false;
