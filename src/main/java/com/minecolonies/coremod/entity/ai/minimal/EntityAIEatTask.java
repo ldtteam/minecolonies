@@ -70,6 +70,11 @@ public class EntityAIEatTask extends Goal
     private static final int GET_YOURSELF_SATURATION = 30;
 
     /**
+     * Limit to go to the restaurant.
+     */
+    private static final double RESTAURANT_LIMIT     = 2.5;
+
+    /**
      * The different types of AIStates related to eating.
      */
     public enum EatingState implements IState
@@ -187,9 +192,9 @@ public class EntityAIEatTask extends Goal
             return false;
         }
 
-        if (citizenData.getSaturation() <= CitizenConstants.LOW_SATURATION)
+        if (citizenData.getSaturation() <= CitizenConstants.AVERAGE_SATURATION)
         {
-            if (citizenData.getSaturation() == 0.0)
+            if (citizenData.getSaturation() == RESTAURANT_LIMIT)
             {
                 return true;
             }
@@ -481,7 +486,7 @@ public class EntityAIEatTask extends Goal
         final ICitizenData citizenData = citizen.getCitizenData();
         final IColony colony = citizenData.getColony();
         restaurantPos = colony.getBuildingManager().getBestBuilding(citizen, BuildingCook.class);
-        if (citizenData.getSaturation() == 0.0)
+        if (citizenData.getSaturation() == RESTAURANT_LIMIT)
         {
             final IJob<?> job = citizen.getCitizenJobHandler().getColonyJob();
             if (job != null && citizenData.isWorking())
