@@ -59,6 +59,7 @@ public class ModTagsInitializer
         ModTags.colonyProtectionException = getBlockTags(COLONYPROTECTIONEXCEPTION, supplier);
         ModTags.indestructible = getBlockTags(INDESTRUCTIBLE, supplier);
         ModTags.hostile = getEntityTags(HOSTILE, supplier);
+        ModTags.glazed_terracotta = getBlockTags(GLAZED_TERRACOTTA, supplier);
 
         initCrafterRules("baker");
         initCrafterRules("blacksmith");

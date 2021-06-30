@@ -34,6 +34,8 @@ public class ModTags
 
     public static ITag<EntityType<?>> hostile;
 
+    public static ITag<Block> glazed_terracotta;
+
     public static final Map<String, ITag<Item>> crafterProduct              = new HashMap<>();
     public static final Map<String, ITag<Item>> crafterProductExclusions    = new HashMap<>();
     public static final Map<String, ITag<Item>> crafterIngredient           = new HashMap<>();
