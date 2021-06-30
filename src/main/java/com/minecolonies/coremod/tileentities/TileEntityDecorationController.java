@@ -172,10 +172,30 @@ public class TileEntityDecorationController extends TileEntity implements IBluep
     }
 
     @Override
+    public void readSchematicDataFromNBT(CompoundNBT compound)
+    {
+        IBlueprintDataProvider.super.readSchematicDataFromNBT(compound);
+        if (compound.contains(TAG_NAME))
+        {
+            this.schematicName = compound.getString(TAG_NAME);
+        }
+
+        if (compound.contains(TAG_LEVEL))
+        {
+            this.level = compound.getInt(TAG_LEVEL);
+        }
+
+        if (compound.contains(TAG_FACING))
+        {
+            this.basicFacing = Direction.byHorizontalIndex(compound.getInt(TAG_FACING));
+        }
+    }
+
+    @Override
     public void read(final BlockState state, final CompoundNBT compound)
     {
         super.read(state, compound);
-        readSchematicDataFromNBT(compound);
+        IBlueprintDataProvider.super.readSchematicDataFromNBT(compound);
         this.schematicName = compound.getString(TAG_NAME);
         this.level = compound.getInt(TAG_LEVEL);
         this.basicFacing = Direction.byHorizontalIndex(compound.getInt(TAG_FACING));
