@@ -86,6 +86,11 @@ public class EntityAIEatTask extends Goal
     }
 
     /**
+     * Minutes between consecutive food checks if saturation is low but not 0.
+     */
+    private static final int MINUTES_BETWEEN_FOOD_CHECKS = 5;
+
+    /**
      * The citizen assigned to this task.
      */
     private final EntityCitizen citizen;
@@ -184,7 +189,17 @@ public class EntityAIEatTask extends Goal
 
         if (citizenData.getSaturation() <= CitizenConstants.LOW_SATURATION)
         {
-            return true;
+            if (citizenData.getSaturation() == 0.0)
+            {
+                return true;
+            }
+
+            waitingTicks++;
+            if (waitingTicks >= SECONDS_A_MINUTE * MINUTES_BETWEEN_FOOD_CHECKS || citizenData.getWorkBuilding() == null)
+            {
+                waitingTicks = 0;
+                return true;
+            }
         }
 
         return false;
@@ -479,18 +494,10 @@ public class EntityAIEatTask extends Goal
                 citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(NO_RESTAURANT), ChatPriority.BLOCKING));
                 return CHECK_FOR_FOOD;
             }
-        }
-        else if (restaurantPos == null)
-        {
-            return IDLE;
+            return GO_TO_RESTAURANT;
         }
 
-        final IJob<?> job = citizen.getCitizenJobHandler().getColonyJob();
-        if (job != null && citizenData.isWorking())
-        {
-            citizenData.setWorking(false);
-        }
-        return GO_TO_RESTAURANT;
+        return IDLE;
     }
 
     /**
