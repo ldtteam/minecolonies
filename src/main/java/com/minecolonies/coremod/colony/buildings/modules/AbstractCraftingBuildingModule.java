@@ -120,7 +120,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
     protected int getMaxRecipes()
     {
         final double increase;
-        if(canLearnLargeRecipes())
+        if(canLearnLargeRecipes() || canLearnFurnaceRecipes())
         {
             increase = (1 + building.getColony().getResearchManager().getResearchEffects().getEffectStrength(RECIPES)) * EXTRA_RECIPE_MULTIPLIER;
         }
