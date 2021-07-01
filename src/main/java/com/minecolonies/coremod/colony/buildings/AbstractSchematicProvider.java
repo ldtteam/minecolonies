@@ -384,6 +384,25 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
             structureName = new StructureName(Structures.SCHEMATICS_PREFIX, style, te.getSchematicName()).toString();
         }
 
+        try
+        {
+            updateTEDataFromSchematic(structureName, te);
+        }
+        catch (final Exception ex)
+        {
+            Log.getLogger().warn("TileEntity with invalid data, restoring correct data from schematic.");
+            updateTEDataFromSchematic(new StructureName(Structures.SCHEMATICS_PREFIX, style, this.getSchematicName() + Math.max(1, buildingLevel)).toString(), te);
+        }
+    }
+
+    /**
+     *
+     * Load updated TE data from the schematic with a given name for a given TE.
+     * @param structureName the name of the schematic.
+     * @param te the tileEntity to load it to.
+     */
+    private void updateTEDataFromSchematic(final String structureName, final TileEntityColonyBuilding te)
+    {
         final LoadOnlyStructureHandler structure = new LoadOnlyStructureHandler(colony.getWorld(), getPosition(), structureName, new PlacementSettings(), true);
         final Blueprint blueprint = structure.getBluePrint();
         if (blueprint != null)
