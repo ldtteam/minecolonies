@@ -373,9 +373,26 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
             return;
         }
 
+        try
+        {
+            updateTEDataFromSchematic(false);
+        }
+        catch (final Exception ex)
+        {
+            Log.getLogger().warn("TileEntity with invalid data, restoring correct data from schematic.");
+            updateTEDataFromSchematic(true);
+        }
+    }
+
+    /**
+     * Load the schematic data from the TE schematic name, if it's a reattempt, calculate the name from the building (backup).
+     * @param reAttempt if backup path.
+     */
+    private void updateTEDataFromSchematic(final boolean reAttempt)
+    {
         final TileEntityColonyBuilding te = (TileEntityColonyBuilding) getColony().getWorld().getTileEntity(getPosition());
         final String structureName;
-        if (te.getSchematicName().isEmpty())
+        if (te.getSchematicName().isEmpty() || reAttempt)
         {
             structureName = new StructureName(Structures.SCHEMATICS_PREFIX, style, this.getSchematicName() + Math.max(1, buildingLevel)).toString();
         }
@@ -384,25 +401,6 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
             structureName = new StructureName(Structures.SCHEMATICS_PREFIX, style, te.getSchematicName()).toString();
         }
 
-        try
-        {
-            updateTEDataFromSchematic(structureName, te);
-        }
-        catch (final Exception ex)
-        {
-            Log.getLogger().warn("TileEntity with invalid data, restoring correct data from schematic.");
-            updateTEDataFromSchematic(new StructureName(Structures.SCHEMATICS_PREFIX, style, this.getSchematicName() + Math.max(1, buildingLevel)).toString(), te);
-        }
-    }
-
-    /**
-     *
-     * Load updated TE data from the schematic with a given name for a given TE.
-     * @param structureName the name of the schematic.
-     * @param te the tileEntity to load it to.
-     */
-    private void updateTEDataFromSchematic(final String structureName, final TileEntityColonyBuilding te)
-    {
         final LoadOnlyStructureHandler structure = new LoadOnlyStructureHandler(colony.getWorld(), getPosition(), structureName, new PlacementSettings(), true);
         final Blueprint blueprint = structure.getBluePrint();
         if (blueprint != null)
