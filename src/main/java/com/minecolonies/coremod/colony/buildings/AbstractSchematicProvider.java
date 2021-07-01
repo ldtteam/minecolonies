@@ -374,6 +374,24 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
         }
 
         final TileEntityColonyBuilding te = (TileEntityColonyBuilding) getColony().getWorld().getTileEntity(getPosition());
+
+        try
+        {
+            saveUpdateTEDataFromSchematic(te);
+        }
+        catch (final Exception ex)
+        {
+            Log.getLogger().warn("TileEntity with invalid data, restoring correct data from schematic.");
+            te.setSchematicName(this.getSchematicName() + Math.max(1, buildingLevel));
+            saveUpdateTEDataFromSchematic(te);
+        }
+    }
+
+    /**
+     * Load the schematic data from the TE schematic name, if it's a reattempt, calculate the name from the building (backup).
+     */
+    private void saveUpdateTEDataFromSchematic(final TileEntityColonyBuilding te)
+    {
         final String structureName;
         if (te.getSchematicName().isEmpty())
         {
@@ -386,14 +404,11 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
 
         final LoadOnlyStructureHandler structure = new LoadOnlyStructureHandler(colony.getWorld(), getPosition(), structureName, new PlacementSettings(), true);
         final Blueprint blueprint = structure.getBluePrint();
-        if (blueprint != null)
+        blueprint.rotateWithMirror(BlockPosUtil.getRotationFromRotations(getRotation()), isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE, colony.getWorld());
+        final BlockInfo info = blueprint.getBlockInfoAsMap().getOrDefault(blueprint.getPrimaryBlockOffset(), null);
+        if (info.getTileEntityData() != null)
         {
-            blueprint.rotateWithMirror(BlockPosUtil.getRotationFromRotations(getRotation()), isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE, colony.getWorld());
-            final BlockInfo info = blueprint.getBlockInfoAsMap().getOrDefault(blueprint.getPrimaryBlockOffset(), null);
-            if (info.getTileEntityData() != null)
-            {
-                te.readSchematicDataFromNBT(info.getTileEntityData());
-            }
+            te.readSchematicDataFromNBT(info.getTileEntityData());
         }
     }
 
