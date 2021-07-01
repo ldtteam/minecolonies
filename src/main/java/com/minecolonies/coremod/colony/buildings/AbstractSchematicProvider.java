@@ -403,14 +403,11 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
 
         final LoadOnlyStructureHandler structure = new LoadOnlyStructureHandler(colony.getWorld(), getPosition(), structureName, new PlacementSettings(), true);
         final Blueprint blueprint = structure.getBluePrint();
-        if (blueprint != null)
+        blueprint.rotateWithMirror(BlockPosUtil.getRotationFromRotations(getRotation()), isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE, colony.getWorld());
+        final BlockInfo info = blueprint.getBlockInfoAsMap().getOrDefault(blueprint.getPrimaryBlockOffset(), null);
+        if (info.getTileEntityData() != null)
         {
-            blueprint.rotateWithMirror(BlockPosUtil.getRotationFromRotations(getRotation()), isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE, colony.getWorld());
-            final BlockInfo info = blueprint.getBlockInfoAsMap().getOrDefault(blueprint.getPrimaryBlockOffset(), null);
-            if (info.getTileEntityData() != null)
-            {
-                te.readSchematicDataFromNBT(info.getTileEntityData());
-            }
+            te.readSchematicDataFromNBT(info.getTileEntityData());
         }
     }
 
