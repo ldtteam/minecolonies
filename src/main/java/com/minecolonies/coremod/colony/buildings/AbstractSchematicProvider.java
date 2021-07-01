@@ -373,26 +373,27 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
             return;
         }
 
+        final TileEntityColonyBuilding te = (TileEntityColonyBuilding) getColony().getWorld().getTileEntity(getPosition());
+
         try
         {
-            updateTEDataFromSchematic(false);
+            saveUpdateTEDataFromSchematic(te);
         }
         catch (final Exception ex)
         {
             Log.getLogger().warn("TileEntity with invalid data, restoring correct data from schematic.");
-            updateTEDataFromSchematic(true);
+            te.setSchematicName(this.getSchematicName() + Math.max(1, buildingLevel));
+            saveUpdateTEDataFromSchematic(te);
         }
     }
 
     /**
      * Load the schematic data from the TE schematic name, if it's a reattempt, calculate the name from the building (backup).
-     * @param reAttempt if backup path.
      */
-    private void updateTEDataFromSchematic(final boolean reAttempt)
+    private void saveUpdateTEDataFromSchematic(final TileEntityColonyBuilding te)
     {
-        final TileEntityColonyBuilding te = (TileEntityColonyBuilding) getColony().getWorld().getTileEntity(getPosition());
         final String structureName;
-        if (te.getSchematicName().isEmpty() || reAttempt)
+        if (te.getSchematicName().isEmpty())
         {
             structureName = new StructureName(Structures.SCHEMATICS_PREFIX, style, this.getSchematicName() + Math.max(1, buildingLevel)).toString();
         }
