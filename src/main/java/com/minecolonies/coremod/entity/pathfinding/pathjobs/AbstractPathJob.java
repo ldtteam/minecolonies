@@ -515,8 +515,9 @@ public abstract class AbstractPathJob implements Callable<Path>
      * @param fluidState existing fluidstate or null
      * @return true if so.
      */
-    private static boolean isWater(@NotNull final IWorldReader world, final BlockPos pos, @Nullable BlockState state, @Nullable FluidState fluidState)
+    private static boolean isWater(@NotNull final IWorldReader world, final BlockPos pos, @Nullable BlockState pState, @Nullable FluidState pFluidState)
     {
+        BlockState state = pState;
         if (state == null)
         {
             state = world.getBlockState(pos);
@@ -531,6 +532,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             return true;
         }
 
+        FluidState fluidState = pFluidState;
         if (fluidState == null)
         {
             fluidState = world.getFluidState(pos);
