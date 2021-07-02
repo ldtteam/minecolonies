@@ -499,12 +499,29 @@ public abstract class AbstractPathJob implements Callable<Path>
 
     /**
      * Check if the block at this position is actually some kind of waterly fluid.
+     *
      * @param pos the pos in the world.
      * @return true if so.
      */
     private static boolean isWater(@NotNull final IWorldReader world, final BlockPos pos)
     {
-        final BlockState state = world.getBlockState(pos);
+        return isWater(world, pos, null, null);
+    }
+
+    /**
+     * Check if the block at this position is actually some kind of waterly fluid.
+     * @param pos the pos in the world.
+     * @param state existing blockstate or null
+     * @param fluidState existing fluidstate or null
+     * @return true if so.
+     */
+    private static boolean isWater(@NotNull final IWorldReader world, final BlockPos pos, @Nullable BlockState state, @Nullable FluidState fluidState)
+    {
+        if (state == null)
+        {
+            state = world.getBlockState(pos);
+        }
+
         if (state.isSolid())
         {
             return false;
@@ -514,7 +531,11 @@ public abstract class AbstractPathJob implements Callable<Path>
             return true;
         }
 
-        final FluidState fluidState = world.getFluidState(pos);
+        if (fluidState == null)
+        {
+            fluidState = world.getFluidState(pos);
+        }
+
         if (fluidState == null || fluidState.isEmpty())
         {
             return false;
@@ -1376,7 +1397,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             return SurfaceType.NOT_PASSABLE;
         }
 
-        if (blockState.getBlock() == Blocks.WATER || (fluid != null && !fluid.isEmpty() && (fluid.getFluid() == Fluids.WATER || fluid.getFluid() == Fluids.FLOWING_WATER)))
+        if (isWater(world, pos, blockState,fluid))
         {
             return SurfaceType.WALKABLE;
         }
