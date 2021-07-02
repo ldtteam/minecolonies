@@ -262,7 +262,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         this.entity = new WeakReference<>(entity);
     }
 
-    private static boolean onLadderGoingUp(@NotNull final Node currentNode, @NotNull final BlockPos dPos)
+    protected boolean onLadderGoingUp(@NotNull final Node currentNode, @NotNull final BlockPos dPos)
     {
         return currentNode.isLadder() && (dPos.getY() >= 0 || dPos.getX() != 0 || dPos.getZ() != 0);
     }
@@ -441,6 +441,7 @@ public abstract class AbstractPathJob implements Callable<Path>
       final boolean onRails,
       final boolean railsExit,
       final boolean swimStart,
+      final boolean corner,
       final BlockPos blockPos)
     {
         double cost = Math.sqrt(dPos.getX() * dPos.getX() + dPos.getY() * dPos.getY() + dPos.getZ() * dPos.getZ());
@@ -498,12 +499,30 @@ public abstract class AbstractPathJob implements Callable<Path>
 
     /**
      * Check if the block at this position is actually some kind of waterly fluid.
+     *
      * @param pos the pos in the world.
      * @return true if so.
      */
     private static boolean isWater(@NotNull final IWorldReader world, final BlockPos pos)
     {
-        final BlockState state = world.getBlockState(pos);
+        return isWater(world, pos, null, null);
+    }
+
+    /**
+     * Check if the block at this position is actually some kind of waterly fluid.
+     * @param pos the pos in the world.
+     * @param state existing blockstate or null
+     * @param fluidState existing fluidstate or null
+     * @return true if so.
+     */
+    private static boolean isWater(@NotNull final IWorldReader world, final BlockPos pos, @Nullable BlockState pState, @Nullable FluidState pFluidState)
+    {
+        BlockState state = pState;
+        if (state == null)
+        {
+            state = world.getBlockState(pos);
+        }
+
         if (state.isSolid())
         {
             return false;
@@ -513,7 +532,12 @@ public abstract class AbstractPathJob implements Callable<Path>
             return true;
         }
 
-        final FluidState fluidState = world.getFluidState(pos);
+        FluidState fluidState = pFluidState;
+        if (fluidState == null)
+        {
+            fluidState = world.getFluidState(pos);
+        }
+
         if (fluidState == null || fluidState.isEmpty())
         {
             return false;
@@ -573,7 +597,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             totalNodesVisited++;
 
             // Limiting max amount of nodes mapped
-            if (totalNodesVisited > MineColonies.getConfig().getServer().pathfindingMaxNodes.get() || totalNodesVisited > maxRange * maxRange)
+            if (totalNodesVisited > maxRange * maxRange)
             {
                 break;
             }
@@ -697,7 +721,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         }
     }
 
-    private boolean onLadderGoingDown(@NotNull final Node currentNode, @NotNull final BlockPos dPos)
+    protected boolean onLadderGoingDown(@NotNull final Node currentNode, @NotNull final BlockPos dPos)
     {
         return (dPos.getY() <= 0 || dPos.getX() != 0 || dPos.getZ() != 0) && isLadder(currentNode.pos.down());
     }
@@ -977,7 +1001,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         final boolean onRails = pathingOptions.canUseRails() && world.getBlockState(corner ? pos.down() : pos).getBlock() instanceof AbstractRailBlock;
         final boolean railsExit = !onRails && parent != null && parent.isOnRails();
         //  Cost may have changed due to a jump up or drop
-        final double stepCost = computeCost(dPos, isSwimming, onRoad, onRails, railsExit, swimStart, pos);
+        final double stepCost = computeCost(dPos, isSwimming, onRoad, onRails, railsExit, swimStart, corner, pos);
         final double heuristic = computeHeuristic(pos);
         final double cost = parent.getCost() + stepCost;
         final double score = cost + heuristic;
@@ -1373,6 +1397,11 @@ public abstract class AbstractPathJob implements Callable<Path>
         if (blockState.getBlock() == Blocks.LAVA || (fluid != null && !fluid.isEmpty() && (fluid.getFluid() == Fluids.LAVA || fluid.getFluid() == Fluids.FLOWING_LAVA)))
         {
             return SurfaceType.NOT_PASSABLE;
+        }
+
+        if (isWater(world, pos, blockState,fluid))
+        {
+            return SurfaceType.WALKABLE;
         }
 
         if (block instanceof AbstractBlockMinecoloniesConstructionTape || block instanceof AbstractSignBlock)

@@ -32,7 +32,7 @@ public class PathingStuckHandler implements IStuckHandler
     /**
      * All directions.
      */
-    private final List<Direction> directions = Arrays.asList(Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST);
+    public static final List<Direction> HORIZONTAL_DIRS = Arrays.asList(Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST);
 
     /**
      * Amount of path steps allowed to teleport on stuck, 0 = disabled
@@ -226,7 +226,7 @@ public class PathingStuckHandler implements IStuckHandler
 
         if (canTeleportGoal)
         {
-            for (final Direction dir : directions)
+            for (final Direction dir : HORIZONTAL_DIRS)
             {
                 // need two air
                 if (world.isAirBlock(desired.offset(dir)) && world.isAirBlock(desired.offset(dir).up()))
@@ -437,7 +437,7 @@ public class PathingStuckHandler implements IStuckHandler
 
         final Direction badFacing = BlockPosUtil.getFacing(new BlockPos(entity.getPositionVec()), navigator.getDesiredPos()).getOpposite();
 
-        for (final Direction dir : directions)
+        for (final Direction dir : HORIZONTAL_DIRS)
         {
             if (dir == badFacing)
             {
@@ -477,7 +477,7 @@ public class PathingStuckHandler implements IStuckHandler
         final BlockState state = world.getBlockState(pos);
         if (state.getBlock() != Blocks.LADDER && !state.isSolid() && world.getFluidState(pos).isEmpty())
         {
-            for (final Direction dir : directions)
+            for (final Direction dir : HORIZONTAL_DIRS)
             {
                 final BlockState toPlace = Blocks.LADDER.getDefaultState().with(LadderBlock.FACING, dir.getOpposite());
                 if (world.getBlockState(pos.offset(dir)).getMaterial().isSolid() && Blocks.LADDER.isValidPosition(toPlace, world, pos))

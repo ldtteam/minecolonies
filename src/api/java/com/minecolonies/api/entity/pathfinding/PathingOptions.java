@@ -141,4 +141,27 @@ public class PathingOptions
         traverseToggleAbleCost = toggleCost;
         return this;
     }
+
+    /**
+     * Sets swimming ability
+     *
+     * @param canswim whether swimming is allowed
+     * @return
+     */
+    public PathingOptions withCanSwim(final boolean canswim)
+    {
+        setCanSwim(canswim);
+        return this;
+    }
+
+    /**
+     * Set door opening capability
+     * @param canEnter whether we can enter doors
+     * @return
+     */
+    public PathingOptions withCanEnterDoors(final boolean canEnter)
+    {
+        setEnterDoors(canEnter);
+        return this;
+    }
 }

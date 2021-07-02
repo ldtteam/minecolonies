@@ -9,9 +9,9 @@ import com.minecolonies.api.colony.colonyEvents.EventStatus;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
 import com.minecolonies.api.colony.managers.interfaces.IRaiderManager;
+import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.Colony;
@@ -30,11 +30,13 @@ import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.Pirat
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipBasedRaiderUtils;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipSize;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
+import com.minecolonies.coremod.entity.pathfinding.Pathfinding;
+import com.minecolonies.coremod.entity.pathfinding.pathjobs.PathJobRaiderPathing;
 import net.minecraft.block.material.Material;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
@@ -274,10 +276,6 @@ public class RaidManager implements IRaiderManager
 
         final int raidLevel = getColonyRaidLevel();
         int amount = calculateRaiderAmount(raidLevel);
-        if (amount <= 0 || raidLevel < MIN_REQUIRED_RAIDLEVEL)
-        {
-            return;
-        }
 
         // Splits into multiple raids if too large
         final int raidCount = Math.max(1, amount / BIG_HORDE_SIZE);
@@ -301,6 +299,7 @@ public class RaidManager implements IRaiderManager
         }
 
         nightsSinceLastRaid = 0;
+        raidTonight = false;
         amount = (int) Math.ceil((float) amount / spawnPoints.size());
 
         for (final BlockPos targetSpawnPoint : spawnPoints)
@@ -328,6 +327,7 @@ public class RaidManager implements IRaiderManager
                 event.setSpawnPoint(targetSpawnPoint);
                 event.setShipSize(ShipSize.getShipForRaiderAmount(amount));
                 event.setShipRotation(shipRotation);
+                event.setSpawnPath(createSpawnPath(targetSpawnPoint));
                 colony.getEventManager().addEvent(event);
             }
             else if (ShipBasedRaiderUtils.canSpawnShipAt(colony, targetSpawnPoint, amount, shipRotation, PirateRaidEvent.SHIP_NAME)
@@ -337,6 +337,7 @@ public class RaidManager implements IRaiderManager
                 event.setSpawnPoint(targetSpawnPoint);
                 event.setShipSize(ShipSize.getShipForRaiderAmount(amount));
                 event.setShipRotation(shipRotation);
+                event.setSpawnPath(createSpawnPath(targetSpawnPoint));
                 colony.getEventManager().addEvent(event);
             }
             else
@@ -369,12 +370,29 @@ public class RaidManager implements IRaiderManager
 
                 event.setSpawnPoint(targetSpawnPoint);
                 event.setHorde(new Horde(amount));
+
+                event.setSpawnPath(createSpawnPath(targetSpawnPoint));
                 colony.getEventManager().addEvent(event);
             }
 
             addRaiderSpawnPoint(targetSpawnPoint);
         }
         colony.markDirty();
+    }
+
+    /**
+     * Creates and starts the pathjob towards this spawnpoint
+     *
+     * @param targetSpawnPoint
+     * @return
+     */
+    private PathResult createSpawnPath(final BlockPos targetSpawnPoint)
+    {
+        final BlockPos closestBuildingPos = colony.getBuildingManager().getBestBuilding(targetSpawnPoint, IBuilding.class);
+        final PathJobRaiderPathing job =
+          new PathJobRaiderPathing(new ArrayList<>(colony.getBuildingManager().getBuildings().values()), colony.getWorld(), closestBuildingPos, targetSpawnPoint, 200);
+        job.getResult().startJob(Pathfinding.getExecutor());
+        return job.getResult();
     }
 
     /**
@@ -404,32 +422,21 @@ public class RaidManager implements IRaiderManager
         }
 
         // Calculate center on loaded buildings, to find a nice distance for raiders
-        BlockPos calcCenter = new BlockPos(locationSum.getX() / amount, locationSum.getY() / amount, locationSum.getZ() / amount);
+        final BlockPos calcCenter = new BlockPos(locationSum.getX() / amount, locationSum.getY() / amount, locationSum.getZ() / amount);
 
-        final Random random = colony.getWorld().rand;
+        // Get a random point on a circle around the colony,far out for the direction
+        final int degree = colony.getWorld().rand.nextInt(360);
+        int x = (int) Math.round(500 * Math.cos(Math.toRadians(degree)));
+        int z = (int) Math.round(500 * Math.sin(Math.toRadians(degree)));
+        final BlockPos advanceTowards = calcCenter.add(x, 0, z);
 
         BlockPos spawnPos = null;
+        final BlockPos closestBuilding = colony.getBuildingManager().getBestBuilding(advanceTowards, IBuilding.class);
 
-        final Direction direction1 = random.nextInt(2) < 1 ? Direction.EAST : Direction.WEST;
-        final Direction direction2 = random.nextInt(2) < 1 ? Direction.NORTH : Direction.SOUTH;
-
-        Tuple<Direction, Direction> mainDir = new Tuple<>(direction1, direction1);
-        Tuple<Direction, Direction> secondDir = new Tuple<>(direction2, direction2);
-
+        // 8 Tries
         for (int i = 0; i < 8; i++)
         {
-            if (i % 2 == 0)
-            {
-                mainDir = new Tuple<>(mainDir.getA(), mainDir.getB().rotateY());
-                secondDir = new Tuple<>(secondDir.getA().rotateY(), secondDir.getB());
-            }
-            else
-            {
-                mainDir = new Tuple<>(mainDir.getA().rotateY(), mainDir.getB());
-                secondDir = new Tuple<>(secondDir.getA(), secondDir.getB().rotateY());
-            }
-
-            spawnPos = findSpawnPointInDirections(calcCenter, mainDir, secondDir);
+            spawnPos = findSpawnPointInDirections(new BlockPos(closestBuilding.getX(), calcCenter.getY(), closestBuilding.getZ()), advanceTowards);
             if (spawnPos != null)
             {
                 break;
@@ -452,133 +459,68 @@ public class RaidManager implements IRaiderManager
     /**
      * Finds a spawnpoint randomly in a circular shape around the center Advances
      *
-     * @param center          the center of the area to search for a spawn point
-     * @param dir1            the first of the directions to look in
-     * @param dir2            the second of the directions to look in
-     * @param loadedBuildings a list of loaded buildings
+     * @param start      the center of the area to search for a spawn point
+     * @param advancePos The position we advance towards
      * @return the calculated position
      */
     private BlockPos findSpawnPointInDirections(
-      final BlockPos center,
-      final Tuple<Direction, Direction> dir1,
-      final Tuple<Direction, Direction> dir2)
+      final BlockPos start,
+      final BlockPos advancePos)
     {
-        final Random random = colony.getWorld().rand;
+        BlockPos spawnPos = new BlockPos(start);
+        BlockPos tempPos = new BlockPos(spawnPos);
+        final Collection<IBuilding> buildings = colony.getBuildingManager().getBuildings().values();
 
-        BlockPos spawnPos = new BlockPos(center);
+        final int xDiff = start.getX() - advancePos.getX();
+        final int zDiff = start.getZ() - advancePos.getZ();
 
-        while (spawnPos.distanceSq(center) < MIN_RAID_BLOCK_DIST_CENTER_SQ)
+        Vector3d rates = new Vector3d(1, 1, 1);
+
+        if (xDiff > zDiff)
         {
-            if (random.nextBoolean())
-            {
-                spawnPos = spawnPos.offset(dir1.getA(), 16);
-            }
-            else
-            {
-                spawnPos = spawnPos.offset(dir2.getA(), 16);
-            }
+            rates = new Vector3d((xDiff) / ((double) zDiff), 1, start.getZ() < advancePos.getZ() ? 1 : -1);
+        }
+        else
+        {
+            rates = new Vector3d(start.getX() < advancePos.getX() ? 1 : -1, 1, (zDiff) / ((double) xDiff));
+        }
 
-            if (random.nextBoolean())
+        int validChunkCount = 0;
+        for (int i = 0; i < 10; i++)
+        {
+            if (WorldUtil.isEntityBlockLoaded(colony.getWorld(), tempPos))
             {
-                spawnPos = spawnPos.offset(dir1.getB(), 16);
+                tempPos = tempPos.add(16 * rates.x, 0, 16 * rates.z);
+
+                if (WorldUtil.isEntityBlockLoaded(colony.getWorld(), tempPos))
+                {
+                    if (isValidSpawnPoint(buildings, tempPos))
+                    {
+                        spawnPos = tempPos;
+                        validChunkCount++;
+                        if (validChunkCount > 5)
+                        {
+                            return spawnPos;
+                        }
+                    }
+                }
+                else
+                {
+                    break;
+                }
             }
             else
             {
-                spawnPos = spawnPos.offset(dir2.getB(), 16);
+                break;
             }
         }
 
-        BlockPos tempPos = new BlockPos(spawnPos);
-
-        // Check if loaded
-        if (WorldUtil.isBlockLoaded(colony.getWorld(), spawnPos))
+        if (!spawnPos.equals(start))
         {
-            final int chunks = random.nextInt(RAID_SPAWN_SEARCH_CHUNKS - 3) + 3;
-            for (int i = 1; i <= chunks; i++)
-            {
-                // Direction one
-                if (random.nextBoolean())
-                {
-                    if (areChunksLoadedForRaidSpawn(tempPos, dir1.getA(), dir2.getB()))
-                    {
-                        if (isValidSpawnPoint(tempPos.offset(dir1.getA(), 16)))
-                        {
-                            spawnPos = tempPos.offset(dir1.getA(), 16);
-                        }
-                        tempPos = tempPos.offset(dir1.getA(), 16);
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-                else
-                {
-                    if (areChunksLoadedForRaidSpawn(tempPos, dir2.getA(), dir1.getB()))
-                    {
-                        if (isValidSpawnPoint(tempPos.offset(dir2.getA(), 16)))
-                        {
-                            spawnPos = tempPos.offset(dir2.getA(), 16);
-                        }
-                        tempPos = tempPos.offset(dir2.getA(), 16);
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-
-                // Direction two
-                if (random.nextBoolean())
-                {
-                    if (areChunksLoadedForRaidSpawn(tempPos, dir1.getB(), dir2.getA()))
-                    {
-                        if (isValidSpawnPoint(tempPos.offset(dir1.getB(), 16)))
-                        {
-                            spawnPos = tempPos.offset(dir1.getB(), 16);
-                        }
-                        tempPos = tempPos.offset(dir1.getB(), 16);
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-                else
-                {
-                    if (areChunksLoadedForRaidSpawn(tempPos, dir2.getB(), dir1.getA()))
-                    {
-                        if (isValidSpawnPoint(tempPos.offset(dir2.getB(), 16)))
-                        {
-                            spawnPos = tempPos.offset(dir2.getB(), 16);
-                        }
-                        tempPos = tempPos.offset(dir2.getB(), 16);
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-            }
-            if (isValidSpawnPoint(spawnPos))
-            {
-                return spawnPos;
-            }
+            return spawnPos;
         }
 
         return null;
-    }
-
-    /**
-     * Checks if there is enough chunks loaded to advance the raid spawn into the direction
-     *
-     * @return
-     */
-    private boolean areChunksLoadedForRaidSpawn(final BlockPos pos, final Direction dir1, final Direction dir2)
-    {
-        return (WorldUtil.isBlockLoaded(colony.getWorld(), pos.offset(dir1, 16))
-                  && WorldUtil.isBlockLoaded(colony.getWorld(), pos.offset(dir1, 32))
-                  && WorldUtil.isBlockLoaded(colony.getWorld(), pos.offset(dir2, 16)));
     }
 
     /**
@@ -587,9 +529,9 @@ public class RaidManager implements IRaiderManager
      * @param spawnPos the spawn point to check
      * @return true if valid
      */
-    private boolean isValidSpawnPoint(final BlockPos spawnPos)
+    public static boolean isValidSpawnPoint(final Collection<IBuilding> buildings, final BlockPos spawnPos)
     {
-        for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
+        for (final IBuilding building : buildings)
         {
             if (building.getBuildingLevel() == 0)
             {
