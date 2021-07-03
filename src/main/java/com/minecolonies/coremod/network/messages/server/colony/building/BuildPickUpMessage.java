@@ -50,13 +50,5 @@ public class BuildPickUpMessage extends AbstractBuildingServerMessage<IBuilding>
     {
         final PlayerEntity player = ctxIn.getSender();
         building.pickUp(player);
-        for (final BlockPos childPos : building.getChildren())
-        {
-            final IBuilding childBuilding = colony.getBuildingManager().getBuilding(childPos);
-            if (childBuilding != null)
-            {
-                childBuilding.pickUp(player);
-            }
-        }
     }
 }
