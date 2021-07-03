@@ -2021,5 +2021,6 @@
   "com.minecolonies.coremod.gui.citizen.family.siblings": "Siblings",
   "com.minecolonies.coremod.gui.citizen.family.children": "Children",
   "com.minecolonies.coremod.gui.citizen.family.unknown": "Unknown",
-  "com.minecolonies.coremod.invalidbuilding": "The Building %s at position %d %d %d is missing its original blueprint of style %s. Building potentially inoperable. Please recover the blueprint or pickup and replace the building."
+  "com.minecolonies.coremod.invalidbuilding": "The Building %s at position %d %d %d is missing its original blueprint of style %s. Building potentially inoperable. Please recover the blueprint or pickup and replace the building.",
+  "entity.miner.invalidmineshaft": "I can't work at the mine because the mineshaft is missing the proper indication."
 }

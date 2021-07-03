@@ -374,6 +374,8 @@ public final class TranslationConstants
     @NonNls
     public static final String NO_FREE_FIELDS                                                       = "entity.farmer.nofreefields";
     @NonNls
+    public static final String INVALID_MINESHAFT                                                    = "entity.miner.invalidmineshaft";
+    @NonNls
     public static final String NO_SEED_SET                                                          = "entity.farmer.noseedset";
     @NonNls
     public static final String WATER_TOO_FAR                                                        = "entity.fisherman.messagewatertoofar";
