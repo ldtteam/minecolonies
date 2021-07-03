@@ -385,7 +385,6 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
         {
             Log.getLogger().warn("TileEntity with invalid data, restoring correct data from schematic.");
             te.setSchematicName(this.getSchematicName() + Math.max(1, buildingLevel));
-
         }
 
         try
@@ -394,7 +393,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
         }
         catch (final Exception ex)
         {
-            Log.getLogger().warn("Building with invalid data, setting building as deconstruct");
+            Log.getLogger().warn("Building with invalid data, setting building as deconstructed.");
             setDeconstructed();
             LanguageHandler.sendPlayersMessage(getColony().getImportantMessageEntityPlayers(), "com.minecolonies.coremod.invalidbuilding", getSchematicName(), getID().getX(), getID().getY(), getID().getZ());
         }
