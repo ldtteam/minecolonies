@@ -65,7 +65,7 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
     public boolean canResolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final AbstractBuilding building)
     {
         if (building instanceof BuildingWareHouse
-              || building.isMinimumStockRequest(request)
+              || (building.isMinimumStockRequest(request) && request.getRequest().getCount() != request.getRequest().getMinimumCount())
               || (building.getCitizenForRequest(request.getId()).isPresent() && building.getCitizenForRequest(request.getId()).get().isRequestAsync(request.getId())))
         {
             return false;

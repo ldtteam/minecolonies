@@ -26,9 +26,15 @@ import java.util.function.Predicate;
 public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack implements IBlueprintDataProvider
 {
     /**
+     * Version of the TE data.
+     */
+    private static final String TAG_VERSION = "version";
+    private static final int    VERSION     = 2;
+
+    /**
      * Corner positions of schematic, relative to te pos.
      */
-    private BlockPos corner1 = BlockPos.ZERO;
+    private BlockPos corner1             = BlockPos.ZERO;
     private BlockPos corner2 = BlockPos.ZERO;
 
     /**
@@ -40,6 +46,11 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
      * Map of block positions relative to TE pos and string tags
      */
     private Map<BlockPos, List<String>> tagPosMap = new HashMap<>();
+
+    /**
+     * Check if the building might have old data.
+     */
+    private int version = 0;
 
     public AbstractTileEntityColonyBuilding(final TileEntityType<? extends AbstractTileEntityColonyBuilding> type)
     {
@@ -202,6 +213,7 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
     {
         super.read(state, compound);
         readSchematicDataFromNBT(compound);
+        this.version = compound.getInt(TAG_VERSION);
     }
 
     @Override
@@ -220,6 +232,7 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
         {
             building.onUpgradeSchematicTo(old, getSchematicName(), this);
         }
+        this.version = VERSION;
     }
 
     @NotNull
@@ -228,6 +241,7 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
     {
         super.write(compound);
         writeSchematicDataToNBT(compound);
+        compound.putInt(TAG_VERSION, this.version);
         return compound;
     }
 
@@ -235,5 +249,14 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
     public BlockPos getTilePos()
     {
         return pos;
+    }
+
+    /**
+     * Check if the TE is on an old data version.
+     * @return true if so.
+     */
+    public boolean isOutdated()
+    {
+        return version < VERSION;
     }
 }

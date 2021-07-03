@@ -16,7 +16,6 @@ import com.minecolonies.coremod.util.ChunkDataHelper;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
@@ -122,6 +121,10 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
     {
         super.onUpgradeComplete(newLevel);
         final IBuilding barrack = colony.getBuildingManager().getBuilding(barracks);
+        if (barrack == null)
+        {
+            return;
+        }
         ChunkDataHelper.claimColonyChunks(colony, true, barracks, barrack.getClaimRadius(newLevel));
 
         if (newLevel == barrack.getMaxBuildingLevel())

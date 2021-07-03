@@ -161,15 +161,13 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             handlers.add(workerEntity.getInventory());
         }
 
-        for (final BlockPos pos : getContainers())
+        final TileEntity entity = colony.getWorld().getTileEntity(getID());
+        if (entity != null)
         {
-            final TileEntity entity = colony.getWorld().getTileEntity(pos);
-            if (entity != null)
-            {
-                final LazyOptional<IItemHandler> handler = entity.getCapability(ITEM_HANDLER_CAPABILITY, null);
-                handler.ifPresent(handlers::add);
-            }
+            final LazyOptional<IItemHandler> handler = entity.getCapability(ITEM_HANDLER_CAPABILITY, null);
+            handler.ifPresent(handlers::add);
         }
+
         return ImmutableList.copyOf(handlers);
     }
 

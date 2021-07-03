@@ -111,10 +111,6 @@ public enum AIWorkerState implements IAIState
      */
     MINER_CHECK_MINESHAFT(true),
     /**
-     * The Miner searches for the ladder.
-     */
-    MINER_SEARCHING_LADDER(true),
-    /**
      * The Miner walks to the ladder.
      */
     MINER_WALKING_TO_LADDER(true),

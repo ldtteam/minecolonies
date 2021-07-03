@@ -280,7 +280,6 @@ public class RecipeStorage implements IRecipeStorage
     @Override
     public boolean canFullFillRecipe(final int qty, final Map<ItemStorage, Integer> existingRequirements, @NotNull final IItemHandler... inventories)
     {
-        final int neededMultiplier = ItemStackUtils.isEmpty(this.primaryOutput) ? qty : CraftingUtils.calculateMaxCraftingCount(qty, this);
         final List<ItemStorage> items = getCleanedInput();
 
         for (final ItemStorage storage : items)
@@ -296,7 +295,7 @@ public class RecipeStorage implements IRecipeStorage
             {
                 if(!ItemStackUtils.compareItemStackListIgnoreStackSize(this.getCraftingToolsAndSecondaryOutputs(), stack, false, !storage.ignoreNBT()))
                 {
-                    neededCount = storage.getAmount() * neededMultiplier;
+                    neededCount = storage.getAmount() * qty;
                 }
                 else
                 {
@@ -308,7 +307,7 @@ public class RecipeStorage implements IRecipeStorage
                 final ItemStack container = stack.getItem().getContainerItem(stack);
                 if(ItemStackUtils.isEmpty(container) || !ItemStackUtils.compareItemStacksIgnoreStackSize(stack, container, false, !storage.ignoreNBT()))
                 {
-                    neededCount = storage.getAmount() * neededMultiplier;
+                    neededCount = storage.getAmount() * qty;
                 }
                 else
                 {

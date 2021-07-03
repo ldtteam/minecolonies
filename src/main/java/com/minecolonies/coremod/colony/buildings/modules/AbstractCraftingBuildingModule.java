@@ -120,7 +120,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
     protected int getMaxRecipes()
     {
         final double increase;
-        if(canLearnLargeRecipes())
+        if(canLearnLargeRecipes() || canLearnFurnaceRecipes())
         {
             increase = (1 + building.getColony().getResearchManager().getResearchEffects().getEffectStrength(RECIPES)) * EXTRA_RECIPE_MULTIPLIER;
         }
@@ -312,7 +312,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
                 {
                     final IRequest<? extends PublicCrafting> request = (IRequest<? extends PublicCrafting>) building.getColony().getRequestManager().getRequestForToken(taskToken);
                     final IRecipeStorage recipeStorage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(request.getRequest().getRecipeID());
-                    if (this.recipes.contains(request.getRequest().getRecipeID()) && recipeStorage != null)
+                    if (holdsRecipe(request.getRequest().getRecipeID()) && recipeStorage != null)
                     {
                         recipes.add(new Tuple<>(recipeStorage, request.getRequest().getCount()));
                     }
@@ -614,11 +614,11 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         for (final IToken<?> token : recipes)
         {
             final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-            if (storage != null && (stackPredicate.test(storage.getPrimaryOutput()) || storage.getAlternateOutputs().stream().anyMatch(stackPredicate)))
+            if (storage != null && (stackPredicate.test(storage.getPrimaryOutput()) || storage.getAlternateOutputs().stream().anyMatch(i -> stackPredicate.test(i))))
             {
                 final List<IItemHandler> handlers = building.getHandlers();
                 IRecipeStorage toTest = storage.getRecipeType() instanceof MultiOutputRecipe ? storage.getClassicForMultiOutput(stackPredicate) : storage;
-                if (toTest.canFullFillRecipe(count, Collections.emptyMap(), handlers.toArray(new IItemHandler[0])))
+                if (toTest.canFullFillRecipe(count, considerReservation ? reservedStacks() : Collections.emptyMap(), handlers.toArray(new IItemHandler[0])))
                 {
                     return toTest;
                 }

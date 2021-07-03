@@ -19,9 +19,9 @@ import com.minecolonies.api.entity.ai.statemachine.AIOneTimeEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
+import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
@@ -48,7 +48,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.pathfinding.Path;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
@@ -57,9 +56,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.concurrent.Future;
 
-import static com.minecolonies.api.research.util.ResearchConstants.*;
+import static com.minecolonies.api.research.util.ResearchConstants.ARCHER_USE_ARROWS;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
@@ -72,12 +70,18 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     /**
      * Settings.
      */
-    public static final ISettingKey<GuardJobSetting> JOB = new SettingKey<>(GuardJobSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "guardjob"));
-    public static final ISettingKey<BoolSetting> RETREAT = new SettingKey<>(BoolSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "retreat"));
-    public static final ISettingKey<BoolSetting>       HIRE_TRAINEE = new SettingKey<>(BoolSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "hiretrainee"));
-    public static final ISettingKey<PatrolModeSetting> PATROL_MODE  = new SettingKey<>(PatrolModeSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "patrolmode"));
-    public static final ISettingKey<FollowModeSetting> FOLLOW_MODE  = new SettingKey<>(FollowModeSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "followmode"));
-    public static final ISettingKey<GuardTaskSetting> GUARD_TASK  = new SettingKey<>(GuardTaskSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "guardtask"));
+    public static final ISettingKey<GuardJobSetting>   JOB          =
+      new SettingKey<>(GuardJobSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "guardjob"));
+    public static final ISettingKey<BoolSetting>       RETREAT      =
+      new SettingKey<>(BoolSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "retreat"));
+    public static final ISettingKey<BoolSetting>       HIRE_TRAINEE =
+      new SettingKey<>(BoolSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "hiretrainee"));
+    public static final ISettingKey<PatrolModeSetting> PATROL_MODE  =
+      new SettingKey<>(PatrolModeSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "patrolmode"));
+    public static final ISettingKey<FollowModeSetting> FOLLOW_MODE  =
+      new SettingKey<>(FollowModeSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "followmode"));
+    public static final ISettingKey<GuardTaskSetting>  GUARD_TASK   =
+      new SettingKey<>(GuardTaskSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "guardtask"));
 
 
     //manual patroll. retreat, hire from training
@@ -141,7 +145,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     /**
      * Pathing future for the next patrol target.
      */
-    private Future<Path> pathingFuture;
+    private PathResult pathResult;
 
     /**
      * The location of the assigned mine
@@ -228,11 +232,11 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             {
                 final AbstractEntityCitizen citizenEntity = optCitizen.get();
                 AttributeModifierUtils.addHealthModifier(citizenEntity,
-                    new AttributeModifier(GUARD_HEALTH_MOD_BUILDING_NAME, getBonusHealth(), AttributeModifier.Operation.ADDITION));
+                  new AttributeModifier(GUARD_HEALTH_MOD_BUILDING_NAME, getBonusHealth(), AttributeModifier.Operation.ADDITION));
                 AttributeModifierUtils.addHealthModifier(citizenEntity,
-                    new AttributeModifier(GUARD_HEALTH_MOD_CONFIG_NAME,
-                        MineColonies.getConfig().getServer().guardHealthMult.get() - 1.0,
-                        AttributeModifier.Operation.MULTIPLY_TOTAL));
+                  new AttributeModifier(GUARD_HEALTH_MOD_CONFIG_NAME,
+                    MineColonies.getConfig().getServer().guardHealthMult.get() - 1.0,
+                    AttributeModifier.Operation.MULTIPLY_TOTAL));
             }
 
             // Set new home, since guards are housed at their workerbuilding.
@@ -391,17 +395,18 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             ICitizenData trainingCitizen = null;
             int maxSkill = 0;
 
-            for(ICitizenData trainee:colony.getCitizenManager().getCitizens())
+            for (ICitizenData trainee : colony.getCitizenManager().getCitizens())
             {
-                if((this.getGuardType() == ModGuardTypes.ranger && trainee.getJob() instanceof JobArcherTraining) || (this.getGuardType() == ModGuardTypes.knight && trainee.getJob() instanceof JobCombatTraining)
-                    &&  trainee.getCitizenSkillHandler().getLevel(getGuardType().getPrimarySkill()) > maxSkill)
+                if ((this.getGuardType() == ModGuardTypes.ranger && trainee.getJob() instanceof JobArcherTraining)
+                      || (this.getGuardType() == ModGuardTypes.knight && trainee.getJob() instanceof JobCombatTraining)
+                           && trainee.getCitizenSkillHandler().getLevel(getGuardType().getPrimarySkill()) > maxSkill)
                 {
                     maxSkill = trainee.getCitizenSkillHandler().getLevel(getGuardType().getPrimarySkill());
                     trainingCitizen = trainee;
                 }
             }
 
-            if(trainingCitizen != null )
+            if (trainingCitizen != null)
             {
                 hiredFromTraining = true;
                 assignCitizen(trainingCitizen);
@@ -409,9 +414,9 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         }
 
         //If we hired, we may have more than one to hire, so let's skip the superclass until next time. 
-        if(!hiredFromTraining)
+        if (!hiredFromTraining)
         {
-            super.onColonyTick(colony); 
+            super.onColonyTick(colony);
         }
 
         if (patrolTimer > 0 && getSetting(GUARD_TASK).getValue().equals(GuardTaskSetting.PATROL))
@@ -507,21 +512,22 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         if (!getSetting(PATROL_MODE).getValue().equals(PatrolModeSetting.MANUAL) || patrolTargets == null || patrolTargets.isEmpty())
         {
             BlockPos pos = null;
-            if (this.pathingFuture != null && this.pathingFuture.isDone())
+            if (this.pathResult != null)
             {
-                try
+                if (this.pathResult.isDone())
                 {
-                    pos = this.pathingFuture.get().getTarget();
+                    if (pathResult.getPath() != null)
+                    {
+                        pos = this.pathResult.getPath().getTarget();
+                    }
+                    this.pathResult = null;
                 }
-                catch (final Exception e)
-                {
-                    Log.getLogger().warn("Guard pathing interrupted", e);
-                }
-                this.pathingFuture = null;
             }
-            else if (colony.getWorld().rand.nextBoolean() || (this.pathingFuture != null && this.pathingFuture.isCancelled()))
+            else if (colony.getWorld().rand.nextBoolean())
             {
-                this.pathingFuture = Pathfinding.enqueue(new PathJobRandomPos(colony.getWorld(),lastPatrolPoint,10, 30,null));
+                final PathJobRandomPos job = new PathJobRandomPos(colony.getWorld(), lastPatrolPoint, 20, 40, null);
+                this.pathResult = job.getResult();
+                Pathfinding.enqueue(job);
             }
             else
             {
@@ -574,6 +580,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
 
     /**
      * Return the position of the mine to guard
+     *
      * @return the position of the mine
      */
     public BlockPos getMinePos()
@@ -582,8 +589,8 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     }
 
     /**
-     * Set the position of the mine the guard is patrolling
-     * Check whether the given position is actually a mine
+     * Set the position of the mine the guard is patrolling Check whether the given position is actually a mine
+     *
      * @param pos the position of the mine
      */
     public void setMinePos(BlockPos pos)
@@ -926,6 +933,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
 
         /**
          * Get the current guard type.
+         *
          * @return the type.
          */
         public GuardType getGuardType()
@@ -940,12 +948,14 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
 
         /**
          * Return the position of the mine the guard is patrolling
+         *
          * @return the position of the mine
          */
         public BlockPos getMinePos() { return minePos; }
 
         /**
          * Set the position of the mine the guard is patrolling
+         *
          * @param pos the position of the mine
          */
         public void setMinePos(BlockPos pos) { this.minePos = pos; }

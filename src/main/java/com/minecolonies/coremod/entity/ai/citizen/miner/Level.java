@@ -13,7 +13,6 @@ import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 
@@ -102,9 +101,11 @@ public class Level
         final int cobbleX = buildingMiner.getCobbleLocation().getX();
         final int cobbleZ = buildingMiner.getCobbleLocation().getZ();
 
+        final BlockPos vector = buildingMiner.getLadderLocation().subtract(buildingMiner.getCobbleLocation());
+
         //check for orientation
-        @NotNull final Vec2i cobbleCenter = new Vec2i(cobbleX - (buildingMiner.getVectorX() * 3), cobbleZ - (buildingMiner.getVectorZ() * 3));
-        @NotNull final Vec2i ladderCenter = new Vec2i(cobbleX + (buildingMiner.getVectorX() * 4), cobbleZ + (buildingMiner.getVectorZ() * 4));
+        @NotNull final Vec2i cobbleCenter = new Vec2i(cobbleX - (vector.getX() * 3), cobbleZ - (vector.getZ() * 3));
+        @NotNull final Vec2i ladderCenter = new Vec2i(cobbleX + (vector.getX() * 4), cobbleZ + (vector.getZ() * 4));
 
         //They are shaft and ladderBack, their parents are the shaft.
         @NotNull final Node cobbleNode = new Node(cobbleCenter.getX(), cobbleCenter.getZ(), ladderCenter);
@@ -214,7 +215,9 @@ public class Level
         }
         if (nextNode == null || nextNode.getStyle() == SHAFT)
         {
-            return new BlockPos(ladderNode.getX() + 3 * buildingMiner.getVectorX(), getDepth() + 1, ladderNode.getZ() + 3 * buildingMiner.getVectorZ());
+            final BlockPos vector = buildingMiner.getLadderLocation().subtract(buildingMiner.getCobbleLocation());
+
+            return new BlockPos(ladderNode.getX() + 3 * vector.getX(), getDepth() + 1, ladderNode.getZ() + 3 * vector.getZ());
         }
         else
         {
