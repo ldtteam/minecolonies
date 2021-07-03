@@ -32,6 +32,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
+import com.minecolonies.coremod.network.messages.server.colony.building.BuildPickUpMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.BuildRequestMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.BuildingSetStyleMessage;
 import net.minecraft.block.BlockState;
@@ -42,7 +43,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.TriPredicate;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
@@ -130,6 +130,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         registerButton(BUTTON_CANCEL, this::cancelClicked);
         registerButton(BUTTON_REPAIR, this::repairClicked);
         registerButton(BUTTON_DECONSTRUCT_BUILDING, this::deconstructBuildingClicked);
+        registerButton(BUTTON_PICKUP_BUILDING, this::pickUpBuilding);
 
         final Button buttonBuild = findPaneOfTypeByID(BUTTON_BUILD, Button.class);
         final IBuildingView parentBuilding = c.getBuilding(building.getParent());
@@ -138,6 +139,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         {
             buttonBuild.setText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.build"));
             findPaneOfTypeByID(BUTTON_DECONSTRUCT_BUILDING, Button.class).hide();
+            findPaneOfTypeByID(BUTTON_PICKUP_BUILDING, Button.class).show();
         }
 
         if (building.getBuildingLevel() == building.getBuildingMaxLevel() || (parentBuilding != null && building.getBuildingLevel() >= parentBuilding.getBuildingLevel()))
@@ -151,12 +153,20 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
 
         if (building.isDeconstructed())
         {
-            findPaneOfTypeByID(BUTTON_DECONSTRUCT_BUILDING, Button.class).setText(new TranslationTextComponent("com.minecolonies.coremod.gui.workerhuts.pickup"));
+            findPaneOfTypeByID(BUTTON_PICKUP_BUILDING, Button.class).show();
         }
     }
 
     /**
-     * When the move building button has been clicked.
+     * When the pickup building button was clicked.
+     */
+    private void pickUpBuilding()
+    {
+        Network.getNetwork().sendToServer(new BuildPickUpMessage(building));
+    }
+
+    /**
+     * When the deconstruct building button has been clicked.
      */
     private void deconstructBuildingClicked()
     {
@@ -331,6 +341,8 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         if (!structure.hasBluePrint())
         {
             findPaneOfTypeByID(BUTTON_BUILD, Button.class).hide();
+            findPaneOfTypeByID(BUTTON_REPAIR, Button.class).hide();
+            findPaneOfTypeByID(BUTTON_PICKUP_BUILDING, Button.class).show();
             return;
         }
 

@@ -2021,5 +2021,5 @@
   "com.minecolonies.coremod.gui.citizen.family.siblings": "Siblings",
   "com.minecolonies.coremod.gui.citizen.family.children": "Children",
   "com.minecolonies.coremod.gui.citizen.family.unknown": "Unknown",
-  "com.minecolonies.coremod.invalidbuilding": "The Building %s at position %d %d %d is missing its original blueprint, it was set as deconstructed. Please pick it up and place it again."
+  "com.minecolonies.coremod.invalidbuilding": "The Building %s at position %d %d %d is missing its original blueprint of style %s. Building potentially inoperable. Please recover the blueprint or pickup and replace the building."
 }

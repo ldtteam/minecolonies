@@ -811,24 +811,30 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     {
         if (this.isDeconstructed())
         {
-            final ItemStack stack = new ItemStack(colony.getWorld().getBlockState(getPosition()).getBlock(), 1);
-            final CompoundNBT compoundNBT = new CompoundNBT();
-            compoundNBT.putInt(TAG_COLONY_ID, this.getColony().getID());
-            compoundNBT.putInt(TAG_OTHER_LEVEL, this.getBuildingLevel());
-            stack.setTag(compoundNBT);
-            if (InventoryUtils.addItemStackToProvider(player, stack))
-            {
-                colony.getWorld().destroyBlock(this.getPosition(), false);
-                this.destroy();
-            }
-            else
-            {
-                LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.playerinvfull");
-            }
+            pickUp(player);
         }
         else
         {
             requestWorkOrder(getBuildingLevel(), builder, true);
+        }
+    }
+
+    @Override
+    public void pickUp(final PlayerEntity player)
+    {
+        final ItemStack stack = new ItemStack(colony.getWorld().getBlockState(getPosition()).getBlock(), 1);
+        final CompoundNBT compoundNBT = new CompoundNBT();
+        compoundNBT.putInt(TAG_COLONY_ID, this.getColony().getID());
+        compoundNBT.putInt(TAG_OTHER_LEVEL, this.getBuildingLevel());
+        stack.setTag(compoundNBT);
+        if (InventoryUtils.addItemStackToProvider(player, stack))
+        {
+            colony.getWorld().destroyBlock(this.getPosition(), false);
+            this.destroy();
+        }
+        else
+        {
+            LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.playerinvfull");
         }
     }
 
