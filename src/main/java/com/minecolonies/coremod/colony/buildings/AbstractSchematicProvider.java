@@ -30,6 +30,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static com.minecolonies.api.util.constant.Constants.DEFAULT_STYLE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 public abstract class AbstractSchematicProvider implements ISchematicProvider, IBuilding
@@ -395,6 +396,8 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
         {
             Log.getLogger().warn("Building with invalid data, setting building as deconstructed.");
             setDeconstructed();
+            style = DEFAULT_STYLE;
+            markDirty();
             LanguageHandler.sendPlayersMessage(getColony().getImportantMessageEntityPlayers(), "com.minecolonies.coremod.invalidbuilding", getSchematicName(), getID().getX(), getID().getY(), getID().getZ());
         }
     }
