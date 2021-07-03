@@ -315,6 +315,13 @@ task setupCIWorkspace {
 }
 
 processResources {
+    from(sourceSets.main.resources.srcDirs) {
+        include 'META-INF/mods.toml'
+        expand 'config': config
+    }
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'META-INF/mods.toml'
+    }
     doLast {
         if(file('src/main/generated/resources/assets/minecolonies/lang/default.json').exists()) {
             def slurper = new JsonSlurper()
