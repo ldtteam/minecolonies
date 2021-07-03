@@ -129,7 +129,7 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLib
             final StudyItem chosenItem = currentItems.get(world.rand.nextInt(currentItems.size()));
 
             worker.setHeldItem(Hand.MAIN_HAND, new ItemStack(chosenItem.getItem(), 1));
-            data.getCitizenSkillHandler().tryLevelUpIntelligence(world.rand, ONE_IN_X_CHANCE * (100 / chosenItem.getSkillIncreasePct()), data);
+            data.getCitizenSkillHandler().tryLevelUpIntelligence(world.rand, (ONE_IN_X_CHANCE * (100.0 / chosenItem.getSkillIncreasePct())), data);
             // Break item rand
             if (world.rand.nextInt(100) <= chosenItem.getBreakPct())
             {
