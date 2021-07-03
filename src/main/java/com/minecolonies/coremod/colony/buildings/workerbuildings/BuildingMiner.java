@@ -438,7 +438,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         final Set<BlockPos> ladderPos = map.getOrDefault("ladder", new HashSet<>());
         if (cobblePos.isEmpty() || ladderPos.isEmpty())
         {
-            saveUpdateTEDataFromSchematic();
+            safeUpdateTEDataFromSchematic();
             return;
         }
         cobbleLocation = cobblePos.iterator().next();

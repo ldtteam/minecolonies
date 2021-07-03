@@ -367,7 +367,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     /**
      * Load updated TE data from the schematic if missing.
      */
-    protected void saveUpdateTEDataFromSchematic()
+    protected void safeUpdateTEDataFromSchematic()
     {
         if (buildingLevel <= 0)
         {
@@ -378,7 +378,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
 
         try
         {
-            unsaveUpdateTEDataFromSchematic(te);
+            unsafeUpdateTEDataFromSchematic(te);
             return;
         }
         catch (final Exception ex)
@@ -389,7 +389,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
 
         try
         {
-            unsaveUpdateTEDataFromSchematic(te);
+            unsafeUpdateTEDataFromSchematic(te);
         }
         catch (final Exception ex)
         {
@@ -399,8 +399,9 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
 
     /**
      * Load the schematic data from the TE schematic name, if it's a reattempt, calculate the name from the building (backup).
+     * Might throw exceptions if data is invalid.
      */
-    private void unsaveUpdateTEDataFromSchematic(final TileEntityColonyBuilding te)
+    private void unsafeUpdateTEDataFromSchematic(final TileEntityColonyBuilding te)
     {
         final String structureName;
         if (te.getSchematicName().isEmpty())
