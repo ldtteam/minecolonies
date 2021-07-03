@@ -60,4 +60,22 @@ MineColonies is a colony simulator within Minecraft! There are numerous types of
     versionRange="[${config.structurize_version}]"
     ordering="AFTER"
     side="BOTH"
-
+# The rest of these are not required, but if you have them then they must be at least this version
+[[dependencies.minecolonies]]
+    modId="tconstruct"
+    mandatory=false
+    versionRange="[${config.tc_version},)"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.minecolonies]]
+    modId="resourcefulbees"
+    mandatory=false
+    versionRange="[${config.rb_version},)"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.minecolonies]]
+    modId="dynamictrees"
+    mandatory=false
+    versionRange="[${config.dt_version},)"
+    ordering="NONE"
+    side="BOTH"
