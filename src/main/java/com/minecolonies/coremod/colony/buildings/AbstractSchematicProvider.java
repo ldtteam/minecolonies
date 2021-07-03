@@ -393,8 +393,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
         }
         catch (final Exception ex)
         {
-            Log.getLogger().warn("Building with invalid data, setting building as deconstructed.");
-            LanguageHandler.sendPlayersMessage(getColony().getImportantMessageEntityPlayers(), "com.minecolonies.coremod.invalidbuilding", getSchematicName(), getID().getX(), getID().getY(), getID().getZ(), getStyle());
+            LanguageHandler.sendPlayersMessage(getColony().getMessagePlayerEntities(), "com.minecolonies.coremod.invalidbuilding", getSchematicName(), getID().getX(), getID().getY(), getID().getZ(), getStyle());
         }
     }
 
