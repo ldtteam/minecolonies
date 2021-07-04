@@ -35,7 +35,7 @@ import java.util.List;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.research.util.ResearchConstants.MORE_ORES;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
-import static com.minecolonies.api.util.constant.TranslationConstants.NEEDS_BETTER_HUT;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.util.WorkerUtil.getLastLadder;
 
 /**
@@ -164,9 +164,18 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         {
             return START_WORKING;
         }
+
+        if (getOwnBuilding().getLadderLocation() == null || getOwnBuilding().getCobbleLocation() == null)
+        {
+            worker.getCitizenData().triggerInteraction(new StandardInteraction(new TranslationTextComponent(INVALID_MINESHAFT), ChatPriority.BLOCKING));
+            return START_WORKING;
+        }
+
         //Miner is at building
         return PREPARING;
     }
+
+
 
     @Override
     public int getBreakSpeedLevel()

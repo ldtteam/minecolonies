@@ -111,6 +111,10 @@ public class InteractionValidatorInitializer
 
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(NO_FREE_FIELDS),
           citizen -> citizen.getWorkBuilding() instanceof BuildingFarmer && ((BuildingFarmer) citizen.getWorkBuilding()).hasNoFields());
+
+        InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(INVALID_MINESHAFT),
+          citizen -> citizen.getWorkBuilding() instanceof BuildingMiner && (((BuildingMiner) citizen.getWorkBuilding()).getCobbleLocation() == null || ((BuildingMiner) citizen.getWorkBuilding()).getLadderLocation() == null));
+
         InteractionValidatorRegistry.registerPosBasedPredicate(new TranslationTextComponent(NO_SEED_SET),
           (citizen, pos) ->
           {
