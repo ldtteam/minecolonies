@@ -517,4 +517,30 @@ public class SettingsFactories
             return 54;
         }
     }
+
+    /**
+     * Specific factory for the string setting with desc.
+     */
+    public static class CrafterRecipeSettingFactory extends AbstractStringSettingsFactory<CrafterRecipeSetting>
+    {
+        @NotNull
+        @Override
+        public TypeToken<CrafterRecipeSetting> getFactoryOutputType()
+        {
+            return TypeToken.of(CrafterRecipeSetting.class);
+        }
+
+        @NotNull
+        @Override
+        public CrafterRecipeSetting getNewInstance(final List<String> value, final int curr)
+        {
+            return new CrafterRecipeSetting(value, curr);
+        }
+
+        @Override
+        public short getSerializationId()
+        {
+            return 55;
+        }
+    }
 }

@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.modules.*;
+import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
@@ -21,6 +22,8 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.modules.settings.CrafterRecipeSetting;
+import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.coremod.colony.crafting.CustomRecipe;
 import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
@@ -60,6 +63,11 @@ import static com.minecolonies.api.util.constant.TranslationConstants.RECIPE_IMP
  */
 public abstract class AbstractCraftingBuildingModule extends AbstractBuildingModule implements ICraftingBuildingModule, IPersistentModule, ICreatesResolversModule, IHasRequiredItemsModule
 {
+    /**
+     * The recipemode of the crafter (either priority based, or warehouse stock baseD).
+     */
+    public static final ISettingKey<CrafterRecipeSetting> RECIPE_MODE = new SettingKey<>(CrafterRecipeSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "recipemode"));
+
     /**
      * The base chance for a recipe to be improved. This is modified by worker skill and the number of items crafted
      */
@@ -465,7 +473,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         final List<ItemStorage> inputs = recipe.getCleanedInput().stream().sorted(Comparator.comparingInt(ItemStorage::getAmount).reversed()).collect(Collectors.toList());
 
         final double actualChance = Math.min(5.0, (BASE_CHANCE * count) + (BASE_CHANCE * citizen.getCitizenSkillHandler().getLevel(building.getRecipeImprovementSkill())));
-        final double roll = citizen.getRandom().nextDouble() * 100;
+        final double roll = citizen.getRandom().nextDouble() * 5;
 
         ItemStorage reducedItem = null;
 
@@ -529,7 +537,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
     {
         IRecipeStorage foundRecipe = null;
         final HashMap<IRecipeStorage, Integer> candidates = new HashMap<>();
-
+        final boolean sameOutputs = false;
         //Scan through and collect all possible recipes that could fulfill this, taking special note of the first one
         for (final IToken<?> token : recipes)
         {
@@ -545,7 +553,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         }
 
         //If we have more than one possible recipe, let's choose the one with the most stock in the warehouses
-        if(candidates.size() > 1)
+        if(candidates.size() > 1 && building.getSetting(RECIPE_MODE).getValue().equals(CrafterRecipeSetting.MAX_STOCK))
         {
             for(Map.Entry<IRecipeStorage, Integer> foo : candidates.entrySet())
             {
@@ -737,6 +745,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
             final IToken<?> storage = recipes.get(i);
             recipes.set(i, recipes.get(j));
             recipes.set(j, storage);
+            markDirty();
         }
     }
 
