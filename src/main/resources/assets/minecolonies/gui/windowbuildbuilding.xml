@@ -50,7 +50,10 @@
     <buttonimage id="build" align="TOP_MIDDLE" size="129 17" pos="10 220"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
                  label="$(com.minecolonies.coremod.gui.workerhuts.upgrade)" textcolor="black"/>
-    <buttonimage id="reposition" align="TOP_MIDDLE" size="129 17" pos="140 220"
+    <buttonimage id="deconstruct" align="TOP_MIDDLE" size="129 17" pos="140 220"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
                  label="$(com.minecolonies.coremod.gui.workerhuts.deconstruct)" textcolor="black"/>
+    <buttonimage id="pickup" align="TOP_MIDDLE" size="129 17" pos="140 220"
+                 source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
+                 label="$(com.minecolonies.coremod.gui.workerhuts.pickup)" textcolor="black" visible="false"/>
 </window>

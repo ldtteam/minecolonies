@@ -55,7 +55,7 @@ public interface ICitizenSkillHandler
      * @param customChance the custom chance.
      * @param citizen      the citizen that is trying to level up.
      */
-    void tryLevelUpIntelligence(@NotNull final Random random, final int customChance, @NotNull final ICitizenData citizen);
+    void tryLevelUpIntelligence(@NotNull final Random random, final double customChance, @NotNull final ICitizenData citizen);
 
     /**
      * Get the level for a certain skill.
