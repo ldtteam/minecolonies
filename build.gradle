@@ -315,6 +315,7 @@ task setupCIWorkspace {
 }
 
 processResources {
+    inputs.file 'build.properties'
     from(sourceSets.main.resources.srcDirs) {
         include 'META-INF/mods.toml'
         expand 'config': config
