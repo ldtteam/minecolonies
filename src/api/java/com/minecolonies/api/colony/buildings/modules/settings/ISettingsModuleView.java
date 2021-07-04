@@ -1,9 +1,11 @@
 package com.minecolonies.api.colony.buildings.modules.settings;
 
+import com.minecolonies.api.colony.buildings.modules.IBuildingModuleView;
+
 /**
  * Client side part of the settings module.
  */
-public interface ISettingsModuleView
+public interface ISettingsModuleView extends IBuildingModuleView
 {
     /**
      * Trigger a setting of a specific key.

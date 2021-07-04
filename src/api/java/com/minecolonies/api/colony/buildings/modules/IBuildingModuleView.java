@@ -1,6 +1,7 @@
 package com.minecolonies.api.colony.buildings.modules;
 
 import com.ldtteam.blockout.views.Window;
+import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.api.distmarker.Dist;
@@ -49,4 +50,10 @@ public interface IBuildingModuleView
      * @return the lang string.
      */
     String getDesc();
+
+    /**
+     * Get the colony view the module belongs to.
+     * @return the colony view.
+     */
+    IColonyView getColony();
 }

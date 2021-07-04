@@ -473,7 +473,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         final List<ItemStorage> inputs = recipe.getCleanedInput().stream().sorted(Comparator.comparingInt(ItemStorage::getAmount).reversed()).collect(Collectors.toList());
 
         final double actualChance = Math.min(5.0, (BASE_CHANCE * count) + (BASE_CHANCE * citizen.getCitizenSkillHandler().getLevel(building.getRecipeImprovementSkill())));
-        final double roll = citizen.getRandom().nextDouble() * 5;
+        final double roll = citizen.getRandom().nextDouble() * 100;
 
         ItemStorage reducedItem = null;
 
@@ -537,7 +537,6 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
     {
         IRecipeStorage foundRecipe = null;
         final HashMap<IRecipeStorage, Integer> candidates = new HashMap<>();
-        final boolean sameOutputs = false;
         //Scan through and collect all possible recipes that could fulfill this, taking special note of the first one
         for (final IToken<?> token : recipes)
         {
