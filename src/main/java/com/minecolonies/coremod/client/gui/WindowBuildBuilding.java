@@ -134,19 +134,18 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         final Button buttonBuild = findPaneOfTypeByID(BUTTON_BUILD, Button.class);
         final IBuildingView parentBuilding = c.getBuilding(building.getParent());
 
-        if (building.getBuildingLevel() == 0 || parentBuilding != null)
+        if (building.getBuildingLevel() == 0)
         {
-            buttonBuild.setText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.build"));
+            buttonBuild.setText(new TranslationTextComponent("com.minecolonies.coremod.gui.workerhuts.build"));
             findPaneOfTypeByID(BUTTON_DECONSTRUCT_BUILDING, Button.class).hide();
         }
-
-        if (building.getBuildingLevel() == building.getBuildingMaxLevel() || (parentBuilding != null && building.getBuildingLevel() >= parentBuilding.getBuildingLevel()))
+        else if (building.getBuildingLevel() == building.getBuildingMaxLevel() || (parentBuilding != null && building.getBuildingLevel() >= parentBuilding.getBuildingLevel()))
         {
             buttonBuild.hide();
         }
         else
         {
-            buttonBuild.setText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.upgrade"));
+            buttonBuild.setText(new TranslationTextComponent("com.minecolonies.coremod.gui.workerhuts.upgrade"));
         }
 
         if (building.isDeconstructed())
