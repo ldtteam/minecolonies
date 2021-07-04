@@ -70,6 +70,11 @@ public class EntityAIEatTask extends Goal
     private static final int GET_YOURSELF_SATURATION = 30;
 
     /**
+     * Limit to go to the restaurant.
+     */
+    private static final double RESTAURANT_LIMIT     = 2.5;
+
+    /**
      * The different types of AIStates related to eating.
      */
     public enum EatingState implements IState
@@ -84,6 +89,11 @@ public class EntityAIEatTask extends Goal
         GO_TO_EAT_POS,
         EAT
     }
+
+    /**
+     * Minutes between consecutive food checks if saturation is low but not 0.
+     */
+    private static final int MINUTES_BETWEEN_FOOD_CHECKS = 5;
 
     /**
      * The citizen assigned to this task.
@@ -182,9 +192,19 @@ public class EntityAIEatTask extends Goal
             return false;
         }
 
-        if (citizenData.getSaturation() <= CitizenConstants.LOW_SATURATION)
+        if (citizenData.getSaturation() <= CitizenConstants.AVERAGE_SATURATION)
         {
-            return true;
+            if (citizenData.getSaturation() <= RESTAURANT_LIMIT)
+            {
+                return true;
+            }
+
+            waitingTicks++;
+            if (waitingTicks >= SECONDS_A_MINUTE * MINUTES_BETWEEN_FOOD_CHECKS || citizenData.getWorkBuilding() == null)
+            {
+                waitingTicks = 0;
+                return true;
+            }
         }
 
         return false;
@@ -492,7 +512,7 @@ public class EntityAIEatTask extends Goal
             restaurantPos = colony.getBuildingManager().getBestBuilding(citizen, BuildingCook.class);
         }
 
-        if (citizenData.getSaturation() == 0.0)
+        if (citizenData.getSaturation() <= RESTAURANT_LIMIT)
         {
             final IJob<?> job = citizen.getCitizenJobHandler().getColonyJob();
             if (job != null && citizenData.isWorking())
@@ -505,18 +525,10 @@ public class EntityAIEatTask extends Goal
                 citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(NO_RESTAURANT), ChatPriority.BLOCKING));
                 return CHECK_FOR_FOOD;
             }
-        }
-        else if (restaurantPos == null)
-        {
-            return IDLE;
+            return GO_TO_RESTAURANT;
         }
 
-        final IJob<?> job = citizen.getCitizenJobHandler().getColonyJob();
-        if (job != null && citizenData.isWorking())
-        {
-            citizenData.setWorking(false);
-        }
-        return GO_TO_RESTAURANT;
+        return IDLE;
     }
 
     /**

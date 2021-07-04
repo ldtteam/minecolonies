@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.colonyEvents.IColonyCampFireRaidEvent;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
 import com.minecolonies.api.entity.mobs.RaiderMobUtils;
+import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.sounds.RaidSounds;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Tuple;
@@ -25,6 +26,7 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.pathfinding.Path;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.SoundCategory;
@@ -119,6 +121,11 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
      * Time the campfires are active
      */
     private int campFireTime = 0;
+
+    /**
+     * The path result towards the intended spawn point
+     */
+    private PathResult spawnPathResult;
 
     public HordeRaidEvent(IColony colony)
     {
@@ -300,6 +307,15 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
     @Override
     public void onStart()
     {
+        if (spawnPathResult.isDone())
+        {
+            final Path path = spawnPathResult.getPath();
+            if (path != null && path.reachesTarget())
+            {
+                spawnPoint = path.getFinalPathPoint().func_224759_a();
+            }
+        }
+
         final BlockPos spawnPos = ShipBasedRaiderUtils.getLoadedPositionTowardsCenter(spawnPoint, colony, MAX_SPAWN_DEVIATION, spawnPoint, MIN_CENTER_DISTANCE, 10);
         if (spawnPos == null)
         {
@@ -503,5 +519,15 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
     public void addSpawner(final BlockPos pos)
     {
         // do noting
+    }
+
+    /**
+     * Set the pathing for this raids spawnpoint
+     *
+     * @param result pathing result to wait for
+     */
+    public void setSpawnPath(final PathResult result)
+    {
+        this.spawnPathResult = result;
     }
 }

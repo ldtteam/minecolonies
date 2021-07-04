@@ -10,6 +10,7 @@ import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
 import com.minecolonies.api.colony.colonyEvents.IColonyStructureSpawnEvent;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.entity.mobs.RaiderMobUtils;
+import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CreativeBuildingStructureHandler;
 import com.minecolonies.api.util.Tuple;
@@ -26,6 +27,7 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
+import net.minecraft.pathfinding.Path;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.tileentity.MobSpawnerTileEntity;
@@ -136,6 +138,11 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     private int maxSpawners = 0;
 
     /**
+     * The path result towards the intended spawn point
+     */
+    private PathResult spawnPathResult;
+
+    /**
      * Create a new ship based raid event.
      *
      * @param colony the colony.
@@ -149,16 +156,37 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     @Override
     public void onStart()
     {
+
         status = EventStatus.PREPARING;
         daysToGo = MineColonies.getConfig().getServer().daysUntilPirateshipsDespawn.get();
 
-        final CreativeBuildingStructureHandler structure =
+        CreativeBuildingStructureHandler structure =
           new CreativeBuildingStructureHandler(colony.getWorld(),
             spawnPoint,
             Structures.SCHEMATICS_PREFIX + ShipBasedRaiderUtils.SHIP_FOLDER + shipSize.schematicPrefix + this.getShipDesc(),
             new PlacementSettings(),
             true);
         structure.getBluePrint().rotateWithMirror(BlockPosUtil.getRotationFromRotations(shipRotation), Mirror.NONE, colony.getWorld());
+
+        if (spawnPathResult.isDone())
+        {
+            final Path path = spawnPathResult.getPath();
+            if (path != null && path.reachesTarget())
+            {
+                final BlockPos endpoint = path.getFinalPathPoint().func_224759_a().down();
+                if (ShipBasedRaiderUtils.canPlaceShipAt(endpoint, structure.getBluePrint(), colony.getWorld()))
+                {
+                    spawnPoint = endpoint;
+                    structure =
+                      new CreativeBuildingStructureHandler(colony.getWorld(),
+                        spawnPoint,
+                        Structures.SCHEMATICS_PREFIX + ShipBasedRaiderUtils.SHIP_FOLDER + shipSize.schematicPrefix + this.getShipDesc(),
+                        new PlacementSettings(),
+                        true);
+                    structure.getBluePrint().rotateWithMirror(BlockPosUtil.getRotationFromRotations(shipRotation), Mirror.NONE, colony.getWorld());
+                }
+            }
+        }
 
         if (!ShipBasedRaiderUtils.canPlaceShipAt(spawnPoint, structure.getBluePrint(), colony.getWorld()))
         {
@@ -484,5 +512,15 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     {
         this.spawners.add(pos);
         maxSpawners++;
+    }
+
+    /**
+     * Set the pathing for this raids spawnpoint
+     *
+     * @param result pathing result to wait for
+     */
+    public void setSpawnPath(final PathResult result)
+    {
+        this.spawnPathResult = result;
     }
 }
