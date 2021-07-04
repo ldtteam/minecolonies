@@ -6,6 +6,7 @@ import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.util.BlockInfo;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColony;
@@ -366,7 +367,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     /**
      * Load updated TE data from the schematic if missing.
      */
-    protected void updateTEDataFromSchematic()
+    protected void safeUpdateTEDataFromSchematic()
     {
         if (buildingLevel <= 0)
         {
@@ -377,20 +378,30 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
 
         try
         {
-            saveUpdateTEDataFromSchematic(te);
+            unsafeUpdateTEDataFromSchematic(te);
+            return;
         }
         catch (final Exception ex)
         {
             Log.getLogger().warn("TileEntity with invalid data, restoring correct data from schematic.");
             te.setSchematicName(this.getSchematicName() + Math.max(1, buildingLevel));
-            saveUpdateTEDataFromSchematic(te);
+        }
+
+        try
+        {
+            unsafeUpdateTEDataFromSchematic(te);
+        }
+        catch (final Exception ex)
+        {
+            LanguageHandler.sendPlayersMessage(getColony().getMessagePlayerEntities(), "com.minecolonies.coremod.invalidbuilding", getSchematicName(), getID().getX(), getID().getY(), getID().getZ(), getStyle());
         }
     }
 
     /**
      * Load the schematic data from the TE schematic name, if it's a reattempt, calculate the name from the building (backup).
+     * Might throw exceptions if data is invalid.
      */
-    private void saveUpdateTEDataFromSchematic(final TileEntityColonyBuilding te)
+    private void unsafeUpdateTEDataFromSchematic(final TileEntityColonyBuilding te)
     {
         final String structureName;
         if (te.getSchematicName().isEmpty())

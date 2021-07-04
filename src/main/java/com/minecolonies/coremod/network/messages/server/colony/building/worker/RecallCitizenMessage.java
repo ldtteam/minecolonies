@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
 import com.minecolonies.coremod.util.TeleportHelper;
@@ -67,6 +68,7 @@ public class RecallCitizenMessage extends AbstractBuildingServerMessage<IBuildin
                 if (citizenData != null)
                 {
                     Log.getLogger().warn(String.format("Citizen #%d:%d has gone AWOL, respawning them!", colony.getID(), citizenData.getId()));
+                    citizenData.setNextRespawnPosition(EntityUtils.getSpawnPoint(colony.getWorld(), building.getPosition()));
                     citizenData.updateEntityIfNecessary();
                 }
                 else

@@ -199,6 +199,7 @@ public class NetworkChannel
         registerMessage(++idx, BuilderSelectWorkOrderMessage.class, BuilderSelectWorkOrderMessage::new);
         registerMessage(++idx, TriggerSettingMessage.class, TriggerSettingMessage::new);
         registerMessage(++idx, AssignFilterableEntityMessage.class, AssignFilterableEntityMessage::new);
+        registerMessage(++idx, BuildPickUpMessage.class, BuildPickUpMessage::new);
 
         //Client side only
         registerMessage(++idx, BlockParticleEffectMessage.class, BlockParticleEffectMessage::new);

@@ -104,12 +104,12 @@ dependencies {
     additionalMods "com.ldtteam:structurize:${config.structurize_version}"
     compile "com.ldtteam:datagenerators:${config.datagen_version}"
     
-    implementation fg.deobf("mezz.jei:jei-${config.jei_version}")
+    implementation fg.deobf("mezz.jei:jei-${config.jei_mcversion}:${config.jei_version}")
     compileOnly fg.deobf("com.resourcefulbees:ResourcefulBees:${config.rb_version}")
     apiCompileOnly fg.deobf("com.resourcefulbees:ResourcefulBees:${config.rb_version}")
-    apiCompileOnly fg.deobf("slimeknights.mantle:Mantle:1.16.5-${config.mantle_version}")
-    apiCompileOnly fg.deobf("slimeknights.tconstruct:TConstruct:1.16.5-${config.tc_version}")
-    apiCompileOnly fg.deobf("com.ferreusveritas.dynamictrees:DynamicTrees-${config.minecraft_version}:${config.dt_version}")
+    apiCompileOnly fg.deobf("slimeknights.mantle:Mantle:${config.mantle_mcversion}-${config.mantle_version}")
+    apiCompileOnly fg.deobf("slimeknights.tconstruct:TConstruct:${config.tc_mcversion}-${config.tc_version}")
+    apiCompileOnly fg.deobf("com.ferreusveritas.dynamictrees:DynamicTrees-${config.dt_mcversion}:${config.dt_version}")
 
     testImplementation  'junit:junit:4.12'
     testImplementation  "org.mockito:mockito-core:1.+"
@@ -315,6 +315,13 @@ task setupCIWorkspace {
 }
 
 processResources {
+    from(sourceSets.main.resources.srcDirs) {
+        include 'META-INF/mods.toml'
+        expand 'config': config
+    }
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'META-INF/mods.toml'
+    }
     doLast {
         if(file('src/main/generated/resources/assets/minecolonies/lang/default.json').exists()) {
             def slurper = new JsonSlurper()

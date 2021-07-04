@@ -147,15 +147,15 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
     }
 
     @Override
-    public void tryLevelUpIntelligence(@NotNull final Random random, final int customChance, @NotNull final ICitizenData citizen)
+    public void tryLevelUpIntelligence(@NotNull final Random random, final double customChance, @NotNull final ICitizenData citizen)
     {
-        if ((customChance > 0 && random.nextInt(customChance) > 0) || (customChance < 1 && random.nextInt(CHANCE_TO_LEVEL) > 0))
+        if (customChance > 0 && random.nextDouble() * customChance < 1)
         {
             return;
         }
 
         final int levelCap = (int) citizen.getCitizenHappinessHandler().getHappiness(citizen.getColony());
-        if (skillMap.get(Skill.Intelligence).getB() < levelCap * 9)
+        if (skillMap.get(Skill.Intelligence).getA() < levelCap * 9)
         {
             addXpToSkill(Skill.Intelligence, 10, citizen);
         }

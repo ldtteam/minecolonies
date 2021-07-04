@@ -119,4 +119,11 @@ public class MovementHandler extends MovementController
             this.mob.setMoveForward(0.0F);
         }
     }
+
+    @Override
+    public void setMoveTo(double x, double y, double z, double speedIn)
+    {
+        super.setMoveTo(x, y, z, speedIn);
+        this.action = MovementController.Action.MOVE_TO;
+    }
 }

@@ -15,7 +15,6 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.ItemStorage;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Tuple;
@@ -421,4 +420,10 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
      * @return the map.
      */
     Map<TypeToken<?>, Collection<IToken<?>>> getOpenRequestsByRequestableType();
+
+    /**
+     * Pickup the building including the level and put it in the players inv.
+     * @param player the player picking it up.
+     */
+    void pickUp(final PlayerEntity player);
 }
