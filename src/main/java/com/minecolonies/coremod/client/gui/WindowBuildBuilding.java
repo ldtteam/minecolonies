@@ -137,6 +137,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         if (building.getBuildingLevel() == 0)
         {
             buttonBuild.setText(new TranslationTextComponent("com.minecolonies.coremod.gui.workerhuts.build"));
+            findPaneOfTypeByID(BUTTON_REPAIR, Button.class).hide();
             findPaneOfTypeByID(BUTTON_DECONSTRUCT_BUILDING, Button.class).hide();
         }
         else if (building.getBuildingLevel() == building.getBuildingMaxLevel() || (parentBuilding != null && building.getBuildingLevel() >= parentBuilding.getBuildingLevel()))
@@ -150,6 +151,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
 
         if (building.isDeconstructed())
         {
+            findPaneOfTypeByID(BUTTON_REPAIR, Button.class).setText(new TranslationTextComponent("com.minecolonies.coremod.gui.workerhuts.build"));
             findPaneOfTypeByID(BUTTON_DECONSTRUCT_BUILDING, Button.class).setText(new TranslationTextComponent("com.minecolonies.coremod.gui.workerhuts.pickup"));
         }
     }
