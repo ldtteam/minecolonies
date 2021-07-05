@@ -73,13 +73,13 @@ public class SwitchBuildingWithToolMessage implements IMessage
     {
         final ServerPlayerEntity player = ctxIn.getSender();
 
-        int stackSLot = 0;
-        int buildToolSlot = 0;
+        int stackSlot = -1;
+        int buildToolSlot = -1;
         for (int i = 0; i < 9; i++)
         {
             if (player.inventory.getStackInSlot(i).isItemEqual(stack))
             {
-                stackSLot = i;
+                stackSlot = i;
             }
             else if (player.inventory.getStackInSlot(i).getItem() == ModItems.buildTool.get())
             {
@@ -95,10 +95,10 @@ public class SwitchBuildingWithToolMessage implements IMessage
             }
         }
 
-        if (stackSLot != buildToolSlot)
+        if (stackSlot != -1 && buildToolSlot != -1)
         {
-            player.inventory.setInventorySlotContents(buildToolSlot, player.inventory.getStackInSlot(stackSLot).copy());
-            player.inventory.setInventorySlotContents(stackSLot, new ItemStack(ModItems.buildTool.get(), 1));
+            player.inventory.setInventorySlotContents(buildToolSlot, player.inventory.getStackInSlot(stackSlot).copy());
+            player.inventory.setInventorySlotContents(stackSlot, new ItemStack(ModItems.buildTool.get(), 1));
         }
     }
 }
