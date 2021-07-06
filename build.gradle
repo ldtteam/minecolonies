@@ -251,18 +251,6 @@ task crowdin(type: Zip) {
     }
 }
 
-task remapping() {
-    if (project.hasProperty('UPDATE_MAPPINGS')) {
-        extractRangeMap {
-            sources sourceSets.api.java.srcDirs
-        }
-        applyRangeMap {
-            sources sourceSets.api.java.srcDirs
-        }
-        sourceSets.api.java.srcDirs.each { extractMappedNew.addTarget it }
-    }
-}
-
 task apiJar(type: Jar) {
     from sourceSets.api.output
     classifier 'api'
