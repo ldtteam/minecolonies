@@ -21,8 +21,6 @@ import java.util.List;
 
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 
-import net.minecraft.item.Item.Properties;
-
 /**
  * Sweet Bread, made by the baker. Adds speed, removes poison
  */

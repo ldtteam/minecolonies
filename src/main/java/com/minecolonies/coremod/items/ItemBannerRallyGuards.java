@@ -43,8 +43,6 @@ import static com.minecolonies.api.util.constant.Constants.TAG_COMPOUND;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_RALLIED_GUARDTOWERS;
 
-import net.minecraft.item.Item.Properties;
-
 /**
  * Rally Guards Banner Item class. Used to give tasks to guards.
  */

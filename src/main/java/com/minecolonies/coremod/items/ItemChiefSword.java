@@ -16,8 +16,6 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.Constants.*;
 
-import net.minecraft.item.Item.Properties;
-
 /**
  * Class handling the Chief Sword item.
  */

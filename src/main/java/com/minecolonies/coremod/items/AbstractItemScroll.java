@@ -23,8 +23,6 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONY_ID;
 
-import net.minecraft.item.Item.Properties;
-
 /**
  * Scroll items base class, does colony registering/checks.
  */

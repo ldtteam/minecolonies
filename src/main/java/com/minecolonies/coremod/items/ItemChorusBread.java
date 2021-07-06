@@ -22,8 +22,6 @@ import java.util.List;
 
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 
-import net.minecraft.item.Item.Properties;
-
 /**
  * Chorus Bread, made by the baker. Teleports user to surface.
  */

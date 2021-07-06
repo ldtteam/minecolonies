@@ -20,8 +20,6 @@ import java.util.List;
 
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 
-import net.minecraft.item.Item.Properties;
-
 /**
  * Milk Bread item, made by the baker, with milk bucket effect
  */

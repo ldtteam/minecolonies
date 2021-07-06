@@ -22,8 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-import net.minecraft.item.Item.Properties;
-
 /**
  * Colony teleport scroll, which teleports the user and any nearby players to the colony, invite a friend-style
  */

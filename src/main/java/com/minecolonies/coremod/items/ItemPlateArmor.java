@@ -7,8 +7,6 @@ import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.SoundEvents;
 import org.jetbrains.annotations.NotNull;
 
-import net.minecraft.item.Item.Properties;
-
 /**
  * Class handling the Plate Armor.
  */

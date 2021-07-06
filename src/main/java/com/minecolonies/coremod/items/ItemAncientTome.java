@@ -12,8 +12,6 @@ import net.minecraft.world.World;
 
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 
-import net.minecraft.item.Item.Properties;
-
 /**
  * Class describing the Ancient Tome item.
  */

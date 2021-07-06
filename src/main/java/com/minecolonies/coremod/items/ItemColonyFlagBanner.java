@@ -22,12 +22,9 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-import javax.swing.*;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
-
-import net.minecraft.item.Item.Properties;
 
 /**
  * This item represents the colony flag banner, both wall and floor blocks.

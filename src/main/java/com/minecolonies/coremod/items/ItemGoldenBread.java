@@ -19,8 +19,6 @@ import java.util.List;
 
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 
-import net.minecraft.item.Item.Properties;
-
 /**
  * Golden Bread, made by the Baker. Heals 2 hearts 
  */

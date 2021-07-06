@@ -4,8 +4,6 @@ import com.minecolonies.api.creativetab.ModCreativeTabs;
 
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 
-import net.minecraft.item.Item.Properties;
-
 /**
  * Class handling Cookie Dough.
  */

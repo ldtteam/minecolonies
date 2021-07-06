@@ -4,8 +4,6 @@ import com.minecolonies.api.creativetab.ModCreativeTabs;
 
 import org.jetbrains.annotations.NotNull;
 
-import net.minecraft.item.Item.Properties;
-
 /**
  * Class handling Sifter Mesh.
  */

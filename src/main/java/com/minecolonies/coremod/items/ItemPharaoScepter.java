@@ -21,8 +21,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Predicate;
 
-import net.minecraft.item.Item.Properties;
-
 /**
  * Class handling the Pharao Scepter item.
  */
