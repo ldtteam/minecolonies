@@ -714,6 +714,7 @@
   "com.minecolonies.coremod.permission.no": "You do not have permission to do this in this colony!",
   "com.minecolonies.coremod.gui.townhall.freeblocks": "Free for Interaction",
   "com.minecolonies.coremod.gui.townhall.add": "Add",
+  "com.minecolonies.coremod.gui.townhall.player_permission_error": "You are not permitted to add new players. Ask a colony manager to turn on \"Edit permissions\" for your rank.",
 
   "com.minecolonies.coremod.permission.access_huts": "Access GUIs",
   "com.minecolonies.coremod.permission.guards_attack": "Fight Guards",

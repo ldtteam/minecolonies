@@ -44,6 +44,7 @@ import com.minecolonies.coremod.network.messages.server.colony.citizen.RecallSin
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.ResourceLocationException;
 import net.minecraft.util.math.BlockPos;
@@ -1556,6 +1557,22 @@ public class WindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
         if (switchView.getCurrentView().getID().equals(PERMISSION_VIEW))
         {
             findPaneOfTypeByID(TOWNHALL_ADD_RANK_ERROR, Text.class).hide();
+        }
+        if (switchView.getCurrentView().getID().equals(TOWNHALL_USER_VIEW))
+        {
+            PlayerEntity player = Minecraft.getInstance().player;
+            Text label = findPaneOfTypeByID(TOWNHALL_PERMISSION_ERROR, Text.class);
+            Button button = findPaneOfTypeByID(BUTTON_ADD_PLAYER, Button.class);
+            if (townHall.getColony().getPermissions().hasPermission(player, Action.EDIT_PERMISSIONS))
+            {
+                label.hide();
+                button.setEnabled(true);
+            }
+            else
+            {
+                label.show();
+                button.setEnabled(false);
+            }
         }
     }
 
