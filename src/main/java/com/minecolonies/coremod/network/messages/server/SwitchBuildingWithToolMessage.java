@@ -47,7 +47,7 @@ public class SwitchBuildingWithToolMessage implements IMessage
     @Override
     public void fromBytes(@NotNull final PacketBuffer buf)
     {
-        stack = buf.readItemStack();
+        stack = buf.readItem();
     }
 
     /**
@@ -58,7 +58,7 @@ public class SwitchBuildingWithToolMessage implements IMessage
     @Override
     public void toBytes(@NotNull final PacketBuffer buf)
     {
-        buf.writeItemStack(stack);
+        buf.writeItem(stack);
     }
 
     @Nullable
@@ -77,19 +77,19 @@ public class SwitchBuildingWithToolMessage implements IMessage
         int buildToolSlot = -1;
         for (int i = 0; i < 9; i++)
         {
-            if (player.inventory.getStackInSlot(i).isItemEqual(stack))
+            if (player.inventory.getItem(i).sameItem(stack))
             {
                 stackSlot = i;
             }
-            else if (player.inventory.getStackInSlot(i).getItem() == ModItems.buildTool.get())
+            else if (player.inventory.getItem(i).getItem() == ModItems.buildTool.get())
             {
                 buildToolSlot = i;
             }
         }
 
-        for (int i = 9; i < player.inventory.getSizeInventory(); i++)
+        for (int i = 9; i < player.inventory.getContainerSize(); i++)
         {
-            if (player.inventory.getStackInSlot(i).getItem() == ModItems.buildTool.get())
+            if (player.inventory.getItem(i).getItem() == ModItems.buildTool.get())
             {
                 buildToolSlot = i;
             }
@@ -97,8 +97,8 @@ public class SwitchBuildingWithToolMessage implements IMessage
 
         if (stackSlot != -1 && buildToolSlot != -1)
         {
-            player.inventory.setInventorySlotContents(buildToolSlot, player.inventory.getStackInSlot(stackSlot).copy());
-            player.inventory.setInventorySlotContents(stackSlot, new ItemStack(ModItems.buildTool.get(), 1));
+            player.inventory.setItem(buildToolSlot, player.inventory.getItem(stackSlot).copy());
+            player.inventory.setItem(stackSlot, new ItemStack(ModItems.buildTool.get(), 1));
         }
     }
 }

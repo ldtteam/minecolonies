@@ -477,7 +477,7 @@ public final class ModBuildingsInitializer
                                     .addBuildingModuleProducer(BuildingPlantation.CraftingModule::new, () -> CraftingModuleView::new)
                                     .addBuildingModuleViewProducer(() -> CrafterTaskModuleView::new)
                                     .addBuildingModuleProducer(() -> new SettingsModule()
-                                                                       .with(BuildingPlantation.MODE, new PlantationSetting(Items.SUGAR_CANE.getTranslationKey(), Items.CACTUS.getTranslationKey(), Items.BAMBOO.getTranslationKey()))
+                                                                       .with(BuildingPlantation.MODE, new PlantationSetting(Items.SUGAR_CANE.getDescriptionId(), Items.CACTUS.getDescriptionId(), Items.BAMBOO.getDescriptionId()))
                                                                        .with(AbstractCraftingBuildingModule.RECIPE_MODE, new CrafterRecipeSetting()), () -> SettingsModuleView::new)
                                     .createBuildingEntry();
 
