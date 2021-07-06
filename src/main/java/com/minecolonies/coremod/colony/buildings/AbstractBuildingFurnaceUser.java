@@ -23,8 +23,8 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.Suppression.OVERRIDE_EQUALS;
-import static com.minecolonies.api.util.constant.Constants.*;
 
 /**
  * Abstract Class for all furnace users.

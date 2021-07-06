@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.client.gui.containers;
 
 import com.minecolonies.api.inventory.container.ContainerBuildingInventory;
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.minecolonies.api.util.constant.Constants;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.player.PlayerInventory;

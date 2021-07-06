@@ -1,7 +1,6 @@
 package com.minecolonies.api.colony.buildings;
 
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import org.jetbrains.annotations.NotNull;
 

@@ -14,7 +14,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * An ingredient that can be used in a vanilla recipe to require more than one item in a particular input slot.

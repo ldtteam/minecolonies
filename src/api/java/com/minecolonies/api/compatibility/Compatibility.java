@@ -1,6 +1,5 @@
 package com.minecolonies.api.compatibility;
 
-import com.minecolonies.api.compatibility.dynamictrees.DynamicTreeCompat;
 import com.minecolonies.api.compatibility.dynamictrees.DynamicTreeProxy;
 import com.minecolonies.api.compatibility.resourcefulbees.IBeehiveCompat;
 import com.minecolonies.api.compatibility.tinkers.*;

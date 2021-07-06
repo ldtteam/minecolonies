@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.items;
 
 import com.minecolonies.api.creativetab.ModCreativeTabs;
-
 import org.jetbrains.annotations.NotNull;
 
 /**

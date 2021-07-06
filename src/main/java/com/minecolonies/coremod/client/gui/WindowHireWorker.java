@@ -2,9 +2,9 @@ package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.PaneBuilders;
+import com.ldtteam.blockout.controls.AbstractTextBuilder.TextBuilder;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.Text;
-import com.ldtteam.blockout.controls.AbstractTextBuilder.TextBuilder;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenDataView;
@@ -25,9 +25,7 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
-
 import org.jetbrains.annotations.NotNull;
-
 
 import java.util.*;
 import java.util.stream.Collectors;

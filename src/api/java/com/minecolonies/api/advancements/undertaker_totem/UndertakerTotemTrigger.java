@@ -3,7 +3,6 @@ package com.minecolonies.api.advancements.undertaker_totem;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.advancements.AbstractCriterionTrigger;
 import com.minecolonies.api.advancements.CriterionListeners;
-import com.minecolonies.api.advancements.undertaker_totem.UndertakerTotemCriterionInstance;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.loot.ConditionArrayParser;

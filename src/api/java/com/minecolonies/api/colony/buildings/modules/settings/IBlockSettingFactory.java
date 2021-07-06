@@ -3,7 +3,6 @@ package com.minecolonies.api.colony.buildings.modules.settings;
 import com.minecolonies.api.colony.requestsystem.factory.FactoryVoidInput;
 import com.minecolonies.api.colony.requestsystem.factory.IFactory;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
-import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;
 import org.jetbrains.annotations.NotNull;
 

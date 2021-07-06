@@ -31,7 +31,6 @@ import com.minecolonies.coremod.client.gui.AbstractWindowModuleBuilding;
 import com.minecolonies.coremod.client.gui.WindowBannerPicker;
 import com.minecolonies.coremod.client.gui.citizen.CitizenWindowUtils;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingSchool;

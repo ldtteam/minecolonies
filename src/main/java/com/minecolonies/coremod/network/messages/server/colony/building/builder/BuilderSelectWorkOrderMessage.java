@@ -1,14 +1,12 @@
 package com.minecolonies.coremod.network.messages.server.colony.building.builder;
 
-import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import org.jetbrains.annotations.NotNull;
-
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
-
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
+import org.jetbrains.annotations.NotNull;
 
 public class BuilderSelectWorkOrderMessage extends AbstractBuildingServerMessage<BuildingBuilder>
 {
