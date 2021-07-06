@@ -25,8 +25,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.block.AbstractBlock.Properties;
-
 /**
  * Creates a decoration controller block.
  */

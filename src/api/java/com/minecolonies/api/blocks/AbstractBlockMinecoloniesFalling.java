@@ -8,8 +8,6 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraftforge.registries.IForgeRegistry;
 
-import net.minecraft.block.AbstractBlock.Properties;
-
 public abstract class AbstractBlockMinecoloniesFalling<B extends AbstractBlockMinecoloniesFalling<B>> extends FallingBlock implements IBlockMinecolonies<B>
 {
     public AbstractBlockMinecoloniesFalling(final Properties properties)

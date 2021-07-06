@@ -28,8 +28,6 @@ import java.util.List;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.TOWNHALL_BREAKING_MESSAGE;
 
-import net.minecraft.block.AbstractBlock.Properties;
-
 /**
  * Hut for the town hall. Sets the working range for the town hall in the constructor
  */

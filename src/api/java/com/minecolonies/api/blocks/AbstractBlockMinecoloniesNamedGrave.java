@@ -8,8 +8,6 @@ import net.minecraft.item.Item;
 import net.minecraft.state.DirectionProperty;
 import net.minecraftforge.registries.IForgeRegistry;
 
-import net.minecraft.block.AbstractBlock.Properties;
-
 /**
  * Abstract class for minecolonies named graves.
  */

@@ -21,8 +21,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.block.AbstractBlock.Properties;
-
 /**
  * Represents the common functions of both the wall and floor colony flag banner blocks
  */

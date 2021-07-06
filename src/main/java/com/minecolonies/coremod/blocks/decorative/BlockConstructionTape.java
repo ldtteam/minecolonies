@@ -22,10 +22,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static net.minecraft.util.Direction.Axis;
-import static net.minecraft.util.Direction.Plane;
-
-import net.minecraft.block.AbstractBlock.Properties;
 import net.minecraft.util.Direction.Axis;
 import net.minecraft.util.Direction.Plane;
 

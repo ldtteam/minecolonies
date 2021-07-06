@@ -4,8 +4,6 @@ import com.minecolonies.api.blocks.AbstractBlockMinecoloniesContainer;
 import net.minecraft.block.HorizontalBlock;
 import net.minecraft.state.DirectionProperty;
 
-import net.minecraft.block.AbstractBlock.Properties;
-
 public abstract class AbstractBlockMinecoloniesDefault<B extends AbstractBlockMinecoloniesDefault<B>> extends AbstractBlockMinecoloniesContainer<B>
 {
     /**

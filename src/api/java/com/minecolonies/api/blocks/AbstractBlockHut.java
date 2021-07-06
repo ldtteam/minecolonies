@@ -41,8 +41,6 @@ import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.block.AbstractBlock.Properties;
-
 /**
  * Abstract class for all minecolonies blocks.
  * <p>

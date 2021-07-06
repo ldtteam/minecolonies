@@ -27,8 +27,6 @@ import org.jetbrains.annotations.NotNull;
 
 import static net.minecraft.state.properties.BlockStateProperties.WATERLOGGED;
 
-import net.minecraft.block.AbstractBlock.Properties;
-
 /**
  * Block class for gates, which expand and retract and act as one big door
  */

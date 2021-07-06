@@ -17,8 +17,6 @@ import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 import org.jetbrains.annotations.NotNull;
 
-import net.minecraft.block.AbstractBlock.Properties;
-
 public abstract class AbstractBlockMinecoloniesConstructionTape<B extends AbstractBlockMinecoloniesConstructionTape<B>> extends AbstractBlockMinecoloniesFalling<B>
   implements IWaterLoggable
 {

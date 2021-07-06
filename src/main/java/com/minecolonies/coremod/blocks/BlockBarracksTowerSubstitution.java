@@ -17,8 +17,6 @@ import javax.annotation.Nullable;
 
 import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
 
-import net.minecraft.block.AbstractBlock.Properties;
-
 public class BlockBarracksTowerSubstitution extends AbstractBlockMinecolonies<BlockBarracksTowerSubstitution>
 {
 

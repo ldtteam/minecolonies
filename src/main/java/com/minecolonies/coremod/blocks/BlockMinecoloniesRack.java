@@ -39,8 +39,6 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.block.AbstractBlock.Properties;
-
 /**
  * Block for the shelves of the warehouse.
  */
