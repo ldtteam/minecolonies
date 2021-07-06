@@ -16,6 +16,8 @@ import java.util.EnumSet;
 
 import static com.minecolonies.api.util.constant.Constants.LEVITATION_EFFECT;
 
+import net.minecraft.entity.ai.goal.Goal.Flag;
+
 /**
  * Raider Pathing Class
  */
@@ -89,17 +91,17 @@ public class EntityAIWalkToRandomHuts extends Goal
         super();
         this.entity = creatureIn;
         this.speed = speedIn;
-        this.world = creatureIn.getEntityWorld();
-        this.setMutexFlags(EnumSet.of(Flag.MOVE));
-        campFireWalkTimer = world.rand.nextInt(1000);
+        this.world = creatureIn.getCommandSenderWorld();
+        this.setFlags(EnumSet.of(Flag.MOVE));
+        campFireWalkTimer = world.random.nextInt(1000);
         proxy = new GeneralEntityWalkToProxy(entity);
     }
 
     @Override
-    public boolean shouldExecute()
+    public boolean canUse()
     {
-        if (!this.entity.isAlive() || this.entity.getColony() == null || (entity.getAttackTarget() != null && !EntityUtils.isFlying(entity.getAttackTarget())) || (
-          entity.getAttackingEntity() != null && !EntityUtils.isFlying(entity.getAttackTarget())))
+        if (!this.entity.isAlive() || this.entity.getColony() == null || (entity.getTarget() != null && !EntityUtils.isFlying(entity.getTarget())) || (
+          entity.getKillCredit() != null && !EntityUtils.isFlying(entity.getTarget())))
         {
             return false;
         }
@@ -155,7 +157,7 @@ public class EntityAIWalkToRandomHuts extends Goal
      * Is executed when the ai Starts Executing
      */
     @Override
-    public void startExecuting()
+    public void start()
     {
         targetBlock = getRandomBuilding();
         hadPath = false;
@@ -163,7 +165,7 @@ public class EntityAIWalkToRandomHuts extends Goal
     }
 
     @Override
-    public void resetTask()
+    public void stop()
     {
         targetBlock = getRandomBuilding();
         hadPath = false;
@@ -179,7 +181,7 @@ public class EntityAIWalkToRandomHuts extends Goal
      */
     private boolean isEntityAtSiteWithMove(@NotNull final BlockPos site, final int range)
     {
-        if (this.entity.isPotionActive(LEVITATION_EFFECT))
+        if (this.entity.hasEffect(LEVITATION_EFFECT))
         {
             return true;
         }
@@ -190,7 +192,7 @@ public class EntityAIWalkToRandomHuts extends Goal
             return true;
         }
 
-        if (entity.getNavigator().getPath() == null || entity.getNavigator().getPath().isFinished())
+        if (entity.getNavigation().getPath() == null || entity.getNavigation().getPath().isDone())
         {
             // With no path reset the last path index point to -1
             lastIndex = -1;
@@ -203,20 +205,20 @@ public class EntityAIWalkToRandomHuts extends Goal
         }
         else
         {
-            if (entity.getNavigator().getPath().getCurrentPathIndex() == lastIndex)
+            if (entity.getNavigation().getPath().getNextNodeIndex() == lastIndex)
             {
                 // Stuck when we have a path, but are not progressing on it
                 stuckTime++;
             }
-            else if (entity.getNavigator().getPath().getCurrentPathIndex() > 5)
+            else if (entity.getNavigation().getPath().getNextNodeIndex() > 5)
             {
                 // Not stuck when progressing on a slightly longer path(no short unstuck-path)
                 resetStuckCounters();
             }
-            lastIndex = entity.getNavigator().getPath().getCurrentPathIndex();
+            lastIndex = entity.getNavigation().getPath().getNextNodeIndex();
         }
 
-        hadPath = entity.getNavigator().getPath() != null && !entity.getNavigator().getPath().isFinished();
+        hadPath = entity.getNavigation().getPath() != null && !entity.getNavigation().getPath().isDone();
 
         if (stuckTime * UPDATE_INTERVAL > THREE_MINUTES_TICKS)
         {
@@ -253,7 +255,7 @@ public class EntityAIWalkToRandomHuts extends Goal
                 return;
             }
 
-            campFireWalkTimer = world.rand.nextInt(1000);
+            campFireWalkTimer = world.random.nextInt(1000);
             targetBlock = BlockPosUtil.getRandomPosition(world,
               campFire,
               BlockPos.ZERO,

@@ -79,7 +79,7 @@ public class TypeTokenFactory implements IFactory<Class<?>, TypeToken<?>>
     @Override
     public void serialize(IFactoryController controller, TypeToken<?> input, PacketBuffer packetBuffer)
     {
-        packetBuffer.writeString(input.getRawType().getName());
+        packetBuffer.writeUtf(input.getRawType().getName());
     }
 
     @Override
@@ -87,7 +87,7 @@ public class TypeTokenFactory implements IFactory<Class<?>, TypeToken<?>>
     {
         try
         {
-            return TypeToken.of(Class.forName(buffer.readString(32767)));
+            return TypeToken.of(Class.forName(buffer.readUtf(32767)));
         }
         catch (ClassNotFoundException e)
         {

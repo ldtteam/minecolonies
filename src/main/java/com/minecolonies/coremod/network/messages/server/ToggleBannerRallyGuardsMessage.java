@@ -48,13 +48,13 @@ public class ToggleBannerRallyGuardsMessage implements IMessage
     @Override
     public void fromBytes(@NotNull final PacketBuffer buf)
     {
-        banner = buf.readItemStack();
+        banner = buf.readItem();
     }
 
     @Override
     public void toBytes(@NotNull final PacketBuffer buf)
     {
-        buf.writeItemStack(banner);
+        buf.writeItem(banner);
     }
 
     @Nullable
@@ -77,6 +77,6 @@ public class ToggleBannerRallyGuardsMessage implements IMessage
             return;
         }
 
-        toggleBanner(player.inventory.getStackInSlot(slot), player);
+        toggleBanner(player.inventory.getItem(slot), player);
     }
 }

@@ -61,7 +61,7 @@ public class FurnaceCraftingGuiHandler extends AbstractTeachingGuiHandler<Window
     protected void updateServer(@NotNull final WindowFurnaceCrafting gui)
     {
         final Map<Integer, ItemStack> matrix = new HashMap<>();
-        matrix.put(0, gui.getContainer().getSlot(0).getStack());
+        matrix.put(0, gui.getMenu().getSlot(0).getItem());
 
         final TransferRecipeCraftingTeachingMessage message = new TransferRecipeCraftingTeachingMessage(matrix, false);
         Network.getNetwork().sendToServer(message);

@@ -4,6 +4,8 @@ import com.minecolonies.api.creativetab.ModCreativeTabs;
 
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 
+import net.minecraft.item.Item.Properties;
+
 /**
  * Class handling Raw Pumpkin Pie.
  */
@@ -16,6 +18,6 @@ public class ItemRawPumpkinPie extends AbstractItemMinecolonies
      */
     public ItemRawPumpkinPie(final Properties properties)
     {
-        super("raw_pumpkin_pie", properties.maxStackSize(STACKSIZE).group(ModCreativeTabs.MINECOLONIES));
+        super("raw_pumpkin_pie", properties.stacksTo(STACKSIZE).tab(ModCreativeTabs.MINECOLONIES));
     }
 }

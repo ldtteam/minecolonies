@@ -141,8 +141,8 @@ public class WorkOrderView
         priority = buf.readInt();
         claimedBy = buf.readBlockPos();
         type = WorkOrderType.values()[buf.readInt()];
-        schematicName = buf.readString(32767);
-        displayName = buf.readString(32767);
+        schematicName = buf.readUtf(32767);
+        displayName = buf.readUtf(32767);
         pos = buf.readBlockPos();
         upgradeLevel = buf.readInt();
     }

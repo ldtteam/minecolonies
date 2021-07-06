@@ -60,7 +60,7 @@ public class ContainerCraftingFurnace extends Container
     public static ContainerCraftingFurnace fromPacketBuffer(final int windowId, final PlayerInventory inv, final PacketBuffer packetBuffer)
     {
         final BlockPos tePos = packetBuffer.readBlockPos();
-        final String moduleId = packetBuffer.readString(32767);
+        final String moduleId = packetBuffer.readUtf(32767);
         return new ContainerCraftingFurnace(windowId, inv, tePos, moduleId);
     }
 
@@ -163,7 +163,7 @@ public class ContainerCraftingFurnace extends Container
         this.addSlot(new SlotItemHandler(furnaceInventory, 0, 56, 17)
         {
             @Override
-            public int getSlotStackLimit()
+            public int getMaxStackSize()
             {
                 return 1;
             }
@@ -177,19 +177,19 @@ public class ContainerCraftingFurnace extends Container
 
             @NotNull
             @Override
-            public ItemStack decrStackSize(final int par1)
+            public ItemStack remove(final int par1)
             {
                 return ItemStack.EMPTY;
             }
 
             @Override
-            public boolean isItemValid(final ItemStack par1ItemStack)
+            public boolean mayPlace(final ItemStack par1ItemStack)
             {
                 return false;
             }
 
             @Override
-            public boolean canTakeStack(final PlayerEntity par1PlayerEntity)
+            public boolean mayPickup(final PlayerEntity par1PlayerEntity)
             {
                 return false;
             }
@@ -225,7 +225,7 @@ public class ContainerCraftingFurnace extends Container
 
     @NotNull
     @Override
-    public ItemStack slotClick(final int slotId, final int clickedButton, final ClickType mode, final PlayerEntity playerIn)
+    public ItemStack clicked(final int slotId, final int clickedButton, final ClickType mode, final PlayerEntity playerIn)
     {
         final ItemStack clickResult;
         if (slotId >= 0 && slotId < FURNACE_SLOTS)
@@ -235,9 +235,9 @@ public class ContainerCraftingFurnace extends Container
                   || mode == ClickType.PICKUP_ALL
                   || mode == ClickType.SWAP)
             {
-                final Slot slot = this.inventorySlots.get(slotId);
+                final Slot slot = this.slots.get(slotId);
 
-                final ItemStack dropping = playerIn.inventory.getItemStack();
+                final ItemStack dropping = playerIn.inventory.getCarried();
 
                 clickResult = handleSlotClick(slot, dropping);
             }
@@ -252,7 +252,7 @@ public class ContainerCraftingFurnace extends Container
         }
         else
         {
-            clickResult = super.slotClick(slotId, clickedButton, mode, playerInventory.player);
+            clickResult = super.clicked(slotId, clickedButton, mode, playerInventory.player);
         }
 
         updateFurnaceOutput();
@@ -283,14 +283,14 @@ public class ContainerCraftingFurnace extends Container
         {
             final ItemStack copy = stack.copy();
             copy.setCount(1);
-            slot.putStack(copy);
+            slot.set(copy);
         }
-        else if (slot.getStack().getCount() > 0)
+        else if (slot.getItem().getCount() > 0)
         {
-            slot.putStack(ItemStack.EMPTY);
+            slot.set(ItemStack.EMPTY);
         }
 
-        return slot.getStack().copy();
+        return slot.getItem().copy();
     }
 
     /**
@@ -298,25 +298,25 @@ public class ContainerCraftingFurnace extends Container
      */
     private void updateFurnaceOutput()
     {
-        if (!playerInventory.player.world.isRemote)
+        if (!playerInventory.player.level.isClientSide)
         {
             final ServerPlayerEntity player = (ServerPlayerEntity) playerInventory.player;
             final ItemStack result = IMinecoloniesAPI.getInstance().getFurnaceRecipes().getSmeltingResult(furnaceInventory.getStackInSlot(0));
 
             this.furnaceInventory.insertItem(1, result, false);
-            player.connection.sendPacket(new SSetSlotPacket(this.windowId, 1, result));
+            player.connection.send(new SSetSlotPacket(this.containerId, 1, result));
         }
     }
 
     @Override
-    public boolean canInteractWith(@NotNull final PlayerEntity playerIn)
+    public boolean stillValid(@NotNull final PlayerEntity playerIn)
     {
         return true;
     }
 
     @NotNull
     @Override
-    public ItemStack transferStackInSlot(final PlayerEntity playerIn, final int index)
+    public ItemStack quickMoveStack(final PlayerEntity playerIn, final int index)
     {
         if (index <= FURNACE_SLOTS)
         {
@@ -324,39 +324,39 @@ public class ContainerCraftingFurnace extends Container
         }
 
         ItemStack itemstack = ItemStackUtils.EMPTY;
-        final Slot slot = this.inventorySlots.get(index);
-        if (slot != null && slot.getHasStack())
+        final Slot slot = this.slots.get(index);
+        if (slot != null && slot.hasItem())
         {
-            final ItemStack itemstack1 = slot.getStack();
+            final ItemStack itemstack1 = slot.getItem();
             itemstack = itemstack1.copy();
             if (index == 0)
             {
-                if (!this.mergeItemStack(itemstack1, FURNACE_SLOTS, TOTAL_SLOTS_FURNACE, true))
+                if (!this.moveItemStackTo(itemstack1, FURNACE_SLOTS, TOTAL_SLOTS_FURNACE, true))
                 {
                     return ItemStackUtils.EMPTY;
                 }
-                slot.onSlotChange(itemstack1, itemstack);
+                slot.onQuickCraft(itemstack1, itemstack);
             }
             else if (index < HOTBAR_START)
             {
-                if (!this.mergeItemStack(itemstack1, HOTBAR_START, TOTAL_SLOTS_FURNACE, false))
+                if (!this.moveItemStackTo(itemstack1, HOTBAR_START, TOTAL_SLOTS_FURNACE, false))
                 {
                     return ItemStackUtils.EMPTY;
                 }
             }
             else if ((index < TOTAL_SLOTS_FURNACE
-                        && !this.mergeItemStack(itemstack1, FURNACE_SLOTS, HOTBAR_START, false))
-                       || !this.mergeItemStack(itemstack1, FURNACE_SLOTS, TOTAL_SLOTS_FURNACE, false))
+                        && !this.moveItemStackTo(itemstack1, FURNACE_SLOTS, HOTBAR_START, false))
+                       || !this.moveItemStackTo(itemstack1, FURNACE_SLOTS, TOTAL_SLOTS_FURNACE, false))
             {
                 return ItemStack.EMPTY;
             }
             if (itemstack1.getCount() == 0)
             {
-                slot.putStack(ItemStackUtils.EMPTY);
+                slot.set(ItemStackUtils.EMPTY);
             }
             else
             {
-                slot.onSlotChanged();
+                slot.setChanged();
             }
             if (itemstack1.getCount() == itemstack.getCount())
             {
@@ -367,9 +367,9 @@ public class ContainerCraftingFurnace extends Container
     }
 
     @Override
-    public boolean canMergeSlot(final ItemStack stack, final Slot slotIn)
+    public boolean canTakeItemForPickAll(final ItemStack stack, final Slot slotIn)
     {
-        return !(slotIn instanceof FurnaceResultSlot) && super.canMergeSlot(stack, slotIn);
+        return !(slotIn instanceof FurnaceResultSlot) && super.canTakeItemForPickAll(stack, slotIn);
     }
 
     /**
@@ -389,7 +389,7 @@ public class ContainerCraftingFurnace extends Container
      */
     public World getWorldObj()
     {
-        return playerInventory.player.world;
+        return playerInventory.player.level;
     }
 
     /**

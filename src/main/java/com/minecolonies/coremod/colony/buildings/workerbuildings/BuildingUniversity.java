@@ -249,7 +249,7 @@ public class BuildingUniversity extends AbstractBuildingWorker
 
         for(PlayerEntity player : colony.getMessagePlayerEntities())
         {
-            player.sendMessage(message, player.getUniqueID());
+            player.sendMessage(message, player.getUUID());
         }
         colony.getResearchManager().checkAutoStartResearch();
         this.markDirty();

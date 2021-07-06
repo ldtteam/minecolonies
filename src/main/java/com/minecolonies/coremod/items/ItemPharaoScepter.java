@@ -21,6 +21,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Predicate;
 
+import net.minecraft.item.Item.Properties;
+
 /**
  * Class handling the Pharao Scepter item.
  */
@@ -33,15 +35,15 @@ public class ItemPharaoScepter extends BowItem
      */
     public ItemPharaoScepter(final Properties properties)
     {
-        super(properties.group(ModCreativeTabs.MINECOLONIES).maxDamage(384));
+        super(properties.tab(ModCreativeTabs.MINECOLONIES).durability(384));
         setRegistryName("pharaoscepter");
     }
 
     @NotNull
     @Override
-    public ActionResult<ItemStack> onItemRightClick(@NotNull final World worldIn, PlayerEntity playerIn, @NotNull final Hand handIn)
+    public ActionResult<ItemStack> use(@NotNull final World worldIn, PlayerEntity playerIn, @NotNull final Hand handIn)
     {
-        ItemStack itemstack = playerIn.getHeldItem(handIn);
+        ItemStack itemstack = playerIn.getItemInHand(handIn);
 
         ActionResult<ItemStack> ret = net.minecraftforge.event.ForgeEventFactory.onArrowNock(itemstack, worldIn, playerIn, handIn, true);
         if (ret != null)
@@ -49,12 +51,12 @@ public class ItemPharaoScepter extends BowItem
             return ret;
         }
 
-        playerIn.setActiveHand(handIn);
-        return ActionResult.resultConsume(itemstack);
+        playerIn.startUsingItem(handIn);
+        return ActionResult.consume(itemstack);
     }
 
     @Override
-    public void onPlayerStoppedUsing(@NotNull final ItemStack stack, @NotNull final World worldIn, LivingEntity entityLiving, int timeLeft)
+    public void releaseUsing(@NotNull final ItemStack stack, @NotNull final World worldIn, LivingEntity entityLiving, int timeLeft)
     {
         if (entityLiving instanceof PlayerEntity)
         {
@@ -67,61 +69,61 @@ public class ItemPharaoScepter extends BowItem
                 return;
             }
 
-            float speed = getArrowVelocity(useDuration);
+            float speed = getPowerForTime(useDuration);
             if (!((double) speed < 0.1D))
             {
-                if (!worldIn.isRemote)
+                if (!worldIn.isClientSide)
                 {
                     ArrowItem arrowitem = (ArrowItem) Items.ARROW;
                     AbstractArrowEntity abstractarrowentity = arrowitem.createArrow(worldIn, new ItemStack(arrowitem, 1), playerentity);
                     abstractarrowentity = customArrow(abstractarrowentity);
-                    abstractarrowentity.func_234612_a_(playerentity, playerentity.rotationPitch, playerentity.rotationYaw, 0.0F, speed * 3.0F, 1.0F);
+                    abstractarrowentity.shootFromRotation(playerentity, playerentity.xRot, playerentity.yRot, 0.0F, speed * 3.0F, 1.0F);
                     if (speed == 1.0F)
                     {
-                        abstractarrowentity.setIsCritical(true);
+                        abstractarrowentity.setCritArrow(true);
                     }
 
-                    int j = EnchantmentHelper.getEnchantmentLevel(Enchantments.POWER, stack);
+                    int j = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.POWER_ARROWS, stack);
                     if (j > 0)
                     {
-                        abstractarrowentity.setDamage(abstractarrowentity.getDamage() + (double) j * 0.5D + 0.5D);
+                        abstractarrowentity.setBaseDamage(abstractarrowentity.getBaseDamage() + (double) j * 0.5D + 0.5D);
                     }
 
-                    int k = EnchantmentHelper.getEnchantmentLevel(Enchantments.PUNCH, stack);
+                    int k = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.PUNCH_ARROWS, stack);
                     if (k > 0)
                     {
-                        abstractarrowentity.setKnockbackStrength(k);
+                        abstractarrowentity.setKnockback(k);
                     }
 
-                    if (EnchantmentHelper.getEnchantmentLevel(Enchantments.FLAME, stack) > 0)
+                    if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.FLAMING_ARROWS, stack) > 0)
                     {
-                        abstractarrowentity.setFire(100);
+                        abstractarrowentity.setSecondsOnFire(100);
                     }
 
-                    stack.damageItem(1, playerentity, (p_220009_1_) -> {
-                        p_220009_1_.sendBreakAnimation(playerentity.getActiveHand());
+                    stack.hurtAndBreak(1, playerentity, (p_220009_1_) -> {
+                        p_220009_1_.broadcastBreakEvent(playerentity.getUsedItemHand());
                     });
-                    abstractarrowentity.pickupStatus = AbstractArrowEntity.PickupStatus.CREATIVE_ONLY;
+                    abstractarrowentity.pickup = AbstractArrowEntity.PickupStatus.CREATIVE_ONLY;
 
-                    worldIn.addEntity(abstractarrowentity);
+                    worldIn.addFreshEntity(abstractarrowentity);
                 }
 
                 worldIn.playSound(null,
-                  playerentity.getPosX(),
-                  playerentity.getPosY(),
-                  playerentity.getPosZ(),
-                  SoundEvents.ENTITY_ARROW_SHOOT,
+                  playerentity.getX(),
+                  playerentity.getY(),
+                  playerentity.getZ(),
+                  SoundEvents.ARROW_SHOOT,
                   SoundCategory.PLAYERS,
                   1.0F,
                   1.0F / (random.nextFloat() * 0.4F + 1.2F) + speed * 0.5F);
-                playerentity.addStat(Stats.ITEM_USED.get(this));
+                playerentity.awardStat(Stats.ITEM_USED.get(this));
             }
         }
     }
 
     @NotNull
     @Override
-    public Predicate<ItemStack> getInventoryAmmoPredicate()
+    public Predicate<ItemStack> getAllSupportedProjectiles()
     {
         return itemStack -> true;
     }
@@ -130,9 +132,9 @@ public class ItemPharaoScepter extends BowItem
     @Override
     public AbstractArrowEntity customArrow(@NotNull AbstractArrowEntity arrow)
     {
-        AbstractArrowEntity entity = ((ArrowItem) ModItems.firearrow).createArrow(arrow.world, new ItemStack(ModItems.firearrow, 1), (LivingEntity) arrow.func_234616_v_());
-        entity.pickupStatus = AbstractArrowEntity.PickupStatus.DISALLOWED;
-        entity.setFire(3);
+        AbstractArrowEntity entity = ((ArrowItem) ModItems.firearrow).createArrow(arrow.level, new ItemStack(ModItems.firearrow, 1), (LivingEntity) arrow.getOwner());
+        entity.pickup = AbstractArrowEntity.PickupStatus.DISALLOWED;
+        entity.setSecondsOnFire(3);
 
         return entity;
     }

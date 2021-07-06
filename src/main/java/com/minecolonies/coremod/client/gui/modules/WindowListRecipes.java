@@ -141,7 +141,7 @@ public class WindowListRecipes extends AbstractModuleWindow
             return;
         }
         final BlockPos pos = buildingView.getPosition();
-        Minecraft.getInstance().player.openContainer((INamedContainerProvider) Minecraft.getInstance().world.getTileEntity(pos));
+        Minecraft.getInstance().player.openMenu((INamedContainerProvider) Minecraft.getInstance().level.getBlockEntity(pos));
         Network.getNetwork().sendToServer(new OpenCraftingGUIMessage((AbstractBuildingView) buildingView, module.getId()));
     }
 

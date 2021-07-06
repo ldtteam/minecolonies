@@ -149,8 +149,8 @@ public class ResearchManager implements IResearchManager
             {
                 for (PlayerEntity player : colony.getMessagePlayerEntities())
                 {
-                    player.sendMessage(new TranslationTextComponent(TranslationConstants.RESEARCH_AVAILABLE, research.getName()), player.getUniqueID());
-                    SoundUtils.playSuccessSound(player, player.getPosition());
+                    player.sendMessage(new TranslationTextComponent(TranslationConstants.RESEARCH_AVAILABLE, research.getName()), player.getUUID());
+                    SoundUtils.playSuccessSound(player, player.blockPosition());
                 }
             }
             // Otherwise, we can start the research without user intervention.
@@ -198,8 +198,8 @@ public class ResearchManager implements IResearchManager
               IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getName());
             for (PlayerEntity player : colony.getMessagePlayerEntities())
             {
-                player.sendMessage(message, player.getUniqueID());
-                SoundUtils.playSuccessSound(player, player.getPosition());
+                player.sendMessage(message, player.getUUID());
+                SoundUtils.playSuccessSound(player, player.blockPosition());
             }
         }
         else
@@ -209,8 +209,8 @@ public class ResearchManager implements IResearchManager
                 player.sendMessage(new TranslationTextComponent(TranslationConstants.RESEARCH_AVAILABLE, research.getName())
                                      .append(new TranslationTextComponent("com.minecolonies.coremod.research.started",
                                       research.getName())),
-                  player.getUniqueID());
-                SoundUtils.playSuccessSound(player, player.getPosition());
+                  player.getUUID());
+                SoundUtils.playSuccessSound(player, player.blockPosition());
             }
         }
     }

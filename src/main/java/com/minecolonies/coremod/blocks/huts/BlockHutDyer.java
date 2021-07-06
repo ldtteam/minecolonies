@@ -12,7 +12,7 @@ public class BlockHutDyer extends AbstractBlockHut<BlockHutDyer>
 {
     @NotNull
     @Override
-    public String getName()
+    public String getHutName()
     {
         return "blockhutdyer";
     }

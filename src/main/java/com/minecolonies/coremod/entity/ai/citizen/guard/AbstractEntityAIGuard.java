@@ -259,15 +259,15 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         }
 
         // Move into range
-        if (BlockPosUtil.getDistanceSquared(sleepingGuard.get().getPosition(), worker.getPosition()) > 4 && wakeTimer <= 10)
+        if (BlockPosUtil.getDistanceSquared(sleepingGuard.get().blockPosition(), worker.blockPosition()) > 4 && wakeTimer <= 10)
         {
-            worker.getNavigator().moveToLivingEntity(sleepingGuard.get(), getCombatMovementSpeed());
+            worker.getNavigation().moveToLivingEntity(sleepingGuard.get(), getCombatMovementSpeed());
         }
         else
         {
-            worker.swingArm(Hand.OFF_HAND);
-            sleepingGuard.get().attackEntityFrom(new NamedDamageSource("wakeywakey", worker).setDamageBypassesArmor(), 1);
-            sleepingGuard.get().setRevengeTarget(worker);
+            worker.swing(Hand.OFF_HAND);
+            sleepingGuard.get().hurt(new NamedDamageSource("wakeywakey", worker).bypassArmor(), 1);
+            sleepingGuard.get().setLastHurtByMob(worker);
             return GUARD_DECIDE;
         }
 
@@ -281,7 +281,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      */
     private boolean shouldSleep()
     {
-        if (worker.getRevengeTarget() != null || target != null || fighttimer > 0)
+        if (worker.getLastHurtByMob() != null || target != null || fighttimer > 0)
         {
             return false;
         }
@@ -294,7 +294,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         {
             // Sleep for 2500-3000 ticks
             sleepTimer = worker.getRandom().nextInt(500) + 2500;
-            SittingEntity.sitDown(worker.getPosition(), worker, sleepTimer);
+            SittingEntity.sitDown(worker.blockPosition(), worker, sleepTimer);
 
             return true;
         }
@@ -309,7 +309,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      */
     private IAIState sleepParticles()
     {
-        Network.getNetwork().sendToTrackingEntity(new SleepingParticleMessage(worker.getPosX(), worker.getPosY() + 2.0d, worker.getPosZ()), worker);
+        Network.getNetwork().sendToTrackingEntity(new SleepingParticleMessage(worker.getX(), worker.getY() + 2.0d, worker.getZ()), worker);
 
         if (worker.getHealth() < worker.getMaxHealth())
         {
@@ -326,16 +326,16 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      */
     private IAIState sleep()
     {
-        if (worker.getRevengeTarget() != null || (sleepTimer -= getTickRate()) < 0)
+        if (worker.getLastHurtByMob() != null || (sleepTimer -= getTickRate()) < 0)
         {
             stopSleeping();
             return GUARD_DECIDE;
         }
 
-        worker.getLookController()
-          .setLookPosition(worker.getPosX() + worker.getHorizontalFacing().getXOffset(),
-            worker.getPosY() + worker.getHorizontalFacing().getYOffset(),
-            worker.getPosZ() + worker.getHorizontalFacing().getZOffset(),
+        worker.getLookControl()
+          .setLookAt(worker.getX() + worker.getDirection().getStepX(),
+            worker.getY() + worker.getDirection().getStepY(),
+            worker.getZ() + worker.getDirection().getStepZ(),
             0f,
             30f);
         return null;
@@ -349,9 +349,9 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         if (getState() == GUARD_SLEEP)
         {
             resetTarget();
-            worker.setRevengeTarget(null);
+            worker.setLastHurtByMob(null);
             worker.stopRiding();
-            worker.setPosition(worker.getPosX(), worker.getPosY() + 1, worker.getPosZ());
+            worker.setPos(worker.getX(), worker.getY() + 1, worker.getZ());
             worker.getCitizenExperienceHandler().addExperience(1);
         }
     }
@@ -363,12 +363,12 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      */
     private IAIState regen()
     {
-        if (!worker.isPotionActive(Effects.SPEED))
+        if (!worker.hasEffect(Effects.MOVEMENT_SPEED))
         {
             final double effect = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(FLEEING_SPEED);
             if (effect > 0)
             {
-                worker.addPotionEffect(new EffectInstance(Effects.SPEED, 200, (int) (0 + effect)));
+                worker.addEffect(new EffectInstance(Effects.MOVEMENT_SPEED, 200, (int) (0 + effect)));
             }
         }
 
@@ -379,9 +379,9 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
 
         if (worker.getHealth() < ((int) worker.getMaxHealth() * 0.75D) && buildingGuards.shallRetrieveOnLowHealth())
         {
-            if (!worker.isPotionActive(Effects.REGENERATION))
+            if (!worker.hasEffect(Effects.REGENERATION))
             {
-                worker.addPotionEffect(new EffectInstance(Effects.REGENERATION, 200));
+                worker.addEffect(new EffectInstance(Effects.REGENERATION, 200));
             }
             return GUARD_REGEN;
         }
@@ -417,7 +417,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
             }
 
             worker.setCanBeStuck(false);
-            worker.getNavigator().getPathingOptions().setCanUseRails(false);
+            worker.getNavigation().getPathingOptions().setCanUseRails(false);
             fighttimer = COMBAT_TIME;
             equipInventoryArmor();
             moveInAttackPosition();
@@ -429,7 +429,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
             fighttimer--;
             if (fighttimer == 0)
             {
-                worker.getNavigator().getPathingOptions().setCanUseRails(((EntityCitizen) worker).canPathOnRails());
+                worker.getNavigation().getPathingOptions().setCanUseRails(((EntityCitizen) worker).canPathOnRails());
                 worker.setCanBeStuck(true);
             }
         }
@@ -463,9 +463,9 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      */
     private IAIState follow()
     {
-        if (BlockPosUtil.getDistance2D(worker.getPosition(), buildingGuards.getPositionToFollow()) > MAX_FOLLOW_DERIVATION)
+        if (BlockPosUtil.getDistance2D(worker.blockPosition(), buildingGuards.getPositionToFollow()) > MAX_FOLLOW_DERIVATION)
         {
-            TeleportHelper.teleportCitizen(worker, worker.getEntityWorld(), buildingGuards.getPositionToFollow());
+            TeleportHelper.teleportCitizen(worker, worker.getCommandSenderWorld(), buildingGuards.getPositionToFollow());
             return GUARD_FOLLOW;
         }
 
@@ -477,8 +477,8 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         {
             if (!isWithinPersecutionDistance(buildingGuards.getPositionToFollow()))
             {
-                worker.getNavigator().clearPath();
-                worker.getMoveHelper().strafe(0, 0);
+                worker.getNavigation().stop();
+                worker.getMoveControl().strafe(0, 0);
             }
             else
             {
@@ -503,17 +503,17 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     {
         final ICitizenData citizenData = worker.getCitizenData();
         if (!worker.isWorkerAtSiteWithMove(location.getInDimensionLocation()
-                                             .add(randomGenerator.nextInt(GUARD_FOLLOW_TIGHT_RANGE) - GUARD_FOLLOW_TIGHT_RANGE / 2,
+                                             .offset(randomGenerator.nextInt(GUARD_FOLLOW_TIGHT_RANGE) - GUARD_FOLLOW_TIGHT_RANGE / 2,
                                                0,
                                                randomGenerator.nextInt(GUARD_FOLLOW_TIGHT_RANGE) - GUARD_FOLLOW_TIGHT_RANGE / 2),
           GUARD_FOLLOW_TIGHT_RANGE) && citizenData != null)
         {
-            if (!worker.isPotionActive(Effects.SPEED))
+            if (!worker.hasEffect(Effects.MOVEMENT_SPEED))
             {
                 // Guards will rally faster with higher skill.
                 // Considering 99 is the maximum for any skill, the maximum theoretical getJobModifier() = 99 + 99/4 = 124. We want them to have Speed 5
                 // when they're at half-max, so at about skill60. Therefore, divide the skill by 20.
-                worker.addPotionEffect(new EffectInstance(Effects.SPEED,
+                worker.addEffect(new EffectInstance(Effects.MOVEMENT_SPEED,
                   5 * TICKS_SECOND,
                   MathHelper.clamp((citizenData.getCitizenSkillHandler().getLevel(Skill.Adaptability) / 20) + 2, 2, 5),
                   false,
@@ -714,7 +714,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
 
         if (target == null || !target.isAlive())
         {
-            target = helpCitizen.get().getRevengeTarget();
+            target = helpCitizen.get().getLastHurtByMob();
             if (target == null || !target.isAlive())
             {
                 return GUARD_DECIDE;
@@ -723,9 +723,9 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
 
         currentPatrolPoint = null;
         // Check if we're ready to attack the target
-        if (worker.getEntitySenses().canSee(target) && isWithinPersecutionDistance(new BlockPos(target.getPositionVec())))
+        if (worker.getSensing().canSee(target) && isWithinPersecutionDistance(new BlockPos(target.position())))
         {
-            target.setRevengeTarget(worker);
+            target.setLastHurtByMob(worker);
             return checkAndAttackTarget();
         }
 
@@ -754,11 +754,11 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
 
         if (rallyLocation != null || buildingGuards.getTask().equals(GuardTaskSetting.FOLLOW))
         {
-            worker.addPotionEffect(new EffectInstance(GLOW_EFFECT, GLOW_EFFECT_DURATION, GLOW_EFFECT_MULTIPLIER, false, false));
+            worker.addEffect(new EffectInstance(GLOW_EFFECT, GLOW_EFFECT_DURATION, GLOW_EFFECT_MULTIPLIER, false, false));
         }
         else
         {
-            worker.removeActivePotionEffect(GLOW_EFFECT);
+            worker.removeEffectNoUpdate(GLOW_EFFECT);
         }
 
         if (rallyLocation != null && rallyLocation.isReachableFromLocation(worker.getLocation()))
@@ -797,15 +797,15 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         // Check Current target
         if (isEntityValidTarget(target))
         {
-            if (target != worker.getRevengeTarget() && isEntityValidTargetAndCanbeSeen(worker.getRevengeTarget())
-                  && worker.getDistanceSq(worker.getRevengeTarget()) < worker.getDistanceSq(target) - 15)
+            if (target != worker.getLastHurtByMob() && isEntityValidTargetAndCanbeSeen(worker.getLastHurtByMob())
+                  && worker.distanceToSqr(worker.getLastHurtByMob()) < worker.distanceToSqr(target) - 15)
             {
-                target = worker.getRevengeTarget();
+                target = worker.getLastHurtByMob();
                 onTargetChange();
             }
 
             // Check sight
-            if (!worker.canEntityBeSeen(target))
+            if (!worker.canSee(target))
             {
                 lastSeen += 10;
             }
@@ -821,9 +821,9 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
             }
 
             // Move into range
-            if (!isInAttackDistance(new BlockPos(target.getPositionVec())))
+            if (!isInAttackDistance(new BlockPos(target.position())))
             {
-                if (worker.getNavigator().noPath())
+                if (worker.getNavigation().isDone())
                 {
                     moveInAttackPosition();
                 }
@@ -837,9 +837,9 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         }
 
         // Check the revenge target
-        if (isEntityValidTargetAndCanbeSeen(worker.getRevengeTarget()))
+        if (isEntityValidTargetAndCanbeSeen(worker.getLastHurtByMob()))
         {
-            target = worker.getRevengeTarget();
+            target = worker.getLastHurtByMob();
             onTargetChange();
             return true;
         }
@@ -854,9 +854,9 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     {
         for (final ICitizenData citizen : getOwnBuilding().getAssignedCitizen())
         {
-            if (citizen.getEntity().isPresent() && citizen.getEntity().get().getRevengeTarget() == null)
+            if (citizen.getEntity().isPresent() && citizen.getEntity().get().getLastHurtByMob() == null)
             {
-                citizen.getEntity().get().setRevengeTarget(target);
+                citizen.getEntity().get().setLastHurtByMob(target);
             }
         }
 
@@ -865,10 +865,10 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
             for (final Map.Entry<BlockPos, IBuilding> entry : worker.getCitizenColonyHandler().getColony().getBuildingManager().getBuildings().entrySet())
             {
                 if (entry.getValue() instanceof AbstractBuildingGuards &&
-                      worker.getPosition().distanceSq(entry.getKey()) < PATROL_DEVIATION_RAID_POINT)
+                      worker.blockPosition().distSqr(entry.getKey()) < PATROL_DEVIATION_RAID_POINT)
                 {
                     final AbstractBuildingGuards building = (AbstractBuildingGuards) entry.getValue();
-                    building.setTempNextPatrolPoint(target.getPosition());
+                    building.setTempNextPatrolPoint(target.blockPosition());
                 }
             }
         }
@@ -882,7 +882,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      */
     public boolean isEntityValidTargetAndCanbeSeen(final LivingEntity entity)
     {
-        return isEntityValidTarget(entity) && worker.canEntityBeSeen(entity);
+        return isEntityValidTarget(entity) && worker.canSee(entity);
     }
 
     /**
@@ -893,12 +893,12 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      */
     public boolean isEntityValidTarget(final LivingEntity entity)
     {
-        if (entity == null || !entity.isAlive() || !isWithinPersecutionDistance(new BlockPos(entity.getPositionVec())))
+        if (entity == null || !entity.isAlive() || !isWithinPersecutionDistance(new BlockPos(entity.position())))
         {
             return false;
         }
 
-        if (entity == worker.getRevengeTarget())
+        if (entity == worker.getLastHurtByMob())
         {
             return true;
         }
@@ -940,14 +940,14 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
             return;
         }
 
-        if (worker.getLastAttackedEntity() == target)
+        if (worker.getLastHurtMob() == target)
         {
-            worker.setLastAttackedEntity(null);
+            worker.setLastHurtMob(null);
         }
 
-        if (worker.getRevengeTarget() == target)
+        if (worker.getLastHurtByMob() == target)
         {
-            worker.setRevengeTarget(null);
+            worker.setLastHurtByMob(null);
         }
 
         target = null;
@@ -1011,7 +1011,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
             return null;
         }
 
-        final List<LivingEntity> entities = world.getLoadedEntitiesWithinAABB(LivingEntity.class, getSearchArea());
+        final List<LivingEntity> entities = world.getLoadedEntitiesOfClass(LivingEntity.class, getSearchArea());
 
         int closest = Integer.MAX_VALUE;
         LivingEntity targetEntity = null;
@@ -1028,7 +1028,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
             {
                 final EntityCitizen citizen = (EntityCitizen) entity;
                 if (citizen.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard && ((AbstractJobGuard<?>) citizen.getCitizenJobHandler().getColonyJob()).isAsleep()
-                      && worker.canEntityBeSeen(entity))
+                      && worker.canSee(entity))
                 {
                     sleepingGuard = new WeakReference<>(citizen);
                     wakeTimer = 0;
@@ -1037,10 +1037,10 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
                 }
             }
 
-            if (isEntityValidTarget(entity) && worker.canEntityBeSeen(entity))
+            if (isEntityValidTarget(entity) && worker.canSee(entity))
             {
                 // Find closest
-                final int tempDistance = (int) BlockPosUtil.getDistanceSquared(worker.getPosition(), new BlockPos(entity.getPositionVec()));
+                final int tempDistance = (int) BlockPosUtil.getDistanceSquared(worker.blockPosition(), new BlockPos(entity.position()));
                 if (tempDistance < closest)
                 {
                     closest = tempDistance;
@@ -1067,7 +1067,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      */
     public boolean isInAttackDistance(final BlockPos position)
     {
-        return BlockPosUtil.getDistanceSquared2D(worker.getPosition(), position) <= getAttackRange() * getAttackRange();
+        return BlockPosUtil.getDistanceSquared2D(worker.blockPosition(), position) <= getAttackRange() * getAttackRange();
     }
 
     /**
@@ -1110,7 +1110,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         {
             case GuardTaskSetting.PATROL:
             case GuardTaskSetting.PATROL_MINE:
-                return currentPatrolPoint != null ? currentPatrolPoint : worker.getPosition();
+                return currentPatrolPoint != null ? currentPatrolPoint : worker.blockPosition();
             case GuardTaskSetting.FOLLOW:
                 return buildingGuards.getPositionToFollow();
             default:
@@ -1151,14 +1151,14 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         final IGuardBuilding building = getOwnBuilding();
         final int buildingBonus = building.getBonusVision() + Math.max(TARGET_RANGE_ATTACK_RANGE_BONUS, getAttackRange());
 
-        final Direction randomDirection = Direction.byIndex(worker.getRandom().nextInt(4) + 2);
+        final Direction randomDirection = Direction.from3DDataValue(worker.getRandom().nextInt(4) + 2);
 
-        final double x1 = worker.getPosition().getX() + (Math.max(buildingBonus * randomDirection.getXOffset() + DEFAULT_VISION, DEFAULT_VISION));
-        final double x2 = worker.getPosition().getX() + (Math.min(buildingBonus * randomDirection.getXOffset() - DEFAULT_VISION, -DEFAULT_VISION));
-        final double y1 = worker.getPosition().getY() + (Y_VISION >> 1);
-        final double y2 = worker.getPosition().getY() - (Y_VISION << 1);
-        final double z1 = worker.getPosition().getZ() + (Math.max(buildingBonus * randomDirection.getZOffset() + DEFAULT_VISION, DEFAULT_VISION));
-        final double z2 = worker.getPosition().getZ() + (Math.min(buildingBonus * randomDirection.getZOffset() - DEFAULT_VISION, -DEFAULT_VISION));
+        final double x1 = worker.blockPosition().getX() + (Math.max(buildingBonus * randomDirection.getStepX() + DEFAULT_VISION, DEFAULT_VISION));
+        final double x2 = worker.blockPosition().getX() + (Math.min(buildingBonus * randomDirection.getStepX() - DEFAULT_VISION, -DEFAULT_VISION));
+        final double y1 = worker.blockPosition().getY() + (Y_VISION >> 1);
+        final double y2 = worker.blockPosition().getY() - (Y_VISION << 1);
+        final double z1 = worker.blockPosition().getZ() + (Math.max(buildingBonus * randomDirection.getStepZ() + DEFAULT_VISION, DEFAULT_VISION));
+        final double z2 = worker.blockPosition().getZ() + (Math.min(buildingBonus * randomDirection.getStepZ() - DEFAULT_VISION, -DEFAULT_VISION));
 
         return new AxisAlignedBB(x1, y1, z1, x2, y2, z2);
     }

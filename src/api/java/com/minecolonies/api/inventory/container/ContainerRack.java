@@ -71,9 +71,9 @@ public class ContainerRack extends Container
     {
         super(ModContainers.rackInv, windowId);
 
-        final AbstractTileEntityRack abstractTileEntityRack = (AbstractTileEntityRack) inv.player.world.getTileEntity(rack);
+        final AbstractTileEntityRack abstractTileEntityRack = (AbstractTileEntityRack) inv.player.level.getBlockEntity(rack);
         // TODO: bug, what if neighbor is actually bp.ZERO? (unlikely to happen)
-        final AbstractTileEntityRack neighborRack = neighbor.equals(BlockPos.ZERO) ? null : (AbstractTileEntityRack) inv.player.world.getTileEntity(neighbor);
+        final AbstractTileEntityRack neighborRack = neighbor.equals(BlockPos.ZERO) ? null : (AbstractTileEntityRack) inv.player.level.getBlockEntity(neighbor);
 
         if (neighborRack != null)
         {
@@ -145,17 +145,17 @@ public class ContainerRack extends Container
 
     @NotNull
     @Override
-    public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player)
+    public ItemStack clicked(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player)
     {
-        if (player.world.isRemote || slotId >= inventory.getSlots() || slotId < 0)
+        if (player.level.isClientSide || slotId >= inventory.getSlots() || slotId < 0)
         {
-            return super.slotClick(slotId, dragType, clickTypeIn, player);
+            return super.clicked(slotId, dragType, clickTypeIn, player);
         }
         final ItemStack currentStack = inventory.getStackInSlot(slotId).copy();
-        final ItemStack result = super.slotClick(slotId, dragType, clickTypeIn, player);
+        final ItemStack result = super.clicked(slotId, dragType, clickTypeIn, player);
         final ItemStack afterStack = inventory.getStackInSlot(slotId).copy();
 
-        if (!ItemStack.areItemStacksEqual(currentStack, afterStack))
+        if (!ItemStack.matches(currentStack, afterStack))
         {
             this.updateRacks(afterStack);
         }
@@ -165,39 +165,39 @@ public class ContainerRack extends Container
 
     @NotNull
     @Override
-    public ItemStack transferStackInSlot(final PlayerEntity playerIn, final int index)
+    public ItemStack quickMoveStack(final PlayerEntity playerIn, final int index)
     {
-        final Slot slot = this.inventorySlots.get(index);
+        final Slot slot = this.slots.get(index);
 
-        if (slot == null || !slot.getHasStack())
+        if (slot == null || !slot.hasItem())
         {
             return ItemStackUtils.EMPTY;
         }
 
-        final ItemStack stackCopy = slot.getStack().copy();
+        final ItemStack stackCopy = slot.getItem().copy();
 
         final int maxIndex = this.inventorySize * INVENTORY_COLUMNS;
 
         if (index < maxIndex)
         {
-            if (!this.mergeItemStack(stackCopy, maxIndex, this.inventorySlots.size(), true))
+            if (!this.moveItemStackTo(stackCopy, maxIndex, this.slots.size(), true))
             {
                 return ItemStackUtils.EMPTY;
             }
         }
-        else if (!this.mergeItemStack(stackCopy, 0, maxIndex, false))
+        else if (!this.moveItemStackTo(stackCopy, 0, maxIndex, false))
         {
             return ItemStackUtils.EMPTY;
         }
 
         if (ItemStackUtils.getSize(stackCopy) == 0)
         {
-            slot.putStack(ItemStackUtils.EMPTY);
+            slot.set(ItemStackUtils.EMPTY);
         }
         else
         {
-            slot.putStack(stackCopy);
-            slot.onSlotChanged();
+            slot.set(stackCopy);
+            slot.setChanged();
         }
 
         if (playerIn instanceof ServerPlayerEntity)
@@ -209,10 +209,10 @@ public class ContainerRack extends Container
     }
 
     @Override
-    protected boolean mergeItemStack(final ItemStack stack, final int startIndex, final int endIndex, final boolean reverseDirection)
+    protected boolean moveItemStackTo(final ItemStack stack, final int startIndex, final int endIndex, final boolean reverseDirection)
     {
         final ItemStack before = stack.copy();
-        final boolean merge =  super.mergeItemStack(stack, startIndex, endIndex, reverseDirection);
+        final boolean merge =  super.moveItemStackTo(stack, startIndex, endIndex, reverseDirection);
         if (merge)
         {
             this.updateRacks(before);
@@ -236,7 +236,7 @@ public class ContainerRack extends Container
     }
 
     @Override
-    public boolean canInteractWith(final PlayerEntity playerIn)
+    public boolean stillValid(final PlayerEntity playerIn)
     {
         return true;
     }

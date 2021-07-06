@@ -52,19 +52,19 @@ public class BarbarianRaidEvent extends HordeRaidEvent
 
         if (entity instanceof EntityChiefBarbarian && boss.keySet().size() < horde.numberOfBosses)
         {
-            boss.put(entity, entity.getUniqueID());
+            boss.put(entity, entity.getUUID());
             return;
         }
 
         if (entity instanceof EntityArcherBarbarian && archers.keySet().size() < horde.numberOfArchers)
         {
-            archers.put(entity, entity.getUniqueID());
+            archers.put(entity, entity.getUUID());
             return;
         }
 
         if (entity instanceof EntityBarbarian && normal.keySet().size() < horde.numberOfRaiders)
         {
-            normal.put(entity, entity.getUniqueID());
+            normal.put(entity, entity.getUUID());
             return;
         }
 

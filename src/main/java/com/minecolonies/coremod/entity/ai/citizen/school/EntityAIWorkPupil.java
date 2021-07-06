@@ -146,14 +146,14 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil, Buildi
             return getState();
         }
 
-        if (!world.getLoadedEntitiesWithinAABB(EntityCitizen.class,
+        if (!world.getLoadedEntitiesOfClass(EntityCitizen.class,
           new AxisAlignedBB(studyPos.getX(), studyPos.getY(), studyPos.getZ(), studyPos.getX(), studyPos.getY(), studyPos.getZ())).isEmpty())
         {
             studyPos = null;
             return DECIDE;
         }
 
-        if (sittingTicks == 0 || worker.ridingEntity == null)
+        if (sittingTicks == 0 || worker.vehicle == null)
         {
             // Sit for 60-120 seconds.
             maxSittingTicks = worker.getRandom().nextInt(120 / 2) + 60;
@@ -164,13 +164,13 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil, Buildi
 
         if (slot != -1)
         {
-            worker.setItemStackToSlot(EquipmentSlotType.MAINHAND, worker.getInventoryCitizen().getStackInSlot(slot));
-            Network.getNetwork().sendToTrackingEntity(new CircleParticleEffectMessage(worker.getPositionVec().add(0, 1, 0), ParticleTypes.ENCHANT, sittingTicks), worker);
+            worker.setItemSlot(EquipmentSlotType.MAINHAND, worker.getInventoryCitizen().getStackInSlot(slot));
+            Network.getNetwork().sendToTrackingEntity(new CircleParticleEffectMessage(worker.position().add(0, 1, 0), ParticleTypes.ENCHANT, sittingTicks), worker);
         }
         else
         {
-            worker.setItemStackToSlot(EquipmentSlotType.MAINHAND, ItemStack.EMPTY);
-            Network.getNetwork().sendToTrackingEntity(new CircleParticleEffectMessage(worker.getPositionVec().add(0, 1, 0), ParticleTypes.HAPPY_VILLAGER, sittingTicks), worker);
+            worker.setItemSlot(EquipmentSlotType.MAINHAND, ItemStack.EMPTY);
+            Network.getNetwork().sendToTrackingEntity(new CircleParticleEffectMessage(worker.position().add(0, 1, 0), ParticleTypes.HAPPY_VILLAGER, sittingTicks), worker);
         }
 
         sittingTicks++;
@@ -179,11 +179,11 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil, Buildi
             return getState();
         }
 
-        worker.setItemStackToSlot(EquipmentSlotType.MAINHAND, ItemStack.EMPTY);
-        if (worker.ridingEntity != null)
+        worker.setItemSlot(EquipmentSlotType.MAINHAND, ItemStack.EMPTY);
+        if (worker.vehicle != null)
         {
             worker.stopRiding();
-            worker.setPosition(worker.getPosX(), worker.getPosY() + 1, worker.getPosZ());
+            worker.setPos(worker.getX(), worker.getY() + 1, worker.getZ());
         }
 
         if (slot != -1)

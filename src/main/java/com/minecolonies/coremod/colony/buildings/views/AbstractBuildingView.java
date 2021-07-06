@@ -378,10 +378,10 @@ public abstract class AbstractBuildingView implements IBuildingView
         buildingMaxLevel = buf.readInt();
         buildingDmPrio = buf.readInt();
         workOrderLevel = buf.readInt();
-        style = buf.readString(32767);
-        schematicName = buf.readString(32767);
+        style = buf.readUtf(32767);
+        schematicName = buf.readUtf(32767);
         parent = buf.readBlockPos();
-        customName = buf.readString(32767);
+        customName = buf.readUtf(32767);
 
         rotation = buf.readInt();
         isBuildingMirrored = buf.readBoolean();
@@ -391,7 +391,7 @@ public abstract class AbstractBuildingView implements IBuildingView
         final int resolverSize = buf.readInt();
         for (int i = 0; i < resolverSize; i++)
         {
-            final CompoundNBT compound = buf.readCompoundTag();
+            final CompoundNBT compound = buf.readNbt();
             if (compound != null)
             {
                 list.add(StandardFactoryController.getInstance().deserialize(compound));
@@ -399,7 +399,7 @@ public abstract class AbstractBuildingView implements IBuildingView
         }
 
         resolvers = ImmutableList.copyOf(list);
-        final CompoundNBT compound = buf.readCompoundTag();
+        final CompoundNBT compound = buf.readNbt();
         if (compound != null)
         {
             requesterId = StandardFactoryController.getInstance().deserialize(compound);
@@ -410,7 +410,7 @@ public abstract class AbstractBuildingView implements IBuildingView
         {
             containerlist.add(buf.readBlockPos());
         }
-        loadRequestSystemFromNBT(buf.readCompoundTag());
+        loadRequestSystemFromNBT(buf.readNbt());
         isDeconstructed = buf.readBoolean();
 
         for (final IBuildingModuleView module: moduleViews)

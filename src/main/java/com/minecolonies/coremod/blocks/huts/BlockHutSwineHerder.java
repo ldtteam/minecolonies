@@ -18,7 +18,7 @@ public class BlockHutSwineHerder extends AbstractBlockHut<BlockHutSwineHerder>
 
     @NotNull
     @Override
-    public String getName()
+    public String getHutName()
     {
         return "blockhutswineherder";
     }

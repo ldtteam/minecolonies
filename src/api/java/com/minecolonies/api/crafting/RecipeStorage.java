@@ -113,7 +113,7 @@ public class RecipeStorage implements IRecipeStorage
      * The loot parameter set definition
      */
     public static final LootParameterSet recipeLootParameters = (new LootParameterSet.Builder())
-                .required(LootParameters.field_237457_g_)
+                .required(LootParameters.ORIGIN)
                 .required(LootParameters.THIS_ENTITY)
                 .required(LootParameters.TOOL)
                 .optional(LootParameters.DAMAGE_SOURCE)
@@ -248,7 +248,7 @@ public class RecipeStorage implements IRecipeStorage
         {
             for(ItemStack result: getSecondaryOutputs())
             {
-                if(ItemStackUtils.compareItemStacksIgnoreStackSize(item.getItemStack(), result, false, true) && result.isDamageable())
+                if(ItemStackUtils.compareItemStacksIgnoreStackSize(item.getItemStack(), result, false, true) && result.isDamageableItem())
                 {
                     tools.add(result);
                     secondaryOutputs.remove(result);
@@ -480,7 +480,7 @@ public class RecipeStorage implements IRecipeStorage
             return null;
         }
 
-        final AbstractEntityCitizen citizen = (AbstractEntityCitizen) context.get(LootParameters.THIS_ENTITY);
+        final AbstractEntityCitizen citizen = (AbstractEntityCitizen) context.getParamOrNull(LootParameters.THIS_ENTITY);
 
         for (final ItemStorage storage : getCleanedInput())
         {
@@ -506,7 +506,7 @@ public class RecipeStorage implements IRecipeStorage
                         {
                             // The 4 parameter inner call from forge is for adding a callback to alter the damage caused,
                             // but unlike its description does not actually damage the item(despite the same function name). So used to just calculate the damage.
-                            toDamage.damageItem(toDamage.getItem().damageItem(stack, 1, citizen, item -> item.sendBreakAnimation(Hand.MAIN_HAND)), citizen, item -> item.sendBreakAnimation(Hand.MAIN_HAND));
+                            toDamage.hurtAndBreak(toDamage.getItem().damageItem(stack, 1, citizen, item -> item.broadcastBreakEvent(Hand.MAIN_HAND)), citizen, item -> item.broadcastBreakEvent(Hand.MAIN_HAND));
                         }
                         if (!ItemStackUtils.isEmpty(toDamage))
                         {
@@ -583,12 +583,12 @@ public class RecipeStorage implements IRecipeStorage
 
         if (loot == null && lootTable != null)
         {
-            loot = context.getWorld().getServer().getLootTableManager().getLootTableFromLocation(lootTable);
+            loot = context.getLevel().getServer().getLootTables().get(lootTable);
         }
 
         if(loot != null && context != null)
         {
-            secondaryStacks.addAll(loot.generate(context));
+            secondaryStacks.addAll(loot.getRandomItems(context));
         }
 
         resultStacks.addAll(secondaryStacks.stream().map(ItemStack::copy).collect(Collectors.toList()));

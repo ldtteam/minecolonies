@@ -20,7 +20,7 @@ public class CommandKillMonster implements IMCOPCommand
     {
         entitiesKilled = 0;
 
-        context.getSource().getWorld().getEntities().forEach(entity ->
+        context.getSource().getLevel().getEntities().forEach(entity ->
         {
             if (entity instanceof MonsterEntity)
             {
@@ -28,7 +28,7 @@ public class CommandKillMonster implements IMCOPCommand
                 entitiesKilled++;
             }
         });
-        context.getSource().sendFeedback(new StringTextComponent(entitiesKilled + " entities killed"), true);
+        context.getSource().sendSuccess(new StringTextComponent(entitiesKilled + " entities killed"), true);
         return 1;
     }
 

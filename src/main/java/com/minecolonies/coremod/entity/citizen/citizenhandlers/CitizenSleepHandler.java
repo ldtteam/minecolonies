@@ -68,7 +68,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
     @Override
     public boolean isAsleep()
     {
-        return citizen.getDataManager().get(DATA_IS_ASLEEP);
+        return citizen.getEntityData().get(DATA_IS_ASLEEP);
     }
 
     /**
@@ -82,7 +82,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
         {
             citizen.getCitizenData().setAsleep(isAsleep);
         }
-        citizen.getDataManager().set(DATA_IS_ASLEEP, isAsleep);
+        citizen.getEntityData().set(DATA_IS_ASLEEP, isAsleep);
     }
 
     /**
@@ -92,10 +92,10 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
     @OnlyIn(Dist.CLIENT)
     public float getBedOrientationInDegrees()
     {
-        final BlockState state = getBedLocation() == null ? null : citizen.world.getBlockState(getBedLocation());
-        if (state != null && state.getBlock().isBed(state, citizen.world, getBedLocation(), citizen))
+        final BlockState state = getBedLocation() == null ? null : citizen.level.getBlockState(getBedLocation());
+        if (state != null && state.getBlock().isBed(state, citizen.level, getBedLocation(), citizen))
         {
-            switch (state.getBlock().getBedDirection(state, citizen.world, getBedLocation()))
+            switch (state.getBlock().getBedDirection(state, citizen.level, getBedLocation()))
             {
                 case SOUTH:
                     return NINETY_DEGREE;
@@ -121,8 +121,8 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
     @Override
     public boolean trySleep(final BlockPos bedLocation)
     {
-        final BlockState state = WorldUtil.isEntityBlockLoaded(citizen.world, bedLocation) ? citizen.world.getBlockState(bedLocation) : null;
-        final boolean isBed = state != null && state.getBlock().isBed(state, citizen.world, bedLocation, citizen);
+        final BlockState state = WorldUtil.isEntityBlockLoaded(citizen.level, bedLocation) ? citizen.level.getBlockState(bedLocation) : null;
+        final boolean isBed = state != null && state.getBlock().isBed(state, citizen.level, bedLocation, citizen);
 
         if (!isBed)
         {
@@ -130,14 +130,14 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
         }
 
         citizen.updatePose(Pose.SLEEPING);
-        citizen.getNavigator().clearPath();
-        citizen.setPosition(((float) bedLocation.getX() + HALF_BLOCK),
+        citizen.getNavigation().stop();
+        citizen.setPos(((float) bedLocation.getX() + HALF_BLOCK),
           (float) bedLocation.getY() + 0.8F,
           ((float) bedLocation.getZ() + HALF_BLOCK));
-        citizen.setBedPosition(bedLocation);
+        citizen.setSleepingPos(bedLocation);
 
-        citizen.setMotion(Vector3d.ZERO);
-        citizen.isAirBorne = true;
+        citizen.setDeltaMovement(Vector3d.ZERO);
+        citizen.hasImpulse = true;
 
         //Remove item while citizen is asleep.
         citizen.getCitizenItemHandler().removeHeldItem();
@@ -149,7 +149,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
         {
             citizen.getCitizenData().setBedPos(bedLocation);
         }
-        citizen.getDataManager().set(DATA_BED_POS, bedLocation);
+        citizen.getEntityData().set(DATA_BED_POS, bedLocation);
 
         citizen.getCitizenData().getColony().getCitizenManager().onCitizenSleep();
 
@@ -170,7 +170,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
             return;
         }
         citizen.updatePose(Pose.STANDING);
-        citizen.clearBedPosition();
+        citizen.clearSleepingPos();
         spawnCitizenFromBed();
     }
 
@@ -196,19 +196,19 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
     private void spawnCitizenFromBed()
     {
         final BlockPos spawn;
-        if (!getBedLocation().equals(BlockPos.ZERO) && citizen.world.getBlockState(getBedLocation()).getBlock().isIn(BlockTags.BEDS))
+        if (!getBedLocation().equals(BlockPos.ZERO) && citizen.level.getBlockState(getBedLocation()).getBlock().is(BlockTags.BEDS))
         {
-            final Optional<Vector3d> spawnVec = Blocks.RED_BED.getBedSpawnPosition(ModEntities.CITIZEN, citizen.world.getBlockState(getBedLocation()), citizen.world, getBedLocation(), 0, citizen);
-            spawn = spawnVec.map(BlockPos::new).orElseGet(() -> getBedLocation().up());
+            final Optional<Vector3d> spawnVec = Blocks.RED_BED.getBedSpawnPosition(ModEntities.CITIZEN, citizen.level.getBlockState(getBedLocation()), citizen.level, getBedLocation(), 0, citizen);
+            spawn = spawnVec.map(BlockPos::new).orElseGet(() -> getBedLocation().above());
         }
         else
         {
-            spawn = citizen.getPosition();
+            spawn = citizen.blockPosition();
         }
 
         if (spawn != null && !spawn.equals(BlockPos.ZERO))
         {
-            citizen.setPosition(spawn.getX() + HALF_BLOCK, spawn.getY() + HALF_BLOCK, spawn.getZ() + HALF_BLOCK);
+            citizen.setPos(spawn.getX() + HALF_BLOCK, spawn.getY() + HALF_BLOCK, spawn.getZ() + HALF_BLOCK);
         }
 
         setIsAsleep(false);
@@ -216,13 +216,13 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
         {
             citizen.getCitizenData().setBedPos(new BlockPos(0, 0, 0));
         }
-        citizen.getDataManager().set(DATA_BED_POS, new BlockPos(0, 0, 0));
+        citizen.getEntityData().set(DATA_BED_POS, new BlockPos(0, 0, 0));
     }
 
     @Override
     public BlockPos findHomePos()
     {
-        final BlockPos pos = citizen.getHomePosition();
+        final BlockPos pos = citizen.getRestrictCenter();
         if (pos.equals(BlockPos.ZERO))
         {
             if (citizen.getCitizenColonyHandler().getColony().hasTownHall())
@@ -244,7 +244,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
     @Override
     public BlockPos getBedLocation()
     {
-        return citizen.getDataManager().get(DATA_BED_POS);
+        return citizen.getEntityData().get(DATA_BED_POS);
     }
 
     /**
@@ -260,16 +260,16 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
             return 0;
         }
 
-        final BlockState state = WorldUtil.isEntityBlockLoaded(citizen.world, getBedLocation()) ? citizen.world.getBlockState(getBedLocation()) : null;
-        final boolean isBed = state != null && state.getBlock().isBed(state, citizen.world, getBedLocation(), citizen);
-        final Direction Direction = isBed && state.getBlock() instanceof HorizontalBlock ? state.get(HorizontalBlock.HORIZONTAL_FACING) : null;
+        final BlockState state = WorldUtil.isEntityBlockLoaded(citizen.level, getBedLocation()) ? citizen.level.getBlockState(getBedLocation()) : null;
+        final boolean isBed = state != null && state.getBlock().isBed(state, citizen.level, getBedLocation(), citizen);
+        final Direction Direction = isBed && state.getBlock() instanceof HorizontalBlock ? state.getValue(HorizontalBlock.FACING) : null;
 
         if (Direction == null)
         {
             return 0;
         }
 
-        return SLEEPING_RENDER_OFFSET * (float) Direction.getXOffset();
+        return SLEEPING_RENDER_OFFSET * (float) Direction.getStepX();
     }
 
     /**
@@ -285,23 +285,23 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
             return 0;
         }
 
-        final BlockState state = WorldUtil.isEntityBlockLoaded(citizen.world, getBedLocation()) ? citizen.world.getBlockState(getBedLocation()) : null;
-        final boolean isBed = state != null && state.getBlock().isBed(state, citizen.world, getBedLocation(), citizen);
-        final Direction Direction = isBed && state.getBlock() instanceof HorizontalBlock ? state.get(HorizontalBlock.HORIZONTAL_FACING) : null;
+        final BlockState state = WorldUtil.isEntityBlockLoaded(citizen.level, getBedLocation()) ? citizen.level.getBlockState(getBedLocation()) : null;
+        final boolean isBed = state != null && state.getBlock().isBed(state, citizen.level, getBedLocation(), citizen);
+        final Direction Direction = isBed && state.getBlock() instanceof HorizontalBlock ? state.getValue(HorizontalBlock.FACING) : null;
 
         if (Direction == null)
         {
             return 0;
         }
 
-        return SLEEPING_RENDER_OFFSET * (float) Direction.getZOffset();
+        return SLEEPING_RENDER_OFFSET * (float) Direction.getStepZ();
     }
 
     @Override
     public boolean shouldGoSleep()
     {
         final BlockPos homePos = findHomePos();
-        BlockPos citizenPos = citizen.getPosition();
+        BlockPos citizenPos = citizen.blockPosition();
 
         int additionalDist = 0;
 
@@ -322,7 +322,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
 
         // Estimated arrival is 1hour past night
         final double timeLeft = (citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(WORK_LONGER) == 0
-                                   ? NIGHT : NIGHT + citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(WORK_LONGER) * 1000) - (citizen.world.getDayTime() % 24000);
+                                   ? NIGHT : NIGHT + citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(WORK_LONGER) * 1000) - (citizen.level.getDayTime() % 24000);
         if (timeLeft <= 0 || (timeLeft - timeNeeded <= 0))
         {
             if (citizen.getCitizenData().getWorkBuilding() != null)

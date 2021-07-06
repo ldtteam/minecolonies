@@ -24,7 +24,7 @@ public class BlockHutGraveyard extends AbstractBlockHut<BlockHutGraveyard>
     /**
      * tall shape.
      */
-    private static final VoxelShape SHAPE = VoxelShapes.create(0.1, 0.1, 0.1, 0.9, 1.9, 0.9);
+    private static final VoxelShape SHAPE = VoxelShapes.box(0.1, 0.1, 0.1, 0.9, 1.9, 0.9);
 
     public BlockHutGraveyard()
     {
@@ -41,7 +41,7 @@ public class BlockHutGraveyard extends AbstractBlockHut<BlockHutGraveyard>
 
     @NotNull
     @Override
-    public String getName() { return "blockhutgraveyard"; }
+    public String getHutName() { return "blockhutgraveyard"; }
 
     @Override
     public BuildingEntry getBuildingEntry()

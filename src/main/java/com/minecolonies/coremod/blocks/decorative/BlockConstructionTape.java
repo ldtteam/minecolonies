@@ -25,6 +25,10 @@ import java.util.List;
 import static net.minecraft.util.Direction.Axis;
 import static net.minecraft.util.Direction.Plane;
 
+import net.minecraft.block.AbstractBlock.Properties;
+import net.minecraft.util.Direction.Axis;
+import net.minecraft.util.Direction.Plane;
+
 /**
  * This block is used as a border to show the size of the building. It also shows that the building is in the progress of being built.
  */
@@ -40,19 +44,19 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
      */
     public BlockConstructionTape()
     {
-        super(Properties.create(Material.TALL_PLANTS).hardnessAndResistance(0.0f).doesNotBlockMovement().noDrops());
+        super(Properties.of(Material.REPLACEABLE_PLANT).strength(0.0f).noCollission().noDrops());
         setRegistryName(BLOCK_NAME);
 
         this.shapes = makeShapes(2, 2, 16, 0, 16);
 
-        this.setDefaultState(this.getDefaultState()
-                .with(NORTH, false)
-                .with(EAST, false)
-                .with(SOUTH, false)
-                .with(WEST, false)
-                .with(FACING, Direction.NORTH)
-                .with(WATERLOGGED, false)
-                .with(CORNER, false)
+        this.registerDefaultState(this.defaultBlockState()
+                .setValue(NORTH, false)
+                .setValue(EAST, false)
+                .setValue(SOUTH, false)
+                .setValue(WEST, false)
+                .setValue(FACING, Direction.NORTH)
+                .setValue(WATERLOGGED, false)
+                .setValue(CORNER, false)
         );
     }
 
@@ -72,15 +76,15 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
 
         return BlockConstructionTape.getPlacementState(
           super.getStateForPlacement(context),
-          context.getWorld(),
-          context.getPos(),
-          faces[0].getHorizontalIndex() >= 0 ? faces[0] : faces[1]
+          context.getLevel(),
+          context.getClickedPos(),
+          faces[0].get2DDataValue() >= 0 ? faces[0] : faces[1]
         );
     }
 
     @NotNull
     @Override
-    public BlockState updatePostPlacement(
+    public BlockState updateShape(
       @NotNull final BlockState stateIn,
       final Direction dir,
       final BlockState state,
@@ -88,13 +92,13 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
       @NotNull final BlockPos currentPos,
       final BlockPos pos)
     {
-        if (stateIn.get(WATERLOGGED))
+        if (stateIn.getValue(WATERLOGGED))
         {
-            worldIn.getPendingFluidTicks().scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickRate(worldIn));
+            worldIn.getLiquidTicks().scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(worldIn));
         }
 
         return BlockConstructionTape.getPlacementState(
-          super.updatePostPlacement(stateIn, dir, state, worldIn, currentPos, pos), worldIn, currentPos, stateIn.get(FACING)
+          super.updateShape(stateIn, dir, state, worldIn, currentPos, pos), worldIn, currentPos, stateIn.getValue(FACING)
         );
     }
 
@@ -109,16 +113,16 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
      */
     public static BlockState getPlacementState(@Nullable BlockState state, IBlockReader world, BlockPos pos, Direction face)
     {
-        Fluid fluid = world.getFluidState(pos).getFluid();
-        List<Direction> connections = getConnections(world, pos, face, state.get(CORNER));
+        Fluid fluid = world.getFluidState(pos).getType();
+        List<Direction> connections = getConnections(world, pos, face, state.getValue(CORNER));
 
         return state
-                 .with(NORTH, connections.contains(Direction.NORTH))
-                 .with(EAST, connections.contains(Direction.EAST))
-                 .with(SOUTH, connections.contains(Direction.SOUTH))
-                 .with(WEST, connections.contains(Direction.WEST))
-                 .with(FACING, face)
-                 .with(WATERLOGGED, fluid == Fluids.WATER);
+                 .setValue(NORTH, connections.contains(Direction.NORTH))
+                 .setValue(EAST, connections.contains(Direction.EAST))
+                 .setValue(SOUTH, connections.contains(Direction.SOUTH))
+                 .setValue(WEST, connections.contains(Direction.WEST))
+                 .setValue(FACING, face)
+                 .setValue(WATERLOGGED, fluid == Fluids.WATER);
     }
 
     public static List<Direction> getConnections(IBlockReader world, BlockPos pos, Direction face, boolean corner)
@@ -141,7 +145,7 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
             {
                 connections.clear();
                 connections.add(face);
-                connections.add(face.rotateY());
+                connections.add(face.getClockWise());
             }
             else
             {
@@ -200,17 +204,17 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
 
     protected static boolean canRemoveTStem(IBlockReader world, BlockPos pos, Direction face)
     {
-        BlockState neighbor = world.getBlockState(pos.offset(face));
+        BlockState neighbor = world.getBlockState(pos.relative(face));
         switch (face)
         {
             case NORTH:
-                return !neighbor.get(NORTH) && neighbor.get(EAST) && neighbor.get(WEST);
+                return !neighbor.getValue(NORTH) && neighbor.getValue(EAST) && neighbor.getValue(WEST);
             case EAST:
-                return !neighbor.get(EAST) && neighbor.get(NORTH) && neighbor.get(SOUTH);
+                return !neighbor.getValue(EAST) && neighbor.getValue(NORTH) && neighbor.getValue(SOUTH);
             case SOUTH:
-                return !neighbor.get(SOUTH) && neighbor.get(EAST) && neighbor.get(WEST);
+                return !neighbor.getValue(SOUTH) && neighbor.getValue(EAST) && neighbor.getValue(WEST);
             case WEST:
-                return !neighbor.get(WEST) && neighbor.get(NORTH) && neighbor.get(SOUTH);
+                return !neighbor.getValue(WEST) && neighbor.getValue(NORTH) && neighbor.getValue(SOUTH);
         }
         return false;
     }
@@ -222,15 +226,15 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
     }
 
     @Override
-    public void onEndFalling(final World worldIn, final BlockPos pos, final BlockState fallingState, final BlockState hitState, final FallingBlockEntity blockEntity)
+    public void onLand(final World worldIn, final BlockPos pos, final BlockState fallingState, final BlockState hitState, final FallingBlockEntity blockEntity)
     {
-        worldIn.setBlockState(pos, BlockConstructionTape.getPlacementState(
-          fallingState, worldIn, pos, fallingState.get(FACING)
+        worldIn.setBlockAndUpdate(pos, BlockConstructionTape.getPlacementState(
+          fallingState, worldIn, pos, fallingState.getValue(FACING)
         ));
     }
 
     @Override
-    protected void fillStateContainer(final StateContainer.Builder<Block, BlockState> builder)
+    protected void createBlockStateDefinition(final StateContainer.Builder<Block, BlockState> builder)
     {
         builder.add(NORTH, EAST, SOUTH, WEST, FACING, CORNER, WATERLOGGED);
     }

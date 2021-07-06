@@ -29,10 +29,10 @@ public class CommandChangeOwner implements IMCColonyOfficerCommand
     public int onExecute(final CommandContext<CommandSource> context)
     {
         final int colonyID = IntegerArgumentType.getInteger(context, COLONYID_ARG);
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getWorld().getDimensionKey());
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getLevel().dimension());
         if (colony == null)
         {
-            context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.colonyidnotfound", colonyID), true);
+            context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.colonyidnotfound", colonyID), true);
             return 0;
         }
 
@@ -46,17 +46,17 @@ public class CommandChangeOwner implements IMCColonyOfficerCommand
             return 0;
         }
 
-        final PlayerEntity player = context.getSource().getServer().getPlayerList().getPlayerByUUID(profile.getId());
+        final PlayerEntity player = context.getSource().getServer().getPlayerList().getPlayer(profile.getId());
         if (player == null)
         {
             // could not find player with given name.
-            context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.playernotfound", profile.getName()), true);
+            context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.playernotfound", profile.getName()), true);
             return 0;
         }
 
         colony.getPermissions().setOwner(player);
 
-        context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.ownerchange.success", profile.getName(), colony.getName()), true);
+        context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.ownerchange.success", profile.getName(), colony.getName()), true);
         return 1;
     }
 

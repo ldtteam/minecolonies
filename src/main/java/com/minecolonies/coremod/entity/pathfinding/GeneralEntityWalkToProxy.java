@@ -31,10 +31,10 @@ public class GeneralEntityWalkToProxy extends AbstractWalkToProxy
     public Set<BlockPos> getWayPoints()
     {
         final LivingEntity living = getEntity();
-        final BlockPos pos = new BlockPos(living.getPositionVec());
-        final IColony colony = IColonyManager.getInstance().getClosestColony(living.getEntityWorld(), pos);
+        final BlockPos pos = new BlockPos(living.position());
+        final IColony colony = IColonyManager.getInstance().getClosestColony(living.getCommandSenderWorld(), pos);
 
-        if (colony == null || !colony.isCoordInColony(living.getEntityWorld(), pos))
+        if (colony == null || !colony.isCoordInColony(living.getCommandSenderWorld(), pos))
         {
             return Collections.emptySet();
         }

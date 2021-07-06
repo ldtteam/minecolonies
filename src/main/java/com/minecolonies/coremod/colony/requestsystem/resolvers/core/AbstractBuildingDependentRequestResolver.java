@@ -28,7 +28,7 @@ public abstract class AbstractBuildingDependentRequestResolver<R extends IReques
     @Override
     public boolean canResolveRequest(@NotNull final IRequestManager manager, final IRequest<? extends R> requestToCheck)
     {
-        if (!manager.getColony().getWorld().isRemote)
+        if (!manager.getColony().getWorld().isClientSide)
         {
             final ILocation requesterLocation = requestToCheck.getRequester().getLocation();
             if (requesterLocation.equals(getLocation()))

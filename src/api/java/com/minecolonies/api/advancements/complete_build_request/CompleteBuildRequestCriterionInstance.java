@@ -17,7 +17,7 @@ public class CompleteBuildRequestCriterionInstance extends CriterionInstance
 
     public CompleteBuildRequestCriterionInstance()
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_COMPLETE_BUILD_REQUEST), EntityPredicate.AndPredicate.ANY_AND);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_COMPLETE_BUILD_REQUEST), EntityPredicate.AndPredicate.ANY);
     }
 
     /**

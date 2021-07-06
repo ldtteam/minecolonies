@@ -4,6 +4,8 @@ import com.minecolonies.api.creativetab.ModCreativeTabs;
 
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 
+import net.minecraft.item.Item.Properties;
+
 /**
  * Class handling Cookie Dough.
  */
@@ -16,6 +18,6 @@ public class ItemCookieDough extends AbstractItemMinecolonies
      */
     public ItemCookieDough(final Properties properties)
     {
-        super("cookie_dough", properties.maxStackSize(STACKSIZE).group(ModCreativeTabs.MINECOLONIES));
+        super("cookie_dough", properties.stacksTo(STACKSIZE).tab(ModCreativeTabs.MINECOLONIES));
     }
 }

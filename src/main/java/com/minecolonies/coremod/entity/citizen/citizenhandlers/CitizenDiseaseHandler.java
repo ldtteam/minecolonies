@@ -153,7 +153,7 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
         this.disease = "";
         if (citizen.getCitizenSleepHandler().isAsleep())
         {
-            citizen.wakeUp();
+            citizen.stopSleeping();
             final BlockPos hospitalPos = citizen.getCitizenColonyHandler().getColony().getBuildingManager().getBestBuilding(citizen, BuildingCook.class);
             final IColony colony = citizen.getCitizenColonyHandler().getColony();
             final IBuilding hospital = colony.getBuildingManager().getBuilding(hospitalPos);

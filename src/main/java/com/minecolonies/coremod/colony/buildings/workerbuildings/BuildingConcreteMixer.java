@@ -81,15 +81,15 @@ public class BuildingConcreteMixer extends AbstractBuildingWorker implements IBu
     {
         if (!blockState.getFluidState().isEmpty())
         {
-            if (blockState.getFluidState().getFluid() == Fluids.FLOWING_WATER && blockState.getFluidState().getLevel() <= WATER_DEPTH_SUPPORT)
+            if (blockState.getFluidState().getType() == Fluids.FLOWING_WATER && blockState.getFluidState().getAmount() <= WATER_DEPTH_SUPPORT)
             {
-                final List<BlockPos> fluidPos = waterPos.getOrDefault(blockState.getFluidState().getLevel(), new ArrayList<>());
+                final List<BlockPos> fluidPos = waterPos.getOrDefault(blockState.getFluidState().getAmount(), new ArrayList<>());
                 if (!fluidPos.contains(pos))
                 {
                     fluidPos.add(pos);
                 }
-                waterPos.put(blockState.getFluidState().getLevel(), fluidPos);
-                minWaterLevel = Math.min(minWaterLevel, blockState.getFluidState().getLevel());
+                waterPos.put(blockState.getFluidState().getAmount(), fluidPos);
+                minWaterLevel = Math.min(minWaterLevel, blockState.getFluidState().getAmount());
             }
         }
 

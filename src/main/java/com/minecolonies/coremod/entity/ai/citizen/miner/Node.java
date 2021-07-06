@@ -98,7 +98,7 @@ public class Node
     public static Node createFromNBT(@NotNull final CompoundNBT compound)
     {
         // for backwards compatibility check if the types are doubles
-        final boolean hasDoubles = compound.keySet().contains(TAG_X);
+        final boolean hasDoubles = compound.getAllKeys().contains(TAG_X);
 
         final int x;
         final int z;
@@ -117,7 +117,7 @@ public class Node
         final NodeStatus status = NodeStatus.valueOf(compound.getString(TAG_STATUS));
 
         Vec2i parent = null;
-        if (compound.keySet().contains(TAG_PARENTX))
+        if (compound.getAllKeys().contains(TAG_PARENTX))
         {
             if (hasDoubles)
             {
@@ -140,7 +140,7 @@ public class Node
         node.setStyle(style);
         node.setStatus(status);
 
-        if(compound.keySet().contains(TAG_ROT))
+        if(compound.getAllKeys().contains(TAG_ROT))
         {
             node.setRot(compound.getInt(TAG_ROT));
         }

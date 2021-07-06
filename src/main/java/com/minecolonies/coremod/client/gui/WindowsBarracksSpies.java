@@ -65,7 +65,7 @@ public class WindowsBarracksSpies extends Window implements ButtonHandler
         findPaneOfTypeByID(SPIES_BUTTON_ICON, ItemIcon.class).setItem(Items.GOLD_INGOT.getDefaultInstance());
         findPaneOfTypeByID(GOLD_COST_LABEL, Text.class).setText("x5");
 
-        final IItemHandler rackInv = ((TileEntityRack) buildingView.getColony().getWorld().getTileEntity(buildingPos)).getInventory();
+        final IItemHandler rackInv = ((TileEntityRack) buildingView.getColony().getWorld().getBlockEntity(buildingPos)).getInventory();
         final IItemHandler playerInv = new InvWrapper(Minecraft.getInstance().player.inventory);
         int goldCount = InventoryUtils.getItemCountInItemHandler(playerInv, Items.GOLD_INGOT);
         goldCount += InventoryUtils.getItemCountInItemHandler(rackInv, Items.GOLD_INGOT);

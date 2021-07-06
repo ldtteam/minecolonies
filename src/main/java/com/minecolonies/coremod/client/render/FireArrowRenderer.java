@@ -32,8 +32,8 @@ public class FireArrowRenderer extends ArrowRenderer<AbstractArrowEntity>
 
     @NotNull
     @Override
-    public ResourceLocation getEntityTexture(@NotNull final AbstractArrowEntity entity)
+    public ResourceLocation getTextureLocation(@NotNull final AbstractArrowEntity entity)
     {
-        return RES[entity.ticksExisted % 6];
+        return RES[entity.tickCount % 6];
     }
 }

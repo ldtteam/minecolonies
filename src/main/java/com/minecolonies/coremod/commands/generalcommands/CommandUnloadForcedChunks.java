@@ -28,12 +28,12 @@ public class CommandUnloadForcedChunks implements IMCCommand
         final Entity sender = context.getSource().getEntity();
         if (sender instanceof PlayerEntity)
         {
-            final World world = sender.world;
-            for (long chunk : ((ServerChunkProvider) sender.world.getChunkProvider()).chunkManager.immutableLoadedChunks.keySet())
+            final World world = sender.level;
+            for (long chunk : ((ServerChunkProvider) sender.level.getChunkSource()).chunkMap.visibleChunkMap.keySet())
             {
-                ((ServerWorld) world).forceChunk(ChunkPos.getX(chunk), ChunkPos.getZ(chunk), false);
+                ((ServerWorld) world).setChunkForced(ChunkPos.getX(chunk), ChunkPos.getZ(chunk), false);
             }
-            sender.sendMessage(new StringTextComponent("Successfully removed forceload flag!"), sender.getUniqueID());
+            sender.sendMessage(new StringTextComponent("Successfully removed forceload flag!"), sender.getUUID());
             return 1;
         }
         return 0;

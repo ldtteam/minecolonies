@@ -28,7 +28,7 @@ public abstract class AbstractWindowCitizen extends AbstractWindowRequestTree
      */
     public AbstractWindowCitizen(final ICitizenDataView citizen, final String ui)
     {
-        super(citizen.getWorkBuilding(), ui, IColonyManager.getInstance().getColonyView(citizen.getColonyId(), Minecraft.getInstance().world.getDimensionKey()));
+        super(citizen.getWorkBuilding(), ui, IColonyManager.getInstance().getColonyView(citizen.getColonyId(), Minecraft.getInstance().level.dimension()));
 
         registerButton("mainTab", () -> new MainWindowCitizen(citizen).open());
         registerButton("mainIcon", () -> new MainWindowCitizen(citizen).open());

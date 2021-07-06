@@ -50,7 +50,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
      */
     public ItemResourceScroll(final Item.Properties properties)
     {
-        super("resourcescroll", properties.maxStackSize(STACKSIZE).group(ModCreativeTabs.MINECOLONIES));
+        super("resourcescroll", properties.stacksTo(STACKSIZE).tab(ModCreativeTabs.MINECOLONIES));
     }
 
     /**
@@ -61,26 +61,26 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
      */
     @Override
     @NotNull
-    public ActionResultType onItemUse(ItemUseContext ctx)
+    public ActionResultType useOn(ItemUseContext ctx)
     {
-        final ItemStack scroll = ctx.getPlayer().getHeldItem(ctx.getHand());
+        final ItemStack scroll = ctx.getPlayer().getItemInHand(ctx.getHand());
 
         final CompoundNBT compound = checkForCompound(scroll);
-        TileEntity entity = ctx.getWorld().getTileEntity(ctx.getPos());
+        TileEntity entity = ctx.getLevel().getBlockEntity(ctx.getClickedPos());
 
         if (entity instanceof TileEntityColonyBuilding)
         {
             compound.putInt(TAG_COLONY_ID, ((AbstractTileEntityColonyBuilding) entity).getColonyId());
             BlockPosUtil.write(compound, TAG_BUILDER, ((AbstractTileEntityColonyBuilding) entity).getPosition());
 
-            if (!ctx.getWorld().isRemote)
+            if (!ctx.getLevel().isClientSide)
             {
                 LanguageHandler.sendPlayerMessage(ctx.getPlayer(),
                   TranslationConstants.COM_MINECOLONIES_SCROLL_BUILDER_SET,
                   ((AbstractTileEntityColonyBuilding) entity).getColony().getName());
             }
         }
-        else if (ctx.getWorld().isRemote)
+        else if (ctx.getLevel().isClientSide)
         {
             openWindow(compound, ctx.getPlayer());
         }
@@ -98,14 +98,14 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
      */
     @Override
     @NotNull
-    public ActionResult<ItemStack> onItemRightClick(
+    public ActionResult<ItemStack> use(
       final World worldIn,
       final PlayerEntity playerIn,
       final Hand hand)
     {
-        final ItemStack clipboard = playerIn.getHeldItem(hand);
+        final ItemStack clipboard = playerIn.getItemInHand(hand);
 
-        if (!worldIn.isRemote)
+        if (!worldIn.isClientSide)
         {
             return new ActionResult<>(ActionResultType.SUCCESS, clipboard);
         }
@@ -117,9 +117,9 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn)
+    public void appendHoverText(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn)
     {
-        super.addInformation(stack, worldIn, tooltip, flagIn);
+        super.appendHoverText(stack, worldIn, tooltip, flagIn);
 
         if (worldIn == null) return;
 
@@ -127,7 +127,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
         final int colonyId = compound.getInt(TAG_COLONY_ID);
         final BlockPos builderPos = BlockPosUtil.read(compound, TAG_BUILDER);
 
-        final IColonyView colonyView = IColonyManager.getInstance().getColonyView(colonyId, worldIn.getDimensionKey());
+        final IColonyView colonyView = IColonyManager.getInstance().getColonyView(colonyId, worldIn.dimension());
         if (colonyView != null)
         {
             final IBuildingView buildingView = colonyView.getBuilding(builderPos);
@@ -163,7 +163,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
      */
     private static void openWindow(CompoundNBT compound, PlayerEntity player)
     {
-        if (compound.keySet().contains(TAG_COLONY_ID) && compound.keySet().contains(TAG_BUILDER))
+        if (compound.getAllKeys().contains(TAG_COLONY_ID) && compound.getAllKeys().contains(TAG_BUILDER))
         {
             final int colonyId = compound.getInt(TAG_COLONY_ID);
             final BlockPos builderPos = BlockPosUtil.read(compound, TAG_BUILDER);
@@ -171,7 +171,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
         }
         else
         {
-            player.sendStatusMessage(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_SCROLL_NEED_BUILDER), true);
+            player.displayClientMessage(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_SCROLL_NEED_BUILDER), true);
         }
     }
 }

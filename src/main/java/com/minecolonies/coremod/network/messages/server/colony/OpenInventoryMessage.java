@@ -87,7 +87,7 @@ public class OpenInventoryMessage extends AbstractColonyServerMessage
     {
 
         inventoryType = InventoryType.values()[buf.readInt()];
-        name = buf.readString(32767);
+        name = buf.readUtf(32767);
         switch (inventoryType)
         {
             case INVENTORY_CITIZEN:
@@ -105,7 +105,7 @@ public class OpenInventoryMessage extends AbstractColonyServerMessage
     {
 
         buf.writeInt(inventoryType.ordinal());
-        buf.writeString(name);
+        buf.writeUtf(name);
         switch (inventoryType)
         {
             case INVENTORY_CITIZEN:
@@ -144,7 +144,7 @@ public class OpenInventoryMessage extends AbstractColonyServerMessage
 
     private void doCitizenInventory(final ServerPlayerEntity player)
     {
-        @Nullable final AbstractEntityCitizen citizen = (AbstractEntityCitizen) CompatibilityUtils.getWorldFromEntity(player).getEntityByID(entityID);
+        @Nullable final AbstractEntityCitizen citizen = (AbstractEntityCitizen) CompatibilityUtils.getWorldFromEntity(player).getEntity(entityID);
         if (citizen != null)
         {
             if (!StringUtils.isNullOrEmpty(name))
@@ -158,11 +158,11 @@ public class OpenInventoryMessage extends AbstractColonyServerMessage
 
     private void doHutInventory(final ServerPlayerEntity player, final IColony colony)
     {
-        final TileEntity tileEntity = BlockPosUtil.getTileEntity(player.world, tePos);
+        final TileEntity tileEntity = BlockPosUtil.getTileEntity(player.level, tePos);
 
         if(tileEntity instanceof TileEntityRack || tileEntity instanceof TileEntityGrave)
         {
-            NetworkHooks.openGui(player, (INamedContainerProvider) tileEntity, packetBuffer -> packetBuffer.writeVarInt(colony.getID()).writeBlockPos(tileEntity.getPos()));
+            NetworkHooks.openGui(player, (INamedContainerProvider) tileEntity, packetBuffer -> packetBuffer.writeVarInt(colony.getID()).writeBlockPos(tileEntity.getBlockPos()));
         }
     }
 

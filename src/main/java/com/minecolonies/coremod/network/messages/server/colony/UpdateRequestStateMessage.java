@@ -58,22 +58,22 @@ public class UpdateRequestStateMessage extends AbstractColonyServerMessage
     @Override
     public void fromBytesOverride(@NotNull final PacketBuffer buf)
     {
-        token = StandardFactoryController.getInstance().deserialize(buf.readCompoundTag());
+        token = StandardFactoryController.getInstance().deserialize(buf.readNbt());
         state = RequestState.values()[buf.readInt()];
         if (state == RequestState.OVERRULED)
         {
-            itemStack = buf.readItemStack();
+            itemStack = buf.readItem();
         }
     }
 
     @Override
     public void toBytesOverride(@NotNull final PacketBuffer buf)
     {
-        buf.writeCompoundTag(StandardFactoryController.getInstance().serialize(token));
+        buf.writeNbt(StandardFactoryController.getInstance().serialize(token));
         buf.writeInt(state.ordinal());
         if (state == RequestState.OVERRULED)
         {
-            buf.writeItemStack(itemStack);
+            buf.writeItem(itemStack);
         }
     }
 

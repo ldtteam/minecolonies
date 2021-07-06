@@ -63,9 +63,9 @@ public class ColonyViewRemoveWorkOrderMessage implements IMessage
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
-        if (Minecraft.getInstance().world != null)
+        if (Minecraft.getInstance().level != null)
         {
-            IColonyManager.getInstance().handleColonyViewRemoveWorkOrderMessage(colonyId, workOrderId, Minecraft.getInstance().world.getDimensionKey());
+            IColonyManager.getInstance().handleColonyViewRemoveWorkOrderMessage(colonyId, workOrderId, Minecraft.getInstance().level.dimension());
         }
     }
 }

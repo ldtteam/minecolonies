@@ -4,6 +4,8 @@ import com.minecolonies.api.creativetab.ModCreativeTabs;
 
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 
+import net.minecraft.item.Item.Properties;
+
 /**
  * Class handling Cake Batter.
  */
@@ -16,6 +18,6 @@ public class ItemCakeBatter extends AbstractItemMinecolonies
      */
     public ItemCakeBatter(final Properties properties)
     {
-        super("cake_batter", properties.maxStackSize(STACKSIZE).group(ModCreativeTabs.MINECOLONIES));
+        super("cake_batter", properties.stacksTo(STACKSIZE).tab(ModCreativeTabs.MINECOLONIES));
     }
 }

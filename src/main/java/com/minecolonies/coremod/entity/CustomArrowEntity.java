@@ -33,29 +33,29 @@ public class CustomArrowEntity extends ArrowEntity
     }
 
     @Override
-    protected void arrowHit(LivingEntity target)
+    protected void doPostHurtEffects(LivingEntity target)
     {
         // TODO add enderman damage hit research here. Note that this is also used by mobs, so check the shooter first.
-        super.arrowHit(target);
+        super.doPostHurtEffects(target);
     }
 
     @Override
     @NotNull
-    public IPacket<?> createSpawnPacket()
+    public IPacket<?> getAddEntityPacket()
     {
         return NetworkHooks.getEntitySpawningPacket(this);
     }
 
     @Override
-    protected void onEntityHit(EntityRayTraceResult traceResult)
+    protected void onHitEntity(EntityRayTraceResult traceResult)
     {
-        final double prevDamage = getDamage();
+        final double prevDamage = getBaseDamage();
 
         // Reduce damage by motion before vanilla increases it by the same factor, so our damage stays.
-        float f = (float) this.getMotion().length();
+        float f = (float) this.getDeltaMovement().length();
         if (f != 0)
         {
-            setDamage(prevDamage / f);
+            setBaseDamage(prevDamage / f);
         }
 
         if (armorPiercePlayer)
@@ -63,26 +63,26 @@ public class CustomArrowEntity extends ArrowEntity
             final Entity player = traceResult.getEntity();
             if (player instanceof PlayerEntity)
             {
-                Entity shooter = this.func_234616_v_();
+                Entity shooter = this.getOwner();
                 DamageSource source;
                 if (shooter == null)
                 {
-                    source = DamageSource.causeArrowDamage(this, this);
+                    source = DamageSource.arrow(this, this);
                 }
                 else
                 {
-                    source = DamageSource.causeArrowDamage(this, shooter);
+                    source = DamageSource.arrow(this, shooter);
                 }
-                source.setDamageBypassesArmor();
-                player.attackEntityFrom(source, (float) getDamage());
-                setDamage(0);
+                source.bypassArmor();
+                player.hurt(source, (float) getBaseDamage());
+                setBaseDamage(0);
             }
         }
 
-        super.onEntityHit(traceResult);
+        super.onHitEntity(traceResult);
 
         // Set the old actual damage value back
-        setDamage(prevDamage);
+        setBaseDamage(prevDamage);
     }
 
     /**
@@ -98,7 +98,7 @@ public class CustomArrowEntity extends ArrowEntity
     {
         super.tick();
 
-        if (this.timeInGround > MAX_TIME_IN_GROUND)
+        if (this.inGroundTime > MAX_TIME_IN_GROUND)
         {
             remove();
         }

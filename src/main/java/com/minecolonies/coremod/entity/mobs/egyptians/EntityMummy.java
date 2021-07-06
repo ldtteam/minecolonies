@@ -21,6 +21,6 @@ public class EntityMummy extends AbstractEntityEgyptian implements IMeleeMummyEn
     public EntityMummy(final EntityType<? extends EntityMummy> type, final World worldIn)
     {
         super(type, worldIn);
-        this.moveController = new MovementHandler(this);
+        this.moveControl = new MovementHandler(this);
     }
 }

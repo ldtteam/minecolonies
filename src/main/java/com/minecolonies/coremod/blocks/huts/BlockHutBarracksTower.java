@@ -21,7 +21,7 @@ public class BlockHutBarracksTower extends AbstractBlockHut<BlockHutBarracksTowe
 
     @NotNull
     @Override
-    public String getName()
+    public String getHutName()
     {
         return "blockhutbarrackstower";
     }

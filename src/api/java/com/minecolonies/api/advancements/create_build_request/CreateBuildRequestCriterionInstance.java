@@ -17,7 +17,7 @@ public class CreateBuildRequestCriterionInstance extends CriterionInstance
 
     public CreateBuildRequestCriterionInstance()
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CREATE_BUILD_REQUEST), EntityPredicate.AndPredicate.ANY_AND);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CREATE_BUILD_REQUEST), EntityPredicate.AndPredicate.ANY);
     }
 
     /**
@@ -26,7 +26,7 @@ public class CreateBuildRequestCriterionInstance extends CriterionInstance
      */
     public CreateBuildRequestCriterionInstance(final StructureName structureName)
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CREATE_BUILD_REQUEST), EntityPredicate.AndPredicate.ANY_AND);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CREATE_BUILD_REQUEST), EntityPredicate.AndPredicate.ANY);
 
         this.structureName = structureName;
     }
@@ -37,7 +37,7 @@ public class CreateBuildRequestCriterionInstance extends CriterionInstance
      */
     public CreateBuildRequestCriterionInstance(final String hutName)
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CREATE_BUILD_REQUEST), EntityPredicate.AndPredicate.ANY_AND);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CREATE_BUILD_REQUEST), EntityPredicate.AndPredicate.ANY);
 
         this.hutName = hutName;
     }
@@ -49,7 +49,7 @@ public class CreateBuildRequestCriterionInstance extends CriterionInstance
      */
     public CreateBuildRequestCriterionInstance(final StructureName structureName, final int level)
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CREATE_BUILD_REQUEST), EntityPredicate.AndPredicate.ANY_AND);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CREATE_BUILD_REQUEST), EntityPredicate.AndPredicate.ANY);
 
         this.structureName = structureName;
         this.level = level;
@@ -62,7 +62,7 @@ public class CreateBuildRequestCriterionInstance extends CriterionInstance
      */
     public CreateBuildRequestCriterionInstance(final String hutName, final int level)
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CREATE_BUILD_REQUEST), EntityPredicate.AndPredicate.ANY_AND);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CREATE_BUILD_REQUEST), EntityPredicate.AndPredicate.ANY);
 
         this.hutName = hutName;
         this.level = level;

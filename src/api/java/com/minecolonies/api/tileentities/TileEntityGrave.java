@@ -33,6 +33,8 @@ import java.util.Map;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
+import com.minecolonies.api.tileentities.AbstractTileEntityRack.RackInventory;
+
 /**
  * Tile entity for the graves.
  */
@@ -71,7 +73,7 @@ public class TileEntityGrave extends AbstractTileEntityGrave
     @Override
     public void updateItemStorage()
     {
-        if (world != null && !world.isRemote)
+        if (level != null && !level.isClientSide)
         {
             final boolean empty = content.isEmpty();
             updateContent();
@@ -80,7 +82,7 @@ public class TileEntityGrave extends AbstractTileEntityGrave
             {
                 updateBlockState();
             }
-            markDirty();
+            setChanged();
         }
     }
 
@@ -112,12 +114,12 @@ public class TileEntityGrave extends AbstractTileEntityGrave
     @Override
     public void updateBlockState()
     {
-        if (world != null && world.getBlockState(pos).getBlock() instanceof AbstractBlockMinecoloniesGrave)
+        if (level != null && level.getBlockState(worldPosition).getBlock() instanceof AbstractBlockMinecoloniesGrave)
         {
-            final BlockState state = world.getBlockState(pos).with(AbstractBlockMinecoloniesGrave.VARIANT, decayed ? GraveType.DECAYED : GraveType.DEFAULT);
-            if (!world.getBlockState(pos).equals(state))
+            final BlockState state = level.getBlockState(worldPosition).setValue(AbstractBlockMinecoloniesGrave.VARIANT, decayed ? GraveType.DECAYED : GraveType.DEFAULT);
+            if (!level.getBlockState(worldPosition).equals(state))
             {
-                world.setBlockState(pos, state);
+                level.setBlockAndUpdate(worldPosition, state);
             }
         }
     }
@@ -136,9 +138,9 @@ public class TileEntityGrave extends AbstractTileEntityGrave
     }
 
     @Override
-    public void read(final BlockState state, final CompoundNBT compound)
+    public void load(final BlockState state, final CompoundNBT compound)
     {
-        super.read(state, compound);
+        super.load(state, compound);
         inventory = createInventory(DEFAULT_SIZE);
 
         final ListNBT inventoryTagList = compound.getList(TAG_INVENTORY, TAG_COMPOUND);
@@ -147,7 +149,7 @@ public class TileEntityGrave extends AbstractTileEntityGrave
             final CompoundNBT inventoryCompound = inventoryTagList.getCompound(i);
             if (!inventoryCompound.contains(TAG_EMPTY))
             {
-                final ItemStack stack = ItemStack.read(inventoryCompound);
+                final ItemStack stack = ItemStack.of(inventoryCompound);
                 inventory.setStackInSlot(i, stack);
             }
         }
@@ -155,7 +157,7 @@ public class TileEntityGrave extends AbstractTileEntityGrave
         decay_timer         = compound.contains(TAG_DECAY_TIMER) ? compound.getInt(TAG_DECAY_TIMER) : DEFAULT_DECAY_TIMER;
         decayed             = compound.contains(TAG_DECAYED) ? compound.getBoolean(TAG_DECAYED) :false;
 
-        if (compound.keySet().contains(TAG_GRAVE_DATA))
+        if (compound.getAllKeys().contains(TAG_GRAVE_DATA))
         {
             graveData = new GraveData();
             graveData.read(compound.getCompound(TAG_GRAVE_DATA));
@@ -165,9 +167,9 @@ public class TileEntityGrave extends AbstractTileEntityGrave
 
     @NotNull
     @Override
-    public CompoundNBT write(final CompoundNBT compound)
+    public CompoundNBT save(final CompoundNBT compound)
     {
-        super.write(compound);
+        super.save(compound);
 
         @NotNull final ListNBT inventoryTagList = new ListNBT();
         for (int slot = 0; slot < inventory.getSlots(); slot++)
@@ -180,7 +182,7 @@ public class TileEntityGrave extends AbstractTileEntityGrave
             }
             else
             {
-                stack.write(inventoryCompound);
+                stack.save(inventoryCompound);
             }
             inventoryTagList.add(inventoryCompound);
         }
@@ -200,32 +202,32 @@ public class TileEntityGrave extends AbstractTileEntityGrave
     public SUpdateTileEntityPacket getUpdatePacket()
     {
         final CompoundNBT compound = new CompoundNBT();
-        return new SUpdateTileEntityPacket(this.pos, 0, this.write(compound));
+        return new SUpdateTileEntityPacket(this.worldPosition, 0, this.save(compound));
     }
 
     @NotNull
     @Override
     public CompoundNBT getUpdateTag()
     {
-        return this.write(new CompoundNBT());
+        return this.save(new CompoundNBT());
     }
 
     @Override
     public void onDataPacket(final NetworkManager net, final SUpdateTileEntityPacket packet)
     {
-        this.read(getBlockState(), packet.getNbtCompound());
+        this.load(getBlockState(), packet.getTag());
     }
 
     @Override
     public void handleUpdateTag(final BlockState state, final CompoundNBT tag)
     {
-        this.read(state, tag);
+        this.load(state, tag);
     }
 
     @Override
-    public void markDirty()
+    public void setChanged()
     {
-        WorldUtil.markChunkDirty(world, pos);
+        WorldUtil.markChunkDirty(level, worldPosition);
     }
 
     @Nullable
@@ -233,7 +235,7 @@ public class TileEntityGrave extends AbstractTileEntityGrave
     public Container createMenu(final int id, @NotNull final PlayerInventory inv, @NotNull final PlayerEntity player)
     {
         final PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
-        buffer.writeBlockPos(this.getPos());
+        buffer.writeBlockPos(this.getBlockPos());
 
         return new ContainerGrave(id, inv, buffer);
     }
@@ -254,7 +256,7 @@ public class TileEntityGrave extends AbstractTileEntityGrave
      **/
     public boolean onColonyTick(final double delay)
     {
-        if (this.hasWorld() && !world.isRemote && decay_timer != -1)
+        if (this.hasLevel() && !level.isClientSide && decay_timer != -1)
         {
             decay_timer -= delay;
             if (decay_timer <= 0)
@@ -267,8 +269,8 @@ public class TileEntityGrave extends AbstractTileEntityGrave
                 }
                 else
                 {
-                    InventoryUtils.dropItemHandler(inventory, world, this.pos.getX(), this.pos.getY(), this.pos.getZ());
-                    world.setBlockState(this.pos, Blocks.AIR.getDefaultState());
+                    InventoryUtils.dropItemHandler(inventory, level, this.worldPosition.getX(), this.worldPosition.getY(), this.worldPosition.getZ());
+                    level.setBlockAndUpdate(this.worldPosition, Blocks.AIR.defaultBlockState());
                     return false;
                 }
             }

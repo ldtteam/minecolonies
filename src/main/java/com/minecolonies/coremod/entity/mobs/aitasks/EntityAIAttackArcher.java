@@ -18,6 +18,8 @@ import java.util.EnumSet;
 
 import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
 
+import net.minecraft.entity.ai.goal.Goal.Flag;
+
 /**
  * Barbarian Ranged Attack AI class
  */
@@ -62,13 +64,13 @@ public class EntityAIAttackArcher extends Goal
     {
         super();
         this.entity = creatureIn;
-        this.setMutexFlags(EnumSet.of(Flag.MOVE));
+        this.setFlags(EnumSet.of(Flag.MOVE));
     }
 
     @Override
-    public boolean shouldExecute()
+    public boolean canUse()
     {
-        target = entity.getAttackTarget() != null ? entity.getAttackTarget() : entity.getAttackingEntity();
+        target = entity.getTarget() != null ? entity.getTarget() : entity.getKillCredit();
         return target != null;
     }
 
@@ -78,10 +80,10 @@ public class EntityAIAttackArcher extends Goal
      * @return Boolean value on whether or not to continue executing
      */
     @Override
-    public boolean shouldContinueExecuting()
+    public boolean canContinueToUse()
     {
-        target = entity.getAttackTarget();
-        if (target != null && target.isAlive() && entity.isAlive() && entity.canEntityBeSeen(target))
+        target = entity.getTarget();
+        if (target != null && target.isAlive() && entity.isAlive() && entity.canSee(target))
         {
             attack(target);
             return true;
@@ -93,7 +95,7 @@ public class EntityAIAttackArcher extends Goal
      * Is executed when the ai Starts Executing
      */
     @Override
-    public void startExecuting()
+    public void start()
     {
         attack(target);
     }
@@ -114,37 +116,37 @@ public class EntityAIAttackArcher extends Goal
         }
         tickTimer = 10;
 
-        if ((entity.getDistance(target) >= MAX_ATTACK_DISTANCE * Math.max(entity.getDifficulty(), 2.0d) && !EntityUtils.isFlying(target)) || !entity.canEntityBeSeen(target))
+        if ((entity.distanceTo(target) >= MAX_ATTACK_DISTANCE * Math.max(entity.getDifficulty(), 2.0d) && !EntityUtils.isFlying(target)) || !entity.canSee(target))
         {
-            entity.getNavigator().tryMoveToEntityLiving(target, ATTACK_SPEED);
+            entity.getNavigation().moveTo(target, ATTACK_SPEED);
         }
         else
         {
             // Stop walking when we're in attack range
-            if (entity.getDistance(target) < MAX_ATTACK_DISTANCE)
+            if (entity.distanceTo(target) < MAX_ATTACK_DISTANCE)
             {
-                entity.getNavigator().clearPath();
+                entity.getNavigation().stop();
             }
 
-            if (lastAttack <= 0 && entity.canEntityBeSeen(target))
+            if (lastAttack <= 0 && entity.canSee(target))
             {
-                AbstractArrowEntity arrowEntity = ModEntities.MC_NORMAL_ARROW.create(target.world);
-                arrowEntity.setShooter(entity);
+                AbstractArrowEntity arrowEntity = ModEntities.MC_NORMAL_ARROW.create(target.level);
+                arrowEntity.setOwner(entity);
 
-                final ItemStack bow = entity.getHeldItem(Hand.MAIN_HAND);
+                final ItemStack bow = entity.getItemInHand(Hand.MAIN_HAND);
                 if (bow.getItem() instanceof BowItem)
                 {
                     arrowEntity = ((BowItem) bow.getItem()).customArrow(arrowEntity);
                 }
 
-                arrowEntity.setPosition(entity.getPosX(), entity.getPosY() + 1, entity.getPosZ());
-                final double xVector = target.getPosX() - entity.getPosX();
-                final double yVector = target.getBoundingBox().minY + target.getHeight() / AIM_HEIGHT - arrowEntity.getPosY();
-                final double zVector = target.getPosZ() - entity.getPosZ();
+                arrowEntity.setPos(entity.getX(), entity.getY() + 1, entity.getZ());
+                final double xVector = target.getX() - entity.getX();
+                final double yVector = target.getBoundingBox().minY + target.getBbHeight() / AIM_HEIGHT - arrowEntity.getY();
+                final double zVector = target.getZ() - entity.getZ();
                 final double distance = MathHelper.sqrt(xVector * xVector + zVector * zVector);
                 final double dist3d = MathHelper.sqrt(yVector * yVector + xVector * xVector + zVector * zVector);
                 //Lower the variable higher the chance that the arrows hits the target.
-                arrowEntity.setDamage(entity.getAttribute(MOB_ATTACK_DAMAGE).getValue());
+                arrowEntity.setBaseDamage(entity.getAttribute(MOB_ATTACK_DAMAGE).getValue());
 
                 if (entity.getDifficulty() > ARROW_PIERCE_DIFFICULTY)
                 {
@@ -154,8 +156,8 @@ public class EntityAIAttackArcher extends Goal
                 if (EntityUtils.isFlying(target))
                 {
                     ((CustomArrowEntity) arrowEntity).setPlayerArmorPierce();
-                    arrowEntity.setFire(200);
-                    arrowEntity.setDamage(10);
+                    arrowEntity.setSecondsOnFire(200);
+                    arrowEntity.setBaseDamage(10);
                     lastAttack = 10;
                 }
                 else
@@ -164,12 +166,12 @@ public class EntityAIAttackArcher extends Goal
                 }
                 arrowEntity.shoot(xVector, yVector + distance * AIM_SLIGHTLY_HIGHER_MULTIPLIER, zVector, (float) (ARROW_SPEED * 1 + (dist3d / SPEED_FOR_DIST)), (float) HIT_CHANCE);
 
-                entity.faceEntity(target, (float) HALF_ROTATION, (float) HALF_ROTATION);
-                entity.getLookController().setLookPositionWithEntity(target, (float) HALF_ROTATION, (float) HALF_ROTATION);
+                entity.lookAt(target, (float) HALF_ROTATION, (float) HALF_ROTATION);
+                entity.getLookControl().setLookAt(target, (float) HALF_ROTATION, (float) HALF_ROTATION);
 
-                target.world.addEntity(arrowEntity);
-                entity.swingArm(Hand.MAIN_HAND);
-                entity.playSound(SoundEvents.ENTITY_SKELETON_SHOOT, (float) 1.0D, (float) getRandomPitch());
+                target.level.addFreshEntity(arrowEntity);
+                entity.swing(Hand.MAIN_HAND);
+                entity.playSound(SoundEvents.SKELETON_SHOOT, (float) 1.0D, (float) getRandomPitch());
             }
         }
         if (lastAttack > 0)
@@ -195,6 +197,6 @@ public class EntityAIAttackArcher extends Goal
      */
     private double getRandomPitch()
     {
-        return PITCH_DIVIDER / (entity.getRNG().nextDouble() * PITCH_MULTIPLIER + BASE_PITCH);
+        return PITCH_DIVIDER / (entity.getRandom().nextDouble() * PITCH_MULTIPLIER + BASE_PITCH);
     }
 }

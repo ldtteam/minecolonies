@@ -16,13 +16,13 @@ public class ServerProxy extends CommonProxy
     @Override
     public File getSchematicsFolder()
     {
-        return new File(ServerLifecycleHooks.getCurrentServer().getDataDirectory()
+        return new File(ServerLifecycleHooks.getCurrentServer().getServerDirectory()
                           + "/" + Constants.MOD_ID);
     }
 
     @Override
     public World getWorld(final RegistryKey<World> dimension)
     {
-        return ServerLifecycleHooks.getCurrentServer().getWorld(dimension);
+        return ServerLifecycleHooks.getCurrentServer().getLevel(dimension);
     }
 }

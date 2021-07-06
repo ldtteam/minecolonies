@@ -127,7 +127,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
         equipInventoryArmor();
 
         // Can only "see" the inventory and check for items if at the building
-        if (worker.getPosition().distanceSq(getOwnBuilding().getID()) > 50)
+        if (worker.blockPosition().distSqr(getOwnBuilding().getID()) > 50)
         {
             return DECIDE;
         }
@@ -159,16 +159,16 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
                 int bestLevel = -1;
                 IItemHandler bestHandler = null;
 
-                if (!ItemStackUtils.isEmpty(worker.getItemStackFromSlot(item.getType())))
+                if (!ItemStackUtils.isEmpty(worker.getItemBySlot(item.getType())))
                 {
-                    bestLevel = ItemStackUtils.getMiningLevel(worker.getItemStackFromSlot(item.getType()), item.getItemNeeded());
+                    bestLevel = ItemStackUtils.getMiningLevel(worker.getItemBySlot(item.getType()), item.getItemNeeded());
                 }
 
                 final Map<IItemHandler, List<Integer>> items = InventoryUtils.findAllSlotsInProviderWith(building, item::test);
                 if (items.isEmpty())
                 {
                     // None found, check for equipped
-                    if (ItemStackUtils.isEmpty(worker.getItemStackFromSlot(item.getType())))
+                    if (ItemStackUtils.isEmpty(worker.getItemBySlot(item.getType())))
                     {
                         // create request
                         checkForToolorWeaponASync(item.getItemNeeded(), item.getMinArmorLevel(), item.getMaxArmorLevel());
@@ -202,10 +202,10 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
                 // Transfer if needed
                 if (bestHandler != null)
                 {
-                    if (!ItemStackUtils.isEmpty(worker.getItemStackFromSlot(item.getType())))
+                    if (!ItemStackUtils.isEmpty(worker.getItemBySlot(item.getType())))
                     {
                         final int slot =
-                          InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(worker.getInventoryCitizen(), stack -> stack == worker.getItemStackFromSlot(item.getType()));
+                          InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(worker.getInventoryCitizen(), stack -> stack == worker.getItemBySlot(item.getType()));
                         if (slot > -1)
                         {
                             InventoryUtils.transferItemStackIntoNextFreeSlotInProvider(worker.getInventoryCitizen(), slot, building);
@@ -213,7 +213,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
                     }
 
                     // Used for further comparisons, set to the right inventory slot afterwards
-                    worker.setItemStackToSlot(item.getType(), bestHandler.getStackInSlot(bestSlot));
+                    worker.setItemSlot(item.getType(), bestHandler.getStackInSlot(bestSlot));
                     InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandler(bestHandler, bestSlot, worker.getInventoryCitizen());
                 }
             }
@@ -289,7 +289,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
 
                     if (slot > -1)
                     {
-                        worker.setItemStackToSlot(item.getType(), worker.getInventoryCitizen().getStackInSlot(slot));
+                        worker.setItemSlot(item.getType(), worker.getInventoryCitizen().getStackInSlot(slot));
                     }
                 }
             }
@@ -301,10 +301,10 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
      */
     public void cleanArmor()
     {
-        worker.setItemStackToSlot(EquipmentSlotType.CHEST, ItemStackUtils.EMPTY);
-        worker.setItemStackToSlot(EquipmentSlotType.FEET, ItemStackUtils.EMPTY);
-        worker.setItemStackToSlot(EquipmentSlotType.HEAD, ItemStackUtils.EMPTY);
-        worker.setItemStackToSlot(EquipmentSlotType.LEGS, ItemStackUtils.EMPTY);
-        worker.setItemStackToSlot(EquipmentSlotType.OFFHAND, ItemStackUtils.EMPTY);
+        worker.setItemSlot(EquipmentSlotType.CHEST, ItemStackUtils.EMPTY);
+        worker.setItemSlot(EquipmentSlotType.FEET, ItemStackUtils.EMPTY);
+        worker.setItemSlot(EquipmentSlotType.HEAD, ItemStackUtils.EMPTY);
+        worker.setItemSlot(EquipmentSlotType.LEGS, ItemStackUtils.EMPTY);
+        worker.setItemSlot(EquipmentSlotType.OFFHAND, ItemStackUtils.EMPTY);
     }
 }

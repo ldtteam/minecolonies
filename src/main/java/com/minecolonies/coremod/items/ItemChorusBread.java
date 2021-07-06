@@ -22,6 +22,8 @@ import java.util.List;
 
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 
+import net.minecraft.item.Item.Properties;
+
 /**
  * Chorus Bread, made by the baker. Teleports user to surface.
  */
@@ -32,9 +34,9 @@ public class ItemChorusBread extends AbstractItemMinecolonies
      * Setup the food definition
      */
     private static Food chorusBread = (new Food.Builder())
-                                        .hunger(5)
-                                        .saturation(2.0F)
-                                        .setAlwaysEdible()
+                                        .nutrition(5)
+                                        .saturationMod(2.0F)
+                                        .alwaysEat()
                                         .build(); 
 
     /**
@@ -44,31 +46,31 @@ public class ItemChorusBread extends AbstractItemMinecolonies
      */
     public ItemChorusBread(final Properties properties)
     {
-        super("chorus_bread", properties.maxStackSize(STACKSIZE).group(ModCreativeTabs.MINECOLONIES).food(chorusBread));
+        super("chorus_bread", properties.stacksTo(STACKSIZE).tab(ModCreativeTabs.MINECOLONIES).food(chorusBread));
     }
 
    /**
     * Teleport to the surface. 
     */
     @Override
-    public ItemStack onItemUseFinish(ItemStack stack, World worldIn, LivingEntity entityLiving)
+    public ItemStack finishUsingItem(ItemStack stack, World worldIn, LivingEntity entityLiving)
     {
-        if (!worldIn.isRemote && entityLiving instanceof ServerPlayerEntity && WorldUtil.isOverworldType(worldIn))
+        if (!worldIn.isClientSide && entityLiving instanceof ServerPlayerEntity && WorldUtil.isOverworldType(worldIn))
         {
             TeleportHelper.surfaceTeleport((ServerPlayerEntity)entityLiving);
         }
 
-        return super.onItemUseFinish(stack, worldIn, entityLiving);
+        return super.finishUsingItem(stack, worldIn, entityLiving);
     }
 
     @Override
-    public void addInformation(
+    public void appendHoverText(
     @NotNull final ItemStack stack, @Nullable final World worldIn, @NotNull final List<ITextComponent> tooltip, @NotNull final ITooltipFlag flagIn)
     {
         final IFormattableTextComponent guiHint = LanguageHandler.buildChatComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_CHORUS_BREAD_TOOLTIP_GUI);
-        guiHint.setStyle(Style.EMPTY.setFormatting(TextFormatting.GRAY));
+        guiHint.setStyle(Style.EMPTY.withColor(TextFormatting.GRAY));
         tooltip.add(guiHint);
 
-        super.addInformation(stack, worldIn, tooltip, flagIn);
+        super.appendHoverText(stack, worldIn, tooltip, flagIn);
     }
 }

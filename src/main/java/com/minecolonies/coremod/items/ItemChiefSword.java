@@ -16,6 +16,8 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.Constants.*;
 
+import net.minecraft.item.Item.Properties;
+
 /**
  * Class handling the Chief Sword item.
  */
@@ -31,7 +33,7 @@ public class ItemChiefSword extends SwordItem implements IChiefSwordItem
      */
     public ItemChiefSword(final Properties properties)
     {
-        super(ItemTier.DIAMOND, 3, -2.4f, properties.group(ModCreativeTabs.MINECOLONIES));
+        super(ItemTier.DIAMOND, 3, -2.4f, properties.tab(ModCreativeTabs.MINECOLONIES));
         setRegistryName(CHIEFSWORD_NAME);
     }
 
@@ -41,18 +43,18 @@ public class ItemChiefSword extends SwordItem implements IChiefSwordItem
         if (entityIn instanceof PlayerEntity && isSelected)
         {
             RaiderMobUtils.getBarbariansCloseToEntity(entityIn, GLOW_EFFECT_DISTANCE)
-              .forEach(entity -> entity.addPotionEffect(new EffectInstance(GLOW_EFFECT, GLOW_EFFECT_DURATION, GLOW_EFFECT_MULTIPLIER)));
+              .forEach(entity -> entity.addEffect(new EffectInstance(GLOW_EFFECT, GLOW_EFFECT_DURATION, GLOW_EFFECT_MULTIPLIER)));
         }
     }
 
     @Override
-    public boolean hitEntity(final ItemStack stack, final LivingEntity target, @NotNull final LivingEntity attacker)
+    public boolean hurtEnemy(final ItemStack stack, final LivingEntity target, @NotNull final LivingEntity attacker)
     {
         if (attacker instanceof PlayerEntity && target instanceof AbstractEntityBarbarian)
         {
-            target.addPotionEffect(new EffectInstance(LEVITATION_EFFECT, LEVITATION_EFFECT_DURATION, LEVITATION_EFFECT_MULTIPLIER));
+            target.addEffect(new EffectInstance(LEVITATION_EFFECT, LEVITATION_EFFECT_DURATION, LEVITATION_EFFECT_MULTIPLIER));
         }
 
-        return super.hitEntity(stack, target, attacker);
+        return super.hurtEnemy(stack, target, attacker);
     }
 }

@@ -66,8 +66,8 @@ public class TileEntityCompostedDirt extends TileEntity implements ITickableTile
     @Override
     public void tick()
     {
-        final World world = this.getWorld();
-        if (!world.isRemote && this.composted && ticker % TICKS_SECOND == 0)
+        final World world = this.getLevel();
+        if (!world.isClientSide && this.composted && ticker % TICKS_SECOND == 0)
         {
             this.updateTick(world);
         }
@@ -89,15 +89,15 @@ public class TileEntityCompostedDirt extends TileEntity implements ITickableTile
 
         if (this.composted)
         {
-            ((ServerWorld) worldIn).spawnParticle(
-              ParticleTypes.HAPPY_VILLAGER, this.getPos().getX() + 0.5,
-              this.getPos().getY() + 1, this.getPos().getZ() + 0.5,
+            ((ServerWorld) worldIn).sendParticles(
+              ParticleTypes.HAPPY_VILLAGER, this.getBlockPos().getX() + 0.5,
+              this.getBlockPos().getY() + 1, this.getBlockPos().getZ() + 0.5,
               1, 0.2, 0, 0.2, 0);
         }
 
         if (random.nextDouble() * 100 <= this.percentage)
         {
-            final BlockPos position = pos.up();
+            final BlockPos position = worldPosition.above();
             if (worldIn.getBlockState(position).getBlock() instanceof AirBlock)
             {
                 if (flower.getItem() instanceof BlockItem)
@@ -108,12 +108,12 @@ public class TileEntityCompostedDirt extends TileEntity implements ITickableTile
                     }
                     else
                     {
-                        worldIn.setBlockState(position, ((BlockItem) flower.getItem()).getBlock().getDefaultState());
+                        worldIn.setBlockAndUpdate(position, ((BlockItem) flower.getItem()).getBlock().defaultBlockState());
                     }
                 }
                 else
                 {
-                    worldIn.setBlockState(position, BlockUtils.getBlockStateFromStack(flower));
+                    worldIn.setBlockAndUpdate(position, BlockUtils.getBlockStateFromStack(flower));
                 }
             }
         }
@@ -126,9 +126,9 @@ public class TileEntityCompostedDirt extends TileEntity implements ITickableTile
     }
 
     @Override
-    public void markDirty()
+    public void setChanged()
     {
-        WorldUtil.markChunkDirty(world, pos);
+        WorldUtil.markChunkDirty(level, worldPosition);
     }
 
     /**

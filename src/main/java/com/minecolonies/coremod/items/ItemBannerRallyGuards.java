@@ -43,6 +43,8 @@ import static com.minecolonies.api.util.constant.Constants.TAG_COMPOUND;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_RALLIED_GUARDTOWERS;
 
+import net.minecraft.item.Item.Properties;
+
 /**
  * Rally Guards Banner Item class. Used to give tasks to guards.
  */
@@ -60,12 +62,12 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
      */
     public ItemBannerRallyGuards(final Properties properties)
     {
-        super("banner_rally_guards", properties.maxStackSize(1).maxDamage(0).group(ModCreativeTabs.MINECOLONIES));
+        super("banner_rally_guards", properties.stacksTo(1).durability(0).tab(ModCreativeTabs.MINECOLONIES));
     }
 
     @NotNull
     @Override
-    public ActionResultType onItemUse(final ItemUseContext context)
+    public ActionResultType useOn(final ItemUseContext context)
     {
         final PlayerEntity player = context.getPlayer();
 
@@ -74,19 +76,19 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
             return ActionResultType.FAIL;
         }
 
-        final ItemStack banner = context.getPlayer().getHeldItem(context.getHand());
+        final ItemStack banner = context.getPlayer().getItemInHand(context.getHand());
 
         final CompoundNBT compound = checkForCompound(banner);
 
-        if (isGuardBuilding(context.getWorld(), context.getPos()))
+        if (isGuardBuilding(context.getLevel(), context.getClickedPos()))
         {
-            if (context.getWorld().isRemote())
+            if (context.getLevel().isClientSide())
             {
                 return ActionResultType.SUCCESS;
             }
             else
             {
-                final IGuardBuilding building = getGuardBuilding(context.getWorld(), context.getPos());
+                final IGuardBuilding building = getGuardBuilding(context.getLevel(), context.getClickedPos());
                 if (!building.getColony().getPermissions().hasPermission(player, Action.RALLY_GUARDS))
                 {
                     LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.permission.no");
@@ -120,21 +122,21 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
 
     @NotNull
     @Override
-    public ActionResult<ItemStack> onItemRightClick(final World worldIn, final PlayerEntity playerIn, final Hand handIn)
+    public ActionResult<ItemStack> use(final World worldIn, final PlayerEntity playerIn, final Hand handIn)
     {
-        final ItemStack banner = playerIn.getHeldItem(handIn);
+        final ItemStack banner = playerIn.getItemInHand(handIn);
         handleRightClick(banner, playerIn);
-        return ActionResult.resultSuccess(banner);
+        return ActionResult.success(banner);
     }
 
     @Override
     public boolean onDroppedByPlayer(final ItemStack item, final PlayerEntity player)
     {
-        if (!player.getEntityWorld().isRemote())
+        if (!player.getCommandSenderWorld().isClientSide())
         {
             final CompoundNBT compound = checkForCompound(item);
             compound.putBoolean(TAG_IS_ACTIVE, false);
-            broadcastPlayerToRally(item, player.getEntityWorld(), null);
+            broadcastPlayerToRally(item, player.getCommandSenderWorld(), null);
         }
 
         return super.onDroppedByPlayer(item, player);
@@ -148,11 +150,11 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
      */
     private void handleRightClick(final ItemStack banner, final PlayerEntity playerIn)
     {
-        if (playerIn.isSneaking() && !playerIn.getEntityWorld().isRemote())
+        if (playerIn.isShiftKeyDown() && !playerIn.getCommandSenderWorld().isClientSide())
         {
             toggleBanner(banner, playerIn);
         }
-        else if (!playerIn.isSneaking() && playerIn.getEntityWorld().isRemote())
+        else if (!playerIn.isShiftKeyDown() && playerIn.getCommandSenderWorld().isClientSide())
         {
             if (getGuardTowerLocations(banner).isEmpty())
             {
@@ -175,7 +177,7 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
      */
     public static void toggleBanner(final ItemStack banner, final PlayerEntity playerIn)
     {
-        if (playerIn.getEntityWorld().isRemote())
+        if (playerIn.getCommandSenderWorld().isClientSide())
         {
             Log.getLogger().error("Tried to run server-side function #toggleBanner() on the client-side!");
             return;
@@ -196,13 +198,13 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
         else if (compound.getBoolean(TAG_IS_ACTIVE))
         {
             compound.putBoolean(TAG_IS_ACTIVE, false);
-            broadcastPlayerToRally(banner, playerIn.getEntityWorld(), null);
+            broadcastPlayerToRally(banner, playerIn.getCommandSenderWorld(), null);
             LanguageHandler.sendPlayerMessage(playerIn, "item.minecolonies.banner_rally_guards.deactivated");
         }
         else
         {
             compound.putBoolean(TAG_IS_ACTIVE, true);
-            final int numGuards = broadcastPlayerToRally(banner, playerIn.getEntityWorld(), playerIn);
+            final int numGuards = broadcastPlayerToRally(banner, playerIn.getCommandSenderWorld(), playerIn);
 
             if (numGuards > 0)
             {
@@ -224,7 +226,7 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
      */
     public static int broadcastPlayerToRally(final ItemStack banner, final World worldIn, @Nullable final PlayerEntity playerIn)
     {
-        if (worldIn.isRemote())
+        if (worldIn.isClientSide())
         {
             Log.getLogger().error("Tried to run server-side function #broadcastPlayerToRally() on the client-side!");
             return 0;
@@ -237,7 +239,7 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
         }
         else
         {
-            rallyTarget = new EntityLocation(playerIn.getUniqueID());
+            rallyTarget = new EntityLocation(playerIn.getUUID());
         }
 
         int numGuards = 0;
@@ -246,7 +248,7 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
             // Note: getCurrentServer().getWorld() must be used here because MineColonies.proxy.getWorld() fails on single player worlds
             // We are sure we are on the server-side in this function though, so it's fine.
             final IGuardBuilding building =
-              getGuardBuilding(ServerLifecycleHooks.getCurrentServer().getWorld(guardTowerLocation.getDimension()),
+              getGuardBuilding(ServerLifecycleHooks.getCurrentServer().getLevel(guardTowerLocation.getDimension()),
                 guardTowerLocation.getInDimensionLocation());
 
             // If the building is null, it means that guardtower has been moved/destroyed since being added.
@@ -293,9 +295,9 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
      */
     public static boolean isGuardBuilding(final World worldIn, final BlockPos position)
     {
-        if (worldIn.isRemote())
+        if (worldIn.isClientSide())
         {
-            return IColonyManager.getInstance().getBuildingView(worldIn.getDimensionKey(), position) instanceof AbstractBuildingGuards.View;
+            return IColonyManager.getInstance().getBuildingView(worldIn.dimension(), position) instanceof AbstractBuildingGuards.View;
         }
         else
         {
@@ -313,14 +315,14 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
     @Nullable
     public static AbstractBuildingGuards.View getGuardBuildingView(final World worldIn, final BlockPos position)
     {
-        if (!worldIn.isRemote())
+        if (!worldIn.isClientSide())
         {
             Log.getLogger().error("Tried to run client-side function #getGuardBuildingView() on the server-side!");
             return null;
         }
 
         return isGuardBuilding(worldIn, position)
-                 ? (AbstractBuildingGuards.View) IColonyManager.getInstance().getBuildingView(worldIn.getDimensionKey(), position)
+                 ? (AbstractBuildingGuards.View) IColonyManager.getInstance().getBuildingView(worldIn.dimension(), position)
                  : null;
     }
 
@@ -334,7 +336,7 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
     @Nullable
     public static IGuardBuilding getGuardBuilding(final World worldIn, final BlockPos position)
     {
-        if (worldIn.isRemote())
+        if (worldIn.isClientSide())
         {
             Log.getLogger().error("Tried to run server-side function #getGuardBuilding() on the client-side!");
             return null;
@@ -439,7 +441,7 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
         final CompoundNBT compound = banner.getTag();
         if (!compound.contains(TAG_RALLIED_GUARDTOWERS))
         {
-            compound.putUniqueId(TAG_ID, UUID.randomUUID());
+            compound.putUUID(TAG_ID, UUID.randomUUID());
             compound.putBoolean(TAG_IS_ACTIVE, false);
             @NotNull final ListNBT guardTowerList = new ListNBT();
             compound.put(TAG_RALLIED_GUARDTOWERS, guardTowerList);
@@ -448,22 +450,22 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
     }
 
     @Override
-    public boolean hasEffect(@NotNull final ItemStack stack)
+    public boolean isFoil(@NotNull final ItemStack stack)
     {
         final CompoundNBT compound = checkForCompound(stack);
         return compound.getBoolean(TAG_IS_ACTIVE);
     }
 
     @Override
-    public void addInformation(
+    public void appendHoverText(
       @NotNull final ItemStack stack, @Nullable final World worldIn, @NotNull final List<ITextComponent> tooltip, @NotNull final ITooltipFlag flagIn)
     {
         final IFormattableTextComponent guiHint = LanguageHandler.buildChatComponent(TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP_GUI);
-        guiHint.setStyle(Style.EMPTY.setFormatting(TextFormatting.GRAY));
+        guiHint.setStyle(Style.EMPTY.withColor(TextFormatting.GRAY));
         tooltip.add(guiHint);
 
         final IFormattableTextComponent rallyHint = LanguageHandler.buildChatComponent(TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP_RALLY);
-        rallyHint.setStyle(Style.EMPTY.setFormatting(TextFormatting.GRAY));
+        rallyHint.setStyle(Style.EMPTY.withColor(TextFormatting.GRAY));
         tooltip.add(rallyHint);
 
         final List<ILocation> guardTowerPositions = getGuardTowerLocations(stack);
@@ -471,17 +473,17 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
         if (guardTowerPositions.isEmpty())
         {
             final IFormattableTextComponent emptyTooltip = LanguageHandler.buildChatComponent(TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP_EMPTY);
-            emptyTooltip.setStyle(Style.EMPTY.setFormatting(TextFormatting.GRAY));
+            emptyTooltip.setStyle(Style.EMPTY.withColor(TextFormatting.GRAY));
             tooltip.add(emptyTooltip);
         }
         else
         {
             final IFormattableTextComponent numGuardTowers = LanguageHandler.buildChatComponent(TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP, guardTowerPositions.size());
-            numGuardTowers.setStyle(Style.EMPTY.setFormatting(TextFormatting.DARK_AQUA));
+            numGuardTowers.setStyle(Style.EMPTY.withColor(TextFormatting.DARK_AQUA));
             tooltip.add(numGuardTowers);
         }
 
 
-        super.addInformation(stack, worldIn, tooltip, flagIn);
+        super.appendHoverText(stack, worldIn, tooltip, flagIn);
     }
 }

@@ -23,8 +23,8 @@ public class CommandWhereAmI implements IMCCommand
     {
         final Entity sender = context.getSource().getEntity();
 
-        final BlockPos playerPos = new BlockPos(sender.getPositionVec());
-        final IColony colony = IColonyManager.getInstance().getClosestColony(sender.getEntityWorld(), playerPos);
+        final BlockPos playerPos = new BlockPos(sender.position());
+        final IColony colony = IColonyManager.getInstance().getClosestColony(sender.getCommandSenderWorld(), playerPos);
 
         if (colony == null)
         {
@@ -34,7 +34,7 @@ public class CommandWhereAmI implements IMCCommand
         final BlockPos center = colony.getCenter();
         final double distance = BlockPosUtil.getDistance2D(center, new BlockPos(playerPos.getX(), center.getY(), playerPos.getZ()));
 
-        if (!IColonyManager.getInstance().isCoordinateInAnyColony(sender.getEntityWorld(), playerPos))
+        if (!IColonyManager.getInstance().isCoordinateInAnyColony(sender.getCommandSenderWorld(), playerPos))
         {
             LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.whereami.colonyclose", distance);
             return 0;

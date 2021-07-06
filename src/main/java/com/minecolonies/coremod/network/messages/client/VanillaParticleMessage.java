@@ -74,7 +74,7 @@ public class VanillaParticleMessage implements IMessage
     @OnlyIn(Dist.CLIENT)
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
-        final ClientWorld world = Minecraft.getInstance().world;
+        final ClientWorld world = Minecraft.getInstance().level;
 
         spawnParticles(type, world, x, y, z);
     }

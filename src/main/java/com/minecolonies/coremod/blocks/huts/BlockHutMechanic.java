@@ -12,7 +12,7 @@ public class BlockHutMechanic extends AbstractBlockHut<BlockHutMechanic>
 {
     @NotNull
     @Override
-    public String getName()
+    public String getHutName()
     {
         return "blockhutmechanic";
     }

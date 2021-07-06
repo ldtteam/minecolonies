@@ -313,8 +313,8 @@ public class RaidManager implements IRaiderManager
 
             // No rotation till spawners are moved into schematics
             final int shipRotation = new Random().nextInt(3);
-            final String homeBiomePath = colony.getWorld().getBiome(colony.getCenter()).getCategory().getName();
-            final int rand = colony.getWorld().rand.nextInt(100);
+            final String homeBiomePath = colony.getWorld().getBiome(colony.getCenter()).getBiomeCategory().getName();
+            final int rand = colony.getWorld().random.nextInt(100);
             if ((raidType.isEmpty() && (homeBiomePath.contains(TAIGA_BIOME_ID) || rand < IGNORE_BIOME_CHANCE)
                    || raidType.equals(NorsemenRaidEvent.NORSEMEN_RAID_EVENT_TYPE_ID.getPath()))
                   && ShipBasedRaiderUtils.canSpawnShipAt(colony,
@@ -342,7 +342,7 @@ public class RaidManager implements IRaiderManager
             }
             else
             {
-                final String biomePath = colony.getWorld().getBiome(targetSpawnPoint).getCategory().getName().toLowerCase();
+                final String biomePath = colony.getWorld().getBiome(targetSpawnPoint).getBiomeCategory().getName().toLowerCase();
                 final HordeRaidEvent event;
                 if (((biomePath.contains(DESERT_BIOME_ID) || (rand > IGNORE_BIOME_CHANCE && rand < IGNORE_BIOME_CHANCE * 2))
                        && raidType.isEmpty()) || raidType.equals(EgyptianRaidEvent.EGYPTIAN_RAID_EVENT_TYPE_ID.getPath()))
@@ -411,7 +411,7 @@ public class RaidManager implements IRaiderManager
             if (WorldUtil.isEntityBlockLoaded(colony.getWorld(), building.getPosition()))
             {
                 amount++;
-                locationSum = locationSum.add(building.getPosition());
+                locationSum = locationSum.offset(building.getPosition());
             }
         }
 
@@ -425,10 +425,10 @@ public class RaidManager implements IRaiderManager
         final BlockPos calcCenter = new BlockPos(locationSum.getX() / amount, locationSum.getY() / amount, locationSum.getZ() / amount);
 
         // Get a random point on a circle around the colony,far out for the direction
-        final int degree = colony.getWorld().rand.nextInt(360);
+        final int degree = colony.getWorld().random.nextInt(360);
         int x = (int) Math.round(500 * Math.cos(Math.toRadians(degree)));
         int z = (int) Math.round(500 * Math.sin(Math.toRadians(degree)));
-        final BlockPos advanceTowards = calcCenter.add(x, 0, z);
+        final BlockPos advanceTowards = calcCenter.offset(x, 0, z);
 
         BlockPos spawnPos = null;
         final BlockPos closestBuilding = colony.getBuildingManager().getBestBuilding(advanceTowards, IBuilding.class);
@@ -452,8 +452,8 @@ public class RaidManager implements IRaiderManager
           BlockPosUtil.getFloor(spawnPos, colony.getWorld()),
           3,
           30,
-          (world, pos) -> (world.getBlockState(pos).isSolid() || world.getBlockState(pos).getMaterial().isLiquid()) && world.getBlockState(
-            pos.up()).getMaterial() == Material.AIR && world.getBlockState(pos.up(2)).getMaterial() == Material.AIR);
+          (world, pos) -> (world.getBlockState(pos).canOcclude() || world.getBlockState(pos).getMaterial().isLiquid()) && world.getBlockState(
+            pos.above()).getMaterial() == Material.AIR && world.getBlockState(pos.above(2)).getMaterial() == Material.AIR);
     }
 
     /**
@@ -490,7 +490,7 @@ public class RaidManager implements IRaiderManager
         {
             if (WorldUtil.isEntityBlockLoaded(colony.getWorld(), tempPos))
             {
-                tempPos = tempPos.add(16 * rates.x, 0, 16 * rates.z);
+                tempPos = tempPos.offset(16 * rates.x, 0, 16 * rates.z);
 
                 if (WorldUtil.isEntityBlockLoaded(colony.getWorld(), tempPos))
                 {
@@ -583,7 +583,7 @@ public class RaidManager implements IRaiderManager
     {
         return 1 + Math.min(MineColonies.getConfig().getServer().maxBarbarianSize.get(),
           (int) ((raidLevel / SPAWN_MODIFIER) * getRaidDifficultyModifier() * (1.0 + colony.getMessagePlayerEntities().size() * INCREASE_PER_PLAYER) * ((
-            colony.getWorld().rand.nextDouble() * 0.5d) + 0.75)));
+            colony.getWorld().random.nextDouble() * 0.5d) + 0.75)));
     }
 
     @Override
@@ -673,7 +673,7 @@ public class RaidManager implements IRaiderManager
             &&
             (
               raidThisNight(colony.getWorld(), colony)
-                || colony.getWorld().getBiome(colony.getCenter()).getCategory().getName().contains("desert") && colony.getWorld().isRaining()
+                || colony.getWorld().getBiome(colony.getCenter()).getBiomeCategory().getName().contains("desert") && colony.getWorld().isRaining()
             );
 
         if (MineColonies.getConfig().getServer().enableInDevelopmentFeatures.get())
@@ -722,7 +722,7 @@ public class RaidManager implements IRaiderManager
             return true;
         }
 
-        return world.rand.nextDouble() < 1.0 / (MineColonies.getConfig().getServer().averageNumberOfNightsBetweenRaids.get() - MineColonies.getConfig()
+        return world.random.nextDouble() < 1.0 / (MineColonies.getConfig().getServer().averageNumberOfNightsBetweenRaids.get() - MineColonies.getConfig()
                                                                                                                                  .getServer().minimumNumberOfNightsBetweenRaids.get());
     }
 
@@ -738,7 +738,7 @@ public class RaidManager implements IRaiderManager
             final Object[] buildingArray = buildingList.toArray();
             if (buildingArray.length != 0)
             {
-                final int rand = colony.getWorld().rand.nextInt(buildingArray.length);
+                final int rand = colony.getWorld().random.nextInt(buildingArray.length);
                 final IBuilding building = (IBuilding) buildingArray[rand];
                 lastBuilding = building.getPosition();
             }
@@ -796,7 +796,7 @@ public class RaidManager implements IRaiderManager
     @Override
     public void read(final CompoundNBT compound)
     {
-        if (compound.keySet().contains(TAG_RAIDABLE))
+        if (compound.getAllKeys().contains(TAG_RAIDABLE))
         {
             setCanHaveRaiderEvents(compound.getBoolean(TAG_RAIDABLE));
         }

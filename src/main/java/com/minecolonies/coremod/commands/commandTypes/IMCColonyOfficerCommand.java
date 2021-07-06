@@ -23,7 +23,7 @@ public interface IMCColonyOfficerCommand extends IMCCommand
     @Override
     default boolean checkPreCondition(final CommandContext<CommandSource> context)
     {
-        if (context.getSource().hasPermissionLevel(OP_PERM_LEVEL))
+        if (context.getSource().hasPermission(OP_PERM_LEVEL))
         {
             return true;
         }
@@ -37,7 +37,7 @@ public interface IMCColonyOfficerCommand extends IMCCommand
 
         // Colony
         final int colonyID = IntegerArgumentType.getInteger(context, COLONYID_ARG);
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getWorld().getDimensionKey());
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getLevel().dimension());
         if (colony == null)
         {
             LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.colonyidnotfound", colonyID);

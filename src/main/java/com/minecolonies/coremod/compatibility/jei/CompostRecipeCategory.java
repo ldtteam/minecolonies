@@ -40,7 +40,7 @@ public class CompostRecipeCategory implements IRecipeCategory<CompostRecipe>
 
     public CompostRecipeCategory(@NotNull final IGuiHelper guiHelper)
     {
-        this.title = I18n.format(ModBlocks.blockBarrel.getTranslationKey());
+        this.title = I18n.get(ModBlocks.blockBarrel.getDescriptionId());
 
         this.background = guiHelper.createBlankDrawable(80, 50);
         this.icon = guiHelper.createDrawableIngredient(new ItemStack(ModBlocks.blockBarrel));
@@ -95,7 +95,7 @@ public class CompostRecipeCategory implements IRecipeCategory<CompostRecipe>
     public void setIngredients(@NotNull final CompostRecipe recipe, @NotNull final IIngredients ingredients)
     {
         ingredients.setInputIngredients(recipe.getIngredients());
-        ingredients.setOutput(VanillaTypes.ITEM, recipe.getRecipeOutput());
+        ingredients.setOutput(VanillaTypes.ITEM, recipe.getResultItem());
     }
 
     @Override
@@ -115,9 +115,9 @@ public class CompostRecipeCategory implements IRecipeCategory<CompostRecipe>
     public void draw(@NotNull final CompostRecipe recipe, @NotNull final MatrixStack matrixStack, final double mouseX, final double mouseY)
     {
         final BarrelType type = BarrelType.byMetadata(this.timer.getValue());
-        final BlockState barrel = ModBlocks.blockBarrel.getDefaultState()
-                .with(AbstractBlockBarrel.FACING, Direction.SOUTH)
-                .with(AbstractBlockBarrel.VARIANT, type);
+        final BlockState barrel = ModBlocks.blockBarrel.defaultBlockState()
+                .setValue(AbstractBlockBarrel.FACING, Direction.SOUTH)
+                .setValue(AbstractBlockBarrel.VARIANT, type);
         RenderHelper.renderBlock(matrixStack, barrel, 40, 20, 100, -30F, 20F, 25F);
     }
 }

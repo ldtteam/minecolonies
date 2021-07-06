@@ -3,6 +3,8 @@ package com.minecolonies.coremod.blocks.schematic;
 import com.minecolonies.api.blocks.AbstractBlockMinecolonies;
 import net.minecraft.block.material.Material;
 
+import net.minecraft.block.AbstractBlock.Properties;
+
 /**
  * This block is a waypoint, which makes citizens path to it.
  */
@@ -29,7 +31,7 @@ public class BlockWaypoint extends AbstractBlockMinecolonies<BlockWaypoint>
      */
     public BlockWaypoint()
     {
-        super(Properties.create(Material.WOOD).hardnessAndResistance(BLOCK_HARDNESS, RESISTANCE).doesNotBlockMovement());
+        super(Properties.of(Material.WOOD).strength(BLOCK_HARDNESS, RESISTANCE).noCollission());
         setRegistryName(BLOCK_NAME);
     }
 }

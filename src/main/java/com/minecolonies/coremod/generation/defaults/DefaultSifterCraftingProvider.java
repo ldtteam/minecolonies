@@ -29,6 +29,8 @@ import java.util.stream.Stream;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 
+import com.minecolonies.coremod.generation.CustomRecipeProvider.CustomRecipeBuilder;
+
 public class DefaultSifterCraftingProvider implements IDataProvider
 {
     private final SifterRecipeProvider recipeProvider;
@@ -221,10 +223,10 @@ public class DefaultSifterCraftingProvider implements IDataProvider
     }
 
     @Override
-    public void act(@NotNull final DirectoryCache cache) throws IOException
+    public void run(@NotNull final DirectoryCache cache) throws IOException
     {
-        recipeProvider.act(cache);
-        lootTableProvider.act(cache);
+        recipeProvider.run(cache);
+        lootTableProvider.run(cache);
     }
 
     private static class SifterMeshDetails

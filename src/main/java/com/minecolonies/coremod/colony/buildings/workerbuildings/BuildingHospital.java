@@ -200,9 +200,9 @@ public class BuildingHospital extends AbstractBuildingFurnaceUser
         BlockPos registrationPosition = pos;
         if (blockState.getBlock() instanceof BedBlock)
         {
-            if (blockState.get(BedBlock.PART) == BedPart.FOOT)
+            if (blockState.getValue(BedBlock.PART) == BedPart.FOOT)
             {
-                registrationPosition = registrationPosition.offset(blockState.get(BedBlock.HORIZONTAL_FACING));
+                registrationPosition = registrationPosition.relative(blockState.getValue(BedBlock.FACING));
             }
 
             if (!bedMap.containsKey(registrationPosition))
@@ -281,7 +281,7 @@ public class BuildingHospital extends AbstractBuildingFurnaceUser
                     final Disease disease = IColonyManager.getInstance().getCompatibilityManager().getDisease(diseaseName);
                     for (final ItemStack cure : disease.getCure())
                     {
-                        if (cure.isItemEqual(stack))
+                        if (cure.sameItem(stack))
                         {
                             return true;
                         }
@@ -326,16 +326,16 @@ public class BuildingHospital extends AbstractBuildingFurnaceUser
     private void setBedOccupation(final BlockPos bedPos, final boolean occupied)
     {
         final BlockState state = colony.getWorld().getBlockState(bedPos);
-        if (state.getBlock().isIn(BlockTags.BEDS))
+        if (state.getBlock().is(BlockTags.BEDS))
         {
-            colony.getWorld().setBlockState(bedPos, state.with(BedBlock.OCCUPIED, occupied), 0x03);
+            colony.getWorld().setBlock(bedPos, state.setValue(BedBlock.OCCUPIED, occupied), 0x03);
 
-            final BlockPos feetPos = bedPos.offset(state.get(BedBlock.HORIZONTAL_FACING).getOpposite());
+            final BlockPos feetPos = bedPos.relative(state.getValue(BedBlock.FACING).getOpposite());
             final BlockState feetState = colony.getWorld().getBlockState(feetPos);
 
-            if (feetState.getBlock().isIn(BlockTags.BEDS))
+            if (feetState.getBlock().is(BlockTags.BEDS))
             {
-                colony.getWorld().setBlockState(feetPos, feetState.with(BedBlock.OCCUPIED, occupied), 0x03);
+                colony.getWorld().setBlock(feetPos, feetState.setValue(BedBlock.OCCUPIED, occupied), 0x03);
             }
         }
     }
@@ -348,7 +348,7 @@ public class BuildingHospital extends AbstractBuildingFurnaceUser
             final BlockState state = colony.getWorld().getBlockState(entry.getKey());
             if (state.getBlock() instanceof BedBlock)
             {
-                if (entry.getValue() == 0 && state.get(BedBlock.OCCUPIED))
+                if (entry.getValue() == 0 && state.getValue(BedBlock.OCCUPIED))
                 {
                     setBedOccupation(entry.getKey(), false);
                 }
@@ -357,10 +357,10 @@ public class BuildingHospital extends AbstractBuildingFurnaceUser
                     final ICitizenData citizen = colony.getCitizenManager().getCivilian(entry.getValue());
                     if (citizen != null)
                     {
-                        if (state.get(BedBlock.OCCUPIED))
+                        if (state.getValue(BedBlock.OCCUPIED))
                         {
                             if (!citizen.isAsleep() || !citizen.getEntity().isPresent()
-                                  || citizen.getEntity().get().getPosition().distanceSq(entry.getKey()) > 2.0)
+                                  || citizen.getEntity().get().blockPosition().distSqr(entry.getKey()) > 2.0)
                             {
                                 setBedOccupation(entry.getKey(), false);
                                 bedMap.put(entry.getKey(), 0);
@@ -368,7 +368,7 @@ public class BuildingHospital extends AbstractBuildingFurnaceUser
                         }
                         else
                         {
-                            if (citizen.isAsleep() && citizen.getEntity().isPresent() && citizen.getEntity().get().getPosition().distanceSq(entry.getKey()) < 2.0)
+                            if (citizen.isAsleep() && citizen.getEntity().isPresent() && citizen.getEntity().get().blockPosition().distSqr(entry.getKey()) < 2.0)
                             {
                                 setBedOccupation(entry.getKey(), true);
                             }
@@ -394,7 +394,7 @@ public class BuildingHospital extends AbstractBuildingFurnaceUser
         {
             for (final ItemStack cure : disease.getCure())
             {
-                if (cure.isItemEqual(stack))
+                if (cure.sameItem(stack))
                 {
                     return false;
                 }

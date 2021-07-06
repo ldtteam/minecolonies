@@ -104,7 +104,7 @@ public class Tag implements IDeliverable
     @Override
     public boolean matches(@NotNull final ItemStack stack)
     {
-        return stack.getItem().isIn(theTag);
+        return stack.getItem().is(theTag);
     }
 
     /**
@@ -191,7 +191,7 @@ public class Tag implements IDeliverable
     @Override
     public int hashCode()
     {
-        int result1 = ItemTags.getCollection().getValidatedIdFromTag(getTag()).toString().hashCode();
+        int result1 = ItemTags.getAllTags().getIdOrThrow(getTag()).toString().hashCode();
         result1 = 31 * result1 + getResult().hashCode();
         return result1;
     }
@@ -206,7 +206,7 @@ public class Tag implements IDeliverable
     public static CompoundNBT serialize(final IFactoryController controller, final Tag input)
     {
         final CompoundNBT compound = new CompoundNBT();
-        compound.putString(NBT_TAG, ItemTags.getCollection().getValidatedIdFromTag(input.getTag()).toString());
+        compound.putString(NBT_TAG, ItemTags.getAllTags().getIdOrThrow(input.getTag()).toString());
         if (!ItemStackUtils.isEmpty(input.getResult()))
         {
             compound.put(NBT_RESULT, input.getResult().serializeNBT());
@@ -218,12 +218,12 @@ public class Tag implements IDeliverable
 
     public static void serialize(final IFactoryController controller, final PacketBuffer buffer, final Tag input)
     {
-        buffer.writeString(ItemTags.getCollection().getValidatedIdFromTag(input.getTag()).toString());
+        buffer.writeUtf(ItemTags.getAllTags().getIdOrThrow(input.getTag()).toString());
         buffer.writeBoolean(!ItemStackUtils.isEmpty(input.getResult()));
 
         if (!ItemStackUtils.isEmpty(input.getResult()))
         {
-            buffer.writeItemStack(input.getResult());
+            buffer.writeItem(input.getResult());
         }
         buffer.writeInt(input.getCount());
         buffer.writeInt(input.getMinimumCount());
@@ -231,8 +231,8 @@ public class Tag implements IDeliverable
 
     public static Tag deserialize(final IFactoryController controller, final PacketBuffer buffer)
     {
-        final ITag<Item> theTag = ItemTags.getCollection().get(ResourceLocation.tryCreate(buffer.readString(32767)));
-        final ItemStack result = buffer.readBoolean() ? buffer.readItemStack() : ItemStack.EMPTY;
+        final ITag<Item> theTag = ItemTags.getAllTags().getTag(ResourceLocation.tryParse(buffer.readUtf(32767)));
+        final ItemStack result = buffer.readBoolean() ? buffer.readItem() : ItemStack.EMPTY;
         final int count = buffer.readInt();
         final int minCount = buffer.readInt();
 
@@ -248,12 +248,12 @@ public class Tag implements IDeliverable
      */
     public static Tag deserialize(final IFactoryController controller, final CompoundNBT compound)
     {
-        final ITag<Item> theTag = ItemTags.makeWrapperTag(compound.getString(NBT_TAG));
-        final ItemStack result = compound.keySet().contains(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_RESULT)) : ItemStackUtils.EMPTY;
+        final ITag<Item> theTag = ItemTags.bind(compound.getString(NBT_TAG));
+        final ItemStack result = compound.getAllKeys().contains(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_RESULT)) : ItemStackUtils.EMPTY;
 
         int count = compound.getInt("size");
         int minCount = count;
-        if (compound.keySet().contains(NBT_COUNT))
+        if (compound.getAllKeys().contains(NBT_COUNT))
         {
             count = compound.getInt(NBT_COUNT);
             minCount = compound.getInt(NBT_MINCOUNT);

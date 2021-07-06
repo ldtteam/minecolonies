@@ -299,7 +299,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     private IWareHouse getAndCheckWareHouse()
     {
         final List<IWareHouse> wareHouses = new ArrayList<>(job.getColony().getBuildingManager().getWareHouses());
-        wareHouses.sort((wh1, wh2) -> (int) (wh1.getPosition().distanceSq(getOwnBuilding().getPosition()) - wh2.getPosition().distanceSq(getOwnBuilding().getPosition())));
+        wareHouses.sort((wh1, wh2) -> (int) (wh1.getPosition().distSqr(getOwnBuilding().getPosition()) - wh2.getPosition().distSqr(getOwnBuilding().getPosition())));
         for (final IWareHouse wareHouse : wareHouses)
         {
            wareHouse.unregisterFromWareHouse(this.getOwnBuilding());
@@ -347,7 +347,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return DELIVERY;
         }
 
-        final TileEntity tileEntity = world.getTileEntity(targetBuildingLocation.getInDimensionLocation());
+        final TileEntity tileEntity = world.getBlockEntity(targetBuildingLocation.getInDimensionLocation());
 
         if (!(tileEntity instanceof TileEntityColonyBuilding))
         {
@@ -397,7 +397,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             {
                 // A stack was replaced (meaning the inventory didn't have enough space).
 
-                if (ItemStack.areItemStacksEqual(insertionResultStack, stack) && worker.getCitizenData() != null)
+                if (ItemStack.matches(insertionResultStack, stack) && worker.getCitizenData() != null)
                 {
                     // The replaced stack is the same as the one we tried to put into the inventory.
                     // Meaning, replacing failed.
@@ -511,19 +511,19 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return PREPARE_DELIVERY;
         }
 
-        final TileEntity tileEntity = world.getTileEntity(location.getInDimensionLocation());
+        final TileEntity tileEntity = world.getBlockEntity(location.getInDimensionLocation());
         if (tileEntity instanceof ChestTileEntity && !(tileEntity instanceof TileEntityColonyBuilding))
         {
-            if (((ChestTileEntity) tileEntity).numPlayersUsing == 0)
+            if (((ChestTileEntity) tileEntity).openCount == 0)
             {
-                this.world.addBlockEvent(tileEntity.getPos(), tileEntity.getBlockState().getBlock(), 1, 1);
-                this.world.notifyNeighborsOfStateChange(tileEntity.getPos(), tileEntity.getBlockState().getBlock());
-                this.world.notifyNeighborsOfStateChange(tileEntity.getPos().down(), tileEntity.getBlockState().getBlock());
+                this.world.blockEvent(tileEntity.getBlockPos(), tileEntity.getBlockState().getBlock(), 1, 1);
+                this.world.updateNeighborsAt(tileEntity.getBlockPos(), tileEntity.getBlockState().getBlock());
+                this.world.updateNeighborsAt(tileEntity.getBlockPos().below(), tileEntity.getBlockState().getBlock());
                 return PREPARE_DELIVERY;
             }
-            this.world.addBlockEvent(tileEntity.getPos(), tileEntity.getBlockState().getBlock(), 1, 0);
-            this.world.notifyNeighborsOfStateChange(tileEntity.getPos(), tileEntity.getBlockState().getBlock());
-            this.world.notifyNeighborsOfStateChange(tileEntity.getPos().down(), tileEntity.getBlockState().getBlock());
+            this.world.blockEvent(tileEntity.getBlockPos(), tileEntity.getBlockState().getBlock(), 1, 0);
+            this.world.updateNeighborsAt(tileEntity.getBlockPos(), tileEntity.getBlockState().getBlock());
+            this.world.updateNeighborsAt(tileEntity.getBlockPos().below(), tileEntity.getBlockState().getBlock());
         }
 
         job.addConcurrentDelivery(nextPickUp.getId());

@@ -56,14 +56,14 @@ public class CrafterRecipeListener extends JsonReloadListener
             {
                 final JsonObject recipeJson = entry.getValue().getAsJsonObject();
 
-                switch (JSONUtils.getString(recipeJson, RECIPE_TYPE_PROP, ""))
+                switch (JSONUtils.getAsString(recipeJson, RECIPE_TYPE_PROP, ""))
                 {
                     case RECIPE_TYPE_RECIPE:
                     case RECIPE_TYPE_RECIPE_MULT_OUT:
                         recipeManager.addRecipe(CustomRecipe.parse(key, recipeJson));
                         break;
                     case RECIPE_TYPE_REMOVE:
-                        final ResourceLocation toRemove = new ResourceLocation(JSONUtils.getString(recipeJson, RECIPE_ID_TO_REMOVE_PROP, ""));
+                        final ResourceLocation toRemove = new ResourceLocation(JSONUtils.getAsString(recipeJson, RECIPE_ID_TO_REMOVE_PROP, ""));
                         recipeManager.removeRecipe(toRemove);
                         break;
                 }
@@ -74,7 +74,7 @@ public class CrafterRecipeListener extends JsonReloadListener
             }
         }
 
-        recipeManager.buildLootData(dataPackRegistries.getLootTableManager());
+        recipeManager.buildLootData(dataPackRegistries.getLootTables());
 
         final int totalRecipes = recipeManager.getAllRecipes().values().stream().mapToInt(Map::size).sum();
         Log.getLogger().info("Loaded " + totalRecipes + " recipes for " + recipeManager.getAllRecipes().size() + " crafters");

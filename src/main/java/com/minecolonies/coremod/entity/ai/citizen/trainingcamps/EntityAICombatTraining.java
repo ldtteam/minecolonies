@@ -144,7 +144,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
             return COMBAT_TRAINING;
         }
 
-        if (BlockPosUtil.getDistance2D(worker.getPosition(), trainingPartner.getPosition()) > MIN_DISTANCE_TO_TRAIN && walkToBlock(trainingPartner.getPosition()))
+        if (BlockPosUtil.getDistance2D(worker.blockPosition(), trainingPartner.blockPosition()) > MIN_DISTANCE_TO_TRAIN && walkToBlock(trainingPartner.blockPosition()))
         {
             return KNIGHT_TRAIN_WITH_PARTNER;
         }
@@ -164,9 +164,9 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
             return START_WORKING;
         }
 
-        if (BlockPosUtil.getDistance2D(worker.getPosition(), trainingPartner.getPosition()) > MIN_DISTANCE_TO_TRAIN)
+        if (BlockPosUtil.getDistance2D(worker.blockPosition(), trainingPartner.blockPosition()) > MIN_DISTANCE_TO_TRAIN)
         {
-            currentPathingTarget = trainingPartner.getPosition();
+            currentPathingTarget = trainingPartner.blockPosition();
             stateAfterPathing = KNIGHT_TRAIN_WITH_PARTNER;
             return GO_TO_TARGET;
         }
@@ -175,29 +175,29 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
         {
             worker.getCitizenExperienceHandler().addExperience(XP_BASE_RATE);
             worker.decreaseSaturationForAction();
-            worker.faceEntity(trainingPartner, (float) TURN_AROUND, (float) TURN_AROUND);
-            WorkerUtil.faceBlock(trainingPartner.getPosition().up(), worker);
-            worker.resetActiveHand();
+            worker.lookAt(trainingPartner, (float) TURN_AROUND, (float) TURN_AROUND);
+            WorkerUtil.faceBlock(trainingPartner.blockPosition().above(), worker);
+            worker.stopUsingItem();
 
             if (worker.getRandom().nextBoolean())
             {
                 final int shieldSlot = InventoryUtils.findFirstSlotInItemHandlerWith(getInventory(), Items.SHIELD);
                 if (shieldSlot != -1)
                 {
-                    worker.playSound(SoundEvents.ITEM_SHIELD_BLOCK, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
+                    worker.playSound(SoundEvents.SHIELD_BLOCK, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
                     worker.getCitizenItemHandler().setHeldItem(Hand.OFF_HAND, shieldSlot);
-                    worker.setActiveHand(Hand.OFF_HAND);
-                    worker.getLookController().setLookPositionWithEntity(trainingPartner, (float) TURN_AROUND, (float) TURN_AROUND);
+                    worker.startUsingItem(Hand.OFF_HAND);
+                    worker.getLookControl().setLookAt(trainingPartner, (float) TURN_AROUND, (float) TURN_AROUND);
                 }
             }
             else
             {
-                worker.swingArm(Hand.MAIN_HAND);
-                worker.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
-                trainingPartner.attackEntityFrom(new NamedDamageSource(worker.getName().getString(), worker), 0.0F);
+                worker.swing(Hand.MAIN_HAND);
+                worker.playSound(SoundEvents.PLAYER_ATTACK_SWEEP, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
+                trainingPartner.hurt(new NamedDamageSource(worker.getName().getString(), worker), 0.0F);
                 worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, 1);
             }
-            worker.getNavigator().moveAwayFromXYZ(trainingPartner.getPosition(), 4.0, 1.0);
+            worker.getNavigation().moveAwayFromXYZ(trainingPartner.blockPosition(), 4.0, 1.0);
             targetCounter++;
 
             if (targetCounter > getOwnBuilding().getBuildingLevel() * ACTIONS_PER_BUILDING_LEVEL)
@@ -227,7 +227,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
         final BuildingCombatAcademy academy = getOwnBuilding();
         if (targetCounter >= academy.getBuildingLevel() * ACTIONS_PER_BUILDING_LEVEL)
         {
-            worker.resetActiveHand();
+            worker.stopUsingItem();
             targetCounter = 0;
             return DECIDE;
         }
@@ -240,7 +240,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
         final BlockPos targetPos = academy.getRandomCombatTarget(worker.getRandom());
         if (targetPos == null)
         {
-            worker.resetActiveHand();
+            worker.stopUsingItem();
             return DECIDE;
         }
 
@@ -269,7 +269,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
             worker.getCitizenExperienceHandler().addExperience(XP_BASE_RATE);
             worker.decreaseSaturationForAction();
             WorkerUtil.faceBlock(currentCombatTarget, worker);
-            worker.resetActiveHand();
+            worker.stopUsingItem();
 
             if (worker.getRandom().nextBoolean())
             {
@@ -277,15 +277,15 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
                   Items.SHIELD);
                 if (shieldSlot != -1)
                 {
-                    worker.playSound(SoundEvents.ITEM_SHIELD_BLOCK, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
+                    worker.playSound(SoundEvents.SHIELD_BLOCK, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
                     worker.getCitizenItemHandler().setHeldItem(Hand.OFF_HAND, shieldSlot);
-                    worker.setActiveHand(Hand.OFF_HAND);
+                    worker.startUsingItem(Hand.OFF_HAND);
                 }
             }
             else
             {
-                worker.swingArm(Hand.MAIN_HAND);
-                worker.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
+                worker.swing(Hand.MAIN_HAND);
+                worker.playSound(SoundEvents.PLAYER_ATTACK_SWEEP, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
                 worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, 1);
             }
 

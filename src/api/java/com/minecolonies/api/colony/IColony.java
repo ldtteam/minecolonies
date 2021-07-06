@@ -120,7 +120,7 @@ public interface IColony
      */
     default String getTeamName()
     {
-        final String dim = getDimension().getLocation().getPath();
+        final String dim = getDimension().location().getPath();
         return TEAM_COLONY_NAME + "_" + (dim.length() > 10 ? dim.hashCode() : dim) + "_" + getID();
     }
 

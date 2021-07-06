@@ -63,7 +63,7 @@ public class ContainerBuildingInventory extends Container
     {
         super(ModContainers.buildingInv, windowId);
 
-        tileEntityColonyBuilding = (TileEntityColonyBuilding) inv.player.world.getTileEntity(pos);
+        tileEntityColonyBuilding = (TileEntityColonyBuilding) inv.player.level.getBlockEntity(pos);
         this.buildingInventory = tileEntityColonyBuilding.getInventory();
         final int size = buildingInventory.getSlots();
         this.inventorySize = size / INVENTORY_COLUMNS;
@@ -84,12 +84,12 @@ public class ContainerBuildingInventory extends Container
                         PLAYER_INVENTORY_OFFSET_EACH + j * PLAYER_INVENTORY_OFFSET_EACH)
                       {
                           @Override
-                          public void putStack(final ItemStack stack)
+                          public void set(final ItemStack stack)
                           {
-                              super.putStack(stack);
-                              if (!inv.player.world.isRemote && !ItemStackUtils.isEmpty(stack))
+                              super.set(stack);
+                              if (!inv.player.level.isClientSide && !ItemStackUtils.isEmpty(stack))
                               {
-                                  final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, inv.player.world);
+                                  final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, inv.player.level);
                                   final IBuilding building = colony.getBuildingManager().getBuilding(pos);
                                   if (building != null)
                                   {
@@ -138,38 +138,38 @@ public class ContainerBuildingInventory extends Container
      * @param index    Index of the {@link Slot}. This index is relative to the list of slots in this {@code Container}, {@link #inventorySlots}.
      */
     @Override
-    public ItemStack transferStackInSlot(final PlayerEntity playerIn, final int index)
+    public ItemStack quickMoveStack(final PlayerEntity playerIn, final int index)
     {
-        final Slot slot = this.inventorySlots.get(index);
+        final Slot slot = this.slots.get(index);
 
-        if (slot == null || !slot.getHasStack())
+        if (slot == null || !slot.hasItem())
         {
             return ItemStackUtils.EMPTY;
         }
 
-        final ItemStack stackCopy = slot.getStack().copy();
+        final ItemStack stackCopy = slot.getItem().copy();
 
         final int maxIndex = this.inventorySize * INVENTORY_COLUMNS;
 
         if (index < maxIndex)
         {
-            if (!this.mergeItemStack(stackCopy, maxIndex, this.inventorySlots.size(), true))
+            if (!this.moveItemStackTo(stackCopy, maxIndex, this.slots.size(), true))
             {
                 return ItemStackUtils.EMPTY;
             }
         }
-        else if (!this.mergeItemStack(stackCopy, 0, maxIndex, false))
+        else if (!this.moveItemStackTo(stackCopy, 0, maxIndex, false))
         {
             return ItemStackUtils.EMPTY;
         }
 
         if (ItemStackUtils.getSize(stackCopy) == 0)
         {
-            slot.putStack(ItemStackUtils.EMPTY);
+            slot.set(ItemStackUtils.EMPTY);
         }
         else
         {
-            slot.putStack(stackCopy);
+            slot.set(stackCopy);
         }
 
         return stackCopy;
@@ -179,16 +179,16 @@ public class ContainerBuildingInventory extends Container
      * Called when the container is closed.
      */
     @Override
-    public void onContainerClosed(final PlayerEntity playerIn)
+    public void removed(final PlayerEntity playerIn)
     {
-        super.onContainerClosed(playerIn);
+        super.removed(playerIn);
     }
 
     /**
      * Determines whether supplied player can use this container
      */
     @Override
-    public boolean canInteractWith(@NotNull final PlayerEntity playerIn)
+    public boolean stillValid(@NotNull final PlayerEntity playerIn)
     {
         return this.tileEntityColonyBuilding.isUsableByPlayer(playerIn);
     }

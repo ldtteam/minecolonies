@@ -87,20 +87,20 @@ public class CompostRecipe implements IRecipe<IInventory>
 
     @NotNull
     @Override
-    public ItemStack getCraftingResult(final IInventory inv)
+    public ItemStack assemble(final IInventory inv)
     {
         return this.output.copy();
     }
 
     @Override
-    public boolean canFit(final int width, final int height)
+    public boolean canCraftInDimensions(final int width, final int height)
     {
         return true;
     }
 
     @NotNull
     @Override
-    public ItemStack getRecipeOutput()
+    public ItemStack getResultItem()
     {
         return this.output;
     }
@@ -137,7 +137,7 @@ public class CompostRecipe implements IRecipe<IInventory>
     @NotNull
     public static CompostRecipe individualize(@NotNull final Item item, @NotNull final CompostRecipe recipe)
     {
-        return new CompostRecipe(recipe.getId(), Ingredient.fromItems(item), recipe.getStrength());
+        return new CompostRecipe(recipe.getId(), Ingredient.of(item), recipe.getStrength());
     }
 
     public static class Serializer extends ForgeRegistryEntry<IRecipeSerializer<?>>
@@ -151,28 +151,28 @@ public class CompostRecipe implements IRecipe<IInventory>
 
         @NotNull
         @Override
-        public CompostRecipe read(@NotNull final ResourceLocation recipeId, @NotNull final JsonObject json)
+        public CompostRecipe fromJson(@NotNull final ResourceLocation recipeId, @NotNull final JsonObject json)
         {
-            final Ingredient ingredient = Ingredient.deserialize(json.get("input"));
-            final int strength = JSONUtils.getInt(json, "strength", 1);
+            final Ingredient ingredient = Ingredient.fromJson(json.get("input"));
+            final int strength = JSONUtils.getAsInt(json, "strength", 1);
 
             return new CompostRecipe(recipeId, ingredient, strength);
         }
 
         @Nullable
         @Override
-        public CompostRecipe read(@NotNull final ResourceLocation recipeId, @NotNull final PacketBuffer buffer)
+        public CompostRecipe fromNetwork(@NotNull final ResourceLocation recipeId, @NotNull final PacketBuffer buffer)
         {
-            final Ingredient ingredient = Ingredient.read(buffer);
+            final Ingredient ingredient = Ingredient.fromNetwork(buffer);
             final int strength = buffer.readVarInt();
 
             return new CompostRecipe(recipeId, ingredient, strength);
         }
 
         @Override
-        public void write(@NotNull final PacketBuffer buffer, @NotNull final CompostRecipe recipe)
+        public void toNetwork(@NotNull final PacketBuffer buffer, @NotNull final CompostRecipe recipe)
         {
-            recipe.getInput().write(buffer);
+            recipe.getInput().toNetwork(buffer);
             buffer.writeVarInt(recipe.getStrength());
         }
     }

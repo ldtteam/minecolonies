@@ -43,13 +43,13 @@ public class RemoveMinimumStockFromBuildingModuleMessage extends AbstractBuildin
     @Override
     public void fromBytesOverride(@NotNull final PacketBuffer buf)
     {
-        itemStack = buf.readItemStack();
+        itemStack = buf.readItem();
     }
 
     @Override
     public void toBytesOverride(@NotNull final PacketBuffer buf)
     {
-        buf.writeItemStack(itemStack);
+        buf.writeItem(itemStack);
     }
 
     @Override

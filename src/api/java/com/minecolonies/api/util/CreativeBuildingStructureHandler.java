@@ -77,7 +77,7 @@ public final class CreativeBuildingStructureHandler extends CreativeStructureHan
         final CompoundNBT teData = getBluePrint().getTileEntityData(worldPos, pos);
         if (teData != null && teData.contains(TAG_BLUEPRINTDATA))
         {
-            ((IBlueprintDataProvider) getWorld().getTileEntity(worldPos)).readSchematicDataFromNBT(teData);
+            ((IBlueprintDataProvider) getWorld().getBlockEntity(worldPos)).readSchematicDataFromNBT(teData);
         }
 
         if (building != null)
@@ -111,7 +111,7 @@ public final class CreativeBuildingStructureHandler extends CreativeStructureHan
     {
         return itemStack == null
                  || itemStack.isEmpty()
-                 || itemStack.getItem().isIn(ItemTags.LEAVES)
+                 || itemStack.getItem().is(ItemTags.LEAVES)
                  || itemStack.getItem() == new ItemStack(ModBlocks.blockDecorationPlaceholder, 1).getItem();
     }
 

@@ -4,6 +4,8 @@ import com.minecolonies.api.blocks.AbstractBlockHut;
 
 import net.minecraft.item.BlockItem;
 
+import net.minecraft.item.Item.Properties;
+
 /**
  * A custom item class for hut blocks.
  */

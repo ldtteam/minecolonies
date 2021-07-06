@@ -25,6 +25,8 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.block.AbstractBlock.Properties;
+
 /**
  * Creates a decoration controller block.
  */
@@ -53,25 +55,25 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
     /**
      * The bounding boxes.
      */
-    protected static final VoxelShape AABB_SOUTH = VoxelShapes.create(0.25D, 0.314D, 0.97D, 0.75D, 0.86D, 1.0D);
-    protected static final VoxelShape AABB_NORTH = VoxelShapes.create(0.25D, 0.314D, 0.0D, 0.75D, 0.86D, 0.3D);
-    protected static final VoxelShape AABB_EAST  = VoxelShapes.create(0.97D, 0.314D, 0.25D, 1.0D, 0.86D, 0.75D);
-    protected static final VoxelShape AABB_WEST  = VoxelShapes.create(0.0D, 0.314D, 0.25D, 0.3D, 0.86D, 0.75D);
+    protected static final VoxelShape AABB_SOUTH = VoxelShapes.box(0.25D, 0.314D, 0.97D, 0.75D, 0.86D, 1.0D);
+    protected static final VoxelShape AABB_NORTH = VoxelShapes.box(0.25D, 0.314D, 0.0D, 0.75D, 0.86D, 0.3D);
+    protected static final VoxelShape AABB_EAST  = VoxelShapes.box(0.97D, 0.314D, 0.25D, 1.0D, 0.86D, 0.75D);
+    protected static final VoxelShape AABB_WEST  = VoxelShapes.box(0.0D, 0.314D, 0.25D, 0.3D, 0.86D, 0.75D);
 
     /**
      * Constructor for the deco controller.
      */
     public BlockDecorationController()
     {
-        super(Properties.create(Material.WOOD).hardnessAndResistance(BLOCK_HARDNESS, RESISTANCE).doesNotBlockMovement());
-        this.setDefaultState(this.getDefaultState().with(HORIZONTAL_FACING, Direction.NORTH).with(MIRROR, false));
+        super(Properties.of(Material.WOOD).strength(BLOCK_HARDNESS, RESISTANCE).noCollission());
+        this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH).setValue(MIRROR, false));
         setRegistryName(BLOCK_NAME);
     }
 
     @Override
     public VoxelShape getShape(final BlockState state, final IBlockReader worldIn, final BlockPos pos, final ISelectionContext context)
     {
-        Direction Direction = state.get(HORIZONTAL_FACING);
+        Direction Direction = state.getValue(FACING);
         switch (Direction)
         {
             case EAST:
@@ -87,7 +89,7 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
     }
 
     @Override
-    public ActionResultType onBlockActivated(
+    public ActionResultType use(
       final BlockState state,
       final World worldIn,
       final BlockPos pos,
@@ -95,9 +97,9 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
       final Hand hand,
       final BlockRayTraceResult ray)
     {
-        if (worldIn.isRemote)
+        if (worldIn.isClientSide)
         {
-            final TileEntity tileEntity = worldIn.getTileEntity(pos);
+            final TileEntity tileEntity = worldIn.getBlockEntity(pos);
             if (tileEntity instanceof TileEntityDecorationController)
             {
                 MineColonies.proxy.openDecorationControllerWindow(pos);
@@ -113,9 +115,9 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
     }
 
     @Override
-    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder)
+    protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder)
     {
-        builder.add(HORIZONTAL_FACING, MIRROR);
+        builder.add(FACING, MIRROR);
     }
 
     @Nullable
@@ -129,7 +131,7 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
     @Override
     public BlockState getStateForPlacement(final BlockItemUseContext context)
     {
-        return super.getStateForPlacement(context).with(HORIZONTAL_FACING, context.getPlacementHorizontalFacing());
+        return super.getStateForPlacement(context).setValue(FACING, context.getHorizontalDirection());
     }
 
     /**
@@ -139,13 +141,13 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
     @Override
     public BlockState rotate(@NotNull BlockState state, Rotation rot)
     {
-        return state.with(HORIZONTAL_FACING, rot.rotate(state.get(HORIZONTAL_FACING)));
+        return state.setValue(FACING, rot.rotate(state.getValue(FACING)));
     }
 
     @NotNull
     @Override
     public BlockState mirror(@NotNull BlockState state, Mirror mirrorIn)
     {
-        return state.with(MIRROR, mirrorIn != Mirror.NONE);
+        return state.setValue(MIRROR, mirrorIn != Mirror.NONE);
     }
 }

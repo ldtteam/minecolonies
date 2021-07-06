@@ -113,7 +113,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
      */
     protected IAIState decide()
     {
-        worker.setHeldItem(Hand.MAIN_HAND, ItemStack.EMPTY);
+        worker.setItemInHand(Hand.MAIN_HAND, ItemStack.EMPTY);
         if (walkToBuilding())
         {
             return DECIDE;
@@ -201,29 +201,29 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
         {
             Network.getNetwork().sendToTrackingEntity(
               new CircleParticleEffectMessage(
-                worker.getPositionVec().add(0, 2, 0),
+                worker.position().add(0, 2, 0),
                 ParticleTypes.ENCHANT,
                 progressTicks), worker);
 
             Network.getNetwork().sendToTrackingEntity(
               new CircleParticleEffectMessage(
-                worker.getPositionVec().add(0, 1.5, 0),
+                worker.position().add(0, 1.5, 0),
                 ParticleTypes.ENCHANT,
                 progressTicks), worker);
 
             Network.getNetwork().sendToTrackingEntity(
               new CircleParticleEffectMessage(
-                worker.getPositionVec().add(0, 1, 0),
+                worker.position().add(0, 1, 0),
                 ParticleTypes.ENCHANT,
                 progressTicks), worker);
 
             if (worker.getRandom().nextBoolean())
             {
-                worker.swingArm(Hand.MAIN_HAND);
+                worker.swing(Hand.MAIN_HAND);
             }
             else
             {
-                worker.swingArm(Hand.OFF_HAND);
+                worker.swing(Hand.OFF_HAND);
             }
             return getState();
         }
@@ -323,7 +323,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
         if (progressTicks == 0)
         {
             // If worker is too far away wait.
-            if (BlockPosUtil.getDistance2D(citizenToGatherFrom.getEntity().get().getPosition(), worker.getPosition()) > MIN_DISTANCE_TO_DRAIN)
+            if (BlockPosUtil.getDistance2D(citizenToGatherFrom.getEntity().get().blockPosition(), worker.blockPosition()) > MIN_DISTANCE_TO_DRAIN)
             {
                 if (!job.incrementWaitingTicks())
                 {
@@ -337,8 +337,8 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
         progressTicks++;
         if (progressTicks < MAX_PROGRESS_TICKS)
         {
-            final Vector3d start = worker.getPositionVec().add(0, 2, 0);
-            final Vector3d goal = citizenToGatherFrom.getEntity().get().getPositionVec().add(0, 2, 0);
+            final Vector3d start = worker.position().add(0, 2, 0);
+            final Vector3d goal = citizenToGatherFrom.getEntity().get().position().add(0, 2, 0);
 
             Network.getNetwork().sendToTrackingEntity(
               new StreamParticleEffectMessage(
@@ -358,11 +358,11 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
 
             if (worker.getRandom().nextBoolean())
             {
-                worker.swingArm(Hand.MAIN_HAND);
+                worker.swing(Hand.MAIN_HAND);
             }
             else
             {
-                worker.swingArm(Hand.OFF_HAND);
+                worker.swing(Hand.OFF_HAND);
             }
 
             return getState();
@@ -380,7 +380,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
                 final ItemStack stack = citizenToGatherFrom.getInventory().getStackInSlot(randomSlot);
                 if (!stack.isEmpty() && stack.isEnchantable())
                 {
-                    EnchantmentHelper.addRandomEnchantment(worker.getRandom(), stack, getSecondarySkillLevel() > 50 ? 2 : 1, false);
+                    EnchantmentHelper.enchantItem(worker.getRandom(), stack, getSecondarySkillLevel() > 50 ? 2 : 1, false);
                     break;
                 }
             }

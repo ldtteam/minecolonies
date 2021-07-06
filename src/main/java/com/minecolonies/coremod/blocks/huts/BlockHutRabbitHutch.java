@@ -12,7 +12,7 @@ public class BlockHutRabbitHutch extends AbstractBlockHut<BlockHutRabbitHutch>
 {
     @NotNull
     @Override
-    public String getName()
+    public String getHutName()
     {
         return "blockhutrabbithutch";
     }
