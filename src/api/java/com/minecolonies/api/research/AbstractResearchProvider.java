@@ -62,7 +62,7 @@ public abstract class AbstractResearchProvider implements IDataProvider
     protected abstract Collection<Research> getResearchCollection();
 
     @Override
-    public void act(@NotNull final DirectoryCache cache) throws IOException
+    public void run(@NotNull final DirectoryCache cache) throws IOException
     {
         final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
         final JsonObject langJson = new JsonObject();

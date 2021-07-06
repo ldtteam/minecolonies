@@ -15,7 +15,7 @@ public class BlockHutMysticalSite extends AbstractBlockHut<BlockHutMysticalSite>
      * @return Name of the block.
      */
     @Override
-    public String getName()
+    public String getHutName()
     {
         return "blockhutmysticalsite";
     }

@@ -29,7 +29,7 @@ public class RendererArcherNorsemen extends AbstractRendererNorsemen<AbstractEnt
 
     @NotNull
     @Override
-    public ResourceLocation getEntityTexture(final AbstractEntityNorsemen entity)
+    public ResourceLocation getTextureLocation(final AbstractEntityNorsemen entity)
     {
         if (entity.getTextureId() == 1)
         {

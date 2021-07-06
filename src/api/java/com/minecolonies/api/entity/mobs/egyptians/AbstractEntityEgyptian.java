@@ -32,14 +32,14 @@ public abstract class AbstractEntityEgyptian extends AbstractEntityMinecoloniesM
     {
         final SoundEvent soundevent = this.getAmbientSound();
 
-        if (soundevent != null && world.rand.nextInt(OUT_OF_ONE_HUNDRED) <= ONE)
+        if (soundevent != null && level.random.nextInt(OUT_OF_ONE_HUNDRED) <= ONE)
         {
-            this.playSound(soundevent, this.getSoundVolume(), this.getSoundPitch());
+            this.playSound(soundevent, this.getSoundVolume(), this.getVoicePitch());
         }
     }
 
     @Override
-    public boolean canSpawn(final IWorld worldIn, final SpawnReason spawnReasonIn)
+    public boolean checkSpawnRules(final IWorld worldIn, final SpawnReason spawnReasonIn)
     {
         return true;
     }

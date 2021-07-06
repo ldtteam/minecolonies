@@ -77,9 +77,9 @@ public class DirectPlaceMessage implements IMessage
     @Override
     public void fromBytes(@NotNull final PacketBuffer buf)
     {
-        state = Block.getStateById(buf.readInt());
+        state = Block.stateById(buf.readInt());
         pos = buf.readBlockPos();
-        stack = buf.readItemStack();
+        stack = buf.readItem();
     }
 
     /**
@@ -90,9 +90,9 @@ public class DirectPlaceMessage implements IMessage
     @Override
     public void toBytes(@NotNull final PacketBuffer buf)
     {
-        buf.writeInt(Block.getStateId(state));
+        buf.writeInt(Block.getId(state));
         buf.writeBlockPos(pos);
-        buf.writeItemStack(stack);
+        buf.writeItem(stack);
     }
 
     @Nullable
@@ -106,7 +106,7 @@ public class DirectPlaceMessage implements IMessage
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
         final ServerPlayerEntity player = ctxIn.getSender();
-        final World world = player.getEntityWorld();
+        final World world = player.getCommandSenderWorld();
         final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, pos);
         if ((colony == null && state.getBlock() == ModBlocks.blockHutTownHall) || (colony != null && colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS)))
         {
@@ -117,9 +117,9 @@ public class DirectPlaceMessage implements IMessage
                 return;
             }
 
-            player.getEntityWorld().setBlockState(pos, state);
+            player.getCommandSenderWorld().setBlockAndUpdate(pos, state);
             InventoryUtils.reduceStackInItemHandler(new InvWrapper(player.inventory), stack);
-            state.getBlock().onBlockPlacedBy(world, pos, state, player, stack);
+            state.getBlock().setPlacedBy(world, pos, state, player, stack);
 
             if (compound != null && compound.contains(TAG_OTHER_LEVEL))
             {

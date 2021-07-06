@@ -51,13 +51,13 @@ public class OpenCraftingGUIMessage extends AbstractBuildingServerMessage<IBuild
     @Override
     public void fromBytesOverride(@NotNull final PacketBuffer buf)
     {
-        this.id = buf.readString(32767);
+        this.id = buf.readUtf(32767);
     }
 
     @Override
     public void toBytesOverride(@NotNull final PacketBuffer buf)
     {
-        buf.writeString(id);
+        buf.writeUtf(id);
     }
 
     @Override
@@ -87,7 +87,7 @@ public class OpenCraftingGUIMessage extends AbstractBuildingServerMessage<IBuild
                 {
                     return new ContainerCraftingFurnace(id, inv, building.getID(), module.getId());
                 }
-            }, buffer -> new PacketBuffer(buffer.writeBlockPos(building.getID()).writeString(module.getId())));
+            }, buffer -> new PacketBuffer(buffer.writeBlockPos(building.getID()).writeUtf(module.getId())));
         }
         else
         {
@@ -106,7 +106,7 @@ public class OpenCraftingGUIMessage extends AbstractBuildingServerMessage<IBuild
                 {
                     return new ContainerCrafting(id, inv, module.canLearnLargeRecipes(), building.getID(), module.getId());
                 }
-            }, buffer -> new PacketBuffer(buffer.writeBoolean(module.canLearnLargeRecipes())).writeBlockPos(building.getID()).writeString(module.getId()));
+            }, buffer -> new PacketBuffer(buffer.writeBoolean(module.canLearnLargeRecipes())).writeBlockPos(building.getID()).writeUtf(module.getId()));
         }
     }
 }

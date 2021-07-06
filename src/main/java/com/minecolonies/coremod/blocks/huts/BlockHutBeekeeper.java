@@ -15,7 +15,7 @@ public class BlockHutBeekeeper extends AbstractBlockHut<BlockHutBeekeeper>
      * @return Name of the block.
      */
     @Override
-    public String getName()
+    public String getHutName()
     {
         return "blockhutbeekeeper";
     }

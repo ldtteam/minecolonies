@@ -33,22 +33,22 @@ public class AbstractColonyFlagBanner<B extends AbstractColonyFlagBanner<B>> ext
     {
         super(
             DyeColor.WHITE,
-            Properties.create(Material.WOOD)
-                .doesNotBlockMovement()
-                .hardnessAndResistance(1F)
+            Properties.of(Material.WOOD)
+                .noCollission()
+                .strength(1F)
                 .sound(SoundType.WOOD)
         );
     }
 
     @Override
-    public TileEntity createNewTileEntity(IBlockReader worldIn) { return new TileEntityColonyFlag(); }
+    public TileEntity newBlockEntity(IBlockReader worldIn) { return new TileEntityColonyFlag(); }
 
     @Override
-    public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack)
+    public void setPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack)
     {
-        if (worldIn.isRemote) return;
+        if (worldIn.isClientSide) return;
 
-        TileEntity te = worldIn.getTileEntity(pos);
+        TileEntity te = worldIn.getBlockEntity(pos);
         if (te instanceof TileEntityColonyFlag && ((TileEntityColonyFlag) te).colonyId == -1 )
         {
             IColony colony = IColonyManager.getInstance().getIColony(worldIn, pos);
@@ -65,9 +65,9 @@ public class AbstractColonyFlagBanner<B extends AbstractColonyFlagBanner<B>> ext
 
     @NotNull
     @Override
-    public ItemStack getItem(final IBlockReader worldIn, @NotNull final BlockPos pos, @NotNull final BlockState state)
+    public ItemStack getCloneItemStack(final IBlockReader worldIn, @NotNull final BlockPos pos, @NotNull final BlockState state)
     {
-        TileEntity tileentity = worldIn.getTileEntity(pos);
+        TileEntity tileentity = worldIn.getBlockEntity(pos);
         if (tileentity instanceof TileEntityColonyFlag)
         {
             if (worldIn instanceof ClientWorld)
@@ -79,7 +79,7 @@ public class AbstractColonyFlagBanner<B extends AbstractColonyFlagBanner<B>> ext
                 ((TileEntityColonyFlag)tileentity).getItemServer();
             }
         }
-        return super.getItem(worldIn, pos, state);
+        return super.getCloneItemStack(worldIn, pos, state);
     }
 
     @Override

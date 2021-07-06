@@ -11,6 +11,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 import java.util.function.Function;
 
+import net.minecraft.advancements.ICriterionTrigger.Listener;
+
 /**
  * The base class of a Trigger that tracks listeners and defines criterion
  * related to the trigger, and how that is fetched from JSON
@@ -47,7 +49,7 @@ public abstract class AbstractCriterionTrigger<T extends CriterionListeners<U>, 
     }
 
     @Override
-    public void addListener(@NotNull PlayerAdvancements playerAdvancements, @NotNull Listener<U> listener)
+    public void addPlayerListener(@NotNull PlayerAdvancements playerAdvancements, @NotNull Listener<U> listener)
     {
         T listeners = this.listeners.get(playerAdvancements);
         if (listeners == null)
@@ -59,7 +61,7 @@ public abstract class AbstractCriterionTrigger<T extends CriterionListeners<U>, 
     }
 
     @Override
-    public void removeListener(@NotNull PlayerAdvancements playerAdvancements, @NotNull Listener<U> listener)
+    public void removePlayerListener(@NotNull PlayerAdvancements playerAdvancements, @NotNull Listener<U> listener)
     {
         final T listeners = this.listeners.get(playerAdvancements);
 
@@ -80,7 +82,7 @@ public abstract class AbstractCriterionTrigger<T extends CriterionListeners<U>, 
     }
 
     @Override
-    public void removeAllListeners(@NotNull PlayerAdvancements playerAdvancements)
+    public void removePlayerListeners(@NotNull PlayerAdvancements playerAdvancements)
     {
         this.listeners.remove(playerAdvancements);
     }

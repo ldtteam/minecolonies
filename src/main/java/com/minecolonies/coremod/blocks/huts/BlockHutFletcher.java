@@ -12,7 +12,7 @@ public class BlockHutFletcher extends AbstractBlockHut<BlockHutFletcher>
 {
     @NotNull
     @Override
-    public String getName()
+    public String getHutName()
     {
         return "blockhutfletcher";
     }

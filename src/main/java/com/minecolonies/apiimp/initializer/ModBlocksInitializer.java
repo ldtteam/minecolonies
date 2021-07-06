@@ -123,7 +123,7 @@ public final class ModBlocksInitializer
      */
     public static void registerBlockItem(final IForgeRegistry<Item> registry)
     {
-        final Item.Properties properties = new Item.Properties().group(ModCreativeTabs.MINECOLONIES);
+        final Item.Properties properties = new Item.Properties().tab(ModCreativeTabs.MINECOLONIES);
 
         ModBlocks.blockHutBaker.registerBlockItem(registry, properties);
         ModBlocks.blockHutBlacksmith.registerBlockItem(registry, properties);

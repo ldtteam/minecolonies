@@ -63,9 +63,9 @@ public class ColonyViewRemoveBuildingMessage implements IMessage
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
-        if (Minecraft.getInstance().world != null)
+        if (Minecraft.getInstance().level != null)
         {
-            IColonyManager.getInstance().handleColonyViewRemoveBuildingMessage(colonyId, buildingId, Minecraft.getInstance().world.getDimensionKey());
+            IColonyManager.getInstance().handleColonyViewRemoveBuildingMessage(colonyId, buildingId, Minecraft.getInstance().level.dimension());
         }
     }
 }

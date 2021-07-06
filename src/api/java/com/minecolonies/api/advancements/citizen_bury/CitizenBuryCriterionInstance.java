@@ -12,6 +12,6 @@ public class CitizenBuryCriterionInstance extends CriterionInstance
 {
     public CitizenBuryCriterionInstance()
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CITIZEN_BURY), EntityPredicate.AndPredicate.ANY_AND);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CITIZEN_BURY), EntityPredicate.AndPredicate.ANY);
     }
 }

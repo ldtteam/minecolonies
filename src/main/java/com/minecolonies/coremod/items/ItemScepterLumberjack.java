@@ -35,33 +35,33 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies
      */
     public ItemScepterLumberjack(final Properties properties)
     {
-        super("scepterlumberjack", properties.maxStackSize(1));
+        super("scepterlumberjack", properties.stacksTo(1));
     }
 
     @NotNull
     @Override
-    public ActionResultType onItemUse(final ItemUseContext context)
+    public ActionResultType useOn(final ItemUseContext context)
     {
-        if (context.getWorld().isRemote)
+        if (context.getLevel().isClientSide)
         {
             return ActionResultType.FAIL;
         }
 
-        final ItemStack scepter = context.getPlayer().getHeldItem(context.getHand());
+        final ItemStack scepter = context.getPlayer().getItemInHand(context.getHand());
         LanguageHandler.sendPlayerMessage(context.getPlayer(), "item.minecolonies.scepterlumberjack.usedend");
-        if (setPosition(scepter.getOrCreateTag(), NBT_START_POS, context.getPos(), context.getPlayer()))
+        if (setPosition(scepter.getOrCreateTag(), NBT_START_POS, context.getClickedPos(), context.getPlayer()))
         {
-            storeRestrictedArea(context.getPlayer(), scepter.getOrCreateTag(), context.getWorld());
+            storeRestrictedArea(context.getPlayer(), scepter.getOrCreateTag(), context.getLevel());
         }
         return ActionResultType.FAIL;
     }
 
     @Override
-    public boolean canPlayerBreakBlockWhileHolding(@NotNull final BlockState state, @NotNull final World world, @NotNull final BlockPos pos, @NotNull final PlayerEntity player)
+    public boolean canAttackBlock(@NotNull final BlockState state, @NotNull final World world, @NotNull final BlockPos pos, @NotNull final PlayerEntity player)
     {
-        if (!world.isRemote)
+        if (!world.isClientSide)
         {
-            final ItemStack tool = player.getHeldItemMainhand();
+            final ItemStack tool = player.getMainHandItem();
             LanguageHandler.sendPlayerMessage(player, "item.minecolonies.scepterlumberjack.usedstart");
             if (setPosition(tool.getOrCreateTag(), NBT_END_POS, pos, player))
             {
@@ -126,7 +126,7 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies
         {
             if (BlockPosUtil.read(compound, key).equals(pos))
             {
-                player.inventory.removeStackFromSlot(player.inventory.currentItem);
+                player.inventory.removeItemNoUpdate(player.inventory.selected);
                 return false;
             }
         }

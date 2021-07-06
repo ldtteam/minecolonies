@@ -58,17 +58,17 @@ public class OpenSuggestionWindowMessage implements IMessage
     @Override
     public void fromBytes(@NotNull final PacketBuffer buf)
     {
-        state = Block.getStateById(buf.readInt());
+        state = Block.stateById(buf.readInt());
         pos = buf.readBlockPos();
-        stack = buf.readItemStack();
+        stack = buf.readItem();
     }
 
     @Override
     public void toBytes(@NotNull final PacketBuffer buf)
     {
-        buf.writeInt(Block.getStateId(state));
+        buf.writeInt(Block.getId(state));
         buf.writeBlockPos(pos);
-        buf.writeItemStack(stack);
+        buf.writeItem(stack);
     }
 
     @Nullable

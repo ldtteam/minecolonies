@@ -59,11 +59,11 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel
     @Override
     public void tick()
     {
-        final World world = this.getWorld();
+        final World world = this.getLevel();
 
-        if (!world.isRemote && (world.getGameTime() % (world.rand.nextInt(AVERAGE_TICKS * 2) + 1) == 0))
+        if (!world.isClientSide && (world.getGameTime() % (world.random.nextInt(AVERAGE_TICKS * 2) + 1) == 0))
         {
-            this.updateTick(world, this.getPos(), world.getBlockState(this.getPos()), new Random());
+            this.updateTick(world, this.getBlockPos(), world.getBlockState(this.getBlockPos()), new Random());
         }
     }
 
@@ -83,9 +83,9 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel
         }
         if (this.done)
         {
-            ((ServerWorld) worldIn).spawnParticle(
-              ParticleTypes.HAPPY_VILLAGER, this.getPos().getX() + 0.5,
-              this.getPos().getY() + 1.5, this.getPos().getZ() + 0.5,
+            ((ServerWorld) worldIn).sendParticles(
+              ParticleTypes.HAPPY_VILLAGER, this.getBlockPos().getX() + 0.5,
+              this.getBlockPos().getY() + 1.5, this.getBlockPos().getZ() + 0.5,
               1, 0.2, 0, 0.2, 0);
         }
     }
@@ -113,7 +113,7 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel
     {
         if (done)
         {
-            playerIn.inventory.addItemStackToInventory(new ItemStack(ModItems.compost, 6));
+            playerIn.inventory.add(new ItemStack(ModItems.compost, 6));
             done = false;
             return true;
         }
@@ -126,7 +126,7 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel
 
         if (items == AbstractTileEntityBarrel.MAX_ITEMS)
         {
-            playerIn.sendMessage(new TranslationTextComponent("entity.barrel.working"), playerIn.getUniqueID());
+            playerIn.sendMessage(new TranslationTextComponent("entity.barrel.working"), playerIn.getUUID());
             return false;
         }
         else
@@ -171,18 +171,18 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel
      */
     public void updateBlock(final World worldIn)
     {
-        final BlockState barrel = world.getBlockState(pos);
+        final BlockState barrel = level.getBlockState(worldPosition);
         if (barrel.getBlock() == ModBlocks.blockBarrel)
         {
-            worldIn.setBlockState(pos, AbstractBlockBarrel.changeStateOverFullness(this, barrel));
-            markDirty();
+            worldIn.setBlockAndUpdate(worldPosition, AbstractBlockBarrel.changeStateOverFullness(this, barrel));
+            setChanged();
         }
     }
 
     @Override
-    public CompoundNBT write(final CompoundNBT compound)
+    public CompoundNBT save(final CompoundNBT compound)
     {
-        super.write(compound);
+        super.save(compound);
 
         compound.putInt("items", this.items);
         compound.putInt("timer", this.timer);
@@ -192,9 +192,9 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel
     }
 
     @Override
-    public void read(final BlockState state, final CompoundNBT compound)
+    public void load(final BlockState state, final CompoundNBT compound)
     {
-        super.read(state, compound);
+        super.load(state, compound);
         this.items = compound.getInt("items");
         this.timer = compound.getInt("timer");
         this.done = compound.getBoolean("done");
@@ -204,29 +204,29 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel
     public SUpdateTileEntityPacket getUpdatePacket()
     {
         final CompoundNBT compound = new CompoundNBT();
-        this.write(compound);
-        return new SUpdateTileEntityPacket(this.pos, 0, compound);
+        this.save(compound);
+        return new SUpdateTileEntityPacket(this.worldPosition, 0, compound);
     }
 
     @NotNull
     @Override
     public CompoundNBT getUpdateTag()
     {
-        return write(new CompoundNBT());
+        return save(new CompoundNBT());
     }
 
     @Override
     public void onDataPacket(final NetworkManager net, final SUpdateTileEntityPacket packet)
     {
-        final CompoundNBT compound = packet.getNbtCompound();
-        this.read(getBlockState(), compound);
-        markDirty();
+        final CompoundNBT compound = packet.getTag();
+        this.load(getBlockState(), compound);
+        setChanged();
     }
 
     @Override
-    public void markDirty()
+    public void setChanged()
     {
-        WorldUtil.markChunkDirty(world, pos);
+        WorldUtil.markChunkDirty(level, worldPosition);
     }
 
     @Override
@@ -283,7 +283,7 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel
         if (recipe != null && this.items < MAX_ITEMS)
         {
             this.consumeNeededItems(item, recipe);
-            this.updateBlock(this.world);
+            this.updateBlock(this.level);
             return true;
         }
         return false;
@@ -299,7 +299,7 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel
         if (this.done)
         {
             this.done = false;
-            this.updateBlock(this.world);
+            this.updateBlock(this.level);
             return new ItemStack(ModItems.compost, (int) (6 * multiplier));
         }
         return ItemStack.EMPTY;

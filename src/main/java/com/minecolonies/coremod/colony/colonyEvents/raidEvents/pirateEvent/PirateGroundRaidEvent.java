@@ -51,7 +51,7 @@ public class PirateGroundRaidEvent extends HordeRaidEvent
     protected void updateRaidBar()
     {
         super.updateRaidBar();
-        raidBar.setDarkenSky(true);
+        raidBar.setDarkenScreen(true);
     }
 
     @Override
@@ -77,19 +77,19 @@ public class PirateGroundRaidEvent extends HordeRaidEvent
 
         if (entity instanceof EntityCaptainPirate && boss.keySet().size() < horde.numberOfBosses)
         {
-            boss.put(entity, entity.getUniqueID());
+            boss.put(entity, entity.getUUID());
             return;
         }
 
         if (entity instanceof EntityArcherPirate && archers.keySet().size() < horde.numberOfArchers)
         {
-            archers.put(entity, entity.getUniqueID());
+            archers.put(entity, entity.getUUID());
             return;
         }
 
         if (entity instanceof EntityPirate && normal.keySet().size() < horde.numberOfRaiders)
         {
-            normal.put(entity, entity.getUniqueID());
+            normal.put(entity, entity.getUUID());
             return;
         }
 

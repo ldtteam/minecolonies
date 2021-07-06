@@ -209,9 +209,9 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
     }
 
     @Override
-    public void read(final BlockState state, @NotNull final CompoundNBT compound)
+    public void load(final BlockState state, @NotNull final CompoundNBT compound)
     {
-        super.read(state, compound);
+        super.load(state, compound);
         readSchematicDataFromNBT(compound);
         this.version = compound.getInt(TAG_VERSION);
     }
@@ -222,12 +222,12 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
         final String old = getSchematicName();
         IBlueprintDataProvider.super.readSchematicDataFromNBT(originalCompound);
 
-        if (world == null || world.isRemote || getColony() == null || getColony().getBuildingManager() == null)
+        if (level == null || level.isClientSide || getColony() == null || getColony().getBuildingManager() == null)
         {
             return;
         }
 
-        final IBuilding building = getColony().getBuildingManager().getBuilding(pos);
+        final IBuilding building = getColony().getBuildingManager().getBuilding(worldPosition);
         if (building != null)
         {
             building.onUpgradeSchematicTo(old, getSchematicName(), this);
@@ -237,9 +237,9 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
 
     @NotNull
     @Override
-    public CompoundNBT write(@NotNull final CompoundNBT compound)
+    public CompoundNBT save(@NotNull final CompoundNBT compound)
     {
-        super.write(compound);
+        super.save(compound);
         writeSchematicDataToNBT(compound);
         compound.putInt(TAG_VERSION, this.version);
         return compound;
@@ -248,7 +248,7 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
     @Override
     public BlockPos getTilePos()
     {
-        return pos;
+        return worldPosition;
     }
 
     /**

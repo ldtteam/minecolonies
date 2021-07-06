@@ -280,7 +280,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
             workFrom = findRandomPositionToWalkTo(5, currentBlock);
             if (workFrom == null && pathBackupFactor > 10)
             {
-                workFrom = worker.getPosition();
+                workFrom = worker.blockPosition();
             }
             return false;
         }
@@ -290,7 +290,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
             return false;
         }
 
-        if (BlockPosUtil.getDistance2D(worker.getPosition(), currentBlock) > 5 + 5 * pathBackupFactor)
+        if (BlockPosUtil.getDistance2D(worker.blockPosition(), currentBlock) > 5 + 5 * pathBackupFactor)
         {
             workFrom = null;
             return false;

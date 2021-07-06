@@ -17,7 +17,7 @@ public class BlockHutTavern extends AbstractBlockHut<com.minecolonies.coremod.bl
 
     @NotNull
     @Override
-    public String getName()
+    public String getHutName()
     {
         return BLOCKHUT_TAVERN;
     }

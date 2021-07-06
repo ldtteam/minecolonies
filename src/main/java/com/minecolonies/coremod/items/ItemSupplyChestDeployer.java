@@ -68,20 +68,20 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      */
     public ItemSupplyChestDeployer(final Item.Properties properties)
     {
-        super("supplychestdeployer", properties.maxStackSize(1).group(ModCreativeTabs.MINECOLONIES));
+        super("supplychestdeployer", properties.stacksTo(1).tab(ModCreativeTabs.MINECOLONIES));
     }
 
     @NotNull
     @Override
-    public ActionResultType onItemUse(final ItemUseContext ctx)
+    public ActionResultType useOn(final ItemUseContext ctx)
     {
-        if (ctx.getWorld().isRemote)
+        if (ctx.getLevel().isClientSide)
         {
-            if (!MineColonies.getConfig().getServer().allowOtherDimColonies.get() && !WorldUtil.isOverworldType(ctx.getWorld()))
+            if (!MineColonies.getConfig().getServer().allowOtherDimColonies.get() && !WorldUtil.isOverworldType(ctx.getLevel()))
             {
                 return ActionResultType.FAIL;
             }
-            placeSupplyShip(ctx.getWorld(), ctx.getPos(), ctx.getPlayer().getHorizontalFacing());
+            placeSupplyShip(ctx.getLevel(), ctx.getClickedPos(), ctx.getPlayer().getDirection());
         }
 
         return ActionResultType.FAIL;
@@ -89,17 +89,17 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
 
     @NotNull
     @Override
-    public ActionResult<ItemStack> onItemRightClick(final World worldIn, final PlayerEntity playerIn, final Hand hand)
+    public ActionResult<ItemStack> use(final World worldIn, final PlayerEntity playerIn, final Hand hand)
     {
-        final ItemStack stack = playerIn.getHeldItem(hand);
-        if (worldIn.isRemote)
+        final ItemStack stack = playerIn.getItemInHand(hand);
+        if (worldIn.isClientSide)
         {
             if (!MineColonies.getConfig().getServer().allowOtherDimColonies.get() && !WorldUtil.isOverworldType(worldIn))
             {
                 LanguageHandler.sendPlayerMessage(playerIn, CANT_PLACE_COLONY_IN_OTHER_DIM);
                 return new ActionResult<>(ActionResultType.FAIL, stack);
             }
-            placeSupplyShip(worldIn, null, playerIn.getHorizontalFacing());
+            placeSupplyShip(worldIn, null, playerIn.getDirection());
         }
 
         return new ActionResult<>(ActionResultType.FAIL, stack);
@@ -128,19 +128,19 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
         switch (direction)
         {
             case SOUTH:
-                tempPos = pos.add(OFFSET_LEFT, OFFSET_Y, OFFSET_DISTANCE);
+                tempPos = pos.offset(OFFSET_LEFT, OFFSET_Y, OFFSET_DISTANCE);
                 rotations = ROTATE_THREE_TIMES;
                 break;
             case NORTH:
-                tempPos = pos.add(-OFFSET_LEFT, OFFSET_Y, -OFFSET_DISTANCE);
+                tempPos = pos.offset(-OFFSET_LEFT, OFFSET_Y, -OFFSET_DISTANCE);
                 rotations = ROTATE_ONCE;
                 break;
             case EAST:
-                tempPos = pos.add(OFFSET_DISTANCE, OFFSET_Y, -OFFSET_LEFT);
+                tempPos = pos.offset(OFFSET_DISTANCE, OFFSET_Y, -OFFSET_LEFT);
                 rotations = ROTATE_TWICE;
                 break;
             default:
-                tempPos = pos.add(-OFFSET_DISTANCE, OFFSET_Y, OFFSET_LEFT);
+                tempPos = pos.offset(-OFFSET_DISTANCE, OFFSET_Y, OFFSET_LEFT);
                 rotations = ROTATE_0_TIMES;
                 break;
         }
@@ -183,7 +183,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
         {
             for (int x = pos.getX() - size.getX() / 2 + 1; x < pos.getX() + size.getX() / 2 + 1; x++)
             {
-                if (!world.isAirBlock(new BlockPos(x, pos.getY() + SCAN_HEIGHT, z)))
+                if (!world.isEmptyBlock(new BlockPos(x, pos.getY() + SCAN_HEIGHT, z)))
                 {
                     final PlacementError placementError = new PlacementError(PlacementError.PlacementErrorType.NEEDS_AIR_ABOVE, new BlockPos(x, pos.getY() + SCAN_HEIGHT, z));
                     placementErrorList.add(placementError);
@@ -211,7 +211,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
             final PlacementError placementError = new PlacementError(PlacementError.PlacementErrorType.NOT_WATER, pos);
             placementErrorList.add(placementError);
         }
-        else if (!world.getBlockState(pos).getFluidState().getFluid().isEquivalentTo(Fluids.LAVA) && !isOverworld)
+        else if (!world.getBlockState(pos).getFluidState().getType().isSame(Fluids.LAVA) && !isOverworld)
         {
             final PlacementError placementError = new PlacementError(PlacementError.PlacementErrorType.NOT_WATER, pos);
             placementErrorList.add(placementError);

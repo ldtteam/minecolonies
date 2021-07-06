@@ -80,18 +80,18 @@ public class WindowHutUniversityModule extends AbstractWindowWorkerModuleBuildin
                 }
                 else
                 {
-                    requirements.add(new TranslationTextComponent("Or").setStyle((Style.EMPTY).setFormatting(TextFormatting.BLUE)));
+                    requirements.add(new TranslationTextComponent("Or").setStyle((Style.EMPTY).withColor(TextFormatting.BLUE)));
                 }
                 for(IResearchRequirement req : IGlobalResearchTree.getInstance().getResearch(branch, primary).getResearchRequirement())
                 {
                     // We'll include even completed partial components in the requirement list.
                     if (!req.isFulfilled(building.getColony()))
                     {
-                        requirements.add(new StringTextComponent("-").append(req.getDesc().setStyle((Style.EMPTY).setFormatting(TextFormatting.RED))));
+                        requirements.add(new StringTextComponent("-").append(req.getDesc().setStyle((Style.EMPTY).withColor(TextFormatting.RED))));
                     }
                     else
                     {
-                        requirements.add(new StringTextComponent("-").append(req.getDesc().setStyle((Style.EMPTY).setFormatting(TextFormatting.AQUA))));
+                        requirements.add(new StringTextComponent("-").append(req.getDesc().setStyle((Style.EMPTY).withColor(TextFormatting.AQUA))));
                     }
                 }
             }
@@ -104,7 +104,7 @@ public class WindowHutUniversityModule extends AbstractWindowWorkerModuleBuildin
     {
         super.onButtonClicked(button);
 
-        if (button.getParent() != null && ResourceLocation.isResouceNameValid(button.getParent().getID()) && IGlobalResearchTree.getInstance().getBranches().contains(new ResourceLocation(button.getParent().getID())))
+        if (button.getParent() != null && ResourceLocation.isValidResourceLocation(button.getParent().getID()) && IGlobalResearchTree.getInstance().getBranches().contains(new ResourceLocation(button.getParent().getID())))
         {
             new WindowResearchTree(new ResourceLocation(button.getParent().getID()), building, this).open();
         }

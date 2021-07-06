@@ -33,7 +33,7 @@ public class PlaceSupplyTrigger extends AbstractCriterionTrigger<PlaceSupplyList
 
     @NotNull
     @Override
-    public PlaceSupplyCriterionInstance deserialize(@NotNull final JsonObject jsonObject, @NotNull final ConditionArrayParser conditionArrayParser)
+    public PlaceSupplyCriterionInstance createInstance(@NotNull final JsonObject jsonObject, @NotNull final ConditionArrayParser conditionArrayParser)
     {
         return new PlaceSupplyCriterionInstance();
     }

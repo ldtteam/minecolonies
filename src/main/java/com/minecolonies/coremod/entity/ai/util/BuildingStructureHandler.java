@@ -172,17 +172,17 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
         WorkerUtil.faceBlock(worldPos, structureAI.getWorker());
         //Move out of the way when placing blocks
         final ItemStack item = BlockUtils.getItemStackFromBlockState(blockState);
-        structureAI.getWorker().setItemStackToSlot(EquipmentSlotType.MAINHAND, item == null ? ItemStackUtils.EMPTY : item);
+        structureAI.getWorker().setItemSlot(EquipmentSlotType.MAINHAND, item == null ? ItemStackUtils.EMPTY : item);
 
-        if (MathHelper.floor(structureAI.getWorker().getPosX()) == worldPos.getX()
-              && MathHelper.abs(worldPos.getY() - (int) structureAI.getWorker().getPosY()) <= 1
-              && MathHelper.floor(structureAI.getWorker().getPosZ()) == worldPos.getZ()
-              && structureAI.getWorker().getNavigator().noPath())
+        if (MathHelper.floor(structureAI.getWorker().getX()) == worldPos.getX()
+              && MathHelper.abs(worldPos.getY() - (int) structureAI.getWorker().getY()) <= 1
+              && MathHelper.floor(structureAI.getWorker().getZ()) == worldPos.getZ()
+              && structureAI.getWorker().getNavigation().isDone())
         {
-            structureAI.getWorker().getNavigator().moveAwayFromXYZ(worldPos, RUN_AWAY_SPEED, 1);
+            structureAI.getWorker().getNavigation().moveAwayFromXYZ(worldPos, RUN_AWAY_SPEED, 1);
         }
 
-        structureAI.getWorker().swingArm(Hand.MAIN_HAND);
+        structureAI.getWorker().swing(Hand.MAIN_HAND);
     }
 
     @Nullable
@@ -277,7 +277,7 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
     {
         return itemStack == null
                  || itemStack.isEmpty()
-                 || itemStack.getItem().isIn(ItemTags.LEAVES)
+                 || itemStack.getItem().is(ItemTags.LEAVES)
                  || itemStack.getItem() == new ItemStack(ModBlocks.blockDecorationPlaceholder, 1).getItem();
     }
 
@@ -290,7 +290,7 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
     @Override
     public ItemStack getHeldItem()
     {
-        return structureAI.getWorker().getHeldItemMainhand();
+        return structureAI.getWorker().getMainHandItem();
     }
 
     @Override

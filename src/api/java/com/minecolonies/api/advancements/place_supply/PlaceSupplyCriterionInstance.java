@@ -12,6 +12,6 @@ public class PlaceSupplyCriterionInstance extends CriterionInstance
 {
     public PlaceSupplyCriterionInstance()
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_SUPPLY_PLACED), EntityPredicate.AndPredicate.ANY_AND);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_SUPPLY_PLACED), EntityPredicate.AndPredicate.ANY);
     }
 }

@@ -29,7 +29,7 @@ public class RendererShieldmaidenNorsemen extends AbstractRendererNorsemen<Abstr
 
     @NotNull
     @Override
-    public ResourceLocation getEntityTexture(final AbstractEntityNorsemen entity)
+    public ResourceLocation getTextureLocation(final AbstractEntityNorsemen entity)
     {
         if (entity.getTextureId() == 1)
         {

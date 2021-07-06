@@ -54,8 +54,8 @@ public class WindowHutBuilderModule extends AbstractWindowWorkerModuleBuilding<B
     {
         if (needGuide)
         {
-            final Advancement ad = Minecraft.getInstance().player.connection.getAdvancementManager().getAdvancementList().getAdvancement(GUIDE_ADVANCEMENT);
-            if (ad == null || !Minecraft.getInstance().player.connection.getAdvancementManager().advancementToProgress.getOrDefault(ad, new AdvancementProgress()).isDone())
+            final Advancement ad = Minecraft.getInstance().player.connection.getAdvancements().getAdvancements().get(GUIDE_ADVANCEMENT);
+            if (ad == null || !Minecraft.getInstance().player.connection.getAdvancements().progress.getOrDefault(ad, new AdvancementProgress()).isDone())
             {
                 close();
                 new WindowHutGuide(building).open();

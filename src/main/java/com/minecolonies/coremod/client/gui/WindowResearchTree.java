@@ -161,7 +161,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         else if (button.getID().contains("undo:"))
         {
             final String undoName = button.getID().substring(button.getID().indexOf(':') + 1);
-            if(!ResourceLocation.isResouceNameValid(undoName))
+            if(!ResourceLocation.isValidResourceLocation(undoName))
             {
                 return;
             }
@@ -187,7 +187,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                 close();
             }
         }
-        else if (ResourceLocation.isResouceNameValid(button.getID())
+        else if (ResourceLocation.isValidResourceLocation(button.getID())
                    && IGlobalResearchTree.getInstance().getResearch(branch, new ResourceLocation(button.getID())) != null
                    && (building.getBuildingLevel() >= IGlobalResearchTree.getInstance().getResearch(branch, new ResourceLocation(button.getID())).getDepth()
                          || building.getBuildingLevel() == building.getBuildingMaxLevel()))
@@ -619,7 +619,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
     private void generateResearchTooltips(final Button tipItem, final IGlobalResearch research, final ResearchButtonState state)
     {
         // have to use a deep copy of getName, or the TranslationText will also retain and apply the formatting in other contexts.
-        final AbstractTextBuilder.TooltipBuilder hoverPaneBuilder = PaneBuilders.tooltipBuilder().hoverPane(tipItem).append(research.getName().deepCopy()).bold().color(COLOR_TEXT_NAME);
+        final AbstractTextBuilder.TooltipBuilder hoverPaneBuilder = PaneBuilders.tooltipBuilder().hoverPane(tipItem).append(research.getName().copy()).bold().color(COLOR_TEXT_NAME);
         if (!research.getSubtitle().getKey().isEmpty())
         {
             hoverPaneBuilder.paragraphBreak().italic().colorName("GRAY").append(research.getSubtitle());
@@ -663,9 +663,9 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             {
                 hoverPaneBuilder.paragraphBreak()
                   .append(new StringTextComponent(" - "))
-                  .append(new TranslationTextComponent("com.minecolonies.coremod.research.limit.requirement", is.getAmount(), is.getItem().getName()));
+                  .append(new TranslationTextComponent("com.minecolonies.coremod.research.limit.requirement", is.getAmount(), is.getItem().getDescription()));
                 if((InventoryUtils.getItemCountInItemHandler(new InvWrapper(Minecraft.getInstance().player.inventory),
-                  stack -> !ItemStackUtils.isEmpty(stack) && stack.isItemEqual(is.getItemStack())) < is.getAmount()))
+                  stack -> !ItemStackUtils.isEmpty(stack) && stack.sameItem(is.getItemStack())) < is.getAmount()))
                 {
                     hoverPaneBuilder.color(COLOR_TEXT_UNFULFILLED);
                 }
@@ -796,7 +796,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             final ItemStorage is = costList.get(i);
             undoCostIcons[i] = new ItemIcon();
             if (InventoryUtils.getItemCountInItemHandler(new InvWrapper(Minecraft.getInstance().player.inventory),
-              stack -> !ItemStackUtils.isEmpty(stack) && stack.isItemEqual(is.getItemStack())) < is.getAmount())
+              stack -> !ItemStackUtils.isEmpty(stack) && stack.sameItem(is.getItemStack())) < is.getAmount())
             {
                 missingItems.add(is);
             }
@@ -820,7 +820,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             for (ItemStorage cost : missingItems)
             {
                 undoTipBuilder.paragraphBreak().append(new TranslationTextComponent("com.minecolonies.coremod.research.requirement.research",
-                  cost.getItem().getName())).color(COLOR_TEXT_UNFULFILLED);
+                  cost.getItem().getDescription())).color(COLOR_TEXT_UNFULFILLED);
             }
         }
         else
@@ -974,15 +974,15 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             icon.setSize(DEFAULT_COST_SIZE, DEFAULT_COST_SIZE);
             view.addChild(icon);
             if((InventoryUtils.getItemCountInItemHandler(new InvWrapper(Minecraft.getInstance().player.inventory),
-              stack -> !ItemStackUtils.isEmpty(stack) && stack.isItemEqual(storage.getItemStack())) < storage.getAmount()))
+              stack -> !ItemStackUtils.isEmpty(stack) && stack.sameItem(storage.getItemStack())) < storage.getAmount()))
             {
                 PaneBuilders.tooltipBuilder().hoverPane(icon).paragraphBreak().append(new TranslationTextComponent("com.minecolonies.coremod.research.limit.requirement",
-                  storage.getAmount(), is.getItem().getName())).color(COLOR_TEXT_UNFULFILLED).build();
+                  storage.getAmount(), is.getItem().getDescription())).color(COLOR_TEXT_UNFULFILLED).build();
             }
             else
             {
                 PaneBuilders.tooltipBuilder().hoverPane(icon).paragraphBreak().append(new TranslationTextComponent("com.minecolonies.coremod.research.limit.requirement",
-                  storage.getAmount(), is.getItem().getName())).color(COLOR_TEXT_FULFILLED).build();
+                  storage.getAmount(), is.getItem().getDescription())).color(COLOR_TEXT_FULFILLED).build();
             }
             storageXOffset += COST_OFFSET;
         }

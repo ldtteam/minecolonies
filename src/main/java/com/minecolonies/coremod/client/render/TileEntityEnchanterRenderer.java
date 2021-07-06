@@ -25,7 +25,7 @@ public class TileEntityEnchanterRenderer extends TileEntityRenderer<TileEntityCo
     public static final RenderMaterial TEXTURE_BOOK;
     static
     {
-        TEXTURE_BOOK = new RenderMaterial(AtlasTexture.LOCATION_BLOCKS_TEXTURE, new ResourceLocation(Constants.MOD_ID, "blocks/enchanting_table_book"));
+        TEXTURE_BOOK = new RenderMaterial(AtlasTexture.LOCATION_BLOCKS, new ResourceLocation(Constants.MOD_ID, "blocks/enchanting_table_book"));
     }
 
     /**
@@ -55,7 +55,7 @@ public class TileEntityEnchanterRenderer extends TileEntityRenderer<TileEntityCo
         if (ent instanceof TileEntityEnchanter)
         {
             final TileEntityEnchanter entity = (TileEntityEnchanter) ent;
-            matrixStack.push();
+            matrixStack.pushPose();
             matrixStack.translate(0.5D, 0.75D, 0.5D);
             float tick = (float) entity.tickCount + partialTicks;
             matrixStack.translate(0.0D, (0.1F + MathHelper.sin(tick * 0.1F) * 0.01F), 0.0D);
@@ -64,16 +64,16 @@ public class TileEntityEnchanterRenderer extends TileEntityRenderer<TileEntityCo
             float circleRot = (float) ((rotVPrev + Math.PI % (2 * Math.PI)) - Math.PI);
 
             float tickBasedRot = entity.bookRotationPrev + circleRot * partialTicks;
-            matrixStack.rotate(Vector3f.YP.rotation(-tickBasedRot));
-            matrixStack.rotate(Vector3f.ZP.rotationDegrees(80.0F));
+            matrixStack.mulPose(Vector3f.YP.rotation(-tickBasedRot));
+            matrixStack.mulPose(Vector3f.ZP.rotationDegrees(80.0F));
             float pageFlip = MathHelper.lerp(partialTicks, entity.pageFlipPrev, entity.pageFlip);
             float flipA = MathHelper.frac(pageFlip + 0.25F) * 1.6F - 0.3F;
             float flipB = MathHelper.frac(pageFlip + 0.75F) * 1.6F - 0.3F;
             float bookSpread = MathHelper.lerp(partialTicks, entity.bookSpreadPrev, entity.bookSpread);
-            this.modelBook.setBookState(tick, MathHelper.clamp(flipA, 0.0F, 1.0F), MathHelper.clamp(flipB, 0.0F, 1.0F), bookSpread);
-            IVertexBuilder vertexConsumer = TEXTURE_BOOK.getBuffer(renderTypeBuffer, RenderType::getEntitySolid);
-            this.modelBook.render(matrixStack, vertexConsumer, lightA, lightB, 1.0F, 1.0F, 1.0F, 1.0F);
-            matrixStack.pop();
+            this.modelBook.setupAnim(tick, MathHelper.clamp(flipA, 0.0F, 1.0F), MathHelper.clamp(flipB, 0.0F, 1.0F), bookSpread);
+            IVertexBuilder vertexConsumer = TEXTURE_BOOK.buffer(renderTypeBuffer, RenderType::entitySolid);
+            this.modelBook.renderToBuffer(matrixStack, vertexConsumer, lightA, lightB, 1.0F, 1.0F, 1.0F, 1.0F);
+            matrixStack.popPose();
         }
     }
 }

@@ -31,8 +31,8 @@ public class SittingEntity extends Entity
         super(type, worldIn);
 
         this.setInvisible(true);
-        this.forceSpawn = true;
-        this.noClip = true;
+        this.forcedLoading = true;
+        this.noPhysics = true;
         this.setNoGravity(true);
     }
 
@@ -40,11 +40,11 @@ public class SittingEntity extends Entity
     {
         super(type, worldIn);
 
-        this.setPosition(x, y, z);
+        this.setPos(x, y, z);
 
         this.setInvisible(true);
-        this.forceSpawn = true;
-        this.noClip = true;
+        this.forcedLoading = true;
+        this.noPhysics = true;
         this.setNoGravity(true);
         this.maxLifeTime = lifeTime;
     }
@@ -52,7 +52,7 @@ public class SittingEntity extends Entity
     /**
      * Do not let the entity be destroyed
      */
-    public boolean attackEntityFrom(DamageSource source, float amount)
+    public boolean hurt(DamageSource source, float amount)
     {
         return false;
     }
@@ -60,31 +60,31 @@ public class SittingEntity extends Entity
     /**
      * No Collision
      */
-    public boolean canBeCollidedWith()
+    public boolean isPickable()
     {
         return false;
     }
 
     @Override
-    protected void readAdditional(final CompoundNBT compound)
+    protected void readAdditionalSaveData(final CompoundNBT compound)
     {
 
     }
 
     @Override
-    protected void writeAdditional(final CompoundNBT compound)
+    protected void addAdditionalSaveData(final CompoundNBT compound)
     {
 
     }
 
     @Override
-    public IPacket<?> createSpawnPacket()
+    public IPacket<?> getAddEntityPacket()
     {
         return NetworkHooks.getEntitySpawningPacket(this);
     }
 
     @Override
-    protected void registerData()
+    protected void defineSynchedData()
     {
 
     }
@@ -92,18 +92,18 @@ public class SittingEntity extends Entity
     @Override
     public void tick()
     {
-        if (this.world.isRemote)
+        if (this.level.isClientSide)
         {
             return;
         }
 
-        if (!this.isBeingRidden() || maxLifeTime-- < 0)
+        if (!this.isVehicle() || maxLifeTime-- < 0)
         {
             // Upsizes entity again
 
             if (getPassengers().size() > 0)
             {
-                this.removePassengers();
+                this.ejectPassengers();
             }
 
             this.remove();
@@ -114,28 +114,28 @@ public class SittingEntity extends Entity
     protected void addPassenger(Entity passenger)
     {
         super.addPassenger(passenger);
-        if (this.world.isRemote)
+        if (this.level.isClientSide)
         {
             return;
         }
 
-        passenger.size = passenger.size.scale(1.0f, 0.5f);
+        passenger.dimensions = passenger.dimensions.scale(1.0f, 0.5f);
     }
 
     @Override
     protected void removePassenger(Entity passenger)
     {
         super.removePassenger(passenger);
-        if (this.world.isRemote)
+        if (this.level.isClientSide)
         {
             return;
         }
 
         if (passenger instanceof LivingEntity)
         {
-            passenger.size = ((LivingEntity) passenger).isChild() ? passenger.getType().getSize().scale(0.5f) : passenger.getType().getSize();
+            passenger.dimensions = ((LivingEntity) passenger).isBaby() ? passenger.getType().getDimensions().scale(0.5f) : passenger.getType().getDimensions();
         }
-        passenger.setPosition(this.getPosX(), this.getPosY() + 0.6, this.getPosZ());
+        passenger.setPos(this.getX(), this.getY() + 0.6, this.getZ());
     }
 
     /**
@@ -157,19 +157,19 @@ public class SittingEntity extends Entity
      */
     public static void sitDown(final BlockPos pos, final MobEntity entity, final int maxLifeTime)
     {
-        if (entity.getRidingEntity() != null)
+        if (entity.getVehicle() != null)
         {
             // Already riding an entity, abort
             return;
         }
 
-        final SittingEntity sittingEntity = (SittingEntity) ModEntities.SITTINGENTITY.create(entity.world);
+        final SittingEntity sittingEntity = (SittingEntity) ModEntities.SITTINGENTITY.create(entity.level);
 
         // Find the lowest box and sit on that
-        final BlockState state = entity.world.getBlockState(pos);
+        final BlockState state = entity.level.getBlockState(pos);
         double minY = 1;
 
-        final List<AxisAlignedBB> shapes = state.getCollisionShape(entity.world, pos).toBoundingBoxList();
+        final List<AxisAlignedBB> shapes = state.getCollisionShape(entity.level, pos).toAabbs();
         for (final AxisAlignedBB box : shapes)
         {
             if (box.maxY < minY)
@@ -183,10 +183,10 @@ public class SittingEntity extends Entity
             minY = 0;
         }
 
-        sittingEntity.setPosition(pos.getX() + 0.5f, (pos.getY() + minY) - entity.getHeight() / 2, pos.getZ() + 0.5f);
+        sittingEntity.setPos(pos.getX() + 0.5f, (pos.getY() + minY) - entity.getBbHeight() / 2, pos.getZ() + 0.5f);
         sittingEntity.setMaxLifeTime(maxLifeTime);
-        entity.world.addEntity(sittingEntity);
+        entity.level.addFreshEntity(sittingEntity);
         entity.startRiding(sittingEntity);
-        entity.getNavigator().clearPath();
+        entity.getNavigation().stop();
     }
 }

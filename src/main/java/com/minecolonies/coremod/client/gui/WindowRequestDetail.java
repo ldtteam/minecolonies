@@ -135,8 +135,8 @@ public class WindowRequestDetail extends Window implements ButtonHandler
     {
         final Box box = findPaneOfTypeByID(BOX_ID_REQUEST, Box.class);
         final Text description = PaneBuilders.textBuilder()
-            .style(TextFormatting.fromFormattingCode('r'))
-            .style(TextFormatting.fromFormattingCode('0'))
+            .style(TextFormatting.getByCode('r'))
+            .style(TextFormatting.getByCode('0'))
             .append(request.getLongDisplayString())
             .build();
         description.setPosition(1, 1);
@@ -150,7 +150,7 @@ public class WindowRequestDetail extends Window implements ButtonHandler
 
         final ItemIcon exampleStackDisplay = findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_STACK, ItemIcon.class);
         final List<ItemStack> displayStacks = request.getDisplayStacks();
-        final IColonyView colony = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().world.getDimensionKey());
+        final IColonyView colony = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().level.dimension());
 
         if (!displayStacks.isEmpty())
         {

@@ -241,7 +241,7 @@ public class BuildingBaker extends AbstractBuildingFurnaceUser implements IBuild
                 for (final ItemStorage itemStorage : storage.getCleanedInput())
                 {
                     final ItemStack stack = itemStorage.getItemStack();
-                    map.put(stack::isItemEqual, new Tuple<>(RECIPE_INPUT_HOLD, false));
+                    map.put(stack::sameItem, new Tuple<>(RECIPE_INPUT_HOLD, false));
                 }
             }
 

@@ -24,16 +24,16 @@ public class ItemAncientTome extends AbstractItemMinecolonies
      */
     public ItemAncientTome(final Properties properties)
     {
-        super("ancienttome", properties.maxStackSize(STACKSIZE).group(ModCreativeTabs.MINECOLONIES));
+        super("ancienttome", properties.stacksTo(STACKSIZE).tab(ModCreativeTabs.MINECOLONIES));
     }
 
     @Override
     public void inventoryTick(final ItemStack stack, final World worldIn, final Entity entityIn, final int itemSlot, final boolean isSelected)
     {
         super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
-        if (!worldIn.isRemote)
+        if (!worldIn.isClientSide)
         {
-            final IColony colony = IColonyManager.getInstance().getClosestColony(worldIn, new BlockPos(entityIn.getPositionVec()));
+            final IColony colony = IColonyManager.getInstance().getClosestColony(worldIn, new BlockPos(entityIn.position()));
             final CompoundNBT tag = new CompoundNBT();
 
             if (colony != null)
@@ -48,7 +48,7 @@ public class ItemAncientTome extends AbstractItemMinecolonies
         }
     }
 
-    public boolean hasEffect(final ItemStack stack)
+    public boolean isFoil(final ItemStack stack)
     {
         return stack.getTag() != null && stack.getTag().getBoolean(NbtTagConstants.TAG_RAID_WILL_HAPPEN);
     }

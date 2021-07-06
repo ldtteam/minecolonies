@@ -171,9 +171,9 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
         if (spawnPathResult.isDone())
         {
             final Path path = spawnPathResult.getPath();
-            if (path != null && path.reachesTarget())
+            if (path != null && path.canReach())
             {
-                final BlockPos endpoint = path.getFinalPathPoint().func_224759_a().down();
+                final BlockPos endpoint = path.getEndNode().asBlockPos().below();
                 if (ShipBasedRaiderUtils.canPlaceShipAt(endpoint, structure.getBluePrint(), colony.getWorld()))
                 {
                     spawnPoint = endpoint;
@@ -190,7 +190,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
 
         if (!ShipBasedRaiderUtils.canPlaceShipAt(spawnPoint, structure.getBluePrint(), colony.getWorld()))
         {
-            spawnPoint = spawnPoint.down();
+            spawnPoint = spawnPoint.below();
         }
 
         if (!ShipBasedRaiderUtils.spawnPirateShip(spawnPoint, colony.getWorld(), colony, shipSize.schematicPrefix + this.getShipDesc(), this, shipRotation))
@@ -269,7 +269,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
             if (spawnPos != null)
             {
                 // Find nice position on the ship
-                if (spawnPos.distanceSq(spawnPoint) < 25)
+                if (spawnPos.distSqr(spawnPoint) < 25)
                 {
                     spawnPos = ShipBasedRaiderUtils.findSpawnPosOnShip(spawnPos, colony.getWorld(), 3);
                 }
@@ -287,7 +287,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
             {
                 if (entity instanceof LivingEntity)
                 {
-                    ((LivingEntity) entity).addPotionEffect(new EffectInstance(Effects.GLOWING, 550));
+                    ((LivingEntity) entity).addEffect(new EffectInstance(Effects.GLOWING, 550));
                 }
             }
         }
@@ -315,7 +315,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     {
         if (te instanceof MobSpawnerTileEntity)
         {
-            spawners.remove(te.getPos());
+            spawners.remove(te.getBlockPos());
 
             raidBar.setPercent((float) spawners.size() / maxSpawners);
             // remove at nightfall after spawners are killed.
@@ -358,7 +358,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
 
         if (raiders.keySet().size() < getMaxRaiders())
         {
-            raiders.put(entity, entity.getUniqueID());
+            raiders.put(entity, entity.getUUID());
         }
         else
         {
@@ -381,7 +381,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
 
         raiders.remove(entity);
         // Respawn as a new entity in a loaded chunk, if not too close.
-        respawns.add(new Tuple<>(entity.getType(), new BlockPos(entity.getPositionVec())));
+        respawns.add(new Tuple<>(entity.getType(), new BlockPos(entity.position())));
     }
 
     /**

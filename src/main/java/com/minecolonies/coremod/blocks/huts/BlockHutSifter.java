@@ -12,7 +12,7 @@ public class BlockHutSifter extends AbstractBlockHut<BlockHutSifter>
 {
     @NotNull
     @Override
-    public String getName()
+    public String getHutName()
     {
         return "blockhutsifter";
     }

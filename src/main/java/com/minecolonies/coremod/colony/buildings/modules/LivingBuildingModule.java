@@ -22,7 +22,7 @@ public class LivingBuildingModule extends AbstractBuildingModule implements IAss
     @Override
     public void deserializeNBT(final CompoundNBT compound)
     {
-        if (compound.keySet().contains(TAG_RESIDENTS))
+        if (compound.getAllKeys().contains(TAG_RESIDENTS))
         {
             final int[] residentIds = compound.getIntArray(TAG_RESIDENTS);
             for (final int citizenId : residentIds)

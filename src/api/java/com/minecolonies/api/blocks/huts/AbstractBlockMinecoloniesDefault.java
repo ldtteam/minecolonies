@@ -9,7 +9,7 @@ public abstract class AbstractBlockMinecoloniesDefault<B extends AbstractBlockMi
     /**
      * The position it faces.
      */
-    public static final DirectionProperty FACING           = HorizontalBlock.HORIZONTAL_FACING;
+    public static final DirectionProperty FACING           = HorizontalBlock.FACING;
     /**
      * Hardness of the block.
      */

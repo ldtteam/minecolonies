@@ -37,11 +37,11 @@ public class VisitorColonyHandler extends CitizenColonyHandler
             return;
         }
 
-        final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, citizen.world);
+        final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, citizen.level);
 
         if (colony == null)
         {
-            Log.getLogger().warn(String.format("EntityCitizen '%s' unable to find Colony #%d", citizen.getUniqueID(), colonyId));
+            Log.getLogger().warn(String.format("EntityCitizen '%s' unable to find Colony #%d", citizen.getUUID(), colonyId));
             citizen.remove();
             return;
         }

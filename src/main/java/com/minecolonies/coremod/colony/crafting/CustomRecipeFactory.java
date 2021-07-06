@@ -122,14 +122,14 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
         }
         compound.put(RECIPE_INPUTS_PROP, inputs);
 
-        compound.put(RECIPE_RESULT_PROP, recipe.getPrimaryOutput().write(new CompoundNBT()));
+        compound.put(RECIPE_RESULT_PROP, recipe.getPrimaryOutput().save(new CompoundNBT()));
 
         if(recipe.getSecondaryOutput().size() > 0)
         {
             final ListNBT secondaryOutputs = new ListNBT();
             for (final ItemStack is : recipe.getSecondaryOutput())
             {
-                secondaryOutputs.add(is.write(new CompoundNBT()));
+                secondaryOutputs.add(is.save(new CompoundNBT()));
             }
             compound.put(RECIPE_SECONDARY_PROP, secondaryOutputs);
         }
@@ -138,7 +138,7 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
             final ListNBT altOutputs = new ListNBT();
             for (final ItemStack is : recipe.getAltOutputs())
             {
-                altOutputs.add(is.write(new CompoundNBT()));
+                altOutputs.add(is.save(new CompoundNBT()));
             }
             compound.put(RECIPE_ALTERNATE_PROP, altOutputs);
         }
@@ -152,7 +152,7 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
     {
         final String crafter = nbt.getString(RECIPE_CRAFTER_PROP);
         final ResourceLocation recipeId;
-        if(nbt.hasUniqueId(CUSTOM_RECIPE_ID_PROP))
+        if(nbt.hasUUID(CUSTOM_RECIPE_ID_PROP))
         {
             recipeId = new ResourceLocation(nbt.getString(CUSTOM_RECIPE_ID_PROP));
         }
@@ -161,7 +161,7 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
             recipeId = null;
         }
         final ResourceLocation researchReq;
-        if(nbt.hasUniqueId(RECIPE_RESEARCHID_PROP))
+        if(nbt.hasUUID(RECIPE_RESEARCHID_PROP))
         {
             researchReq = new ResourceLocation(nbt.getString(RECIPE_RESEARCHID_PROP));
         }
@@ -170,7 +170,7 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
             researchReq = null;
         }
         final ResourceLocation researchExclude;
-        if(nbt.hasUniqueId(RECIPE_EXCLUDED_RESEARCHID_PROP))
+        if(nbt.hasUUID(RECIPE_EXCLUDED_RESEARCHID_PROP))
         {
              researchExclude = new ResourceLocation(nbt.getString(RECIPE_EXCLUDED_RESEARCHID_PROP));
         }
@@ -179,9 +179,9 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
             researchExclude = null;
         }
         final ResourceLocation lootTable;
-        if(nbt.hasUniqueId(RECIPE_LOOTTABLE_PROP))
+        if(nbt.hasUUID(RECIPE_LOOTTABLE_PROP))
         {
-            lootTable = new ResourceLocation(nbt.getString());
+            lootTable = new ResourceLocation(nbt.getAsString());
         }
         else
         {
@@ -200,7 +200,7 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
                 inputs.add(controller.deserialize((CompoundNBT)input));
             }
         }
-        final ItemStack primaryOutput = ItemStack.read(nbt.getCompound(RECIPE_RESULT_PROP));
+        final ItemStack primaryOutput = ItemStack.of(nbt.getCompound(RECIPE_RESULT_PROP));
 
         final ListNBT secondaryList = nbt.getList(RECIPE_SECONDARY_PROP, Constants.NBT.TAG_COMPOUND);
         final List<ItemStack> secondaryOutput = new ArrayList<>();
@@ -208,7 +208,7 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
         {
             if(secondary instanceof CompoundNBT)
             {
-                secondaryOutput.add(ItemStack.read((CompoundNBT)secondary));
+                secondaryOutput.add(ItemStack.of((CompoundNBT)secondary));
             }
         }
 
@@ -218,7 +218,7 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
         {
             if(alt instanceof CompoundNBT)
             {
-                secondaryOutput.add(ItemStack.read((CompoundNBT)alt));
+                secondaryOutput.add(ItemStack.of((CompoundNBT)alt));
             }
         }
 
@@ -230,7 +230,7 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
     {
         // This serialization is drastically more efficient: expect <150 bytes per recipes, avg, compared to 800 bytes for CompoundNBT variant.
         // It also avoids populating the RecipeStorage cached inside the CustomRecipe.
-        packetBuffer.writeString(recipe.getCrafter());
+        packetBuffer.writeUtf(recipe.getCrafter());
         packetBuffer.writeResourceLocation(recipe.getRecipeStorage().getRecipeSource());
         packetBuffer.writeBoolean(recipe.getRequiredResearchId() != null);
         if(recipe.getRequiredResearchId() != null)
@@ -256,16 +256,16 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
         {
             controller.serialize(packetBuffer, input);
         }
-        packetBuffer.writeItemStack(recipe.getPrimaryOutput());
+        packetBuffer.writeItem(recipe.getPrimaryOutput());
         packetBuffer.writeVarInt(recipe.getSecondaryOutput().size());
         for(final ItemStack secondary : recipe.getSecondaryOutput())
         {
-            packetBuffer.writeItemStack(secondary);
+            packetBuffer.writeItem(secondary);
         }
         packetBuffer.writeVarInt(recipe.getAltOutputs().size());
         for(final ItemStack alts : recipe.getAltOutputs())
         {
-            packetBuffer.writeItemStack(alts);
+            packetBuffer.writeItem(alts);
         }
     }
 
@@ -273,7 +273,7 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
     @Override
     public CustomRecipe deserialize(@NotNull IFactoryController controller, PacketBuffer buffer) throws Throwable
     {
-        final String crafter = buffer.readString();
+        final String crafter = buffer.readUtf();
         final ResourceLocation recipeId = buffer.readResourceLocation();
         final ResourceLocation researchReq;
         if(buffer.readBoolean())
@@ -311,16 +311,16 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
         {
             inputs.add(controller.deserialize(buffer));
         }
-        final ItemStack primaryOutput = buffer.readItemStack();
+        final ItemStack primaryOutput = buffer.readItem();
         final List<ItemStack> secondaryOutput = new ArrayList<>();
         for(int numSec = buffer.readVarInt(); numSec > 0; numSec--)
         {
-            secondaryOutput.add(buffer.readItemStack());
+            secondaryOutput.add(buffer.readItem());
         }
         final List<ItemStack> altOutputs = new ArrayList<>();
         for(int numAlts = buffer.readVarInt(); numAlts > 0; numAlts--)
         {
-            altOutputs.add(buffer.readItemStack());
+            altOutputs.add(buffer.readItem());
         }
 
         return getNewInstance(crafter, minBldgLevel, maxBldgLevel, mustExist, showTooltip, recipeId, researchReq, researchExclude, lootTable, inputs, primaryOutput, secondaryOutput, altOutputs);

@@ -29,7 +29,7 @@ public class BlockWaypoint extends AbstractBlockMinecolonies<BlockWaypoint>
      */
     public BlockWaypoint()
     {
-        super(Properties.create(Material.WOOD).hardnessAndResistance(BLOCK_HARDNESS, RESISTANCE).doesNotBlockMovement());
+        super(Properties.of(Material.WOOD).strength(BLOCK_HARDNESS, RESISTANCE).noCollission());
         setRegistryName(BLOCK_NAME);
     }
 }

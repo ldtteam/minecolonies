@@ -62,13 +62,13 @@ public class AmazonRaidEvent extends HordeRaidEvent
 
         if (entity instanceof EntityAmazonChief && boss.keySet().size() < horde.numberOfBosses)
         {
-            boss.put(entity, entity.getUniqueID());
+            boss.put(entity, entity.getUUID());
             return;
         }
 
         if (entity instanceof EntityArcherAmazon && archers.keySet().size() < horde.numberOfArchers)
         {
-            archers.put(entity, entity.getUniqueID());
+            archers.put(entity, entity.getUUID());
             return;
         }
 
@@ -79,7 +79,7 @@ public class AmazonRaidEvent extends HordeRaidEvent
     protected void updateRaidBar()
     {
         super.updateRaidBar();
-        raidBar.setCreateFog(true);
+        raidBar.setCreateWorldFog(true);
     }
 
     @Override

@@ -27,7 +27,7 @@ public class PathJobWalkRandomEdge extends AbstractPathJob
     @Override
     protected double computeHeuristic(final BlockPos pos)
     {
-        return entity.get().getPosition().manhattanDistance(pos);
+        return entity.get().blockPosition().distManhattan(pos);
     }
 
     @Override
@@ -38,11 +38,11 @@ public class PathJobWalkRandomEdge extends AbstractPathJob
             return false;
         }
 
-        if (entity.get().getRNG().nextInt(NODE_EDGE_CHANCE) == 0)
+        if (entity.get().getRandom().nextInt(NODE_EDGE_CHANCE) == 0)
         {
             for (final Direction direction : Direction.Plane.HORIZONTAL)
             {
-                if (world.isAirBlock(n.pos.down().offset(direction)))
+                if (world.isEmptyBlock(n.pos.below().relative(direction)))
                 {
                     return true;
                 }
@@ -55,6 +55,6 @@ public class PathJobWalkRandomEdge extends AbstractPathJob
     @Override
     protected double getNodeResultScore(final Node n)
     {
-        return start.manhattanDistance(n.pos);
+        return start.distManhattan(n.pos);
     }
 }

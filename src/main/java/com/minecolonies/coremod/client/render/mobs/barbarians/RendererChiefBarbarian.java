@@ -26,7 +26,7 @@ public class RendererChiefBarbarian extends AbstractRendererBarbarian<AbstractEn
     }
 
     @Override
-    public ResourceLocation getEntityTexture(final AbstractEntityBarbarian entity)
+    public ResourceLocation getTextureLocation(final AbstractEntityBarbarian entity)
     {
         return TEXTURE;
     }

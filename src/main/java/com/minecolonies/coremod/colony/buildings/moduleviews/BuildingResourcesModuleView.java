@@ -46,14 +46,14 @@ public class BuildingResourcesModuleView extends AbstractBuildingModuleView
 
         for (int i = 0; i < size; i++)
         {
-            final ItemStack itemStack = buf.readItemStack();
+            final ItemStack itemStack = buf.readItem();
             final int amountAvailable = buf.readInt();
             final int amountNeeded = buf.readInt();
             final BuildingBuilderResource resource = new BuildingBuilderResource(itemStack, amountNeeded, amountAvailable);
-            resources.put(itemStack.getDisplayName().getString(), resource);
+            resources.put(itemStack.getHoverName().getString(), resource);
         }
 
-        constructionName = buf.readString(32767);
+        constructionName = buf.readUtf(32767);
         progress = buf.readDouble();
         totalStages = buf.readInt();
         finishedStages = buf.readInt();

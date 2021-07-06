@@ -176,14 +176,14 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
 
         final Entity living = citizenToServe.isEmpty() ? playerToServe.get(0) : citizenToServe.get(0);
 
-        if (!getOwnBuilding().isInBuilding(living.getPosition()))
+        if (!getOwnBuilding().isInBuilding(living.blockPosition()))
         {
-            worker.getNavigator().clearPath();
+            worker.getNavigation().stop();
             removeFromQueue();
             return START_WORKING;
         }
 
-        if (walkToBlock(new BlockPos(living.getPositionVec())))
+        if (walkToBlock(new BlockPos(living.position())))
         {
             return getState();
         }
@@ -198,9 +198,9 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
                 if (foodSlot != -1)
                 {
                     final ItemStack stack = worker.getInventoryCitizen().extractItem(foodSlot, 1, false);
-                    if (stack.getItem().isFood())
+                    if (stack.getItem().isEdible())
                     {
-                        citizenToServe.get(0).getCitizenData().increaseSaturation(stack.getItem().getFood().getHealing() / 2.0);
+                        citizenToServe.get(0).getCitizenData().increaseSaturation(stack.getItem().getFoodProperties().getNutrition() / 2.0);
                     }
                 }
             }
@@ -291,7 +291,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
 
         final List<PlayerEntity> playerList = WorldUtil.getEntitiesWithinBuilding(world, PlayerEntity.class,
           getOwnBuilding(), player -> player != null
-                      && player.getFoodStats().getFoodLevel() < LEVEL_TO_FEED_PLAYER
+                      && player.getFoodData().getFoodLevel() < LEVEL_TO_FEED_PLAYER
                       && getOwnBuilding().getColony().getPermissions().hasPermission(player, Action.MANAGE_HUTS)
         );
 

@@ -58,7 +58,7 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
     @Override
     public Optional<IRequester> getBuilding(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
-        if (!manager.getColony().getWorld().isRemote)
+        if (!manager.getColony().getWorld().isClientSide)
         {
             return Optional.ofNullable(manager.getColony().getRequesterBuildingForPosition(getLocation().getInDimensionLocation()));
         }
@@ -69,7 +69,7 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
     @Override
     public boolean canResolveRequest(@NotNull final IRequestManager manager, final IRequest<? extends C> requestToCheck)
     {
-        if (!manager.getColony().getWorld().isRemote)
+        if (!manager.getColony().getWorld().isClientSide)
         {
             final ILocation requesterLocation = requestToCheck.getRequester().getLocation();
             return requesterLocation.equals(getLocation());

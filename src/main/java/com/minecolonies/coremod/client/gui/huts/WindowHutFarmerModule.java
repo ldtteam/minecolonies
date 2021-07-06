@@ -106,7 +106,7 @@ public class WindowHutFarmerModule extends AbstractWindowWorkerModuleBuilding<Bu
     /**
      * The world.
      */
-    private final ClientWorld world = Minecraft.getInstance().world;
+    private final ClientWorld world = Minecraft.getInstance().level;
 
     /**
      * Constructor for the window of the farmer.
@@ -129,7 +129,7 @@ public class WindowHutFarmerModule extends AbstractWindowWorkerModuleBuilding<Bu
     {
         final int row = fieldList.getListElementIndexByPane(button);
         final BlockPos field = fields.get(row);
-        final TileEntity entity = world.getTileEntity(field);
+        final TileEntity entity = world.getBlockEntity(field);
         if (entity instanceof ScarecrowTileEntity)
         {
             if (button.getTextAsString().equals(RED_X))
@@ -205,7 +205,7 @@ public class WindowHutFarmerModule extends AbstractWindowWorkerModuleBuilding<Bu
                 final BlockPos field = fields.get(index);
                 @NotNull final String distance = Integer.toString((int) Math.sqrt(BlockPosUtil.getDistanceSquared(field, building.getPosition())));
                 final String direction = BlockPosUtil.calcDirection(building.getPosition(), field);
-                final TileEntity entity = world.getTileEntity(field);
+                final TileEntity entity = world.getBlockEntity(field);
                 if (entity instanceof ScarecrowTileEntity)
                 {
                     @NotNull final String owner =

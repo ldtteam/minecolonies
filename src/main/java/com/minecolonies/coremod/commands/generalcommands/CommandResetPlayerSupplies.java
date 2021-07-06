@@ -24,7 +24,7 @@ public class CommandResetPlayerSupplies implements IMCOPCommand
     public int onExecute(final CommandContext<CommandSource> context)
     {
         final String username = StringArgumentType.getString(context, PLAYERNAME_ARG);
-        final PlayerEntity player = context.getSource().getServer().getPlayerList().getPlayerByUsername(username);
+        final PlayerEntity player = context.getSource().getServer().getPlayerList().getPlayerByName(username);
         if (player == null)
         {
             if (context.getSource().getEntity() instanceof PlayerEntity)
@@ -34,13 +34,13 @@ public class CommandResetPlayerSupplies implements IMCOPCommand
             }
             else
             {
-                context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.playernotfound", username), true);
+                context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.playernotfound", username), true);
             }
             return 0;
         }
 
-        player.addStat(Stats.ITEM_USED.get(ModItems.supplyChest), -1);
-        context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.resetsupply"), true);
+        player.awardStat(Stats.ITEM_USED.get(ModItems.supplyChest), -1);
+        context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.resetsupply"), true);
         LanguageHandler.sendPlayerMessage(player, "com.minecolonies.command.resetsupply");
         return 1;
     }

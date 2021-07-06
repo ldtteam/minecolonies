@@ -42,14 +42,14 @@ public class HutRenameMessage extends AbstractBuildingServerMessage<IBuilding>
     public void fromBytesOverride(@NotNull final PacketBuffer buf)
     {
 
-        name = buf.readString(32767);
+        name = buf.readUtf(32767);
     }
 
     @Override
     public void toBytesOverride(@NotNull final PacketBuffer buf)
     {
 
-        buf.writeString(name);
+        buf.writeUtf(name);
     }
 
     @Override

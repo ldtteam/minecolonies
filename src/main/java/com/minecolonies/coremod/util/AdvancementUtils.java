@@ -26,7 +26,7 @@ public class AdvancementUtils
 
             for (final Player player : colony.getPermissions().getFilteredPlayers(predicate))
             {
-                final ServerPlayerEntity playerEntity = minecraftServer.getPlayerList().getPlayerByUUID(player.getID());
+                final ServerPlayerEntity playerEntity = minecraftServer.getPlayerList().getPlayer(player.getID());
                 if (playerEntity != null)
                 {
                     playerConsumer.accept(playerEntity);

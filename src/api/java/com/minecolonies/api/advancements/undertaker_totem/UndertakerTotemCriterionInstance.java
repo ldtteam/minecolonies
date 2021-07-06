@@ -12,6 +12,6 @@ public class UndertakerTotemCriterionInstance extends CriterionInstance
 {
     public UndertakerTotemCriterionInstance()
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_UNDERTAKER_TOTEM), EntityPredicate.AndPredicate.ANY_AND);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_UNDERTAKER_TOTEM), EntityPredicate.AndPredicate.ANY);
     }
 }

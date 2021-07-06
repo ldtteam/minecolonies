@@ -36,7 +36,7 @@ public class TileEntityDecorationController extends TileEntity implements IBluep
     /**
      * The current level.
      */
-    private int level = 0;
+    private int tier = 0;
 
     /**
      * The basic direction this block is facing.
@@ -77,7 +77,7 @@ public class TileEntityDecorationController extends TileEntity implements IBluep
     public void setSchematicName(final String schematicName)
     {
         this.schematicName = schematicName;
-        if (world != null)
+        if (super.level != null)
         {
             this.update();
         }
@@ -88,19 +88,19 @@ public class TileEntityDecorationController extends TileEntity implements IBluep
      *
      * @return the level.
      */
-    public int getLevel()
+    public int getTier()
     {
-        return level;
+        return tier;
     }
 
     /**
      * Set the deco level.
      *
-     * @param level the max.
+     * @param tier the max.
      */
-    public void setLevel(final int level)
+    public void setTier(final int tier)
     {
-        this.level = level;
+        this.tier = tier;
         this.update();
     }
 
@@ -129,15 +129,15 @@ public class TileEntityDecorationController extends TileEntity implements IBluep
      */
     private void update()
     {
-        this.markDirty();
+        this.setChanged();
     }
 
     @Override
-    public void markDirty()
+    public void setChanged()
     {
-        if (world != null)
+        if (level != null)
         {
-            WorldUtil.markChunkDirty(world, pos);
+            WorldUtil.markChunkDirty(level, worldPosition);
         }
     }
 
@@ -158,7 +158,7 @@ public class TileEntityDecorationController extends TileEntity implements IBluep
     {
         if (corner1 == BlockPos.ZERO || corner2 == BlockPos.ZERO)
         {
-            return new Tuple<>(pos, pos);
+            return new Tuple<>(worldPosition, worldPosition);
         }
 
         return new Tuple<>(corner1, corner2);
@@ -182,34 +182,34 @@ public class TileEntityDecorationController extends TileEntity implements IBluep
 
         if (compound.contains(TAG_LEVEL))
         {
-            this.level = compound.getInt(TAG_LEVEL);
+            this.tier = compound.getInt(TAG_LEVEL);
         }
 
         if (compound.contains(TAG_FACING))
         {
-            this.basicFacing = Direction.byHorizontalIndex(compound.getInt(TAG_FACING));
+            this.basicFacing = Direction.from2DDataValue(compound.getInt(TAG_FACING));
         }
     }
 
     @Override
-    public void read(final BlockState state, final CompoundNBT compound)
+    public void load(final BlockState state, final CompoundNBT compound)
     {
-        super.read(state, compound);
+        super.load(state, compound);
         IBlueprintDataProvider.super.readSchematicDataFromNBT(compound);
         this.schematicName = compound.getString(TAG_NAME);
-        this.level = compound.getInt(TAG_LEVEL);
-        this.basicFacing = Direction.byHorizontalIndex(compound.getInt(TAG_FACING));
+        this.tier = compound.getInt(TAG_LEVEL);
+        this.basicFacing = Direction.from2DDataValue(compound.getInt(TAG_FACING));
     }
 
     @NotNull
     @Override
-    public CompoundNBT write(final CompoundNBT compound)
+    public CompoundNBT save(final CompoundNBT compound)
     {
-        super.write(compound);
+        super.save(compound);
         writeSchematicDataToNBT(compound);
         compound.putString(TAG_NAME, schematicName);
-        compound.putInt(TAG_LEVEL, level);
-        compound.putInt(TAG_FACING, basicFacing.getHorizontalIndex());
+        compound.putInt(TAG_LEVEL, tier);
+        compound.putInt(TAG_FACING, basicFacing.get2DDataValue());
         return compound;
     }
 
@@ -217,26 +217,26 @@ public class TileEntityDecorationController extends TileEntity implements IBluep
     @Override
     public SUpdateTileEntityPacket getUpdatePacket()
     {
-        return new SUpdateTileEntityPacket(this.pos, 0x9, this.getUpdateTag());
+        return new SUpdateTileEntityPacket(this.worldPosition, 0x9, this.getUpdateTag());
     }
 
     @NotNull
     @Override
     public CompoundNBT getUpdateTag()
     {
-        return this.write(new CompoundNBT());
+        return this.save(new CompoundNBT());
     }
 
     @Override
     public void onDataPacket(final NetworkManager net, final SUpdateTileEntityPacket packet)
     {
-        final CompoundNBT compound = packet.getNbtCompound();
-        this.read(getBlockState(), compound);
+        final CompoundNBT compound = packet.getTag();
+        this.load(getBlockState(), compound);
     }
 
     @Override
     public BlockPos getTilePos()
     {
-        return pos;
+        return worldPosition;
     }
 }

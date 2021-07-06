@@ -34,7 +34,7 @@ public class DefaultBlockLootTableProvider implements IDataProvider
     }
 
     @Override
-    public void act(@NotNull final DirectoryCache cache) throws IOException
+    public void run(@NotNull final DirectoryCache cache) throws IOException
     {
         saveBlocks(Arrays.asList(ModBlocks.getHuts()), cache);
 

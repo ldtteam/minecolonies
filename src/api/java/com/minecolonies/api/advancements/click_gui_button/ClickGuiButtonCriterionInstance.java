@@ -15,7 +15,7 @@ public class ClickGuiButtonCriterionInstance extends CriterionInstance
 
     public ClickGuiButtonCriterionInstance()
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CLICK_GUI_BUTTON), EntityPredicate.AndPredicate.ANY_AND);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CLICK_GUI_BUTTON), EntityPredicate.AndPredicate.ANY);
     }
 
     /**
@@ -24,7 +24,7 @@ public class ClickGuiButtonCriterionInstance extends CriterionInstance
      */
     public ClickGuiButtonCriterionInstance(final String buttonId)
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CLICK_GUI_BUTTON), EntityPredicate.AndPredicate.ANY_AND);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CLICK_GUI_BUTTON), EntityPredicate.AndPredicate.ANY);
 
         this.buttonId = buttonId;
     }
@@ -36,7 +36,7 @@ public class ClickGuiButtonCriterionInstance extends CriterionInstance
      */
     public ClickGuiButtonCriterionInstance(final String buttonId, final String windowResource)
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CLICK_GUI_BUTTON), EntityPredicate.AndPredicate.ANY_AND);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CLICK_GUI_BUTTON), EntityPredicate.AndPredicate.ANY);
 
         this.windowResource = windowResource;
         this.buttonId = buttonId;

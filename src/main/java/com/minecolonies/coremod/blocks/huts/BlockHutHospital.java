@@ -18,7 +18,7 @@ public class BlockHutHospital extends AbstractBlockHut<BlockHutHospital>
 
     @NotNull
     @Override
-    public String getName()
+    public String getHutName()
     {
         return "blockhuthospital";
     }

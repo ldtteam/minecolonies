@@ -44,11 +44,11 @@ public class FurnaceRecipes implements IFurnaceRecipes
         recipes.clear();
         reverseRecipes.clear();
         loadUtilityPredicates();
-        recipeManager.getRecipes(IRecipeType.SMELTING).values().forEach(recipe -> {
+        recipeManager.byType(IRecipeType.SMELTING).values().forEach(recipe -> {
             final NonNullList<Ingredient> list = recipe.getIngredients();
             if (list.size() == 1)
             {
-                for(final ItemStack smeltable: list.get(0).getMatchingStacks())
+                for(final ItemStack smeltable: list.get(0).getItems())
                 {
                     if (!smeltable.isEmpty())
                     {
@@ -57,13 +57,13 @@ public class FurnaceRecipes implements IFurnaceRecipes
                           StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
                           ImmutableList.of(new ItemStorage(smeltable)),
                           1,
-                          recipe.getRecipeOutput(),
+                          recipe.getResultItem(),
                           Blocks.FURNACE,
                           recipe.getId());
 
                         recipes.put(storage.getCleanedInput().get(0), storage);
 
-                        final ItemStack output = recipe.getRecipeOutput().copy();
+                        final ItemStack output = recipe.getResultItem().copy();
                         output.setCount(1);
                         reverseRecipes.put(new ItemStorage(output), storage);
                     }

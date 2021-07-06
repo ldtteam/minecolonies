@@ -126,7 +126,7 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
             }
         }
 
-        setName(nbt.keySet().contains(NBT_KEY_NAME) ? nbt.getString(NBT_KEY_NAME) : null);
+        setName(nbt.getAllKeys().contains(NBT_KEY_NAME) ? nbt.getString(NBT_KEY_NAME) : null);
     }
 
     /**
