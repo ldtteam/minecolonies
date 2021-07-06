@@ -49,7 +49,7 @@ import org.jetbrains.annotations.Nullable;
  * All AbstractBlockHut[something] should extend this class.
  */
 @SuppressWarnings("PMD.ExcessiveImports")
-public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends AbstractBlockMinecolonies<B> implements IBuilderUndestroyable, IAnchorBlock
+public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends AbstractBlockMinecolonies<B> implements IBuilderUndestroyable, IAnchorBlock, IBlockHut
 {
     /**
      * Hardness factor of the pvp mode.
@@ -77,7 +77,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     private static final VoxelShape SHAPE = VoxelShapes.create(0.1, 0.1, 0.1, 0.9, 0.9, 0.9);
 
     /**
-     * The hut's lower-case building-registry-compatible name.
+     * The hut's lower-case building-registry-compatible name.s
      */
     private final String name;
 
