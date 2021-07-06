@@ -43,8 +43,6 @@ import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.RACK;
 
-import com.minecolonies.api.tileentities.AbstractTileEntityRack.RackInventory;
-
 /**
  * Tile entity for the warehouse shelves.
  */

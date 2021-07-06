@@ -8,8 +8,6 @@ import net.minecraftforge.items.ItemStackHandler;
 
 import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.getPlayerActionPriority;
 
-import com.minecolonies.api.tileentities.AbstractTileEntityRack.RackInventory;
-
 /**
  * Class which handles the tileEntity for the Stash block.
  */
