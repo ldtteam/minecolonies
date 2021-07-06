@@ -124,7 +124,7 @@ public class BuildingBarracks extends AbstractBuilding
         {
             if (world.getBlockState(pos).getBlock() != ModBlocks.blockHutBarracksTower)
             {
-                world.setBlockAndUpdate(pos, ModBlocks.blockHutBarracksTower.defaultBlockState().setValue(BlockBarracksTowerSubstitution.FACING, block.getValue(AbstractBlockHut.FACING)));
+                world.setBlockAndUpdate(pos, ModBlocks.blockHutBarracksTower.defaultBlockState().setValue(BlockBarracksTowerSubstitution.FACING, block.getValue(BlockBarracksTowerSubstitution.FACING)));
                 final TileEntity tile = world.getBlockEntity(pos);
                 if (tile instanceof TileEntityColonyBuilding)
                 {
