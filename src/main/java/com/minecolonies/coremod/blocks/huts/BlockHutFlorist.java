@@ -9,7 +9,7 @@ public class BlockHutFlorist extends AbstractBlockHut<BlockHutFlorist>
 {
     @NotNull
     @Override
-    public String getName()
+    public String getHutName()
     {
         return "blockhutflorist";
     }

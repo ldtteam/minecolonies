@@ -898,7 +898,7 @@ public class GlobalResearch implements IGlobalResearch
         {
             try
             {
-                stack.setTag(JsonToNBT.getTagFromJson(tag));
+                stack.setTag(JsonToNBT.parseTag(tag));
             }
             catch (CommandSyntaxException e1)
             {

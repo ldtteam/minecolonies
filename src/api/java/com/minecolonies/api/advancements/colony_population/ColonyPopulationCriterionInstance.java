@@ -18,7 +18,7 @@ public class ColonyPopulationCriterionInstance extends CriterionInstance
      */
     public ColonyPopulationCriterionInstance(final int populationCount)
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_COLONY_POPULATION), EntityPredicate.AndPredicate.ANY_AND);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_COLONY_POPULATION), EntityPredicate.AndPredicate.ANY);
 
         this.populationCount = populationCount;
     }

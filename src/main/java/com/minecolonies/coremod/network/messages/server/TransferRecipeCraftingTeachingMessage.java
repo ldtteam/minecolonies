@@ -57,7 +57,7 @@ public class TransferRecipeCraftingTeachingMessage implements IMessage
         final int count = buf.readInt();
         for (int i = 0; i < count; i++)
         {
-            itemStacks.put(buf.readInt(), buf.readItemStack());
+            itemStacks.put(buf.readInt(), buf.readItem());
         }
         complete = buf.readBoolean();
     }
@@ -69,7 +69,7 @@ public class TransferRecipeCraftingTeachingMessage implements IMessage
         itemStacks.forEach((slot, stack) ->
         {
             buf.writeInt(slot);
-            buf.writeItemStack(stack);
+            buf.writeItem(stack);
         });
         buf.writeBoolean(complete);
     }
@@ -85,9 +85,9 @@ public class TransferRecipeCraftingTeachingMessage implements IMessage
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
         final PlayerEntity player = ctxIn.getSender();
-        if (player.openContainer instanceof ContainerCrafting)
+        if (player.containerMenu instanceof ContainerCrafting)
         {
-            final ContainerCrafting container = (ContainerCrafting) player.openContainer;
+            final ContainerCrafting container = (ContainerCrafting) player.containerMenu;
 
             if (complete)
             {
@@ -109,11 +109,11 @@ public class TransferRecipeCraftingTeachingMessage implements IMessage
                 container.handleSlotClick(container.getSlot(4), itemStacks.getOrDefault(4, ItemStackUtils.EMPTY));
             }
 
-            container.detectAndSendChanges();
+            container.broadcastChanges();
         }
-        else if (player.openContainer instanceof ContainerCraftingFurnace)
+        else if (player.containerMenu instanceof ContainerCraftingFurnace)
         {
-            final ContainerCraftingFurnace container = (ContainerCraftingFurnace) player.openContainer;
+            final ContainerCraftingFurnace container = (ContainerCraftingFurnace) player.containerMenu;
 
             container.setFurnaceInput(itemStacks.getOrDefault(0, ItemStack.EMPTY));
         }

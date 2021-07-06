@@ -79,7 +79,7 @@ public class PrivateCrafting extends AbstractCrafting
      */
     public static void serialize(final IFactoryController controller, final PacketBuffer buffer, final PrivateCrafting input)
     {
-        buffer.writeItemStack(input.getStack());
+        buffer.writeItem(input.getStack());
         buffer.writeInt(input.getCount());
         buffer.writeInt(input.getMinCount());
         StandardFactoryController.getInstance().serialize(buffer, input.getRecipeID());
@@ -94,7 +94,7 @@ public class PrivateCrafting extends AbstractCrafting
      */
     public static PrivateCrafting deserialize(final IFactoryController controller, final PacketBuffer buffer)
     {
-        final ItemStack stack = buffer.readItemStack();
+        final ItemStack stack = buffer.readItem();
         final int count = buffer.readInt();
         final int minCount = buffer.readInt();
         final IToken<?> token = StandardFactoryController.getInstance().deserialize(buffer);

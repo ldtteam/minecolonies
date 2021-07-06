@@ -69,15 +69,15 @@ public class ContainerField extends Container
     {
         super(ModContainers.field, windowId);
 
-        final World world = playerInventory.player.world;
+        final World world = playerInventory.player.level;
 
-        if (world.getBlockState(pos).get(BlockStateProperties.DOUBLE_BLOCK_HALF) == DoubleBlockHalf.UPPER)
+        if (world.getBlockState(pos).getValue(BlockStateProperties.DOUBLE_BLOCK_HALF) == DoubleBlockHalf.UPPER)
         {
-            pos = pos.down();
+            pos = pos.below();
         }
 
         this.colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, pos);
-        this.tileEntity = ((AbstractScarecrowTileEntity) world.getTileEntity(pos));
+        this.tileEntity = ((AbstractScarecrowTileEntity) world.getBlockEntity(pos));
         this.inventory = getTileEntity().getInventory();
         final int extraOffset = 0;
 
@@ -112,28 +112,28 @@ public class ContainerField extends Container
 
     @NotNull
     @Override
-    public ItemStack transferStackInSlot(@NotNull final PlayerEntity playerIn, final int index)
+    public ItemStack quickMoveStack(@NotNull final PlayerEntity playerIn, final int index)
     {
         ItemStack transfer = ItemStackUtils.EMPTY;
-        Slot slot = this.inventorySlots.get(index);
+        Slot slot = this.slots.get(index);
 
-        if (slot == null || !slot.getHasStack())
+        if (slot == null || !slot.hasItem())
         {
             return transfer;
         }
 
-        transfer = slot.getStack();
+        transfer = slot.getItem();
 
         if (index == 0)
         {
-            if (!mergeItemStack(transfer, 1, 37, true))
+            if (!moveItemStackTo(transfer, 1, 37, true))
             {
                 return ItemStackUtils.EMPTY;
             }
         }
         else
         {
-            if (!this.mergeItemStack(transfer, 0, 1, false))
+            if (!this.moveItemStackTo(transfer, 0, 1, false))
             {
                 return ItemStackUtils.EMPTY;
             }
@@ -143,7 +143,7 @@ public class ContainerField extends Container
     }
 
     @Override
-    public boolean canInteractWith(@NotNull final PlayerEntity playerIn)
+    public boolean stillValid(@NotNull final PlayerEntity playerIn)
     {
         if (colony == null)
         {

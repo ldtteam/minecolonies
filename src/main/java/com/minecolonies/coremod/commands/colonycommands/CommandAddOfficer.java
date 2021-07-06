@@ -27,18 +27,18 @@ public class CommandAddOfficer implements IMCColonyOfficerCommand
     @Override
     public int onExecute(final CommandContext<CommandSource> context)
     {
-        if (!context.getSource().hasPermissionLevel(OP_PERM_LEVEL) && !MineColonies.getConfig().getServer().canPlayerUseAddOfficerCommand.get())
+        if (!context.getSource().hasPermission(OP_PERM_LEVEL) && !MineColonies.getConfig().getServer().canPlayerUseAddOfficerCommand.get())
         {
-            context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.notenabledinconfig"), true);
+            context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.notenabledinconfig"), true);
             return 0;
         }
 
 
         final int colonyID = IntegerArgumentType.getInteger(context, COLONYID_ARG);
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getWorld().getDimensionKey());
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getLevel().dimension());
         if (colony == null)
         {
-            context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.colonyidnotfound", colonyID), true);
+            context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.colonyidnotfound", colonyID), true);
             return 0;
         }
 
@@ -52,15 +52,15 @@ public class CommandAddOfficer implements IMCColonyOfficerCommand
             return 0;
         }
 
-        if (context.getSource().getServer().getPlayerList().getPlayerByUUID(profile.getId()) == null)
+        if (context.getSource().getServer().getPlayerList().getPlayer(profile.getId()) == null)
         {
             // could not find player with given name.
-            context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.playernotfound", profile.getName()), true);
+            context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.playernotfound", profile.getName()), true);
             return 0;
         }
         colony.getPermissions().addPlayer(profile, colony.getPermissions().getRank(colony.getPermissions().OFFICER_RANK_ID));
 
-        context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.addofficer.success", profile.getName(), colony.getName()), true);
+        context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.addofficer.success", profile.getName(), colony.getName()), true);
         return 1;
     }
 

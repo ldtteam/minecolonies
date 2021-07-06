@@ -29,18 +29,18 @@ public class ItemGate extends BlockItem
       @NotNull final ItemGroup tab,
       final Properties properties)
     {
-        super(block, properties.group(tab));
+        super(block, properties.tab(tab));
 
         // Registry name links to item model json file name
         setRegistryName(Constants.MOD_ID.toLowerCase() + ":" + name);
     }
 
     @Override
-    public void addInformation(
+    public void appendHoverText(
       @NotNull final ItemStack stack, @Nullable final World worldIn, @NotNull final List<ITextComponent> tooltip, @NotNull final ITooltipFlag flagIn)
     {
         final IFormattableTextComponent guiHint2 = LanguageHandler.buildChatComponent(TranslationConstants.GATE_PLACEMENT_TOOLTIP);
-        guiHint2.setStyle(Style.EMPTY.setFormatting(TextFormatting.DARK_AQUA));
+        guiHint2.setStyle(Style.EMPTY.withColor(TextFormatting.DARK_AQUA));
         tooltip.add(guiHint2);
     }
 }

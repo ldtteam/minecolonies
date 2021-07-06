@@ -59,7 +59,7 @@ public class ItemStorage
         this.shouldIgnoreDamageValue = ignoreDamageValue;
         this.shouldIgnoreNBTValue = ignoreDamageValue;
         this.amount = amount;
-        this.creativeTabIndex = stack.getItem().getCreativeTabs().stream().filter(Objects::nonNull).map(g -> g.index).collect(Collectors.toList());
+        this.creativeTabIndex = stack.getItem().getCreativeTabs().stream().filter(Objects::nonNull).map(g -> g.id).collect(Collectors.toList());
     }
 
     /**
@@ -76,7 +76,7 @@ public class ItemStorage
         this.shouldIgnoreNBTValue = shouldIgnoreNBTValue;
         this.amount = ItemStackUtils.getSize(stack);
         this.creativeTabIndex =
-          stack.isEmpty() ? new ArrayList<>() : stack.getItem().getCreativeTabs().stream().filter(Objects::nonNull).map(g -> g.index).collect(Collectors.toList());
+          stack.isEmpty() ? new ArrayList<>() : stack.getItem().getCreativeTabs().stream().filter(Objects::nonNull).map(g -> g.id).collect(Collectors.toList());
     }
 
     /**
@@ -91,7 +91,7 @@ public class ItemStorage
         this.shouldIgnoreDamageValue = ignoreDamageValue;
         this.shouldIgnoreNBTValue = false;
         this.amount = ItemStackUtils.getSize(stack);
-        this.creativeTabIndex = stack.getItem().getCreativeTabs().stream().filter(Objects::nonNull).map(g -> g.index).collect(Collectors.toList());
+        this.creativeTabIndex = stack.getItem().getCreativeTabs().stream().filter(Objects::nonNull).map(g -> g.id).collect(Collectors.toList());
     }
 
     /**
@@ -105,7 +105,7 @@ public class ItemStorage
         this.shouldIgnoreDamageValue = false;
         this.shouldIgnoreNBTValue = false;
         this.amount = ItemStackUtils.getSize(stack);
-        this.creativeTabIndex = stack.getItem().getCreativeTabs().stream().filter(Objects::nonNull).map(g -> g.index).collect(Collectors.toList());
+        this.creativeTabIndex = stack.getItem().getCreativeTabs().stream().filter(Objects::nonNull).map(g -> g.id).collect(Collectors.toList());
     }
 
     /**
@@ -154,7 +154,7 @@ public class ItemStorage
             this.shouldIgnoreNBTValue = true;
         }
     
-        this.creativeTabIndex = stack.getItem().getCreativeTabs().stream().filter(Objects::nonNull).map(g -> g.index).collect(Collectors.toList());
+        this.creativeTabIndex = stack.getItem().getCreativeTabs().stream().filter(Objects::nonNull).map(g -> g.id).collect(Collectors.toList());
     }
 
     /**
@@ -276,7 +276,7 @@ public class ItemStorage
         final ItemStorage that = (ItemStorage) o;
 
 
-        return stack.isItemEqual(that.getItemStack())
+        return stack.sameItem(that.getItemStack())
                  && (this.shouldIgnoreDamageValue || that.shouldIgnoreDamageValue || that.getDamageValue() == this.getDamageValue())
                  && (this.shouldIgnoreNBTValue || that.shouldIgnoreNBTValue
                        || (that.getItemStack().getTag() == null && this.getItemStack().getTag() == null)
@@ -312,7 +312,7 @@ public class ItemStorage
      */
     public int getDamageValue()
     {
-        return stack.getDamage();
+        return stack.getDamageValue();
     }
 
     /**
@@ -322,7 +322,7 @@ public class ItemStorage
      */
     public int getRemainingDurablityValue()
     {
-        return stack.getMaxDamage() - stack.getDamage();
+        return stack.getMaxDamage() - stack.getDamageValue();
     }
 
     /**

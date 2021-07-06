@@ -162,14 +162,14 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight, AbstractBui
             if (worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SHIELD_USAGE) > 0 && shieldSlot != -1)
             {
                 worker.getCitizenItemHandler().setHeldItem(Hand.OFF_HAND, shieldSlot);
-                worker.setActiveHand(Hand.OFF_HAND);
+                worker.startUsingItem(Hand.OFF_HAND);
 
                 // Apply the colony Flag to the shield
                 ItemStack shieldStack = worker.getInventoryCitizen().getHeldItem(Hand.OFF_HAND);
-                CompoundNBT nbt = shieldStack.getOrCreateChildTag("BlockEntityTag");
+                CompoundNBT nbt = shieldStack.getOrCreateTagElement("BlockEntityTag");
                 nbt.put(TAG_BANNER_PATTERNS, worker.getCitizenColonyHandler().getColony().getColonyFlag());
 
-                worker.faceEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
+                worker.lookAt(target, (float) TURN_AROUND, (float) TURN_AROUND);
                 worker.decreaseSaturationForContinuousAction();
             }
         }
@@ -187,8 +187,8 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight, AbstractBui
         final IAIState state = preAttackChecks();
         if (state != getState())
         {
-            worker.getNavigator().clearPath();
-            worker.getMoveHelper().strafe(0, 0);
+            worker.getNavigation().stop();
+            worker.getMoveControl().strafe(0, 0);
             setDelay(STANDARD_DELAY);
             worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
             return state;
@@ -202,16 +202,16 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight, AbstractBui
             return GUARD_ATTACK_PROTECT;
         }
 
-        if (!isInAttackDistance(new BlockPos(target.getPositionVec())))
+        if (!isInAttackDistance(new BlockPos(target.position())))
         {
             return getState();
         }
 
         currentAttackDelay = getAttackDelay();
-        worker.faceEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
+        worker.lookAt(target, (float) TURN_AROUND, (float) TURN_AROUND);
 
-        worker.swingArm(Hand.MAIN_HAND);
-        worker.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
+        worker.swing(Hand.MAIN_HAND);
+        worker.playSound(SoundEvents.PLAYER_ATTACK_SWEEP, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
 
         double damageToBeDealt = getAttackDamage();
 
@@ -223,13 +223,13 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight, AbstractBui
         final DamageSource source = new NamedDamageSource(worker.getName().getString(), worker);
         if (MineColonies.getConfig().getServer().pvp_mode.get() && target instanceof PlayerEntity)
         {
-            source.setDamageBypassesArmor();
+            source.bypassArmor();
         }
 
-        final int fireLevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.FIRE_ASPECT, worker.getHeldItem(Hand.MAIN_HAND));
+        final int fireLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.FIRE_ASPECT, worker.getItemInHand(Hand.MAIN_HAND));
         if (fireLevel > 0)
         {
-            target.setFire(fireLevel * 80);
+            target.setSecondsOnFire(fireLevel * 80);
         }
 
         if (knockbackAoeCooldown <= 0)
@@ -237,36 +237,36 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight, AbstractBui
             if (worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(KNIGHT_WHIRLWIND) > 0
                   && worker.getRandom().nextInt(KNOCKBACK_CHANCE) == 0)
             {
-                List<LivingEntity> entities = this.world.getLoadedEntitiesWithinAABB(LivingEntity.class, worker.getBoundingBox().grow(2.0D, 0.5D, 2.0D));
+                List<LivingEntity> entities = this.world.getLoadedEntitiesOfClass(LivingEntity.class, worker.getBoundingBox().inflate(2.0D, 0.5D, 2.0D));
                 for (LivingEntity livingentity : entities)
                 {
-                    if (livingentity != worker && (!worker.isOnSameTeam(livingentity)) && (!(livingentity instanceof ArmorStandEntity)))
+                    if (livingentity != worker && (!worker.isAlliedTo(livingentity)) && (!(livingentity instanceof ArmorStandEntity)))
                     {
-                        livingentity.applyKnockback(
+                        livingentity.knockback(
                           2F,
-                          MathHelper.sin(livingentity.rotationYaw * ((float) Math.PI)),
-                          (-MathHelper.cos(livingentity.rotationYaw * ((float) Math.PI))));
-                        livingentity.attackEntityFrom(source, (float) (damageToBeDealt / entities.size()));
+                          MathHelper.sin(livingentity.yRot * ((float) Math.PI)),
+                          (-MathHelper.cos(livingentity.yRot * ((float) Math.PI))));
+                        livingentity.hurt(source, (float) (damageToBeDealt / entities.size()));
                     }
                 }
 
                 this.world.playSound(null,
-                  worker.getPosX(),
-                  worker.getPosY(),
-                  worker.getPosZ(),
-                  SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP,
-                  worker.getSoundCategory(),
+                  worker.getX(),
+                  worker.getY(),
+                  worker.getZ(),
+                  SoundEvents.PLAYER_ATTACK_SWEEP,
+                  worker.getSoundSource(),
                   1.0F,
                   1.0F);
 
-                double d0 = (double) (-MathHelper.sin(worker.rotationYaw * ((float) Math.PI / 180)));
-                double d1 = (double) MathHelper.cos(worker.rotationYaw * ((float) Math.PI / 180));
-                if (worker.world instanceof ServerWorld)
+                double d0 = (double) (-MathHelper.sin(worker.yRot * ((float) Math.PI / 180)));
+                double d1 = (double) MathHelper.cos(worker.yRot * ((float) Math.PI / 180));
+                if (worker.level instanceof ServerWorld)
                 {
-                    ((ServerWorld) worker.world).spawnParticle(ParticleTypes.SWEEP_ATTACK,
-                      worker.getPosX() + d0,
-                      worker.getPosYHeight(0.5D),
-                      worker.getPosZ() + d1,
+                    ((ServerWorld) worker.level).sendParticles(ParticleTypes.SWEEP_ATTACK,
+                      worker.getX() + d0,
+                      worker.getY(0.5D),
+                      worker.getZ() + d1,
                       2,
                       d0,
                       0.0D,
@@ -279,13 +279,13 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight, AbstractBui
         }
 
 
-        target.attackEntityFrom(source, (float) damageToBeDealt);
-        target.setRevengeTarget(worker);
+        target.hurt(source, (float) damageToBeDealt);
+        target.setLastHurtByMob(worker);
         if (target instanceof MobEntity)
         {
             if (worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(KNIGHT_TAUNT) > 0)
             {
-                ((MobEntity) target).setAttackTarget(worker);
+                ((MobEntity) target).setTarget(worker);
             }
         }
 
@@ -302,19 +302,19 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight, AbstractBui
         {
             int addDmg = 0;
 
-            final ItemStack heldItem = worker.getHeldItem(Hand.MAIN_HAND);
+            final ItemStack heldItem = worker.getItemInHand(Hand.MAIN_HAND);
 
             if (ItemStackUtils.doesItemServeAsWeapon(heldItem))
             {
                 if (heldItem.getItem() instanceof SwordItem)
                 {
-                    addDmg += ((SwordItem) heldItem.getItem()).getAttackDamage() + BASE_PHYSICAL_DAMAGE;
+                    addDmg += ((SwordItem) heldItem.getItem()).getDamage() + BASE_PHYSICAL_DAMAGE;
                 }
                 else
                 {
                     addDmg += TinkersToolHelper.getDamage(heldItem);
                 }
-                addDmg += EnchantmentHelper.getModifierForCreature(heldItem, target.getCreatureAttribute()) / 2.5;
+                addDmg += EnchantmentHelper.getDamageBonus(heldItem, target.getMobType()) / 2.5;
             }
 
             addDmg += worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(MELEE_DAMAGE);
@@ -333,7 +333,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight, AbstractBui
     @Override
     public void moveInAttackPosition()
     {
-        worker.getNavigator().tryMoveToEntityLiving(target, getCombatMovementSpeed());
+        worker.getNavigation().moveTo(target, getCombatMovementSpeed());
     }
 
     @Override

@@ -43,26 +43,26 @@ public class BlockMinecoloniesNamedGrave extends AbstractBlockMinecoloniesNamedG
 
     public BlockMinecoloniesNamedGrave()
     {
-        super(Properties.create(Material.ROCK).hardnessAndResistance(BLOCK_HARDNESS, RESISTANCE).noDrops());
+        super(Properties.of(Material.STONE).strength(BLOCK_HARDNESS, RESISTANCE).noDrops());
         setRegistryName(Constants.MOD_ID.toLowerCase() + ":" + BLOCK_NAME);
-        final BlockState bs = this.getDefaultState();
-        this.setDefaultState(bs.with(FACING, Direction.NORTH));
+        final BlockState bs = this.defaultBlockState();
+        this.registerDefaultState(bs.setValue(FACING, Direction.NORTH));
     }
 
     @Override
-    public void onBlockPlacedBy(final World worldIn, final BlockPos pos, final BlockState state, @Nullable final LivingEntity placer, final ItemStack stack)
+    public void setPlacedBy(final World worldIn, final BlockPos pos, final BlockState state, @Nullable final LivingEntity placer, final ItemStack stack)
     {
         BlockState tempState = state;
         if (placer != null)
         {
-            tempState = tempState.with(FACING, placer.getHorizontalFacing().getOpposite());
+            tempState = tempState.setValue(FACING, placer.getDirection().getOpposite());
         }
 
-        worldIn.setBlockState(pos, tempState, 2);
+        worldIn.setBlock(pos, tempState, 2);
     }
 
     @Override
-    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder)
+    protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder)
     {
         builder.add(FACING);
     }
@@ -84,17 +84,17 @@ public class BlockMinecoloniesNamedGrave extends AbstractBlockMinecoloniesNamedG
     @Override
     public VoxelShape getShape(final BlockState state, final IBlockReader worldIn, final BlockPos pos, final ISelectionContext context)
     {
-        return VoxelShapes.create(0, 0, 0, 1, 1.1, 1);
+        return VoxelShapes.box(0, 0, 0, 1, 1.1, 1);
     }
 
     @Nullable
     @Override
     public BlockState getStateForPlacement(final BlockItemUseContext context)
     {
-        final World worldIn = context.getWorld();
-        final BlockPos pos = context.getPos();
-        final BlockState state = getDefaultState();
-        final TileEntity entity = worldIn.getTileEntity(pos);
+        final World worldIn = context.getLevel();
+        final BlockPos pos = context.getClickedPos();
+        final BlockState state = defaultBlockState();
+        final TileEntity entity = worldIn.getBlockEntity(pos);
 
         if (!(entity instanceof TileEntityNamedGrave))
         {
@@ -127,7 +127,7 @@ public class BlockMinecoloniesNamedGrave extends AbstractBlockMinecoloniesNamedG
     @Deprecated
     public BlockState rotate(@NotNull final BlockState state, final Rotation rot)
     {
-        return state.with(AbstractBlockMinecoloniesNamedGrave.FACING, rot.rotate(state.get(AbstractBlockMinecoloniesNamedGrave.FACING)));
+        return state.setValue(AbstractBlockMinecoloniesNamedGrave.FACING, rot.rotate(state.getValue(AbstractBlockMinecoloniesNamedGrave.FACING)));
     }
 
     /**
@@ -138,13 +138,13 @@ public class BlockMinecoloniesNamedGrave extends AbstractBlockMinecoloniesNamedG
     @Deprecated
     public BlockState mirror(@NotNull final BlockState state, final Mirror mirrorIn)
     {
-        return state.rotate(mirrorIn.toRotation(state.get(AbstractBlockMinecoloniesNamedGrave.FACING)));
+        return state.rotate(mirrorIn.getRotation(state.getValue(AbstractBlockMinecoloniesNamedGrave.FACING)));
     }
 
     @Override
-    public boolean isValidPosition(final BlockState state, final IWorldReader worldIn, final BlockPos pos)
+    public boolean canSurvive(final BlockState state, final IWorldReader worldIn, final BlockPos pos)
     {
-        return !worldIn.isAirBlock(pos.down())
-                 && worldIn.getBlockState(pos.down()).getBlock() != ModBlocks.blockNamedGrave;
+        return !worldIn.isEmptyBlock(pos.below())
+                 && worldIn.getBlockState(pos.below()).getBlock() != ModBlocks.blockNamedGrave;
     }
 }

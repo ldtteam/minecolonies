@@ -95,7 +95,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             {
                 for (final ItemStack deliveryStack : request.getDeliveries())
                 {
-                    if (deliveryStack.isItemEqualIgnoreDurability(stack))
+                    if (deliveryStack.sameItemStackIgnoreDurability(stack))
                     {
                         return true;
                     }
@@ -160,7 +160,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             handlers.add(workerEntity.getInventory());
         }
 
-        final TileEntity entity = colony.getWorld().getTileEntity(getID());
+        final TileEntity entity = colony.getWorld().getBlockEntity(getID());
         if (entity != null)
         {
             final LazyOptional<IItemHandler> handler = entity.getCapability(ITEM_HANDLER_CAPABILITY, null);
@@ -202,7 +202,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     {
         super.deserializeNBT(compound);
 
-        if (compound.keySet().contains(TAG_WORKER))
+        if (compound.getAllKeys().contains(TAG_WORKER))
         {
             try
             {
@@ -210,11 +210,11 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
                 for (int i = 0; i < workersTagList.size(); ++i)
                 {
                     final ICitizenData data;
-                    if (workersTagList.getCompound(i).keySet().contains(TAG_ID))
+                    if (workersTagList.getCompound(i).getAllKeys().contains(TAG_ID))
                     {
                         data = getColony().getCitizenManager().getCivilian(workersTagList.getCompound(i).getInt(TAG_ID));
                     }
-                    else if (workersTagList.getCompound(i).keySet().contains(TAG_WORKER_ID))
+                    else if (workersTagList.getCompound(i).getAllKeys().contains(TAG_WORKER_ID))
                     {
                         data = getColony().getCitizenManager().getCivilian(workersTagList.getCompound(i).getInt(TAG_WORKER_ID));
                     }
@@ -316,12 +316,12 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         }
 
         buf.writeInt(hiringMode.ordinal());
-        buf.writeString(this.getJobName());
+        buf.writeUtf(this.getJobName());
         buf.writeInt(getMaxInhabitants());
         buf.writeInt(getPrimarySkill().ordinal());
         buf.writeInt(getSecondarySkill().ordinal());
         buf.writeInt(getMaxInhabitants());
-        buf.writeString(getJobDisplayName());
+        buf.writeUtf(getJobDisplayName());
     }
 
     @Override
@@ -379,7 +379,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     @Override
     public boolean canEat(final ItemStack stack)
     {
-        return stack.getItem().getFood().getHealing() >= getBuildingLevel();
+        return stack.getItem().getFoodProperties().getNutrition() >= getBuildingLevel();
     }
 
     /**

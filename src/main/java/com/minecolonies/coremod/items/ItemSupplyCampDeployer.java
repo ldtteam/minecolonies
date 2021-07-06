@@ -58,21 +58,21 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
      */
     public ItemSupplyCampDeployer(final Item.Properties properties)
     {
-        super("supplycampdeployer", properties.maxStackSize(1).group(ModCreativeTabs.MINECOLONIES));
+        super("supplycampdeployer", properties.stacksTo(1).tab(ModCreativeTabs.MINECOLONIES));
     }
 
     @NotNull
     @Override
-    public ActionResultType onItemUse(final ItemUseContext ctx)
+    public ActionResultType useOn(final ItemUseContext ctx)
     {
-        if (ctx.getWorld().isRemote)
+        if (ctx.getLevel().isClientSide)
         {
-            if (!MineColonies.getConfig().getServer().allowOtherDimColonies.get() && !WorldUtil.isOverworldType(ctx.getWorld()))
+            if (!MineColonies.getConfig().getServer().allowOtherDimColonies.get() && !WorldUtil.isOverworldType(ctx.getLevel()))
             {
                 LanguageHandler.sendPlayerMessage(ctx.getPlayer(), CANT_PLACE_COLONY_IN_OTHER_DIM);
                 return ActionResultType.FAIL;
             }
-            placeSupplyCamp(ctx.getPos(), ctx.getPlayer().getHorizontalFacing());
+            placeSupplyCamp(ctx.getClickedPos(), ctx.getPlayer().getDirection());
         }
 
         return ActionResultType.FAIL;
@@ -80,17 +80,17 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
 
     @NotNull
     @Override
-    public ActionResult<ItemStack> onItemRightClick(final World worldIn, final PlayerEntity playerIn, final Hand hand)
+    public ActionResult<ItemStack> use(final World worldIn, final PlayerEntity playerIn, final Hand hand)
     {
-        final ItemStack stack = playerIn.getHeldItem(hand);
-        if (worldIn.isRemote)
+        final ItemStack stack = playerIn.getItemInHand(hand);
+        if (worldIn.isClientSide)
         {
             if (!MineColonies.getConfig().getServer().allowOtherDimColonies.get() && !WorldUtil.isOverworldType(worldIn))
             {
                 LanguageHandler.sendPlayerMessage(playerIn, CANT_PLACE_COLONY_IN_OTHER_DIM);
                 return new ActionResult<>(ActionResultType.FAIL, stack);
             }
-            placeSupplyCamp(null, playerIn.getHorizontalFacing());
+            placeSupplyCamp(null, playerIn.getDirection());
         }
 
         return new ActionResult<>(ActionResultType.FAIL, stack);
@@ -115,19 +115,19 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
         switch (direction)
         {
             case SOUTH:
-                tempPos = pos.add(OFFSET_LEFT, OFFSET_Y, OFFSET_DISTANCE);
+                tempPos = pos.offset(OFFSET_LEFT, OFFSET_Y, OFFSET_DISTANCE);
                 rotations = ROTATE_THREE_TIMES;
                 break;
             case NORTH:
-                tempPos = pos.add(-OFFSET_LEFT, OFFSET_Y, -OFFSET_DISTANCE);
+                tempPos = pos.offset(-OFFSET_LEFT, OFFSET_Y, -OFFSET_DISTANCE);
                 rotations = ROTATE_ONCE;
                 break;
             case EAST:
-                tempPos = pos.add(OFFSET_DISTANCE, OFFSET_Y, -OFFSET_LEFT);
+                tempPos = pos.offset(OFFSET_DISTANCE, OFFSET_Y, -OFFSET_LEFT);
                 rotations = ROTATE_TWICE;
                 break;
             default:
-                tempPos = pos.add(-OFFSET_DISTANCE, OFFSET_Y, OFFSET_LEFT);
+                tempPos = pos.offset(-OFFSET_DISTANCE, OFFSET_Y, OFFSET_LEFT);
                 rotations = ROTATE_0_TIMES;
                 break;
         }

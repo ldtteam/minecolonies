@@ -196,11 +196,11 @@ public class Stack implements IConcreteDeliverable
         final boolean matchMeta = compound.getBoolean(NBT_MATCHMETA);
         final boolean matchNBT = compound.getBoolean(NBT_MATCHNBT);
         final boolean matchOreDic = compound.getBoolean(NBT_MATCHOREDIC);
-        final ItemStack result = compound.keySet().contains(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_RESULT)) : ItemStackUtils.EMPTY;
+        final ItemStack result = compound.getAllKeys().contains(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_RESULT)) : ItemStackUtils.EMPTY;
 
         int count = compound.getInt("size");
         int minCount = count;
-        if (compound.keySet().contains(NBT_COUNT))
+        if (compound.getAllKeys().contains(NBT_COUNT))
         {
             count = compound.getInt(NBT_COUNT);
             minCount = compound.getInt(NBT_MINCOUNT);
@@ -218,7 +218,7 @@ public class Stack implements IConcreteDeliverable
      */
     public static void serialize(final IFactoryController controller, final PacketBuffer buffer, final Stack input)
     {
-        buffer.writeItemStack(input.theStack);
+        buffer.writeItem(input.theStack);
         buffer.writeBoolean(input.matchMeta);
         buffer.writeBoolean(input.matchNBT);
         buffer.writeBoolean(input.matchOreDic);
@@ -226,7 +226,7 @@ public class Stack implements IConcreteDeliverable
         buffer.writeBoolean(!ItemStackUtils.isEmpty(input.result));
         if (!ItemStackUtils.isEmpty(input.result))
         {
-            buffer.writeItemStack(input.result);
+            buffer.writeItem(input.result);
         }
         buffer.writeInt(input.getCount());
         buffer.writeInt(input.getMinimumCount());
@@ -241,12 +241,12 @@ public class Stack implements IConcreteDeliverable
      */
     public static Stack deserialize(final IFactoryController controller, final PacketBuffer buffer)
     {
-        final ItemStack stack = buffer.readItemStack();
+        final ItemStack stack = buffer.readItem();
         final boolean matchMeta = buffer.readBoolean();
         final boolean matchNBT = buffer.readBoolean();
         final boolean matchOreDic = buffer.readBoolean();
 
-        final ItemStack result = buffer.readBoolean() ? buffer.readItemStack() : ItemStack.EMPTY;
+        final ItemStack result = buffer.readBoolean() ? buffer.readItem() : ItemStack.EMPTY;
 
         int count = buffer.readInt();
         int minCount = buffer.readInt();

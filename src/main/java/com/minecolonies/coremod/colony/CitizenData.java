@@ -438,19 +438,19 @@ public class CitizenData implements ICitizenData
         citizen.setFemale(isFemale());
         citizen.setTextureId(getTextureId());
 
-        citizen.getDataManager().set(DATA_COLONY_ID, colony.getID());
-        citizen.getDataManager().set(DATA_CITIZEN_ID, citizen.getCivilianID());
-        citizen.getDataManager().set(DATA_IS_FEMALE, citizen.isFemale() ? 1 : 0);
-        citizen.getDataManager().set(DATA_TEXTURE, citizen.getTextureId());
-        citizen.getDataManager().set(DATA_TEXTURE_SUFFIX, getTextureSuffix());
-        citizen.getDataManager().set(DATA_IS_ASLEEP, isAsleep());
-        citizen.getDataManager().set(DATA_IS_CHILD, isChild());
-        citizen.getDataManager().set(DATA_BED_POS, getBedPos());
-        citizen.getDataManager().set(DATA_STYLE, colony.getStyle());
+        citizen.getEntityData().set(DATA_COLONY_ID, colony.getID());
+        citizen.getEntityData().set(DATA_CITIZEN_ID, citizen.getCivilianID());
+        citizen.getEntityData().set(DATA_IS_FEMALE, citizen.isFemale() ? 1 : 0);
+        citizen.getEntityData().set(DATA_TEXTURE, citizen.getTextureId());
+        citizen.getEntityData().set(DATA_TEXTURE_SUFFIX, getTextureSuffix());
+        citizen.getEntityData().set(DATA_IS_ASLEEP, isAsleep());
+        citizen.getEntityData().set(DATA_IS_CHILD, isChild());
+        citizen.getEntityData().set(DATA_BED_POS, getBedPos());
+        citizen.getEntityData().set(DATA_STYLE, colony.getStyle());
 
         citizen.getCitizenExperienceHandler().updateLevel();
 
-        setLastPosition(citizen.getPosition());
+        setLastPosition(citizen.blockPosition());
 
         citizen.getCitizenJobHandler().onJobChanged(citizen.getCitizenJobHandler().getColonyJob());
 
@@ -744,7 +744,7 @@ public class CitizenData implements ICitizenData
             {
                 getEntity().ifPresent(entityCitizen -> {
                     entityCitizen.getTasks()
-                      .goals.stream()
+                      .availableGoals.stream()
                       .filter(task -> task.getGoal() instanceof AbstractAISkeleton)
                       .findFirst()
                       .ifPresent(e -> entityCitizen.getTasks().removeGoal(e));
@@ -765,7 +765,7 @@ public class CitizenData implements ICitizenData
         if (getEntity().isPresent())
         {
             final Entity entity = getEntity().get();
-            if (entity.isAlive() && entity.addedToChunk && WorldUtil.isEntityBlockLoaded(entity.world, entity.getPosition()))
+            if (entity.isAlive() && entity.inChunk && WorldUtil.isEntityBlockLoaded(entity.level, entity.blockPosition()))
             {
                 return;
             }
@@ -817,10 +817,10 @@ public class CitizenData implements ICitizenData
     @Override
     public void serializeViewNetworkData(@NotNull final PacketBuffer buf)
     {
-        buf.writeString(name);
+        buf.writeUtf(name);
         buf.writeBoolean(female);
 
-        buf.writeInt(getEntity().map(AbstractEntityCitizen::getEntityId).orElse(-1));
+        buf.writeInt(getEntity().map(AbstractEntityCitizen::getId).orElse(-1));
 
         buf.writeBoolean(paused);
 
@@ -845,15 +845,15 @@ public class CitizenData implements ICitizenData
         buf.writeDouble(getSaturation());
         buf.writeDouble(citizenHappinessHandler.getHappiness(getColony()));
 
-        buf.writeCompoundTag(citizenSkillHandler.write());
+        buf.writeNbt(citizenSkillHandler.write());
 
-        buf.writeString((job != null) ? job.getName() : "");
+        buf.writeUtf((job != null) ? job.getName() : "");
 
         buf.writeInt(colony.getID());
 
         final CompoundNBT compound = new CompoundNBT();
         compound.put("inventory", inventory.write(new ListNBT()));
-        buf.writeCompoundTag(compound);
+        buf.writeNbt(compound);
         buf.writeBlockPos(lastPosition);
 
         if (colony.getWorld() != null)
@@ -863,7 +863,7 @@ public class CitizenData implements ICitizenData
             buf.writeInt(subInteractions.size());
             for (final IInteractionResponseHandler interactionHandler : subInteractions)
             {
-                buf.writeCompoundTag(interactionHandler.serializeNBT());
+                buf.writeNbt(interactionHandler.serializeNBT());
             }
         }
         else
@@ -873,7 +873,7 @@ public class CitizenData implements ICitizenData
 
         final CompoundNBT happinessCompound = new CompoundNBT();
         citizenHappinessHandler.write(happinessCompound);
-        buf.writeCompoundTag(happinessCompound);
+        buf.writeNbt(happinessCompound);
 
         buf.writeInt(status != null ? status.getId() : -1);
 
@@ -902,8 +902,8 @@ public class CitizenData implements ICitizenData
         {
             buf.writeInt(child);
         }
-        buf.writeString(parents.getA());
-        buf.writeString(parents.getB());
+        buf.writeUtf(parents.getA());
+        buf.writeUtf(parents.getB());
     }
 
     @Override
@@ -1066,7 +1066,7 @@ public class CitizenData implements ICitizenData
 
         nbtTagCompound.put(TAG_NEW_SKILLS, citizenSkillHandler.write());
 
-        BlockPosUtil.write(nbtTagCompound, TAG_POS, getEntity().isPresent() ? getEntity().get().getPosition() : lastPosition);
+        BlockPosUtil.write(nbtTagCompound, TAG_POS, getEntity().isPresent() ? getEntity().get().blockPosition() : lastPosition);
         if (nextRespawnPos != null)
         {
             BlockPosUtil.write(nbtTagCompound, TAG_RESPAWN_POS, nextRespawnPos);
@@ -1132,7 +1132,7 @@ public class CitizenData implements ICitizenData
         isChild = nbtTagCompound.getBoolean(TAG_CHILD);
         textureId = nbtTagCompound.getInt(TAG_TEXTURE);
 
-        if (nbtTagCompound.keySet().contains(TAG_SUFFIX))
+        if (nbtTagCompound.getAllKeys().contains(TAG_SUFFIX))
         {
             textureSuffix = nbtTagCompound.getString(TAG_SUFFIX);
         }
@@ -1152,12 +1152,12 @@ public class CitizenData implements ICitizenData
 
         saturation = nbtTagCompound.getDouble(TAG_SATURATION);
 
-        if (nbtTagCompound.keySet().contains("job"))
+        if (nbtTagCompound.getAllKeys().contains("job"))
         {
             setJob(IJobDataManager.getInstance().createFrom(this, nbtTagCompound.getCompound("job")));
         }
 
-        if (nbtTagCompound.keySet().contains(TAG_INVENTORY))
+        if (nbtTagCompound.getAllKeys().contains(TAG_INVENTORY))
         {
             final ListNBT nbttaglist = nbtTagCompound.getList(TAG_INVENTORY, 10);
             this.inventory.read(nbttaglist);
@@ -1170,19 +1170,19 @@ public class CitizenData implements ICitizenData
             name = generateName(random, isFemale(), getColony());
         }
 
-        if (nbtTagCompound.keySet().contains(TAG_ASLEEP))
+        if (nbtTagCompound.getAllKeys().contains(TAG_ASLEEP))
         {
             bedPos = BlockPosUtil.read(nbtTagCompound, TAG_BEDS);
             isAsleep = nbtTagCompound.getBoolean(TAG_ASLEEP);
         }
 
-        if (nbtTagCompound.keySet().contains(TAG_JUST_ATE))
+        if (nbtTagCompound.getAllKeys().contains(TAG_JUST_ATE))
         {
             justAte = nbtTagCompound.getBoolean(TAG_JUST_ATE);
         }
 
         //  Citizen chat options.
-        if (nbtTagCompound.keySet().contains(TAG_CHAT_OPTIONS))
+        if (nbtTagCompound.getAllKeys().contains(TAG_CHAT_OPTIONS))
         {
             final ListNBT handlerTagList = nbtTagCompound.getList(TAG_CHAT_OPTIONS, Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < handlerTagList.size(); ++i)
@@ -1198,7 +1198,7 @@ public class CitizenData implements ICitizenData
         this.citizenHappinessHandler.read(nbtTagCompound);
         this.citizenMournHandler.read(nbtTagCompound);
 
-        if (nbtTagCompound.keySet().contains(TAG_LEVEL_MAP) && !nbtTagCompound.keySet().contains(TAG_NEW_SKILLS))
+        if (nbtTagCompound.getAllKeys().contains(TAG_LEVEL_MAP) && !nbtTagCompound.getAllKeys().contains(TAG_NEW_SKILLS))
         {
             citizenSkillHandler.init((int) citizenHappinessHandler.getHappiness(getColony()));
             final Map<String, Integer> levels = new HashMap<>();
@@ -1414,7 +1414,7 @@ public class CitizenData implements ICitizenData
             final AbstractEntityCitizen citizen = getEntity().get();
 
             // Applies entity related research effects.
-            citizen.getNavigator().getPathingOptions().setCanUseRails(((EntityCitizen) citizen).canPathOnRails());
+            citizen.getNavigation().getPathingOptions().setCanUseRails(((EntityCitizen) citizen).canPathOnRails());
 
             final AttributeModifier speedModifier = new AttributeModifier(RESEARCH_BONUS_MULTIPLIER,
               colony.getResearchManager().getResearchEffects().getEffectStrength(WALKING),

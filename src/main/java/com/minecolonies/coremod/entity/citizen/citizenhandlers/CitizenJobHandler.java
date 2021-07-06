@@ -47,10 +47,10 @@ public class CitizenJobHandler implements ICitizenJobHandler
     @Override
     public void setModelDependingOnJob(@Nullable final IJob<?> job)
     {
-        if (citizen.isChild())
+        if (citizen.isBaby())
         {
             citizen.setModelId(BipedModelType.CHILD);
-            citizen.getDataManager().set(DATA_MODEL, citizen.getModelType().getName());
+            citizen.getEntityData().set(DATA_MODEL, citizen.getModelType().getName());
             citizen.setRenderMetadata("");
             return;
         }
@@ -85,7 +85,7 @@ public class CitizenJobHandler implements ICitizenJobHandler
             citizen.setModelId(job.getModel());
         }
 
-        citizen.getDataManager().set(DATA_MODEL, citizen.getModelType().getName());
+        citizen.getEntityData().set(DATA_MODEL, citizen.getModelType().getName());
         citizen.setRenderMetadata("");
     }
 
@@ -101,7 +101,7 @@ public class CitizenJobHandler implements ICitizenJobHandler
         setModelDependingOnJob(job);
 
         //  AI Tasks
-        for (@NotNull final PrioritizedGoal task : new ArrayList<>(citizen.getTasks().goals))
+        for (@NotNull final PrioritizedGoal task : new ArrayList<>(citizen.getTasks().availableGoals))
         {
             if (task.getGoal() instanceof AbstractAISkeleton)
             {

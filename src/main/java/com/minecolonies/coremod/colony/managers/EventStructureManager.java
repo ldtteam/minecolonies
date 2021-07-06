@@ -100,7 +100,7 @@ public class EventStructureManager implements IEventStructureManager
             final CompoundNBT teData = structure.getTileEntityData(targetSpawnPoint, structure.getPrimaryBlockOffset());
             if (teData != null && teData.contains(TAG_BLUEPRINTDATA))
             {
-                final TileEntity entity = TileEntity.readTileEntity(info.getState(), info.getTileEntityData());
+                final TileEntity entity = TileEntity.loadStatic(info.getState(), info.getTileEntityData());
                 if (entity instanceof IBlueprintDataProvider)
                 {
                     for (final Map.Entry<BlockPos, List<String>> entry : ((IBlueprintDataProvider) entity).getPositionedTags().entrySet())
@@ -114,14 +114,14 @@ public class EventStructureManager implements IEventStructureManager
             }
         }
 
-        final BlockPos spawnPos = targetSpawnPoint.add(0, -y, 0);
+        final BlockPos spawnPos = targetSpawnPoint.offset(0, -y, 0);
 
-        final BlockPos zeroPos = targetSpawnPoint.subtract(structure.getPrimaryBlockOffset()).add(0, -y, 0);
+        final BlockPos zeroPos = targetSpawnPoint.subtract(structure.getPrimaryBlockOffset()).offset(0, -y, 0);
         final BlockPos cornerPos = new BlockPos(zeroPos.getX() + structure.getSizeX() - 1, zeroPos.getY() + structure.getSizeY(), zeroPos.getZ() + structure.getSizeZ() - 1);
 
         final BlockPos anchor = new BlockPos(zeroPos.getX() + structure.getSizeX() / 2, zeroPos.getY(), zeroPos.getZ() + structure.getSizeZ() / 2);
 
-        final String backupPath = Structures.SCHEMATICS_PREFIX + "/" + STRUCTURE_BACKUP_FOLDER + "/" + colony.getID() + "/" + colony.getDimension().getLocation().getNamespace() + colony.getDimension().getLocation().getPath() + "/" + anchor;
+        final String backupPath = Structures.SCHEMATICS_PREFIX + "/" + STRUCTURE_BACKUP_FOLDER + "/" + colony.getID() + "/" + colony.getDimension().location().getNamespace() + colony.getDimension().location().getPath() + "/" + anchor;
 
         if (!ItemScanTool.saveStructureOnServer(world,
           zeroPos,
@@ -158,7 +158,7 @@ public class EventStructureManager implements IEventStructureManager
             {
                 final String oldBackupPath = String.valueOf(colony.getID()) + colony.getDimension() + entry.getKey();
                 String fileName = new StructureName("cache", "backup", Structures.SCHEMATICS_PREFIX + "/" + STRUCTURE_BACKUP_FOLDER).toString() + "/" +
-                        String.valueOf(colony.getID()) + "/" + colony.getDimension().getLocation().getNamespace() + colony.getDimension().getLocation().getPath() + "/" + entry.getKey();
+                        String.valueOf(colony.getID()) + "/" + colony.getDimension().location().getNamespace() + colony.getDimension().location().getPath() + "/" + entry.getKey();
 
                 // TODO: remove compat for colony.getDimension()-based file names after sufficient time has passed from PR#6305
                 if(CreativeBuildingStructureHandler.loadAndPlaceStructureWithRotation(colony.getWorld(),

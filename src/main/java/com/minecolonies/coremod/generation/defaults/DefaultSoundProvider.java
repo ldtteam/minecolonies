@@ -32,7 +32,7 @@ public class DefaultSoundProvider implements IDataProvider
     }
 
     @Override
-    public void act(@NotNull final DirectoryCache cache) throws IOException
+    public void run(@NotNull final DirectoryCache cache) throws IOException
     {
         sounds = new JsonObject();
 

@@ -108,7 +108,7 @@ public class GraveManager implements IGraveManager
                 continue;
             }
 
-            final TileEntityGrave graveEntity = (TileEntityGrave) colony.getWorld().getTileEntity(pos);
+            final TileEntityGrave graveEntity = (TileEntityGrave) colony.getWorld().getBlockEntity(pos);
             if (graveEntity == null)
             {
                 iterator.remove();
@@ -145,7 +145,7 @@ public class GraveManager implements IGraveManager
     @Override
     public boolean addNewGrave(@NotNull final BlockPos pos)
     {
-        final TileEntityGrave graveEntity = (TileEntityGrave) colony.getWorld().getTileEntity(pos);
+        final TileEntityGrave graveEntity = (TileEntityGrave) colony.getWorld().getBlockEntity(pos);
         if (graveEntity == null)
         {
             return false;
@@ -217,7 +217,7 @@ public class GraveManager implements IGraveManager
                 continue;
             }
 
-            final TileEntityGrave graveEntity = (TileEntityGrave) colony.getWorld().getTileEntity(pos);
+            final TileEntityGrave graveEntity = (TileEntityGrave) colony.getWorld().getBlockEntity(pos);
             if (graveEntity == null)
             {
                 continue;
@@ -247,8 +247,8 @@ public class GraveManager implements IGraveManager
         final BlockPos firstValidPosition = ConstructionTapeHelper.firstValidPosition(pos, world, 10);
         if (firstValidPosition != null)
         {
-            world.setBlockState(firstValidPosition, BlockMinecoloniesGrave.getPlacementState(ModBlocks.blockGrave.getDefaultState(), new TileEntityGrave(), firstValidPosition));
-            final TileEntityGrave graveEntity = (TileEntityGrave) world.getTileEntity(firstValidPosition);
+            world.setBlockAndUpdate(firstValidPosition, BlockMinecoloniesGrave.getPlacementState(ModBlocks.blockGrave.defaultBlockState(), new TileEntityGrave(), firstValidPosition));
+            final TileEntityGrave graveEntity = (TileEntityGrave) world.getBlockEntity(firstValidPosition);
             if (!InventoryUtils.transferAllItemHandler(citizenData.getInventory(), graveEntity.getInventory()))
             {
                 InventoryUtils.dropItemHandler(citizenData.getInventory(), world, pos.getX(), pos.getY(), pos.getZ());

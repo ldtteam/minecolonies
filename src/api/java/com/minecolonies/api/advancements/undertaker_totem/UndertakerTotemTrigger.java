@@ -36,7 +36,7 @@ public class UndertakerTotemTrigger extends AbstractCriterionTrigger<CriterionLi
 
     @NotNull
     @Override
-    public UndertakerTotemCriterionInstance deserialize(@NotNull final JsonObject object, @NotNull final ConditionArrayParser conditions)
+    public UndertakerTotemCriterionInstance createInstance(@NotNull final JsonObject object, @NotNull final ConditionArrayParser conditions)
     {
         return new UndertakerTotemCriterionInstance();
     }

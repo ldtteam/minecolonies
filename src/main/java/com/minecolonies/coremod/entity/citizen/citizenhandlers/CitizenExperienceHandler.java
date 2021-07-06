@@ -113,18 +113,18 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
     {
         int experience;
 
-        if (!CompatibilityUtils.getWorldFromCitizen(citizen).isRemote && citizen.getRecentlyHit() > 0 && citizen.checkCanDropLoot() && CompatibilityUtils.getWorldFromCitizen(
+        if (!CompatibilityUtils.getWorldFromCitizen(citizen).isClientSide && citizen.getRecentlyHit() > 0 && citizen.checkCanDropLoot() && CompatibilityUtils.getWorldFromCitizen(
           citizen).getGameRules().getBoolean(
-          GameRules.DO_MOB_LOOT))
+          GameRules.RULE_DOMOBLOOT))
         {
             experience = (int) (citizen.getCitizenData().getCitizenSkillHandler().getTotalXP());
 
             while (experience > 0)
             {
-                final int j = ExperienceOrbEntity.getXPSplit(experience);
+                final int j = ExperienceOrbEntity.getExperienceValue(experience);
                 experience -= j;
                 CompatibilityUtils.getWorldFromCitizen(citizen)
-                  .addEntity(new ExperienceOrbEntity(CompatibilityUtils.getWorldFromCitizen(citizen), citizen.getPosX(), citizen.getPosY(), citizen.getPosZ(), j));
+                  .addFreshEntity(new ExperienceOrbEntity(CompatibilityUtils.getWorldFromCitizen(citizen), citizen.getX(), citizen.getY(), citizen.getZ(), j));
             }
         }
 
@@ -135,9 +135,9 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
             final double d0 = citizen.getRandom().nextGaussian() * 0.02D;
             final double d1 = citizen.getRandom().nextGaussian() * 0.02D;
             CompatibilityUtils.getWorldFromCitizen(citizen).addParticle(ParticleTypes.EXPLOSION,
-              citizen.getPosX() + (citizen.getRandom().nextDouble() * citizen.getWidth() * 2.0F) - (double) citizen.getWidth(),
-              citizen.getPosY() + (citizen.getRandom().nextDouble() * citizen.getHeight()),
-              citizen.getPosZ() + (citizen.getRandom().nextDouble() * citizen.getWidth() * 2.0F) - (double) citizen.getWidth(),
+              citizen.getX() + (citizen.getRandom().nextDouble() * citizen.getBbWidth() * 2.0F) - (double) citizen.getBbWidth(),
+              citizen.getY() + (citizen.getRandom().nextDouble() * citizen.getBbHeight()),
+              citizen.getZ() + (citizen.getRandom().nextDouble() * citizen.getBbWidth() * 2.0F) - (double) citizen.getBbWidth(),
               d2,
               d0,
               d1);
@@ -147,42 +147,42 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
     @Override
     public void gatherXp()
     {
-        if (citizen.world.isRemote)
+        if (citizen.level.isClientSide)
         {
             return;
         }
 
         final int growSize = counterMovedXp > 0 || citizen.getRandom().nextInt(100) < 20 ? 8 : 2;
 
-        final AxisAlignedBB box = citizen.getBoundingBox().grow(growSize);
-        if (!WorldUtil.isAABBLoaded(citizen.world, box))
+        final AxisAlignedBB box = citizen.getBoundingBox().inflate(growSize);
+        if (!WorldUtil.isAABBLoaded(citizen.level, box))
         {
             return;
         }
 
         boolean movedXp = false;
 
-        for (@NotNull final ExperienceOrbEntity orb : citizen.world.getLoadedEntitiesWithinAABB(ExperienceOrbEntity.class, box))
+        for (@NotNull final ExperienceOrbEntity orb : citizen.level.getLoadedEntitiesOfClass(ExperienceOrbEntity.class, box))
         {
-            Vector3d vec3d = new Vector3d(citizen.getPosX() - orb.getPosX(), citizen.getPosY() + (double) this.citizen.getEyeHeight() / 2.0D - orb.getPosY(), citizen.getPosZ() - orb.getPosZ());
-            double d1 = vec3d.lengthSquared();
+            Vector3d vec3d = new Vector3d(citizen.getX() - orb.getX(), citizen.getY() + (double) this.citizen.getEyeHeight() / 2.0D - orb.getY(), citizen.getZ() - orb.getZ());
+            double d1 = vec3d.lengthSqr();
 
             if (d1 < 1.0D)
             {
-                addExperience(orb.getXpValue() / 2.5D);
+                addExperience(orb.getValue() / 2.5D);
                 orb.remove();
                 counterMovedXp = 0;
             }
             else if (counterMovedXp > MAX_XP_PICKUP_ATTEMPTS)
             {
-                addExperience(orb.getXpValue() / 2.0D);
+                addExperience(orb.getValue() / 2.0D);
                 orb.remove();
                 counterMovedXp = 0;
                 return;
             }
 
             double d2 = 1.0D - Math.sqrt(d1) / 8.0D;
-            orb.setMotion(orb.getMotion().add(vec3d.normalize().scale(d2 * d2 * 0.1D)));
+            orb.setDeltaMovement(orb.getDeltaMovement().add(vec3d.normalize().scale(d2 * d2 * 0.1D)));
             movedXp = true;
             counterMovedXp++;
         }

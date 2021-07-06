@@ -34,39 +34,39 @@ public class ItemScepterBeekeeper extends AbstractItemMinecolonies
      */
     public ItemScepterBeekeeper(final Properties properties)
     {
-        super("scepterbeekeeper", properties.maxStackSize(1));
+        super("scepterbeekeeper", properties.stacksTo(1));
     }
 
     @Override
-    public ActionResultType onItemUse(final ItemUseContext useContext)
+    public ActionResultType useOn(final ItemUseContext useContext)
     {
         // if server world, do nothing
-        if (useContext.getWorld().isRemote)
+        if (useContext.getLevel().isClientSide)
         {
             return ActionResultType.FAIL;
         }
 
         final PlayerEntity player = useContext.getPlayer();
 
-        final ItemStack scepter = useContext.getPlayer().getHeldItem(useContext.getHand());
+        final ItemStack scepter = useContext.getPlayer().getItemInHand(useContext.getHand());
         final CompoundNBT compound = scepter.getOrCreateTag();
 
-        final IColony colony = IColonyManager.getInstance().getColonyByWorld(compound.getInt(TAG_ID), useContext.getWorld());
+        final IColony colony = IColonyManager.getInstance().getColonyByWorld(compound.getInt(TAG_ID), useContext.getLevel());
         final BlockPos hutPos = BlockPosUtil.read(compound, TAG_POS);
         final IBuilding hut = colony.getBuildingManager().getBuilding(hutPos);
         final BuildingBeekeeper building = (BuildingBeekeeper) hut;
 
-        if (useContext.getWorld().getBlockState(useContext.getPos()).getBlock() instanceof BeehiveBlock)
+        if (useContext.getLevel().getBlockState(useContext.getClickedPos()).getBlock() instanceof BeehiveBlock)
         {
 
             final Collection<BlockPos> positions = building.getHives();
 
-            final BlockPos pos = useContext.getPos();
+            final BlockPos pos = useContext.getClickedPos();
             if (positions.contains(pos))
             {
                 LanguageHandler.sendPlayerMessage(useContext.getPlayer(), "item.minecolonies.scepterbeekeeper.removehive");
                 building.removeHive(pos);
-                SoundUtils.playSoundForPlayer((ServerPlayerEntity) player, SoundEvents.BLOCK_NOTE_BLOCK_BELL,
+                SoundUtils.playSoundForPlayer((ServerPlayerEntity) player, SoundEvents.NOTE_BLOCK_BELL,
                         (float) SoundUtils.VOLUME * 2, 0.5f);
             }
             else
@@ -75,20 +75,20 @@ public class ItemScepterBeekeeper extends AbstractItemMinecolonies
                 {
                     LanguageHandler.sendPlayerMessage(useContext.getPlayer(), "item.minecolonies.scepterbeekeeper.addhive");
                     building.addHive(pos);
-                    SoundUtils.playSuccessSound(player, player.getPosition());
+                    SoundUtils.playSuccessSound(player, player.blockPosition());
                 }
                 if (positions.size() >= building.getMaximumHives())
                 {
                     LanguageHandler.sendPlayerMessage(useContext.getPlayer(), "item.minecolonies.scepterbeekeeper.maxhives");
-                    player.inventory.removeStackFromSlot(player.inventory.currentItem);
+                    player.inventory.removeItemNoUpdate(player.inventory.selected);
                 }
             }
         }
         else
         {
-            player.inventory.removeStackFromSlot(player.inventory.currentItem);
+            player.inventory.removeItemNoUpdate(player.inventory.selected);
         }
 
-        return super.onItemUse(useContext);
+        return super.useOn(useContext);
     }
 }

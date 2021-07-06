@@ -20,7 +20,7 @@ public class BuildingAddRecipeCriterionInstance extends CriterionInstance
      */
     public BuildingAddRecipeCriterionInstance()
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_BUILDING_ADD_RECIPE), EntityPredicate.AndPredicate.ANY_AND);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_BUILDING_ADD_RECIPE), EntityPredicate.AndPredicate.ANY);
     }
 
     /**
@@ -29,7 +29,7 @@ public class BuildingAddRecipeCriterionInstance extends CriterionInstance
      */
     public BuildingAddRecipeCriterionInstance(final ItemPredicate[] outputItemPredicates)
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_BUILDING_ADD_RECIPE), EntityPredicate.AndPredicate.ANY_AND);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_BUILDING_ADD_RECIPE), EntityPredicate.AndPredicate.ANY);
 
         this.outputItemPredicates = outputItemPredicates;
     }
@@ -41,7 +41,7 @@ public class BuildingAddRecipeCriterionInstance extends CriterionInstance
      */
     public BuildingAddRecipeCriterionInstance(final ItemPredicate[] outputItemPredicates, final int craftingSize)
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_BUILDING_ADD_RECIPE), EntityPredicate.AndPredicate.ANY_AND);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_BUILDING_ADD_RECIPE), EntityPredicate.AndPredicate.ANY);
 
         this.outputItemPredicates = outputItemPredicates;
         this.craftingSize = craftingSize;
@@ -59,7 +59,7 @@ public class BuildingAddRecipeCriterionInstance extends CriterionInstance
             boolean outputMatches = false;
             for (ItemPredicate itemPredicate : outputItemPredicates)
             {
-                if (itemPredicate.test(recipeStorage.getPrimaryOutput()))
+                if (itemPredicate.matches(recipeStorage.getPrimaryOutput()))
                 {
                     outputMatches = true;
                     break;

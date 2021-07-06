@@ -105,7 +105,7 @@ public class WindowHutCrusherModule extends AbstractWindowWorkerModuleBuilding<B
     {
         if (this.mode != null)
         {
-            crushingSettingsButton.setText(this.mode.getItemStack().getDisplayName());
+            crushingSettingsButton.setText(this.mode.getItemStack().getHoverName());
         }
     }
 

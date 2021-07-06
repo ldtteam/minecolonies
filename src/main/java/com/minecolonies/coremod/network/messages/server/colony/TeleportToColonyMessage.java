@@ -40,7 +40,7 @@ public class TeleportToColonyMessage extends AbstractColonyServerMessage
             return;
         }
 
-        if (colony.getPermissions().getRank(ctxIn.getSender().getUniqueID()) != colony.getPermissions().getRankNeutral())
+        if (colony.getPermissions().getRank(ctxIn.getSender().getUUID()) != colony.getPermissions().getRankNeutral())
         {
             TeleportHelper.colonyTeleport(ctxIn.getSender(), colony);
         }

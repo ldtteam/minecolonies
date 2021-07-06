@@ -17,6 +17,6 @@ public class ItemSifterMesh extends AbstractItemMinecolonies
         @NotNull final String name,
         final Properties properties)
     {
-        super(name, properties.group(ModCreativeTabs.MINECOLONIES));
+        super(name, properties.tab(ModCreativeTabs.MINECOLONIES));
     }
 }

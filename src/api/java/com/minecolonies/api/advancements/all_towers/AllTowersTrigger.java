@@ -38,7 +38,7 @@ public class AllTowersTrigger extends AbstractCriterionTrigger<CriterionListener
 
     @NotNull
     @Override
-    public AllTowersCriterionInstance deserialize(@NotNull final JsonObject object, @NotNull final ConditionArrayParser conditions)
+    public AllTowersCriterionInstance createInstance(@NotNull final JsonObject object, @NotNull final ConditionArrayParser conditions)
     {
         return new AllTowersCriterionInstance();
     }

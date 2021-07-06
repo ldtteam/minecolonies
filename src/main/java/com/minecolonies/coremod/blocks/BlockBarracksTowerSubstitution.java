@@ -23,7 +23,7 @@ public class BlockBarracksTowerSubstitution extends AbstractBlockMinecolonies<Bl
     /**
      * Our Substitution bock's Facing.
      */
-    public static final DirectionProperty FACING = HorizontalBlock.HORIZONTAL_FACING;
+    public static final DirectionProperty FACING = HorizontalBlock.FACING;
 
     /**
      * The hardness this block has.
@@ -45,9 +45,9 @@ public class BlockBarracksTowerSubstitution extends AbstractBlockMinecolonies<Bl
      */
     public BlockBarracksTowerSubstitution()
     {
-        super(Properties.create(Material.WOOD).hardnessAndResistance(BLOCK_HARDNESS, RESISTANCE));
+        super(Properties.of(Material.WOOD).strength(BLOCK_HARDNESS, RESISTANCE));
         setRegistryName(BLOCK_NAME);
-        this.setDefaultState(this.getDefaultState().with(FACING, Direction.NORTH));
+        this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH));
     }
 
     /**
@@ -61,7 +61,7 @@ public class BlockBarracksTowerSubstitution extends AbstractBlockMinecolonies<Bl
     @Deprecated
     public BlockState rotate(@NotNull final BlockState state, final Rotation rot)
     {
-        return state.with(FACING, rot.rotate(state.get(FACING)));
+        return state.setValue(FACING, rot.rotate(state.getValue(FACING)));
     }
 
     /**
@@ -73,19 +73,19 @@ public class BlockBarracksTowerSubstitution extends AbstractBlockMinecolonies<Bl
     @Deprecated
     public BlockState mirror(@NotNull final BlockState state, final Mirror mirrorIn)
     {
-        return state.rotate(mirrorIn.toRotation(state.get(FACING)));
+        return state.rotate(mirrorIn.getRotation(state.getValue(FACING)));
     }
 
     @Nullable
     @Override
     public BlockState getStateForPlacement(final BlockItemUseContext context)
     {
-        @NotNull final Direction direction = (context.getPlayer() == null) ? Direction.NORTH : Direction.fromAngle(context.getPlayer().rotationYaw);
-        return this.getDefaultState().with(FACING, direction);
+        @NotNull final Direction direction = (context.getPlayer() == null) ? Direction.NORTH : Direction.fromYRot(context.getPlayer().yRot);
+        return this.defaultBlockState().setValue(FACING, direction);
     }
 
     @Override
-    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder)
+    protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder)
     {
         builder.add(FACING);
     }

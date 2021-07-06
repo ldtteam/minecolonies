@@ -12,7 +12,7 @@ public class BlockHutGlassblower extends AbstractBlockHut<BlockHutGlassblower>
 {
     @NotNull
     @Override
-    public String getName()
+    public String getHutName()
     {
         return "blockhutglassblower";
     }

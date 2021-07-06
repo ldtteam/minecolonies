@@ -27,10 +27,10 @@ public class CommandSetAbandoned implements IMCColonyOfficerCommand
         final Entity sender = context.getSource().getEntity();
 
         final int colonyID = IntegerArgumentType.getInteger(context, COLONYID_ARG);
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getWorld().getDimensionKey());
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getLevel().dimension());
         if (colony == null)
         {
-            context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.colonyidnotfound", colonyID), true);
+            context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.colonyidnotfound", colonyID), true);
             return 0;
         }
 
@@ -47,7 +47,7 @@ public class CommandSetAbandoned implements IMCColonyOfficerCommand
             colony.getPermissions().addPlayer(((PlayerEntity) sender).getGameProfile(), colony.getPermissions().getRankOfficer());
         }
 
-        context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.ownerchange.success", "[abandoned]", colony.getName()), true);
+        context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.ownerchange.success", "[abandoned]", colony.getName()), true);
         return 1;
     }
 

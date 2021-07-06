@@ -529,7 +529,7 @@ public class StandardRequestManager implements IStandardRequestManager
       @NotNull final BiFunction<CompoundNBT, String, T> extractor,
       @NotNull final Consumer<T> valueConsumer)
     {
-        if (!nbt.keySet().contains(key))
+        if (!nbt.getAllKeys().contains(key))
         {
             markForUpdate();
             return;

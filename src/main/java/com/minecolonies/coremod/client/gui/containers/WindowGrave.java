@@ -79,7 +79,7 @@ public class WindowGrave extends ContainerScreen<ContainerGrave>
     /**
      * The upper chest inventory.
      */
-    private final IItemHandler inventory;
+    private final IItemHandler inv;
 
     /**
      * Used to calculate the window height.
@@ -89,14 +89,14 @@ public class WindowGrave extends ContainerScreen<ContainerGrave>
     public WindowGrave(final ContainerGrave container, final PlayerInventory playerInventory, final ITextComponent iTextComponent)
     {
         super(container, playerInventory, iTextComponent);
-        this.inventory = container.grave.getInventory();
+        this.inv = container.grave.getInventory();
 
-        this.inventoryRows = inventory.getSlots() / SLOTS_EACH_ROW;
+        this.inventoryRows = inv.getSlots() / SLOTS_EACH_ROW;
 
-        this.ySize = Y_OFFSET + Math.min(SLOTS_EACH_ROW, this.inventoryRows) * SLOT_OFFSET;
+        this.imageHeight = Y_OFFSET + Math.min(SLOTS_EACH_ROW, this.inventoryRows) * SLOT_OFFSET;
         if (this.inventoryRows > SLOTS_EACH_ROW - 1)
         {
-            this.xSize = this.xSize + (this.inventoryRows - SLOTS_EACH_ROW) * (SLOTS_EACH_ROW + 1);
+            this.imageWidth = this.imageWidth + (this.inventoryRows - SLOTS_EACH_ROW) * (SLOTS_EACH_ROW + 1);
         }
     }
 
@@ -104,38 +104,39 @@ public class WindowGrave extends ContainerScreen<ContainerGrave>
      * Draw the foreground layer for the GuiContainer (everything in front of the items)
      */
     @Override
-    protected void drawGuiContainerForegroundLayer(@NotNull final MatrixStack stack, int mouseX, int mouseY)
+    protected void renderLabels(@NotNull final MatrixStack stack, int mouseX, int mouseY)
     {
-        this.font.drawString(stack, this.title.getString(), 8.0F, 6.0F, 4210752);
-        this.font.drawString(stack, this.playerInventory.getDisplayName().getString(), 8.0F, (float) (this.ySize - (inventoryRows > 6 ? 110 : 94)), 4210752);
+
+        this.font.draw(stack, this.title.getString(), 8.0F, 6.0F, 4210752);
+        this.font.draw(stack, this.inventory.getDisplayName().getString(), 8.0F, (float) (this.imageHeight - (inventoryRows > 6 ? 110 : 94)), 4210752);
     }
 
     /**
      * Draws the background layer of this container (behind the items).
      */
     @Override
-    protected void drawGuiContainerBackgroundLayer(@NotNull final MatrixStack stack, final float partialTicks, final int mouseX, final int mouseY)
+    protected void renderBg(@NotNull final MatrixStack stack, final float partialTicks, final int mouseX, final int mouseY)
     {
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.minecraft.getTextureManager().bindTexture(getCorrectTextureForSlots(inventoryRows));
-        final int i = (this.width - this.xSize) / 2;
-        final int j = (this.height - this.ySize) / 2;
+        this.minecraft.getTextureManager().bind(getCorrectTextureForSlots(inventoryRows));
+        final int i = (this.width - this.imageWidth) / 2;
+        final int j = (this.height - this.imageHeight) / 2;
 
         if (inventoryRows < SLOTS_EACH_ROW)
         {
-            blit(stack, i, j, 0, 0, this.xSize, this.inventoryRows * SLOT_OFFSET + SLOT_OFFSET - 1, TEXTURE_SIZE, TEXTURE_SIZE);
+            blit(stack, i, j, 0, 0, this.imageWidth, this.inventoryRows * SLOT_OFFSET + SLOT_OFFSET - 1, TEXTURE_SIZE, TEXTURE_SIZE);
             blit(stack, i, j + this.inventoryRows * SLOT_OFFSET + SLOT_OFFSET - 1, 0,
-              TEXTURE_OFFSET, this.xSize, TEXTURE_HEIGHT, TEXTURE_SIZE, TEXTURE_SIZE);
+              TEXTURE_OFFSET, this.imageWidth, TEXTURE_HEIGHT, TEXTURE_SIZE, TEXTURE_SIZE);
         }
         else
         {
             final int textureOffset = TEXTURE_OFFSET - EXTRA_OFFSET;
-            blit(stack, i, j, 0, 0, (this.xSize * SIZE_MULTIPLIER) / 2, this.inventoryRows * SLOT_OFFSET + SLOT_OFFSET - 1, TEXTURE_SIZE, TEXTURE_SIZE);
+            blit(stack, i, j, 0, 0, (this.imageWidth * SIZE_MULTIPLIER) / 2, this.inventoryRows * SLOT_OFFSET + SLOT_OFFSET - 1, TEXTURE_SIZE, TEXTURE_SIZE);
             blit(stack, i,
               j + Math.min(SLOTS_EACH_ROW, this.inventoryRows) * SLOT_OFFSET + SLOT_OFFSET - 1,
               0,
               textureOffset,
-              (this.xSize * SIZE_MULTIPLIER) / 2,
+              (this.imageWidth * SIZE_MULTIPLIER) / 2,
               TEXTURE_HEIGHT + EXTRA_HEIGHT,
               TEXTURE_SIZE,
               TEXTURE_SIZE);
@@ -165,6 +166,6 @@ public class WindowGrave extends ContainerScreen<ContainerGrave>
     {
         this.renderBackground(stack);
         super.render(stack, x, y, z);
-        this.renderHoveredTooltip(stack, x, y);
+        this.renderTooltip(stack, x, y);
     }
 }

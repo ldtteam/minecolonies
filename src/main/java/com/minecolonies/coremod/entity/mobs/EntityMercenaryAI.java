@@ -132,9 +132,9 @@ public class EntityMercenaryAI extends Goal
      */
     private boolean hasTarget()
     {
-        if (entity.getAttackTarget() != null && entity.getAttackTarget().isAlive())
+        if (entity.getTarget() != null && entity.getTarget().isAlive())
         {
-            entity.getAttackTarget().setRevengeTarget(entity);
+            entity.getTarget().setLastHurtByMob(entity);
             return true;
         }
         return false;
@@ -162,10 +162,10 @@ public class EntityMercenaryAI extends Goal
 
                     if (!ItemStackUtils.isEmpty(stack))
                     {
-                        entity.swingArm(Hand.OFF_HAND);
+                        entity.swing(Hand.OFF_HAND);
                         LanguageHandler.sendPlayersMessage(entity.getColony().getMessagePlayerEntities(),
                           "com.minecolonies.coremod.mercenary.stealBuilding",
-                          stack.getDisplayName().getString());
+                          stack.getHoverName().getString());
                     }
                 }
             }
@@ -178,11 +178,11 @@ public class EntityMercenaryAI extends Goal
             else
             {
                 movingToBuilding = false;
-                currentPatrolPos = BlockPosUtil.getRandomPosition(entity.getEntityWorld(), entity.getPosition(), entity.getPosition(), 10, 27);
+                currentPatrolPos = BlockPosUtil.getRandomPosition(entity.getCommandSenderWorld(), entity.blockPosition(), entity.blockPosition(), 10, 27);
             }
         }
 
-        if (entity.getPosition().equals(lastWorkerPos))
+        if (entity.blockPosition().equals(lastWorkerPos))
         {
             stuckTimer++;
         }
@@ -195,10 +195,10 @@ public class EntityMercenaryAI extends Goal
         {
             stuckTimer = 0;
             currentPatrolPos = null;
-            entity.getNavigator().clearPath();
+            entity.getNavigation().stop();
         }
 
-        lastWorkerPos = entity.getPosition();
+        lastWorkerPos = entity.blockPosition();
 
         return true;
     }
@@ -210,9 +210,9 @@ public class EntityMercenaryAI extends Goal
      */
     private boolean fighting()
     {
-        if (entity.getAttackTarget() == null || !entity.getAttackTarget().isAlive())
+        if (entity.getTarget() == null || !entity.getTarget().isAlive())
         {
-            entity.getNavigator().clearPath();
+            entity.getNavigation().stop();
             attackPath = null;
             return true;
         }
@@ -224,25 +224,25 @@ public class EntityMercenaryAI extends Goal
 
         if (attackPath == null || !attackPath.isInProgress())
         {
-            entity.getNavigator().moveToLivingEntity(entity.getAttackTarget(), 1);
-            entity.getLookController().setLookPositionWithEntity(entity.getAttackTarget(), 180f, 180f);
+            entity.getNavigation().moveToLivingEntity(entity.getTarget(), 1);
+            entity.getLookControl().setLookAt(entity.getTarget(), 180f, 180f);
         }
 
-        final int distance = BlockPosUtil.getMaxDistance2D(entity.getPosition(), new BlockPos(entity.getAttackTarget().getPositionVec()));
+        final int distance = BlockPosUtil.getMaxDistance2D(entity.blockPosition(), new BlockPos(entity.getTarget().position()));
 
         // Check if we can attack
         if (distance < MELEE_ATTACK_DIST && attacktimer == 0)
         {
-            entity.swingArm(Hand.MAIN_HAND);
+            entity.swing(Hand.MAIN_HAND);
             entity.playSound(MercenarySounds.mercenaryAttack, 0.55f, 1.0f);
-            entity.getAttackTarget().attackEntityFrom(new EntityDamageSource(entity.getType().getTranslationKey(), entity), 15);
-            entity.getAttackTarget().setFire(3);
+            entity.getTarget().hurt(new EntityDamageSource(entity.getType().getDescriptionId(), entity), 15);
+            entity.getTarget().setSecondsOnFire(3);
             attacktimer = ATTACK_DELAY;
         }
         else if (distance > MAX_BLOCK_CHASE_DISTANCE)
         {
-            entity.setAttackTarget(null);
-            entity.getNavigator().clearPath();
+            entity.setTarget(null);
+            entity.getNavigation().stop();
             attackPath = null;
             return true;
         }
@@ -256,13 +256,13 @@ public class EntityMercenaryAI extends Goal
     }
 
     @Override
-    public boolean shouldExecute()
+    public boolean canUse()
     {
         return entity != null && entity.isAlive() && !entity.isInvisible() && entity.getColony() != null && entity.getState() == State.ALIVE;
     }
 
     @Override
-    public boolean shouldContinueExecuting()
+    public boolean canContinueToUse()
     {
         stateMachine.tick();
         return entity != null && entity.isAlive() && !entity.isInvisible() && entity.getColony() != null && entity.getState() == State.ALIVE;

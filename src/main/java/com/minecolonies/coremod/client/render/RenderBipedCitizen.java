@@ -54,10 +54,10 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
     {
         setupMainModelFrom(citizen);
 
-        final CitizenModel<AbstractEntityCitizen> citizenModel = entityModel;
+        final CitizenModel<AbstractEntityCitizen> citizenModel = model;
 
-        final ItemStack mainHandStack = citizen.getHeldItemMainhand();
-        final ItemStack offHandStack = citizen.getHeldItemOffhand();
+        final ItemStack mainHandStack = citizen.getMainHandItem();
+        final ItemStack offHandStack = citizen.getOffhandItem();
         final BipedModel.ArmPose armPoseMainHand = getArmPoseFrom(citizen, mainHandStack);
         final BipedModel.ArmPose armPoseOffHand = getArmPoseFrom(citizen, offHandStack);
 
@@ -82,56 +82,56 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
 
     private void setupMainModelFrom(@NotNull final AbstractEntityCitizen citizen)
     {
-        entityModel = (citizen.isFemale()
+        model = (citizen.isFemale()
                          ? IModelTypeRegistry.getInstance().getFemaleMap().get(citizen.getModelType())
                          : IModelTypeRegistry.getInstance().getMaleMap().get(citizen.getModelType()));
-        if (entityModel == null)
+        if (model == null)
         {
-            entityModel = (citizen.isFemale() ? new ModelEntityFemaleCitizen() : new CitizenModel<>(0.0F));
+            model = (citizen.isFemale() ? new ModelEntityFemaleCitizen() : new CitizenModel<>(0.0F));
         }
 
-        entityModel.isChild = citizen.isChild();
-        entityModel.isSitting = citizen.getRidingEntity() != null;
-        entityModel.swingProgress = citizen.swingProgress;
+        model.young = citizen.isBaby();
+        model.riding = citizen.getVehicle() != null;
+        model.attackTime = citizen.attackAnim;
     }
 
     @Override
-    protected void renderName(
+    protected void renderNameTag(
       @NotNull final AbstractEntityCitizen entityIn,
       @NotNull final ITextComponent str,
       @NotNull final MatrixStack matrixStack,
       @NotNull final IRenderTypeBuffer buffer,
       final int maxDistance)
     {
-        super.renderName(entityIn, str, matrixStack, buffer, maxDistance);
+        super.renderNameTag(entityIn, str, matrixStack, buffer, maxDistance);
 
         if (entityIn.getCitizenDataView() != null && entityIn.getCitizenDataView().hasPendingInteractions())
         {
-            double distance = this.renderManager.getDistanceToCamera(entityIn.getPosX(), entityIn.getPosY(), entityIn.getPosZ());
+            double distance = this.entityRenderDispatcher.distanceToSqr(entityIn.getX(), entityIn.getY(), entityIn.getZ());
             if (distance <= 4096.0D)
             {
-                double yOffset = entityModel.isChild ? -0.8 : 0;
-                boolean isSneaking = entityIn.isSneaking();
-                double height = entityIn.getHeight() + 0.5F - (isSneaking ? 0.25F : 0.0F);
+                double yOffset = model.young ? -0.8 : 0;
+                boolean isSneaking = entityIn.isShiftKeyDown();
+                double height = entityIn.getBbHeight() + 0.5F - (isSneaking ? 0.25F : 0.0F);
                 double y = height + 0.3 + yOffset;
 
                 final ResourceLocation texture = entityIn.getCitizenDataView().getInteractionIcon();
 
-                matrixStack.push();
+                matrixStack.pushPose();
                 matrixStack.translate(0, y, 0);
-                matrixStack.rotate(renderManager.getCameraOrientation());
-                matrixStack.rotate(Vector3f.ZP.rotationDegrees(90));
+                matrixStack.mulPose(entityRenderDispatcher.cameraOrientation());
+                matrixStack.mulPose(Vector3f.ZP.rotationDegrees(90));
 
                 matrixStack.scale(-0.025F, -0.025F, 0.025F);
 
-                final Matrix4f matrix = matrixStack.getLast().getMatrix();
+                final Matrix4f matrix = matrixStack.last().pose();
                 final IVertexBuilder r = buffer.getBuffer(MRenderTypes.customTextRenderer(texture));
 
-                r.pos(matrix, 0, 0, 0).tex(0, 0).lightmap(250).endVertex();
-                r.pos(matrix, 0, 10, 0).tex(1, 0).lightmap(250).endVertex();
-                r.pos(matrix, 10, 10, 0).tex(1, 1).lightmap(250).endVertex();
-                r.pos(matrix, 10, 0, 0).tex(0, 1).lightmap(250).endVertex();
-                matrixStack.pop();
+                r.vertex(matrix, 0, 0, 0).uv(0, 0).uv2(250).endVertex();
+                r.vertex(matrix, 0, 10, 0).uv(1, 0).uv2(250).endVertex();
+                r.vertex(matrix, 10, 10, 0).uv(1, 1).uv2(250).endVertex();
+                r.vertex(matrix, 10, 0, 0).uv(0, 1).uv2(250).endVertex();
+                matrixStack.popPose();
             }
         }
     }
@@ -143,9 +143,9 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
         if (!mainHandStack.isEmpty())
         {
             pose = BipedModel.ArmPose.ITEM;
-            if (citizen.getItemInUseCount() > 0)
+            if (citizen.getUseItemRemainingTicks() > 0)
             {
-                enumActionMainHand = mainHandStack.getUseAction();
+                enumActionMainHand = mainHandStack.getUseAnimation();
                 if (enumActionMainHand == UseAction.BLOCK)
                 {
                     pose = BipedModel.ArmPose.BLOCK;
@@ -165,7 +165,7 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
       final BipedModel.ArmPose armPoseMainHand,
       final BipedModel.ArmPose armPoseOffHand)
     {
-        if (citizen.getPrimaryHand() == HandSide.RIGHT)
+        if (citizen.getMainArm() == HandSide.RIGHT)
         {
             citizenModel.rightArmPose = armPoseMainHand;
             citizenModel.leftArmPose = armPoseOffHand;
@@ -179,7 +179,7 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
 
     @NotNull
     @Override
-    public ResourceLocation getEntityTexture(final AbstractEntityCitizen entity)
+    public ResourceLocation getTextureLocation(final AbstractEntityCitizen entity)
     {
         return entity.getTexture();
     }

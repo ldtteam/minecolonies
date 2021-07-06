@@ -131,7 +131,7 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
     {
         super.deserializeNBT(compound);
 
-        if (compound.keySet().contains(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE))
+        if (compound.getAllKeys().contains(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE))
         {
             rsDataStoreToken = StandardFactoryController.getInstance().deserialize(compound.getCompound(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE));
         }

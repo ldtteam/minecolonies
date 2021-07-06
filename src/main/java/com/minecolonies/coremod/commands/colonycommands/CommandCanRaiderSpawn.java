@@ -27,10 +27,10 @@ public class CommandCanRaiderSpawn implements IMCOPCommand
     {
         // Colony
         final int colonyID = IntegerArgumentType.getInteger(context, COLONYID_ARG);
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getWorld().getDimensionKey());
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getLevel().dimension());
         if (colony == null)
         {
-            context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.colonyidnotfound", colonyID), true);
+            context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.colonyidnotfound", colonyID), true);
             return 0;
         }
 
@@ -38,7 +38,7 @@ public class CommandCanRaiderSpawn implements IMCOPCommand
 
         colony.getRaiderManager().setCanHaveRaiderEvents(canHaveBarbEvents);
         colony.markDirty();
-        context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.canspawnraider.success", colony.getName(), canHaveBarbEvents), true);
+        context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.canspawnraider.success", colony.getName(), canHaveBarbEvents), true);
         return 1;
     }
 

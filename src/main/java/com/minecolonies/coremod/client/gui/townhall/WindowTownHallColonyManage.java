@@ -112,7 +112,7 @@ public class WindowTownHallColonyManage extends AbstractWindowSkeleton
 
         if (MineColonies.getConfig().getServer().restrictColonyPlacement.get())
         {
-            final double spawnDistance = Math.sqrt(BlockPosUtil.getDistanceSquared2D(pos, new BlockPos(world.getWorldInfo().getSpawnX(), world.getWorldInfo().getSpawnY(), world.getWorldInfo().getSpawnZ())));
+            final double spawnDistance = Math.sqrt(BlockPosUtil.getDistanceSquared2D(pos, new BlockPos(world.getLevelData().getXSpawn(), world.getLevelData().getYSpawn(), world.getLevelData().getZSpawn())));
             if (spawnDistance < MineColonies.getConfig().getServer().minDistanceFromWorldSpawn.get())
             {
                 findPaneOfTypeByID(TEXT_FEEDBACK, Text.class).setText(LanguageHandler.format(CANT_PLACE_COLONY_TOO_CLOSE_TO_SPAWN,
@@ -142,8 +142,8 @@ public class WindowTownHallColonyManage extends AbstractWindowSkeleton
     public void onCreate()
     {
         new VanillaParticleMessage(pos.getX(), pos.getY(), pos.getZ(), ParticleTypes.DRAGON_BREATH).onExecute(null, false);
-        Minecraft.getInstance().world.playSound(Minecraft.getInstance().player, new BlockPos(Minecraft.getInstance().player.getPositionVec()),
-          SoundEvents.BLOCK_CAMPFIRE_CRACKLE, SoundCategory.AMBIENT, 2.5f, 0.8f);
+        Minecraft.getInstance().level.playSound(Minecraft.getInstance().player, new BlockPos(Minecraft.getInstance().player.position()),
+          SoundEvents.CAMPFIRE_CRACKLE, SoundCategory.AMBIENT, 2.5f, 0.8f);
         Network.getNetwork().sendToServer(new CreateColonyMessage(pos));
         close();
     }

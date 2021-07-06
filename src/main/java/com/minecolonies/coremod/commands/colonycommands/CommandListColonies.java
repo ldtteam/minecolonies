@@ -88,34 +88,34 @@ public class CommandListColonies implements IMCCommand
         }
 
         final ITextComponent headerLine = new StringTextComponent(PAGE_TOP_LEFT + page + PAGE_TOP_MIDDLE + pageCount + PAGE_TOP_RIGHT);
-        context.getSource().sendFeedback(headerLine, true);
+        context.getSource().sendSuccess(headerLine, true);
 
 
         for (final IColony colony : coloniesPage)
         {
-            context.getSource().sendFeedback(new StringTextComponent(String.format(
-              ID_AND_NAME_TEXT, colony.getID(), colony.getName())).setStyle(Style.EMPTY.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
+            context.getSource().sendSuccess(new StringTextComponent(String.format(
+              ID_AND_NAME_TEXT, colony.getID(), colony.getName())).setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
               String.format(COMMAND_COLONY_INFO, colony.getID())))), true);
             final BlockPos center = colony.getCenter();
 
             final IFormattableTextComponent teleport = new StringTextComponent(COORDINATES_TEXT + String.format(COORDINATES_XYZ, center.getX(), center.getY(), center.getZ()));
-            teleport.setStyle(Style.EMPTY.setBold(true).setFormatting(TextFormatting.GOLD).setClickEvent(
+            teleport.setStyle(Style.EMPTY.withBold(true).withColor(TextFormatting.GOLD).withClickEvent(
               new ClickEvent(ClickEvent.Action.RUN_COMMAND, TELEPORT_COMMAND + colony.getID())));
 
-            context.getSource().sendFeedback(teleport, true);
+            context.getSource().sendSuccess(teleport, true);
         }
 
-        final ITextComponent prevButton = new StringTextComponent(PREV_PAGE).setStyle(Style.EMPTY.setBold(true).setFormatting(TextFormatting.GOLD).setClickEvent(
+        final ITextComponent prevButton = new StringTextComponent(PREV_PAGE).setStyle(Style.EMPTY.withBold(true).withColor(TextFormatting.GOLD).withClickEvent(
           new ClickEvent(ClickEvent.Action.RUN_COMMAND, LIST_COMMAND_SUGGESTED + prevPage)));
 
-        final ITextComponent nextButton = new StringTextComponent(NEXT_PAGE).setStyle(Style.EMPTY.setBold(true).setFormatting(TextFormatting.GOLD).setClickEvent(
+        final ITextComponent nextButton = new StringTextComponent(NEXT_PAGE).setStyle(Style.EMPTY.withBold(true).withColor(TextFormatting.GOLD).withClickEvent(
           new ClickEvent(ClickEvent.Action.RUN_COMMAND, LIST_COMMAND_SUGGESTED + nextPage)
         ));
 
         final StringTextComponent beginLine = new StringTextComponent(PAGE_LINE);
         final StringTextComponent endLine = new StringTextComponent(PAGE_LINE);
         context.getSource()
-          .sendFeedback(beginLine.append(prevButton).append(new StringTextComponent(PAGE_LINE_DIVIDER)).append(nextButton).append(endLine), true);
+          .sendSuccess(beginLine.append(prevButton).append(new StringTextComponent(PAGE_LINE_DIVIDER)).append(nextButton).append(endLine), true);
         return 1;
     }
 

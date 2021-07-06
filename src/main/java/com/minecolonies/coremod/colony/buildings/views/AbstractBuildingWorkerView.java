@@ -91,12 +91,12 @@ public abstract class AbstractBuildingWorkerView extends AbstractBuildingView im
         }
 
         this.hiringMode = HiringMode.values()[buf.readInt()];
-        this.jobName = buf.readString(32767);
+        this.jobName = buf.readUtf(32767);
         this.maxInhabitants = buf.readInt();
         this.primary = Skill.values()[buf.readInt()];
         this.secondary = Skill.values()[buf.readInt()];
         this.maxInhabitants = buf.readInt();
-        this.jobDisplayName = buf.readString();
+        this.jobDisplayName = buf.readUtf();
     }
 
     @Override

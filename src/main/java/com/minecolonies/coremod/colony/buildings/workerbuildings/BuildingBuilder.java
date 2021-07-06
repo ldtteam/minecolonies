@@ -244,7 +244,7 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
 
                 if (!job.hasWorkOrder() && wo instanceof WorkOrderBuild && ((WorkOrderBuild) wo).canBuild(otherBuilder))
                 {
-                    final double distance = otherBuilder.getWorkBuilding().getID().distanceSq(wo.getSchematicLocation());
+                    final double distance = otherBuilder.getWorkBuilding().getID().distSqr(wo.getSchematicLocation());
                     if (distance < distanceToBuilder)
                     {
                         distanceToBuilder = distance;
@@ -252,7 +252,7 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
                 }
             }
 
-            if (citizen.getWorkBuilding().getID().distanceSq(wo.getSchematicLocation()) < distanceToBuilder)
+            if (citizen.getWorkBuilding().getID().distSqr(wo.getSchematicLocation()) < distanceToBuilder)
             {
                 citizen.getJob(JobBuilder.class).setWorkOrder(wo);
                 wo.setClaimedBy(citizen);

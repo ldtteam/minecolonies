@@ -19,7 +19,7 @@ public class RenderSitting<T extends Entity> extends EntityRenderer<T>
     }
 
     @Override
-    public ResourceLocation getEntityTexture(final T t)
+    public ResourceLocation getTextureLocation(final T t)
     {
         return null;
     }

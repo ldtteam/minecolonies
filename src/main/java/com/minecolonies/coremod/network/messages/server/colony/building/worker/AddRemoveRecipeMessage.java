@@ -114,7 +114,7 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
     {
         storage = StandardFactoryController.getInstance().deserialize(buf);
         remove = buf.readBoolean();
-        this.id = buf.readString(32767);
+        this.id = buf.readUtf(32767);
     }
 
     /**
@@ -127,7 +127,7 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
     {
         StandardFactoryController.getInstance().serialize(buf, storage);
         buf.writeBoolean(remove);
-        buf.writeString(id);
+        buf.writeUtf(id);
     }
 
     @Override
@@ -143,19 +143,19 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
         if (remove)
         {
             module.removeRecipe(storage.getToken());
-            SoundUtils.playSuccessSound(player, player.getPosition());
+            SoundUtils.playSuccessSound(player, player.blockPosition());
         }
         else
         {
             final IToken<?> token = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage);
             if (!module.addRecipe(token))
             {
-                SoundUtils.playErrorSound(player, player.getPosition());
+                SoundUtils.playErrorSound(player, player.blockPosition());
                 LanguageHandler.sendPlayerMessage(player, UNABLE_TO_ADD_RECIPE_MESSAGE, building.getJobName());
             }
             else
             {
-                SoundUtils.playSuccessSound(player, player.getPosition());
+                SoundUtils.playSuccessSound(player, player.blockPosition());
                 AdvancementUtils.TriggerAdvancementPlayersForColony(colony, playerMP -> AdvancementTriggers.BUILDING_ADD_RECIPE.trigger(playerMP, this.storage));
                 LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.gui.recipe.done");
             }

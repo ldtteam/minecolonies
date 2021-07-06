@@ -109,7 +109,7 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
 
             final int levelDepth = level.getDepth() + 2;
             final int targetY = target.getY();
-            final int workerY = citizen.getPosition().getY();
+            final int workerY = citizen.blockPosition().getY();
 
             //Check if miner is underground in shaft and his target is overground.
             if (workerY <= levelDepth && targetY > levelDepth)
@@ -121,7 +121,7 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
                     {
                         building.setActiveNode(null);
                         building.setOldNode(null);
-                        return getProxy(target, citizen.getPosition(), distanceToPath);
+                        return getProxy(target, citizen.blockPosition(), distanceToPath);
                     }
 
                     while (currentNode.getParent() != null)
@@ -131,7 +131,7 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
                             final Direction facing = BlockPosUtil.getXZFacing(ladderPos, new BlockPos(currentNode.getX(), 0, currentNode.getZ()));
                             final BlockPos ladderHeight = new BlockPos(ladderPos.getX(), targetY + 1, ladderPos.getZ());
 
-                            return new BlockPos(ladderHeight.offset(facing, 7));
+                            return new BlockPos(ladderHeight.relative(facing, 7));
                         }
                         else
                         {
@@ -146,7 +146,7 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
                     ladderPos.getX() + vector.getX() * OTHER_SIDE_OF_SHAFT,
                     level.getDepth(),
                     ladderPos.getZ() + vector.getZ() * OTHER_SIDE_OF_SHAFT));
-                return getProxy(target, citizen.getPosition(), distanceToPath);
+                return getProxy(target, citizen.blockPosition(), distanceToPath);
 
                 //If he already is at ladder location, the closest node automatically will be his hut block.
             }
@@ -157,7 +157,7 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
                 final BlockPos newProxy;
 
                 //First calculate way to miner building.
-                newProxy = getProxy(buildingPos, citizen.getPosition(), BlockPosUtil.getDistanceSquared(citizen.getPosition(), buildingPos));
+                newProxy = getProxy(buildingPos, citizen.blockPosition(), BlockPosUtil.getDistanceSquared(citizen.blockPosition(), buildingPos));
 
                 if (buildingPos.getY() - level.getDepth() > 25)
                 {
@@ -189,7 +189,7 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
                 com.minecolonies.coremod.entity.ai.citizen.miner.Node lastNode = null;
                 for (final Map.Entry<Vec2i, com.minecolonies.coremod.entity.ai.citizen.miner.Node> node : level.getNodes().entrySet())
                 {
-                    final double distanceToNode = node.getKey().distanceSq(citizen.getPosition().getX(), citizen.getPosition().getZ());
+                    final double distanceToNode = node.getKey().distanceSq(citizen.blockPosition().getX(), citizen.blockPosition().getZ());
                     if (distanceToNode < closestNode)
                     {
                         lastNode = node.getValue();
@@ -201,7 +201,7 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
                 {
                     final Direction facing = BlockPosUtil.getXZFacing(ladderPos, new BlockPos(lastNode.getX(), 0, lastNode.getZ()));
                     final BlockPos ladderHeight = new BlockPos(ladderPos.getX(), targetY + 1, ladderPos.getZ());
-                    return new BlockPos(ladderHeight.offset(facing, 7));
+                    return new BlockPos(ladderHeight.relative(facing, 7));
                 }
 
                 if (lastNode != null && lastNode.getParent() != null)
@@ -227,7 +227,7 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
             }
         }
 
-        return getProxy(target, citizen.getPosition(), distanceToPath);
+        return getProxy(target, citizen.blockPosition(), distanceToPath);
     }
 
     private void calculateNodes(final Level level, final int levelDepth, final BuildingMiner buildingMiner)
@@ -241,7 +241,7 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
                 final BlockPos ladderPos = buildingMiner.getLadderLocation();
                 final Direction facing = BlockPosUtil.getXZFacing(ladderPos, new BlockPos(currentNode.getX(), 0, currentNode.getZ()));
                 final BlockPos ladderHeight = new BlockPos(ladderPos.getX(), levelDepth + 1, ladderPos.getZ());
-                nodesToTarget.add(new BlockPos(ladderHeight.offset(facing, 7)));
+                nodesToTarget.add(new BlockPos(ladderHeight.relative(facing, 7)));
             }
             else
             {

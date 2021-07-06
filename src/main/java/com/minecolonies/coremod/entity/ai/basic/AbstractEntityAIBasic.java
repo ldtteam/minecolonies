@@ -326,7 +326,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             if (worker != null)
             {
                 final String name = this.worker.getName().getString();
-                final BlockPos workerPosition = worker.getPosition();
+                final BlockPos workerPosition = worker.blockPosition();
                 final IJob<?> colonyJob = worker.getCitizenJobHandler().getColonyJob();
                 final String jobName = colonyJob == null ? "null" : colonyJob.getName();
                 Log.getLogger().error("Pausing Entity " + name + " (" + jobName + ") at " + workerPosition + " for " + timeout + " Seconds because of error:");
@@ -698,7 +698,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         @Nullable final IBuildingWorker building = getOwnBuilding();
         for (final BlockPos pos : building.getContainers())
         {
-            final TileEntity entity = world.getTileEntity(pos);
+            final TileEntity entity = world.getBlockEntity(pos);
             if (entity instanceof TileEntityRack && ((TileEntityRack) entity).hasItemStack(is, 1, false))
             {
                 entity.getCapability(ITEM_HANDLER_CAPABILITY, null)
@@ -919,7 +919,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             final Predicate<ItemStack> toolPredicate = stack -> ItemStackUtils.hasToolLevel(stack, toolType, minimalLevel, getOwnBuilding().getMaxToolLevel());
             for (final BlockPos pos : building.getContainers())
             {
-                final TileEntity entity = world.getTileEntity(pos);
+                final TileEntity entity = world.getBlockEntity(pos);
                 if (entity instanceof TileEntityRack)
                 {
                     if (ToolType.NONE.equals(toolType))
@@ -1147,12 +1147,12 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      */
     private void requestTool(@NotNull final BlockState target, final BlockPos pos)
     {
-        final IToolType toolType = WorkerUtil.getBestToolForBlock(target, target.getBlockHardness(world, pos));
+        final IToolType toolType = WorkerUtil.getBestToolForBlock(target, target.getDestroySpeed(world, pos));
         final int required = WorkerUtil.getCorrectHarvestLevelForBlock(target);
         if (getOwnBuilding().getMaxToolLevel() < required && worker.getCitizenData() != null)
         {
             worker.getCitizenData().triggerInteraction(new PosBasedInteraction(
-              new TranslationTextComponent(BUILDING_LEVEL_TOO_LOW, new ItemStack(target.getBlock()).getDisplayName(), pos.getX(), pos.getY(), pos.getZ()),
+              new TranslationTextComponent(BUILDING_LEVEL_TOO_LOW, new ItemStack(target.getBlock()).getHoverName(), pos.getX(), pos.getY(), pos.getZ()),
               ChatPriority.IMPORTANT,
               new TranslationTextComponent(BUILDING_LEVEL_TOO_LOW),
               pos));
@@ -1187,7 +1187,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      */
     protected int getMostEfficientTool(@NotNull final BlockState target, final BlockPos pos)
     {
-        final IToolType toolType = WorkerUtil.getBestToolForBlock(target, target.getBlockHardness(world, pos));
+        final IToolType toolType = WorkerUtil.getBestToolForBlock(target, target.getDestroySpeed(world, pos));
         final int required = WorkerUtil.getCorrectHarvestLevelForBlock(target);
 
         if (toolType == ToolType.NONE)
@@ -1332,7 +1332,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         {
             @NotNull final BlockPos positionInDirection = getPositionInDirection(direction, distance + offset, targetPos);
             if (EntityUtils.checkForFreeSpace(world, positionInDirection)
-                  && world.getBlockState(positionInDirection.up()).getBlock().isIn(BlockTags.SAPLINGS))
+                  && world.getBlockState(positionInDirection.above()).getBlock().is(BlockTags.SAPLINGS))
             {
                 return positionInDirection;
             }
@@ -1353,7 +1353,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     @NotNull
     private BlockPos getPositionInDirection(final Direction facing, final int distance, final BlockPos targetPos)
     {
-        return BlockPosUtil.getFloor(targetPos.offset(facing, distance), world);
+        return BlockPosUtil.getFloor(targetPos.relative(facing, distance), world);
     }
 
     /**
@@ -1510,15 +1510,15 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      */
     public boolean checkIfRequestForTagExistOrCreateAsynch(@NotNull final ITag<Item> tag, final int count)
     {
-        if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), stack -> stack.getItem().isIn(tag) && stack.getCount() >= count))
+        if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), stack -> stack.getItem().is(tag) && stack.getCount() >= count))
         {
             return true;
         }
 
         if (InventoryUtils.getCountFromBuilding(getOwnBuilding(),
-          itemStack -> itemStack.getItem().isIn(tag)) >= count &&
+          itemStack -> itemStack.getItem().is(tag)) >= count &&
               InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
-                getOwnBuilding(), itemStack -> itemStack.getItem().isIn(tag),
+                getOwnBuilding(), itemStack -> itemStack.getItem().is(tag),
                 count,
                 worker.getInventoryCitizen()))
         {
@@ -1547,7 +1547,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
 
     private boolean tryTransferFromPosToWorkerIfNeeded(final BlockPos pos, @NotNull final Tuple<Predicate<ItemStack>, Integer> predicate)
     {
-        final TileEntity entity = world.getTileEntity(pos);
+        final TileEntity entity = world.getBlockEntity(pos);
         if (entity == null)
         {
             return true;
@@ -1597,20 +1597,20 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      */
     private IAIState bePaused()
     {
-        if (!worker.getNavigator().noPath())
+        if (!worker.getNavigation().isDone())
         {
             return null;
         }
 
         // Pick random activity.
-        final int percent = worker.getRNG().nextInt(ONE_HUNDRED_PERCENT);
+        final int percent = worker.getRandom().nextInt(ONE_HUNDRED_PERCENT);
         if (percent < VISIT_BUILDING_CHANCE)
         {
-            worker.getNavigator().tryMoveToBlockPos(getOwnBuilding().getPosition(), worker.getRNG().nextBoolean() ? DEFAULT_SPEED * 1.5D : DEFAULT_SPEED * 2.2D);
+            worker.getNavigation().tryMoveToBlockPos(getOwnBuilding().getPosition(), worker.getRandom().nextBoolean() ? DEFAULT_SPEED * 1.5D : DEFAULT_SPEED * 2.2D);
         }
         else if (percent < WANDER_CHANCE)
         {
-            worker.getNavigator().moveToRandomPos(10, DEFAULT_SPEED);
+            worker.getNavigation().moveToRandomPos(10, DEFAULT_SPEED);
         }
 
         return null;

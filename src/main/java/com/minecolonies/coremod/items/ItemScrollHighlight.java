@@ -39,43 +39,43 @@ public class ItemScrollHighlight extends AbstractItemScroll
 
     @Override
     @NotNull
-    public ActionResultType onItemUse(ItemUseContext ctx)
+    public ActionResultType useOn(ItemUseContext ctx)
     {
         // Right click on block
-        if (ctx.getWorld().isRemote || ctx.getPlayer() == null || !ctx.getPlayer().isSneaking())
+        if (ctx.getLevel().isClientSide || ctx.getPlayer() == null || !ctx.getPlayer().isShiftKeyDown())
         {
             return ActionResultType.PASS;
         }
 
-        final TileEntity te = ctx.getWorld().getTileEntity(ctx.getPos());
+        final TileEntity te = ctx.getLevel().getBlockEntity(ctx.getClickedPos());
         if (te instanceof TileEntityColonyBuilding)
         {
-            ctx.getItem().shrink(1);
+            ctx.getItemInHand().shrink(1);
 
-            if (ctx.getWorld().rand.nextInt(10) == 0)
+            if (ctx.getLevel().random.nextInt(10) == 0)
             {
                 ctx.getPlayer()
-                  .sendStatusMessage(new TranslationTextComponent(
-                    "minecolonies.scroll.failed" + (ctx.getWorld().rand.nextInt(FAIL_RESPONSES_TOTAL) + 1)).setStyle(Style.EMPTY.setFormatting(
+                  .displayClientMessage(new TranslationTextComponent(
+                    "minecolonies.scroll.failed" + (ctx.getLevel().random.nextInt(FAIL_RESPONSES_TOTAL) + 1)).setStyle(Style.EMPTY.withColor(
                     TextFormatting.GOLD)), true);
-                ctx.getPlayer().addPotionEffect(new EffectInstance(Effects.GLOWING, TICKS_SECOND * 300));
-                SoundUtils.playSoundForPlayer((ServerPlayerEntity) ctx.getPlayer(), SoundEvents.BLOCK_ENDER_CHEST_OPEN, 0.3f, 1.0f);
+                ctx.getPlayer().addEffect(new EffectInstance(Effects.GLOWING, TICKS_SECOND * 300));
+                SoundUtils.playSoundForPlayer((ServerPlayerEntity) ctx.getPlayer(), SoundEvents.ENDER_CHEST_OPEN, 0.3f, 1.0f);
                 return ActionResultType.SUCCESS;
             }
 
             final TileEntityColonyBuilding building = (TileEntityColonyBuilding) te;
-            final List<ICitizenData> citizens = building.getColony().getBuildingManager().getBuilding(ctx.getPos()).getAssignedCitizen();
+            final List<ICitizenData> citizens = building.getColony().getBuildingManager().getBuilding(ctx.getClickedPos()).getAssignedCitizen();
 
             for (final ICitizenData citizenData : citizens)
             {
                 if (citizenData.getEntity().isPresent())
                 {
-                    citizenData.getEntity().get().addPotionEffect(new EffectInstance(Effects.GLOWING, TICKS_SECOND * 120));
-                    citizenData.getEntity().get().addPotionEffect(new EffectInstance(Effects.SPEED, TICKS_SECOND * 120));
+                    citizenData.getEntity().get().addEffect(new EffectInstance(Effects.GLOWING, TICKS_SECOND * 120));
+                    citizenData.getEntity().get().addEffect(new EffectInstance(Effects.MOVEMENT_SPEED, TICKS_SECOND * 120));
                 }
             }
 
-            SoundUtils.playSoundForPlayer((ServerPlayerEntity) ctx.getPlayer(), SoundEvents.ENTITY_PLAYER_LEVELUP, 0.3f, 1.0f);
+            SoundUtils.playSoundForPlayer((ServerPlayerEntity) ctx.getPlayer(), SoundEvents.PLAYER_LEVELUP, 0.3f, 1.0f);
         }
 
         return ActionResultType.SUCCESS;
@@ -94,11 +94,11 @@ public class ItemScrollHighlight extends AbstractItemScroll
     }
 
     @Override
-    public void addInformation(
+    public void appendHoverText(
       @NotNull final ItemStack stack, @Nullable final World worldIn, @NotNull final List<ITextComponent> tooltip, @NotNull final ITooltipFlag flagIn)
     {
         final IFormattableTextComponent guiHint = LanguageHandler.buildChatComponent("item.minecolonies.scroll_highlight.tip");
-        guiHint.setStyle(Style.EMPTY.setFormatting(TextFormatting.DARK_GREEN));
+        guiHint.setStyle(Style.EMPTY.withColor(TextFormatting.DARK_GREEN));
         tooltip.add(guiHint);
     }
 }

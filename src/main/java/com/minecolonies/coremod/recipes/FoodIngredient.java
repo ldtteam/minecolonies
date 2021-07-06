@@ -18,6 +18,9 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import net.minecraft.item.crafting.Ingredient.IItemList;
+import net.minecraft.item.crafting.Ingredient.SingleItemList;
+
 /**
  * An ingredient that can be used in a vanilla recipe to match food items.
  * Only items with at least *some* healing and saturation are counted, and
@@ -71,7 +74,7 @@ public class FoodIngredient extends Ingredient
      * True if this stack is a standard food item (has at least some healing and some saturation, not purely for effects).
      */
     public static final Predicate<ItemStack> ISFOOD
-            = stack -> ItemStackUtils.isNotEmpty(stack) && stack.getItem().isFood() && stack.getItem().getFood().getHealing() > 0 && stack.getItem().getFood().getSaturation() > 0;
+            = stack -> ItemStackUtils.isNotEmpty(stack) && stack.getItem().isEdible() && stack.getItem().getFoodProperties().getNutrition() > 0 && stack.getItem().getFoodProperties().getSaturationModifier() > 0;
 
     private static Stream<IItemList> buildItemLists(final Builder builder)
     {
@@ -108,11 +111,11 @@ public class FoodIngredient extends Ingredient
 
         private boolean matchesFood(@NotNull final ItemStack stack)
         {
-            @NotNull final Food food = Objects.requireNonNull(stack.getItem().getFood());
-            return minHealing.map(healing -> food.getHealing() >= healing).orElse(true) &&
-                    maxHealing.map(healing -> food.getHealing() < healing).orElse(true) &&
-                    minSaturation.map(saturation -> food.getSaturation() >= saturation).orElse(true) &&
-                    maxSaturation.map(saturation -> food.getSaturation() < saturation).orElse(true);
+            @NotNull final Food food = Objects.requireNonNull(stack.getItem().getFoodProperties());
+            return minHealing.map(healing -> food.getNutrition() >= healing).orElse(true) &&
+                    maxHealing.map(healing -> food.getNutrition() < healing).orElse(true) &&
+                    minSaturation.map(saturation -> food.getSaturationModifier() >= saturation).orElse(true) &&
+                    maxSaturation.map(saturation -> food.getSaturationModifier() < saturation).orElse(true);
         }
     }
 
@@ -130,10 +133,10 @@ public class FoodIngredient extends Ingredient
         {
             final Builder builder = new Builder();
 
-            if (json.has(MIN_HEALING_PROP)) builder.minHealing(JSONUtils.getInt(json, MIN_HEALING_PROP));
-            if (json.has(MAX_HEALING_PROP)) builder.maxHealing(JSONUtils.getInt(json, MAX_HEALING_PROP));
-            if (json.has(MIN_SATURATION_PROP)) builder.minSaturation(JSONUtils.getFloat(json, MIN_SATURATION_PROP));
-            if (json.has(MAX_SATURATION_PROP)) builder.maxSaturation(JSONUtils.getFloat(json, MAX_SATURATION_PROP));
+            if (json.has(MIN_HEALING_PROP)) builder.minHealing(JSONUtils.getAsInt(json, MIN_HEALING_PROP));
+            if (json.has(MAX_HEALING_PROP)) builder.maxHealing(JSONUtils.getAsInt(json, MAX_HEALING_PROP));
+            if (json.has(MIN_SATURATION_PROP)) builder.minSaturation(JSONUtils.getAsFloat(json, MIN_SATURATION_PROP));
+            if (json.has(MAX_SATURATION_PROP)) builder.maxSaturation(JSONUtils.getAsFloat(json, MAX_SATURATION_PROP));
 
             return builder.build();
         }

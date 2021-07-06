@@ -13,7 +13,7 @@ public class BlockHutConcreteMixer extends AbstractBlockHut<BlockHutConcreteMixe
 {
     @NotNull
     @Override
-    public String getName()
+    public String getHutName()
     {
         return "blockhutconcretemixer";
     }

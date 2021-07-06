@@ -16,11 +16,11 @@ public abstract class AbstractBlockMinecoloniesNamedGrave<B extends AbstractBloc
     /**
      * The direction the block is facing.
      */
-    public static final DirectionProperty FACING = HorizontalBlock.HORIZONTAL_FACING;
+    public static final DirectionProperty FACING = HorizontalBlock.FACING;
 
     public AbstractBlockMinecoloniesNamedGrave(final Properties properties)
     {
-        super(properties.notSolid());
+        super(properties.noOcclusion());
     }
 
     /**

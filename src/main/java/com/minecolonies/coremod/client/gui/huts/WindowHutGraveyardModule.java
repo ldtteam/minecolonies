@@ -96,7 +96,7 @@ public class WindowHutGraveyardModule extends AbstractWindowWorkerModuleBuilding
     /**
      * The world.
      */
-    private final ClientWorld world = Minecraft.getInstance().world;
+    private final ClientWorld world = Minecraft.getInstance().level;
 
     /**
      * Constructor for the window of the graveyard.
@@ -137,7 +137,7 @@ public class WindowHutGraveyardModule extends AbstractWindowWorkerModuleBuilding
                 final BlockPos grave = graves.get(index);
                 @NotNull final String distance = Integer.toString((int) Math.sqrt(BlockPosUtil.getDistanceSquared(grave, building.getPosition())));
                 final String direction = BlockPosUtil.calcDirection(building.getPosition(), grave);
-                final TileEntity entity = world.getTileEntity(grave);
+                final TileEntity entity = world.getBlockEntity(grave);
                 if (entity instanceof TileEntityGrave)
                 {
                     rowPane.findPaneOfTypeByID(TAG_NAME, Text.class).setText("Grave of " +

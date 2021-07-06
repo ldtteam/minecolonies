@@ -122,7 +122,7 @@ public final class WorkerUtil
         if (!EntityUtils.isLivingAtSiteWithMove(worker, x, y, z, range))
         {
             //If not moving the try setting the point where the entity should move to
-            if (worker.getNavigator().noPath() && !EntityUtils.tryMoveLivingToXYZ(worker, x, y, z))
+            if (worker.getNavigation().isDone() && !EntityUtils.tryMoveLivingToXYZ(worker, x, y, z))
             {
                 worker.getCitizenStatusHandler().setStatus(Status.PATHFINDING_ERROR);
             }
@@ -145,13 +145,13 @@ public final class WorkerUtil
             return false;
         }
 
-        citizen.setLocationAndAngles(
+        citizen.moveTo(
           spawnPoint.getX() + MIDDLE_BLOCK_OFFSET,
           spawnPoint.getY(),
           spawnPoint.getZ() + MIDDLE_BLOCK_OFFSET,
           citizen.getRotationYaw(),
           citizen.getRotationPitch());
-        citizen.getNavigator().clearPath();
+        citizen.getNavigation().stop();
         return true;
     }
 
@@ -176,7 +176,7 @@ public final class WorkerUtil
                     if (tool.getB() != null && tool.getB().getItem() instanceof ToolItem)
                     {
                         final ToolItem toolItem = (ToolItem) tool.getB().getItem();
-                        if (tool.getB().getDestroySpeed(state) >= toolItem.getTier().getEfficiency())
+                        if (tool.getB().getDestroySpeed(state) >= toolItem.getTier().getSpeed())
                         {
                             toolName = tool.getA().getName();
                             break;
@@ -234,9 +234,9 @@ public final class WorkerUtil
             return;
         }
 
-        final double xDifference = block.getX() - citizen.getPosition().getX();
-        final double zDifference = block.getZ() - citizen.getPosition().getZ();
-        final double yDifference = block.getY() - (citizen.getPosition().getY() + citizen.getEyeHeight());
+        final double xDifference = block.getX() - citizen.blockPosition().getX();
+        final double zDifference = block.getZ() - citizen.blockPosition().getZ();
+        final double yDifference = block.getY() - (citizen.blockPosition().getY() + citizen.getEyeHeight());
 
         final double squareDifference = Math.sqrt(xDifference * xDifference + zDifference * zDifference);
         final double intendedRotationYaw = (Math.atan2(zDifference, xDifference) * 180.0D / Math.PI) - 90.0;
@@ -274,7 +274,7 @@ public final class WorkerUtil
                         if (teData != null && teData.getString(LEVEL_SIGN_FIRST_ROW).equals(LEVEL_SIGN_TEXT))
                         {
                             // try to make an anchor in 0,0,0 instead of the middle of the structure
-                            return pos.subtract(structure.getPrimaryBlockOffset()).add(localPos);
+                            return pos.subtract(structure.getPrimaryBlockOffset()).offset(localPos);
                         }
                     }
                 }
@@ -297,22 +297,22 @@ public final class WorkerUtil
 
         if (levelSignPos != null)
         {
-            final TileEntity te = world.getTileEntity(levelSignPos);
+            final TileEntity te = world.getBlockEntity(levelSignPos);
 
             if (te instanceof SignTileEntity)
             {
                 final BlockState BlockState = world.getBlockState(levelSignPos);
                 final SignTileEntity teLevelSign = (SignTileEntity) te;
 
-                teLevelSign.setText(0, new StringTextComponent(TextFormatting.getTextWithoutFormattingCodes(
+                teLevelSign.setMessage(0, new StringTextComponent(TextFormatting.stripFormatting(
                   LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.minerMineNode") + ": " + levelId)));
-                teLevelSign.setText(1, new StringTextComponent(TextFormatting.getTextWithoutFormattingCodes("Y: " + (level.getDepth() + 1))));
-                teLevelSign.setText(2, new StringTextComponent(TextFormatting.getTextWithoutFormattingCodes(
+                teLevelSign.setMessage(1, new StringTextComponent(TextFormatting.stripFormatting("Y: " + (level.getDepth() + 1))));
+                teLevelSign.setMessage(2, new StringTextComponent(TextFormatting.stripFormatting(
                   LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.minerNode") + ": " + level.getNumberOfBuiltNodes())));
-                teLevelSign.setText(3, new StringTextComponent(TextFormatting.getTextWithoutFormattingCodes("")));
+                teLevelSign.setMessage(3, new StringTextComponent(TextFormatting.stripFormatting("")));
 
-                teLevelSign.markDirty();
-                world.notifyBlockUpdate(levelSignPos, BlockState, BlockState, 3);
+                teLevelSign.setChanged();
+                world.sendBlockUpdated(levelSignPos, BlockState, BlockState, 3);
             }
         }
     }
@@ -330,7 +330,7 @@ public final class WorkerUtil
         {
             if (WorldUtil.isBlockLoaded(world, pos))
             {
-                final TileEntity entity = world.getTileEntity(pos);
+                final TileEntity entity = world.getBlockEntity(pos);
                 if (entity instanceof TileEntityCompostedDirt)
                 {
                     if (((TileEntityCompostedDirt) entity).isComposted())
@@ -358,7 +358,7 @@ public final class WorkerUtil
     {
         if (world.getBlockState(pos).getBlock().isLadder(world.getBlockState(pos), world, pos, null))
         {
-            return getLastLadder(pos.down(), world);
+            return getLastLadder(pos.below(), world);
         }
         else
         {

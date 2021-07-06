@@ -75,7 +75,7 @@ public class PlayAudioMessage implements IMessage
     public void fromBytes(final PacketBuffer buf)
     {
         this.category = SoundCategory.values()[buf.readVarInt()];
-        this.soundEvent = Registry.SOUND_EVENT.getByValue(buf.readVarInt());
+        this.soundEvent = Registry.SOUND_EVENT.byId(buf.readVarInt());
     }
 
     @Nullable
@@ -89,8 +89,8 @@ public class PlayAudioMessage implements IMessage
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
-        Minecraft.getInstance().getSoundHandler().play(new SimpleSound(
-          soundEvent.getName(), category,
+        Minecraft.getInstance().getSoundManager().play(new SimpleSound(
+          soundEvent.getLocation(), category,
           1.0F, 1.0F, false, 0,
           ISound.AttenuationType.NONE, 0, 0, 0, true));
     }

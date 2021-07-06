@@ -58,12 +58,12 @@ public class BlockMinecoloniesGrave extends AbstractBlockMinecoloniesGrave<Block
     /**
      * Smaller shape.
      */
-    private static final VoxelShape SHAPE = VoxelShapes.create(0.1, 0.1, 0.1, 0.9, 0.9, 0.9);
+    private static final VoxelShape SHAPE = VoxelShapes.box(0.1, 0.1, 0.1, 0.9, 0.9, 0.9);
 
     public BlockMinecoloniesGrave()
     {
-        super(Properties.create(Material.ROCK).hardnessAndResistance(BLOCK_HARDNESS, RESISTANCE).harvestTool(ToolType.SHOVEL).noDrops());
-        this.setDefaultState(this.getDefaultState().with(FACING, Direction.NORTH).with(VARIANT, GraveType.DEFAULT));
+        super(Properties.of(Material.STONE).strength(BLOCK_HARDNESS, RESISTANCE).harvestTool(ToolType.SHOVEL).noDrops());
+        this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH).setValue(VARIANT, GraveType.DEFAULT));
         setRegistryName(Constants.MOD_ID.toLowerCase() + ":" + BLOCK_NAME);
     }
 
@@ -84,10 +84,10 @@ public class BlockMinecoloniesGrave extends AbstractBlockMinecoloniesGrave<Block
     @Override
     public BlockState getStateForPlacement(final BlockItemUseContext context)
     {
-        final World worldIn = context.getWorld();
-        final BlockPos pos = context.getPos();
-        final BlockState state = getDefaultState();
-        final TileEntity entity = worldIn.getTileEntity(pos);
+        final World worldIn = context.getLevel();
+        final BlockPos pos = context.getClickedPos();
+        final BlockState state = defaultBlockState();
+        final TileEntity entity = worldIn.getBlockEntity(pos);
 
         if (!(entity instanceof TileEntityGrave))
         {
@@ -107,7 +107,7 @@ public class BlockMinecoloniesGrave extends AbstractBlockMinecoloniesGrave<Block
      */
     public static BlockState getPlacementState(final BlockState state, final TileEntity entity, final BlockPos pos)
     {
-        return state.with(VARIANT, GraveType.DEFAULT);
+        return state.setValue(VARIANT, GraveType.DEFAULT);
     }
 
     /**
@@ -120,7 +120,7 @@ public class BlockMinecoloniesGrave extends AbstractBlockMinecoloniesGrave<Block
     @Deprecated
     public BlockState rotate(@NotNull final BlockState state, final Rotation rot)
     {
-        return state.with(FACING, rot.rotate(state.get(FACING)));
+        return state.setValue(FACING, rot.rotate(state.getValue(FACING)));
     }
 
     /**
@@ -131,23 +131,23 @@ public class BlockMinecoloniesGrave extends AbstractBlockMinecoloniesGrave<Block
     @Deprecated
     public BlockState mirror(@NotNull final BlockState state, final Mirror mirrorIn)
     {
-        return state.rotate(mirrorIn.toRotation(state.get(FACING)));
+        return state.rotate(mirrorIn.getRotation(state.getValue(FACING)));
     }
 
     @Override
-    public void spawnAdditionalDrops(final BlockState state, final ServerWorld worldIn, final BlockPos pos, final ItemStack stack)
+    public void spawnAfterBreak(final BlockState state, final ServerWorld worldIn, final BlockPos pos, final ItemStack stack)
     {
-        final TileEntity tileentity = worldIn.getTileEntity(pos);
+        final TileEntity tileentity = worldIn.getBlockEntity(pos);
         if (tileentity instanceof TileEntityGrave)
         {
             final IItemHandler handler = ((AbstractTileEntityGrave) tileentity).getInventory();
             InventoryUtils.dropItemHandler(handler, worldIn, pos.getX(), pos.getY(), pos.getZ());
         }
-        super.spawnAdditionalDrops(state, worldIn, pos, stack);
+        super.spawnAfterBreak(state, worldIn, pos, stack);
     }
 
     @Override
-    public ActionResultType onBlockActivated(
+    public ActionResultType use(
       final BlockState state,
       final World worldIn,
       final BlockPos pos,
@@ -156,17 +156,17 @@ public class BlockMinecoloniesGrave extends AbstractBlockMinecoloniesGrave<Block
       final BlockRayTraceResult ray)
     {
         final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(worldIn, pos);
-        final TileEntity tileEntity = worldIn.getTileEntity(pos);
+        final TileEntity tileEntity = worldIn.getBlockEntity(pos);
 
         if ((colony == null || colony.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
               && tileEntity instanceof TileEntityGrave)
         {
             final TileEntityGrave grave = (TileEntityGrave) tileEntity;
-            if (!worldIn.isRemote)
+            if (!worldIn.isClientSide)
             {
                 NetworkHooks.openGui((ServerPlayerEntity) player,
                   grave,
-                  buf -> buf.writeBlockPos(grave.getPos()));
+                  buf -> buf.writeBlockPos(grave.getBlockPos()));
             }
             return ActionResultType.SUCCESS;
         }
@@ -174,20 +174,20 @@ public class BlockMinecoloniesGrave extends AbstractBlockMinecoloniesGrave<Block
     }
 
     @Override
-    public void onBlockPlacedBy(final World worldIn, final BlockPos pos, final BlockState state, @Nullable final LivingEntity placer, final ItemStack stack)
+    public void setPlacedBy(final World worldIn, final BlockPos pos, final BlockState state, @Nullable final LivingEntity placer, final ItemStack stack)
     {
         BlockState tempState = state;
-        tempState = tempState.with(VARIANT, GraveType.DEFAULT);
+        tempState = tempState.setValue(VARIANT, GraveType.DEFAULT);
         if (placer != null)
         {
-            tempState = tempState.with(FACING, placer.getHorizontalFacing().getOpposite());
+            tempState = tempState.setValue(FACING, placer.getDirection().getOpposite());
         }
 
-        worldIn.setBlockState(pos, tempState, 2);
+        worldIn.setBlock(pos, tempState, 2);
     }
 
     @Override
-    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder)
+    protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder)
     {
         builder.add(FACING, VARIANT);
     }
@@ -206,23 +206,23 @@ public class BlockMinecoloniesGrave extends AbstractBlockMinecoloniesGrave<Block
     }
 
     @Override
-    public void onReplaced(BlockState state, @NotNull World worldIn, @NotNull BlockPos pos, BlockState newState, boolean isMoving)
+    public void onRemove(BlockState state, @NotNull World worldIn, @NotNull BlockPos pos, BlockState newState, boolean isMoving)
     {
         if (state.getBlock() != newState.getBlock())
         {
-            TileEntity tileEntity = worldIn.getTileEntity(pos);
+            TileEntity tileEntity = worldIn.getBlockEntity(pos);
             if (tileEntity instanceof TileEntityGrave)
             {
                 TileEntityGrave tileEntityGrave = (TileEntityGrave) tileEntity;
                 InventoryUtils.dropItemHandler(tileEntityGrave.getInventory(),
                   worldIn,
-                  tileEntityGrave.getPos().getX(),
-                  tileEntityGrave.getPos().getY(),
-                  tileEntityGrave.getPos().getZ());
-                worldIn.updateComparatorOutputLevel(pos, this);
+                  tileEntityGrave.getBlockPos().getX(),
+                  tileEntityGrave.getBlockPos().getY(),
+                  tileEntityGrave.getBlockPos().getZ());
+                worldIn.updateNeighbourForOutputSignal(pos, this);
             }
 
-            super.onReplaced(state, worldIn, pos, newState, isMoving);
+            super.onRemove(state, worldIn, pos, newState, isMoving);
         }
     }
 }

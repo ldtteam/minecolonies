@@ -42,7 +42,7 @@ public enum RackType implements IStringSerializable
 
     @NotNull
     @Override
-    public String getString()
+    public String getSerializedName()
     {
         return getName();
     }

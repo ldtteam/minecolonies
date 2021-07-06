@@ -255,7 +255,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         }
 
         @Nullable final BlockPos currentField = building.getCurrentField();
-        final TileEntity entity = world.getTileEntity(currentField);
+        final TileEntity entity = world.getBlockEntity(currentField);
         if (entity instanceof ScarecrowTileEntity && ((ScarecrowTileEntity) entity).needsWork())
         {
             if (((ScarecrowTileEntity) entity).getFieldStage() == ScarecrowFieldStage.PLANTED && checkIfShouldExecute((ScarecrowTileEntity) entity, this::shouldHarvest))
@@ -309,7 +309,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
             {
                 newField.setOwner(worker.getCitizenData().getId());
                 newField.setTaken(true);
-                newField.markDirty();
+                newField.setChanged();
                 getOwnBuilding().addFarmerFields(newField.getPosition());
             }
         }
@@ -333,7 +333,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
                 return false;
             }
 
-            position = field.getPos().down().south(workingOffset.getZ()).east(workingOffset.getX());
+            position = field.getBlockPos().below().south(workingOffset.getZ()).east(workingOffset.getX());
         }
         while (!predicate.test(position));
 
@@ -352,10 +352,10 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         if (currentField.getSeed() == null || currentField.getSeed().isEmpty())
         {
             worker.getCitizenData()
-              .triggerInteraction(new PosBasedInteraction(new TranslationTextComponent(NO_SEED_SET, currentField.getPos()),
+              .triggerInteraction(new PosBasedInteraction(new TranslationTextComponent(NO_SEED_SET, currentField.getBlockPos()),
                 ChatPriority.BLOCKING,
                 new TranslationTextComponent(NO_SEED_SET),
-                currentField.getPos()));
+                currentField.getBlockPos()));
             buildingFarmer.setCurrentField(null);
             worker.getCitizenData().setIdleAtJob(true);
             return PREPARING;
@@ -390,9 +390,9 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
     private boolean shouldHoe(@NotNull final BlockPos position, @NotNull final ScarecrowTileEntity field)
     {
 
-        return !field.isNoPartOfField(world, position) && !(world.getBlockState(position.up()).getBlock() instanceof CropsBlock)
-                 && !(world.getBlockState(position.up()).getBlock() instanceof BlockScarecrow)
-                 && (world.getBlockState(position).getBlock().isIn(Tags.Blocks.DIRT) || world.getBlockState(position).getBlock() instanceof GrassBlock);
+        return !field.isNoPartOfField(world, position) && !(world.getBlockState(position.above()).getBlock() instanceof CropsBlock)
+                 && !(world.getBlockState(position.above()).getBlock() instanceof BlockScarecrow)
+                 && (world.getBlockState(position).getBlock().is(Tags.Blocks.DIRT) || world.getBlockState(position).getBlock() instanceof GrassBlock);
     }
 
     /**
@@ -423,7 +423,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
             }
             ring = (int) Math.floor((Math.sqrt(cell + 1) + 1) / 2.0);
             ringCell = cell - (int) (4 * Math.pow(ring - 1, 2) + 4 * (ring - 1));
-            facing = Direction.byHorizontalIndex(Math.floorDiv(ringCell, 2 * ring));
+            facing = Direction.from2DDataValue(Math.floorDiv(ringCell, 2 * ring));
 
 
             if (facing.getAxis() == Direction.Axis.Z)
@@ -484,7 +484,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
 
         worker.getCitizenData().setVisibleStatus(FARMING_ICON);
         @Nullable final BlockPos field = buildingFarmer.getCurrentField();
-        final TileEntity entity = world.getTileEntity(field);
+        final TileEntity entity = world.getBlockEntity(field);
         if (entity instanceof ScarecrowTileEntity)
         {
             final ScarecrowTileEntity scarecrow = (ScarecrowTileEntity) entity;
@@ -497,10 +497,10 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
                     return getState();
                 }
 
-                final BlockPos position = field.down().south(workingOffset.getZ()).east(workingOffset.getX());
+                final BlockPos position = field.below().south(workingOffset.getZ()).east(workingOffset.getX());
 
                 // Still moving to the block
-                if (walkToBlock(position.up()))
+                if (walkToBlock(position.above()))
                 {
                     return getState();
                 }
@@ -563,11 +563,11 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
     {
         if (shouldHoe(position, field) && !checkForToolOrWeapon(ToolType.HOE))
         {
-            if (mineBlock(position.up()))
+            if (mineBlock(position.above()))
             {
                 equipHoe();
-                worker.swingArm(worker.getActiveHand());
-                world.setBlockState(position, Blocks.FARMLAND.getDefaultState());
+                worker.swing(worker.getUsedItemHand());
+                world.setBlockAndUpdate(position, Blocks.FARMLAND.defaultBlockState());
                 worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, 1);
                 worker.decreaseSaturationForContinuousAction();
                 return true;
@@ -596,11 +596,11 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
             if (Compatibility.isPamsInstalled())
             {
                 worker.getCitizenExperienceHandler().addExperience(XP_PER_HARVEST);
-                harvestCrop(position.up());
+                harvestCrop(position.above());
                 return true;
             }
 
-            if (mineBlock(position.up()))
+            if (mineBlock(position.above()))
             {
                 worker.getCitizenExperienceHandler().addExperience(XP_PER_HARVEST);
             }
@@ -646,8 +646,8 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
      */
     private boolean shouldPlant(@NotNull final BlockPos position, @NotNull final ScarecrowTileEntity field)
     {
-        return !field.isNoPartOfField(world, position) && !(world.getBlockState(position.up()).getBlock() instanceof CropsBlock)
-                 && !(world.getBlockState(position.up()).getBlock() instanceof StemBlock)
+        return !field.isNoPartOfField(world, position) && !(world.getBlockState(position.above()).getBlock() instanceof CropsBlock)
+                 && !(world.getBlockState(position.above()).getBlock() instanceof StemBlock)
                  && !(world.getBlockState(position).getBlock() instanceof BlockScarecrow) && world.getBlockState(position).getBlock() instanceof FarmlandBlock;
     }
 
@@ -673,12 +673,12 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         if (item.getItem() instanceof BlockItem && (((BlockItem) item.getItem()).getBlock() instanceof CropsBlock || ((BlockItem) item.getItem()).getBlock() instanceof StemBlock))
         {
             @NotNull final Item seed = item.getItem();
-            if ((seed == Items.MELON_SEEDS || seed == Items.PUMPKIN_SEEDS) && prevPos != null && !world.isAirBlock(prevPos.up()))
+            if ((seed == Items.MELON_SEEDS || seed == Items.PUMPKIN_SEEDS) && prevPos != null && !world.isEmptyBlock(prevPos.above()))
             {
                 return true;
             }
 
-            world.setBlockState(position.up(), ((BlockItem) item.getItem()).getBlock().getDefaultState());
+            world.setBlockAndUpdate(position.above(), ((BlockItem) item.getItem()).getBlock().defaultBlockState());
             worker.decreaseSaturationForContinuousAction();
             getInventory().extractItem(slot, 1, false);
         }
@@ -693,7 +693,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
      */
     private boolean shouldHarvest(@NotNull final BlockPos position)
     {
-        BlockState state = world.getBlockState(position.up());
+        BlockState state = world.getBlockState(position.above());
         Block block = state.getBlock();
 
         if (block == Blocks.PUMPKIN || block == Blocks.MELON)
@@ -716,10 +716,10 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
 
             if (InventoryUtils.shrinkItemCountInItemHandler(worker.getInventoryCitizen(), this::isCompost))
             {
-                Network.getNetwork().sendToPosition(new CompostParticleMessage(position.up()),
-                  new PacketDistributor.TargetPoint(position.getX(), position.getY(), position.getZ(), BLOCK_BREAK_SOUND_RANGE, world.getDimensionKey()));
-                crop.grow(world, position.up(), state);
-                state = world.getBlockState(position.up());
+                Network.getNetwork().sendToPosition(new CompostParticleMessage(position.above()),
+                  new PacketDistributor.TargetPoint(position.getX(), position.getY(), position.getZ(), BLOCK_BREAK_SOUND_RANGE, world.dimension()));
+                crop.growCrops(world, position.above(), state);
+                state = world.getBlockState(position.above());
                 block = state.getBlock();
                 if (isCrop(block))
                 {
@@ -776,7 +776,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
      */
     private void harvestCrop(@NotNull final BlockPos pos)
     {
-        final ItemStack tool = worker.getHeldItemMainhand();
+        final ItemStack tool = worker.getMainHandItem();
 
         final int fortune = ItemStackUtils.getFortuneOf(tool);
         final BlockState state = world.getBlockState(pos);
@@ -786,7 +786,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         final NonNullList<ItemStack> drops = NonNullList.create();
         state.getDrops(new LootContext.Builder((ServerWorld) world).withLuck(fortune)
                          .withLuck(fortune)
-                         .withParameter(LootParameters.field_237457_g_, worker.getPositionVec())
+                         .withParameter(LootParameters.ORIGIN, worker.position())
                          .withParameter(LootParameters.TOOL, tool)
                          .withParameter(LootParameters.THIS_ENTITY, getCitizen()));
         for (final ItemStack item : drops)
@@ -802,7 +802,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         if (state.getBlock() instanceof CropsBlock)
         {
             final CropsBlock crops = (CropsBlock) state.getBlock();
-            world.setBlockState(pos, crops.withAge(0));
+            world.setBlockAndUpdate(pos, crops.getStateForAge(0));
         }
 
         this.incrementActionsDone();

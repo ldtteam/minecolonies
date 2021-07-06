@@ -114,7 +114,7 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
         buf.writeInt(colonyEvents.size());
         for (final IColonyEventDescription event : colonyEvents)
         {
-            buf.writeString(event.getEventTypeId().getPath());
+            buf.writeUtf(event.getEventTypeId().getPath());
             event.serialize(buf);
         }
     }
@@ -219,7 +219,7 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
             final int colonyEventsSize = buf.readInt();
             for (int i = 0; i < colonyEventsSize; i++)
             {
-                final ResourceLocation eventTypeID = new ResourceLocation(MOD_ID, buf.readString());
+                final ResourceLocation eventTypeID = new ResourceLocation(MOD_ID, buf.readUtf());
 
                 final ColonyEventDescriptionTypeRegistryEntry registryEntry = MinecoloniesAPIProxy.getInstance().getColonyEventDescriptionRegistry().getValue(eventTypeID);
                 if (registryEntry == null)

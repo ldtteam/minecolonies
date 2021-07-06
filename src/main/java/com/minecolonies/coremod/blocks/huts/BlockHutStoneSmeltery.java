@@ -12,7 +12,7 @@ public class BlockHutStoneSmeltery extends AbstractBlockHut<BlockHutStoneSmelter
 {
     @NotNull
     @Override
-    public String getName()
+    public String getHutName()
     {
         return "blockhutstonesmeltery";
     }

@@ -69,17 +69,17 @@ public class ItemScrollGuardHelp extends AbstractItemScroll
         itemStack.shrink(1);
         final List<ICitizenData> guards = building.getAssignedCitizen();
 
-        if (world.rand.nextInt(10) == 0 || colony.getWorld() != world)
+        if (world.random.nextInt(10) == 0 || colony.getWorld() != world)
         {
             // Fail
             final LlamaEntity entity = EntityType.LLAMA.create(world);
-            entity.setPosition(player.getPosX(), player.getPosY(), player.getPosZ());
-            world.addEntity(entity);
+            entity.setPos(player.getX(), player.getY(), player.getZ());
+            world.addFreshEntity(entity);
 
-            player.sendStatusMessage(new TranslationTextComponent("minecolonies.scroll.failed" + (world.rand.nextInt(FAIL_RESPONSES_TOTAL) + 1)).setStyle(Style.EMPTY.setFormatting(
+            player.displayClientMessage(new TranslationTextComponent("minecolonies.scroll.failed" + (world.random.nextInt(FAIL_RESPONSES_TOTAL) + 1)).setStyle(Style.EMPTY.withColor(
               TextFormatting.GOLD)), true);
 
-            SoundUtils.playSoundForPlayer(player, SoundEvents.ENTITY_EVOKER_CAST_SPELL, 0.5f, 1.0f);
+            SoundUtils.playSoundForPlayer(player, SoundEvents.EVOKER_CAST_SPELL, 0.5f, 1.0f);
             return itemStack;
         }
         else
@@ -102,7 +102,7 @@ public class ItemScrollGuardHelp extends AbstractItemScroll
                     citizenData.getEntity().get().remove();
                 }
 
-                colony.getCitizenManager().spawnOrCreateCivilian(citizenData, world, player.getPosition(), true);
+                colony.getCitizenManager().spawnOrCreateCivilian(citizenData, world, player.blockPosition(), true);
                 citizenData.setNextRespawnPosition(buildingPos);
 
                 ((AbstractBuildingGuards) building).getSetting(AbstractBuildingGuards.GUARD_TASK).set(GuardTaskSetting.FOLLOW);
@@ -152,19 +152,19 @@ public class ItemScrollGuardHelp extends AbstractItemScroll
 
     @Override
     @NotNull
-    public ActionResultType onItemUse(ItemUseContext ctx)
+    public ActionResultType useOn(ItemUseContext ctx)
     {
-        final ActionResultType result = super.onItemUse(ctx);
+        final ActionResultType result = super.useOn(ctx);
 
-        if (ctx.getWorld().isRemote)
+        if (ctx.getLevel().isClientSide)
         {
             return result;
         }
 
-        final TileEntity te = ctx.getWorld().getTileEntity(ctx.getPos());
+        final TileEntity te = ctx.getLevel().getBlockEntity(ctx.getClickedPos());
         if (te instanceof TileEntityColonyBuilding && ctx.getPlayer() != null)
         {
-            final IBuilding building = ((TileEntityColonyBuilding) te).getColony().getBuildingManager().getBuilding(ctx.getPos());
+            final IBuilding building = ((TileEntityColonyBuilding) te).getColony().getBuildingManager().getBuilding(ctx.getClickedPos());
             if (!(building instanceof AbstractBuildingGuards))
             {
                 LanguageHandler.sendPlayerMessage(ctx.getPlayer(), "minecolonies.scroll.noguardbuilding");
@@ -175,25 +175,25 @@ public class ItemScrollGuardHelp extends AbstractItemScroll
     }
 
     @Override
-    public void onUse(World worldIn, LivingEntity entity, ItemStack stack, int count)
+    public void onUseTick(World worldIn, LivingEntity entity, ItemStack stack, int count)
     {
-        if (!worldIn.isRemote && worldIn.getGameTime() % 5 == 0)
+        if (!worldIn.isClientSide && worldIn.getGameTime() % 5 == 0)
         {
             Network.getNetwork()
-              .sendToTrackingEntity(new VanillaParticleMessage(entity.getPosX(), entity.getPosY(), entity.getPosZ(), ParticleTypes.ENCHANT),
+              .sendToTrackingEntity(new VanillaParticleMessage(entity.getX(), entity.getY(), entity.getZ(), ParticleTypes.ENCHANT),
                 entity);
             Network.getNetwork()
-              .sendToPlayer(new VanillaParticleMessage(entity.getPosX(), entity.getPosY(), entity.getPosZ(), ParticleTypes.ENCHANT),
+              .sendToPlayer(new VanillaParticleMessage(entity.getX(), entity.getY(), entity.getZ(), ParticleTypes.ENCHANT),
                 (ServerPlayerEntity) entity);
         }
     }
 
     @Override
-    public void addInformation(
+    public void appendHoverText(
       @NotNull final ItemStack stack, @Nullable final World worldIn, @NotNull final List<ITextComponent> tooltip, @NotNull final ITooltipFlag flagIn)
     {
         final IFormattableTextComponent guiHint = LanguageHandler.buildChatComponent("item.minecolonies.scroll_guard_help.tip");
-        guiHint.setStyle(Style.EMPTY.setFormatting(TextFormatting.DARK_GREEN));
+        guiHint.setStyle(Style.EMPTY.withColor(TextFormatting.DARK_GREEN));
         tooltip.add(guiHint);
 
         String colonyDesc = new TranslationTextComponent("item.minecolonies.scroll.colony.none").getString();
@@ -205,7 +205,7 @@ public class ItemScrollGuardHelp extends AbstractItemScroll
         }
 
         final IFormattableTextComponent guiHint2 = new TranslationTextComponent("item.minecolonies.scroll.colony.tip", colonyDesc);
-        guiHint2.setStyle(Style.EMPTY.setFormatting(TextFormatting.GOLD));
+        guiHint2.setStyle(Style.EMPTY.withColor(TextFormatting.GOLD));
         tooltip.add(guiHint2);
     }
 }

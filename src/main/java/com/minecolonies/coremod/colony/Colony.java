@@ -279,8 +279,8 @@ public class Colony implements IColony
      * The colony flag, as a list of patterns.
      */
     private ListNBT colonyFlag = new BannerPattern.Builder()
-                                   .setPatternWithColor(BannerPattern.BASE, DyeColor.WHITE)
-                                   .buildNBT();
+                                   .addPattern(BannerPattern.BASE, DyeColor.WHITE)
+                                   .toListTag();
 
     /**
      * The last time the mercenaries were used.
@@ -340,7 +340,7 @@ public class Colony implements IColony
         this.id = id;
         if (world != null)
         {
-            this.dimensionId = world.getDimensionKey();
+            this.dimensionId = world.dimension();
             onWorldLoad(world);
             checkOrCreateTeam();
         }
@@ -488,7 +488,7 @@ public class Colony implements IColony
                         if (world instanceof ServerWorld)
                         {
                             final ChunkPos pos = new ChunkPos(chunkX, chunkZ);
-                            ((ServerChunkProvider) world.getChunkProvider()).releaseTicket(KEEP_LOADED_TYPE, pos, 2, pos);
+                            ((ServerChunkProvider) world.getChunkSource()).removeRegionTicket(KEEP_LOADED_TYPE, pos, 2, pos);
                         }
                     }
                     ticketedChunks.clear();
@@ -511,7 +511,7 @@ public class Colony implements IColony
             {
                 ticketedChunks.add(chunkPos);
                 ticketedChunksDirty = true;
-                ((ServerChunkProvider) world.getChunkProvider()).registerTicket(KEEP_LOADED_TYPE, chunk.getPos(), 2, chunk.getPos());
+                ((ServerChunkProvider) world.getChunkSource()).addRegionTicket(KEEP_LOADED_TYPE, chunk.getPos(), 2, chunk.getPos());
             }
         }
     }
@@ -612,12 +612,12 @@ public class Colony implements IColony
      */
     private ScorePlayerTeam checkOrCreateTeam()
     {
-        if (this.world.getScoreboard().getTeam(getTeamName()) == null)
+        if (this.world.getScoreboard().getPlayerTeam(getTeamName()) == null)
         {
-            this.world.getScoreboard().createTeam(getTeamName());
-            this.world.getScoreboard().getTeam(getTeamName()).setAllowFriendlyFire(false);
+            this.world.getScoreboard().addPlayerTeam(getTeamName());
+            this.world.getScoreboard().getPlayerTeam(getTeamName()).setAllowFriendlyFire(false);
         }
-        return this.world.getScoreboard().getTeam(getTeamName());
+        return this.world.getScoreboard().getPlayerTeam(getTeamName());
     }
 
     /**
@@ -631,8 +631,8 @@ public class Colony implements IColony
         {
             checkOrCreateTeam();
             this.colonyTeamColor = colonyColor;
-            this.world.getScoreboard().getTeam(getTeamName()).setColor(colonyColor);
-            this.world.getScoreboard().getTeam(getTeamName()).setPrefix(new StringTextComponent(colonyColor.toString()));
+            this.world.getScoreboard().getPlayerTeam(getTeamName()).setColor(colonyColor);
+            this.world.getScoreboard().getPlayerTeam(getTeamName()).setPlayerPrefix(new StringTextComponent(colonyColor.toString()));
         }
         this.markDirty();
     }
@@ -665,7 +665,7 @@ public class Colony implements IColony
             @NotNull final Colony c = new Colony(id, world);
             c.name = compound.getString(TAG_NAME);
             c.center = BlockPosUtil.read(compound, TAG_CENTER);
-            c.dimensionId = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(compound.getString(TAG_DIMENSION)));
+            c.dimensionId = RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(compound.getString(TAG_DIMENSION)));
 
             c.setRequestManager();
             c.read(compound);
@@ -695,7 +695,7 @@ public class Colony implements IColony
     public void read(@NotNull final CompoundNBT compound)
     {
         manualHiring = compound.getBoolean(TAG_MANUAL_HIRING);
-        dimensionId = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(compound.getString(TAG_DIMENSION)));
+        dimensionId = RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(compound.getString(TAG_DIMENSION)));
 
         mercenaryLastUse = compound.getLong(TAG_MERCENARY_TIME);
         additionalChildTime = compound.getInt(TAG_CHILD_TIME);
@@ -712,7 +712,7 @@ public class Colony implements IColony
 
         graveManager.read(compound.getCompound(TAG_GRAVE_MANAGER));
 
-        if (compound.keySet().contains(TAG_PROGRESS_MANAGER))
+        if (compound.getAllKeys().contains(TAG_PROGRESS_MANAGER))
         {
             progressManager.read(compound);
         }
@@ -720,7 +720,7 @@ public class Colony implements IColony
         eventManager.readFromNBT(compound);
         eventDescManager.deserializeNBT(compound.getCompound(NbtTagConstants.TAG_EVENT_DESC_MANAGER));
 
-        if (compound.keySet().contains(TAG_RESEARCH))
+        if (compound.getAllKeys().contains(TAG_RESEARCH))
         {
             researchManager.readFromNBT(compound.getCompound(TAG_RESEARCH));
             // now that buildings, colonists, and research are loaded, check for new autoStartResearch.
@@ -763,19 +763,19 @@ public class Colony implements IColony
         packageManager.setLastContactInHours(compound.getInt(TAG_ABANDONED));
         manualHousing = compound.getBoolean(TAG_MANUAL_HOUSING);
 
-        if (compound.keySet().contains(TAG_MOVE_IN))
+        if (compound.getAllKeys().contains(TAG_MOVE_IN))
         {
             moveIn = compound.getBoolean(TAG_MOVE_IN);
         }
 
-        if (compound.keySet().contains(TAG_STYLE))
+        if (compound.getAllKeys().contains(TAG_STYLE))
         {
             this.style = compound.getString(TAG_STYLE);
         }
 
         raidManager.read(compound);
 
-        if (compound.keySet().contains(TAG_AUTO_DELETE))
+        if (compound.getAllKeys().contains(TAG_AUTO_DELETE))
         {
             this.canColonyBeAutoDeleted = compound.getBoolean(TAG_AUTO_DELETE);
         }
@@ -784,20 +784,20 @@ public class Colony implements IColony
             this.canColonyBeAutoDeleted = true;
         }
 
-        if (compound.keySet().contains(TAG_TEAM_COLOR))
+        if (compound.getAllKeys().contains(TAG_TEAM_COLOR))
         {
             // This read can occur before the world is non-null, due to Minecraft's order of operations for capabilities.
             // As a result, setColonyColor proper must wait until onWorldLoad fires.
             this.colonyTeamColor = TextFormatting.values()[compound.getInt(TAG_TEAM_COLOR)];
         }
 
-        if (compound.keySet().contains(TAG_FLAG_PATTERNS))
+        if (compound.getAllKeys().contains(TAG_FLAG_PATTERNS))
         {
             this.setColonyFlag(compound.getList(TAG_FLAG_PATTERNS, Constants.TAG_COMPOUND));
         }
 
         this.requestManager.reset();
-        if (compound.keySet().contains(TAG_REQUESTMANAGER))
+        if (compound.getAllKeys().contains(TAG_REQUESTMANAGER))
         {
             this.requestManager.deserializeNBT(compound.getCompound(TAG_REQUESTMANAGER));
         }
@@ -824,7 +824,7 @@ public class Colony implements IColony
     {
         //  Core attributes
         compound.putInt(TAG_ID, id);
-        compound.putString(TAG_DIMENSION, dimensionId.getLocation().toString());
+        compound.putString(TAG_DIMENSION, dimensionId.location().toString());
 
         //  Basic data
         compound.putString(TAG_NAME, name);
@@ -940,7 +940,7 @@ public class Colony implements IColony
     @Override
     public void onWorldLoad(@NotNull final World w)
     {
-        if (w.getDimensionKey() == dimensionId)
+        if (w.dimension() == dimensionId)
         {
             this.world = w;
             // Register a new event handler
@@ -1088,7 +1088,7 @@ public class Colony implements IColony
      */
     public static boolean shallUpdate(final World world, final int averageTicks)
     {
-        return world.getGameTime() % (world.rand.nextInt(averageTicks * 2) + 1) == 0;
+        return world.getGameTime() % (world.random.nextInt(averageTicks * 2) + 1) == 0;
     }
 
     /**
@@ -1100,7 +1100,7 @@ public class Colony implements IColony
     {
         if (!wayPoints.isEmpty() && world != null)
         {
-            final int randomPos = world.rand.nextInt(wayPoints.size());
+            final int randomPos = world.random.nextInt(wayPoints.size());
             int count = 0;
             for (final Map.Entry<BlockPos, BlockState> entry : wayPoints.entrySet())
             {
@@ -1111,7 +1111,7 @@ public class Colony implements IColony
                         final Block worldBlock = world.getBlockState(entry.getKey()).getBlock();
                         if (
                           ((worldBlock != (entry.getValue().getBlock()) && entry.getValue().getBlock() != ModBlocks.blockWayPoint) && worldBlock != ModBlocks.blockConstructionTape)
-                            || (world.isAirBlock(entry.getKey().down()) && !entry.getValue().getMaterial().isSolid()))
+                            || (world.isEmptyBlock(entry.getKey().below()) && !entry.getValue().getMaterial().isSolid()))
                         {
                             wayPoints.remove(entry.getKey());
                             markDirty();
@@ -1164,7 +1164,7 @@ public class Colony implements IColony
     @Override
     public boolean isCoordInColony(@NotNull final World w, @NotNull final BlockPos pos)
     {
-        if (w.getDimensionKey() != this.dimensionId)
+        if (w.dimension() != this.dimensionId)
         {
             return false;
         }

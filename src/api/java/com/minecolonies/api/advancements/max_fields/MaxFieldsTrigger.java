@@ -36,7 +36,7 @@ public class MaxFieldsTrigger extends AbstractCriterionTrigger<CriterionListener
 
     @NotNull
     @Override
-    public MaxFieldsCriterionInstance deserialize(@NotNull final JsonObject object, @NotNull final ConditionArrayParser conditions)
+    public MaxFieldsCriterionInstance createInstance(@NotNull final JsonObject object, @NotNull final ConditionArrayParser conditions)
     {
         return new MaxFieldsCriterionInstance();
     }

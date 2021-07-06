@@ -30,7 +30,7 @@ public abstract class AbstractBuildingBuilderView extends AbstractBuildingWorker
     public void deserialize(@NotNull final PacketBuffer buf)
     {
         super.deserialize(buf);
-        workerName = buf.readString(32767);
+        workerName = buf.readUtf(32767);
     }
 
     /**

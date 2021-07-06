@@ -82,7 +82,7 @@ public final class BlockPosUtil
      */
     public static Tuple<Direction, Direction> getRandomDirectionTuple(final Random random)
     {
-        return new Tuple<>(Direction.getRandomDirection(random), Direction.getRandomDirection(random));
+        return new Tuple<>(Direction.getRandom(random), Direction.getRandom(random));
     }
 
     /**
@@ -97,23 +97,23 @@ public final class BlockPosUtil
      */
     public static BlockPos getRandomPosition(final World world, final BlockPos currentPosition, final BlockPos def, final int minDist, final int maxDist)
     {
-        final Random random = world.rand;
+        final Random random = world.random;
 
         int tries = 0;
         BlockPos pos = null;
         while (pos == null
                  || !WorldUtil.isEntityBlockLoaded(world, pos)
                  || world.getBlockState(pos).getMaterial().isLiquid()
-                 || !world.getBlockState(pos.down()).getMaterial().isSolid()
-                 || (!world.isAirBlock(pos) || !world.isAirBlock(pos.up())))
+                 || !world.getBlockState(pos.below()).getMaterial().isSolid()
+                 || (!world.isEmptyBlock(pos) || !world.isEmptyBlock(pos.above())))
         {
             final Tuple<Direction, Direction> direction = getRandomDirectionTuple(random);
             pos =
               new BlockPos(currentPosition)
-                .offset(direction.getA(), random.nextInt(maxDist) + minDist)
-                .offset(direction.getB(), random.nextInt(maxDist) + minDist)
-                .up(random.nextInt(UP_DOWN_RANGE))
-                .down(random.nextInt(UP_DOWN_RANGE));
+                .relative(direction.getA(), random.nextInt(maxDist) + minDist)
+                .relative(direction.getB(), random.nextInt(maxDist) + minDist)
+                .above(random.nextInt(UP_DOWN_RANGE))
+                .below(random.nextInt(UP_DOWN_RANGE));
 
             if (tries >= MAX_TRIES)
             {
@@ -264,8 +264,8 @@ public final class BlockPosUtil
     {
         return !(sender.getBlockState(blockPos).getBlock() instanceof AirBlock)
                  && !sender.getBlockState(blockPos).getMaterial().isLiquid()
-                 && !sender.getBlockState(blockPos.down()).getMaterial().isLiquid()
-                 && sender.getWorldBorder().contains(blockPos);
+                 && !sender.getBlockState(blockPos.below()).getMaterial().isLiquid()
+                 && sender.getWorldBorder().isWithinBounds(blockPos);
     }
 
     /**
@@ -288,7 +288,7 @@ public final class BlockPosUtil
         {
             tempPos = new BlockPos(tempPos.getX(), mid, tempPos.getZ());
             final Block block = world.getBlockState(tempPos).getBlock();
-            if (block instanceof AirBlock && world.canBlockSeeSky(tempPos))
+            if (block instanceof AirBlock && world.canSeeSkyFromBelowWater(tempPos))
             {
                 top = mid - 1;
                 foundland = tempPos;
@@ -303,7 +303,7 @@ public final class BlockPosUtil
 
         if (world.getBlockState(tempPos).getMaterial().isSolid())
         {
-            return foundland.up();
+            return foundland.above();
         }
 
         return foundland;
@@ -324,14 +324,14 @@ public final class BlockPosUtil
             returnHeight = 0;
         }
 
-        while (returnHeight >= 1 && world.isAirBlock(new BlockPos(MathHelper.floor(position.x),
+        while (returnHeight >= 1 && world.isEmptyBlock(new BlockPos(MathHelper.floor(position.x),
           (int) returnHeight,
           MathHelper.floor(position.z))))
         {
             returnHeight -= 1.0D;
         }
 
-        while (!world.isAirBlock(
+        while (!world.isEmptyBlock(
           new BlockPos(MathHelper.floor(position.x), (int) returnHeight, MathHelper.floor(position.z))))
         {
             returnHeight += 1.0D;
@@ -437,7 +437,7 @@ public final class BlockPosUtil
      */
     public static TileEntity getTileEntity(@NotNull final World world, @NotNull final BlockPos pos)
     {
-        return world.getTileEntity(pos);
+        return world.getBlockEntity(pos);
     }
 
     /**
@@ -453,8 +453,8 @@ public final class BlockPosUtil
     {
         return world.getBlockState(coords).getDrops(new LootContext.Builder((ServerWorld) world)
                                                       .withLuck(fortune)
-                                                      .withNullableParameter(LootParameters.BLOCK_ENTITY, world.getTileEntity(coords))
-                                                      .withParameter(LootParameters.field_237457_g_, entity.getPositionVec())
+                                                      .withOptionalParameter(LootParameters.BLOCK_ENTITY, world.getBlockEntity(coords))
+                                                      .withParameter(LootParameters.ORIGIN, entity.position())
                                                       .withParameter(LootParameters.TOOL, stack));
     }
 
@@ -493,7 +493,7 @@ public final class BlockPosUtil
      */
     public static boolean setBlock(@NotNull final World worldIn, @NotNull final BlockPos coords, final BlockState state, final int flag)
     {
-        return worldIn.setBlockState(coords, state, flag);
+        return worldIn.setBlock(coords, state, flag);
     }
 
     /**
@@ -533,7 +533,7 @@ public final class BlockPosUtil
      */
     public static void set(@NotNull final BlockPos.Mutable pos, @NotNull final BlockPos newPos)
     {
-        pos.setPos(newPos.getX(), newPos.getY(), newPos.getZ());
+        pos.set(newPos.getX(), newPos.getY(), newPos.getZ());
     }
 
     /**
@@ -559,7 +559,7 @@ public final class BlockPosUtil
     @NotNull
     public static BlockPos fromEntity(@NotNull final Entity entity)
     {
-        return new BlockPos(MathHelper.floor(entity.getPosX()), MathHelper.floor(entity.getPosY()), MathHelper.floor(entity.getPosZ()));
+        return new BlockPos(MathHelper.floor(entity.getX()), MathHelper.floor(entity.getY()), MathHelper.floor(entity.getZ()));
     }
 
     /**
@@ -598,15 +598,15 @@ public final class BlockPosUtil
         //If the position is floating in Air go downwards
         if (!EntityUtils.solidOrLiquid(world, position))
         {
-            return getFloor(position.setPos(position.getX(), position.getY() - 1, position.getZ()), depth + 1, world);
+            return getFloor(position.set(position.getX(), position.getY() - 1, position.getZ()), depth + 1, world);
         }
         //If there is no air above the block go upwards
-        if (!EntityUtils.solidOrLiquid(world, position.setPos(position.getX(), position.getY() + 1, position.getZ())) &&
-              !EntityUtils.solidOrLiquid(world, position.setPos(position.getX(), position.getY() + 2, position.getZ())))
+        if (!EntityUtils.solidOrLiquid(world, position.set(position.getX(), position.getY() + 1, position.getZ())) &&
+              !EntityUtils.solidOrLiquid(world, position.set(position.getX(), position.getY() + 2, position.getZ())))
         {
-            return position.toImmutable();
+            return position.immutable();
         }
-        return getFloor(position.setPos(position.getX(), position.getY() + 1, position.getZ()), depth + 1, world);
+        return getFloor(position.set(position.getX(), position.getY() + 1, position.getZ()), depth + 1, world);
     }
 
     /**
@@ -619,7 +619,7 @@ public final class BlockPosUtil
     public static Direction getFacing(final BlockPos pos, final BlockPos neighbor)
     {
         final BlockPos vector = neighbor.subtract(pos);
-        return Direction.getFacingFromVector(vector.getX(), vector.getY(), -vector.getZ());
+        return Direction.getNearest(vector.getX(), vector.getY(), -vector.getZ());
     }
 
     /**
@@ -632,7 +632,7 @@ public final class BlockPosUtil
     public static Direction getXZFacing(final BlockPos pos, final BlockPos neighbor)
     {
         final BlockPos vector = neighbor.subtract(pos);
-        return Direction.getFacingFromVector(vector.getX(), 0, vector.getZ());
+        return Direction.getNearest(vector.getX(), 0, vector.getZ());
     }
 
     /**
@@ -721,12 +721,12 @@ public final class BlockPosUtil
             for (int steps = 1; steps <= vRange; steps++)
             {
                 // Start topleft of middle point
-                temp = start.add(-steps, y, -steps);
+                temp = start.offset(-steps, y, -steps);
 
                 // X ->
                 for (int x = 0; x <= steps; x++)
                 {
-                    temp = temp.add(1, 0, 0);
+                    temp = temp.offset(1, 0, 0);
                     if (predicate.test(world, temp))
                     {
                         return temp;
@@ -738,7 +738,7 @@ public final class BlockPosUtil
                 // v
                 for (int z = 0; z <= steps; z++)
                 {
-                    temp = temp.add(0, 0, 1);
+                    temp = temp.offset(0, 0, 1);
                     if (predicate.test(world, temp))
                     {
                         return temp;
@@ -748,7 +748,7 @@ public final class BlockPosUtil
                 // < - X
                 for (int x = 0; x <= steps; x++)
                 {
-                    temp = temp.add(-1, 0, 0);
+                    temp = temp.offset(-1, 0, 0);
                     if (predicate.test(world, temp))
                     {
                         return temp;
@@ -760,7 +760,7 @@ public final class BlockPosUtil
                 // X
                 for (int z = 0; z <= steps; z++)
                 {
-                    temp = temp.add(0, 0, -1);
+                    temp = temp.offset(0, 0, -1);
                     if (predicate.test(world, temp))
                     {
                         return temp;
@@ -772,7 +772,7 @@ public final class BlockPosUtil
             y_offset++;
             y_offset *= -1;
 
-            if (world.func_234938_ad_() <= start.getY() + y)
+            if (world.getHeight() <= start.getY() + y)
             {
                 return null;
             }
@@ -791,7 +791,7 @@ public final class BlockPosUtil
     public static BlockPos findSpawnPosAround(final World worldReader, final BlockPos start)
     {
         return findAround(worldReader, start, 1, 1,
-          (world, pos) -> world.getBlockState(pos).getMaterial() == Material.AIR && world.getBlockState(pos.up()).getMaterial() == Material.AIR);
+          (world, pos) -> world.getBlockState(pos).getMaterial() == Material.AIR && world.getBlockState(pos.above()).getMaterial() == Material.AIR);
     }
 
     /**

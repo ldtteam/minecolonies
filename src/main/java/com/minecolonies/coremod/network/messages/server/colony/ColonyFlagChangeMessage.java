@@ -44,13 +44,13 @@ public class ColonyFlagChangeMessage extends AbstractColonyServerMessage
     {
         CompoundNBT nbt = new CompoundNBT();
         nbt.put(TAG_BANNER_PATTERNS, this.patterns);
-        buf.writeCompoundTag(nbt);
+        buf.writeNbt(nbt);
     }
 
     @Override
     protected void fromBytesOverride(PacketBuffer buf)
     {
-        CompoundNBT nbt = buf.readCompoundTag();
+        CompoundNBT nbt = buf.readNbt();
         if (nbt != null)
             this.patterns = nbt.getList(TAG_BANNER_PATTERNS, Constants.TAG_COMPOUND);
     }

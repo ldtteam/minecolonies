@@ -16,6 +16,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler.ActionProcessingResult;
+
 public class WayPointBlockPlacementHandler implements IPlacementHandler
 {
     @Override
@@ -39,11 +41,11 @@ public class WayPointBlockPlacementHandler implements IPlacementHandler
         {
             if (!complete)
             {
-                colony.addWayPoint(pos, Blocks.AIR.getDefaultState());
+                colony.addWayPoint(pos, Blocks.AIR.defaultBlockState());
             }
             else
             {
-                world.setBlockState(pos, blockState);
+                world.setBlockAndUpdate(pos, blockState);
             }
         }
         return ActionProcessingResult.SUCCESS;

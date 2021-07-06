@@ -69,8 +69,8 @@ public class InteractionResponse extends AbstractColonyServerMessage
     public void fromBytesOverride(@NotNull final PacketBuffer buf)
     {
         this.citizenId = buf.readInt();
-        this.key = buf.readTextComponent();
-        this.response = buf.readTextComponent();
+        this.key = buf.readComponent();
+        this.response = buf.readComponent();
     }
 
     /**
@@ -82,8 +82,8 @@ public class InteractionResponse extends AbstractColonyServerMessage
     public void toBytesOverride(@NotNull final PacketBuffer buf)
     {
         buf.writeInt(this.citizenId);
-        buf.writeTextComponent(key);
-        buf.writeTextComponent(response);
+        buf.writeComponent(key);
+        buf.writeComponent(response);
     }
 
     @Override

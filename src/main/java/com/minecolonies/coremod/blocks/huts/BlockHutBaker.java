@@ -18,7 +18,7 @@ public class BlockHutBaker extends AbstractBlockHut<BlockHutBaker>
 
     @NotNull
     @Override
-    public String getName()
+    public String getHutName()
     {
         return "blockhutbaker";
     }

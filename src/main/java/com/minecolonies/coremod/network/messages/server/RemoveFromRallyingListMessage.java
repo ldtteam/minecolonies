@@ -57,15 +57,15 @@ public class RemoveFromRallyingListMessage implements IMessage
     @Override
     public void fromBytes(@NotNull final PacketBuffer buf)
     {
-        banner = buf.readItemStack();
-        location = StandardFactoryController.getInstance().deserialize(buf.readCompoundTag());
+        banner = buf.readItem();
+        location = StandardFactoryController.getInstance().deserialize(buf.readNbt());
     }
 
     @Override
     public void toBytes(@NotNull final PacketBuffer buf)
     {
-        buf.writeItemStack(banner);
-        buf.writeCompoundTag(StandardFactoryController.getInstance().serialize(location));
+        buf.writeItem(banner);
+        buf.writeNbt(StandardFactoryController.getInstance().serialize(location));
     }
 
     @Nullable
@@ -88,6 +88,6 @@ public class RemoveFromRallyingListMessage implements IMessage
             return;
         }
 
-        removeGuardTowerAtLocation(player.inventory.getStackInSlot(slot), location);
+        removeGuardTowerAtLocation(player.inventory.getItem(slot), location);
     }
 }

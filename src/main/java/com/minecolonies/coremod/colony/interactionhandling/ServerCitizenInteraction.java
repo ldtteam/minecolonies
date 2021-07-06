@@ -131,11 +131,11 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
         {
             if (((TranslationTextComponent) response).getKey().equals("com.minecolonies.coremod.gui.chat.remindmelater"))
             {
-                displayAtWorldTick = (int) (player.world.getGameTime() + (TICKS_SECOND * 60 * 10));
+                displayAtWorldTick = (int) (player.level.getGameTime() + (TICKS_SECOND * 60 * 10));
             }
             else if (((TranslationTextComponent) response).getKey().equals("com.minecolonies.coremod.gui.chat.ignore"))
             {
-                displayAtWorldTick = (int) (player.world.getGameTime() + (TICKS_SECOND * 60 * 20));
+                displayAtWorldTick = (int) (player.level.getGameTime() + (TICKS_SECOND * 60 * 20));
             }
         }
     }
@@ -150,7 +150,7 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
             windowCitizen.open();
         }
 
-        Network.getNetwork().sendToServer(new InteractionResponse(data.getColonyId(), data.getId(), player.world.getDimensionKey(), this.getInquiry(), response));
+        Network.getNetwork().sendToServer(new InteractionResponse(data.getColonyId(), data.getId(), player.level.dimension(), this.getInquiry(), response));
         return true;
     }
 
@@ -180,9 +180,9 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
         final ListNBT list = compoundNBT.getList(TAG_PARENTS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < list.size(); i++)
         {
-            this.parents.add(ITextComponent.Serializer.getComponentFromJson(compoundNBT.getString(TAG_PARENT)));
+            this.parents.add(ITextComponent.Serializer.fromJson(compoundNBT.getString(TAG_PARENT)));
         }
-        this.validatorId = ITextComponent.Serializer.getComponentFromJson(compoundNBT.getString(TAG_VALIDATOR_ID));
+        this.validatorId = ITextComponent.Serializer.fromJson(compoundNBT.getString(TAG_VALIDATOR_ID));
         loadValidator();
     }
 

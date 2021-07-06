@@ -37,13 +37,13 @@ public class TileEntityColonyFlag extends TileEntity
     public TileEntityColonyFlag () { super(MinecoloniesTileEntities.COLONY_FLAG); }
 
     @Override
-    public CompoundNBT write(CompoundNBT compound)
+    public CompoundNBT save(CompoundNBT compound)
     {
-        super.write(compound);
+        super.save(compound);
 
-        if(this.colonyId == -1 && this.hasWorld())
+        if(this.colonyId == -1 && this.hasLevel())
         {
-            IColony colony = IColonyManager.getInstance().getIColony(this.getWorld(), pos);
+            IColony colony = IColonyManager.getInstance().getIColony(this.getLevel(), worldPosition);
             if (colony != null)
                 this.colonyId = colony.getID();
         }
@@ -57,21 +57,21 @@ public class TileEntityColonyFlag extends TileEntity
     }
 
     @Override
-    public void read(final BlockState state, CompoundNBT compound)
+    public void load(final BlockState state, CompoundNBT compound)
     {
-        super.read(state, compound);
+        super.load(state, compound);
 
         this.flag = compound.getList(TAG_FLAG_PATTERNS, 10);
         this.patterns = compound.getList(TAG_BANNER_PATTERNS, 10);
         this.colonyId = compound.getInt(TAG_COLONY_ID);
 
-        if(this.colonyId == -1 && this.hasWorld())
+        if(this.colonyId == -1 && this.hasLevel())
         {
-            IColony colony = IColonyManager.getInstance().getIColony(this.getWorld(), pos);
+            IColony colony = IColonyManager.getInstance().getIColony(this.getLevel(), worldPosition);
             if (colony != null)
             {
                 this.colonyId = colony.getID();
-                this.markDirty();
+                this.setChanged();
             }
         }
     }
@@ -79,17 +79,17 @@ public class TileEntityColonyFlag extends TileEntity
     @Override
     public SUpdateTileEntityPacket getUpdatePacket()
     {
-        return new SUpdateTileEntityPacket(this.pos, 6, this.getUpdateTag());
+        return new SUpdateTileEntityPacket(this.worldPosition, 6, this.getUpdateTag());
     }
 
     @Override
-    public CompoundNBT getUpdateTag() { return this.write(new CompoundNBT()); }
+    public CompoundNBT getUpdateTag() { return this.save(new CompoundNBT()); }
 
     @Override
     public void onDataPacket(final NetworkManager net, final SUpdateTileEntityPacket packet)
     {
-        final CompoundNBT compound = packet.getNbtCompound();
-        this.read(getBlockState(), compound);
+        final CompoundNBT compound = packet.getTag();
+        this.load(getBlockState(), compound);
     }
 
     /**
@@ -100,17 +100,17 @@ public class TileEntityColonyFlag extends TileEntity
     public List<Pair<BannerPattern, DyeColor>> getPatternList()
     {
         // Structurize will cause the second condition to be false
-        if (world != null && world.getDimensionKey() != null)
+        if (level != null && level.dimension() != null)
         {
-            IColonyView colony = IColonyManager.getInstance().getColonyView(this.colonyId, world.getDimensionKey());
+            IColonyView colony = IColonyManager.getInstance().getColonyView(this.colonyId, level.dimension());
             if (colony != null && this.flag != colony.getColonyFlag())
             {
                 this.flag = colony.getColonyFlag();
-                markDirty();
+                setChanged();
             }
         }
 
-        return BannerTileEntity.getPatternColorData(
+        return BannerTileEntity.createPatterns(
                 DyeColor.WHITE,
                 this.flag.size() > 1 ? this.flag : this.patterns
         );
@@ -136,7 +136,7 @@ public class TileEntityColonyFlag extends TileEntity
         }
 
         if (!nbt.isEmpty())
-            itemstack.getOrCreateChildTag("BlockEntityTag").put(TAG_BANNER_PATTERNS, nbt);
+            itemstack.getOrCreateTagElement("BlockEntityTag").put(TAG_BANNER_PATTERNS, nbt);
 
         return itemstack;
     }

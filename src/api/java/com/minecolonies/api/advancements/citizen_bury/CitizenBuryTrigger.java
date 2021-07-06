@@ -36,7 +36,7 @@ public class CitizenBuryTrigger extends AbstractCriterionTrigger<CriterionListen
 
     @NotNull
     @Override
-    public CitizenBuryCriterionInstance deserialize(@NotNull final JsonObject object, @NotNull final ConditionArrayParser conditions)
+    public CitizenBuryCriterionInstance createInstance(@NotNull final JsonObject object, @NotNull final ConditionArrayParser conditions)
     {
         return new CitizenBuryCriterionInstance();
     }

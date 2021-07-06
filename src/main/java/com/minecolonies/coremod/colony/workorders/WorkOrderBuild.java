@@ -60,7 +60,7 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
         this.buildingLocation = building.getID();
         this.upgradeLevel = level;
 
-        final TileEntity buildingTE = building.getColony().getWorld().getTileEntity(buildingLocation);
+        final TileEntity buildingTE = building.getColony().getWorld().getBlockEntity(buildingLocation);
         if (buildingTE instanceof AbstractTileEntityColonyBuilding)
         {
             if (!((AbstractTileEntityColonyBuilding) buildingTE).getSchematicName().isEmpty())
@@ -104,8 +104,8 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
         buf.writeInt(getPriority());
         buf.writeBlockPos(getClaimedBy() == null ? BlockPos.ZERO : getClaimedBy());
         buf.writeInt(getType().ordinal());
-        buf.writeString(upgradeName);
-        buf.writeString(getDisplayName());
+        buf.writeUtf(upgradeName);
+        buf.writeUtf(getDisplayName());
         buf.writeBlockPos(buildingLocation == null ? BlockPos.ZERO : buildingLocation);
         buf.writeInt(upgradeLevel);
         //value is upgradeName and upgradeLevel for workOrderBuild
@@ -184,7 +184,7 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
 
         final IBuilding building = citizen.getWorkBuilding();
         return canBuildIngoringDistance(building.getPosition(), building.getBuildingLevel())
-                 && citizen.getWorkBuilding().getPosition().distanceSq(this.getSchematicLocation()) <= MAX_DISTANCE_SQ;
+                 && citizen.getWorkBuilding().getPosition().distSqr(this.getSchematicLocation()) <= MAX_DISTANCE_SQ;
     }
 
     /**
@@ -210,7 +210,7 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
                  .values()
                  .stream()
                  .noneMatch(building -> building instanceof BuildingBuilder && building.getMainCitizen() != null
-                                          && building.getPosition().distanceSq(this.getSchematicLocation()) <= MAX_DISTANCE_SQ);
+                                          && building.getPosition().distSqr(this.getSchematicLocation()) <= MAX_DISTANCE_SQ);
     }
 
     /**

@@ -159,7 +159,7 @@ public final class SoundUtils
     {
         if (player instanceof ServerPlayerEntity)
         {
-            ((ServerPlayerEntity) player).connection.sendPacket(new SPlaySoundEffectPacket(SoundEvents.BLOCK_NOTE_BLOCK_BELL,
+            ((ServerPlayerEntity) player).connection.send(new SPlaySoundEffectPacket(SoundEvents.NOTE_BLOCK_BELL,
               SoundCategory.NEUTRAL,
               position.getX(),
               position.getY(),
@@ -178,7 +178,7 @@ public final class SoundUtils
     {
         if (player instanceof ServerPlayerEntity)
         {
-            ((ServerPlayerEntity) player).connection.sendPacket(new SPlaySoundEffectPacket(SoundEvents.BLOCK_NOTE_BLOCK_DIDGERIDOO,
+            ((ServerPlayerEntity) player).connection.send(new SPlaySoundEffectPacket(SoundEvents.NOTE_BLOCK_DIDGERIDOO,
               SoundCategory.NEUTRAL,
               position.getX(),
               position.getY(),
@@ -259,11 +259,11 @@ public final class SoundUtils
      */
     public static void playSoundForPlayer(final ServerPlayerEntity playerEntity, final SoundEvent sound, float volume, final float pitch)
     {
-        playerEntity.connection.sendPacket(new SPlaySoundEffectPacket(sound,
-          playerEntity.getSoundCategory(),
-          playerEntity.getPosX(),
-          playerEntity.getPosY(),
-          playerEntity.getPosZ(),
+        playerEntity.connection.send(new SPlaySoundEffectPacket(sound,
+          playerEntity.getSoundSource(),
+          playerEntity.getX(),
+          playerEntity.getY(),
+          playerEntity.getZ(),
           16.0F * volume,
           pitch));
     }

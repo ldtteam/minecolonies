@@ -75,7 +75,7 @@ public abstract class AbstractBuildingEvent implements IBuildingEventDescription
     public void serialize(PacketBuffer buf)
     {
         buf.writeBlockPos(eventPos);
-        buf.writeString(buildingName);
+        buf.writeUtf(buildingName);
         buf.writeInt(level);
     }
 
@@ -83,7 +83,7 @@ public abstract class AbstractBuildingEvent implements IBuildingEventDescription
     public void deserialize(PacketBuffer buf)
     {
         eventPos = buf.readBlockPos();
-        buildingName = buf.readString();
+        buildingName = buf.readUtf();
         level = buf.readInt();
     }
 

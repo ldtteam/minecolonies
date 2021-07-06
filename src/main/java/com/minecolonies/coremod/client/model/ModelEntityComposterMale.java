@@ -17,65 +17,65 @@ public class ModelEntityComposterMale extends CitizenModel<AbstractEntityCitizen
         ModelRenderer gloveR;
         ModelRenderer headDetail;
 
-        textureWidth = 128;
-        textureHeight = 64;
+        texWidth = 128;
+        texHeight = 64;
 
-        bipedLeftLeg = new ModelRenderer(this);
-        bipedLeftLeg.setRotationPoint(2.0F, 12.0F, 0.0F);
-        bipedLeftLeg.setTextureOffset(0, 16).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, false);
+        leftLeg = new ModelRenderer(this);
+        leftLeg.setPos(2.0F, 12.0F, 0.0F);
+        leftLeg.texOffs(0, 16).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, false);
 
         bootL = new ModelRenderer(this);
-        bootL.setRotationPoint(2.0F, 12.0F, 0.0F);
-        bipedLeftLeg.addChild(bootL);
-        bootL.setTextureOffset(0, 38).addBox(-4.5F, -8.0F, -2.5F, 5.0F, 2.0F, 5.0F, 0.0F, true);
+        bootL.setPos(2.0F, 12.0F, 0.0F);
+        leftLeg.addChild(bootL);
+        bootL.texOffs(0, 38).addBox(-4.5F, -8.0F, -2.5F, 5.0F, 2.0F, 5.0F, 0.0F, true);
 
-        bipedRightLeg = new ModelRenderer(this);
-        bipedRightLeg.setRotationPoint(-2.0F, 12.0F, 0.0F);
-        bipedRightLeg.setTextureOffset(0, 16).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, true);
+        rightLeg = new ModelRenderer(this);
+        rightLeg.setPos(-2.0F, 12.0F, 0.0F);
+        rightLeg.texOffs(0, 16).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, true);
 
         bootR = new ModelRenderer(this);
-        bootR.setRotationPoint(-2.0F, 12.0F, 0.0F);
-        bipedRightLeg.addChild(bootR);
-        bootR.setTextureOffset(20, 38).addBox(-0.5F, -8.0F, -2.5F, 5.0F, 2.0F, 5.0F, 0.0F, true);
+        bootR.setPos(-2.0F, 12.0F, 0.0F);
+        rightLeg.addChild(bootR);
+        bootR.texOffs(20, 38).addBox(-0.5F, -8.0F, -2.5F, 5.0F, 2.0F, 5.0F, 0.0F, true);
 
-        bipedLeftArm = new ModelRenderer(this);
-        bipedLeftArm.setRotationPoint(5.0F, 2.0F, 0.0F);
-        bipedLeftArm.setTextureOffset(40, 16).addBox(-1.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, true);
+        leftArm = new ModelRenderer(this);
+        leftArm.setPos(5.0F, 2.0F, 0.0F);
+        leftArm.texOffs(40, 16).addBox(-1.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, true);
 
         gloveL = new ModelRenderer(this);
-        gloveL.setRotationPoint(5.0F, 2.0F, 0.0F);
-        bipedLeftArm.addChild(gloveL);
-        gloveL.setTextureOffset(0, 32).addBox(-6.5F, 3.0F, -2.5F, 5.0F, 1.0F, 5.0F, 0.0F, true);
+        gloveL.setPos(5.0F, 2.0F, 0.0F);
+        leftArm.addChild(gloveL);
+        gloveL.texOffs(0, 32).addBox(-6.5F, 3.0F, -2.5F, 5.0F, 1.0F, 5.0F, 0.0F, true);
 
-        bipedRightArm = new ModelRenderer(this);
-        bipedRightArm.setRotationPoint(-5.0F, 2.0F, 0.0F);
-        bipedRightArm.setTextureOffset(40, 16).addBox(-3.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, false);
+        rightArm = new ModelRenderer(this);
+        rightArm.setPos(-5.0F, 2.0F, 0.0F);
+        rightArm.texOffs(40, 16).addBox(-3.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, false);
 
         gloveR = new ModelRenderer(this);
-        gloveR.setRotationPoint(-5.0F, 2.0F, 0.0F);
-        bipedRightArm.addChild(gloveR);
-        gloveR.setTextureOffset(20, 32).addBox(1.5F, 3.0F, -2.5F, 5.0F, 1.0F, 5.0F, 0.0F, true);
+        gloveR.setPos(-5.0F, 2.0F, 0.0F);
+        rightArm.addChild(gloveR);
+        gloveR.texOffs(20, 32).addBox(1.5F, 3.0F, -2.5F, 5.0F, 1.0F, 5.0F, 0.0F, true);
 
-        bipedHead = new ModelRenderer(this);
-        bipedHead.setRotationPoint(0.0F, 0.0F, 0.0F);
-        bipedHead.setTextureOffset(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, 0.0F, false);
+        head = new ModelRenderer(this);
+        head.setPos(0.0F, 0.0F, 0.0F);
+        head.texOffs(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, 0.0F, false);
 
         headDetail = new ModelRenderer(this);
-        headDetail.setRotationPoint(0.0F, 0.0F, 1.0F);
-        bipedHead.addChild(headDetail);
-        headDetail.setTextureOffset(32, 0).addBox(-4.0F, -8.0F, -5.0F, 8.0F, 8.0F, 8.0F, 0.5F, false);
+        headDetail.setPos(0.0F, 0.0F, 1.0F);
+        head.addChild(headDetail);
+        headDetail.texOffs(32, 0).addBox(-4.0F, -8.0F, -5.0F, 8.0F, 8.0F, 8.0F, 0.5F, false);
 
-        bipedBody = new ModelRenderer(this);
-        bipedBody.setRotationPoint(0.0F, 0.0F, 0.0F);
-        bipedBody.setTextureOffset(16, 16).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, 0.0F, false);
+        body = new ModelRenderer(this);
+        body.setPos(0.0F, 0.0F, 0.0F);
+        body.texOffs(16, 16).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, 0.0F, false);
 
-        bipedHeadwear.showModel = false;
+        hat.visible = false;
     }
 
     public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z)
     {
-        modelRenderer.rotateAngleX = x;
-        modelRenderer.rotateAngleY = y;
-        modelRenderer.rotateAngleZ = z;
+        modelRenderer.xRot = x;
+        modelRenderer.yRot = y;
+        modelRenderer.zRot = z;
     }
 }

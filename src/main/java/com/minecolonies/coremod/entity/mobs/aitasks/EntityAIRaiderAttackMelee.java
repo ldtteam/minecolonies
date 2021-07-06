@@ -15,6 +15,8 @@ import java.util.EnumSet;
 
 import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
 
+import net.minecraft.entity.ai.goal.Goal.Flag;
+
 /**
  * Barbarian Attack AI class
  */
@@ -57,13 +59,13 @@ public class EntityAIRaiderAttackMelee extends Goal
     {
         super();
         this.entity = creatureIn;
-        this.setMutexFlags(EnumSet.of(Flag.MOVE));
+        this.setFlags(EnumSet.of(Flag.MOVE));
     }
 
     @Override
-    public boolean shouldExecute()
+    public boolean canUse()
     {
-        target = entity.getAttackTarget() != null ? entity.getAttackTarget() : entity.getAttackingEntity();
+        target = entity.getTarget() != null ? entity.getTarget() : entity.getKillCredit();
         return target != null && !EntityUtils.isFlying(target);
     }
 
@@ -73,10 +75,10 @@ public class EntityAIRaiderAttackMelee extends Goal
      * @return Boolean value on whether or not to continue executing
      */
     @Override
-    public boolean shouldContinueExecuting()
+    public boolean canContinueToUse()
     {
-        target = entity.getAttackTarget();
-        if (target != null && target.isAlive() && entity.isAlive() && entity.canEntityBeSeen(target) && !EntityUtils.isFlying(target))
+        target = entity.getTarget();
+        if (target != null && target.isAlive() && entity.isAlive() && entity.canSee(target) && !EntityUtils.isFlying(target))
         {
             attack(target);
             return true;
@@ -88,7 +90,7 @@ public class EntityAIRaiderAttackMelee extends Goal
      * Is executed when the ai Starts Executing
      */
     @Override
-    public void startExecuting()
+    public void start()
     {
         attack(target);
     }
@@ -113,13 +115,13 @@ public class EntityAIRaiderAttackMelee extends Goal
         {
             double damageToBeDealt = entity.getAttribute(MOB_ATTACK_DAMAGE).getValue();
 
-            if (entity.getDistance(target) <= (entity.getDifficulty() < EXTENDED_REACH_DIFFICUTLY ? MIN_DISTANCE_FOR_ATTACK : MIN_DISTANCE_FOR_ATTACK + EXTENDED_REACH)
-                  && lastAttack <= 0 && entity.canEntityBeSeen(target))
+            if (entity.distanceTo(target) <= (entity.getDifficulty() < EXTENDED_REACH_DIFFICUTLY ? MIN_DISTANCE_FOR_ATTACK : MIN_DISTANCE_FOR_ATTACK + EXTENDED_REACH)
+                  && lastAttack <= 0 && entity.canSee(target))
             {
-                target.attackEntityFrom(new NamedDamageSource("death.attack." + ((TranslationTextComponent) entity.getName()).getKey(), entity), (float) damageToBeDealt);
-                entity.swingArm(Hand.MAIN_HAND);
-                entity.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, (float) 1.0D, (float) SoundUtils.getRandomPitch(entity.getRNG()));
-                target.setRevengeTarget(entity);
+                target.hurt(new NamedDamageSource("death.attack." + ((TranslationTextComponent) entity.getName()).getKey(), entity), (float) damageToBeDealt);
+                entity.swing(Hand.MAIN_HAND);
+                entity.playSound(SoundEvents.PLAYER_ATTACK_SWEEP, (float) 1.0D, (float) SoundUtils.getRandomPitch(entity.getRandom()));
+                target.setLastHurtByMob(entity);
                 lastAttack = getAttackDelay();
             }
             if (lastAttack > 0)
@@ -127,10 +129,10 @@ public class EntityAIRaiderAttackMelee extends Goal
                 lastAttack -= 1;
             }
 
-            entity.faceEntity(target, (float) HALF_ROTATION, (float) HALF_ROTATION);
-            entity.getLookController().setLookPositionWithEntity(target, (float) HALF_ROTATION, (float) HALF_ROTATION);
+            entity.lookAt(target, (float) HALF_ROTATION, (float) HALF_ROTATION);
+            entity.getLookControl().setLookAt(target, (float) HALF_ROTATION, (float) HALF_ROTATION);
 
-            entity.getNavigator().tryMoveToEntityLiving(target, entity.getDifficulty() < ADD_SPEED_DIFFICULTY ? ATTACK_SPEED : ATTACK_SPEED * BONUS_SPEED);
+            entity.getNavigation().moveTo(target, entity.getDifficulty() < ADD_SPEED_DIFFICULTY ? ATTACK_SPEED : ATTACK_SPEED * BONUS_SPEED);
         }
     }
 

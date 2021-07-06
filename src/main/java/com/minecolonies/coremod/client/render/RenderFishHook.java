@@ -34,7 +34,7 @@ public class RenderFishHook extends EntityRenderer<Entity>
     /**
      * The render type of the hook.
      */
-    private static final RenderType RENDER_TYPE = RenderType.getEntityCutout(TEXTURE);
+    private static final RenderType RENDER_TYPE = RenderType.entityCutout(TEXTURE);
 
     /**
      * Required constructor, sets the RenderManager.
@@ -53,63 +53,63 @@ public class RenderFishHook extends EntityRenderer<Entity>
         if (bobber != null && bobber.getAngler() != null)
         {
             final EntityCitizen citizen = bobber.getAngler();
-            matrixStackIn.push();
-            matrixStackIn.push();
+            matrixStackIn.pushPose();
+            matrixStackIn.pushPose();
             matrixStackIn.scale(0.5F, 0.5F, 0.5F);
-            matrixStackIn.rotate(this.renderManager.getCameraOrientation());
-            matrixStackIn.rotate(Vector3f.YP.rotationDegrees(180.0F));
-            final MatrixStack.Entry matrixstack$entry = matrixStackIn.getLast();
-            final Matrix4f matrix4f = matrixstack$entry.getMatrix();
-            final Matrix3f matrix3f = matrixstack$entry.getNormal();
+            matrixStackIn.mulPose(this.entityRenderDispatcher.cameraOrientation());
+            matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(180.0F));
+            final MatrixStack.Entry matrixstack$entry = matrixStackIn.last();
+            final Matrix4f matrix4f = matrixstack$entry.pose();
+            final Matrix3f matrix3f = matrixstack$entry.normal();
             final IVertexBuilder ivertexbuilder = bufferIn.getBuffer(RENDER_TYPE);
-            func_229106_a_(ivertexbuilder, matrix4f, matrix3f, packedLightIn, 0.0F, 0, 0, 1);
-            func_229106_a_(ivertexbuilder, matrix4f, matrix3f, packedLightIn, 1.0F, 0, 1, 1);
-            func_229106_a_(ivertexbuilder, matrix4f, matrix3f, packedLightIn, 1.0F, 1, 1, 0);
-            func_229106_a_(ivertexbuilder, matrix4f, matrix3f, packedLightIn, 0.0F, 1, 0, 0);
-            matrixStackIn.pop();
-            int i = citizen.getPrimaryHand() == HandSide.RIGHT ? 1 : -1;
-            final ItemStack itemstack = citizen.getHeldItemMainhand();
+            vertex(ivertexbuilder, matrix4f, matrix3f, packedLightIn, 0.0F, 0, 0, 1);
+            vertex(ivertexbuilder, matrix4f, matrix3f, packedLightIn, 1.0F, 0, 1, 1);
+            vertex(ivertexbuilder, matrix4f, matrix3f, packedLightIn, 1.0F, 1, 1, 0);
+            vertex(ivertexbuilder, matrix4f, matrix3f, packedLightIn, 0.0F, 1, 0, 0);
+            matrixStackIn.popPose();
+            int i = citizen.getMainArm() == HandSide.RIGHT ? 1 : -1;
+            final ItemStack itemstack = citizen.getMainHandItem();
             if (!(itemstack.getItem() instanceof net.minecraft.item.FishingRodItem))
             {
                 i = -i;
             }
 
-            final float f2 = MathHelper.lerp(partialTicks, citizen.prevRenderYawOffset, citizen.renderYawOffset) * ((float) Math.PI / 180F);
+            final float f2 = MathHelper.lerp(partialTicks, citizen.yBodyRotO, citizen.yBodyRot) * ((float) Math.PI / 180F);
             final double d0 = MathHelper.sin(f2);
             final double d1 = MathHelper.cos(f2);
             final double d2 = (double) i * 0.35D;
 
-            double d4 = MathHelper.lerp(partialTicks, citizen.prevPosX, citizen.getPosX()) - d1 * d2 - d0 * 0.8D;
-            double d5 = citizen.prevPosY + (double) citizen.getEyeHeight() + (citizen.getPosY() - citizen.prevPosY) * (double) partialTicks - 0.45D;
-            double d6 = MathHelper.lerp(partialTicks, citizen.prevPosZ, citizen.getPosZ()) - d0 * d2 + d1 * 0.8D;
+            double d4 = MathHelper.lerp(partialTicks, citizen.xo, citizen.getX()) - d1 * d2 - d0 * 0.8D;
+            double d5 = citizen.yo + (double) citizen.getEyeHeight() + (citizen.getY() - citizen.yo) * (double) partialTicks - 0.45D;
+            double d6 = MathHelper.lerp(partialTicks, citizen.zo, citizen.getZ()) - d0 * d2 + d1 * 0.8D;
             float f3 = citizen.isCrouching() ? -0.1875F : 0.0F;
 
-            double d9 = MathHelper.lerp(partialTicks, entityIn.prevPosX, entityIn.getPosX());
-            double d10 = MathHelper.lerp(partialTicks, entityIn.prevPosY, entityIn.getPosY()) + 0.25D;
-            double d8 = MathHelper.lerp(partialTicks, entityIn.prevPosZ, entityIn.getPosZ());
+            double d9 = MathHelper.lerp(partialTicks, entityIn.xo, entityIn.getX());
+            double d10 = MathHelper.lerp(partialTicks, entityIn.yo, entityIn.getY()) + 0.25D;
+            double d8 = MathHelper.lerp(partialTicks, entityIn.zo, entityIn.getZ());
             float f4 = (float) (d4 - d9);
             float f5 = (float) (d5 - d10) + f3;
             float f6 = (float) (d6 - d8);
-            final IVertexBuilder ivertexbuilder1 = bufferIn.getBuffer(RenderType.getLines());
-            final Matrix4f matrix4f1 = matrixStackIn.getLast().getMatrix();
+            final IVertexBuilder ivertexbuilder1 = bufferIn.getBuffer(RenderType.lines());
+            final Matrix4f matrix4f1 = matrixStackIn.last().pose();
 
             for (int k = 0; k < 16; ++k)
             {
-                func_229104_a_(f4, f5, f6, ivertexbuilder1, matrix4f1, func_229105_a_(k, 16));
-                func_229104_a_(f4, f5, f6, ivertexbuilder1, matrix4f1, func_229105_a_(k + 1, 16));
+                stringVertex(f4, f5, f6, ivertexbuilder1, matrix4f1, fraction(k, 16));
+                stringVertex(f4, f5, f6, ivertexbuilder1, matrix4f1, fraction(k + 1, 16));
             }
 
-            matrixStackIn.pop();
+            matrixStackIn.popPose();
             super.render(entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
         }
     }
 
-    private static float func_229105_a_(int p_229105_0_, int p_229105_1_)
+    private static float fraction(int p_229105_0_, int p_229105_1_)
     {
         return (float) p_229105_0_ / (float) p_229105_1_;
     }
 
-    private static void func_229106_a_(
+    private static void vertex(
       IVertexBuilder p_229106_0_,
       Matrix4f p_229106_1_,
       Matrix3f p_229106_2_,
@@ -119,13 +119,13 @@ public class RenderFishHook extends EntityRenderer<Entity>
       int p_229106_6_,
       int p_229106_7_)
     {
-        p_229106_0_.pos(p_229106_1_, p_229106_4_ - 0.5F, (float) p_229106_5_ - 0.5F, 0.0F).color(255, 255, 255, 255).tex((float) p_229106_6_, (float) p_229106_7_).overlay(
-          OverlayTexture.NO_OVERLAY).lightmap(p_229106_3_).normal(p_229106_2_, 0.0F, 1.0F, 0.0F).endVertex();
+        p_229106_0_.vertex(p_229106_1_, p_229106_4_ - 0.5F, (float) p_229106_5_ - 0.5F, 0.0F).color(255, 255, 255, 255).uv((float) p_229106_6_, (float) p_229106_7_).overlayCoords(
+          OverlayTexture.NO_OVERLAY).uv2(p_229106_3_).normal(p_229106_2_, 0.0F, 1.0F, 0.0F).endVertex();
     }
 
-    private static void func_229104_a_(float p_229104_0_, float p_229104_1_, float p_229104_2_, IVertexBuilder p_229104_3_, Matrix4f p_229104_4_, float p_229104_5_)
+    private static void stringVertex(float p_229104_0_, float p_229104_1_, float p_229104_2_, IVertexBuilder p_229104_3_, Matrix4f p_229104_4_, float p_229104_5_)
     {
-        p_229104_3_.pos(p_229104_4_, p_229104_0_ * p_229104_5_, p_229104_1_ * (p_229104_5_ * p_229104_5_ + p_229104_5_) * 0.5F + 0.25F, p_229104_2_ * p_229104_5_)
+        p_229104_3_.vertex(p_229104_4_, p_229104_0_ * p_229104_5_, p_229104_1_ * (p_229104_5_ * p_229104_5_ + p_229104_5_) * 0.5F + 0.25F, p_229104_2_ * p_229104_5_)
           .color(0, 0, 0, 255)
           .endVertex();
     }
@@ -138,7 +138,7 @@ public class RenderFishHook extends EntityRenderer<Entity>
      */
     @NotNull
     @Override
-    public ResourceLocation getEntityTexture(@NotNull final Entity entity)
+    public ResourceLocation getTextureLocation(@NotNull final Entity entity)
     {
         return getTexture();
     }

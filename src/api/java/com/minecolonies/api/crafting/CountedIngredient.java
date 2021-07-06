@@ -15,6 +15,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import net.minecraft.item.crafting.Ingredient.SingleItemList;
+
 /**
  * An ingredient that can be used in a vanilla recipe to require more than one item in a particular input slot.
  *
@@ -37,7 +39,7 @@ public class CountedIngredient extends Ingredient
 
     public CountedIngredient(@NotNull final Ingredient child, final int count)
     {
-        super(Arrays.stream(child.getMatchingStacks()).map(SingleItemList::new));
+        super(Arrays.stream(child.getItems()).map(SingleItemList::new));
 
         this.child = child;
         this.count = count;
@@ -52,11 +54,11 @@ public class CountedIngredient extends Ingredient
 
     @NotNull
     @Override
-    public ItemStack[] getMatchingStacks()
+    public ItemStack[] getItems()
     {
         if (this.array == null)
         {
-            final List<ItemStack> matchingStacks = Arrays.stream(this.child.getMatchingStacks())
+            final List<ItemStack> matchingStacks = Arrays.stream(this.child.getItems())
                     .map(ItemStack::copy).collect(Collectors.toList());
             matchingStacks.forEach(s -> s.setCount(this.count));
             this.array = matchingStacks.toArray(new ItemStack[matchingStacks.size()]);
@@ -83,8 +85,8 @@ public class CountedIngredient extends Ingredient
         @Override
         public CountedIngredient parse(@NotNull final JsonObject json)
         {
-            final Ingredient child = Ingredient.deserialize(json.get("item"));
-            final int count = JSONUtils.getInt(json, "count", 1);
+            final Ingredient child = Ingredient.fromJson(json.get("item"));
+            final int count = JSONUtils.getAsInt(json, "count", 1);
             return new CountedIngredient(child, count);
         }
 
@@ -93,7 +95,7 @@ public class CountedIngredient extends Ingredient
         public CountedIngredient parse(@NotNull final PacketBuffer buffer)
         {
             final int count = buffer.readVarInt();
-            final Ingredient child = Ingredient.read(buffer);
+            final Ingredient child = Ingredient.fromNetwork(buffer);
             return new CountedIngredient(child, count);
         }
 

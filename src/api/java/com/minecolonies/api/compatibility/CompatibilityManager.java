@@ -324,7 +324,7 @@ public class CompatibilityManager implements ICompatibilityManager
             return false;
         }
 
-        if (stack.getItem().isIn(Tags.Items.ORES))
+        if (stack.getItem().is(Tags.Items.ORES))
         {
             return !MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getSmeltingResult(stack).isEmpty();
         }
@@ -348,7 +348,7 @@ public class CompatibilityManager implements ICompatibilityManager
             return false;
         }
 
-        if (stack.getItem().isIn(Tags.Items.ORES))
+        if (stack.getItem().is(Tags.Items.ORES))
         {
             return true;
         }
@@ -441,13 +441,13 @@ public class CompatibilityManager implements ICompatibilityManager
 
         for (final Map.Entry<RegistryKey<EntityType<?>>, EntityType<?>> entry : ForgeRegistries.ENTITIES.getEntries())
         {
-            if (entry.getValue().getClassification() == EntityClassification.MONSTER)
+            if (entry.getValue().getCategory() == EntityClassification.MONSTER)
             {
-                monsters.add(entry.getKey().getLocation());
+                monsters.add(entry.getKey().location());
             }
             else if (ModTags.hostile.contains(entry.getValue()))
             {
-                monsters.add(entry.getKey().getLocation());
+                monsters.add(entry.getKey().location());
             }
         }
     }
@@ -472,7 +472,7 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         if (smeltableOres.isEmpty())
         {
-            for(Item item : Tags.Items.ORES.getAllElements())
+            for(Item item : Tags.Items.ORES.getValues())
             {
                 if(item.getItem() instanceof BlockItem)
                 {
@@ -492,7 +492,7 @@ public class CompatibilityManager implements ICompatibilityManager
      */
     private void discoverSaplings()
     {
-        for (final Item item : ItemTags.SAPLINGS.getAllElements())
+        for (final Item item : ItemTags.SAPLINGS.getValues())
         {
             final ItemStack stack = new ItemStack(item);
             {
@@ -511,10 +511,10 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         if (compostRecipes.isEmpty())
         {
-            for (final IRecipe<?> r : recipeManager.getRecipes(CompostRecipe.TYPE).values())
+            for (final IRecipe<?> r : recipeManager.byType(CompostRecipe.TYPE).values())
             {
                 final CompostRecipe recipe = (CompostRecipe) r;
-                for (final ItemStack stack : recipe.getInput().getMatchingStacks())
+                for (final ItemStack stack : recipe.getInput().getItems())
                 {
                     // there can be duplicates due to overlapping tags.  weakest one wins.
                     compostRecipes.merge(stack.getItem(), recipe,
@@ -532,7 +532,7 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         if (plantables.isEmpty())
         {
-            for (Item item : ModTags.floristFlowers.getAllElements())
+            for (Item item : ModTags.floristFlowers.getValues())
             {
                 if (item instanceof BlockItem)
                 {
@@ -715,13 +715,13 @@ public class CompatibilityManager implements ICompatibilityManager
     private static CompoundNBT writeLeafSaplingEntryToNBT(final BlockState state, final ItemStorage storage)
     {
         final CompoundNBT compound = NBTUtil.writeBlockState(state);
-        storage.getItemStack().write(compound);
+        storage.getItemStack().save(compound);
         return compound;
     }
 
     private static Tuple<BlockState, ItemStorage> readLeafSaplingEntryFromNBT(final CompoundNBT compound)
     {
-        return new Tuple<>(NBTUtil.readBlockState(compound), new ItemStorage(ItemStack.read(compound), false, true));
+        return new Tuple<>(NBTUtil.readBlockState(compound), new ItemStorage(ItemStack.of(compound), false, true));
     }
 
     /**
@@ -778,7 +778,7 @@ public class CompatibilityManager implements ICompatibilityManager
     public static Set<ItemStorage> getAllBeekeeperFlowers()
     {
         Set<ItemStorage> flowers = new HashSet<>();
-        ItemTags.FLOWERS.getAllElements().forEach((item) -> flowers.add(new ItemStorage(new ItemStack(item))));
+        ItemTags.FLOWERS.getValues().forEach((item) -> flowers.add(new ItemStorage(new ItemStack(item))));
         return flowers;
     }
 }

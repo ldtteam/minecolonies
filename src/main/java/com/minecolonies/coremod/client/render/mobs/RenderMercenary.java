@@ -33,7 +33,7 @@ public class RenderMercenary extends MobRenderer<CreatureEntity, BipedModel<Crea
     }
 
     @Override
-    public ResourceLocation getEntityTexture(final CreatureEntity entity)
+    public ResourceLocation getTextureLocation(final CreatureEntity entity)
     {
         return TEXTURE;
     }

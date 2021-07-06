@@ -41,7 +41,7 @@ public abstract class DeliverymenRequestResolver<R extends IRequestable> extends
     @Override
     public boolean canResolveRequest(@NotNull final IRequestManager manager, final IRequest<? extends R> requestToCheck)
     {
-        if (manager.getColony().getWorld().isRemote)
+        if (manager.getColony().getWorld().isClientSide)
         {
             return false;
         }
@@ -87,7 +87,7 @@ public abstract class DeliverymenRequestResolver<R extends IRequestable> extends
     @Override
     public List<IToken<?>> attemptResolveRequest(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends R> request)
     {
-        if (manager.getColony().getWorld().isRemote)
+        if (manager.getColony().getWorld().isClientSide)
         {
             return null;
         }
@@ -143,7 +143,7 @@ public abstract class DeliverymenRequestResolver<R extends IRequestable> extends
     public void onAssignedRequestCancelled(
       @NotNull final IRequestManager manager, @NotNull final IRequest<? extends R> request)
     {
-        if (!manager.getColony().getWorld().isRemote)
+        if (!manager.getColony().getWorld().isClientSide)
         {
             final Colony colony = (Colony) manager.getColony();
             final ICitizenData freeDeliveryMan = colony.getCitizenManager().getCitizens()

@@ -117,14 +117,14 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
     {
         for (final BlockPos pos : getOwnBuilding().getFurnaces())
         {
-            final TileEntity entity = world.getTileEntity(pos);
+            final TileEntity entity = world.getBlockEntity(pos);
             if (entity instanceof FurnaceTileEntity)
             {
                 final FurnaceTileEntity furnace = (FurnaceTileEntity) entity;
-                final int countInResultSlot = ItemStackUtils.isEmpty(furnace.getStackInSlot(RESULT_SLOT)) ? 0 : furnace.getStackInSlot(RESULT_SLOT).getCount();
-                final int countInInputSlot = ItemStackUtils.isEmpty(furnace.getStackInSlot(SMELTABLE_SLOT)) ? 0 : furnace.getStackInSlot(SMELTABLE_SLOT).getCount();
+                final int countInResultSlot = ItemStackUtils.isEmpty(furnace.getItem(RESULT_SLOT)) ? 0 : furnace.getItem(RESULT_SLOT).getCount();
+                final int countInInputSlot = ItemStackUtils.isEmpty(furnace.getItem(SMELTABLE_SLOT)) ? 0 : furnace.getItem(SMELTABLE_SLOT).getCount();
 
-                if ((!furnace.isBurning() && countInResultSlot > 0)
+                if ((!furnace.isLit() && countInResultSlot > 0)
                       || countInResultSlot > RETRIEVE_SMELTABLE_IF_MORE_THAN
                       || (countInResultSlot > 0 && countInInputSlot == 0))
                 {
@@ -145,12 +145,12 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
     {
         for (final BlockPos pos : getOwnBuilding().getFurnaces())
         {
-            final TileEntity entity = world.getTileEntity(pos);
+            final TileEntity entity = world.getBlockEntity(pos);
             if (entity instanceof FurnaceTileEntity)
             {
                 final FurnaceTileEntity furnace = (FurnaceTileEntity) entity;
 
-                if (!furnace.getStackInSlot(FUEL_SLOT).isEmpty() && !compareItemStackListIgnoreStackSize(getOwnBuilding().getAllowedFuel(), furnace.getStackInSlot(FUEL_SLOT), false, false))
+                if (!furnace.getItem(FUEL_SLOT).isEmpty() && !compareItemStackListIgnoreStackSize(getOwnBuilding().getAllowedFuel(), furnace.getItem(FUEL_SLOT), false, false))
                 {
                     worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_STATUS_RETRIEVING));
                     return pos;
@@ -262,13 +262,13 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
         {
             if (WorldUtil.isBlockLoaded(world, pos))
             {
-                final TileEntity entity = world.getTileEntity(pos);
+                final TileEntity entity = world.getBlockEntity(pos);
                 if (entity instanceof FurnaceTileEntity)
                 {
                     final FurnaceTileEntity furnace = (FurnaceTileEntity) entity;
                     for(int i = 0; i < accelerationTicks; i++)
                     {
-                        if (furnace.isBurning()) 
+                        if (furnace.isLit()) 
                         {
                             furnace.tick();
                         }
@@ -295,7 +295,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
     {
         for (final BlockPos pos : getOwnBuilding().getFurnaces())
         {
-            final TileEntity entity = world.getTileEntity(pos);
+            final TileEntity entity = world.getBlockEntity(pos);
 
             if (entity instanceof FurnaceTileEntity)
             {
@@ -373,9 +373,9 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
             return getState();
         }
 
-        final TileEntity entity = world.getTileEntity(walkTo);
+        final TileEntity entity = world.getBlockEntity(walkTo);
         if (!(entity instanceof FurnaceTileEntity)
-              || (ItemStackUtils.isEmpty(((FurnaceTileEntity) entity).getStackInSlot(RESULT_SLOT))))
+              || (ItemStackUtils.isEmpty(((FurnaceTileEntity) entity).getItem(RESULT_SLOT))))
         {
             walkTo = null;
             return START_WORKING;
@@ -408,9 +408,9 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
             return getState();
         }
 
-        final TileEntity entity = world.getTileEntity(walkTo);
+        final TileEntity entity = world.getBlockEntity(walkTo);
         if (!(entity instanceof FurnaceTileEntity)
-                || (ItemStackUtils.isEmpty(((FurnaceTileEntity) entity).getStackInSlot(FUEL_SLOT))))
+                || (ItemStackUtils.isEmpty(((FurnaceTileEntity) entity).getItem(FUEL_SLOT))))
         {
             walkTo = null;
             return START_WORKING;
@@ -450,7 +450,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
             return getState();
         }
 
-        final TileEntity entity = world.getTileEntity(walkTo);
+        final TileEntity entity = world.getBlockEntity(walkTo);
         if (entity instanceof FurnaceTileEntity)
         {
             final FurnaceTileEntity furnace = (FurnaceTileEntity) entity;

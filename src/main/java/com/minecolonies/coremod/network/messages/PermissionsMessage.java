@@ -85,7 +85,7 @@ public class PermissionsMessage
         {
             final PacketBuffer newBuf = new PacketBuffer(buf.retain());
             colonyID = newBuf.readInt();
-            dimension = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(newBuf.readString(32767)));
+            dimension = RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(newBuf.readUtf(32767)));
             data = newBuf;
         }
 
@@ -108,7 +108,7 @@ public class PermissionsMessage
         public void toBytes(@NotNull final PacketBuffer buf)
         {
             buf.writeInt(colonyID);
-            buf.writeString(dimension.getLocation().toString());
+            buf.writeUtf(dimension.location().toString());
             buf.writeBytes(data);
         }
     }
@@ -197,20 +197,20 @@ public class PermissionsMessage
         public void toBytes(@NotNull final PacketBuffer buf)
         {
             buf.writeInt(colonyID);
-            buf.writeString(type.name());
+            buf.writeUtf(type.name());
             buf.writeInt(rank.getId());
-            buf.writeString(action.name());
-            buf.writeString(dimension.getLocation().toString());
+            buf.writeUtf(action.name());
+            buf.writeUtf(dimension.location().toString());
         }
 
         @Override
         public void fromBytes(@NotNull final PacketBuffer buf)
         {
             colonyID = buf.readInt();
-            type = MessageType.valueOf(buf.readString(32767));
+            type = MessageType.valueOf(buf.readUtf(32767));
             final int rankId = buf.readInt();
-            action = Action.valueOf(buf.readString(32767));
-            dimension = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(buf.readString(32767)));
+            action = Action.valueOf(buf.readUtf(32767));
+            dimension = RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)));
             final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, dimension);
             if (colony != null)
             {
@@ -258,16 +258,16 @@ public class PermissionsMessage
         public void toBytes(@NotNull final PacketBuffer buf)
         {
             buf.writeInt(colonyID);
-            buf.writeString(playerName);
-            buf.writeString(dimension.getLocation().toString());
+            buf.writeUtf(playerName);
+            buf.writeUtf(dimension.location().toString());
         }
 
         @Override
         public void fromBytes(@NotNull final PacketBuffer buf)
         {
             colonyID = buf.readInt();
-            playerName = buf.readString(32767);
-            dimension = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(buf.readString(32767)));
+            playerName = buf.readUtf(32767);
+            dimension = RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)));
         }
 
         @Nullable
@@ -336,16 +336,16 @@ public class PermissionsMessage
         public void toBytes(PacketBuffer buf)
         {
             buf.writeInt(colonyID);
-            buf.writeString(rankName);
-            buf.writeString(dimension.getLocation().toString());
+            buf.writeUtf(rankName);
+            buf.writeUtf(dimension.location().toString());
         }
 
         @Override
         public void fromBytes(PacketBuffer buf)
         {
             this.colonyID = buf.readInt();
-            this.rankName = buf.readString(32767);
-            this.dimension = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(buf.readString(32767)));
+            this.rankName = buf.readUtf(32767);
+            this.dimension = RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)));
         }
 
         @Override
@@ -402,18 +402,18 @@ public class PermissionsMessage
         public void toBytes(@NotNull final PacketBuffer buf)
         {
             buf.writeInt(colonyID);
-            buf.writeString(playerName);
+            buf.writeUtf(playerName);
             PacketUtils.writeUUID(buf, id);
-            buf.writeString(dimension.getLocation().toString());
+            buf.writeUtf(dimension.location().toString());
         }
 
         @Override
         public void fromBytes(@NotNull final PacketBuffer buf)
         {
             colonyID = buf.readInt();
-            playerName = buf.readString(32767);
+            playerName = buf.readUtf(32767);
             id = PacketUtils.readUUID(buf);
-            dimension = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(buf.readString(32767)));
+            dimension = RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)));
         }
 
         @Nullable
@@ -482,7 +482,7 @@ public class PermissionsMessage
         {
             buf.writeInt(colonyID);
             PacketUtils.writeUUID(buf, playerID);
-            buf.writeString(dimension.getLocation().toString());
+            buf.writeUtf(dimension.location().toString());
             buf.writeInt(rank.getId());
         }
 
@@ -491,7 +491,7 @@ public class PermissionsMessage
         {
             colonyID = buf.readInt();
             playerID = PacketUtils.readUUID(buf);
-            dimension = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(buf.readString(32767)));
+            dimension = RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)));
             IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, dimension);
             rank = colony.getPermissions().getRank(buf.readInt());
 
@@ -556,7 +556,7 @@ public class PermissionsMessage
         {
             buf.writeInt(colonyID);
             PacketUtils.writeUUID(buf, playerID);
-            buf.writeString(dimension.getLocation().toString());
+            buf.writeUtf(dimension.location().toString());
         }
 
         @Override
@@ -564,7 +564,7 @@ public class PermissionsMessage
         {
             colonyID = buf.readInt();
             playerID = PacketUtils.readUUID(buf);
-            dimension = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(buf.readString(32767)));
+            dimension = RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)));
         }
 
         @Nullable
@@ -590,7 +590,7 @@ public class PermissionsMessage
                   || (!permissionsPlayer.getRank().isHostile()
                         && colony.getPermissions().hasPermission(player, Action.EDIT_PERMISSIONS)
                         && colony.getPermissions().getRank(player).isColonyManager())
-                  || player.getUniqueID().equals(playerID))
+                  || player.getUUID().equals(playerID))
             {
                 colony.getPermissions().removePlayer(playerID);
             }
@@ -641,7 +641,7 @@ public class PermissionsMessage
         {
             buf.writeInt(colonyId);
             buf.writeInt(rankId);
-            buf.writeString(dimension.getLocation().toString());
+            buf.writeUtf(dimension.location().toString());
         }
 
         @Override
@@ -649,7 +649,7 @@ public class PermissionsMessage
         {
             colonyId = buf.readInt();
             rankId = buf.readInt();
-            dimension = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(buf.readString(32767)));
+            dimension = RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)));
         }
 
         @Override
@@ -709,7 +709,7 @@ public class PermissionsMessage
         {
             buf.writeInt(colonyId);
             buf.writeInt(rankId);
-            buf.writeString(dimension.getLocation().toString());
+            buf.writeUtf(dimension.location().toString());
             buf.writeInt(rankType);
         }
 
@@ -718,7 +718,7 @@ public class PermissionsMessage
         {
             this.colonyId = buf.readInt();
             this.rankId = buf.readInt();
-            this.dimension = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(buf.readString(32767)));
+            this.dimension = RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)));
             this.rankType = buf.readInt();
         }
 
@@ -794,7 +794,7 @@ public class PermissionsMessage
         public void toBytes(final PacketBuffer buf)
         {
             buf.writeInt(colonyId);
-            buf.writeString(dimension.getLocation().toString());
+            buf.writeUtf(dimension.location().toString());
             buf.writeInt(rankId);
             buf.writeBoolean(isSubscriber);
         }
@@ -803,7 +803,7 @@ public class PermissionsMessage
         public void fromBytes(final PacketBuffer buf)
         {
             this.colonyId = buf.readInt();
-            this.dimension = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(buf.readString(32767)));
+            this.dimension = RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)));
             this.rankId = buf.readInt();
             this.isSubscriber = buf.readBoolean();
         }

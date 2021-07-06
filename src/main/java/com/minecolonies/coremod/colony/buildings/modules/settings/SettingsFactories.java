@@ -165,7 +165,7 @@ public class SettingsFactories
             packetBuffer.writeInt(input.getSettings().size());
             for (final String setting: input.getSettings())
             {
-                packetBuffer.writeString(setting);
+                packetBuffer.writeUtf(setting);
             }
         }
 
@@ -178,7 +178,7 @@ public class SettingsFactories
             final List<String> settings = new ArrayList<>();
             for (int i = 0; i < size; i++)
             {
-                settings.add(buffer.readString(32767));
+                settings.add(buffer.readUtf(32767));
             }
             return this.getNewInstance(settings, currentIndex);
         }
@@ -268,16 +268,16 @@ public class SettingsFactories
         @Override
         public void serialize(@NotNull final IFactoryController controller, @NotNull final BlockSetting input, @NotNull final PacketBuffer packetBuffer)
         {
-            packetBuffer.writeItemStack(new ItemStack(input.getValue()));
-            packetBuffer.writeItemStack(new ItemStack(input.getDefault()));
+            packetBuffer.writeItem(new ItemStack(input.getValue()));
+            packetBuffer.writeItem(new ItemStack(input.getDefault()));
         }
 
         @NotNull
         @Override
         public BlockSetting deserialize(@NotNull final IFactoryController controller, @NotNull final PacketBuffer buffer) throws Throwable
         {
-            final BlockItem value = (BlockItem) buffer.readItemStack().getItem();
-            final BlockItem def = (BlockItem) buffer.readItemStack().getItem();
+            final BlockItem value = (BlockItem) buffer.readItem().getItem();
+            final BlockItem def = (BlockItem) buffer.readItem().getItem();
             return this.getNewInstance(value, def);
         }
 

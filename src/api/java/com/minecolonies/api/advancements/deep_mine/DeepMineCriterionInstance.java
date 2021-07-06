@@ -12,6 +12,6 @@ public class DeepMineCriterionInstance extends CriterionInstance
 {
     public DeepMineCriterionInstance()
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_DEEP_MINE), EntityPredicate.AndPredicate.ANY_AND);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_DEEP_MINE), EntityPredicate.AndPredicate.ANY);
     }
 }

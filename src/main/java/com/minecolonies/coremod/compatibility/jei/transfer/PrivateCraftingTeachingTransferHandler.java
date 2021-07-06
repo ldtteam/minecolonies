@@ -99,22 +99,22 @@ public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHa
             final CraftingInventory craftMatrix = craftingGUIBuilding.getInv();
             if (craftingGUIBuilding.isComplete())
             {
-                craftMatrix.setInventorySlotContents(0, guiIngredients.get(0));
-                craftMatrix.setInventorySlotContents(1, guiIngredients.get(1));
-                craftMatrix.setInventorySlotContents(2, guiIngredients.get(2));
-                craftMatrix.setInventorySlotContents(3, guiIngredients.get(3));
-                craftMatrix.setInventorySlotContents(4, guiIngredients.get(4));
-                craftMatrix.setInventorySlotContents(5, guiIngredients.get(5));
-                craftMatrix.setInventorySlotContents(6, guiIngredients.get(6));
-                craftMatrix.setInventorySlotContents(7, guiIngredients.get(7));
-                craftMatrix.setInventorySlotContents(8, guiIngredients.get(8));
+                craftMatrix.setItem(0, guiIngredients.get(0));
+                craftMatrix.setItem(1, guiIngredients.get(1));
+                craftMatrix.setItem(2, guiIngredients.get(2));
+                craftMatrix.setItem(3, guiIngredients.get(3));
+                craftMatrix.setItem(4, guiIngredients.get(4));
+                craftMatrix.setItem(5, guiIngredients.get(5));
+                craftMatrix.setItem(6, guiIngredients.get(6));
+                craftMatrix.setItem(7, guiIngredients.get(7));
+                craftMatrix.setItem(8, guiIngredients.get(8));
             }
             else
             {
-                craftMatrix.setInventorySlotContents(0, guiIngredients.get(0));
-                craftMatrix.setInventorySlotContents(1, guiIngredients.get(1));
-                craftMatrix.setInventorySlotContents(2, guiIngredients.get(3));
-                craftMatrix.setInventorySlotContents(3, guiIngredients.get(4));
+                craftMatrix.setItem(0, guiIngredients.get(0));
+                craftMatrix.setItem(1, guiIngredients.get(1));
+                craftMatrix.setItem(2, guiIngredients.get(3));
+                craftMatrix.setItem(3, guiIngredients.get(4));
             }
 
             final TransferRecipeCraftingTeachingMessage message = new TransferRecipeCraftingTeachingMessage(guiIngredients, craftingGUIBuilding.isComplete());

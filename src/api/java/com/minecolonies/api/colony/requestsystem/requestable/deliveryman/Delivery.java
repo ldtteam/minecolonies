@@ -89,7 +89,7 @@ public class Delivery extends AbstractDeliverymanRequestable
     {
         controller.serialize(buffer, input.getStart());
         controller.serialize(buffer, input.getTarget());
-        buffer.writeItemStack(input.getStack());
+        buffer.writeItem(input.getStack());
         buffer.writeInt(input.getPriority());
     }
 
@@ -104,7 +104,7 @@ public class Delivery extends AbstractDeliverymanRequestable
     {
         final ILocation start = controller.deserialize(buffer);
         final ILocation target = controller.deserialize(buffer);
-        final ItemStack stack = buffer.readItemStack();
+        final ItemStack stack = buffer.readItem();
         final int priority = buffer.readInt();
 
         return new Delivery(start, target, stack, priority);

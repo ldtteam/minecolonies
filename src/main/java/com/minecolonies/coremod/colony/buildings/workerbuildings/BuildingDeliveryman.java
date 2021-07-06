@@ -118,7 +118,7 @@ public class BuildingDeliveryman extends AbstractBuildingWorker implements IBuil
                 return super.canEat(stack);
             }
             final IRequestable request = currentTask.getRequest();
-            if (request instanceof Delivery && ((Delivery) request).getStack().isItemEqual(stack))
+            if (request instanceof Delivery && ((Delivery) request).getStack().sameItem(stack))
             {
                 return false;
             }

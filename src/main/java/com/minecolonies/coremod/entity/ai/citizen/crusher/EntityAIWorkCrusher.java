@@ -118,7 +118,7 @@ public class EntityAIWorkCrusher extends AbstractEntityAICrafting<JobCrusher, Bu
                     currentRequest.addDelivery(currentRecipeStorage.getPrimaryOutput());
                 }
 
-                worker.swingArm(Hand.MAIN_HAND);
+                worker.swing(Hand.MAIN_HAND);
                 job.setCraftCounter(job.getCraftCounter() + 1);
                 currentRecipeStorage.fullfillRecipe(getLootContext(), ImmutableList.of(worker.getItemHandlerCitizen()));
 
@@ -146,9 +146,9 @@ public class EntityAIWorkCrusher extends AbstractEntityAICrafting<JobCrusher, Bu
         if (check == CRAFT)
         {
             Network.getNetwork().sendToTrackingEntity(new LocalizedParticleEffectMessage(currentRecipeStorage.getInput().get(0).getItemStack().copy(), crusherBuilding.getID()), worker);
-            Network.getNetwork().sendToTrackingEntity(new LocalizedParticleEffectMessage(currentRecipeStorage.getPrimaryOutput().copy(), crusherBuilding.getID().down()),
+            Network.getNetwork().sendToTrackingEntity(new LocalizedParticleEffectMessage(currentRecipeStorage.getPrimaryOutput().copy(), crusherBuilding.getID().below()),
               worker);
-            SoundUtils.playSoundAtCitizen(world, getOwnBuilding().getID(), SoundEvents.BLOCK_STONE_BREAK);
+            SoundUtils.playSoundAtCitizen(world, getOwnBuilding().getID(), SoundEvents.STONE_BREAK);
         }
         return getState();
     }
@@ -178,9 +178,9 @@ public class EntityAIWorkCrusher extends AbstractEntityAICrafting<JobCrusher, Bu
 
         job.setProgress(job.getProgress() + 1);
 
-        worker.setHeldItem(Hand.MAIN_HAND,
+        worker.setItemInHand(Hand.MAIN_HAND,
           currentRecipeStorage.getCleanedInput().get(worker.getRandom().nextInt(currentRecipeStorage.getCleanedInput().size())).getItemStack().copy());
-        worker.setHeldItem(Hand.OFF_HAND, currentRecipeStorage.getPrimaryOutput().copy());
+        worker.setItemInHand(Hand.OFF_HAND, currentRecipeStorage.getPrimaryOutput().copy());
         worker.getCitizenItemHandler().hitBlockWithToolInHand(getOwnBuilding().getPosition());
 
         currentRequest = job.getCurrentTask();

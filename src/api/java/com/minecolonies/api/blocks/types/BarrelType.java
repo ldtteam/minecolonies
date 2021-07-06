@@ -122,7 +122,7 @@ public enum BarrelType implements IStringSerializable
 
     @NotNull
     @Override
-    public String getString()
+    public String getSerializedName()
     {
         return this.name;
     }

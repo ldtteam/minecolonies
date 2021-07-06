@@ -51,8 +51,8 @@ public class UpdateClientWithRecipesMessage implements IMessage
         final int size = buf.readInt();
         for (int i = 0; i < size; i++)
         {
-            final ItemStack result = buf.readItemStack();
-            final RecipeStorage storage = StandardFactoryController.getInstance().deserialize(buf.readCompoundTag());
+            final ItemStack result = buf.readItem();
+            final RecipeStorage storage = StandardFactoryController.getInstance().deserialize(buf.readNbt());
             recipes.put(new ItemStorage(result), storage);
         }
     }
@@ -63,8 +63,8 @@ public class UpdateClientWithRecipesMessage implements IMessage
         buf.writeInt(recipes.size());
         for (final Map.Entry<ItemStorage, RecipeStorage> entry : recipes.entrySet())
         {
-            buf.writeItemStack(entry.getKey().getItemStack());
-            buf.writeCompoundTag(StandardFactoryController.getInstance().serialize(entry.getValue()));
+            buf.writeItem(entry.getKey().getItemStack());
+            buf.writeNbt(StandardFactoryController.getInstance().serialize(entry.getValue()));
         }
     }
 

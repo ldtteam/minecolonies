@@ -64,7 +64,7 @@ public class PlayMusicAtPosMessage implements IMessage
         super();
         this.soundEvent = event;
         this.pos = pos;
-        this.dimensionID = world.getDimensionKey();
+        this.dimensionID = world.dimension();
         this.volume = volume;
         this.pitch = pitch;
     }
@@ -74,7 +74,7 @@ public class PlayMusicAtPosMessage implements IMessage
     {
         buf.writeVarInt(Registry.SOUND_EVENT.getId(this.soundEvent));
         buf.writeBlockPos(pos);
-        buf.writeString(dimensionID.getLocation().toString());
+        buf.writeUtf(dimensionID.location().toString());
         buf.writeFloat(volume);
         buf.writeFloat(pitch);
     }
@@ -82,9 +82,9 @@ public class PlayMusicAtPosMessage implements IMessage
     @Override
     public void fromBytes(final PacketBuffer buf)
     {
-        this.soundEvent = Registry.SOUND_EVENT.getByValue(buf.readVarInt());
+        this.soundEvent = Registry.SOUND_EVENT.byId(buf.readVarInt());
         this.pos = buf.readBlockPos();
-        this.dimensionID = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(buf.readString(32767)));
+        this.dimensionID = RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)));
         this.volume = buf.readFloat();
         this.pitch = buf.readFloat();
     }
@@ -100,9 +100,9 @@ public class PlayMusicAtPosMessage implements IMessage
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
-        if (Minecraft.getInstance().world.getDimensionKey() == dimensionID)
+        if (Minecraft.getInstance().level.dimension() == dimensionID)
         {
-            Minecraft.getInstance().world.playSound(Minecraft.getInstance().player, pos.getX(), pos.getY(), pos.getZ(), soundEvent, SoundCategory.AMBIENT, volume, pitch);
+            Minecraft.getInstance().level.playSound(Minecraft.getInstance().player, pos.getX(), pos.getY(), pos.getZ(), soundEvent, SoundCategory.AMBIENT, volume, pitch);
         }
     }
 }

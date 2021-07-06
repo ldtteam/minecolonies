@@ -158,28 +158,28 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
             return START_WORKING;
         }
 
-        if (worker.isHandActive())
+        if (worker.isUsingItem())
         {
             WorkerUtil.faceBlock(currentShootingTarget, worker);
-            worker.swingArm(Hand.MAIN_HAND);
+            worker.swing(Hand.MAIN_HAND);
 
             final ArrowEntity arrow = ModEntities.MC_NORMAL_ARROW.create(world);
-            arrow.setDamage(0);
-            arrow.setShooter(worker);
-            arrow.setPosition(worker.getPosX(), worker.getPosY() + 1, worker.getPosZ());
-            final double xVector = currentShootingTarget.getX() - worker.getPosX();
-            final double yVector = currentShootingTarget.getY() - arrow.getPosY();
-            final double zVector = currentShootingTarget.getZ() - worker.getPosZ();
+            arrow.setBaseDamage(0);
+            arrow.setOwner(worker);
+            arrow.setPos(worker.getX(), worker.getY() + 1, worker.getZ());
+            final double xVector = currentShootingTarget.getX() - worker.getX();
+            final double yVector = currentShootingTarget.getY() - arrow.getY();
+            final double zVector = currentShootingTarget.getZ() - worker.getZ();
             final double distance = (double) MathHelper.sqrt(xVector * xVector + zVector * zVector);
 
             final double chance = HIT_CHANCE_DIVIDER / (getPrimarySkillLevel()/2.0 + 1);
             arrow.shoot(xVector, yVector + distance * RANGED_AIM_SLIGHTLY_HIGHER_MULTIPLIER, zVector, RANGED_VELOCITY, (float) chance);
 
-            worker.playSound(SoundEvents.ENTITY_SKELETON_SHOOT, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
-            worker.world.addEntity(arrow);
+            worker.playSound(SoundEvents.SKELETON_SHOOT, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
+            worker.level.addFreshEntity(arrow);
 
-            final double xDiff = currentShootingTarget.getX() - worker.getPosX();
-            final double zDiff = currentShootingTarget.getZ() - worker.getPosZ();
+            final double xDiff = currentShootingTarget.getX() - worker.getX();
+            final double zDiff = currentShootingTarget.getZ() - worker.getZ();
             final double goToX = xDiff > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
             final double goToZ = zDiff > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
             worker.move(MoverType.SELF, new Vector3d(goToX, 0, goToZ));
@@ -188,7 +188,7 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
             {
                 worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, 1);
             }
-            worker.resetActiveHand();
+            worker.stopUsingItem();
             this.incrementActionsDoneAndDecSaturation();
             arrowInProgress = arrow;
             currentAttackDelay = RANGED_ATTACK_DELAY_BASE;
@@ -198,7 +198,7 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
             reduceAttackDelay();
             if (currentAttackDelay <= 0)
             {
-                worker.setActiveHand(Hand.MAIN_HAND);
+                worker.startUsingItem(Hand.MAIN_HAND);
             }
             return ARCHER_SHOOT;
         }
@@ -209,7 +209,7 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
 
     private IAIState checkShot()
     {
-        if (arrowInProgress.getDistanceSq(new Vector3d(currentShootingTarget.getX(), currentShootingTarget.getY(), currentShootingTarget.getZ())) < MIN_DISTANCE_FOR_SUCCESS)
+        if (arrowInProgress.distanceToSqr(new Vector3d(currentShootingTarget.getX(), currentShootingTarget.getY(), currentShootingTarget.getZ())) < MIN_DISTANCE_FOR_SUCCESS)
         {
             worker.getCitizenExperienceHandler().addExperience(XP_PER_SUCCESSFUL_SHOT);
         }

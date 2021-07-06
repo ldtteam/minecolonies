@@ -28,7 +28,7 @@ public class RendererChiefNorsemen extends AbstractRendererNorsemen<AbstractEnti
 
     @NotNull
     @Override
-    public ResourceLocation getEntityTexture(final AbstractEntityNorsemen entity)
+    public ResourceLocation getTextureLocation(final AbstractEntityNorsemen entity)
     {
         return TEXTURE;
     }

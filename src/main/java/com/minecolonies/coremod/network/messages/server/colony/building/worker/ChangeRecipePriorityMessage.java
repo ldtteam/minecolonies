@@ -62,7 +62,7 @@ public class ChangeRecipePriorityMessage extends AbstractBuildingServerMessage<I
     {
         this.recipeLocation = buf.readInt();
         this.up = buf.readBoolean();
-        this.id = buf.readString(32767);
+        this.id = buf.readUtf(32767);
     }
 
     /**
@@ -75,7 +75,7 @@ public class ChangeRecipePriorityMessage extends AbstractBuildingServerMessage<I
     {
         buf.writeInt(this.recipeLocation);
         buf.writeBoolean(this.up);
-        buf.writeString(id);
+        buf.writeUtf(id);
     }
 
     @Override

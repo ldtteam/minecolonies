@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 public class ItemSantaHead extends ArmorItem
 {
     public static final IArmorMaterial SANTA_HAT =
-      new MineColoniesArmorMaterial("minecolonies:santa_hat", 500, new int[] {0, 0, 0, 0}, 5, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 0F, Ingredient.fromItems());
+      new MineColoniesArmorMaterial("minecolonies:santa_hat", 500, new int[] {0, 0, 0, 0}, 5, SoundEvents.ARMOR_EQUIP_LEATHER, 0F, Ingredient.EMPTY);
 
     /**
      * Constructor method for the Chief Sword Item
@@ -34,7 +34,7 @@ public class ItemSantaHead extends ArmorItem
       @NotNull final EquipmentSlotType equipmentSlotIn,
       final Item.Properties properties)
     {
-        super(materialIn, equipmentSlotIn, properties.group(tab));
+        super(materialIn, equipmentSlotIn, properties.tab(tab));
 
         setRegistryName(Constants.MOD_ID.toLowerCase() + ":" + name);
     }

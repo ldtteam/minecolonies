@@ -38,15 +38,15 @@ public class ClickGuiButtonTriggerMessage implements IMessage
     @Override
     public void toBytes(final PacketBuffer buf)
     {
-        buf.writeString(this.resource);
-        buf.writeString(this.buttonId);
+        buf.writeUtf(this.resource);
+        buf.writeUtf(this.buttonId);
     }
 
     @Override
     public void fromBytes(final PacketBuffer buf)
     {
-        this.resource = buf.readString(32767);
-        this.buttonId = buf.readString(32767);
+        this.resource = buf.readUtf(32767);
+        this.buttonId = buf.readUtf(32767);
     }
 
     @Nullable

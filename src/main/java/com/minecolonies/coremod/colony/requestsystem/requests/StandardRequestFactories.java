@@ -1012,7 +1012,7 @@ public final class StandardRequestFactories
         compound.put(NBT_CHILDREN, childrenCompound);
 
         final ListNBT deliveriesList = new ListNBT();
-        request.getDeliveries().forEach(itemStack -> deliveriesList.add(itemStack.write(new CompoundNBT())));
+        request.getDeliveries().forEach(itemStack -> deliveriesList.add(itemStack.save(new CompoundNBT())));
 
         compound.put(NBT_DELIVERIES, deliveriesList);
 
@@ -1050,7 +1050,7 @@ public final class StandardRequestFactories
         }
 
         packetBuffer.writeInt(request.getDeliveries().size());
-        request.getDeliveries().forEach(packetBuffer::writeItemStack);
+        request.getDeliveries().forEach(packetBuffer::writeItem);
     }
 
     public static <T extends IRequestable, R extends IRequest<T>> R deserializeFromNBT(
@@ -1075,21 +1075,21 @@ public final class StandardRequestFactories
 
         request.addChildren(childTokens);
 
-        if (compound.keySet().contains(NBT_PARENT))
+        if (compound.getAllKeys().contains(NBT_PARENT))
         {
             request.setParent(controller.deserialize(compound.getCompound(NBT_PARENT)));
         }
 
-        if (compound.keySet().contains(NBT_RESULT))
+        if (compound.getAllKeys().contains(NBT_RESULT))
         {
             request.setResult(typeDeserialization.apply(controller, compound.getCompound(NBT_RESULT)));
         }
 
-        if (compound.keySet().contains(NBT_DELIVERIES))
+        if (compound.getAllKeys().contains(NBT_DELIVERIES))
         {
             final ImmutableList.Builder<ItemStack> stackBuilder = ImmutableList.builder();
             final ListNBT deliveriesList = compound.getList(NBT_DELIVERIES, Constants.NBT.TAG_COMPOUND);
-            NBTUtils.streamCompound(deliveriesList).forEach(itemStackCompound -> stackBuilder.add(ItemStack.read(itemStackCompound)));
+            NBTUtils.streamCompound(deliveriesList).forEach(itemStackCompound -> stackBuilder.add(ItemStack.of(itemStackCompound)));
 
             request.overrideCurrentDeliveries(stackBuilder.build());
         }
@@ -1132,7 +1132,7 @@ public final class StandardRequestFactories
         final int size2 = buffer.readInt();
         for (int i = 0; i < size2; i++)
         {
-            deliveries.add(buffer.readItemStack());
+            deliveries.add(buffer.readItem());
         }
 
         request.overrideCurrentDeliveries(ImmutableList.copyOf(deliveries));
