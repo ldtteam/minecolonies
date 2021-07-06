@@ -17,6 +17,8 @@ import java.util.List;
 
 import static com.ldtteam.structurize.placement.handlers.placement.PlacementHandlers.handleTileEntityPlacement;
 
+import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler.ActionProcessingResult;
+
 public class BuildingBarracksTowerSub implements IPlacementHandler
 {
     @Override
@@ -40,7 +42,7 @@ public class BuildingBarracksTowerSub implements IPlacementHandler
             return ActionProcessingResult.PASS;
         }
 
-        if (!world.setBlockState(pos, blockState, com.ldtteam.structurize.api.util.constant.Constants.UPDATE_FLAG))
+        if (!world.setBlock(pos, blockState, com.ldtteam.structurize.api.util.constant.Constants.UPDATE_FLAG))
         {
             return ActionProcessingResult.PASS;
         }

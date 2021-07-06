@@ -83,7 +83,7 @@ public class GuardTaskSetting extends StringSettingWithDesc
             mineLabel.setVisible(true);
             if (((AbstractBuildingGuards.View) building).getMinePos() != null)
             {
-                mineLabel.setText(new TranslationTextComponent("com.minecolonies.coremod.gui.worherhuts.patrollingmine", ((AbstractBuildingGuards.View) building).getMinePos().getCoordinatesAsString()));
+                mineLabel.setText(new TranslationTextComponent("com.minecolonies.coremod.gui.worherhuts.patrollingmine", ((AbstractBuildingGuards.View) building).getMinePos().toShortString()));
             }
             else
             {

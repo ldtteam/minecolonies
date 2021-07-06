@@ -59,7 +59,7 @@ public class EgyptianRaidEvent extends HordeRaidEvent
     protected void updateRaidBar()
     {
         super.updateRaidBar();
-        raidBar.setDarkenSky(true);
+        raidBar.setDarkenScreen(true);
     }
 
     @Override
@@ -85,19 +85,19 @@ public class EgyptianRaidEvent extends HordeRaidEvent
 
         if (entity instanceof EntityPharao && boss.keySet().size() < horde.numberOfBosses)
         {
-            boss.put(entity, entity.getUniqueID());
+            boss.put(entity, entity.getUUID());
             return;
         }
 
         if (entity instanceof EntityArcherMummy && archers.keySet().size() < horde.numberOfArchers)
         {
-            archers.put(entity, entity.getUniqueID());
+            archers.put(entity, entity.getUUID());
             return;
         }
 
         if (entity instanceof EntityMummy && normal.keySet().size() < horde.numberOfRaiders)
         {
-            normal.put(entity, entity.getUniqueID());
+            normal.put(entity, entity.getUUID());
             return;
         }
 

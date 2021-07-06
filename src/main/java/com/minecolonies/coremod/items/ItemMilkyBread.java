@@ -30,8 +30,8 @@ public class ItemMilkyBread extends AbstractItemMinecolonies
      * Setup the food definition
      */
     private static Food milkBread = (new Food.Builder())
-                                        .hunger(5)
-                                        .saturation(0.6F)
+                                        .nutrition(5)
+                                        .saturationMod(0.6F)
                                         .build(); 
 
     /**
@@ -41,31 +41,31 @@ public class ItemMilkyBread extends AbstractItemMinecolonies
      */
     public ItemMilkyBread(final Properties properties)
     {
-        super("milky_bread", properties.maxStackSize(STACKSIZE).group(ModCreativeTabs.MINECOLONIES).food(milkBread));
+        super("milky_bread", properties.stacksTo(STACKSIZE).tab(ModCreativeTabs.MINECOLONIES).food(milkBread));
     }
 
    /**
     * Remove the potion effects like Milk
     */
     @Override
-    public ItemStack onItemUseFinish(ItemStack stack, World worldIn, LivingEntity entityLiving) {
+    public ItemStack finishUsingItem(ItemStack stack, World worldIn, LivingEntity entityLiving) {
         
-        if (!worldIn.isRemote)
+        if (!worldIn.isClientSide)
         {
             entityLiving.curePotionEffects(new ItemStack(Items.MILK_BUCKET));
         }
 
-        return super.onItemUseFinish(stack, worldIn, entityLiving);
+        return super.finishUsingItem(stack, worldIn, entityLiving);
     }    
 
     @Override
-    public void addInformation(
+    public void appendHoverText(
     @NotNull final ItemStack stack, @Nullable final World worldIn, @NotNull final List<ITextComponent> tooltip, @NotNull final ITooltipFlag flagIn)
     {
         final IFormattableTextComponent guiHint = LanguageHandler.buildChatComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_MILKY_BREAD_TOOLTIP_GUI);
-        guiHint.setStyle(Style.EMPTY.setFormatting(TextFormatting.GRAY));
+        guiHint.setStyle(Style.EMPTY.withColor(TextFormatting.GRAY));
         tooltip.add(guiHint);
 
-        super.addInformation(stack, worldIn, tooltip, flagIn);
+        super.appendHoverText(stack, worldIn, tooltip, flagIn);
     }
 }

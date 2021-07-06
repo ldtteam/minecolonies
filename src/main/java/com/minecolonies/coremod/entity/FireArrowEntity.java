@@ -21,15 +21,15 @@ public class FireArrowEntity extends CustomArrowEntity
     }
 
     @Override
-    public void setShooter(@Nullable final Entity shooter)
+    public void setOwner(@Nullable final Entity shooter)
     {
-        super.setShooter(shooter);
-        this.setPosition(shooter.getPosX(), shooter.getPosYEye() - (double) 0.1F, shooter.getPosZ());
+        super.setOwner(shooter);
+        this.setPos(shooter.getX(), shooter.getEyeY() - (double) 0.1F, shooter.getZ());
     }
 
     @NotNull
     @Override
-    protected ItemStack getArrowStack()
+    protected ItemStack getPickupItem()
     {
         return new ItemStack(ModItems.firearrow, 1);
     }

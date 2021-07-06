@@ -135,7 +135,7 @@ public class RequestBasedInteraction extends ServerCitizenInteraction
     @OnlyIn(Dist.CLIENT)
     public void onWindowOpened(final Window window, final ICitizenDataView dataView)
     {
-        final IColony colony = IColonyManager.getInstance().getColonyView(dataView.getColonyId(), Minecraft.getInstance().player.world.getDimensionKey());
+        final IColony colony = IColonyManager.getInstance().getColonyView(dataView.getColonyId(), Minecraft.getInstance().player.level.dimension());
 
         if (colony != null)
         {
@@ -168,7 +168,7 @@ public class RequestBasedInteraction extends ServerCitizenInteraction
     {
         if (response.equals(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.fulfill")))
         {
-            final IColony colony = IColonyManager.getInstance().getColonyView(data.getColonyId(), player.world.getDimensionKey());
+            final IColony colony = IColonyManager.getInstance().getColonyView(data.getColonyId(), player.level.dimension());
 
             if (colony != null)
             {

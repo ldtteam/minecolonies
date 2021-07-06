@@ -238,10 +238,10 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         buf.writeInt(storages.size());
         for (final IRecipeStorage storage : storages)
         {
-            buf.writeCompoundTag(StandardFactoryController.getInstance().serialize(storage));
+            buf.writeNbt(StandardFactoryController.getInstance().serialize(storage));
         }
         buf.writeInt(getMaxRecipes());
-        buf.writeString(getId());
+        buf.writeUtf(getId());
         buf.writeBoolean(isVisible());
     }
 
@@ -272,7 +272,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
 
         return new HashMap<>(requiredItems.entrySet()
                                .stream()
-                               .collect(Collectors.toMap(key -> (stack -> stack.isItemEqualIgnoreDurability(key.getKey().getItemStack())), Map.Entry::getValue)));
+                               .collect(Collectors.toMap(key -> (stack -> stack.sameItemStackIgnoreDurability(key.getKey().getItemStack())), Map.Entry::getValue)));
     }
 
     @Override
@@ -504,13 +504,13 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
                 // Expected parameters for RECIPE_IMPROVED are Job, Result, Ingredient, Citizen
                 final TranslationTextComponent message = new TranslationTextComponent(RECIPE_IMPROVED + citizen.getRandom().nextInt(3),
                   new TranslationTextComponent(citizen.getJob().getName().toLowerCase()),
-                  recipe.getPrimaryOutput().getDisplayName(),
-                  reducedItem.getItemStack().getDisplayName(),
+                  recipe.getPrimaryOutput().getHoverName(),
+                  reducedItem.getItemStack().getHoverName(),
                   citizen.getName());
 
                 for(PlayerEntity player : building.getColony().getMessagePlayerEntities())
                 {
-                    player.sendMessage(message, player.getUniqueID());
+                    player.sendMessage(message, player.getUUID());
                 }
             }
         }
@@ -644,13 +644,13 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         final int luck = (int)(((primarySkill + 1) * 2) - Math.pow((primarySkill + 1 ) / 10.0, 2));
 
         LootContext.Builder builder =  (new LootContext.Builder((ServerWorld) building.getColony().getWorld())
-                                          .withParameter(LootParameters.field_237457_g_, worker.getPositionVec())
+                                          .withParameter(LootParameters.ORIGIN, worker.position())
                                           .withParameter(LootParameters.THIS_ENTITY, worker)
-                                          .withParameter(LootParameters.TOOL, worker.getHeldItemMainhand())
+                                          .withParameter(LootParameters.TOOL, worker.getMainHandItem())
                                           .withRandom(worker.getRandom())
                                           .withLuck((float) luck));
 
-        return storage.fullfillRecipe(builder.build(RecipeStorage.recipeLootParameters), handlers);
+        return storage.fullfillRecipe(builder.create(RecipeStorage.recipeLootParameters), handlers);
     }
 
     @Override

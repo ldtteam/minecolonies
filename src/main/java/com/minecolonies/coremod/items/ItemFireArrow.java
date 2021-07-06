@@ -24,7 +24,7 @@ public class ItemFireArrow extends ArrowItem
      */
     public ItemFireArrow(final Properties properties)
     {
-        super(properties.group(ModCreativeTabs.MINECOLONIES));
+        super(properties.tab(ModCreativeTabs.MINECOLONIES));
         setRegistryName("firearrow");
     }
 
@@ -39,7 +39,7 @@ public class ItemFireArrow extends ArrowItem
     public AbstractArrowEntity createArrow(@NotNull final World worldIn, @NotNull final ItemStack stack, final LivingEntity shooter)
     {
         AbstractArrowEntity entity = ModEntities.FIREARROW.create(worldIn);
-        entity.setShooter(shooter);
+        entity.setOwner(shooter);
         return entity;
     }
 

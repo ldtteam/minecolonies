@@ -71,7 +71,7 @@ public final class Utils
                     {
                         @NotNull final BlockPos tempCoords = new BlockPos(i, j, k);
 
-                        if (world.getBlockState(tempCoords.down()).getMaterial().isSolid() || world.getBlockState(tempCoords.down(2)).getMaterial().isSolid())
+                        if (world.getBlockState(tempCoords.below()).getMaterial().isSolid() || world.getBlockState(tempCoords.below(2)).getMaterial().isSolid())
                         {
                             final double distance = BlockPosUtil.getDistanceSquared(tempCoords, point);
                             if (closestCoords == null || distance < minDistance)
@@ -103,7 +103,7 @@ public final class Utils
         for (int dy = 0; dy < height; dy++)
         {
             final BlockState state = world.getBlockState(new BlockPos(x, y + dy, z));
-            if (!arrayContains(blocks, state.getBlock()) && state.getMaterial().blocksMovement())
+            if (!arrayContains(blocks, state.getBlock()) && state.getMaterial().blocksMotion())
             {
                 return false;
             }

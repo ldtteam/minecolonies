@@ -12,7 +12,7 @@ public class BlockHutCrusher extends AbstractBlockHut<BlockHutCrusher>
 {
     @NotNull
     @Override
-    public String getName()
+    public String getHutName()
     {
         return "blockhutcrusher";
     }

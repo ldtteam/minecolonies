@@ -14,6 +14,8 @@ import java.util.EnumSet;
 
 import static com.minecolonies.api.research.util.ResearchConstants.MECHANIC_ENHANCED_GATES;
 
+import net.minecraft.entity.ai.goal.Goal.Flag;
+
 /**
  * Break door entity AI with mutex.
  */
@@ -37,76 +39,76 @@ public class EntityAIBreakDoor extends BreakDoorGoal
     public EntityAIBreakDoor(final MobEntity entityIn)
     {
         super(entityIn, difficulty -> difficulty.getId() > 0);
-        setMutexFlags(EnumSet.of(Flag.MOVE));
+        setFlags(EnumSet.of(Flag.MOVE));
     }
 
     @Override
-    public boolean shouldContinueExecuting()
+    public boolean canContinueToUse()
     {
-        return super.shouldContinueExecuting() && !entity.world.isAirBlock(doorPosition);
+        return super.canContinueToUse() && !mob.level.isEmptyBlock(doorPos);
     }
 
     @Override
-    public void startExecuting()
+    public void start()
     {
-        super.startExecuting();
-        if (!prevDoorPos.equals(doorPosition))
+        super.start();
+        if (!prevDoorPos.equals(doorPos))
         {
-            this.breakingTime = 0;
+            this.breakTime = 0;
         }
-        prevDoorPos = doorPosition;
-        hardness = (int) (1 + entity.world.getBlockState(doorPosition).getBlockHardness(entity.world, doorPosition));
+        prevDoorPos = doorPos;
+        hardness = (int) (1 + mob.level.getBlockState(doorPos).getDestroySpeed(mob.level, doorPos));
 
         // No stuck during door break
-        if (entity instanceof AbstractEntityMinecoloniesMob)
+        if (mob instanceof AbstractEntityMinecoloniesMob)
         {
-            ((AbstractEntityMinecoloniesMob) entity).setCanBeStuck(false);
+            ((AbstractEntityMinecoloniesMob) mob).setCanBeStuck(false);
         }
     }
 
-    public void resetTask()
+    public void stop()
     {
-        super.resetTask();
-        this.entity.world.sendBlockBreakProgress(this.entity.getEntityId(), this.doorPosition, -1);
-        if (entity instanceof AbstractEntityMinecoloniesMob)
+        super.stop();
+        this.mob.level.destroyBlockProgress(this.mob.getId(), this.doorPos, -1);
+        if (mob instanceof AbstractEntityMinecoloniesMob)
         {
-            ((AbstractEntityMinecoloniesMob) entity).setCanBeStuck(true);
+            ((AbstractEntityMinecoloniesMob) mob).setCanBeStuck(true);
         }
     }
 
     @Override
     public void tick()
     {
-        if (entity.getEntityWorld().getDifficulty().getId() < 2 || !MineColonies.getConfig().getServer().shouldRaidersBreakDoors.get())
+        if (mob.getCommandSenderWorld().getDifficulty().getId() < 2 || !MineColonies.getConfig().getServer().shouldRaidersBreakDoors.get())
         {
-            breakingTime = 0;
+            breakTime = 0;
         }
 
         // Only advances breaking time in relation to hardness
-        if (this.entity.getRNG().nextInt(breakChance) != 0)
+        if (this.mob.getRandom().nextInt(breakChance) != 0)
         {
-            this.breakingTime--;
+            this.breakTime--;
         }
         else
         {
             int fasterBreakPerXNearby = 5;
 
-            if (entity instanceof AbstractEntityMinecoloniesMob && !entity.world.isRemote())
+            if (mob instanceof AbstractEntityMinecoloniesMob && !mob.level.isClientSide())
             {
-                final IColony colony = ((AbstractEntityMinecoloniesMob) entity).getColony();
+                final IColony colony = ((AbstractEntityMinecoloniesMob) mob).getColony();
 
                 fasterBreakPerXNearby += colony.getResearchManager().getResearchEffects().getEffectStrength(MECHANIC_ENHANCED_GATES);
             }
             breakChance = Math.max(1,
-              hardness / (1 + (entity.world.getLoadedEntitiesWithinAABB(AbstractEntityMinecoloniesMob.class, entity.getBoundingBox().grow(5)).size() / fasterBreakPerXNearby)));
+              hardness / (1 + (mob.level.getLoadedEntitiesOfClass(AbstractEntityMinecoloniesMob.class, mob.getBoundingBox().inflate(5)).size() / fasterBreakPerXNearby)));
         }
 
-        if (this.breakingTime == this.func_220697_f() - 1)
+        if (this.breakTime == this.getDoorBreakTime() - 1)
         {
-            final BlockState toBreak = entity.world.getBlockState(doorPosition);
+            final BlockState toBreak = mob.level.getBlockState(doorPos);
             if (toBreak.getBlock() instanceof AbstractBlockGate)
             {
-                ((AbstractBlockGate) toBreak.getBlock()).removeGate(entity.world, doorPosition, toBreak.get(BlockStateProperties.HORIZONTAL_FACING).rotateY());
+                ((AbstractBlockGate) toBreak.getBlock()).removeGate(mob.level, doorPos, toBreak.getValue(BlockStateProperties.HORIZONTAL_FACING).getClockWise());
             }
         }
 

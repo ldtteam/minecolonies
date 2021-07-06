@@ -6,6 +6,8 @@ import net.minecraft.entity.ai.goal.Goal;
 
 import java.util.EnumSet;
 
+import net.minecraft.entity.ai.goal.Goal.Flag;
+
 /**
  * Entity action to wander randomly around.
  */
@@ -28,16 +30,16 @@ public class EntityAICitizenWander extends Goal
         this.citizen = citizen;
         this.speed = speed;
         this.randomModifier = randomModifier;
-        this.setMutexFlags(EnumSet.of(Flag.MOVE));
+        this.setFlags(EnumSet.of(Flag.MOVE));
     }
 
     /**
      * {@inheritDoc} Returns whether the Goal should begin execution. True when age less than 100, when a random (120) is chosen correctly, and when a citizen is nearby.
      */
     @Override
-    public boolean shouldExecute()
+    public boolean canUse()
     {
-        return !isTooOld() && !checkForRandom() && citizen.getDesiredActivity() != DesiredActivity.SLEEP && citizen.getNavigator().noPath();
+        return !isTooOld() && !checkForRandom() && citizen.getDesiredActivity() != DesiredActivity.SLEEP && citizen.getNavigation().isDone();
     }
 
     /**
@@ -47,34 +49,34 @@ public class EntityAICitizenWander extends Goal
      */
     private boolean isTooOld()
     {
-        return citizen.getGrowingAge() >= 100;
+        return citizen.getAge() >= 100;
     }
 
     private boolean checkForRandom()
     {
-        return citizen.getRNG().nextInt((int) (randomModifier * 120.0D)) != 0;
+        return citizen.getRandom().nextInt((int) (randomModifier * 120.0D)) != 0;
     }
 
     /**
      * {@inheritDoc} Returns whether an in-progress Goal should continue executing.
      */
     @Override
-    public boolean shouldContinueExecuting()
+    public boolean canContinueToUse()
     {
-        return !citizen.getNavigator().noPath();
+        return !citizen.getNavigation().isDone();
     }
 
     /**
      * {@inheritDoc} Execute a one shot task or start executing a continuous task.
      */
     @Override
-    public void startExecuting()
+    public void start()
     {
-        citizen.getNavigator().moveToRandomPos(10, this.speed);
+        citizen.getNavigation().moveToRandomPos(10, this.speed);
     }
 
     @Override
-    public void resetTask()
+    public void stop()
     {
         citizen.getCitizenData().setVisibleStatus(null);
     }

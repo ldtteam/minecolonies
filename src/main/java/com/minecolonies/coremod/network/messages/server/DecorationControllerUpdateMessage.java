@@ -57,7 +57,7 @@ public class DecorationControllerUpdateMessage implements IMessage
     @Override
     public void fromBytes(@NotNull final PacketBuffer buf)
     {
-        this.name = buf.readString(32767);
+        this.name = buf.readUtf(32767);
         this.pos = buf.readBlockPos();
         this.level = buf.readInt();
     }
@@ -65,7 +65,7 @@ public class DecorationControllerUpdateMessage implements IMessage
     @Override
     public void toBytes(@NotNull final PacketBuffer buf)
     {
-        buf.writeString(this.name);
+        buf.writeUtf(this.name);
         buf.writeBlockPos(this.pos);
         buf.writeInt(this.level);
     }
@@ -81,13 +81,13 @@ public class DecorationControllerUpdateMessage implements IMessage
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
         final PlayerEntity player = ctxIn.getSender();
-        final TileEntity tileEntity = player.getEntityWorld().getTileEntity(pos);
+        final TileEntity tileEntity = player.getCommandSenderWorld().getBlockEntity(pos);
         if (tileEntity instanceof TileEntityDecorationController)
         {
-            final BlockState state = player.getEntityWorld().getBlockState(pos);
-            final Direction basicFacing = state.get(BlockDecorationController.HORIZONTAL_FACING);
+            final BlockState state = player.getCommandSenderWorld().getBlockState(pos);
+            final Direction basicFacing = state.getValue(BlockDecorationController.FACING);
             ((TileEntityDecorationController) tileEntity).setSchematicName(name + level);
-            ((TileEntityDecorationController) tileEntity).setLevel(level);
+            ((TileEntityDecorationController) tileEntity).setTier(level);
             ((TileEntityDecorationController) tileEntity).setBasicFacing(basicFacing);
         }
     }

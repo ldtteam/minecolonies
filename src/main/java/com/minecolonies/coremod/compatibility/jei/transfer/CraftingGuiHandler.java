@@ -55,27 +55,27 @@ public class CraftingGuiHandler extends AbstractTeachingGuiHandler<WindowCraftin
     @Override
     protected boolean isSupportedSlot(@NotNull Slot slot)
     {
-        return slot.inventory instanceof CraftingInventory;
+        return slot.container instanceof CraftingInventory;
     }
 
     @Override
     protected void updateServer(@NotNull final WindowCrafting gui)
     {
         final Map<Integer, ItemStack> matrix = new HashMap<>();
-        final CraftingInventory inventory = gui.getContainer().getInv();
+        final CraftingInventory inventory = gui.getMenu().getInv();
         if (gui.isCompleteCrafting())
         {
             for (int i = 0; i < 9; ++i)
             {
-                matrix.put(i, inventory.getStackInSlot(i));
+                matrix.put(i, inventory.getItem(i));
             }
         }
         else
         {
-            matrix.put(0, inventory.getStackInSlot(0));
-            matrix.put(1, inventory.getStackInSlot(1));
-            matrix.put(3, inventory.getStackInSlot(2));
-            matrix.put(4, inventory.getStackInSlot(3));
+            matrix.put(0, inventory.getItem(0));
+            matrix.put(1, inventory.getItem(1));
+            matrix.put(3, inventory.getItem(2));
+            matrix.put(4, inventory.getItem(3));
         }
 
         final TransferRecipeCraftingTeachingMessage message = new TransferRecipeCraftingTeachingMessage(matrix, gui.isCompleteCrafting());

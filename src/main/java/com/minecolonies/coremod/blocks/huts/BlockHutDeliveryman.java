@@ -19,7 +19,7 @@ public class BlockHutDeliveryman extends AbstractBlockHut<BlockHutDeliveryman>
 
     @NotNull
     @Override
-    public String getName()
+    public String getHutName()
     {
         return "blockhutdeliveryman";
     }

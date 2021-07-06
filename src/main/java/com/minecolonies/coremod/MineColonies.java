@@ -140,7 +140,7 @@ public class MineColonies
     @OnlyIn(Dist.CLIENT)
     public static void onStitch(final TextureStitchEvent.Pre event)
     {
-        if (!event.getMap().getTextureLocation().equals(AtlasTexture.LOCATION_BLOCKS_TEXTURE))
+        if (!event.getMap().location().equals(AtlasTexture.LOCATION_BLOCKS))
         {
             return;
         }
@@ -162,24 +162,24 @@ public class MineColonies
         CapabilityManager.INSTANCE.register(IChunkmanagerCapability.class, new IChunkmanagerCapability.Storage(), IChunkmanagerCapability.Impl::new);
         CapabilityManager.INSTANCE.register(IColonyManagerCapability.class, new IColonyManagerCapability.Storage(), IColonyManagerCapability.Impl::new);
         DeferredWorkQueue.runLater(() -> {
-            GlobalEntityTypeAttributes.put(ModEntities.CITIZEN, AbstractEntityCitizen.getDefaultAttributes().create());
-            GlobalEntityTypeAttributes.put(ModEntities.VISITOR, AbstractEntityCitizen.getDefaultAttributes().create());
-            GlobalEntityTypeAttributes.put(ModEntities.MERCENARY, EntityMercenary.getDefaultAttributes().create());
-            GlobalEntityTypeAttributes.put(ModEntities.MERCENARY, EntityMercenary.getDefaultAttributes().create());
-            GlobalEntityTypeAttributes.put(ModEntities.BARBARIAN, AbstractEntityMinecoloniesMob.getDefaultAttributes().create());
-            GlobalEntityTypeAttributes.put(ModEntities.ARCHERBARBARIAN, AbstractEntityMinecoloniesMob.getDefaultAttributes().create());
-            GlobalEntityTypeAttributes.put(ModEntities.CHIEFBARBARIAN, AbstractEntityMinecoloniesMob.getDefaultAttributes().create());
-            GlobalEntityTypeAttributes.put(ModEntities.PHARAO, AbstractEntityMinecoloniesMob.getDefaultAttributes().create());
-            GlobalEntityTypeAttributes.put(ModEntities.MUMMY, AbstractEntityMinecoloniesMob.getDefaultAttributes().create());
-            GlobalEntityTypeAttributes.put(ModEntities.ARCHERMUMMY, AbstractEntityMinecoloniesMob.getDefaultAttributes().create());
-            GlobalEntityTypeAttributes.put(ModEntities.PIRATE, AbstractEntityMinecoloniesMob.getDefaultAttributes().create());
-            GlobalEntityTypeAttributes.put(ModEntities.ARCHERPIRATE, AbstractEntityMinecoloniesMob.getDefaultAttributes().create());
-            GlobalEntityTypeAttributes.put(ModEntities.CHIEFPIRATE, AbstractEntityMinecoloniesMob.getDefaultAttributes().create());
-            GlobalEntityTypeAttributes.put(ModEntities.AMAZON, AbstractEntityMinecoloniesMob.getDefaultAttributes().create());
-            GlobalEntityTypeAttributes.put(ModEntities.AMAZONCHIEF, AbstractEntityMinecoloniesMob.getDefaultAttributes().create());
-            GlobalEntityTypeAttributes.put(ModEntities.NORSEMEN_ARCHER, AbstractEntityMinecoloniesMob.getDefaultAttributes().create());
-            GlobalEntityTypeAttributes.put(ModEntities.NORSEMEN_CHIEF, AbstractEntityMinecoloniesMob.getDefaultAttributes().create());
-            GlobalEntityTypeAttributes.put(ModEntities.SHIELDMAIDEN, AbstractEntityMinecoloniesMob.getDefaultAttributes().create());
+            GlobalEntityTypeAttributes.put(ModEntities.CITIZEN, AbstractEntityCitizen.getDefaultAttributes().build());
+            GlobalEntityTypeAttributes.put(ModEntities.VISITOR, AbstractEntityCitizen.getDefaultAttributes().build());
+            GlobalEntityTypeAttributes.put(ModEntities.MERCENARY, EntityMercenary.getDefaultAttributes().build());
+            GlobalEntityTypeAttributes.put(ModEntities.MERCENARY, EntityMercenary.getDefaultAttributes().build());
+            GlobalEntityTypeAttributes.put(ModEntities.BARBARIAN, AbstractEntityMinecoloniesMob.getDefaultAttributes().build());
+            GlobalEntityTypeAttributes.put(ModEntities.ARCHERBARBARIAN, AbstractEntityMinecoloniesMob.getDefaultAttributes().build());
+            GlobalEntityTypeAttributes.put(ModEntities.CHIEFBARBARIAN, AbstractEntityMinecoloniesMob.getDefaultAttributes().build());
+            GlobalEntityTypeAttributes.put(ModEntities.PHARAO, AbstractEntityMinecoloniesMob.getDefaultAttributes().build());
+            GlobalEntityTypeAttributes.put(ModEntities.MUMMY, AbstractEntityMinecoloniesMob.getDefaultAttributes().build());
+            GlobalEntityTypeAttributes.put(ModEntities.ARCHERMUMMY, AbstractEntityMinecoloniesMob.getDefaultAttributes().build());
+            GlobalEntityTypeAttributes.put(ModEntities.PIRATE, AbstractEntityMinecoloniesMob.getDefaultAttributes().build());
+            GlobalEntityTypeAttributes.put(ModEntities.ARCHERPIRATE, AbstractEntityMinecoloniesMob.getDefaultAttributes().build());
+            GlobalEntityTypeAttributes.put(ModEntities.CHIEFPIRATE, AbstractEntityMinecoloniesMob.getDefaultAttributes().build());
+            GlobalEntityTypeAttributes.put(ModEntities.AMAZON, AbstractEntityMinecoloniesMob.getDefaultAttributes().build());
+            GlobalEntityTypeAttributes.put(ModEntities.AMAZONCHIEF, AbstractEntityMinecoloniesMob.getDefaultAttributes().build());
+            GlobalEntityTypeAttributes.put(ModEntities.NORSEMEN_ARCHER, AbstractEntityMinecoloniesMob.getDefaultAttributes().build());
+            GlobalEntityTypeAttributes.put(ModEntities.NORSEMEN_CHIEF, AbstractEntityMinecoloniesMob.getDefaultAttributes().build());
+            GlobalEntityTypeAttributes.put(ModEntities.SHIELDMAIDEN, AbstractEntityMinecoloniesMob.getDefaultAttributes().build());
         });
 
         Network.getNetwork().registerCommonMessages();
@@ -192,7 +192,7 @@ public class MineColonies
     @SubscribeEvent
     public static void registerAttributes(RegistryEvent.Register<Attribute> event)
     {
-        RaiderMobUtils.MOB_ATTACK_DAMAGE.setRegistryName(Constants.MOD_ID, RaiderMobUtils.MOB_ATTACK_DAMAGE.getAttributeName());
+        RaiderMobUtils.MOB_ATTACK_DAMAGE.setRegistryName(Constants.MOD_ID, RaiderMobUtils.MOB_ATTACK_DAMAGE.getDescriptionId());
         event.getRegistry().register(RaiderMobUtils.MOB_ATTACK_DAMAGE);
     }
 
@@ -263,14 +263,14 @@ public class MineColonies
         ClientRegistry.bindTileEntityRenderer(MinecoloniesTileEntities.NAMED_GRAVE, TileEntityNamedGraveRenderer::new);
 
         Arrays.stream(ModBlocks.getHuts())
-          .forEach(hut -> RenderTypeLookup.setRenderLayer(hut, renderType -> renderType.equals(RenderType.getCutout()) || renderType.equals(RenderType.getSolid())));
-        RenderTypeLookup.setRenderLayer(ModBlocks.blockScarecrow, RenderType.getCutout());
-        RenderTypeLookup.setRenderLayer(ModBlocks.blockRack, RenderType.getCutout());
-        RenderTypeLookup.setRenderLayer(ModBlocks.blockDecorationPlaceholder, RenderType.getCutout());
-        RenderTypeLookup.setRenderLayer(ModBlocks.blockCompostedDirt, RenderType.getCutout());
-        RenderTypeLookup.setRenderLayer(ModBlocks.blockBarrel, RenderType.getCutout());
-        RenderTypeLookup.setRenderLayer(ModBlocks.blockBarracksTowerSubstitution, RenderType.getCutout());
-        RenderTypeLookup.setRenderLayer(ModBlocks.blockWayPoint, RenderType.getCutout());
+          .forEach(hut -> RenderTypeLookup.setRenderLayer(hut, renderType -> renderType.equals(RenderType.cutout()) || renderType.equals(RenderType.solid())));
+        RenderTypeLookup.setRenderLayer(ModBlocks.blockScarecrow, RenderType.cutout());
+        RenderTypeLookup.setRenderLayer(ModBlocks.blockRack, RenderType.cutout());
+        RenderTypeLookup.setRenderLayer(ModBlocks.blockDecorationPlaceholder, RenderType.cutout());
+        RenderTypeLookup.setRenderLayer(ModBlocks.blockCompostedDirt, RenderType.cutout());
+        RenderTypeLookup.setRenderLayer(ModBlocks.blockBarrel, RenderType.cutout());
+        RenderTypeLookup.setRenderLayer(ModBlocks.blockBarracksTowerSubstitution, RenderType.cutout());
+        RenderTypeLookup.setRenderLayer(ModBlocks.blockWayPoint, RenderType.cutout());
     }
 
     /**

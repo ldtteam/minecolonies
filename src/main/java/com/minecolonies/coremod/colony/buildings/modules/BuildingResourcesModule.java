@@ -78,7 +78,7 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
         double qty = 0;
         for (@NotNull final BuildingBuilderResource resource : neededResources.values())
         {
-            buf.writeItemStack(resource.getItemStack());
+            buf.writeItem(resource.getItemStack());
             buf.writeInt(resource.getAvailable());
             buf.writeInt(resource.getAmount());
             qty += resource.getAmount();
@@ -92,7 +92,7 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
             if (workOrderBuildDecoration != null)
             {
                 final String name = workOrderBuildDecoration.getDisplayName();
-                buf.writeString(name);
+                buf.writeUtf(name);
 
                 buf.writeDouble(workOrderBuildDecoration.getAmountOfRes() == 0 ? 0 : qty / workOrderBuildDecoration.getAmountOfRes());
                 buf.writeInt(totalStages);
@@ -101,7 +101,7 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
             }
         }
 
-        buf.writeString("");
+        buf.writeUtf("");
         buf.writeDouble(0.0);
         buf.writeInt(0);
         buf.writeInt(0);
@@ -188,7 +188,7 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
             return;
         }
         final int hashCode = res.hasTag() ? res.getTag().hashCode() : 0;
-        final String key = res.getTranslationKey() + "-" + hashCode;
+        final String key = res.getDescriptionId() + "-" + hashCode;
         BuildingBuilderResource resource = this.neededResources.get(key);
         if (resource == null)
         {
@@ -240,7 +240,7 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
     public void reduceNeededResource(final ItemStack res, final int amount)
     {
         final int hashCode = res.hasTag() ? res.getTag().hashCode() : 0;
-        final String name = res.getTranslationKey() + "-" + hashCode;
+        final String name = res.getDescriptionId() + "-" + hashCode;
 
         final BuilderBucket last = buckets.isEmpty() ? null : getRequiredResources();
 
@@ -302,7 +302,7 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
     public boolean requiresResourceForBuilding(final ItemStack stack)
     {
         final int hashCode = stack.hasTag() ? stack.getTag().hashCode() : 0;
-        return neededResources.containsKey(stack.getTranslationKey() + "-" + hashCode);
+        return neededResources.containsKey(stack.getDescriptionId() + "-" + hashCode);
     }
 
     /**
@@ -331,10 +331,10 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
 
             boolean hasOpenRequest = false;
             int count = InventoryUtils.getItemCountInItemHandler(building.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElseGet(null),
-              stack -> stack.isItemEqual(itemStack.getItemStack()));
+              stack -> stack.sameItem(itemStack.getItemStack()));
 
             int totalAmount = neededResources.containsKey(entry.getKey()) ? neededResources.get(entry.getKey()).getAmount() : 0;
-            int workerInvCount = InventoryUtils.getItemCountInItemHandler(worker.getInventory(), stack -> stack.isItemEqual(itemStack.getItemStack()));
+            int workerInvCount = InventoryUtils.getItemCountInItemHandler(worker.getInventory(), stack -> stack.sameItem(itemStack.getItemStack()));
             if ((workerInv && (count + workerInvCount) < entry.getValue())
                   || (count < entry.getValue() && (count + workerInvCount) < totalAmount))
             {
@@ -343,7 +343,7 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
                 {
                     for (final IRequest<? extends Stack> request : list)
                     {
-                        if (request.getRequest().getStack().isItemEqual(itemStack.getItemStack()))
+                        if (request.getRequest().getStack().sameItem(itemStack.getItemStack()))
                         {
                             hasOpenRequest = true;
                             break;

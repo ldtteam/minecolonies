@@ -113,7 +113,7 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
     public void deserializeNBT(final CompoundNBT compound)
     {
         super.deserializeNBT(compound);
-        if (compound.keySet().contains(TAG_WORK_ORDER))
+        if (compound.getAllKeys().contains(TAG_WORK_ORDER))
         {
             workOrderId = compound.getInt(TAG_WORK_ORDER);
         }
@@ -136,13 +136,13 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
                     final CompoundNBT compoundNBT = tileEntityData[y][z][x];
                     if (compoundNBT != null && compoundNBT.contains(TAG_BLUEPRINTDATA))
                     {
-                        final BlockPos tePos = getWorkOrder().getSchematicLocation().subtract(blueprint.getPrimaryBlockOffset()).add(x, y, z);
-                        final TileEntity te = getColony().getWorld().getTileEntity(tePos);
+                        final BlockPos tePos = getWorkOrder().getSchematicLocation().subtract(blueprint.getPrimaryBlockOffset()).offset(x, y, z);
+                        final TileEntity te = getColony().getWorld().getBlockEntity(tePos);
                         if (te instanceof IBlueprintDataProvider)
                         {
                             ((IBlueprintDataProvider) te).readSchematicDataFromNBT(compoundNBT);
-                            ((ServerWorld) getColony().getWorld()).getChunkProvider().markBlockChanged(tePos);
-                            te.markDirty();
+                            ((ServerWorld) getColony().getWorld()).getChunkSource().blockChanged(tePos);
+                            te.setChanged();
                         }
                     }
                 }

@@ -120,7 +120,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
     private void updateBuilders()
     {
         IColonyView colony = (IColonyView) IColonyManager.getInstance()
-                .getIColony(Minecraft.getInstance().world, structurePos);
+                .getIColony(Minecraft.getInstance().level, structurePos);
 
         if (colony == null)
         {
@@ -135,7 +135,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
                 .filter(build -> build instanceof AbstractBuildingBuilderView && !((AbstractBuildingBuilderView) build).getWorkerName().isEmpty()
                         && !(build instanceof BuildingMiner.View))
                 .map(build -> new Tuple<>(((AbstractBuildingBuilderView) build).getWorkerName(), build.getPosition()))
-                .sorted(Comparator.comparing(item -> item.getB().distanceSq(structurePos)))
+                .sorted(Comparator.comparing(item -> item.getB().distSqr(structurePos)))
                 .collect(Collectors.toList()));
 
         initBuilderNavigation();
@@ -173,7 +173,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
      */
     private void updateResources()
     {
-        final World world = Minecraft.getInstance().world;
+        final World world = Minecraft.getInstance().level;
         resources.clear();
 
         final LoadOnlyStructureHandler structure = new LoadOnlyStructureHandler(
@@ -241,7 +241,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
         {
             return;
         }
-        ItemStorage resource = resources.get(res.getTranslationKey());
+        ItemStorage resource = resources.get(res.getDescriptionId());
         if (resource == null)
         {
             resource = new ItemStorage(res);
@@ -251,7 +251,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
         {
             resource.setAmount(resource.getAmount() + amount);
         }
-        resources.put(res.getTranslationKey(), resource);
+        resources.put(res.getDescriptionId(), resource);
     }
 
     public void updateResourceList()
@@ -285,7 +285,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
                 final ItemStorage resource = tempRes.get(index);
                 final Text resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Text.class);
                 final Text quantityLabel = rowPane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Text.class);
-                resourceLabel.setText(resource.getItemStack().getDisplayName().getString());
+                resourceLabel.setText(resource.getItemStack().getHoverName().getString());
                 quantityLabel.setText(Integer.toString(resource.getAmount()));
                 resourceLabel.setColors(WHITE);
                 quantityLabel.setColors(WHITE);

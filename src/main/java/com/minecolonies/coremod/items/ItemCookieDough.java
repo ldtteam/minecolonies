@@ -16,6 +16,6 @@ public class ItemCookieDough extends AbstractItemMinecolonies
      */
     public ItemCookieDough(final Properties properties)
     {
-        super("cookie_dough", properties.maxStackSize(STACKSIZE).group(ModCreativeTabs.MINECOLONIES));
+        super("cookie_dough", properties.stacksTo(STACKSIZE).tab(ModCreativeTabs.MINECOLONIES));
     }
 }

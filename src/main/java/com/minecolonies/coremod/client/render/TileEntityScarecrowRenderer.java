@@ -72,8 +72,8 @@ public class TileEntityScarecrowRenderer extends TileEntityRenderer<AbstractScar
     public static final RenderMaterial       SCARECROW_B;
     static
     {
-        SCARECROW_A = new RenderMaterial(AtlasTexture.LOCATION_BLOCKS_TEXTURE, new ResourceLocation(Constants.MOD_ID, "blocks/blockscarecrowpumpkin"));
-        SCARECROW_B = new RenderMaterial(AtlasTexture.LOCATION_BLOCKS_TEXTURE, new ResourceLocation(Constants.MOD_ID, "blocks/blockscarecrownormal"));
+        SCARECROW_A = new RenderMaterial(AtlasTexture.LOCATION_BLOCKS, new ResourceLocation(Constants.MOD_ID, "blocks/blockscarecrowpumpkin"));
+        SCARECROW_B = new RenderMaterial(AtlasTexture.LOCATION_BLOCKS, new ResourceLocation(Constants.MOD_ID, "blocks/blockscarecrownormal"));
     }
     /**
      * The public constructor for the renderer.
@@ -96,34 +96,34 @@ public class TileEntityScarecrowRenderer extends TileEntityRenderer<AbstractScar
       final int lightB)
     {
         //Store the transformation
-        matrixStack.push();
+        matrixStack.pushPose();
         //Set viewport to tile entity position to render it
         matrixStack.translate(BLOCK_MIDDLE, YOFFSET, BLOCK_MIDDLE);
-        matrixStack.rotate(Vector3f.ZP.rotationDegrees(ROTATION));
+        matrixStack.mulPose(Vector3f.ZP.rotationDegrees(ROTATION));
 
         //In the case of worldLags tileEntities may sometimes disappear.
-        if (te.getWorld().getBlockState(te.getPos()).getBlock() instanceof BlockScarecrow)
+        if (te.getLevel().getBlockState(te.getBlockPos()).getBlock() instanceof BlockScarecrow)
         {
-            final Direction facing = te.getWorld().getBlockState(te.getPos()).get(AbstractBlockMinecoloniesDefault.FACING);
+            final Direction facing = te.getLevel().getBlockState(te.getBlockPos()).getValue(AbstractBlockMinecoloniesDefault.FACING);
             switch (facing)
             {
                 case EAST:
-                    matrixStack.rotate(Vector3f.YP.rotationDegrees(BASIC_ROTATION * ROTATE_EAST));
+                    matrixStack.mulPose(Vector3f.YP.rotationDegrees(BASIC_ROTATION * ROTATE_EAST));
                     break;
                 case SOUTH:
-                    matrixStack.rotate(Vector3f.YP.rotationDegrees(BASIC_ROTATION * ROTATE_SOUTH));
+                    matrixStack.mulPose(Vector3f.YP.rotationDegrees(BASIC_ROTATION * ROTATE_SOUTH));
                     break;
                 case WEST:
-                    matrixStack.rotate(Vector3f.YP.rotationDegrees(BASIC_ROTATION * ROTATE_WEST));
+                    matrixStack.mulPose(Vector3f.YP.rotationDegrees(BASIC_ROTATION * ROTATE_WEST));
                     break;
                 default:
                     //don't rotate at all.
             }
         }
 
-        final IVertexBuilder vertexConsumer = getMaterial(te).getBuffer(iRenderTypeBuffer, RenderType::getEntitySolid);
-        this.model.render(matrixStack, vertexConsumer, lightA, lightB, 1.0F, 1.0F, 1.0F, 1.0F);
-        matrixStack.pop();
+        final IVertexBuilder vertexConsumer = getMaterial(te).buffer(iRenderTypeBuffer, RenderType::entitySolid);
+        this.model.renderToBuffer(matrixStack, vertexConsumer, lightA, lightB, 1.0F, 1.0F, 1.0F, 1.0F);
+        matrixStack.popPose();
     }
 
     /**

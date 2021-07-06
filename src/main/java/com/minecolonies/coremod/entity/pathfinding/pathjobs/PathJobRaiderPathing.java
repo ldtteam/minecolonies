@@ -16,6 +16,8 @@ import java.util.List;
 
 import static com.minecolonies.api.entity.pathfinding.PathingStuckHandler.HORIZONTAL_DIRS;
 
+import com.minecolonies.coremod.entity.pathfinding.pathjobs.AbstractPathJob.SurfaceType;
+
 /**
  * Special raider pathfinding, can go through blocks and place ladders, is finished when reaching close to the intended spawn and is a legit spawn point.
  */
@@ -55,24 +57,24 @@ public class PathJobRaiderPathing extends AbstractPathJob
     @Override
     protected double computeHeuristic(final BlockPos pos)
     {
-        return Math.sqrt(direction.distanceSq(pos));
+        return Math.sqrt(direction.distSqr(pos));
     }
 
     @Override
     protected boolean isAtDestination(final Node n)
     {
-        if (start.distanceSq(n.pos) < 50 * 50)
+        if (start.distSqr(n.pos) < 50 * 50)
         {
             return false;
         }
 
-        return (direction.distanceSq(n.pos) < 50 * 50) && RaidManager.isValidSpawnPoint(buildings, n.pos);
+        return (direction.distSqr(n.pos) < 50 * 50) && RaidManager.isValidSpawnPoint(buildings, n.pos);
     }
 
     @Override
     protected double getNodeResultScore(final Node n)
     {
-        return Math.sqrt(direction.distanceSq(n.pos));
+        return Math.sqrt(direction.distSqr(n.pos));
     }
 
     @Override
@@ -104,8 +106,8 @@ public class PathJobRaiderPathing extends AbstractPathJob
 
             for (final Direction dir : HORIZONTAL_DIRS)
             {
-                final BlockState toPlace = Blocks.LADDER.getDefaultState().with(LadderBlock.FACING, dir.getOpposite());
-                if (world.getBlockState(currentNode.pos.offset(dir)).getMaterial().isSolid() && Blocks.LADDER.isValidPosition(toPlace, world, currentNode.pos))
+                final BlockState toPlace = Blocks.LADDER.defaultBlockState().setValue(LadderBlock.FACING, dir.getOpposite());
+                if (world.getBlockState(currentNode.pos.relative(dir)).getMaterial().isSolid() && Blocks.LADDER.canSurvive(toPlace, world, currentNode.pos))
                 {
                     return true;
                 }
@@ -125,7 +127,7 @@ public class PathJobRaiderPathing extends AbstractPathJob
         }
 
         if ((parent.pos.getX() - pos.getX() == 0 && parent.pos.getZ() - pos.getZ() == 0)
-              || (Math.abs(height - pos.getY()) > 1) && isWalkableSurface(world.getBlockState(pos.down()), pos.down()) == SurfaceType.WALKABLE)
+              || (Math.abs(height - pos.getY()) > 1) && isWalkableSurface(world.getBlockState(pos.below()), pos.below()) == SurfaceType.WALKABLE)
         {
             addCost = 3.5;
             return pos.getY();
@@ -152,7 +154,7 @@ public class PathJobRaiderPathing extends AbstractPathJob
             modifier *= THROUGH_BLOCK_COST;
         }
 
-        if (!corner && isWalkableSurface(world.getBlockState(blockPos.down()), blockPos.down()) != SurfaceType.WALKABLE)
+        if (!corner && isWalkableSurface(world.getBlockState(blockPos.below()), blockPos.below()) != SurfaceType.WALKABLE)
         {
             modifier *= THROUGH_BLOCK_COST;
         }

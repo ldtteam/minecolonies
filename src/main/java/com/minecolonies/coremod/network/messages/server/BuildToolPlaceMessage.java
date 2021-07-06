@@ -108,8 +108,8 @@ public class BuildToolPlaceMessage implements IMessage
     @Override
     public void fromBytes(@NotNull final PacketBuffer buf)
     {
-        structureName = buf.readString(32767);
-        workOrderName = buf.readString(32767);
+        structureName = buf.readUtf(32767);
+        workOrderName = buf.readUtf(32767);
 
         pos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
 
@@ -119,7 +119,7 @@ public class BuildToolPlaceMessage implements IMessage
 
         mirror = buf.readBoolean();
 
-        state = Block.getStateById(buf.readInt());
+        state = Block.stateById(buf.readInt());
 
         builder = buf.readBlockPos();
     }
@@ -132,8 +132,8 @@ public class BuildToolPlaceMessage implements IMessage
     @Override
     public void toBytes(@NotNull final PacketBuffer buf)
     {
-        buf.writeString(structureName);
-        buf.writeString(workOrderName);
+        buf.writeUtf(structureName);
+        buf.writeUtf(workOrderName);
 
         buf.writeInt(pos.getX());
         buf.writeInt(pos.getY());
@@ -145,7 +145,7 @@ public class BuildToolPlaceMessage implements IMessage
 
         buf.writeBoolean(mirror);
 
-        buf.writeInt(Block.getStateId(state));
+        buf.writeInt(Block.getId(state));
 
         buf.writeBlockPos(builder);
     }
@@ -164,7 +164,7 @@ public class BuildToolPlaceMessage implements IMessage
         final StructureName sn = new StructureName(structureName);
         if (!Structures.hasMD5(sn))
         {
-            player.sendMessage(new StringTextComponent("Can not build " + workOrderName + ": schematic missing!"), player.getUniqueID());
+            player.sendMessage(new StringTextComponent("Can not build " + workOrderName + ": schematic missing!"), player.getUUID());
             return;
         }
         if (isHut)
@@ -225,7 +225,7 @@ public class BuildToolPlaceMessage implements IMessage
             return;
         }
 
-        if (block != null && player.inventory.hasItemStack(new ItemStack(block)))
+        if (block != null && player.inventory.contains(new ItemStack(block)))
         {
             if (EventHandler.onBlockHutPlaced(world, player, block, buildPos))
             {
@@ -239,7 +239,7 @@ public class BuildToolPlaceMessage implements IMessage
                 }
 
                 world.destroyBlock(buildPos, true);
-                world.setBlockState(buildPos, state);
+                world.setBlockAndUpdate(buildPos, state);
                 ((AbstractBlockHut<?>) block).onBlockPlacedByBuildTool(world, buildPos, world.getBlockState(buildPos), player, null, mirror, sn.getStyle());
 
                 boolean complete = false;
@@ -247,16 +247,16 @@ public class BuildToolPlaceMessage implements IMessage
 
                 if (compound != null)
                 {
-                    if (compound.keySet().contains(TAG_OTHER_LEVEL))
+                    if (compound.getAllKeys().contains(TAG_OTHER_LEVEL))
                     {
                         level = compound.getInt(TAG_OTHER_LEVEL);
                     }
-                    if (compound.keySet().contains(TAG_PASTEABLE))
+                    if (compound.getAllKeys().contains(TAG_PASTEABLE))
                     {
                         String schematic = sn.toString();
                         schematic = schematic.substring(0, schematic.length() - 1);
                         schematic += level;
-                        CreativeBuildingStructureHandler.loadAndPlaceStructureWithRotation(player.world, schematic,
+                        CreativeBuildingStructureHandler.loadAndPlaceStructureWithRotation(player.level, schematic,
                           buildPos, BlockPosUtil.getRotationFromRotations(rotation), mirror ? Mirror.FRONT_BACK : Mirror.NONE, true, (ServerPlayerEntity) player);
                         complete = true;
                     }
@@ -321,7 +321,7 @@ public class BuildToolPlaceMessage implements IMessage
         }
         else
         {
-            SoundUtils.playErrorSound(player, player.getPosition());
+            SoundUtils.playErrorSound(player, player.blockPosition());
             Log.getLogger().error("handleDecoration: Could not build " + sn, new Exception());
         }
     }
@@ -349,13 +349,13 @@ public class BuildToolPlaceMessage implements IMessage
         {
             if (!sn.getHutName().equals(ModBuildings.TOWNHALL_ID))
             {
-            SoundUtils.playErrorSound(player, player.getPosition());
+            SoundUtils.playErrorSound(player, player.blockPosition());
                 Log.getLogger().error("BuildTool: building is null!", new Exception());
             }
         }
         else
         {
-            SoundUtils.playSuccessSound(player, player.getPosition());
+            SoundUtils.playSuccessSound(player, player.blockPosition());
             if (building.getTileEntity() != null)
             {
                 final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, buildPos);

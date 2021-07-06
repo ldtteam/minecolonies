@@ -18,11 +18,11 @@ public class CommandBackup implements IMCOPCommand
     {
         if (BackUpHelper.backupColonyData())
         {
-            context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.backup.success"), true);
+            context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.backup.success"), true);
         }
         else
         {
-            context.getSource().sendFeedback(LanguageHandler.buildChatComponent("com.minecolonies.command.backup.failed"), true);
+            context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.backup.failed"), true);
         }
         return 1;
     }

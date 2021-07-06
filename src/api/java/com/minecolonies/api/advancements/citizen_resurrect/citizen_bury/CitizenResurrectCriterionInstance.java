@@ -12,6 +12,6 @@ public class CitizenResurrectCriterionInstance extends CriterionInstance
 {
     public CitizenResurrectCriterionInstance()
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CITIZEN_RESURRECT), EntityPredicate.AndPredicate.ANY_AND);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CITIZEN_RESURRECT), EntityPredicate.AndPredicate.ANY);
     }
 }

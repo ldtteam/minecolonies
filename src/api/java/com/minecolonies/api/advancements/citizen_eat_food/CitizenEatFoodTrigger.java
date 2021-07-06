@@ -34,11 +34,11 @@ public class CitizenEatFoodTrigger extends AbstractCriterionTrigger<CitizenEatFo
     }
     
     @Override
-    public CitizenEatFoodCriterionInstance deserialize(final JsonObject jsonObject, final ConditionArrayParser conditionArrayParser)
+    public CitizenEatFoodCriterionInstance createInstance(final JsonObject jsonObject, final ConditionArrayParser conditionArrayParser)
     {
         if (jsonObject.has("items"))
         {
-            final ItemPredicate[] itemPredicates = ItemPredicate.deserializeArray(jsonObject.get("items"));
+            final ItemPredicate[] itemPredicates = ItemPredicate.fromJsonArray(jsonObject.get("items"));
             return new CitizenEatFoodCriterionInstance(itemPredicates);
         }
         return new CitizenEatFoodCriterionInstance();

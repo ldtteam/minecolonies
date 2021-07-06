@@ -42,13 +42,13 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel>
 
     public BlockBarrel()
     {
-        super(Properties.create(Material.WOOD).hardnessAndResistance(BLOCK_HARDNESS, RESISTANCE));
-        this.setDefaultState(this.getDefaultState().with(AbstractBlockBarrel.FACING, Direction.NORTH).with(VARIANT, BarrelType.ZERO));
+        super(Properties.of(Material.WOOD).strength(BLOCK_HARDNESS, RESISTANCE));
+        this.registerDefaultState(this.defaultBlockState().setValue(AbstractBlockBarrel.FACING, Direction.NORTH).setValue(VARIANT, BarrelType.ZERO));
         setRegistryName(BLOCK_NAME);
     }
 
     @Override
-    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder)
+    protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder)
     {
         builder.add(AbstractBlockBarrel.FACING, VARIANT);
     }
@@ -68,7 +68,7 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel>
 
     @NotNull
     @Override
-    public ActionResultType onBlockActivated(
+    public ActionResultType use(
       final BlockState state,
       final World worldIn,
       final BlockPos pos,
@@ -76,9 +76,9 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel>
       final Hand hand,
       final BlockRayTraceResult ray)
     {
-        final ItemStack itemstack = player.inventory.getCurrentItem();
-        final TileEntity te = worldIn.getTileEntity(pos);
-        if (te instanceof TileEntityBarrel && !worldIn.isRemote)
+        final ItemStack itemstack = player.inventory.getSelected();
+        final TileEntity te = worldIn.getBlockEntity(pos);
+        if (te instanceof TileEntityBarrel && !worldIn.isClientSide)
         {
             ((TileEntityBarrel) te).useBarrel(player, itemstack);
             ((TileEntityBarrel) te).updateBlock(worldIn);
@@ -91,7 +91,7 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel>
     @Override
     public VoxelShape getShape(final BlockState state, final IBlockReader worldIn, final BlockPos pos, final ISelectionContext context)
     {
-        return VoxelShapes.create(0, 0, 0, 1, 1.5, 1);
+        return VoxelShapes.box(0, 0, 0, 1, 1.5, 1);
     }
 
     /**
@@ -104,7 +104,7 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel>
     @Deprecated
     public BlockState rotate(@NotNull final BlockState state, final Rotation rot)
     {
-        return state.with(AbstractBlockBarrel.FACING, rot.rotate(state.get(AbstractBlockBarrel.FACING)));
+        return state.setValue(AbstractBlockBarrel.FACING, rot.rotate(state.getValue(AbstractBlockBarrel.FACING)));
     }
 
     /**
@@ -115,20 +115,20 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel>
     @Deprecated
     public BlockState mirror(@NotNull final BlockState state, final Mirror mirrorIn)
     {
-        return state.rotate(mirrorIn.toRotation(state.get(AbstractBlockBarrel.FACING)));
+        return state.rotate(mirrorIn.getRotation(state.getValue(AbstractBlockBarrel.FACING)));
     }
 
     @Nullable
     @Override
     public BlockState getStateForPlacement(final BlockItemUseContext context)
     {
-        return super.getStateForPlacement(context).with(AbstractBlockBarrel.FACING, context.getPlacementHorizontalFacing());
+        return super.getStateForPlacement(context).setValue(AbstractBlockBarrel.FACING, context.getHorizontalDirection());
     }
 
     @Override
-    public boolean isValidPosition(final BlockState state, final IWorldReader worldIn, final BlockPos pos)
+    public boolean canSurvive(final BlockState state, final IWorldReader worldIn, final BlockPos pos)
     {
-        return !worldIn.isAirBlock(pos.down())
-                 && worldIn.getBlockState(pos.down()).getBlock() != ModBlocks.blockBarrel;
+        return !worldIn.isEmptyBlock(pos.below())
+                 && worldIn.getBlockState(pos.below()).getBlock() != ModBlocks.blockBarrel;
     }
 }

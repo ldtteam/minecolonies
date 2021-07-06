@@ -264,7 +264,7 @@ public class ChunkLoadStorage
                 cap.addBuildingClaim(tuple.getA(), tuple.getB(), chunk);
             }
         }
-        chunk.markDirty();
+        chunk.markUnsaved();
     }
 
     /**

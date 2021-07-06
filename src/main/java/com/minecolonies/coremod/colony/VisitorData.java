@@ -50,7 +50,7 @@ public class VisitorData extends CitizenData implements IVisitorData
     {
         CompoundNBT compoundNBT = super.serializeNBT();
         CompoundNBT item = new CompoundNBT();
-        recruitCost.write(item);
+        recruitCost.save(item);
         compoundNBT.put(TAG_RECRUIT_COST, item);
         BlockPosUtil.write(compoundNBT, TAG_SITTING, sittingPosition);
         return compoundNBT;
@@ -61,7 +61,7 @@ public class VisitorData extends CitizenData implements IVisitorData
     {
         super.deserializeNBT(nbtTagCompound);
         sittingPosition = BlockPosUtil.read(nbtTagCompound, TAG_SITTING);
-        recruitCost = ItemStack.read(nbtTagCompound.getCompound(TAG_RECRUIT_COST));
+        recruitCost = ItemStack.of(nbtTagCompound.getCompound(TAG_RECRUIT_COST));
     }
 
     @Override
@@ -94,7 +94,7 @@ public class VisitorData extends CitizenData implements IVisitorData
     public void serializeViewNetworkData(@NotNull final PacketBuffer buf)
     {
         super.serializeViewNetworkData(buf);
-        buf.writeItemStack(recruitCost);
+        buf.writeItem(recruitCost);
     }
 
     @Override
@@ -115,7 +115,7 @@ public class VisitorData extends CitizenData implements IVisitorData
         if (getEntity().isPresent())
         {
             final Entity entity = getEntity().get();
-            if (entity.isAlive() && entity.addedToChunk && WorldUtil.isEntityBlockLoaded(entity.world, entity.getPosition()))
+            if (entity.isAlive() && entity.inChunk && WorldUtil.isEntityBlockLoaded(entity.level, entity.blockPosition()))
             {
                 return;
             }

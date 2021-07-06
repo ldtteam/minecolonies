@@ -52,7 +52,7 @@ public class CommandClaimChunks implements IMCOPCommand
         // Added/removed
         final boolean add = BoolArgumentType.getBool(context, ADD_ARG);
 
-        final IChunkmanagerCapability chunkManager = sender.world.getCapability(CHUNK_STORAGE_UPDATE_CAP, null).resolve().orElse(null);
+        final IChunkmanagerCapability chunkManager = sender.level.getCapability(CHUNK_STORAGE_UPDATE_CAP, null).resolve().orElse(null);
         if (chunkManager == null)
         {
             Log.getLogger().error(UNABLE_TO_FIND_WORLD_CAP_TEXT, new Exception());
@@ -65,7 +65,7 @@ public class CommandClaimChunks implements IMCOPCommand
             return 0;
         }
 
-        ChunkDataHelper.claimChunksInRange(colonyID, context.getSource().getWorld().getDimensionKey(), add, new BlockPos(sender.getPositionVec()), range, 0, sender.world);
+        ChunkDataHelper.claimChunksInRange(colonyID, context.getSource().getLevel().dimension(), add, new BlockPos(sender.position()), range, 0, sender.level);
         if(add)
         {
             LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.claim.success");

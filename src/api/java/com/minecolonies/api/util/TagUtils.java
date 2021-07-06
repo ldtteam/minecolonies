@@ -24,7 +24,7 @@ public final class TagUtils
      */
     public static ITag<Item> getItem(final ResourceLocation resourceLocation)
     {
-        return ItemTags.getCollection().getTagByID(resourceLocation);
+        return ItemTags.getAllTags().getTagOrEmpty(resourceLocation);
     }
 
     /**
@@ -34,6 +34,6 @@ public final class TagUtils
      */
     public static ITag<Block> getBlock(final ResourceLocation resourceLocation)
     {
-        return BlockTags.getCollection().getTagByID(resourceLocation);
+        return BlockTags.getAllTags().getTagOrEmpty(resourceLocation);
     }
 }

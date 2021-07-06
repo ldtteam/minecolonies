@@ -126,7 +126,7 @@ public interface IColonyTagCapability
         public void addColony(final int id, final Chunk chunk)
         {
             colonies.add(id);
-            chunk.markDirty();
+            chunk.markUnsaved();
         }
 
         @Override
@@ -137,7 +137,7 @@ public interface IColonyTagCapability
             {
                 this.owningColony = 0;
             }
-            chunk.markDirty();
+            chunk.markUnsaved();
         }
 
         @Override
@@ -152,7 +152,7 @@ public interface IColonyTagCapability
             colonies.clear();
             owningColony = 0;
             claimingBuildings.clear();
-            chunk.markDirty();
+            chunk.markUnsaved();
         }
 
         @Override
@@ -173,7 +173,7 @@ public interface IColonyTagCapability
                 newList.add(pos);
                 claimingBuildings.put(colonyId, newList);
             }
-            chunk.markDirty();
+            chunk.markUnsaved();
         }
 
         @Override
@@ -205,14 +205,14 @@ public interface IColonyTagCapability
                     }
                 }
             }
-            chunk.markDirty();
+            chunk.markUnsaved();
         }
 
         @Override
         public void setOwningColony(final int id, final Chunk chunk)
         {
             this.owningColony = id;
-            chunk.markDirty();
+            chunk.markUnsaved();
         }
 
         @Override

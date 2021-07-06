@@ -20,12 +20,12 @@ public class CommandKillCow implements IMCOPCommand
     {
         entitiesKilled = 0;
 
-        context.getSource().getWorld().getEntities(EntityType.COW, entity -> true).forEach(entity ->
+        context.getSource().getLevel().getEntities(EntityType.COW, entity -> true).forEach(entity ->
         {
             entity.remove();
             entitiesKilled++;
         });
-        context.getSource().sendFeedback(new StringTextComponent(entitiesKilled + " entities killed"), true);
+        context.getSource().sendSuccess(new StringTextComponent(entitiesKilled + " entities killed"), true);
         return 1;
     }
 

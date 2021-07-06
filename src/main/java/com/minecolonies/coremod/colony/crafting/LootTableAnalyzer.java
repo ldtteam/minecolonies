@@ -38,8 +38,8 @@ public final class LootTableAnalyzer
     private static JsonObject getLootTableJson(@NotNull final LootTableManager lootTableManager,
                                                @NotNull final ResourceLocation lootTableId)
     {
-        final LootTable lootTable = lootTableManager.getLootTableFromLocation(lootTableId);
-        return LootTableManager.toJson(lootTable).getAsJsonObject();
+        final LootTable lootTable = lootTableManager.get(lootTableId);
+        return LootTableManager.serialize(lootTable).getAsJsonObject();
     }
 
     public static List<LootDrop> toDrops(@NotNull final LootTableManager lootTableManager,
@@ -68,39 +68,39 @@ public final class LootTableAnalyzer
             return drops;
         }
 
-        final JsonArray pools = JSONUtils.getJsonArray(lootTableJson, "pools");
+        final JsonArray pools = JSONUtils.getAsJsonArray(lootTableJson, "pools");
         for (final JsonElement pool : pools)
         {
-            final JsonArray entries = JSONUtils.getJsonArray(pool.getAsJsonObject(), "entries", new JsonArray());
+            final JsonArray entries = JSONUtils.getAsJsonArray(pool.getAsJsonObject(), "entries", new JsonArray());
             final float totalWeight = StreamSupport.stream(entries.spliterator(), false)
                     .filter(entry ->
                     {
-                        final String type = JSONUtils.getString(entry.getAsJsonObject(), "type");
+                        final String type = JSONUtils.getAsString(entry.getAsJsonObject(), "type");
                         return type.equals("minecraft:empty") || type.equals("minecraft:item") || type.equals("minecraft:tag") || type.equals("minecraft:loot_table");
                     })
-                    .mapToInt(entry -> JSONUtils.getInt(entry.getAsJsonObject(), "weight", 1))
+                    .mapToInt(entry -> JSONUtils.getAsInt(entry.getAsJsonObject(), "weight", 1))
                     .sum();
 
             for (final JsonElement ej : entries)
             {
                 final JsonObject entryJson = ej.getAsJsonObject();
-                final String type = JSONUtils.getString(entryJson, "type");
+                final String type = JSONUtils.getAsString(entryJson, "type");
                 if (type.equals("minecraft:item"))
                 {
-                    final Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(JSONUtils.getString(entryJson, "name")));
-                    final float weight = JSONUtils.getFloat(entryJson, "weight", 1);
-                    final boolean variableQuality = JSONUtils.getFloat(entryJson, "quality", 0) != 0;
+                    final Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(JSONUtils.getAsString(entryJson, "name")));
+                    final float weight = JSONUtils.getAsFloat(entryJson, "weight", 1);
+                    final boolean variableQuality = JSONUtils.getAsFloat(entryJson, "quality", 0) != 0;
                     final ItemStack stack = new ItemStack(item);
                     if (entryJson.has("functions"))
                     {
-                        processFunctions(stack, JSONUtils.getJsonArray(entryJson, "functions"));
+                        processFunctions(stack, JSONUtils.getAsJsonArray(entryJson, "functions"));
                     }
 
                     drops.add(new LootDrop(Collections.singletonList(stack), weight / totalWeight, variableQuality));
                 }
                 else if (type.equals("minecraft:loot_table"))
                 {
-                    final ResourceLocation table = new ResourceLocation(JSONUtils.getString(entryJson, "name"));
+                    final ResourceLocation table = new ResourceLocation(JSONUtils.getAsString(entryJson, "name"));
                     drops.addAll(toDrops(lootTableManager, table));
                 }
             }
@@ -126,12 +126,12 @@ public final class LootTableAnalyzer
         for (final JsonElement je : functions)
         {
             final JsonObject function = je.getAsJsonObject();
-            switch (JSONUtils.getString(function, "function"))
+            switch (JSONUtils.getAsString(function, "function"))
             {
                 case "minecraft:set_nbt":
                     try
                     {
-                        stack.setTag(JsonToNBT.getTagFromJson(JSONUtils.getString(function, "tag")));
+                        stack.setTag(JsonToNBT.parseTag(JSONUtils.getAsString(function, "tag")));
                     }
                     catch (CommandSyntaxException e)
                     {
@@ -185,7 +185,7 @@ public final class LootTableAnalyzer
             buffer.writeVarInt(stacks.size());
             for (final ItemStack stack : stacks)
             {
-                buffer.writeItemStack(stack);
+                buffer.writeItem(stack);
             }
             buffer.writeFloat(probability);
             buffer.writeBoolean(variableQuality);
@@ -198,7 +198,7 @@ public final class LootTableAnalyzer
             final List<ItemStack> stacks = new ArrayList<>(size);
             for (int i = 0; i < size; ++i)
             {
-                stacks.add(buffer.readItemStack());
+                stacks.add(buffer.readItem());
             }
             final float probability = buffer.readFloat();
             final boolean variableQuality = buffer.readBoolean();

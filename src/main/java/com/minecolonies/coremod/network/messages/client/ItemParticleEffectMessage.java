@@ -93,7 +93,7 @@ public class ItemParticleEffectMessage implements IMessage
     @Override
     public void fromBytes(@NotNull final PacketBuffer buf)
     {
-        stack = buf.readItemStack();
+        stack = buf.readItem();
         posX = buf.readDouble();
         posY = buf.readDouble();
         posZ = buf.readDouble();
@@ -105,7 +105,7 @@ public class ItemParticleEffectMessage implements IMessage
     @Override
     public void toBytes(@NotNull final PacketBuffer buf)
     {
-        buf.writeItemStack(stack);
+        buf.writeItem(stack);
         buf.writeDouble(posX);
         buf.writeDouble(posY);
         buf.writeDouble(posZ);
@@ -124,19 +124,19 @@ public class ItemParticleEffectMessage implements IMessage
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
-        final ClientWorld world = Minecraft.getInstance().world;
+        final ClientWorld world = Minecraft.getInstance().level;
         final ItemStack localStack = stack;
-        if (localStack.getUseAction() == UseAction.EAT)
+        if (localStack.getUseAnimation() == UseAction.EAT)
         {
             for (int i = 0; i < 5; ++i)
             {
                 Vector3d randomPos = new Vector3d((RAND.nextDouble() - 0.5D) * 0.1D, Math.random() * 0.1D + 0.1D, 0.0D);
-                randomPos = randomPos.rotatePitch((float) (-rotationPitch * 0.017453292F));
-                randomPos = randomPos.rotateYaw((float) (-rotationYaw * 0.017453292F));
+                randomPos = randomPos.xRot((float) (-rotationPitch * 0.017453292F));
+                randomPos = randomPos.yRot((float) (-rotationYaw * 0.017453292F));
                 final double d0 = -RAND.nextDouble() * 0.6D - 0.3D;
                 Vector3d randomOffset = new Vector3d((RAND.nextDouble() - 0.5D) * 0.3D, d0, 0.6D);
-                randomOffset = randomOffset.rotatePitch((float) (-rotationPitch * 0.017453292F));
-                randomOffset = randomOffset.rotateYaw((float) (-rotationYaw * 0.017453292F));
+                randomOffset = randomOffset.xRot((float) (-rotationPitch * 0.017453292F));
+                randomOffset = randomOffset.yRot((float) (-rotationYaw * 0.017453292F));
                 randomOffset = randomOffset.add(posX, posY + eyeHeight, posZ);
                 world.addParticle(new ItemParticleData(ParticleTypes.ITEM, localStack),
                   randomOffset.x,

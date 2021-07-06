@@ -22,7 +22,7 @@ public final class InteractionResponseHandlerManager implements IInteractionResp
     public IInteractionResponseHandler createFrom(@NotNull final ICitizen citizen, @NotNull final CompoundNBT compound)
     {
         final ResourceLocation handlerType =
-          compound.keySet().contains(NbtTagConstants.TAG_HANDLER_TYPE)
+          compound.getAllKeys().contains(NbtTagConstants.TAG_HANDLER_TYPE)
             ? new ResourceLocation(Constants.MOD_ID, compound.getString(NbtTagConstants.TAG_HANDLER_TYPE))
             : ModInteractionResponseHandlers.STANDARD;
         final IInteractionResponseHandler handler = IInteractionResponseHandlerRegistry.getInstance().getValue(handlerType).getProducer().apply(citizen);

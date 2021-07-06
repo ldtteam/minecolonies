@@ -91,8 +91,8 @@ public final class ColonyView implements IColonyView
      * The colony flag (set to plain white as default)
      */
     private ListNBT        colonyFlag      = new BannerPattern.Builder()
-        .setPatternWithColor(BannerPattern.BASE, DyeColor.WHITE)
-        .buildNBT();
+        .addPattern(BannerPattern.BASE, DyeColor.WHITE)
+        .toListTag();
 
     private BlockPos       center          = BlockPos.ZERO;
 
@@ -244,8 +244,8 @@ public final class ColonyView implements IColonyView
     public static void serializeNetworkData(@NotNull Colony colony, @NotNull PacketBuffer buf, boolean hasNewSubscribers)
     {
         //  General Attributes
-        buf.writeString(colony.getName());
-        buf.writeString(colony.getDimension().getLocation().toString());
+        buf.writeUtf(colony.getName());
+        buf.writeUtf(colony.getDimension().location().toString());
         buf.writeBlockPos(colony.getCenter());
         buf.writeBoolean(colony.isManualHiring());
         //  Citizenry
@@ -259,7 +259,7 @@ public final class ColonyView implements IColonyView
         buf.writeInt(freeBlocks.size());
         for (final Block block : freeBlocks)
         {
-            buf.writeString(block.getRegistryName().toString());
+            buf.writeUtf(block.getRegistryName().toString());
         }
 
         buf.writeInt(freePos.size());
@@ -274,7 +274,7 @@ public final class ColonyView implements IColonyView
         for (final Map.Entry<BlockPos, BlockState> block : waypoints.entrySet())
         {
             buf.writeBlockPos(block.getKey());
-            buf.writeInt(Block.getStateId(block.getValue()));
+            buf.writeInt(Block.getId(block.getValue()));
         }
 
         buf.writeInt(colony.getLastContactInHours());
@@ -308,13 +308,13 @@ public final class ColonyView implements IColonyView
 
         CompoundNBT flagNBT = new CompoundNBT();
         flagNBT.put(TAG_BANNER_PATTERNS, colony.getColonyFlag());
-        buf.writeCompoundTag(flagNBT);
+        buf.writeNbt(flagNBT);
 
         buf.writeBoolean(colony.getProgressManager().isPrintingProgress());
 
         buf.writeLong(colony.getMercenaryUseTime());
 
-        buf.writeString(colony.getStyle());
+        buf.writeUtf(colony.getStyle());
         buf.writeBoolean(colony.getRaiderManager().isRaided());
         buf.writeBoolean(colony.getRaiderManager().areSpiesEnabled());
         // ToDo: rework ally system
@@ -337,11 +337,11 @@ public final class ColonyView implements IColonyView
         buf.writeInt(allies.size());
         for (final IColony col : allies)
         {
-            buf.writeString(col.getName());
+            buf.writeUtf(col.getName());
             buf.writeBlockPos(col.getCenter());
             buf.writeInt(col.getID());
             buf.writeBoolean(col.hasTownHall());
-            buf.writeString(col.getDimension().getLocation().toString());
+            buf.writeUtf(col.getDimension().location().toString());
         }
 
         final List<IColony> feuds = new ArrayList<>();
@@ -363,15 +363,15 @@ public final class ColonyView implements IColonyView
         buf.writeInt(feuds.size());
         for (final IColony col : feuds)
         {
-            buf.writeString(col.getName());
+            buf.writeUtf(col.getName());
             buf.writeBlockPos(col.getCenter());
             buf.writeInt(col.getID());
-            buf.writeString(col.getDimension().getLocation().toString());
+            buf.writeUtf(col.getDimension().location().toString());
         }
 
         final CompoundNBT treeTag = new CompoundNBT();
         colony.getResearchManager().writeToNBT(treeTag);
-        buf.writeCompoundTag(treeTag);
+        buf.writeNbt(treeTag);
 
         if (hasNewSubscribers || colony.isTicketedChunksDirty())
         {
@@ -774,8 +774,8 @@ public final class ColonyView implements IColonyView
     {
         this.world = world;
         //  General Attributes
-        name = buf.readString(32767);
-        dimensionId = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(buf.readString(32767)));
+        name = buf.readUtf(32767);
+        dimensionId = RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)));
         center = buf.readBlockPos();
         manualHiring = buf.readBoolean();
         //  Citizenry
@@ -797,7 +797,7 @@ public final class ColonyView implements IColonyView
         final int blockListSize = buf.readInt();
         for (int i = 0; i < blockListSize; i++)
         {
-            freeBlocks.add(ForgeRegistries.BLOCKS.getValue(new ResourceLocation((buf.readString(32767)))));
+            freeBlocks.add(ForgeRegistries.BLOCKS.getValue(new ResourceLocation((buf.readUtf(32767)))));
         }
 
         final int posListSize = buf.readInt();
@@ -811,7 +811,7 @@ public final class ColonyView implements IColonyView
         final int wayPointListSize = buf.readInt();
         for (int i = 0; i < wayPointListSize; i++)
         {
-            wayPoints.put(buf.readBlockPos(), Block.getStateById(buf.readInt()));
+            wayPoints.put(buf.readBlockPos(), Block.stateById(buf.readInt()));
         }
         this.lastContactInHours = buf.readInt();
         this.manualHousing = buf.readBoolean();
@@ -831,13 +831,13 @@ public final class ColonyView implements IColonyView
         Collections.reverse(lastSpawnPoints);
 
         this.teamColonyColor = TextFormatting.values()[buf.readInt()];
-        this.colonyFlag = buf.readCompoundTag().getList(TAG_BANNER_PATTERNS, Constants.TAG_COMPOUND);
+        this.colonyFlag = buf.readNbt().getList(TAG_BANNER_PATTERNS, Constants.TAG_COMPOUND);
 
         this.printProgress = buf.readBoolean();
 
         this.mercenaryLastUseTime = buf.readLong();
 
-        this.style = buf.readString(32767);
+        this.style = buf.readUtf(32767);
 
         this.isUnderRaid = buf.readBoolean();
         this.spiesEnabled = buf.readBoolean();
@@ -848,16 +848,16 @@ public final class ColonyView implements IColonyView
         final int noOfAllies = buf.readInt();
         for (int i = 0; i < noOfAllies; i++)
         {
-            allies.add(new CompactColonyReference(buf.readString(32767), buf.readBlockPos(), buf.readInt(), buf.readBoolean(), RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(buf.readString(32767)))));
+            allies.add(new CompactColonyReference(buf.readUtf(32767), buf.readBlockPos(), buf.readInt(), buf.readBoolean(), RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)))));
         }
 
         final int noOfFeuds = buf.readInt();
         for (int i = 0; i < noOfFeuds; i++)
         {
-            feuds.add(new CompactColonyReference(buf.readString(32767), buf.readBlockPos(), buf.readInt(), false, RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(buf.readString(32767)))));
+            feuds.add(new CompactColonyReference(buf.readUtf(32767), buf.readBlockPos(), buf.readInt(), false, RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)))));
         }
 
-        this.manager.readFromNBT(buf.readCompoundTag());
+        this.manager.readFromNBT(buf.readNbt());
 
         final int ticketChunkCount = buf.readInt();
         if (ticketChunkCount != -1)
@@ -1003,7 +1003,7 @@ public final class ColonyView implements IColonyView
         if (buildings.containsKey(buildingId))
         {
             //Read the string first to set up the buffer.
-            buf.readString(32767);
+            buf.readUtf(32767);
             buildings.get(buildingId).deserialize(buf);
         }
         else
@@ -1181,7 +1181,7 @@ public final class ColonyView implements IColonyView
     @Override
     public ScorePlayerTeam getTeam()
     {
-        return world.getScoreboard().getTeam(getTeamName());
+        return world.getScoreboard().getPlayerTeam(getTeamName());
     }
 
     @Override

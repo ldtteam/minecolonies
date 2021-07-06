@@ -22,6 +22,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumSet;
 
+import net.minecraft.entity.ai.goal.Goal.Flag;
+
 /**
  * AI for visitors, they do sometimes nap on their place, sit on their place, randomly walk around inside building outline
  */
@@ -91,7 +93,7 @@ public class EntityAIVisitor extends Goal
         stateMachine.addTransition(new TickingTransition<>(VisitorState.IDLE, this::reduceTime, stateMachine::getState, 50));
         stateMachine.addTransition(new TickingTransition<>(VisitorState.WANDERING, this::reduceTime, stateMachine::getState, 50));
         stateMachine.addTransition(new TickingTransition<>(VisitorState.SITTING, this::reduceTime, stateMachine::getState, 50));
-        setMutexFlags(EnumSet.of(Flag.JUMP));
+        setFlags(EnumSet.of(Flag.JUMP));
     }
 
     /**
@@ -125,15 +127,15 @@ public class EntityAIVisitor extends Goal
         if (target == null || !target.isAlive() || (actionTimeoutCounter -= COMBAT_UPDATE_RATE) <= 0)
         {
             target = null;
-            citizen.setRevengeTarget(null);
-            citizen.setAttackTarget(null);
+            citizen.setLastHurtByMob(null);
+            citizen.setTarget(null);
             return true;
         }
 
-        if (citizen.isWorkerAtSiteWithMove(new BlockPos(target.getPositionVec()), 2) && citizen.canEntityBeSeen(target))
+        if (citizen.isWorkerAtSiteWithMove(new BlockPos(target.position()), 2) && citizen.canSee(target))
         {
-            citizen.swingArm(Hand.MAIN_HAND);
-            target.attackEntityFrom(new NamedDamageSource(citizen.getName().getString(), citizen), 10.0f);
+            citizen.swing(Hand.MAIN_HAND);
+            target.hurt(new NamedDamageSource(citizen.getName().getString(), citizen), 10.0f);
         }
 
         return false;
@@ -151,7 +153,7 @@ public class EntityAIVisitor extends Goal
             return true;
         }
 
-        citizen.getNavigator().moveToRandomPos(10, 0.6D);
+        citizen.getNavigation().moveToRandomPos(10, 0.6D);
         return false;
     }
 
@@ -191,7 +193,7 @@ public class EntityAIVisitor extends Goal
         }
         else if (random == 2)
         {
-            citizen.getNavigator().moveToRandomPos(10, 0.6D);
+            citizen.getNavigation().moveToRandomPos(10, 0.6D);
             actionTimeoutCounter = citizen.getCitizenColonyHandler().getColony().isDay() ? citizen.getRandom().nextInt(1000) + 1000 : 300;
             return VisitorState.WANDERING;
         }
@@ -215,7 +217,7 @@ public class EntityAIVisitor extends Goal
         final BlockPos moveTo = ((VisitorData) citizen.getCitizenData()).getSittingPosition();
         if (citizen.isWorkerAtSiteWithMove(moveTo, 1))
         {
-            if (citizen.getRidingEntity() == null)
+            if (citizen.getVehicle() == null)
             {
                 SittingEntity.sitDown(moveTo, citizen, actionTimeoutCounter);
             }
@@ -243,7 +245,7 @@ public class EntityAIVisitor extends Goal
 
         ((VisitorData) citizen.getCitizenData()).setSittingPosition(BlockPos.ZERO);
 
-        return WorldUtil.isEntityBlockLoaded(citizen.world, citizen.getPosition());
+        return WorldUtil.isEntityBlockLoaded(citizen.level, citizen.blockPosition());
     }
 
     /**
@@ -255,10 +257,10 @@ public class EntityAIVisitor extends Goal
     {
         if (target == null)
         {
-            target = citizen.getAttackTarget();
+            target = citizen.getTarget();
             if (target == null)
             {
-                target = citizen.getRevengeTarget();
+                target = citizen.getLastHurtByMob();
             }
         }
         return target;
@@ -278,7 +280,7 @@ public class EntityAIVisitor extends Goal
      * Returns whether the Goal should begin execution of avoiding.
      */
     @Override
-    public boolean shouldExecute()
+    public boolean canUse()
     {
         return true;
     }
@@ -287,7 +289,7 @@ public class EntityAIVisitor extends Goal
      * Returns whether an in-progress Goal should continue executing.
      */
     @Override
-    public boolean shouldContinueExecuting()
+    public boolean canContinueToUse()
     {
         stateMachine.tick();
         return true;
@@ -305,7 +307,7 @@ public class EntityAIVisitor extends Goal
      * Resets the task.
      */
     @Override
-    public void resetTask()
+    public void stop()
     {
         stateMachine.reset();
         resetLogic();

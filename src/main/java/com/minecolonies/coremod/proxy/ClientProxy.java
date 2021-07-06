@@ -77,7 +77,7 @@ public class ClientProxy extends CommonProxy
     @Override
     public World getWorld(final RegistryKey<World> dimension)
     {
-        return Minecraft.getInstance().world;
+        return Minecraft.getInstance().level;
     }
 
     @Override
@@ -126,7 +126,7 @@ public class ClientProxy extends CommonProxy
         {
             if (IColonyManager.getInstance().getServerUUID() != null)
             {
-                return new File(Minecraft.getInstance().gameDir, Constants.MOD_ID + "/" + IColonyManager.getInstance().getServerUUID());
+                return new File(Minecraft.getInstance().gameDirectory, Constants.MOD_ID + "/" + IColonyManager.getInstance().getServerUUID());
             }
             else
             {
@@ -137,12 +137,12 @@ public class ClientProxy extends CommonProxy
 
         // if the world schematics folder exists we use it
         // otherwise we use the minecraft folder  /minecolonies/schematics if on the physical client on the logical server
-        final File worldSchematicFolder = new File(ServerLifecycleHooks.getCurrentServer().getDataDirectory()
+        final File worldSchematicFolder = new File(ServerLifecycleHooks.getCurrentServer().getServerDirectory()
                                                      + "/" + Constants.MOD_ID + '/' + Structures.SCHEMATICS_PREFIX);
 
         if (!worldSchematicFolder.exists())
         {
-            return new File(Minecraft.getInstance().gameDir, Constants.MOD_ID);
+            return new File(Minecraft.getInstance().gameDirectory, Constants.MOD_ID);
         }
 
         return worldSchematicFolder.getParentFile();

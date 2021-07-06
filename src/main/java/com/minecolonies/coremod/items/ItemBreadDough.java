@@ -16,6 +16,6 @@ public class ItemBreadDough extends AbstractItemMinecolonies
      */
     public ItemBreadDough(final Properties properties)
     {
-        super("bread_dough", properties.maxStackSize(STACKSIZE).group(ModCreativeTabs.MINECOLONIES));
+        super("bread_dough", properties.stacksTo(STACKSIZE).tab(ModCreativeTabs.MINECOLONIES));
     }
 }

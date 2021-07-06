@@ -18,7 +18,7 @@ public class BlockHutLumberjack extends AbstractBlockHut<BlockHutLumberjack>
 
     @NotNull
     @Override
-    public String getName()
+    public String getHutName()
     {
         return "blockhutlumberjack";
     }

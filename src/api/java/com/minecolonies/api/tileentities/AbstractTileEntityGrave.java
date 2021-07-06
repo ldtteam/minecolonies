@@ -64,6 +64,6 @@ public abstract class AbstractTileEntityGrave extends TileEntityRack implements 
     public void setGraveData(IGraveData graveData)
     {
         this.graveData = graveData;
-        markDirty();
+        setChanged();
     }
 }

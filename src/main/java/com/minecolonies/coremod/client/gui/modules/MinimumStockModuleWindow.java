@@ -141,7 +141,7 @@ public class MinimumStockModuleWindow extends AbstractModuleWindow
                 final ItemStack resource = moduleView.getStock().get(index).getA().getItemStack().copy();
                 resource.setCount(resource.getMaxStackSize());
 
-                rowPane.findPaneOfTypeByID(RESOURCE_NAME, Text.class).setText(resource.getDisplayName());
+                rowPane.findPaneOfTypeByID(RESOURCE_NAME, Text.class).setText(resource.getHoverName());
                 rowPane.findPaneOfTypeByID(QUANTITY_LABEL, Text.class).setText(String.valueOf(moduleView.getStock().get(index).getB()));
                 rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(resource);
             }

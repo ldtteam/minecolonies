@@ -154,7 +154,7 @@ public class BuildingFletcher extends AbstractBuildingWorker implements IBuildin
             final Item output = recipe.getPrimaryOutput().getItem();
             return output instanceof ArrowItem ||
                     (output instanceof DyeableArmorItem &&
-                    ((DyeableArmorItem) output).getArmorMaterial() == ArmorMaterial.LEATHER);
+                    ((DyeableArmorItem) output).getMaterial() == ArmorMaterial.LEATHER);
         }
     }
 }

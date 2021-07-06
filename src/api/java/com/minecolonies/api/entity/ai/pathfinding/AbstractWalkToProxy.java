@@ -88,7 +88,7 @@ public abstract class AbstractWalkToProxy implements IWalkToProxy
             this.target = target;
         }
 
-        final BlockPos pos = new BlockPos(entity.getPosX(), entity.getPosY(), entity.getPosZ());
+        final BlockPos pos = new BlockPos(entity.getX(), entity.getY(), entity.getZ());
         final double distanceToPath = careAboutY()
                                         ? BlockPosUtil.getDistanceSquared(pos, target) : BlockPosUtil.getDistanceSquared2D(pos, target);
 
@@ -200,11 +200,11 @@ public abstract class AbstractWalkToProxy implements IWalkToProxy
     private boolean takeTheDirectPath(@NotNull final BlockPos target, final int range, final boolean onMove)
     {
         final boolean arrived;
-        final BlockPos pos = new BlockPos(entity.getPosX(), entity.getPosY(), entity.getPosZ());
+        final BlockPos pos = new BlockPos(entity.getX(), entity.getY(), entity.getZ());
 
         if (onMove)
         {
-            final int targetY = careAboutY() ? target.getY() : entity.getPosition().getY();
+            final int targetY = careAboutY() ? target.getY() : entity.blockPosition().getY();
             arrived = isLivingAtSiteWithMove(entity, target.getX(), target.getY(), target.getZ(), range)
                         || EntityUtils.isLivingAtSite(entity, target.getX(), targetY, target.getZ(), range + 1);
         }
@@ -231,7 +231,7 @@ public abstract class AbstractWalkToProxy implements IWalkToProxy
     private BlockPos fillProxyList(@NotNull final BlockPos target, final double distanceToPath)
     {
         @Nullable BlockPos proxyPoint = getSpecializedProxy(target, distanceToPath);
-        final BlockPos pos = new BlockPos(entity.getPosX(), entity.getPosY(), entity.getPosZ());
+        final BlockPos pos = new BlockPos(entity.getX(), entity.getY(), entity.getZ());
 
         if (proxyPoint == null)
         {

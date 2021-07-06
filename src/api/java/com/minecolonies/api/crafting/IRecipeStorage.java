@@ -120,7 +120,7 @@ public interface IRecipeStorage
     @Nullable
     default List<ItemStack> fullfillRecipeAndCopy(final World world, final List<IItemHandler> handlers)
     {
-        return fullfillRecipeAndCopy((new LootContext.Builder((ServerWorld) world)).build(LootParameterSets.EMPTY), handlers);
+        return fullfillRecipeAndCopy((new LootContext.Builder((ServerWorld) world)).create(LootParameterSets.EMPTY), handlers);
     }
 
     /**

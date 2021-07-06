@@ -59,7 +59,7 @@ public class ColonyViewWorkOrderMessage implements IMessage
     {
         final PacketBuffer newbuf = new PacketBuffer(buf.retain());
         colonyId = newbuf.readInt();
-        dimension = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(newbuf.readString(32767)));
+        dimension = RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(newbuf.readUtf(32767)));
         workOrderBuffer = newbuf;
     }
 
@@ -67,7 +67,7 @@ public class ColonyViewWorkOrderMessage implements IMessage
     public void toBytes(@NotNull final PacketBuffer buf)
     {
         buf.writeInt(colonyId);
-        buf.writeString(dimension.getLocation().toString());
+        buf.writeUtf(dimension.location().toString());
         buf.writeBytes(workOrderBuffer);
     }
 

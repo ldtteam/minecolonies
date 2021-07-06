@@ -12,11 +12,11 @@ public abstract class AbstractBlockMinecoloniesGrave<B extends AbstractBlockMine
     /**
      * The position it faces.
      */
-    public static final DirectionProperty      FACING       = HorizontalBlock.HORIZONTAL_FACING;
+    public static final DirectionProperty      FACING       = HorizontalBlock.FACING;
 
     public AbstractBlockMinecoloniesGrave(final Properties properties)
     {
-        super(properties.notSolid());
+        super(properties.noOcclusion());
     }
 
 }

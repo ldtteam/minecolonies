@@ -147,7 +147,7 @@ public class Level
     {
 
         this.depth = compound.getInt(TAG_DEPTH);
-        if (compound.keySet().contains(TAG_LEVEL_SIGN))
+        if (compound.getAllKeys().contains(TAG_LEVEL_SIGN))
         {
             this.levelSign = BlockPosUtil.read(compound, TAG_LEVEL_SIGN);
         }
@@ -163,7 +163,7 @@ public class Level
             this.nodes.put(new Vec2i(node.getX(), node.getZ()), node);
         }
 
-        final boolean hasDoubles = compound.keySet().contains(TAG_LADDERX);
+        final boolean hasDoubles = compound.getAllKeys().contains(TAG_LADDERX);
 
         final int ladderX;
         final int ladderZ;

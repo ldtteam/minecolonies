@@ -25,6 +25,8 @@ import java.util.List;
 import static com.ldtteam.structurize.placement.handlers.placement.PlacementHandlers.handleTileEntityPlacement;
 import static com.minecolonies.api.util.constant.Constants.UPDATE_FLAG;
 
+import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler.ActionProcessingResult;
+
 public class RackPlacementHandler implements IPlacementHandler
 {
     @Override
@@ -48,20 +50,20 @@ public class RackPlacementHandler implements IPlacementHandler
             return ActionProcessingResult.SUCCESS;
         }
 
-        TileEntity entity = world.getTileEntity(pos);
+        TileEntity entity = world.getBlockEntity(pos);
         if (entity instanceof ChestTileEntity)
         {
             BuildingWareHouse.handleBuildingOverChest(pos, (ChestTileEntity) entity, world, tileEntityData);
         }
         else
         {
-            world.setBlockState(pos, blockState, UPDATE_FLAG);
+            world.setBlock(pos, blockState, UPDATE_FLAG);
             if (tileEntityData != null)
             {
                 handleTileEntityPlacement(tileEntityData, world, pos, settings);
             }
 
-            entity = world.getTileEntity(pos);
+            entity = world.getBlockEntity(pos);
             if (entity instanceof TileEntityRack)
             {
                 ((TileEntityRack) entity).updateBlockState();

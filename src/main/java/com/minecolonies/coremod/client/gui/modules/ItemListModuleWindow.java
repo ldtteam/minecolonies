@@ -150,8 +150,8 @@ public class ItemListModuleWindow extends AbstractModuleWindow
     private void updateResources()
     {
         final Predicate<ItemStack> filterPredicate = stack -> filter.isEmpty()
-                                                                || stack.getTranslationKey().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))
-                                                                || stack.getDisplayName().getString().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US));
+                                                                || stack.getDescriptionId().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))
+                                                                || stack.getHoverName().getString().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US));
         currentDisplayedList.clear();
         for (final ItemStorage storage : groupedItemList)
         {
@@ -215,7 +215,7 @@ public class ItemListModuleWindow extends AbstractModuleWindow
             {
                 final ItemStack resource = currentDisplayedList.get(index).getItemStack();
                 final Text resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Text.class);
-                resourceLabel.setText(resource.getDisplayName());
+                resourceLabel.setText(resource.getHoverName());
                 resourceLabel.setColors(WHITE);
                 rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(resource);
                 final boolean isAllowedItem  = building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id)).isAllowedItem(new ItemStorage(resource));

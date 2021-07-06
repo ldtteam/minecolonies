@@ -27,6 +27,8 @@ import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.S
 import static com.minecolonies.api.util.constant.CitizenConstants.MAX_GUARD_CALL_RANGE;
 import static com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenDiseaseHandler.SEEK_DOCTOR_HEALTH;
 
+import net.minecraft.entity.ai.goal.Goal.Flag;
+
 /**
  * AI task to avoid an Entity class.
  */
@@ -100,12 +102,12 @@ public class EntityAICitizenAvoidEntity extends Goal
     {
         super();
         this.citizen = entity;
-        this.startingPos = entity.getPosition();
+        this.startingPos = entity.blockPosition();
         this.targetEntityClass = targetEntityClass;
         this.distanceFromEntity = distanceFromEntity;
         this.farSpeed = farSpeed;
         this.nearSpeed = nearSpeed;
-        super.setMutexFlags(EnumSet.of(Flag.MOVE));
+        super.setFlags(EnumSet.of(Flag.MOVE));
 
         stateMachine = new TickRateStateMachine<>(SAFE, this::onException);
 
@@ -142,7 +144,7 @@ public class EntityAICitizenAvoidEntity extends Goal
         {
             fleeingCounter = 0;
             citizen.setFleeingState(false);
-            citizen.getNavigator().tryMoveToBlockPos(startingPos, 1);
+            citizen.getNavigation().tryMoveToBlockPos(startingPos, 1);
             return false;
         }
 
@@ -160,17 +162,17 @@ public class EntityAICitizenAvoidEntity extends Goal
     {
         if (targetEntityClass == PlayerEntity.class)
         {
-            return CompatibilityUtils.getWorldFromCitizen(citizen).getClosestPlayer(citizen, (double) distanceFromEntity);
+            return CompatibilityUtils.getWorldFromCitizen(citizen).getNearestPlayer(citizen, (double) distanceFromEntity);
         }
         else
         {
-            final Optional<Entity> entityOptional = CompatibilityUtils.getWorldFromCitizen(citizen).getEntitiesInAABBexcluding(
+            final Optional<Entity> entityOptional = CompatibilityUtils.getWorldFromCitizen(citizen).getEntities(
               citizen,
-              citizen.getBoundingBox().grow(
+              citizen.getBoundingBox().inflate(
                 (double) distanceFromEntity,
                 3.0D,
                 (double) distanceFromEntity),
-              target -> target.isAlive() && citizen.getEntitySenses().canSee(target))
+              target -> target.isAlive() && citizen.getSensing().canSee(target))
                                                       .stream()
                                                       .filter(targetEntityClass::isInstance)
                                                       .findFirst();
@@ -186,10 +188,10 @@ public class EntityAICitizenAvoidEntity extends Goal
      */
     private boolean performMoveAway()
     {
-        if ((moveAwayPath == null || !moveAwayPath.isInProgress()) && citizen.getNavigator().noPath())
+        if ((moveAwayPath == null || !moveAwayPath.isInProgress()) && citizen.getNavigation().isDone())
         {
             moveAwayPath =
-              citizen.getNavigator().moveAwayFromXYZ(citizen.getPosition().add(rand.nextInt(2), 0, rand.nextInt(2)), distanceFromEntity + getMoveAwayDist(citizen), nearSpeed);
+              citizen.getNavigation().moveAwayFromXYZ(citizen.blockPosition().offset(rand.nextInt(2), 0, rand.nextInt(2)), distanceFromEntity + getMoveAwayDist(citizen), nearSpeed);
             citizen.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.avoiding"));
             return true;
         }
@@ -227,7 +229,7 @@ public class EntityAICitizenAvoidEntity extends Goal
         @Nullable final Entity newClosest = getClosestToAvoid();
         if (newClosest != null)
         {
-            if (newClosest.getEntityId() != closestLivingEntity.getEntityId())
+            if (newClosest.getId() != closestLivingEntity.getId())
             {
                 // Calling for help for the new enemy
                 citizen.callForHelp(newClosest, MAX_GUARD_CALL_RANGE);
@@ -243,13 +245,13 @@ public class EntityAICitizenAvoidEntity extends Goal
         }
         else
         {
-            if (citizen.getDistance(closestLivingEntity) < TOO_CLOSE_TO_MOB)
+            if (citizen.distanceTo(closestLivingEntity) < TOO_CLOSE_TO_MOB)
             {
-                citizen.getNavigator().setSpeed(nearSpeed);
+                citizen.getNavigation().setSpeedModifier(nearSpeed);
             }
             else
             {
-                citizen.getNavigator().setSpeed(farSpeed);
+                citizen.getNavigation().setSpeedModifier(farSpeed);
             }
         }
         return false;
@@ -259,12 +261,12 @@ public class EntityAICitizenAvoidEntity extends Goal
      * Returns whether the Goal should begin execution of avoiding.
      */
     @Override
-    public boolean shouldExecute()
+    public boolean canUse()
     {
         if (citizen.isCurrentlyFleeing() && citizen.getCitizenJobHandler().shouldRunAvoidance() && (citizen.getCitizenJobHandler().getColonyJob() == null
                                                                                                       || citizen.getCitizenJobHandler().getColonyJob().canAIBeInterrupted()))
         {
-            startingPos = citizen.getPosition();
+            startingPos = citizen.blockPosition();
             fleeingCounter = 0;
 
             return !(citizen.getHealth() <= SEEK_DOCTOR_HEALTH) || citizen.getCitizenColonyHandler().getColony() == null
@@ -277,7 +279,7 @@ public class EntityAICitizenAvoidEntity extends Goal
      * Returns whether an in-progress Goal should continue executing.
      */
     @Override
-    public boolean shouldContinueExecuting()
+    public boolean canContinueToUse()
     {
         stateMachine.tick();
         if (citizen.getHealth() <= SEEK_DOCTOR_HEALTH && citizen.getCitizenColonyHandler().getColony() != null
@@ -293,7 +295,7 @@ public class EntityAICitizenAvoidEntity extends Goal
      * Resets the task.
      */
     @Override
-    public void resetTask()
+    public void stop()
     {
         closestLivingEntity = null;
         moveAwayPath = null;

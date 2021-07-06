@@ -278,7 +278,7 @@ public class Permissions implements IPermissions
             final CompoundNBT ownerCompound = ownerTagList.getCompound(i);
             @NotNull final UUID id = UUID.fromString(ownerCompound.getString(TAG_ID));
             String name = "";
-            if (ownerCompound.keySet().contains(TAG_NAME))
+            if (ownerCompound.getAllKeys().contains(TAG_NAME))
             {
                 name = ownerCompound.getString(TAG_NAME);
             }
@@ -293,7 +293,7 @@ public class Permissions implements IPermissions
                 rank = ranks.get(oldRank.ordinal());
             }
 
-            final GameProfile player = ServerLifecycleHooks.getCurrentServer().getPlayerProfileCache().getProfileByUUID(id);
+            final GameProfile player = ServerLifecycleHooks.getCurrentServer().getProfileCache().get(id);
 
             if (player != null && rank != null)
             {
@@ -389,7 +389,7 @@ public class Permissions implements IPermissions
         final Map.Entry<UUID, Player> owner = getOwnerEntry();
         if (owner == null && ownerUUID != null)
         {
-            final GameProfile player = ServerLifecycleHooks.getCurrentServer().getPlayerProfileCache().getProfileByUUID(ownerUUID);
+            final GameProfile player = ServerLifecycleHooks.getCurrentServer().getProfileCache().get(ownerUUID);
 
             if (player != null)
             {
@@ -431,7 +431,7 @@ public class Permissions implements IPermissions
         players.remove(getOwner());
 
         ownerName = player.getName().getString();
-        ownerUUID = player.getUniqueID();
+        ownerUUID = player.getUUID();
 
         players.put(ownerUUID, new Player(ownerUUID, player.getName().getString(), ranks.get(OWNER_RANK_ID)));
 
@@ -700,7 +700,7 @@ public class Permissions implements IPermissions
         else
         {
 
-            final GameProfile gameprofile = world.getServer().getPlayerProfileCache().getProfileByUUID(id);
+            final GameProfile gameprofile = world.getServer().getProfileCache().get(id);
 
             return gameprofile != null && addPlayer(gameprofile, rank);
         }
@@ -762,13 +762,13 @@ public class Permissions implements IPermissions
         {
             return false;
         }
-        final GameProfile gameprofile = world.getServer().getPlayerProfileCache().getGameProfileForUsername(player);
+        final GameProfile gameprofile = world.getServer().getProfileCache().get(player);
         //Check if the player already exists so that their rank isn't overridden
 
         // Adds new subscribers
-        if (!world.isRemote() && gameprofile != null)
+        if (!world.isClientSide() && gameprofile != null)
         {
-            final ServerPlayerEntity playerEntity = (ServerPlayerEntity) world.getPlayerByUuid(gameprofile.getId());
+            final ServerPlayerEntity playerEntity = (ServerPlayerEntity) world.getPlayerByUUID(gameprofile.getId());
             if (playerEntity != null)
             {
                 if (rank.getId() == OFFICER_RANK_ID)
@@ -784,12 +784,12 @@ public class Permissions implements IPermissions
                 else
                 {
                     // Check claim
-                    final Chunk chunk = world.getChunk(playerEntity.chunkCoordX, playerEntity.chunkCoordZ);
+                    final Chunk chunk = world.getChunk(playerEntity.xChunk, playerEntity.zChunk);
 
                     final IColonyTagCapability colonyCap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
                     if (colonyCap != null)
                     {
-                        if (colonyCap.getOwningColony() == colony.getID() && world.getDimensionKey() == colony.getDimension())
+                        if (colonyCap.getOwningColony() == colony.getID() && world.dimension() == colony.getDimension())
                         {
                             colony.getPackageManager().addCloseSubscriber(playerEntity);
                             colony.getPackageManager().updateSubscribers();
@@ -918,7 +918,7 @@ public class Permissions implements IPermissions
         for (Rank rank : ranks.values())
         {
             buf.writeInt(rank.getId());
-            buf.writeString(rank.getName());
+            buf.writeUtf(rank.getName());
             buf.writeBoolean(rank.isSubscriber());
             buf.writeBoolean(rank.isInitial());
             buf.writeBoolean(rank.isColonyManager());
@@ -932,7 +932,7 @@ public class Permissions implements IPermissions
         for (@NotNull final Map.Entry<UUID, Player> player : players.entrySet())
         {
             PacketUtils.writeUUID(buf, player.getKey());
-            buf.writeString(player.getValue().getName());
+            buf.writeUtf(player.getValue().getName());
             buf.writeInt(player.getValue().getRank().getId());
         }
 

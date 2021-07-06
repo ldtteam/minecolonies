@@ -40,8 +40,8 @@ public class ColonyStylesMessage implements IMessage
         final int count = buf.readInt();
         for (int i = 0; i < count; i++)
         {
-            final String filename = buf.readString(32767);
-            final String md5 = buf.readString(32767);
+            final String filename = buf.readUtf(32767);
+            final String md5 = buf.readUtf(32767);
             map.put(filename, md5);
         }
         return map;
@@ -59,8 +59,8 @@ public class ColonyStylesMessage implements IMessage
         buf.writeInt(md5s.size());
         for (final Map.Entry<String, String> entry : md5s.entrySet())
         {
-            buf.writeString(entry.getKey());
-            buf.writeString(entry.getValue());
+            buf.writeUtf(entry.getKey());
+            buf.writeUtf(entry.getValue());
         }
     }
 

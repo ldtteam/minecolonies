@@ -36,17 +36,17 @@ public class MinecoloniesMinecart extends AbstractMinecartEntity
      */
     private static final Map<RailShape, Pair<Vector3i, Vector3i>> MATRIX = Util.make(Maps.newEnumMap(RailShape.class), (entry) ->
     {
-        Vector3i westVec = Direction.WEST.getDirectionVec();
-        Vector3i eastVec = Direction.EAST.getDirectionVec();
-        Vector3i northVec = Direction.NORTH.getDirectionVec();
-        Vector3i southVec = Direction.SOUTH.getDirectionVec();
+        Vector3i westVec = Direction.WEST.getNormal();
+        Vector3i eastVec = Direction.EAST.getNormal();
+        Vector3i northVec = Direction.NORTH.getNormal();
+        Vector3i southVec = Direction.SOUTH.getNormal();
 
         entry.put(RailShape.NORTH_SOUTH, Pair.of(northVec, southVec));
         entry.put(RailShape.EAST_WEST, Pair.of(westVec, eastVec));
-        entry.put(RailShape.ASCENDING_EAST, Pair.of(westVec.down(), eastVec));
-        entry.put(RailShape.ASCENDING_WEST, Pair.of(westVec, eastVec.down()));
-        entry.put(RailShape.ASCENDING_NORTH, Pair.of(northVec, southVec.down()));
-        entry.put(RailShape.ASCENDING_SOUTH, Pair.of(northVec.down(), southVec));
+        entry.put(RailShape.ASCENDING_EAST, Pair.of(westVec.below(), eastVec));
+        entry.put(RailShape.ASCENDING_WEST, Pair.of(westVec, eastVec.below()));
+        entry.put(RailShape.ASCENDING_NORTH, Pair.of(northVec, southVec.below()));
+        entry.put(RailShape.ASCENDING_SOUTH, Pair.of(northVec.below(), southVec));
         entry.put(RailShape.SOUTH_EAST, Pair.of(southVec, eastVec));
         entry.put(RailShape.SOUTH_WEST, Pair.of(southVec, westVec));
         entry.put(RailShape.NORTH_WEST, Pair.of(northVec, westVec));
@@ -68,9 +68,9 @@ public class MinecoloniesMinecart extends AbstractMinecartEntity
     protected void moveAlongTrack(BlockPos pos, BlockState state)
     {
         this.fallDistance = 0.0F;
-        double x = this.getPosX();
-        double y = this.getPosY();
-        double z = this.getPosZ();
+        double x = this.getX();
+        double y = this.getY();
+        double z = this.getZ();
         Vector3d posVec = this.getPos(x, y, z);
         y = pos.getY();
         boolean isPowered = false;
@@ -78,11 +78,11 @@ public class MinecoloniesMinecart extends AbstractMinecartEntity
         AbstractRailBlock abstractrailblock = (AbstractRailBlock) state.getBlock();
         if (abstractrailblock instanceof PoweredRailBlock && !((PoweredRailBlock) abstractrailblock).isActivatorRail())
         {
-            isPowered = state.get(PoweredRailBlock.POWERED);
+            isPowered = state.getValue(PoweredRailBlock.POWERED);
             flag = !isPowered;
         }
 
-        RailShape railshape = ((AbstractRailBlock) state.getBlock()).getRailDirection(state, this.world, pos, this);
+        RailShape railshape = ((AbstractRailBlock) state.getBlock()).getRailDirection(state, this.level, pos, this);
         switch (railshape)
         {
             case ASCENDING_EAST:
@@ -96,7 +96,7 @@ public class MinecoloniesMinecart extends AbstractMinecartEntity
                 break;
         }
 
-        Vector3d motion = this.getMotion();
+        Vector3d motion = this.getDeltaMovement();
         Pair<Vector3i, Vector3i> pair = getShapeMatrix(railshape);
         Vector3i vecIn = pair.getFirst();
         Vector3i vecOut = pair.getSecond();
@@ -110,20 +110,20 @@ public class MinecoloniesMinecart extends AbstractMinecartEntity
             zDif = -zDif;
         }
 
-        double veloc = Math.min(2.0D, Math.sqrt(horizontalMag(motion)));
+        double veloc = Math.min(2.0D, Math.sqrt(getHorizontalDistanceSqr(motion)));
         motion = new Vector3d(veloc * xDif / difSq, motion.y, veloc * zDif / difSq);
-        this.setMotion(motion);
+        this.setDeltaMovement(motion);
 
         if (flag && shouldDoRailFunctions())
         {
-            double tempMot = Math.sqrt(horizontalMag(this.getMotion()));
+            double tempMot = Math.sqrt(getHorizontalDistanceSqr(this.getDeltaMovement()));
             if (tempMot < 0.03D)
             {
-                this.setMotion(Vector3d.ZERO);
+                this.setDeltaMovement(Vector3d.ZERO);
             }
             else
             {
-                this.setMotion(this.getMotion().mul(0.5D, 0.0D, 0.5D));
+                this.setDeltaMovement(this.getDeltaMovement().multiply(0.5D, 0.0D, 0.5D));
             }
         }
 
@@ -151,57 +151,57 @@ public class MinecoloniesMinecart extends AbstractMinecartEntity
 
         x = xInDif + xDif * xzDif;
         z = zInDif + zDif * xzDif;
-        this.setPosition(x, y, z);
+        this.setPos(x, y, z);
         this.moveMinecartOnRail(pos);
-        if (vecIn.getY() != 0 && MathHelper.floor(this.getPosX()) - pos.getX() == vecIn.getX() && MathHelper.floor(this.getPosZ()) - pos.getZ() == vecIn.getZ())
+        if (vecIn.getY() != 0 && MathHelper.floor(this.getX()) - pos.getX() == vecIn.getX() && MathHelper.floor(this.getZ()) - pos.getZ() == vecIn.getZ())
         {
-            this.setPosition(this.getPosX(), this.getPosY() + (double) vecIn.getY(), this.getPosZ());
+            this.setPos(this.getX(), this.getY() + (double) vecIn.getY(), this.getZ());
         }
-        else if (vecOut.getY() != 0 && MathHelper.floor(this.getPosX()) - pos.getX() == vecOut.getX() && MathHelper.floor(this.getPosZ()) - pos.getZ() == vecOut.getZ())
+        else if (vecOut.getY() != 0 && MathHelper.floor(this.getX()) - pos.getX() == vecOut.getX() && MathHelper.floor(this.getZ()) - pos.getZ() == vecOut.getZ())
         {
-            this.setPosition(this.getPosX(), this.getPosY() + (double) vecOut.getY(), this.getPosZ());
+            this.setPos(this.getX(), this.getY() + (double) vecOut.getY(), this.getZ());
         }
 
-        this.applyDrag();
-        Vector3d newPos = this.getPos(this.getPosX(), this.getPosY(), this.getPosZ());
+        this.applyNaturalSlowdown();
+        Vector3d newPos = this.getPos(this.getX(), this.getY(), this.getZ());
         if (newPos != null && posVec != null)
         {
             double yMot = (posVec.y - newPos.y) * 0.05D;
-            Vector3d tempMot = this.getMotion();
-            double tempVeloc = Math.sqrt(horizontalMag(tempMot));
+            Vector3d tempMot = this.getDeltaMovement();
+            double tempVeloc = Math.sqrt(getHorizontalDistanceSqr(tempMot));
             if (tempVeloc > 0.0D)
             {
-                this.setMotion(tempMot.mul((tempVeloc + yMot) / tempVeloc, 1.0D, (tempVeloc + yMot) / tempVeloc));
+                this.setDeltaMovement(tempMot.multiply((tempVeloc + yMot) / tempVeloc, 1.0D, (tempVeloc + yMot) / tempVeloc));
             }
 
-            this.setPosition(this.getPosX(), newPos.y, this.getPosZ());
+            this.setPos(this.getX(), newPos.y, this.getZ());
         }
 
-        int xFloor = MathHelper.floor(this.getPosX());
-        int zFloor = MathHelper.floor(this.getPosZ());
+        int xFloor = MathHelper.floor(this.getX());
+        int zFloor = MathHelper.floor(this.getZ());
         if (xFloor != pos.getX() || zFloor != pos.getZ())
         {
-            Vector3d tempMot = this.getMotion();
-            double temoVeloc = Math.sqrt(horizontalMag(tempMot));
-            this.setMotion(temoVeloc * (double) (xFloor - pos.getX()), tempMot.y, temoVeloc * (double) (zFloor - pos.getZ()));
+            Vector3d tempMot = this.getDeltaMovement();
+            double temoVeloc = Math.sqrt(getHorizontalDistanceSqr(tempMot));
+            this.setDeltaMovement(temoVeloc * (double) (xFloor - pos.getX()), tempMot.y, temoVeloc * (double) (zFloor - pos.getZ()));
         }
 
         if (shouldDoRailFunctions())
         {
-            ((AbstractRailBlock) state.getBlock()).onMinecartPass(state, world, pos, this);
+            ((AbstractRailBlock) state.getBlock()).onMinecartPass(state, level, pos, this);
         }
 
         if (isPowered && shouldDoRailFunctions())
         {
-            Vector3d tempMot = this.getMotion();
-            double tempVeloc = Math.sqrt(horizontalMag(tempMot));
+            Vector3d tempMot = this.getDeltaMovement();
+            double tempVeloc = Math.sqrt(getHorizontalDistanceSqr(tempMot));
             if (tempVeloc > 0.01D)
             {
-                this.setMotion(tempMot.add(tempMot.x / tempVeloc * 0.06D, 0.0D, tempMot.z / tempVeloc * 0.06D));
+                this.setDeltaMovement(tempMot.add(tempMot.x / tempVeloc * 0.06D, 0.0D, tempMot.z / tempVeloc * 0.06D));
             }
             else
             {
-                Vector3d mot = this.getMotion();
+                Vector3d mot = this.getDeltaMovement();
                 double tempX = mot.x;
                 double tempZ = mot.z;
                 if (railshape == RailShape.EAST_WEST)
@@ -232,14 +232,14 @@ public class MinecoloniesMinecart extends AbstractMinecartEntity
                     }
                 }
 
-                this.setMotion(tempX, mot.y, tempZ);
+                this.setDeltaMovement(tempX, mot.y, tempZ);
             }
         }
     }
 
     private boolean isNormalCube(BlockPos pos)
     {
-        return this.world.getBlockState(pos).isNormalCube(this.world, pos);
+        return this.level.getBlockState(pos).isRedstoneConductor(this.level, pos);
     }
 
     private static Pair<Vector3i, Vector3i> getShapeMatrix(RailShape p_226573_0_)
@@ -248,13 +248,13 @@ public class MinecoloniesMinecart extends AbstractMinecartEntity
     }
 
     @Override
-    public ActionResultType processInitialInteract(final PlayerEntity p_184230_1_, final Hand p_184230_2_)
+    public ActionResultType interact(final PlayerEntity p_184230_1_, final Hand p_184230_2_)
     {
         return ActionResultType.FAIL;
     }
 
     @Override
-    public boolean canBeCollidedWith()
+    public boolean isPickable()
     {
         return false;
     }
@@ -266,49 +266,49 @@ public class MinecoloniesMinecart extends AbstractMinecartEntity
     }
 
     @Override
-    public void applyEntityCollision(@NotNull final Entity entityIn)
+    public void push(@NotNull final Entity entityIn)
     {
         // Do nothing
     }
 
     @Override
-    public void onCollideWithPlayer(final PlayerEntity entityIn)
+    public void playerTouch(final PlayerEntity entityIn)
     {
         // Do nothing
     }
 
     @Override
-    public boolean canBePushed()
+    public boolean isPushable()
     {
         return false;
     }
 
     @NotNull
     @Override
-    public Vector3d getAllowedMovement(Vector3d vec)
+    public Vector3d collide(Vector3d vec)
     {
         final AxisAlignedBB axisalignedbb = this.getBoundingBox();
-        final ISelectionContext iselectioncontext = ISelectionContext.forEntity(this);
-        final VoxelShape voxelshape = this.world.getWorldBorder().getShape();
-        final Stream<VoxelShape> stream = VoxelShapes.compare(voxelshape, VoxelShapes.create(axisalignedbb.shrink(1.0E-7D)), IBooleanFunction.AND) ? Stream.empty() : Stream.of(voxelshape);
+        final ISelectionContext iselectioncontext = ISelectionContext.of(this);
+        final VoxelShape voxelshape = this.level.getWorldBorder().getCollisionShape();
+        final Stream<VoxelShape> stream = VoxelShapes.joinIsNotEmpty(voxelshape, VoxelShapes.create(axisalignedbb.deflate(1.0E-7D)), IBooleanFunction.AND) ? Stream.empty() : Stream.of(voxelshape);
         final ReuseableStream<VoxelShape> reuseablestream = new ReuseableStream<>(stream);
-        final Vector3d vector3d = vec.lengthSquared() == 0.0D ? vec : collideBoundingBoxHeuristically(this, vec, axisalignedbb, this.world, iselectioncontext, reuseablestream);
+        final Vector3d vector3d = vec.lengthSqr() == 0.0D ? vec : collideBoundingBoxHeuristically(this, vec, axisalignedbb, this.level, iselectioncontext, reuseablestream);
         final boolean xDif = vec.x != vector3d.x;
         final boolean yDif = vec.y != vector3d.y;
         final boolean zDif = vec.z != vector3d.z;
         final boolean groundDif = this.onGround || yDif && vec.y < 0.0D;
-        if (this.stepHeight > 0.0F && groundDif && (xDif || zDif)) {
-            Vector3d vector3d1 = collideBoundingBoxHeuristically(this, new Vector3d(vec.x, (double)this.stepHeight, vec.z), axisalignedbb, this.world, iselectioncontext, reuseablestream);
-            final Vector3d vector3d2 = collideBoundingBoxHeuristically(this, new Vector3d(0.0D, (double)this.stepHeight, 0.0D), axisalignedbb.expand(vec.x, 0.0D, vec.z), this.world, iselectioncontext, reuseablestream);
-            if (vector3d2.y < (double)this.stepHeight) {
-                Vector3d vector3d3 = collideBoundingBoxHeuristically(this, new Vector3d(vec.x, 0.0D, vec.z), axisalignedbb.offset(vector3d2), this.world, iselectioncontext, reuseablestream).add(vector3d2);
-                if (horizontalMag(vector3d3) > horizontalMag(vector3d1)) {
+        if (this.maxUpStep > 0.0F && groundDif && (xDif || zDif)) {
+            Vector3d vector3d1 = collideBoundingBoxHeuristically(this, new Vector3d(vec.x, (double)this.maxUpStep, vec.z), axisalignedbb, this.level, iselectioncontext, reuseablestream);
+            final Vector3d vector3d2 = collideBoundingBoxHeuristically(this, new Vector3d(0.0D, (double)this.maxUpStep, 0.0D), axisalignedbb.expandTowards(vec.x, 0.0D, vec.z), this.level, iselectioncontext, reuseablestream);
+            if (vector3d2.y < (double)this.maxUpStep) {
+                Vector3d vector3d3 = collideBoundingBoxHeuristically(this, new Vector3d(vec.x, 0.0D, vec.z), axisalignedbb.move(vector3d2), this.level, iselectioncontext, reuseablestream).add(vector3d2);
+                if (getHorizontalDistanceSqr(vector3d3) > getHorizontalDistanceSqr(vector3d1)) {
                     vector3d1 = vector3d3;
                 }
             }
 
-            if (horizontalMag(vector3d1) > horizontalMag(vector3d)) {
-                return vector3d1.add(collideBoundingBoxHeuristically(this, new Vector3d(0.0D, -vector3d1.y + vec.y, 0.0D), axisalignedbb.offset(vector3d1), this.world, iselectioncontext, reuseablestream));
+            if (getHorizontalDistanceSqr(vector3d1) > getHorizontalDistanceSqr(vector3d)) {
+                return vector3d1.add(collideBoundingBoxHeuristically(this, new Vector3d(0.0D, -vector3d1.y + vec.y, 0.0D), axisalignedbb.move(vector3d1), this.level, iselectioncontext, reuseablestream));
             }
         }
 
@@ -320,7 +320,7 @@ public class MinecoloniesMinecart extends AbstractMinecartEntity
     {
         super.tick();
 
-        if (this.ticksExisted % 20 == 19 && getPassengers().isEmpty())
+        if (this.tickCount % 20 == 19 && getPassengers().isEmpty())
         {
             this.remove();
         }
@@ -328,7 +328,7 @@ public class MinecoloniesMinecart extends AbstractMinecartEntity
 
     @NotNull
     @Override
-    public IPacket<?> createSpawnPacket()
+    public IPacket<?> getAddEntityPacket()
     {
         return NetworkHooks.getEntitySpawningPacket(this);
     }

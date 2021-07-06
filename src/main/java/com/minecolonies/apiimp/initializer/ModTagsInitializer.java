@@ -116,7 +116,7 @@ public class ModTagsInitializer
      */
     private static ITag<Item> getItemTags(final ResourceLocation resourceLocation, final ITagCollectionSupplier supplier)
     {
-        return supplier.getItemTags().getTagByID(resourceLocation);
+        return supplier.getItems().getTagOrEmpty(resourceLocation);
     }
 
     /**
@@ -127,7 +127,7 @@ public class ModTagsInitializer
      */
     private static ITag<Block> getBlockTags(final ResourceLocation resourceLocation, final ITagCollectionSupplier supplier)
     {
-        return supplier.getBlockTags().getTagByID(resourceLocation);
+        return supplier.getBlocks().getTagOrEmpty(resourceLocation);
     }
 
     /**
@@ -138,6 +138,6 @@ public class ModTagsInitializer
      */
     private static ITag<EntityType<?>> getEntityTags(final ResourceLocation resourceLocation, final ITagCollectionSupplier supplier)
     {
-        return supplier.getEntityTypeTags().getTagByID(resourceLocation);
+        return supplier.getEntityTypes().getTagOrEmpty(resourceLocation);
     }
 }

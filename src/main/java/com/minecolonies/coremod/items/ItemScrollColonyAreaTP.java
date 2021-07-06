@@ -46,22 +46,22 @@ public class ItemScrollColonyAreaTP extends AbstractItemScroll
     @Override
     protected ItemStack onItemUseSuccess(final ItemStack itemStack, final World world, final ServerPlayerEntity player)
     {
-        if (world.rand.nextInt(10) == 0)
+        if (world.random.nextInt(10) == 0)
         {
             // Fail chance
-            player.sendStatusMessage(new TranslationTextComponent("minecolonies.scroll.failed" + (world.rand.nextInt(FAIL_RESPONSES_TOTAL) + 1)).setStyle(Style.EMPTY.setFormatting(
+            player.displayClientMessage(new TranslationTextComponent("minecolonies.scroll.failed" + (world.random.nextInt(FAIL_RESPONSES_TOTAL) + 1)).setStyle(Style.EMPTY.withColor(
               TextFormatting.GOLD)), true);
 
             itemStack.shrink(1);
             if (!ItemStackUtils.isEmpty(itemStack))
             {
-                player.dropItem(itemStack.copy(), true, false);
+                player.drop(itemStack.copy(), true, false);
                 itemStack.setCount(0);
             }
 
             for (final ServerPlayerEntity sPlayer : getAffectedPlayers(player))
             {
-                SoundUtils.playSoundForPlayer(sPlayer, SoundEvents.ENTITY_EVOKER_PREPARE_SUMMON, 0.3f, 1.0f);
+                SoundUtils.playSoundForPlayer(sPlayer, SoundEvents.EVOKER_PREPARE_SUMMON, 0.3f, 1.0f);
             }
         }
         else
@@ -96,20 +96,20 @@ public class ItemScrollColonyAreaTP extends AbstractItemScroll
     }
 
     @Override
-    public void onUse(World worldIn, LivingEntity entity, ItemStack stack, int count)
+    public void onUseTick(World worldIn, LivingEntity entity, ItemStack stack, int count)
     {
-        if (!worldIn.isRemote && worldIn.getGameTime() % 5 == 0 && entity instanceof PlayerEntity)
+        if (!worldIn.isClientSide && worldIn.getGameTime() % 5 == 0 && entity instanceof PlayerEntity)
         {
             final ServerPlayerEntity sPlayer = (ServerPlayerEntity) entity;
             for (final Entity player : getAffectedPlayers(sPlayer))
             {
                 Network.getNetwork()
-                  .sendToTrackingEntity(new VanillaParticleMessage(player.getPosX(), player.getPosY(), player.getPosZ(), ParticleTypes.INSTANT_EFFECT),
+                  .sendToTrackingEntity(new VanillaParticleMessage(player.getX(), player.getY(), player.getZ(), ParticleTypes.INSTANT_EFFECT),
                     player);
             }
 
             Network.getNetwork()
-              .sendToPlayer(new VanillaParticleMessage(sPlayer.getPosX(), sPlayer.getPosY(), sPlayer.getPosZ(), ParticleTypes.INSTANT_EFFECT),
+              .sendToPlayer(new VanillaParticleMessage(sPlayer.getX(), sPlayer.getY(), sPlayer.getZ(), ParticleTypes.INSTANT_EFFECT),
                 sPlayer);
         }
     }
@@ -119,15 +119,15 @@ public class ItemScrollColonyAreaTP extends AbstractItemScroll
      */
     private List<ServerPlayerEntity> getAffectedPlayers(final ServerPlayerEntity user)
     {
-        return user.world.getLoadedEntitiesWithinAABB(ServerPlayerEntity.class, user.getBoundingBox().grow(10, 2, 10));
+        return user.level.getLoadedEntitiesOfClass(ServerPlayerEntity.class, user.getBoundingBox().inflate(10, 2, 10));
     }
 
     @Override
-    public void addInformation(
+    public void appendHoverText(
       @NotNull final ItemStack stack, @Nullable final World worldIn, @NotNull final List<ITextComponent> tooltip, @NotNull final ITooltipFlag flagIn)
     {
         final IFormattableTextComponent guiHint = LanguageHandler.buildChatComponent("item.minecolonies.scroll_area_tp.tip");
-        guiHint.setStyle(Style.EMPTY.setFormatting(TextFormatting.DARK_GREEN));
+        guiHint.setStyle(Style.EMPTY.withColor(TextFormatting.DARK_GREEN));
         tooltip.add(guiHint);
 
         String colonyDesc = new TranslationTextComponent("item.minecolonies.scroll.colony.none").getString();
@@ -139,7 +139,7 @@ public class ItemScrollColonyAreaTP extends AbstractItemScroll
         }
 
         final IFormattableTextComponent guiHint2 = new TranslationTextComponent("item.minecolonies.scroll.colony.tip", colonyDesc);
-        guiHint2.setStyle(Style.EMPTY.setFormatting(TextFormatting.GOLD));
+        guiHint2.setStyle(Style.EMPTY.withColor(TextFormatting.GOLD));
         tooltip.add(guiHint2);
     }
 }

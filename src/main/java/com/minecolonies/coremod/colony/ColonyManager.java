@@ -151,7 +151,7 @@ public final class ColonyManager implements IColonyManager
             for (final ICitizenData citizenData : new ArrayList<>(colony.getCitizenManager().getCitizens()))
             {
                 Log.getLogger().info("Kill Citizen " + citizenData.getName());
-                citizenData.getEntity().ifPresent(entityCitizen -> entityCitizen.onDeath(CONSOLE_DAMAGE_SOURCE));
+                citizenData.getEntity().ifPresent(entityCitizen -> entityCitizen.die(CONSOLE_DAMAGE_SOURCE));
             }
 
             Log.getLogger().info("Removing buildings for " + id);
@@ -234,7 +234,7 @@ public final class ColonyManager implements IColonyManager
     @Nullable
     public IColony getColonyByDimension(final int id, final RegistryKey<World> registryKey)
     {
-        final World world = ServerLifecycleHooks.getCurrentServer().getWorld(registryKey);
+        final World world = ServerLifecycleHooks.getCurrentServer().getLevel(registryKey);
         if (world == null)
         {
             return null;
@@ -293,7 +293,7 @@ public final class ColonyManager implements IColonyManager
     @Override
     public IColony getColonyByPosFromDim(final RegistryKey<World> registryKey, @NotNull final BlockPos pos)
     {
-        return getColonyByPosFromWorld(ServerLifecycleHooks.getCurrentServer().getWorld(registryKey), pos);
+        return getColonyByPosFromWorld(ServerLifecycleHooks.getCurrentServer().getLevel(registryKey), pos);
     }
 
     @Override
@@ -330,7 +330,7 @@ public final class ColonyManager implements IColonyManager
     public List<IColony> getAllColonies()
     {
         final List<IColony> allColonies = new ArrayList<>();
-        for (final World world : ServerLifecycleHooks.getCurrentServer().getWorlds())
+        for (final World world : ServerLifecycleHooks.getCurrentServer().getAllLevels())
         {
             world.getCapability(COLONY_MANAGER_CAP, null).ifPresent(c -> allColonies.addAll(c.getColonies()));
         }
@@ -376,7 +376,7 @@ public final class ColonyManager implements IColonyManager
     @Nullable
     public IColony getIColony(@NotNull final World w, @NotNull final BlockPos pos)
     {
-        return w.isRemote ? getColonyView(w, pos) : getColonyByPosFromWorld(w, pos);
+        return w.isClientSide ? getColonyView(w, pos) : getColonyByPosFromWorld(w, pos);
     }
 
     /**
@@ -395,14 +395,14 @@ public final class ColonyManager implements IColonyManager
         {
             return null;
         }
-        return getColonyView(id, w.getDimensionKey());
+        return getColonyView(id, w.dimension());
     }
 
     @Override
     @Nullable
     public IColony getClosestIColony(@NotNull final World w, @NotNull final BlockPos pos)
     {
-        return w.isRemote ? getClosestColonyView(w, pos) : getClosestColony(w, pos);
+        return w.isClientSide ? getClosestColonyView(w, pos) : getClosestColony(w, pos);
     }
 
     @Override
@@ -423,7 +423,7 @@ public final class ColonyManager implements IColonyManager
 
         if (cap.getOwningColony() != 0)
         {
-            return getColonyView(cap.getOwningColony(), w.getDimensionKey());
+            return getColonyView(cap.getOwningColony(), w.dimension());
         }
         else if (!cap.getAllCloseColonies().isEmpty())
         {
@@ -432,8 +432,8 @@ public final class ColonyManager implements IColonyManager
 
             for (final int cId : cap.getAllCloseColonies())
             {
-                final IColonyView c = getColonyView(cId, w.getDimensionKey());
-                if (c != null && c.getDimension() == w.getDimensionKey())
+                final IColonyView c = getColonyView(cId, w.dimension());
+                if (c != null && c.getDimension() == w.dimension())
                 {
                     final long dist = c.getDistanceSquared(pos);
                     if (dist < closestDist)
@@ -449,11 +449,11 @@ public final class ColonyManager implements IColonyManager
         @Nullable IColonyView closestColony = null;
         long closestDist = Long.MAX_VALUE;
 
-        if (colonyViews.containsKey(w.getDimensionKey()))
+        if (colonyViews.containsKey(w.dimension()))
         {
-            for (@NotNull final IColonyView c : colonyViews.get(w.getDimensionKey()))
+            for (@NotNull final IColonyView c : colonyViews.get(w.dimension()))
             {
-                if (c.getDimension() == w.getDimensionKey() && c.getCenter() != null)
+                if (c.getDimension() == w.dimension() && c.getCenter() != null)
                 {
                     final long dist = c.getDistanceSquared(pos);
                     if (dist < closestDist)
@@ -490,7 +490,7 @@ public final class ColonyManager implements IColonyManager
             for (final int cId : cap.getAllCloseColonies())
             {
                 final IColony c = getColonyByWorld(cId, w);
-                if (c != null && c.getDimension() == w.getDimensionKey())
+                if (c != null && c.getDimension() == w.dimension())
                 {
                     final long dist = c.getDistanceSquared(pos);
                     if (dist < closestDist)
@@ -508,7 +508,7 @@ public final class ColonyManager implements IColonyManager
 
         for (@NotNull final IColony c : getColonies(w))
         {
-            if (c.getDimension() == w.getDimensionKey())
+            if (c.getDimension() == w.dimension())
             {
                 final long dist = c.getDistanceSquared(pos);
                 if (dist < closestDist)
@@ -526,14 +526,14 @@ public final class ColonyManager implements IColonyManager
     @Nullable
     public IColony getIColonyByOwner(@NotNull final World w, @NotNull final PlayerEntity owner)
     {
-        return getIColonyByOwner(w, w.isRemote ? owner.getUniqueID() : owner.getGameProfile().getId());
+        return getIColonyByOwner(w, w.isClientSide ? owner.getUUID() : owner.getGameProfile().getId());
     }
 
     @Override
     @Nullable
     public IColony getIColonyByOwner(@NotNull final World w, final UUID owner)
     {
-        return w.isRemote ? getColonyViewByOwner(owner, w.getDimensionKey()) : getColonyByOwner(owner);
+        return w.isClientSide ? getColonyViewByOwner(owner, w.dimension()) : getColonyByOwner(owner);
     }
 
     /**
@@ -599,7 +599,7 @@ public final class ColonyManager implements IColonyManager
         //Get the colonies NBT tags and store them in a ListNBT.
         if (serverUUID != null)
         {
-            compound.putUniqueId(TAG_UUID, serverUUID);
+            compound.putUUID(TAG_UUID, serverUUID);
         }
 
         final CompoundNBT compCompound = new CompoundNBT();
@@ -617,12 +617,12 @@ public final class ColonyManager implements IColonyManager
     @Override
     public void read(@NotNull final CompoundNBT compound)
     {
-        if (compound.hasUniqueId(TAG_UUID))
+        if (compound.hasUUID(TAG_UUID))
         {
-            serverUUID = compound.getUniqueId(TAG_UUID);
+            serverUUID = compound.getUUID(TAG_UUID);
         }
 
-        if (compound.keySet().contains(TAG_COMPATABILITY_MANAGER))
+        if (compound.getAllKeys().contains(TAG_COMPATABILITY_MANAGER))
         {
             compatibilityManager.read(compound.getCompound(TAG_COMPATABILITY_MANAGER));
         }
@@ -633,7 +633,7 @@ public final class ColonyManager implements IColonyManager
     @Override
     public void onClientTick(@NotNull final TickEvent.ClientTickEvent event)
     {
-        if (event.phase == TickEvent.Phase.END && Minecraft.getInstance().world == null && !colonyViews.isEmpty())
+        if (event.phase == TickEvent.Phase.END && Minecraft.getInstance().level == null && !colonyViews.isEmpty())
         {
             //  Player has left the game, clear the Colony View cache
             colonyViews.clear();
@@ -652,10 +652,10 @@ public final class ColonyManager implements IColonyManager
     @Override
     public void onWorldLoad(@NotNull final World world)
     {
-        if (!world.isRemote)
+        if (!world.isClientSide)
         {
             // Remote clients only guarantee consistent tag behavior if loaded from a TagsUpdatedEvent.
-            ModTagsInitializer.init(world.getTags());
+            ModTagsInitializer.init(world.getTagManager());
 
             // Late-load restore if cap was not loaded
             if (!capLoaded)
@@ -693,7 +693,7 @@ public final class ColonyManager implements IColonyManager
     @Override
     public void onWorldUnload(@NotNull final World world)
     {
-        if (!world.isRemote)
+        if (!world.isClientSide)
         {
             for (@NotNull final IColony c : getColonies(world))
             {
@@ -860,7 +860,7 @@ public final class ColonyManager implements IColonyManager
     public int getTopColonyId()
     {
         int top = 0;
-        for (final World world : ServerLifecycleHooks.getCurrentServer().getWorlds())
+        for (final World world : ServerLifecycleHooks.getCurrentServer().getAllLevels())
         {
             final int tempTop = world.getCapability(COLONY_MANAGER_CAP, null).map(IColonyManagerCapability::getTopID).orElse(0);
             if (tempTop > top)

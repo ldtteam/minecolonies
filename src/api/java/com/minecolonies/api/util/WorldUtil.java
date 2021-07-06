@@ -70,9 +70,9 @@ public class WorldUtil
     {
         if (WorldUtil.isBlockLoaded(world, pos))
         {
-            world.getChunk(pos.getX() >> 4, pos.getZ() >> 4).markDirty();
+            world.getChunk(pos.getX() >> 4, pos.getZ() >> 4).markUnsaved();
             final BlockState state = world.getBlockState(pos);
-            world.notifyBlockUpdate(pos, state, state, 3);
+            world.sendBlockUpdated(pos, state, state, 3);
         }
     }
 
@@ -122,7 +122,7 @@ public class WorldUtil
      */
     public static boolean isEntityChunkLoaded(final IWorld world, final ChunkPos pos)
     {
-        return world.getChunkProvider().isChunkLoaded(pos);
+        return world.getChunkSource().isEntityTickingChunk(pos);
     }
 
     /**
@@ -178,7 +178,7 @@ public class WorldUtil
      */
     public static boolean isOverworldType(@NotNull final World world)
     {
-        return isOfWorldType(world, DimensionType.OVERWORLD);
+        return isOfWorldType(world, DimensionType.OVERWORLD_LOCATION);
     }
 
     /**
@@ -189,7 +189,7 @@ public class WorldUtil
      */
     public static boolean isNetherType(@NotNull final World world)
     {
-        return isOfWorldType(world, DimensionType.THE_NETHER);
+        return isOfWorldType(world, DimensionType.NETHER_LOCATION);
     }
 
     /**
@@ -201,18 +201,18 @@ public class WorldUtil
      */
     public static boolean isOfWorldType(@NotNull final World world, @NotNull final RegistryKey<DimensionType> type)
     {
-        DynamicRegistries dynRegistries = world.func_241828_r();
-        ResourceLocation loc = dynRegistries.func_230520_a_().getKey(world.getDimensionType());
+        DynamicRegistries dynRegistries = world.registryAccess();
+        ResourceLocation loc = dynRegistries.dimensionTypes().getKey(world.dimensionType());
         if (loc == null)
         {
-            if (world.isRemote)
+            if (world.isClientSide)
             {
                 //todo Remove this line once forge fixes this.
-                return world.getDimensionType().getEffects().equals(type.getLocation());
+                return world.dimensionType().effectsLocation().equals(type.location());
             }
             return false;
         }
-        RegistryKey<DimensionType> regKey = RegistryKey.getOrCreateKey(Registry.DIMENSION_TYPE_KEY, loc);
+        RegistryKey<DimensionType> regKey = RegistryKey.create(Registry.DIMENSION_TYPE_REGISTRY, loc);
         return regKey == type;
     }
 
@@ -226,7 +226,7 @@ public class WorldUtil
      */
     public static boolean isPeaceful(@NotNull final World world)
     {
-        return !world.getWorldInfo().getGameRulesInstance().getBoolean(GameRules.DO_MOB_SPAWNING) || world.getDifficulty().equals(Difficulty.PEACEFUL);
+        return !world.getLevelData().getGameRules().getBoolean(GameRules.RULE_DOMOBSPAWNING) || world.getDifficulty().equals(Difficulty.PEACEFUL);
     }
 
     /**
@@ -239,9 +239,9 @@ public class WorldUtil
      */
     public static boolean setBlockState(final IWorld world, final BlockPos pos, final BlockState state)
     {
-        if (world.isRemote())
+        if (world.isClientSide())
         {
-            return world.setBlockState(pos, state, 3);
+            return world.setBlock(pos, state, 3);
         }
 
         return setBlockState(world, pos, state, 3);
@@ -257,22 +257,22 @@ public class WorldUtil
      */
     public static boolean setBlockState(final IWorld world, final BlockPos pos, final BlockState state, int flags)
     {
-        if (world.isRemote() || !(world instanceof ServerWorld))
+        if (world.isClientSide() || !(world instanceof ServerWorld))
         {
-            return world.setBlockState(pos, state, flags);
+            return world.setBlock(pos, state, flags);
         }
 
         if ((flags & 2) != 0)
         {
             final Set<PathNavigator> navigators = ((ServerWorld) world).navigations;
             ((ServerWorld) world).navigations = Collections.emptySet();
-            final boolean result = world.setBlockState(pos, state, flags);
+            final boolean result = world.setBlock(pos, state, flags);
             ((ServerWorld) world).navigations = navigators;
             return result;
         }
         else
         {
-            return world.setBlockState(pos, state, flags);
+            return world.setBlock(pos, state, flags);
         }
     }
 
@@ -287,7 +287,7 @@ public class WorldUtil
     public static boolean removeBlock(final IWorld world, BlockPos pos, boolean isMoving)
     {
         final FluidState fluidstate = world.getFluidState(pos);
-        return setBlockState(world, pos, fluidstate.getBlockState(), 3 | (isMoving ? 64 : 0));
+        return setBlockState(world, pos, fluidstate.createLegacyBlock(), 3 | (isMoving ? 64 : 0));
     }
 
     /**
@@ -316,7 +316,7 @@ public class WorldUtil
         int maxY = corners.getB().getY() >> 4;
 
         List<T> list = Lists.newArrayList();
-        AbstractChunkProvider abstractchunkprovider = world.getChunkProvider();
+        AbstractChunkProvider abstractchunkprovider = world.getChunkSource();
 
         for (int x = minX; x <= maxX; ++x)
         {
@@ -329,9 +329,9 @@ public class WorldUtil
                     {
                         for (int y = minY; y <= maxY; y++)
                         {
-                            for (final T entity : chunk.getEntityLists()[y].getByClass(clazz))
+                            for (final T entity : chunk.getEntitySections()[y].find(clazz))
                             {
-                                if (building.isInBuilding(entity.getPosition()) && (predicate == null || predicate.test(entity)))
+                                if (building.isInBuilding(entity.blockPosition()) && (predicate == null || predicate.test(entity)))
                                 {
                                     list.add(entity);
                                 }

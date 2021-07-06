@@ -139,7 +139,7 @@ public class EntityAIEatTask extends Goal
     {
         super();
         this.citizen = citizen;
-        this.setMutexFlags(EnumSet.of(Goal.Flag.MOVE));
+        this.setFlags(EnumSet.of(Goal.Flag.MOVE));
 
         stateMachine = new TickRateStateMachine<>(IDLE, e -> Log.getLogger().warn("Eating AI threw exception:", e));
 
@@ -211,7 +211,7 @@ public class EntityAIEatTask extends Goal
     }
 
     @Override
-    public boolean shouldExecute()
+    public boolean canUse()
     {
         stateMachine.tick();
         return stateMachine.getState() != IDLE;
@@ -254,17 +254,17 @@ public class EntityAIEatTask extends Goal
             return CHECK_FOR_FOOD;
         }
 
-        citizen.setHeldItem(Hand.MAIN_HAND, stack);
+        citizen.setItemInHand(Hand.MAIN_HAND, stack);
 
-        citizen.swingArm(Hand.MAIN_HAND);
-        citizen.playSound(SoundEvents.ENTITY_GENERIC_EAT, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(citizen.getRandom()));
+        citizen.swing(Hand.MAIN_HAND);
+        citizen.playSound(SoundEvents.GENERIC_EAT, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(citizen.getRandom()));
         Network.getNetwork()
-          .sendToTrackingEntity(new ItemParticleEffectMessage(citizen.getHeldItemMainhand(),
-            citizen.getPosX(),
-            citizen.getPosY(),
-            citizen.getPosZ(),
-            citizen.rotationPitch,
-            citizen.rotationYaw,
+          .sendToTrackingEntity(new ItemParticleEffectMessage(citizen.getMainHandItem(),
+            citizen.getX(),
+            citizen.getY(),
+            citizen.getZ(),
+            citizen.xRot,
+            citizen.yRot,
             citizen.getEyeHeight()), citizen);
 
         waitingTicks++;
@@ -274,11 +274,11 @@ public class EntityAIEatTask extends Goal
         }
 
 
-        final Food itemFood = stack.getItem().getFood();
+        final Food itemFood = stack.getItem().getFoodProperties();
 
-        final Item containerItem = stack.getItem().getContainerItem();
+        final Item containerItem = stack.getItem().getCraftingRemainingItem();
 
-        final double satIncrease = itemFood.getHealing() * (1.0 + citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SATURATION));
+        final double satIncrease = itemFood.getNutrition() * (1.0 + citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SATURATION));
 
         citizenData.increaseSaturation(satIncrease / 2.0);
         citizenData.getInventory().extractItem(foodSlot, 1, false);
@@ -288,10 +288,10 @@ public class EntityAIEatTask extends Goal
             if (citizenData.getInventory().isFull())
             {
                 InventoryUtils.spawnItemStack(
-                        citizen.world,
-                        citizen.getPosX(),
-                        citizen.getPosY(),
-                        citizen.getPosZ(),
+                        citizen.level,
+                        citizen.getX(),
+                        citizen.getY(),
+                        citizen.getZ(),
                         new ItemStack(containerItem, 1)
                 );
             }
@@ -308,7 +308,7 @@ public class EntityAIEatTask extends Goal
         }
 
         citizenData.markDirty();
-        citizen.setHeldItem(Hand.MAIN_HAND, ItemStack.EMPTY);
+        citizen.setItemInHand(Hand.MAIN_HAND, ItemStack.EMPTY);
 
         if (citizenData.getSaturation() < CitizenConstants.FULL_SATURATION && !citizenData.getInventory().getStackInSlot(foodSlot).isEmpty())
         {
@@ -424,7 +424,7 @@ public class EntityAIEatTask extends Goal
             return SEARCH_RESTAURANT;
         }
 
-        if (BlockPosUtil.getDistance2D(restaurantPos, citizen.getPosition()) > MIN_DISTANCE_TO_RESTAURANT)
+        if (BlockPosUtil.getDistance2D(restaurantPos, citizen.blockPosition()) > MIN_DISTANCE_TO_RESTAURANT)
         {
             return GO_TO_RESTAURANT;
         }
@@ -572,15 +572,15 @@ public class EntityAIEatTask extends Goal
     {
         waitingTicks = 0;
         foodSlot = -1;
-        citizen.stopActiveHand();
-        citizen.resetActiveHand();
-        citizen.setHeldItem(Hand.MAIN_HAND, ItemStack.EMPTY);
+        citizen.releaseUsingItem();
+        citizen.stopUsingItem();
+        citizen.setItemInHand(Hand.MAIN_HAND, ItemStack.EMPTY);
         restaurantPos = null;
         eatPos = null;
     }
 
     @Override
-    public void resetTask()
+    public void stop()
     {
         reset();
         stateMachine.reset();
@@ -588,7 +588,7 @@ public class EntityAIEatTask extends Goal
     }
 
     @Override
-    public void startExecuting()
+    public void start()
     {
         citizen.getCitizenData().setVisibleStatus(VisibleCitizenStatus.EAT);
     }

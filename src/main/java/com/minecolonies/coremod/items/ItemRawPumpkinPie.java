@@ -16,6 +16,6 @@ public class ItemRawPumpkinPie extends AbstractItemMinecolonies
      */
     public ItemRawPumpkinPie(final Properties properties)
     {
-        super("raw_pumpkin_pie", properties.maxStackSize(STACKSIZE).group(ModCreativeTabs.MINECOLONIES));
+        super("raw_pumpkin_pie", properties.stacksTo(STACKSIZE).tab(ModCreativeTabs.MINECOLONIES));
     }
 }

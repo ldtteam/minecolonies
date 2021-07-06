@@ -33,7 +33,7 @@ public class AbstractTileEntityNamedGrave extends TileEntity
     /**
      * The position it faces.
      */
-    public static final DirectionProperty FACING       = HorizontalBlock.HORIZONTAL_FACING;
+    public static final DirectionProperty FACING       = HorizontalBlock.FACING;
 
     /**
      * The text displayed on the name plate
@@ -54,16 +54,16 @@ public class AbstractTileEntityNamedGrave extends TileEntity
     public void setTextLines(final ArrayList<String> content)
     {
         this.textLines = content;
-        markDirty();
+        setChanged();
     }
 
     @Override
-    public void read(final BlockState state, final CompoundNBT compound)
+    public void load(final BlockState state, final CompoundNBT compound)
     {
-        super.read(state, compound);
+        super.load(state, compound);
 
         textLines.clear();
-        if (compound.keySet().contains(TAG_CONTENT))
+        if (compound.getAllKeys().contains(TAG_CONTENT))
         {
             final ListNBT lines = compound.getList(TAG_CONTENT, TAG_STRING);
             for (int i = 0; i < lines.size(); i++)
@@ -76,9 +76,9 @@ public class AbstractTileEntityNamedGrave extends TileEntity
 
     @NotNull
     @Override
-    public CompoundNBT write(final CompoundNBT compound)
+    public CompoundNBT save(final CompoundNBT compound)
     {
-        super.write(compound);
+        super.save(compound);
 
         @NotNull final ListNBT lines = new ListNBT();
         for (@NotNull final String line : textLines)
@@ -94,31 +94,31 @@ public class AbstractTileEntityNamedGrave extends TileEntity
     public SUpdateTileEntityPacket getUpdatePacket()
     {
         final CompoundNBT compound = new CompoundNBT();
-        return new SUpdateTileEntityPacket(this.pos, 0, this.write(compound));
+        return new SUpdateTileEntityPacket(this.worldPosition, 0, this.save(compound));
     }
 
     @NotNull
     @Override
     public CompoundNBT getUpdateTag()
     {
-        return this.write(new CompoundNBT());
+        return this.save(new CompoundNBT());
     }
 
     @Override
     public void onDataPacket(final NetworkManager net, final SUpdateTileEntityPacket packet)
     {
-        this.read(getBlockState(), packet.getNbtCompound());
+        this.load(getBlockState(), packet.getTag());
     }
 
     @Override
     public void handleUpdateTag(final BlockState state, final CompoundNBT tag)
     {
-        this.read(state, tag);
+        this.load(state, tag);
     }
 
     @Override
-    public void markDirty()
+    public void setChanged()
     {
-        WorldUtil.markChunkDirty(world, pos);
+        WorldUtil.markChunkDirty(level, worldPosition);
     }
 }

@@ -41,13 +41,13 @@ public class BuildingSetStyleMessage extends AbstractBuildingServerMessage<IBuil
     @Override
     public void fromBytesOverride(@NotNull final PacketBuffer buf)
     {
-        style = buf.readString(32767);
+        style = buf.readUtf(32767);
     }
 
     @Override
     public void toBytesOverride(@NotNull final PacketBuffer buf)
     {
-        buf.writeString(style);
+        buf.writeUtf(style);
     }
 
     @Override
