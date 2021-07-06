@@ -1,6 +1,5 @@
 package com.minecolonies.api.util.constant;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import net.minecraft.util.ResourceLocation;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
@@ -286,11 +285,6 @@ public final class WindowConstants
     public static final String BUTTON_ADD_PLAYER_OR_FAKEPLAYER = "addfakeplayer";
 
     /**
-     * Id of the switch view of the different groups.
-     */
-    public static final String VIEW_PERM_GROUPS = "userGroups";
-
-    /**
      * The view of the permission management.
      */
     public static final String PERMISSION_VIEW = "managePermissions";
@@ -386,7 +380,6 @@ public final class WindowConstants
     public static final String HUT_BUILDER_RESOURCE_SUFFIX = ":gui/windowhutworkerplaceholder.xml";
     public static final String LIST_RESOURCES              = "resources";
 
-    public static final String PAGE_RESOURCES              = "resourceActions";
     public static final String LIST_WORK_ORDERS            = "workOrders";
     public static final String RESOURCE_NAME               = "resourceName";
     public static final String RESOURCE_AVAILABLE_NEEDED   = "resourceAvailableNeeded";
@@ -403,7 +396,6 @@ public final class WindowConstants
     public static final String WORK_ORDER_NAME   = "buildingName";
     public static final String WORK_ORDER_POS    = "buildingPos";
     public static final String WORK_ORDER_SELECT = "manage";
-    public static final String WORK_ORDER_ID     = "orderId";
 
     public static final String GUIDE_RESOURCE_SUFFIX = ":gui/windowhutguide.xml";
     public static final String GUIDE_CONFIRM         = "confirm";
@@ -464,46 +456,13 @@ public final class WindowConstants
     /**
      * The GuardTower GUI file.
      */
-    //GUI Lists
-    public static final String  GUI_ELEMENT_LIST_LEVELS    = "positions";
-    public static final String  GUI_ELEMENT_LIST_MOBS      = "mobs";
     //GUI List Elements
     public static final String  GUI_LIST_ELEMENT_NAME      = "name";
     public static final String  GUI_LIST_BUTTON_SWITCH     = "switch";
-    public static final String  GUI_LIST_BUTTON_UP         = "prioUp";
-    public static final String  GUI_LIST_BUTTON_DOWN       = "prioDown";
-    //GUI Buttons
-    public static final String  GUI_BUTTON_JOB             = "job";
-    public static final String  GUI_BUTTON_ASSIGNMENT_MODE = "assign";
-    public static final String  GUI_BUTTON_PATROL_MODE     = "patrol";
-    public static final String  GUI_BUTTON_RETRIEVAL_MODE  = "retrieve";
-    public static final String  GUI_BUTTON_TRAINEE_MODE    = "trainees";
-    public static final String  GUI_BUTTON_SET_TARGET      = "setTarget";
-    public static final String  GUI_BUTTON_RECALCULATE     = "recalculate";
-    //GUI Switches
-    public static final String  GUI_SWITCH_VIEW_PAGES      = "pages";
-    public static final String  GUI_SWITCH_TASK_PATROL     = "patrolling";
-    public static final String  GUI_SWITCH_TASK_FOLLOW     = "following";
-    public static final String  GUI_SWITCH_TASK_GUARD      = "guarding";
-    public static final String  GUI_SWITCH_TASK_MINE       = "mine";
-    public static final String  GUI_SWITCH_AUTO            = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_MODE_AUTO);
-    public static final String  GUI_SWITCH_MANUAL          = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_MODE_MANUAL);
-    public static final String  GUI_SWITCH_ON              = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON);
-    public static final String  GUI_SWITCH_OFF             = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF);
-    //GUI Pages
-    public static final String  GUI_PAGE_LEVEL_ACTIONS     = "levelActions";
-    public static final String  GUI_PAGE_MOB_ACTIONS       = "mobActions";
-    //GUI Resource
-    public static final String  GUI_RESOURCE               = ":gui/windowhutguardtower.xml";
-    //Get GuardTool GUI
-    public static final String  BUTTON_GET_TOOL            = "getTool";
 
     /**
      * GuardControl GUI
      */
-    public static final String GUARD_CONTROL  = ":gui/windowguardcontrol.xml";
-    public static final String LIST_WORKERS   = "workers";
-    public static final String POSITION_LABEL = "position";
     public static final String LEVEL_LABEL    = "level";
 
     /**
@@ -530,7 +489,6 @@ public final class WindowConstants
     public static final String BLUE_ICON   = "minecolonies:textures/gui/blue_icon.png";
 
     public static final String LABEL_CONSTRUCTION_NAME = "constructionName";
-    public static final String LABEL_CONSTRUCTION_POS  = "constructionPos";
     public static final String LABEL_PROGRESS          = "progress";
     public static final String STEP_PROGRESS          = "stepprogress";
     public static final String LABEL_WORKERNAME        = "workerName";
@@ -836,16 +794,6 @@ public final class WindowConstants
     public static final String DELIVERY_IMAGE = "deliveryImage";
 
     /**
-     * Switch id of the head switch in citizen gui.
-     */
-    public static final String VIEW_HEAD = "head";
-
-    /**
-     * Button id of the requests page.
-     */
-    public static final String BUTTON_REQUESTS = "requestsTitle";
-
-    /**
      * Button id to get back from the requests page.
      */
     public static final String BUTTON_BACK = "back";
@@ -874,11 +822,6 @@ public final class WindowConstants
      * Id of the requester label.
      */
     public static final String REQUESTER = "requester";
-
-    /**
-     * Id of the order label.
-     */
-    public static final String ORDER = "order";
 
     /**
      * Id of the parent label.
@@ -1088,24 +1031,15 @@ public final class WindowConstants
     public static final String TOWNHALL_RANK_BUTTON      = "rankButton";
     public static final String BUTTON_ADD_RANK = "buttonAddRank";
     public static final String INPUT_ADDRANK_NAME = "addRankName";
-    public static final String BUTTON_EDIT_PLAYERRANK = "editPlayerRank";
     public static final String BUTTON_REMOVE_RANK = "removeRank";
     public static final String TOWNHALL_RANK_LIST = "rankList";
     public static final String TOWNHALL_ADD_RANK_ERROR = "rankNameError";
-    public static final String TOWNHALL_PLAYER_NAME = "playerName";
     public static final String TOWNHALL_RANK_PICKER = "rankPicker";
     public static final String TOWNHALL_PERM_MANAGEMENT = "permissionsManagement";
     public static final String TOWNHALL_PERM_LIST = "permissionsList";
     public static final String TOWNHALL_PERM_SETTINGS = "permissionsSettings";
     public static final String TOWNHALL_PERM_MODE_TOGGLE = "permissionsModeToggle";
-    public static final String TOWNHALL_BUTTON_MANAGER = "typeManager";
-    public static final String TOWNHALL_BUTTON_HOSTILE = "typeHostile";
-    public static final String TOWNHALL_BUTTON_NONE = "typeNone";
     public static final String TOWNHALL_BUTTON_SUBSCRIBER = "setSubscriber";
-    public static final String TOWNHALL_SWITCH_PLAYER = "switchPlayer";
-    public static final String TOWNHALL_SWITCH_PLAYER_LIST = "playerList";
-    public static final String TOWNHALL_SWITCH_PLAYER_RANK = "playerEditRank";
-    public static final String TOWNHALL_USER_VIEW = "pageAddPlayer";
     public static final String TOWNHALL_RANK_TYPE_PICKER = "rankTypePicker";
 
     /**
