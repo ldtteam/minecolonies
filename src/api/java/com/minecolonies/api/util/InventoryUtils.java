@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.constant.IToolType;
 import net.minecraft.block.Block;
@@ -389,7 +390,7 @@ public class InventoryUtils
     }
 
     /**
-     * Adapted from {@link net.minecraft.entity.player.PlayerInventory#addItemStackToInventory(ItemStack)}.
+     * Adapted from {@link net.minecraft.entity.player.PlayerInventory#add(ItemStack)}.
      *
      * @param itemHandler              {@link IItemHandler} to add itemstack to.
      * @param itemStack                ItemStack to add.
@@ -921,7 +922,7 @@ public class InventoryUtils
     }
 
     /**
-     * Adapted from {@link net.minecraft.entity.player.PlayerInventory#addItemStackToInventory(ItemStack)}.
+     * Adapted from {@link net.minecraft.entity.player.PlayerInventory#add(ItemStack)}.
      *
      * @param provider  {@link ICapabilityProvider} to add itemstack to.
      * @param itemStack ItemStack to add.
@@ -933,7 +934,7 @@ public class InventoryUtils
     }
 
     /**
-     * Adapted from {@link net.minecraft.entity.player.PlayerInventory#addItemStackToInventory(ItemStack)}.
+     * Adapted from {@link net.minecraft.entity.player.PlayerInventory#add(ItemStack)}.
      *
      * @param itemHandler {@link IItemHandler} to add itemstack to.
      * @param itemStack   ItemStack to add.
@@ -1007,7 +1008,7 @@ public class InventoryUtils
     }
 
     /**
-     * Adapted from {@link net.minecraft.entity.player.PlayerInventory#addItemStackToInventory(ItemStack)}.
+     * Adapted from {@link net.minecraft.entity.player.PlayerInventory#add(ItemStack)}.
      *
      * @param provider  {@link ICapabilityProvider} to add itemstack to.
      * @param itemStack ItemStack to add.
@@ -1031,7 +1032,7 @@ public class InventoryUtils
     }
 
     /**
-     * Adapted from {@link net.minecraft.entity.player.PlayerInventory#addItemStackToInventory(ItemStack)}.
+     * Adapted from {@link net.minecraft.entity.player.PlayerInventory#add(ItemStack)}.
      *
      * @param itemHandler {@link IItemHandler} to add itemstack to.
      * @param itemStack   ItemStack to add.
@@ -1080,7 +1081,7 @@ public class InventoryUtils
     }
 
     /**
-     * Adapted from {@link net.minecraft.entity.player.PlayerInventory#addItemStackToInventory(ItemStack)}.
+     * Adapted from {@link net.minecraft.entity.player.PlayerInventory#add(ItemStack)}.
      *
      * @param provider                 {@link ICapabilityProvider} to add itemstack to.
      * @param itemStack                ItemStack to add.
@@ -2001,38 +2002,36 @@ public class InventoryUtils
     }
 
     /**
-     * Method to swap the ItemStacks from the given source {@link ICapabilityProvider} to the given target {@link IItemHandler}.
+     * Method to swap the ItemStacks from the given source {@link IItemHandler} to the given target {@link IItemHandler}.
      *
-     * @param sourceProvider The {@link ICapabilityProvider} that works as Source.
+     * @param handler The {@link IItemHandler} that works as Source.
      * @param stackPredicate The type of stack to pickup.
      * @param count how much to pick up.
      * @param targetHandler  The {@link IItemHandler} that works as Target.
      * @return True when the swap was successful, false when not.
      */
-    public static boolean transferItemStackIntoNextFreeSlotFromProvider(
-      @NotNull final ICapabilityProvider sourceProvider,
+    public static boolean transferItemStackIntoNextFreeSlotFromItemHandler(
+      @NotNull final IItemHandler handler,
       @NotNull final Predicate<ItemStack> stackPredicate,
       final int count,
       @NotNull final IItemHandler targetHandler)
     {
         int totalCount = count;
-        for (final IItemHandler handler : getItemHandlersFromProvider(sourceProvider))
-        {
-            int index = findFirstSlotInItemHandlerWith(handler, stackPredicate);
-            while (index != -1)
-            {
-                final int localCount = Math.min(totalCount, handler.getStackInSlot(index).getCount());
-                if (transferXOfItemStackIntoNextFreeSlotInItemHandler(handler, index, localCount, targetHandler))
-                {
-                    totalCount -= localCount;
-                }
 
-                if (totalCount <= 0)
-                {
-                    return true;
-                }
-                index = findFirstSlotInItemHandlerWith(handler, stackPredicate);
+        int index = findFirstSlotInItemHandlerWith(handler, stackPredicate);
+        while (index != -1)
+        {
+            final int localCount = Math.min(totalCount, handler.getStackInSlot(index).getCount());
+            if (transferXOfItemStackIntoNextFreeSlotInItemHandler(handler, index, localCount, targetHandler))
+            {
+                totalCount -= localCount;
             }
+
+            if (totalCount <= 0)
+            {
+                return true;
+            }
+            index = findFirstSlotInItemHandlerWith(handler, stackPredicate);
         }
 
         return false;
@@ -3039,5 +3038,26 @@ public class InventoryUtils
         {
             ((ServerPlayerEntity) player).server.getPlayerList().sendAllPlayerInfo((ServerPlayerEntity) player);
         }
+    }
+
+    /**
+     * Check if there is enough of a given stack in the provider.
+     * @param entity the provider.
+     * @param stack the stack to count.
+     * @param count the count.
+     * @return true if enough.
+     */
+    public static boolean hasEnoughInProvider(final TileEntity entity, final ItemStack stack, final int count)
+    {
+        if (entity instanceof TileEntityColonyBuilding)
+        {
+            return InventoryUtils.hasBuildingEnoughElseCount( ((TileEntityColonyBuilding) entity).getBuilding(), new ItemStorage(stack), stack.getCount()) >= count;
+        }
+        else if (entity instanceof TileEntityRack)
+        {
+            return ((TileEntityRack) entity).getCount(stack, false, false) >= count;
+        }
+
+        return getItemCountInProvider(entity, itemStack -> !ItemStackUtils.isEmpty(itemStack) && ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, true, true)) >= count;
     }
 }

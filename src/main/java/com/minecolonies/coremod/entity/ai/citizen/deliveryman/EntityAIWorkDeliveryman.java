@@ -16,7 +16,6 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
-import com.minecolonies.api.util.InventoryFunctions;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
@@ -30,7 +29,6 @@ import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests.D
 import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests.PickupRequest;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
@@ -43,7 +41,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
@@ -513,20 +510,6 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         }
 
         final TileEntity tileEntity = world.getBlockEntity(location.getInDimensionLocation());
-        if (tileEntity instanceof ChestTileEntity)
-        {
-            if (((ChestTileEntity) tileEntity).openCount == 0)
-            {
-                this.world.blockEvent(tileEntity.getBlockPos(), tileEntity.getBlockState().getBlock(), 1, 1);
-                this.world.updateNeighborsAt(tileEntity.getBlockPos(), tileEntity.getBlockState().getBlock());
-                this.world.updateNeighborsAt(tileEntity.getBlockPos().below(), tileEntity.getBlockState().getBlock());
-                return PREPARE_DELIVERY;
-            }
-            this.world.blockEvent(tileEntity.getBlockPos(), tileEntity.getBlockState().getBlock(), 1, 0);
-            this.world.updateNeighborsAt(tileEntity.getBlockPos(), tileEntity.getBlockState().getBlock());
-            this.world.updateNeighborsAt(tileEntity.getBlockPos().below(), tileEntity.getBlockState().getBlock());
-        }
-
         job.addConcurrentDelivery(nextPickUp.getId());
         if (gatherIfInTileEntity(tileEntity, nextPickUp.getRequest().getStack()))
         {
@@ -559,10 +542,16 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return false;
         }
 
-        final Predicate<ItemStack> stackPredicate = stack -> !ItemStackUtils.isEmpty(stack) && ItemStackUtils.compareItemStacksIgnoreStackSize(is, stack, true, true);
-        if (InventoryUtils.getItemCountInProvider(entity,  stackPredicate) >= is.getCount())
+        if (InventoryUtils.hasEnoughInProvider(entity, is, is.getCount()))
         {
-            return InventoryUtils.transferItemStackIntoNextFreeSlotFromProvider(entity,  stackPredicate, is.getCount(), worker.getInventoryCitizen());
+            final IItemHandler handler = entity.getCapability(ITEM_HANDLER_CAPABILITY, null).resolve().orElse(null);
+            if (handler != null)
+            {
+                return InventoryUtils.transferItemStackIntoNextFreeSlotFromItemHandler(handler,
+                  stack -> !ItemStackUtils.isEmpty(stack) && ItemStackUtils.compareItemStacksIgnoreStackSize(is, stack, true, true),
+                  is.getCount(),
+                  worker.getInventoryCitizen());
+            }
         }
 
         return false;
