@@ -4,6 +4,7 @@ import com.minecolonies.api.compatibility.dynamictrees.DynamicTreeCompat;
 import com.minecolonies.api.compatibility.dynamictrees.DynamicTreeProxy;
 import com.minecolonies.api.compatibility.resourcefulbees.IBeehiveCompat;
 import com.minecolonies.api.compatibility.tinkers.*;
+import com.minecolonies.api.util.constant.IToolType;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.Item;
@@ -113,6 +114,14 @@ public final class Compatibility
     {
         return tinkersCompat.isTinkersWeapon(stack);
     }
+
+    /**
+     * Check if a certain item stack is a tinkers tool of the given tool type.
+     * @param stack the stack to check for.
+     * @param toolType the tool type.
+     * @return true if so.
+     */
+    public static boolean isTinkersTool(@Nullable final ItemStack stack, IToolType toolType) { return tinkersCompat.isTinkersTool(stack, toolType); }
 
     /**
      * Calculate the actual attack damage of the tinkers weapon.

@@ -288,6 +288,10 @@ public final class ItemStackUtils
         {
             return -1;
         }
+        if (Compatibility.isTinkersTool(stack, toolType))
+        {
+            return Compatibility.getToolLevel(stack);
+        }
         if (ToolType.HOE.equals(toolType))
         {
             if (stack.getItem() instanceof HoeItem)
@@ -374,7 +378,7 @@ public final class ItemStackUtils
         }
         else if (ToolType.HOE.equals(toolType))
         {
-            isATool = itemStack.getItem() instanceof HoeItem;
+            isATool = itemStack.getItem() instanceof HoeItem || itemStack.getToolTypes().contains(net.minecraftforge.common.ToolType.HOE);
         }
         else if (ToolType.BOW.equals(toolType))
         {

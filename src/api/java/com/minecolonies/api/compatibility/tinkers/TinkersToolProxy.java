@@ -1,5 +1,6 @@
 package com.minecolonies.api.compatibility.tinkers;
 
+import com.minecolonies.api.util.constant.IToolType;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -16,6 +17,17 @@ public class TinkersToolProxy
      * @return true if so.
      */
     public boolean isTinkersWeapon(@NotNull final ItemStack stack)
+    {
+        return false;
+    }
+
+    /**
+     * Check if a certain item stack is a tinkers tool of the given tool type.
+     * @param stack the stack to check for.
+     * @param toolType the tool type.
+     * @return true if so.
+     */
+    public boolean isTinkersTool(@Nullable final ItemStack stack, IToolType toolType)
     {
         return false;
     }

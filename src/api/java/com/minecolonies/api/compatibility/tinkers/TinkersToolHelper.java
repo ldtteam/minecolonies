@@ -1,10 +1,14 @@
 package com.minecolonies.api.compatibility.tinkers;
 
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.constant.IToolType;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.ToolType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import slimeknights.tconstruct.common.TinkerTags;
 import slimeknights.tconstruct.library.tools.helper.ToolAttackUtil;
+import slimeknights.tconstruct.library.tools.helper.ToolDamageUtil;
 import slimeknights.tconstruct.library.tools.nbt.ToolStack;
 import slimeknights.tconstruct.library.tools.stat.ToolStats;
 import slimeknights.tconstruct.tools.item.small.SwordTool;
@@ -34,7 +38,7 @@ public final class TinkersToolHelper extends TinkersToolProxy
     @Override
     public boolean isTinkersWeapon(@NotNull final ItemStack stack)
     {
-        return !ItemStackUtils.isEmpty(stack) && stack.getItem() instanceof SwordTool;
+        return !ItemStackUtils.isEmpty(stack) && stack.getItem().is(TinkerTags.Items.SWORD);
     }
 
     /**
@@ -46,7 +50,7 @@ public final class TinkersToolHelper extends TinkersToolProxy
     @Override
     public double getAttackDamage(@NotNull final ItemStack stack)
     {
-        return ToolStack.copyFrom(stack).getStats().getFloat(ToolStats.ATTACK_DAMAGE);
+        return ToolStack.from(stack).getStats().getFloat(ToolStats.ATTACK_DAMAGE);
     }
 
     /**
@@ -62,7 +66,7 @@ public final class TinkersToolHelper extends TinkersToolProxy
         {
             return -1;
         }
-        return (ToolStack.copyFrom(stack).getStats().getInt(ToolStats.HARVEST_LEVEL));
+        return (ToolStack.from(stack).getStats().getInt(ToolStats.HARVEST_LEVEL));
     }
 
     /**
@@ -96,6 +100,25 @@ public final class TinkersToolHelper extends TinkersToolProxy
     @Override
     public boolean checkTinkersBroken(@Nullable final ItemStack stack)
     {
-        return !ItemStackUtils.isEmpty(stack) && ToolStack.copyFrom(stack).isBroken();
+        return !ItemStackUtils.isEmpty(stack) && ToolDamageUtil.isBroken(stack);
+    }
+
+    /**
+     * Check if a certain item stack is a tinkers tool of the given tool type.
+     * @param stack the stack to check for.
+     * @param toolType the tool type.
+     * @return true if so.
+     */
+    @Override
+    public boolean isTinkersTool(@Nullable final ItemStack stack, IToolType toolType)
+    {
+        if (ItemStackUtils.isEmpty(stack) || !stack.getToolTypes().contains(ToolType.get(toolType.getName())))
+        {
+            return false;
+        }
+        else
+        {
+            return stack.getItem().is(TinkerTags.Items.HARVEST);
+        }
     }
 }

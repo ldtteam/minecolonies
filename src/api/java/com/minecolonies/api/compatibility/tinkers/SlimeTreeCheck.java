@@ -3,6 +3,7 @@ package com.minecolonies.api.compatibility.tinkers;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import org.jetbrains.annotations.NotNull;
+import slimeknights.tconstruct.common.TinkerTags;
 import slimeknights.tconstruct.world.block.*;
 
 /**
@@ -30,7 +31,7 @@ public final class SlimeTreeCheck extends SlimeTreeProxy
     @Override
     public boolean checkForTinkersSlimeBlock(@NotNull final Block block)
     {
-        return block instanceof StrippableLogBlock;
+        return block.is(TinkerTags.Blocks.SLIMY_LOGS);
     }
 
     /**
@@ -42,7 +43,7 @@ public final class SlimeTreeCheck extends SlimeTreeProxy
     @Override
     public boolean checkForTinkersSlimeLeaves(@NotNull final Block block)
     {
-        return block instanceof SlimeLeavesBlock;
+        return block.is(TinkerTags.Blocks.SLIMY_LEAVES);
     }
 
     /**
@@ -54,7 +55,7 @@ public final class SlimeTreeCheck extends SlimeTreeProxy
     @Override
     public boolean checkForTinkersSlimeSapling(@NotNull final Block block)
     {
-        return block instanceof SlimeSaplingBlock;
+        return block.is(TinkerTags.Blocks.SLIMY_SAPLINGS);
     }
 
     /**
@@ -66,7 +67,7 @@ public final class SlimeTreeCheck extends SlimeTreeProxy
     @Override
     public boolean checkForTinkersSlimeDirtOrGrass(@NotNull final Block block)
     {
-        return block instanceof SlimeDirtBlock || block instanceof SlimeGrassBlock;
+        return block instanceof SlimeDirtBlock || block.is(TinkerTags.Blocks.SLIMY_GRASS);
     }
 
     /**
