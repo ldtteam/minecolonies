@@ -1354,7 +1354,7 @@
   "com.minecolonies.coremod.furnaceuser.nofuel": "Please tell me what kind of fuel I should use in my furnace!",
   "com.minecolonies.coremod.furnaceuser.noore": "Please tell me what kind of ore I should smelt in my furnace!",
   "com.minecolonies.coremod.furnaceuser.nofood": "Please tell me what kind of food I should hand out!",
-  "com.minecolonies.coremod.sifter.nomesh": "Please make sure I have at least a string mesh to sift with!",
+  "com.minecolonies.coremod.sifter.nomesh": "Please make sure I have at least a string mesh to sift with! You can either manually stock different meshes in my hut or setup a minimum stock to automate it.",
   "com.minecolonies.coremod.florist.noplantground": "I don't have any composted dirt to plant on! Please repair my Flower Shop!",
   "com.minecolonies.coremod.florist.nocompost": "I need compost to plant my flowers!",
   "com.minecolonies.coremod.florist.noflowers": "I can't work, all my flowers are disabled!",

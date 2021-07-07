@@ -112,14 +112,14 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
      *
      * @return {@link IBuildingContainer} associated with the tile entity.
      */
-    public abstract IBuildingContainer getBuilding();
+    public abstract IBuilding getBuilding();
 
     /**
      * Sets the building associated with the tile entity.
      *
      * @param b {@link IBuildingContainer} to associate with the tile entity.
      */
-    public abstract void setBuilding(IBuildingContainer b);
+    public abstract void setBuilding(IBuilding b);
 
     /**
      * Returns the view of the building associated with the tile entity.

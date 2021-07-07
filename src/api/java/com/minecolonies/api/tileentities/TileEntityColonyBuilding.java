@@ -4,6 +4,7 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingContainer;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.permissions.Action;
@@ -69,7 +70,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     /**
      * The building the tileEntity belongs to.
      */
-    private IBuildingContainer building;
+    private IBuilding building;
 
     /**
      * Check if the building has a mirror.
@@ -284,7 +285,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
      * @return {@link IBuildingContainer} associated with the tile entity.
      */
     @Override
-    public IBuildingContainer getBuilding()
+    public IBuilding getBuilding()
     {
         if (building == null)
         {
@@ -296,10 +297,10 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     /**
      * Sets the building associated with the tile entity.
      *
-     * @param b {@link IBuildingContainer} to associate with the tile entity.
+     * @param b {@link IBuilding} to associate with the tile entity.
      */
     @Override
-    public void setBuilding(final IBuildingContainer b)
+    public void setBuilding(final IBuilding b)
     {
         building = b;
     }
