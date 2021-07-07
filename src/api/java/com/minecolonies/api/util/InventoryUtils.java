@@ -2004,6 +2004,44 @@ public class InventoryUtils
      * Method to swap the ItemStacks from the given source {@link ICapabilityProvider} to the given target {@link IItemHandler}.
      *
      * @param sourceProvider The {@link ICapabilityProvider} that works as Source.
+     * @param stackPredicate The type of stack to pickup.
+     * @param count how much to pick up.
+     * @param targetHandler  The {@link IItemHandler} that works as Target.
+     * @return True when the swap was successful, false when not.
+     */
+    public static boolean transferItemStackIntoNextFreeSlotFromProvider(
+      @NotNull final ICapabilityProvider sourceProvider,
+      @NotNull final Predicate<ItemStack> stackPredicate,
+      final int count,
+      @NotNull final IItemHandler targetHandler)
+    {
+        int totalCount = count;
+        for (final IItemHandler handler : getItemHandlersFromProvider(sourceProvider))
+        {
+            int index = findFirstSlotInItemHandlerWith(handler, stackPredicate);
+            while (index != -1)
+            {
+                final int localCount = Math.min(totalCount, handler.getStackInSlot(index).getCount());
+                if (transferXOfItemStackIntoNextFreeSlotInItemHandler(handler, index, localCount, targetHandler))
+                {
+                    totalCount -= localCount;
+                }
+
+                if (totalCount <= 0)
+                {
+                    return true;
+                }
+                index = findFirstSlotInItemHandlerWith(handler, stackPredicate);
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Method to swap the ItemStacks from the given source {@link ICapabilityProvider} to the given target {@link IItemHandler}.
+     *
+     * @param sourceProvider The {@link ICapabilityProvider} that works as Source.
      * @param sourceIndex    The index of the slot that is being extracted from.
      * @param count          the quantity.
      * @param targetHandler  The {@link IItemHandler} that works as Target.

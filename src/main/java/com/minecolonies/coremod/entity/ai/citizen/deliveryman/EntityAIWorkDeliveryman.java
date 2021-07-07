@@ -43,6 +43,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
@@ -512,7 +513,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         }
 
         final TileEntity tileEntity = world.getBlockEntity(location.getInDimensionLocation());
-        if (tileEntity instanceof ChestTileEntity && !(tileEntity instanceof TileEntityColonyBuilding))
+        if (tileEntity instanceof ChestTileEntity)
         {
             if (((ChestTileEntity) tileEntity).openCount == 0)
             {
@@ -553,16 +554,18 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     public boolean gatherIfInTileEntity(final TileEntity entity, final ItemStack is)
     {
-        return is != null
-                 && InventoryFunctions
-                      .matchFirstInProviderWithAction(
-                        entity,
-                        stack -> !ItemStackUtils.isEmpty(stack) && ItemStackUtils.compareItemStacksIgnoreStackSize(is, stack, true, true, true),
-                        (provider, index) -> InventoryUtils.transferXOfItemStackIntoNextFreeSlotFromProvider(provider,
-                          index,
-                          is.getCount(),
-                          worker.getInventoryCitizen())
-                      );
+        if (is == null)
+        {
+            return false;
+        }
+
+        final Predicate<ItemStack> stackPredicate = stack -> !ItemStackUtils.isEmpty(stack) && ItemStackUtils.compareItemStacksIgnoreStackSize(is, stack, true, true);
+        if (InventoryUtils.getItemCountInProvider(entity,  stackPredicate) >= is.getCount())
+        {
+            return InventoryUtils.transferItemStackIntoNextFreeSlotFromProvider(entity,  stackPredicate, is.getCount(), worker.getInventoryCitizen());
+        }
+
+        return false;
     }
 
     /**
