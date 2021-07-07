@@ -27,6 +27,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_DESC;
 
 /**
  * Teleport scroll to teleport you back to the set colony. Requires colony permissions
@@ -126,10 +127,18 @@ public class ItemScrollColonyTP extends AbstractItemScroll
 
         String colonyDesc = new TranslationTextComponent("item.minecolonies.scroll.colony.none").getString();
 
-        final IColony colony = getColonyView(stack);
-        if (colony != null)
+        if (stack.getOrCreateTag().contains(TAG_DESC))
         {
-            colonyDesc = colony.getName();
+            colonyDesc = stack.getOrCreateTag().getString(TAG_DESC);
+        }
+        else
+        {
+            final IColony colony = getColonyView(stack);
+            if (colony != null)
+            {
+                colonyDesc = colony.getName();
+                stack.getOrCreateTag().putString(TAG_DESC, colonyDesc);
+            }
         }
 
         final IFormattableTextComponent guiHint2 = new TranslationTextComponent("item.minecolonies.scroll.colony.tip", colonyDesc);

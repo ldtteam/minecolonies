@@ -64,18 +64,6 @@ public class BlockBarracksTowerSubstitution extends AbstractBlockMinecolonies<Bl
         return state.setValue(FACING, rot.rotate(state.getValue(FACING)));
     }
 
-    /**
-     * @deprecated (Remove this as soon as minecraft offers anything better).
-     */
-    @SuppressWarnings(DEPRECATION)
-    @NotNull
-    @Override
-    @Deprecated
-    public BlockState mirror(@NotNull final BlockState state, final Mirror mirrorIn)
-    {
-        return state.rotate(mirrorIn.getRotation(state.getValue(FACING)));
-    }
-
     @Nullable
     @Override
     public BlockState getStateForPlacement(final BlockItemUseContext context)

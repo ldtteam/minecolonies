@@ -26,10 +26,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.Rotation;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.shapes.ISelectionContext;
@@ -279,7 +276,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
      * @param stack   the itemstack from where the block was placed.
      * @param mirror  the mirror used.
      * @param style   the style of the building
-     * @see Block#onBlockPlacedByBuildTool(World, BlockPos, BlockState, LivingEntity, ItemStack)
+     * @see Block#onPlace(BlockState, World, BlockPos, BlockState, boolean)
      */
     public void onBlockPlacedByBuildTool(
       @NotNull final World worldIn, @NotNull final BlockPos pos,
