@@ -2023,5 +2023,9 @@
   "com.minecolonies.coremod.gui.citizen.family.children": "Children",
   "com.minecolonies.coremod.gui.citizen.family.unknown": "Unknown",
   "com.minecolonies.coremod.invalidbuilding": "The Building %s at position %d %d %d is missing its original blueprint of style %s. Building potentially inoperable. Please recover the blueprint or pickup and replace the building.",
-  "entity.miner.invalidmineshaft": "I can't work at the mine because the mineshaft is missing the proper indication."
+  "entity.miner.invalidmineshaft": "I can't work at the mine because the mineshaft is missing the proper indication.",
+  "com.minecolonies.coremod.setting.minecolonies:recipemode": "Recipe Mode:",
+  "com.minecolonies.core.crafting.setting.priority": "Priority",
+  "com.minecolonies.core.crafting.setting.maxstock": "Warehouse Stock",
+  "item.buildtool.missing": "Missing build-tool in player inventory!"
 }

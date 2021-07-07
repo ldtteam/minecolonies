@@ -1,5 +1,6 @@
 package com.minecolonies.api.colony.buildings.modules;
 
+import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 
 /**
@@ -17,5 +18,11 @@ public abstract class AbstractBuildingModuleView implements IBuildingModuleView
     {
         this.buildingView = buildingView;
         return this;
+    }
+
+    @Override
+    public IColonyView getColony()
+    {
+        return buildingView.getColony();
     }
 }

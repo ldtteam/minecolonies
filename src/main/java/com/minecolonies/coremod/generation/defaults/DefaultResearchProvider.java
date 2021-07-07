@@ -118,6 +118,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         effects.add(new ResearchEffect(WORKING_IN_RAIN).setTranslatedName("Citizens Work in Rain"));
         effects.add(new ResearchEffect(UNDERTAKER_RUN).setTranslatedName("Undertaker unlocks run ability").setTranslatedSubtitle("Teach Undertaker the ability to run towards graves"));
         effects.add(new ResearchEffect(USE_TOTEM).setTranslatedName("Undertaker gains the ability to use Totems of Undying to assist in Resurrection"));
+        effects.add(new ResearchEffect(RECIPE_MODE).setTranslatedName("Add the option to select recipes based on Warehouse stock"));
 
         // Building-focused unlocks are derived from the block hut name.  Do not manually add ResourceLocations as a string, as some building blocks have surprising names.
         effects.add(new ResearchEffect(ModBuildings.archery.getBuildingBlock()).setTranslatedName("Unlocks Archery"));
@@ -1345,6 +1346,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                      .addItemCost(Items.PAPER, 32)
                                      .addEffect(RECIPES, 1)
                                      .addToList(r);
+
         final Research cheatSheet = new Research(new ResourceLocation(Constants.MOD_ID, "technology/cheatsheet"), TECH).setParentResearch(memoryAid)
                                       .setTranslatedName("Cheat Sheet")
                                       .setTranslatedSubtitle("So THAT's what I should be making!")
@@ -1352,6 +1354,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                       .addBuildingRequirement(ModBuildings.SAWMILL_ID, 2)
                                       .addItemCost(Items.PAPER, 64)
                                       .addEffect(RECIPES, 2)
+                                      .setSortOrder(1)
                                       .addToList(r);
         final Research recipeBook = new Research(new ResourceLocation(Constants.MOD_ID, "technology/recipebook"), TECH).setParentResearch(cheatSheet)
                                       .setTranslatedName("Recipe Book")
@@ -1375,6 +1378,16 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .addItemCost(Items.SALMON_BUCKET, 27)
           .addEffect(WORKING_IN_RAIN, 1)
           .addToList(r);
+
+        new Research(new ResourceLocation(Constants.MOD_ID, "technology/warehousemaster"), TECH).setParentResearch(memoryAid)
+                                      .setTranslatedName("Warehouse Master")
+                                      .setTranslatedSubtitle("So many items to choose from!")
+                                      .setIcon(ModBlocks.blockRack.asItem())
+                                      .addBuildingRequirement(ModBuildings.SAWMILL_ID, 3)
+                                      .addItemCost(ModBlocks.blockRack.asItem(), 3)
+                                      .addEffect(RECIPE_MODE, 1)
+                                      .setSortOrder(2)
+                                      .addToList(r);
 
         final Research deepPockets = new Research(new ResourceLocation(Constants.MOD_ID, "technology/deeppockets"), TECH).setParentResearch(cheatSheet)
                                        .setTranslatedName("Deep Pockets")

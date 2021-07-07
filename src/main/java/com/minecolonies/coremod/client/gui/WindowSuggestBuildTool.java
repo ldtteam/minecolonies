@@ -1,11 +1,17 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.ldtteam.structurize.items.ModItems;
+import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.server.DirectPlaceMessage;
+import com.minecolonies.coremod.network.messages.server.SwitchBuildingWithToolMessage;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
@@ -65,7 +71,14 @@ public class WindowSuggestBuildTool extends AbstractWindowSkeleton
      */
     private void buildToolClicked()
     {
-        new WindowMinecoloniesBuildTool(this.pos).open();
+        if (InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(Minecraft.getInstance().player.inventory), ModItems.buildTool.get()) != -1)
+        {
+            Network.getNetwork().sendToServer(new SwitchBuildingWithToolMessage(stack));
+            new WindowMinecoloniesBuildTool(this.pos).open();
+            return;
+        }
+        LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, "item.buildtool.missing");
+        close();
     }
 
     /**
