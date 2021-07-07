@@ -42,7 +42,7 @@ public class CustomGoalSelector extends GoalSelector
     /**
      * All goals added to this selector
      */
-    public Set<PrioritizedGoal> goals = Sets.newHashSet();
+    public Set<PrioritizedGoal> availableGoals = Sets.newHashSet();
 
     /**
      * Profiler used for debug information /debug
@@ -73,7 +73,7 @@ public class CustomGoalSelector extends GoalSelector
     {
         super(old.profiler);
         importFrom(old);
-        super.availableGoals = this.goals;
+        super.availableGoals = this.availableGoals;
         super.profiler = this.profiler;
     }
 
@@ -86,7 +86,7 @@ public class CustomGoalSelector extends GoalSelector
     {
         super(profiler);
         this.profiler = profiler;
-        super.availableGoals = this.goals;
+        super.availableGoals = this.availableGoals;
         super.profiler = this.profiler;
         for (Goal.Flag flag : Goal.Flag.values())
         {
@@ -113,7 +113,7 @@ public class CustomGoalSelector extends GoalSelector
         }
 
         // Set goal list reference to existing
-        goals = selector.availableGoals;
+        availableGoals = selector.availableGoals;
         // Set profiler reference
         profiler = selector.profiler;
 
@@ -130,7 +130,7 @@ public class CustomGoalSelector extends GoalSelector
     @Override
     public void addGoal(int priority, Goal task)
     {
-        this.goals.add(new PrioritizedGoal(priority, task));
+        this.availableGoals.add(new PrioritizedGoal(priority, task));
     }
 
     /**
@@ -139,10 +139,10 @@ public class CustomGoalSelector extends GoalSelector
     @Override
     public void removeGoal(Goal task)
     {
-        this.goals.stream().filter((goal) -> {
+        this.availableGoals.stream().filter((goal) -> {
             return goal.getGoal() == task;
         }).filter(PrioritizedGoal::isRunning).forEach(PrioritizedGoal::stop);
-        this.goals.removeIf((goal) -> {
+        this.availableGoals.removeIf((goal) -> {
             return goal.getGoal() == task;
         });
     }
@@ -200,7 +200,7 @@ public class CustomGoalSelector extends GoalSelector
         boolean hasFlags;
         counter++;
 
-        for (final PrioritizedGoal currentGoal : new ArrayList<>(goals))
+        for (final PrioritizedGoal currentGoal : new ArrayList<>(availableGoals))
         {
             hasFlags = !currentGoal.getFlags().isEmpty();
 
@@ -243,7 +243,7 @@ public class CustomGoalSelector extends GoalSelector
     @Override
     public Stream<PrioritizedGoal> getRunningGoals()
     {
-        return this.goals.stream().filter(PrioritizedGoal::isRunning);
+        return this.availableGoals.stream().filter(PrioritizedGoal::isRunning);
     }
 
     /**
