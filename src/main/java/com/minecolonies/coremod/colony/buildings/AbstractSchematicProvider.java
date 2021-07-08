@@ -262,6 +262,12 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     }
 
     @Override
+    public boolean hasParent()
+    {
+        return !parentSchematic.equals(BlockPos.ZERO);
+    }
+
+    @Override
     public void setParent(final BlockPos pos)
     {
         if (!pos.equals(getID()))

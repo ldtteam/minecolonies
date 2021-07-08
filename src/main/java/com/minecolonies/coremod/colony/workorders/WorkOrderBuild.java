@@ -85,7 +85,7 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
         this.structureName = sn.toString();
         this.workOrderName = this.structureName;
 
-        if (!building.getParent().equals(BlockPos.ZERO))
+        if (building.hasParent())
         {
             final IBuilding parentBuilding = building.getColony().getBuildingManager().getBuilding(building.getParent());
             if (parentBuilding != null)

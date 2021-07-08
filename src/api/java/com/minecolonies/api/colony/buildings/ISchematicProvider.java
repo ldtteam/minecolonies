@@ -48,6 +48,13 @@ public interface ISchematicProvider extends INBTSerializable<CompoundNBT>
     BlockPos getParent();
 
     /**
+     * Whether we have a parent
+     *
+     * @return true if there is a parent building
+     */
+    boolean hasParent();
+
+    /**
      * Set the parent building position
      * @param pos
      */
