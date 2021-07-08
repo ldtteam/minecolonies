@@ -12,7 +12,7 @@ public class ModelEntityBakerMale extends CitizenModel<AbstractEntityCitizen>
     public ModelEntityBakerMale()
     {
         ModelRenderer headdetail;
-        ModelRenderer hat;
+        ModelRenderer hatPiece;
         ModelRenderer base;
         ModelRenderer middle;
         ModelRenderer top;
@@ -49,26 +49,26 @@ public class ModelEntityBakerMale extends CitizenModel<AbstractEntityCitizen>
         head.addChild(headdetail);
         headdetail.texOffs(32, 0).addBox(-4.0F, -32.0F, -4.0F, 8.0F, 8.0F, 8.0F, 0.5F, false);
 
-        hat = new ModelRenderer(this);
-        hat.setPos(0.0F, 0.0F, 0.0F);
-        head.addChild(hat);
+        hatPiece = new ModelRenderer(this);
+        hatPiece.setPos(0.0F, 0.0F, 0.0F);
+        head.addChild(hatPiece);
 
 
         base = new ModelRenderer(this);
         base.setPos(0.0F, 0.0F, 0.0F);
-        hat.addChild(base);
+        hatPiece.addChild(base);
         setRotationAngle(base, -0.1859F, 0.0F, 0.0F);
         base.texOffs(0, 33).addBox(-4.5F, -9.0F, -5.8F, 9.0F, 2.0F, 9.0F, 0.0F, true);
 
         middle = new ModelRenderer(this);
         middle.setPos(0.0F, 0.0F, 0.0F);
-        hat.addChild(middle);
+        hatPiece.addChild(middle);
         setRotationAngle(middle, -0.1859F, 0.0F, 0.0F);
         middle.texOffs(0, 44).addBox(-3.5F, -10.0F, -5.0F, 7.0F, 1.0F, 8.0F, 0.0F, true);
 
         top = new ModelRenderer(this);
         top.setPos(0.0F, 0.0F, 0.0F);
-        hat.addChild(top);
+        hatPiece.addChild(top);
         setRotationAngle(top, -0.1859F, 0.0F, 0.0F);
         top.texOffs(0, 53).addBox(-2.5F, -11.0F, -4.6F, 5.0F, 1.0F, 7.0F, 0.0F, true);
 
