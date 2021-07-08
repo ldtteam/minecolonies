@@ -22,12 +22,14 @@ public class CustomGoalSelector extends GoalSelector
      */
     private static final PrioritizedGoal DUMMY = new PrioritizedGoal(Integer.MAX_VALUE, new Goal()
     {
+        @Override
         public boolean canUse()
         {
             return false;
         }
     })
     {
+        @Override
         public boolean isRunning()
         {
             return false;
@@ -139,12 +141,14 @@ public class CustomGoalSelector extends GoalSelector
     @Override
     public void removeGoal(Goal task)
     {
-        this.availableGoals.stream().filter((goal) -> {
-            return goal.getGoal() == task;
-        }).filter(PrioritizedGoal::isRunning).forEach(PrioritizedGoal::stop);
-        this.availableGoals.removeIf((goal) -> {
-            return goal.getGoal() == task;
-        });
+        for(final PrioritizedGoal prioritizedGoal : new ArrayList<>(availableGoals))
+        {
+            if (prioritizedGoal.getGoal() == task)
+            {
+                prioritizedGoal.stop();
+                availableGoals.remove(prioritizedGoal);
+            }
+        }
     }
 
     /**
