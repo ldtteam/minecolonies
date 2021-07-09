@@ -60,7 +60,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     /**
      * Citizens swim speed factor
      */
-    private static final double CITIZEN_SWIM_BONUS = 1.1;
+    private static final double CITIZEN_SWIM_BONUS = 2.0;
 
     /**
      * Used texture mapping.
@@ -790,5 +790,25 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     public void markEquipmentDirty()
     {
         this.isEquipmentDirty = true;
+    }
+
+    /**
+     * Disallow pushing from fluids to prevent stuck
+     *
+     * @return
+     */
+    public boolean isPushedByFluid()
+    {
+        return false;
+    }
+
+    /**
+     * Do not allow bubble movement
+     *
+     * @param down
+     */
+    public void onInsideBubbleColumn(boolean down)
+    {
+
     }
 }

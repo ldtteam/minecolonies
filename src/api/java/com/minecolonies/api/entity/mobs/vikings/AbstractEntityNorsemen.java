@@ -23,7 +23,7 @@ public abstract class AbstractEntityNorsemen extends AbstractEntityMinecoloniesM
     /**
      * Swim speed for pirates
      */
-    private static final double PIRATE_SWIM_BONUS = 1.5;
+    private static final double PIRATE_SWIM_BONUS = 2.3;
 
     /**
      * Amount of unique norsemen textures.

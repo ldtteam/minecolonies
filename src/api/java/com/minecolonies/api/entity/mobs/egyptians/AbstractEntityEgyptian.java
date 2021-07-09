@@ -19,7 +19,7 @@ public abstract class AbstractEntityEgyptian extends AbstractEntityMinecoloniesM
     /**
      * Swim speed for mummies
      */
-    private static final double MUMMY_SWIM_SPEED = 1.3;
+    private static final double MUMMY_SWIM_SPEED = 1.7;
 
 
     /**

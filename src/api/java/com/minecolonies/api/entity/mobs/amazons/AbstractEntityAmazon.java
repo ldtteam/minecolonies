@@ -19,7 +19,7 @@ public abstract class AbstractEntityAmazon extends AbstractEntityMinecoloniesMob
     /**
      * Swim speed for amazons
      */
-    private static final double AMAZON_SWIM_BONUS = 1.3;
+    private static final double AMAZON_SWIM_BONUS = 1.9;
 
     /**
      * Constructor method for Abstract egyptian..

@@ -95,6 +95,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     {
         super(entity, world);
 
+        entity.moveControl = new MovementHandler(entity);
         this.nodeEvaluator = new WalkNodeProcessor();
         this.nodeEvaluator.setCanPassDoors(true);
         getPathingOptions().setEnterDoors(true);

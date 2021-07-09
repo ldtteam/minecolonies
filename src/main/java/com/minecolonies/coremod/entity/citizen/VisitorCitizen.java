@@ -26,6 +26,7 @@ import com.minecolonies.coremod.entity.ai.minimal.EntityAIInteractToggleAble;
 import com.minecolonies.coremod.entity.ai.minimal.EntityAIVisitor;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.*;
 import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
+import com.minecolonies.coremod.entity.pathfinding.MovementHandler;
 import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMessage;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.LookAtGoal;
