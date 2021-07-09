@@ -409,7 +409,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
      */
     public <T extends ISetting> T getSetting(@NotNull final ISettingKey<T> key)
     {
-        return getFirstModuleOccurance(ISettingsModule .class).getSetting(key);
+        return getFirstModuleOccurance(ISettingsModule.class).getSetting(key);
     }
 
     /**

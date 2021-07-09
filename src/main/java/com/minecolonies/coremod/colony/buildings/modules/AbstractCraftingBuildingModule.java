@@ -552,7 +552,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         }
 
         //If we have more than one possible recipe, let's choose the one with the most stock in the warehouses
-        if(candidates.size() > 1 && building.getSetting(RECIPE_MODE).getValue().equals(CrafterRecipeSetting.MAX_STOCK))
+        if(candidates.size() > 1 && building.hasModule(ISettingsModule.class) && building.getSetting(RECIPE_MODE).getValue().equals(CrafterRecipeSetting.MAX_STOCK))
         {
             for(Map.Entry<IRecipeStorage, Integer> foo : candidates.entrySet())
             {
