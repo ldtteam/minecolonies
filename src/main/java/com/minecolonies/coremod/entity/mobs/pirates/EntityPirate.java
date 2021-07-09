@@ -2,7 +2,7 @@ package com.minecolonies.coremod.entity.mobs.pirates;
 
 import com.minecolonies.api.entity.mobs.pirates.AbstractEntityPirate;
 import com.minecolonies.api.entity.mobs.pirates.IMeleePirateEntity;
-import com.minecolonies.coremod.entity.citizen.citizenhandlers.MovementHandler;
+import com.minecolonies.coremod.entity.pathfinding.MovementHandler;
 import net.minecraft.entity.EntityType;
 import net.minecraft.world.World;
 
