@@ -659,4 +659,24 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements
     {
         this.canBeStuck = canBeStuck;
     }
+
+    /**
+     * Disallow pushing from fluids to prevent stuck
+     *
+     * @return
+     */
+    public boolean isPushedByFluid()
+    {
+        return false;
+    }
+
+    /**
+     * Do not allow bubble movement
+     *
+     * @param down
+     */
+    public void onInsideBubbleColumn(boolean down)
+    {
+
+    }
 }

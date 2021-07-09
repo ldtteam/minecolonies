@@ -2,7 +2,7 @@ package com.minecolonies.coremod.entity.mobs.egyptians;
 
 import com.minecolonies.api.entity.mobs.egyptians.AbstractEntityEgyptian;
 import com.minecolonies.api.entity.mobs.egyptians.IMeleeMummyEntity;
-import com.minecolonies.coremod.entity.citizen.citizenhandlers.MovementHandler;
+import com.minecolonies.coremod.entity.pathfinding.MovementHandler;
 import net.minecraft.entity.EntityType;
 import net.minecraft.world.World;
 

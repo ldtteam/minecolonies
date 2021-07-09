@@ -17,7 +17,7 @@ public abstract class AbstractEntityBarbarian extends AbstractEntityMinecolonies
     /**
      * Swim speed for barbarians
      */
-    private static final double BARBARIAN_SWIM_BONUS = 1.2;
+    private static final double BARBARIAN_SWIM_BONUS = 2.0;
 
     /**
      * Constructor method for Abstract Barbarians.
