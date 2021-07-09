@@ -5,8 +5,6 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.MinecoloniesMinecart;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.entity.mobs.barbarians.AbstractEntityBarbarian;
-import com.minecolonies.api.entity.mobs.pirates.AbstractEntityPirate;
 import com.minecolonies.api.entity.pathfinding.*;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
@@ -45,9 +43,6 @@ import java.util.List;
 public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNavigate
 {
     private static final double ON_PATH_SPEED_MULTIPLIER = 1.3D;
-    private static final double PIRATE_SWIM_BONUS        = 1.5;
-    private static final double BARBARIAN_SWIM_BONUS     = 1.2;
-    private static final double CITIZEN_SWIM_BONUS       = 1.1;
     public static final  double MIN_Y_DISTANCE           = 0.001;
     public static final  int    MAX_SPEED_ALLOWED        = 2;
     public static final  double MIN_SPEED_ALLOWED        = 0.1;
@@ -84,6 +79,11 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
      * Whether we did set sneaking
      */
     private boolean isSneaking = true;
+
+    /**
+     * Speed factor for swimming
+     */
+    private double swimSpeedFactor = 1.0;
 
     /**
      * Instantiates the navigation of an ourEntity.
@@ -401,19 +401,9 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
 
     public double getSpeedFactor()
     {
-        if (ourEntity instanceof AbstractEntityPirate && ourEntity.isInWater())
+        if (ourEntity.isInWater())
         {
-            speedModifier = walkSpeedFactor * PIRATE_SWIM_BONUS;
-            return speedModifier;
-        }
-        else if (ourEntity instanceof AbstractEntityBarbarian && ourEntity.isInWater())
-        {
-            speedModifier = walkSpeedFactor * BARBARIAN_SWIM_BONUS;
-            return speedModifier;
-        }
-        else if (ourEntity instanceof AbstractEntityCitizen && ourEntity.isInWater())
-        {
-            speedModifier = walkSpeedFactor * CITIZEN_SWIM_BONUS;
+            speedModifier = walkSpeedFactor * swimSpeedFactor;
             return speedModifier;
         }
 
@@ -1000,5 +990,11 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     public void setStuckHandler(final IStuckHandler stuckHandler)
     {
         this.stuckHandler = stuckHandler;
+    }
+
+    @Override
+    public void setSwimSpeedFactor(final double factor)
+    {
+        this.swimSpeedFactor = factor;
     }
 }

@@ -17,6 +17,11 @@ import static com.minecolonies.api.util.constant.RaiderConstants.OUT_OF_ONE_HUND
 public abstract class AbstractEntityAmazon extends AbstractEntityMinecoloniesMob
 {
     /**
+     * Swim speed for amazons
+     */
+    private static final double AMAZON_SWIM_BONUS = 1.3;
+
+    /**
      * Constructor method for Abstract egyptian..
      *
      * @param type  the type.
@@ -48,5 +53,11 @@ public abstract class AbstractEntityAmazon extends AbstractEntityMinecoloniesMob
     public RaiderType getRaiderType()
     {
         return RaiderType.AMAZON;
+    }
+
+    @Override
+    public double getSwimSpeedFactor()
+    {
+        return AMAZON_SWIM_BONUS;
     }
 }

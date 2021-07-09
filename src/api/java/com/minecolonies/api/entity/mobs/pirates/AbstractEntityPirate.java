@@ -21,6 +21,11 @@ import static com.minecolonies.api.util.constant.RaiderConstants.OUT_OF_ONE_HUND
 public abstract class AbstractEntityPirate extends AbstractEntityMinecoloniesMob
 {
     /**
+     * Swim speed for pirates
+     */
+    private static final double PIRATE_SWIM_BONUS = 1.5;
+
+    /**
      * Amount of unique pirate textures.
      */
     private static final int PIRATE_TEXTURES = 4;
@@ -82,5 +87,11 @@ public abstract class AbstractEntityPirate extends AbstractEntityMinecoloniesMob
     public RaiderType getRaiderType()
     {
         return RaiderType.PIRATE;
+    }
+
+    @Override
+    public double getSwimSpeedFactor()
+    {
+        return PIRATE_SWIM_BONUS;
     }
 }
