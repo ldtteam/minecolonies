@@ -235,6 +235,11 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements
         return newNavigator;
     }
 
+    /**
+     * Get the swim speed factor
+     *
+     * @return speed factor
+     */
     public abstract double getSwimSpeedFactor();
 
     /**
