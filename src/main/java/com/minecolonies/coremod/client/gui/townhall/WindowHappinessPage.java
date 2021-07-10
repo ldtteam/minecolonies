@@ -16,7 +16,6 @@ import static com.minecolonies.coremod.client.gui.modules.WindowBuilderResModule
 /**
  * Window for the town hall.
  */
-@SuppressWarnings("PMD.ExcessiveClassLength")
 public class WindowHappinessPage extends AbstractWindowTownHall
 {
     /**

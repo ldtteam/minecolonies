@@ -38,7 +38,6 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 /**
  * Window for the town hall.
  */
-@SuppressWarnings("PMD.ExcessiveClassLength")
 public class WindowInfoPage extends AbstractWindowTownHall
 {
     /**
