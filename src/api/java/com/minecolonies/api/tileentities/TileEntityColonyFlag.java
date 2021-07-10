@@ -43,13 +43,6 @@ public class TileEntityColonyFlag extends TileEntity
     {
         super.save(compound);
 
-        if(this.colonyId == -1 && this.hasLevel())
-        {
-            IColony colony = IColonyManager.getInstance().getIColony(this.getLevel(), worldPosition);
-            if (colony != null)
-                this.colonyId = colony.getID();
-        }
-
         compound.put(TAG_FLAG_PATTERNS, this.flag);
         compound.put(TAG_BANNER_PATTERNS, this.patterns);
 
