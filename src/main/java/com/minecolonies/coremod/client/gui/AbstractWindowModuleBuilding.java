@@ -123,13 +123,13 @@ public abstract class AbstractWindowModuleBuilding<B extends IBuildingView> exte
     {
         super.onUpdate();
         // Check if we are on the default page
-        if (switchView.getCurrentView().getID().equals(PAGE_ACTIONS))
+        if (switchView == null || switchView.getCurrentView().getID().equals(PAGE_ACTIONS))
         {
             final IBuildingView buildingView = building;
             if (title != null && buildingView != null)
             {
                 final String name = building.getCustomName().isEmpty() ? LanguageHandler.format(getBuildingName()) : building.getCustomName();
-                if (switchView.getID().equals(GUI_LIST_BUTTON_SWITCH + PAGE_ACTIONS))
+                if (switchView == null || switchView.getID().equals(GUI_LIST_BUTTON_SWITCH + PAGE_ACTIONS))
                 {
                     // Townhall does not need level in colony name
                     title.setText(name);
