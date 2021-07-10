@@ -38,8 +38,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.minecolonies.coremod.compatibility.jei.JobBasedRecipeCategory.LootTableTooltipCallback;
-
 /**
  * The main JEI recipe category GUI implementation for IGenericRecipe.
  */
