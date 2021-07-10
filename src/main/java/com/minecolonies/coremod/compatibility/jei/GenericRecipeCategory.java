@@ -6,7 +6,6 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.crafting.CustomRecipe;
 import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
@@ -20,14 +19,9 @@ import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.ingredients.IIngredients;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Rectangle2d;
-import net.minecraft.inventory.CraftingInventory;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.IRecipeType;
-import net.minecraft.item.crafting.RecipeManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -300,29 +294,30 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
     }
 
     @NotNull
-    public List<IGenericRecipe> findRecipes()
+    public List<IGenericRecipe> findRecipes(@NotNull final Map<IRecipeType<?>, List<IGenericRecipe>> vanilla)
     {
         final List<IGenericRecipe> recipes = new ArrayList<>();
-        final RecipeManager recipeManager = Minecraft.getInstance().level.getRecipeManager();
 
         // vanilla shaped and shapeless crafting recipes
         if (this.crafting.canLearnCraftingRecipes())
         {
-            for (final IRecipe<CraftingInventory> recipe : recipeManager.byType(IRecipeType.CRAFTING).values())
+            for (final IGenericRecipe recipe : vanilla.get(IRecipeType.CRAFTING))
             {
-                if (!recipe.canCraftInDimensions(3, 3)) continue;
-                if (!this.crafting.canLearnLargeRecipes() && !recipe.canCraftInDimensions(2, 2)) continue;
+                if (!this.crafting.canLearnLargeRecipes() && recipe.getGridSize() > 2) continue;
+                if (!this.crafting.isRecipeCompatible(recipe)) continue;
 
-                tryAddingVanillaRecipe(recipes, recipe);
+                recipes.add(recipe);
             }
         }
 
         // vanilla furnace recipes (do we want to check smoking and blasting too?)
         if (this.crafting.canLearnFurnaceRecipes())
         {
-            for (final IRecipe<IInventory> recipe : recipeManager.byType(IRecipeType.SMELTING).values())
+            for (final IGenericRecipe recipe : vanilla.get(IRecipeType.CRAFTING))
             {
-                tryAddingVanillaRecipe(recipes, recipe);
+                if (!this.crafting.isRecipeCompatible(recipe)) continue;
+
+                recipes.add(recipe);
             }
         }
 
@@ -348,26 +343,5 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
                 .sorted(Comparator.comparing(IGenericRecipe::getLevelSort)
                     .thenComparing(r -> r.getPrimaryOutput().getItem().getRegistryName()))
                 .collect(Collectors.toList());
-    }
-
-    private void tryAddingVanillaRecipe(@NotNull final List<IGenericRecipe> recipes,
-                                        @NotNull final IRecipe<?> recipe)
-    {
-        if (recipe.getResultItem().isEmpty()) return;     // invalid or special recipes
-
-        try
-        {
-            final IGenericRecipe genericRecipe = GenericRecipeUtils.create(recipe);
-            if (genericRecipe.getInputs().isEmpty()) return;
-
-            if (this.crafting.isRecipeCompatible(genericRecipe))
-            {
-                recipes.add(genericRecipe);
-            }
-        }
-        catch (final Exception ex)
-        {
-            Log.getLogger().warn("Error evaluating recipe " + recipe.getId() + "; ignoring.", ex);
-        }
     }
 }

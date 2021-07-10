@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.compatibility.jei;
 
+import com.google.common.collect.ImmutableMap;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
@@ -7,6 +8,7 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.crafting.CompostRecipe;
+import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
@@ -24,7 +26,12 @@ import mezz.jei.api.recipe.IRecipeManager;
 import mezz.jei.api.registration.*;
 import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.client.Minecraft;
+import net.minecraft.inventory.CraftingInventory;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.IRecipeType;
+import net.minecraft.item.crafting.RecipeManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.MinecraftForge;
@@ -32,9 +39,7 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
@@ -104,25 +109,8 @@ public class JEIPlugin implements IModPlugin
             return;
         }
 
-        populateRecipes(registration::addRecipes);
+        populateRecipes(cacheVanillaRecipes(), registration::addRecipes);
         recipesLoaded = true;
-    }
-
-    private void populateRecipes(@NotNull final BiConsumer<Collection<?>, ResourceLocation> registrar)
-    {
-        registrar.accept(CompostRecipeCategory.findRecipes(), CompostRecipe.ID);
-
-        for (final GenericRecipeCategory category : this.categories)
-        {
-            try
-            {
-                registrar.accept(category.findRecipes(), category.getUid());
-            }
-            catch (Exception e)
-            {
-                Log.getLogger().error("Failed to process recipes for " + category.getTitle(), e);
-            }
-        }
     }
 
     @Override
@@ -157,6 +145,66 @@ public class JEIPlugin implements IModPlugin
         this.weakRuntime = new WeakReference<>(jeiRuntime);
     }
 
+    private Map<IRecipeType<?>, List<IGenericRecipe>> cacheVanillaRecipes()
+    {
+        final RecipeManager recipeManager = Minecraft.getInstance().level.getRecipeManager();
+
+        final List<IGenericRecipe> craftingRecipes = new ArrayList<>();
+        for (final IRecipe<CraftingInventory> recipe : recipeManager.byType(IRecipeType.CRAFTING).values())
+        {
+            if (!recipe.canCraftInDimensions(3, 3)) continue;
+
+            tryAddingVanillaRecipe(craftingRecipes, recipe);
+        }
+
+        final List<IGenericRecipe> smeltingRecipes = new ArrayList<>();
+        for (final IRecipe<IInventory> recipe : recipeManager.byType(IRecipeType.SMELTING).values())
+        {
+            tryAddingVanillaRecipe(smeltingRecipes, recipe);
+        }
+
+        return new ImmutableMap.Builder<IRecipeType<?>, List<IGenericRecipe>>()
+                .put(IRecipeType.CRAFTING, craftingRecipes)
+                .put(IRecipeType.SMELTING, smeltingRecipes)
+                .build();
+    }
+
+    private void tryAddingVanillaRecipe(@NotNull final List<IGenericRecipe> recipes,
+                                        @NotNull final IRecipe<?> recipe)
+    {
+        if (recipe.getResultItem().isEmpty()) return;     // invalid or special recipes
+
+        try
+        {
+            final IGenericRecipe genericRecipe = GenericRecipeUtils.create(recipe);
+            if (genericRecipe.getInputs().isEmpty()) return;
+
+            recipes.add(genericRecipe);
+        }
+        catch (final Exception ex)
+        {
+            Log.getLogger().warn("Error evaluating recipe " + recipe.getId() + "; ignoring.", ex);
+        }
+    }
+
+    private void populateRecipes(@NotNull final Map<IRecipeType<?>, List<IGenericRecipe>> vanilla,
+                                 @NotNull final BiConsumer<Collection<?>, ResourceLocation> registrar)
+    {
+        registrar.accept(CompostRecipeCategory.findRecipes(), CompostRecipe.ID);
+
+        for (final GenericRecipeCategory category : this.categories)
+        {
+            try
+            {
+                registrar.accept(category.findRecipes(vanilla), category.getUid());
+            }
+            catch (Exception e)
+            {
+                Log.getLogger().error("Failed to process recipes for " + category.getTitle(), e);
+            }
+        }
+    }
+
     private void onCustomRecipesReloaded(@NotNull final CustomRecipesReloadedEvent event)
     {
         // if this happens after JEI has loaded, it means we're on a dedicated server and
@@ -172,7 +220,7 @@ public class JEIPlugin implements IModPlugin
             if (runtime != null)
             {
                 final IRecipeManager jeiManager = runtime.getRecipeManager();
-                populateRecipes((list, uid) ->
+                populateRecipes(cacheVanillaRecipes(), (list, uid) ->
                 {
                     for (final Object recipe : list)
                     {
