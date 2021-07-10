@@ -1,18 +1,15 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.ldtteam.blockout.views.Window;
-import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
-import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.NBTUtils;
-import com.minecolonies.coremod.blocks.BlockBarracksTowerSubstitution;
 import com.minecolonies.coremod.client.gui.huts.WindowBarracksBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
@@ -22,7 +19,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -120,19 +116,8 @@ public class BuildingBarracks extends AbstractBuilding
     public void registerBlockPosition(@NotNull final BlockState block, @NotNull final BlockPos pos, @NotNull final World world)
     {
         super.registerBlockPosition(block, pos, world);
-        if (block.getBlock() == ModBlocks.blockBarracksTowerSubstitution || block.getBlock() == ModBlocks.blockHutBarracksTower)
+        if (block.getBlock() == ModBlocks.blockHutBarracksTower)
         {
-            if (world.getBlockState(pos).getBlock() != ModBlocks.blockHutBarracksTower)
-            {
-                world.setBlockAndUpdate(pos, ModBlocks.blockHutBarracksTower.defaultBlockState().setValue(BlockBarracksTowerSubstitution.FACING, block.getValue(BlockBarracksTowerSubstitution.FACING)));
-                final TileEntity tile = world.getBlockEntity(pos);
-                if (tile instanceof TileEntityColonyBuilding)
-                {
-                    ((TileEntityColonyBuilding) tile).setMirror(this.isMirrored());
-                    ((TileEntityColonyBuilding) tile).setStyle(this.getStyle());
-                }
-                getColony().getBuildingManager().addNewBuilding((TileEntityColonyBuilding) world.getBlockEntity(pos), world);
-            }
             final IBuilding building = getColony().getBuildingManager().getBuilding(pos);
             if (building instanceof BuildingBarracksTower)
             {

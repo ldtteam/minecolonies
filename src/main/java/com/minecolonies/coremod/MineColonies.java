@@ -269,7 +269,6 @@ public class MineColonies
         RenderTypeLookup.setRenderLayer(ModBlocks.blockDecorationPlaceholder, RenderType.cutout());
         RenderTypeLookup.setRenderLayer(ModBlocks.blockCompostedDirt, RenderType.cutout());
         RenderTypeLookup.setRenderLayer(ModBlocks.blockBarrel, RenderType.cutout());
-        RenderTypeLookup.setRenderLayer(ModBlocks.blockBarracksTowerSubstitution, RenderType.cutout());
         RenderTypeLookup.setRenderLayer(ModBlocks.blockWayPoint, RenderType.cutout());
     }
 

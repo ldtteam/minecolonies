@@ -94,7 +94,6 @@ public final class ModBlocksInitializer
         ModBlocks.blockHutGraveyard = new BlockHutGraveyard().registerBlock(registry);
 
         ModBlocks.blockConstructionTape = new BlockConstructionTape().registerBlock(registry);
-        ModBlocks.blockBarracksTowerSubstitution = new BlockBarracksTowerSubstitution().registerBlock(registry);
         ModBlocks.blockRack = new BlockMinecoloniesRack().registerBlock(registry);
         ModBlocks.blockGrave = new BlockMinecoloniesGrave().registerBlock(registry);
         ModBlocks.blockNamedGrave = new BlockMinecoloniesNamedGrave().registerBlock(registry);
@@ -173,7 +172,6 @@ public final class ModBlocksInitializer
         ModBlocks.blockHutGraveyard.registerBlockItem(registry, properties);
 
         ModBlocks.blockConstructionTape.registerBlockItem(registry, properties);
-        ModBlocks.blockBarracksTowerSubstitution.registerBlockItem(registry, properties);
         ModBlocks.blockRack.registerBlockItem(registry, properties);
         ModBlocks.blockGrave.registerBlockItem(registry, properties);
         ModBlocks.blockNamedGrave.registerBlockItem(registry, properties);
