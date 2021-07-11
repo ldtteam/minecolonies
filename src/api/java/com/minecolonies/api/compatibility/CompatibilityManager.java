@@ -182,7 +182,7 @@ public class CompatibilityManager implements ICompatibilityManager
         diseaseList.clear();
         freeBlocks.clear();
         freePositions.clear();
-        monsters.clear();
+        monsters = ImmutableSet.of();
 
         discoverAllItems();
 
