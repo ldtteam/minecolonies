@@ -182,4 +182,6 @@ public abstract class AbstractAdvancedPathNavigate extends GroundPathNavigator
      * @param stuckHandler handler to use
      */
     public abstract void setStuckHandler(final IStuckHandler stuckHandler);
+
+    public abstract void setSwimSpeedFactor(double factor);
 }

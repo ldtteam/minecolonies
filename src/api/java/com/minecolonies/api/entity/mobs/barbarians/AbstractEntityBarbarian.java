@@ -15,6 +15,11 @@ import static com.minecolonies.api.util.constant.RaiderConstants.OUT_OF_ONE_HUND
 public abstract class AbstractEntityBarbarian extends AbstractEntityMinecoloniesMob
 {
     /**
+     * Swim speed for barbarians
+     */
+    private static final double BARBARIAN_SWIM_BONUS = 2.0;
+
+    /**
      * Constructor method for Abstract Barbarians.
      *
      * @param type  the type.
@@ -40,5 +45,11 @@ public abstract class AbstractEntityBarbarian extends AbstractEntityMinecolonies
     public RaiderType getRaiderType()
     {
         return RaiderType.BARBARIAN;
+    }
+
+    @Override
+    public double getSwimSpeedFactor()
+    {
+        return BARBARIAN_SWIM_BONUS;
     }
 }

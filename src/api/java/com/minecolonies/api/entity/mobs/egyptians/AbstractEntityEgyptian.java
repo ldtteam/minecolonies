@@ -17,6 +17,12 @@ import static com.minecolonies.api.util.constant.RaiderConstants.OUT_OF_ONE_HUND
 public abstract class AbstractEntityEgyptian extends AbstractEntityMinecoloniesMob
 {
     /**
+     * Swim speed for mummies
+     */
+    private static final double MUMMY_SWIM_SPEED = 1.7;
+
+
+    /**
      * Constructor method for Abstract egyptian..
      *
      * @param type  the type.
@@ -48,5 +54,11 @@ public abstract class AbstractEntityEgyptian extends AbstractEntityMinecoloniesM
     public RaiderType getRaiderType()
     {
         return RaiderType.EGYPTIAN;
+    }
+
+    @Override
+    public double getSwimSpeedFactor()
+    {
+        return MUMMY_SWIM_SPEED;
     }
 }

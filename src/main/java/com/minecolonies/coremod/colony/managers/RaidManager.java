@@ -433,6 +433,11 @@ public class RaidManager implements IRaiderManager
         BlockPos spawnPos = null;
         final BlockPos closestBuilding = colony.getBuildingManager().getBestBuilding(advanceTowards, IBuilding.class);
 
+        if (closestBuilding == null)
+        {
+            return null;
+        }
+
         // 8 Tries
         for (int i = 0; i < 8; i++)
         {
