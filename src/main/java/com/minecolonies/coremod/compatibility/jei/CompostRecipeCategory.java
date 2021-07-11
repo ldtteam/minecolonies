@@ -4,7 +4,6 @@ import com.minecolonies.api.blocks.AbstractBlockBarrel;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.blocks.types.BarrelType;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.compatibility.ICompatibilityManager;
 import com.minecolonies.api.crafting.CompostRecipe;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import mezz.jei.api.constants.VanillaTypes;
@@ -22,7 +21,6 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
