@@ -109,7 +109,7 @@ public class JEIPlugin implements IModPlugin
             return;
         }
 
-        populateRecipes(cacheVanillaRecipes(), registration::addRecipes);
+        populateRecipes(buildVanillaRecipesMap(), registration::addRecipes);
         recipesLoaded = true;
     }
 
@@ -145,7 +145,7 @@ public class JEIPlugin implements IModPlugin
         this.weakRuntime = new WeakReference<>(jeiRuntime);
     }
 
-    private Map<IRecipeType<?>, List<IGenericRecipe>> cacheVanillaRecipes()
+    private Map<IRecipeType<?>, List<IGenericRecipe>> buildVanillaRecipesMap()
     {
         final RecipeManager recipeManager = Minecraft.getInstance().level.getRecipeManager();
 
@@ -220,7 +220,7 @@ public class JEIPlugin implements IModPlugin
             if (runtime != null)
             {
                 final IRecipeManager jeiManager = runtime.getRecipeManager();
-                populateRecipes(cacheVanillaRecipes(), (list, uid) ->
+                populateRecipes(buildVanillaRecipesMap(), (list, uid) ->
                 {
                     for (final Object recipe : list)
                     {
