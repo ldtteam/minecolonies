@@ -822,6 +822,12 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public void pickUp(final PlayerEntity player)
     {
+        if (hasParent())
+        {
+            LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.gui.workerhuts.pickup.denied");
+            return;
+        }
+
         final ItemStack stack = new ItemStack(colony.getWorld().getBlockState(getPosition()).getBlock(), 1);
         final CompoundNBT compoundNBT = new CompoundNBT();
         compoundNBT.putInt(TAG_COLONY_ID, this.getColony().getID());

@@ -31,7 +31,10 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilde
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
 import com.minecolonies.coremod.entity.ai.util.BuildingStructureHandler;
 import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
-import net.minecraft.block.*;
+import net.minecraft.block.AirBlock;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tags.BlockTags;
@@ -474,7 +477,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
               this, new BuildingStructureHandler.Stage[] {REMOVE_WATER, REMOVE});
             getOwnBuilding().setTotalStages(2);
         }
-        else if ((colonyBuilding != null && colonyBuilding.getBuildingLevel() > 0) ||
+        else if ((colonyBuilding != null && (colonyBuilding.getBuildingLevel() > 0 || colonyBuilding.hasParent())) ||
                    (entity instanceof TileEntityDecorationController && ((TileEntityDecorationController) entity).getTier() > 0))
         {
             structure = new BuildingStructureHandler<>(world,

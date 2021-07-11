@@ -1,5 +1,6 @@
 package com.minecolonies.api.entity.citizen;
 
+import com.google.common.collect.Lists;
 import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.client.render.modeltype.IModelType;
 import com.minecolonies.api.colony.ICitizenData;
@@ -14,18 +15,23 @@ import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.sounds.EventType;
 import com.minecolonies.api.util.CompatibilityUtils;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.SoundUtils;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.GoalSelector;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.ShieldItem;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.network.play.server.SEntityEquipmentPacket;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
@@ -39,6 +45,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -109,6 +116,11 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      * The collision threshold
      */
     private final static int COLL_THRESHOLD = 50;
+
+    /**
+     * Flag to check if the equipment is dirty.
+     */
+    private boolean isEquipmentDirty;
 
     /**
      * Constructor for a new citizen typed entity.
@@ -733,5 +745,44 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     public void updatePose(final Pose pose)
     {
         setPose(pose);
+    }
+
+    @Override
+    public void detectEquipmentUpdates()
+    {
+        if (this.isEquipmentDirty)
+        {
+            this.isEquipmentDirty = false;
+            List<Pair<EquipmentSlotType, ItemStack>> list = Lists.newArrayListWithCapacity(6);
+
+            list.add(new Pair<>(EquipmentSlotType.CHEST, getItemBySlot(EquipmentSlotType.CHEST)));
+            list.add(new Pair<>(EquipmentSlotType.FEET, getItemBySlot(EquipmentSlotType.FEET)));
+            list.add(new Pair<>(EquipmentSlotType.HEAD, getItemBySlot(EquipmentSlotType.HEAD)));
+            list.add(new Pair<>(EquipmentSlotType.LEGS, getItemBySlot(EquipmentSlotType.LEGS)));
+            list.add(new Pair<>(EquipmentSlotType.OFFHAND, getItemBySlot(EquipmentSlotType.OFFHAND)));
+            list.add(new Pair<>(EquipmentSlotType.MAINHAND, getItemBySlot(EquipmentSlotType.MAINHAND)));
+            ((ServerWorld) this.level).getChunkSource().broadcast(this, new SEntityEquipmentPacket(this.getId(), list));
+        }
+    }
+
+    @Override
+    public void setItemSlot(final EquipmentSlotType slot, @NotNull final ItemStack stack)
+    {
+        if (!level.isClientSide)
+        {
+            if (!ItemStackUtils.compareItemStacksIgnoreStackSize(getItemBySlot(slot), stack, false, true))
+            {
+                markEquipmentDirty();
+            }
+        }
+        super.setItemSlot(slot, stack);
+    }
+
+    /**
+     * Mark the equipment as dirty.
+     */
+    public void markEquipmentDirty()
+    {
+        this.isEquipmentDirty = true;
     }
 }

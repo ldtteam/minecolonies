@@ -283,7 +283,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
         {
             for (final GuardGear item : itemList)
             {
-                if (building.getBuildingLevel() >= item.getMinBuildingLevelRequired() && building.getBuildingLevel() <= item.getMaxBuildingLevelRequired())
+                if (ItemStackUtils.isEmpty(worker.getItemBySlot(item.getType())) && building.getBuildingLevel() >= item.getMinBuildingLevelRequired() && building.getBuildingLevel() <= item.getMaxBuildingLevelRequired())
                 {
                     int slot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(worker.getInventoryCitizen(), item::test);
 
@@ -301,10 +301,23 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
      */
     public void cleanArmor()
     {
-        worker.setItemSlot(EquipmentSlotType.CHEST, ItemStackUtils.EMPTY);
-        worker.setItemSlot(EquipmentSlotType.FEET, ItemStackUtils.EMPTY);
-        worker.setItemSlot(EquipmentSlotType.HEAD, ItemStackUtils.EMPTY);
-        worker.setItemSlot(EquipmentSlotType.LEGS, ItemStackUtils.EMPTY);
-        worker.setItemSlot(EquipmentSlotType.OFFHAND, ItemStackUtils.EMPTY);
+        updateArmorInSlot(EquipmentSlotType.CHEST);
+        updateArmorInSlot(EquipmentSlotType.FEET);
+        updateArmorInSlot(EquipmentSlotType.HEAD);
+        updateArmorInSlot(EquipmentSlotType.LEGS);
+        updateArmorInSlot(EquipmentSlotType.OFFHAND);
+    }
+
+    /**
+     * Check if the armor is still in the inventory, if not empty the equipment slot.
+     * @param type the type of armor.
+     */
+    private void updateArmorInSlot(final EquipmentSlotType type)
+    {
+        final ItemStack stack = worker.getItemBySlot(type);
+        if (stack.isEmpty() || InventoryUtils.findFirstSlotInItemHandlerWith(getInventory(), itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack, false, true)) == -1)
+        {
+            worker.setItemSlot(type, ItemStackUtils.EMPTY);
+        }
     }
 }

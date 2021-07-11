@@ -960,6 +960,7 @@
   "com.minecolonies.coremod.pirates.killed": "§2Victory! %s rid the seas of the intruders!",
   "com.minecolonies.coremod.gui.workerhuts.deconstruct": "Deconstruct",
   "com.minecolonies.coremod.gui.workerhuts.pickup": "Pick Up",
+  "com.minecolonies.coremod.gui.workerhuts.pickup.denied": "You cannot pickup this building.",
 
   "com.minecolonies.coremod.tooclose": "Too close to world spawn, needs to be at least %d blocks away!",
   "com.minecolonies.coremod.toofar": "Too far away from the world spawn, needs to be max %d blocks away!",
