@@ -2,6 +2,7 @@ package com.minecolonies.api.compatibility;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.compatibility.dynamictrees.DynamicTreeCompat;
 import com.minecolonies.api.compatibility.resourcefulbees.ResourcefulBeesCompat;
@@ -14,7 +15,10 @@ import com.minecolonies.api.util.*;
 import net.minecraft.block.*;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
-import net.minecraft.item.*;
+import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.RecipeManager;
 import net.minecraft.nbt.CompoundNBT;
@@ -149,7 +153,7 @@ public class CompatibilityManager implements ICompatibilityManager
     /**
      * Hashmap of mobs we may or may not attack.
      */
-    private Set<ResourceLocation> monsters = new HashSet<>();
+    private ImmutableSet<ResourceLocation> monsters = ImmutableSet.of();
 
     /**
      * Instantiates the compatibilityManager.
@@ -425,9 +429,9 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
-    public Set<ResourceLocation> getAllMonsters()
+    public ImmutableSet<ResourceLocation> getAllMonsters()
     {
-        return new HashSet<>(monsters);
+        return monsters;
     }
 
     //------------------------------- Private Utility Methods -------------------------------//
@@ -437,19 +441,21 @@ public class CompatibilityManager implements ICompatibilityManager
      */
     private void discoverMobs()
     {
-        monsters = new HashSet<>();
+        Set<ResourceLocation> monsterSet = new HashSet<>();
 
         for (final Map.Entry<RegistryKey<EntityType<?>>, EntityType<?>> entry : ForgeRegistries.ENTITIES.getEntries())
         {
             if (entry.getValue().getCategory() == EntityClassification.MONSTER)
             {
-                monsters.add(entry.getKey().location());
+                monsterSet.add(entry.getKey().location());
             }
             else if (ModTags.hostile.contains(entry.getValue()))
             {
-                monsters.add(entry.getKey().location());
+                monsterSet.add(entry.getKey().location());
             }
         }
+
+        monsters = ImmutableSet.copyOf(monsterSet);
     }
 
     /**
