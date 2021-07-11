@@ -165,6 +165,7 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
             if (entity instanceof TileEntityColonyBuilding)
             {
                 ((TileEntityColonyBuilding) entity).setStyle(this.getStyle());
+                ((TileEntityColonyBuilding) entity).setMirror(isMirrored());
                 final IBuilding building = colony.getBuildingManager().getBuilding(pos);
                 if (building != null)
                 {
