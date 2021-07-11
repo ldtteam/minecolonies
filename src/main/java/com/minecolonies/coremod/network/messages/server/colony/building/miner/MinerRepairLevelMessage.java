@@ -10,16 +10,16 @@ import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Message to set the level of the miner from the GUI.
+ * Message to repair the level of the miner from the GUI.
  */
-public class MinerSetLevelMessage extends AbstractBuildingServerMessage<BuildingMiner>
+public class MinerRepairLevelMessage extends AbstractBuildingServerMessage<BuildingMiner>
 {
     private int level;
 
     /**
      * Empty constructor used when registering the
      */
-    public MinerSetLevelMessage()
+    public MinerRepairLevelMessage()
     {
         super();
     }
@@ -30,7 +30,7 @@ public class MinerSetLevelMessage extends AbstractBuildingServerMessage<Building
      * @param building View of the building to read data from.
      * @param level    Level of the miner.
      */
-    public MinerSetLevelMessage(@NotNull final IBuildingView building, final int level)
+    public MinerRepairLevelMessage(@NotNull final IBuildingView building, final int level)
     {
         super(building);
         this.level = level;
@@ -51,6 +51,6 @@ public class MinerSetLevelMessage extends AbstractBuildingServerMessage<Building
     @Override
     protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final BuildingMiner building)
     {
-        building.getFirstModuleOccurance(MinerLevelManagementModule.class).setCurrentLevel(level);
+        building.getFirstModuleOccurance(MinerLevelManagementModule.class).repairLevel(level);
     }
 }
