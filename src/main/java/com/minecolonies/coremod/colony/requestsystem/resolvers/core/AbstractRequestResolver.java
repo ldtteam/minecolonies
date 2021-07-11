@@ -10,7 +10,7 @@ import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.util.RSConstants.CONST_DEFAULT_RESOLVER_PRIORITY;
+import static com.minecolonies.api.util.constant.RSConstants.CONST_DEFAULT_RESOLVER_PRIORITY;
 
 /**
  * ----------------------- Not Documented Object ---------------------

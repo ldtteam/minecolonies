@@ -2,8 +2,8 @@ package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.blockout.Alignment;
 import com.ldtteam.blockout.PaneBuilders;
-import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.controls.AbstractTextBuilder.TextBuilder;
+import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.View;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
@@ -11,11 +11,12 @@ import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
+
 import java.util.Arrays;
 import java.util.function.Supplier;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_INFO_PREFIX;
-import static com.minecolonies.api.util.constant.WindowConstants.*;
+import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_EXIT;
 
 public class WindowInfo extends AbstractWindowSkeleton
 {

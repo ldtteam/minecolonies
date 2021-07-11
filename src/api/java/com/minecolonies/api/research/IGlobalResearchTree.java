@@ -11,7 +11,6 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
-import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;

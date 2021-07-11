@@ -1,32 +1,15 @@
 package com.minecolonies.coremod.client.gui.citizen;
 
 import com.ldtteam.blockout.Pane;
-import com.ldtteam.blockout.PaneBuilders;
-import com.ldtteam.blockout.controls.AbstractTextBuilder;
-import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.ScrollingList;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenDataView;
-import com.minecolonies.api.colony.buildings.HiringMode;
-import com.minecolonies.api.colony.buildings.IBuildingCanBeHiredFrom;
-import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.CitizenDataView;
-import net.minecraft.util.Tuple;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Locale;
-import java.util.Map;
-
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_HIRE_PAUSE;
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_HIRE_UNPAUSE;
-import static com.minecolonies.api.util.constant.WindowConstants.*;
-import static com.minecolonies.api.util.constant.WindowConstants.ATTRIBUTES_LABEL;
+import static com.minecolonies.api.util.constant.WindowConstants.CITIZEN_FAM_RESOURCE_SUFFIX;
 
 /**
  * Window for the citizen.

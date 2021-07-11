@@ -1,15 +1,13 @@
 package com.minecolonies.coremod.colony.colonyEvents.citizenEvents;
 
-import static com.minecolonies.api.util.constant.NbtTagConstants.*;
-
 import com.minecolonies.api.util.constant.Constants;
-
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-
 import org.jetbrains.annotations.NotNull;
+
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_DEATH_CAUSE;
 
 /**
  * The event for handling a citizen death.

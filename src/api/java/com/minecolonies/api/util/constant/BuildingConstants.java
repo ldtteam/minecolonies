@@ -38,21 +38,6 @@ public final class BuildingConstants
     public static final String TAG_CLEARED = "clearedShaft";
 
     /**
-     * The NBT Tag to store the location of the shaft.
-     */
-    public static final String TAG_SLOCATION = "shaftLocation";
-
-    /**
-     * The NBT Tag to store the vector-x of the shaft.
-     */
-    public static final String TAG_VECTORX = "vectorx";
-
-    /**
-     * The NBT Tag to store the vector-z of the shaft.
-     */
-    public static final String TAG_VECTORZ = "vectorz";
-
-    /**
      * The NBT Tag to store the location of the cobblestone at the shaft.
      */
     public static final String TAG_CLOCATION = "cobblelocation";
@@ -86,11 +71,6 @@ public final class BuildingConstants
      * The NBT Tag to store the location of the ladder.
      */
     public static final String TAG_LLOCATION = "ladderlocation";
-
-    /**
-     * The NBT Tag to store if a ladder has been found yet.
-     */
-    public static final String TAG_LADDER = "found_ladder";
 
     /**
      * Max depth the miner reaches at level 0.

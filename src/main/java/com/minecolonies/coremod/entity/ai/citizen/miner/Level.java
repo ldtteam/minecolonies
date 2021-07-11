@@ -15,7 +15,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-
 import static com.minecolonies.coremod.entity.ai.citizen.miner.Node.NodeType.*;
 
 /**

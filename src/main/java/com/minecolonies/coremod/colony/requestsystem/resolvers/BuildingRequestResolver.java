@@ -25,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
 
-import static com.minecolonies.api.util.RSConstants.CONST_BUILDING_RESOLVER_PRIORITY;
+import static com.minecolonies.api.util.constant.RSConstants.CONST_BUILDING_RESOLVER_PRIORITY;
 
 /**
  * Resolver that checks if a deliverable request is already in the building it is being requested from.

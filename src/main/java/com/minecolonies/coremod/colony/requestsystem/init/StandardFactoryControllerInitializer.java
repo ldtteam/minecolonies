@@ -1,12 +1,12 @@
 package com.minecolonies.coremod.colony.requestsystem.init;
 
-import com.minecolonies.coremod.colony.buildings.modules.settings.SettingsFactories;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.factory.standard.IntegerFactory;
 import com.minecolonies.api.colony.requestsystem.factory.standard.TypeTokenFactory;
 import com.minecolonies.api.colony.requestsystem.token.InitializedTokenFactory;
 import com.minecolonies.api.colony.requestsystem.token.RandomSeededTokenFactory;
 import com.minecolonies.api.colony.requestsystem.token.StandardTokenFactory;
+import com.minecolonies.coremod.colony.buildings.modules.settings.SettingsFactories;
 import com.minecolonies.coremod.colony.crafting.CustomRecipeFactory;
 import com.minecolonies.coremod.colony.crafting.ImmutableItemStorageFactory;
 import com.minecolonies.coremod.colony.crafting.ItemStorageFactory;
