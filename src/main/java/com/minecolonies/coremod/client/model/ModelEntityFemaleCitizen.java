@@ -12,7 +12,7 @@ public class ModelEntityFemaleCitizen extends CitizenModel<AbstractEntityCitizen
     public ModelEntityFemaleCitizen()
     {
         ModelRenderer hair;
-        ModelRenderer hat;
+        ModelRenderer hatPiece;
         ModelRenderer breast;
         ModelRenderer dressPart1;
         ModelRenderer dressPart2;
@@ -30,10 +30,10 @@ public class ModelEntityFemaleCitizen extends CitizenModel<AbstractEntityCitizen
         head.addChild(hair);
         hair.texOffs(46, 17).addBox(-4.0F, 0.4F, 2.1F, 8.0F, 7.0F, 1.0F, 0.5F, false);
 
-        hat = new ModelRenderer(this);
-        hat.setPos(0.0F, 0.0F, 0.0F);
-        head.addChild(hat);
-        hat.texOffs(32, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, 0.5F, false);
+        hatPiece = new ModelRenderer(this);
+        hatPiece.setPos(0.0F, 0.0F, 0.0F);
+        head.addChild(hatPiece);
+        hatPiece.texOffs(32, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, 0.5F, false);
 
         body = new ModelRenderer(this);
         body.setPos(0.0F, 0.0F, 3.0F);

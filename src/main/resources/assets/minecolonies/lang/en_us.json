@@ -710,6 +710,7 @@
   "com.minecolonies.coremod.permission.no": "You do not have permission to do this in this colony!",
   "com.minecolonies.coremod.gui.townhall.freeblocks": "Free for Interaction",
   "com.minecolonies.coremod.gui.townhall.add": "Add",
+  "com.minecolonies.coremod.gui.townhall.player_permission_error": "You are not permitted to add new players. Ask a colony manager to turn on \"Edit permissions\" for your rank.",
 
   "com.minecolonies.coremod.permission.access_huts": "Access GUIs",
   "com.minecolonies.coremod.permission.guards_attack": "Fight Guards",
@@ -952,6 +953,7 @@
   "com.minecolonies.coremod.pirates.killed": "§2Victory! %s rid the seas of the intruders!",
   "com.minecolonies.coremod.gui.workerhuts.deconstruct": "Deconstruct",
   "com.minecolonies.coremod.gui.workerhuts.pickup": "Pick Up",
+  "com.minecolonies.coremod.gui.workerhuts.pickup.denied": "You cannot pickup this building.",
 
   "com.minecolonies.coremod.tooclose": "Too close to world spawn, needs to be at least %d blocks away!",
   "com.minecolonies.coremod.toofar": "Too far away from the world spawn, needs to be max %d blocks away!",
@@ -1344,7 +1346,7 @@
   "com.minecolonies.coremod.furnaceuser.nofuel": "Please tell me what kind of fuel I should use in my furnace!",
   "com.minecolonies.coremod.furnaceuser.noore": "Please tell me what kind of ore I should smelt in my furnace!",
   "com.minecolonies.coremod.furnaceuser.nofood": "Please tell me what kind of food I should hand out!",
-  "com.minecolonies.coremod.sifter.nomesh": "Please make sure I have at least a string mesh to sift with!",
+  "com.minecolonies.coremod.sifter.nomesh": "Please make sure I have at least a string mesh to sift with! You can either manually stock different meshes in my hut or setup a minimum stock to automate it.",
   "com.minecolonies.coremod.florist.noplantground": "I don't have any composted dirt to plant on! Please repair my Flower Shop!",
   "com.minecolonies.coremod.florist.nocompost": "I need compost to plant my flowers!",
   "com.minecolonies.coremod.florist.noflowers": "I can't work, all my flowers are disabled!",
@@ -2012,5 +2014,9 @@
   "com.minecolonies.coremod.gui.citizen.family.children": "Children",
   "com.minecolonies.coremod.gui.citizen.family.unknown": "Unknown",
   "com.minecolonies.coremod.invalidbuilding": "The Building %s at position %d %d %d is missing its original blueprint of style %s. Building potentially inoperable. Please recover the blueprint or pickup and replace the building.",
-  "entity.miner.invalidmineshaft": "I can't work at the mine because the mineshaft is missing the proper indication."
+  "entity.miner.invalidmineshaft": "I can't work at the mine because the mineshaft is missing the proper indication.",
+  "com.minecolonies.coremod.setting.minecolonies:recipemode": "Recipe Mode:",
+  "com.minecolonies.core.crafting.setting.priority": "Priority",
+  "com.minecolonies.core.crafting.setting.maxstock": "Warehouse Stock",
+  "item.buildtool.missing": "Missing build-tool in player inventory!"
 }

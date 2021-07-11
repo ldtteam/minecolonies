@@ -70,6 +70,11 @@ public final class SoundUtils
     };
 
     /**
+     * The minimum required distance to play a sound to a player
+     */
+    private static final double MIN_REQUIRED_SOUND_DIST = 10 * 10;
+
+    /**
      * Private constructor to hide the implicit public one.
      */
     private SoundUtils()
@@ -88,6 +93,21 @@ public final class SoundUtils
      */
     public static void playRandomSound(@NotNull final World worldIn, @NotNull final BlockPos pos, @NotNull final ICitizenData citizen)
     {
+        boolean playerCloseEnough = false;
+        for (final PlayerEntity player : citizen.getColony().getPackageManager().getCloseSubscribers())
+        {
+            if (player.blockPosition().distSqr(pos) < MIN_REQUIRED_SOUND_DIST)
+            {
+                playerCloseEnough = true;
+                break;
+            }
+        }
+
+        if (!playerCloseEnough)
+        {
+            return;
+        }
+
         final double v = rand.nextDouble();
         if (v <= 0.1)
         {

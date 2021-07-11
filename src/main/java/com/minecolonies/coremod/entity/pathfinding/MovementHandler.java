@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.entity.citizen.citizenhandlers;
+package com.minecolonies.coremod.entity.pathfinding;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;

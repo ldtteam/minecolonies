@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.compatibility.jei.transfer;
 
 import com.google.common.collect.ImmutableSet;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.Network;
@@ -15,6 +14,8 @@ import mezz.jei.api.recipe.transfer.IRecipeTransferHandlerHelper;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -85,7 +86,7 @@ public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHa
                 {
                     if (badIndexes.contains(inputIndex))
                     {
-                        final String tooltipMessage = LanguageHandler.format("jei.tooltip.error.recipe.transfer.too.large.player.inventory");
+                        final ITextComponent tooltipMessage = new TranslationTextComponent("jei.tooltip.error.recipe.transfer.too.large.player.inventory");
                         return handlerHelper.createUserErrorForSlots(tooltipMessage, badIndexes);
                     }
                     guiIngredients.put(inputIndex, ingredient.getDisplayedIngredient());

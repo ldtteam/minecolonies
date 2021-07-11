@@ -1,7 +1,7 @@
-<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="374 243" pause="false" lightbox="false"
-        xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
+<window size="524 243" pause="false" lightbox="false">
 
-    <switch id="switchpagePermissions" size="100% 100%">
+    <layout source="minecolonies:gui/townhall/windowtownhall.xml"/>
+    <switch id="pages" size="100% 100%" pos="75 0">
         <view id="pageAddPlayer">
             <list id="users" size="148 171" pos="201 36">
                 <box size="100% 35" linewidth="2">
@@ -28,6 +28,7 @@
             <label size="148 11" pos="26 65" color="black" label="$(com.minecolonies.coremod.gui.townHall.addPlayer)"/>
             <input id="addPlayerName" size="100 18" pos="26 76" maxlength="32"/>
             <button id="addPlayer" size="19 19" pos="130 76" label="+"/>
+            <label id="permissionError" size="148 100" pos="26 100" color="red" label="$(com.minecolonies.coremod.gui.townhall.player_permission_error)" textalign="TOP_MIDDLE" />
         </view>
         <view id="managePermissions">
             <switch id="permissionsManagement" size="148 171" pos="201 36">
@@ -73,7 +74,7 @@
             <label size="148 11" pos="36 167" color="black" label="$(com.minecolonies.coremod.gui.townhall.addrank)"/>
             <input id="addRankName" size="100 18" pos="36 179" maxlength="32"/>
             <button id="buttonAddRank" size="19 19" pos="140 179" label="+"/>
-            <label id="rankNameError" size="148 11" pos="36 200" color="red" label="$(com.minecolonies.coremod.gui.townhall.invalidrankname)" />
+            <label id="rankNameError" size="148 11" pos="36 200" color="red" label="$(com.minecolonies.coremod.gui.townhall.invalidrankname)" visible="false" />
         </view>
         <view id="freeBlockList">
             <label size="148 11" pos="201 24" color="black" label="$(com.minecolonies.coremod.gui.townHall.freeBlocks)"/>
@@ -89,4 +90,7 @@
             <button id="addBlock" size="19 19" pos="130 76" label="+"/>
         </view>
     </switch>
+    <buttonimage id="prevPage" size="18 10" pos="100 24" source="minecolonies:textures/gui/builderhut/turn_page_left.png"/>
+    <buttonimage id="nextPage" size="18 10" pos="406 24" source="minecolonies:textures/gui/builderhut/turn_page_right.png"/>
+    <label id="pageNum" size="18 9" pos="406 211" textalign="MIDDLE" label="" color="black"/>
 </window>

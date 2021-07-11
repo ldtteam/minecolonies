@@ -1,5 +1,6 @@
 package com.minecolonies.api.compatibility;
 
+import com.google.common.collect.ImmutableSet;
 import com.minecolonies.api.crafting.CompostRecipe;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.Disease;
@@ -103,7 +104,7 @@ public interface ICompatibilityManager
      * Get the set of all monsters.
      * @return the set.
      */
-    Set<ResourceLocation> getAllMonsters();
+    ImmutableSet<ResourceLocation> getAllMonsters();
 
     /**
      * Get a random disease of the compat manager.

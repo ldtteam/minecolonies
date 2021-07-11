@@ -19,6 +19,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
+
 /**
  * Stuck handler for pathing
  */
@@ -33,6 +35,12 @@ public class PathingStuckHandler implements IStuckHandler
      * All directions.
      */
     public static final List<Direction> HORIZONTAL_DIRS = Arrays.asList(Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST);
+
+    /**
+     * Constants related to tp.
+     */
+    private static final int MAX_TP_DELAY    = 60 * TICKS_SECOND * 5;
+    private static final int MIN_DIST_FOR_TP = 10;
 
     /**
      * Amount of path steps allowed to teleport on stuck, 0 = disabled
@@ -154,7 +162,7 @@ public class PathingStuckHandler implements IStuckHandler
             globalTimeout++;
 
             // Try path first, if path fits target pos
-            if (globalTimeout > timePerBlockDistance * distanceToGoal)
+            if (globalTimeout > Math.min(MAX_TP_DELAY, timePerBlockDistance * Math.max(MIN_DIST_FOR_TP, distanceToGoal)))
             {
                 completeStuckAction(navigator);
             }
@@ -290,19 +298,12 @@ public class PathingStuckHandler implements IStuckHandler
         }
 
         // Skip ahead
-        if (stuckLevel == 2)
+        if (stuckLevel == 2 && teleportRange > 0 && hadPath)
         {
-            if (hadPath && teleportRange > 0)
-            {
-                delayToNextUnstuckAction = 100;
-                int index = navigator.getPath().getNextNodeIndex() + teleportRange;
-                if (index < navigator.getPath().getNodeCount())
-                {
-                    final PathPoint togo = navigator.getPath().getNode(index);
-                    navigator.getOurEntity().teleportTo(togo.x + 0.5d, togo.y, togo.z + 0.5d);
-                    delayToNextUnstuckAction = 300;
-                }
-            }
+            int index = Math.min(navigator.getPath().getNextNodeIndex() + teleportRange, navigator.getPath().getNodeCount() - 1);
+            final PathPoint togo = navigator.getPath().getNode(index);
+            navigator.getOurEntity().teleportTo(togo.x + 0.5d, togo.y, togo.z + 0.5d);
+            delayToNextUnstuckAction = 300;
         }
 
         // Place ladders & leaves

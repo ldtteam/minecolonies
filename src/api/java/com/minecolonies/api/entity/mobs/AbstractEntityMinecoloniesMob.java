@@ -33,7 +33,6 @@ import net.minecraftforge.common.util.ITeleporter;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-import java.util.Random;
 
 import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
@@ -217,6 +216,7 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements
             this.newNavigator = IPathNavigateRegistry.getInstance().getNavigateFor(this);
             this.navigation = newNavigator;
             this.newNavigator.setCanFloat(true);
+            newNavigator.setSwimSpeedFactor(getSwimSpeedFactor());
             this.newNavigator.getNodeEvaluator().setCanPassDoors(true);
             newNavigator.getPathingOptions().withJumpDropCost(1.1D);
             PathingStuckHandler stuckHandler = PathingStuckHandler.createStuckHandler()
@@ -234,6 +234,13 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements
         }
         return newNavigator;
     }
+
+    /**
+     * Get the swim speed factor
+     *
+     * @return speed factor
+     */
+    public abstract double getSwimSpeedFactor();
 
     /**
      * Get the stack counter.
@@ -651,5 +658,25 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements
     public void setCanBeStuck(final boolean canBeStuck)
     {
         this.canBeStuck = canBeStuck;
+    }
+
+    /**
+     * Disallow pushing from fluids to prevent stuck
+     *
+     * @return
+     */
+    public boolean isPushedByFluid()
+    {
+        return false;
+    }
+
+    /**
+     * Do not allow bubble movement
+     *
+     * @param down
+     */
+    public void onInsideBubbleColumn(boolean down)
+    {
+
     }
 }

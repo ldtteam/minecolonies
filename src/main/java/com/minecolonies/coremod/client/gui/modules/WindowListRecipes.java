@@ -9,6 +9,7 @@ import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.IRecipeStorage;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.AbstractModuleWindow;
@@ -107,6 +108,7 @@ public class WindowListRecipes extends AbstractModuleWindow
     {
         final int row = recipeList.getListElementIndexByPane(button);
         Network.getNetwork().sendToServer(new ChangeRecipePriorityMessage(buildingView, row, false, module.getId()));
+        recipeList.refreshElementPanes();
     }
 
     /**
@@ -117,6 +119,7 @@ public class WindowListRecipes extends AbstractModuleWindow
     {
         final int row = recipeList.getListElementIndexByPane(button);
         Network.getNetwork().sendToServer(new ChangeRecipePriorityMessage(buildingView, row, true, module.getId()));
+        recipeList.refreshElementPanes();
     }
 
     /**
@@ -184,9 +187,7 @@ public class WindowListRecipes extends AbstractModuleWindow
                     {
                         if (i < recipe.getInput().size())
                         {
-                            final ItemStack displayItem = recipe.getInput().get(i).getItemStack();
-
-                            rowPane.findPaneOfTypeByID(String.format(RESOURCE, i + 1), ItemIcon.class).setItem(displayItem);
+                            rowPane.findPaneOfTypeByID(String.format(RESOURCE, i + 1), ItemIcon.class).setItem(getStackWithCount(recipe.getInput().get(i)));
                         }
                         else
                         {
@@ -196,11 +197,11 @@ public class WindowListRecipes extends AbstractModuleWindow
                 }
                 else if (recipe.getInput().size() == 4)
                 {
-                    rowPane.findPaneOfTypeByID(String.format(RESOURCE, 1), ItemIcon.class).setItem(recipe.getInput().get(0).getItemStack());
-                    rowPane.findPaneOfTypeByID(String.format(RESOURCE, 2), ItemIcon.class).setItem(recipe.getInput().get(1).getItemStack());
+                    rowPane.findPaneOfTypeByID(String.format(RESOURCE, 1), ItemIcon.class).setItem(getStackWithCount(recipe.getInput().get(0)));
+                    rowPane.findPaneOfTypeByID(String.format(RESOURCE, 2), ItemIcon.class).setItem(getStackWithCount(recipe.getInput().get(1)));
                     rowPane.findPaneOfTypeByID(String.format(RESOURCE, 3), ItemIcon.class).setItem(ItemStack.EMPTY);
-                    rowPane.findPaneOfTypeByID(String.format(RESOURCE, 4), ItemIcon.class).setItem(recipe.getInput().get(2).getItemStack());
-                    rowPane.findPaneOfTypeByID(String.format(RESOURCE, 5), ItemIcon.class).setItem(recipe.getInput().get(3).getItemStack());
+                    rowPane.findPaneOfTypeByID(String.format(RESOURCE, 4), ItemIcon.class).setItem(getStackWithCount(recipe.getInput().get(2)));
+                    rowPane.findPaneOfTypeByID(String.format(RESOURCE, 5), ItemIcon.class).setItem(getStackWithCount(recipe.getInput().get(3)));
                     for (int i = 6; i < 9; i++)
                     {
                         rowPane.findPaneOfTypeByID(String.format(RESOURCE, i + 1), ItemIcon.class).setItem(ItemStack.EMPTY);
@@ -210,11 +211,23 @@ public class WindowListRecipes extends AbstractModuleWindow
                 {
                     for (int i = 0; i < 9; i++)
                     {
-                        rowPane.findPaneOfTypeByID(String.format(RESOURCE, i + 1), ItemIcon.class).setItem(recipe.getInput().get(i).getItemStack());
+                        rowPane.findPaneOfTypeByID(String.format(RESOURCE, i + 1), ItemIcon.class).setItem(getStackWithCount(recipe.getInput().get(i)));
                     }
                 }
             }
         });
+    }
+
+    /**
+     * Setup the stack with count.
+     * @param storage the storage to get it from.
+     * @return the stack with the set count.
+     */
+    private ItemStack getStackWithCount(final ItemStorage storage)
+    {
+        final ItemStack displayItem = storage.getItemStack();
+        displayItem.setCount(storage.getAmount());
+        return displayItem;
     }
 
     @Override

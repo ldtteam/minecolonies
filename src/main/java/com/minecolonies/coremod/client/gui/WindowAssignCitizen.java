@@ -25,8 +25,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
-import static com.minecolonies.coremod.client.gui.townhall.WindowTownHall.DARKGREEN;
-import static com.minecolonies.coremod.client.gui.townhall.WindowTownHall.RED;
+import static com.minecolonies.coremod.client.gui.townhall.AbstractWindowTownHall.DARKGREEN;
+import static com.minecolonies.coremod.client.gui.townhall.AbstractWindowTownHall.RED;
 
 /**
  * Window for the hiring or firing of a worker.

@@ -15,7 +15,7 @@ public class ModelAmazonChief extends AmazonModel<AbstractEntityAmazon>
     public ModelAmazonChief()
     {
         ModelRenderer hairBack1;
-        ModelRenderer hat;
+        ModelRenderer hatPiece;
         ModelRenderer nehat;
         ModelRenderer mask;
         ModelRenderer bone2;
@@ -50,15 +50,15 @@ public class ModelAmazonChief extends AmazonModel<AbstractEntityAmazon>
         hairBack1.texOffs(24, 26).addBox(-4.5F, -8.5F, 1.5F, 9.0F, 9.0F, 3.0F, 0.0F, false);
         hairBack1.texOffs(48, 0).addBox(-4.5F, -8.5F, -0.5F, 9.0F, 5.0F, 2.0F, 0.0F, false);
 
-        hat = new ModelRenderer(this);
-        hat.setPos(0.1F, -6.8F, -4.3F);
-        hairBack1.addChild(hat);
-        setRotationAngle(hat, -0.5585F, 0.0F, 0.0F);
-        hat.texOffs(80, 14).addBox(-4.6F, -2.961F, -1.1223F, 9.0F, 3.0F, 1.0F, 0.0F, false);
+        hatPiece = new ModelRenderer(this);
+        hatPiece.setPos(0.1F, -6.8F, -4.3F);
+        hairBack1.addChild(hatPiece);
+        setRotationAngle(hatPiece, -0.5585F, 0.0F, 0.0F);
+        hatPiece.texOffs(80, 14).addBox(-4.6F, -2.961F, -1.1223F, 9.0F, 3.0F, 1.0F, 0.0F, false);
 
         nehat = new ModelRenderer(this);
         nehat.setPos(0.4F, -1.9F, -1.0F);
-        hat.addChild(nehat);
+        hatPiece.addChild(nehat);
         setRotationAngle(nehat, -0.1745F, 0.0F, 0.0F);
         nehat.texOffs(104, 15).addBox(3.0F, -3.1545F, -0.4684F, 1.0F, 4.0F, 1.0F, 0.0F, false);
         nehat.texOffs(113, 13).addBox(1.0F, -6.192F, -0.3757F, 1.0F, 7.0F, 1.0F, 0.0F, false);

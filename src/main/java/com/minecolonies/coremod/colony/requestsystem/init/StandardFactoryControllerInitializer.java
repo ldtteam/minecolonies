@@ -91,6 +91,7 @@ public final class StandardFactoryControllerInitializer
         StandardFactoryController.getInstance().registerNewFactory(new SettingsFactories.GuardTaskSettingFactory());
         StandardFactoryController.getInstance().registerNewFactory(new SettingsFactories.FollowModeSettingFactory());
         StandardFactoryController.getInstance().registerNewFactory(new SettingsFactories.GuardJobSettingFactory());
+        StandardFactoryController.getInstance().registerNewFactory(new SettingsFactories.CrafterRecipeSettingFactory());
 
         StandardFactoryController.getInstance().registerNewTypeOverrideHandler(new TypeTokenFactory.TypeTokenSubTypeOverrideHandler());
 

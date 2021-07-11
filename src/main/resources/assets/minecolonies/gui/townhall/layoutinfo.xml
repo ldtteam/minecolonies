@@ -1,32 +1,28 @@
-<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="374 243" pause="false" lightbox="false"
-        xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
+<window size="524 243" pause="false" lightbox="false">
 
-    <switch id="switchpageInfo" size="100% 100%">
-        <view>
-            <label size="148 11" pos="201 25" color="black" textalign="MIDDLE"
-                   label="$(com.minecolonies.coremod.gui.townHall.currentHappiness)"/>
-            <label id="happinessLevel" size="148 11" pos="201 35" color="black" textalign="MIDDLE"/>
-            <button id="permissionEvents" size="148 14" pos="201 45" textalign="MIDDLE"
-                   label="$(com.minecolonies.coremod.gui.townHall.permissionevents)"/>
-            <label size="148 11" pos="201 59" color="black" textalign="MIDDLE"
-                   label="$(com.minecolonies.coremod.gui.townHall.events):"/>
+    <layout source="minecolonies:gui/townhall/windowtownhall.xml"/>
+    <label size="148 11" pos="276 25" color="black" textalign="MIDDLE"
+           label="$(com.minecolonies.coremod.gui.townHall.currentHappiness)"/>
+    <label id="happinessLevel" size="148 11" pos="276 35" color="black" textalign="MIDDLE"/>
+    <button id="permissionEvents" size="148 14" pos="276 45" textalign="MIDDLE"
+            label="$(com.minecolonies.coremod.gui.townHall.permissionevents)"/>
+    <label size="148 11" pos="276 59" color="black" textalign="MIDDLE"
+           label="$(com.minecolonies.coremod.gui.townHall.events):"/>
 
-            <list id="eventsList" size="148 152" pos="201 70">
-                <box size="100% 36" linewidth="2">
-                    <label id="action" size="140 12" pos="1 1" color="black"/>
-                    <label id="name" size="100 12" pos="1 12" color="blue"/>
-                    <label id="pos" size="70 12" pos="1 24" color="black"/>
-                    <button id="addfakeplayer" size="35 12" label="$(com.minecolonies.coremod.gui.townHall.add)" pos="105 12"/>
-                </box>
-            </list>
+    <list id="eventsList" size="148 152" pos="276 70">
+        <box size="100% 36" linewidth="2">
+            <label id="action" size="140 12" pos="1 1" color="black"/>
+            <label id="name" size="100 12" pos="1 12" color="blue"/>
+            <label id="pos" size="70 12" pos="1 24" color="black"/>
+            <button id="addfakeplayer" size="35 12" label="$(com.minecolonies.coremod.gui.townHall.add)" pos="105 12"/>
+        </box>
+    </list>
 
-            <label size="110 11" pos="25 61" color="black" label="$(com.minecolonies.coremod.gui.townhall.population.totalcitizens)"/>
-            <label id="totalCitizens" size="38 11" pos="135 61" color="black"/>
-            <list id="citizen-stats" size="148 136" pos="25 83">
-                <box size="100% 11" linewidth="0">
-                    <label id="citizensAmount" size="100% 11" color="black"/>
-                </box>
-            </list>
-        </view>
-    </switch>
+    <label size="110 11" pos="100 61" color="black" label="$(com.minecolonies.coremod.gui.townhall.population.totalcitizens)"/>
+    <label id="totalCitizens" size="38 11" pos="215 61" color="black"/>
+    <list id="citizen-stats" size="148 136" pos="100 83">
+        <box size="100% 11" linewidth="0">
+            <label id="citizensAmount" size="100% 11" color="black"/>
+        </box>
+    </list>
 </window>

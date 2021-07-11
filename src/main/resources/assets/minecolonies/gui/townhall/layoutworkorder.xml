@@ -1,23 +1,19 @@
-<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="374 243" pause="false" lightbox="false"
-        xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
+<window size="524 243" pause="false" lightbox="false">
 
-    <switch id="switchpageWorkOrder" size="100% 100%">
-        <view>
-            <label size="148 11" pos="201 28" textalign="MIDDLE" label="§n§4$(com.minecolonies.coremod.gui.townHall.workorders):"/>
+    <layout source="minecolonies:gui/townhall/windowtownhall.xml"/>
+    <label size="148 11" pos="276 28" textalign="MIDDLE" label="§n§4$(com.minecolonies.coremod.gui.townHall.workorders):"/>
 
-            <list id="workOrderList" size="148 166" pos="201 50">
-                <view size="100% 30">
-                    <box size="100% 30" linewidth="2">
-                        <button id="plus" size="15 15" label="↥" pos="0 0"/>
-                        <button id="minus" size="15 15" label="↧" pos="0 15"/>
-                        <label id="assignee" size="50 8" pos="25 15" textalign="MIDDLE_LEFT" color="black" textscale="0.8"/>
+    <list id="workOrderList" size="148 166" pos="276 50">
+        <view size="100% 30">
+            <box size="100% 30" linewidth="2">
+                <button id="plus" size="15 15" label="↥" pos="0 0"/>
+                <button id="minus" size="15 15" label="↧" pos="0 15"/>
+                <label id="assignee" size="50 8" pos="25 15" textalign="MIDDLE_LEFT" color="black" textscale="0.8"/>
 
-                        <label id="work" size="60 12" pos="20 5" textalign="MIDDLE_LEFT" color="black"/>
-                        <button id="delete" size="15 15" label="§n§4X" pos="115 8"/>
-                        <label id="hiddenId" size="1 1" pos="100 100"/>
-                    </box>
-                </view>
-            </list>
+                <label id="work" size="60 12" pos="20 5" textalign="MIDDLE_LEFT" color="black"/>
+                <button id="delete" size="15 15" label="§n§4X" pos="115 8"/>
+                <label id="hiddenId" size="1 1" pos="100 100"/>
+            </box>
         </view>
-    </switch>
+    </list>
 </window>
