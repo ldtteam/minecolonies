@@ -14,12 +14,10 @@ import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMess
 import com.minecolonies.coremod.network.messages.server.colony.building.postbox.PostBoxRequestMessage;
 import net.minecraft.item.EnchantedBookItem;
 import net.minecraft.item.ItemStack;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -149,6 +147,7 @@ public class WindowPostBox extends AbstractWindowRequestTree
                                                                 || (stack.getItem() instanceof EnchantedBookItem && EnchantedBookItem.getEnchantments(stack).getCompound(0).getString("id").contains(filter.toLowerCase(Locale.US)));
         allItems.clear();
         allItems.addAll(getBlockList(filterPredicate));
+        allItems.sort(Comparator.comparingInt(s1 -> StringUtils.getLevenshteinDistance(s1.getHoverName().getString(), filter)));
         updateResourceList();
     }
 

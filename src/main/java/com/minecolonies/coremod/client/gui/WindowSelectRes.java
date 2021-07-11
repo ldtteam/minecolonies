@@ -14,6 +14,7 @@ import com.minecolonies.api.util.Log;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -145,6 +146,8 @@ public class WindowSelectRes extends AbstractWindowSkeleton
                                                                                                                    || stack.getHoverName().getString().toLowerCase(Locale.US)
                                                                                                                         .contains(filter.toLowerCase(Locale.US)))))
                                                     .collect(Collectors.toList())));
+
+        allItems.sort(Comparator.comparingInt(s1 -> StringUtils.getLevenshteinDistance(s1.getHoverName().getString(), filter)));
         this.updateResourceList();
     }
 
