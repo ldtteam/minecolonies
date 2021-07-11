@@ -1,5 +1,4 @@
-<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="524 243" pause="false" lightbox="false"
-        xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
+<window size="524 243" pause="false" lightbox="false">
 
     <image source="minecolonies:textures/gui/townhall_book.png" pos="75 0" size="374 243"/>
 
@@ -70,31 +69,4 @@
     <!-- TODO create the happiness texture -->
     <buttonimage id="happiness" size="17 17" pos="62 215" onHoverId="happinessExt"
                  source="minecolonies:textures/gui/red_wax_information.png"/>
-
-    <switch id="pages" size="374 243" pos="75 0">
-        <view id="pageActions">
-            <layout source="minecolonies:gui/townhall/layoutactions.xml"/>
-        </view>
-        <view id="pageInfo">
-            <layout source="minecolonies:gui/townhall/layoutinfo.xml"/>
-        </view>
-        <view id="pagePermissions">
-            <layout source="minecolonies:gui/townhall/layoutpermissions.xml"/>
-        </view>
-        <view id="pageCitizens">
-            <layout source="minecolonies:gui/townhall/layoutcitizens.xml"/>
-        </view>
-        <view id="pageSettings">
-            <layout source="minecolonies:gui/townhall/layoutsettings.xml"/>
-        </view>
-        <view id="pageHappiness">
-            <layout source="minecolonies:gui/townhall/layouthappiness.xml"/>
-        </view>
-        <view id="pageWorkOrder">
-            <layout source="minecolonies:gui/townhall/layoutworkorder.xml"/>
-        </view>
-    </switch>
-    <buttonimage id="prevPage" size="18 10" pos="100 24" source="minecolonies:textures/gui/builderhut/turn_page_left.png"/>
-    <buttonimage id="nextPage" size="18 10" pos="406 24" source="minecolonies:textures/gui/builderhut/turn_page_right.png"/>
-    <label id="pageNum" size="18 9" pos="406 211" textalign="MIDDLE" label="" color="black"/>
 </window>

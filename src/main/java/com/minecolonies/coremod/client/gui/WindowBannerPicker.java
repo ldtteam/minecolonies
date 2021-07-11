@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.coremod.client.gui.townhall.WindowTownHall;
+import com.minecolonies.coremod.client.gui.townhall.AbstractWindowTownHall;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.gui.screen.Screen;
@@ -92,7 +92,7 @@ public class WindowBannerPicker extends Screen
     private final IColonyView colony;
 
     /** The town hall window that called this picker. Will be used to return to it. */
-    private final WindowTownHall window;
+    private final AbstractWindowTownHall window;
 
     /** The assigned renderer for the banner models */
     private final ModelRenderer modelRender;
@@ -113,7 +113,7 @@ public class WindowBannerPicker extends Screen
      * @param colony the colony to make the flag for
      * @param hallWindow the calling town hall window to return to
      */
-    public WindowBannerPicker(IColonyView colony, WindowTownHall hallWindow)
+    public WindowBannerPicker(IColonyView colony, AbstractWindowTownHall hallWindow)
     {
         super(new StringTextComponent("Flag"));
 

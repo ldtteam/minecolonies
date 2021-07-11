@@ -1,9 +1,5 @@
-<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="374 243" pause="false" lightbox="false"
-        xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
+<window size="524 243" pause="false" lightbox="false">
 
-    <switch id="switchpageHappiness" size="100% 100%">
-        <view id="happinesspage">
-
-        </view>
-    </switch>
+    <layout source="minecolonies:gui/townhall/windowtownhall.xml"/>
+    <view size="200 243" id="happinesspage" pos="100 0"/>
 </window>
