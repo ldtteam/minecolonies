@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.event;
 
+import com.google.common.collect.ImmutableMap;
 import com.ldtteam.blockout.Log;
 import com.ldtteam.structures.blueprints.v1.Blueprint;
 import com.ldtteam.structures.client.StructureClientHandler;
@@ -17,6 +18,8 @@ import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.items.ModItems;
@@ -37,7 +40,9 @@ import com.minecolonies.coremod.items.ItemBannerRallyGuards;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderTypeBuffers;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
@@ -52,9 +57,11 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
+import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.antlr.v4.runtime.misc.Triple;
 import org.jetbrains.annotations.NotNull;
@@ -104,6 +111,11 @@ public class ClientEventHandler
     private static final IRenderTypeBuffer.Impl renderBuffer = renderBuffers.bufferSource();
     private static final Supplier<IVertexBuilder> linesWithCullAndDepth = () -> renderBuffer.getBuffer(RenderType.lines());
     private static final Supplier<IVertexBuilder> linesWithoutCullAndDepth = () -> renderBuffer.getBuffer(RenderUtils.LINES_GLINT);
+
+    /**
+     * Lazy cache for crafting module lookups.
+     */
+    private static final Lazy<Map<String, BuildingEntry>> crafterToBuilding = Lazy.of(ClientEventHandler::buildCrafterToBuildingMap);
 
     /**
      * Used to catch the renderWorldLastEvent in order to draw the debug nodes for pathfinding.
@@ -220,11 +232,19 @@ public class ClientEventHandler
             {
                 continue;
             }
-            final String crafterCapitalized = rec.getCrafter().substring(0, 1).toUpperCase(Locale.ROOT) + rec.getCrafter().substring(1);
-            if(rec.getMinBuildingLevel() > 0)
+            final BuildingEntry craftingBuilding = crafterToBuilding.get().get(rec.getCrafter());
+            if (craftingBuilding == null) continue;
+            final ITextComponent craftingBuildingName = getFullBuildingName(craftingBuilding);
+            if (rec.getMinBuildingLevel() > 0)
             {
-                final IFormattableTextComponent reqLevelText = new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ITEM_BUILDLEVEL_TOOLTIP_GUI, crafterCapitalized, rec.getMinBuildingLevel());
-                if(colony != null && colony.hasBuilding(rec.getCrafter(), rec.getMinBuildingLevel(), true))
+                final String schematicName = craftingBuilding.getRegistryName().getPath();
+                // the above is not guaranteed to match (and indeed doesn't for a few buildings), but
+                // does match for all currently interesting crafters, at least.  there doesn't otherwise
+                // appear to be an easy way to get the schematic name from a BuildingEntry ... or
+                // unless we can change how colony.hasBuilding uses its parameter...
+
+                final IFormattableTextComponent reqLevelText = new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ITEM_BUILDLEVEL_TOOLTIP_GUI, craftingBuildingName, rec.getMinBuildingLevel());
+                if(colony != null && colony.hasBuilding(schematicName, rec.getMinBuildingLevel(), true))
                 {
                     reqLevelText.setStyle(Style.EMPTY.withColor(TextFormatting.AQUA));
                 }
@@ -236,8 +256,8 @@ public class ClientEventHandler
             }
             else
             {
-                final IFormattableTextComponent reqBuildingTxt = new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ITEM_AVAILABLE_TOOLTIP_GUI, crafterCapitalized)
-                .setStyle(Style.EMPTY.withItalic(true).withColor(TextFormatting.GRAY));
+                final IFormattableTextComponent reqBuildingTxt = new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ITEM_AVAILABLE_TOOLTIP_GUI, craftingBuildingName)
+                    .setStyle(Style.EMPTY.withItalic(true).withColor(TextFormatting.GRAY));
                 toolTip.add(reqBuildingTxt);
             }
             if(rec.getRequiredResearchId() != null)
@@ -273,6 +293,43 @@ public class ClientEventHandler
                 }
             }
         }
+    }
+
+    /**
+     * Gets a string like "ModName Building Name" for the specified building entry.
+     * @param building The building entry
+     * @return The translated building name
+     */
+    private static ITextComponent getFullBuildingName(@NotNull final BuildingEntry building)
+    {
+        final String namespace = building.getBuildingBlock().getRegistryName().getNamespace();
+        final String modName = ModList.get().getModContainerById(namespace)
+                .map(m -> m.getModInfo().getDisplayName())
+                .orElse(namespace);
+        final ITextComponent buildingName = building.getBuildingBlock().getName();
+        return new StringTextComponent(modName + " ").append(buildingName);
+    }
+
+    /**
+     * Builds a mapping from crafting module ids to the corresponding buildings.
+     * @return The mapping
+     */
+    private static Map<String, BuildingEntry> buildCrafterToBuildingMap()
+    {
+        final ImmutableMap.Builder<String, BuildingEntry> builder = new ImmutableMap.Builder<>();
+        for (final BuildingEntry building : IMinecoloniesAPI.getInstance().getBuildingRegistry())
+        {
+            building.getModuleProducers().stream()
+                    .map(Supplier::get)
+                    .filter(m -> m instanceof ICraftingBuildingModule)
+                    .map(m -> (ICraftingBuildingModule) m)
+                    .filter(m -> m.getCraftingJob() != null)
+                    .forEach(crafting ->
+                    {
+                        builder.put(crafting.getCustomRecipeKey(), building);
+                    });
+        }
+        return builder.build();
     }
 
     /**
