@@ -6,6 +6,8 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
+import com.minecolonies.api.entity.combat.combat.IThreatTableEntity;
+import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.SoundUtils;
@@ -31,9 +33,9 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -286,6 +288,10 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight, AbstractBui
             if (worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(KNIGHT_TAUNT) > 0)
             {
                 ((MobEntity) target).setTarget(worker);
+                if (target instanceof IThreatTableEntity)
+                {
+                    ((IThreatTableEntity) target).getThreatTable().addThreat(worker, 5);
+                }
             }
         }
 
@@ -331,9 +337,9 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight, AbstractBui
     }
 
     @Override
-    public void moveInAttackPosition()
+    public PathResult moveInAttackPosition()
     {
-        worker.getNavigation().moveTo(target, getCombatMovementSpeed());
+        return worker.getNavigation().moveToLivingEntity(target, getCombatMovementSpeed());
     }
 
     @Override

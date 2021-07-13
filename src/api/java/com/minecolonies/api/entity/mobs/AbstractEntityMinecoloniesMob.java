@@ -7,6 +7,8 @@ import com.minecolonies.api.colony.colonyEvents.IColonyCampFireRaidEvent;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.enchants.ModEnchants;
 import com.minecolonies.api.entity.CustomGoalSelector;
+import com.minecolonies.api.entity.combat.combat.IThreatTableEntity;
+import com.minecolonies.api.entity.combat.combat.ThreatTable;
 import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
 import com.minecolonies.api.entity.pathfinding.IStuckHandlerEntity;
 import com.minecolonies.api.entity.pathfinding.PathingStuckHandler;
@@ -41,7 +43,7 @@ import static com.minecolonies.api.util.constant.RaiderConstants.*;
 /**
  * Abstract for all Barbarian entities.
  */
-public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements IStuckHandlerEntity
+public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements IStuckHandlerEntity, IThreatTableEntity
 {
     /**
      * Difficulty at which raiders team up
@@ -143,6 +145,11 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements
      * Mob difficulty
      */
     private double difficulty = 1.0d;
+
+    /**
+     * The threattable of the mob
+     */
+    private ThreatTable threatTable = new ThreatTable(this);
 
     /**
      * Constructor method for Abstract Barbarians.
@@ -472,6 +479,11 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements
     @Override
     public boolean hurt(@NotNull final DamageSource damageSource, final float damage)
     {
+        if (damageSource.getEntity() instanceof LivingEntity)
+        {
+            threatTable.addThreat((LivingEntity) damageSource.getEntity(), (int) damage);
+        }
+
         if (damageSource.getDirectEntity() == null)
         {
             if (envDamageImmunity)
@@ -678,5 +690,11 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements
     public void onInsideBubbleColumn(boolean down)
     {
 
+    }
+
+    @Override
+    public ThreatTable getThreatTable()
+    {
+        return threatTable;
     }
 }
