@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.client.gui.huts;
+package com.minecolonies.coremod.client.gui.modules;
 
 import com.ldtteam.blockout.Color;
 import com.ldtteam.blockout.Pane;
@@ -104,7 +104,7 @@ public class WindowHutMinerModule extends AbstractModuleWindow
 
                 if (miner.doesWorkOrderExist(index))
                 {
-                    rowPane.findPaneOfTypeByID("repair", Button.class).hide();
+                    rowPane.findPaneOfTypeByID("repair", Button.class).disable();
                 }
 
                 rowPane.findPaneOfTypeByID("lvl", Text.class).setText(Integer.toString(index));

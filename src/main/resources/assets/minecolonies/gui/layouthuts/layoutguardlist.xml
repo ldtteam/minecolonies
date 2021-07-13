@@ -9,7 +9,7 @@
             <label id="guardName" size="92 24" pos="0 0" textalign="MIDDLE" color="black"/>
             <buttonimage id="assignGuard" size="64 17" pos="92 4" color="black"
                          source="minecolonies:textures/gui/builderhut/builder_button_small.png"
-            />
+                         disabled="minecolonies:textures/gui/builderhut/builder_button_small_disabled.png"/>
         </box>
     </list>
 </window>

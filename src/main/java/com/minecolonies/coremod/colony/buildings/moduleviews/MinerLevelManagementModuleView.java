@@ -3,19 +3,15 @@ package com.minecolonies.coremod.colony.buildings.moduleviews;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
 import com.minecolonies.api.colony.workorders.WorkOrderView;
-import com.minecolonies.coremod.client.gui.huts.WindowHutMinerModule;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
+import com.minecolonies.coremod.client.gui.modules.WindowHutMinerModule;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.minecolonies.coremod.entity.ai.citizen.miner.EntityAIStructureMiner.SHAFT_RADIUS;
 
 /**
  * Miner guard assignment module.
