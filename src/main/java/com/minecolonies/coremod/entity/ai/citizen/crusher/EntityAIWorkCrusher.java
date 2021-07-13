@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.crusher;
 
+import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
@@ -17,9 +18,9 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvents;
 import org.jetbrains.annotations.NotNull;
+
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
-import com.google.common.collect.ImmutableList;
 
 /**
  * Crusher AI class.

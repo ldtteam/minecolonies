@@ -4,9 +4,8 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.coremod.colony.jobs.JobCookAssistant;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIRequestSmelter;
-import org.jetbrains.annotations.NotNull;
-
 import net.minecraft.block.Blocks;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Crafts food related things.

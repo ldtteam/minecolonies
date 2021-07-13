@@ -8,12 +8,10 @@ import com.minecolonies.api.crafting.IImmutableItemStorageFactory;
 import com.minecolonies.api.crafting.ImmutableItemStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.constant.TypeConstants;
-
-import org.jetbrains.annotations.NotNull;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Factory implementation taking care of creating new instances, serializing and deserializing ImmutableItemStorage.

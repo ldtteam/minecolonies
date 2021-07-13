@@ -58,6 +58,11 @@ import static com.minecolonies.api.util.constant.CitizenConstants.*;
 public abstract class AbstractEntityCitizen extends AbstractCivilianEntity implements INamedContainerProvider
 {
     /**
+     * Citizens swim speed factor
+     */
+    private static final double CITIZEN_SWIM_BONUS = 2.0;
+
+    /**
      * Used texture mapping.
      */
     private Map<String, String> textureMapping = new HashMap<>();
@@ -361,6 +366,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
             this.pathNavigate = IPathNavigateRegistry.getInstance().getNavigateFor(this);
             this.navigation = pathNavigate;
             this.pathNavigate.setCanFloat(true);
+            this.pathNavigate.setSwimSpeedFactor(CITIZEN_SWIM_BONUS);
             this.pathNavigate.getPathingOptions().setEnterDoors(true);
             this.pathNavigate.getPathingOptions().setCanOpenDoors(true);
             this.pathNavigate.setStuckHandler(PathingStuckHandler.createStuckHandler().withTeleportOnFullStuck().withTeleportSteps(5));
@@ -784,5 +790,25 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     public void markEquipmentDirty()
     {
         this.isEquipmentDirty = true;
+    }
+
+    /**
+     * Disallow pushing from fluids to prevent stuck
+     *
+     * @return
+     */
+    public boolean isPushedByFluid()
+    {
+        return false;
+    }
+
+    /**
+     * Do not allow bubble movement
+     *
+     * @param down
+     */
+    public void onInsideBubbleColumn(boolean down)
+    {
+
     }
 }

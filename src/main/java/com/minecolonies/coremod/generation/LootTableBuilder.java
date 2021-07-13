@@ -10,7 +10,6 @@ import com.ldtteam.datagenerators.loot_table.pool.entry.functions.SetCountFuncti
 import com.ldtteam.datagenerators.loot_table.pool.entry.functions.SetNbtFunctionJson;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

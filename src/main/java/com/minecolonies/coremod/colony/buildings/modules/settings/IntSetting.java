@@ -4,7 +4,6 @@ import com.ldtteam.blockout.Loader;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.controls.TextField;
-import com.ldtteam.blockout.views.Box;
 import com.ldtteam.blockout.views.View;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.buildings.modules.settings.ISetting;

@@ -4,15 +4,11 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.requestsystem.management.IProviderHandler;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
-import com.minecolonies.api.colony.requestsystem.request.IRequest;
-import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverProvider;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequestManager;
-import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 /**

@@ -1,13 +1,14 @@
 package com.minecolonies.coremod.colony.colonyEvents.buildingEvents;
 
-import static com.minecolonies.api.util.constant.NbtTagConstants.*;
-
 import com.minecolonies.api.colony.colonyEvents.descriptions.IBuildingEventDescription;
 import com.minecolonies.api.util.BlockPosUtil;
-
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
+
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BUILDING_LEVEL;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BUILDING_NAME;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_EVENT_POS;
 
 /**
  * The abstract event handling building/upgrading huts.

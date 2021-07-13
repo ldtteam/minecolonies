@@ -8,10 +8,8 @@ import com.minecolonies.coremod.MineColonies;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.server.MinecraftServer;
 
-import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 public class AdvancementUtils
 {

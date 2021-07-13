@@ -1,4 +1,4 @@
-package com.minecolonies.api.util;
+package com.minecolonies.api.util.constant;
 
 /**
  * Utility class for RS related constants.

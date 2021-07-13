@@ -29,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
 
-import static com.minecolonies.api.util.RSConstants.STANDARD_PLAYER_REQUEST_PRIORITY;
+import static com.minecolonies.api.util.constant.RSConstants.STANDARD_PLAYER_REQUEST_PRIORITY;
 
 /**
  * Resolver that checks if a deliverable request is already in the building it is being requested from.

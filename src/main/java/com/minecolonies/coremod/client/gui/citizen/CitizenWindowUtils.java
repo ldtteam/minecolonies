@@ -14,7 +14,6 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.constant.HappinessConstants;
 import com.minecolonies.coremod.client.gui.AbstractWindowSkeleton;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLibrary;
 import net.minecraft.client.Minecraft;

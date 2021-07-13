@@ -44,7 +44,6 @@ public final class NbtTagConstants
     public static final String TAG_POS                    = "pos";
     public static final String TAG_PLANTGROUND            = "plantGround";
     public static final String TAG_CURRENT_PHASE          = "currentPhase";
-    public static final String TAG_SETTING                = "setting";
     public static final String TAG_BOOKCASES              = "bookcase";
     public static final String TAG_BUILDING_MANAGER       = "buildingManager";
     public static final String TAG_CITIZEN_MANAGER        = "citizenManager";
@@ -60,7 +59,6 @@ public final class NbtTagConstants
     public static final String TAG_CUSTOM_NAME            = "customName";
     public static final String TAG_OTHER_LEVEL            = "otherLevel";
     public static final String TAG_PASTEABLE              = "isPasteable";
-    public static final String TAG_NEED_TO_MOURN          = "needToMourn";
     public static final String TAG_MOURNING               = "mourning";
     public static final String TAG_DECEASED               = "deceased";
     public static final String TAG_PAUSED                 = "paused";
@@ -76,7 +74,6 @@ public final class NbtTagConstants
     public static final String TAG_MERCENARY_TIME         = "mercenaryUseTime";
     public static final String TAG_IDLE                   = "idle";
     public static final String TAG_PURGED_MOBS            = "purgedMobs";
-    public static final String TAG_MANUAL_JOB_SELECTION   = "manualMode";
     public static final String TAG_RESERVED               = "reserved";
     public static final String TAG_DESC                   = "desc";
 
@@ -185,7 +182,6 @@ public final class NbtTagConstants
      */
     public static final String TAG_CORNER1 = "corner1";
     public static final String TAG_CORNER2 = "corner2";
-    public static final String TAG_CORNER3 = "corner3";
     public static final String TAG_HEIGHT  = "height";
 
     /**
@@ -484,10 +480,9 @@ public final class NbtTagConstants
     public static final String TAG_CURR_MANA  = "currentMana";
 
     /**
-     * Beekeeper tags
+     * Beekeeper tag
      */
     public static final String TAG_HIVES              = "hives";
-    public static final String TAG_HARVEST_HONEYCOMBS = "harvest_honeycombs";
 
     /**
      * BannerRallyGuards tags

@@ -313,7 +313,7 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
         // vanilla furnace recipes (do we want to check smoking and blasting too?)
         if (this.crafting.canLearnFurnaceRecipes())
         {
-            for (final IGenericRecipe recipe : vanilla.get(IRecipeType.CRAFTING))
+            for (final IGenericRecipe recipe : vanilla.get(IRecipeType.SMELTING))
             {
                 if (!this.crafting.isRecipeCompatible(recipe)) continue;
 

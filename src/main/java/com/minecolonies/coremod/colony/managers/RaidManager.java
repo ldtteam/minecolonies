@@ -276,6 +276,10 @@ public class RaidManager implements IRaiderManager
 
         final int raidLevel = getColonyRaidLevel();
         int amount = calculateRaiderAmount(raidLevel);
+        if (amount <= 0 || raidLevel < MIN_REQUIRED_RAIDLEVEL)
+        {
+            return;
+        }
 
         // Splits into multiple raids if too large
         final int raidCount = Math.max(1, amount / BIG_HORDE_SIZE);
@@ -432,6 +436,11 @@ public class RaidManager implements IRaiderManager
 
         BlockPos spawnPos = null;
         final BlockPos closestBuilding = colony.getBuildingManager().getBestBuilding(advanceTowards, IBuilding.class);
+
+        if (closestBuilding == null)
+        {
+            return null;
+        }
 
         // 8 Tries
         for (int i = 0; i < 8; i++)

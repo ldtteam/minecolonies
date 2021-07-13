@@ -1,13 +1,11 @@
 package com.minecolonies.coremod.colony.colonyEvents.buildingEvents;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.minecolonies.api.util.constant.Constants;
-
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Event handling a new building being built.

@@ -1,35 +1,25 @@
 package com.minecolonies.coremod.blocks;
 
-import com.minecolonies.api.blocks.AbstractBlockBarrel;
-import com.minecolonies.api.blocks.AbstractBlockMinecolonies;
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesNamedGrave;
 import com.minecolonies.api.blocks.ModBlocks;
-import com.minecolonies.api.blocks.types.BarrelType;
-import com.minecolonies.api.blocks.types.GraveType;
-import com.minecolonies.api.tileentities.TileEntityGrave;
 import com.minecolonies.api.tileentities.TileEntityNamedGrave;
-import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.tileentities.TileEntityBarrel;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ToolType;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;

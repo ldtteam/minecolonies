@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.function.Predicate;
 
-import static com.minecolonies.api.util.RSConstants.CONST_CRAFTING_RESOLVER_PRIORITY;
+import static com.minecolonies.api.util.constant.RSConstants.CONST_CRAFTING_RESOLVER_PRIORITY;
 
 /**
  * A crafting resolver which takes care of 3x3 crafts which are crafted by a crafter worker.

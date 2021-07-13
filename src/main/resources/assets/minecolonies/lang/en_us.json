@@ -601,8 +601,6 @@
   "com.minecolonies.coremod.decoorderadded": "Decoration request created for colony %s!",
 
   "com.minecolonies.coremod.gui.hiring.on": "Manual",
-  "com.minecolonies.coremod.gui.requestfert.on": "Enabled",
-  "com.minecolonies.coremod.gui.requestfert.off": "Disabled",
 
   "com.minecolonies.coremod.gui.hiring.buttonhire": "Hire",
   "com.minecolonies.coremod.gui.hiring.buttonassign": "Assign",
@@ -668,8 +666,6 @@
   "com.minecolonies.coremod.gui.workerhuts.trainees": "Try to hire from training facility:",
   "com.minecolonies.coremod.gui.workerhuts.knight": "Knight",
   "com.minecolonies.coremod.gui.workerhuts.ranger": "Archer",
-  "com.minecolonies.coremod.gui.workerhuts.modem": "Manually",
-  "com.minecolonies.coremod.gui.workerhuts.modea": "Automatically",
   "com.minecolonies.coremod.gui.workerhuts.retrieveoff": "Off",
   "com.minecolonies.coremod.gui.workerhuts.retrieveon": "On",
   "com.minecolonies.coremod.gui.workerhuts.resetdefault": "Reset to Default",
@@ -836,7 +832,6 @@
   "com.minecolonies.coremod.status.retrieving": "Retrieving from furnace",
   "com.minecolonies.coremod.status.idling": "Idling",
   "com.minecolonies.coremod.status.mining": "Mining",
-  "com.minecolonies.coremod.status.smeltingdown": "Smelting down",
 
   "item.minecolonies.scepterpermission": "Permission Scepter",
 
@@ -936,8 +931,6 @@
   "com.minecolonies.coremod.gui.workerhuts.listrecipes": "List of Recipes",
   "com.minecolonies.coremod.gui.workerhuts.recipestatus": "%s of %s",
   "com.minecolonies.coremod.resolvers.crafter.private": "Crafting",
-  "com.minecolonies.coremod.gui.workerhuts.togglereplantsaplingson": "Replant On",
-  "com.minecolonies.coremod.gui.workerhuts.togglereplantsaplingsoff": "Replant Off",
   "com.minecolonies.coremod.gui.workerhuts.switchstyle": "Switch Style",
   "com.minecolonies.coremod.gui.townhall.toolow": "Town Hall level too low!",
   "com.minecolonies.coremod.gui.recipe.full": "Max number of recipes reached for hut level",
@@ -1035,8 +1028,6 @@
   "com.minecolonies.coremod.gui.warehouse.upgrade.disabled.2": "Warehouse Level %s",
   "com.minecolonies.coremod.gui.auto.hire.warning": "Turn the hiring mode of this hut (and colony) to manual to fire this worker or hire another one.",
   "com.minecolonies.coremod.citizens.nospace": "Colonists can't arrive at your colony because there is not enough space at pos X:%d Y:%d Z:%d!",
-
-  "com.minecolonies.coremod.builder.manual_mode": "Builder %s: Successfully switched to manual mode. I'll just finish up my current task.",
 
   "entity.pirate": "Pirate",
   "entity.archerpirate": "Archer Pirate",
@@ -1725,7 +1716,6 @@
 
   "com.minecolonies.coremod.gui.workerhuts.plantation": "Plantation",
   "com.minecolonies.coremod.gui.workerhuts.plantation.to_plant": "Planting:",
-  "com.minecolonies.coremod.gui.workerhuts.plantation.not_plant": "NOT planting:",
   "com.minecolonies.coremod.job.planter": "Planter",
 
   "entity.minecolonies.norsemenchief": "Chief Norseman",
@@ -1839,8 +1829,8 @@
   "com.minecolonies.coremod.item.milky.bread.gui": "Removes potion effects",
   "com.minecolonies.coremod.item.golden.bread.gui": "Instantly heals 2 hearts",
   "com.minecolonies.coremod.item.chorus.bread.gui": "Teleports you to the surface",
-  "com.minecolonies.coremod.item.available.gui": "Crafted by a MineColonies %s",
-  "com.minecolonies.coremod.item.buildlevel.gui": "Crafted by a MineColonies %s level %s or higher",
+  "com.minecolonies.coremod.item.available.gui": "Crafted by a %s",
+  "com.minecolonies.coremod.item.buildlevel.gui": "Crafted by a %s level %s or higher",
   "com.minecolonies.coremod.item.requiresresearch.gui": "Requires Research: %s",
 
   "com.minecolonies.coremod.gui.xofz": "%d of %d",
