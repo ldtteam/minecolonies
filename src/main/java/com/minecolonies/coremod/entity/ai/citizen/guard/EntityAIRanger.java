@@ -523,9 +523,9 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
     }
 
     @Override
-    public void moveInAttackPosition()
+    public PathResult moveInAttackPosition()
     {
-        ((MinecoloniesAdvancedPathNavigate) worker.getNavigation()).setPathJob(new PathJobCanSee(worker,
+        return ((MinecoloniesAdvancedPathNavigate) worker.getNavigation()).setPathJob(new PathJobCanSee(worker,
             target,
             world,
             buildingGuards.getGuardPos(), shouldStayCloseToPos()
