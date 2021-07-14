@@ -350,6 +350,8 @@ public class CitizenManager implements ICitizenManager
         }
 
         final ICitizenData citizenData = deserializeCitizen(compoundNBT);
+        citizenData.setWorkBuilding(null);
+        citizenData.setHomeBuilding(null);
         citizens.put(citizenData.getId(), citizenData);
         spawnOrCreateCitizen(citizenData, world, spawnPos);
         return citizenData;
