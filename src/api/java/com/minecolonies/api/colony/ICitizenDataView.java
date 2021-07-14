@@ -116,6 +116,13 @@ public interface ICitizenDataView extends ICitizen
     boolean hasBlockingInteractions();
 
     /**
+     * Check if the citizen has any visible interactions.
+     * 
+     * @return true if so.
+     */
+    boolean hasVisibleInteractions();
+
+    /**
      * Check if the citizen has any interactions.
      *
      * @return true if so.

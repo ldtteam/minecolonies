@@ -1030,7 +1030,7 @@ public class EntityCitizen extends AbstractEntityCitizen
                       && !citizenData.getCitizenMournHandler().isMourning()
                       && !CompatibilityUtils.getWorldFromCitizen(this).isRaining())
                 {
-            	    citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_SLEEPING), ChatPriority.CHITCHAT));
+            	    citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_SLEEPING), ChatPriority.HIDDEN));
                 }
                 setVisibleStatusIfNone(SLEEP);
                 return false;
@@ -1073,7 +1073,7 @@ public class EntityCitizen extends AbstractEntityCitizen
             if (!citizenData.getColony().getRaiderManager().isRaided()
                   && !citizenData.getCitizenMournHandler().isMourning())
             {
-                citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_RAINING), ChatPriority.CHITCHAT));
+                citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_RAINING), ChatPriority.HIDDEN));
             }
             desiredActivity = DesiredActivity.SLEEP;
             return false;
