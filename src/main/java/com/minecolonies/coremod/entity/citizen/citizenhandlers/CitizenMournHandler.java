@@ -67,6 +67,11 @@ public class CitizenMournHandler implements ICitizenMournHandler
     }
 
     @Override
+    public Set<String> getDeceasedCitizens() {
+    	return deceasedCitizens;
+    }
+
+    @Override
     public void removeDeceasedCitizen(final String name)
     {
         deceasedCitizens.remove(name);

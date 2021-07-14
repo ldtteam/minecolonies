@@ -1015,7 +1015,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
         if (getCitizenColonyHandler().getColony().getRaiderManager().isRaided())
         {
-            citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_RAID), ChatPriority.CHITCHAT));
+            citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_RAID), ChatPriority.IMPORTANT));
             setVisibleStatusIfNone(RAIDED);
             desiredActivity = DesiredActivity.SLEEP;
             return false;
@@ -1026,6 +1026,12 @@ public class EntityCitizen extends AbstractEntityCitizen
         {
             if (desiredActivity == DesiredActivity.SLEEP)
             {
+                if (!getCitizenColonyHandler().getColony().getRaiderManager().isRaided()
+                      && !citizenData.getCitizenMournHandler().isMourning()
+                      && !CompatibilityUtils.getWorldFromCitizen(this).isRaining())
+                {
+            	    citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_SLEEPING), ChatPriority.CHITCHAT));
+                }
                 setVisibleStatusIfNone(SLEEP);
                 return false;
             }
@@ -1041,8 +1047,13 @@ public class EntityCitizen extends AbstractEntityCitizen
             }
         }
 
+        // Mourning
         if (citizenData.getCitizenMournHandler().isMourning() && citizenData.getCitizenMournHandler().shouldMourn())
         {
+            if (!getCitizenColonyHandler().getColony().getRaiderManager().isRaided())
+            {
+                citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_MOURNING, citizenData.getCitizenMournHandler().getDeceasedCitizens().iterator().next()), new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_MOURNING), ChatPriority.IMPORTANT));
+            }
             setVisibleStatusIfNone(MOURNING);
             desiredActivity = DesiredActivity.MOURN;
             return false;
@@ -1059,7 +1070,8 @@ public class EntityCitizen extends AbstractEntityCitizen
             citizenStatusHandler.setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.waiting"),
               new TranslationTextComponent("com.minecolonies.coremod.status.rainStop"));
             setVisibleStatusIfNone(BAD_WEATHER);
-            if (!citizenData.getColony().getRaiderManager().isRaided())
+            if (!citizenData.getColony().getRaiderManager().isRaided()
+                  && !citizenData.getCitizenMournHandler().isMourning())
             {
                 citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_RAINING), ChatPriority.CHITCHAT));
             }
