@@ -388,6 +388,23 @@ public class CitizenDataView implements ICitizenDataView
     }
 
     @Override
+    public boolean hasVisibleInteractions()
+    {
+        if (sortedInteractions.isEmpty())
+        {
+            return false;
+        }
+
+        final IInteractionResponseHandler interaction = sortedInteractions.get(0);
+        if (interaction != null)
+        {
+            return interaction.getPriority().getPriority() >= ChatPriority.CHITCHAT.getPriority();
+        }
+
+        return false;
+    }
+
+    @Override
     public boolean hasPendingInteractions()
     {
         if (sortedInteractions.isEmpty())
@@ -431,7 +448,7 @@ public class CitizenDataView implements ICitizenDataView
             {
                 icon = BLOCKING_RESOURCE;
             }
-            else
+            else if (hasVisibleInteractions())
             {
                 icon = PENDING_RESOURCE;
             }

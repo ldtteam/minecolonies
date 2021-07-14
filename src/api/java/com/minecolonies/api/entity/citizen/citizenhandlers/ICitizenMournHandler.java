@@ -1,5 +1,7 @@
 package com.minecolonies.api.entity.citizen.citizenhandlers;
 
+import java.util.Set;
+
 import net.minecraft.nbt.CompoundNBT;
 
 /**
@@ -26,6 +28,12 @@ public interface ICitizenMournHandler
      * @param name the name of the citizen.
      */
     void addDeceasedCitizen(final String name);
+
+    /**
+     * Gets a set with all the recently deceased citizens.
+     * @return a set with all the recently deceased citizens.
+     */
+    Set<String> getDeceasedCitizens();
 
     /**
      * Remove a deceased citizen from the handler.
