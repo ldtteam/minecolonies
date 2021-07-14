@@ -688,7 +688,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
             final ICitizenData mainCitizen = this.building.getMainCitizen();
             if (mainCitizen != null)
             {
-                return Optional.of(mainCitizen.getJob());
+                return Optional.ofNullable(mainCitizen.getJob());
             }
         }
         return Optional.empty();
