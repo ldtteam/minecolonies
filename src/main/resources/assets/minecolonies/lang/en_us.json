@@ -1651,7 +1651,7 @@
   "com.minecolonies.coremod.entity.citizen.sleep": "All colonists are tucked into bed.",
   "com.minecolonies.coremod.entity.citizen.raining": "I don't like staying out in the rain, my clothes are gonna get wet.",
   "com.minecolonies.coremod.entity.citizen.raid": "Help! The colony is being raided. I am running for shelter.",
-  "com.minecolonies.coremod.entity.citizen.sleeping": "zZzz... I'm sleeping... Why did you wake me up?",
+  "com.minecolonies.coremod.entity.citizen.sleeping": "zZzz... I want to sleep... Why are you bothering me?",
   "com.minecolonies.coremod.entity.citizen.mourning": "I'm still processing %ss death, I can't work today.",
 
   "com.minecolonies.coremod.gui.townhall.happiness.homelessness": "Housing",
