@@ -197,6 +197,7 @@ public final class ModBuildingsInitializer
                                 .addBuildingModuleProducer(() -> new SettingsModule()
                                                                    .with(BuildingFarmer.FERTILIZE, new BoolSetting(true))
                                                                    .with(AbstractCraftingBuildingModule.RECIPE_MODE, new CrafterRecipeSetting()), () -> SettingsModuleView::new)
+                                .addBuildingModuleProducer(FarmerFieldModule::new, () -> FarmerFieldModuleView::new)
                                 .createBuildingEntry();
 
         ModBuildings.fisherman = new BuildingEntry.Builder()

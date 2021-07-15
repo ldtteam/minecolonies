@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.client.gui.huts;
+package com.minecolonies.coremod.client.gui.modules;
 
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Button;
@@ -7,9 +7,11 @@ import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.blockout.views.SwitchView;
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.client.gui.AbstractWindowWorkerModuleBuilding;
+import com.minecolonies.coremod.client.gui.AbstractModuleWindow;
+import com.minecolonies.coremod.colony.buildings.moduleviews.FarmerFieldModuleView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFarmer;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import net.minecraft.client.Minecraft;
@@ -26,7 +28,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 /**
  * Window for the farmer hut.
  */
-public class WindowHutFarmerModule extends AbstractWindowWorkerModuleBuilding<BuildingFarmer.View>
+public class FarmerFieldsModuleWindow extends AbstractModuleWindow
 {
     /**
      * Tag of the pages view.
@@ -36,7 +38,7 @@ public class WindowHutFarmerModule extends AbstractWindowWorkerModuleBuilding<Bu
     /**
      * Resource suffix of the GUI.
      */
-    private static final String HUT_FARMER_RESOURCE_SUFFIX = ":gui/windowhutfarmer.xml";
+    private static final String HUT_FARMER_RESOURCE_SUFFIX = ":gui/layouthuts/layoutfarmerfields.xml";
 
     /**
      * Id of the the fields page inside the GUI.
@@ -74,11 +76,6 @@ public class WindowHutFarmerModule extends AbstractWindowWorkerModuleBuilding<Bu
     private static final String TAG_BUTTON_ASSIGNMENT_MODE = "assignmentMode";
 
     /**
-     * Id of the requestFert button inside the GUI.
-     */
-    private static final String TAG_BUTTON_REQUEST_FERTILIZER = "requestFert";
-
-    /**
      * String which displays the release of a field.
      */
     private static final String RED_X = "§n§4X";
@@ -92,6 +89,11 @@ public class WindowHutFarmerModule extends AbstractWindowWorkerModuleBuilding<Bu
      * Id of the icon inside the GUI.
      */
     private static final String TAG_ICON = "icon";
+
+    /**
+     * The farmer module view.
+     */
+    private final FarmerFieldModuleView moduleView;
 
     /**
      * List of fields the building seeds.
@@ -113,11 +115,12 @@ public class WindowHutFarmerModule extends AbstractWindowWorkerModuleBuilding<Bu
      *
      * @param building {@link BuildingFarmer.View}.
      */
-    public WindowHutFarmerModule(final BuildingFarmer.View building)
+    public FarmerFieldsModuleWindow(final IBuildingView building, final FarmerFieldModuleView moduleView)
     {
         super(building, Constants.MOD_ID + HUT_FARMER_RESOURCE_SUFFIX);
         registerButton(TAG_BUTTON_ASSIGNMENT_MODE, this::assignmentModeClicked);
         registerButton(TAG_BUTTON_ASSIGN, this::assignClicked);
+        this.moduleView = moduleView;
     }
 
     /**
@@ -135,12 +138,12 @@ public class WindowHutFarmerModule extends AbstractWindowWorkerModuleBuilding<Bu
             if (button.getTextAsString().equals(RED_X))
             {
                 button.setText(APPROVE);
-                building.changeFields(field, false, (ScarecrowTileEntity) entity);
+                moduleView.changeFields(field, false, (ScarecrowTileEntity) entity);
             }
             else
             {
                 button.setText(RED_X);
-                building.changeFields(field, true, (ScarecrowTileEntity) entity);
+                moduleView.changeFields(field, true, (ScarecrowTileEntity) entity);
             }
 
             pullLevelsFromHut();
@@ -153,7 +156,7 @@ public class WindowHutFarmerModule extends AbstractWindowWorkerModuleBuilding<Bu
      */
     private void pullLevelsFromHut()
     {
-        fields = building.getFields();
+        fields = moduleView.getFields();
     }
 
     /**
@@ -166,12 +169,12 @@ public class WindowHutFarmerModule extends AbstractWindowWorkerModuleBuilding<Bu
         if (button.getTextAsString().equals(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF)))
         {
             button.setText(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HIRING_ON));
-            building.setAssignFieldManually(true);
+            moduleView.setAssignFieldManually(true);
         }
         else
         {
             button.setText(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF));
-            building.setAssignFieldManually(false);
+            moduleView.setAssignFieldManually(false);
         }
         window.findPaneOfTypeByID(LIST_FIELDS, ScrollingList.class).refreshElementPanes();
     }
@@ -181,7 +184,7 @@ public class WindowHutFarmerModule extends AbstractWindowWorkerModuleBuilding<Bu
     {
         super.onOpened();
 
-        if (building.assignFieldManually())
+        if (moduleView.assignFieldManually())
         {
             findPaneOfTypeByID(TAG_BUTTON_ASSIGNMENT_MODE, Button.class).setText(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HIRING_ON));
         }
@@ -203,8 +206,8 @@ public class WindowHutFarmerModule extends AbstractWindowWorkerModuleBuilding<Bu
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
                 final BlockPos field = fields.get(index);
-                @NotNull final String distance = Integer.toString((int) Math.sqrt(BlockPosUtil.getDistanceSquared(field, building.getPosition())));
-                final String direction = BlockPosUtil.calcDirection(building.getPosition(), field);
+                @NotNull final String distance = Integer.toString((int) Math.sqrt(BlockPosUtil.getDistanceSquared(field, buildingView.getPosition())));
+                final String direction = BlockPosUtil.calcDirection(buildingView.getPosition(), field);
                 final TileEntity entity = world.getBlockEntity(field);
                 if (entity instanceof ScarecrowTileEntity)
                 {
@@ -220,7 +223,7 @@ public class WindowHutFarmerModule extends AbstractWindowWorkerModuleBuilding<Bu
 
                     final Button assignButton = rowPane.findPaneOfTypeByID(TAG_BUTTON_ASSIGN, Button.class);
 
-                    assignButton.setEnabled(building.assignFieldManually());
+                    assignButton.setEnabled(moduleView.assignFieldManually());
 
                     if (((ScarecrowTileEntity) entity).isTaken())
                     {
@@ -229,7 +232,7 @@ public class WindowHutFarmerModule extends AbstractWindowWorkerModuleBuilding<Bu
                     else
                     {
                         assignButton.setText(APPROVE);
-                        if (building.getBuildingLevel() <= building.getAmountOfFields())
+                        if (buildingView.getBuildingLevel() <= moduleView.getAmountOfFields())
                         {
                             assignButton.disable();
                         }
@@ -244,24 +247,11 @@ public class WindowHutFarmerModule extends AbstractWindowWorkerModuleBuilding<Bu
         });
     }
 
-    @NotNull
-    @Override
-    public String getBuildingName()
-    {
-        return TILE_MINECOLONIES_BLOCK_HUT_FARMER_NAME;
-    }
-
     @Override
     public void onUpdate()
     {
         super.onUpdate();
-
-        final String currentPage = findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).getCurrentView().getID();
-        if (currentPage.equals(PAGE_FIELDS))
-        {
-            pullLevelsFromHut();
-            window.findPaneOfTypeByID(LIST_FIELDS, ScrollingList.class).refreshElementPanes();
-        }
+        pullLevelsFromHut();
     }
 }
 

@@ -2,6 +2,7 @@ package com.minecolonies.coremod.network.messages.server.colony.building.farmer;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.coremod.colony.buildings.modules.FarmerFieldModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFarmer;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.network.PacketBuffer;
@@ -61,11 +62,11 @@ public class AssignFieldMessage extends AbstractBuildingServerMessage<BuildingFa
     {
         if (assign)
         {
-            building.assignField(field);
+            building.getFirstOptionalModuleOccurance(FarmerFieldModule.class).ifPresent(m -> m.assignField(field));
         }
         else
         {
-            building.freeField(field);
+            building.getFirstOptionalModuleOccurance(FarmerFieldModule.class).ifPresent(m -> m.freeField(field));
         }
     }
 }
