@@ -976,7 +976,7 @@ public final class WindowConstants
     /**
      * The resource string.
      */
-    public static final String RESOURCE_STRING   = ":gui/windowhutuniversity.xml";
+    public static final String RESOURCE_STRING   = ":gui/layouthuts/layoutuniversity.xml";
 
     /**
      * The job modifier page.

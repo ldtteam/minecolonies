@@ -388,6 +388,7 @@ public final class ModBuildingsInitializer
                                     .setBuildingProducer(BuildingUniversity::new)
                                     .setBuildingViewProducer(() -> BuildingUniversity.View::new)
                                     .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.UNIVERSITY_ID))
+                                    .addBuildingModuleViewProducer(() -> UniversityResearchModuleView::new)
                                     .createBuildingEntry();
 
         ModBuildings.hospital = new BuildingEntry.Builder()

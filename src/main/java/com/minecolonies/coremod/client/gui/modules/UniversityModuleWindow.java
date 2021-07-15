@@ -1,14 +1,15 @@
-package com.minecolonies.coremod.client.gui.huts;
+package com.minecolonies.coremod.client.gui.modules;
 
 import com.ldtteam.blockout.Color;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.PaneBuilders;
 import com.ldtteam.blockout.controls.*;
 import com.ldtteam.blockout.views.ScrollingList;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.research.IResearchRequirement;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.client.gui.AbstractWindowWorkerModuleBuilding;
+import com.minecolonies.coremod.client.gui.AbstractModuleWindow;
 import com.minecolonies.coremod.client.gui.WindowResearchTree;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingUniversity;
 import net.minecraft.util.ResourceLocation;
@@ -21,20 +22,19 @@ import java.util.Comparator;
 import java.util.List;
 
 import static com.minecolonies.api.research.util.ResearchConstants.COLOR_TEXT_UNFULFILLED;
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_UNIVERSITY;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
  * Window for the university.
  */
-public class WindowHutUniversityModule extends AbstractWindowWorkerModuleBuilding<BuildingUniversity.View>
+public class UniversityModuleWindow extends AbstractModuleWindow
 {
     /**
      * Constructor for the window of the lumberjack.
      *
      * @param building {@link BuildingUniversity.View}.
      */
-    public WindowHutUniversityModule(final BuildingUniversity.View building)
+    public UniversityModuleWindow(final IBuildingView building)
     {
         super(building, Constants.MOD_ID + RESOURCE_STRING);
 
@@ -68,7 +68,7 @@ public class WindowHutUniversityModule extends AbstractWindowWorkerModuleBuildin
         for(final ResourceLocation primary : IGlobalResearchTree.getInstance().getPrimaryResearch(branch))
         {
             if(!IGlobalResearchTree.getInstance().getResearch(branch, primary).isHidden()
-                 || IGlobalResearchTree.getInstance().isResearchRequirementsFulfilled(IGlobalResearchTree.getInstance().getResearch(branch, primary).getResearchRequirement(), building.getColony()))
+                 || IGlobalResearchTree.getInstance().isResearchRequirementsFulfilled(IGlobalResearchTree.getInstance().getResearch(branch, primary).getResearchRequirement(), buildingView.getColony()))
             {
                 return Collections.EMPTY_LIST;
             }
@@ -85,7 +85,7 @@ public class WindowHutUniversityModule extends AbstractWindowWorkerModuleBuildin
                 for(IResearchRequirement req : IGlobalResearchTree.getInstance().getResearch(branch, primary).getResearchRequirement())
                 {
                     // We'll include even completed partial components in the requirement list.
-                    if (!req.isFulfilled(building.getColony()))
+                    if (!req.isFulfilled(buildingView.getColony()))
                     {
                         requirements.add(new StringTextComponent("-").append(req.getDesc().setStyle((Style.EMPTY).withColor(TextFormatting.RED))));
                     }
@@ -106,7 +106,7 @@ public class WindowHutUniversityModule extends AbstractWindowWorkerModuleBuildin
 
         if (button.getParent() != null && ResourceLocation.isValidResourceLocation(button.getParent().getID()) && IGlobalResearchTree.getInstance().getBranches().contains(new ResourceLocation(button.getParent().getID())))
         {
-            new WindowResearchTree(new ResourceLocation(button.getParent().getID()), building, this).open();
+            new WindowResearchTree(new ResourceLocation(button.getParent().getID()), (BuildingUniversity.View) buildingView, this).open();
         }
     }
 
@@ -118,8 +118,8 @@ public class WindowHutUniversityModule extends AbstractWindowWorkerModuleBuildin
     {
         this.findPaneOfTypeByID("maxresearchwarn", Text.class)
           .setText(new TranslationTextComponent("com.minecolonies.coremod.gui.research.countinprogress",
-            building.getColony().getResearchManager().getResearchTree().getResearchInProgress().size() + offset, building.getBuildingLevel()));
-        if(building.getBuildingLevel() <= building.getColony().getResearchManager().getResearchTree().getResearchInProgress().size() + offset)
+            buildingView.getColony().getResearchManager().getResearchTree().getResearchInProgress().size() + offset, buildingView.getBuildingLevel()));
+        if(buildingView.getBuildingLevel() <= buildingView.getColony().getResearchManager().getResearchTree().getResearchInProgress().size() + offset)
         {
             this.findPaneOfTypeByID("maxresearchwarn", Text.class).setColors(Color.getByName("red", 0));
         }
@@ -127,18 +127,6 @@ public class WindowHutUniversityModule extends AbstractWindowWorkerModuleBuildin
         {
             this.findPaneOfTypeByID("maxresearchwarn", Text.class).setColors(Color.getByName("black", 0));
         }
-    }
-
-    /**
-     * Returns the name of a building.
-     *
-     * @return Name of a building.
-     */
-    @NotNull
-    @Override
-    public String getBuildingName()
-    {
-        return COM_MINECOLONIES_COREMOD_GUI_UNIVERSITY;
     }
 
     private static class ResearchListProvider implements ScrollingList.DataProvider
