@@ -77,7 +77,6 @@ public final class ModBlocks
     public static AbstractBlockBarrel<? extends AbstractBlockBarrel<?>>                                 blockBarrel;
     public static AbstractBlockMinecoloniesHorizontal<? extends AbstractBlockMinecoloniesHorizontal<?>> blockDecorationPlaceholder;
     public static AbstractBlockMinecoloniesDefault<? extends AbstractBlockMinecoloniesDefault<?>>       blockScarecrow;
-    public static AbstractBlockMinecolonies<? extends AbstractBlockMinecolonies<?>>                     blockBarracksTowerSubstitution;
     public static AbstractBlockMinecolonies<? extends AbstractBlockMinecolonies<?>>                     blockCompostedDirt;
     public static AbstractColonyFlagBanner<? extends AbstractColonyFlagBanner<?>>                       blockColonyBanner;
     public static AbstractColonyFlagBanner<? extends AbstractColonyFlagBanner<?>>                       blockColonyWallBanner;
