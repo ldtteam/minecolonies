@@ -74,7 +74,7 @@ public class EnchanterStationsModuleView extends AbstractBuildingModuleView
     @Override
     public String getIcon()
     {
-        return "info";
+        return "entity";
     }
 
     @Override
