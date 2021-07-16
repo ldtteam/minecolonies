@@ -58,7 +58,7 @@ public class GraveyardManagementModuleView extends AbstractBuildingModuleView
     @Override
     public String getIcon()
     {
-        return "info";
+        return "grave";
     }
 
     @Override
