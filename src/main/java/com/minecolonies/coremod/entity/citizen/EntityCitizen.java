@@ -606,7 +606,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             else
             {
                 healAmount = 1 * (1.0 + getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(REGENERATION));
-                ;
             }
 
             heal((float) healAmount);

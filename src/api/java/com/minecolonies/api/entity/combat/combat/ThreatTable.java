@@ -46,9 +46,9 @@ public class ThreatTable
      * Adds X threat to the given entity
      *
      * @param attacker entity to add the value to
-     * @param threat   threat value to add
+     * @param additionalThreat   threat value to add
      */
-    public void addThreat(final LivingEntity attacker, final int threat)
+    public void addThreat(final LivingEntity attacker, final int additionalThreat)
     {
         ThreatTableEntry threatTableEntry = null;
         int index = threatList.size();
@@ -71,7 +71,7 @@ public class ThreatTable
             threatTableEntry.addThreat(Math.max(0, 10 - (owner.blockPosition().distManhattan(attacker.blockPosition()) / 4)));
         }
 
-        threatTableEntry.addThreat(threat);
+        threatTableEntry.addThreat(additionalThreat);
         adaptTableToThreat(index);
     }
 
