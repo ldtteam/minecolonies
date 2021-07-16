@@ -29,7 +29,7 @@ public class MinerGuardAssignModuleView extends AbstractBuildingModuleView
     @Override
     public String getIcon()
     {
-        return "info";
+        return "sword";
     }
 
     @Override

@@ -377,6 +377,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         if (requiredName != null &&  (job == null || job.getWorkOrder() == null))
         {
             final WorkOrderBuildMiner wo = new WorkOrderBuildMiner(requiredName, requiredName, rotateCount, structurePos, false, buildingMiner.getPosition());
+            wo.setClaimedBy(buildingMiner.getPosition());
             buildingMiner.getColony().getWorkManager().addWorkOrder(wo, false);
             if (job != null)
             {
