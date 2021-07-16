@@ -531,6 +531,7 @@ public final class ModBuildingsInitializer
                                     .setBuildingProducer(BuildingGraveyard::new)
                                     .setBuildingViewProducer(() -> BuildingGraveyard.View::new)
                                     .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.GRAVEYARD_ID))
+                                    .addBuildingModuleProducer(GraveyardManagementModule::new, () -> GraveyardManagementModuleView::new)
                                     .createBuildingEntry();
 
         reg.register(ModBuildings.archery);

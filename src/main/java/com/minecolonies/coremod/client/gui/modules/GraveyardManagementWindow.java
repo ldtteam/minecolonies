@@ -1,13 +1,14 @@
-package com.minecolonies.coremod.client.gui.huts;
+package com.minecolonies.coremod.client.gui.modules;
 
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.ScrollingList;
-import com.ldtteam.blockout.views.SwitchView;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.tileentities.TileEntityGrave;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.client.gui.AbstractWindowWorkerModuleBuilding;
+import com.minecolonies.coremod.client.gui.AbstractModuleWindow;
+import com.minecolonies.coremod.colony.buildings.moduleviews.GraveyardManagementModuleView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingGraveyard;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.world.ClientWorld;
@@ -21,27 +22,12 @@ import java.util.List;
 /**
  * Window for the Graveyard building.
  */
-public class WindowHutGraveyardModule extends AbstractWindowWorkerModuleBuilding<BuildingGraveyard.View>
+public class GraveyardManagementWindow extends AbstractModuleWindow
 {
-    /**
-     * Tag of the pages view.
-     */
-    private static final String VIEW_PAGES = "pages";
-
     /**
      * Resource suffix of the GUI.
      */
-    private static final String HUT_GRAVEYARD_RESOURCE_SUFFIX = ":gui/windowhutgraveyard.xml";
-
-    /**
-     * Id of the the graves page inside the GUI.
-     */
-    private static final String PAGE_GRAVES = "pageGraves";
-
-    /**
-     * Id of the the RIP page inside the GUI.
-     */
-    private static final String PAGE_RIP = "pageRIP";
+    private static final String HUT_GRAVEYARD_RESOURCE_SUFFIX = ":gui/layouthuts/layoutgraveyard.xml";
 
     /**
      * Id of the graves list inside the GUI.
@@ -74,47 +60,24 @@ public class WindowHutGraveyardModule extends AbstractWindowWorkerModuleBuilding
     private static final String TAG_DIRECTION = "dir";
 
     /**
-     * List of graves to collect
-     */
-    private List<BlockPos> graves = new ArrayList<>();
-
-    /**
-     * List of resting citizen in this building
-     */
-    private List<String> ripCitizen = new ArrayList<>();
-
-    /**
-     * ScrollList with the graves.
-     */
-    private ScrollingList graveList;
-
-    /**
-     * ScrollList with the resting citizen.
-     */
-    private ScrollingList ripList;
-
-    /**
      * The world.
      */
     private final ClientWorld world = Minecraft.getInstance().level;
+
+    /**
+     * The module view.
+     */
+    private final GraveyardManagementModuleView moduleView;
 
     /**
      * Constructor for the window of the graveyard.
      *
      * @param building {@link BuildingGraveyard.View}.
      */
-    public WindowHutGraveyardModule(final BuildingGraveyard.View building)
+    public GraveyardManagementWindow(final IBuildingView building, GraveyardManagementModuleView moduleView)
     {
         super(building, Constants.MOD_ID + HUT_GRAVEYARD_RESOURCE_SUFFIX);
-    }
-
-     /**
-     * Retrieve levels from the building to display in GUI.
-     */
-    private void pullInformationFromHut()
-    {
-        graves = building.getGraves();
-        ripCitizen = building.getRestingCitizen();
+        this.moduleView = moduleView;
     }
 
     @Override
@@ -122,21 +85,24 @@ public class WindowHutGraveyardModule extends AbstractWindowWorkerModuleBuilding
     {
         super.onOpened();
 
-        graveList = findPaneOfTypeByID(LIST_GRAVES, ScrollingList.class);
+        /*
+         * ScrollList with the graves.
+         */
+        final ScrollingList graveList = findPaneOfTypeByID(LIST_GRAVES, ScrollingList.class);
         graveList.setDataProvider(new ScrollingList.DataProvider()
         {
             @Override
             public int getElementCount()
             {
-                return graves.size();
+                return moduleView.getGraves().size();
             }
 
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                final BlockPos grave = graves.get(index);
-                @NotNull final String distance = Integer.toString((int) Math.sqrt(BlockPosUtil.getDistanceSquared(grave, building.getPosition())));
-                final String direction = BlockPosUtil.calcDirection(building.getPosition(), grave);
+                final BlockPos grave = moduleView.getGraves().get(index);
+                @NotNull final String distance = Integer.toString((int) Math.sqrt(BlockPosUtil.getDistanceSquared(grave, buildingView.getPosition())));
+                final String direction = BlockPosUtil.calcDirection(buildingView.getPosition(), grave);
                 final TileEntity entity = world.getBlockEntity(grave);
                 if (entity instanceof TileEntityGrave)
                 {
@@ -150,41 +116,31 @@ public class WindowHutGraveyardModule extends AbstractWindowWorkerModuleBuilding
             }
         });
 
-        ripList = findPaneOfTypeByID(LIST_CITIZEN, ScrollingList.class);
+        /*
+         * ScrollList with the resting citizen.
+         */
+        final ScrollingList ripList = findPaneOfTypeByID(LIST_CITIZEN, ScrollingList.class);
         ripList.setDataProvider(new ScrollingList.DataProvider()
         {
             @Override
             public int getElementCount()
             {
-                return ripCitizen.size();
+                return moduleView.getRestingCitizen().size();
             }
 
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                final String citizenName = ripCitizen.get(index);
+                final String citizenName = moduleView.getRestingCitizen().get(index);
                 rowPane.findPaneOfTypeByID(TAG_CITIZEN_NAME, Text.class).setText(citizenName);
             }
         });
-    }
-
-    @NotNull
-    @Override
-    public String getBuildingName()
-    {
-        return "com.minecolonies.coremod.gui.workerhuts.graveyard";
     }
 
     @Override
     public void onUpdate()
     {
         super.onUpdate();
-
-        final String currentPage = findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).getCurrentView().getID();
-        if (currentPage.equals(PAGE_GRAVES))
-        {
-            pullInformationFromHut();
-            window.findPaneOfTypeByID(LIST_GRAVES, ScrollingList.class).refreshElementPanes();
-        }
+        moduleView.cleanGraves();
     }
 }
