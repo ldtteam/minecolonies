@@ -382,6 +382,7 @@ public final class ModBuildingsInitializer
                                    .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.ENCHANTER_ID))
                                    .addBuildingModuleProducer(BuildingEnchanter.CraftingModule::new, () -> CraftingModuleView::new)
                                    .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
+                                   .addBuildingModuleProducer(EnchanterStationsModule::new, () -> EnchanterStationsModuleView::new)
                                    .createBuildingEntry();
 
         ModBuildings.university = new BuildingEntry.Builder()

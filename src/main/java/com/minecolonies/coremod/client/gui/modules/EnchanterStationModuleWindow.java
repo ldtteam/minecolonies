@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.client.gui.huts;
+package com.minecolonies.coremod.client.gui.modules;
 
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Button;
@@ -8,7 +8,8 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.client.gui.AbstractWindowWorkerModuleBuilding;
+import com.minecolonies.coremod.client.gui.AbstractModuleWindow;
+import com.minecolonies.coremod.colony.buildings.moduleviews.EnchanterStationsModuleView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingEnchanter;
 import net.minecraft.util.math.BlockPos;
@@ -18,18 +19,17 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.minecolonies.api.util.constant.TranslationConstants.ENCHANTER_BUILDING_NAME;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
  * Enchanter window class.
  */
-public class WindowHutEnchanterModule extends AbstractWindowWorkerModuleBuilding<BuildingEnchanter.View>
+public class EnchanterStationModuleWindow extends AbstractModuleWindow
 {
     /**
      * The resource string.
      */
-    private static final String RESOURCE_STRING = ":gui/windowhutenchanter.xml";
+    private static final String RESOURCE_STRING = ":gui/layouthuts/layoutenchanter.xml";
 
     /**
      * Tag of the list of workers.
@@ -40,6 +40,11 @@ public class WindowHutEnchanterModule extends AbstractWindowWorkerModuleBuilding
      * The label of the worker.
      */
     private static final String WORKER_NAME = "workerName";
+
+    /**
+     * The stations module view.
+     */
+    private final EnchanterStationsModuleView module;
 
     /**
      * The actual list element of the workers.
@@ -61,20 +66,21 @@ public class WindowHutEnchanterModule extends AbstractWindowWorkerModuleBuilding
      *
      * @param building class extending
      */
-    public WindowHutEnchanterModule(final BuildingEnchanter.View building)
+    public EnchanterStationModuleWindow(final IBuildingView building, final EnchanterStationsModuleView module)
     {
         super(building, Constants.MOD_ID + RESOURCE_STRING);
         super.registerButton(BUTTON_SWITCH, this::switchClicked);
+        this.module = module;
     }
 
     @Override
     public void onOpened()
     {
         super.onOpened();
-        selectedBuildings = building.getBuildingsToGatherFrom();
-        allBuildings = building.getColony().getBuildings().stream()
+        selectedBuildings = module.getBuildingsToGatherFrom();
+        allBuildings = buildingView.getColony().getBuildings().stream()
                          .filter(b -> b instanceof AbstractBuildingWorkerView && !(b instanceof BuildingEnchanter.View))
-                         .sorted((b1, b2) -> (int) (BlockPosUtil.getDistance2D(building.getPosition(), b1.getPosition()) - BlockPosUtil.getDistance2D(building.getPosition(),
+                         .sorted((b1, b2) -> (int) (BlockPosUtil.getDistance2D(buildingView.getPosition(), b1.getPosition()) - BlockPosUtil.getDistance2D(buildingView.getPosition(),
                            b2.getPosition())))
                          .collect(Collectors.toList());
         workerList = findPaneOfTypeByID(LIST_WORKERS, ScrollingList.class);
@@ -89,15 +95,15 @@ public class WindowHutEnchanterModule extends AbstractWindowWorkerModuleBuilding
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                IBuildingView buildingView = allBuildings.get(index);
+                IBuildingView bView = allBuildings.get(index);
                 String text = "";
-                if (buildingView instanceof AbstractBuildingWorkerView)
+                if (bView instanceof AbstractBuildingWorkerView)
                 {
-                    text += buildingView.getCustomName().isEmpty() ? buildingView.getSchematicName() : buildingView.getCustomName();
-                    text += " " + BlockPosUtil.getDistance2D(building.getPosition(), buildingView.getPosition()) + "m";
+                    text += bView.getCustomName().isEmpty() ? bView.getSchematicName() : bView.getCustomName();
+                    text += " " + BlockPosUtil.getDistance2D(buildingView.getPosition(), bView.getPosition()) + "m";
                     rowPane.findPaneOfTypeByID(WORKER_NAME, Text.class).setText(text);
                     final Button switchButton = rowPane.findPaneOfTypeByID(BUTTON_SWITCH, Button.class);
-                    if (selectedBuildings.contains(buildingView.getID()))
+                    if (selectedBuildings.contains(bView.getID()))
                     {
                         switchButton.setText(new TranslationTextComponent(ON));
                     }
@@ -121,20 +127,14 @@ public class WindowHutEnchanterModule extends AbstractWindowWorkerModuleBuilding
         if (button.getTextAsString().equals(LanguageHandler.format(OFF)))
         {
             button.setText(new TranslationTextComponent(ON));
-            building.addWorker(allBuildings.get(row).getID());
+            module.addWorker(allBuildings.get(row).getID());
         }
         else
         {
             button.setText(new TranslationTextComponent(OFF));
-            building.removeWorker(allBuildings.get(row).getID());
+            module.removeWorker(allBuildings.get(row).getID());
         }
-        selectedBuildings = building.getBuildingsToGatherFrom();
+        selectedBuildings = module.getBuildingsToGatherFrom();
         workerList.refreshElementPanes();
-    }
-
-    @Override
-    public String getBuildingName()
-    {
-        return ENCHANTER_BUILDING_NAME;
     }
 }
