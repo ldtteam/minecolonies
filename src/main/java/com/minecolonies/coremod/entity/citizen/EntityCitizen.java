@@ -149,43 +149,52 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     /**
      * The citizen colony handler.
      */
-    private ICitizenColonyHandler  citizenColonyHandler;
+    private ICitizenColonyHandler citizenColonyHandler;
+
     /**
      * The citizen job handler.
      */
-    private ICitizenJobHandler     citizenJobHandler;
+    private ICitizenJobHandler citizenJobHandler;
+
     /**
      * The citizen sleep handler.
      */
-    private ICitizenSleepHandler   citizenSleepHandler;
+    private ICitizenSleepHandler citizenSleepHandler;
+
     /**
      * The citizen sleep handler.
      */
     private ICitizenDiseaseHandler citizenDiseaseHandler;
+
     /**
      * The path-result of trying to move away
      */
-    private PathResult             moveAwayPath;
+    private PathResult moveAwayPath;
+
     /**
      * IsChild flag
      */
-    private boolean                child               = false;
+    private boolean child = false;
+
     /**
      * Whether the citizen is currently running away
      */
-    private boolean                currentlyFleeing    = false;
+    private boolean currentlyFleeing = false;
+
     /**
      * Timer for the call for help cd.
      */
-    private int                    callForHelpCooldown = 0;
+    private int callForHelpCooldown = 0;
+
     /**
      * Distance walked for consuming food
      */
-    private float                  lastDistanceWalked  = 0;
+    private float lastDistanceWalked = 0;
+
     /**
      * Citizen data view.
      */
-    private ICitizenDataView       citizenDataView;
+    private ICitizenDataView citizenDataView;
 
     /**
      * The location used for requests
