@@ -691,7 +691,7 @@
   "com.minecolonies.coremod.workerhuts.recallfail": "Recall failed. Please make more space around the location.",
   "com.minecolonies.coremod.warehouse.full": "The Warehouse is full, please upgrade it!",
   "com.minecolonies.coremod.warehouse.full.max": "The Warehouse is full, please use an emerald block to make more space in the racks!",
-  "com.minecolonies.coremod.gui.workerhuts.buildingwarehouse": "Warehouse",
+  "com.minecolonies.coremod.gui.workerhuts.warehouse": "Warehouse",
 
   "com.minecolonies.coremod.gui.workerhuts.deliveryman": "Courier's Hut",
   "com.minecolonies.coremod.gui.workerhuts.cancelbuild": "Cancel Build",

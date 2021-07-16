@@ -17,9 +17,10 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
-import com.minecolonies.coremod.client.gui.huts.WindowHutWareHouse;
+import com.minecolonies.coremod.client.gui.WindowHutMinPlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.modules.WarehouseModule;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.DeliveryRequestResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PickupRequestResolver;
@@ -31,7 +32,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -61,11 +61,6 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     private static final String TAG_DELIVERYMAN = "deliveryman";
 
     /**
-     * The storage tag for the storage capacity.
-     */
-    private static final String TAG_STORAGE = "tagStorage";
-
-    /**
      * The list of deliverymen registered to this building.
      */
     private final Set<Vector3d> registeredDeliverymen = new HashSet<>();
@@ -79,11 +74,6 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
      * Max storage upgrades.
      */
     public static final int MAX_STORAGE_UPGRADE = 3;
-
-    /**
-     * Storage upgrade level.
-     */
-    private int storageUpgrade = 0;
 
     /**
      * Instantiates a new warehouse building.
@@ -212,7 +202,6 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
                 registeredDeliverymen.add(new Vector3d(pos.getX(), pos.getY(), pos.getZ()));
             }
         }
-        storageUpgrade = compound.getInt(TAG_STORAGE);
     }
 
     @Override
@@ -225,7 +214,6 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
             levelTagList.add(NBTUtil.writeBlockPos(new BlockPos(deliverymanBuilding)));
         }
         compound.put(TAG_DELIVERYMAN, levelTagList);
-        compound.putInt(TAG_STORAGE, storageUpgrade);
         return compound;
     }
 
@@ -258,13 +246,6 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     public int getMaxBuildingLevel()
     {
         return MAX_LEVEL;
-    }
-
-    @Override
-    public void serializeToView(@NotNull final PacketBuffer buf)
-    {
-        super.serializeToView(buf);
-        buf.writeInt(storageUpgrade);
     }
 
     @Override
@@ -361,7 +342,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     @Override
     public void upgradeContainers(final World world)
     {
-        if (storageUpgrade < MAX_STORAGE_UPGRADE)
+        if (getFirstModuleOccurance(WarehouseModule.class).getStorageUpgrade() < MAX_STORAGE_UPGRADE)
         {
             for (final BlockPos pos : getContainers())
             {
@@ -371,7 +352,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
                     ((AbstractTileEntityRack) entity).upgradeItemStorage();
                 }
             }
-            storageUpgrade++;
+            getFirstModuleOccurance(WarehouseModule.class).incrementStorageUpgrade();
         }
         markDirty();
     }
@@ -388,11 +369,6 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     public static class View extends AbstractBuildingView
     {
         /**
-         * Storage upgrade level.
-         */
-        private int storageUpgrade = 0;
-
-        /**
          * Instantiate the warehouse view.
          *
          * @param c the colonyview to put it in
@@ -407,32 +383,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
         @Override
         public Window getWindow()
         {
-            return new WindowHutWareHouse(this);
-        }
-
-        @Override
-        public void deserialize(@NotNull final PacketBuffer buf)
-        {
-            super.deserialize(buf);
-            storageUpgrade = buf.readInt();
-        }
-
-        /**
-         * Increment storage upgrade.
-         */
-        public void incrementStorageUpgrade()
-        {
-            storageUpgrade++;
-        }
-
-        /**
-         * Get the current storage upgrade level.
-         *
-         * @return the level.
-         */
-        public int getStorageUpgradeLevel()
-        {
-            return storageUpgrade;
+            return new WindowHutMinPlaceholder<>(this, WAREHOUSE);
         }
     }
 }

@@ -836,7 +836,7 @@ public final class WindowConstants
     /**
      * Warehouse constants
      */
-    public static final String HUT_WAREHOUSE_RESOURCE_SUFFIX = ":gui/windowhutwarehouse.xml";
+    public static final String HUT_WAREHOUSE_RESOURCE_SUFFIX = ":gui/layouthuts/layoutwarehouseoptions.xml";
     public static final String SORT_WAREHOUSE_BUTTON         = "sort";
 
     /**

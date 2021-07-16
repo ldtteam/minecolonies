@@ -38,11 +38,11 @@ public class WindowMainPage extends AbstractWindowTownHall
     /**
      * Constructor for the town hall window.
      *
-     * @param townHall {@link BuildingTownHall.View}.
+     * @param building {@link BuildingTownHall.View}.
      */
-    public WindowMainPage(final BuildingTownHall.View townHall)
+    public WindowMainPage(final BuildingTownHall.View building)
     {
-        super(townHall, "layoutactions.xml");
+        super(building, "layoutactions.xml");
 
         alliesList = findPaneOfTypeByID(LIST_ALLIES, ScrollingList.class);
         feudsList = findPaneOfTypeByID(LIST_FEUDS, ScrollingList.class);
@@ -82,8 +82,8 @@ public class WindowMainPage extends AbstractWindowTownHall
         super.onOpened();
         fillAlliesAndFeudsList();
 
-        if (townHall.getColony().getMercenaryUseTime() != 0
-              && townHall.getColony().getWorld().getGameTime() - townHall.getColony().getMercenaryUseTime() < TICKS_FOURTY_MIN)
+        if (building.getColony().getMercenaryUseTime() != 0
+              && building.getColony().getWorld().getGameTime() - building.getColony().getMercenaryUseTime() < TICKS_FOURTY_MIN)
         {
             findPaneOfTypeByID(BUTTON_MERCENARY, Button.class).disable();
         }
@@ -110,7 +110,7 @@ public class WindowMainPage extends AbstractWindowTownHall
                 final long distance = BlockPosUtil.getDistance2D(colonyReference.center, building.getPosition());
                 rowPane.findPaneOfTypeByID(DIST_LABEL, Text.class).setText((int) distance + "b");
                 final Button button = rowPane.findPaneOfTypeByID(BUTTON_TP, Button.class);
-                if (colonyReference.hasTownHall && (townHall.getBuildingLevel() < MineColonies.getConfig().getServer().minThLevelToTeleport.get() || !townHall.canPlayerUseTP()))
+                if (colonyReference.hasTownHall && (building.getBuildingLevel() < MineColonies.getConfig().getServer().minThLevelToTeleport.get() || !building.canPlayerUseTP()))
                 {
                     button.setText(LanguageHandler.format(TH_TOO_LOW));
                     button.disable();
@@ -146,7 +146,7 @@ public class WindowMainPage extends AbstractWindowTownHall
      */
     private void renameClicked()
     {
-        @NotNull final WindowTownHallNameEntry window = new WindowTownHallNameEntry(townHall.getColony());
+        @NotNull final WindowTownHallNameEntry window = new WindowTownHallNameEntry(building.getColony());
         window.open();
     }
 
@@ -155,7 +155,7 @@ public class WindowMainPage extends AbstractWindowTownHall
      */
     private void mercenaryClicked()
     {
-        @NotNull final WindowTownHallMercenary window = new WindowTownHallMercenary(townHall.getColony());
+        @NotNull final WindowTownHallMercenary window = new WindowTownHallMercenary(building.getColony());
         window.open();
     }
 

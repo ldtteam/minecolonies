@@ -15,11 +15,6 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 public abstract class AbstractWindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
 {
     /**
-     * The view of the current building.
-     */
-    protected final ITownHallView townHall;
-
-    /**
      * Color constants for builder list.
      */
     public static final int RED       = Color.getByName("red", 0);
@@ -34,7 +29,6 @@ public abstract class AbstractWindowTownHall extends AbstractWindowModuleBuildin
     public AbstractWindowTownHall(final BuildingTownHall.View townHall, final String page)
     {
         super(townHall, Constants.MOD_ID + ":gui/townhall/" + page);
-        this.townHall = townHall;
 
         registerButton(BUTTON_ACTIONS, () -> new WindowMainPage(townHall).open());
         registerButton(BUTTON_INFOPAGE, () -> new WindowInfoPage(townHall).open());
@@ -64,6 +58,6 @@ public abstract class AbstractWindowTownHall extends AbstractWindowModuleBuildin
     @Override
     public String getBuildingName()
     {
-        return townHall.getColony().getName();
+        return building.getColony().getName();
     }
 }

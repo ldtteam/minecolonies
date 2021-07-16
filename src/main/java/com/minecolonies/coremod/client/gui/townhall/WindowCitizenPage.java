@@ -55,7 +55,7 @@ public class WindowCitizenPage extends AbstractWindowTownHall
     private void updateCitizens()
     {
         citizens.clear();
-        citizens.addAll(townHall.getColony().getCitizens().values());
+        citizens.addAll(building.getColony().getCitizens().values());
         citizens.sort(COMPARE_BY_NAME);
     }
 
@@ -90,7 +90,7 @@ public class WindowCitizenPage extends AbstractWindowTownHall
     private void recallOneClicked(final Button button)
     {
         final int citizenid = Integer.parseInt(button.getParent().findPaneOfTypeByID(HIDDEN_CITIZEN_ID, Text.class).getTextAsString());
-        Network.getNetwork().sendToServer(new RecallSingleCitizenMessage(townHall, citizenid));
+        Network.getNetwork().sendToServer(new RecallSingleCitizenMessage(building, citizenid));
     }
 
     /**

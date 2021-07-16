@@ -357,6 +357,7 @@ public final class ModBuildingsInitializer
                                    .setBuildingViewProducer(() -> BuildingWareHouse.View::new)
                                    .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.WAREHOUSE_ID))
                                    .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
+                                   .addBuildingModuleProducer(WarehouseModule::new, () -> WarehouseOptionsModuleView::new)
                                    .createBuildingEntry();
 
         ModBuildings.postBox = new BuildingEntry.Builder()
