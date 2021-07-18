@@ -811,6 +811,10 @@ public class Colony implements IColony
         {
             this.textureStyle = compound.getString(TAG_COL_TEXT);
         }
+        else if (this.style.contains("medieval"))
+        {
+            this.textureStyle = "medieval";
+        }
         this.colonyTag = compound;
     }
 
