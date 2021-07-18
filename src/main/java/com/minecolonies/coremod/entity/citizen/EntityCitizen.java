@@ -22,6 +22,8 @@ import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingT
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.citizen.citizenhandlers.*;
+import com.minecolonies.api.entity.combat.combat.IThreatTableEntity;
+import com.minecolonies.api.entity.combat.combat.ThreatTable;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.inventory.container.ContainerCitizenInventory;
@@ -95,7 +97,7 @@ import static com.minecolonies.coremod.entity.ai.minimal.EntityAIInteractToggleA
  * The Class used to represent the citizen entities.
  */
 @SuppressWarnings({"PMD.ExcessiveImports", "PMD.CouplingBetweenObjects", "PMD.ExcessiveClassLength"})
-public class EntityCitizen extends AbstractEntityCitizen
+public class EntityCitizen extends AbstractEntityCitizen implements IThreatTableEntity
 {
     /**
      * Cooldown for calling help, in ticks.
@@ -147,39 +149,48 @@ public class EntityCitizen extends AbstractEntityCitizen
     /**
      * The citizen colony handler.
      */
-    private ICitizenColonyHandler  citizenColonyHandler;
+    private ICitizenColonyHandler citizenColonyHandler;
+
     /**
      * The citizen job handler.
      */
-    private ICitizenJobHandler     citizenJobHandler;
+    private ICitizenJobHandler citizenJobHandler;
+
     /**
      * The citizen sleep handler.
      */
-    private ICitizenSleepHandler   citizenSleepHandler;
+    private ICitizenSleepHandler citizenSleepHandler;
+
     /**
      * The citizen sleep handler.
      */
     private ICitizenDiseaseHandler citizenDiseaseHandler;
+
     /**
      * The path-result of trying to move away
      */
-    private PathResult             moveAwayPath;
+    private PathResult moveAwayPath;
+
     /**
      * IsChild flag
      */
-    private boolean          child               = false;
+    private boolean child = false;
+
     /**
      * Whether the citizen is currently running away
      */
-    private boolean          currentlyFleeing    = false;
+    private boolean currentlyFleeing = false;
+
     /**
      * Timer for the call for help cd.
      */
-    private int              callForHelpCooldown = 0;
+    private int callForHelpCooldown = 0;
+
     /**
      * Distance walked for consuming food
      */
-    private float            lastDistanceWalked  = 0;
+    private float lastDistanceWalked = 0;
+
     /**
      * Citizen data view.
      */
@@ -194,6 +205,11 @@ public class EntityCitizen extends AbstractEntityCitizen
      * Cached team name the entity belongs to.
      */
     private String cachedTeamName;
+
+    /**
+     * Our entities threat list
+     */
+    private final ThreatTable threatTable = new ThreatTable(this);
 
     /**
      * The entities states
@@ -559,7 +575,7 @@ public class EntityCitizen extends AbstractEntityCitizen
             final IColonyView colonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), level.dimension());
             if (colonyView != null)
             {
-                 return colonyView.getResearchManager().getResearchEffects().getEffectStrength(RAILS) > 0;
+                return colonyView.getResearchManager().getResearchEffects().getEffectStrength(RAILS) > 0;
             }
             return false;
         }
@@ -598,7 +614,7 @@ public class EntityCitizen extends AbstractEntityCitizen
             }
             else
             {
-                healAmount = 1 * (1.0 + getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(REGENERATION));;
+                healAmount = 1 * (1.0 + getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(REGENERATION));
             }
 
             heal((float) healAmount);
@@ -1205,6 +1221,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
     /**
      * Check if the damage source is valid.
+     *
      * @param sourceEntity the entity.
      * @return true if valid.
      */
@@ -1276,7 +1293,7 @@ public class EntityCitizen extends AbstractEntityCitizen
             {
                 if (citizenJobHandler.getColonyJob() instanceof JobKnight)
                 {
-                    if(citizenColonyHandler.getColony().getResearchManager().getResearchEffects().getEffectStrength(BLOCK_ATTACKS) > 0)
+                    if (citizenColonyHandler.getColony().getResearchManager().getResearchEffects().getEffectStrength(BLOCK_ATTACKS) > 0)
                     {
                         if (getRandom().nextDouble() < citizenColonyHandler.getColony().getResearchManager().getResearchEffects().getEffectStrength(BLOCK_ATTACKS))
                         {
@@ -1294,6 +1311,11 @@ public class EntityCitizen extends AbstractEntityCitizen
         }
 
         final boolean result = super.hurt(damageSource, damageInc);
+
+        if (result && damageSource.getEntity() instanceof LivingEntity)
+        {
+            threatTable.addThreat((LivingEntity) damageSource.getEntity(), (int) damageInc);
+        }
 
         if (damageSource.isMagic() || damageSource.isFire())
         {
@@ -1374,10 +1396,14 @@ public class EntityCitizen extends AbstractEntityCitizen
             {
                 // Checking for guard nearby
                 if (entry.getJob() instanceof AbstractJobGuard && entry.getId() != citizenData.getId()
-                      && BlockPosUtil.getDistanceSquared(entry.getEntity().get().blockPosition(), blockPosition()) < guardHelpRange && entry.getJob().getWorkerAI() != null
-                      && ((AbstractEntityAIGuard<?, ?>) entry.getJob().getWorkerAI()).canHelp())
+                      && BlockPosUtil.getDistanceSquared(entry.getEntity().get().blockPosition(), blockPosition()) < guardHelpRange && entry.getJob().getWorkerAI() != null)
                 {
-                    possibleGuards.add(entry.getEntity().get());
+                    final ThreatTable table = ((EntityCitizen) entry.getEntity().get()).getThreatTable();
+                    table.addThreat((LivingEntity) attacker, 0);
+                    if (((AbstractEntityAIGuard<?, ?>) entry.getJob().getWorkerAI()).canHelp())
+                    {
+                        possibleGuards.add(entry.getEntity().get());
+                    }
                 }
             }
         }
@@ -1426,7 +1452,7 @@ public class EntityCitizen extends AbstractEntityCitizen
                 citizenColonyHandler.getColony().getCitizenManager().updateCitizenMourn(citizenData, true);
             }
 
-            if(citizenColonyHandler.getColony().isCoordInColony(level, blockPosition()))
+            if (citizenColonyHandler.getColony().isCoordInColony(level, blockPosition()))
             {
                 getCitizenColonyHandler().getColony().getGraveManager().createCitizenGrave(level, blockPosition(), citizenData);
             }
@@ -1441,7 +1467,8 @@ public class EntityCitizen extends AbstractEntityCitizen
             }
             citizenColonyHandler.getColony().getCitizenManager().removeCivilian(getCitizenData());
 
-            final String deathCause = new StringTextComponent(damageSource.getLocalizedDeathMessage(this).getString()).getString().replaceFirst(this.getDisplayName().getString(), "Citizen");
+            final String deathCause =
+              new StringTextComponent(damageSource.getLocalizedDeathMessage(this).getString()).getString().replaceFirst(this.getDisplayName().getString(), "Citizen");
             citizenColonyHandler.getColony().getEventDescriptionManager().addEventDescription(new CitizenDiedEvent(blockPosition(), citizenData.getName(), deathCause));
         }
         super.die(damageSource);
@@ -1750,5 +1777,11 @@ public class EntityCitizen extends AbstractEntityCitizen
     public boolean isActive()
     {
         return level.isClientSide ? entityStatemachine.getState() == EntityState.ACTIVE_CLIENT : entityStatemachine.getState() == EntityState.ACTIVE_SERVER;
+    }
+
+    @Override
+    public ThreatTable getThreatTable()
+    {
+        return threatTable;
     }
 }

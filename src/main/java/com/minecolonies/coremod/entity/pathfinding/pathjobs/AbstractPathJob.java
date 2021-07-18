@@ -958,6 +958,11 @@ public abstract class AbstractPathJob implements Callable<Path>
         boolean corner = false;
         if (pos.getY() != newY)
         {
+            if (parent.isCornerNode())
+            {
+                return false;
+            }
+
             // if the new position is above the current node, we're taking the node directly above
             if (!parent.isCornerNode() && newY - pos.getY() > 0 && (parent.parent == null || !parent.parent.pos.equals(parent.pos.offset(new BlockPos(0, newY - pos.getY(), 0)))))
             {

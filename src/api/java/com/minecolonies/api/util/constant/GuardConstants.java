@@ -30,7 +30,7 @@ public final class GuardConstants
     /**
      * Y search range.
      */
-    public static final int Y_VISION = 10;
+    public static final int Y_VISION = 3;
 
     /**
      * Experience to add when a mob is killed
