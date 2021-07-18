@@ -78,7 +78,7 @@ public class FarmerFieldModuleView extends AbstractBuildingModuleView
     @NotNull
     public List<BlockPos> getFields()
     {
-        return Collections.unmodifiableList(fields);
+        return fields;
     }
 
     /**

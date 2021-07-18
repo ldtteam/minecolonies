@@ -39,7 +39,7 @@ public class EnchanterStationsModuleView extends AbstractBuildingModuleView
      */
     public List<BlockPos> getBuildingsToGatherFrom()
     {
-        return new ArrayList<>(buildingToGatherFrom);
+        return buildingToGatherFrom;
     }
 
     /**

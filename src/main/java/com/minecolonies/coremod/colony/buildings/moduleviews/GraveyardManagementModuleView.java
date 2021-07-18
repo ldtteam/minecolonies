@@ -76,7 +76,7 @@ public class GraveyardManagementModuleView extends AbstractBuildingModuleView
     @NotNull
     public List<BlockPos> getGraves()
     {
-        return Collections.unmodifiableList(graves);
+        return graves;
     }
 
     /**
