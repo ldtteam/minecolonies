@@ -296,10 +296,22 @@ public class InteractionValidatorInitializer
                        && ((BuildingBeekeeper) citizen.getWorkBuilding()).getModuleMatching(ItemListModule.class, m -> m.getId().equals(BUILDING_FLOWER_LIST)).getList().isEmpty());
 
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_RAINING),
-          citizen -> citizen.getEntity().isPresent() && citizen.getEntity().get().getCommandSenderWorld().isRaining() && !citizen.getColony().getRaiderManager().isRaided());
+          citizen -> citizen.getEntity().isPresent() && citizen.getEntity().get().getCommandSenderWorld().isRaining()
+                       && !citizen.getColony().getRaiderManager().isRaided()
+                       && !citizen.getCitizenMournHandler().isMourning());
 
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_RAID),
           citizen -> citizen.getEntity().isPresent() && citizen.getColony().getRaiderManager().isRaided());
+
+        InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_SLEEPING),
+          citizen -> citizen.getEntity().isPresent() && citizen.getEntity().get().getCitizenSleepHandler().shouldGoSleep()
+                      && !citizen.getColony().getRaiderManager().isRaided()
+                      && !citizen.getCitizenMournHandler().isMourning()
+                      && !citizen.getEntity().get().getCommandSenderWorld().isRaining());
+
+        InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_MOURNING),
+          citizen -> citizen.getEntity().isPresent() && citizen.getCitizenMournHandler().isMourning()
+                     && !citizen.getColony().getRaiderManager().isRaided());
 
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(CITIZEN_NOT_GUARD_NEAR_WORK),
           citizen -> citizen.getWorkBuilding() != null && !citizen.getWorkBuilding().isGuardBuildingNear());

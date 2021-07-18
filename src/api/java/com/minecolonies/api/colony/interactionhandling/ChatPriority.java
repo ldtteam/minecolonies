@@ -5,6 +5,7 @@ package com.minecolonies.api.colony.interactionhandling;
  */
 public enum ChatPriority implements IChatPriority
 {
+    HIDDEN,
     CHITCHAT,
     PENDING,
     IMPORTANT,
