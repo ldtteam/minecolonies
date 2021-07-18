@@ -267,6 +267,8 @@ public final class ModBuildingsInitializer
                                .addBuildingModuleProducer(SimpleCraftingModule::new, () -> CraftingModuleView::new)
                                .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
                                .addBuildingModuleProducer(BuildingResourcesModule::new, () -> BuildingResourcesModuleView::new)
+                               .addBuildingModuleProducer(MinerLevelManagementModule::new, () -> MinerLevelManagementModuleView::new)
+                               .addBuildingModuleViewProducer(() -> MinerGuardAssignModuleView::new)
                                .createBuildingEntry();
 
         ModBuildings.sawmill = new BuildingEntry.Builder()

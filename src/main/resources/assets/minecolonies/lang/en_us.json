@@ -483,6 +483,7 @@
   "com.minecolonies.coremod.gui.workerhuts.florist": "Flower Shop",
 
   "com.minecolonies.coremod.gui.workerhuts.minerminenode": "Mine Level",
+  "com.minecolonies.coremod.gui.workerhuts.minerrepairnode": "Repair",
   "com.minecolonies.coremod.gui.workerhuts.minerguards": "Guards",
   "com.minecolonies.coremod.gui.workerhuts.buildtype": "Building Style:",
   "com.minecolonies.coremod.gui.workerhuts.workerlevel": "Worker Level: %s",
@@ -634,7 +635,6 @@
   "com.minecolonies.coremod.gui.workerhuts.recall": "Recall Worker",
   "com.minecolonies.coremod.gui.workerhuts.workerassigned": "Worker Assigned:",
   "com.minecolonies.coremod.gui.workerhuts.manage": "Manage Workers",
-  "com.minecolonies.coremod.gui.workerhuts.minerhut": "Mine",
   "com.minecolonies.coremod.gui.inventory.scarecrow": "Scarecrow",
   "com.minecolonies.coremod.gui.workerhuts.farmerhut.fields": "Fields",
   "com.minecolonies.coremod.gui.workerhuts.farmerhut.assignmentmode": "Assign Fields to Farmer:",
@@ -2016,5 +2016,10 @@
   "com.minecolonies.coremod.setting.minecolonies:recipemode": "Recipe Mode:",
   "com.minecolonies.core.crafting.setting.priority": "Priority",
   "com.minecolonies.core.crafting.setting.maxstock": "Warehouse Stock",
-  "item.buildtool.missing": "Missing build-tool in player inventory!"
+  "item.buildtool.missing": "Missing build-tool in player inventory!",
+  "com.minecolonies.coremod.gui.miner.guardassign": "Guards:",
+  "com.minecolonies.coremod.gui.workerhuts.miner.noguards": "You have to first set a guard to 'Guard Mine' Mode.",
+  "com.minecolonies.coremod.gui.miner.levels": "Levels",
+  "com.minecolonies.coremod.gui.workerhuts.miner": "Mine",
+  "com.minecolonies.coremod.gui.workerhuts.miner.repair.enqueued": "Added the repair request to the queue of the miner. Miner will pick it up once the current task is finished."
 }
