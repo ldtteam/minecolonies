@@ -355,6 +355,16 @@ public final class WindowConstants
     public static final String DROPDOWN_COLOR_ID = "colorPicker";
 
     /**
+     * This drop down list is used to choose which text should be used.
+     */
+    public static final String DROPDOWN_TEXT_ID = "textureStylePicker";
+
+    /**
+     * This button is used to set the texture.
+     */
+    public static final String BUTTON_TEXTURE_SET = "switchstyle";
+
+    /**
      * This button is used to set the next available Color.
      */
     public static final String BUTTON_NEXT_COLOR_ID = "nextColor";

@@ -2014,5 +2014,6 @@
   "com.minecolonies.coremod.setting.minecolonies:recipemode": "Recipe Mode:",
   "com.minecolonies.core.crafting.setting.priority": "Priority",
   "com.minecolonies.core.crafting.setting.maxstock": "Warehouse Stock",
-  "item.buildtool.missing": "Missing build-tool in player inventory!"
+  "item.buildtool.missing": "Missing build-tool in player inventory!",
+  "com.minecolonies.coremod.gui.townhall.picktexturestyle": "Pick Citizen Style"
 }

@@ -313,6 +313,11 @@ public class Colony implements IColony
     private int forceLoadTimer = 0;
 
     /**
+     * The texture set of the colony.
+     */
+    private String textureStyle = "default";
+
+    /**
      * Constructor for a newly created Colony.
      *
      * @param id The id of the colony to create.
@@ -802,6 +807,10 @@ public class Colony implements IColony
             this.requestManager.deserializeNBT(compound.getCompound(TAG_REQUESTMANAGER));
         }
         this.lastOnlineTime = compound.getLong(TAG_LAST_ONLINE);
+        if (compound.contains(TAG_COL_TEXT))
+        {
+            this.textureStyle = compound.getString(TAG_COL_TEXT);
+        }
         this.colonyTag = compound;
     }
 
@@ -904,6 +913,7 @@ public class Colony implements IColony
         compound.putInt(TAG_TEAM_COLOR, colonyTeamColor.ordinal());
         compound.put(TAG_FLAG_PATTERNS, colonyFlag);
         compound.putLong(TAG_LAST_ONLINE, lastOnlineTime);
+        compound.putString(TAG_COL_TEXT, textureStyle);
         this.colonyTag = compound;
 
         isActive = false;
@@ -1829,6 +1839,19 @@ public class Colony implements IColony
     public Set<Long> getTicketedChunks()
     {
         return ticketedChunks;
+    }
+
+    @Override
+    public void setTextureStyle(final String style)
+    {
+        this.textureStyle = style;
+        this.markDirty();
+    }
+
+    @Override
+    public String getTextureStyleId()
+    {
+        return this.textureStyle;
     }
 
     /**
