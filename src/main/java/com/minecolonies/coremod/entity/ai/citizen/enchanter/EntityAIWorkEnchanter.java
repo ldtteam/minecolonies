@@ -10,6 +10,7 @@ import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.modules.EnchanterStationsModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingEnchanter;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.JobEnchanter;
@@ -128,7 +129,8 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
         if (getPrimarySkillLevel() < getOwnBuilding().getBuildingLevel() * MANA_REQ_PER_LEVEL)
         {
             final BuildingEnchanter enchanterBuilding = getOwnBuilding();
-            if (enchanterBuilding.getBuildingsToGatherFrom().isEmpty())
+            final EnchanterStationsModule module = enchanterBuilding.getFirstModuleOccurance(EnchanterStationsModule.class);
+            if (module.getBuildingsToGatherFrom().isEmpty())
             {
                 if (worker.getCitizenData() != null)
                 {
@@ -151,7 +153,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
                 return IDLE;
             }
 
-            final BlockPos posToDrainFrom = enchanterBuilding.getRandomBuildingToDrainFrom();
+            final BlockPos posToDrainFrom = module.getRandomBuildingToDrainFrom();
             if (posToDrainFrom == null)
             {
                 return IDLE;
@@ -279,10 +281,11 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
         }
 
         final AbstractBuildingWorker buildingWorker = getOwnBuilding().getColony().getBuildingManager().getBuilding(job.getPosToDrainFrom(), AbstractBuildingWorker.class);
+
         if (buildingWorker == null)
         {
             resetDraining();
-            getOwnBuilding().removeWorker(job.getPosToDrainFrom());
+            getOwnBuilding().getFirstModuleOccurance(EnchanterStationsModule.class).removeWorker(job.getPosToDrainFrom());
             return IDLE;
         }
 
@@ -399,7 +402,8 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
      */
     private void resetDraining()
     {
-        getOwnBuilding().setAsGathered(job.getPosToDrainFrom());
+
+        getOwnBuilding().getFirstModuleOccurance(EnchanterStationsModule.class).setAsGathered(job.getPosToDrainFrom());
         citizenToGatherFrom = null;
         job.setBuildingToDrainFrom(null);
         progressTicks = 0;

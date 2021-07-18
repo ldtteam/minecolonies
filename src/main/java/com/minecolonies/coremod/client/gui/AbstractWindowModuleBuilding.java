@@ -47,7 +47,6 @@ public abstract class AbstractWindowModuleBuilding<B extends IBuildingView> exte
         registerButton(BUTTON_EDIT_NAME, this::editName);
         registerButton(BUTTON_ALLINVENTORY, this::allInventoryClicked);
 
-
         title = findPaneOfTypeByID(LABEL_BUILDING_NAME, Text.class);
         buttonBuild = findPaneOfTypeByID(BUTTON_BUILD, Button.class);
         Button buttonInfo = findPaneOfTypeByID(BUTTON_INFO, Button.class);
@@ -122,27 +121,7 @@ public abstract class AbstractWindowModuleBuilding<B extends IBuildingView> exte
     public void onUpdate()
     {
         super.onUpdate();
-        // Check if we are on the default page
-        if (switchView == null || switchView.getCurrentView().getID().equals(PAGE_ACTIONS))
-        {
-            final IBuildingView buildingView = building;
-            if (title != null && buildingView != null)
-            {
-                final String name = building.getCustomName().isEmpty() ? LanguageHandler.format(getBuildingName()) : building.getCustomName();
-                if (switchView == null || switchView.getID().equals(GUI_LIST_BUTTON_SWITCH + PAGE_ACTIONS))
-                {
-                    // Townhall does not need level in colony name
-                    title.setText(name);
-                    findPaneOfTypeByID(LEVEL_LABEL, Text.class).setText(LanguageHandler.format(CMC_GUI_TOWNHALL_BUILDING_LEVEL) + ": " + buildingView.getBuildingLevel());
-                }
-                else
-                {
-                    title.setText(name + " " + buildingView.getBuildingLevel());
-                }
-            }
-
-            updateButtonBuild(buildingView);
-        }
+        updateButtonBuild(building);
     }
 
     /**
@@ -194,5 +173,17 @@ public abstract class AbstractWindowModuleBuilding<B extends IBuildingView> exte
     {
         super.onOpened();
         setPage(false, 0);
+
+        final String name = building.getCustomName().isEmpty() ? LanguageHandler.format(getBuildingName()) : building.getCustomName();
+        if (switchView != null && switchView.getID().equals(GUI_LIST_BUTTON_SWITCH + PAGE_ACTIONS))
+        {
+            // Townhall does not need level in colony name
+            title.setText(name);
+            findPaneOfTypeByID(LEVEL_LABEL, Text.class).setText(LanguageHandler.format(CMC_GUI_TOWNHALL_BUILDING_LEVEL) + ": " + buildingView.getBuildingLevel());
+        }
+        else if (title != null)
+        {
+            title.setText(name + " " + buildingView.getBuildingLevel());
+        }
     }
 }

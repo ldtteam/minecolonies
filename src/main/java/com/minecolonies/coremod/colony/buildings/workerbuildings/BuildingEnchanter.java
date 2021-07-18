@@ -11,28 +11,17 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.items.ModItems;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.NBTUtils;
-import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.client.gui.huts.WindowHutEnchanterModule;
+import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.colony.jobs.JobEnchanter;
-import com.minecolonies.coremod.network.messages.server.colony.building.enchanter.EnchanterWorkerSetMessage;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
-import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
  * The enchanter building.
@@ -48,16 +37,6 @@ public class BuildingEnchanter extends AbstractBuildingWorker implements IBuildi
      * Maximum building level
      */
     private static final int MAX_BUILDING_LEVEL = 5;
-
-    /**
-     * List of buildings the enchanter gathers experience from.
-     */
-    private Map<BlockPos, Boolean> buildingToGatherFrom = new HashMap<>();
-
-    /**
-     * The random variable.
-     */
-    private Random random = new Random();
 
     /**
      * The constructor of the building.
@@ -119,131 +98,10 @@ public class BuildingEnchanter extends AbstractBuildingWorker implements IBuildi
     }
 
     /**
-     * Add a new worker to gather xp from.
-     *
-     * @param blockPos the pos of the building.
-     */
-    public void addWorker(final BlockPos blockPos)
-    {
-        buildingToGatherFrom.put(blockPos, false);
-        markDirty();
-    }
-
-    /**
-     * Remove a worker to stop gathering from.
-     *
-     * @param blockPos the pos of that worker.
-     */
-    public void removeWorker(final BlockPos blockPos)
-    {
-        buildingToGatherFrom.remove(blockPos);
-        markDirty();
-    }
-
-    @Override
-    public void onWakeUp()
-    {
-        final Set<BlockPos> keys = new HashSet<>(buildingToGatherFrom.keySet());
-        buildingToGatherFrom.clear();
-        keys.forEach(k -> buildingToGatherFrom.put(k, false));
-    }
-
-    @Override
-    public void deserializeNBT(final CompoundNBT compound)
-    {
-        super.deserializeNBT(compound);
-        buildingToGatherFrom.clear();
-        NBTUtils.streamCompound(compound.getList(TAG_GATHER_LIST, Constants.NBT.TAG_COMPOUND))
-          .map(this::deserializeListElement)
-          .forEach(t -> buildingToGatherFrom.put(t.getA(), t.getB()));
-    }
-
-    /**
-     * Helper to deserialize a list element from nbt.
-     *
-     * @param nbtTagCompound the compound to deserialize from.
-     * @return the resulting blockPos/boolean tuple.
-     */
-    private Tuple<BlockPos, Boolean> deserializeListElement(final CompoundNBT nbtTagCompound)
-    {
-        final BlockPos pos = BlockPosUtil.read(nbtTagCompound, TAG_POS);
-        final boolean gatheredAlready = nbtTagCompound.getBoolean(TAG_GATHERED_ALREADY);
-        return new Tuple<>(pos, gatheredAlready);
-    }
-
-    @Override
-    public CompoundNBT serializeNBT()
-    {
-        final CompoundNBT compound = super.serializeNBT();
-        compound.put(TAG_GATHER_LIST, buildingToGatherFrom.entrySet().stream().map(this::serializeListElement).collect(NBTUtils.toListNBT()));
-        return compound;
-    }
-
-    private CompoundNBT serializeListElement(final Map.Entry<BlockPos, Boolean> entry)
-    {
-        final CompoundNBT compound = new CompoundNBT();
-        BlockPosUtil.write(compound, TAG_POS, entry.getKey());
-        compound.putBoolean(TAG_GATHERED_ALREADY, entry.getValue());
-        return compound;
-    }
-
-    @Override
-    public void serializeToView(@NotNull final PacketBuffer buf)
-    {
-        super.serializeToView(buf);
-        buf.writeInt(buildingToGatherFrom.size());
-        for (final BlockPos pos : buildingToGatherFrom.keySet())
-        {
-            buf.writeBlockPos(pos);
-        }
-    }
-
-    /**
-     * Return the set of the buildings to gather from.
-     *
-     * @return a copy of th eset.
-     */
-    public Set<BlockPos> getBuildingsToGatherFrom()
-    {
-        return new HashSet<>(buildingToGatherFrom.keySet());
-    }
-
-    /**
-     * Get a random worker building id to gather xp from.
-     *
-     * @return the unique pos id of it.
-     */
-    @Nullable
-    public BlockPos getRandomBuildingToDrainFrom()
-    {
-        final List<BlockPos> buildings = buildingToGatherFrom.entrySet().stream().filter(k -> !k.getValue()).map(Map.Entry::getKey).collect(Collectors.toList());
-        if (buildings.isEmpty())
-        {
-            return null;
-        }
-        return buildings.get(random.nextInt(buildings.size()));
-    }
-
-    /**
-     * Set the building as gathered.
-     *
-     * @param pos the pos of the building.
-     */
-    public void setAsGathered(final BlockPos pos)
-    {
-        buildingToGatherFrom.put(pos, true);
-    }
-
-    /**
      * The client side representation of the building.
      */
     public static class View extends AbstractBuildingWorkerView
     {
-        /**
-         * List of buildings the enchanter gathers experience from.
-         */
-        private List<BlockPos> buildingToGatherFrom = new ArrayList<>();
-
         /**
          * Instantiates the view of the building.
          *
@@ -259,51 +117,7 @@ public class BuildingEnchanter extends AbstractBuildingWorker implements IBuildi
         @Override
         public Window getWindow()
         {
-            return new WindowHutEnchanterModule(this);
-        }
-
-        @Override
-        public void deserialize(@NotNull final PacketBuffer buf)
-        {
-            super.deserialize(buf);
-            final int size = buf.readInt();
-            buildingToGatherFrom.clear();
-            for (int i = 0; i < size; i++)
-            {
-                buildingToGatherFrom.add(buf.readBlockPos());
-            }
-        }
-
-        /**
-         * Getter for the list.
-         *
-         * @return the list.
-         */
-        public List<BlockPos> getBuildingsToGatherFrom()
-        {
-            return new ArrayList<>(buildingToGatherFrom);
-        }
-
-        /**
-         * Add a new worker to gather xp from.
-         *
-         * @param blockPos the pos of the building.
-         */
-        public void addWorker(final BlockPos blockPos)
-        {
-            buildingToGatherFrom.add(blockPos);
-            Network.getNetwork().sendToServer(new EnchanterWorkerSetMessage(this, blockPos, true));
-        }
-
-        /**
-         * Remove a worker to stop gathering from.
-         *
-         * @param blockPos the pos of that worker.
-         */
-        public void removeWorker(final BlockPos blockPos)
-        {
-            buildingToGatherFrom.remove(blockPos);
-            Network.getNetwork().sendToServer(new EnchanterWorkerSetMessage(this, blockPos, false));
+            return new WindowHutWorkerModulePlaceholder<>(this, ENCHANTER);
         }
     }
 

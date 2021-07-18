@@ -6,7 +6,7 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IMysticalSite;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
-import com.minecolonies.coremod.client.gui.huts.WindowHutMysticalSite;
+import com.minecolonies.coremod.client.gui.WindowHutMinPlaceholder;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -70,7 +70,7 @@ public class BuildingMysticalSite extends AbstractBuilding implements IMysticalS
         @Override
         public Window getWindow()
         {
-            return new WindowHutMysticalSite(this, MYSTICAL_SITE);
+            return new WindowHutMinPlaceholder<>(this, MYSTICAL_SITE);
         }
     }
 }

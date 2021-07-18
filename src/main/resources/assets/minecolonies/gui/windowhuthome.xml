@@ -1,25 +1,16 @@
-<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="190 244" pause="false"
-        lightbox="false"
-        xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockout/blockOut.xsd">
-    <switch id="pages" size="100% 100%">
-        <view id="pageActions" size="100% 100%">
-            <layout source="minecolonies:gui/layouthuts/layouthutpageactionsmin.xml"/>
-            <button id="assign" size="116 15" pos="37 32"
-                    label="$(com.minecolonies.coremod.gui.workerhuts.assign)"/>
+<window size="190 244" pause="false" lightbox="false">
+    <layout source="minecolonies:gui/layouthuts/layouthutpageactionsmin.xml"/>
+    <button id="assign" size="116 15" pos="37 32"
+            label="$(com.minecolonies.coremod.gui.workerhuts.assign)"/>
 
-            <list id="assignedCitizen" size="164 60" pos="13 49">
-                <box size="100% 30" linewidth="2">
-                    <label id="name" size="150 12" pos="5 2" color="black"/>
-                    <button id="remove" size="80 13" pos="75 15" label="$(com.minecolonies.coremod.gui.workerhuts.unassign)"/>
-                    <label id="dist" size="75 13" pos="5 15" color="black"/>
-                </box>
-            </list>
-            <buttonimage id="recall" size="129 17" pos="30 130" textcolor="black"
-                         source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
-                         label="$(com.minecolonies.coremod.gui.townhall.recall)"/>
-        </view>
-    </switch>
-    <buttonimage id="prevPage" size="18 10" pos="13 13" source="minecolonies:textures/gui/builderhut/turn_page_left.png"/>
-    <buttonimage id="nextPage" size="18 10" pos="159 13" source="minecolonies:textures/gui/builderhut/turn_page_right.png"/>
-    <label id="pageNum" size="20 11" pos="158 222" textalign="MIDDLE" label="" color="black"/>
+    <list id="assignedCitizen" size="164 60" pos="13 49">
+        <box size="100% 30" linewidth="2">
+            <label id="name" size="150 12" pos="5 2" color="black"/>
+            <button id="remove" size="80 13" pos="75 15" label="$(com.minecolonies.coremod.gui.workerhuts.unassign)"/>
+            <label id="dist" size="75 13" pos="5 15" color="black"/>
+        </box>
+    </list>
+    <buttonimage id="recall" size="129 17" pos="30 130" textcolor="black"
+                 source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
+                 label="$(com.minecolonies.coremod.gui.townhall.recall)"/>
 </window>

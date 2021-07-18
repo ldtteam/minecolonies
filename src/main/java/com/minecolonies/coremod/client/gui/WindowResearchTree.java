@@ -14,7 +14,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.client.gui.huts.WindowHutUniversityModule;
+import com.minecolonies.coremod.client.gui.modules.UniversityModuleWindow;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingUniversity;
 import com.minecolonies.coremod.network.messages.server.colony.building.university.TryResearchMessage;
 import com.minecolonies.coremod.research.AlternateBuildingResearchRequirement;
@@ -52,7 +52,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
     /**
      * The previous window.
      */
-    private final WindowHutUniversityModule last;
+    private final UniversityModuleWindow last;
 
     /**
      * The styling type of the research window.
@@ -103,7 +103,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
      * @param building the associated university.
      * @param last     the GUI we opened this from.
      */
-    public WindowResearchTree(final ResourceLocation branch, final BuildingUniversity.View building, final WindowHutUniversityModule last)
+    public WindowResearchTree(final ResourceLocation branch, final BuildingUniversity.View building, final UniversityModuleWindow last)
     {
         super(Constants.MOD_ID + R_TREE_RESOURCE_SUFFIX, last);
         this.branch = branch;

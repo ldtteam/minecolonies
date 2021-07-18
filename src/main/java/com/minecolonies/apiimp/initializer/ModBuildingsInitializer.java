@@ -197,6 +197,7 @@ public final class ModBuildingsInitializer
                                 .addBuildingModuleProducer(() -> new SettingsModule()
                                                                    .with(BuildingFarmer.FERTILIZE, new BoolSetting(true))
                                                                    .with(AbstractCraftingBuildingModule.RECIPE_MODE, new CrafterRecipeSetting()), () -> SettingsModuleView::new)
+                                .addBuildingModuleProducer(FarmerFieldModule::new, () -> FarmerFieldModuleView::new)
                                 .createBuildingEntry();
 
         ModBuildings.fisherman = new BuildingEntry.Builder()
@@ -358,6 +359,7 @@ public final class ModBuildingsInitializer
                                    .setBuildingViewProducer(() -> BuildingWareHouse.View::new)
                                    .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.WAREHOUSE_ID))
                                    .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
+                                   .addBuildingModuleProducer(WarehouseModule::new, () -> WarehouseOptionsModuleView::new)
                                    .createBuildingEntry();
 
         ModBuildings.postBox = new BuildingEntry.Builder()
@@ -383,6 +385,7 @@ public final class ModBuildingsInitializer
                                    .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.ENCHANTER_ID))
                                    .addBuildingModuleProducer(BuildingEnchanter.CraftingModule::new, () -> CraftingModuleView::new)
                                    .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
+                                   .addBuildingModuleProducer(EnchanterStationsModule::new, () -> EnchanterStationsModuleView::new)
                                    .createBuildingEntry();
 
         ModBuildings.university = new BuildingEntry.Builder()
@@ -390,6 +393,7 @@ public final class ModBuildingsInitializer
                                     .setBuildingProducer(BuildingUniversity::new)
                                     .setBuildingViewProducer(() -> BuildingUniversity.View::new)
                                     .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.UNIVERSITY_ID))
+                                    .addBuildingModuleViewProducer(() -> UniversityResearchModuleView::new)
                                     .createBuildingEntry();
 
         ModBuildings.hospital = new BuildingEntry.Builder()
@@ -530,6 +534,7 @@ public final class ModBuildingsInitializer
                                     .setBuildingProducer(BuildingGraveyard::new)
                                     .setBuildingViewProducer(() -> BuildingGraveyard.View::new)
                                     .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.GRAVEYARD_ID))
+                                    .addBuildingModuleProducer(GraveyardManagementModule::new, () -> GraveyardManagementModuleView::new)
                                     .createBuildingEntry();
 
         reg.register(ModBuildings.archery);

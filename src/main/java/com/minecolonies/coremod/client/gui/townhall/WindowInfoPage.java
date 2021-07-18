@@ -53,11 +53,11 @@ public class WindowInfoPage extends AbstractWindowTownHall
     /**
      * Constructor for the town hall window.
      *
-     * @param townHall {@link BuildingTownHall.View}.
+     * @param building {@link BuildingTownHall.View}.
      */
-    public WindowInfoPage(final BuildingTownHall.View townHall)
+    public WindowInfoPage(final BuildingTownHall.View building)
     {
-        super(townHall, "layoutinfo.xml");
+        super(building, "layoutinfo.xml");
 
         registerButton(BUTTON_PERMISSION_EVENTS, this::permissionEventsClicked);
         registerButton(BUTTON_ADD_PLAYER_OR_FAKEPLAYER, this::addPlayerToColonyClicked);
@@ -75,7 +75,7 @@ public class WindowInfoPage extends AbstractWindowTownHall
     }
 
     /**
-     * Creates several statistics and sets them in the townHall GUI.
+     * Creates several statistics and sets them in the building GUI.
      */
     private void createAndSetStatistics()
     {
@@ -84,7 +84,7 @@ public class WindowInfoPage extends AbstractWindowTownHall
         final String roundedHappiness = df.format(building.getColony().getOverallHappiness());
 
         findPaneOfTypeByID(HAPPINESS_LABEL, Text.class).setText(roundedHappiness);
-        final int citizensSize = townHall.getColony().getCitizens().size();
+        final int citizensSize = building.getColony().getCitizens().size();
         final int citizensCap;
 
         if(MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().hasResearchEffect(CITIZEN_CAP))
@@ -100,9 +100,9 @@ public class WindowInfoPage extends AbstractWindowTownHall
         final Text totalCitizenLabel = findPaneOfTypeByID(TOTAL_CITIZENS_LABEL, Text.class);
         totalCitizenLabel.setText(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_TOTALCITIZENS_COUNT,
             citizensSize,
-            Math.max(citizensSize, townHall.getColony().getCitizenCountLimit())));
+            Math.max(citizensSize, building.getColony().getCitizenCountLimit())));
         List<IFormattableTextComponent> hoverText = new ArrayList<>();
-        if(citizensSize < (citizensCap * 0.9) && citizensSize < (townHall.getColony().getCitizenCountLimit() * 0.9))
+        if(citizensSize < (citizensCap * 0.9) && citizensSize < (building.getColony().getCitizenCountLimit() * 0.9))
         {
             totalCitizenLabel.setColors(DARKGREEN);
         }
@@ -129,7 +129,7 @@ public class WindowInfoPage extends AbstractWindowTownHall
 
         int children = 0;
         final Map<String, Tuple<Integer, Integer>> jobMaxCountMap = new HashMap<>();
-        for (@NotNull final IBuildingView building : townHall.getColony().getBuildings())
+        for (@NotNull final IBuildingView building : building.getColony().getBuildings())
         {
             if (building instanceof AbstractBuildingWorkerView)
             {
@@ -154,7 +154,7 @@ public class WindowInfoPage extends AbstractWindowTownHall
                     int teachers = workers = 0;
                     for (@NotNull final Integer workerId : ((BuildingSchool.View) building).getWorkerId())
                     {
-                        final ICitizenDataView view = townHall.getColony().getCitizen(workerId);
+                        final ICitizenDataView view = building.getColony().getCitizen(workerId);
                         if (view != null && view.isChild())
                         {
                             workers += 1;
@@ -180,7 +180,7 @@ public class WindowInfoPage extends AbstractWindowTownHall
 
         //calculate number of children
         int unemployedCount = 0;
-        for (ICitizenDataView iCitizenDataView : townHall.getColony().getCitizens().values())
+        for (ICitizenDataView iCitizenDataView : building.getColony().getCitizens().values())
         {
             if (iCitizenDataView.isChild())
             {
@@ -315,7 +315,7 @@ public class WindowInfoPage extends AbstractWindowTownHall
         if (row >= 0 && row < building.getPermissionEvents().size())
         {
             final PermissionEvent user = building.getPermissionEvents().get(row);
-            Network.getNetwork().sendToServer(new PermissionsMessage.AddPlayerOrFakePlayer(townHall.getColony(), user.getName(), user.getId()));
+            Network.getNetwork().sendToServer(new PermissionsMessage.AddPlayerOrFakePlayer(building.getColony(), user.getName(), user.getId()));
         }
     }
 
