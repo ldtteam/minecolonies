@@ -307,7 +307,7 @@ public class WindowSettingsPage extends AbstractWindowTownHall
     }
 
     /**
-     * Request the
+     * Check if the feature is unlocked through the patreon API.
      */
     public void checkFeatureUnlock()
     {
