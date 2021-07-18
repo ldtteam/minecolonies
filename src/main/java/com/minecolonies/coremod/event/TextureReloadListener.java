@@ -62,6 +62,9 @@ public class TextureReloadListener extends ReloadListener<TextureReloadListener.
        TextureReloadListener.TEXTURE_PACKS.addAll(packs.packs);
     }
 
+    /**
+     * Storage class to hand the texture packs from off-thread to the main thread.
+     */
     public static class TexturePacks
     {
         public List<String> packs = new ArrayList<>();
