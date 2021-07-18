@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ModBuildings;
@@ -11,6 +12,9 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingPublicCrafter;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
+import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -182,15 +186,29 @@ public class BuildingDyer extends AbstractBuildingFurnaceUser implements IBuildi
 
                 ItemStorage woolToUse = inventoryCounts.entrySet().stream().min(java.util.Map.Entry.comparingByValue(Comparator.reverseOrder())).get().getKey();
 
-                recipe = StandardFactoryController.getInstance().getNewInstance(
+                final IRecipeStorage tempRecipe = StandardFactoryController.getInstance().getNewInstance(
                   TypeConstants.RECIPE,
                   StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
                   ImmutableList.of(woolToUse, new ItemStorage(new ItemStack(Items.WHITE_DYE, 1))),
                   1,
                   new ItemStack(Items.WHITE_WOOL, 1),
                   Blocks.AIR);
+
+                final IToken<?> token = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(tempRecipe);
+                recipe = IColonyManager.getInstance().getRecipeManager().getRecipe(token);
             }
             return recipe;
+        }
+
+        @Override
+        public boolean holdsRecipe(final IToken<?> token)
+        {
+            if (super.holdsRecipe(token))
+            {
+                return true;
+            }
+
+            return IColonyManager.getInstance().getRecipeManager().getRecipe(token).getPrimaryOutput().getItem() == Items.WHITE_WOOL;
         }
     }
 
