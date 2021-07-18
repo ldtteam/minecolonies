@@ -171,6 +171,9 @@ public class BuildToolPasteMessage implements IMessage
             if (isHut)
             {
                 handleHut(CompatibilityUtils.getWorldFromEntity(player), player, sn, rotation, pos, mirror, state, complete);
+                CreativeBuildingStructureHandler.loadAndPlaceStructureWithRotation(player.level, structureName,
+                  pos, BlockPosUtil.getRotationFromRotations(rotation), mirror ? Mirror.FRONT_BACK : Mirror.NONE, !complete, player);
+
                 @Nullable final IBuilding building = IColonyManager.getInstance().getBuilding(CompatibilityUtils.getWorldFromEntity(player), pos);
                 if (building != null)
                 {
