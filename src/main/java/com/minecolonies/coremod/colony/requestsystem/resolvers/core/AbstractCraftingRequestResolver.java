@@ -156,14 +156,14 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
     }
 
     /**
-     * Method to check if a crafting cycle can be created.
+     * Method to check if a crafting loop is created.
      *
      * @param manager the manager.
      * @param request the request.
      * @param target  the target to create.
      * @param count   the itemCount.
      * @param reqs    the list of reqs.
-     * @return true if possible.
+     * @return true if a loop is detected to abort.
      */
     protected boolean createsCraftingCycle(
       @NotNull final IRequestManager manager,
@@ -194,7 +194,7 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
 
         if (!request.equals(target) && request.getRequest().equals(target.getRequest()))
         {
-            if (request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).getCount() < target.getRequest().getCount())
+            if (request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).getCount() <= target.getRequest().getCount() && !request.hasChildren())
             {
                 return true;
             }
