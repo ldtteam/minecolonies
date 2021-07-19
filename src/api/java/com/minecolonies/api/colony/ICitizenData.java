@@ -364,4 +364,9 @@ public interface ICitizenData extends ICivilianData
     {
         return true;
     }
+
+    /**
+     * On citizen being resurrected.
+     */
+    void onResurrect();
 }
