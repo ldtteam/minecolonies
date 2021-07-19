@@ -727,6 +727,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
             target = helpCitizen.get().getLastHurtByMob();
             if (target == null || !target.isAlive())
             {
+                target = null;
                 return GUARD_DECIDE;
             }
         }
@@ -803,6 +804,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
             incrementActionsDoneAndDecSaturation();
             worker.getCitizenExperienceHandler().addExperience(EXP_PER_MOB_DEATH);
             ((EntityCitizen) worker).getThreatTable().removeCurrentTarget();
+            target = null;
         }
 
         final ThreatTableEntry nextTarget = ((EntityCitizen) worker).getThreatTable().getTarget();
@@ -1181,7 +1183,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     @Override
     public boolean canBeInterrupted()
     {
-        if (fighttimer > 0 || getState() == GUARD_RALLY || target != null || buildingGuards.getRallyLocation() != null || buildingGuards.getTask().equals(GuardTaskSetting.FOLLOW))
+        if (fighttimer > 0 || getState() == GUARD_RALLY || (target != null && target.isAlive()) || buildingGuards.getRallyLocation() != null || buildingGuards.getTask().equals(GuardTaskSetting.FOLLOW))
         {
             return false;
         }
