@@ -44,7 +44,6 @@ import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.ItemStackUtils.*;
 import static com.minecolonies.api.util.constant.Constants.ONE_HUNDRED_PERCENT;
-import static com.minecolonies.api.util.constant.Constants.ORE_STRING;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_SAP_LEAF;
 
 /**
@@ -323,22 +322,9 @@ public class CompatibilityManager implements ICompatibilityManager
     @Override
     public boolean isOre(@NotNull final ItemStack stack)
     {
-        if (isEmpty(stack))
-        {
-            return false;
-        }
-
-        if (stack.getItem().is(Tags.Items.ORES))
+        if (isMineableOre(stack))
         {
             return !MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getSmeltingResult(stack).isEmpty();
-        }
-
-        for (final ResourceLocation tag : stack.getItem().getTags())
-        {
-            if (tag.getPath().contains(ORE_STRING))
-            {
-                return !MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getSmeltingResult(stack).isEmpty();
-            }
         }
 
         return false;
@@ -347,25 +333,7 @@ public class CompatibilityManager implements ICompatibilityManager
     @Override
     public boolean isMineableOre(@NotNull final ItemStack stack)
     {
-        if (isEmpty(stack))
-        {
-            return false;
-        }
-
-        if (stack.getItem().is(Tags.Items.ORES))
-        {
-            return true;
-        }
-
-        for (final ResourceLocation tag : stack.getItem().getTags())
-        {
-            if (tag.getPath().contains(ORE_STRING))
-            {
-                return true;
-            }
-        }
-
-        return false;
+        return !isEmpty(stack) && stack.getItem().is(Tags.Items.ORES);
     }
 
     @Override
