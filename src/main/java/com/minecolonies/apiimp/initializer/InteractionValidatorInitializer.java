@@ -15,7 +15,10 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
+import com.minecolonies.coremod.colony.buildings.modules.EnchanterStationsModule;
+import com.minecolonies.coremod.colony.buildings.modules.FarmerFieldModule;
 import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
+import com.minecolonies.coremod.colony.buildings.modules.MinerLevelManagementModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
 import com.minecolonies.coremod.colony.jobs.*;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIBasic;
@@ -110,7 +113,7 @@ public class InteractionValidatorInitializer
           });
 
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(NO_FREE_FIELDS),
-          citizen -> citizen.getWorkBuilding() instanceof BuildingFarmer && ((BuildingFarmer) citizen.getWorkBuilding()).hasNoFields());
+          citizen -> citizen.getWorkBuilding() instanceof BuildingFarmer && ((BuildingFarmer) citizen.getWorkBuilding()).getFirstModuleOccurance(FarmerFieldModule.class).hasNoFields());
 
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(INVALID_MINESHAFT),
           citizen -> citizen.getWorkBuilding() instanceof BuildingMiner && (((BuildingMiner) citizen.getWorkBuilding()).getCobbleLocation() == null || ((BuildingMiner) citizen.getWorkBuilding()).getLadderLocation() == null));
@@ -234,7 +237,7 @@ public class InteractionValidatorInitializer
           citizen -> citizen.getWorkBuilding() instanceof BuildingBeekeeper && citizen.getJob(JobBeekeeper.class).checkForBeeInteraction());
 
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(NO_WORKERS_TO_DRAIN_SET),
-          citizen -> citizen.getWorkBuilding() instanceof BuildingEnchanter && ((BuildingEnchanter) citizen.getWorkBuilding()).getBuildingsToGatherFrom().isEmpty());
+          citizen -> citizen.getWorkBuilding() instanceof BuildingEnchanter && ((BuildingEnchanter) citizen.getWorkBuilding()).getFirstModuleOccurance(EnchanterStationsModule.class).getBuildingsToGatherFrom().isEmpty());
 
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(NO_PLANT_GROUND_FLORIST),
           citizen -> citizen.getWorkBuilding() instanceof BuildingFlorist && ((BuildingFlorist) citizen.getWorkBuilding()).getPlantGround().isEmpty());
@@ -261,7 +264,7 @@ public class InteractionValidatorInitializer
               if (buildingMiner instanceof BuildingMiner && citizen.getColony() != null && citizen.getColony().getWorld() != null)
               {
                   return getLastLadder(((BuildingMiner) buildingMiner).getLadderLocation(), citizen.getColony().getWorld()) < ((BuildingMiner) buildingMiner).getDepthLimit()
-                           && ((BuildingMiner) buildingMiner).getNumberOfLevels() == 0;
+                           && ((BuildingMiner) buildingMiner).getFirstModuleOccurance(MinerLevelManagementModule.class).getNumberOfLevels() == 0;
               }
               return false;
           });
@@ -296,10 +299,22 @@ public class InteractionValidatorInitializer
                        && ((BuildingBeekeeper) citizen.getWorkBuilding()).getModuleMatching(ItemListModule.class, m -> m.getId().equals(BUILDING_FLOWER_LIST)).getList().isEmpty());
 
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_RAINING),
-          citizen -> citizen.getEntity().isPresent() && citizen.getEntity().get().getCommandSenderWorld().isRaining() && !citizen.getColony().getRaiderManager().isRaided());
+          citizen -> citizen.getEntity().isPresent() && citizen.getEntity().get().getCommandSenderWorld().isRaining()
+                       && !citizen.getColony().getRaiderManager().isRaided()
+                       && !citizen.getCitizenMournHandler().isMourning());
 
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_RAID),
           citizen -> citizen.getEntity().isPresent() && citizen.getColony().getRaiderManager().isRaided());
+
+        InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_SLEEPING),
+          citizen -> citizen.getEntity().isPresent() && citizen.getEntity().get().getCitizenSleepHandler().shouldGoSleep()
+                      && !citizen.getColony().getRaiderManager().isRaided()
+                      && !citizen.getCitizenMournHandler().isMourning()
+                      && !citizen.getEntity().get().getCommandSenderWorld().isRaining());
+
+        InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_MOURNING),
+          citizen -> citizen.getEntity().isPresent() && citizen.getCitizenMournHandler().isMourning()
+                     && !citizen.getColony().getRaiderManager().isRaided());
 
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(CITIZEN_NOT_GUARD_NEAR_WORK),
           citizen -> citizen.getWorkBuilding() != null && !citizen.getWorkBuilding().isGuardBuildingNear());

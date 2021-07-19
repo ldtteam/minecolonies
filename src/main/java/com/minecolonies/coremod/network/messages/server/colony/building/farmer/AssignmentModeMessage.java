@@ -1,6 +1,8 @@
 package com.minecolonies.coremod.network.messages.server.colony.building.farmer;
 
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.coremod.colony.buildings.modules.FarmerFieldModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFarmer;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.network.PacketBuffer;
@@ -28,7 +30,7 @@ public class AssignmentModeMessage extends AbstractBuildingServerMessage<Buildin
      * @param assignmentMode assignmentMode of the particular farmer.
      * @param building       the building we're executing on.
      */
-    public AssignmentModeMessage(@NotNull final BuildingFarmer.View building, final boolean assignmentMode)
+    public AssignmentModeMessage(@NotNull final IBuildingView building, final boolean assignmentMode)
     {
         super(building);
         this.assignmentMode = assignmentMode;
@@ -49,9 +51,8 @@ public class AssignmentModeMessage extends AbstractBuildingServerMessage<Buildin
     }
 
     @Override
-    public void onExecute(
-      final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final BuildingFarmer building)
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final BuildingFarmer building)
     {
-        building.setAssignManually(assignmentMode);
+        building.getFirstOptionalModuleOccurance(FarmerFieldModule.class).ifPresent(m -> m.setAssignManually(assignmentMode));
     }
 }

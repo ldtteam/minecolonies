@@ -57,7 +57,7 @@ public class WindowWorkOrderPage extends AbstractWindowTownHall
     private void updateWorkOrders()
     {
         workOrders.clear();
-        workOrders.addAll(townHall.getColony().getWorkOrders());
+        workOrders.addAll(building.getColony().getWorkOrders());
         sortWorkOrders();
     }
 

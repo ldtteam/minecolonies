@@ -1480,6 +1480,14 @@ public class CitizenData implements ICitizenData
     }
 
     @Override
+    public void onResurrect()
+    {
+        this.workBuilding = null;
+        this.homeBuilding = null;
+        this.job = null;
+    }
+
+    @Override
     public void setWorking(final boolean isWorking)
     {
         if (isWorking && !this.isWorking)

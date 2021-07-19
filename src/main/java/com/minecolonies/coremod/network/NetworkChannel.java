@@ -20,6 +20,7 @@ import com.minecolonies.coremod.network.messages.server.colony.building.farmer.A
 import com.minecolonies.coremod.network.messages.server.colony.building.farmer.AssignmentModeMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.guard.GuardSetMinePosMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.home.AssignUnassignMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.miner.MinerRepairLevelMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.miner.MinerSetLevelMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.postbox.PostBoxRequestMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.university.TryResearchMessage;
@@ -201,6 +202,7 @@ public class NetworkChannel
         registerMessage(++idx, BuildPickUpMessage.class, BuildPickUpMessage::new);
         registerMessage(++idx, SwitchBuildingWithToolMessage.class, SwitchBuildingWithToolMessage::new);
         registerMessage(++idx, ColonyTextureStyleMessage.class, ColonyTextureStyleMessage::new);
+        registerMessage(++idx, MinerRepairLevelMessage.class, MinerRepairLevelMessage::new);
 
         //Client side only
         registerMessage(++idx, BlockParticleEffectMessage.class, BlockParticleEffectMessage::new);

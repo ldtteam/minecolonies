@@ -8,6 +8,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.Vec2i;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
+import com.minecolonies.coremod.colony.buildings.modules.MinerLevelManagementModule;
 import com.minecolonies.coremod.colony.buildings.modules.settings.GuardTaskSetting;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
@@ -99,7 +100,8 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
     @NotNull
     private BlockPos getMinerProxy(final BlockPos target, final double distanceToPath, @NotNull final BuildingMiner building)
     {
-        final Level level = building.getCurrentLevel();
+        final MinerLevelManagementModule module = building.getFirstModuleOccurance(MinerLevelManagementModule.class);
+        final Level level = module.getCurrentLevel();
         final BlockPos ladderPos = building.getLadderLocation();
 
         //If his current working level is null, we have nothing to worry about.
@@ -114,13 +116,13 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
             //Check if miner is underground in shaft and his target is overground.
             if (workerY <= levelDepth && targetY > levelDepth)
             {
-                if (building.getActiveNode() != null && building.getActiveNode().getParent() != null)
+                if (module.getActiveNode() != null && module.getActiveNode().getParent() != null)
                 {
-                    com.minecolonies.coremod.entity.ai.citizen.miner.Node currentNode = level.getNode(building.getActiveNode().getParent());
+                    com.minecolonies.coremod.entity.ai.citizen.miner.Node currentNode = level.getNode(module.getActiveNode().getParent());
                     if (currentNode == null)
                     {
-                        building.setActiveNode(null);
-                        building.setOldNode(null);
+                        module.setActiveNode(null);
+                        module.setOldNode(null);
                         return getProxy(target, citizen.blockPosition(), distanceToPath);
                     }
 
@@ -175,7 +177,7 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
                     level.getDepth(),
                     ladderPos.getZ() + vector.getZ() * OTHER_SIDE_OF_SHAFT));
 
-                if (building.getActiveNode() != null && building.getActiveNode().getParent() != null)
+                if (module.getActiveNode() != null && module.getActiveNode().getParent() != null)
                 {
                     calculateNodes(level, levelDepth, building);
                 }
@@ -214,7 +216,7 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
                     }
                 }
 
-                if (building.getActiveNode() != null && building.getActiveNode().getParent() != null)
+                if (module.getActiveNode() != null && module.getActiveNode().getParent() != null)
                 {
                     calculateNodes(level, levelDepth, building);
                 }
@@ -233,7 +235,7 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
     private void calculateNodes(final Level level, final int levelDepth, final BuildingMiner buildingMiner)
     {
         final List<BlockPos> nodesToTarget = new ArrayList<>();
-        com.minecolonies.coremod.entity.ai.citizen.miner.Node currentNode = level.getNode(buildingMiner.getActiveNode().getParent());
+        com.minecolonies.coremod.entity.ai.citizen.miner.Node currentNode = level.getNode(buildingMiner.getFirstModuleOccurance(MinerLevelManagementModule.class).getActiveNode().getParent());
         while (currentNode != null && currentNode.getParent() != null)
         {
             if (currentNode.getStyle() == Node.NodeType.SHAFT)

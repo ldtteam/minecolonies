@@ -86,11 +86,11 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
     /**
      * Constructor for the town hall window.
      *
-     * @param townHall {@link BuildingTownHall.View}.
+     * @param building {@link BuildingTownHall.View}.
      */
-    public WindowPermissionsPage(final BuildingTownHall.View townHall)
+    public WindowPermissionsPage(final BuildingTownHall.View building)
     {
-        super(townHall, "layoutpermissions.xml");
+        super(building, "layoutpermissions.xml");
         // ToDo: remove these actions in 1.17
         for (Action action : Action.values())
         {
@@ -104,7 +104,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
         rankTypes.put(1, RANKTYPE_HOSTILE);
         rankTypes.put(2, RANKTYPE_NONE);
 
-        actionsRank = townHall.getColony().getPermissions().getRankOfficer();
+        actionsRank = building.getColony().getPermissions().getRankOfficer();
         findPaneOfTypeByID(BUTTON_REMOVE_RANK, Button.class).setEnabled(false);
 
         rankButtonList = findPaneOfTypeByID(TOWNHALL_RANK_BUTTON_LIST, ScrollingList.class);
@@ -132,7 +132,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
      */
     private void setSubscriber(Button button)
     {
-        Network.getNetwork().sendToServer(new PermissionsMessage.SetSubscriber(townHall.getColony(), actionsRank, !actionsRank.isSubscriber()));
+        Network.getNetwork().sendToServer(new PermissionsMessage.SetSubscriber(building.getColony(), actionsRank, !actionsRank.isSubscriber()));
         actionsRank.setSubscriber(!actionsRank.isSubscriber());
         button.setText(LanguageHandler.format(actionsRank.isSubscriber() ? COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON : COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF));
     }
@@ -143,7 +143,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
      */
     private void changeRankMode(DropDownList dropdown)
     {
-        Network.getNetwork().sendToServer(new PermissionsMessage.EditRankType(townHall.getColony(), actionsRank, dropdown.getSelectedIndex()));
+        Network.getNetwork().sendToServer(new PermissionsMessage.EditRankType(building.getColony(), actionsRank, dropdown.getSelectedIndex()));
     }
 
     /**
@@ -187,7 +187,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
         final TextField input = findPaneOfTypeByID(INPUT_ADDRANK_NAME, TextField.class);
         if (isValidRankname(input.getText()))
         {
-            Network.getNetwork().sendToServer(new PermissionsMessage.AddRank(townHall.getColony(), input.getText()));
+            Network.getNetwork().sendToServer(new PermissionsMessage.AddRank(building.getColony(), input.getText()));
             input.setText("");
             label.hide();
         }
@@ -229,9 +229,9 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
     {
         if (actionsRank != null)
         {
-            Network.getNetwork().sendToServer(new PermissionsMessage.RemoveRank(townHall.getColony(), actionsRank));
-            townHall.getColony().getPermissions().removeRank(actionsRank);
-            actionsRank = townHall.getColony().getPermissions().getRankOfficer();
+            Network.getNetwork().sendToServer(new PermissionsMessage.RemoveRank(building.getColony(), actionsRank));
+            building.getColony().getPermissions().removeRank(actionsRank);
+            actionsRank = building.getColony().getPermissions().getRankOfficer();
             button.setEnabled(false);
         }
     }
@@ -242,7 +242,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
     private void updateUsers()
     {
         users.clear();
-        users.addAll(townHall.getColony().getPlayers().values());
+        users.addAll(building.getColony().getPlayers().values());
         users.sort(Comparator.comparing(Player::getRank, Rank::compareTo));
     }
 
@@ -262,7 +262,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
         PlayerEntity player = Minecraft.getInstance().player;
         Text label = findPaneOfTypeByID(TOWNHALL_PERMISSION_ERROR, Text.class);
         Button button = findPaneOfTypeByID(BUTTON_ADD_PLAYER, Button.class);
-        if (townHall.getColony().getPermissions().hasPermission(player, Action.EDIT_PERMISSIONS))
+        if (building.getColony().getPermissions().hasPermission(player, Action.EDIT_PERMISSIONS))
         {
             label.hide();
             button.setEnabled(true);
@@ -280,9 +280,9 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
     private void updateRanks()
     {
         rankList.clear();
-        for (final Rank rank : townHall.getColony().getPermissions().getRanks().values())
+        for (final Rank rank : building.getColony().getPermissions().getRanks().values())
         {
-            if (!rank.equals(townHall.getColony().getPermissions().getRankOwner()))
+            if (!rank.equals(building.getColony().getPermissions().getRankOwner()))
             {
                 rankList.add(rank);
             }
@@ -335,21 +335,21 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
         final int row = freeBlocksList.getListElementIndexByPane(button);
         if (row >= 0)
         {
-            @NotNull final List<Block> freeBlocks = townHall.getColony().getFreeBlocks();
-            @NotNull final List<BlockPos> freePositions = townHall.getColony().getFreePositions();
+            @NotNull final List<Block> freeBlocks = building.getColony().getFreeBlocks();
+            @NotNull final List<BlockPos> freePositions = building.getColony().getFreePositions();
 
             if (row < freeBlocks.size())
             {
                 Network.getNetwork().sendToServer(
-                  new ChangeFreeToInteractBlockMessage(townHall.getColony(), freeBlocks.get(row), ChangeFreeToInteractBlockMessage.MessageType.REMOVE_BLOCK));
-                townHall.getColony().removeFreeBlock(freeBlocks.get(row));
+                  new ChangeFreeToInteractBlockMessage(building.getColony(), freeBlocks.get(row), ChangeFreeToInteractBlockMessage.MessageType.REMOVE_BLOCK));
+                building.getColony().removeFreeBlock(freeBlocks.get(row));
             }
             else if (row < freeBlocks.size() + freePositions.size())
             {
                 final BlockPos freePos = freePositions.get(row - freeBlocks.size());
                 Network.getNetwork().sendToServer(
-                  new ChangeFreeToInteractBlockMessage(townHall.getColony(), freePos, ChangeFreeToInteractBlockMessage.MessageType.REMOVE_BLOCK));
-                townHall.getColony().removeFreePosition(freePos);
+                  new ChangeFreeToInteractBlockMessage(building.getColony(), freePos, ChangeFreeToInteractBlockMessage.MessageType.REMOVE_BLOCK));
+                building.getColony().removeFreePosition(freePos);
             }
             fillFreeBlockList();
         }
@@ -360,8 +360,8 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
      */
     private void fillFreeBlockList()
     {
-        @NotNull final List<Block> freeBlocks = townHall.getColony().getFreeBlocks();
-        @NotNull final List<BlockPos> freePositions = townHall.getColony().getFreePositions();
+        @NotNull final List<Block> freeBlocks = building.getColony().getFreeBlocks();
+        @NotNull final List<BlockPos> freePositions = building.getColony().getFreePositions();
 
         freeBlocksList = findPaneOfTypeByID(LIST_FREE_BLOCKS, ScrollingList.class);
         freeBlocksList.setDataProvider(new ScrollingList.DataProvider()
@@ -402,8 +402,8 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
 
             if (block != null)
             {
-                townHall.getColony().addFreeBlock(block);
-                Network.getNetwork().sendToServer(new ChangeFreeToInteractBlockMessage(townHall.getColony(), block, ChangeFreeToInteractBlockMessage.MessageType.ADD_BLOCK));
+                building.getColony().addFreeBlock(block);
+                Network.getNetwork().sendToServer(new ChangeFreeToInteractBlockMessage(building.getColony(), block, ChangeFreeToInteractBlockMessage.MessageType.ADD_BLOCK));
             }
         }
         catch (final ResourceLocationException e)
@@ -415,8 +415,8 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
 
         if (pos != null)
         {
-            Network.getNetwork().sendToServer(new ChangeFreeToInteractBlockMessage(townHall.getColony(), pos, ChangeFreeToInteractBlockMessage.MessageType.ADD_BLOCK));
-            townHall.getColony().addFreePosition(pos);
+            Network.getNetwork().sendToServer(new ChangeFreeToInteractBlockMessage(building.getColony(), pos, ChangeFreeToInteractBlockMessage.MessageType.ADD_BLOCK));
+            building.getColony().addFreePosition(pos);
         }
 
         fillFreeBlockList();
@@ -434,8 +434,8 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
         final boolean trigger = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON).equals(button.getTextAsString());
         final Action action = actions.get(index);
 
-        Network.getNetwork().sendToServer(new PermissionsMessage.Permission(townHall.getColony(), PermissionsMessage.MessageType.TOGGLE_PERMISSION, actionsRank, action));
-        townHall.getColony().getPermissions().togglePermission(actionsRank, action);
+        Network.getNetwork().sendToServer(new PermissionsMessage.Permission(building.getColony(), PermissionsMessage.MessageType.TOGGLE_PERMISSION, actionsRank, action));
+        building.getColony().getPermissions().togglePermission(actionsRank, action);
 
         if (trigger)
         {
@@ -473,7 +473,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
                 }
 
                 rowPane.findPaneOfTypeByID(NAME_LABEL, Text.class).setText(name);
-                final boolean isTriggered = townHall.getColony().getPermissions().hasPermission(actionsRank, action);
+                final boolean isTriggered = building.getColony().getPermissions().hasPermission(actionsRank, action);
                 rowPane.findPaneOfTypeByID("trigger", Button.class)
                   .setText(isTriggered ? LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON)
                               : LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF));
@@ -503,7 +503,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
                 Rank rank = player.getRank();
                 rowPane.findPaneOfTypeByID(NAME_LABEL, Text.class).setText(player.getName());
                 DropDownList dropdown = rowPane.findPaneOfTypeByID(TOWNHALL_RANK_PICKER, DropDownList.class);
-                if (rank.getId() == townHall.getColony().getPermissions().OWNER_RANK_ID)
+                if (rank.getId() == building.getColony().getPermissions().OWNER_RANK_ID)
                 {
                     rowPane.findPaneOfTypeByID(BUTTON_REMOVE_PLAYER, Button.class).setEnabled(false);
                     rowPane.findPaneOfTypeByID("rank", Text.class).setText(rank.getName());
@@ -546,7 +546,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
         if (rank != player.getRank())
         {
             player.setRank(rank);
-            Network.getNetwork().sendToServer(new PermissionsMessage.ChangePlayerRank(townHall.getColony(), player.getID(), rank));
+            Network.getNetwork().sendToServer(new PermissionsMessage.ChangePlayerRank(building.getColony(), player.getID(), rank));
         }
     }
 
@@ -566,7 +566,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
     private void addPlayerCLicked()
     {
         final TextField input = findPaneOfTypeByID(INPUT_ADDPLAYER_NAME, TextField.class);
-        Network.getNetwork().sendToServer(new PermissionsMessage.AddPlayer(townHall.getColony(), input.getText()));
+        Network.getNetwork().sendToServer(new PermissionsMessage.AddPlayer(building.getColony(), input.getText()));
         input.setText("");
     }
 
@@ -585,7 +585,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
             {
                 users.remove(user);
                 userList.removeChild(button.getParent());
-                Network.getNetwork().sendToServer(new PermissionsMessage.RemovePlayer(townHall.getColony(), user.getID()));
+                Network.getNetwork().sendToServer(new PermissionsMessage.RemovePlayer(building.getColony(), user.getID()));
             }
         }
     }

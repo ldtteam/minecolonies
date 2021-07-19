@@ -1,4 +1,4 @@
-<window inherit="minecolonies:gui/layouthuts/layouthutpageactionsmin.xml">
+<window>
     <layout source="minecolonies:gui/layouthuts/layouthutpageactionsmin.xml"/>
 
     <label size="164 11" pos="13 32" textalign="MIDDLE" color="black"

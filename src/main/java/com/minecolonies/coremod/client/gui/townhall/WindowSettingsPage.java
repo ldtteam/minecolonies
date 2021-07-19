@@ -146,7 +146,7 @@ public class WindowSettingsPage extends AbstractWindowTownHall
      */
     private void onDropDownListChanged(final DropDownList dropDownList)
     {
-        Network.getNetwork().sendToServer(new TeamColonyColorChangeMessage(dropDownList.getSelectedIndex(), townHall));
+        Network.getNetwork().sendToServer(new TeamColonyColorChangeMessage(dropDownList.getSelectedIndex(), building));
     }
 
     /**
@@ -173,22 +173,22 @@ public class WindowSettingsPage extends AbstractWindowTownHall
     {
         super.onOpened();
 
-        if (townHall.getColony().isManualHiring())
+        if (building.getColony().isManualHiring())
         {
             findPaneOfTypeByID(BUTTON_TOGGLE_JOB, Button.class).setText(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HIRING_ON));
         }
 
-        if (!townHall.getColony().isPrintingProgress())
+        if (!building.getColony().isPrintingProgress())
         {
             findPaneOfTypeByID(BUTTON_TOGGLE_PRINT_PROGRESS, Button.class).setText(LanguageHandler.format(OFF_STRING));
         }
 
-        if (townHall.getColony().isManualHousing())
+        if (building.getColony().isManualHousing())
         {
             findPaneOfTypeByID(BUTTON_TOGGLE_HOUSING, Button.class).setText(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HIRING_ON));
         }
 
-        if (townHall.getColony().canMoveIn())
+        if (building.getColony().canMoveIn())
         {
             findPaneOfTypeByID(BUTTON_TOGGLE_MOVE_IN, Button.class).setText(LanguageHandler.format(ON_STRING));
         }
@@ -282,7 +282,7 @@ public class WindowSettingsPage extends AbstractWindowTownHall
      */
     private void openBannerPicker(@NotNull final Button button)
     {
-        Screen window = new WindowBannerPicker(townHall.getColony(), this);
+        Screen window = new WindowBannerPicker(building.getColony(), this);
         Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(window));
     }
 

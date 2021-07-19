@@ -483,6 +483,7 @@
   "com.minecolonies.coremod.gui.workerhuts.florist": "Flower Shop",
 
   "com.minecolonies.coremod.gui.workerhuts.minerminenode": "Mine Level",
+  "com.minecolonies.coremod.gui.workerhuts.minerrepairnode": "Repair",
   "com.minecolonies.coremod.gui.workerhuts.minerguards": "Guards",
   "com.minecolonies.coremod.gui.workerhuts.buildtype": "Building Style:",
   "com.minecolonies.coremod.gui.workerhuts.workerlevel": "Worker Level: %s",
@@ -634,7 +635,6 @@
   "com.minecolonies.coremod.gui.workerhuts.recall": "Recall Worker",
   "com.minecolonies.coremod.gui.workerhuts.workerassigned": "Worker Assigned:",
   "com.minecolonies.coremod.gui.workerhuts.manage": "Manage Workers",
-  "com.minecolonies.coremod.gui.workerhuts.minerhut": "Mine",
   "com.minecolonies.coremod.gui.inventory.scarecrow": "Scarecrow",
   "com.minecolonies.coremod.gui.workerhuts.farmerhut.fields": "Fields",
   "com.minecolonies.coremod.gui.workerhuts.farmerhut.assignmentmode": "Assign Fields to Farmer:",
@@ -691,7 +691,7 @@
   "com.minecolonies.coremod.workerhuts.recallfail": "Recall failed. Please make more space around the location.",
   "com.minecolonies.coremod.warehouse.full": "The Warehouse is full, please upgrade it!",
   "com.minecolonies.coremod.warehouse.full.max": "The Warehouse is full, please use an emerald block to make more space in the racks!",
-  "com.minecolonies.coremod.gui.workerhuts.buildingwarehouse": "Warehouse",
+  "com.minecolonies.coremod.gui.workerhuts.warehouse": "Warehouse",
 
   "com.minecolonies.coremod.gui.workerhuts.deliveryman": "Courier's Hut",
   "com.minecolonies.coremod.gui.workerhuts.cancelbuild": "Cancel Build",
@@ -1651,6 +1651,8 @@
   "com.minecolonies.coremod.entity.citizen.sleep": "All colonists are tucked into bed.",
   "com.minecolonies.coremod.entity.citizen.raining": "I don't like staying out in the rain, my clothes are gonna get wet.",
   "com.minecolonies.coremod.entity.citizen.raid": "Help! The colony is being raided. I am running for shelter.",
+  "com.minecolonies.coremod.entity.citizen.sleeping": "zZzz... I want to sleep... Why are you bothering me?",
+  "com.minecolonies.coremod.entity.citizen.mourning": "I'm still processing %ss death, I can't work today.",
 
   "com.minecolonies.coremod.gui.townhall.happiness.homelessness": "Housing",
   "com.minecolonies.coremod.gui.townhall.happiness.unemployment": "Unemployment",
@@ -2015,5 +2017,10 @@
   "com.minecolonies.core.crafting.setting.priority": "Priority",
   "com.minecolonies.core.crafting.setting.maxstock": "Warehouse Stock",
   "item.buildtool.missing": "Missing build-tool in player inventory!",
+  "com.minecolonies.coremod.gui.miner.guardassign": "Guards:",
+  "com.minecolonies.coremod.gui.workerhuts.miner.noguards": "You have to first set a guard to 'Guard Mine' Mode.",
+  "com.minecolonies.coremod.gui.miner.levels": "Levels",
+  "com.minecolonies.coremod.gui.workerhuts.miner": "Mine",
+  "com.minecolonies.coremod.gui.workerhuts.miner.repair.enqueued": "Added the repair request to the queue of the miner. Miner will pick it up once the current task is finished.",
   "com.minecolonies.coremod.gui.townhall.picktexturestyle": "Pick Citizen Style"
 }

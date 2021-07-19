@@ -57,7 +57,7 @@ public class WindowHappinessPage extends AbstractWindowTownHall
         int yPos = 62;
         for (final Map.Entry<String, Double> entry : happinessMap.entrySet())
         {
-            final double value = entry.getValue() / townHall.getColony().getCitizenCount();
+            final double value = entry.getValue() / building.getColony().getCitizenCount();
             final Image image = new Image();
             image.setSize(11, 11);
             image.setPosition(0, yPos);

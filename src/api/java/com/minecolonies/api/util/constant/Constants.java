@@ -97,11 +97,6 @@ public final class Constants
     public static String INSTANT_PLACEMENT = "instant";
 
     /**
-     * The oredict entry of an ore.
-     */
-    public static final String ORE_STRING = "ore";
-
-    /**
      * Max crafting cycle depth.
      */
     public static final int MAX_CRAFTING_CYCLE_DEPTH = 20;

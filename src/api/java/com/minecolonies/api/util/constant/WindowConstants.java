@@ -846,7 +846,7 @@ public final class WindowConstants
     /**
      * Warehouse constants
      */
-    public static final String HUT_WAREHOUSE_RESOURCE_SUFFIX = ":gui/windowhutwarehouse.xml";
+    public static final String HUT_WAREHOUSE_RESOURCE_SUFFIX = ":gui/layouthuts/layoutwarehouseoptions.xml";
     public static final String SORT_WAREHOUSE_BUTTON         = "sort";
 
     /**
@@ -986,7 +986,7 @@ public final class WindowConstants
     /**
      * The resource string.
      */
-    public static final String RESOURCE_STRING   = ":gui/windowhutuniversity.xml";
+    public static final String RESOURCE_STRING   = ":gui/layouthuts/layoutuniversity.xml";
 
     /**
      * The job modifier page.

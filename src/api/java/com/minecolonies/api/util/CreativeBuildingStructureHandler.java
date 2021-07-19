@@ -20,10 +20,12 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -77,7 +79,10 @@ public final class CreativeBuildingStructureHandler extends CreativeStructureHan
         final CompoundNBT teData = getBluePrint().getTileEntityData(worldPos, pos);
         if (teData != null && teData.contains(TAG_BLUEPRINTDATA))
         {
-            ((IBlueprintDataProvider) getWorld().getBlockEntity(worldPos)).readSchematicDataFromNBT(teData);
+            final TileEntity te = getWorld().getBlockEntity(worldPos);
+            ((IBlueprintDataProvider) te).readSchematicDataFromNBT(teData);
+            ((ServerWorld) getWorld()).getChunkSource().blockChanged(worldPos);
+            te.setChanged();
         }
 
         if (building != null)
