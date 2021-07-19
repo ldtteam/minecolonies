@@ -135,7 +135,7 @@ public class WindowSettingsPage extends AbstractWindowTownHall
     {
         if (dropDownList.getSelectedIndex() != initialTextureIndex)
         {
-            Network.getNetwork().sendToServer(new ColonyTextureStyleMessage(townHall.getColony(), TEXTURE_PACKS.get(dropDownList.getSelectedIndex())));
+            Network.getNetwork().sendToServer(new ColonyTextureStyleMessage(building.getColony(), TEXTURE_PACKS.get(dropDownList.getSelectedIndex())));
         }
     }
 
@@ -315,7 +315,7 @@ public class WindowSettingsPage extends AbstractWindowTownHall
         new Thread(() -> {
             try (final CloseableHttpClient httpclient = HttpClients.createDefault())
             {
-                final HttpGet httpget = new HttpGet("https://ldtteam-auth.chatchain.co/api/minecraft/" + player + "/features");
+                final HttpGet httpget = new HttpGet("https://auth.minecolonies.com/api/minecraft/" + player + "/features");
                 final InputStream responseBody = httpclient.execute(httpget).getEntity().getContent();
 
                 final BufferedReader reader = new BufferedReader(new InputStreamReader(responseBody));
