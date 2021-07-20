@@ -105,8 +105,8 @@ public final class ModBlocksInitializer
         ModBlocks.blockCompostedDirt = new BlockCompostedDirt().registerBlock(registry);
         ModBlocks.blockColonyBanner = new BlockColonyFlagBanner().registerBlock(registry);
         ModBlocks.blockColonyWallBanner = new BlockColonyFlagWallBanner().registerBlock(registry);
-        ModBlocks.blockIronGate = new BlockGate(IRON_GATE, 5f, 5, 4).registerBlock(registry);
-        ModBlocks.blockWoodenGate = new BlockGate(WOODEN_GATE, 4f, 5, 4).registerBlock(registry);
+        ModBlocks.blockIronGate = new BlockGate(IRON_GATE, 5f, 6, 8).registerBlock(registry);
+        ModBlocks.blockWoodenGate = new BlockGate(WOODEN_GATE, 4f, 6, 5).registerBlock(registry);
     }
 
     @SubscribeEvent
