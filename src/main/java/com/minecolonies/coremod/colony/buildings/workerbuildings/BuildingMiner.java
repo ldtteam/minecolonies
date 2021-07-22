@@ -71,11 +71,6 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
     private static final String MINER = "miner";
 
     /**
-     * True if shaft is at bottom limit.
-     */
-    private boolean clearedShaft = false;
-
-    /**
      * The location of the topmost cobblestone the ladder starts at.
      */
     private BlockPos cobbleLocation;
@@ -180,7 +175,6 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
     {
         super.deserializeNBT(compound);
 
-        clearedShaft = compound.getBoolean(TAG_CLEARED);
         ladderLocation = BlockPosUtil.readOrNull(compound, TAG_LLOCATION);
         cobbleLocation = BlockPosUtil.readOrNull(compound, TAG_CLOCATION);
     }
@@ -189,7 +183,6 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
     public CompoundNBT serializeNBT()
     {
         final CompoundNBT compound = super.serializeNBT();
-        compound.putBoolean(TAG_CLEARED, clearedShaft);
 
         BlockPosUtil.writeOptional(compound, TAG_CLOCATION, cobbleLocation);
         BlockPosUtil.writeOptional(compound, TAG_LLOCATION, ladderLocation);
@@ -294,26 +287,6 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         }
         cobbleLocation = cobblePos.iterator().next();
         ladderLocation = ladderPos.iterator().next();
-    }
-
-    /**
-     * Getter to check if the shaft has been cleared.
-     *
-     * @return true if so.
-     */
-    public boolean hasClearedShaft()
-    {
-        return clearedShaft;
-    }
-
-    /**
-     * Setter if the shaft has been cleared.
-     *
-     * @param clearedShaft true if so.
-     */
-    public void setClearedShaft(final boolean clearedShaft)
-    {
-        this.clearedShaft = clearedShaft;
     }
 
     @Override

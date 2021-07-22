@@ -33,11 +33,6 @@ public final class BuildingConstants
     public static final String TAG_LEVELS = "levels";
 
     /**
-     * The NBT Tag to store if the shaft has been cleared.
-     */
-    public static final String TAG_CLEARED = "clearedShaft";
-
-    /**
      * The NBT Tag to store the location of the cobblestone at the shaft.
      */
     public static final String TAG_CLOCATION = "cobblelocation";
