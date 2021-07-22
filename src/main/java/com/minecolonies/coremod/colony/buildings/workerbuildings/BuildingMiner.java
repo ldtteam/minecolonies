@@ -28,6 +28,7 @@ import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -176,8 +177,8 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         super.deserializeNBT(compound);
 
         clearedShaft = compound.getBoolean(TAG_CLEARED);
-        ladderLocation = BlockPosUtil.read(compound, TAG_LLOCATION);
-        cobbleLocation = BlockPosUtil.read(compound, TAG_CLOCATION);
+        ladderLocation = readOptionalBlockPos(compound, TAG_LLOCATION);
+        cobbleLocation = readOptionalBlockPos(compound, TAG_CLOCATION);
     }
 
     @Override
@@ -186,16 +187,28 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         final CompoundNBT compound = super.serializeNBT();
         compound.putBoolean(TAG_CLEARED, clearedShaft);
 
-        if (cobbleLocation != null)
-        {
-            BlockPosUtil.write(compound, TAG_CLOCATION, cobbleLocation);
-        }
+        writeOptionalBlockPos(compound, TAG_CLOCATION, cobbleLocation);
+        writeOptionalBlockPos(compound, TAG_LLOCATION, ladderLocation);
 
-        if (ladderLocation != null)
-        {
-            BlockPosUtil.write(compound, TAG_LLOCATION, ladderLocation);
-        }
         return compound;
+    }
+
+    @Nullable
+    private static BlockPos readOptionalBlockPos(@NotNull final CompoundNBT compound,
+                                                 @NotNull final String name)
+    {
+        final BlockPos result = BlockPosUtil.read(compound, name);
+        return result.equals(BlockPos.ZERO) ? null : result;
+    }
+
+    private static void writeOptionalBlockPos(@NotNull final CompoundNBT compound,
+                                              @NotNull final String name,
+                                              @Nullable final BlockPos value)
+    {
+        if (value != null)
+        {
+            BlockPosUtil.write(compound, name, value);
+        }
     }
 
     @NotNull
