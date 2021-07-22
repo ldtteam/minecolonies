@@ -110,8 +110,11 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
             return INVENTORY_FULL;
         }
 
-        final ICraftingBuildingModule module = getOwnBuilding().getFirstModuleOccurance(BuildingSifter.CraftingModule.class);
-        currentRecipeStorage = module.getFirstFulfillableRecipe(ItemStackUtils::isEmpty, 1, false);
+        if (currentRecipeStorage == null)
+        {
+            final ICraftingBuildingModule module = getOwnBuilding().getFirstModuleOccurance(BuildingSifter.CraftingModule.class);
+            currentRecipeStorage = module.getFirstFulfillableRecipe(ItemStackUtils::isEmpty, 1, false);
+        }
 
         if (currentRecipeStorage == null)
         {
@@ -148,6 +151,12 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
                 .filter(item -> !ItemStackUtils.compareItemStacksIgnoreStackSize(item, meshItem, false, true))
                 .findFirst().orElse(ItemStack.EMPTY);
 
+        if (meshItem.isEmpty() || inputItem.isEmpty())
+        {
+            currentRecipeStorage = null;
+            return getState();
+        }
+
         if (!inputItem.isEmpty() && (ItemStackUtils.isEmpty(worker.getMainHandItem()) || ItemStackUtils.compareItemStacksIgnoreStackSize(worker.getMainHandItem(), inputItem)))
         {
             worker.setItemInHand(Hand.MAIN_HAND, inputItem);
@@ -169,7 +178,11 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
             {
                 incrementActionsDoneAndDecSaturation();
             } 
-            currentRecipeStorage.fullfillRecipe(getLootContext(), sifterBuilding.getHandlers());
+            if (!currentRecipeStorage.fullfillRecipe(getLootContext(), sifterBuilding.getHandlers()))
+            {
+                currentRecipeStorage = null;
+                return getState();
+            }
 
             worker.decreaseSaturationForContinuousAction();
             worker.getCitizenExperienceHandler().addExperience(0.2);
