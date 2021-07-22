@@ -3,7 +3,9 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 import com.ldtteam.blockout.views.Window;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.util.PlacementSettings;
-import com.minecolonies.api.colony.*;
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
@@ -28,9 +30,11 @@ import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.*;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
@@ -177,8 +181,8 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         super.deserializeNBT(compound);
 
         clearedShaft = compound.getBoolean(TAG_CLEARED);
-        ladderLocation = readOptionalBlockPos(compound, TAG_LLOCATION);
-        cobbleLocation = readOptionalBlockPos(compound, TAG_CLOCATION);
+        ladderLocation = BlockPosUtil.readOrNull(compound, TAG_LLOCATION);
+        cobbleLocation = BlockPosUtil.readOrNull(compound, TAG_CLOCATION);
     }
 
     @Override
@@ -187,28 +191,10 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         final CompoundNBT compound = super.serializeNBT();
         compound.putBoolean(TAG_CLEARED, clearedShaft);
 
-        writeOptionalBlockPos(compound, TAG_CLOCATION, cobbleLocation);
-        writeOptionalBlockPos(compound, TAG_LLOCATION, ladderLocation);
+        BlockPosUtil.writeOptional(compound, TAG_CLOCATION, cobbleLocation);
+        BlockPosUtil.writeOptional(compound, TAG_LLOCATION, ladderLocation);
 
         return compound;
-    }
-
-    @Nullable
-    private static BlockPos readOptionalBlockPos(@NotNull final CompoundNBT compound,
-                                                 @NotNull final String name)
-    {
-        final BlockPos result = BlockPosUtil.read(compound, name);
-        return result.equals(BlockPos.ZERO) ? null : result;
-    }
-
-    private static void writeOptionalBlockPos(@NotNull final CompoundNBT compound,
-                                              @NotNull final String name,
-                                              @Nullable final BlockPos value)
-    {
-        if (value != null)
-        {
-            BlockPosUtil.write(compound, name, value);
-        }
     }
 
     @NotNull
