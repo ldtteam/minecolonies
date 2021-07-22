@@ -423,4 +423,16 @@ public interface IColony
      * @return set of positions
      */
     Set<Long> getTicketedChunks();
+
+    /**
+     * Set the texture style of the colony.
+     * @param style the style to set.
+     */
+    void setTextureStyle(String style);
+
+    /**
+     * Get the colony style.
+     * @return the string id of the style.
+     */
+    String getTextureStyleId();
 }
