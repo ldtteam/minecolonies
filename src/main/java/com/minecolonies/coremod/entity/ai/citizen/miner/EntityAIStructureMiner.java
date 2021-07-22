@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.miner;
 
 import com.minecolonies.api.advancements.AdvancementTriggers;
-import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
@@ -34,7 +33,8 @@ import java.util.List;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.research.util.ResearchConstants.MORE_ORES;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.INVALID_MINESHAFT;
+import static com.minecolonies.api.util.constant.TranslationConstants.NEEDS_BETTER_HUT;
 import static com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner.initStructure;
 import static com.minecolonies.coremod.util.WorkerUtil.getLastLadder;
 
@@ -362,15 +362,12 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
             if (buildingMiner.getFirstModuleOccurance(MinerLevelManagementModule.class).getNumberOfLevels() == 0)
             {
                 worker.getCitizenData().triggerInteraction(new StandardInteraction(new TranslationTextComponent(NEEDS_BETTER_HUT), ChatPriority.BLOCKING));
-                buildingMiner.setClearedShaft(false);
                 return IDLE;
             }
             worker.getCitizenData().setVisibleStatus(MINING);
-            buildingMiner.setClearedShaft(true);
             return MINER_MINING_NODE;
         }
         worker.getCitizenData().setVisibleStatus(MINING);
-        buildingMiner.setClearedShaft(false);
         return MINER_MINING_SHAFT;
     }
 

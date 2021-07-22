@@ -3,7 +3,9 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 import com.ldtteam.blockout.views.Window;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.util.PlacementSettings;
-import com.minecolonies.api.colony.*;
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
@@ -29,7 +31,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.*;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
@@ -64,11 +69,6 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
      * The job description.
      */
     private static final String MINER = "miner";
-
-    /**
-     * True if shaft is at bottom limit.
-     */
-    private boolean clearedShaft = false;
 
     /**
      * The location of the topmost cobblestone the ladder starts at.
@@ -175,26 +175,18 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
     {
         super.deserializeNBT(compound);
 
-        clearedShaft = compound.getBoolean(TAG_CLEARED);
-        ladderLocation = BlockPosUtil.read(compound, TAG_LLOCATION);
-        cobbleLocation = BlockPosUtil.read(compound, TAG_CLOCATION);
+        ladderLocation = BlockPosUtil.readOrNull(compound, TAG_LLOCATION);
+        cobbleLocation = BlockPosUtil.readOrNull(compound, TAG_CLOCATION);
     }
 
     @Override
     public CompoundNBT serializeNBT()
     {
         final CompoundNBT compound = super.serializeNBT();
-        compound.putBoolean(TAG_CLEARED, clearedShaft);
 
-        if (cobbleLocation != null)
-        {
-            BlockPosUtil.write(compound, TAG_CLOCATION, cobbleLocation);
-        }
+        BlockPosUtil.writeOptional(compound, TAG_CLOCATION, cobbleLocation);
+        BlockPosUtil.writeOptional(compound, TAG_LLOCATION, ladderLocation);
 
-        if (ladderLocation != null)
-        {
-            BlockPosUtil.write(compound, TAG_LLOCATION, ladderLocation);
-        }
         return compound;
     }
 
@@ -295,26 +287,6 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         }
         cobbleLocation = cobblePos.iterator().next();
         ladderLocation = ladderPos.iterator().next();
-    }
-
-    /**
-     * Getter to check if the shaft has been cleared.
-     *
-     * @return true if so.
-     */
-    public boolean hasClearedShaft()
-    {
-        return clearedShaft;
-    }
-
-    /**
-     * Setter if the shaft has been cleared.
-     *
-     * @param clearedShaft true if so.
-     */
-    public void setClearedShaft(final boolean clearedShaft)
-    {
-        this.clearedShaft = clearedShaft;
     }
 
     @Override
