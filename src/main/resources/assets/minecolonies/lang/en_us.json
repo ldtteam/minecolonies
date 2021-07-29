@@ -2021,5 +2021,7 @@
   "com.minecolonies.coremod.gui.miner.levels": "Levels",
   "com.minecolonies.coremod.gui.workerhuts.miner": "Mine",
   "com.minecolonies.coremod.gui.workerhuts.miner.repair.enqueued": "Added the repair request to the queue of the miner. Miner will pick it up once the current task is finished.",
-  "com.minecolonies.coremod.gui.townhall.picktexturestyle": "Pick Citizen Style"
+  "com.minecolonies.coremod.gui.townhall.picktexturestyle": "Pick Citizen Style",
+  
+  "enchantment.minecolonies.raider_damage_enchant.desc":"Increases damage against colony raiders."
 }
