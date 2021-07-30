@@ -2,8 +2,6 @@ package com.minecolonies.coremod.entity.mobs.barbarians;
 
 import com.minecolonies.api.entity.mobs.barbarians.AbstractEntityBarbarian;
 import com.minecolonies.api.entity.mobs.barbarians.IChiefBarbarianEntity;
-import com.minecolonies.coremod.entity.mobs.aitasks.RaiderMeleeAI;
-import com.minecolonies.coremod.entity.mobs.aitasks.RaiderWalkAI;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.world.World;
@@ -27,8 +25,6 @@ public class EntityChiefBarbarian extends AbstractEntityBarbarian implements ICh
     public EntityChiefBarbarian(final EntityType<? extends EntityChiefBarbarian> type, final World worldIn)
     {
         super(type, worldIn);
-        new RaiderMeleeAI<>(this, this.getAI());
-        new RaiderWalkAI(this, this.getAI());
     }
 
     @Override

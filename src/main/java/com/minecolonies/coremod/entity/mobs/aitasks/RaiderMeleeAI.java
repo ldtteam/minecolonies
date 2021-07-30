@@ -89,4 +89,10 @@ public class RaiderMeleeAI<T extends AbstractEntityMinecoloniesMob & IThreatTabl
     {
         return true;
     }
+
+    @Override
+    protected int getSearchRange()
+    {
+        return 0;
+    }
 }

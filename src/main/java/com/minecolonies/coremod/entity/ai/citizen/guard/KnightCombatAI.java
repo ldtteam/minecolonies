@@ -177,6 +177,7 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
 
         user.stopUsingItem();
         user.decreaseSaturationForContinuousAction();
+        user.getCitizenData().setVisibleStatus(KNIGHT_COMBAT);
         user.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, 1);
     }
 
@@ -293,7 +294,7 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
     protected double getCombatMovementSpeed()
     {
         double levelAdjustment = user.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Adaptability) * SPEED_LEVEL_BONUS;
-        levelAdjustment += (user.getCitizenData().getWorkBuilding().getBuildingLevel() * 2 - 1) * SPEED_LEVEL_BONUS;
+        levelAdjustment += (user.getCitizenData().getWorkBuilding().getBuildingLevel() - 1) * SPEED_LEVEL_BONUS;
 
         levelAdjustment = Math.min(levelAdjustment, 0.3);
         return COMBAT_SPEED + levelAdjustment;
@@ -329,12 +330,15 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
         return false;
     }
 
-    /**
-     * Actions on changing to a new target entity
-     */
     @Override
     protected void onTargetChange()
     {
         CombatUtils.notifyGuardsOfTarget(user, target, PATROL_DEVIATION_RAID_POINT);
+    }
+
+    @Override
+    protected int getSearchRange()
+    {
+        return 0;
     }
 }

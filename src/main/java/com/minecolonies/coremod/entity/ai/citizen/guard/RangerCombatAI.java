@@ -223,7 +223,7 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
      */
     private double calculateDamage()
     {
-        int damage = (user.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Agility) / 50) * 10;
+        int damage = user.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Agility) / 5;
 
         final ItemStack heldItem = user.getItemInHand(Hand.MAIN_HAND);
         damage += EnchantmentHelper.getDamageBonus(heldItem, target.getMobType()) / 2.5;
@@ -311,9 +311,6 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
         return false;
     }
 
-    /**
-     * Actions on changing to a new target entity
-     */
     @Override
     protected void onTargetChange()
     {

@@ -87,6 +87,35 @@ public class MobAIRegistry implements IMobAIRegistry
 
     @NotNull
     @Override
+    public void applyToMob(final AbstractEntityMinecoloniesMob mob)
+    {
+        for (final TaskInformationWrapper<AbstractEntityMinecoloniesMob, IStateAI> task : mobStateAITasks)
+        {
+            if (task.entityPredicate.test(mob))
+            {
+                task.aiTaskProducer.apply(mob);
+            }
+        }
+
+        for (final TaskInformationWrapper<AbstractEntityMinecoloniesMob, Goal> task : mobAiTargetTasks)
+        {
+            if (task.entityPredicate.test(mob))
+            {
+                mob.goalSelector.addGoal(task.priority, task.aiTaskProducer.apply(mob));
+            }
+        }
+
+        for (final TaskInformationWrapper<AbstractEntityMinecoloniesMob, Goal> task : mobAiTasks)
+        {
+            if (task.entityPredicate.test(mob))
+            {
+                mob.goalSelector.addGoal(task.priority, task.aiTaskProducer.apply(mob));
+            }
+        }
+    }
+
+    @NotNull
+    @Override
     public Multimap<Integer, Goal> getEntityAiTargetTasksForMobs(final AbstractEntityMinecoloniesMob mob)
     {
         return mobAiTargetTasks.stream().filter(wrapper -> wrapper.getEntityPredicate().test(mob)).collect(MultimapCollector.toMultimap(

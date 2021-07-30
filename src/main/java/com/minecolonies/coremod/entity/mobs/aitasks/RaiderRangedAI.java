@@ -25,9 +25,14 @@ import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
 public class RaiderRangedAI<T extends AbstractEntityMinecoloniesMob & IThreatTableEntity> extends AttackMoveAI<T>
 {
     /**
-     * Max delay between attacks is 4s, aka 80 ticks.
+     * Max delay between attacks is 3s, aka 60 ticks.
      */
-    private static final int MAX_ATTACK_DELAY = 80;
+    private static final int MAX_ATTACK_DELAY = 60;
+
+    /**
+     * Min delay between attacks is 1s, aka 20 ticks.
+     */
+    private static final int MIN_ATTACK_DELAY = 20;
 
     /**
      * Difficulty level at which arrows do pierce
@@ -137,7 +142,7 @@ public class RaiderRangedAI<T extends AbstractEntityMinecoloniesMob & IThreatTab
             return 10;
         }
 
-        return MAX_ATTACK_DELAY - MineColonies.getConfig().getServer().barbarianHordeDifficulty.get() * 4;
+        return (int) Math.max(MIN_ATTACK_DELAY, MAX_ATTACK_DELAY - MineColonies.getConfig().getServer().barbarianHordeDifficulty.get() * 4 * user.getDifficulty());
     }
 
     @Override

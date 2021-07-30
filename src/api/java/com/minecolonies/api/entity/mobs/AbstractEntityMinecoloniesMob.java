@@ -1,5 +1,6 @@
 package com.minecolonies.api.entity.mobs;
 
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -172,7 +173,7 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements
         this.goalSelector = new CustomGoalSelector(this.goalSelector);
         this.targetSelector = new CustomGoalSelector(this.targetSelector);
         this.xpReward = BARBARIAN_EXP_DROP;
-        RaiderMobUtils.setupMobAi(this);
+        IMinecoloniesAPI.getInstance().getMobAIRegistry().applyToMob(this);
         this.setInvulnerable(true);
         RaiderMobUtils.setEquipment(this);
     }

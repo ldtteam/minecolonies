@@ -71,12 +71,12 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     /**
      * How far off patrols are alterated to match a raider attack point, sq dist
      */
-    public static final int PATROL_DEVIATION_RAID_POINT = 200 * 200;
+    public static final int PATROL_DEVIATION_RAID_POINT = 40 * 40;
 
     /**
      * Max derivation of current position when following..
      */
-    private static final int MAX_FOLLOW_DERIVATION = 80;
+    private static final int MAX_FOLLOW_DERIVATION = 30;
 
     /**
      * Max derivation of current position when guarding.
@@ -97,11 +97,6 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      * The current blockPos we're patrolling at.
      */
     private BlockPos currentPatrolPoint = null;
-
-    /**
-     * The citizen this guard is helping out.
-     */
-    private WeakReference<EntityCitizen> helpCitizen = new WeakReference<>(null);
 
     /**
      * The guard building assigned to this job.
@@ -569,17 +564,15 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     /**
      * Assigning the guard to help a citizen.
      *
-     * @param citizen  the citizen to help.
      * @param attacker the citizens attacker.
      */
-    public void startHelpCitizen(final EntityCitizen citizen, final LivingEntity attacker)
+    public void startHelpCitizen(final LivingEntity attacker)
     {
         if (canHelp())
         {
             ((IThreatTableEntity) worker).getThreatTable().addThreat(attacker, 20);
             registerTarget(new AIOneTimeEventTarget(CombatAIStates.ATTACKING));
             target = attacker;
-            helpCitizen = new WeakReference<>(citizen);
         }
     }
 

@@ -63,6 +63,12 @@ public interface IMobAIRegistry
       Predicate<AbstractEntityMinecoloniesMob> applyPredicate);
 
     /**
+     * Applies the registered AI's to the given mob
+     */
+    @NotNull
+    void applyToMob(AbstractEntityMinecoloniesMob mob);
+
+    /**
      * Method to get the AI target tasks registered for a given mob. Used by minecolonies to get the AIs that are required for a given mob.
      *
      * @param mob The mob that the system is initializing and requests the AI for.
