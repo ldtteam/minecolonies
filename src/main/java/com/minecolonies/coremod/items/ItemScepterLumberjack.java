@@ -48,7 +48,7 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies
         }
 
         final ItemStack scepter = context.getPlayer().getItemInHand(context.getHand());
-        LanguageHandler.sendPlayerMessage(context.getPlayer(), "item.minecolonies.scepterlumberjack.usedend");
+        LanguageHandler.sendPlayerMessage(context.getPlayer(), "item.minecolonies.scepterlumberjack.usedstart");
         if (setPosition(scepter.getOrCreateTag(), NBT_START_POS, context.getClickedPos(), context.getPlayer()))
         {
             storeRestrictedArea(context.getPlayer(), scepter.getOrCreateTag(), context.getLevel());
@@ -62,7 +62,7 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies
         if (!world.isClientSide)
         {
             final ItemStack tool = player.getMainHandItem();
-            LanguageHandler.sendPlayerMessage(player, "item.minecolonies.scepterlumberjack.usedstart");
+            LanguageHandler.sendPlayerMessage(player, "item.minecolonies.scepterlumberjack.usedend");
             if (setPosition(tool.getOrCreateTag(), NBT_END_POS, pos, player))
             {
                 storeRestrictedArea(player, tool.getOrCreateTag(), world);

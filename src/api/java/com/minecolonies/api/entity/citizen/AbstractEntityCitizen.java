@@ -44,9 +44,7 @@ import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
@@ -61,11 +59,6 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      * Citizens swim speed factor
      */
     private static final double CITIZEN_SWIM_BONUS = 2.0;
-
-    /**
-     * Used texture mapping.
-     */
-    private Map<String, String> textureMapping = new HashMap<>();
 
     public static final DataParameter<Integer>  DATA_LEVEL           = EntityDataManager.defineId(AbstractEntityCitizen.class, DataSerializers.INT);
     public static final DataParameter<Integer>  DATA_TEXTURE         = EntityDataManager.defineId(AbstractEntityCitizen.class, DataSerializers.INT);
@@ -184,41 +177,6 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
         return false;
     }
 
-    public float getPreviousRotationPitch()
-    {
-        return xRotO;
-    }
-
-    public float getPreviousRotationYaw()
-    {
-        return yRotO;
-    }
-
-    public float getPreviousRenderYawOffset()
-    {
-        return yBodyRotO;
-    }
-
-    public float getRenderYawOffset()
-    {
-        return yBodyRot;
-    }
-
-    public double getPreviousPosX()
-    {
-        return xo;
-    }
-
-    public double getPreviousPosY()
-    {
-        return yo;
-    }
-
-    public double getPreviousPosZ()
-    {
-        return zo;
-    }
-
     @NotNull
     @Override
     public ActionResultType interactAt(final PlayerEntity player, final Vector3d vec, final Hand hand)
@@ -273,7 +231,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
         if (texture == null
               || textureDirty
               || !texture.getPath().contains(renderMeta)
-              || !texture.getPath().contains(textureMapping.getOrDefault(getEntityData().get(DATA_STYLE), "default"))
+              || !texture.getPath().contains(getEntityData().get(DATA_STYLE))
               || !texture.getPath().contains(getEntityData().get(DATA_TEXTURE_SUFFIX)))
         {
             setTexture();
@@ -287,16 +245,6 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     public void setTextureDirty()
     {
         this.textureDirty = true;
-    }
-
-    /**
-     * Set the used texture mapping (from style to actual folder).
-     * @param style the colony style.
-     * @param used the actual folder.
-     */
-    public void setTextureMapping(final String style, final String used)
-    {
-        this.textureMapping.put(style, used);
     }
 
     /**

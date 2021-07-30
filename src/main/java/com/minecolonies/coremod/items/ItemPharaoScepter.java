@@ -19,6 +19,7 @@ import net.minecraft.util.SoundEvents;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 /**
@@ -98,9 +99,14 @@ public class ItemPharaoScepter extends BowItem
                         abstractarrowentity.setSecondsOnFire(100);
                     }
 
-                    stack.hurtAndBreak(1, playerentity, (p_220009_1_) -> {
-                        p_220009_1_.broadcastBreakEvent(playerentity.getUsedItemHand());
+                    stack.hurtAndBreak(1, playerentity, new Consumer<PlayerEntity>() {
+                        @Override
+                        public void accept(final PlayerEntity player)
+                        {
+                            player.broadcastBreakEvent(playerentity.getUsedItemHand());
+                        }
                     });
+
                     abstractarrowentity.pickup = AbstractArrowEntity.PickupStatus.CREATIVE_ONLY;
 
                     worldIn.addFreshEntity(abstractarrowentity);

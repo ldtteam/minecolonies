@@ -30,6 +30,25 @@
         </view>
     </dropdown>
     <buttonimage id="nextColor" size="14 15" pos="392 42" label="&gt;" source="minecolonies:textures/gui/builderhut/builder_button_mini.png" textcolor="black"/>
-
     <button id="bannerPicker" label="$(com.minecolonies.coremod.gui.townhall.edit_flag)" pos="292 70" size="114 20"/>
+
+    <label label="$(com.minecolonies.coremod.gui.townhall.picktexturestyle)" pos="276 100" size="148 11" textalign="MIDDLE" color="black"/>
+    <dropdown id="textureStylePicker"
+              size="86 17"
+              pos="306 114"
+              maxContentHeight="75"
+              dropDownSize="86 75"
+              source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
+              disabled="minecolonies:textures/gui/builderhut/builder_button_medium_dark.png"
+              textcolor="black"
+              scrollbarOffset="9 0"
+              dropfixx="75"
+              enabled="false">
+        <view size="100% 15">
+            <label id="id" size="100% 100%" label="" pos="0 0" textalign="MIDDLE"/>
+            <buttonimage id="button" size="86 17" pos="0 0" source="minecolonies:textures/gui/builderhut/builder_button_medium.png" textcolor="black"/>
+        </view>
+    </dropdown>
+
+
 </window>

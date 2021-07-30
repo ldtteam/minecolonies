@@ -595,7 +595,7 @@
   "com.minecolonies.coremod.gui.townhall.feuds": "Feuds:",
   "com.minecolonies.coremod.gui.townhall.tp": "Do you really want to teleport to %s? [YES]",
 
-  "com.minecolonies.coremod.workorderadded": "Build request created for %s at colony %s!",
+  "com.minecolonies.coremod.workorderadded": "Build request created for %s at colony %s! The hut block is at %s %s %s.",
   "com.minecolonies.coremod.decoorderadded": "Decoration request created for colony %s!",
 
   "com.minecolonies.coremod.gui.hiring.on": "Manual",
@@ -629,7 +629,6 @@
   "com.minecolonies.coremod.gui.workerhuts.minernodelist": "Levels",
   "com.minecolonies.coremod.gui.workerhuts.resourcelist": "Required Resources",
   "com.minecolonies.coremod.gui.workerhuts.fisherman": "Fisher's Hut",
-  "com.minecolonies.coremod.gui.workerhuts.workorderadded": "Build Order added to queue.",
   "com.minecolonies.coremod.gui.workerhuts.recall": "Recall Worker",
   "com.minecolonies.coremod.gui.workerhuts.workerassigned": "Worker Assigned:",
   "com.minecolonies.coremod.gui.workerhuts.manage": "Manage Workers",
@@ -1971,7 +1970,7 @@
   "com.minecolonies.coremod.gui.tooldesc.scepterbeekeeper": "Right-click a beehive with the tool to add it to the hut. Right-click any other block to discard the tool.",
   "com.minecolonies.coremod.setting.minecolonies:replant": "Replanting:",
   "com.minecolonies.coremod.setting.minecolonies:restrict": "Zoning Mode:",
-  "com.minecolonies.coremod.gui.tooldesc.scepterlumberjack": "Restrict the Forester's working area by left-clicking one corner and right-clicking the opposite corner with the tool.",
+  "com.minecolonies.coremod.gui.tooldesc.scepterlumberjack": "Restrict the Forester's working area by right-clicking one corner and left-clicking the opposite corner with the tool.",
   "com.minecolonies.coremod.gui.tooldesc.scepterguard": "Left click positions to mark as guard or patrol points. Left-click the same position to close and discard.",
 
   "com.minecolonies.coremod.setting.minecolonies:fertilize": "Request Fertilizer",
@@ -2019,5 +2018,6 @@
   "com.minecolonies.coremod.gui.workerhuts.miner.noguards": "You have to first set a guard to 'Guard Mine' Mode.",
   "com.minecolonies.coremod.gui.miner.levels": "Levels",
   "com.minecolonies.coremod.gui.workerhuts.miner": "Mine",
-  "com.minecolonies.coremod.gui.workerhuts.miner.repair.enqueued": "Added the repair request to the queue of the miner. Miner will pick it up once the current task is finished."
+  "com.minecolonies.coremod.gui.workerhuts.miner.repair.enqueued": "Added the repair request to the queue of the miner. Miner will pick it up once the current task is finished.",
+  "com.minecolonies.coremod.gui.townhall.picktexturestyle": "Pick Citizen Style"
 }

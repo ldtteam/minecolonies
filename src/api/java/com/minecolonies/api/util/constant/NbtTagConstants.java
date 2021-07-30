@@ -147,6 +147,11 @@ public final class NbtTagConstants
     public static final String TAG_STYLE = "style";
 
     /**
+     * The tag to store the texture style of the colonists.
+     */
+    public static final String TAG_COL_TEXT = "textstyle";
+
+    /**
      * Tag to store if raidable to a colony.
      */
     public static final String TAG_RAIDABLE = "raidable";
