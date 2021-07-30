@@ -1,4 +1,4 @@
-package com.minecolonies.api.entity.combat.combat;
+package com.minecolonies.api.entity.combat.threat;
 
 /**
  * Entities implement this for the necessary hooks

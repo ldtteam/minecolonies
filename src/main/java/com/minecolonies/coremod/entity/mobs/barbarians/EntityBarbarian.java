@@ -2,6 +2,8 @@ package com.minecolonies.coremod.entity.mobs.barbarians;
 
 import com.minecolonies.api.entity.mobs.barbarians.AbstractEntityBarbarian;
 import com.minecolonies.api.entity.mobs.barbarians.IMeleeBarbarianEntity;
+import com.minecolonies.coremod.entity.mobs.aitasks.RaiderMeleeAI;
+import com.minecolonies.coremod.entity.mobs.aitasks.RaiderWalkAI;
 import net.minecraft.entity.EntityType;
 import net.minecraft.world.World;
 
@@ -20,5 +22,8 @@ public class EntityBarbarian extends AbstractEntityBarbarian implements IMeleeBa
     public EntityBarbarian(final EntityType<? extends EntityBarbarian> type, final World worldIn)
     {
         super(type, worldIn);
+
+        new RaiderMeleeAI<EntityBarbarian>(this, this.getAI());
+        new RaiderWalkAI(this, this.getAI());
     }
 }

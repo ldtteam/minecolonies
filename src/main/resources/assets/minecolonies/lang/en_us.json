@@ -202,8 +202,6 @@
   "minecolonies.config.mobattackcitizens.comment": "Should mobs attack citizens?",
   "minecolonies.config.citizencallforhelp": "Citizens Call for Help",
   "minecolonies.config.citizencallforhelp.comment": "Should citizens call Guards for help when attacked?",
-  "minecolonies.config.rangerenchants": "Archer Enchants",
-  "minecolonies.config.rangerenchants.comment": "Should Archer Guards benefit from Power/Punch/Flame enchants (on bows)?",
   "minecolonies.config.rangerdamagemult": "Archer Attack Multiplier",
   "minecolonies.config.rangerdamagemult.comment": "Attack damage multiplier for Archer Guards.",
   "minecolonies.config.knightdamagemult": "Knight Attack Multiplier",
