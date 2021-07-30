@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.EntityUtils;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.math.BlockPos;
@@ -133,7 +134,7 @@ public final class TeleportHelper
      */
     public static void colonyTeleport(@NotNull final ServerPlayerEntity player, @NotNull final IColony colony)
     {
-        final BlockPos position;
+        BlockPos position;
 
         if (colony.getBuildingManager().getTownHall() != null)
         {
@@ -146,6 +147,16 @@ public final class TeleportHelper
 
         final ServerWorld world = player.getServer().getLevel(colony.getDimension());
 
+        position = BlockPosUtil.findAround(world,
+          position,
+          5,
+          5,
+          (predWorld, predPos) -> predWorld.getBlockState(predPos).getMaterial() == Material.AIR && predWorld.getBlockState(predPos.above()).getMaterial() == Material.AIR);
+
+        if (position == null)
+        {
+            return;
+        }
 
         ChunkPos chunkpos = new ChunkPos(position);
         world.getChunkSource().addRegionTicket(TicketType.POST_TELEPORT, chunkpos, 1, player.getId());
@@ -155,7 +166,7 @@ public final class TeleportHelper
             player.stopSleepInBed(true, true);
         }
 
-        player.teleportTo(world, position.getX(), position.getY() + 2.0, position.getZ(), player.yRot, player.xRot);
+        player.teleportTo(world, position.getX(), position.getY(), position.getZ(), player.yRot, player.xRot);
         LanguageHandler.sendPlayerMessage(player, "com.minecolonies.command.teleport.success", colony.getName());
     }
 }

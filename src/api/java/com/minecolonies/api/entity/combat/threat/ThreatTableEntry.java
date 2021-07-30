@@ -1,6 +1,8 @@
-package com.minecolonies.api.entity.combat.combat;
+package com.minecolonies.api.entity.combat.threat;
 
 import net.minecraft.entity.LivingEntity;
+
+import java.util.Objects;
 
 /**
  * Data entry in the threat table
@@ -24,7 +26,7 @@ public class ThreatTableEntry
 
     public ThreatTableEntry(final LivingEntity entity)
     {
-        this.entity = entity;
+        this.entity = Objects.requireNonNull(entity);
         this.lastSeen = entity.level.getGameTime();
     }
 

@@ -1,4 +1,4 @@
-package com.minecolonies.api.entity.combat.combat;
+package com.minecolonies.api.entity.combat.threat;
 
 import net.minecraft.entity.LivingEntity;
 
@@ -10,7 +10,7 @@ import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 /**
  * Threat table class, basically a list of entities with an associated threat value
  */
-public class ThreatTable
+public class ThreatTable<T extends LivingEntity & IThreatTableEntity>
 {
     /**
      * Melee range
@@ -35,9 +35,9 @@ public class ThreatTable
     /**
      * The owner entity of this table
      */
-    private final LivingEntity owner;
+    private final T owner;
 
-    public ThreatTable(final LivingEntity owner)
+    public ThreatTable(final T owner)
     {
         this.owner = owner;
     }
@@ -45,8 +45,8 @@ public class ThreatTable
     /**
      * Adds X threat to the given entity
      *
-     * @param attacker entity to add the value to
-     * @param additionalThreat   threat value to add
+     * @param attacker         entity to add the value to
+     * @param additionalThreat threat value to add
      */
     public void addThreat(final LivingEntity attacker, final int additionalThreat)
     {
@@ -68,7 +68,8 @@ public class ThreatTable
         {
             threatTableEntry = new ThreatTableEntry(attacker);
             threatList.add(threatTableEntry);
-            threatTableEntry.addThreat(Math.max(0, 10 - (owner.blockPosition().distManhattan(attacker.blockPosition()) / 4)));
+            threatTableEntry.addThreat(Math.max(0, 7 - (owner.blockPosition().distManhattan(attacker.blockPosition()) / 4)));
+            threatTableEntry.addThreat((int) Math.max(0, 2 - (3 * (attacker.getHealth() / attacker.getMaxHealth()))));
         }
 
         threatTableEntry.addThreat(additionalThreat);
@@ -252,6 +253,15 @@ public class ThreatTable
         }
 
         threatList.remove(currentTargetIndex);
+        currentTargetIndex = 0;
+    }
+
+    /**
+     * Reset all entries in the table
+     */
+    public void resetTable()
+    {
+        threatList = new ArrayList<>();
         currentTargetIndex = 0;
     }
 }

@@ -156,7 +156,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
 
         return setPathJob(new PathJobRandomPos(CompatibilityUtils.getWorldFromEntity(ourEntity),
           AbstractPathJob.prepareStart(ourEntity),
-          1,
+          3,
           (int) ourEntity.getAttribute(Attributes.FOLLOW_RANGE).getValue(),
           range,
           ourEntity, pos), pos, speedFactor);

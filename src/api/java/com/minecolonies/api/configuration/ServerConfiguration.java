@@ -110,7 +110,6 @@ public class ServerConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.BooleanValue shouldRaidersBreakDoors;
     public final ForgeConfigSpec.BooleanValue mobAttackCitizens;
     public final ForgeConfigSpec.BooleanValue citizenCallForHelp;
-    public final ForgeConfigSpec.BooleanValue rangerEnchants;
     public final ForgeConfigSpec.DoubleValue  rangerDamageMult;
     public final ForgeConfigSpec.DoubleValue  knightDamageMult;
     public final ForgeConfigSpec.DoubleValue  guardHealthMult;
@@ -254,7 +253,6 @@ public class ServerConfiguration extends AbstractConfiguration
         mobAttackCitizens = defineBoolean(builder, "mobattackcitizens", true);
         shouldRaidersBreakDoors = defineBoolean(builder, "shouldraiderbreakdoors", true);
         citizenCallForHelp = defineBoolean(builder, "citizencallforhelp", true);
-        rangerEnchants = defineBoolean(builder, "rangerenchants", true);
         rangerDamageMult = defineDouble(builder, "rangerdamagemult", 1.0, 0.1, 5.0);
         knightDamageMult = defineDouble(builder, "knightdamagemult", 1.0, 0.1, 5.0);
         guardHealthMult = defineDouble(builder, "guardhealthmult", 1.0, 0.1, 5.0);
@@ -457,7 +455,7 @@ public class ServerConfiguration extends AbstractConfiguration
                      "minecraft:gold_ingot;2",
                      "minecraft:redstone;2",
                      "minecraft:lapis_lazuli;2",
-                     "minecraft:cake;7",
+                     "minecraft:cake;11",
                      "minecraft:sunflower;5",
                      "minecraft:honeycomb;6",
                      "minecraft:quartz;3"),

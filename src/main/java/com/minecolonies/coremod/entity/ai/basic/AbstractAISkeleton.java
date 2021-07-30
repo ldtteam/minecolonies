@@ -19,8 +19,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.EnumSet;
 
-import net.minecraft.entity.ai.goal.Goal.Flag;
-
 /**
  * Skeleton class for worker ai. Here general target execution will be handled. No utility on this level!
  *
@@ -183,5 +181,10 @@ public abstract class AbstractAISkeleton<J extends IJob<?>> extends Goal
     public void resetAI()
     {
         stateMachine.reset();
+    }
+
+    public ITickRateStateMachine<IAIState> getStateAI()
+    {
+        return stateMachine;
     }
 }
