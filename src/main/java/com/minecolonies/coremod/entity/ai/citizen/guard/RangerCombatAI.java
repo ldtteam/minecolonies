@@ -129,7 +129,6 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
         }
 
         user.getCitizenData().setVisibleStatus(ARCHER_COMBAT);
-        user.lookAt(target, (float) TURN_AROUND, (float) TURN_AROUND);
         user.swing(Hand.MAIN_HAND);
 
         int amountOfArrows = 1;

@@ -13,7 +13,7 @@ import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 public class ThreatTable<T extends LivingEntity & IThreatTableEntity>
 {
     /**
-     * Melee range
+     * Melee range sq
      */
     private static final int MELEE_RANGE = 8;
 
@@ -21,6 +21,16 @@ public class ThreatTable<T extends LivingEntity & IThreatTableEntity>
      * Max tracking time
      */
     private static final int MAX_TRACKING_TICKS = TICKS_SECOND * 120;
+
+    /**
+     * Max distance bonus threat
+     */
+    private static final int MAX_DIST_THREAT = 7;
+
+    /**
+     * Max health bonus threat
+     */
+    private static final int MAX_HEALTH_THREAT = 2;
 
     /**
      * List holding the threat entries
@@ -68,8 +78,8 @@ public class ThreatTable<T extends LivingEntity & IThreatTableEntity>
         {
             threatTableEntry = new ThreatTableEntry(attacker);
             threatList.add(threatTableEntry);
-            threatTableEntry.addThreat(Math.max(0, 7 - (owner.blockPosition().distManhattan(attacker.blockPosition()) / 4)));
-            threatTableEntry.addThreat((int) Math.max(0, 2 - (3 * (attacker.getHealth() / attacker.getMaxHealth()))));
+            threatTableEntry.addThreat(Math.max(0, MAX_DIST_THREAT - (owner.blockPosition().distManhattan(attacker.blockPosition()) / 4)));
+            threatTableEntry.addThreat((int) Math.max(0, MAX_HEALTH_THREAT - (3 * (attacker.getHealth() / attacker.getMaxHealth()))));
         }
 
         threatTableEntry.addThreat(additionalThreat);

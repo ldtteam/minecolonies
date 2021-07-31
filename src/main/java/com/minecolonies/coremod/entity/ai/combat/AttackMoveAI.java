@@ -61,7 +61,7 @@ public class AttackMoveAI<T extends MobEntity & IThreatTableEntity> extends Targ
         final ThreatTableEntry nextTarget = user.getThreatTable().getTarget();
         if (nextTarget == null)
         {
-
+            return CombatAIStates.NO_TARGET;
         }
 
         final boolean canSeeTarget = user.getSensing().canSee(target);
@@ -77,6 +77,9 @@ public class AttackMoveAI<T extends MobEntity & IThreatTableEntity> extends Targ
 
         if (!isInAttackDistance(target) || !canSeeTarget)
         {
+            user.lookAt(target, (float) HALF_ROTATION, (float) HALF_ROTATION);
+            user.getLookControl().setLookAt(target, (float) HALF_ROTATION, (float) HALF_ROTATION);
+
             if (pathAttempts > 5 || (targetPath != null && targetPath.isDone() && targetPath.failedToReachDestination()))
             {
                 pathAttempts = 0;
@@ -92,10 +95,8 @@ public class AttackMoveAI<T extends MobEntity & IThreatTableEntity> extends Targ
 
             if (targetPath == null ||
                   user.getNavigation().isDone() ||
-                  (targetPath.isDone() && targetPath.getPath().getTarget().distSqr(target.blockPosition()) > Math.pow(getAttackDistance(), 2)))
+                  (targetPath.isDone() && targetPath.hasPath() && targetPath.getPath().getTarget().distSqr(target.blockPosition()) > Math.pow(getAttackDistance(), 2)))
             {
-                user.lookAt(target, (float) HALF_ROTATION, (float) HALF_ROTATION);
-                user.getLookControl().setLookAt(target, (float) HALF_ROTATION, (float) HALF_ROTATION);
                 targetPath = moveInAttackPosition(target);
                 pathAttempts++;
             }

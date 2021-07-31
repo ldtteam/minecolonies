@@ -183,6 +183,11 @@ public abstract class AbstractAISkeleton<J extends IJob<?>> extends Goal
         stateMachine.reset();
     }
 
+    /**
+     * Get the statemachine of the AI
+     *
+     * @return statemachine
+     */
     public ITickRateStateMachine<IAIState> getStateAI()
     {
         return stateMachine;

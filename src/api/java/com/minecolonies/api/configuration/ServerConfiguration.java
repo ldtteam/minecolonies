@@ -446,7 +446,7 @@ public class ServerConfiguration extends AbstractConfiguration
 
         configListRecruitmentItems = defineList(builder, "configlistrecruitmentitems",
           Arrays.asList
-                   ("minecraft:hay_block;2",
+                   ("minecraft:hay_block;3",
                      "minecraft:book;2",
                      "minecraft:enchanted_book;9",
                      "minecraft:diamond;9",

@@ -66,12 +66,17 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
     /**
      * Last used time of the aoe ability
      */
-    private long knockbackAoeCooldown = 0;
+    private long lastAoeUseTime = 0;
 
     /**
      * Cooldown for the Aoe knockback in ticks
      */
     private final int KNOCKBACK_COOLDOWN = 30 * 8;
+
+    /**
+     * Minimum time needed to next attack to use the shield
+     */
+    private final int MIN_TIME_TO_ATTACK = 8;
 
     /**
      * The value of the speed which the guard will move.
@@ -97,22 +102,19 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
     protected IAIState attackProtect()
     {
         final int shieldSlot = InventoryUtils.findFirstSlotInItemHandlerWith(user.getInventoryCitizen(), Items.SHIELD);
-
-        if (target != null && target.isAlive() && nextAttackTime - user.level.getGameTime() >= 8)
+        if (shieldSlot != -1 && target != null && target.isAlive() && nextAttackTime - user.level.getGameTime() >= MIN_TIME_TO_ATTACK &&
+              user.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SHIELD_USAGE) > 0)
         {
-            if (user.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SHIELD_USAGE) > 0 && shieldSlot != -1)
-            {
-                user.getCitizenItemHandler().setHeldItem(Hand.OFF_HAND, shieldSlot);
-                user.startUsingItem(Hand.OFF_HAND);
+            user.getCitizenItemHandler().setHeldItem(Hand.OFF_HAND, shieldSlot);
+            user.startUsingItem(Hand.OFF_HAND);
 
-                // Apply the colony Flag to the shield
-                ItemStack shieldStack = user.getInventoryCitizen().getHeldItem(Hand.OFF_HAND);
-                CompoundNBT nbt = shieldStack.getOrCreateTagElement("BlockEntityTag");
-                nbt.put(TAG_BANNER_PATTERNS, user.getCitizenColonyHandler().getColony().getColonyFlag());
+            // Apply the colony Flag to the shield
+            ItemStack shieldStack = user.getInventoryCitizen().getHeldItem(Hand.OFF_HAND);
+            CompoundNBT nbt = shieldStack.getOrCreateTagElement("BlockEntityTag");
+            nbt.put(TAG_BANNER_PATTERNS, user.getCitizenColonyHandler().getColony().getColonyFlag());
 
-                user.lookAt(target, (float) TURN_AROUND, (float) TURN_AROUND);
-                user.decreaseSaturationForContinuousAction();
-            }
+            user.lookAt(target, (float) TURN_AROUND, (float) TURN_AROUND);
+            user.decreaseSaturationForContinuousAction();
         }
 
         return null;
@@ -141,7 +143,6 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
             moveInAttackPosition(target);
         }
 
-        user.lookAt(target, (float) TURN_AROUND, (float) TURN_AROUND);
         user.swing(Hand.MAIN_HAND);
         user.playSound(SoundEvents.PLAYER_ATTACK_SWEEP, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(user.getRandom()));
 
@@ -158,7 +159,7 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
             target.setSecondsOnFire(fireLevel * 80);
         }
 
-        if (user.level.getGameTime() - knockbackAoeCooldown > KNOCKBACK_COOLDOWN)
+        if (user.level.getGameTime() - lastAoeUseTime > KNOCKBACK_COOLDOWN)
         {
             doAoeAttack(source, damageToBeDealt);
         }
@@ -229,14 +230,14 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
                   0.0D);
             }
 
-            knockbackAoeCooldown = user.level.getGameTime();
+            lastAoeUseTime = user.level.getGameTime();
         }
     }
 
     /**
      * Calculates the damage to deal
      *
-     * @return
+     * @return attack damage
      */
     private int getAttackDamage()
     {

@@ -157,6 +157,9 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements
      */
     private ThreatTable threatTable = new ThreatTable<>(this);
 
+    /**
+     * Raiders AI statemachine
+     */
     private ITickRateStateMachine<IState> ai = new TickRateStateMachine<>(CombatAIStates.NO_TARGET, e -> Log.getLogger().warn(e));
 
     /**

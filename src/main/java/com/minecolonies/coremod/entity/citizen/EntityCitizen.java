@@ -1424,7 +1424,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
 
         for (int i = 0; i < possibleGuards.size() && i <= CALL_TO_HELP_AMOUNT; i++)
         {
-            ((AbstractEntityAIGuard<?, ?>) possibleGuards.get(i).getCitizenData().getJob().getWorkerAI()).startHelpCitizen(this, (LivingEntity) attacker);
+            ((AbstractEntityAIGuard<?, ?>) possibleGuards.get(i).getCitizenData().getJob().getWorkerAI()).startHelpCitizen((LivingEntity) attacker);
         }
     }
 

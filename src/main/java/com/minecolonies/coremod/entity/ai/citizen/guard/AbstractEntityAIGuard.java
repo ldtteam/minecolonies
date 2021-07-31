@@ -176,14 +176,43 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
           new AITarget(CombatAIStates.NO_TARGET, this::decide, GUARD_TASK_INTERVAL),
           new AITarget(GUARD_WAKE, this::wakeUpGuard, TICKS_SECOND),
 
-          new AITarget(CombatAIStates.ATTACKING, () -> {
-              fighttimer = COMBAT_TIME;
-              return null;
-          }, 8)
+          new AITarget(CombatAIStates.ATTACKING, this::inCombat, 8)
         );
 
         buildingGuards = getOwnBuilding();
         lastGuardActionPos = buildingGuards.getPosition();
+    }
+
+    /**
+     * Updates fight timer during combat
+     */
+    private IAIState inCombat()
+    {
+        if (fighttimer <= 0)
+        {
+            onCombatEnter();
+        }
+
+        fighttimer = COMBAT_TIME;
+        return null;
+    }
+
+    /**
+     * On combat enter
+     */
+    private void onCombatEnter()
+    {
+        worker.setCanBeStuck(false);
+        worker.getNavigation().getPathingOptions().setCanUseRails(false);
+    }
+
+    /**
+     * On combat leave
+     */
+    private void onCombatLeave()
+    {
+        worker.getNavigation().getPathingOptions().setCanUseRails(((EntityCitizen) worker).canPathOnRails());
+        worker.setCanBeStuck(true);
     }
 
     /**
@@ -607,9 +636,13 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
             regularActionTimer = 0;
         }
 
-        if (fighttimer >= 0)
+        if (fighttimer > 0)
         {
             fighttimer -= GUARD_TASK_INTERVAL;
+            if (fighttimer <= 0)
+            {
+                onCombatLeave();
+            }
         }
         else
         {

@@ -143,6 +143,7 @@ public class TargetAI<T extends LivingEntity & IThreatTableEntity> implements IS
             return false;
         }
 
+        boolean foundTarget = false;
         for (final LivingEntity entity : entities)
         {
             if (!entity.isAlive())
@@ -158,10 +159,11 @@ public class TargetAI<T extends LivingEntity & IThreatTableEntity> implements IS
             if (isEntityValidTarget(entity))
             {
                 user.getThreatTable().addThreat(entity, 0);
+                foundTarget = true;
             }
         }
 
-        return true;
+        return foundTarget;
     }
 
     /**
