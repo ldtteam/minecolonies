@@ -1494,6 +1494,7 @@ public class CitizenData implements ICitizenData
         {
             if (job != null)
             {
+                this.isWorking = isWorking;
                 job.triggerActivityChangeAction(isWorking);
             }
             inactivityTimer = DISABLED;
@@ -1501,8 +1502,8 @@ public class CitizenData implements ICitizenData
         else if (!isWorking && this.isWorking)
         {
             inactivityTimer = 0;
+            this.isWorking = isWorking;
         }
-        this.isWorking = isWorking;
     }
 
     @Nullable
