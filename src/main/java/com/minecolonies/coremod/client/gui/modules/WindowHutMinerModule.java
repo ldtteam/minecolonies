@@ -101,6 +101,10 @@ public class WindowHutMinerModule extends AbstractModuleWindow
                 {
                     rowPane.findPaneOfTypeByID("lvl", Text.class).setColors(Color.getByName("red", 0));
                 }
+                else
+                {
+                    rowPane.findPaneOfTypeByID("lvl", Text.class).setColors(Color.getByName("black", 0));
+                }
 
                 if (miner.doesWorkOrderExist(index))
                 {

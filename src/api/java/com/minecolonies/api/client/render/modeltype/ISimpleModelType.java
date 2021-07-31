@@ -11,7 +11,6 @@ import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.DATA_TEX
 
 public interface ISimpleModelType extends IModelType
 {
-
     /**
      * Base folder for textures.
      */
@@ -45,27 +44,15 @@ public interface ISimpleModelType extends IModelType
      */
     default ResourceLocation getTexture(@NotNull final AbstractEntityCitizen entityCitizen)
     {
-        String folder = DEFAULT_FOLDER;
         final int moddedTextureId = (entityCitizen.getTextureId() % getNumTextures()) + 1;
         final String textureIdentifier =
-          getTextureBase() + (entityCitizen.isFemale() ? "female" : "male") + moddedTextureId + entityCitizen.getRenderMetadata() + entityCitizen.getEntityData()
-                                                                                                                                      .get(DATA_TEXTURE_SUFFIX);
-        //TODO: We have to add style tags to the townhalls that will be used for this in the future.
-        // - This will then become a switch case statement for this sake
-        final String style = entityCitizen.getEntityData().get(DATA_STYLE);
-        if (style.contains("medieval"))
-        {
-            folder = "medieval";
-        }
-
-        final ResourceLocation modified = new ResourceLocation(Constants.MOD_ID, BASE_FOLDER + folder + "/" + textureIdentifier + ".png");
+          getTextureBase() + (entityCitizen.isFemale() ? "female" : "male") + moddedTextureId + entityCitizen.getRenderMetadata() + entityCitizen.getEntityData().get(DATA_TEXTURE_SUFFIX);
+        final ResourceLocation modified = new ResourceLocation(Constants.MOD_ID, BASE_FOLDER + entityCitizen.getEntityData().get(DATA_STYLE) + "/" + textureIdentifier + ".png");
         if (Minecraft.getInstance().getResourceManager().hasResource(modified))
         {
-            entityCitizen.setTextureMapping(style, folder);
             return modified;
         }
 
-        entityCitizen.setTextureMapping(style, DEFAULT_FOLDER);
         return new ResourceLocation(Constants.MOD_ID, BASE_FOLDER + DEFAULT_FOLDER + "/" + textureIdentifier + ".png");
     }
 }

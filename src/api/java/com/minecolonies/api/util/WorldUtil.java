@@ -312,8 +312,8 @@ public class WorldUtil
         int maxX = corners.getB().getX() >> 4;
         int minZ = corners.getA().getZ() >> 4;
         int maxZ = corners.getB().getZ() >> 4;
-        int minY = corners.getA().getY() >> 4;
-        int maxY = corners.getB().getY() >> 4;
+        int minY = Math.max(0, corners.getA().getY()) >> 4;
+        int maxY = Math.min(corners.getB().getY(), world.getHeight()) >> 4;
 
         List<T> list = Lists.newArrayList();
         AbstractChunkProvider abstractchunkprovider = world.getChunkSource();

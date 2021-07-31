@@ -446,7 +446,7 @@ public class CitizenData implements ICitizenData
         citizen.getEntityData().set(DATA_IS_ASLEEP, isAsleep());
         citizen.getEntityData().set(DATA_IS_CHILD, isChild());
         citizen.getEntityData().set(DATA_BED_POS, getBedPos());
-        citizen.getEntityData().set(DATA_STYLE, colony.getStyle());
+        citizen.getEntityData().set(DATA_STYLE, colony.getTextureStyleId());
 
         citizen.getCitizenExperienceHandler().updateLevel();
 
@@ -1494,6 +1494,7 @@ public class CitizenData implements ICitizenData
         {
             if (job != null)
             {
+                this.isWorking = isWorking;
                 job.triggerActivityChangeAction(isWorking);
             }
             inactivityTimer = DISABLED;
@@ -1501,8 +1502,8 @@ public class CitizenData implements ICitizenData
         else if (!isWorking && this.isWorking)
         {
             inactivityTimer = 0;
+            this.isWorking = isWorking;
         }
-        this.isWorking = isWorking;
     }
 
     @Nullable

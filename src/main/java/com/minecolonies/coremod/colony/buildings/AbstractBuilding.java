@@ -524,7 +524,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
 
         if (workOrder.getID() != 0)
         {
-            LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), "com.minecolonies.coremod.workorderadded", workOrder.getDisplayName(), colony.getName());
+            LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), "com.minecolonies.coremod.workorderadded", workOrder.getDisplayName(), colony.getName(), workOrder.getSchematicLocation().getX(), workOrder.getSchematicLocation().getY(), workOrder.getSchematicLocation().getZ());
         }
         markDirty();
     }

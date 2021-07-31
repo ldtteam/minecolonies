@@ -523,9 +523,9 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         }
         this.setCustomNameVisible(MineColonies.getConfig().getServer().alwaysRenderNameTag.get());
 
-        if (!citizenColonyHandler.getColony().getStyle().equals(getEntityData().get(DATA_STYLE)))
+        if (!citizenColonyHandler.getColony().getTextureStyleId().equals(getEntityData().get(DATA_STYLE)))
         {
-            getEntityData().set(DATA_STYLE, citizenColonyHandler.getColony().getStyle());
+            getEntityData().set(DATA_STYLE, citizenColonyHandler.getColony().getTextureStyleId());
         }
         if (!citizenData.getTextureSuffix().equals(getEntityData().get(DATA_TEXTURE_SUFFIX)))
         {

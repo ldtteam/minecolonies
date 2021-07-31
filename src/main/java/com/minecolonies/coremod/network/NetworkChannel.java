@@ -201,6 +201,7 @@ public class NetworkChannel
         registerMessage(++idx, AssignFilterableEntityMessage.class, AssignFilterableEntityMessage::new);
         registerMessage(++idx, BuildPickUpMessage.class, BuildPickUpMessage::new);
         registerMessage(++idx, SwitchBuildingWithToolMessage.class, SwitchBuildingWithToolMessage::new);
+        registerMessage(++idx, ColonyTextureStyleMessage.class, ColonyTextureStyleMessage::new);
         registerMessage(++idx, MinerRepairLevelMessage.class, MinerRepairLevelMessage::new);
 
         //Client side only

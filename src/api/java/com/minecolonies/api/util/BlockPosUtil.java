@@ -75,6 +75,24 @@ public final class BlockPosUtil
     }
 
     /**
+     * Writes a chunk coordinate to a CompoundNBT, but only if not null.
+     * @param compound Compound to write to.
+     * @param name     Name of the tag.
+     * @param value    Coordinates to write; if null, the tag is not written.
+     * @return the resulting compound.
+     */
+    @NotNull
+    public static CompoundNBT writeOptional(@NotNull final CompoundNBT compound, @NotNull final String name,
+                                            @Nullable final BlockPos value)
+    {
+        if (value != null)
+        {
+            write(compound, name, value);
+        }
+        return compound;
+    }
+
+    /**
      * Searches a random direction.
      *
      * @param random a random object.
@@ -141,6 +159,19 @@ public final class BlockPosUtil
         final int y = coordsCompound.getInt("y");
         final int z = coordsCompound.getInt("z");
         return new BlockPos(x, y, z);
+    }
+
+    /**
+     * Reads chunk coordinates from a CompoundNBT, but returns null if zero or absent.
+     * @param compound Compound to read data from.
+     * @param name     Tag name to read data from.
+     * @return Chunk coordinates read from the compound, or null if it was zero or absent.
+     */
+    @Nullable
+    public static BlockPos readOrNull(@NotNull final CompoundNBT compound, @NotNull final String name)
+    {
+        final BlockPos result = read(compound, name);
+        return result.equals(BlockPos.ZERO) ? null : result;
     }
 
     /**

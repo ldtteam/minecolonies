@@ -212,6 +212,11 @@ public final class ColonyView implements IColonyView
     private Set<Long> ticketedChunks = new HashSet<>();
 
     /**
+     * The texture style of the colony citizens.
+     */
+    private String textureStyle;
+
+    /**
      * Base constructor for a colony.
      *
      * @param id The current id for the colony.
@@ -280,6 +285,8 @@ public final class ColonyView implements IColonyView
         buf.writeInt(colony.getLastContactInHours());
         buf.writeBoolean(colony.isManualHousing());
         buf.writeBoolean(colony.canMoveIn());
+        buf.writeUtf(colony.getTextureStyleId());
+
         //  Citizens are sent as a separate packet
 
         if (colony.getRequestManager() != null && (colony.getRequestManager().isDirty() || hasNewSubscribers))
@@ -602,6 +609,18 @@ public final class ColonyView implements IColonyView
         return ticketedChunks;
     }
 
+    @Override
+    public void setTextureStyle(final String style)
+    {
+        this.textureStyle = style;
+    }
+
+    @Override
+    public String getTextureStyleId()
+    {
+        return this.textureStyle;
+    }
+
     /**
      * Sets if citizens can move in.
      *
@@ -816,6 +835,7 @@ public final class ColonyView implements IColonyView
         this.lastContactInHours = buf.readInt();
         this.manualHousing = buf.readBoolean();
         this.moveIn = buf.readBoolean();
+        this.textureStyle = buf.readUtf(32767);
 
         if (buf.readBoolean())
         {

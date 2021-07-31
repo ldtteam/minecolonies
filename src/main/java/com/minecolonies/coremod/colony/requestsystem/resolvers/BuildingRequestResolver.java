@@ -127,7 +127,7 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
             return Lists.newArrayList();
         }
 
-        if (totalAvailable > request.getRequest().getMinimumCount())
+        if (totalAvailable >= request.getRequest().getMinimumCount())
         {
             return Lists.newArrayList();
         }
