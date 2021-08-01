@@ -104,8 +104,11 @@ public class ItemListModule extends AbstractBuildingModule implements IItemListM
     @Override
     public void addItem(final ItemStorage item)
     {
-        this.itemsAllowed = ImmutableList.<ItemStorage>builder().addAll(itemsAllowed).add(item).build();
-        markDirty();
+        if (!itemsAllowed.contains(item))
+        {
+            this.itemsAllowed = ImmutableList.<ItemStorage>builder().addAll(itemsAllowed).add(item).build();
+            markDirty();
+        }
     }
 
     @Override
