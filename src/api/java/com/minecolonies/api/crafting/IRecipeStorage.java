@@ -1,5 +1,6 @@
 package com.minecolonies.api.crafting;
 
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
@@ -68,6 +69,18 @@ public interface IRecipeStorage
      * @return true if possible, else false.
      */
     boolean canFullFillRecipe(final int qty, final Map<ItemStorage, Integer> existingRequirements, @NotNull final IItemHandler... inventories);
+
+    /**
+     * Method to check if with the help of inventories this recipe can be fullfilled.
+     * Also check if the inventory has enough to fulfill the existing requirements.
+     *
+     * @param qty         the quantity to craft.
+     * @param existingRequirements map of existing requirements (pending requests).
+     * @param citizen the citizen inventory to check.
+     * @param building the building inv to check.
+     * @return true if possible, else false.
+     */
+    boolean canFullFillRecipe(final int qty, final Map<ItemStorage, Integer> existingRequirements, @NotNull final List<IItemHandler> citizen, @NotNull final IBuilding building);
 
     default boolean fullFillRecipe(@NotNull final World world, @NotNull final IItemHandler... inventories)
     {

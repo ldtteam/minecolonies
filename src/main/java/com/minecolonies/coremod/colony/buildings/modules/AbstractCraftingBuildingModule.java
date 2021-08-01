@@ -623,9 +623,13 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
             final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
             if (storage != null && (stackPredicate.test(storage.getPrimaryOutput()) || storage.getAlternateOutputs().stream().anyMatch(i -> stackPredicate.test(i))))
             {
-                final List<IItemHandler> handlers = building.getHandlers();
+                final Set<IItemHandler> handlers = new HashSet<>();
+                for (final ICitizenData workerEntity : building.getAssignedCitizen())
+                {
+                    handlers.add(workerEntity.getInventory());
+                }
                 IRecipeStorage toTest = storage.getRecipeType() instanceof MultiOutputRecipe ? storage.getClassicForMultiOutput(stackPredicate) : storage;
-                if (toTest.canFullFillRecipe(count, considerReservation ? reservedStacks() : Collections.emptyMap(), handlers.toArray(new IItemHandler[0])))
+                if (toTest.canFullFillRecipe(count, considerReservation ? reservedStacks() : Collections.emptyMap(), new ArrayList<>(handlers), building))
                 {
                     return toTest;
                 }

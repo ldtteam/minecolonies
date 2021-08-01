@@ -511,8 +511,8 @@ public abstract class AbstractPathJob implements Callable<Path>
     /**
      * Check if the block at this position is actually some kind of waterly fluid.
      * @param pos the pos in the world.
-     * @param state existing blockstate or null
-     * @param fluidState existing fluidstate or null
+     * @param pState existing blockstate or null
+     * @param pFluidState existing fluidstate or null
      * @return true if so.
      */
     private static boolean isWater(@NotNull final IWorldReader world, final BlockPos pos, @Nullable BlockState pState, @Nullable FluidState pFluidState)

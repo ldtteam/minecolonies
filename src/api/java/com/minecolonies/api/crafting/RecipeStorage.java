@@ -3,6 +3,7 @@ package com.minecolonies.api.crafting;
 import com.google.common.collect.ImmutableList;
 import com.ldtteam.structurize.items.ModItems;
 import com.minecolonies.api.MinecoloniesAPIProxy;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.registry.RecipeTypeEntry;
@@ -289,37 +290,72 @@ public class RecipeStorage implements IRecipeStorage
               itemStack -> !ItemStackUtils.isEmpty(itemStack)
                              && ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, false, !storage.ignoreNBT()));
 
-            final int neededCount;
-            if(!secondaryOutputs.isEmpty() || !tools.isEmpty())
-            {
-                if(!ItemStackUtils.compareItemStackListIgnoreStackSize(this.getCraftingToolsAndSecondaryOutputs(), stack, false, !storage.ignoreNBT()))
-                {
-                    neededCount = storage.getAmount() * qty;
-                }
-                else
-                {
-                    neededCount = storage.getAmount();
-                }
-            }
-            else
-            {
-                final ItemStack container = stack.getItem().getContainerItem(stack);
-                if(ItemStackUtils.isEmpty(container) || !ItemStackUtils.compareItemStacksIgnoreStackSize(stack, container, false, !storage.ignoreNBT()))
-                {
-                    neededCount = storage.getAmount() * qty;
-                }
-                else
-                {
-                    neededCount = storage.getAmount();
-                }
-            }
-
-            if (availableCount < neededCount + existingRequirements.getOrDefault(storage, 0))
+            if (!canFulfillItemStorage(qty, existingRequirements, availableCount, storage))
             {
                 return false;
             }
         }
         return true;
+    }
+
+    @Override
+    public boolean canFullFillRecipe(final int qty, final Map<ItemStorage, Integer> existingRequirements, @NotNull final List<IItemHandler> citizen, @NotNull final IBuilding building)
+    {
+        final List<ItemStorage> items = getCleanedInput();
+
+        for (final ItemStorage storage : items)
+        {
+            final ItemStack stack = storage.getItemStack();
+            final int availableCount = InventoryUtils.getItemCountInItemHandlers(citizen,
+              itemStack -> !ItemStackUtils.isEmpty(itemStack)
+                             && ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, false, !storage.ignoreNBT()))
+                                         + InventoryUtils.getCountFromBuilding(building, storage);;
+
+            if (!canFulfillItemStorage(qty, existingRequirements, availableCount, storage))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Check if the available qty matches the quantity we need.
+     * @param qty the number of recipe iterations.
+     * @param existingRequirements the existing requirements to skip.
+     * @param availableCount the available count.
+     * @param storage the storage to check.
+     * @return true if can fulfill, else false.
+     */
+    private boolean canFulfillItemStorage(final int qty, final Map<ItemStorage, Integer> existingRequirements, int availableCount, final ItemStorage storage)
+    {
+        final ItemStack stack = storage.getItemStack();
+        final int neededCount;
+        if(!secondaryOutputs.isEmpty() || !tools.isEmpty())
+        {
+            if(!ItemStackUtils.compareItemStackListIgnoreStackSize(this.getCraftingToolsAndSecondaryOutputs(), stack, false, !storage.ignoreNBT()))
+            {
+                neededCount = storage.getAmount() * qty;
+            }
+            else
+            {
+                neededCount = storage.getAmount();
+            }
+        }
+        else
+        {
+            final ItemStack container = stack.getItem().getContainerItem(stack);
+            if(ItemStackUtils.isEmpty(container) || !ItemStackUtils.compareItemStacksIgnoreStackSize(stack, container, false, !storage.ignoreNBT()))
+            {
+                neededCount = storage.getAmount() * qty;
+            }
+            else
+            {
+                neededCount = storage.getAmount();
+            }
+        }
+
+        return availableCount >= neededCount + existingRequirements.getOrDefault(storage, 0);
     }
 
     @Override
