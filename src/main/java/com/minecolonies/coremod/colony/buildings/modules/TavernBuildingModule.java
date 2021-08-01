@@ -107,13 +107,28 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
     {
         if (musicCooldown <= 0 && building.getBuildingLevel() > 0 && !building.getColony().isDay())
         {
-            BlockPos corner1 = building.getCorners().getA();
-            BlockPos corner2 = building.getCorners().getB();
+            int count = 0;
+            BlockPos avg = BlockPos.ZERO;
+            for (final Integer id : externalCitizens)
+            {
+                final IVisitorData data = building.getColony().getVisitorManager().getVisitor(id);
+                if (data != null)
+                {
+                    if (!data.getSittingPosition().equals(BlockPos.ZERO))
+                    {
+                        count++;
+                        avg.offset(data.getSittingPosition());
+                    }
+                }
+            }
 
-            final int x = (int) ((corner1.getX() + corner2.getX()) * 0.5);
-            final int z = (int) ((corner1.getZ() + corner2.getZ()) * 0.5);
+            if (count < 2)
+            {
+                return;
+            }
 
-            final PlayMusicAtPosMessage message = new PlayMusicAtPosMessage(TavernSounds.tavernTheme, new BlockPos(x, building.getPosition().getY(), z), building.getColony().getWorld(), 0.7f, 1.0f);
+            avg = new BlockPos(avg.getX() / count, avg.getY() / count, avg.getZ() / count);
+            final PlayMusicAtPosMessage message = new PlayMusicAtPosMessage(TavernSounds.tavernTheme, avg, building.getColony().getWorld(), 0.7f, 1.0f);
             for (final ServerPlayerEntity curPlayer : building.getColony().getPackageManager().getCloseSubscribers())
             {
                 Network.getNetwork().sendToPlayer(message, curPlayer);

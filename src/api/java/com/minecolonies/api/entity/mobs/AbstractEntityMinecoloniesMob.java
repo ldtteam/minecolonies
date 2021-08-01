@@ -67,6 +67,16 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements
     private static final int MAX_SCALED_DAMAGE = 7;
 
     /**
+     * Minimum damage done before thorns effect can happen
+     */
+    private static final float MIN_THORNS_DAMAGE = 30;
+
+    /**
+     * 1 in X Chance that thorns effect happens
+     */
+    private static final int THORNS_CHANCE = 5;
+
+    /**
      * The New PathNavigate navigator.
      */
     private AbstractAdvancedPathNavigate newNavigator;
@@ -529,6 +539,11 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements
             final Entity source = damageSource.getEntity();
             if (source instanceof PlayerEntity)
             {
+                if (damage > MIN_THORNS_DAMAGE && random.nextInt(THORNS_CHANCE) == 0)
+                {
+                    source.hurt(DamageSource.thorns(this), damage * 0.5f);
+                }
+
                 final float raiderDamageEnchantLevel = EnchantmentHelper.getItemEnchantmentLevel(ModEnchants.raiderDamage, ((PlayerEntity) source).getMainHandItem());
 
                 // Up to 7 damage are converted to health scaling damage, 7 is the damage of a diamond sword
