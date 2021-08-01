@@ -66,10 +66,9 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
     private static final int MAX_PONDS = 20;
 
     /**
-     * Variable to calculate the delay the fisherman needs to throw his rod. The delay will be calculated randomly. The FISHING_DELAY defines the upper limit. The delay is
-     * calculated using the CHANCE anf fishingSkill variables. A higher FISHING_DELAY will lead to a longer delay.
+     * Base chance to fail an action
      */
-    private static final int FISHING_DELAY = 500 / TICKS_SECOND;
+    private static final int FISHING_SKILL_CHANCE = 10;
 
     /**
      * The chance the fisherman has to throw his rod. Directly connected with delay.
@@ -114,7 +113,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
     /**
      * Per level lure speed.
      */
-    private static final int LURE_SPEED_DIVIDER = 15;
+    private static final int LURE_SPEED_DIVIDER = 25;
 
     /**
      * The number of executed adjusts of the fisherman's rotation.
@@ -555,8 +554,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
     {
         //+1 since the level may be 0
         setDelay(FISHING_TIMEOUT);
-        final double chance = worker.getRandom().nextInt(FISHING_DELAY) / ((getSecondarySkillLevel() / 2.0) + 1);
-        return chance >= CHANCE;
+        final double chance = worker.getRandom().nextInt(FISHING_SKILL_CHANCE + ((getSecondarySkillLevel()) / 5));
+        return chance <= CHANCE;
     }
 
     /**
@@ -621,6 +620,11 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
             return false;
         }
         if (!entityFishHook.isReadyToCatch())
+        {
+            return false;
+        }
+
+        if (testRandomChance())
         {
             return false;
         }
