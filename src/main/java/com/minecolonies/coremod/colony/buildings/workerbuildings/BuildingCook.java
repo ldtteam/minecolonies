@@ -541,8 +541,12 @@ public class BuildingCook extends AbstractBuildingFurnaceUser implements IBuildi
                 storage = FurnaceRecipes.getInstance().getFirstSmeltingRecipeByResult(stackPredicate);
                 if (storage != null)
                 {
-                    final List<IItemHandler> handlers = building.getHandlers();
-                    if (!storage.canFullFillRecipe(count, Collections.emptyMap(), handlers.toArray(new IItemHandler[0])))
+                    final Set<IItemHandler> handlers = new HashSet<>();
+                    for (final ICitizenData workerEntity : building.getAssignedCitizen())
+                    {
+                        handlers.add(workerEntity.getInventory());
+                    }
+                    if (!storage.canFullFillRecipe(count, Collections.emptyMap(), new ArrayList<>(handlers), building))
                     {
                         return null;
                     }
