@@ -86,7 +86,7 @@ public class DecorationControllerUpdateMessage implements IMessage
         {
             final BlockState state = player.getCommandSenderWorld().getBlockState(pos);
             final Direction basicFacing = state.getValue(BlockDecorationController.FACING);
-            ((TileEntityDecorationController) tileEntity).setSchematicName(name + level);
+            ((TileEntityDecorationController) tileEntity).setSchematicPath(name + level);
             ((TileEntityDecorationController) tileEntity).setTier(level);
             ((TileEntityDecorationController) tileEntity).setBasicFacing(basicFacing);
         }
