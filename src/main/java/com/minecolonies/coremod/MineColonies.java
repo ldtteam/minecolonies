@@ -270,6 +270,20 @@ public class MineColonies
         RenderTypeLookup.setRenderLayer(ModBlocks.blockCompostedDirt, RenderType.cutout());
         RenderTypeLookup.setRenderLayer(ModBlocks.blockBarrel, RenderType.cutout());
         RenderTypeLookup.setRenderLayer(ModBlocks.blockWayPoint, RenderType.cutout());
+        RenderTypeLookup.setRenderLayer(ModBlocks.blockIronGate, RenderType.cutout());
+        RenderTypeLookup.setRenderLayer(ModBlocks.blockHutBarracks, RenderType.cutout());
+        RenderTypeLookup.setRenderLayer(ModBlocks.blockHutBarracksTower, RenderType.cutout());
+        RenderTypeLookup.setRenderLayer(ModBlocks.blockHutCombatAcademy, RenderType.cutout());
+        RenderTypeLookup.setRenderLayer(ModBlocks.blockHutFarmer, RenderType.cutout());
+        RenderTypeLookup.setRenderLayer(ModBlocks.blockHutGlassblower, RenderType.translucent());
+        RenderTypeLookup.setRenderLayer(ModBlocks.blockHutGuardTower, RenderType.cutout());
+        RenderTypeLookup.setRenderLayer(ModBlocks.blockHutLumberjack, RenderType.cutout());
+        RenderTypeLookup.setRenderLayer(ModBlocks.blockHutMiner, RenderType.cutout());
+        RenderTypeLookup.setRenderLayer(ModBlocks.blockHutPlantation, RenderType.cutout());
+        RenderTypeLookup.setRenderLayer(ModBlocks.blockHutSawmill, RenderType.cutout());
+        RenderTypeLookup.setRenderLayer(ModBlocks.blockHutSifter, RenderType.cutout());
+        RenderTypeLookup.setRenderLayer(ModBlocks.blockHutStonemason, RenderType.cutout());
+        RenderTypeLookup.setRenderLayer(ModBlocks.blockHutTownHall, RenderType.cutout());
     }
 
     /**
