@@ -63,7 +63,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
     /**
      * Smaller shape.
      */
-    private static final VoxelShape SHAPE = VoxelShapes.box(0.1, 0.1, 0.1, 0.9, 0.9, 0.9);
+    private static final VoxelShape SHAPE = VoxelShapes.box(0.0, 0.0, 0.0, 1.0, 1.0, 1.0);
 
     public BlockMinecoloniesRack()
     {

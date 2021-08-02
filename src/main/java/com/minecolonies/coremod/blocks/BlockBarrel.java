@@ -87,13 +87,6 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel>
         return ActionResultType.SUCCESS;
     }
 
-    @NotNull
-    @Override
-    public VoxelShape getShape(final BlockState state, final IBlockReader worldIn, final BlockPos pos, final ISelectionContext context)
-    {
-        return VoxelShapes.box(0, 0, 0, 1, 1.5, 1);
-    }
-
     /**
      * Convert the BlockState into the correct metadata value.
      *
