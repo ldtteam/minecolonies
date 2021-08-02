@@ -1,3 +1,6 @@
 {
-  "parent": "minecolonies:block/gate/gate_iron_spike"
+    "parent": "item/generated",
+	"textures": {
+		"layer0": "minecolonies:blocks/iron_gate_spikes"
+	}
 }

@@ -1,0 +1,19 @@
+{
+	"credit": "Made with Blockbench",
+    "parent": "minecolonies:block/gate/gate_iron",
+	"textures": {
+		"particle": "minecolonies:blocks/iron_gate_spikes",
+		"gate": "minecolonies:blocks/iron_gate_spikes"
+	},
+	"elements": [
+		{
+			"name": "gate",
+			"from": [0, 0, 8],
+			"to": [16, 16, 8],
+			"faces": {
+				"north": {"uv": [0, 0, 16, 16], "texture": "#gate"},
+				"south": {"uv": [0, 0, 16, 16], "texture": "#gate"}
+			}
+		}
+	]
+}

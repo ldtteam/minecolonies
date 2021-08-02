@@ -1,0 +1,115 @@
+{
+	"credit": "Made with Blockbench",
+	"parent": "block/block",
+	"textures": {
+		"compost": "minecolonies:blocks/composted_dirt",
+		"inside": "minecolonies:blocks/composter_barrel_inside",
+		"particle": "minecolonies:blocks/composter_barrel_front",
+		"front": "minecolonies:blocks/composter_barrel_front",
+		"top": "minecolonies:blocks/composter_barrel_top",
+		"bottom": "minecolonies:blocks/hut_base_top",
+		"side": "minecolonies:blocks/composter_barrel_side"
+	},
+	"elements": [
+		{
+			"name": "bottom",
+			"from": [0, 0, 0],
+			"to": [16, 2, 16],
+			"faces": {
+				"down": {"uv": [0, 0, 16, 16], "texture": "#bottom", "cullface": "down"}
+			}
+		},
+		{
+			"name": "north",
+			"from": [2, 0, 0],
+			"to": [14, 16, 2],
+			"faces": {
+				"north": {"uv": [2, 0, 14, 16], "texture": "#front", "cullface": "north"},
+				"south": {"uv": [2, 0, 14, 16], "texture": "#front"},
+				"up": {"uv": [2, 0, 14, 2], "texture": "#top", "cullface": "up"}
+			}
+		},
+		{
+			"name": "south",
+			"from": [2, 0, 14],
+			"to": [14, 16, 16],
+			"faces": {
+				"north": {"uv": [2, 0, 14, 16], "texture": "#inside"},
+				"south": {"uv": [2, 0, 14, 16], "texture": "#side", "cullface": "south"},
+				"up": {"uv": [2, 14, 14, 16], "texture": "#top", "cullface": "up"}
+			}
+		},
+		{
+			"name": "east",
+			"from": [14, 0, 0],
+			"to": [16, 16, 16],
+			"faces": {
+				"north": {"uv": [0, 0, 2, 16], "texture": "#side", "cullface": "north"},
+				"east": {"uv": [0, 0, 16, 16], "texture": "#side", "cullface": "east"},
+				"south": {"uv": [14, 0, 16, 16], "texture": "#side", "cullface": "south"},
+				"west": {"uv": [0, 0, 16, 16], "texture": "#inside"},
+				"up": {"uv": [14, 0, 16, 16], "texture": "#top", "cullface": "up"}
+			}
+		},
+		{
+			"name": "west",
+			"from": [0, 0, 0],
+			"to": [2, 16, 16],
+			"faces": {
+				"north": {"uv": [14, 0, 16, 16], "texture": "#side", "cullface": "north"},
+				"east": {"uv": [0, 0, 16, 16], "texture": "#inside"},
+				"south": {"uv": [0, 0, 2, 16], "texture": "#side", "cullface": "south"},
+				"west": {"uv": [0, 0, 16, 16], "texture": "#side", "cullface": "west"},
+				"up": {"uv": [0, 0, 2, 16], "texture": "#top", "cullface": "up"}
+			}
+		},
+		{
+			"name": "compost",
+			"from": [2, 2, 0.02],
+			"to": [14, 14, 14.02],
+			"faces": {
+				"north": {"uv": [2, 2, 14, 14], "texture": "#compost"},
+				"up": {"uv": [2, 2, 14, 16], "texture": "#compost"}
+			}
+		}
+	],
+	"display": {
+		"thirdperson_righthand": {
+			"rotation": [75, 45, 0],
+			"translation": [0, 2.5, 0],
+			"scale": [0.375, 0.375, 0.375]
+		},
+		"thirdperson_lefthand": {
+			"rotation": [75, 45, 0],
+			"translation": [0, 2.5, 0],
+			"scale": [0.375, 0.375, 0.375]
+		},
+		"firstperson_righthand": {
+			"rotation": [0, 45, 0],
+			"scale": [0.4, 0.4, 0.4]
+		},
+		"firstperson_lefthand": {
+			"rotation": [0, 225, 0],
+			"scale": [0.4, 0.4, 0.4]
+		},
+		"ground": {
+			"translation": [0, 3, 0],
+			"scale": [0.25, 0.25, 0.25]
+		},
+		"gui": {
+			"rotation": [30, 225, 0],
+			"scale": [0.625, 0.625, 0.625]
+		},
+		"fixed": {
+			"scale": [0.5, 0.5, 0.5]
+		}
+	},
+	"groups": [
+		{
+			"name": "composter",
+			"origin": [8, 8, 8],
+			"color": 0,
+			"children": [0, 1, 2, 3, 4, 5]
+		}
+	]
+}

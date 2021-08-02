@@ -1,7 +1,9 @@
 {
 	"parent": "minecolonies:block/blockhutcitizen",
 	"textures": {
-		"7": "block/yellow_terracotta",
-		"14": "block/green_wool"
+		"top": "minecolonies:blocks/citizen_hut_top_blue",
+		"particle": "minecolonies:blocks/citizen_hut_side_blue",
+		"side": "minecolonies:blocks/citizen_hut_side_blue",
+		"back": "minecolonies:blocks/citizen_hut_back_blue"
 	}
 }

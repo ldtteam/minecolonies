@@ -120,19 +120,19 @@
     },
 
     "facing=east,variant=done": {
-      "model": "minecolonies:block/barrel_block/100perc_crate",
+      "model": "minecolonies:block/barrel_block/done_crate",
       "y": 270
     },
     "facing=south,variant=done": {
-      "model": "minecolonies:block/barrel_block/100perc_crate",
+      "model": "minecolonies:block/barrel_block/done_crate",
       "y": 0
     },
     "facing=west,variant=done": {
-      "model": "minecolonies:block/barrel_block/100perc_crate",
+      "model": "minecolonies:block/barrel_block/done_crate",
       "y": 90
     },
     "facing=north,variant=done": {
-      "model": "minecolonies:block/barrel_block/100perc_crate",
+      "model": "minecolonies:block/barrel_block/done_crate",
       "y": 180
     }
   }

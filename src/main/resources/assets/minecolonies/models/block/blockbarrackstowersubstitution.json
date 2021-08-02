@@ -1,0 +1,116 @@
+{
+	"credit": "Made with Blockbench",
+	"parent": "block/block",
+	"ambientocclusion": false,
+	"textures": {
+		"back": "minecolonies:blocks/barracks_tower_placeholder_back",
+		"bottom": "minecolonies:blocks/hut_base_top",
+		"front": "minecolonies:blocks/barracks_tower_placeholder_front",
+		"side": "minecolonies:blocks/barracks_tower_placeholder_side",
+		"sword": "item/iron_sword",
+		"particle": "minecolonies:blocks/barracks_tower_placeholder_top",
+		"top": "minecolonies:blocks/barracks_tower_placeholder_top"
+	},
+	"elements": [
+		{
+			"name": "base",
+			"from": [0, 0, 0],
+			"to": [16, 6, 16],
+			"rotation": {"angle": 0, "axis": "y", "origin": [8, 8, 8]},
+			"faces": {
+				"north": {"uv": [16, 10, 0, 16], "texture": "#side", "cullface": "north"},
+				"east": {"uv": [0, 10, 16, 16], "texture": "#front", "cullface": "east"},
+				"south": {"uv": [0, 10, 16, 16], "texture": "#side", "cullface": "south"},
+				"west": {"uv": [0, 10, 16, 16], "texture": "#back", "cullface": "west"},
+				"up": {"uv": [0, 0, 16, 16], "rotation": 270, "texture": "#top"},
+				"down": {"uv": [0, 0, 16, 16], "rotation": 270, "texture": "#bottom", "cullface": "down"}
+			}
+		},
+		{
+			"name": "support",
+			"from": [0, 6, 12],
+			"to": [4, 16, 16],
+			"rotation": {"angle": 0, "axis": "y", "origin": [16, 0, 0]},
+			"faces": {
+				"north": {"uv": [0, 0, 4, 10], "texture": "#side"},
+				"east": {"uv": [0, 0, 4, 10], "texture": "#front"},
+				"south": {"uv": [0, 0, 4, 10], "texture": "#side", "cullface": "south"},
+				"west": {"uv": [12, 0, 16, 10], "texture": "#back", "cullface": "west"},
+				"up": {"uv": [0, 0, 4, 4], "rotation": 90, "texture": "#top", "cullface": "up"}
+			}
+		},
+		{
+			"name": "support",
+			"from": [0, 6, 0],
+			"to": [4, 16, 4],
+			"rotation": {"angle": 0, "axis": "y", "origin": [16, 0, 0]},
+			"faces": {
+				"north": {"uv": [0, 0, 4, 10], "texture": "#side", "cullface": "north"},
+				"east": {"uv": [12, 0, 16, 10], "texture": "#front"},
+				"south": {"uv": [0, 0, 4, 10], "texture": "#side"},
+				"west": {"uv": [0, 0, 4, 10], "texture": "#back", "cullface": "west"},
+				"up": {"uv": [12, 0, 16, 4], "rotation": 90, "texture": "#top", "cullface": "up"}
+			}
+		},
+		{
+			"name": "support_beam",
+			"from": [1, 11, 4],
+			"to": [3, 13, 12],
+			"rotation": {"angle": 0, "axis": "y", "origin": [16, 1, 0]},
+			"faces": {
+				"east": {"uv": [4, 3, 12, 5], "texture": "#front"},
+				"west": {"uv": [12, 5, 4, 3], "texture": "#back"},
+				"up": {"uv": [12, 3, 4, 5], "rotation": 90, "texture": "#front"},
+				"down": {"uv": [12, 3, 4, 5], "rotation": 270, "texture": "#front"}
+			}
+		},
+		{
+			"name": "sword",
+			"from": [2, 4, 0],
+			"to": [2, 20, 16],
+			"shade": false,
+			"rotation": {"angle": -45, "axis": "x", "origin": [2, 12, 8]},
+			"faces": {
+				"east": {"uv": [0, 0, 16, 16], "rotation": 90, "texture": "#sword"},
+				"west": {"uv": [16, 0, 0, 16], "rotation": 270, "texture": "#sword"}
+			}
+		}
+	],
+	"display": {
+		"thirdperson_righthand": {
+			"rotation": [75, 135, 0],
+			"translation": [0, 3, 0],
+			"scale": [0.375, 0.375, 0.375]
+		},
+		"thirdperson_lefthand": {
+			"rotation": [75, 135, 0],
+			"translation": [0, 3, 0],
+			"scale": [0.375, 0.375, 0.375]
+		},
+		"firstperson_righthand": {
+			"rotation": [0, -135, 0],
+			"translation": [0, 0.75, 0],
+			"scale": [0.4, 0.4, 0.4]
+		},
+		"firstperson_lefthand": {
+			"rotation": [0, 45, 0],
+			"translation": [0, 0.75, 0],
+			"scale": [0.4, 0.4, 0.4]
+		},
+		"ground": {
+			"translation": [0, 3, 0],
+			"scale": [0.25, 0.25, 0.25]
+		},
+		"gui": {
+			"rotation": [30, -45, 0],
+			"scale": [0.625, 0.625, 0.625]
+		},
+		"head": {
+			"rotation": [0, 90, 0]
+		},
+		"fixed": {
+			"rotation": [0, -180, 0],
+			"scale": [0.5, 0.5, 0.5]
+		}
+	}
+}

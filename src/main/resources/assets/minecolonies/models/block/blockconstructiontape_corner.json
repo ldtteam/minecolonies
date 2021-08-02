@@ -1,78 +1,22 @@
 {
-  "credit": "Adapted from Blockbench",
-  "textures": {
-    "post": "block/oak_planks",
-    "particle": "block/oak_planks"
-  },
-  "elements": [
-    {
-      "name": "center_post",
-      "from": [
-        7,
-        0,
-        7
-      ],
-      "to": [
-        9,
-        13,
-        9
-      ],
-      "faces": {
-        "north": {
-          "uv": [
-            0,
-            0,
-            4,
-            16
-          ],
-          "texture": "#post"
-        },
-        "east": {
-          "uv": [
-            0,
-            0,
-            4,
-            16
-          ],
-          "texture": "#post"
-        },
-        "south": {
-          "uv": [
-            0,
-            0,
-            4,
-            16
-          ],
-          "texture": "#post"
-        },
-        "west": {
-          "uv": [
-            0,
-            0,
-            4,
-            16
-          ],
-          "texture": "#post"
-        },
-        "up": {
-          "uv": [
-            4,
-            13,
-            8,
-            14
-          ],
-          "texture": "#post"
-        },
-        "down": {
-          "uv": [
-            0,
-            0,
-            4,
-            4
-          ],
-          "texture": "#post"
-        }
-      }
-    }
-  ]
+	"credit": "Made with Blockbench",
+	"textures": {
+		"particle": "minecolonies:blocks/construction_tape_wood",
+		"post": "minecolonies:blocks/construction_tape_wood"
+	},
+	"elements": [
+		{
+			"name": "center_post",
+			"from": [6, 0, 6],
+			"to": [10, 16, 10],
+			"faces": {
+				"north": {"uv": [9, 0, 13, 16], "texture": "#post"},
+				"east": {"uv": [7, 0, 11, 16], "texture": "#post"},
+				"south": {"uv": [6, 0, 10, 16], "texture": "#post"},
+				"west": {"uv": [10, 0, 14, 16], "texture": "#post"},
+				"up": {"uv": [6, 6, 10, 10], "texture": "#post", "cullface": "up"},
+				"down": {"uv": [10, 5, 14, 9], "texture": "#post", "cullface": "down"}
+			}
+		}
+	]
 }
