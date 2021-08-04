@@ -453,7 +453,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
                 // when they're at half-max, so at about skill60. Therefore, divide the skill by 20.
                 worker.addEffect(new EffectInstance(Effects.MOVEMENT_SPEED,
                   5 * TICKS_SECOND,
-                  MathHelper.clamp((citizenData.getCitizenSkillHandler().getLevel(Skill.Adaptability) / 20) + 2, 2, 5),
+                  MathHelper.clamp((citizenData.getCitizenSkillHandler().getLevel(Skill.Adaptability) / 20), 2, 5),
                   false,
                   false));
             }

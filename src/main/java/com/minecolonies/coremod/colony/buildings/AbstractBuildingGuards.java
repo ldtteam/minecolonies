@@ -739,12 +739,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
                 // will - if only LOW_SATURATION is left - set the saturation level to 0.
                 iCitizenData.decreaseSaturation(LOW_SATURATION);
             }
-
-            final AbstractJobGuard<?> job = iCitizenData.getJob(AbstractJobGuard.class);
-            if (job != null && job.getWorkerAI() != null)
-            {
-                job.getWorkerAI().registerTarget(new AIOneTimeEventTarget(AIWorkerState.GUARD_DECIDE));
-            }
         }
     }
 
