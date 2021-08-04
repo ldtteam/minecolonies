@@ -87,7 +87,7 @@ public class TargetAI<T extends LivingEntity & IThreatTableEntity> implements IS
      */
     public boolean isEntityValidTarget(final LivingEntity target)
     {
-        if (target == null || !target.isAlive() || !isWithinPersecutionDistance(target))
+        if (target == user || target == null || !target.isAlive() || !isWithinPersecutionDistance(target))
         {
             return false;
         }

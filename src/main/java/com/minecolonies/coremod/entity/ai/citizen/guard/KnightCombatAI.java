@@ -196,7 +196,7 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
             List<LivingEntity> entities = user.level.getLoadedEntitiesOfClass(LivingEntity.class, user.getBoundingBox().inflate(2.0D, 0.5D, 2.0D));
             for (LivingEntity livingentity : entities)
             {
-                if (livingentity != user && (!user.isAlliedTo(livingentity)) && (!(livingentity instanceof ArmorStandEntity)))
+                if (livingentity != user && isEntityValidTarget(livingentity) && (!(livingentity instanceof ArmorStandEntity)))
                 {
                     livingentity.knockback(
                       2F,
