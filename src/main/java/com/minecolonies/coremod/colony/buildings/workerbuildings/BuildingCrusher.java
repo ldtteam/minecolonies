@@ -94,11 +94,10 @@ public class BuildingCrusher extends AbstractBuildingWorker
     }
 
     @Override
-    public void registerModule(@NotNull final IBuildingModule module)
+    public void onColonyTick(@NotNull final IColony colony)
     {
-        super.registerModule(module);
-
-        if (module instanceof CraftingModule)
+        super.onColonyTick(colony);
+        if (crusherMode == null || crusherMode.isEmpty())
         {
             loadCrusherMode();
         }
@@ -110,11 +109,8 @@ public class BuildingCrusher extends AbstractBuildingWorker
     private void loadCrusherMode()
     {
         final CraftingModule module =  getFirstModuleOccurance(CraftingModule.class);
-        module.clearRecipes();
-        module.checkForWorkerSpecificRecipes();
 
         this.crusherRecipes.clear();
-
         final ImmutableMap<IToken<?>, IRecipeStorage> recipes = IColonyManager.getInstance().getRecipeManager().getRecipes();
         for (final IToken<?> token : module.getRecipes())
         {

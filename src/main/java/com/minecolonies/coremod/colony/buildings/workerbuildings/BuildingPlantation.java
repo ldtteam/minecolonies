@@ -151,11 +151,12 @@ public class BuildingPlantation extends AbstractBuildingWorker implements IBuild
         final List<BlockPos> filtered = new ArrayList<>();
         if (tileEntity != null && !tileEntity.getPositionedTags().isEmpty())
         {
+            final Item phase = nextPlantPhase();
             for (final Map.Entry<BlockPos, List<String>> entry : tileEntity.getPositionedTags().entrySet())
             {
-                if ((entry.getValue().contains("bamboo") && currentPhase == Items.BAMBOO)
-                      || (entry.getValue().contains("sugar") && currentPhase == Items.SUGAR_CANE)
-                      || (entry.getValue().contains("cactus") && currentPhase == Items.CACTUS))
+                if ((entry.getValue().contains("bamboo") && phase == Items.BAMBOO)
+                      || (entry.getValue().contains("sugar") && phase == Items.SUGAR_CANE)
+                      || (entry.getValue().contains("cactus") && phase== Items.CACTUS))
                 {
                     filtered.add(getPosition().offset(entry.getKey()));
                 }

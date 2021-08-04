@@ -37,7 +37,6 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.UUID;
 
 import static com.minecolonies.api.util.constant.Constants.TAG_COMPOUND;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
@@ -439,10 +438,13 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
         final CompoundNBT compound = banner.getTag();
         if (!compound.contains(TAG_RALLIED_GUARDTOWERS))
         {
-            compound.putUUID(TAG_ID, UUID.randomUUID());
             compound.putBoolean(TAG_IS_ACTIVE, false);
             @NotNull final ListNBT guardTowerList = new ListNBT();
             compound.put(TAG_RALLIED_GUARDTOWERS, guardTowerList);
+        }
+        else if (compound.contains(TAG_ID))
+        {
+            compound.remove(TAG_ID);
         }
         return compound;
     }
