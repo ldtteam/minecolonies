@@ -248,7 +248,7 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
                     }
                 }
             }
-            itemList.add(structureAI.getTotalAmount(stack));
+            itemList.add(stack);
         }
 
         return AbstractEntityAIStructure.hasListOfResInInvOrRequest(structureAI, itemList, itemList.size() > 1) == AbstractEntityAIStructure.ItemCheckResult.SUCCESS;

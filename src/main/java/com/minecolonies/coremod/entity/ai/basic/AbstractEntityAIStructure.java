@@ -578,7 +578,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                 final int oldSize = list.get(tempStorage);
                 tempStorage.setAmount(tempStorage.getAmount() + oldSize);
             }
-            list.put(tempStorage, tempStorage.getAmount());
+            list.put(tempStorage, placer.getTotalAmount(tempStorage.getItemStack()).getCount());
         }
 
         for (final Map.Entry<ItemStorage, Integer> placedStack : list.entrySet())
