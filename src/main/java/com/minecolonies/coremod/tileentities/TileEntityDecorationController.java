@@ -69,7 +69,7 @@ public class TileEntityDecorationController extends TileEntity implements IBluep
      *
      * @return String name.
      */
-    public String getSChematicPath()
+    public String getSchematicPath()
     {
         return schematicPath;
     }
