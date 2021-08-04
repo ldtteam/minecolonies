@@ -20,7 +20,10 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.*;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.EntityRayTraceResult;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
@@ -53,6 +56,11 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
     private              int                    lureSpeed;
     private              int                    anglerId           = -1;
     private              boolean                readyToCatch       = false;
+
+    /**
+     * Saves the bobber position upon catch
+     */
+    private Vector3d onWaterPos;
 
     public NewBobberEntity(final EntityType<?> type, final World world)
     {
@@ -410,6 +418,8 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
             else
             {
                 readyToCatch = true;
+                onWaterPos = new Vector3d(getX(), getY(), getZ());
+
                 final Vector3d Vector3d = this.getDeltaMovement();
                 this.setDeltaMovement(Vector3d.x, (double) (-0.4F * MathHelper.nextFloat(this.random, 0.6F, 1.0F)), Vector3d.z);
                 this.playSound(SoundEvents.FISHING_BOBBER_SPLASH, 0.25F, 1.0F + (this.random.nextFloat() - this.random.nextFloat()) * 0.4F);
@@ -506,10 +516,11 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
 
                 for (final ItemStack itemstack : list)
                 {
-                    final ItemEntity itementity = new ItemEntity(this.level, this.getX(), this.getY(), this.getZ(), itemstack);
-                    final double d0 = this.angler.getX() - this.getX();
-                    final double d1 = this.angler.getY() - this.getY();
-                    final double d2 = this.angler.getZ() - this.getZ();
+                    final ItemEntity itementity = new ItemEntity(this.level, onWaterPos.x, onWaterPos.y, onWaterPos.z, itemstack);
+                    final double d0 = this.angler.getX() - onWaterPos.x;
+                    final double d1 = (this.angler.getY() + 0.5D) - onWaterPos.y;
+                    final double d2 = this.angler.getZ() - onWaterPos.z;
+                    itementity.noPhysics = true;
                     itementity.setDeltaMovement(d0 * 0.1D, d1 * 0.1D + Math.sqrt(Math.sqrt(d0 * d0 + d1 * d1 + d2 * d2)) * 0.08D, d2 * 0.1D);
                     this.level.addFreshEntity(itementity);
                     this.angler.level.addFreshEntity(new ExperienceOrbEntity(this.angler.level,

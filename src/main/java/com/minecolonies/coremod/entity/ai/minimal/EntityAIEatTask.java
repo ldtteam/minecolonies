@@ -27,7 +27,10 @@ import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.client.ItemParticleEffectMessage;
 import com.minecolonies.coremod.util.AdvancementUtils;
 import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.item.*;
+import net.minecraft.item.AirItem;
+import net.minecraft.item.Food;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
@@ -72,7 +75,7 @@ public class EntityAIEatTask extends Goal
     /**
      * Limit to go to the restaurant.
      */
-    private static final double RESTAURANT_LIMIT     = 2.5;
+    private static final double RESTAURANT_LIMIT = 2.5;
 
     /**
      * The different types of AIStates related to eating.
@@ -278,7 +281,8 @@ public class EntityAIEatTask extends Goal
 
         final Item containerItem = stack.getItem().getCraftingRemainingItem();
 
-        final double satIncrease = itemFood.getNutrition() * (1.0 + citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SATURATION));
+        final double satIncrease =
+          itemFood.getNutrition() * (1.0 + citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SATURATION));
 
         citizenData.increaseSaturation(satIncrease / 2.0);
         citizenData.getInventory().extractItem(foodSlot, 1, false);
@@ -288,11 +292,11 @@ public class EntityAIEatTask extends Goal
             if (citizenData.getInventory().isFull())
             {
                 InventoryUtils.spawnItemStack(
-                        citizen.level,
-                        citizen.getX(),
-                        citizen.getY(),
-                        citizen.getZ(),
-                        new ItemStack(containerItem, 1)
+                  citizen.level,
+                  citizen.getX(),
+                  citizen.getY(),
+                  citizen.getZ(),
+                  new ItemStack(containerItem, 1)
                 );
             }
             else
@@ -338,7 +342,8 @@ public class EntityAIEatTask extends Goal
               citizen.getInventoryCitizen(),
               GET_YOURSELF_SATURATION,
               stack -> CAN_EAT.test(stack) && canEat(citizen.getCitizenData(), stack)
-                         && !((BuildingCook) cookBuilding).getModuleMatching(ItemListModule.class, m -> m.getId().equals(BuildingCook.FOOD_EXCLUSION_LIST)).isItemInList(new ItemStorage(stack)));
+                         && !((BuildingCook) cookBuilding).getModuleMatching(ItemListModule.class, m -> m.getId().equals(BuildingCook.FOOD_EXCLUSION_LIST))
+                               .isItemInList(new ItemStorage(stack)));
         }
 
         return WAIT_FOR_FOOD;
@@ -512,27 +517,23 @@ public class EntityAIEatTask extends Goal
             restaurantPos = colony.getBuildingManager().getBestBuilding(citizen, BuildingCook.class);
         }
 
-        if (citizenData.getSaturation() <= RESTAURANT_LIMIT)
+        final IJob<?> job = citizen.getCitizenJobHandler().getColonyJob();
+        if (job != null && citizenData.isWorking())
         {
-            final IJob<?> job = citizen.getCitizenJobHandler().getColonyJob();
-            if (job != null && citizenData.isWorking())
-            {
-                citizenData.setWorking(false);
-            }
-
-            if (restaurantPos == null)
-            {
-                citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(NO_RESTAURANT), ChatPriority.BLOCKING));
-                return CHECK_FOR_FOOD;
-            }
-            return GO_TO_RESTAURANT;
+            citizenData.setWorking(false);
         }
 
-        return IDLE;
+        if (restaurantPos == null)
+        {
+            citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(NO_RESTAURANT), ChatPriority.BLOCKING));
+            return CHECK_FOR_FOOD;
+        }
+        return GO_TO_RESTAURANT;
     }
 
     /**
      * Checks if the citizen has food in the inventory and makes a decision based on that.
+     *
      * @return the next state to go to.
      */
     private boolean hasFood()

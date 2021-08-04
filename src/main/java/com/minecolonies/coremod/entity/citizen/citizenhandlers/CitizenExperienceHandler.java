@@ -164,6 +164,11 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
 
         for (@NotNull final ExperienceOrbEntity orb : citizen.level.getLoadedEntitiesOfClass(ExperienceOrbEntity.class, box))
         {
+            if (orb.tickCount < 5)
+            {
+                continue;
+            }
+
             Vector3d vec3d = new Vector3d(citizen.getX() - orb.getX(), citizen.getY() + (double) this.citizen.getEyeHeight() / 2.0D - orb.getY(), citizen.getZ() - orb.getZ());
             double d1 = vec3d.lengthSqr();
 
