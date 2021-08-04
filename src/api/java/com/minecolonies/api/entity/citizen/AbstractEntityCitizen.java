@@ -346,6 +346,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     public void aiStep()
     {
         super.aiStep();
+        updateSwingTime();
         if (collisionCounter > 0)
         {
             collisionCounter--;
@@ -471,14 +472,6 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     }
 
     /**
-     * Update the armswing progress.
-     */
-    public void updateArmSwingProg()
-    {
-        this.updateSwingTime();
-    }
-
-    /**
      * Check if can drop loot.
      *
      * @return true if so.
@@ -509,7 +502,6 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      *
      * @return the data.
      */
-    @Nullable
     public abstract ICitizenData getCitizenData();
 
     /**

@@ -131,7 +131,6 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
             citizen.setTexture();
             citizen.getEntityData().clearDirty();
         }
-        citizen.updateArmSwingProg();
     }
 
     /**

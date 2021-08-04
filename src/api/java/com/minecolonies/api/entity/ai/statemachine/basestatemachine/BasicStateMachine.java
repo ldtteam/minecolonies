@@ -185,7 +185,7 @@ public class BasicStateMachine<T extends IStateMachineTransition<S>, S extends I
                     // Reached Trap/Sink state we cannot leave.
                     onException(new RuntimeException("Missing AI transition for state: " + newState));
                     reset();
-                    return false;
+                    return true;
                 }
             }
 
