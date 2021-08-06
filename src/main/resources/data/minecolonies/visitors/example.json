@@ -1,0 +1,9 @@
+{
+  "texture": "10231ab-123412asvfa",
+  "citizensuffix": "_b",
+  "name": "John, the junglee",
+  "chance": 0.000,
+  "storylangkey": "com.minecolonies.coremod.gui.chat.insertpatreonnick",
+  "recruitcost": "minecraft:diamond",
+  "recruitcostcount": 1
+}

@@ -11,6 +11,8 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.UUID;
+
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_SITTING;
 
@@ -143,5 +145,11 @@ public class VisitorData extends CitizenData implements IVisitorData
     public void applyResearchEffects()
     {
         // no research effects for now
+    }
+
+    @Override
+    public void setCustomTexture(final UUID texture)
+    {
+        // TODO: find skin from mojang via uuid here and save in a field
     }
 }

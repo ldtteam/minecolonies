@@ -15,6 +15,7 @@ import com.minecolonies.coremod.client.gui.huts.WindowHutTavern;
 import com.minecolonies.coremod.colony.buildings.views.LivingBuildingView;
 import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.VisitorSpawnedEvent;
 import com.minecolonies.coremod.colony.interactionhandling.RecruitmentInteraction;
+import com.minecolonies.coremod.datalistener.CustomVisitorListener;
 import com.minecolonies.coremod.network.messages.client.colony.PlayMusicAtPosMessage;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -234,8 +235,12 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
         }
 
         newCitizen.setRecruitCosts(new ItemStack(cost.getA(), (int)(recruitLevel * 3.0 / cost.getB())));
-        newCitizen.triggerInteraction(new RecruitmentInteraction(new TranslationTextComponent(
-          "com.minecolonies.coremod.gui.chat.recruitstory" + (building.getColony().getWorld().random.nextInt(MAX_STORY) + 1), newCitizen.getName().split(" ")[0]), ChatPriority.IMPORTANT));
+
+        if (!CustomVisitorListener.chanceCustomVisitors(newCitizen))
+        {
+            newCitizen.triggerInteraction(new RecruitmentInteraction(new TranslationTextComponent(
+              "com.minecolonies.coremod.gui.chat.recruitstory" + (building.getColony().getWorld().random.nextInt(MAX_STORY) + 1), newCitizen.getName().split(" ")[0]), ChatPriority.IMPORTANT));
+        }
     }
 
     @Override
