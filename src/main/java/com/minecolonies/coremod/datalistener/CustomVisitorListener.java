@@ -114,7 +114,7 @@ public class CustomVisitorListener extends JsonReloadListener
             {
                 if (dataEntry.recruitCost != null)
                 {
-                    dataEntry.recruitCost.setCount(data.get(VISITOR_RECRUITCOST).getAsInt());
+                    dataEntry.recruitCost.setCount(data.get(VISITOR_RECRUITCOSTCOUNT).getAsInt());
                 }
             }
 
