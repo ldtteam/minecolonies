@@ -391,7 +391,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     private IAIState guard()
     {
         guardMovement();
-        return GUARD_GUARD;
+        return getState();
     }
 
     /**
@@ -567,7 +567,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     public void setNextPatrolTarget(final BlockPos target)
     {
         currentPatrolPoint = target;
-        if (getState() == GUARD_PATROL)
+        if (getState() == CombatAIStates.NO_TARGET)
         {
             worker.isWorkerAtSiteWithMove(currentPatrolPoint, 2);
         }
