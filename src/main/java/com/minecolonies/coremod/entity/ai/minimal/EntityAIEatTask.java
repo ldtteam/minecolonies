@@ -491,10 +491,18 @@ public class EntityAIEatTask extends Goal
         if (restaurantPos != null)
         {
             final IBuilding building = citizen.getCitizenColonyHandler().getColony().getBuildingManager().getBuilding(restaurantPos);
-            if (building != null && building.isInBuilding(citizen.blockPosition()))
+            if (building != null)
             {
-                return WAIT_FOR_FOOD;
+                if (building.isInBuilding(citizen.blockPosition()))
+                {
+                    return WAIT_FOR_FOOD;
+                }
+                else if (!citizen.isWorkerAtSiteWithMove(restaurantPos, MIN_DISTANCE_TO_RESTAURANT))
+                {
+                    return GO_TO_RESTAURANT;
+                }
             }
+
         }
         return SEARCH_RESTAURANT;
     }
