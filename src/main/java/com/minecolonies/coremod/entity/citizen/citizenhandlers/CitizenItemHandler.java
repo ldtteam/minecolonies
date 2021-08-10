@@ -243,9 +243,13 @@ public class CitizenItemHandler implements ICitizenItemHandler
         }
 
         //Check if the effect exists first, to avoid unnecessary calls to random number generator.
-        if(citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(TOOL_DURABILITY) > 0)
+        if (citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(TOOL_DURABILITY) > 0)
         {
-            if (citizen.getRandom().nextDouble() > (1 / (1 + citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(TOOL_DURABILITY))))
+            if (citizen.getRandom().nextDouble() > (1 / (1 + citizen.getCitizenColonyHandler()
+                                                               .getColony()
+                                                               .getResearchManager()
+                                                               .getResearchEffects()
+                                                               .getEffectStrength(TOOL_DURABILITY))))
             {
                 return;
             }
@@ -274,9 +278,9 @@ public class CitizenItemHandler implements ICitizenItemHandler
     public void pickupItems()
     {
         for (final ItemEntity item : CompatibilityUtils.getWorldFromCitizen(citizen).getLoadedEntitiesOfClass(ItemEntity.class,
-                                                             new AxisAlignedBB(citizen.blockPosition())
-                                                               .expandTowards(2.0F, 1.0F, 2.0F)
-                                                               .expandTowards(-2.0F, -1.0F, -2.0F)))
+          new AxisAlignedBB(citizen.blockPosition())
+            .expandTowards(2.0F, 1.0F, 2.0F)
+            .expandTowards(-2.0F, -1.0F, -2.0F)))
         {
             if (item != null && item.isAlive())
             {
@@ -329,13 +333,19 @@ public class CitizenItemHandler implements ICitizenItemHandler
                 continue;
             }
 
-            if(citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(ARMOR_DURABILITY) > 0)
+            if (citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(ARMOR_DURABILITY) > 0)
             {
-                if (citizen.getRandom().nextDouble() > (1 / (1 + citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(ARMOR_DURABILITY))))
+                if (citizen.getRandom().nextDouble() > (1 / (1 + citizen.getCitizenColonyHandler()
+                                                                   .getColony()
+                                                                   .getResearchManager()
+                                                                   .getResearchEffects()
+                                                                   .getEffectStrength(ARMOR_DURABILITY))))
                 {
                     return;
                 }
             }
+
+            // Todo: rework damaging to the visual items atm they can be both, direct inventory item references or visual copies
 
             stack.hurtAndBreak(Math.max(1, (int) (damage / 4)), citizen, (i) -> {
                 i.broadcastBreakEvent(Hand.MAIN_HAND);
