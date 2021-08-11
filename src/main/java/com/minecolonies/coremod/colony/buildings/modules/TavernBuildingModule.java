@@ -157,7 +157,7 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
         {
             spawnVisitor();
             noVisitorTime =
-              colony.getWorld().getRandom().nextInt(300) + (600 / building.getBuildingLevel()) * colony.getCitizenManager().getCurrentCitizenCount() / colony.getCitizenManager()
+              colony.getWorld().getRandom().nextInt(3000) + (6000 / building.getBuildingLevel()) * colony.getCitizenManager().getCurrentCitizenCount() / colony.getCitizenManager()
                                                                                                                                                   .getMaxCitizens();
         }
     }
