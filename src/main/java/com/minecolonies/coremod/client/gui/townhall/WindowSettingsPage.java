@@ -1,5 +1,8 @@
 package com.minecolonies.coremod.client.gui.townhall;
 
+import com.ldtteam.blockout.Pane;
+import com.ldtteam.blockout.PaneBuilders;
+import com.ldtteam.blockout.controls.AbstractTextBuilder;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.views.DropDownList;
 import com.ldtteam.structurize.util.LanguageHandler;
@@ -10,6 +13,7 @@ import com.minecolonies.coremod.network.messages.server.colony.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -296,13 +300,17 @@ public class WindowSettingsPage extends AbstractWindowTownHall
     public void onUpdate()
     {
         super.onUpdate();
+        final Pane pane = findPaneByID(DROPDOWN_TEXT_ID);
         if (isFeatureUnlocked.get())
         {
-            findPaneByID(DROPDOWN_TEXT_ID).enable();
+            pane.enable();
         }
         else
         {
-            findPaneByID(DROPDOWN_TEXT_ID).disable();
+            pane.disable();
+            AbstractTextBuilder.TooltipBuilder hoverText = PaneBuilders.tooltipBuilder().hoverPane(pane);
+            hoverText.append(new TranslationTextComponent("com.minecolonies.core.townhall.patreon")).paragraphBreak();
+            hoverText.build();
         }
     }
 
