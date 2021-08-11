@@ -950,16 +950,30 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public void handleColonyViewVisitorMessage(final boolean refresh, final Set<IVisitorViewData> visitorViewData)
+    public void handleColonyViewVisitorMessage(final PacketBuffer visitorBuf, final boolean refresh)
     {
+        final Map<Integer, IVisitorViewData> visitorCache = new HashMap<>(visitors);
+
         if (refresh)
         {
-            visitors = new HashMap<>();
+            visitors.clear();
         }
 
-        for (final IVisitorViewData data : visitorViewData)
+        int i = visitorBuf.readInt();
+        for (int j = 0; j < i; j++)
         {
-            visitors.put(data.getId(), data);
+            final int id = visitorBuf.readInt();
+            final IVisitorViewData dataView;
+            if (visitorCache.containsKey(id))
+            {
+                dataView = visitorCache.get(id);
+            }
+            else
+            {
+                dataView = new VisitorDataView(id, this);
+            }
+            dataView.deserialize(visitorBuf);
+            visitors.put(dataView.getId(), dataView);
         }
     }
 

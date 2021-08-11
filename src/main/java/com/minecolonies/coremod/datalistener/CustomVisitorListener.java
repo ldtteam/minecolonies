@@ -192,6 +192,8 @@ public class CustomVisitorListener extends JsonReloadListener
             {
                 visitorData.triggerInteraction(new RecruitmentInteraction(new TranslationTextComponent(storykey, visitorData.getName().split(" ")[0]), ChatPriority.IMPORTANT));
             }
+
+            visitorData.markDirty();
         }
     }
 

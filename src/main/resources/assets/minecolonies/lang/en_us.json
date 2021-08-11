@@ -2019,5 +2019,8 @@
   "com.minecolonies.coremod.gui.miner.levels": "Levels",
   "com.minecolonies.coremod.gui.workerhuts.miner": "Mine",
   "com.minecolonies.coremod.gui.workerhuts.miner.repair.enqueued": "Added the repair request to the queue of the miner. Miner will pick it up once the current task is finished.",
-  "com.minecolonies.coremod.gui.townhall.picktexturestyle": "Pick Citizen Style"
+  "com.minecolonies.coremod.gui.townhall.picktexturestyle": "Pick Citizen Style",
+  "com.minecolonies.coremod.gui.chat.drcat": "Miau, mew, mau, meee, mew, hiss, nyan, mew!!! brrrrrrrrrbrrrrrrbrrrrr",
+  "com.minecolonies.coremod.recruit.message.custom": "%s has decided to stay in your colony as a citizen! They quickly switched out of their travellers gear into some new clothes to fit in!"
+
 }

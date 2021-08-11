@@ -3,7 +3,6 @@ package com.minecolonies.coremod.network.messages.client.colony;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.coremod.colony.VisitorDataView;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
@@ -14,7 +13,6 @@ import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -28,11 +26,6 @@ public class ColonyVisitorViewDataMessage implements IMessage
     private int colonyId;
 
     /**
-     * Whether to refresh data clientside
-     */
-    private boolean refresh = false;
-
-    /**
      * The dimension the citizen is in.
      */
     private RegistryKey<World> dimension;
@@ -43,9 +36,14 @@ public class ColonyVisitorViewDataMessage implements IMessage
     private Set<IVisitorData> visitors;
 
     /**
-     * Visiting entity views
+     * Visitor buf to read on client side.
      */
-    private Set<IVisitorViewData> visitorViews = new HashSet<>();
+    private PacketBuffer visitorBuf;
+
+    /**
+     * If a general refresh is necessary,
+     */
+    private boolean refresh;
 
     /**
      * Empty constructor used when registering the
@@ -75,7 +73,6 @@ public class ColonyVisitorViewDataMessage implements IMessage
         colonyId = buf.readInt();
         dimension = RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)));
         refresh = buf.readBoolean();
-
         final IColonyView colony = IColonyManager.getInstance().getColonyView(colonyId, dimension);
 
         if (colony == null)
@@ -84,15 +81,7 @@ public class ColonyVisitorViewDataMessage implements IMessage
             return;
         }
 
-        visitors = new HashSet<>();
-        int i = buf.readInt();
-        for (int j = 0; j < i; j++)
-        {
-            final int id = buf.readInt();
-            final IVisitorViewData dataView = new VisitorDataView(id, colony);
-            dataView.deserialize(buf);
-            visitorViews.add(dataView);
-        }
+        this.visitorBuf = new PacketBuffer(buf.retain());
     }
 
     @Override
@@ -128,6 +117,6 @@ public class ColonyVisitorViewDataMessage implements IMessage
             return;
         }
 
-        colony.handleColonyViewVisitorMessage(refresh, visitorViews);
+        colony.handleColonyViewVisitorMessage(visitorBuf, refresh);
     }
 }

@@ -487,4 +487,10 @@ public class CitizenDataView implements ICitizenDataView
     {
         return parents;
     }
+
+    @Override
+    public ResourceLocation getCustomTexture()
+    {
+        return null;
+    }
 }

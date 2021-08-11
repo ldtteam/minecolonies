@@ -1,9 +1,9 @@
 {
-  "texture": "5fed0afe-0326-4303-be59-0299fdb2f320",
+  "texture": "fefb153f-4ffc-4f5c-acd2-3291e73bdd4d",
   "citizensuffix": "_b",
-  "name": "John, the junglee",
-  "chance": 0.000,
-  "storylangkey": "com.minecolonies.coremod.gui.chat.insertpatreonnick",
-  "recruitcost": "minecraft:diamond",
-  "recruitcostcount": 1
+  "name": "Dr R Cat",
+  "chance": 100.000,
+  "storylangkey": "com.minecolonies.coremod.gui.chat.drcat",
+  "recruitcost": "minecraft:baked_potato",
+  "recruitcostcount": 64
 }
