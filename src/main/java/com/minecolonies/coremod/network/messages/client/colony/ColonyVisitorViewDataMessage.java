@@ -118,5 +118,6 @@ public class ColonyVisitorViewDataMessage implements IMessage
         }
 
         colony.handleColonyViewVisitorMessage(visitorBuf, refresh);
+        visitorBuf.release();
     }
 }
