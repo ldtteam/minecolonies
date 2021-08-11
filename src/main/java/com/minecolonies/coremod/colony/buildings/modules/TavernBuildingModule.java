@@ -6,7 +6,6 @@ import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.modules.*;
 import com.minecolonies.api.colony.buildings.modules.stat.IStat;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
-import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.sounds.TavernSounds;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Tuple;
@@ -49,7 +48,7 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
     /**
      * Schematic name
      */
-    public static final String TAG_VISITOR_ID    = "visitor";
+    public static final String TAG_VISITOR_ID = "visitor";
 
     /**
      * Skill levels
@@ -195,52 +194,53 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
             spawnPos = building.getPosition();
         }
 
-        building.getColony().getVisitorManager().spawnOrCreateCivilian(newCitizen, building.getColony().getWorld(), spawnPos, true);
         Tuple<Item, Integer> cost = recruitCosts.get(building.getColony().getWorld().random.nextInt(recruitCosts.size()));
 
-        building.getColony().getEventDescriptionManager().addEventDescription(new VisitorSpawnedEvent(spawnPos, newCitizen.getName()));
-
-        if (newCitizen.getEntity().isPresent())
+        ItemStack boots = ItemStack.EMPTY;
+        if (recruitLevel > LEATHER_SKILL_LEVEL)
         {
-            final AbstractEntityCitizen citizenEntity = newCitizen.getEntity().get();
-
-            if (recruitLevel > LEATHER_SKILL_LEVEL)
+            // Leather
+            boots = new ItemStack(Items.LEATHER_BOOTS);
+        }
+        if (recruitLevel > GOLD_SKILL_LEVEL)
+        {
+            // Gold
+            boots = new ItemStack(Items.GOLDEN_BOOTS);
+        }
+        if (recruitLevel > IRON_SKILL_LEVEL)
+        {
+            if (cost.getB() <= 2)
             {
-                // Leather
-                citizenEntity.setItemSlot(EquipmentSlotType.FEET, new ItemStack(Items.LEATHER_BOOTS));
+                cost = recruitCosts.get(building.getColony().getWorld().random.nextInt(recruitCosts.size()));
             }
-            if (recruitLevel > GOLD_SKILL_LEVEL)
+            // Iron
+            boots = new ItemStack(Items.IRON_BOOTS);
+        }
+        if (recruitLevel > DIAMOND_SKILL_LEVEL)
+        {
+            if (cost.getB() <= 3)
             {
-                // Gold
-                citizenEntity.setItemSlot(EquipmentSlotType.FEET, new ItemStack(Items.GOLDEN_BOOTS));
+                cost = recruitCosts.get(building.getColony().getWorld().random.nextInt(recruitCosts.size()));
             }
-            if (recruitLevel > IRON_SKILL_LEVEL)
-            {
-                if (cost.getB() <= 2)
-                {
-                    cost = recruitCosts.get(building.getColony().getWorld().random.nextInt(recruitCosts.size()));
-                }
-                // Iron
-                citizenEntity.setItemSlot(EquipmentSlotType.FEET, new ItemStack(Items.IRON_BOOTS));
-            }
-            if (recruitLevel > DIAMOND_SKILL_LEVEL)
-            {
-                if (cost.getB() <= 3)
-                {
-                    cost = recruitCosts.get(building.getColony().getWorld().random.nextInt(recruitCosts.size()));
-                }
-                // Diamond
-                citizenEntity.setItemSlot(EquipmentSlotType.FEET, new ItemStack(Items.DIAMOND_BOOTS));
-            }
+            // Diamond
+            boots = new ItemStack(Items.DIAMOND_BOOTS);
         }
 
-        newCitizen.setRecruitCosts(new ItemStack(cost.getA(), (int)(recruitLevel * 3.0 / cost.getB())));
+        newCitizen.setRecruitCosts(new ItemStack(cost.getA(), (int) (recruitLevel * 3.0 / cost.getB())));
 
         if (!CustomVisitorListener.chanceCustomVisitors(newCitizen))
         {
             newCitizen.triggerInteraction(new RecruitmentInteraction(new TranslationTextComponent(
-              "com.minecolonies.coremod.gui.chat.recruitstory" + (building.getColony().getWorld().random.nextInt(MAX_STORY) + 1), newCitizen.getName().split(" ")[0]), ChatPriority.IMPORTANT));
+              "com.minecolonies.coremod.gui.chat.recruitstory" + (building.getColony().getWorld().random.nextInt(MAX_STORY) + 1), newCitizen.getName().split(" ")[0]),
+              ChatPriority.IMPORTANT));
         }
+
+        building.getColony().getVisitorManager().spawnOrCreateCivilian(newCitizen, building.getColony().getWorld(), spawnPos, true);
+        if (newCitizen.getEntity().isPresent())
+        {
+            newCitizen.getEntity().get().setItemSlot(EquipmentSlotType.FEET, boots);
+        }
+        building.getColony().getEventDescriptionManager().addEventDescription(new VisitorSpawnedEvent(spawnPos, newCitizen.getName()));
     }
 
     @Override

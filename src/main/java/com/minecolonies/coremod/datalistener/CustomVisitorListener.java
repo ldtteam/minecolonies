@@ -41,6 +41,7 @@ public class CustomVisitorListener extends JsonReloadListener
     public static final String VISITOR_CITIZEN_SUFFIX   = "citizensuffix";
     public static final String VISITOR_RECRUITCOST      = "recruitcost";
     public static final String VISITOR_RECRUITCOSTCOUNT = "recruitcostcount";
+    public static final String VISITOR_GENDER           = "gender";
 
     /**
      * List of custom visitor data
@@ -118,6 +119,16 @@ public class CustomVisitorListener extends JsonReloadListener
                 }
             }
 
+            if (data.has(VISITOR_GENDER))
+            {
+                dataEntry.gender = data.get(VISITOR_GENDER).getAsString().substring(0, 1);
+                if (!(dataEntry.gender.equals("m") || dataEntry.gender.equals("f")))
+                {
+                    Log.getLogger().warn("Could not parse visitor gender(m/f) for:" + entry.getKey());
+                    return;
+                }
+            }
+
             visitorDataPack = ImmutableList.<CustomVisitorData>builder().addAll(visitorDataPack).add(dataEntry).build();
         }
         catch (Exception e)
@@ -162,6 +173,11 @@ public class CustomVisitorListener extends JsonReloadListener
         private ItemStack recruitCost;
 
         /**
+         * Gender setting
+         */
+        private String gender = null;
+
+        /**
          * Modifies the given visitor data
          *
          * @param visitorData
@@ -171,6 +187,11 @@ public class CustomVisitorListener extends JsonReloadListener
             if (texture != null)
             {
                 visitorData.setCustomTexture(texture);
+            }
+
+            if (gender != null)
+            {
+                visitorData.setGender(gender.equals("f"));
             }
 
             if (name != null)
