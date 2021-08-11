@@ -429,7 +429,7 @@ public class EntityAIEatTask extends Goal
             return SEARCH_RESTAURANT;
         }
 
-        if (BlockPosUtil.getDistance2D(restaurantPos, citizen.blockPosition()) > MIN_DISTANCE_TO_RESTAURANT)
+        if (!colony.getBuildingManager().getBuilding(restaurantPos).isInBuilding(citizen.blockPosition()))
         {
             return GO_TO_RESTAURANT;
         }
@@ -488,9 +488,21 @@ public class EntityAIEatTask extends Goal
      */
     private EatingState goToRestaurant()
     {
-        if (citizen.isWorkerAtSiteWithMove(restaurantPos, MIN_DISTANCE_TO_RESTAURANT))
+        if (restaurantPos != null)
         {
-            return WAIT_FOR_FOOD;
+            final IBuilding building = citizen.getCitizenColonyHandler().getColony().getBuildingManager().getBuilding(restaurantPos);
+            if (building != null)
+            {
+                if (building.isInBuilding(citizen.blockPosition()))
+                {
+                    return WAIT_FOR_FOOD;
+                }
+                else if (!citizen.isWorkerAtSiteWithMove(restaurantPos, MIN_DISTANCE_TO_RESTAURANT))
+                {
+                    return GO_TO_RESTAURANT;
+                }
+            }
+
         }
         return SEARCH_RESTAURANT;
     }
