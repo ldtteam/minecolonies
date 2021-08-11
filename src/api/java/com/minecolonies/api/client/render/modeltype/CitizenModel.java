@@ -16,7 +16,17 @@ public class CitizenModel<T extends AbstractEntityCitizen> extends BipedModel<Ab
 
     public CitizenModel()
     {
+        this(true);
+    }
+
+    public CitizenModel(final boolean legacy)
+    {
         this(0.0F);
+        if (!legacy)
+        {
+            this.texWidth = 64;
+            this.texHeight = 64;
+        }
     }
 
     @Override

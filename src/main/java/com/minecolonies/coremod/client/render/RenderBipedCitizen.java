@@ -92,7 +92,7 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
 
         if (citizen.getCitizenDataView() != null && citizen.getCitizenDataView().getCustomTexture() != null)
         {
-            model = new CitizenModel<>(0.0F);
+            model = new CitizenModel<>(false);
         }
 
         model.young = citizen.isBaby();
