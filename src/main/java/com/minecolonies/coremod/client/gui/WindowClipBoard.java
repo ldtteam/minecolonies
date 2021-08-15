@@ -2,13 +2,9 @@ package com.minecolonies.coremod.client.gui;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import com.ldtteam.blockout.controls.Button;
-import com.ldtteam.blockout.controls.Image;
-import com.ldtteam.blockout.controls.ItemIcon;
-import com.ldtteam.blockout.controls.Text;
-import com.ldtteam.blockout.views.ScrollingList;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
@@ -19,22 +15,17 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.server.colony.UpdateRequestStateMessage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3i;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.stream.Collectors;
-
 import static com.minecolonies.api.util.constant.WindowConstants.CLIPBOARD_TOGGLE;
-import static com.minecolonies.coremod.colony.requestsystem.requests.AbstractRequest.MISSING;
 
 /**
  * ClipBoard window.
  */
-public class WindowClipBoard extends AbstractWindowSkeleton
+public class WindowClipBoard extends AbstractWindowRequestTree
 {
     /**
      * Resource suffix.
@@ -42,64 +33,14 @@ public class WindowClipBoard extends AbstractWindowSkeleton
     private static final String BUILD_TOOL_RESOURCE_SUFFIX = ":gui/windowclipboard.xml";
 
     /**
-     * Requests list id.
-     */
-    private static final String WINDOW_ID_LIST_REQUESTS = "requests";
-
-    /**
-     * Requestst stack id.
-     */
-    private static final String LIST_ELEMENT_ID_REQUEST_STACK = "requestStack";
-
-    /**
-     * Id of the resource add button.
-     */
-    private static final String REQUEST_CANCEL = "cancel";
-
-    /**
-     * Id of the detail button.
-     */
-    private static final String REQUEST_DETAIL = "detail";
-
-    /**
-     * Id of the short detail label.
-     */
-    private static final String REQUEST_SHORT_DETAIL = "shortDetail";
-
-    /**
-     * Resolver string.
-     */
-    private static final String DELIVERY_IMAGE = "deliveryImage";
-
-    /**
-     * Id of the requester label.
-     */
-    private static final String REQUESTER = "requester";
-
-    /**
-     * The divider for the life count.
-     */
-    private static final int        LIFE_COUNT_DIVIDER = 30;
-
-    /**
      * List of async request tokens.
      */
     private final List<IToken<?>> asyncRequest = new ArrayList<>();
 
     /**
-     * Scrollinglist of the resources.
-     */
-    private ScrollingList resourceList;
-
-    /**
      * The colony id.
      */
     private final IColonyView colony;
-
-    /**
-     * Life count.
-     */
-    private int lifeCount = 0;
 
     /**
      * Hide or show not important requests.
@@ -113,7 +54,7 @@ public class WindowClipBoard extends AbstractWindowSkeleton
      */
     public WindowClipBoard(final IColonyView colony)
     {
-        super(Constants.MOD_ID + BUILD_TOOL_RESOURCE_SUFFIX);
+        super(null, Constants.MOD_ID + BUILD_TOOL_RESOURCE_SUFFIX, colony);
         this.colony = colony;
         for (final ICitizenDataView view : this.colony.getCitizens().values())
         {
@@ -128,61 +69,10 @@ public class WindowClipBoard extends AbstractWindowSkeleton
     private void toggleImportant()
     {
         this.hide = !this.hide;
-        fillList();
     }
 
-    /**
-     * Called when the window is opened. Sets up the buttons for either hut mode or decoration mode.
-     */
     @Override
-    public void onOpened()
-    {
-        fillList();
-    }
-
-    private void fillList()
-    {
-        resourceList = findPaneOfTypeByID(WINDOW_ID_LIST_REQUESTS, ScrollingList.class);
-        resourceList.setDataProvider(() -> getOpenRequests().size(), (index, rowPane) ->
-        {
-            final ImmutableList<IRequest<?>> openRequests = getOpenRequests();
-            if (index < 0 || index >= openRequests.size())
-            {
-                return;
-            }
-
-            final IRequest<?> request = openRequests.get(index);
-            final ItemIcon exampleStackDisplay = rowPane.findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_STACK, ItemIcon.class);
-            final List<ItemStack> displayStacks = request.getDisplayStacks();
-
-            if (!displayStacks.isEmpty())
-            {
-                if (exampleStackDisplay != null)
-                {
-                    exampleStackDisplay.setItem(displayStacks.get((lifeCount / LIFE_COUNT_DIVIDER) % displayStacks.size()));
-                }
-            }
-            else if (!request.getDisplayIcon().equals(MISSING))
-            {
-                final Image logo = rowPane.findPaneOfTypeByID(DELIVERY_IMAGE, Image.class);
-                logo.setVisible(true);
-                logo.setImage(request.getDisplayIcon());
-            }
-
-            rowPane.findPaneOfTypeByID(REQUESTER, Text.class)
-              .setText(request.getRequester().getRequesterDisplayName(colony.getRequestManager(), request));
-
-            rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Text.class)
-              .setText(request.getShortDisplayString().getString().replace("§f", ""));
-        });
-    }
-
-    /**
-     * The requests to display.
-     *
-     * @return the list of requests.
-     */
-    public ImmutableList<IRequest<?>> getOpenRequests()
+    public ImmutableList<IRequest<?>> getOpenRequestsFromBuilding(final IBuildingView building)
     {
         final ArrayList<IRequest<?>> requests = Lists.newArrayList();
 
@@ -205,7 +95,20 @@ public class WindowClipBoard extends AbstractWindowSkeleton
         requestTokens.addAll(resolver.getAllAssignedRequests());
         requestTokens.addAll(retryingRequestResolver.getAllAssignedRequests());
 
-        requests.addAll(requestTokens.stream().map(requestManager::getRequestForToken).filter(Objects::nonNull).collect(Collectors.toSet()));
+        for (final IToken<?> token : requestTokens)
+        {
+            IRequest<?> request = requestManager.getRequestForToken(token);
+
+            while (request != null && request.hasParent())
+            {
+                request = requestManager.getRequestForToken(request.getParent());
+            }
+
+            if (request != null && !requests.contains(request))
+            {
+                requests.add(request);
+            }
+        }
 
         if (hide)
         {
@@ -221,56 +124,14 @@ public class WindowClipBoard extends AbstractWindowSkeleton
     }
 
     @Override
-    public void onUpdate()
+    public boolean fulfillable(final IRequest<?> tRequest)
     {
-        super.onUpdate();
-        if (!Screen.hasShiftDown())
-        {
-            lifeCount++;
-        }
+        return false;
     }
 
-    /**
-     * Called when a button in the citizen has been clicked.
-     *
-     * @param button the clicked button.
-     */
     @Override
-    public void onButtonClicked(@NotNull final Button button)
+    protected void cancel(@NotNull final IRequest<?> request)
     {
-        switch (button.getID())
-        {
-            case REQUEST_DETAIL:
-                detailedClicked(button);
-                break;
-            case REQUEST_CANCEL:
-                cancel(button);
-                break;
-            default:
-                super.onButtonClicked(button);
-                break;
-        }
-    }
-
-    private void detailedClicked(@NotNull final Button button)
-    {
-        final int row = resourceList.getListElementIndexByPane(button);
-
-        if (getOpenRequests().size() > row && row >= 0)
-        {
-            @NotNull final WindowRequestDetail window = new WindowRequestDetail(this, getOpenRequests().get(row), colony.getID());
-            window.open();
-        }
-    }
-
-    private void cancel(@NotNull final Button button)
-    {
-        final int row = resourceList.getListElementIndexByPane(button);
-
-        if (getOpenRequests().size() > row && row >= 0)
-        {
-            @NotNull final IRequest<?> request = getOpenRequests().get(row);
-            Network.getNetwork().sendToServer(new UpdateRequestStateMessage(colony, request.getId(), RequestState.CANCELLED, null));
-        }
+        Network.getNetwork().sendToServer(new UpdateRequestStateMessage(colony, request.getId(), RequestState.CANCELLED, null));
     }
 }
