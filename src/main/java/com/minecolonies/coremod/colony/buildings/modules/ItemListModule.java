@@ -57,32 +57,6 @@ public class ItemListModule extends AbstractBuildingModule implements IItemListM
                 allowedItems.add(new ItemStorage(ItemStack.of(filterableList.getCompound(i))));
             }
         }
-        else
-        {
-            final ListNBT filterableList = compound.getList(TAG_ITEMLIST, Constants.NBT.TAG_COMPOUND);
-            for (int i = 0; i < filterableList.size(); ++i)
-            {
-                try
-                {
-                    final CompoundNBT listItem = filterableList.getCompound(i);
-
-                    // Backwards compatibility to only read the data which we need, TODO: Remove in 1.17
-                    final String id = listItem.getString(TAG_ID);
-                    if (this.id.equals(id))
-                    {
-                        final ListNBT filterableItems = listItem.getList(TAG_ITEMLIST, Constants.NBT.TAG_COMPOUND);
-                        for (int j = 0; j < filterableItems.size(); ++j)
-                        {
-                            allowedItems.add(new ItemStorage(ItemStack.of(filterableItems.getCompound(j))));
-                        }
-                    }
-                }
-                catch (Exception e)
-                {
-                    Log.getLogger().info("Removing incompatible stack");
-                }
-            }
-        }
         this.itemsAllowed = ImmutableList.copyOf(allowedItems);
     }
 

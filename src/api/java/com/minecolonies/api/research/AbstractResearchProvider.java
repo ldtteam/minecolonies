@@ -366,15 +366,7 @@ public abstract class AbstractResearchProvider implements IDataProvider
         private JsonObject makeSafeBuildingProperty(final String propertyType, final String buildingName, final int level)
         {
             JsonObject req = new JsonObject();
-
-            if(buildingName.equals("home"))
-            {
-                req.addProperty(propertyType, "citizen");
-            }
-            else
-            {
-                req.addProperty(propertyType, buildingName);
-            }
+            req.addProperty(propertyType, buildingName);
             req.addProperty("level", level);
             return req;
         }

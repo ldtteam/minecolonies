@@ -91,15 +91,6 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
     public WindowPermissionsPage(final BuildingTownHall.View building)
     {
         super(building, "layoutpermissions.xml");
-        // ToDo: remove these actions in 1.17
-        for (Action action : Action.values())
-        {
-            if (action != Action.CAN_DEMOTE && action != Action.CAN_PROMOTE && action != Action.SEND_MESSAGES)
-            {
-                actions.add(action);
-            }
-        }
-
         rankTypes.put(0, RANKTYPE_COLONY_MANAGER);
         rankTypes.put(1, RANKTYPE_HOSTILE);
         rankTypes.put(2, RANKTYPE_NONE);

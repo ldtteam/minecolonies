@@ -864,12 +864,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                 for (Map.Entry<String, Integer> building : ((AlternateBuildingResearchRequirement) requirement).getBuildings().entrySet())
                 {
                     final Item item;
-                    //TODO Houses use 'citizen' for schematics, but 'home' for ForgeRegistry purposes.  Consider fixing for 1.17
-                    if(building.equals("citizen"))
-                    {
-                        item = ModBuildings.home.getBuildingBlock().asItem();
-                    }
-                    else if (IMinecoloniesAPI.getInstance().getBuildingRegistry().containsKey(
+                    if (IMinecoloniesAPI.getInstance().getBuildingRegistry().containsKey(
                       new ResourceLocation(Constants.MOD_ID, building.getKey())))
                     {
                         item = IMinecoloniesAPI.getInstance().getBuildingRegistry().getValue(
@@ -917,12 +912,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             if (requirement instanceof BuildingResearchRequirement)
             {
                 final Item item;
-                //TODO Houses use 'citizen' for schematics, but 'home' for ForgeRegistry purposes.  Consider fixing for 1.17
-                if(((BuildingResearchRequirement) requirement).getBuilding().equals("citizen"))
-                {
-                    item = ModBuildings.home.getBuildingBlock().asItem();
-                }
-                else if (IMinecoloniesAPI.getInstance().getBuildingRegistry().containsKey(
+                if (IMinecoloniesAPI.getInstance().getBuildingRegistry().containsKey(
                   new ResourceLocation(Constants.MOD_ID, ((BuildingResearchRequirement) requirement).getBuilding())))
                 {
                     item = IMinecoloniesAPI.getInstance().getBuildingRegistry().getValue(

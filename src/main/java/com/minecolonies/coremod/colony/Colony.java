@@ -811,11 +811,6 @@ public class Colony implements IColony
         {
             this.textureStyle = compound.getString(TAG_COL_TEXT);
         }
-        else if (this.style.contains("medieval"))
-        {
-            //todo remove in 1.17. This allows players to keep their current medieval colonies.
-            this.textureStyle = "medieval";
-        }
         this.colonyTag = compound;
     }
 

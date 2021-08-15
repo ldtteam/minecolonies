@@ -186,17 +186,11 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
     @Override
     public void deserializeNBT(CompoundNBT compound)
     {
-        final ListNBT recipesTags;
-        if (compound.contains(TAG_RECIPES))
-        {
-            //todo remove in 1.17
-            recipesTags = compound.getList(TAG_RECIPES, Constants.NBT.TAG_COMPOUND);
-        }
-        else
-        {
-            final CompoundNBT compoundNBT = compound.getCompound(getId());
-            recipesTags = compoundNBT.getList(TAG_RECIPES, Constants.NBT.TAG_COMPOUND);
-        }
+
+
+        final CompoundNBT compoundNBT = compound.getCompound(getId());
+        final ListNBT recipesTags = compoundNBT.getList(TAG_RECIPES, Constants.NBT.TAG_COMPOUND);
+
 
         for (int i = 0; i < recipesTags.size(); i++)
         {
@@ -231,9 +225,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         for (final IToken<?> token : new ArrayList<>(recipes))
         {
             final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-
-            //todo remove preTaught check in 1.17
-            if (storage == null || (storage.getRecipeSource() != null && !crafterRecipes.containsKey(storage.getRecipeSource())) || (!isRecipeCompatibleWithCraftingModule(token) && !isPreTaughtRecipe(storage, crafterRecipes)))
+            if (storage == null || (storage.getRecipeSource() != null && !crafterRecipes.containsKey(storage.getRecipeSource())))
             {
                 removeRecipe(token);
             }
