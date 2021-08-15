@@ -167,7 +167,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
      *
      * @return the next state to go to.
      */
-    private IAIState startWorking()
+    public IAIState startWorking()
     {
         if (walkToBuilding())
         {

@@ -27,7 +27,7 @@ import static com.minecolonies.api.research.util.ResearchConstants.MINIMUM_STOCK
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_QUANTITY;
 
 /**
- * Abstract class for all buildings which require a filterable list of allowed/blocked items.
+ * Minimum stock module.
  */
 public class MinimumStockModule extends AbstractBuildingModule implements IMinimumStockModule, IPersistentModule, ITickingModule, IAltersRequiredItems
 {
