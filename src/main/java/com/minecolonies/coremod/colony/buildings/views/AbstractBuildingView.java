@@ -549,18 +549,22 @@ public abstract class AbstractBuildingView implements IBuildingView
     {
         try
         {
+            final StringTextComponent component = new StringTextComponent("");
+            component.append(new TranslationTextComponent(this.getCustomName().isEmpty() ? this.getSchematicName() : this.getCustomName()));
             if (getColony() == null || !getCitizensByRequest().containsKey(request.getId()))
             {
-                return new TranslationTextComponent(this.getCustomName().isEmpty() ? this.getSchematicName() : this.getCustomName());
+                return component;
             }
 
             final int citizenId = getCitizensByRequest().get(request.getId());
             if (citizenId == -1 || getColony().getCitizen(citizenId) == null)
             {
-                return new TranslationTextComponent(this.getCustomName().isEmpty() ? this.getSchematicName() : this.getCustomName());
+                return component;
             }
 
-            return new StringTextComponent(getColony().getCitizen(getCitizensByRequest().get(request.getId())).getName());
+            component.append(new StringTextComponent(" "));
+            component.append(new StringTextComponent(getColony().getCitizen(getCitizensByRequest().get(request.getId())).getName()));
+            return component;
         }
         catch (final Exception ex)
         {
