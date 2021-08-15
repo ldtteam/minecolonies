@@ -3,6 +3,8 @@ package com.minecolonies.api.colony;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 
+import java.util.UUID;
+
 /**
  * Data for colony visitors, based on citizendata
  */
@@ -33,4 +35,6 @@ public interface IVisitorData extends ICitizenData
      * @param pos sitting pos
      */
     void setSittingPosition(final BlockPos pos);
+
+    void setCustomTexture(UUID texture);
 }

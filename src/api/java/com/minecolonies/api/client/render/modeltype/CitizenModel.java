@@ -1,6 +1,7 @@
 package com.minecolonies.api.client.render.modeltype;
 
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.model.BipedModel;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,7 +17,12 @@ public class CitizenModel<T extends AbstractEntityCitizen> extends BipedModel<Ab
 
     public CitizenModel()
     {
-        this(0.0F);
+        this(true);
+    }
+
+    public CitizenModel(final boolean legacy)
+    {
+        super(RenderType::entityCutoutNoCull, 0.0F, 0.0F, 64, legacy ? 32 : 64);
     }
 
     @Override

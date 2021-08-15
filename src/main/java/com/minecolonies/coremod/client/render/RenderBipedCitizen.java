@@ -90,6 +90,11 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
             model = (citizen.isFemale() ? new ModelEntityFemaleCitizen() : new CitizenModel<>(0.0F));
         }
 
+        if (citizen.getCitizenDataView() != null && citizen.getCitizenDataView().getCustomTexture() != null)
+        {
+            model = new CitizenModel<>(false);
+        }
+
         model.young = citizen.isBaby();
         model.riding = citizen.getVehicle() != null;
         model.attackTime = citizen.attackAnim;
@@ -181,6 +186,10 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
     @Override
     public ResourceLocation getTextureLocation(final AbstractEntityCitizen entity)
     {
+        if (entity.getCitizenDataView() != null && entity.getCitizenDataView().getCustomTexture() != null)
+        {
+            return entity.getCitizenDataView().getCustomTexture();
+        }
         return entity.getTexture();
     }
 }

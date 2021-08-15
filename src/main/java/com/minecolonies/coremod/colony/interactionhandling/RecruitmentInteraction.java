@@ -172,7 +172,14 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
                     newCitizen.updateEntityIfNecessary();
                     data.getEntity().ifPresent(Entity::remove);
 
-                    LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(), "com.minecolonies.coremod.recruit.message", data.getName());
+                    if (data.hasCustomTexture())
+                    {
+                        LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(), "com.minecolonies.coremod.recruit.message.custom", data.getName());
+                    }
+                    else
+                    {
+                        LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(), "com.minecolonies.coremod.recruit.message", data.getName());
+                    }
                 }
             }
             else

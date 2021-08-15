@@ -34,6 +34,8 @@ import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.IntNBT;
@@ -456,7 +458,26 @@ public class CitizenData implements ICitizenData
 
         applyResearchEffects();
 
+        applyItemModifiers(citizen);
+
         markDirty();
+    }
+
+    /**
+     * Upon loading/registering an entity we also apply item modifiers to it
+     *
+     * @param citizen
+     */
+    private void applyItemModifiers(AbstractEntityCitizen citizen)
+    {
+        for (final EquipmentSlotType slot : EquipmentSlotType.values())
+        {
+            final ItemStack stack = citizen.getItemBySlot(slot);
+            if (!ItemStackUtils.isEmpty(stack))
+            {
+                citizen.getAttributes().addTransientAttributeModifiers(stack.getAttributeModifiers(slot));
+            }
+        }
     }
 
     /**
@@ -630,11 +651,17 @@ public class CitizenData implements ICitizenData
     }
 
     @Override
-    public void setIsFemale(final boolean isFemale)
+    public void setGenderAndGenerateName(final boolean isFemale)
     {
         this.female = isFemale;
         this.name = generateName(random, isFemale, getColony());
         markDirty();
+    }
+
+    @Override
+    public void setGender(final boolean isFemale)
+    {
+        this.female = isFemale;
     }
 
     @Override
