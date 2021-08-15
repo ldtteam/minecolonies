@@ -107,6 +107,7 @@ public class WindowListRecipes extends AbstractModuleWindow
     private void backwardClicked(final Button button)
     {
         final int row = recipeList.getListElementIndexByPane(button);
+        module.switchOrder(row, row + 1);
         Network.getNetwork().sendToServer(new ChangeRecipePriorityMessage(buildingView, row, false, module.getId()));
         recipeList.refreshElementPanes();
     }
@@ -118,6 +119,7 @@ public class WindowListRecipes extends AbstractModuleWindow
     private void forwardClicked(final Button button)
     {
         final int row = recipeList.getListElementIndexByPane(button);
+        module.switchOrder(row, row - 1);
         Network.getNetwork().sendToServer(new ChangeRecipePriorityMessage(buildingView, row, true, module.getId()));
         recipeList.refreshElementPanes();
     }
@@ -130,6 +132,8 @@ public class WindowListRecipes extends AbstractModuleWindow
     {
         final int row = recipeList.getListElementIndexByPane(button);
         final IRecipeStorage data = module.getRecipes().get(row);
+        module.removeRecipe(row);
+        recipeList.refreshElementPanes();
         Network.getNetwork().sendToServer(new AddRemoveRecipeMessage(buildingView, true, data, module.getId()));
     }
 
