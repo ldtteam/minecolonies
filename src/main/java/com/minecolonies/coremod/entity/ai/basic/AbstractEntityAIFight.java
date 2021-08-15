@@ -248,6 +248,16 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
         }
     }
 
+    @Override
+    public void onRemoval()
+    {
+        worker.setItemSlot(EquipmentSlotType.CHEST, ItemStackUtils.EMPTY);
+        worker.setItemSlot(EquipmentSlotType.FEET, ItemStackUtils.EMPTY);
+        worker.setItemSlot(EquipmentSlotType.HEAD, ItemStackUtils.EMPTY);
+        worker.setItemSlot(EquipmentSlotType.LEGS, ItemStackUtils.EMPTY);
+        worker.setItemSlot(EquipmentSlotType.OFFHAND, ItemStackUtils.EMPTY);
+    }
+
     /**
      * Removes currently equipped armor and shields
      */

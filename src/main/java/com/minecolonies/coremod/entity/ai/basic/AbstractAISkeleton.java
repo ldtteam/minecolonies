@@ -192,4 +192,13 @@ public abstract class AbstractAISkeleton<J extends IJob<?>> extends Goal
     {
         return stateMachine;
     }
+
+    /**
+     * On removal of the AI.
+     * Allow cleanup.
+     */
+    public void onRemoval()
+    {
+
+    }
 }
