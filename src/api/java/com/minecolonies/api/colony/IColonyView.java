@@ -248,11 +248,10 @@ public interface IColonyView extends IColony
 
     /**
      * Handles visitor view messages
-     *
-     * @param refresh         whether to override old data
+     * @param refresh if all need to be refreshed.
      * @param visitorViewData the new data to set
      */
-    void handleColonyViewVisitorMessage(boolean refresh, Set<IVisitorViewData> visitorViewData);
+    void handleColonyViewVisitorMessage(final PacketBuffer visitorViewData, final boolean refresh);
 
     /**
      * Remove a citizen from the ColonyView.

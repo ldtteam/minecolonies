@@ -56,11 +56,17 @@ public interface ICivilianData extends ICitizen, INBTSerializable<CompoundNBT>
     void initEntityValues();
 
     /**
-     * Sets wether this entity is female.
-     *
-     * @param isFemale true if female
+     * Sets a gender and generates a new name
+     * @param isFemale
      */
-    void setIsFemale(@NotNull boolean isFemale);
+    void setGenderAndGenerateName(@NotNull boolean isFemale);
+
+    /**
+     * Sets the gender
+     *
+     * @param isFemale
+     */
+    void setGender(boolean isFemale);
 
     /**
      * Returns the texture id for the civilian.

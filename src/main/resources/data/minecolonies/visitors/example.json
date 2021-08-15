@@ -1,0 +1,10 @@
+{
+  "texture": "fefb153f-4ffc-4f5c-acd2-3291e73bdd4d",
+  "citizensuffix": "_b",
+  "name": "Dr R Cat",
+  "chance": 0.000,
+  "storylangkey": "com.minecolonies.coremod.gui.chat.drcat",
+  "recruitcost": "minecraft:baked_potato",
+  "recruitcostcount": 64,
+  "gender": "male"
+}
