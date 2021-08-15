@@ -562,7 +562,7 @@ public abstract class AbstractBuildingView implements IBuildingView
                 return component;
             }
 
-            component.append(new StringTextComponent(" "));
+            component.append(new StringTextComponent(": "));
             component.append(new StringTextComponent(getColony().getCitizen(getCitizensByRequest().get(request.getId())).getName()));
             return component;
         }
