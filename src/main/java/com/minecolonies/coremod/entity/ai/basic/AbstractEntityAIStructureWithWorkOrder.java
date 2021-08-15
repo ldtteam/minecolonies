@@ -33,7 +33,8 @@ import static com.ldtteam.structurize.placement.AbstractBlueprintIterator.NULL_P
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.IDLE;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.PICK_UP_RESIDUALS;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDSTART;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECONSTRUCTION_COMPLETE;
 
 /**
  * AI class for the builder. Manages building and repairing buildings.
@@ -423,6 +424,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             }
             job.setWorkOrder(null);
             resetCurrentStructure();
+            getOwnBuilding().cancelAllRequestsOfCitizen(worker.getCitizenData());
             getOwnBuilding().setProgressPos(null, BuildingStructureHandler.Stage.CLEAR);
             return true;
         }
