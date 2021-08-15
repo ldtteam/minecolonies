@@ -84,7 +84,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
     /**
      * The list of items needed for the assistant
      */
-    private Set<ItemStack> assistantTests = new HashSet<>();
+    private Set<ItemStorage> reservedItemCache = new HashSet<>();
 
     /**
      * Constructor for the Cook. Defines the tasks the cook executes.
@@ -122,6 +122,13 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
             worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
             this.incrementActionsDoneAndDecSaturation();
         }
+    }
+
+    @Override
+    public IAIState startWorking()
+    {
+        reservedItemCache.clear();
+        return super.startWorking();
     }
 
     @Override
@@ -284,7 +291,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
     @Override
     protected IAIState checkForImportantJobs()
     {
-        this.assistantTests.clear(); //Clear the cache of current pending work
+        this.reservedItemCache.clear(); //Clear the cache of current pending work
 
         citizenToServe.clear();
         final List<AbstractEntityCitizen> citizenList = WorldUtil.getEntitiesWithinBuilding(world, AbstractEntityCitizen.class, getOwnBuilding(), null)
@@ -327,14 +334,13 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
      */
     private boolean isItemStackForAssistant(ItemStack stack)
     {
-        if(this.assistantTests.isEmpty())
+        if(this.reservedItemCache.isEmpty())
         {
-            this.assistantTests.addAll(getOwnBuilding().getFirstModuleOccurance(BuildingCook.CraftingModule.class).getAssistantItems());
+            this.reservedItemCache.addAll(getOwnBuilding().getFirstModuleOccurance(BuildingCook.CraftingModule.class).reservedStacks().keySet());
         }
 
-        return ItemStackUtils.compareItemStackListIgnoreStackSize(new ArrayList<>(assistantTests), stack, true, true);
+        return reservedItemCache.contains(new ItemStorage(stack));
     }
-
 
     @Override
     protected int getActionsDoneUntilDumping()
