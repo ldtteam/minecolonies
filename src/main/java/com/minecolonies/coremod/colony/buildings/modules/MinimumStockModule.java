@@ -127,14 +127,7 @@ public class MinimumStockModule extends AbstractBuildingModule implements IMinim
                     {
                         itemStack.setCount(Math.min(itemStack.getMaxStackSize(), delta));
                         final Stack stack = new Stack(itemStack, false);
-                        if (building.getMainCitizen() != null)
-                        {
-                            building.getMainCitizen().createRequestAsync(stack);
-                        }
-                        else
-                        {
-                            building.createRequest(stack, false);
-                        }
+                        building.createRequest(stack, false);
                     }
                 }
                 else if (request != null)
