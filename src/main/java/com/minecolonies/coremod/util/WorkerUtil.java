@@ -76,6 +76,7 @@ public final class WorkerUtil
         if (tools == null)
         {
             tools = new ArrayList<>();
+            tools.add(new Tuple<>(ToolType.HOE, new ItemStack(Items.WOODEN_HOE)));
             tools.add(new Tuple<>(ToolType.SHOVEL, new ItemStack(Items.WOODEN_SHOVEL)));
             tools.add(new Tuple<>(ToolType.AXE, new ItemStack(Items.WOODEN_AXE)));
             tools.add(new Tuple<>(ToolType.PICKAXE, new ItemStack(Items.WOODEN_PICKAXE)));

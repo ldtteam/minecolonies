@@ -2,6 +2,7 @@ package com.minecolonies.api.entity.ai.registry;
 
 import com.google.common.collect.Multimap;
 import com.minecolonies.api.IMinecoloniesAPI;
+import com.minecolonies.api.entity.ai.IStateAI;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import net.minecraft.entity.ai.goal.Goal;
 import org.jetbrains.annotations.NotNull;
@@ -48,6 +49,24 @@ public interface IMobAIRegistry
       final int priority,
       final Function<AbstractEntityMinecoloniesMob, Goal> aiTaskProducer,
       Predicate<AbstractEntityMinecoloniesMob> applyPredicate);
+
+    /**
+     * Method used to register a entity AI task for a mob that matches the predicate.
+     *
+     * @param aiTaskProducer The task producer in question to register.
+     * @param applyPredicate The predicate used to indicate if the task should be applied to a given mob.
+     * @return The registry.
+     */
+    @NotNull
+    IMobAIRegistry registerNewStateAI(
+      final Function<AbstractEntityMinecoloniesMob, IStateAI> aiTaskProducer,
+      Predicate<AbstractEntityMinecoloniesMob> applyPredicate);
+
+    /**
+     * Applies the registered AI's to the given mob
+     */
+    @NotNull
+    void applyToMob(AbstractEntityMinecoloniesMob mob);
 
     /**
      * Method to get the AI target tasks registered for a given mob. Used by minecolonies to get the AIs that are required for a given mob.

@@ -4,6 +4,7 @@ import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.client.gui.modules.WindowListRecipes;
@@ -145,9 +146,37 @@ public class CraftingModuleView extends AbstractBuildingModuleView
         return "com.minecolonies.coremod.gui.workerhuts.recipe." + id ;
     }
 
+    /**
+     * Get a list of all recipes.
+     * @return the list.
+     */
     public List<IRecipeStorage> getRecipes()
     {
         return recipes;
+    }
+
+    /**
+     * Remove the recipe at index.
+     * @param index the index to remove.
+     */
+    public void removeRecipe(int index)
+    {
+        recipes.remove(index);
+    }
+
+    /**
+     * Switch order in recipe list.
+     * @param i first index.
+     * @param j second index.
+     */
+    public void switchOrder(final int i, final int j)
+    {
+        if (i < recipes.size() && j < recipes.size() && i >= 0 && j >= 0)
+        {
+            final IRecipeStorage storage = recipes.get(i);
+            recipes.set(i, recipes.get(j));
+            recipes.set(j, storage);
+        }
     }
 
     public int getMaxRecipes()

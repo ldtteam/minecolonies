@@ -1,5 +1,6 @@
 package com.minecolonies.api.entity.mobs;
 
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -7,18 +8,24 @@ import com.minecolonies.api.colony.colonyEvents.IColonyCampFireRaidEvent;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.enchants.ModEnchants;
 import com.minecolonies.api.entity.CustomGoalSelector;
-import com.minecolonies.api.entity.combat.combat.IThreatTableEntity;
-import com.minecolonies.api.entity.combat.combat.ThreatTable;
+import com.minecolonies.api.entity.ai.statemachine.states.IState;
+import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
+import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
+import com.minecolonies.api.entity.combat.CombatAIStates;
+import com.minecolonies.api.entity.combat.threat.IThreatTableEntity;
+import com.minecolonies.api.entity.combat.threat.ThreatTable;
 import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
 import com.minecolonies.api.entity.pathfinding.IStuckHandlerEntity;
 import com.minecolonies.api.entity.pathfinding.PathingStuckHandler;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.items.IChiefSwordItem;
 import com.minecolonies.api.sounds.RaiderSounds;
+import com.minecolonies.api.util.Log;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.potion.EffectInstance;
@@ -26,7 +33,6 @@ import net.minecraft.potion.Effects;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
@@ -43,7 +49,7 @@ import static com.minecolonies.api.util.constant.RaiderConstants.*;
 /**
  * Abstract for all Barbarian entities.
  */
-public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements IStuckHandlerEntity, IThreatTableEntity
+public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements IStuckHandlerEntity, IThreatTableEntity, IMob
 {
     /**
      * Difficulty at which raiders team up
@@ -59,6 +65,16 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements
      * The max amount of damage converted to scaling
      */
     private static final int MAX_SCALED_DAMAGE = 7;
+
+    /**
+     * Minimum damage done before thorns effect can happen
+     */
+    private static final float MIN_THORNS_DAMAGE = 30;
+
+    /**
+     * 1 in X Chance that thorns effect happens
+     */
+    private static final int THORNS_CHANCE = 5;
 
     /**
      * The New PathNavigate navigator.
@@ -149,7 +165,12 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements
     /**
      * The threattable of the mob
      */
-    private ThreatTable threatTable = new ThreatTable(this);
+    private ThreatTable threatTable = new ThreatTable<>(this);
+
+    /**
+     * Raiders AI statemachine
+     */
+    private ITickRateStateMachine<IState> ai = new TickRateStateMachine<>(CombatAIStates.NO_TARGET, e -> Log.getLogger().warn(e));
 
     /**
      * Constructor method for Abstract Barbarians.
@@ -165,7 +186,7 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements
         this.goalSelector = new CustomGoalSelector(this.goalSelector);
         this.targetSelector = new CustomGoalSelector(this.targetSelector);
         this.xpReward = BARBARIAN_EXP_DROP;
-        RaiderMobUtils.setupMobAi(this);
+        IMinecoloniesAPI.getInstance().getMobAIRegistry().applyToMob(this);
         this.setInvulnerable(true);
         RaiderMobUtils.setEquipment(this);
     }
@@ -225,7 +246,7 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements
             this.newNavigator.setCanFloat(true);
             newNavigator.setSwimSpeedFactor(getSwimSpeedFactor());
             this.newNavigator.getNodeEvaluator().setCanPassDoors(true);
-            newNavigator.getPathingOptions().withJumpDropCost(1.1D);
+            newNavigator.getPathingOptions().withDropCost(1.3D);
             PathingStuckHandler stuckHandler = PathingStuckHandler.createStuckHandler()
                                                  .withTakeDamageOnStuck(0.4f)
                                                  .withBuildLeafBridges()
@@ -357,6 +378,8 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements
     @Override
     public void aiStep()
     {
+        updateSwingTime();
+
         if (invulTime > 0)
         {
             invulTime--;
@@ -414,6 +437,11 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements
             }
         }
         currentTick++;
+
+        if (isRegistered)
+        {
+            ai.tick();
+        }
 
         super.aiStep();
     }
@@ -479,7 +507,7 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements
     @Override
     public boolean hurt(@NotNull final DamageSource damageSource, final float damage)
     {
-        if (damageSource.getEntity() instanceof LivingEntity)
+        if (damageSource.getEntity() instanceof LivingEntity && !(damageSource.getEntity() instanceof AbstractEntityMinecoloniesMob))
         {
             threatTable.addThreat((LivingEntity) damageSource.getEntity(), (int) damage);
         }
@@ -511,6 +539,11 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements
             final Entity source = damageSource.getEntity();
             if (source instanceof PlayerEntity)
             {
+                if (damage > MIN_THORNS_DAMAGE && random.nextInt(THORNS_CHANCE) == 0)
+                {
+                    source.hurt(DamageSource.thorns(this), damage * 0.5f);
+                }
+
                 final float raiderDamageEnchantLevel = EnchantmentHelper.getItemEnchantmentLevel(ModEnchants.raiderDamage, ((PlayerEntity) source).getMainHandItem());
 
                 // Up to 7 damage are converted to health scaling damage, 7 is the damage of a diamond sword
@@ -550,15 +583,6 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements
         {
             this.colony = colony;
         }
-    }
-
-    /**
-     * Get the position (blckpos)
-     * @return the pos.
-     */
-    public BlockPos blockPosition()
-    {
-        return new BlockPos(getX(), getY(), getZ());
     }
 
     public int getEventID()
@@ -696,5 +720,15 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements
     public ThreatTable getThreatTable()
     {
         return threatTable;
+    }
+
+    /**
+     * Get the AI machine
+     *
+     * @return ai statemachine
+     */
+    public ITickRateStateMachine<IState> getAI()
+    {
+        return ai;
     }
 }

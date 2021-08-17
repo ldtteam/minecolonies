@@ -3,6 +3,7 @@ package com.minecolonies.coremod.blocks;
 import com.minecolonies.api.blocks.AbstractBlockMinecolonies;
 import com.minecolonies.coremod.tileentities.TileEntityCompostedDirt;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
@@ -12,6 +13,7 @@ import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 import net.minecraftforge.common.IPlantable;
+import net.minecraftforge.common.ToolType;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -31,7 +33,8 @@ public class BlockCompostedDirt extends AbstractBlockMinecolonies<BlockComposted
      */
     public BlockCompostedDirt()
     {
-        super(Properties.of(Material.DIRT).strength(BLOCK_HARDNESS, RESISTANCE));
+        super(Properties.of(Material.DIRT).strength(BLOCK_HARDNESS, RESISTANCE)
+            .harvestTool(ToolType.SHOVEL).sound(SoundType.GRAVEL));
         setRegistryName(BLOCK_NAME);
     }
 

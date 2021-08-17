@@ -5,7 +5,6 @@ import com.minecolonies.api.entity.ai.citizen.guards.GuardGear;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardGearBuilder;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
-import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.InventoryFunctions;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -85,8 +84,6 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
         itemsNeeded.add(GuardGearBuilder.buildGearForLevel(ARMOR_LEVEL_LEATHER, ARMOR_LEVEL_GOLD, LEATHER_BUILDING_LEVEL_RANGE, GOLD_BUILDING_LEVEL_RANGE));
     }
 
-    protected abstract int getAttackRange();
-
     /**
      * Redirects the guard to their building.
      *
@@ -109,8 +106,6 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
      */
     private IAIState prepare()
     {
-        setDelay(TICKS_SECOND * PREPARE_DELAY_SECONDS);
-
         for (final ToolType tool : toolsNeeded)
         {
             if (checkForToolOrWeapon(tool))
@@ -220,49 +215,6 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
         }
 
         equipInventoryArmor();
-    }
-
-    /**
-     * This gets the attack speed for the guard with adjustment for guards level. Capped at 2
-     *
-     * @return movement speed for guard
-     */
-    public double getCombatMovementSpeed()
-    {
-        if (worker.getCitizenData() == null)
-        {
-            return COMBAT_SPEED;
-        }
-        double levelAdjustment = getCombatSpeedBonus();
-        levelAdjustment += (getOwnBuilding().getBuildingLevel() * 2 - 1) * SPEED_LEVEL_BONUS;
-
-        levelAdjustment = levelAdjustment > 0.3 ? 0.3 : levelAdjustment;
-        return COMBAT_SPEED + levelAdjustment;
-    }
-
-    /**
-     * Override to set a combat speed bonus
-     *
-     * @return bonus movement speed
-     */
-    protected double getCombatSpeedBonus()
-    {
-        return 0;
-    }
-
-    /**
-     * Gets the base reload time for an attack.
-     *
-     * @return the reload time
-     */
-    protected int getAttackDelay()
-    {
-        if (worker.getCitizenData() != null)
-        {
-            final int delay = PHYSICAL_ATTACK_DELAY_BASE - (worker.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Adaptability) / 5);
-            return delay > PHYSICAL_ATTACK_DELAY_MIN ? PHYSICAL_ATTACK_DELAY_MIN : delay;
-        }
-        return PHYSICAL_ATTACK_DELAY_BASE;
     }
 
     @Override

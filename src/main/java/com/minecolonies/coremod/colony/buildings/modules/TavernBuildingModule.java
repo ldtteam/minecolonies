@@ -6,7 +6,6 @@ import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.modules.*;
 import com.minecolonies.api.colony.buildings.modules.stat.IStat;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
-import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.sounds.TavernSounds;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Tuple;
@@ -15,6 +14,7 @@ import com.minecolonies.coremod.client.gui.huts.WindowHutTavern;
 import com.minecolonies.coremod.colony.buildings.views.LivingBuildingView;
 import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.VisitorSpawnedEvent;
 import com.minecolonies.coremod.colony.interactionhandling.RecruitmentInteraction;
+import com.minecolonies.coremod.datalistener.CustomVisitorListener;
 import com.minecolonies.coremod.network.messages.client.colony.PlayMusicAtPosMessage;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -48,7 +48,7 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
     /**
      * Schematic name
      */
-    public static final String TAG_VISITOR_ID    = "visitor";
+    public static final String TAG_VISITOR_ID = "visitor";
 
     /**
      * Skill levels
@@ -107,13 +107,28 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
     {
         if (musicCooldown <= 0 && building.getBuildingLevel() > 0 && !building.getColony().isDay())
         {
-            BlockPos corner1 = building.getCorners().getA();
-            BlockPos corner2 = building.getCorners().getB();
+            int count = 0;
+            BlockPos avg = BlockPos.ZERO;
+            for (final Integer id : externalCitizens)
+            {
+                final IVisitorData data = building.getColony().getVisitorManager().getVisitor(id);
+                if (data != null)
+                {
+                    if (!data.getSittingPosition().equals(BlockPos.ZERO))
+                    {
+                        count++;
+                        avg.offset(data.getSittingPosition());
+                    }
+                }
+            }
 
-            final int x = (int) ((corner1.getX() + corner2.getX()) * 0.5);
-            final int z = (int) ((corner1.getZ() + corner2.getZ()) * 0.5);
+            if (count < 2)
+            {
+                return;
+            }
 
-            final PlayMusicAtPosMessage message = new PlayMusicAtPosMessage(TavernSounds.tavernTheme, new BlockPos(x, building.getPosition().getY(), z), building.getColony().getWorld(), 0.7f, 1.0f);
+            avg = new BlockPos(avg.getX() / count, avg.getY() / count, avg.getZ() / count);
+            final PlayMusicAtPosMessage message = new PlayMusicAtPosMessage(TavernSounds.tavernTheme, avg, building.getColony().getWorld(), 0.7f, 1.0f);
             for (final ServerPlayerEntity curPlayer : building.getColony().getPackageManager().getCloseSubscribers())
             {
                 Network.getNetwork().sendToPlayer(message, curPlayer);
@@ -179,48 +194,53 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
             spawnPos = building.getPosition();
         }
 
-        building.getColony().getVisitorManager().spawnOrCreateCivilian(newCitizen, building.getColony().getWorld(), spawnPos, true);
         Tuple<Item, Integer> cost = recruitCosts.get(building.getColony().getWorld().random.nextInt(recruitCosts.size()));
 
-        building.getColony().getEventDescriptionManager().addEventDescription(new VisitorSpawnedEvent(spawnPos, newCitizen.getName()));
-
-        if (newCitizen.getEntity().isPresent())
+        ItemStack boots = ItemStack.EMPTY;
+        if (recruitLevel > LEATHER_SKILL_LEVEL)
         {
-            final AbstractEntityCitizen citizenEntity = newCitizen.getEntity().get();
-
-            if (recruitLevel > LEATHER_SKILL_LEVEL)
+            // Leather
+            boots = new ItemStack(Items.LEATHER_BOOTS);
+        }
+        if (recruitLevel > GOLD_SKILL_LEVEL)
+        {
+            // Gold
+            boots = new ItemStack(Items.GOLDEN_BOOTS);
+        }
+        if (recruitLevel > IRON_SKILL_LEVEL)
+        {
+            if (cost.getB() <= 2)
             {
-                // Leather
-                citizenEntity.setItemSlot(EquipmentSlotType.FEET, new ItemStack(Items.LEATHER_BOOTS));
+                cost = recruitCosts.get(building.getColony().getWorld().random.nextInt(recruitCosts.size()));
             }
-            if (recruitLevel > GOLD_SKILL_LEVEL)
+            // Iron
+            boots = new ItemStack(Items.IRON_BOOTS);
+        }
+        if (recruitLevel > DIAMOND_SKILL_LEVEL)
+        {
+            if (cost.getB() <= 3)
             {
-                // Gold
-                citizenEntity.setItemSlot(EquipmentSlotType.FEET, new ItemStack(Items.GOLDEN_BOOTS));
+                cost = recruitCosts.get(building.getColony().getWorld().random.nextInt(recruitCosts.size()));
             }
-            if (recruitLevel > IRON_SKILL_LEVEL)
-            {
-                if (cost.getB() <= 2)
-                {
-                    cost = recruitCosts.get(building.getColony().getWorld().random.nextInt(recruitCosts.size()));
-                }
-                // Iron
-                citizenEntity.setItemSlot(EquipmentSlotType.FEET, new ItemStack(Items.IRON_BOOTS));
-            }
-            if (recruitLevel > DIAMOND_SKILL_LEVEL)
-            {
-                if (cost.getB() <= 3)
-                {
-                    cost = recruitCosts.get(building.getColony().getWorld().random.nextInt(recruitCosts.size()));
-                }
-                // Diamond
-                citizenEntity.setItemSlot(EquipmentSlotType.FEET, new ItemStack(Items.DIAMOND_BOOTS));
-            }
+            // Diamond
+            boots = new ItemStack(Items.DIAMOND_BOOTS);
         }
 
-        newCitizen.setRecruitCosts(new ItemStack(cost.getA(), (int)(recruitLevel * 3.0 / cost.getB())));
-        newCitizen.triggerInteraction(new RecruitmentInteraction(new TranslationTextComponent(
-          "com.minecolonies.coremod.gui.chat.recruitstory" + (building.getColony().getWorld().random.nextInt(MAX_STORY) + 1), newCitizen.getName().split(" ")[0]), ChatPriority.IMPORTANT));
+        newCitizen.setRecruitCosts(new ItemStack(cost.getA(), (int) (recruitLevel * 3.0 / cost.getB())));
+
+        if (!CustomVisitorListener.chanceCustomVisitors(newCitizen))
+        {
+            newCitizen.triggerInteraction(new RecruitmentInteraction(new TranslationTextComponent(
+              "com.minecolonies.coremod.gui.chat.recruitstory" + (building.getColony().getWorld().random.nextInt(MAX_STORY) + 1), newCitizen.getName().split(" ")[0]),
+              ChatPriority.IMPORTANT));
+        }
+
+        building.getColony().getVisitorManager().spawnOrCreateCivilian(newCitizen, building.getColony().getWorld(), spawnPos, true);
+        if (newCitizen.getEntity().isPresent())
+        {
+            newCitizen.getEntity().get().setItemSlot(EquipmentSlotType.FEET, boots);
+        }
+        building.getColony().getEventDescriptionManager().addEventDescription(new VisitorSpawnedEvent(spawnPos, newCitizen.getName()));
     }
 
     @Override

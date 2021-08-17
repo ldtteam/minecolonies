@@ -1,7 +1,5 @@
 package com.minecolonies.api.entity.mobs;
 
-import com.google.common.collect.Multimap;
-import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.entity.mobs.barbarians.IChiefBarbarianEntity;
 import com.minecolonies.api.entity.mobs.barbarians.IMeleeBarbarianEntity;
@@ -18,7 +16,6 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
-import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -60,20 +57,6 @@ public final class RaiderMobUtils
     private RaiderMobUtils()
     {
         throw new IllegalStateException("Tried to initialize: MobSpawnUtils but this is a Utility class.");
-    }
-
-    /**
-     * Sets up the mob ai for a minecolonies mob. Calls into the api to get the required ai tasks from the registry and loads the tasks.
-     *
-     * @param mob The mob to set the AI Tasks on.
-     */
-    public static void setupMobAi(final AbstractEntityMinecoloniesMob mob)
-    {
-        final Multimap<Integer, Goal> aiTasks = IMinecoloniesAPI.getInstance().getMobAIRegistry().getEntityAiTasksForMobs(mob);
-        aiTasks.keySet().forEach(priority -> aiTasks.get(priority).forEach(task -> mob.goalSelector.addGoal(priority, task)));
-
-        final Multimap<Integer, Goal> aiTargetTasks = IMinecoloniesAPI.getInstance().getMobAIRegistry().getEntityAiTargetTasksForMobs(mob);
-        aiTargetTasks.keySet().forEach(priority -> aiTargetTasks.get(priority).forEach(task -> mob.targetSelector.addGoal(priority, task)));
     }
 
     /**

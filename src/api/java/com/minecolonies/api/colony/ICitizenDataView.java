@@ -188,4 +188,10 @@ public interface ICitizenDataView extends ICitizen
      * @return the name.
      */
     Tuple<String, String> getParents();
+
+    /**
+     * Get the custom texture of the citizen.
+     * @return the res location.
+     */
+    ResourceLocation getCustomTexture();
 }

@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.requestsystem.resolvers;
 
+import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
@@ -19,6 +20,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequestManager;
 import com.minecolonies.coremod.colony.requestsystem.requesters.BuildingBasedRequester;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.IFormattableTextComponent;
@@ -181,14 +183,41 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
     {
         new ArrayList<>(assignedRequests).stream()
           .map(manager::getRequestForToken)
-          .filter(shouldTriggerReassign.and(Objects::nonNull))
           .forEach(request ->
           {
-              final IToken<?> newResolverToken = manager.reassignRequest(request.getId(), ImmutableList.of(token));
-
-              if (newResolverToken != null && !newResolverToken.equals(token))
+              if (request != null)
               {
-                  assignedRequests.remove(request.getId());
+                  if (shouldTriggerReassign.test(request))
+                  {
+                      final IToken<?> newResolverToken = manager.reassignRequest(request.getId(), ImmutableList.of(token));
+                      if (newResolverToken != null && !newResolverToken.equals(token))
+                      {
+                          assignedRequests.remove(request.getId());
+                      }
+                  }
+                  else
+                  {
+                      IRequest<?> req = request;
+                      while (req.hasParent())
+                      {
+                          req = manager.getRequestForToken(req.getParent());
+                          if (req != null && shouldTriggerReassign.test(req))
+                          {
+                              if (req.hasChildren())
+                              {
+                                  final ImmutableCollection<IToken<?>> currentChildren = req.getChildren();
+                                  currentChildren.forEach(((IStandardRequestManager) manager).getRequestHandler()::onRequestCancelledDirectly);
+                              }
+
+                              IToken<?> newResolverToken = manager.reassignRequest(req.getId(), ImmutableList.of(getId()));
+                              if (newResolverToken != getId())
+                              {
+                                  assignedRequests.remove(request.getId());
+                                  break;
+                              }
+                          }
+                      }
+                  }
               }
           });
     }

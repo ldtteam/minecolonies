@@ -121,7 +121,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     /**
      * Whether we need to recheck if a guard building is near
      */
-    private boolean recheckGuardBuildingNear = false;
+    private boolean recheckGuardBuildingNear = true;
 
     /**
      * Made to check if the building has to update the server/client.
@@ -333,15 +333,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             this.customName = compound.getString(TAG_CUSTOM_NAME);
         }
 
-        if (compound.contains(TAG_GUARD_NEARBY))
-        {
-            this.guardBuildingNear = compound.getBoolean(TAG_GUARD_NEARBY);
-        }
-        else
-        {
-            recheckGuardBuildingNear = true;
-        }
-
         getModules(IPersistentModule.class).forEach(module -> module.deserializeNBT(compound));
     }
 
@@ -359,7 +350,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         writeRequestSystemToNBT(compound);
         compound.putBoolean(TAG_IS_BUILT, isBuilt);
         compound.putString(TAG_CUSTOM_NAME, customName);
-        compound.putBoolean(TAG_GUARD_NEARBY, guardBuildingNear);
 
         getModules(IPersistentModule.class).forEach(module -> module.serializeNBT(compound));
         return compound;

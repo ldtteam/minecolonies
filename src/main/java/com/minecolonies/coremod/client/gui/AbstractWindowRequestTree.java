@@ -26,8 +26,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -67,7 +69,7 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
     /**
      * The building position.
      */
-    private final IBuildingView building;
+    private @Nullable final IBuildingView building;
 
     /**
      * Constructor to initiate the window request tree windows.
@@ -111,7 +113,7 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
     {
         super.onOpened();
 
-        if (building != null && resourceList != null)
+        if (resourceList != null)
         {
             updateRequests();
         }
@@ -134,8 +136,7 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
         if (getOpenRequestTreeOfBuilding().size() > row && row >= 0)
         {
             @NotNull final IRequest<?> request = getOpenRequestTreeOfBuilding().get(row).getRequest();
-            building.onRequestedRequestCancelled(colony.getRequestManager(), request);
-            Network.getNetwork().sendToServer(new UpdateRequestStateMessage(colony, request.getId(), RequestState.CANCELLED, null));
+            cancel(request);
         }
         updateRequests();
     }
@@ -145,7 +146,7 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
      *
      * @param request the request to cancel.
      */
-    public void cancel(@NotNull final IRequest<?> request)
+    protected void cancel(@NotNull final IRequest<?> request)
     {
         building.onRequestedRequestCancelled(colony.getRequestManager(), request);
         Network.getNetwork().sendToServer(new UpdateRequestStateMessage(colony, request.getId(), RequestState.CANCELLED, null));
@@ -167,12 +168,9 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
 
         final List<RequestWrapper> treeElements = new ArrayList<>();
 
-        if (building != null)
-        {
-            getOpenRequestsFromBuilding(building).forEach(r -> {
-                constructTreeFromRequest(building, colony.getRequestManager(), r, treeElements, 0);
-            });
-        }
+        getOpenRequestsFromBuilding(building).forEach(r -> {
+            constructTreeFromRequest(building, colony.getRequestManager(), r, treeElements, 0);
+        });
 
         return ImmutableList.copyOf(treeElements);
     }
@@ -187,7 +185,7 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
      * @param currentDepth the current depth.
      */
     private void constructTreeFromRequest(
-      @NotNull final IBuildingView buildingView,
+      @Nullable final IBuildingView buildingView,
       @NotNull final IRequestManager manager,
       @NotNull final IRequest<?> request,
       @NotNull final List<RequestWrapper> list,
@@ -220,6 +218,10 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
      */
     public ImmutableList<IRequest<?>> getOpenRequestsFromBuilding(final IBuildingView building)
     {
+        if (building == null)
+        {
+            return ImmutableList.of();
+        }
         return building.getOpenRequestsOfBuilding();
     }
 
@@ -308,7 +310,11 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
                 wrapperBox.setPosition(wrapperBox.getX() + 2 * wrapper.getDepth(), wrapperBox.getY());
                 wrapperBox.setSize(wrapperBox.getParent().getWidth() - 2 * wrapper.getDepth(), wrapperBox.getHeight());
 
-                rowPane.findPaneByID(REQUEST_FULLFIL).enable();
+                final Pane pane = rowPane.findPaneByID(REQUEST_FULLFIL);
+                if (pane != null)
+                {
+                    rowPane.findPaneByID(REQUEST_FULLFIL).enable();
+                }
 
                 final IRequest<?> request = wrapper.getRequest();
                 final ItemIcon exampleStackDisplay = rowPane.findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_STACK, ItemIcon.class);
@@ -351,13 +357,16 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
                     rowPane.findPaneOfTypeByID(REQUEST_CANCEL, ButtonImage.class).hide();
                 }
 
-                if (!fulfillable(request))
+                if (pane != null)
                 {
-                    rowPane.findPaneOfTypeByID(REQUEST_FULLFIL, ButtonImage.class).hide();
-                }
-                else
-                {
-                    rowPane.findPaneOfTypeByID(REQUEST_FULLFIL, ButtonImage.class).show();
+                    if (!fulfillable(request))
+                    {
+                        pane.hide();
+                    }
+                    else
+                    {
+                        pane.show();
+                    }
                 }
             }
         });
@@ -480,13 +489,13 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
          * @param depth        the depth.
          * @param buildingView the building it belongs to.
          */
-        public RequestWrapper(@NotNull final IRequest<?> request, final int depth, @NotNull final IBuildingView buildingView)
+        public RequestWrapper(@NotNull final IRequest<?> request, final int depth, @Nullable final IBuildingView buildingView)
         {
             this.request = request;
             this.depth = depth;
-            this.overruleable = request.getRequester().getId().equals(buildingView.getId())
+            this.overruleable = buildingView != null && (request.getRequester().getId().equals(buildingView.getId())
                                   || buildingView.getResolverIds().contains(request.getRequester().getId())
-                                  || buildingView.getPosition().equals(request.getRequester().getLocation().getInDimensionLocation());
+                                  || buildingView.getPosition().equals(request.getRequester().getLocation().getInDimensionLocation()));
         }
 
         /**

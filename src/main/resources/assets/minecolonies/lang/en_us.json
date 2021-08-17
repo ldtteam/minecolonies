@@ -202,8 +202,6 @@
   "minecolonies.config.mobattackcitizens.comment": "Should mobs attack citizens?",
   "minecolonies.config.citizencallforhelp": "Citizens Call for Help",
   "minecolonies.config.citizencallforhelp.comment": "Should citizens call Guards for help when attacked?",
-  "minecolonies.config.rangerenchants": "Archer Enchants",
-  "minecolonies.config.rangerenchants.comment": "Should Archer Guards benefit from Power/Punch/Flame enchants (on bows)?",
   "minecolonies.config.rangerdamagemult": "Archer Attack Multiplier",
   "minecolonies.config.rangerdamagemult.comment": "Attack damage multiplier for Archer Guards.",
   "minecolonies.config.knightdamagemult": "Knight Attack Multiplier",
@@ -2022,6 +2020,8 @@
   "com.minecolonies.coremod.gui.workerhuts.miner": "Mine",
   "com.minecolonies.coremod.gui.workerhuts.miner.repair.enqueued": "Added the repair request to the queue of the miner. Miner will pick it up once the current task is finished.",
   "com.minecolonies.coremod.gui.townhall.picktexturestyle": "Pick Citizen Style",
-  
-  "enchantment.minecolonies.raider_damage_enchant.desc":"Increases damage against colony raiders."
+  "enchantment.minecolonies.raider_damage_enchant.desc":"Increases damage against colony raiders.",
+  "com.minecolonies.core.townhall.patreon": "Feature Limited to Contributors and Donors",
+  "com.minecolonies.coremod.gui.chat.drcat": "Miau, mew, mau, meee, mew, hiss, nyan, mew!!! brrrrrrrrrbrrrrrrbrrrrr",
+  "com.minecolonies.coremod.recruit.message.custom": "%s has decided to stay in your colony as a citizen! They quickly switched out of their travellers gear into some new clothes to fit in!"
 }

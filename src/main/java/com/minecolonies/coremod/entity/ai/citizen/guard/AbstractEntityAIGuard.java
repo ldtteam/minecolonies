@@ -9,16 +9,13 @@ import com.minecolonies.api.colony.buildings.modules.ISettingsModule;
 import com.minecolonies.api.colony.guardtype.registry.ModGuardTypes;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
-import com.minecolonies.api.entity.ai.statemachine.AIEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.AIOneTimeEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
-import com.minecolonies.api.entity.ai.statemachine.states.AIBlockingEventType;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
-import com.minecolonies.api.entity.combat.combat.ThreatTableEntry;
-import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
-import com.minecolonies.api.entity.pathfinding.PathResult;
+import com.minecolonies.api.entity.combat.CombatAIStates;
+import com.minecolonies.api.entity.combat.threat.IThreatTableEntity;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.ToolType;
@@ -40,21 +37,16 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
-import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;
-import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.research.util.ResearchConstants.*;
-import static com.minecolonies.api.util.constant.CitizenConstants.BIG_SATURATION_FACTOR;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
 import static com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards.HOSTILE_LIST;
@@ -74,12 +66,17 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     /**
      * Max derivation of current position when patrolling.
      */
-    private static final int MAX_PATROL_DERIVATION = 50;
+    private static final int MAX_PATROL_DERIVATION = 80;
+
+    /**
+     * How far off patrols are alterated to match a raider attack point, sq dist
+     */
+    public static final int PATROL_DEVIATION_RAID_POINT = 40 * 40;
 
     /**
      * Max derivation of current position when following..
      */
-    private static final int MAX_FOLLOW_DERIVATION = 40;
+    private static final int MAX_FOLLOW_DERIVATION = 30;
 
     /**
      * Max derivation of current position when guarding.
@@ -87,34 +84,9 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     private static final int MAX_GUARD_DERIVATION = 10;
 
     /**
-     * After this amount of ticks not seeing an entity stop persecution.
-     */
-    private static final int STOP_PERSECUTION_AFTER = TICKS_SECOND * 60;
-
-    /**
-     * How far off patrols are alterated to match a raider attack point, sq dist
-     */
-    private static final double PATROL_DEVIATION_RAID_POINT = 200 * 200;
-
-    /**
-     * Max bonus target search range from attack range
-     */
-    private static final int TARGET_RANGE_ATTACK_RANGE_BONUS = 18;
-
-    /**
      * The amount of time the guard counts as in combat after last combat action
      */
-    protected static final int COMBAT_TIME = 30;
-
-    /**
-     * How many more ticks we have until next attack.
-     */
-    protected int currentAttackDelay = 0;
-
-    /**
-     * The last time the target was seen.
-     */
-    private int lastSeen = 0;
+    protected static final int COMBAT_TIME = 30 * 20;
 
     /**
      * The current target for our guard.
@@ -125,11 +97,6 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      * The current blockPos we're patrolling at.
      */
     private BlockPos currentPatrolPoint = null;
-
-    /**
-     * The citizen this guard is helping out.
-     */
-    private WeakReference<EntityCitizen> helpCitizen = new WeakReference<>(null);
 
     /**
      * The guard building assigned to this job.
@@ -147,16 +114,6 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     private static final int SHOULD_SLEEP_INTERVAL = 200;
 
     /**
-     * Check target interval
-     */
-    private static final int CHECK_TARGET_INTERVAL = 10;
-
-    /**
-     * Search area for target interval
-     */
-    private static final int SEARCH_TARGET_INTERVAL = 80;
-
-    /**
      * Interval between guard task updates
      */
     private static final int GUARD_TASK_INTERVAL = 100;
@@ -165,11 +122,6 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      * Interval between guard regen updates
      */
     private static final int GUARD_REGEN_INTERVAL = 40;
-
-    /**
-     * Interval between saturation losses during rallying. BIG_SATURATION_FACTOR loss per interval.
-     */
-    private static final int RALLY_SATURATION_LOSS_INTERVAL = TICKS_SECOND * 12;
 
     /**
      * Amount of regular actions before the action counter is increased
@@ -184,7 +136,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     /**
      * Timer for the wakeup AI.
      */
-    private int wakeTimer = 0;
+    protected int wakeTimer = 0;
 
     /**
      * Timer for fighting, goes down to 0 when hasnt been fighting for a while
@@ -194,7 +146,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     /**
      * The sleeping guard we found
      */
-    private WeakReference<EntityCitizen> sleepingGuard = new WeakReference<>(null);
+    protected WeakReference<EntityCitizen> sleepingGuard = new WeakReference<>(null);
 
     /**
      * Random generator for this AI.
@@ -207,41 +159,60 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     private int regularActionTimer = 0;
 
     /**
-     * The path result of moving towards the target
+     * The last position a guard did some guard task on
      */
-    private PathResult targetPath = null;
+    private BlockPos lastGuardActionPos;
 
-    /**
-     * Creates the abstract part of the AI. Always use this constructor!
-     *
-     * @param job the job to fulfill
-     */
     public AbstractEntityAIGuard(@NotNull final J job)
     {
         super(job);
         super.registerTargets(
-          // Note that DECIDE is only here for compatibility purposes. The guards should use GUARD_DECIDE internally.
-          new AITarget(DECIDE, this::decide, GUARD_TASK_INTERVAL),
-          new AITarget(GUARD_DECIDE, this::decide, GUARD_TASK_INTERVAL),
-          new AITarget(GUARD_PATROL, this::shouldSleep, () -> GUARD_SLEEP, SHOULD_SLEEP_INTERVAL),
-          new AIEventTarget(AIBlockingEventType.STATE_BLOCKING, this::checkAndAttackTarget, CHECK_TARGET_INTERVAL),
-          new AITarget(GUARD_PATROL, () -> searchNearbyTarget(), this::checkAndAttackTarget, SEARCH_TARGET_INTERVAL),
-          new AITarget(GUARD_PATROL, this::decide, GUARD_TASK_INTERVAL),
+          new AITarget(DECIDE, CombatAIStates.NO_TARGET, 1),
+          new AITarget(CombatAIStates.NO_TARGET, this::shouldSleep, () -> GUARD_SLEEP, SHOULD_SLEEP_INTERVAL),
           new AITarget(GUARD_SLEEP, this::sleep, 1),
           new AITarget(GUARD_SLEEP, this::sleepParticles, PARTICLE_INTERVAL),
-          new AITarget(GUARD_WAKE, this::wakeUpGuard, TICKS_SECOND),
-          new AITarget(GUARD_FOLLOW, this::decide, GUARD_TASK_INTERVAL),
-          new AITarget(GUARD_FOLLOW, () -> searchNearbyTarget(), this::checkAndAttackTarget, SEARCH_TARGET_INTERVAL),
-          new AITarget(GUARD_RALLY, this::decide, GUARD_TASK_INTERVAL),
-          new AITarget(GUARD_RALLY, () -> searchNearbyTarget(), this::checkAndAttackTarget, SEARCH_TARGET_INTERVAL),
-          new AITarget(GUARD_RALLY, this::decreaseSaturation, RALLY_SATURATION_LOSS_INTERVAL),
-          new AITarget(GUARD_GUARD, this::shouldSleep, () -> GUARD_SLEEP, SHOULD_SLEEP_INTERVAL),
-          new AITarget(GUARD_GUARD, this::decide, GUARD_TASK_INTERVAL),
-          new AITarget(GUARD_GUARD, () -> searchNearbyTarget(), this::checkAndAttackTarget, SEARCH_TARGET_INTERVAL),
           new AITarget(GUARD_REGEN, this::regen, GUARD_REGEN_INTERVAL),
-          new AITarget(HELP_CITIZEN, this::helping, GUARD_TASK_INTERVAL)
+          new AITarget(CombatAIStates.ATTACKING, this::shouldFlee, () -> GUARD_REGEN, GUARD_REGEN_INTERVAL),
+          new AITarget(CombatAIStates.NO_TARGET, this::decide, GUARD_TASK_INTERVAL),
+          new AITarget(GUARD_WAKE, this::wakeUpGuard, TICKS_SECOND),
+
+          new AITarget(CombatAIStates.ATTACKING, this::inCombat, 8)
         );
+
         buildingGuards = getOwnBuilding();
+        lastGuardActionPos = buildingGuards.getPosition();
+    }
+
+    /**
+     * Updates fight timer during combat
+     */
+    private IAIState inCombat()
+    {
+        if (fighttimer <= 0)
+        {
+            onCombatEnter();
+        }
+
+        fighttimer = COMBAT_TIME;
+        return null;
+    }
+
+    /**
+     * On combat enter
+     */
+    private void onCombatEnter()
+    {
+        worker.setCanBeStuck(false);
+        worker.getNavigation().getPathingOptions().setCanUseRails(false);
+    }
+
+    /**
+     * On combat leave
+     */
+    private void onCombatLeave()
+    {
+        worker.getNavigation().getPathingOptions().setCanUseRails(((EntityCitizen) worker).canPathOnRails());
+        worker.setCanBeStuck(true);
     }
 
     /**
@@ -256,7 +227,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
                                                                                                                                           .getColonyJob(AbstractJobGuard.class)
                                                                                                                                           .isAsleep())
         {
-            return GUARD_DECIDE;
+            return CombatAIStates.NO_TARGET;
         }
 
         wakeTimer++;
@@ -269,14 +240,14 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         // Move into range
         if (BlockPosUtil.getDistanceSquared(sleepingGuard.get().blockPosition(), worker.blockPosition()) > 4 && wakeTimer <= 10)
         {
-            worker.getNavigation().moveToLivingEntity(sleepingGuard.get(), getCombatMovementSpeed());
+            worker.getNavigation().moveToLivingEntity(sleepingGuard.get(), 1.0);
         }
         else
         {
             worker.swing(Hand.OFF_HAND);
             sleepingGuard.get().hurt(new NamedDamageSource("wakeywakey", worker).bypassArmor(), 1);
             sleepingGuard.get().setLastHurtByMob(worker);
-            return GUARD_DECIDE;
+            return CombatAIStates.NO_TARGET;
         }
 
         return getState();
@@ -337,7 +308,9 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         if (worker.getLastHurtByMob() != null || (sleepTimer -= getTickRate()) < 0)
         {
             stopSleeping();
-            return GUARD_DECIDE;
+            ((EntityCitizen) worker).getThreatTable().removeCurrentTarget();
+            worker.setLastHurtByMob(null);
+            return CombatAIStates.NO_TARGET;
         }
 
         worker.getLookControl()
@@ -356,12 +329,25 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     {
         if (getState() == GUARD_SLEEP)
         {
-            resetTarget();
-            worker.setLastHurtByMob(null);
             worker.stopRiding();
             worker.setPos(worker.getX(), worker.getY() + 1, worker.getZ());
             worker.getCitizenExperienceHandler().addExperience(1);
         }
+    }
+
+    /**
+     * Whether the guard should flee
+     *
+     * @return
+     */
+    private boolean shouldFlee()
+    {
+        if (buildingGuards.shallRetrieveOnLowHealth() && worker.getHealth() < ((int) worker.getMaxHealth() * 0.2D))
+        {
+            return worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(RETREAT) > 0;
+        }
+
+        return false;
     }
 
     /**
@@ -398,54 +384,6 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     }
 
     /**
-     * Get the Attack state to go to.
-     *
-     * @return the next attack state.
-     */
-    public abstract IAIState getAttackState();
-
-    /**
-     * Checks and attacks the target
-     *
-     * @return next state
-     */
-    private IAIState checkAndAttackTarget()
-    {
-        if (getState() == GUARD_SLEEP || getState() == GUARD_REGEN || getState() == GUARD_ATTACK_PROTECT || getState() == GUARD_ATTACK_PHYSICAL
-              || getState() == GUARD_ATTACK_RANGED)
-        {
-            return null;
-        }
-
-        if (checkForTarget())
-        {
-            if (!hasTool())
-            {
-                return START_WORKING;
-            }
-
-            worker.setCanBeStuck(false);
-            worker.getNavigation().getPathingOptions().setCanUseRails(false);
-            fighttimer = COMBAT_TIME;
-            equipInventoryArmor();
-
-            return getAttackState();
-        }
-
-        if (fighttimer > 0)
-        {
-            fighttimer--;
-            if (fighttimer == 0)
-            {
-                worker.getNavigation().getPathingOptions().setCanUseRails(((EntityCitizen) worker).canPathOnRails());
-                worker.setCanBeStuck(true);
-            }
-        }
-
-        return null;
-    }
-
-    /**
      * Guard at a specific position.
      *
      * @return the next state to run into.
@@ -453,7 +391,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     private IAIState guard()
     {
         guardMovement();
-        return GUARD_GUARD;
+        return getState();
     }
 
     /**
@@ -474,7 +412,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         if (BlockPosUtil.getDistance2D(worker.blockPosition(), buildingGuards.getPositionToFollow()) > MAX_FOLLOW_DERIVATION)
         {
             TeleportHelper.teleportCitizen(worker, worker.getCommandSenderWorld(), buildingGuards.getPositionToFollow());
-            return GUARD_FOLLOW;
+            return null;
         }
 
         if (buildingGuards.isTightGrouping())
@@ -483,17 +421,9 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         }
         else
         {
-            if (!isWithinPersecutionDistance(buildingGuards.getPositionToFollow()))
-            {
-                worker.getNavigation().stop();
-                worker.getMoveControl().strafe(0, 0);
-            }
-            else
-            {
-                worker.isWorkerAtSiteWithMove(buildingGuards.getPositionToFollow(), GUARD_FOLLOW_LOSE_RANGE);
-            }
+            worker.isWorkerAtSiteWithMove(buildingGuards.getPositionToFollow(), GUARD_FOLLOW_LOSE_RANGE);
         }
-        return GUARD_FOLLOW;
+        return null;
     }
 
     @Override
@@ -523,13 +453,13 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
                 // when they're at half-max, so at about skill60. Therefore, divide the skill by 20.
                 worker.addEffect(new EffectInstance(Effects.MOVEMENT_SPEED,
                   5 * TICKS_SECOND,
-                  MathHelper.clamp((citizenData.getCitizenSkillHandler().getLevel(Skill.Adaptability) / 20) + 2, 2, 5),
+                  MathHelper.clamp((citizenData.getCitizenSkillHandler().getLevel(Skill.Adaptability) / 20), 2, 5),
                   false,
                   false));
             }
         }
 
-        return GUARD_RALLY;
+        return null;
     }
 
     @Override
@@ -544,23 +474,6 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
 
         // Walks to our building, only when not busy with another task
         return super.startWorkingAtOwnBuilding();
-    }
-
-    /**
-     * Decrease the saturation while rallying. Rallying is hard work for the guards, so make sure they suffer from it.
-     *
-     * @return The next state
-     */
-    protected IAIState decreaseSaturation()
-    {
-        final ICitizenData citizenData = worker.getCitizenData();
-
-        if (citizenData != null)
-        {
-            citizenData.decreaseSaturation(citizenData.getSaturation() * BIG_SATURATION_FACTOR);
-        }
-
-        return getState();
     }
 
     /**
@@ -601,7 +514,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
                 buildingGuards.arrivedAtPatrolPoint(worker);
             }
         }
-        return GUARD_PATROL;
+        return null;
     }
 
     /**
@@ -643,7 +556,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
                 buildingGuards.getFirstModuleOccurance(ISettingsModule.class).getSetting(AbstractBuildingGuards.GUARD_TASK).set(GuardTaskSetting.PATROL);
             }
         }
-        return GUARD_PATROL;
+        return null;
     }
 
     /**
@@ -654,7 +567,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     public void setNextPatrolTarget(final BlockPos target)
     {
         currentPatrolPoint = target;
-        if (getState() == GUARD_PATROL)
+        if (getState() == CombatAIStates.NO_TARGET)
         {
             worker.isWorkerAtSiteWithMove(currentPatrolPoint, 2);
         }
@@ -680,16 +593,15 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     /**
      * Assigning the guard to help a citizen.
      *
-     * @param citizen  the citizen to help.
      * @param attacker the citizens attacker.
      */
-    public void startHelpCitizen(final EntityCitizen citizen, final LivingEntity attacker)
+    public void startHelpCitizen(final LivingEntity attacker)
     {
         if (canHelp())
         {
-            registerTarget(new AIOneTimeEventTarget(HELP_CITIZEN));
+            ((IThreatTableEntity) worker).getThreatTable().addThreat(attacker, 20);
+            registerTarget(new AIOneTimeEventTarget(CombatAIStates.ATTACKING));
             target = attacker;
-            helpCitizen = new WeakReference<>(citizen);
         }
     }
 
@@ -700,7 +612,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      */
     public boolean canHelp()
     {
-        if (!isEntityValidTarget(target) && (getState() == GUARD_PATROL || getState() == GUARD_SLEEP) && canBeInterrupted())
+        if ((getState() == CombatAIStates.NO_TARGET || getState() == GUARD_SLEEP) && canBeInterrupted())
         {
             // Stop sleeping when someone called for help
             stopSleeping();
@@ -710,57 +622,32 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     }
 
     /**
-     * Helping out a citizen, moving into range and setting attack target.
-     *
-     * @return the next state to go into
-     */
-    private IAIState helping()
-    {
-        reduceAttackDelay(GUARD_TASK_INTERVAL * getTickRate());
-        if (helpCitizen.get() == null || !helpCitizen.get().isCurrentlyFleeing())
-        {
-            return GUARD_DECIDE;
-        }
-
-        if (target == null || !target.isAlive())
-        {
-            target = helpCitizen.get().getLastHurtByMob();
-            if (target == null || !target.isAlive())
-            {
-                target = null;
-                return GUARD_DECIDE;
-            }
-        }
-
-        currentPatrolPoint = null;
-        // Check if we're ready to attack the target
-        if (worker.getSensing().canSee(target) && isWithinPersecutionDistance(new BlockPos(target.position())))
-        {
-            target.setLastHurtByMob(worker);
-            return checkAndAttackTarget();
-        }
-
-        // Move towards the target
-        targetPath = moveInAttackPosition();
-
-        return HELP_CITIZEN;
-    }
-
-    /**
      * Decide what we should do next! Ticked once every GUARD_TASK_INTERVAL Ticks
      *
      * @return the next IAIState.
      */
     protected IAIState decide()
     {
-        reduceAttackDelay(GUARD_TASK_INTERVAL * getTickRate());
-
         final ILocation rallyLocation = buildingGuards.getRallyLocation();
 
         if (regularActionTimer++ > ACTION_INCREASE_INTERVAL)
         {
             incrementActionsDone();
             regularActionTimer = 0;
+        }
+
+        if (fighttimer > 0)
+        {
+            fighttimer -= GUARD_TASK_INTERVAL;
+            if (fighttimer <= 0)
+            {
+                onCombatLeave();
+            }
+        }
+        else
+        {
+            worker.stopUsingItem();
+            lastGuardActionPos = worker.blockPosition();
         }
 
         if (rallyLocation != null || buildingGuards.getTask().equals(GuardTaskSetting.FOLLOW))
@@ -793,315 +680,14 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     }
 
     /**
-     * Checks if the current targets is still valid, if not searches a new target. Adds experience if the current target died.
-     *
-     * @return true if we found a target, false if no target.
-     */
-    protected boolean checkForTarget()
-    {
-        if (target != null && !target.isAlive())
-        {
-            incrementActionsDoneAndDecSaturation();
-            worker.getCitizenExperienceHandler().addExperience(EXP_PER_MOB_DEATH);
-            ((EntityCitizen) worker).getThreatTable().removeCurrentTarget();
-            target = null;
-        }
-
-        final ThreatTableEntry nextTarget = ((EntityCitizen) worker).getThreatTable().getTarget();
-        if (nextTarget == null)
-        {
-            return false;
-        }
-
-        // Check Current target
-        if (isEntityValidTarget(nextTarget.getEntity()))
-        {
-            if (target != nextTarget.getEntity())
-            {
-                target = nextTarget.getEntity();
-                onTargetChange();
-            }
-
-            // Check sight
-            if (worker.getSensing().canSee(target))
-            {
-                nextTarget.setLastSeen(world.getGameTime());
-            }
-            else if ((world.getGameTime() - nextTarget.getLastSeen()) > STOP_PERSECUTION_AFTER)
-            {
-                resetTarget();
-                return false;
-            }
-
-            // Move into range
-            if (!isInAttackDistance(new BlockPos(target.position())))
-            {
-                if (worker.getNavigation().isDone())
-                {
-                    if (targetPath != null && targetPath.failedToReachDestination())
-                    {
-                        ((EntityCitizen) worker).getThreatTable().addThreat(target, -1);
-                        if (nextTarget.getThreat() < 5)
-                        {
-                            resetTarget();
-                            return false;
-                        }
-                    }
-
-                    if (targetPath == null || targetPath.isDone())
-                    {
-                        targetPath = moveInAttackPosition();
-                    }
-                }
-            }
-
-            return true;
-        }
-        else
-        {
-            resetTarget();
-        }
-
-        return target != null;
-    }
-
-    /**
-     * Actions on changing to a new target entity
-     */
-    protected void onTargetChange()
-    {
-        for (final ICitizenData citizen : getOwnBuilding().getAssignedCitizen())
-        {
-            if (citizen.getEntity().isPresent() && citizen.getEntity().get().getLastHurtByMob() == null)
-            {
-                ((EntityCitizen) citizen.getEntity().get()).getThreatTable().addThreat(target, 0);
-            }
-        }
-
-        if (target instanceof AbstractEntityMinecoloniesMob)
-        {
-            for (final Map.Entry<BlockPos, IBuilding> entry : worker.getCitizenColonyHandler().getColony().getBuildingManager().getBuildings().entrySet())
-            {
-                if (entry.getValue() instanceof AbstractBuildingGuards &&
-                      worker.blockPosition().distSqr(entry.getKey()) < PATROL_DEVIATION_RAID_POINT)
-                {
-                    final AbstractBuildingGuards building = (AbstractBuildingGuards) entry.getValue();
-                    building.setTempNextPatrolPoint(target.blockPosition());
-                }
-            }
-        }
-    }
-
-    /**
-     * Checks whether the given entity is a valid target to attack.
-     *
-     * @param entity Entity to check
-     * @return true if should attack
-     */
-    public boolean isEntityValidTarget(final LivingEntity entity)
-    {
-        if (entity == null || !entity.isAlive() || !isWithinPersecutionDistance(new BlockPos(entity.position())))
-        {
-            return false;
-        }
-
-        if (entity == worker.getLastHurtByMob())
-        {
-            return true;
-        }
-
-        if (IColonyManager.getInstance().getCompatibilityManager().getAllMonsters().contains(entity.getType().getRegistryName()) && !buildingGuards.getModuleMatching(
-          EntityListModule.class,
-          m -> m.getId().equals(HOSTILE_LIST)).isEntityInList(entity.getType().getRegistryName()))
-        {
-            return true;
-        }
-
-        final IColony colony = worker.getCitizenColonyHandler().getColony();
-        if (colony == null)
-        {
-            return false;
-        }
-
-        // Players
-        if (entity instanceof PlayerEntity && (colony.getPermissions().hasPermission((PlayerEntity) entity, Action.GUARDS_ATTACK)
-                                                 || colony.isValidAttackingPlayer((PlayerEntity) entity)))
-        {
-            return true;
-        }
-
-        // Other colonies guard citizen attacking the colony
-        if (entity instanceof EntityCitizen && colony.isValidAttackingGuard((AbstractEntityCitizen) entity))
-        {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Resets the current target and removes it from all saved targets.
-     */
-    public void resetTarget()
-    {
-        if (target == null)
-        {
-            return;
-        }
-
-        if (worker.getLastHurtMob() == target)
-        {
-            worker.setLastHurtMob(null);
-        }
-
-        if (worker.getLastHurtByMob() == target)
-        {
-            worker.setLastHurtByMob(null);
-        }
-
-        targetPath = null;
-        ((EntityCitizen) worker).getThreatTable().markInvalidTarget();
-        target = null;
-    }
-
-    /**
-     * Move the guard into a good attacking position.
-     */
-    public abstract PathResult moveInAttackPosition();
-
-    /**
-     * Execute pre attack checks to check if worker can attack enemy.
-     *
-     * @return the next aiState to go to.
-     */
-    public IAIState preAttackChecks()
-    {
-        if (!hasMainWeapon())
-        {
-            resetTarget();
-            return START_WORKING;
-        }
-
-        if (buildingGuards.shallRetrieveOnLowHealth() && worker.getHealth() < ((int) worker.getMaxHealth() * 0.2D))
-        {
-            if (worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(RETREAT) > 0)
-            {
-                resetTarget();
-                return GUARD_REGEN;
-            }
-        }
-
-        if (!checkForTarget())
-        {
-            return GUARD_DECIDE;
-        }
-
-        wearWeapon();
-
-        return getState();
-    }
-
-    /**
-     * Check if the worker has his main weapon.
-     *
-     * @return true if so.
-     */
-    public abstract boolean hasMainWeapon();
-
-    /**
-     * Get a target for the guard. First check if we're under attack by anything and switch target if necessary.
-     *
-     * @return The next IAIState to go to.
-     */
-    protected boolean searchNearbyTarget()
-    {
-        final IColony colony = worker.getCitizenColonyHandler().getColony();
-        if (colony == null)
-        {
-            resetTarget();
-            return false;
-        }
-
-        if (checkForTarget())
-        {
-            return true;
-        }
-
-        final List<LivingEntity> entities = world.getLoadedEntitiesOfClass(LivingEntity.class, getSearchArea());
-
-        if (entities.isEmpty())
-        {
-            return false;
-        }
-
-        for (final LivingEntity entity : entities)
-        {
-            if (!entity.isAlive())
-            {
-                continue;
-            }
-
-            // Found a sleeping guard nearby
-            if (entity instanceof EntityCitizen)
-            {
-                final EntityCitizen citizen = (EntityCitizen) entity;
-                if (citizen.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard && ((AbstractJobGuard<?>) citizen.getCitizenJobHandler().getColonyJob()).isAsleep()
-                      && worker.getSensing().canSee(entity))
-                {
-                    sleepingGuard = new WeakReference<>(citizen);
-                    wakeTimer = 0;
-                    registerTarget(new AIOneTimeEventTarget(GUARD_WAKE));
-                    return false;
-                }
-            }
-
-            if (isEntityValidTarget(entity))
-            {
-                ((EntityCitizen) worker).getThreatTable().addThreat(entity, 0);
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * Wears the weapon of the guard.
-     */
-    public abstract void wearWeapon();
-
-    /**
-     * Check if a position is within regular attack distance.
-     *
-     * @param position the position to check.
-     * @return true if so.
-     */
-    public boolean isInAttackDistance(final BlockPos position)
-    {
-        return BlockPosUtil.getDistanceSquared2D(worker.blockPosition(), position) <= getAttackRange() * getAttackRange();
-    }
-
-    /**
-     * Reduces the attack delay by the given value
-     *
-     * @param value amount to reduce by
-     */
-    public void reduceAttackDelay(final int value)
-    {
-        if (currentAttackDelay > 0)
-        {
-            currentAttackDelay -= value;
-        }
-    }
-
-    /**
      * Check if a position is within the allowed persecution distance.
      *
      * @param entityPos the position to check.
      * @return true if so.
      */
-    private boolean isWithinPersecutionDistance(final BlockPos entityPos)
+    public boolean isWithinPersecutionDistance(final BlockPos entityPos, final double attackRange)
     {
-        return BlockPosUtil.getDistanceSquared(getTaskReferencePoint(), entityPos) <= Math.pow(getPersecutionDistance() + getAttackRange(), 2);
+        return BlockPosUtil.getDistanceSquared(getTaskReferencePoint(), entityPos) <= Math.pow(getPersecutionDistance() + attackRange, 2);
     }
 
     /**
@@ -1120,7 +706,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         {
             case GuardTaskSetting.PATROL:
             case GuardTaskSetting.PATROL_MINE:
-                return currentPatrolPoint != null ? currentPatrolPoint : worker.blockPosition();
+                return lastGuardActionPos;
             case GuardTaskSetting.FOLLOW:
                 return buildingGuards.getPositionToFollow();
             default:
@@ -1151,42 +737,75 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         }
     }
 
-    /**
-     * Get the {@link AxisAlignedBB} we're searching for targets in.
-     *
-     * @return the {@link AxisAlignedBB}
-     */
-    private AxisAlignedBB getSearchArea()
-    {
-        final IGuardBuilding building = getOwnBuilding();
-        final int buildingBonus = building.getBonusVision() + Math.max(TARGET_RANGE_ATTACK_RANGE_BONUS, getAttackRange());
-
-        final Direction randomDirection = Direction.from3DDataValue(worker.getRandom().nextInt(4) + 2);
-
-        final double x1 = worker.blockPosition().getX() + (Math.max(buildingBonus * randomDirection.getStepX() + DEFAULT_VISION, DEFAULT_VISION));
-        final double x2 = worker.blockPosition().getX() + (Math.min(buildingBonus * randomDirection.getStepX() - DEFAULT_VISION, -DEFAULT_VISION));
-        final double y1 = worker.blockPosition().getY() + (Y_VISION);
-        final double y2 = worker.blockPosition().getY() - (Y_VISION);
-        final double z1 = worker.blockPosition().getZ() + (Math.max(buildingBonus * randomDirection.getStepZ() + DEFAULT_VISION, DEFAULT_VISION));
-        final double z2 = worker.blockPosition().getZ() + (Math.min(buildingBonus * randomDirection.getStepZ() - DEFAULT_VISION, -DEFAULT_VISION));
-
-        return new AxisAlignedBB(x1, y1, z1, x2, y2, z2);
-    }
-
-    /**
-     * Method which calculates the possible attack range in Blocks.
-     *
-     * @return the calculated range.
-     */
-    protected abstract int getAttackRange();
-
     @Override
     public boolean canBeInterrupted()
     {
-        if (fighttimer > 0 || getState() == GUARD_RALLY || (target != null && target.isAlive()) || buildingGuards.getRallyLocation() != null || buildingGuards.getTask().equals(GuardTaskSetting.FOLLOW))
+        if (fighttimer > 0 || getState() == CombatAIStates.ATTACKING || getState() == GUARD_RALLY || (target != null && target.isAlive())
+              || buildingGuards.getRallyLocation() != null || buildingGuards.getTask()
+                                                                .equals(GuardTaskSetting.FOLLOW))
         {
             return false;
         }
         return super.canBeInterrupted();
+    }
+
+    /**
+     * Set the citizen to wakeup
+     *
+     * @param citizen
+     */
+    public void setWakeCitizen(final EntityCitizen citizen)
+    {
+        sleepingGuard = new WeakReference<>(citizen);
+        wakeTimer = 0;
+        registerTarget(new AIOneTimeEventTarget(GUARD_WAKE));
+    }
+
+    @Override
+    public Class<B> getExpectedBuildingClass()
+    {
+        return (Class<B>) AbstractBuildingGuards.class;
+    }
+
+    /**
+     * Check whether the target is attackable
+     *
+     * @param user
+     * @param entity
+     * @return
+     */
+    public static boolean isAttackableTarget(final AbstractEntityCitizen user, final LivingEntity entity)
+    {
+        if (IColonyManager.getInstance().getCompatibilityManager().getAllMonsters().contains(entity.getType().getRegistryName()) && !user.getCitizenData()
+                                                                                                                                       .getWorkBuilding()
+                                                                                                                                       .getModuleMatching(
+                                                                                                                                         EntityListModule.class,
+                                                                                                                                         m -> m.getId().equals(HOSTILE_LIST))
+                                                                                                                                       .isEntityInList(entity.getType()
+                                                                                                                                                         .getRegistryName()))
+        {
+            return true;
+        }
+
+        final IColony colony = user.getCitizenColonyHandler().getColony();
+        if (colony == null)
+        {
+            return false;
+        }
+
+        // Players
+        if (entity instanceof PlayerEntity && (colony.getPermissions().hasPermission((PlayerEntity) entity, Action.GUARDS_ATTACK)
+                                                 || colony.isValidAttackingPlayer((PlayerEntity) entity)))
+        {
+            return true;
+        }
+
+        // Other colonies guard citizen attacking the colony
+        if (entity instanceof EntityCitizen && colony.isValidAttackingGuard((AbstractEntityCitizen) entity))
+        {
+            return true;
+        }
+
+        return false;
     }
 }

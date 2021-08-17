@@ -22,8 +22,8 @@ import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingT
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.citizen.citizenhandlers.*;
-import com.minecolonies.api.entity.combat.combat.IThreatTableEntity;
-import com.minecolonies.api.entity.combat.combat.ThreatTable;
+import com.minecolonies.api.entity.combat.threat.IThreatTableEntity;
+import com.minecolonies.api.entity.combat.threat.ThreatTable;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.inventory.container.ContainerCitizenInventory;
@@ -209,7 +209,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     /**
      * Our entities threat list
      */
-    private final ThreatTable threatTable = new ThreatTable(this);
+    private final ThreatTable threatTable = new ThreatTable<>(this);
 
     /**
      * The entities states
@@ -1004,7 +1004,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     @Override
     public boolean shouldBeFed()
     {
-        return this.getCitizenData() != null && this.getCitizenData().getSaturation() <= AVERAGE_SATURATION && !this.getCitizenData().justAte();
+        return this.getCitizenData() != null && this.getCitizenData().getSaturation() <= AVERAGE_SATURATION && !this.getCitizenData().justAte() && isOkayToEat();
     }
 
     /**
@@ -1424,7 +1424,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
 
         for (int i = 0; i < possibleGuards.size() && i <= CALL_TO_HELP_AMOUNT; i++)
         {
-            ((AbstractEntityAIGuard<?, ?>) possibleGuards.get(i).getCitizenData().getJob().getWorkerAI()).startHelpCitizen(this, (LivingEntity) attacker);
+            ((AbstractEntityAIGuard<?, ?>) possibleGuards.get(i).getCitizenData().getJob().getWorkerAI()).startHelpCitizen((LivingEntity) attacker);
         }
     }
 

@@ -18,8 +18,6 @@ import java.util.Random;
 
 import static com.minecolonies.api.util.constant.PathingConstants.DEBUG_VERBOSITY_NONE;
 
-import com.minecolonies.coremod.entity.pathfinding.pathjobs.AbstractPathJob.SurfaceType;
-
 /**
  * Job that handles random pathing.
  */
@@ -116,7 +114,8 @@ public class PathJobRandomPos extends AbstractPathJob
     @Override
     protected boolean isAtDestination(@NotNull final Node n)
     {
-        if ((minDistFromStart ==  1 || start.distSqr(n.pos) > minDistFromStart * minDistFromStart) && isWalkableSurface(world.getBlockState(n.pos.below()), n.pos.below()) == SurfaceType.WALKABLE
+        if (random.nextInt(10) == 0 && (start.distSqr(n.pos) > minDistFromStart * minDistFromStart)
+              && isWalkableSurface(world.getBlockState(n.pos.below()), n.pos.below()) == SurfaceType.WALKABLE
               && destination.distSqr(n.pos) < this.maxDistToDest * this.maxDistToDest)
         {
             return true;

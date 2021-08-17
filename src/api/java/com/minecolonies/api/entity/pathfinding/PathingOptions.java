@@ -8,7 +8,12 @@ public class PathingOptions
     /**
      * Additional cost of jumping and dropping - base 1.
      */
-    public double jumpDropCost = 1.1D;
+    public double jumpCost = 1.1D;
+
+    /**
+     * Additional cost of jumping and dropping - base 1.
+     */
+    public double dropCost = 1.1D;
 
     /**
      * Cost improvement of paths - base 1.
@@ -112,9 +117,15 @@ public class PathingOptions
         return this;
     }
 
-    public PathingOptions withJumpDropCost(final double jumpDropCost)
+    public PathingOptions withJumpCost(final double jumpCost)
     {
-        this.jumpDropCost = jumpDropCost;
+        this.jumpCost = jumpCost;
+        return this;
+    }
+
+    public PathingOptions withDropCost(final double dropCost)
+    {
+        this.dropCost = dropCost;
         return this;
     }
 

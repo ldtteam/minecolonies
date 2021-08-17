@@ -75,7 +75,7 @@ public class WindowDecorationController extends AbstractWindowSkeleton
         registerButton(BUTTON_CANCEL, this::cancelClicked);
 
         final TextField textFieldName = findPaneOfTypeByID(INPUT_NAME, TextField.class);
-        textFieldName.setText(controller.getSchematicName().replaceAll("\\d$", ""));
+        textFieldName.setText(controller.getSchematicPath().replaceAll("\\d$", ""));
 
         final TextField textFieldLevel = findPaneOfTypeByID(INPUT_LEVEL, TextField.class);
         textFieldLevel.setText(String.valueOf(controller.getTier()));
@@ -119,11 +119,11 @@ public class WindowDecorationController extends AbstractWindowSkeleton
         try
         {
             structure =
-              new LoadOnlyStructureHandler(world, b, controller.getSchematicName().replace("/structurize/", "") + (controller.getTier() + 1), new PlacementSettings(), true);
+              new LoadOnlyStructureHandler(world, b, controller.getSchematicPath().replace("/structurize/", "") + (controller.getTier() + 1), new PlacementSettings(), true);
         }
         catch (final Exception e)
         {
-            Log.getLogger().info("Unable to load structure: " + controller.getSchematicName() + " for decoration controller!");
+            Log.getLogger().info("Unable to load structure: " + controller.getSchematicPath() + " for decoration controller!");
         }
 
         findPaneByID(LABEL_NO_UPGRADE).hide();
@@ -173,7 +173,7 @@ public class WindowDecorationController extends AbstractWindowSkeleton
             {
                 final int level = Integer.parseInt(levelString);
                 Network.getNetwork().sendToServer(new DecorationControllerUpdateMessage(controller.getBlockPos(), name, level));
-                controller.setSchematicName(name + level);
+                controller.setSchematicPath(name + level);
                 controller.setTier(level);
                 close();
             }
@@ -191,7 +191,7 @@ public class WindowDecorationController extends AbstractWindowSkeleton
     {
         Network.getNetwork()
           .sendToServer(new DecorationBuildRequestMessage(controller.getBlockPos(),
-            controller.getSchematicName().replaceAll("\\d$", ""),
+            controller.getSchematicPath().replaceAll("\\d$", ""),
             controller.getTier() + 1,
             world.dimension()));
         close();
@@ -204,7 +204,7 @@ public class WindowDecorationController extends AbstractWindowSkeleton
     {
         Network.getNetwork()
           .sendToServer(new DecorationBuildRequestMessage(controller.getBlockPos(),
-            controller.getSchematicName().replaceAll("\\d$", ""),
+            controller.getSchematicPath().replaceAll("\\d$", ""),
             controller.getTier(),
             world.dimension()));
         close();

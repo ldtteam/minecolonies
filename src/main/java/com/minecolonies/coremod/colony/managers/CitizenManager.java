@@ -580,17 +580,17 @@ public class CitizenManager implements ICitizenManager
                 // For first citizen, give a random chance of male or female.
                 if (getCitizens().size() == 1)
                 {
-                    newCitizen.setIsFemale(random.nextBoolean());
+                    newCitizen.setGenderAndGenerateName(random.nextBoolean());
                 }
                 // Otherwise, set the new colonist's gender to whatever gender is less common.
                 // Use double division to avoid getting two male colonists in a row for the first set.
                 else if (femaleCount < (getCitizens().size() - 1) / 2.0)
                 {
-                    newCitizen.setIsFemale(true);
+                    newCitizen.setGenderAndGenerateName(true);
                 }
                 else
                 {
-                    newCitizen.setIsFemale(false);
+                    newCitizen.setGenderAndGenerateName(false);
                 }
 
                 spawnOrCreateCivilian(newCitizen, colony.getWorld(), null, true);

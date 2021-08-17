@@ -118,7 +118,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     /**
      * Flag to check if the equipment is dirty.
      */
-    private boolean isEquipmentDirty;
+    private boolean isEquipmentDirty = true;
 
     /**
      * Constructor for a new citizen typed entity.
@@ -346,6 +346,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     public void aiStep()
     {
         super.aiStep();
+        updateSwingTime();
         if (collisionCounter > 0)
         {
             collisionCounter--;
@@ -471,14 +472,6 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     }
 
     /**
-     * Update the armswing progress.
-     */
-    public void updateArmSwingProg()
-    {
-        this.updateSwingTime();
-    }
-
-    /**
      * Check if can drop loot.
      *
      * @return true if so.
@@ -509,7 +502,6 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      *
      * @return the data.
      */
-    @Nullable
     public abstract ICitizenData getCitizenData();
 
     /**
@@ -720,16 +712,27 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     }
 
     @Override
-    public void setItemSlot(final EquipmentSlotType slot, @NotNull final ItemStack stack)
+    public void setItemSlot(final EquipmentSlotType slot, @NotNull final ItemStack newItem)
     {
         if (!level.isClientSide)
         {
-            if (!ItemStackUtils.compareItemStacksIgnoreStackSize(getItemBySlot(slot), stack, false, true))
+            final ItemStack previous = getItemBySlot(slot);
+            if (!ItemStackUtils.compareItemStacksIgnoreStackSize(previous, newItem, false, true))
             {
+                if (!previous.isEmpty())
+                {
+                    this.getAttributes().removeAttributeModifiers(previous.getAttributeModifiers(slot));
+                }
+
+                if (!newItem.isEmpty())
+                {
+                    this.getAttributes().addTransientAttributeModifiers(newItem.getAttributeModifiers(slot));
+                }
+
                 markEquipmentDirty();
             }
         }
-        super.setItemSlot(slot, stack);
+        super.setItemSlot(slot, newItem);
     }
 
     /**

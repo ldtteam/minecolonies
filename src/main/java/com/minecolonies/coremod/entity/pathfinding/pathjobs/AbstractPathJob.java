@@ -446,10 +446,16 @@ public abstract class AbstractPathJob implements Callable<Path>
     {
         double cost = Math.sqrt(dPos.getX() * dPos.getX() + dPos.getY() * dPos.getY() + dPos.getZ() * dPos.getZ());
 
-        if (dPos.getY() != 0 && (dPos.getX() != 0 || dPos.getZ() != 0) && !(Math.abs(dPos.getY()) <= 1 && world.getBlockState(blockPos).getBlock() instanceof StairsBlock))
+        if (dPos.getY() != 0 && !(Math.abs(dPos.getY()) <= 1 && world.getBlockState(blockPos).getBlock() instanceof StairsBlock))
         {
-            //  Tax the cost for jumping, dropping
-            cost *= pathingOptions.jumpDropCost * Math.abs(dPos.getY());
+            if (dPos.getY() > 0)
+            {
+                cost *= pathingOptions.jumpCost * Math.abs(dPos.getY());
+            }
+            else
+            {
+                cost *= pathingOptions.dropCost * Math.abs(dPos.getY());
+            }
         }
 
         if (world.getBlockState(blockPos).hasProperty(BlockStateProperties.OPEN))
@@ -958,20 +964,22 @@ public abstract class AbstractPathJob implements Callable<Path>
         boolean corner = false;
         if (pos.getY() != newY)
         {
-            if (parent.isCornerNode())
+            if (parent.isCornerNode() && (dPos.getX() != 0 || dPos.getZ() != 0))
             {
                 return false;
             }
 
             // if the new position is above the current node, we're taking the node directly above
-            if (!parent.isCornerNode() && newY - pos.getY() > 0 && (parent.parent == null || !parent.parent.pos.equals(parent.pos.offset(new BlockPos(0, newY - pos.getY(), 0)))))
+            if (!parent.isCornerNode() && newY - parent.pos.getY() > 0 && (parent.parent == null || !parent.parent.pos.equals(parent.pos.offset(new BlockPos(0,
+              newY - pos.getY(),
+              0)))))
             {
                 dPos = new BlockPos(0, newY - pos.getY(), 0);
                 pos = parent.pos.offset(dPos);
                 corner = true;
             }
             // If we're going down, take the air-corner before going to the lower node
-            else if (!parent.isCornerNode() && newY - pos.getY() < 0 && (dPos.getX() != 0 || dPos.getZ() != 0) && (parent.parent == null || !parent.pos.below()
+            else if (!parent.isCornerNode() && newY - parent.pos.getY() < 0 && (dPos.getX() != 0 || dPos.getZ() != 0) && (parent.parent == null || !parent.pos.below()
                                                                                                                                                .equals(parent.parent.pos)))
             {
                 dPos = new BlockPos(dPos.getX(), 0, dPos.getZ());

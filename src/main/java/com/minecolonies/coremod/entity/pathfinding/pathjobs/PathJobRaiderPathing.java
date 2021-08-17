@@ -16,8 +16,6 @@ import java.util.List;
 
 import static com.minecolonies.api.entity.pathfinding.PathingStuckHandler.HORIZONTAL_DIRS;
 
-import com.minecolonies.coremod.entity.pathfinding.pathjobs.AbstractPathJob.SurfaceType;
-
 /**
  * Special raider pathfinding, can go through blocks and place ladders, is finished when reaching close to the intended spawn and is a legit spawn point.
  */
@@ -51,7 +49,7 @@ public class PathJobRaiderPathing extends AbstractPathJob
         super(world, start, targetSpawnPoint, range, null);
         this.buildings = buildings;
         direction = targetSpawnPoint;
-        setPathingOptions(new PathingOptions().withJumpDropCost(1).withStartSwimCost(1).withSwimCost(1).withCanSwim(true).withCanEnterDoors(true));
+        setPathingOptions(new PathingOptions().withJumpCost(1).withStartSwimCost(1).withSwimCost(1).withCanSwim(true).withCanEnterDoors(true));
     }
 
     @Override

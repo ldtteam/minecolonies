@@ -2,6 +2,7 @@ package com.minecolonies.api.entity.pathfinding;
 
 import com.minecolonies.api.util.Log;
 import net.minecraft.pathfinding.Path;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -131,6 +132,7 @@ public class PathResult<T extends Callable<Path>>
      *
      * @return path
      */
+    @Nullable
     public Path getPath()
     {
         return path;

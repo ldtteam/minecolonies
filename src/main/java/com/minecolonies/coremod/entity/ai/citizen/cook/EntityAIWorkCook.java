@@ -84,7 +84,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
     /**
      * The list of items needed for the assistant
      */
-    private Set<ItemStack> assistantTests = new HashSet<>();
+    private Set<ItemStorage> reservedItemCache = new HashSet<>();
 
     /**
      * Constructor for the Cook. Defines the tasks the cook executes.
@@ -122,6 +122,13 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
             worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
             this.incrementActionsDoneAndDecSaturation();
         }
+    }
+
+    @Override
+    public IAIState startWorking()
+    {
+        reservedItemCache.clear();
+        return super.startWorking();
     }
 
     @Override
@@ -214,7 +221,11 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
             return getState();
         }
 
-        InventoryUtils.transferFoodUpToSaturation(worker, handler, getOwnBuilding().getBuildingLevel() * SATURATION_TO_SERVE, stack -> CAN_EAT.test(stack) && canEat(stack));
+        if (!InventoryUtils.transferFoodUpToSaturation(worker, handler, getOwnBuilding().getBuildingLevel() * SATURATION_TO_SERVE, stack -> CAN_EAT.test(stack) && canEat(stack)))
+        {
+            removeFromQueue();
+            return getState();
+        }
 
         if (!citizenToServe.isEmpty() && citizenToServe.get(0).getCitizenData() != null)
         {
@@ -280,7 +291,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
     @Override
     protected IAIState checkForImportantJobs()
     {
-        this.assistantTests.clear(); //Clear the cache of current pending work
+        this.reservedItemCache.clear(); //Clear the cache of current pending work
 
         citizenToServe.clear();
         final List<AbstractEntityCitizen> citizenList = WorldUtil.getEntitiesWithinBuilding(world, AbstractEntityCitizen.class, getOwnBuilding(), null)
@@ -300,11 +311,11 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
             citizenToServe.addAll(citizenList);
             playerToServe.addAll(playerList);
 
-            if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), stack -> ItemStackUtils.CAN_EAT.test(stack)))
+            if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), stack -> ItemStackUtils.CAN_EAT.test(stack) && canEat(stack)))
             {
                 return COOK_SERVE_FOOD_TO_CITIZEN;
             }
-            else if (!InventoryUtils.hasItemInProvider(getOwnBuilding(), stack -> ItemStackUtils.CAN_EAT.test(stack) && !isItemStackForAssistant(stack)))
+            else if (!InventoryUtils.hasItemInProvider(getOwnBuilding(), stack -> ItemStackUtils.CAN_EAT.test(stack) && canEat(stack) && !isItemStackForAssistant(stack)))
             {
                 return START_WORKING;
             }
@@ -323,14 +334,13 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
      */
     private boolean isItemStackForAssistant(ItemStack stack)
     {
-        if(this.assistantTests.isEmpty())
+        if(this.reservedItemCache.isEmpty())
         {
-            this.assistantTests.addAll(getOwnBuilding().getFirstModuleOccurance(BuildingCook.CraftingModule.class).getAssistantItems());
+            this.reservedItemCache.addAll(getOwnBuilding().getFirstModuleOccurance(BuildingCook.CraftingModule.class).reservedStacks().keySet());
         }
 
-        return ItemStackUtils.compareItemStackListIgnoreStackSize(new ArrayList<>(assistantTests), stack, true, true);
+        return reservedItemCache.contains(new ItemStorage(stack));
     }
-
 
     @Override
     protected int getActionsDoneUntilDumping()

@@ -34,6 +34,11 @@ public class TileEntityDecorationController extends TileEntity implements IBluep
     private String schematicName = "";
 
     /**
+     * The schematic name of the placerholder block.
+     */
+    private String schematicPath = "";
+
+    /**
      * The current level.
      */
     private int tier = 0;
@@ -64,19 +69,31 @@ public class TileEntityDecorationController extends TileEntity implements IBluep
      *
      * @return String name.
      */
+    public String getSchematicPath()
+    {
+        return schematicPath;
+    }
+
+    @Override
     public String getSchematicName()
     {
         return schematicName;
     }
 
+    @Override
+    public void setSchematicName(final String s)
+    {
+        this.schematicName = s;
+    }
+
     /**
      * Setter for the schematic name connected to this.
      *
-     * @param schematicName the name to set.
+     * @param schematicPath the name to set.
      */
-    public void setSchematicName(final String schematicName)
+    public void setSchematicPath(final String schematicPath)
     {
-        this.schematicName = schematicName;
+        this.schematicPath = schematicPath;
         if (super.level != null)
         {
             this.update();
@@ -177,7 +194,7 @@ public class TileEntityDecorationController extends TileEntity implements IBluep
         IBlueprintDataProvider.super.readSchematicDataFromNBT(compound);
         if (compound.contains(TAG_NAME))
         {
-            this.schematicName = compound.getString(TAG_NAME);
+            this.schematicPath = compound.getString(TAG_NAME);
         }
 
         if (compound.contains(TAG_LEVEL))
@@ -196,7 +213,7 @@ public class TileEntityDecorationController extends TileEntity implements IBluep
     {
         super.load(state, compound);
         IBlueprintDataProvider.super.readSchematicDataFromNBT(compound);
-        this.schematicName = compound.getString(TAG_NAME);
+        this.schematicPath = compound.getString(TAG_NAME);
         this.tier = compound.getInt(TAG_LEVEL);
         this.basicFacing = Direction.from2DDataValue(compound.getInt(TAG_FACING));
     }
@@ -207,7 +224,7 @@ public class TileEntityDecorationController extends TileEntity implements IBluep
     {
         super.save(compound);
         writeSchematicDataToNBT(compound);
-        compound.putString(TAG_NAME, schematicName);
+        compound.putString(TAG_NAME, schematicPath);
         compound.putInt(TAG_LEVEL, tier);
         compound.putInt(TAG_FACING, basicFacing.get2DDataValue());
         return compound;
