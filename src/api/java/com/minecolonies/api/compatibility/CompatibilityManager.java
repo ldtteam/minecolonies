@@ -15,10 +15,7 @@ import com.minecolonies.api.util.*;
 import net.minecraft.block.*;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
+import net.minecraft.item.*;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.RecipeManager;
 import net.minecraft.nbt.CompoundNBT;
@@ -133,6 +130,7 @@ public class CompatibilityManager implements ICompatibilityManager
      * Random obj.
      */
     private static final Random random = new Random();
+
 
     /**
      * List of all blocks.
@@ -431,12 +429,15 @@ public class CompatibilityManager implements ICompatibilityManager
      */
     private void discoverAllItems()
     {
-        final NonNullList<ItemStack> items = NonNullList.create();
+        final ImmutableList.Builder<ItemStack> builder = new ImmutableList.Builder<>();
         for(Item item : ForgeRegistries.ITEMS.getValues())
         {
-            items.add(new ItemStack(item));
+            final NonNullList<ItemStack> list = NonNullList.create();
+            item.fillItemCategory(ItemGroup.TAB_SEARCH, list);
+            builder.addAll(list);
         }
-        allItems = ImmutableList.copyOf(items);
+
+        allItems = builder.build();
     }
 
     /**
