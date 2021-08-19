@@ -11,7 +11,7 @@
         },
         {
           "type": "item",
-          "weight": 3,
+          "weight": 1,
           "quality": 1,
           "name": "minecolonies:chiefsword"
         },
@@ -22,22 +22,22 @@
         },
         {
           "type": "item",
-          "weight": 10,
+          "weight": 5,
           "name": "minecraft:golden_sword"
         },
         {
           "type": "item",
-          "weight": 20,
+          "weight": 10,
           "name": "minecraft:iron_sword"
         },
         {
           "type": "item",
-          "weight": 30,
+          "weight": 20,
           "name": "minecraft:stone_sword"
         },
         {
           "type": "item",
-          "weight": 50,
+          "weight": 30,
           "name": "minecolonies:ancienttome"
         }
       ]
