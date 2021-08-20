@@ -14,16 +14,17 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.jetbrains.annotations.NotNull;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSocketFactory;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
@@ -321,11 +322,15 @@ public class WindowSettingsPage extends AbstractWindowTownHall
     {
         final String player = Minecraft.getInstance().player.getStringUUID();
         new Thread(() -> {
-            try (final CloseableHttpClient httpclient = HttpClients.createDefault())
+            try
             {
-                final HttpGet httpget = new HttpGet("https://auth.minecolonies.com/api/minecraft/" + player + "/features");
-                final InputStream responseBody = httpclient.execute(httpget).getEntity().getContent();
+                final SSLSocketFactory sslsocketfactory = HttpsURLConnection.getDefaultSSLSocketFactory();
+                final URL url = new URL("https://auth.minecolonies.com/api/minecraft/" + player + "/features");
+                final HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
 
+                conn.setSSLSocketFactory(sslsocketfactory);
+
+                final InputStream responseBody = conn.getInputStream();
                 final BufferedReader reader = new BufferedReader(new InputStreamReader(responseBody));
 
                 String inputLine;
