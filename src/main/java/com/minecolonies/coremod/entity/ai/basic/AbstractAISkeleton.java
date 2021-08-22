@@ -11,8 +11,10 @@ import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingT
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.CompatibilityUtils;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.MineColonies;
 import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
@@ -191,5 +193,19 @@ public abstract class AbstractAISkeleton<J extends IJob<?>> extends Goal
     public ITickRateStateMachine<IAIState> getStateAI()
     {
         return stateMachine;
+    }
+
+    /**
+     * On removal of the AI.
+     * Clean up equipment.
+     */
+    public void onRemoval()
+    {
+        worker.setItemSlot(EquipmentSlotType.CHEST, ItemStackUtils.EMPTY);
+        worker.setItemSlot(EquipmentSlotType.FEET, ItemStackUtils.EMPTY);
+        worker.setItemSlot(EquipmentSlotType.HEAD, ItemStackUtils.EMPTY);
+        worker.setItemSlot(EquipmentSlotType.LEGS, ItemStackUtils.EMPTY);
+        worker.setItemSlot(EquipmentSlotType.OFFHAND, ItemStackUtils.EMPTY);
+        worker.setItemSlot(EquipmentSlotType.MAINHAND, ItemStackUtils.EMPTY);
     }
 }

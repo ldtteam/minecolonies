@@ -1004,7 +1004,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     @Override
     public boolean shouldBeFed()
     {
-        return this.getCitizenData() != null && this.getCitizenData().getSaturation() <= AVERAGE_SATURATION && !this.getCitizenData().justAte();
+        return this.getCitizenData() != null && this.getCitizenData().getSaturation() <= AVERAGE_SATURATION && !this.getCitizenData().justAte() && isOkayToEat();
     }
 
     /**

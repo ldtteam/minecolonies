@@ -382,12 +382,12 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         }
         else
         {
-            job.setTree(new Tree(world, pathResult.treeLocation));
+            job.setTree(new Tree(world, pathResult.treeLocation, getOwnBuilding().getColony()));
 
             // Check if tree creation was successful
             if (job.getTree().isTree())
             {
-                job.getTree().findLogs(world);
+                job.getTree().findLogs(world, getOwnBuilding().getColony());
                 return LUMBERJACK_CHOP_TREE;
             }
             else

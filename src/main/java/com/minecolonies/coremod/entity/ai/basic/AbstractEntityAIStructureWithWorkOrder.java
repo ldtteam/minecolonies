@@ -16,6 +16,7 @@ import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.colonyEvents.buildingEvents.BuildingBuiltEvent;
 import com.minecolonies.coremod.colony.colonyEvents.buildingEvents.BuildingDeconstructedEvent;
 import com.minecolonies.coremod.colony.colonyEvents.buildingEvents.BuildingUpgradedEvent;
@@ -197,6 +198,12 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         StructurePhasePlacementResult result;
         final WorkerLoadOnlyStructureHandler structure =
           new WorkerLoadOnlyStructureHandler(world, structurePlacer.getB().getWorldPos(), structurePlacer.getB().getBluePrint(), new PlacementSettings(), true, this);
+
+        if (job.getWorkOrder().getIteratorType().isEmpty() && getOwnBuilding().getSetting(BuildingBuilder.BUILDING_MODE) != null)
+        {
+            job.getWorkOrder().setIteratorType(getOwnBuilding().getSetting(BuildingBuilder.BUILDING_MODE).getValue());
+        }
+
         final StructurePlacer placer = new StructurePlacer(structure, job.getWorkOrder().getIteratorType());
 
         if (requestProgress == null)

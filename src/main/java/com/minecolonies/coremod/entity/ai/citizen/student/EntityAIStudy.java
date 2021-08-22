@@ -84,8 +84,6 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLib
 
         // Search for Items to use to study
         final List<StudyItem> currentItems = new ArrayList<>();
-        worker.decreaseSaturationForAction();
-
         for (final StudyItem curItem : getOwnBuilding().getStudyItems())
         {
             final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(worker,
@@ -137,6 +135,7 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLib
             }
         }
 
+        worker.decreaseSaturationForAction();
         studyPos = null;
         setDelay(STUDY_DELAY);
         return getState();

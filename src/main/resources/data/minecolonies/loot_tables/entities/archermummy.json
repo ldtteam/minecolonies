@@ -11,12 +11,12 @@
         },
         {
           "type": "item",
-          "weight": 40,
+          "weight": 10,
           "name": "minecraft:bow"
         },
         {
           "type": "item",
-          "weight": 10,
+          "weight": 5,
           "name": "minecolonies:ancienttome"
         }
       ]

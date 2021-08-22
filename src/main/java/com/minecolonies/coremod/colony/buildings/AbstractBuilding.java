@@ -1849,7 +1849,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         }
 
         final int citizenID = getCitizensByRequest().get(token);
-        if (getColony().getCitizenManager().getCivilian(citizenID) == null)
+        if (citizenID == -1 || getColony().getCitizenManager().getCivilian(citizenID) == null)
         {
             return Optional.empty();
         }

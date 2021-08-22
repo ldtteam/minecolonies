@@ -13,8 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_TEXTURE;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_SITTING;
 
 /**
@@ -74,9 +73,9 @@ public class VisitorData extends CitizenData implements IVisitorData
         super.deserializeNBT(nbtTagCompound);
         sittingPosition = BlockPosUtil.read(nbtTagCompound, TAG_SITTING);
         recruitCost = ItemStack.of(nbtTagCompound.getCompound(TAG_RECRUIT_COST));
-        if (nbtTagCompound.contains(TAG_TEXTURE))
+        if (nbtTagCompound.contains(TAG_TEXTURE_UUID))
         {
-            this.textureUUID = nbtTagCompound.getUUID(TAG_TEXTURE);
+            this.textureUUID = nbtTagCompound.getUUID(TAG_TEXTURE_UUID);
         }
     }
 

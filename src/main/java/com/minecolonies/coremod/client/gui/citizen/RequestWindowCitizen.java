@@ -22,6 +22,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -73,6 +74,10 @@ public class RequestWindowCitizen extends AbstractWindowCitizen
     @Override
     public ImmutableList<IRequest<?>> getOpenRequestsFromBuilding(final IBuildingView building)
     {
+        if (building == null)
+        {
+            return ImmutableList.of();
+        }
         return building.getOpenRequests(citizen);
     }
 

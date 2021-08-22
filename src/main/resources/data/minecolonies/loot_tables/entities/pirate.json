@@ -11,12 +11,12 @@
         },
         {
           "type": "item",
-          "weight": 10,
+          "weight": 6,
           "name": "minecolonies:iron_scimitar"
         },
         {
           "type": "item",
-          "weight": 10,
+          "weight": 4,
           "name": "minecolonies:ancienttome"
         }
       ]

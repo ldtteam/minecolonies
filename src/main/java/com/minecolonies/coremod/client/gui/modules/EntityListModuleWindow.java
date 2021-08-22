@@ -56,6 +56,11 @@ public class EntityListModuleWindow extends AbstractModuleWindow
     private final List<ResourceLocation> currentDisplayedList = new ArrayList<>();
 
     /**
+     * Update delay.
+     */
+    private int tick;
+
+    /**
      * @param building   the building it belongs to.
      * @param res   the building res id.
      * @param moduleView   the assigned module view.
@@ -74,6 +79,15 @@ public class EntityListModuleWindow extends AbstractModuleWindow
         this.id = moduleView.getId();
 
         groupedItemList = new ArrayList<>(IColonyManager.getInstance().getCompatibilityManager().getAllMonsters());
+
+        window.findPaneOfTypeByID(INPUT_FILTER, TextField.class).setHandler(input -> {
+            final String newFilter = input.getText();
+            if (!newFilter.equals(filter))
+            {
+                filter = newFilter;
+                this.tick = 10;
+            }
+        });
     }
 
     @Override
@@ -97,16 +111,13 @@ public class EntityListModuleWindow extends AbstractModuleWindow
     }
 
     @Override
-    public boolean onKeyTyped(final char ch, final int key)
+    public void onUpdate()
     {
-        final boolean result = super.onKeyTyped(ch, key);
-        final String newFilter = window.findPaneOfTypeByID(INPUT_FILTER, TextField.class).getText();
-        if (!newFilter.equals(filter))
+        super.onUpdate();
+        if (tick > 0 && --tick == 0)
         {
-            filter = newFilter;
             updateResources();
         }
-        return result;
     }
 
     /**

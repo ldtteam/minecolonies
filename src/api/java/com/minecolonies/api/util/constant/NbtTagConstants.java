@@ -378,6 +378,7 @@ public final class NbtTagConstants
      */
     public static final String TAG_FEMALE             = "female";
     public static final String TAG_TEXTURE            = "texture";
+    public static final String TAG_TEXTURE_UUID       = "textureUUID";
     public static final String TAG_SKILL              = "skill";
     public static final String TAG_LEVEL              = "level";
     public static final String TAG_EXPERIENCE         = "experience";

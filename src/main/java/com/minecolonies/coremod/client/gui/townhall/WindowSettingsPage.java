@@ -1,5 +1,8 @@
 package com.minecolonies.coremod.client.gui.townhall;
 
+import com.ldtteam.blockout.Pane;
+import com.ldtteam.blockout.PaneBuilders;
+import com.ldtteam.blockout.controls.AbstractTextBuilder;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.views.DropDownList;
 import com.ldtteam.structurize.util.LanguageHandler;
@@ -10,16 +13,18 @@ import com.minecolonies.coremod.network.messages.server.colony.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.util.text.TextFormatting;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSocketFactory;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
@@ -296,13 +301,17 @@ public class WindowSettingsPage extends AbstractWindowTownHall
     public void onUpdate()
     {
         super.onUpdate();
+        final Pane pane = findPaneByID(DROPDOWN_TEXT_ID);
         if (isFeatureUnlocked.get())
         {
-            findPaneByID(DROPDOWN_TEXT_ID).enable();
+            pane.enable();
         }
         else
         {
-            findPaneByID(DROPDOWN_TEXT_ID).disable();
+            pane.disable();
+            AbstractTextBuilder.TooltipBuilder hoverText = PaneBuilders.tooltipBuilder().hoverPane(pane);
+            hoverText.append(new TranslationTextComponent("com.minecolonies.core.townhall.patreon")).paragraphBreak();
+            hoverText.build();
         }
     }
 
@@ -313,11 +322,15 @@ public class WindowSettingsPage extends AbstractWindowTownHall
     {
         final String player = Minecraft.getInstance().player.getStringUUID();
         new Thread(() -> {
-            try (final CloseableHttpClient httpclient = HttpClients.createDefault())
+            try
             {
-                final HttpGet httpget = new HttpGet("https://auth.minecolonies.com/api/minecraft/" + player + "/features");
-                final InputStream responseBody = httpclient.execute(httpget).getEntity().getContent();
+                final SSLSocketFactory sslsocketfactory = HttpsURLConnection.getDefaultSSLSocketFactory();
+                final URL url = new URL("https://auth.minecolonies.com/api/minecraft/" + player + "/features");
+                final HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
 
+                conn.setSSLSocketFactory(sslsocketfactory);
+
+                final InputStream responseBody = conn.getInputStream();
                 final BufferedReader reader = new BufferedReader(new InputStreamReader(responseBody));
 
                 String inputLine;

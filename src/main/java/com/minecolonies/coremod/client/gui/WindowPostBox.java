@@ -31,35 +31,47 @@ public class WindowPostBox extends AbstractWindowRequestTree
     /**
      * Id of the deliver available button inside the GUI.
      */
-    private static final String               TAG_BUTTON_DELIVER_AVAILABLE = "deliverAvailable";
+    private static final String TAG_BUTTON_DELIVER_AVAILABLE = "deliverAvailable";
+
     /**
      * String which displays full delivery.
      */
-    private static final String               RED_X                        = "§n§4X";
+    private static final String RED_X = "§n§4X";
+
     /**
      * String which displays partial delivery..
      */
-    private static final String               APPROVE                      = "✓";
+    private static final String APPROVE = "✓";
+
     /**
      * List of all item stacks in the game.
      */
-    private final        List<ItemStack>      allItems                     = new ArrayList<>();
+    private final List<ItemStack> allItems = new ArrayList<>();
+
     /**
      * Resource scrolling list.
      */
-    private final        ScrollingList        stackList;
+    private final ScrollingList stackList;
+
     /**
      * The building view of this window.
      */
-    private final        AbstractBuildingView buildingView;
+    private final AbstractBuildingView buildingView;
+
     /**
      * The filter for the resource list.
      */
-    private              String               filter                       = "";
+    private String filter = "";
+
     /**
      * Whether to deliver what's currently in the warehouse and then cancel order.
      */
-    private              boolean              deliverAvailable;
+    private boolean deliverAvailable;
+
+    /**
+     * Update delay.
+     */
+    private int tick;
 
     /**
      * Create the postBox GUI.
@@ -74,6 +86,15 @@ public class WindowPostBox extends AbstractWindowRequestTree
         registerButton(BUTTON_INVENTORY, this::inventoryClicked);
         registerButton(BUTTON_REQUEST, this::requestClicked);
         registerButton(TAG_BUTTON_DELIVER_AVAILABLE, this::deliverPartialClicked);
+
+        window.findPaneOfTypeByID(INPUT_FILTER, TextField.class).setHandler(input -> {
+            final String newFilter = input.getText();
+            if (!newFilter.equals(filter))
+            {
+                filter = newFilter;
+                this.tick = 10;
+            }
+        });
     }
 
     /**
@@ -144,7 +165,10 @@ public class WindowPostBox extends AbstractWindowRequestTree
         final Predicate<ItemStack> filterPredicate = stack -> filter.isEmpty()
                                                                 || stack.getDescriptionId().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))
                                                                 || stack.getHoverName().getString().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))
-                                                                || (stack.getItem() instanceof EnchantedBookItem && EnchantedBookItem.getEnchantments(stack).getCompound(0).getString("id").contains(filter.toLowerCase(Locale.US)));
+                                                                || (stack.getItem() instanceof EnchantedBookItem && EnchantedBookItem.getEnchantments(stack)
+                                                                                                                      .getCompound(0)
+                                                                                                                      .getString("id")
+                                                                                                                      .contains(filter.toLowerCase(Locale.US)));
         allItems.clear();
         allItems.addAll(getBlockList(filterPredicate));
         allItems.sort(Comparator.comparingInt(s1 -> StringUtils.getLevenshteinDistance(s1.getHoverName().getString(), filter)));
@@ -205,11 +229,12 @@ public class WindowPostBox extends AbstractWindowRequestTree
     }
 
     @Override
-    public boolean onKeyTyped(final char ch, final int key)
+    public void onUpdate()
     {
-        final boolean result = super.onKeyTyped(ch, key);
-        filter = findPaneOfTypeByID(INPUT_NAME, TextField.class).getText();
-        updateResources();
-        return result;
+        super.onUpdate();
+        if (tick > 0 && --tick == 0)
+        {
+            updateResources();
+        }
     }
 }
