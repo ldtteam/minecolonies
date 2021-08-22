@@ -6,7 +6,6 @@ import com.ldtteam.blockout.controls.ItemIcon;
 import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.controls.TextField;
 import com.ldtteam.blockout.views.ScrollingList;
-import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
@@ -87,19 +86,8 @@ public class WindowPostBox extends AbstractWindowRequestTree
         registerButton(BUTTON_INVENTORY, this::inventoryClicked);
         registerButton(BUTTON_REQUEST, this::requestClicked);
         registerButton(TAG_BUTTON_DELIVER_AVAILABLE, this::deliverPartialClicked);
-    }
 
-    @Override
-    public void setWindow(Window w)
-    {
-        if (window != null)
-        {
-            window.findPaneOfTypeByID(INPUT_FILTER, TextField.class).setHandler(null);
-        }
-
-        super.setWindow(w);
-
-        window.findPaneOfTypeByID(INPUT_FILTER, TextField.class).setHandler(input -> {
+        window.findPaneOfTypeByID(NAME_LABEL, TextField.class).setHandler(input -> {
             final String newFilter = input.getText();
             if (!newFilter.equals(filter))
             {
