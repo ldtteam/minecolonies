@@ -1,0 +1,23 @@
+{
+  "branch": "minecolonies:technology",
+  "parentResearch": "minecolonies:technology/memoryaid",
+  "researchLevel": 3,
+  "subtitle": "com.minecolonies.research.technology.buildermodes.subtitle",
+  "icon": "minecolonies:blockhutbuilder",
+  "requirements": [
+    {
+      "building": "builder",
+      "level": 3
+    },
+    {
+      "item": "minecraft:diamond_axe",
+      "quantity": 1
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/buildermodeunlock": 1
+    }
+  ],
+  "sortOrder": 3
+}

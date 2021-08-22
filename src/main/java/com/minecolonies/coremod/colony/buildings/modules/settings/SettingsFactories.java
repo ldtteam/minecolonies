@@ -543,4 +543,30 @@ public class SettingsFactories
             return 55;
         }
     }
+
+    /**
+     * Specific factory for the string setting with desc.
+     */
+    public static class BuilderModeSettingFactory extends AbstractStringSettingsFactory<BuilderModeSetting>
+    {
+        @NotNull
+        @Override
+        public TypeToken<BuilderModeSetting> getFactoryOutputType()
+        {
+            return TypeToken.of(BuilderModeSetting.class);
+        }
+
+        @NotNull
+        @Override
+        public BuilderModeSetting getNewInstance(final List<String> value, final int curr)
+        {
+            return new BuilderModeSetting(value, curr);
+        }
+
+        @Override
+        public short getSerializationId()
+        {
+            return 56;
+        }
+    }
 }
