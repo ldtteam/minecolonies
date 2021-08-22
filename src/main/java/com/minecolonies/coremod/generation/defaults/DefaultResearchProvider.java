@@ -119,6 +119,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         effects.add(new ResearchEffect(UNDERTAKER_RUN).setTranslatedName("Undertaker unlocks run ability").setTranslatedSubtitle("Teach Undertaker the ability to run towards graves"));
         effects.add(new ResearchEffect(USE_TOTEM).setTranslatedName("Undertaker gains the ability to use Totems of Undying to assist in Resurrection"));
         effects.add(new ResearchEffect(RECIPE_MODE).setTranslatedName("Add the option to select recipes based on Warehouse stock"));
+        effects.add(new ResearchEffect(BUILDER_MODE).setTranslatedName("Add the option to select different build-modes for your builders"));
 
         // Building-focused unlocks are derived from the block hut name.  Do not manually add ResourceLocations as a string, as some building blocks have surprising names.
         effects.add(new ResearchEffect(ModBuildings.archery.getBuildingBlock()).setTranslatedName("Unlocks Archery"));
@@ -1388,6 +1389,16 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                       .addEffect(RECIPE_MODE, 1)
                                       .setSortOrder(2)
                                       .addToList(r);
+
+        new Research(new ResourceLocation(Constants.MOD_ID, "technology/buildermodes"), TECH).setParentResearch(memoryAid)
+          .setTranslatedName("Builder Modes")
+          .setTranslatedSubtitle("Possibility Overload!")
+          .setIcon(ModBlocks.blockHutBuilder.asItem())
+          .addBuildingRequirement(ModBuildings.BUILDER_ID, 3)
+          .addItemCost(Items.DIAMOND_AXE, 1)
+          .addEffect(BUILDER_MODE, 1)
+          .setSortOrder(3)
+          .addToList(r);
 
         final Research deepPockets = new Research(new ResourceLocation(Constants.MOD_ID, "technology/deeppockets"), TECH).setParentResearch(cheatSheet)
                                        .setTranslatedName("Deep Pockets")

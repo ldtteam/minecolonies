@@ -218,6 +218,10 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     @Override
     public void setStructurePlacer(final BuildingStructureHandler<JobBuilder, BuildingBuilder> structure)
     {
+        if (job.getWorkOrder().getIteratorType().isEmpty() && getOwnBuilding().getSetting(BuildingBuilder.BUILDING_MODE) != null)
+        {
+            job.getWorkOrder().setIteratorType(getOwnBuilding().getSetting(BuildingBuilder.BUILDING_MODE).getValue());
+        }
         structurePlacer = new Tuple<>(new StructurePlacer(structure, job.getWorkOrder().getIteratorType()), structure);
     }
 

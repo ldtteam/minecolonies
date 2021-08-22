@@ -2,7 +2,6 @@ package com.minecolonies.coremod.colony.workorders;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import com.ldtteam.structurize.Structurize;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.workorders.IWorkManager;
@@ -93,7 +92,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
      */
     public AbstractWorkOrder()
     {
-        this.iteratorType = Structurize.getConfig().getServer().iteratorType.get();
+        this.iteratorType = "";
     }
 
     /**
@@ -103,6 +102,18 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     public String getIteratorType()
     {
         return iteratorType;
+    }
+
+    /**
+     * Set the new iterator type if not set yet.
+     * @param newType the new type to set.
+     */
+    public void setIteratorType(final String newType)
+    {
+        if (this.iteratorType.isEmpty())
+        {
+            this.iteratorType = newType;
+        }
     }
 
     /**

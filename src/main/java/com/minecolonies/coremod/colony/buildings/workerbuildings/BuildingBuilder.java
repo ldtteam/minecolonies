@@ -16,6 +16,7 @@ import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.client.gui.huts.WindowHutBuilderModule;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
+import com.minecolonies.coremod.colony.buildings.modules.settings.BuilderModeSetting;
 import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.coremod.colony.buildings.modules.settings.StringSetting;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;
@@ -46,6 +47,7 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
      * Settings key for the building mode.
      */
     public static final ISettingKey<StringSetting> MODE = new SettingKey<>(StringSetting.class, new ResourceLocation(Constants.MOD_ID, "mode"));
+    public static final ISettingKey<BuilderModeSetting> BUILDING_MODE = new SettingKey<>(BuilderModeSetting.class, new ResourceLocation(Constants.MOD_ID, "buildmode"));
 
     /**
      * Both setting options.

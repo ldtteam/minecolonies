@@ -66,6 +66,11 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
     private final Window prev;
 
     /**
+     * Update delay.
+     */
+    private int tick;
+
+    /**
      * Constructor for a hut rename entry window.
      *
      * @param b    {@link AbstractBuilding}
@@ -81,6 +86,25 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
         updateResources();
         registerButton(LOCATE, this::locate);
         this.prev = prev;
+
+        window.findPaneOfTypeByID("names", TextField.class).setHandler(input -> {
+            final String newFilter = input.getText();
+            if (!newFilter.equals(filter))
+            {
+                filter = newFilter;
+                this.tick = 10;
+            }
+        });
+    }
+
+    @Override
+    public void onUpdate()
+    {
+        super.onUpdate();
+        if (tick > 0 && --tick == 0)
+        {
+            updateResources();
+        }
     }
 
     private void locate(final Button button)
@@ -283,17 +307,5 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
                 rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(image);
             }
         });
-    }
-
-    @Override
-    public boolean onKeyTyped(final char ch, final int key)
-    {
-        final boolean result = super.onKeyTyped(ch, key);
-        if (result)
-        {
-            filter = findPaneOfTypeByID("names", TextField.class).getText();
-            updateResources();
-        }
-        return result;
     }
 }
