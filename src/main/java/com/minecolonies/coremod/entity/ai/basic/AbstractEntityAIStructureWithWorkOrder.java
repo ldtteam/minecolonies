@@ -6,6 +6,7 @@ import com.ldtteam.structurize.placement.StructurePhasePlacementResult;
 import com.ldtteam.structurize.placement.StructurePlacer;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.modules.ISettingsModule;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
@@ -199,7 +200,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         final WorkerLoadOnlyStructureHandler structure =
           new WorkerLoadOnlyStructureHandler(world, structurePlacer.getB().getWorldPos(), structurePlacer.getB().getBluePrint(), new PlacementSettings(), true, this);
 
-        if (job.getWorkOrder().getIteratorType().isEmpty() && getOwnBuilding().getSetting(BuildingBuilder.BUILDING_MODE) != null)
+        if (job.getWorkOrder().getIteratorType().isEmpty() && getOwnBuilding().hasModule(ISettingsModule.class) && getOwnBuilding().getSetting(BuildingBuilder.BUILDING_MODE) != null)
         {
             job.getWorkOrder().setIteratorType(getOwnBuilding().getSetting(BuildingBuilder.BUILDING_MODE).getValue());
         }
