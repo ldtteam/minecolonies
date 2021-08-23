@@ -630,6 +630,11 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         {
             workingNode = module.getActiveNode();
             module.setActiveNode(workingNode);
+
+            if (workingNode == null)
+            {
+                module.setCurrentLevel(module.getLevelId(currentLevel) + 1);
+            }
             return MINER_CHECK_MINESHAFT;
         }
 
@@ -677,6 +682,13 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         }
         @NotNull final BlockPos standingPosition = new BlockPos(workingNode.getParent().getX(), currentLevel.getDepth(), workingNode.getParent().getZ());
         currentStandingPosition = standingPosition;
+        if (workingNode != null && currentLevel.getNode(new Vec2i(workingNode.getX(), workingNode.getZ())) == null)
+        {
+            module.setActiveNode(null);
+            module.setOldNode(null);
+            return MINER_MINING_SHAFT;
+        }
+
         if ((workingNode.getStatus() == Node.NodeStatus.AVAILABLE || workingNode.getStatus() == Node.NodeStatus.IN_PROGRESS) && !walkToBlock(standingPosition))
         {
             workingNode.setRot(rotation);
