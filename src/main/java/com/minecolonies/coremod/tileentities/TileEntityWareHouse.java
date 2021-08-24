@@ -125,7 +125,7 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
                 continue;
             }
 
-            @Nullable final TileEntity chest = searchRightChestForStack(stack);
+            @Nullable final TileEntity chest = getRackForStack(stack);
             if (chest == null)
             {
                 if(level.getGameTime() - lastNotification > TICKS_FIVE_MIN)
@@ -149,55 +149,49 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
     }
 
     /**
+     * Get a rack for a stack.
+     * @param stack the stack to insert.
+     * @return the matching rack.
+     */
+    public TileEntity getRackForStack(final ItemStack stack)
+    {
+        TileEntity rack = getPositionOfChestWithItemStack(stack);
+        if (rack == null)
+        {
+            rack = getPositionOfChestWithSimilarItemStack(stack);
+            if (rack == null)
+            {
+                rack = searchMostEmptyRack();
+            }
+        }
+        return rack;
+    }
+
+    /**
      * Search the right chest for an itemStack.
      *
      * @param stack the stack to dump.
      * @return the tile entity of the chest
      */
     @Nullable
-    private TileEntity searchRightChestForStack(@NotNull final ItemStack stack)
+    private TileEntity getPositionOfChestWithItemStack(@NotNull final ItemStack stack)
     {
         for (@NotNull final BlockPos pos : getBuilding().getContainers())
         {
-            final TileEntity entity = getLevel().getBlockEntity(pos);
-            if (isInRack(stack, entity, false) || isInChest(stack, entity, false))
+            if (WorldUtil.isBlockLoaded(level, pos))
             {
-                return entity;
+                final TileEntity entity = getLevel().getBlockEntity(pos);
+                if (entity instanceof AbstractTileEntityRack)
+                {
+                    if (((AbstractTileEntityRack) entity).getFreeSlots() > 0 && ((AbstractTileEntityRack) entity).hasItemStack(stack, 1, true))
+                    {
+                        return entity;
+                    }
+                }
             }
         }
 
-        @Nullable final TileEntity chest = searchChestWithSimilarItem(stack);
-        return chest == null ? searchMostEmptySlot() : chest;
-    }
-
-    /**
-     * Check if a similar item is in the rack.
-     *
-     * @param stack             the stack to check.
-     * @param entity            the entity.
-     * @param includeSimilarMatches if similar matches should be included or only exact matches.
-     * @return true if so.
-     */
-    private static boolean isInRack(final ItemStack stack, final TileEntity entity, final boolean includeSimilarMatches)
-    {
-        return entity instanceof TileEntityRack
-                 && !((AbstractTileEntityRack) entity).isEmpty()
-                 && (includeSimilarMatches ? ((TileEntityRack) entity).hasSimilarStack(stack) : ((AbstractTileEntityRack) entity).hasItemStack(stack, 1, false))
-                 && ((TileEntityRack) entity).getFreeSlots() > 0;
-    }
-
-    /**
-     * Check if a similar item is in the chest.
-     *
-     * @param stack             the stack to check.
-     * @param entity            the entity.
-     * @param ignoreDamageValue should the damage value be ignored.
-     * @return true if so.
-     */
-    private static boolean isInChest(final ItemStack stack, final TileEntity entity, final boolean ignoreDamageValue)
-    {
-        return entity instanceof ChestTileEntity
-                 && InventoryUtils.findSlotInItemHandlerNotFullWithItem(entity.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null), stack);
+        return null;
     }
 
     /**
@@ -207,14 +201,20 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
      * @return the entity of the chest.
      */
     @Nullable
-    private TileEntity searchChestWithSimilarItem(final ItemStack stack)
+    private TileEntity getPositionOfChestWithSimilarItemStack(final ItemStack stack)
     {
         for (@NotNull final BlockPos pos : getBuilding().getContainers())
         {
-            final TileEntity entity = getLevel().getBlockEntity(pos);
-            if (isInRack(stack, entity, true) || isInChest(stack, entity, true))
+            if (WorldUtil.isBlockLoaded(level, pos))
             {
-                return entity;
+                final TileEntity entity = getLevel().getBlockEntity(pos);
+                if (entity instanceof AbstractTileEntityRack)
+                {
+                    if (((AbstractTileEntityRack) entity).getFreeSlots() > 0 && ((AbstractTileEntityRack) entity).hasSimilarStack(stack))
+                    {
+                        return entity;
+                    }
+                }
             }
         }
         return null;
@@ -226,19 +226,13 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
      * @return the tileEntity of this chest.
      */
     @Nullable
-    private TileEntity searchMostEmptySlot()
+    private TileEntity searchMostEmptyRack()
     {
         int freeSlots = 0;
         TileEntity emptiestChest = null;
         for (@NotNull final BlockPos pos : getBuilding().getContainers())
         {
             final TileEntity entity = getLevel().getBlockEntity(pos);
-            if (entity == null)
-            {
-                getBuilding().removeContainerPosition(pos);
-                continue;
-            }
-            final int tempFreeSlots;
             if (entity instanceof TileEntityRack)
             {
                 if (((AbstractTileEntityRack) entity).isEmpty())
@@ -246,24 +240,14 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
                     return entity;
                 }
 
-                tempFreeSlots = ((AbstractTileEntityRack) entity).getFreeSlots();
-                if (freeSlots < tempFreeSlots)
-                {
-                    freeSlots = tempFreeSlots;
-                    emptiestChest = entity;
-                }
-            }
-            else if (entity instanceof ChestTileEntity && InventoryUtils.getFirstOpenSlotFromProvider(entity) != -1)
-            {
-                tempFreeSlots = ((ChestTileEntity) entity).getContainerSize() - InventoryUtils.getAmountOfStacksInProvider(entity);
-                if (freeSlots < tempFreeSlots)
+                final int tempFreeSlots = ((AbstractTileEntityRack) entity).getFreeSlots();
+                if (tempFreeSlots > freeSlots)
                 {
                     freeSlots = tempFreeSlots;
                     emptiestChest = entity;
                 }
             }
         }
-
         return emptiestChest;
     }
 }

@@ -1,6 +1,5 @@
 package com.minecolonies.api.tileentities;
 
-import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesRack;
 import com.minecolonies.api.blocks.types.RackType;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -21,7 +20,6 @@ import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -121,7 +119,7 @@ public class TileEntityRack extends AbstractTileEntityRack
     @Override
     public boolean hasSimilarStack(@NotNull final ItemStack stack)
     {
-        final ItemStorage checkItem = new ItemStorage(stack, true);
+        final ItemStorage checkItem = new ItemStorage(stack, true, true);
         if (content.containsKey(checkItem))
         {
             return true;
@@ -129,13 +127,9 @@ public class TileEntityRack extends AbstractTileEntityRack
 
         for (final ItemStorage storage : content.keySet())
         {
-            for (final ResourceLocation tag : stack.getItem().getTags())
+            if (checkItem.getPrimaryCreativeTabIndex() == storage.getPrimaryCreativeTabIndex())
             {
-                if (MinecoloniesAPIProxy.getInstance().getConfig().getServer().enabledModTags.get().contains(tag.toString())
-                      && storage.getItemStack().getItem().getTags().contains(tag))
-                {
-                    return true;
-                }
+                return true;
             }
         }
 
