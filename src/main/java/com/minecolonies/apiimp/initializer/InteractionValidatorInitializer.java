@@ -10,7 +10,6 @@ import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.interactionhandling.InteractionValidatorRegistry;
 import com.minecolonies.api.colony.requestsystem.request.RequestUtils;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -308,7 +307,7 @@ public class InteractionValidatorInitializer
           citizen -> citizen.getEntity().isPresent() && citizen.getColony().getRaiderManager().isRaided());
 
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_SLEEPING),
-          citizen -> citizen.getEntity().isPresent() && citizen.getEntity().get().getDesiredActivity() == DesiredActivity.SLEEP);
+          citizen -> citizen.getEntity().isPresent() && citizen.isAsleep());
 
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_MOURNING),
           citizen -> citizen.getEntity().isPresent() && citizen.getCitizenMournHandler().isMourning()
