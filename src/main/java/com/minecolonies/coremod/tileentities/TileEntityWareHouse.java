@@ -55,7 +55,7 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
     }
 
     @Override
-    public boolean hasMatchingItemStackInWarehouse(@NotNull final ItemStack itemStack, final int count, final boolean ignoreNBT, final int leftOver)
+    public boolean hasMatchingItemStackInWarehouse(@NotNull final ItemStack itemStack, final int count, final boolean ignoreNBT, final boolean ignoreDamage, final int leftOver)
     {
         int totalCountFound = 0 - leftOver;
         for (@NotNull final BlockPos pos : getBuilding().getContainers())
@@ -65,17 +65,7 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
                 final TileEntity entity = getLevel().getBlockEntity(pos);
                 if (entity instanceof TileEntityRack && !((AbstractTileEntityRack) entity).isEmpty())
                 {
-                    totalCountFound += ((AbstractTileEntityRack) entity).getCount(itemStack, true, ignoreNBT);
-                    if (totalCountFound >= count)
-                    {
-                        return true;
-                    }
-                }
-
-                if (entity instanceof ChestTileEntity)
-                {
-                    totalCountFound += InventoryUtils.getItemCountInItemHandler(entity.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null),
-                      item -> item.sameItemStackIgnoreDurability(itemStack) && item.getCount() >= itemStack.getCount());
+                    totalCountFound += ((AbstractTileEntityRack) entity).getCount(itemStack, ignoreDamage, ignoreNBT);
                     if (totalCountFound >= count)
                     {
                         return true;
@@ -84,6 +74,12 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
             }
         }
         return false;
+    }
+
+    @Override
+    public boolean hasMatchingItemStackInWarehouse(@NotNull final ItemStack itemStack, final int count, final boolean ignoreNBT, final int leftOver)
+    {
+        return hasMatchingItemStackInWarehouse(itemStack, count, ignoreNBT, true, leftOver);
     }
 
     @Override

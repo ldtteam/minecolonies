@@ -44,14 +44,14 @@ public class WarehouseConcreteRequestResolver extends AbstractWarehouseRequestRe
                 {
                     if (requestToCheck.getRequest() instanceof INonExhaustiveDeliverable)
                     {
-                        if (wareHouse.hasMatchingItemStackInWarehouse(possible, requestToCheck.getRequest().getMinimumCount(), ignoreNBT, ((INonExhaustiveDeliverable) requestToCheck.getRequest()).getLeftOver()))
+                        if (wareHouse.hasMatchingItemStackInWarehouse(possible, requestToCheck.getRequest().getMinimumCount(), ignoreNBT, false, ((INonExhaustiveDeliverable) requestToCheck.getRequest()).getLeftOver()))
                         {
                             return true;
                         }
                     }
                     else
                     {
-                        if (wareHouse.hasMatchingItemStackInWarehouse(possible, requestToCheck.getRequest().getMinimumCount(), ignoreNBT))
+                        if (wareHouse.hasMatchingItemStackInWarehouse(possible, requestToCheck.getRequest().getMinimumCount(), ignoreNBT, false, 0))
                         {
                             return true;
                         }
