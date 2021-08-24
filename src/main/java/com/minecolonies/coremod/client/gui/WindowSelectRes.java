@@ -23,8 +23,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_SELECT;
-import static com.minecolonies.api.util.constant.WindowConstants.INPUT_FILTER;
+import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 public class WindowSelectRes extends AbstractWindowSkeleton
 {
@@ -91,7 +90,7 @@ public class WindowSelectRes extends AbstractWindowSkeleton
         this.test = test;
         this.consumer = consumer;
 
-        window.findPaneOfTypeByID(INPUT_FILTER, TextField.class).setHandler(input -> {
+        window.findPaneOfTypeByID(NAME_LABEL, TextField.class).setHandler(input -> {
             final String newFilter = input.getText();
             if (!newFilter.equals(filter))
             {
