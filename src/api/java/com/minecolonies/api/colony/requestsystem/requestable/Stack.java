@@ -129,7 +129,7 @@ public class Stack implements IConcreteDeliverable
      * Create a Stack deliverable.
      *
      * @param stack       the required stack.
-     * @param matchMeta   if damage has to be matched.
+     * @param matchDamage   if damage has to be matched.
      * @param matchNBT    if NBT has to be matched.
      * @param matchOreDic if the oredict has to be matched.
      * @param result      the result stack.
@@ -138,7 +138,7 @@ public class Stack implements IConcreteDeliverable
      */
     public Stack(
       @NotNull final ItemStack stack,
-      final boolean matchMeta,
+      final boolean matchDamage,
       final boolean matchNBT,
       final boolean matchOreDic,
       @NotNull final ItemStack result,
@@ -151,7 +151,7 @@ public class Stack implements IConcreteDeliverable
         }
 
         this.theStack = stack.copy();
-        this.matchDamage = matchMeta;
+        this.matchDamage = matchDamage;
         this.matchNBT = matchNBT;
         this.matchOreDic = matchOreDic;
         this.result = result;

@@ -633,7 +633,11 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
 
             if (workingNode == null)
             {
-                module.setCurrentLevel(module.getLevelId(currentLevel) + 1);
+                final int levelId = module.getLevelId(currentLevel);
+                if (levelId > 0)
+                {
+                    module.setCurrentLevel(levelId - 1);
+                }
             }
             return MINER_CHECK_MINESHAFT;
         }
