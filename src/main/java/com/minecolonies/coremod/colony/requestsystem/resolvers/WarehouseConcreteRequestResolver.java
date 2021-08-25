@@ -34,9 +34,17 @@ public class WarehouseConcreteRequestResolver extends AbstractWarehouseRequestRe
         if(deliverable instanceof IConcreteDeliverable)
         {
             boolean ignoreNBT = false;
-            if (deliverable instanceof Stack && !((Stack) requestToCheck.getRequest()).matchNBT())
+            boolean ignoreDamage = false;
+            if (deliverable instanceof Stack)
             {
-                ignoreNBT = true;
+                if (!((Stack) requestToCheck.getRequest()).matchNBT())
+                {
+                    ignoreNBT = true;
+                }
+                if (!((Stack) requestToCheck.getRequest()).matchDamage())
+                {
+                    ignoreDamage = true;
+                }
             }
             for(final ItemStack possible : ((IConcreteDeliverable) deliverable).getRequestedItems())
             {
@@ -44,14 +52,14 @@ public class WarehouseConcreteRequestResolver extends AbstractWarehouseRequestRe
                 {
                     if (requestToCheck.getRequest() instanceof INonExhaustiveDeliverable)
                     {
-                        if (wareHouse.hasMatchingItemStackInWarehouse(possible, requestToCheck.getRequest().getMinimumCount(), ignoreNBT, false, ((INonExhaustiveDeliverable) requestToCheck.getRequest()).getLeftOver()))
+                        if (wareHouse.hasMatchingItemStackInWarehouse(possible, requestToCheck.getRequest().getMinimumCount(), ignoreNBT, ignoreDamage, ((INonExhaustiveDeliverable) requestToCheck.getRequest()).getLeftOver()))
                         {
                             return true;
                         }
                     }
                     else
                     {
-                        if (wareHouse.hasMatchingItemStackInWarehouse(possible, requestToCheck.getRequest().getMinimumCount(), ignoreNBT, false, 0))
+                        if (wareHouse.hasMatchingItemStackInWarehouse(possible, requestToCheck.getRequest().getMinimumCount(), ignoreNBT, ignoreDamage, 0))
                         {
                             return true;
                         }

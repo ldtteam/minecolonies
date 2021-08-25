@@ -740,7 +740,7 @@ public class InventoryUtils
                 final TileEntity entity = world.getBlockEntity(pos);
                 if (entity instanceof TileEntityRack)
                 {
-                    totalCount += ((TileEntityRack) entity).getAllContent().getOrDefault(stack, 0);
+                    totalCount += ((TileEntityRack) entity).getCount(stack);
                 }
                 else if (entity instanceof ChestTileEntity)
                 {
@@ -795,7 +795,7 @@ public class InventoryUtils
                 final TileEntity entity = world.getBlockEntity(pos);
                 if (entity instanceof TileEntityRack)
                 {
-                    totalCount += ((TileEntityRack) entity).getAllContent().getOrDefault(stack, 0);
+                    totalCount += ((TileEntityRack) entity).getCount(stack);
                 }
                 else if (entity instanceof ChestTileEntity)
                 {

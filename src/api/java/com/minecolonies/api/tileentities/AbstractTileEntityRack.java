@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
@@ -174,6 +175,14 @@ public abstract class AbstractTileEntityRack extends TileEntity implements IName
      * @return the quantity or 0.
      */
     public abstract int getCount(ItemStack stack, boolean ignoreDamageValue, final boolean ignoreNBT);
+
+    /**
+     * Check if a similar/same item as the stack is in the inventory. And return the count if so.
+     *
+     * @param storage the storage to match.
+     * @return the quantity or 0.
+     */
+    public abstract int getCount(ItemStorage storage);
 
     /**
      * Check if a similar/same item as the stack is in the inventory. This method checks the content list, it is therefore extremely fast.

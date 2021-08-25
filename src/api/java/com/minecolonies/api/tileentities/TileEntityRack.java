@@ -100,7 +100,31 @@ public class TileEntityRack extends AbstractTileEntityRack
     public int getCount(final ItemStack stack, final boolean ignoreDamageValue, final boolean ignoreNBT)
     {
         final ItemStorage checkItem = new ItemStorage(stack, ignoreDamageValue, ignoreNBT);
-        return content.getOrDefault(checkItem, 0);
+        return getCount(checkItem);
+    }
+
+    @Override
+    public int getCount(final ItemStorage storage)
+    {
+        if (storage.ignoreDamageValue() || storage.ignoreNBT())
+        {
+            if (!content.containsKey(storage))
+            {
+                return 0;
+            }
+
+            int count = 0;
+            for (final Map.Entry<ItemStorage, Integer> contentStorage : content.entrySet())
+            {
+                if (contentStorage.getKey().equals(storage))
+                {
+                    count += contentStorage.getValue();
+                }
+            }
+            return count;
+        }
+
+        return content.getOrDefault(storage, 0);
     }
 
     @Override
