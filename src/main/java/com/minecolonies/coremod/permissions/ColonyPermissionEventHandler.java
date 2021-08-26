@@ -421,12 +421,9 @@ public class ColonyPermissionEventHandler
               && colony.isCoordInColony(player.getCommandSenderWorld(), positionToCheck)
               && !colony.getPermissions().hasPermission(player, action))
         {
-            if (MineColonies.getConfig().getServer().pvp_mode.get())
+            if (MineColonies.getConfig().getServer().pvp_mode.get() && !world.isClientSide && colony.isValidAttackingPlayer(playerIn))
             {
-                if (!world.isClientSide && colony.isValidAttackingPlayer(playerIn))
-                {
-                    return false;
-                }
+                return false;
             }
             else
             {
