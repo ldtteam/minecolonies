@@ -1,0 +1,10 @@
+{
+  "texture": "00ca8f7b-ed67-4e24-9d69-1a206f1c1823",
+  "citizensuffix": "_w",
+  "name": "Asuna Yuuki",
+  "chance": 0.001,
+  "storylangkey": "com.minecolonies.coremod.gui.chat.hyrios",
+  "recruitcost": "minecraft:diamond_sword",
+  "recruitcostcount": 1,
+  "gender": "female"
+}
