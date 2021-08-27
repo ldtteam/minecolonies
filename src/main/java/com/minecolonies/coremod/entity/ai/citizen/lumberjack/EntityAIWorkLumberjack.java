@@ -35,10 +35,13 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.common.IPlantable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.items.ModTags.fungi;
@@ -341,19 +344,19 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
                 final BlockPos endPos = building.getEndRestriction();
 
                 pathResult = worker.getNavigation()
-                    .moveToTree(startPos,
-                        endPos,
-                        1.0D,
-                      building.getModuleMatching(ItemListModule.class, m -> m.getId().equals(SAPLINGS_LIST)).getList(),
-                        worker.getCitizenColonyHandler().getColony());
+                               .moveToTree(startPos,
+                                 endPos,
+                                 1.0D,
+                                 building.getModuleMatching(ItemListModule.class, m -> m.getId().equals(SAPLINGS_LIST)).getList(),
+                                 worker.getCitizenColonyHandler().getColony());
             }
             else
             {
                 pathResult = worker.getNavigation()
-                    .moveToTree(SEARCH_RANGE + searchIncrement,
-                        1.0D,
-                      building.getModuleMatching(ItemListModule.class, m -> m.getId().equals(SAPLINGS_LIST)).getList(),
-                        worker.getCitizenColonyHandler().getColony());
+                               .moveToTree(SEARCH_RANGE + searchIncrement,
+                                 1.0D,
+                                 building.getModuleMatching(ItemListModule.class, m -> m.getId().equals(SAPLINGS_LIST)).getList(),
+                                 worker.getCitizenColonyHandler().getColony());
             }
             return getState();
         }
@@ -537,9 +540,12 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         {
             if (world.getRandom().nextInt(100) > 95)
             {
-                if (stack.getItem() == Items.NETHER_WART_BLOCK) {
+                if (stack.getItem() == Items.NETHER_WART_BLOCK)
+                {
                     newDrops.add(new ItemStack(Items.CRIMSON_FUNGUS, 1));
-                } else if (stack.getItem() == Items.WARPED_WART_BLOCK) {
+                }
+                else if (stack.getItem() == Items.WARPED_WART_BLOCK)
+                {
                     newDrops.add(new ItemStack(Items.WARPED_FUNGUS, 1));
                 }
             }
@@ -824,7 +830,13 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         return -1;
     }
 
-    //todo: we need to use a different way to get Metadata, check other Mods like BOP for compatibility then
+    /**
+     * Place saplings to the stump locations
+     *
+     * @param saplingSlot sapling item slot
+     * @param stack
+     * @param block       sapling block
+     */
     private void placeSaplings(final int saplingSlot, @NotNull final ItemStack stack, @NotNull final Block block)
     {
         while (!job.getTree().getStumpLocations().isEmpty())
@@ -842,13 +854,23 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
                 {
                     new_block = Blocks.CRIMSON_NYLIUM;
                 }
-                world.setBlockAndUpdate(pos.below(), new_block.defaultBlockState());
-                getOwnBuilding().addNetherTree(pos);
+
+                if (world.getBlockState(pos.below()).getBlock() instanceof NetherrackBlock)
+                {
+                    world.setBlockAndUpdate(pos.below(), new_block.defaultBlockState());
+                    getOwnBuilding().addNetherTree(pos);
+                }
             }
-            if ((world.setBlockAndUpdate(pos, block.defaultBlockState()) && getInventory().getStackInSlot(saplingSlot) != null)
+
+            if (!(block instanceof IPlantable && block.canSustainPlant(world.getBlockState(pos.below()), world, pos.below(), Direction.UP, (IPlantable) block))
                   || Objects.equals(world.getBlockState(pos), block.defaultBlockState()))
             {
+                job.getTree().removeStump(pos);
+                continue;
+            }
 
+            if (world.setBlockAndUpdate(pos, block.defaultBlockState()) && !ItemStackUtils.isEmpty(getInventory().getStackInSlot(saplingSlot)))
+            {
                 getInventory().extractItem(saplingSlot, 1, false);
                 job.getTree().removeStump(pos);
             }
