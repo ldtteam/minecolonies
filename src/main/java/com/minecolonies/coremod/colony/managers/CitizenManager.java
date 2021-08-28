@@ -32,6 +32,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
@@ -111,7 +112,7 @@ public class CitizenManager implements ICitizenManager
     {
         if (entity.getCivilianID() == 0 || citizens.get(entity.getCivilianID()) == null)
         {
-            entity.remove();
+            entity.remove(Entity.RemovalReason.DISCARDED);
             return;
         }
 
@@ -133,14 +134,14 @@ public class CitizenManager implements ICitizenManager
 
         if (entity.isAlive())
         {
-            existingCitizen.get().remove();
+            existingCitizen.get().remove(Entity.RemovalReason.DISCARDED);
             data.setEntity(entity);
             entity.setCivilianData(data);
             colony.getWorld().getScoreboard().addPlayerToTeam(entity.getScoreboardName(), colony.getTeam());
             return;
         }
 
-        entity.remove();
+        entity.remove(Entity.RemovalReason.DISCARDED);
     }
 
     @Override

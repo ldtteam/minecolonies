@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.util;
 
-import com.ldtteam.structures.blueprints.v1.Blueprint;
+import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.util.BlockInfo;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.entity.ai.Status;

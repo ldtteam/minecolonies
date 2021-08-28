@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.util;
 
-import com.ldtteam.structures.blueprints.v1.Blueprint;
+import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.minecolonies.api.util.BlockPosUtil;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.util.Tuple;

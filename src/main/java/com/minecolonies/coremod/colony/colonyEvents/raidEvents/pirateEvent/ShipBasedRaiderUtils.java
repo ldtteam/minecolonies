@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent;
 
 import com.google.common.collect.Lists;
-import com.ldtteam.structures.blueprints.v1.Blueprint;
+import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.IColony;

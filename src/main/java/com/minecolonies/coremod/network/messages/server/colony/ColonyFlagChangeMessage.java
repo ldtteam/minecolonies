@@ -6,7 +6,7 @@ import com.minecolonies.coremod.network.messages.server.AbstractColonyServerMess
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BANNER_PATTERNS;
 

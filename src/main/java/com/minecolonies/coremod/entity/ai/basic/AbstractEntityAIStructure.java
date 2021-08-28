@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
 import com.google.common.collect.ImmutableList;
-import com.ldtteam.structures.blueprints.v1.Blueprint;
+import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.blocks.schematic.BlockFluidSubstitution;
 import com.ldtteam.structurize.placement.BlockPlacementResult;
 import com.ldtteam.structurize.placement.StructurePhasePlacementResult;
@@ -567,7 +567,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
         {
             itemList.removeIf(itemStack -> ItemStackUtils.isEmpty(itemStack) || foundStacks.stream().anyMatch(target -> target.sameItem(itemStack)));
         }
-        itemList.removeIf(itemstack -> itemstack.getItem() instanceof BlockItem && isBlockFree(((BlockItem) itemstack.getItem()).getBlock()));
+        itemList.removeIf(itemstack -> itemstack.getItem() instanceof BlockItem && isBlockFree(((BlockItem) itemstack.getItem()).getBlock().defaultBlockState()));
 
         final Map<ItemStorage, Integer> list = new HashMap<>();
         for (final ItemStack stack : itemList)
@@ -723,12 +723,12 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
      * @param block The block to check if it is free.
      * @return true or false.
      */
-    public static boolean isBlockFree(@Nullable final Block block)
+    public static boolean isBlockFree(@Nullable final BlockState block)
     {
         return block == null
-                 || BlockUtils.isWater(block.defaultBlockState())
+                 || BlockUtils.isWater(block)
                  || block.is(BlockTags.LEAVES)
-                 || block == ModBlocks.blockDecorationPlaceholder;
+                 || block.getBlock() == ModBlocks.blockDecorationPlaceholder;
     }
 
     /**

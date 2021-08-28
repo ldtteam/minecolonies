@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.colony.buildings;
 
 import com.google.common.collect.ImmutableSet;
-import com.ldtteam.structures.blueprints.v1.Blueprint;
+import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;

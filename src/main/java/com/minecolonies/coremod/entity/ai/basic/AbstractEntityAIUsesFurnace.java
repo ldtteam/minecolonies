@@ -270,7 +270,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
                     {
                         if (furnace.isLit()) 
                         {
-                            furnace.tick();
+                            furnace.serverTick(world, pos, world.getBlockState(pos), furnace);
                         }
                     }
                 }

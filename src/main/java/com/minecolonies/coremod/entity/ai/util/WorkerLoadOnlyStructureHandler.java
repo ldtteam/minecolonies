@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.entity.ai.util;
 
-import com.ldtteam.structures.blueprints.v1.Blueprint;
+import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;

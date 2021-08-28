@@ -247,7 +247,7 @@ public class GraveManager implements IGraveManager
         final BlockPos firstValidPosition = ConstructionTapeHelper.firstValidPosition(pos, world, 10);
         if (firstValidPosition != null)
         {
-            world.setBlockAndUpdate(firstValidPosition, BlockMinecoloniesGrave.getPlacementState(ModBlocks.blockGrave.defaultBlockState(), new TileEntityGrave(), firstValidPosition));
+            world.setBlockAndUpdate(firstValidPosition, BlockMinecoloniesGrave.getPlacementState(ModBlocks.blockGrave.defaultBlockState(), new TileEntityGrave(pos, ModBlocks.blockGrave.defaultBlockState()), firstValidPosition));
             final TileEntityGrave graveEntity = (TileEntityGrave) world.getBlockEntity(firstValidPosition);
             if (!InventoryUtils.transferAllItemHandler(citizenData.getInventory(), graveEntity.getInventory()))
             {

@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.colony.managers;
 
-import com.ldtteam.structures.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.Structurize;
 import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
+import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.items.ItemScanTool;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
@@ -100,7 +100,7 @@ public class EventStructureManager implements IEventStructureManager
             final CompoundTag teData = structure.getTileEntityData(targetSpawnPoint, structure.getPrimaryBlockOffset());
             if (teData != null && teData.contains(TAG_BLUEPRINTDATA))
             {
-                final BlockEntity entity = BlockEntity.loadStatic(info.getState(), info.getTileEntityData());
+                final BlockEntity entity = BlockEntity.loadStatic(info.getPos(), info.getState(), info.getTileEntityData());
                 if (entity instanceof IBlueprintDataProvider)
                 {
                     for (final Map.Entry<BlockPos, List<String>> entry : ((IBlueprintDataProvider) entity).getPositionedTags().entrySet())

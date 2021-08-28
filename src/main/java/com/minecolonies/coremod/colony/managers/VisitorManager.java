@@ -18,6 +18,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
@@ -69,7 +70,7 @@ public class VisitorManager implements IVisitorManager
     {
         if (visitor.getCivilianID() == 0 || visitorMap.get(visitor.getCivilianID()) == null)
         {
-            visitor.remove();
+            visitor.remove(Entity.RemovalReason.DISCARDED);
             return;
         }
 
@@ -90,13 +91,13 @@ public class VisitorManager implements IVisitorManager
 
         if (visitor.isAlive())
         {
-            existingCitizen.get().remove();
+            existingCitizen.get().remove(Entity.RemovalReason.DISCARDED);
             data.setEntity(visitor);
             visitor.setCivilianData(data);
             return;
         }
 
-        visitor.remove();
+        visitor.remove(Entity.RemovalReason.DISCARDED);
     }
 
     @Override
@@ -248,7 +249,7 @@ public class VisitorManager implements IVisitorManager
         final IVisitorData data = visitorMap.remove(citizen.getId());
         if (data != null && data.getEntity().isPresent())
         {
-            data.getEntity().get().remove();
+            data.getEntity().get().remove(Entity.RemovalReason.DISCARDED);
         }
     }
 

@@ -106,7 +106,7 @@ public class EventManager implements IEventManager
         final IColonyEvent event = events.get(eventID);
         if (!(event instanceof IColonyEntitySpawnEvent))
         {
-            entity.remove();
+            entity.remove(Entity.RemovalReason.DISCARDED);
             return;
         }
         ((IColonyEntitySpawnEvent) event).registerEntity(entity);
