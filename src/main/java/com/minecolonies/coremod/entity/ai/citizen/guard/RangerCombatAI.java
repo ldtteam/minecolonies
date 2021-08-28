@@ -326,4 +326,11 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
 
         return Y_VISION;
     }
+
+    @Override
+    protected void onTargetDied(final LivingEntity entity)
+    {
+        parentAI.incrementActionsDoneAndDecSaturation();
+        user.getCitizenExperienceHandler().addExperience(EXP_PER_MOB_DEATH);
+    }
 }
