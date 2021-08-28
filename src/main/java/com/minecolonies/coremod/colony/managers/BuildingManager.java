@@ -628,9 +628,13 @@ public class BuildingManager implements IBuildingManager
     @Override
     public void guardBuildingChangedAt(final IBuilding guardBuilding, final int newLevel)
     {
+        final int claimRadius = guardBuilding.getClaimRadius(Math.max(guardBuilding.getBuildingLevel(), newLevel)) * 16;
         for (final IBuilding building : getBuildings().values())
         {
-            building.resetGuardBuildingNear();
+            if (claimRadius > building.getID().distManhattan(guardBuilding.getID()))
+            {
+                building.resetGuardBuildingNear();
+            }
         }
     }
 
