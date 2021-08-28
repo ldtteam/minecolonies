@@ -30,7 +30,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * A custom rendered Screen (i.e. not BlockOut) that renders a picker for the banners,
+ * A custom rendered Screen (i.e. not blockui) that renders a picker for the banners,
  * similar to a loom. The resulting banner cannot be extracted.
  */
 @OnlyIn(Dist.CLIENT)

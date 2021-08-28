@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.event;
 
 import com.google.common.collect.ImmutableMap;
-import com.ldtteam.blockout.Log;
+import com.ldtteam.blockui.Log;
 import com.ldtteam.structures.blueprints.v1.Blueprint;
 import com.ldtteam.structures.client.StructureClientHandler;
 import com.ldtteam.structures.helpers.Settings;

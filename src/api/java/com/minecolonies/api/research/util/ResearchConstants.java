@@ -1,6 +1,6 @@
 package com.minecolonies.api.research.util;
 
-import com.ldtteam.blockout.Color;
+import com.ldtteam.blockui.Color;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.resources.ResourceLocation;
 

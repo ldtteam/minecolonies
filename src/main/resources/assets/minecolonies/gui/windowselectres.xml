@@ -1,5 +1,5 @@
 <window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" pause="false"
-        lightbox="true" xsi:noNamespaceSchemaLocation="file:../../../../java/com/ldtteam/blockout/blockOut.xsd">
+        lightbox="true" xsi:noNamespaceSchemaLocation="file:../../../../java/com/ldtteam/blockui/blockui.xsd">
     <label size="100% 11" pos="0 25" textalign="TOP_MIDDLE" color="white"
            label="$(com.minecolonies.coremod.gui.scan.select.title)"/>
 

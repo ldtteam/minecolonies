@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.client.gui.citizen;
 
-import com.ldtteam.blockout.PaneBuilders;
-import com.ldtteam.blockout.controls.*;
-import com.ldtteam.blockout.views.View;
+import com.ldtteam.blockui.PaneBuilders;
+import com.ldtteam.blockui.controls.*;
+import com.ldtteam.blockui.views.View;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.constant.Constants;

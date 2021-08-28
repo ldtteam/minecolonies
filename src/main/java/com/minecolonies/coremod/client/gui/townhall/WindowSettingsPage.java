@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.client.gui.townhall;
 
-import com.ldtteam.blockout.Pane;
-import com.ldtteam.blockout.PaneBuilders;
-import com.ldtteam.blockout.controls.AbstractTextBuilder;
-import com.ldtteam.blockout.controls.Button;
-import com.ldtteam.blockout.views.DropDownList;
+import com.ldtteam.blockui.Pane;
+import com.ldtteam.blockui.PaneBuilders;
+import com.ldtteam.blockui.controls.AbstractTextBuilder;
+import com.ldtteam.blockui.controls.Button;
+import com.ldtteam.blockui.views.DropDownList;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.WindowBannerPicker;
@@ -281,7 +281,7 @@ public class WindowSettingsPage extends AbstractWindowTownHall
     }
 
     /**
-     * Opens the banner picker window. Window does not use BlockOut, so is started manually.
+     * Opens the banner picker window. Window does not use blockui, so is started manually.
      *
      * @param button the trigger button
      */

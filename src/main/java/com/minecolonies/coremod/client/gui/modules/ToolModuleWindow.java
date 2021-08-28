@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.client.gui.modules;
 
-import com.ldtteam.blockout.controls.Text;
+import com.ldtteam.blockui.controls.Text;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.AbstractModuleWindow;

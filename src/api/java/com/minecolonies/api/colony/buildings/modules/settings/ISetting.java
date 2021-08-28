@@ -1,7 +1,7 @@
 package com.minecolonies.api.colony.buildings.modules.settings;
 
-import com.ldtteam.blockout.Pane;
-import com.ldtteam.blockout.views.Window;
+import com.ldtteam.blockui.Pane;
+import com.ldtteam.blockui.views.Window;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import net.minecraft.server.level.ServerPlayer;

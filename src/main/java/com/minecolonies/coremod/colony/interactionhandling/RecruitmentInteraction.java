@@ -1,11 +1,11 @@
 package com.minecolonies.coremod.colony.interactionhandling;
 
-import com.ldtteam.blockout.PaneBuilders;
-import com.ldtteam.blockout.controls.ButtonImage;
-import com.ldtteam.blockout.controls.ItemIcon;
-import com.ldtteam.blockout.controls.Text;
-import com.ldtteam.blockout.views.Box;
-import com.ldtteam.blockout.views.Window;
+import com.ldtteam.blockui.PaneBuilders;
+import com.ldtteam.blockui.controls.ButtonImage;
+import com.ldtteam.blockui.controls.ItemIcon;
+import com.ldtteam.blockui.controls.Text;
+import com.ldtteam.blockui.views.Box;
+import com.ldtteam.blockui.views.Window;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.interactionhandling.IChatPriority;

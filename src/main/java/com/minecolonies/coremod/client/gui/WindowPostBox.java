@@ -1,11 +1,11 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.ldtteam.blockout.Pane;
-import com.ldtteam.blockout.controls.Button;
-import com.ldtteam.blockout.controls.ItemIcon;
-import com.ldtteam.blockout.controls.Text;
-import com.ldtteam.blockout.controls.TextField;
-import com.ldtteam.blockout.views.ScrollingList;
+import com.ldtteam.blockui.Pane;
+import com.ldtteam.blockui.controls.Button;
+import com.ldtteam.blockui.controls.ItemIcon;
+import com.ldtteam.blockui.controls.Text;
+import com.ldtteam.blockui.controls.TextField;
+import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;

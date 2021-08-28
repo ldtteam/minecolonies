@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.modules;
 
-import com.ldtteam.blockout.views.Window;
+import com.ldtteam.blockui.views.Window;
 import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.modules.*;

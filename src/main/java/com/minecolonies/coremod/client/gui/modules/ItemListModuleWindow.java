@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.client.gui.modules;
 
-import com.ldtteam.blockout.Pane;
-import com.ldtteam.blockout.controls.*;
-import com.ldtteam.blockout.views.ScrollingList;
+import com.ldtteam.blockui.Pane;
+import com.ldtteam.blockui.controls.*;
+import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.buildings.modules.IItemListModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;

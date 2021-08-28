@@ -1,6 +1,6 @@
 package com.minecolonies.api.colony.buildings.modules;
 
-import com.ldtteam.blockout.views.Window;
+import com.ldtteam.blockui.views.Window;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import net.minecraft.network.FriendlyByteBuf;

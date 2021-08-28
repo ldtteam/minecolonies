@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.client.gui.townhall;
 
-import com.ldtteam.blockout.controls.ButtonImage;
-import com.ldtteam.blockout.controls.Text;
+import com.ldtteam.blockui.controls.ButtonImage;
+import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;

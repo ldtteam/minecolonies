@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.google.common.collect.ImmutableList;
-import com.ldtteam.blockout.views.Window;
+import com.ldtteam.blockui.views.Window;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -165,7 +165,7 @@ public class BuildingBaker extends AbstractBuildingFurnaceUser implements IBuild
         /**
          * Creates a new window for the building.
          *
-         * @return A BlockOut window.
+         * @return A blockui window.
          */
         @NotNull
         @Override

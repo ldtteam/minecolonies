@@ -9,8 +9,8 @@ Note: You will need an Eclipse with a newer ECJ (eclipse built-in compiler) in o
 ```
 	<classpathentry kind="lib" path="/home/minecraft/workspaces/luna-minecraft/minecolonies/build/classes/structures"/>
 	<classpathentry kind="lib" path="/home/minecraft/workspaces/luna-minecraft/minecolonies/build/resources/structures"/>
-	<classpathentry kind="lib" path="/home/minecraft/workspaces/luna-minecraft/minecolonies/build/classes/blockOut"/>
-	<classpathentry kind="lib" path="/home/minecraft/workspaces/luna-minecraft/minecolonies/build/resources/blockOut"/>
+	<classpathentry kind="lib" path="/home/minecraft/workspaces/luna-minecraft/minecolonies/build/classes/blockui"/>
+	<classpathentry kind="lib" path="/home/minecraft/workspaces/luna-minecraft/minecolonies/build/resources/blockui"/>
 ```
 
 * Install PMD

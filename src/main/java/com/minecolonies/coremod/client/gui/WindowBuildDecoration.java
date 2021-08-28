@@ -1,12 +1,12 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.ldtteam.blockout.Color;
-import com.ldtteam.blockout.Pane;
-import com.ldtteam.blockout.controls.Button;
-import com.ldtteam.blockout.controls.ItemIcon;
-import com.ldtteam.blockout.controls.Text;
-import com.ldtteam.blockout.views.DropDownList;
-import com.ldtteam.blockout.views.ScrollingList;
+import com.ldtteam.blockui.Color;
+import com.ldtteam.blockui.Pane;
+import com.ldtteam.blockui.controls.Button;
+import com.ldtteam.blockui.controls.ItemIcon;
+import com.ldtteam.blockui.controls.Text;
+import com.ldtteam.blockui.views.DropDownList;
+import com.ldtteam.blockui.views.ScrollingList;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.network.messages.SchematicRequestMessage;

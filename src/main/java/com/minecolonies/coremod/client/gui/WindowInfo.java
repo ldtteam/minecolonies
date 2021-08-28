@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.ldtteam.blockout.Alignment;
-import com.ldtteam.blockout.PaneBuilders;
-import com.ldtteam.blockout.controls.AbstractTextBuilder.TextBuilder;
-import com.ldtteam.blockout.controls.Text;
-import com.ldtteam.blockout.views.View;
+import com.ldtteam.blockui.Alignment;
+import com.ldtteam.blockui.PaneBuilders;
+import com.ldtteam.blockui.controls.AbstractTextBuilder.TextBuilder;
+import com.ldtteam.blockui.controls.Text;
+import com.ldtteam.blockui.views.View;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.constant.Constants;

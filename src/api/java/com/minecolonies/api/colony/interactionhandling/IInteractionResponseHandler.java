@@ -1,6 +1,6 @@
 package com.minecolonies.api.colony.interactionhandling;
 
-import com.ldtteam.blockout.views.Window;
+import com.ldtteam.blockui.views.Window;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.ICitizenDataView;
 import net.minecraft.world.entity.player.Player;

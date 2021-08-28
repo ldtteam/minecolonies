@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.colony.buildings.modules.settings;
 
-import com.ldtteam.blockout.Pane;
-import com.ldtteam.blockout.controls.ButtonImage;
-import com.ldtteam.blockout.views.Window;
+import com.ldtteam.blockui.Pane;
+import com.ldtteam.blockui.controls.ButtonImage;
+import com.ldtteam.blockui.views.Window;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingsModuleView;

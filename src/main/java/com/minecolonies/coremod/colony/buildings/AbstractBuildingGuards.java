@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.colony.buildings;
 
-import com.ldtteam.blockout.views.Window;
+import com.ldtteam.blockui.views.Window;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
@@ -861,7 +861,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         /**
          * Creates a new window for the building.
          *
-         * @return a BlockOut window.
+         * @return a blockui window.
          */
         @NotNull
         @Override

@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.client.gui.townhall;
 
-import com.ldtteam.blockout.Color;
-import com.ldtteam.blockout.controls.ButtonImage;
-import com.ldtteam.blockout.controls.Image;
+import com.ldtteam.blockui.Color;
+import com.ldtteam.blockui.controls.ButtonImage;
+import com.ldtteam.blockui.controls.Image;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.client.gui.AbstractWindowModuleBuilding;

@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.moduleviews;
 
-import com.ldtteam.blockout.views.Window;
+import com.ldtteam.blockui.views.Window;
 import com.minecolonies.api.colony.buildings.modules.*;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;

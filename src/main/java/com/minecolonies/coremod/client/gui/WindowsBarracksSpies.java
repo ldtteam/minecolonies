@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.ldtteam.blockout.controls.*;
-import com.ldtteam.blockout.views.Window;
+import com.ldtteam.blockui.controls.*;
+import com.ldtteam.blockui.views.Window;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.tileentities.TileEntityRack;

@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
-import com.ldtteam.blockout.views.Window;
+import com.ldtteam.blockui.views.Window;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
@@ -141,7 +141,7 @@ public class BuildingFisherman extends AbstractBuildingWorker
         }
 
         /**
-         * Gets the blockOut Window.
+         * Gets the blockui Window.
          *
          * @return the window of the fisherman building.
          */

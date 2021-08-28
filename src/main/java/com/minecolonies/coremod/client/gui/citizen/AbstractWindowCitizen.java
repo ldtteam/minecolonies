@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.client.gui.citizen;
 
-import com.ldtteam.blockout.PaneBuilders;
+import com.ldtteam.blockui.PaneBuilders;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;

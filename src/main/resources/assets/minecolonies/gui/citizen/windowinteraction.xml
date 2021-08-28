@@ -1,5 +1,5 @@
 <window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="350 150" pause="false" lightbox="false" pos="600 600"
-        xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
+        xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockui/blockui.xsd">
 
     <switch id="head" size="100% 100%" pos="0 0">
         <view id="interactionView">

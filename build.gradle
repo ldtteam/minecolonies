@@ -19,9 +19,12 @@ apply from: 'https://raw.githubusercontent.com/ldtteam/OperaPublicaCreator/main/
 apply from: 'https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remapper/main/classremapper.gradle'
 
 dependencies {
+    implementation fg.deobf("mezz.jei:jei-${project.minecraftVersion}:${project.jei_version}")
+
     implementation fg.deobf("com.ldtteam:blockui:${project.minecraftVersion}-${project.blockUI_version}")
     contained "com.ldtteam:blockui:${project.minecraftVersion}-${project.blockUI_version}"
 
-    implementation fg.deobf("com.ldtteam:structurize:${project.structurize_version}")
-    contained "com.ldtteam:structurize:${project.structurize_version}"
+    apiImplementation fg.deobf("com.ldtteam:structurize:${project.minecraftVersion}-${project.structurize_version}")
+    implementation fg.deobf("com.ldtteam:structurize:${project.minecraftVersion}-${project.structurize_version}")
+    contained "com.ldtteam:structurize:${project.minecraftVersion}-${project.structurize_version}"
 }

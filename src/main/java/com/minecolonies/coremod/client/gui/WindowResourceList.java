@@ -2,11 +2,11 @@ package com.minecolonies.coremod.client.gui;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
-import com.ldtteam.blockout.Pane;
-import com.ldtteam.blockout.controls.Image;
-import com.ldtteam.blockout.controls.ItemIcon;
-import com.ldtteam.blockout.controls.Text;
-import com.ldtteam.blockout.views.ScrollingList;
+import com.ldtteam.blockui.Pane;
+import com.ldtteam.blockui.controls.Image;
+import com.ldtteam.blockui.controls.ItemIcon;
+import com.ldtteam.blockui.controls.Text;
+import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;

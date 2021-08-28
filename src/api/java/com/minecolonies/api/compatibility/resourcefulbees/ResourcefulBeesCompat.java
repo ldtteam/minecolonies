@@ -1,6 +1,5 @@
 package com.minecolonies.api.compatibility.resourcefulbees;
 
-import com.resourcefulbees.resourcefulbees.tileentity.TieredBeehiveTileEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
@@ -14,7 +13,7 @@ public class ResourcefulBeesCompat implements IBeehiveCompat
     public List<ItemStack> getCombsFromHive(BlockPos pos, Level world, int amount)
     {
         List<ItemStack> list = new ArrayList<>();
-        if (world.getBlockEntity(pos) instanceof TieredBeehiveTileEntity)
+        /*if (world.getBlockEntity(pos) instanceof TieredBeehiveTileEntity)
         {
             //If we have a resourceful bees hive, we care about the items inside
             TieredBeehiveTileEntity hive = (TieredBeehiveTileEntity) world.getBlockEntity(pos);
@@ -27,7 +26,7 @@ public class ResourcefulBeesCompat implements IBeehiveCompat
 
             return list;
         }
-        else
+        else*/
         {
             return IBeehiveCompat.super.getCombsFromHive(pos, world, amount);
         }

@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.ldtteam.blockout.Pane;
-import com.ldtteam.blockout.PaneBuilders;
-import com.ldtteam.blockout.controls.*;
-import com.ldtteam.blockout.views.Box;
-import com.ldtteam.blockout.views.Window;
+import com.ldtteam.blockui.Pane;
+import com.ldtteam.blockui.PaneBuilders;
+import com.ldtteam.blockui.controls.*;
+import com.ldtteam.blockui.views.Box;
+import com.ldtteam.blockui.views.Window;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;

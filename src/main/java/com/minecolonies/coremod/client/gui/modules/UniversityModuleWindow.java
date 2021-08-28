@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.client.gui.modules;
 
-import com.ldtteam.blockout.Color;
-import com.ldtteam.blockout.Pane;
-import com.ldtteam.blockout.PaneBuilders;
-import com.ldtteam.blockout.controls.*;
-import com.ldtteam.blockout.views.ScrollingList;
+import com.ldtteam.blockui.Color;
+import com.ldtteam.blockui.Pane;
+import com.ldtteam.blockui.PaneBuilders;
+import com.ldtteam.blockui.controls.*;
+import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.research.IResearchRequirement;

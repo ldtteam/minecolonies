@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.client.gui.townhall;
 
-import com.ldtteam.blockout.controls.Button;
+import com.ldtteam.blockui.controls.Button;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.AbstractWindowSkeleton;
 import com.minecolonies.coremod.network.messages.server.colony.ColonyDeleteOwnMessage;

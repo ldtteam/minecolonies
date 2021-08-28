@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.client.gui.townhall;
 
-import com.ldtteam.blockout.PaneBuilders;
-import com.ldtteam.blockout.controls.*;
-import com.ldtteam.blockout.views.View;
+import com.ldtteam.blockui.PaneBuilders;
+import com.ldtteam.blockui.controls.*;
+import com.ldtteam.blockui.views.View;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;

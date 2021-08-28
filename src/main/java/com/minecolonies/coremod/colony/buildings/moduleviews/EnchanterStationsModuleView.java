@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.moduleviews;
 
-import com.ldtteam.blockout.views.Window;
+import com.ldtteam.blockui.views.Window;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.modules.EnchanterStationModuleWindow;

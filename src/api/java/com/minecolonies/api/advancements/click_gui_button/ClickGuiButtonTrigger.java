@@ -19,8 +19,8 @@ public class ClickGuiButtonTrigger extends AbstractCriterionTrigger<ClickGuiButt
     /**
      * Triggers the listener checks if there are any listening in
      * @param player the player the check regards
-     * @param buttonId the id of the button in blockout
-     * @param windowResource the blockout window id to refer to
+     * @param buttonId the id of the button in blockui
+     * @param windowResource the blockui window id to refer to
      */
     public void trigger(final ServerPlayer player, final String buttonId, final String windowResource)
     {

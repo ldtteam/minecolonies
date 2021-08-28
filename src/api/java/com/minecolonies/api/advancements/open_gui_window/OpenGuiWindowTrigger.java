@@ -10,7 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Triggered when a blockout window is opened
+ * Triggered when a blockui window is opened
  */
 public class OpenGuiWindowTrigger extends AbstractCriterionTrigger<OpenGuiWindowListeners, OpenGuiWindowCriterionInstance>
 {

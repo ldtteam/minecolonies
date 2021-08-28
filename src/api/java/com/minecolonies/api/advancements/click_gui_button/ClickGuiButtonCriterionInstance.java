@@ -45,7 +45,7 @@ public class ClickGuiButtonCriterionInstance extends AbstractCriterionTriggerIns
     /**
      * Performs the check for the conditions
      * @param buttonId the id of the button that was just clicked
-     * @param windowResource the blockout window id to check
+     * @param windowResource the blockui window id to check
      * @return whether the check succeeded
      */
     public boolean test(final String buttonId, final String windowResource)

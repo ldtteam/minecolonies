@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.ldtteam.blockout.controls.Button;
-import com.ldtteam.blockout.controls.ButtonHandler;
-import com.ldtteam.blockout.controls.Text;
-import com.ldtteam.blockout.views.SwitchView;
-import com.ldtteam.blockout.views.Window;
+import com.ldtteam.blockui.controls.Button;
+import com.ldtteam.blockui.controls.ButtonHandler;
+import com.ldtteam.blockui.controls.Text;
+import com.ldtteam.blockui.views.SwitchView;
+import com.ldtteam.blockui.views.Window;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.server.ClickGuiButtonTriggerMessage;
 import com.minecolonies.coremod.network.messages.server.OpenGuiWindowTriggerMessage;

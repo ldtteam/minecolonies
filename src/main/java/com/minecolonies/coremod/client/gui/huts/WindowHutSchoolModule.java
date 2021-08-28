@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.client.gui.huts;
 
-import com.ldtteam.blockout.controls.Button;
+import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.coremod.client.gui.WindowHireWorkerSchool;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingSchool;

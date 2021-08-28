@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.client.gui.huts;
 
-import com.ldtteam.blockout.controls.*;
+import com.ldtteam.blockui.controls.*;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.client.gui.AbstractWindowWorkerModuleBuilding;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingSifter;

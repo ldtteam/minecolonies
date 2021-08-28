@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.util;
 
-import com.ldtteam.structures.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.api.util.Log;
 import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
+import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.management.Manager;
 import com.ldtteam.structurize.placement.StructurePlacer;
 import com.ldtteam.structurize.placement.structure.CreativeStructureHandler;
@@ -82,10 +82,9 @@ public final class CreativeRaiderStructureHandler extends CreativeStructureHandl
             final CompoundTag teData = getBluePrint().getTileEntityData(pos, getBluePrint().getPrimaryBlockOffset());
             if (teData != null && teData.contains(TAG_BLUEPRINTDATA))
             {
-                final BlockEntity entity = BlockEntity.loadStatic(info.getState(), info.getTileEntityData());
+                final BlockEntity entity = BlockEntity.loadStatic(pos, info.getState(), info.getTileEntityData());
                 if (entity instanceof IBlueprintDataProvider)
                 {
-                    entity.setPosition(pos);
                     this.map = ((IBlueprintDataProvider) entity).getWorldTagPosMap();
                 }
             }

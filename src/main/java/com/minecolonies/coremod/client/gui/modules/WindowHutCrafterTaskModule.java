@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.client.gui.modules;
 
-import com.ldtteam.blockout.Pane;
-import com.ldtteam.blockout.controls.Image;
-import com.ldtteam.blockout.controls.Text;
-import com.ldtteam.blockout.views.ScrollingList;
+import com.ldtteam.blockui.Pane;
+import com.ldtteam.blockui.controls.Image;
+import com.ldtteam.blockui.controls.Text;
+import com.ldtteam.blockui.views.ScrollingList;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.buildings.IBuildingWorkerView;

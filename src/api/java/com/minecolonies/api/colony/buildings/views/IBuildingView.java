@@ -2,7 +2,7 @@ package com.minecolonies.api.colony.buildings.views;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
-import com.ldtteam.blockout.views.Window;
+import com.ldtteam.blockui.views.Window;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.modules.IBuildingModuleView;
@@ -152,16 +152,16 @@ public interface IBuildingView extends IRequester
     int getClaimRadius();
 
     /**
-     * Open the associated BlockOut window for this building. If the player is sneaking open the inventory else open the GUI directly.
+     * Open the associated blockui window for this building. If the player is sneaking open the inventory else open the GUI directly.
      *
      * @param shouldOpenInv if the player is sneaking.
      */
     void openGui(boolean shouldOpenInv);
 
     /**
-     * Will return the window if this building has an associated BlockOut window.
+     * Will return the window if this building has an associated blockui window.
      *
-     * @return BlockOut window.
+     * @return blockui window.
      */
     @Nullable
     Window getWindow();

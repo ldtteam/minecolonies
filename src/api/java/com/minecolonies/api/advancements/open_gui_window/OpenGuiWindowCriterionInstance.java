@@ -30,7 +30,7 @@ public class OpenGuiWindowCriterionInstance extends AbstractCriterionTriggerInst
 
     /**
      * Performs the check for the conditions
-     * @param windowResource the blockout window id that was just opened
+     * @param windowResource the blockui window id that was just opened
      * @return whether the check succeeded
      */
     public boolean test(final String windowResource)

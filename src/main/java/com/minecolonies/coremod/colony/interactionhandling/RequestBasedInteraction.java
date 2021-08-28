@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.colony.interactionhandling;
 
-import com.ldtteam.blockout.controls.ItemIcon;
-import com.ldtteam.blockout.views.View;
-import com.ldtteam.blockout.views.Window;
+import com.ldtteam.blockui.controls.ItemIcon;
+import com.ldtteam.blockui.views.View;
+import com.ldtteam.blockui.views.Window;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.interactionhandling.*;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
