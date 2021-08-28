@@ -21,7 +21,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.util.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -31,7 +30,7 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.Level;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraftforge.fmllegacy.network.NetworkHooks;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
@@ -44,7 +43,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
 /**
  * Block for the shelves of the warehouse.
@@ -267,17 +265,11 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
         builder.add(FACING, VARIANT);
     }
 
-    @Override
-    public boolean hasTileEntity(final BlockState state)
-    {
-        return true;
-    }
-
     @Nullable
     @Override
-    public BlockEntity createTileEntity(final BlockState state, final BlockGetter world)
+    public BlockEntity newBlockEntity(@NotNull final BlockPos blockPos, @NotNull final BlockState blockState)
     {
-        return new TileEntityRack();
+        return new TileEntityRack(blockPos, blockState);
     }
 
     @Override

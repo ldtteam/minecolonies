@@ -167,7 +167,7 @@ public interface IBuildingView extends IRequester
     BOWindow getWindow();
 
     /**
-     * Read this view from a {@link PacketBuffer}.
+     * Read this view from a {@link FriendlyByteBuf}.
      *
      * @param buf The buffer to read this view from.
      */

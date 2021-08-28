@@ -12,7 +12,6 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHal
 import com.minecolonies.coremod.commands.ClickEventWithExecutable;
 import com.minecolonies.coremod.network.messages.server.colony.*;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.text.*;
 import net.minecraft.network.chat.ClickEvent;
 import org.jetbrains.annotations.NotNull;
 

@@ -68,7 +68,7 @@ public class CitizenBornEvent extends AbstractCitizenEvent
      * @param buf the packet buffer.
      * @return the colony to load.
      */
-    public static CitizenBornEvent loadFromPacketBuffer(@NotNull final FriendlyByteBuf buf)
+    public static CitizenBornEvent loadFromFriendlyByteBuf(@NotNull final FriendlyByteBuf buf)
     {
         final CitizenBornEvent birthEvent = new CitizenBornEvent();
         birthEvent.deserialize(buf);

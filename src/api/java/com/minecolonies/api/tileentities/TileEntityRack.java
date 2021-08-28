@@ -1,5 +1,6 @@
 package com.minecolonies.api.tileentities;
 
+import com.ldtteam.structurize.api.util.IRotatableBlockEntity;
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesRack;
 import com.minecolonies.api.blocks.types.RackType;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -8,6 +9,7 @@ import com.minecolonies.api.inventory.container.ContainerRack;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.WorldUtil;
+import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.Inventory;
@@ -44,7 +46,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.RACK;
 /**
  * Tile entity for the warehouse shelves.
  */
-public class TileEntityRack extends AbstractTileEntityRack
+public class TileEntityRack extends AbstractTileEntityRack implements IRotatableBlockEntity
 {
     /**
      * The content of the chest.
@@ -66,14 +68,14 @@ public class TileEntityRack extends AbstractTileEntityRack
      */
     private LazyOptional<IItemHandler> lastOptional;
 
-    public TileEntityRack(final BlockEntityType<? extends TileEntityRack> type)
+    public TileEntityRack(final BlockEntityType<? extends TileEntityRack> type, final BlockPos pos, final BlockState state)
     {
-        super(type);
+        super(type, pos, state);
     }
 
-    public TileEntityRack()
+    public TileEntityRack(final BlockPos pos, final BlockState state)
     {
-        super(MinecoloniesTileEntities.RACK);
+        super(MinecoloniesTileEntities.RACK, pos, state);
     }
 
     @Override
@@ -346,9 +348,9 @@ public class TileEntityRack extends AbstractTileEntityRack
     }
 
     @Override
-    public void load(final BlockState state, final CompoundTag compound)
+    public void load(final CompoundTag compound)
     {
-        super.load(state, compound);
+        super.load(compound);
         if (compound.getAllKeys().contains(TAG_SIZE))
         {
             size = compound.getInt(TAG_SIZE);
@@ -445,24 +447,37 @@ public class TileEntityRack extends AbstractTileEntityRack
     @Override
     public void onDataPacket(final Connection net, final ClientboundBlockEntityDataPacket packet)
     {
-        this.load(getBlockState(), packet.getTag());
+        this.load(packet.getTag());
     }
 
     @Override
-    public void handleUpdateTag(final BlockState state, final CompoundTag tag)
+    public void handleUpdateTag(final CompoundTag tag)
     {
-        this.load(state, tag);
+        this.load(tag);
     }
 
     @Override
     public void rotate(final Rotation rotationIn)
     {
-        super.rotate(rotationIn);
         if (relativeNeighbor != null)
         {
             relativeNeighbor = relativeNeighbor.rotate(rotationIn);
         }
     }
+
+    @Override
+    public void mirror(final Mirror mirror)
+    {
+        if (relativeNeighbor != null)
+        {
+            switch (mirror)
+            {
+                case LEFT_RIGHT -> relativeNeighbor = new BlockPos(relativeNeighbor.getX(), relativeNeighbor.getY(), -relativeNeighbor.getZ());
+                case FRONT_BACK -> relativeNeighbor = new BlockPos(-relativeNeighbor.getX(), relativeNeighbor.getY(), relativeNeighbor.getZ());
+            }
+        }
+    }
+
 
     @Nonnull
     @Override
@@ -603,13 +618,6 @@ public class TileEntityRack extends AbstractTileEntityRack
     public void setRemoved()
     {
         super.setRemoved();
-        invalidateCap();
-    }
-
-    @Override
-    public void clearCache()
-    {
-        super.clearCache();
         invalidateCap();
     }
 

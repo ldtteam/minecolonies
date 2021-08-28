@@ -27,9 +27,9 @@ public interface IPermissions
 
     boolean hasPermission(Rank rank, @NotNull Action action);
 
-    Set<Player> getPlayersByRank(Rank rank);
+    Set<ColonyPlayer> getPlayersByRank(Rank rank);
 
-    Set<Player> getPlayersByRank(@NotNull Set<Rank> ranks);
+    Set<ColonyPlayer> getPlayersByRank(@NotNull Set<Rank> ranks);
 
     /**
      * Returns a map of all ranks present in the colony, identified by their ID
@@ -77,7 +77,7 @@ public interface IPermissions
     /**
      * Returns whether the player has the permission for an action.
      *
-     * @param player {@link PlayerEntity} player.
+     * @param player {@link Player} player.
      * @param action {@link Action} action.
      * @return true if has permission, otherwise false.
      */
@@ -93,7 +93,7 @@ public interface IPermissions
     /**
      * Checks if a user is a subscriber.
      *
-     * @param player {@link PlayerEntity} to check for subscription.
+     * @param player {@link Player} to check for subscription.
      * @return True is subscriber, otherwise false.
      */
     boolean isSubscriber(@NotNull Player player);
@@ -101,7 +101,7 @@ public interface IPermissions
     /**
      * Returns whether the player is a member of the colony.
      *
-     * @param player {@link PlayerEntity} to check.
+     * @param player {@link Player} to check.
      * @return true if the player is a member of the colony.
      */
     boolean isColonyMember(Player player);
@@ -109,9 +109,9 @@ public interface IPermissions
     void togglePermission(Rank rank, @NotNull Action action);
 
     @Nullable
-    Map.Entry<UUID, Player> getOwnerEntry();
+    Map.Entry<UUID, ColonyPlayer> getOwnerEntry();
 
-    boolean setOwner(Player player);
+    boolean setOwner(ColonyPlayer player);
 
     /**
      * Sets the owner to abandoned
@@ -127,7 +127,7 @@ public interface IPermissions
      * @return map of UUIDs and player objects.
      */
     @NotNull
-    Map<UUID, Player> getPlayers();
+    Map<UUID, ColonyPlayer> getPlayers();
 
     boolean setPlayerRank(UUID id, Rank rank, Level world);
 
@@ -164,5 +164,5 @@ public interface IPermissions
      */
     void removeRank(Rank rank);
 
-    Set<Player> getFilteredPlayers(Predicate<Rank> p);
+    Set<ColonyPlayer> getFilteredPlayers(Predicate<Rank> p);
 }

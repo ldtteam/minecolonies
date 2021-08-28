@@ -3,13 +3,14 @@ package com.minecolonies.api.blocks;
 import com.minecolonies.api.blocks.types.RackType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 
 import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
-public abstract class AbstractBlockMinecoloniesRack<B extends AbstractBlockMinecoloniesRack<B>> extends AbstractBlockMinecolonies<B>
+public abstract class AbstractBlockMinecoloniesRack<B extends AbstractBlockMinecoloniesRack<B>> extends AbstractBlockMinecolonies<B> implements EntityBlock
 {
     public static final EnumProperty<RackType> VARIANT = EnumProperty.create("variant", RackType.class);
 

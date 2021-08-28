@@ -85,7 +85,7 @@ public class ContainerCrafting extends AbstractContainerMenu
      * @param packetBuffer network buffer
      * @return new instance
      */
-    public static ContainerCrafting fromPacketBuffer(final int windowId, final Inventory inv, final FriendlyByteBuf packetBuffer)
+    public static ContainerCrafting fromFriendlyByteBuf(final int windowId, final Inventory inv, final FriendlyByteBuf packetBuffer)
     {
         final boolean complete = packetBuffer.readBoolean();
         final BlockPos tePos = packetBuffer.readBlockPos();

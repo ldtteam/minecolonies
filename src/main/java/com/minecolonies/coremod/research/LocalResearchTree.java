@@ -138,7 +138,7 @@ public class LocalResearchTree implements ILocalResearchTree
                 SoundUtils.playSuccessSound(player, player.blockPosition());
                 return;
             }
-            final InvWrapper playerInv = new InvWrapper(player.inventory);
+            final InvWrapper playerInv = new InvWrapper(player.getInventory());
             if (!research.hasEnoughResources(playerInv))
             {
                 player.sendMessage(new TranslatableComponent("com.minecolonies.coremod.research.costnotavailable", research.getName()),
@@ -226,7 +226,7 @@ public class LocalResearchTree implements ILocalResearchTree
             if(!player.isCreative())
             {
                 final List<ItemStorage> costList = IGlobalResearchTree.getInstance().getResearchResetCosts();
-                final InvWrapper playerInv = new InvWrapper(player.inventory);
+                final InvWrapper playerInv = new InvWrapper(player.getInventory());
                 for (final ItemStorage cost : costList)
                 {
                     final int count = InventoryUtils.getItemCountInItemHandler(playerInv,

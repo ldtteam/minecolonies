@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
@@ -27,25 +28,22 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.phys.shapes.Shapes;
-import net.minecraft.world.*;
-import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraftforge.fmllegacy.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static net.minecraft.util.Direction.NORTH;
 
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
 /**
  * The cnet.minecraft.core.Directions, placement and activation.
  */
 @SuppressWarnings("PMD.ExcessiveImports")
-public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarecrow>
+public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarecrow> implements EntityBlock
 {
     public static final EnumProperty<DoubleBlockHalf> HALF = BlockStateProperties.DOUBLE_BLOCK_HALF;
 
@@ -56,7 +54,7 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
     {
         super(Properties.of(Material.WOOD).strength(HARDNESS, RESISTANCE));
         setRegistryName(REGISTRY_NAME);
-        this.registerDefaultState(this.defaultBlockState().setValue(FACING, NORTH).setValue(HALF, DoubleBlockHalf.LOWER));
+        this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH).setValue(HALF, DoubleBlockHalf.LOWER));
     }
 
     @NotNull
@@ -84,9 +82,9 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
 
     @Nullable
     @Override
-    public BlockEntity createTileEntity(final BlockState state, final BlockGetter world)
+    public BlockEntity newBlockEntity(@NotNull final BlockPos blockPos, @NotNull final BlockState blockState)
     {
-        return new ScarecrowTileEntity();
+        return new ScarecrowTileEntity(blockPos, blockState);
     }
 
     @Override
@@ -125,7 +123,7 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
     @Override
     public BlockState getStateForPlacement(final BlockPlaceContext context)
     {
-        @NotNull final Direction dir = (context.getPlayer() == null) ? NORTH : Direction.fromYRot(context.getPlayer().yRot + 180);
+        @NotNull final Direction dir = (context.getPlayer() == null) ? Direction.NORTH : Direction.fromYRot(context.getPlayer().getYRot() + 180);
 
         if (context.getClickedPos().getY() < 255 && context.getLevel().getBlockState(context.getClickedPos().above()).canBeReplaced(context))
         {
@@ -225,11 +223,5 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder)
     {
         builder.add(HALF, FACING);
-    }
-
-    @Override
-    public boolean hasTileEntity(final BlockState state)
-    {
-        return state.getValue(HALF) == DoubleBlockHalf.LOWER;
     }
 }

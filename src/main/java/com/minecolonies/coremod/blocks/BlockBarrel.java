@@ -5,6 +5,7 @@ import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.blocks.types.BarrelType;
 import com.minecolonies.coremod.tileentities.TileEntityBarrel;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.entity.player.Player;
@@ -32,7 +33,7 @@ import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
-public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel>
+public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel> implements EntityBlock
 {
     /**
      * The hardness this block has.
@@ -62,15 +63,9 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel>
 
     @Nullable
     @Override
-    public BlockEntity createTileEntity(final BlockState state, final BlockGetter world)
+    public BlockEntity newBlockEntity(@NotNull final BlockPos blockPos, @NotNull final BlockState blockState)
     {
-        return new TileEntityBarrel();
-    }
-
-    @Override
-    public boolean hasTileEntity(final BlockState state)
-    {
-        return true;
+        return new TileEntityBarrel(blockPos, blockState);
     }
 
     @NotNull
@@ -83,7 +78,7 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel>
       final InteractionHand hand,
       final BlockHitResult ray)
     {
-        final ItemStack itemstack = player.inventory.getSelected();
+        final ItemStack itemstack = player.getInventory().getSelected();
         final BlockEntity te = worldIn.getBlockEntity(pos);
         if (te instanceof TileEntityBarrel && !worldIn.isClientSide)
         {

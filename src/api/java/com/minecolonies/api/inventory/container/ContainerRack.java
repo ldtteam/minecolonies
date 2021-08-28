@@ -52,7 +52,7 @@ public class ContainerRack extends AbstractContainerMenu
      * @param packetBuffer network buffer
      * @return new instance
      */
-    public static ContainerRack fromPacketBuffer(final int windowId, final Inventory inv, final FriendlyByteBuf packetBuffer)
+    public static ContainerRack fromFriendlyByteBuf(final int windowId, final Inventory inv, final FriendlyByteBuf packetBuffer)
     {
         final BlockPos tePos = packetBuffer.readBlockPos();
         final BlockPos neighborPos = packetBuffer.readBlockPos();

@@ -469,10 +469,10 @@ public class EventHandler
                 }
             }
 
-            final int size = player.inventory.getContainerSize();
+            final int size = player.getInventory().getContainerSize();
             for (int i = 0; i < size; i++)
             {
-                final ItemStack stack = player.inventory.getItem(i);
+                final ItemStack stack = player.getInventory().getItem(i);
                 if (stack.getItem() instanceof ItemBannerRallyGuards)
                 {
                     ItemBannerRallyGuards.broadcastPlayerToRally(stack, player.getLevel(), player);

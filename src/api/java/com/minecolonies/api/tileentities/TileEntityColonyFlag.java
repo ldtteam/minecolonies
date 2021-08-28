@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.items.ModItems;
 import com.mojang.datafixers.util.Pair;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
@@ -34,7 +35,7 @@ public class TileEntityColonyFlag extends BlockEntity
     /** The colony of the player that placed this banner */
     public int colonyId = -1;
 
-    public TileEntityColonyFlag () { super(MinecoloniesTileEntities.COLONY_FLAG); }
+    public TileEntityColonyFlag(final BlockPos pos, final BlockState state) { super(MinecoloniesTileEntities.COLONY_FLAG, pos, state); }
 
     @Override
     public CompoundTag save(CompoundTag compound)
@@ -50,9 +51,9 @@ public class TileEntityColonyFlag extends BlockEntity
     }
 
     @Override
-    public void load(final BlockState state, CompoundTag compound)
+    public void load(CompoundTag compound)
     {
-        super.load(state, compound);
+        super.load(compound);
 
         this.flag = compound.getList(TAG_FLAG_PATTERNS, 10);
         this.patterns = compound.getList(TAG_BANNER_PATTERNS, 10);
@@ -82,7 +83,7 @@ public class TileEntityColonyFlag extends BlockEntity
     public void onDataPacket(final Connection net, final ClientboundBlockEntityDataPacket packet)
     {
         final CompoundTag compound = packet.getTag();
-        this.load(getBlockState(), compound);
+        this.load(compound);
     }
 
     /**

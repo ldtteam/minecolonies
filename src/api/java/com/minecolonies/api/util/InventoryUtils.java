@@ -2931,7 +2931,7 @@ public class InventoryUtils
      */
     public static boolean putItemToHotbarAndSelectOrDrop(final ItemStack itemStack, final Player player)
     {
-        final Inventory playerInv = player.inventory;
+        final Inventory playerInv = player.getInventory();
 
         final int emptySlot = playerInv.getFreeSlot();
         if (emptySlot == -1) // try full inv first
@@ -2994,7 +2994,7 @@ public class InventoryUtils
         final Supplier<ItemStack> itemStackFactory,
         final boolean messageOnDrop)
     {
-        final Inventory playerInv = player.inventory;
+        final Inventory playerInv = player.getInventory();
 
         for (int slot = 0; slot < playerInv.items.size(); slot++)
         {

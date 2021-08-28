@@ -7,7 +7,7 @@ import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
 import com.minecolonies.api.colony.managers.interfaces.*;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.IPermissions;
-import com.minecolonies.api.colony.permissions.Player;
+import com.minecolonies.api.colony.permissions.ColonyPlayer;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
@@ -30,9 +30,9 @@ import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.coremod.network.messages.PermissionsMessage;
 import com.minecolonies.coremod.network.messages.server.colony.ColonyFlagChangeMessage;
 import com.minecolonies.coremod.network.messages.server.colony.TownHallRenameMessage;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -243,7 +243,7 @@ public final class ColonyView implements IColonyView
      * Populate an NBT compound for a network packet representing a ColonyView.
      *
      * @param colony            Colony to write data about.
-     * @param buf               {@link PacketBuffer} to write data in.
+     * @param buf               {@link FriendlyByteBuf} to write data in.
      * @param hasNewSubscribers true if there is a new subscription.
      */
     public static void serializeNetworkData(@NotNull Colony colony, @NotNull FriendlyByteBuf buf, boolean hasNewSubscribers)
@@ -328,12 +328,12 @@ public final class ColonyView implements IColonyView
         final List<IColony> allies = new ArrayList<>();
         for (final Player player : colony.getPermissions().getFilteredPlayers(Rank::isColonyManager))
         {
-            final IColony col = IColonyManager.getInstance().getIColonyByOwner(colony.getWorld(), player.getID());
+            final IColony col = IColonyManager.getInstance().getIColonyByOwner(colony.getWorld(), player.getUUID());
             if (col != null)
             {
                 for (final Player owner : colony.getPermissions().getPlayersByRank(colony.getPermissions().getRankOwner()))
                 {
-                    if (col.getPermissions().getRank(owner.getID()).isColonyManager() && col.getID() != colony.getID())
+                    if (col.getPermissions().getRank(owner.getUUID()).isColonyManager() && col.getID() != colony.getID())
                     {
                         allies.add(col);
                     }
@@ -354,12 +354,12 @@ public final class ColonyView implements IColonyView
         final List<IColony> feuds = new ArrayList<>();
         for (final Player player : colony.getPermissions().getFilteredPlayers(Rank::isHostile))
         {
-            final IColony col = IColonyManager.getInstance().getIColonyByOwner(colony.getWorld(), player.getID());
+            final IColony col = IColonyManager.getInstance().getIColonyByOwner(colony.getWorld(), player.getUUID());
             if (col != null)
             {
                 for (final Player owner : colony.getPermissions().getPlayersByRank(colony.getPermissions().getRankOwner()))
                 {
-                    if (col.getPermissions().getRank(owner.getID()).isHostile())
+                    if (col.getPermissions().getRank(owner.getUUID()).isHostile())
                     {
                         feuds.add(col);
                     }
@@ -668,13 +668,13 @@ public final class ColonyView implements IColonyView
     }
 
     /**
-     * Returns a map of players in the colony. Key is the UUID, value is {@link Player}
+     * Returns a map of players in the colony. Key is the UUID, value is {@link ColonyPlayer}
      *
-     * @return Map of UUID's and {@link Player}
+     * @return Map of UUID's and {@link ColonyPlayer}
      */
     @Override
     @NotNull
-    public Map<UUID, Player> getPlayers()
+    public Map<UUID, ColonyPlayer> getPlayers()
     {
         return permissions.getPlayers();
     }
@@ -783,7 +783,7 @@ public final class ColonyView implements IColonyView
     /**
      * Populate a ColonyView from the network data.
      *
-     * @param buf               {@link PacketBuffer} to read from.
+     * @param buf               {@link FriendlyByteBuf} to read from.
      * @param isNewSubscription Whether this is a new subscription of not.
      * @return null == no response.
      */

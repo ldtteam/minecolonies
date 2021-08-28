@@ -86,7 +86,7 @@ public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHa
                 {
                     if (badIndexes.contains(inputIndex))
                     {
-                        final Component tooltipMessage = new TranslatableComponent("jei.tooltip.error.recipe.transfer.too.large.player.inventory");
+                        final Component tooltipMessage = new TranslatableComponent("jei.tooltip.error.recipe.transfer.too.large.player.getInventory()");
                         return handlerHelper.createUserErrorForSlots(tooltipMessage, badIndexes);
                     }
                     guiIngredients.put(inputIndex, ingredient.getDisplayedIngredient());

@@ -74,15 +74,9 @@ public class BlockMinecoloniesNamedGrave extends AbstractBlockMinecoloniesNamedG
 
     @Nullable
     @Override
-    public BlockEntity createTileEntity(final BlockState state, final BlockGetter world)
+    public BlockEntity newBlockEntity(@NotNull final BlockPos blockPos, @NotNull final BlockState blockState)
     {
-        return new TileEntityNamedGrave();
-    }
-
-    @Override
-    public boolean hasTileEntity(final BlockState state)
-    {
-        return true;
+        return new TileEntityNamedGrave(blockPos, blockState);
     }
 
     @NotNull

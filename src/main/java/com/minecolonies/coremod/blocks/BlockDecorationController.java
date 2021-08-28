@@ -6,6 +6,7 @@ import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.entity.player.Player;
@@ -35,7 +36,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 /**
  * Creates a decoration controller block.
  */
-public class BlockDecorationController extends AbstractBlockMinecoloniesHorizontal<BlockDecorationController> implements IBuilderUndestroyable, IAnchorBlock
+public class BlockDecorationController extends AbstractBlockMinecoloniesHorizontal<BlockDecorationController> implements IBuilderUndestroyable, IAnchorBlock, EntityBlock
 {
     /**
      * The hardness this block has.
@@ -114,12 +115,6 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
     }
 
     @Override
-    public boolean hasTileEntity(final BlockState state)
-    {
-        return true;
-    }
-
-    @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder)
     {
         builder.add(FACING, MIRROR);
@@ -127,9 +122,9 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
 
     @Nullable
     @Override
-    public BlockEntity createTileEntity(final BlockState state, final BlockGetter world)
+    public BlockEntity newBlockEntity(@NotNull final BlockPos blockPos, @NotNull final BlockState blockState)
     {
-        return new TileEntityDecorationController();
+        return new TileEntityDecorationController(blockPos, blockState);
     }
 
     @Nullable

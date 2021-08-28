@@ -8,7 +8,7 @@ public interface ICitizenStatusHandler
     /**
      * Get the latest status of the citizen.
      *
-     * @return a ITextComponent with the length 4 describing it.
+     * @return a Component with the length 4 describing it.
      */
     Component[] getLatestStatus();
 

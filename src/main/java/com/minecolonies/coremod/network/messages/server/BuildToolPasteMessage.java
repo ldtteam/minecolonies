@@ -99,7 +99,7 @@ public class BuildToolPasteMessage implements IMessage
     }
 
     /**
-     * Reads this packet from a {@link PacketBuffer}.
+     * Reads this packet from a {@link FriendlyByteBuf}.
      *
      * @param buf The buffer begin read from.
      */
@@ -123,7 +123,7 @@ public class BuildToolPasteMessage implements IMessage
     }
 
     /**
-     * Writes this packet to a {@link PacketBuffer}.
+     * Writes this packet to a {@link FriendlyByteBuf}.
      *
      * @param buf The buffer being written to.
      */
@@ -212,9 +212,9 @@ public class BuildToolPasteMessage implements IMessage
                   searchPredicate.and(stack -> stack.hasTag() && stack.getTag().get(PLACEMENT_NBT) != null && stack.getTag().getString(PLACEMENT_NBT).equals(INSTANT_PLACEMENT));
             }
 
-            final int slot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(new InvWrapper(player.inventory), searchPredicate);
+            final int slot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(new InvWrapper(player.getInventory()), searchPredicate);
 
-            if (slot != -1 && !ItemStackUtils.isEmpty(player.inventory.removeItemNoUpdate(slot)))
+            if (slot != -1 && !ItemStackUtils.isEmpty(player.getInventory().removeItemNoUpdate(slot)))
             {
                 if (player.getStats().getValue(Stats.ITEM_USED.get(ModItems.supplyChest)) < 1)
                 {
@@ -272,7 +272,7 @@ public class BuildToolPasteMessage implements IMessage
 
         final String hut = sn.getSection();
 
-        final ItemStack stack = BuildingUtils.getItemStackForHutFromInventory(player.inventory, hut);
+        final ItemStack stack = BuildingUtils.getItemStackForHutFromInventory(player.getInventory(), hut);
         final Block block = stack.getItem() instanceof BlockItem ? ((BlockItem) stack.getItem()).getBlock() : null;
         if (block != null && EventHandler.onBlockHutPlaced(world, player, block, buildPos))
         {

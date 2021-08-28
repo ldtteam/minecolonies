@@ -44,7 +44,7 @@ public class ContainerBuildingInventory extends AbstractContainerMenu
      * @param packetBuffer network buffer
      * @return new instance
      */
-    public static ContainerBuildingInventory fromPacketBuffer(final int windowId, final Inventory inv, final FriendlyByteBuf packetBuffer)
+    public static ContainerBuildingInventory fromFriendlyByteBuf(final int windowId, final Inventory inv, final FriendlyByteBuf packetBuffer)
     {
         final int colonyId = packetBuffer.readVarInt();
         final BlockPos tePos = packetBuffer.readBlockPos();

@@ -68,7 +68,7 @@ public class VisitorSpawnedEvent extends AbstractCitizenEvent
      * @param buf the packet buffer.
      * @return the colony to load.
      */
-    public static VisitorSpawnedEvent loadFromPacketBuffer(@NotNull final FriendlyByteBuf buf)
+    public static VisitorSpawnedEvent loadFromFriendlyByteBuf(@NotNull final FriendlyByteBuf buf)
     {
         final VisitorSpawnedEvent spawnEvent = new VisitorSpawnedEvent();
         spawnEvent.deserialize(buf);

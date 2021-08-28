@@ -70,7 +70,7 @@ public class DirectPlaceMessage implements IMessage
     }
 
     /**
-     * Reads this packet from a {@link PacketBuffer}.
+     * Reads this packet from a {@link FriendlyByteBuf}.
      *
      * @param buf The buffer begin read from.
      */
@@ -83,7 +83,7 @@ public class DirectPlaceMessage implements IMessage
     }
 
     /**
-     * Writes this packet to a {@link PacketBuffer}.
+     * Writes this packet to a {@link FriendlyByteBuf}.
      *
      * @param buf The buffer being written to.
      */
@@ -118,7 +118,7 @@ public class DirectPlaceMessage implements IMessage
             }
 
             player.getCommandSenderWorld().setBlockAndUpdate(pos, state);
-            InventoryUtils.reduceStackInItemHandler(new InvWrapper(player.inventory), stack);
+            InventoryUtils.reduceStackInItemHandler(new InvWrapper(player.getInventory()), stack);
             state.getBlock().setPlacedBy(world, pos, state, player, stack);
 
             if (compound != null && compound.contains(TAG_OTHER_LEVEL))

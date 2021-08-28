@@ -57,7 +57,7 @@ public class ContainerCraftingFurnace extends AbstractContainerMenu
      * @param packetBuffer network buffer
      * @return new instance
      */
-    public static ContainerCraftingFurnace fromPacketBuffer(final int windowId, final Inventory inv, final FriendlyByteBuf packetBuffer)
+    public static ContainerCraftingFurnace fromFriendlyByteBuf(final int windowId, final Inventory inv, final FriendlyByteBuf packetBuffer)
     {
         final BlockPos tePos = packetBuffer.readBlockPos();
         final String moduleId = packetBuffer.readUtf(32767);

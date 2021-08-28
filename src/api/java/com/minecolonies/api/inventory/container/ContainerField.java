@@ -52,7 +52,7 @@ public class ContainerField extends AbstractContainerMenu
      * @param packetBuffer network buffer
      * @return new instance
      */
-    public static ContainerField fromPacketBuffer(final int windowId, final Inventory inv, final FriendlyByteBuf packetBuffer)
+    public static ContainerField fromFriendlyByteBuf(final int windowId, final Inventory inv, final FriendlyByteBuf packetBuffer)
     {
         final BlockPos tePos = packetBuffer.readBlockPos();
         return new ContainerField(windowId, inv, tePos);

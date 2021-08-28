@@ -54,7 +54,7 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
     /**
      * Inventory of the player.
      */
-    private final Inventory inventory = this.mc.player.inventory;
+    private final Inventory inventory = this.mc.player.getInventory();
 
     /**
      * Is the player in creative or not.

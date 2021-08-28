@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.crafting.CompostRecipe;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.tileentities.AbstractTileEntityBarrel;
+import com.minecolonies.api.tileentities.ITickable;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.WorldUtil;
@@ -25,7 +26,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 
-public class TileEntityBarrel extends AbstractTileEntityBarrel
+public class TileEntityBarrel extends AbstractTileEntityBarrel implements ITickable
 {
     /**
      * True if the barrel has finished composting and the items are ready to harvest
@@ -48,9 +49,9 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel
      */
     private static final int     AVERAGE_TICKS = 20;
 
-    public TileEntityBarrel()
+    public TileEntityBarrel(final BlockPos pos, final BlockState state)
     {
-        super(MinecoloniesTileEntities.BARREL);
+        super(MinecoloniesTileEntities.BARREL, pos, state);
     }
 
     /**
@@ -113,7 +114,7 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel
     {
         if (done)
         {
-            playerIn.inventory.add(new ItemStack(ModItems.compost, 6));
+            playerIn.getInventory().add(new ItemStack(ModItems.compost, 6));
             done = false;
             return true;
         }
@@ -192,9 +193,9 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel
     }
 
     @Override
-    public void load(final BlockState state, final CompoundTag compound)
+    public void load(final CompoundTag compound)
     {
-        super.load(state, compound);
+        super.load(compound);
         this.items = compound.getInt("items");
         this.timer = compound.getInt("timer");
         this.done = compound.getBoolean("done");
@@ -219,7 +220,7 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel
     public void onDataPacket(final Connection net, final ClientboundBlockEntityDataPacket packet)
     {
         final CompoundTag compound = packet.getTag();
-        this.load(getBlockState(), compound);
+        this.load(compound);
         setChanged();
     }
 
@@ -230,7 +231,7 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel
     }
 
     @Override
-    public final void handleUpdateTag(final BlockState state, final CompoundTag tag)
+    public final void handleUpdateTag(final CompoundTag tag)
     {
         this.items = tag.getInt("items");
         this.timer = tag.getInt("timer");

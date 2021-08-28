@@ -1,8 +1,10 @@
 package com.minecolonies.api.tileentities;
 
 import com.minecolonies.api.colony.IGraveData;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.util.constant.Constants.*;
@@ -33,9 +35,9 @@ public abstract class AbstractTileEntityGrave extends TileEntityRack implements 
     @Nullable
     protected IGraveData graveData;
 
-    public AbstractTileEntityGrave(final BlockEntityType<? extends AbstractTileEntityGrave> tileEntityTypeIn)
+    public AbstractTileEntityGrave(final BlockEntityType<? extends AbstractTileEntityGrave> tileEntityTypeIn, final BlockPos pos, final BlockState state)
     {
-        super(tileEntityTypeIn);
+        super(tileEntityTypeIn, pos, state);
         decay_timer = DEFAULT_DECAY_TIMER;
         decayed = false;
     }

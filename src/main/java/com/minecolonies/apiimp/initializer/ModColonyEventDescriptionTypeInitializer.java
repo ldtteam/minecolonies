@@ -21,13 +21,13 @@ public final class ModColonyEventDescriptionTypeInitializer
     public static void init(final RegistryEvent.Register<ColonyEventDescriptionTypeRegistryEntry> event)
     {
         final IForgeRegistry<ColonyEventDescriptionTypeRegistryEntry> reg = event.getRegistry();
-        reg.register(new ColonyEventDescriptionTypeRegistryEntry(CitizenBornEvent::loadFromNBT, CitizenBornEvent::loadFromPacketBuffer, CitizenBornEvent.CITIZEN_BORN_EVENT_ID));
-        reg.register(new ColonyEventDescriptionTypeRegistryEntry(CitizenSpawnedEvent::loadFromNBT, CitizenSpawnedEvent::loadFromPacketBuffer, CitizenSpawnedEvent.CITIZEN_SPAWNED_EVENT_ID));
-        reg.register(new ColonyEventDescriptionTypeRegistryEntry(VisitorSpawnedEvent::loadFromNBT, VisitorSpawnedEvent::loadFromPacketBuffer, VisitorSpawnedEvent.VISITOR_SPAWNED_EVENT_ID));
-        reg.register(new ColonyEventDescriptionTypeRegistryEntry(CitizenDiedEvent::loadFromNBT, CitizenDiedEvent::loadFromPacketBuffer, CitizenDiedEvent.CITIZEN_DIED_EVENT_ID));
-        reg.register(new ColonyEventDescriptionTypeRegistryEntry(CitizenGrownUpEvent::loadFromNBT, CitizenGrownUpEvent::loadFromPacketBuffer, CitizenGrownUpEvent.CITIZEN_GROWN_UP_EVENT_ID));
-        reg.register(new ColonyEventDescriptionTypeRegistryEntry(BuildingBuiltEvent::loadFromNBT, BuildingBuiltEvent::loadFromPacketBuffer, BuildingBuiltEvent.BUILDING_BUILT_EVENT_ID));
-        reg.register(new ColonyEventDescriptionTypeRegistryEntry(BuildingUpgradedEvent::loadFromNBT, BuildingUpgradedEvent::loadFromPacketBuffer, BuildingUpgradedEvent.BUILDING_UPGRADED_EVENT_ID));
-        reg.register(new ColonyEventDescriptionTypeRegistryEntry(BuildingDeconstructedEvent::loadFromNBT, BuildingDeconstructedEvent::loadFromPacketBuffer, BuildingDeconstructedEvent.BUILDING_DECONSTRUCTED_EVENT_ID));
+        reg.register(new ColonyEventDescriptionTypeRegistryEntry(CitizenBornEvent::loadFromNBT, CitizenBornEvent::loadFromFriendlyByteBuf, CitizenBornEvent.CITIZEN_BORN_EVENT_ID));
+        reg.register(new ColonyEventDescriptionTypeRegistryEntry(CitizenSpawnedEvent::loadFromNBT, CitizenSpawnedEvent::loadFromFriendlyByteBuf, CitizenSpawnedEvent.CITIZEN_SPAWNED_EVENT_ID));
+        reg.register(new ColonyEventDescriptionTypeRegistryEntry(VisitorSpawnedEvent::loadFromNBT, VisitorSpawnedEvent::loadFromFriendlyByteBuf, VisitorSpawnedEvent.VISITOR_SPAWNED_EVENT_ID));
+        reg.register(new ColonyEventDescriptionTypeRegistryEntry(CitizenDiedEvent::loadFromNBT, CitizenDiedEvent::loadFromFriendlyByteBuf, CitizenDiedEvent.CITIZEN_DIED_EVENT_ID));
+        reg.register(new ColonyEventDescriptionTypeRegistryEntry(CitizenGrownUpEvent::loadFromNBT, CitizenGrownUpEvent::loadFromFriendlyByteBuf, CitizenGrownUpEvent.CITIZEN_GROWN_UP_EVENT_ID));
+        reg.register(new ColonyEventDescriptionTypeRegistryEntry(BuildingBuiltEvent::loadFromNBT, BuildingBuiltEvent::loadFromFriendlyByteBuf, BuildingBuiltEvent.BUILDING_BUILT_EVENT_ID));
+        reg.register(new ColonyEventDescriptionTypeRegistryEntry(BuildingUpgradedEvent::loadFromNBT, BuildingUpgradedEvent::loadFromFriendlyByteBuf, BuildingUpgradedEvent.BUILDING_UPGRADED_EVENT_ID));
+        reg.register(new ColonyEventDescriptionTypeRegistryEntry(BuildingDeconstructedEvent::loadFromNBT, BuildingDeconstructedEvent::loadFromFriendlyByteBuf, BuildingDeconstructedEvent.BUILDING_DECONSTRUCTED_EVENT_ID));
     }
 }

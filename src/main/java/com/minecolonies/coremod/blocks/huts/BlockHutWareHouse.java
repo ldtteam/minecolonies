@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.BlockGetter;
@@ -32,9 +33,9 @@ public class BlockHutWareHouse extends AbstractBlockHut<BlockHutWareHouse>
 
     @Nullable
     @Override
-    public BlockEntity createTileEntity(final BlockState state, final BlockGetter world)
+    public BlockEntity newBlockEntity(@NotNull final BlockPos blockPos, @NotNull final BlockState blockState)
     {
-        final TileEntityWareHouse building = (TileEntityWareHouse) MinecoloniesTileEntities.WAREHOUSE.create();
+        final TileEntityWareHouse building = (TileEntityWareHouse) MinecoloniesTileEntities.WAREHOUSE.create(blockPos, blockState);
         building.registryName = this.getBuildingEntry().getRegistryName();
         return building;
     }

@@ -5,7 +5,7 @@ import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.colony.permissions.Player;
+import com.minecolonies.api.colony.permissions.ColonyPlayer;
 import com.minecolonies.api.compatibility.CompatibilityManager;
 import com.minecolonies.api.compatibility.ICompatibilityManager;
 import com.minecolonies.api.crafting.IRecipeManager;
@@ -19,7 +19,6 @@ import com.minecolonies.coremod.network.messages.client.colony.ColonyViewRemoveM
 import com.minecolonies.coremod.util.BackUpHelper;
 import com.minecolonies.coremod.util.ChunkDataHelper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -79,7 +78,7 @@ public final class ColonyManager implements IColonyManager
     private boolean capLoaded = false;
 
     @Override
-    public void createColony(@NotNull final Level w, final BlockPos pos, @NotNull final Player player, @NotNull final String style)
+    public void createColony(@NotNull final Level w, final BlockPos pos, @NotNull final ColonyPlayer player, @NotNull final String style)
     {
         final IColonyManagerCapability cap = w.getCapability(COLONY_MANAGER_CAP, null).resolve().orElse(null);
         if (cap == null)
@@ -524,7 +523,7 @@ public final class ColonyManager implements IColonyManager
 
     @Override
     @Nullable
-    public IColony getIColonyByOwner(@NotNull final Level w, @NotNull final Player owner)
+    public IColony getIColonyByOwner(@NotNull final Level w, @NotNull final ColonyPlayer owner)
     {
         return getIColonyByOwner(w, w.isClientSide ? owner.getUUID() : owner.getGameProfile().getId());
     }
@@ -549,7 +548,7 @@ public final class ColonyManager implements IColonyManager
         {
             for (@NotNull final IColonyView c : colonyViews.get(dimension))
             {
-                final Player p = c.getPlayers().get(owner);
+                final ColonyPlayer p = c.getPlayers().get(owner);
                 if (p != null && p.getRank().equals(c.getPermissions().getRankOwner()))
                 {
                     return c;

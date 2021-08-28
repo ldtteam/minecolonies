@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 public class PermissionsView implements IPermissions
 {
     @NotNull
-    private final Map<UUID, Player>  players     = new HashMap<>();
+    private final Map<UUID, ColonyPlayer>  players     = new HashMap<>();
     @NotNull
     private final Map<Rank, Integer> permissions = new HashMap<>();
     private       Rank               userRank;
@@ -46,7 +46,7 @@ public class PermissionsView implements IPermissions
      * @return set of players.
      */
     @NotNull
-    public Set<Player> getPlayersByRank(final Rank rank)
+    public Set<ColonyPlayer> getPlayersByRank(final Rank rank)
     {
         return Collections.unmodifiableSet(
           this.players.values()
@@ -56,7 +56,7 @@ public class PermissionsView implements IPermissions
     }
 
     @NotNull
-    public Map<UUID, Player> getPlayers()
+    public Map<UUID, ColonyPlayer> getPlayers()
     {
         return Collections.unmodifiableMap(players);
     }
@@ -80,7 +80,7 @@ public class PermissionsView implements IPermissions
      * @return set of players.
      */
     @NotNull
-    public Set<Player> getPlayersByRank(@NotNull final Set<Rank> ranks)
+    public Set<ColonyPlayer> getPlayersByRank(@NotNull final Set<Rank> ranks)
     {
         return Collections.unmodifiableSet(
           this.players.values()
@@ -90,7 +90,7 @@ public class PermissionsView implements IPermissions
     }
 
     @Override
-    public Set<Player> getFilteredPlayers(@NotNull final Predicate<Rank> predicate)
+    public Set<ColonyPlayer> getFilteredPlayers(@NotNull final Predicate<Rank> predicate)
     {
         return Collections.unmodifiableSet(
           this.players.values().stream()
@@ -186,9 +186,9 @@ public class PermissionsView implements IPermissions
 
     @Nullable
     @Override
-    public Map.Entry<UUID, Player> getOwnerEntry()
+    public Map.Entry<UUID, ColonyPlayer> getOwnerEntry()
     {
-        for (@NotNull final Map.Entry<UUID, Player> entry : players.entrySet())
+        for (@NotNull final Map.Entry<UUID, ColonyPlayer> entry : players.entrySet())
         {
             if (entry.getValue().getRank().equals(getRanks().get(OWNER_RANK_ID)))
             {
@@ -199,7 +199,7 @@ public class PermissionsView implements IPermissions
     }
 
     @Override
-    public boolean setOwner(final Player player)
+    public boolean setOwner(final ColonyPlayer player)
     {
         return false;
     }
@@ -215,7 +215,7 @@ public class PermissionsView implements IPermissions
     {
         if (colonyOwner == null)
         {
-            final Map.Entry<UUID, Player> owner = getOwnerEntry();
+            final Map.Entry<UUID, ColonyPlayer> owner = getOwnerEntry();
             if (owner != null)
             {
                 colonyOwner = owner.getKey();
@@ -257,7 +257,7 @@ public class PermissionsView implements IPermissions
                 colonyOwner = id;
             }
 
-            players.put(id, new Player(id, name, rank));
+            players.put(id, new ColonyPlayer(id, name, rank));
         }
 
         //Permissions
@@ -278,6 +278,7 @@ public class PermissionsView implements IPermissions
      * @return the rank.
      */
     @NotNull
+    @Override
     public Rank getRank(@NotNull final Player player)
     {
         return getRank(player.getUUID());
@@ -299,7 +300,7 @@ public class PermissionsView implements IPermissions
     @Override
     public Rank getRank(final UUID id)
     {
-        final Player player = players.get(id);
+        final ColonyPlayer player = players.get(id);
         return player == null ? ranks.get(NEUTRAL_RANK_ID) : player.getRank();
     }
 
@@ -327,7 +328,7 @@ public class PermissionsView implements IPermissions
     {
         if (ownerName.isEmpty())
         {
-            final Map.Entry<UUID, Player> owner = getOwnerEntry();
+            final Map.Entry<UUID, ColonyPlayer> owner = getOwnerEntry();
             if (owner != null)
             {
                 ownerName = owner.getValue().getName();

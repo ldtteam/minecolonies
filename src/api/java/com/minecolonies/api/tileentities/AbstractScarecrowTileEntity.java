@@ -8,6 +8,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,9 +19,9 @@ public abstract class AbstractScarecrowTileEntity extends BlockEntity implements
     /**
      * Default constructor.
      */
-    public AbstractScarecrowTileEntity()
+    public AbstractScarecrowTileEntity(final BlockPos pos, final BlockState state)
     {
-        super(MinecoloniesTileEntities.SCARECROW);
+        super(MinecoloniesTileEntities.SCARECROW, pos, state);
     }
 
     /**

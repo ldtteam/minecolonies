@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.ldtteam.structures.helpers.Settings;
 import com.ldtteam.structurize.client.gui.WindowBuildTool;
+import com.ldtteam.structurize.helpers.Settings;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.placement.handlers.placement.PlacementError;
 import com.ldtteam.structurize.util.LanguageHandler;
@@ -58,7 +58,7 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
     public void place(final StructureName structureName)
     {
         final BlockPos offset = Settings.instance.getActiveStructure().getPrimaryBlockOffset();
-        final BlockState state = Settings.instance.getActiveStructure().getBlockState(offset).getBlockState();
+        final BlockState state = Settings.instance.getActiveStructure().getBlockState(offset);
 
         BuildToolPlaceMessage msg = new BuildToolPlaceMessage(
           structureName.toString(),
@@ -96,7 +96,7 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
     {
         final BlockPos offset = Settings.instance.getActiveStructure().getPrimaryBlockOffset();
         ;
-        final BlockState state = Settings.instance.getActiveStructure().getBlockState(offset).getBlockState();
+        final BlockState state = Settings.instance.getActiveStructure().getBlockState(offset);
 
         Network.getNetwork().sendToServer(new BuildToolPasteMessage(
           name.toString(),

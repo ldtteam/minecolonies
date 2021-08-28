@@ -68,7 +68,7 @@ public class ToggleBannerRallyGuardsMessage implements IMessage
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
         final ServerPlayer player = ctxIn.getSender();
-        final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.inventory),
+        final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.getInventory()),
           (itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, banner)));
 
         if (slot == -1)
@@ -77,6 +77,6 @@ public class ToggleBannerRallyGuardsMessage implements IMessage
             return;
         }
 
-        toggleBanner(player.inventory.getItem(slot), player);
+        toggleBanner(player.getInventory().getItem(slot), player);
     }
 }

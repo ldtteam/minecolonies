@@ -18,13 +18,12 @@ import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.mojang.datafixers.util.Pair;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.GoalSelector;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ShieldItem;
@@ -48,12 +47,6 @@ import java.util.List;
 import java.util.Random;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
-
-import net.minecraft.world.entity.AgableMob;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Pose;
 
 /**
  * The abstract citizen entity.
@@ -132,7 +125,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      * @param type  the Entity type.
      * @param world the world.
      */
-    public AbstractEntityCitizen(final EntityType<? extends AgableMob> type, final Level world)
+    public AbstractEntityCitizen(final EntityType<? extends AgeableMob> type, final Level world)
     {
         super(type, world);
     }
@@ -270,7 +263,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      */
     @Nullable
     @Override
-    public AgableMob getBreedOffspring(final ServerLevel world, final AgableMob parent)
+    public AgeableMob getBreedOffspring(final ServerLevel world, final AgeableMob parent)
     {
         return null;
     }

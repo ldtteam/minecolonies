@@ -8,7 +8,6 @@ import com.minecolonies.api.tileentities.AbstractScarecrowTileEntity;
 import com.minecolonies.api.tileentities.ScareCrowType;
 import com.minecolonies.api.tileentities.ScarecrowFieldStage;
 import com.minecolonies.api.util.ItemStackUtils;
-import net.minecraft.block.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -104,9 +103,9 @@ public class ScarecrowTileEntity extends AbstractScarecrowTileEntity
     /**
      * Creates an instance of the tileEntity.
      */
-    public ScarecrowTileEntity()
+    public ScarecrowTileEntity(final BlockPos pos, final BlockState state)
     {
-        super();
+        super(pos, state);
         this.inventory = new ItemStackHandler()
         {
             @Override
@@ -133,7 +132,7 @@ public class ScarecrowTileEntity extends AbstractScarecrowTileEntity
 
     /**
      * The size of the field in all four directions
-     * in the same order as {@link Direction#getHorizontalIndex()}:
+     * in the same order as {@link Direction}:
      * S, W, N, E
      */
     protected int[] radii = {MAX_RANGE, MAX_RANGE, MAX_RANGE, MAX_RANGE};
@@ -405,7 +404,7 @@ public class ScarecrowTileEntity extends AbstractScarecrowTileEntity
     public void onDataPacket(final Connection net, final ClientboundBlockEntityDataPacket packet)
     {
         final CompoundTag compound = packet.getTag();
-        this.load(getBlockState(), compound);
+        this.load(compound);
         if (compound.getAllKeys().contains(TAG_COLONY_ID))
         {
             setOwner(ownerId, IColonyManager.getInstance().getColonyView(compound.getInt(TAG_COLONY_ID), level.dimension()));
@@ -415,7 +414,7 @@ public class ScarecrowTileEntity extends AbstractScarecrowTileEntity
     /////////////--------------------------- End Synchronization-area ---------------------------- /////////////
 
     @Override
-    public void load(final BlockState state, final CompoundTag compound)
+    public void load(final CompoundTag compound)
     {
         final ListTag inventoryTagList = compound.getList(TAG_INVENTORY, TAG_COMPOUND);
         for (int i = 0; i < inventoryTagList.size(); ++i)
@@ -441,7 +440,7 @@ public class ScarecrowTileEntity extends AbstractScarecrowTileEntity
         ownerId = compound.getInt(TAG_OWNER);
         setOwner(ownerId);
 
-        super.load(state, compound);
+        super.load(compound);
     }
 
     @NotNull

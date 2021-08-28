@@ -29,7 +29,7 @@ public class MinimumStockModuleView extends AbstractBuildingModuleView  implemen
     private boolean reachedLimit = false;
 
     /**
-     * Read this view from a {@link PacketBuffer}.
+     * Read this view from a {@link FriendlyByteBuf}.
      *
      * @param buf The buffer to read this view from.
      */

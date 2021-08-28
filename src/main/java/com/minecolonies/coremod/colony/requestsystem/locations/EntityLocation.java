@@ -230,7 +230,7 @@ public class EntityLocation implements ILocation
     }
 
     /**
-     * Serialize this location to the given {@link PacketBuffer}.
+     * Serialize this location to the given {@link FriendlyByteBuf}.
      *
      * @param buffer the buffer to serialize this location to.
      */
@@ -240,7 +240,7 @@ public class EntityLocation implements ILocation
     }
 
     /**
-     * Deserialize the location from the given {@link PacketBuffer}
+     * Deserialize the location from the given {@link FriendlyByteBuf}
      *
      * @param buffer the buffer to read.
      * @return the deserialized location.

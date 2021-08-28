@@ -3,7 +3,9 @@ package com.minecolonies.api.tileentities;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.items.ItemStackHandler;
 
 import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.getPlayerActionPriority;
@@ -19,17 +21,17 @@ public class TileEntityStash extends TileEntityColonyBuilding
      *
      * @param type tile entity type
      */
-    public TileEntityStash(final BlockEntityType<? extends TileEntityStash> type)
+    public TileEntityStash(final BlockEntityType<? extends TileEntityStash> type, final BlockPos pos, final BlockState state)
     {
-        super(type);
+        super(type, pos, state);
     }
 
     /**
      * Default constructor of the stash
      */
-    public TileEntityStash()
+    public TileEntityStash(final BlockPos pos, final BlockState state)
     {
-        super(MinecoloniesTileEntities.STASH);
+        super(MinecoloniesTileEntities.STASH, pos, state);
     }
 
     @Override

@@ -122,7 +122,7 @@ public class TransferItemsToCitizenRequestMessage extends AbstractColonyServerMe
         else
         {
             amountToTake = Math.min(quantity,
-              InventoryUtils.getItemCountInItemHandler(new InvWrapper(player.inventory), stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack)));
+              InventoryUtils.getItemCountInItemHandler(new InvWrapper(player.getInventory()), stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack)));
         }
 
         final List<ItemStack> itemsToPut = new ArrayList<>();
@@ -141,7 +141,7 @@ public class TransferItemsToCitizenRequestMessage extends AbstractColonyServerMe
 
         if (!isCreative && MineColonies.getConfig().getServer().debugInventories.get())
         {
-            previousContent = InventoryUtils.getAllItemsForProviders(citizen.getInventoryCitizen(), new InvWrapper(player.inventory));
+            previousContent = InventoryUtils.getAllItemsForProviders(citizen.getInventoryCitizen(), new InvWrapper(player.getInventory()));
         }
 
         tempAmount = 0;
@@ -162,15 +162,15 @@ public class TransferItemsToCitizenRequestMessage extends AbstractColonyServerMe
             while (amountToRemoveFromPlayer > 0)
             {
                 final int slot =
-                  InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.inventory), stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack));
-                final ItemStack itemsTaken = player.inventory.removeItem(slot, amountToRemoveFromPlayer);
+                  InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.getInventory()), stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack));
+                final ItemStack itemsTaken = player.getInventory().removeItem(slot, amountToRemoveFromPlayer);
                 amountToRemoveFromPlayer -= ItemStackUtils.getSize(itemsTaken);
             }
         }
 
         if (!isCreative && previousContent != null && MineColonies.getConfig().getServer().debugInventories.get())
         {
-            InventoryUtils.doStorageSetsMatch(previousContent, InventoryUtils.getAllItemsForProviders(citizen.getInventoryCitizen(), new InvWrapper(player.inventory)), true);
+            InventoryUtils.doStorageSetsMatch(previousContent, InventoryUtils.getAllItemsForProviders(citizen.getInventoryCitizen(), new InvWrapper(player.getInventory())), true);
         }
     }
 }

@@ -59,9 +59,9 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
      */
     private Map<BlockPos, List<String>> tagPosMap = new HashMap<>();
 
-    public TileEntityDecorationController()
+    public TileEntityDecorationController(final BlockPos pos, final BlockState state)
     {
-        super(MinecoloniesTileEntities.DECO_CONTROLLER);
+        super(MinecoloniesTileEntities.DECO_CONTROLLER, pos, state);
     }
 
     /**
@@ -209,9 +209,9 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
     }
 
     @Override
-    public void load(final BlockState state, final CompoundTag compound)
+    public void load(final CompoundTag compound)
     {
-        super.load(state, compound);
+        super.load(compound);
         IBlueprintDataProvider.super.readSchematicDataFromNBT(compound);
         this.schematicPath = compound.getString(TAG_NAME);
         this.tier = compound.getInt(TAG_LEVEL);
@@ -248,7 +248,7 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
     public void onDataPacket(final Connection net, final ClientboundBlockEntityDataPacket packet)
     {
         final CompoundTag compound = packet.getTag();
-        this.load(getBlockState(), compound);
+        this.load(compound);
     }
 
     @Override

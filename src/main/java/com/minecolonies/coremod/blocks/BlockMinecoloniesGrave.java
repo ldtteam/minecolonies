@@ -10,6 +10,7 @@ import com.minecolonies.api.tileentities.TileEntityGrave;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.entity.LivingEntity;
@@ -19,7 +20,6 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.util.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -28,8 +28,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraftforge.common.ToolType;
-import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraftforge.fmllegacy.network.NetworkHooks;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
@@ -40,7 +39,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
 /**
  * Block for the graves
@@ -69,7 +67,7 @@ public class BlockMinecoloniesGrave extends AbstractBlockMinecoloniesGrave<Block
 
     public BlockMinecoloniesGrave()
     {
-        super(Properties.of(Material.STONE).strength(BLOCK_HARDNESS, RESISTANCE).harvestTool(ToolType.SHOVEL).noDrops());
+        super(Properties.of(Material.STONE).strength(BLOCK_HARDNESS, RESISTANCE).noDrops());
         this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH).setValue(VARIANT, GraveType.DEFAULT));
         setRegistryName(Constants.MOD_ID.toLowerCase() + ":" + BLOCK_NAME);
     }
@@ -199,17 +197,11 @@ public class BlockMinecoloniesGrave extends AbstractBlockMinecoloniesGrave<Block
         builder.add(FACING, VARIANT);
     }
 
-    @Override
-    public boolean hasTileEntity(final BlockState state)
-    {
-        return true;
-    }
-
     @Nullable
     @Override
-    public BlockEntity createTileEntity(final BlockState state, final BlockGetter world)
+    public BlockEntity newBlockEntity(@NotNull final BlockPos blockPos, @NotNull final BlockState blockState)
     {
-        return new TileEntityGrave();
+        return new TileEntityGrave(blockPos, blockState);
     }
 
     @Override

@@ -244,42 +244,42 @@ public class CustomRecipeManager
      */
     public void sendCustomRecipeManagerPackets(final ServerPlayer player)
     {
-        final FriendlyByteBuf recipeMgrPacketBuffer = new FriendlyByteBuf(Unpooled.buffer());
-        serializeNetworkData(recipeMgrPacketBuffer);
-        Network.getNetwork().sendToPlayer(new CustomRecipeManagerMessage(recipeMgrPacketBuffer), player);
+        final FriendlyByteBuf recipeMgrFriendlyByteBuf = new FriendlyByteBuf(Unpooled.buffer());
+        serializeNetworkData(recipeMgrFriendlyByteBuf);
+        Network.getNetwork().sendToPlayer(new CustomRecipeManagerMessage(recipeMgrFriendlyByteBuf), player);
     }
 
     /**
      * Serializes a partial assembly of Custom Recipes.
      * This version sends the full Custom Recipe Manager.
-     * @param recipeMgrPacketBuffer packet buffer to encode the data into.
+     * @param recipeMgrFriendlyByteBuf packet buffer to encode the data into.
      */
-    private void serializeNetworkData(final FriendlyByteBuf recipeMgrPacketBuffer)
+    private void serializeNetworkData(final FriendlyByteBuf recipeMgrFriendlyByteBuf)
     {
         // Custom Recipe Manager packets can potentially get very large, and individual CompoundNBTs can not be parsed if they exceed 2MB.
         // For safety with arbitrary data packs (or sets of data packs), we can not wrap the entire CustomRecipeManager into single ListNBT.
         // Including all recipes in transfer results in total transfer size around ~670KB for just Minecolonies + Structurize recipes.
         // See CustomRecipeFactory.serialize for last tested numbers and more precise breakdown.
-        recipeMgrPacketBuffer.writeVarInt(recipeMap.size());
+        recipeMgrFriendlyByteBuf.writeVarInt(recipeMap.size());
         for (Map.Entry<String, Map<ResourceLocation, CustomRecipe>> crafter : recipeMap.entrySet())
         {
-            recipeMgrPacketBuffer.writeVarInt(crafter.getValue().size());
+            recipeMgrFriendlyByteBuf.writeVarInt(crafter.getValue().size());
             for (CustomRecipe recipe : crafter.getValue().values())
             {
-                StandardFactoryController.getInstance().serialize(recipeMgrPacketBuffer, recipe);
+                StandardFactoryController.getInstance().serialize(recipeMgrFriendlyByteBuf, recipe);
                 //// NBT-based serialization for debugging/diagnosis only, as total packet size can be /very/ large.
-                //recipeMgrPacketBuffer.writeCompoundTag(StandardFactoryController.getInstance().serialize(recipe));
+                //recipeMgrFriendlyByteBuf.writeCompoundTag(StandardFactoryController.getInstance().serialize(recipe));
             }
         }
 
-        recipeMgrPacketBuffer.writeVarInt(lootTables.size());
+        recipeMgrFriendlyByteBuf.writeVarInt(lootTables.size());
         for (final Map.Entry<ResourceLocation, List<LootTableAnalyzer.LootDrop>> lootEntry : lootTables.entrySet())
         {
-            recipeMgrPacketBuffer.writeResourceLocation(lootEntry.getKey());
-            recipeMgrPacketBuffer.writeVarInt(lootEntry.getValue().size());
+            recipeMgrFriendlyByteBuf.writeResourceLocation(lootEntry.getKey());
+            recipeMgrFriendlyByteBuf.writeVarInt(lootEntry.getValue().size());
             for (final LootTableAnalyzer.LootDrop drop : lootEntry.getValue())
             {
-                drop.serialize(recipeMgrPacketBuffer);
+                drop.serialize(recipeMgrFriendlyByteBuf);
             }
         }
     }

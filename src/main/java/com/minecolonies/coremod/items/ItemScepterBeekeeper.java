@@ -82,13 +82,13 @@ public class ItemScepterBeekeeper extends AbstractItemMinecolonies
                 if (positions.size() >= building.getMaximumHives())
                 {
                     LanguageHandler.sendPlayerMessage(useContext.getPlayer(), "item.minecolonies.scepterbeekeeper.maxhives");
-                    player.inventory.removeItemNoUpdate(player.inventory.selected);
+                    player.getInventory().removeItemNoUpdate(player.getInventory().selected);
                 }
             }
         }
         else
         {
-            player.inventory.removeItemNoUpdate(player.inventory.selected);
+            player.getInventory().removeItemNoUpdate(player.getInventory().selected);
         }
 
         return super.useOn(useContext);

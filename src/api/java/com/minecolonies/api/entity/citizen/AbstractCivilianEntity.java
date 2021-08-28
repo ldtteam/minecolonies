@@ -2,7 +2,7 @@ package com.minecolonies.api.entity.citizen;
 
 import com.minecolonies.api.colony.ICivilianData;
 import com.minecolonies.api.entity.pathfinding.IStuckHandlerEntity;
-import net.minecraft.world.entity.AgableMob;
+import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.npc.Npc;
@@ -12,7 +12,7 @@ import net.minecraftforge.common.util.ITeleporter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class AbstractCivilianEntity extends AgableMob implements Npc, IStuckHandlerEntity
+public abstract class AbstractCivilianEntity extends AgeableMob implements Npc, IStuckHandlerEntity
 {
 
     /**
@@ -20,7 +20,7 @@ public abstract class AbstractCivilianEntity extends AgableMob implements Npc, I
      */
     private boolean canBeStuck = true;
 
-    protected AbstractCivilianEntity(final EntityType<? extends AgableMob> type, final Level worldIn)
+    protected AbstractCivilianEntity(final EntityType<? extends AgeableMob> type, final Level worldIn)
     {
         super(type, worldIn);
     }

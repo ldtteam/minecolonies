@@ -5,7 +5,6 @@ import com.ldtteam.blockui.controls.*;
 import com.ldtteam.blockui.views.ZoomDragView;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
-import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.research.*;
 import com.minecolonies.api.research.util.ResearchState;
@@ -25,7 +24,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.text.*;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -198,7 +196,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             final IGlobalResearch research = IGlobalResearchTree.getInstance().getResearch(branch, new ResourceLocation(button.getID()));
             final ILocalResearch localResearch = building.getColony().getResearchManager().getResearchTree().getResearch(branch, research.getId());
             if (localResearch == null && building.getBuildingLevel() > building.getColony().getResearchManager().getResearchTree().getResearchInProgress().size() &&
-                  (research.hasEnoughResources(new InvWrapper(Minecraft.getInstance().player.inventory)) || (mc.player.isCreative())))
+                  (research.hasEnoughResources(new InvWrapper(Minecraft.getInstance().player.getInventory())) || (mc.player.isCreative())))
             {
                 // This side won't actually start research; it'll be overridden the next colony update from the server.
                 // It will, however, update for the next WindowResearchTree if the colony update is slow to come back.
@@ -431,7 +429,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             return ResearchButtonState.MISSING_REQUIREMENT;
         }
         // has everything but the item cost requirements.
-        else if (!research.hasEnoughResources(new InvWrapper(Minecraft.getInstance().player.inventory)))
+        else if (!research.hasEnoughResources(new InvWrapper(Minecraft.getInstance().player.getInventory())))
         {
             return ResearchButtonState.MISSING_COST;
         }
@@ -667,7 +665,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
                 hoverPaneBuilder.paragraphBreak()
                   .append(new TextComponent(" - "))
                   .append(new TranslatableComponent("com.minecolonies.coremod.research.limit.requirement", is.getAmount(), is.getItem().getDescription()));
-                if((InventoryUtils.getItemCountInItemHandler(new InvWrapper(Minecraft.getInstance().player.inventory),
+                if((InventoryUtils.getItemCountInItemHandler(new InvWrapper(Minecraft.getInstance().player.getInventory()),
                   stack -> !ItemStackUtils.isEmpty(stack) && stack.sameItem(is.getItemStack())) < is.getAmount()))
                 {
                     hoverPaneBuilder.color(COLOR_TEXT_UNFULFILLED);
@@ -798,7 +796,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
         {
             final ItemStorage is = costList.get(i);
             undoCostIcons[i] = new ItemIcon();
-            if (InventoryUtils.getItemCountInItemHandler(new InvWrapper(Minecraft.getInstance().player.inventory),
+            if (InventoryUtils.getItemCountInItemHandler(new InvWrapper(Minecraft.getInstance().player.getInventory()),
               stack -> !ItemStackUtils.isEmpty(stack) && stack.sameItem(is.getItemStack())) < is.getAmount())
             {
                 missingItems.add(is);
@@ -966,7 +964,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             icon.setPosition(offsetX + RESEARCH_WIDTH - storageXOffset - INITIAL_X_OFFSET, offsetY + NAME_LABEL_HEIGHT + TEXT_Y_OFFSET);
             icon.setSize(DEFAULT_COST_SIZE, DEFAULT_COST_SIZE);
             view.addChild(icon);
-            if((InventoryUtils.getItemCountInItemHandler(new InvWrapper(Minecraft.getInstance().player.inventory),
+            if((InventoryUtils.getItemCountInItemHandler(new InvWrapper(Minecraft.getInstance().player.getInventory()),
               stack -> !ItemStackUtils.isEmpty(stack) && stack.sameItem(storage.getItemStack())) < storage.getAmount()))
             {
                 PaneBuilders.tooltipBuilder().hoverPane(icon).paragraphBreak().append(new TranslatableComponent("com.minecolonies.coremod.research.limit.requirement",

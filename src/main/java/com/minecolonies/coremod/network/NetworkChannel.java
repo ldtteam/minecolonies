@@ -402,8 +402,8 @@ public class NetworkChannel
 
         //Write the message into a buffer and copy that buffer into a byte array for processing.
         final ByteBuf buffer = Unpooled.buffer();
-        final FriendlyByteBuf innerPacketBuffer = new FriendlyByteBuf(buffer);
-        msg.toBytes(innerPacketBuffer);
+        final FriendlyByteBuf innerFriendlyByteBuf = new FriendlyByteBuf(buffer);
+        msg.toBytes(innerFriendlyByteBuf);
         final byte[] data = buffer.array();
         buffer.release();
 

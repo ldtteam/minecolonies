@@ -1,5 +1,6 @@
 package com.minecolonies.api.blocks;
 
+import com.minecolonies.api.blocks.interfaces.ITickableBlockMinecolonies;
 import com.minecolonies.api.blocks.types.BarrelType;
 import com.minecolonies.api.tileentities.AbstractTileEntityBarrel;
 import net.minecraft.world.level.block.state.BlockState;
@@ -8,9 +9,7 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import org.jetbrains.annotations.NotNull;
 
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
-
-public abstract class AbstractBlockBarrel<B extends AbstractBlockBarrel<B>> extends AbstractBlockMinecoloniesHorizontal<B>
+public abstract class AbstractBlockBarrel<B extends AbstractBlockBarrel<B>> extends AbstractBlockMinecoloniesHorizontal<B> implements ITickableBlockMinecolonies
 {
     public static final EnumProperty<BarrelType> VARIANT = EnumProperty.create("variant", BarrelType.class);
 

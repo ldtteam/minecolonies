@@ -9,6 +9,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.WorldUtil;
 import io.netty.buffer.Unpooled;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.entity.player.Player;
@@ -48,14 +49,14 @@ public class TileEntityGrave extends AbstractTileEntityGrave
      */
     private static final String TAG_GRAVE_DATA = "gravedata";
 
-    public TileEntityGrave(final BlockEntityType<? extends TileEntityGrave> type)
+    public TileEntityGrave(final BlockEntityType<? extends TileEntityGrave> type, final BlockPos pos, final BlockState state)
     {
-        super(type);
+        super(type, pos, state);
     }
 
-    public TileEntityGrave()
+    public TileEntityGrave(final BlockPos pos, final BlockState state)
     {
-        super(MinecoloniesTileEntities.GRAVE);
+        super(MinecoloniesTileEntities.GRAVE, pos, state);
     }
 
     /**
@@ -136,9 +137,9 @@ public class TileEntityGrave extends AbstractTileEntityGrave
     }
 
     @Override
-    public void load(final BlockState state, final CompoundTag compound)
+    public void load(final CompoundTag compound)
     {
-        super.load(state, compound);
+        super.load(compound);
         inventory = createInventory(DEFAULT_SIZE);
 
         final ListTag inventoryTagList = compound.getList(TAG_INVENTORY, TAG_COMPOUND);
@@ -213,13 +214,13 @@ public class TileEntityGrave extends AbstractTileEntityGrave
     @Override
     public void onDataPacket(final Connection net, final ClientboundBlockEntityDataPacket packet)
     {
-        this.load(getBlockState(), packet.getTag());
+        this.load(packet.getTag());
     }
 
     @Override
-    public void handleUpdateTag(final BlockState state, final CompoundTag tag)
+    public void handleUpdateTag(final CompoundTag tag)
     {
-        this.load(state, tag);
+        this.load(tag);
     }
 
     @Override

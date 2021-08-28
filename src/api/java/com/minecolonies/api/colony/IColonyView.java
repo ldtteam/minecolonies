@@ -145,7 +145,7 @@ public interface IColonyView extends IColony
      * @return Map of UUID's and {@link Player}
      */
     @NotNull
-    Map<UUID, Player> getPlayers();
+    Map<UUID, ColonyPlayer> getPlayers();
 
     /**
      * Sets a specific permission to a rank. If the permission wasn't already set, it sends a message to the server.
@@ -210,7 +210,7 @@ public interface IColonyView extends IColony
     /**
      * Populate a ColonyView from the network data.
      *
-     * @param buf               {@link PacketBuffer} to read from.
+     * @param buf               {@link FriendlyByteBuf} to read from.
      * @param isNewSubscription Whether this is a new subscription of not.
      * @param world             the world it is in.
      * @return null == no response.

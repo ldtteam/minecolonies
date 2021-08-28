@@ -3,7 +3,6 @@ package com.minecolonies.coremod.blocks.decorative;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.minecolonies.api.blocks.decorative.AbstractColonyFlagBanner;
-import net.minecraft.block.*;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.StateDefinition;

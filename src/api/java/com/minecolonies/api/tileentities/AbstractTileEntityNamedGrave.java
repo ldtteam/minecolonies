@@ -1,6 +1,7 @@
 package com.minecolonies.api.tileentities;
 
 import com.minecolonies.api.util.WorldUtil;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.nbt.CompoundTag;
@@ -30,9 +31,9 @@ public class AbstractTileEntityNamedGrave extends BlockEntity
      */
     private ArrayList<String> textLines = new ArrayList<>();
 
-    public AbstractTileEntityNamedGrave(BlockEntityType<?> tileEntityTypeIn)
+    public AbstractTileEntityNamedGrave(BlockEntityType<?> tileEntityTypeIn, final BlockPos pos, final BlockState state)
     {
-        super(tileEntityTypeIn);
+        super(tileEntityTypeIn, pos, state);
         textLines.add("Unknown Citizen");
     }
 
@@ -48,9 +49,9 @@ public class AbstractTileEntityNamedGrave extends BlockEntity
     }
 
     @Override
-    public void load(final BlockState state, final CompoundTag compound)
+    public void load(final CompoundTag compound)
     {
-        super.load(state, compound);
+        super.load(compound);
 
         textLines.clear();
         if (compound.getAllKeys().contains(TAG_CONTENT))
@@ -97,13 +98,13 @@ public class AbstractTileEntityNamedGrave extends BlockEntity
     @Override
     public void onDataPacket(final Connection net, final ClientboundBlockEntityDataPacket packet)
     {
-        this.load(getBlockState(), packet.getTag());
+        this.load(packet.getTag());
     }
 
     @Override
-    public void handleUpdateTag(final BlockState state, final CompoundTag tag)
+    public void handleUpdateTag(final CompoundTag tag)
     {
-        this.load(state, tag);
+        this.load(tag);
     }
 
     @Override

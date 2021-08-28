@@ -1,6 +1,6 @@
 package com.minecolonies.api.colony.managers.interfaces;
 
-import com.ldtteam.structures.blueprints.v1.Blueprint;
+import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.core.BlockPos;

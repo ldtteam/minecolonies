@@ -71,6 +71,6 @@ public class GiveToolMessage extends AbstractBuildingServerMessage<AbstractBuild
         BlockPosUtil.write(compound, TAG_POS, building.getID());
         compound.putInt(TAG_ID, colony.getID());
 
-        player.inventory.setChanged();
+        player.getInventory().setChanged();
     }
 }

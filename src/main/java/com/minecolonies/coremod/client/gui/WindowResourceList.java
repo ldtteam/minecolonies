@@ -87,7 +87,7 @@ public class WindowResourceList extends AbstractWindowSkeleton
         if (newView instanceof BuildingBuilder.View)
         {
             final BuildingResourcesModuleView moduleView = newView.getModuleView(BuildingResourcesModuleView.class);
-            final Inventory inventory = this.mc.player.inventory;
+            final Inventory inventory = this.mc.player.getInventory();
             final boolean isCreative = this.mc.player.isCreative();
 
             final List<Delivery> deliveries = new ArrayList<>();

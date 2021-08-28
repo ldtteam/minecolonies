@@ -23,7 +23,7 @@ public class ColonyEventDescriptionTypeRegistryEntry extends ForgeRegistryEntry<
     private final Function<CompoundTag, IColonyEventDescription> nbtEventDescriptionCreator;
 
     /**
-     * Function for creating the event description from a {@link PacketBuffer}.
+     * Function for creating the event description from a {@link FriendlyByteBuf}.
      */
     private final Function<FriendlyByteBuf, IColonyEventDescription> packetBufferEventDescriptionCreator;
 
@@ -31,7 +31,7 @@ public class ColonyEventDescriptionTypeRegistryEntry extends ForgeRegistryEntry<
      * Creates a new registry entry for the given function and registry name.
      *
      * @param nbtEventCreator          the event creator using nbt.
-     * @param packetBufferEventCreator the event creator using a {@link PacketBuffer}.
+     * @param packetBufferEventCreator the event creator using a {@link FriendlyByteBuf}.
      * @param registryID               the registry id.
      */
     public ColonyEventDescriptionTypeRegistryEntry(@NotNull final Function<CompoundTag, IColonyEventDescription> nbtEventCreator, @NotNull final Function<FriendlyByteBuf, IColonyEventDescription> packetBufferEventCreator, @NotNull final ResourceLocation registryID)
@@ -58,12 +58,12 @@ public class ColonyEventDescriptionTypeRegistryEntry extends ForgeRegistryEntry<
     }
 
     /**
-     * Deserializes the event description from the given {@link PacketBuffer}.
+     * Deserializes the event description from the given {@link FriendlyByteBuf}.
      * 
-     * @param buffer the {@link PacketBuffer} to deserialize the event description from.
+     * @param buffer the {@link FriendlyByteBuf} to deserialize the event description from.
      * @return the deserialized event description.
      */
-    public IColonyEventDescription deserializeEventDescriptionFromPacketBuffer(@Nonnull final FriendlyByteBuf buffer)
+    public IColonyEventDescription deserializeEventDescriptionFromFriendlyByteBuf(@Nonnull final FriendlyByteBuf buffer)
     {
         return packetBufferEventDescriptionCreator.apply(buffer);
     }

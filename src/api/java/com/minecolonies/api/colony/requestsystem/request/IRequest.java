@@ -9,8 +9,8 @@ import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.util.NonNullList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Component;
@@ -240,7 +240,7 @@ public interface IRequest<R extends IRequestable>
     void addDelivery(@NotNull final List<ItemStack> list);
 
     /**
-     * Method used to get a {@link ITextComponent} that can be displayed to the Player and describes the request in short. Should represent the request, in case the player needs to
+     * Method used to get a {@link Component} that can be displayed to the Player and describes the request in short. Should represent the request, in case the player needs to
      * fulfill it, or information about this request is required.
      *
      * @return The text that describes this Request.
@@ -249,7 +249,7 @@ public interface IRequest<R extends IRequestable>
     Component getShortDisplayString();
 
     /**
-     * Method used to get a {@link ITextComponent} that can be displayed to the Player and describes so that the player can complete it. Should represent the request, in case the
+     * Method used to get a {@link Component} that can be displayed to the Player and describes so that the player can complete it. Should represent the request, in case the
      * player needs to fulfill it, or information about this request is required.
      *
      * @return The text that describes this Request.

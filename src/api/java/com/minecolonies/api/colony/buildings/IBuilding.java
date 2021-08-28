@@ -185,7 +185,7 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
     /**
      * Serializes to view. Sends 3 integers. 1) hashcode of the name of the class. 2) building level. 3) max building level.
      *
-     * @param buf PacketBuffer to write to.
+     * @param buf FriendlyByteBuf to write to.
      */
     void serializeToView(@NotNull FriendlyByteBuf buf);
 

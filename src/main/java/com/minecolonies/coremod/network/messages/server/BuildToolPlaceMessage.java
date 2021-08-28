@@ -101,7 +101,7 @@ public class BuildToolPlaceMessage implements IMessage
     }
 
     /**
-     * Reads this packet from a {@link PacketBuffer}.
+     * Reads this packet from a {@link FriendlyByteBuf}.
      *
      * @param buf The buffer begin read from.
      */
@@ -125,7 +125,7 @@ public class BuildToolPlaceMessage implements IMessage
     }
 
     /**
-     * Writes this packet to a {@link PacketBuffer}.
+     * Writes this packet to a {@link FriendlyByteBuf}.
      *
      * @param buf The buffer being written to.
      */
@@ -206,7 +206,7 @@ public class BuildToolPlaceMessage implements IMessage
         }
 
         final String hut = sn.getSection();
-        final ItemStack stack = BuildingUtils.getItemStackForHutFromInventory(player.inventory, hut);
+        final ItemStack stack = BuildingUtils.getItemStackForHutFromInventory(player.getInventory(), hut);
         final Block block = stack.getItem() instanceof BlockItem ? ((BlockItem) stack.getItem()).getBlock() : null;
 
         final IColony tempColony = IColonyManager.getInstance().getClosestColony(world, buildPos);
@@ -225,7 +225,7 @@ public class BuildToolPlaceMessage implements IMessage
             return;
         }
 
-        if (block != null && player.inventory.contains(new ItemStack(block)))
+        if (block != null && player.getInventory().contains(new ItemStack(block)))
         {
             if (EventHandler.onBlockHutPlaced(world, player, block, buildPos))
             {
@@ -262,7 +262,7 @@ public class BuildToolPlaceMessage implements IMessage
                     }
                 }
 
-                InventoryUtils.reduceStackInItemHandler(new InvWrapper(player.inventory), new ItemStack(block, 1), 1);
+                InventoryUtils.reduceStackInItemHandler(new InvWrapper(player.getInventory()), new ItemStack(block, 1), 1);
                 setupBuilding(world, player, sn, rotation, buildPos, mirror, level, complete);
             }
         }

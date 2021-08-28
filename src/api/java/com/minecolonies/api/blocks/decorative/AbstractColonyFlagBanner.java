@@ -4,7 +4,6 @@ import com.minecolonies.api.blocks.interfaces.IBlockMinecolonies;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.tileentities.TileEntityColonyFlag;
-import net.minecraft.block.*;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.entity.LivingEntity;
@@ -24,7 +23,6 @@ import javax.annotation.Nullable;
 import net.minecraft.world.level.block.AbstractBannerBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
@@ -47,10 +45,13 @@ public class AbstractColonyFlagBanner<B extends AbstractColonyFlagBanner<B>> ext
     }
 
     @Override
-    public BlockEntity newBlockEntity(BlockGetter worldIn) { return new TileEntityColonyFlag(); }
+    public BlockEntity newBlockEntity(@NotNull final BlockPos blockPos, @NotNull final BlockState blockState)
+    {
+        return new TileEntityColonyFlag(blockPos, blockState);
+    }
 
     @Override
-    public void setPlacedBy(Level worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack)
+    public void setPlacedBy(final Level worldIn, final @NotNull BlockPos pos, @NotNull BlockState state, @Nullable LivingEntity placer, @NotNull ItemStack stack)
     {
         if (worldIn.isClientSide) return;
 

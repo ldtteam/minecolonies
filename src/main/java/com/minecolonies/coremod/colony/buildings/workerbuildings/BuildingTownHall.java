@@ -229,7 +229,7 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
                     continue;
                 }
 
-                colonyEvents.add(registryEntry.deserializeEventDescriptionFromPacketBuffer(buf));
+                colonyEvents.add(registryEntry.deserializeEventDescriptionFromFriendlyByteBuf(buf));
             }
         }
 

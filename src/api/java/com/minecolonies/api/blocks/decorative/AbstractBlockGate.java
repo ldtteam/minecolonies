@@ -1,7 +1,11 @@
 package com.minecolonies.api.blocks.decorative;
 
 import com.minecolonies.api.util.WorldUtil;
-import net.minecraft.block.*;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -24,21 +28,18 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
-
-import static net.minecraft.state.properties.BlockStateProperties.WATERLOGGED;
+import org.jetbrains.annotations.Nullable;
 
 /**
- * Blocknet.miimport net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.DoorBlock;
-import net.minecraft.world.level.block.RenderShape;
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
-import net.minecraft.world.level.block.state.BlockState;
-
-necraft.world.level.block.state.properties.BlockStatePropertiesas one big door
+ * Block as one big door
  */
 public abstract class AbstractBlockGate extends DoorBlock
 {
+    /**
+     * Waterlogged property.
+     */
+    public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
+
     /**
      * Variant reg names
      */
@@ -223,7 +224,7 @@ public abstract class AbstractBlockGate extends DoorBlock
         {
             final BlockPos checkPos = pos.relative(facing.getOpposite(), hor);
             final BlockState checkState = worldIn.getBlockState(checkPos);
-            if (checkState.isAir(worldIn, checkPos) && canPlace > 0 && worldIn.getBlockState(checkPos.relative(facing.getOpposite())).getBlock() != this)
+            if (checkState.isAir() && canPlace > 0 && worldIn.getBlockState(checkPos.relative(facing.getOpposite())).getBlock() != this)
             {
                 if (stack.getCount() > 1)
                 {
@@ -249,7 +250,7 @@ public abstract class AbstractBlockGate extends DoorBlock
         {
             final BlockPos checkPos = pos.relative(facing, hor);
             final BlockState checkState = worldIn.getBlockState(checkPos);
-            if (checkState.getBlock() != this && checkState.isAir(worldIn, checkPos) && canPlace > 0
+            if (checkState.getBlock() != this && checkState.isAir() && canPlace > 0
                   && worldIn.getBlockState(checkPos.relative(facing)).getBlock() != this)
             {
                 if (stack.getCount() > 1)
@@ -280,7 +281,7 @@ public abstract class AbstractBlockGate extends DoorBlock
         {
             final BlockPos checkPos = base.offset(0, vert, 0);
             final BlockState checkState = world.getBlockState(checkPos);
-            if (checkState.isAir(world, checkPos) && world.getBlockState(checkPos.above()).getBlock() != this)
+            if (checkState.isAir() && world.getBlockState(checkPos.above()).getBlock() != this)
             {
                 if (stack.getCount() > 1)
                 {
@@ -406,7 +407,7 @@ public abstract class AbstractBlockGate extends DoorBlock
     }
 
     @Override
-    public void setOpen(final Level worldIn, final BlockState state, final BlockPos pos, final boolean open)
+    public void setOpen(@Nullable final Entity p_153166_, final Level worldIn, final BlockState state, final BlockPos pos, final boolean open)
     {
         BlockState blockstate = worldIn.getBlockState(pos);
         if (blockstate.getBlock() == this && blockstate.getValue(OPEN) != open)
@@ -468,7 +469,7 @@ public abstract class AbstractBlockGate extends DoorBlock
         boolean powered = worldIn.hasNeighborSignal(pos);
         if (powered != state.getValue(OPEN))
         {
-            setOpen(worldIn, state, pos, powered);
+            setOpen(null, worldIn, state, pos, powered);
         }
     }
 

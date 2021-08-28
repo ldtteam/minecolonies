@@ -1,9 +1,11 @@
 package com.minecolonies.api.tileentities;
 
 import com.minecolonies.api.util.WorldUtil;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.util.Mth;
+import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.Random;
 
@@ -29,9 +31,9 @@ public class TileEntityEnchanter extends TileEntityColonyBuilding
     /**
      * Default constructor used to create a new TileEntity via reflection. Do not use.
      */
-    public TileEntityEnchanter()
+    public TileEntityEnchanter(final BlockPos pos, final BlockState state)
     {
-        this(MinecoloniesTileEntities.ENCHANTER);
+        this(MinecoloniesTileEntities.ENCHANTER, pos, state);
     }
 
     /**
@@ -39,9 +41,9 @@ public class TileEntityEnchanter extends TileEntityColonyBuilding
      *
      * @param type the entity type.
      */
-    public TileEntityEnchanter(final BlockEntityType<? extends TileEntityEnchanter> type)
+    public TileEntityEnchanter(final BlockEntityType<? extends TileEntityEnchanter> type, final BlockPos pos, final BlockState state)
     {
-        super(type);
+        super(type, pos, state);
     }
 
     @Override

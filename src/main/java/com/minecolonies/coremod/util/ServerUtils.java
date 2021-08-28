@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.util;
 
-import com.minecolonies.api.colony.permissions.Player;
-import net.minecraft.world.entity.player.Player;
+import com.minecolonies.api.colony.permissions.ColonyPlayer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
@@ -34,7 +33,7 @@ public final class ServerUtils
      * @return the Player
      */
     @Nullable
-    public static Player getPlayerFromUUID(@NotNull final Level world, @NotNull final UUID id)
+    public static ColonyPlayer getPlayerFromUUID(@NotNull final Level world, @NotNull final UUID id)
     {
         for (int i = 0; i < world.players().size(); ++i)
         {
@@ -54,19 +53,19 @@ public final class ServerUtils
      * @return list of PlayerEntitys
      */
     @NotNull
-    public static List<Player> getPlayersFromUUID(@Nullable final Level world, @NotNull final Collection<UUID> ids)
+    public static List<ColonyPlayer> getPlayersFromUUID(@Nullable final Level world, @NotNull final Collection<UUID> ids)
     {
         if (world == null)
         {
             return Collections.emptyList();
         }
-        @NotNull final List<Player> players = new ArrayList<>();
+        @NotNull final List<ColonyPlayer> players = new ArrayList<>();
 
         for (final Object o : world.players())
         {
-            if (o instanceof Player)
+            if (o instanceof ColonyPlayer)
             {
-                @NotNull final Player player = (Player) o;
+                @NotNull final ColonyPlayer player = (ColonyPlayer) o;
                 if (ids.contains(player.getGameProfile().getId()))
                 {
                     players.add(player);
@@ -81,22 +80,22 @@ public final class ServerUtils
     }
 
     /**
-     * Returns a list of players from a list of {@link Player}.
+     * Returns a list of players from a list of {@link ColonyPlayer}.
      * <p>
-     * The {@link Player} is a wrapper around a {@link UUID} of minecraft players. The List will simply be converted into an {@link PlayerEntity} type.
+     * The {@link ColonyPlayer} is a wrapper around a {@link UUID} of minecraft players. The List will simply be converted into an {@link PlayerEntity} type.
      * <p>
-     * Uses {@link ServerUtils#getPlayerFromPermPlayer(Player, World)}.
+     * Uses {@link ServerUtils#getPlayerFromPermPlayer(ColonyPlayer, World)}.
      *
      * @param players The list of players to convert.
      * @param world   an instance of the world.
      * @return A list of {@link PlayerEntity}s
      */
     @NotNull
-    public static List<Player> getPlayersFromPermPlayer(@NotNull final List<Player> players, @NotNull final Level world)
+    public static List<ColonyPlayer> getPlayersFromPermPlayer(@NotNull final List<ColonyPlayer> players, @NotNull final Level world)
     {
-        @NotNull final List<Player> playerList = new ArrayList<>();
+        @NotNull final List<ColonyPlayer> playerList = new ArrayList<>();
 
-        for (@NotNull final Player player : players)
+        for (@NotNull final ColonyPlayer player : players)
         {
             playerList.add(ServerUtils.getPlayerFromPermPlayer(player, world));
         }
@@ -105,18 +104,18 @@ public final class ServerUtils
     }
 
     /**
-     * Retrieves a Player from {@link Player}.
+     * Retrieves a Player from {@link ColonyPlayer}.
      * <p>
      * Simply converts our type into the base type.
      * <p>
-     * Passes this {@link Player#getID()} to {@link ServerUtils#getPlayerFromUUID(UUID, World)}.
+     * Passes this {@link ColonyPlayer#getID()} to {@link ServerUtils#getPlayerFromUUID(UUID, World)}.
      *
-     * @param player The {@link Player} to convert
+     * @param player The {@link ColonyPlayer} to convert
      * @param world  an instance of the world.
      * @return The {@link PlayerEntity} reference.
      */
     @Nullable
-    public static Player getPlayerFromPermPlayer(@NotNull final Player player, @NotNull final Level world)
+    public static ColonyPlayer getPlayerFromPermPlayer(@NotNull final ColonyPlayer player, @NotNull final Level world)
     {
         return ServerUtils.getPlayerFromUUID(player.getID(), world);
     }
@@ -131,7 +130,7 @@ public final class ServerUtils
      * @return The player the player if found or null
      */
     @Nullable
-    public static Player getPlayerFromUUID(@Nullable final UUID uuid, @NotNull final Level world)
+    public static ColonyPlayer getPlayerFromUUID(@Nullable final UUID uuid, @NotNull final Level world)
     {
         if (uuid == null)
         {

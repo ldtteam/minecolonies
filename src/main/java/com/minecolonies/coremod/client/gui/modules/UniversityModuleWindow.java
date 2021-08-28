@@ -13,7 +13,6 @@ import com.minecolonies.coremod.client.gui.AbstractModuleWindow;
 import com.minecolonies.coremod.client.gui.WindowResearchTree;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingUniversity;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.text.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

@@ -41,7 +41,7 @@ public class ContainerCitizenInventory extends AbstractContainerMenu
      * @param packetBuffer network buffer
      * @return new instance
      */
-    public static ContainerCitizenInventory fromPacketBuffer(final int windowId, final Inventory inv, final FriendlyByteBuf packetBuffer)
+    public static ContainerCitizenInventory fromFriendlyByteBuf(final int windowId, final Inventory inv, final FriendlyByteBuf packetBuffer)
     {
         final int colonyId = packetBuffer.readVarInt();
         final int citizenId = packetBuffer.readVarInt();

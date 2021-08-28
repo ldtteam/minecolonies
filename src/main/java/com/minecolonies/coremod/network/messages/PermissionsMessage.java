@@ -4,14 +4,13 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.colony.permissions.Player;
+import com.minecolonies.api.colony.permissions.ColonyPlayer;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.network.PacketUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
 import io.netty.buffer.Unpooled;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -507,7 +506,7 @@ public class PermissionsMessage
                 Log.getLogger().error(String.format(COLONY_DOES_NOT_EXIST, colonyID), new Exception());
                 return;
             }
-            final Player player = ctxIn.getSender();
+            final ColonyPlayer player = ctxIn.getSender();
             if (colony.getPermissions().hasPermission(player, Action.EDIT_PERMISSIONS) && rank != colony.getPermissions().getRank(colony.getPermissions().OWNER_RANK_ID))
             {
                 Log.getLogger().error(rank.getName());
@@ -584,8 +583,8 @@ public class PermissionsMessage
                 Log.getLogger().error(String.format(COLONY_DOES_NOT_EXIST, colonyID), new Exception());
                 return;
             }
-            final Player player = ctxIn.getSender();
-            final Player permissionsPlayer = colony.getPermissions().getPlayers().get(playerID);
+            final ColonyPlayer player = ctxIn.getSender();
+            final ColonyPlayer permissionsPlayer = colony.getPermissions().getPlayers().get(playerID);
             if ((permissionsPlayer.getRank().isHostile() && colony.getPermissions().hasPermission(player, Action.EDIT_PERMISSIONS))
                   || (!permissionsPlayer.getRank().isHostile()
                         && colony.getPermissions().hasPermission(player, Action.EDIT_PERMISSIONS)

@@ -91,7 +91,7 @@ public class ColorPalette
         @Override
         public void renderButton(final PoseStack stack, int mouseX, int mouseY, float partialTicks)
         {
-            int color = this.color.getColorValue();
+            int color = this.color.getTextColor();
             boolean pressed = selected == this.color;
 
             this.fillButton(stack, 0, 0, 0, 0, isHovered() ? 0xFFFFFF : pressed ? brighten(color, 0.5F) : 0x0);

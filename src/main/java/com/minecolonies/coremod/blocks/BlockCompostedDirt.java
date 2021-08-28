@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.blocks;
 
 import com.minecolonies.api.blocks.AbstractBlockMinecolonies;
+import com.minecolonies.api.blocks.interfaces.ITickableBlockMinecolonies;
 import com.minecolonies.coremod.tileentities.TileEntityCompostedDirt;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.SoundType;
@@ -13,17 +14,14 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraftforge.common.IPlantable;
-import net.minecraftforge.common.ToolType;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
-
 /**
  * Block that if activated with BoneMeal or Compost by an AI will produce flowers by intervals until it deactivates
  */
-public class BlockCompostedDirt extends AbstractBlockMinecolonies<BlockCompostedDirt>
+public class BlockCompostedDirt extends AbstractBlockMinecolonies<BlockCompostedDirt> implements ITickableBlockMinecolonies
 {
     private static final String     BLOCK_NAME     = "composted_dirt";
     private static final float      BLOCK_HARDNESS = 5f;
@@ -35,22 +33,15 @@ public class BlockCompostedDirt extends AbstractBlockMinecolonies<BlockComposted
      */
     public BlockCompostedDirt()
     {
-        super(Properties.of(Material.DIRT).strength(BLOCK_HARDNESS, RESISTANCE)
-            .harvestTool(ToolType.SHOVEL).sound(SoundType.GRAVEL));
+        super(Properties.of(Material.DIRT).strength(BLOCK_HARDNESS, RESISTANCE).sound(SoundType.GRAVEL));
         setRegistryName(BLOCK_NAME);
-    }
-
-    @Override
-    public boolean hasTileEntity(final BlockState state)
-    {
-        return true;
     }
 
     @Nullable
     @Override
-    public BlockEntity createTileEntity(final BlockState state, final BlockGetter world)
+    public BlockEntity newBlockEntity(@NotNull final BlockPos blockPos, @NotNull final BlockState blockState)
     {
-        return new TileEntityCompostedDirt();
+        return new TileEntityCompostedDirt(blockPos, blockState);
     }
 
     @NotNull

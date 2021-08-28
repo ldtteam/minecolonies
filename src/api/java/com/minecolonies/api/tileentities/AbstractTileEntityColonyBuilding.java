@@ -52,9 +52,9 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
      */
     private int version = 0;
 
-    public AbstractTileEntityColonyBuilding(final BlockEntityType<? extends AbstractTileEntityColonyBuilding> type)
+    public AbstractTileEntityColonyBuilding(final BlockEntityType<? extends AbstractTileEntityColonyBuilding> type, final BlockPos pos, final BlockState state)
     {
-        super(type);
+        super(type, pos, state);
     }
 
     /**
@@ -209,9 +209,9 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
     }
 
     @Override
-    public void load(final BlockState state, @NotNull final CompoundTag compound)
+    public void load(@NotNull final CompoundTag compound)
     {
-        super.load(state, compound);
+        super.load(compound);
         readSchematicDataFromNBT(compound);
         this.version = compound.getInt(TAG_VERSION);
     }

@@ -93,7 +93,7 @@ public class WarehouseOptionsModuleWindow extends AbstractModuleWindow
         final BuildingBuilderResource resource = new BuildingBuilderResource(new ItemStack(Blocks.EMERALD_BLOCK, 1), 1);
 
         final int amountToSet;
-        final Inventory inventory = this.mc.player.inventory;
+        final Inventory inventory = this.mc.player.getInventory();
         final boolean isCreative = this.mc.player.isCreative();
         if (isCreative)
         {

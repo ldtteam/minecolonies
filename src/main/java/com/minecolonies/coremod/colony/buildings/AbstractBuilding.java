@@ -667,7 +667,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     /**
      * Serializes to view.
      *
-     * @param buf PacketBuffer to write to.
+     * @param buf FriendlyByteBuf to write to.
      */
     @Override
     public void serializeToView(@NotNull final FriendlyByteBuf buf)

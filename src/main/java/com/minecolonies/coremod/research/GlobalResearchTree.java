@@ -225,10 +225,10 @@ public class GlobalResearchTree implements IGlobalResearchTree
     @Override
     public void sendGlobalResearchTreePackets(final ServerPlayer player)
     {
-        final FriendlyByteBuf researchTreePacketBuffer = new FriendlyByteBuf(Unpooled.buffer());
-        serializeNetworkData(researchTreePacketBuffer);
+        final FriendlyByteBuf researchTreeFriendlyByteBuf = new FriendlyByteBuf(Unpooled.buffer());
+        serializeNetworkData(researchTreeFriendlyByteBuf);
 
-        Network.getNetwork().sendToPlayer(new GlobalResearchTreeMessage(researchTreePacketBuffer), player);
+        Network.getNetwork().sendToPlayer(new GlobalResearchTreeMessage(researchTreeFriendlyByteBuf), player);
     }
 
     public void serializeNetworkData(final FriendlyByteBuf buf)

@@ -79,7 +79,7 @@ public class WindowBuilderResModule extends AbstractModuleWindow
      */
     private void pullResourcesFromHut()
     {
-        final Inventory inventory = this.mc.player.inventory;
+        final Inventory inventory = this.mc.player.getInventory();
         final boolean isCreative = this.mc.player.isCreative();
 
         resources.clear();

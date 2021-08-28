@@ -123,7 +123,7 @@ public class CitizenDiedEvent extends AbstractCitizenEvent
      * @param buf the packet buffer.
      * @return the colony to load.
      */
-    public static CitizenDiedEvent loadFromPacketBuffer(@NotNull final FriendlyByteBuf buf)
+    public static CitizenDiedEvent loadFromFriendlyByteBuf(@NotNull final FriendlyByteBuf buf)
     {
         final CitizenDiedEvent deathEvent = new CitizenDiedEvent();
         deathEvent.deserialize(buf);

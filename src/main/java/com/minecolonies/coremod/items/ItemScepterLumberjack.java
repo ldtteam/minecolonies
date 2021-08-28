@@ -128,7 +128,7 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies
         {
             if (BlockPosUtil.read(compound, key).equals(pos))
             {
-                player.inventory.removeItemNoUpdate(player.inventory.selected);
+                player.getInventory().removeItemNoUpdate(player.getInventory().selected);
                 return false;
             }
         }

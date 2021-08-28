@@ -18,13 +18,13 @@ public class ModContainerInitializers
     @SubscribeEvent
     public static void registerContainers(final RegistryEvent.Register<MenuType<?>> event)
     {
-        ModContainers.craftingFurnace = (MenuType<ContainerCraftingFurnace>) IForgeContainerType.create(ContainerCraftingFurnace::fromPacketBuffer).setRegistryName("crafting_furnace");
-        ModContainers.buildingInv = (MenuType<ContainerBuildingInventory>) IForgeContainerType.create(ContainerBuildingInventory::fromPacketBuffer).setRegistryName("bulding_inv");
-        ModContainers.citizenInv = (MenuType<ContainerCitizenInventory>) IForgeContainerType.create(ContainerCitizenInventory::fromPacketBuffer).setRegistryName("citizen_inv");
-        ModContainers.craftingGrid = (MenuType<ContainerCrafting>) IForgeContainerType.create(ContainerCrafting::fromPacketBuffer).setRegistryName("crafting_building");
-        ModContainers.rackInv = (MenuType<ContainerRack>) IForgeContainerType.create(ContainerRack::fromPacketBuffer).setRegistryName("rack_inv");
-        ModContainers.graveInv = (MenuType<ContainerGrave>) IForgeContainerType.create(ContainerGrave::fromPacketBuffer).setRegistryName("grave_inv");
-        ModContainers.field = (MenuType<ContainerField>) IForgeContainerType.create(ContainerField::fromPacketBuffer).setRegistryName("field");
+        ModContainers.craftingFurnace = (MenuType<ContainerCraftingFurnace>) IForgeContainerType.create(ContainerCraftingFurnace::fromFriendlyByteBuf).setRegistryName("crafting_furnace");
+        ModContainers.buildingInv = (MenuType<ContainerBuildingInventory>) IForgeContainerType.create(ContainerBuildingInventory::fromFriendlyByteBuf).setRegistryName("bulding_inv");
+        ModContainers.citizenInv = (MenuType<ContainerCitizenInventory>) IForgeContainerType.create(ContainerCitizenInventory::fromFriendlyByteBuf).setRegistryName("citizen_inv");
+        ModContainers.craftingGrid = (MenuType<ContainerCrafting>) IForgeContainerType.create(ContainerCrafting::fromFriendlyByteBuf).setRegistryName("crafting_building");
+        ModContainers.rackInv = (MenuType<ContainerRack>) IForgeContainerType.create(ContainerRack::fromFriendlyByteBuf).setRegistryName("rack_inv");
+        ModContainers.graveInv = (MenuType<ContainerGrave>) IForgeContainerType.create(ContainerGrave::fromFriendlyByteBuf).setRegistryName("grave_inv");
+        ModContainers.field = (MenuType<ContainerField>) IForgeContainerType.create(ContainerField::fromFriendlyByteBuf).setRegistryName("field");
 
         event.getRegistry()
           .registerAll(ModContainers.craftingFurnace, ModContainers.buildingInv, ModContainers.citizenInv, ModContainers.rackInv, ModContainers.graveInv, ModContainers.craftingGrid, ModContainers.field);

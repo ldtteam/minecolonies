@@ -10,7 +10,7 @@ import com.ldtteam.blockui.views.SwitchView;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.IPermissions;
-import com.minecolonies.api.colony.permissions.Player;
+import com.minecolonies.api.colony.permissions.ColonyPlayer;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
@@ -18,9 +18,9 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.network.messages.PermissionsMessage;
 import com.minecolonies.coremod.network.messages.server.colony.*;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.core.BlockPos;
@@ -41,7 +41,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
      * List of added users.
      */
     @NotNull
-    private final List<Player> users = new ArrayList<>();
+    private final List<ColonyPlayer> users = new ArrayList<>();
 
     /**
      * The ScrollingList of the users.
@@ -234,7 +234,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
     {
         users.clear();
         users.addAll(building.getColony().getPlayers().values());
-        users.sort(Comparator.comparing(Player::getRank, Rank::compareTo));
+        users.sort(Comparator.comparing(ColonyPlayer::getRank, Rank::compareTo));
     }
 
     /**
@@ -250,7 +250,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
         fillRanks();
         fillPermissionList();
 
-        Player player = Minecraft.getInstance().player;
+        LocalPlayer player = Minecraft.getInstance().player;
         Text label = findPaneOfTypeByID(TOWNHALL_PERMISSION_ERROR, Text.class);
         Button button = findPaneOfTypeByID(BUTTON_ADD_PLAYER, Button.class);
         if (building.getColony().getPermissions().hasPermission(player, Action.EDIT_PERMISSIONS))
@@ -490,7 +490,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                final Player player = users.get(index);
+                final ColonyPlayer player = users.get(index);
                 Rank rank = player.getRank();
                 rowPane.findPaneOfTypeByID(NAME_LABEL, Text.class).setText(player.getName());
                 DropDownList dropdown = rowPane.findPaneOfTypeByID(TOWNHALL_RANK_PICKER, DropDownList.class);
@@ -532,7 +532,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
     private void onRankSelected(final DropDownList dropdown)
     {
         final int index = dropdown.getSelectedIndex();
-        final Player player = users.get(userList.getListElementIndexByPane(dropdown));
+        final ColonyPlayer player = users.get(userList.getListElementIndexByPane(dropdown));
         final Rank rank = rankList.get(index);
         if (rank != player.getRank())
         {
@@ -571,7 +571,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
         final int row = userList.getListElementIndexByPane(button);
         if (row >= 0 && row < users.size())
         {
-            final Player user = users.get(row);
+            final ColonyPlayer user = users.get(row);
             if (user.getRank().getId() != IPermissions.OWNER_RANK_ID)
             {
                 users.remove(user);

@@ -13,6 +13,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
@@ -54,9 +55,9 @@ public abstract class AbstractTileEntityRack extends BlockEntity implements Menu
      */
     protected ItemStackHandler inventory;
 
-    public AbstractTileEntityRack(final BlockEntityType<?> tileEntityTypeIn)
+    public AbstractTileEntityRack(final BlockEntityType<?> tileEntityTypeIn, final BlockPos pos, final BlockState state)
     {
-        super(tileEntityTypeIn);
+        super(tileEntityTypeIn, pos, state);
         inventory = createInventory(DEFAULT_SIZE);
     }
 

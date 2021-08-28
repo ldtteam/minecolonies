@@ -20,7 +20,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.world.level.block.entity.TickableBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.core.Direction;
@@ -48,7 +47,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BUILDING_TY
  * Class which handles the tileEntity of our colonyBuildings.
  */
 @SuppressWarnings("PMD.ExcessiveImports")
-public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding implements TickableBlockEntity
+public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding implements ITickable
 {
     /**
      * NBTTag to store the colony id.
@@ -95,9 +94,9 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     /**
      * Default constructor used to create a new TileEntity via reflection. Do not use.
      */
-    public TileEntityColonyBuilding()
+    public TileEntityColonyBuilding(final BlockPos pos, final BlockState state)
     {
-        this(MinecoloniesTileEntities.BUILDING);
+        this(MinecoloniesTileEntities.BUILDING, pos, state);
     }
 
     /**
@@ -105,9 +104,9 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
      *
      * @param type the entity type.
      */
-    public TileEntityColonyBuilding(final BlockEntityType<? extends AbstractTileEntityColonyBuilding> type)
+    public TileEntityColonyBuilding(final BlockEntityType<? extends AbstractTileEntityColonyBuilding> type, final BlockPos pos, final BlockState state)
     {
-        super(type);
+        super(type, pos, state);
     }
 
     /**
@@ -257,9 +256,9 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     }
 
     @Override
-    public void handleUpdateTag(final BlockState state, final CompoundTag tag)
+    public void handleUpdateTag(final CompoundTag tag)
     {
-        this.load(state, tag);
+        this.load(tag);
     }
 
     @Override
@@ -329,9 +328,9 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     }
 
     @Override
-    public void load(final BlockState state, @NotNull final CompoundTag compound)
+    public void load(@NotNull final CompoundTag compound)
     {
-        super.load(state, compound);
+        super.load(compound);
         if (compound.getAllKeys().contains(TAG_COLONY))
         {
             colonyId = compound.getInt(TAG_COLONY);

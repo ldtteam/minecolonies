@@ -1,6 +1,8 @@
 package com.minecolonies.api.tileentities;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * Represent a TileEntity that will be built by a graveyard undertaker in a graveyard to honor a dead citizen
@@ -10,9 +12,9 @@ public class TileEntityNamedGrave extends AbstractTileEntityNamedGrave
     /**
      * Default constructor used to create a new TileEntity via reflection. Do not use.
      */
-    public TileEntityNamedGrave()
+    public TileEntityNamedGrave(final BlockPos pos, final BlockState state)
     {
-        this(MinecoloniesTileEntities.NAMED_GRAVE);
+        this(MinecoloniesTileEntities.NAMED_GRAVE, pos, state);
     }
 
     /**
@@ -20,8 +22,8 @@ public class TileEntityNamedGrave extends AbstractTileEntityNamedGrave
      *
      * @param type the entity type.
      */
-    public TileEntityNamedGrave(final BlockEntityType<? extends TileEntityNamedGrave> type)
+    public TileEntityNamedGrave(final BlockEntityType<? extends TileEntityNamedGrave> type, final BlockPos pos, final BlockState state)
     {
-        super(type);
+        super(type, pos, state);
     }
 }

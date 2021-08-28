@@ -5,6 +5,7 @@ import com.minecolonies.api.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -12,9 +13,9 @@ import java.util.function.Predicate;
 
 public abstract class AbstractTileEntityWareHouse extends TileEntityColonyBuilding
 {
-    public AbstractTileEntityWareHouse(final BlockEntityType<? extends AbstractTileEntityWareHouse> warehouse)
+    public AbstractTileEntityWareHouse(final BlockEntityType<? extends AbstractTileEntityWareHouse> warehouse, final BlockPos pos, final BlockState state)
     {
-        super(warehouse);
+        super(warehouse, pos, state);
     }
 
     /**

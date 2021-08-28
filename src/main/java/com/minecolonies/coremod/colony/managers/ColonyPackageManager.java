@@ -172,8 +172,8 @@ public class ColonyPackageManager implements IColonyPackageManager
     {
         if (isDirty || !newSubscribers.isEmpty())
         {
-            final FriendlyByteBuf colonyPacketBuffer = new FriendlyByteBuf(Unpooled.buffer());
-            ColonyView.serializeNetworkData(colony, colonyPacketBuffer, !newSubscribers.isEmpty());
+            final FriendlyByteBuf colonyFriendlyByteBuf = new FriendlyByteBuf(Unpooled.buffer());
+            ColonyView.serializeNetworkData(colony, colonyFriendlyByteBuf, !newSubscribers.isEmpty());
             final Set<ServerPlayer> players = new HashSet<>();
             if (isDirty)
             {
@@ -181,7 +181,7 @@ public class ColonyPackageManager implements IColonyPackageManager
             }
             players.addAll(newSubscribers);
 
-            players.forEach(player -> Network.getNetwork().sendToPlayer(new ColonyViewMessage(colony, colonyPacketBuffer, newSubscribers.contains(player)), player));
+            players.forEach(player -> Network.getNetwork().sendToPlayer(new ColonyViewMessage(colony, colonyFriendlyByteBuf, newSubscribers.contains(player)), player));
         }
         colony.getRequestManager().setDirty(false);
     }

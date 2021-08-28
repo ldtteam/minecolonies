@@ -5,7 +5,7 @@ import java.util.UUID;
 /**
  * Player within a colony.
  */
-public class Player
+public class ColonyPlayer
 {
     private final UUID   id;
     private final String name;
@@ -18,7 +18,7 @@ public class Player
      * @param name name of the player
      * @param rank rank of the player.
      */
-    public Player(final UUID id, final String name, final Rank rank)
+    public ColonyPlayer(final UUID id, final String name, final Rank rank)
     {
         this.id = id;
         this.name = name;

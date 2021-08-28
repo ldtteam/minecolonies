@@ -107,10 +107,10 @@ public class TransferItemsRequestMessage extends AbstractBuildingServerMessage<I
         {
             if (MineColonies.getConfig().getServer().debugInventories.get())
             {
-                previousContent = InventoryUtils.getAllItemsForProviders(building.getTileEntity(), new InvWrapper(player.inventory));
+                previousContent = InventoryUtils.getAllItemsForProviders(building.getTileEntity(), new InvWrapper(player.getInventory()));
             }
 
-            amountToTake = Math.min(quantity, InventoryUtils.getItemCountInItemHandler(new InvWrapper(player.inventory),
+            amountToTake = Math.min(quantity, InventoryUtils.getItemCountInItemHandler(new InvWrapper(player.getInventory()),
               stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack, true, true)));
         }
 
@@ -145,9 +145,9 @@ public class TransferItemsRequestMessage extends AbstractBuildingServerMessage<I
                 while (amountToRemoveFromPlayer > 0)
                 {
                     final int slot =
-                      InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.inventory),
+                      InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.getInventory()),
                         stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack, true, true));
-                    final ItemStack itemsTaken = player.inventory.removeItem(slot, amountToRemoveFromPlayer);
+                    final ItemStack itemsTaken = player.getInventory().removeItem(slot, amountToRemoveFromPlayer);
                     amountToRemoveFromPlayer -= ItemStackUtils.getSize(itemsTaken);
                 }
             }
@@ -160,7 +160,7 @@ public class TransferItemsRequestMessage extends AbstractBuildingServerMessage<I
 
         if (!isCreative && previousContent != null && MineColonies.getConfig().getServer().debugInventories.get())
         {
-            InventoryUtils.doStorageSetsMatch(previousContent, InventoryUtils.getAllItemsForProviders(building.getTileEntity(), new InvWrapper(player.inventory)), true);
+            InventoryUtils.doStorageSetsMatch(previousContent, InventoryUtils.getAllItemsForProviders(building.getTileEntity(), new InvWrapper(player.getInventory())), true);
         }
     }
 }

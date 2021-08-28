@@ -14,6 +14,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,9 +37,9 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
      */
     private long lastNotification                   = 0;
 
-    public TileEntityWareHouse()
+    public TileEntityWareHouse(final BlockPos pos, final BlockState state)
     {
-        super(MinecoloniesTileEntities.WAREHOUSE);
+        super(MinecoloniesTileEntities.WAREHOUSE, pos, state);
     }
 
     @Override
