@@ -238,16 +238,15 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
         final List<ItemStack> itemList = new ArrayList<>();
         for (final ItemStack stack : requiredItems)
         {
-            for (final ToolType toolType : ToolType.values())
+            if (ItemStackUtils.isTool(stack, ToolType.FLINT_N_STEEL))
             {
-                if (ItemStackUtils.isTool(stack, toolType))
+                //todo after 1.17 port try to find a generic way to handle this in Structurize.
+                if (structureAI.checkForToolOrWeapon(ToolType.FLINT_N_STEEL))
                 {
-                    if (structureAI.checkForToolOrWeapon(toolType))
-                    {
-                        return false;
-                    }
+                    return false;
                 }
             }
+
             itemList.add(stack);
         }
 

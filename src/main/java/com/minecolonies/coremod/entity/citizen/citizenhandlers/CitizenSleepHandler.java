@@ -8,6 +8,7 @@ import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSleepHandler;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.colony.interactionhandling.SimpleNotificationInteraction;
+import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -28,6 +29,7 @@ import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.DATA_IS_
 import static com.minecolonies.api.research.util.ResearchConstants.WORK_LONGER;
 import static com.minecolonies.api.util.constant.CitizenConstants.NIGHT;
 import static com.minecolonies.api.util.constant.Constants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_SLEEPING;
 
 /**
  * Handles the sleep of the citizen.
@@ -144,6 +146,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
 
         setIsAsleep(true);
 
+        citizen.getCitizenData().triggerInteraction(new StandardInteraction(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_SLEEPING), ChatPriority.HIDDEN));
 
         if (citizen.getCitizenData() != null)
         {

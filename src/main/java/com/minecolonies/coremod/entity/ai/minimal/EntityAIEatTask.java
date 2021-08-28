@@ -60,7 +60,7 @@ public class EntityAIEatTask extends Goal
     /**
      * Min distance in blocks to placeToPath block.
      */
-    private static final int MIN_DISTANCE_TO_RESTAURANT = 10;
+    private static final int MIN_DISTANCE_TO_RESTAURANT = 3;
 
     /**
      * Time required to eat in seconds.

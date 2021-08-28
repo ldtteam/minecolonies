@@ -197,7 +197,12 @@ public class Level
     public Node getRandomNode(@Nullable final Node node)
     {
         Node nextNode = null;
-        if (node != null && getNumberOfBuiltNodes() > MINIMUM_NODES_FOR_RANDOM && rand.nextInt(RANDOM_TYPES) > 0)
+        if (node == null || !nodes.containsKey(new Vec2i(node.getX(), node.getZ())))
+        {
+            return openNodes.peek();
+        }
+
+        if (getNumberOfBuiltNodes() > MINIMUM_NODES_FOR_RANDOM && rand.nextInt(RANDOM_TYPES) > 0)
         {
             nextNode = node.getRandomNextNode(this, 0);
         }
