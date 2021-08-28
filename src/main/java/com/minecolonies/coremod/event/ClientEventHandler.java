@@ -3,9 +3,9 @@ package com.minecolonies.coremod.event;
 import com.google.common.collect.ImmutableMap;
 import com.ldtteam.blockui.Log;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
-import com.ldtteam.structures.client.StructureClientHandler;
-import com.ldtteam.structures.helpers.Settings;
 import com.ldtteam.structurize.Network;
+import com.ldtteam.structurize.client.StructureClientHandler;
+import com.ldtteam.structurize.helpers.Settings;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.network.messages.SchematicRequestMessage;
@@ -52,7 +52,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.text.*;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
@@ -62,7 +61,7 @@ import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
+import net.minecraftforge.fmllegacy.server.ServerLifecycleHooks;
 import org.antlr.v4.runtime.misc.Triple;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -352,15 +351,15 @@ public class ClientEventHandler
         {
             return;
         }
-        final ResourceLocation effectId = colony.getResearchManager().getResearchEffectIdFrom(block.getBlock());
+        final ResourceLocation effectId = colony.getResearchManager().getResearchEffectIdFrom(block);
         if (colony.getResearchManager().getResearchEffects().getEffectStrength(effectId) > 0)
         {
             return;
         }
         if (MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().getResearchForEffect(effectId) != null)
         {
-            tooltip.add(new TranslatableComponent(TranslationConstants.HUT_NEEDS_RESEARCH_TOOLTIP_1, block.getBlock().getName()));
-            tooltip.add(new TranslatableComponent(TranslationConstants.HUT_NEEDS_RESEARCH_TOOLTIP_2, block.getBlock().getName()));
+            tooltip.add(new TranslatableComponent(TranslationConstants.HUT_NEEDS_RESEARCH_TOOLTIP_1, block.getName()));
+            tooltip.add(new TranslatableComponent(TranslationConstants.HUT_NEEDS_RESEARCH_TOOLTIP_2, block.getName()));
         }
     }
 
