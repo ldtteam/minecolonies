@@ -2,9 +2,9 @@ package com.minecolonies.coremod.colony.colonyEvents.buildingEvents;
 
 import com.minecolonies.api.colony.colonyEvents.descriptions.IBuildingEventDescription;
 import com.minecolonies.api.util.BlockPosUtil;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.BlockPos;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BUILDING_LEVEL;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BUILDING_NAME;
@@ -54,9 +54,9 @@ public abstract class AbstractBuildingEvent implements IBuildingEventDescription
     }
 
     @Override
-    public CompoundNBT serializeNBT()
+    public CompoundTag serializeNBT()
     {
-        CompoundNBT compound = new CompoundNBT();
+        CompoundTag compound = new CompoundTag();
         BlockPosUtil.write(compound, TAG_EVENT_POS, eventPos);
         compound.putString(TAG_BUILDING_NAME, buildingName);
         compound.putInt(TAG_BUILDING_LEVEL, level);
@@ -64,7 +64,7 @@ public abstract class AbstractBuildingEvent implements IBuildingEventDescription
     }
 
     @Override
-    public void deserializeNBT(CompoundNBT compound)
+    public void deserializeNBT(CompoundTag compound)
     {
         eventPos = BlockPosUtil.read(compound, TAG_EVENT_POS);
         buildingName = compound.getString(TAG_BUILDING_NAME);
@@ -72,7 +72,7 @@ public abstract class AbstractBuildingEvent implements IBuildingEventDescription
     }
 
     @Override
-    public void serialize(PacketBuffer buf)
+    public void serialize(FriendlyByteBuf buf)
     {
         buf.writeBlockPos(eventPos);
         buf.writeUtf(buildingName);
@@ -80,7 +80,7 @@ public abstract class AbstractBuildingEvent implements IBuildingEventDescription
     }
 
     @Override
-    public void deserialize(PacketBuffer buf)
+    public void deserialize(FriendlyByteBuf buf)
     {
         eventPos = buf.readBlockPos();
         buildingName = buf.readUtf();

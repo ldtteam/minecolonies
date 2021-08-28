@@ -7,22 +7,30 @@ import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.crafting.LootTableAnalyzer;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.drawable.IDrawableStatic;
 import mezz.jei.api.gui.ingredient.ITooltipCallback;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.Rectangle2d;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.renderer.Rect2i;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.text.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+import net.minecraft.ChatFormatting;
+import net.minecraft.locale.Language;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 
 /**
  * Base class for a JEI recipe category that displays a Minecolonies citizen based on a job.
@@ -38,7 +46,7 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
     @NotNull protected final IDrawableStatic slot;
     @NotNull protected final IDrawableStatic chanceSlot;
     @NotNull private final EntityCitizen citizen;
-    @NotNull private final List<ITextProperties> description;
+    @NotNull private final List<FormattedText> description;
     @NotNull protected final List<InfoBlock> infoBlocks;
 
     protected static final int WIDTH = 167;
@@ -91,9 +99,9 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
 
     @NotNull
     @Override
-    public ITextComponent getTitleAsTextComponent()
+    public Component getTitleAsTextComponent()
     {
-        return new TranslationTextComponent(this.job.getName().toLowerCase());
+        return new TranslatableComponent(this.job.getName().toLowerCase());
     }
 
     @NotNull
@@ -111,7 +119,7 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
     }
 
     @Override
-    public void draw(@NotNull final T recipe, @NotNull final MatrixStack matrixStack, final double mouseX, final double mouseY)
+    public void draw(@NotNull final T recipe, @NotNull final PoseStack matrixStack, final double mouseX, final double mouseY)
     {
         final float scale = CITIZEN_H / 2.4f;
         final int citizen_cx = CITIZEN_X + (CITIZEN_W / 2);
@@ -124,31 +132,31 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
 
         int y = 0;
         final Minecraft mc = Minecraft.getInstance();
-        for (final ITextProperties line : this.description)
+        for (final FormattedText line : this.description)
         {
             final int x = 0;
-            mc.font.draw(matrixStack, LanguageMap.getInstance().getVisualOrder(line), x, y, TextFormatting.BLACK.getColor());
+            mc.font.draw(matrixStack, Language.getInstance().getVisualOrder(line), x, y, ChatFormatting.BLACK.getColor());
             y += mc.font.lineHeight + 2;
         }
 
         for (final InfoBlock block : this.infoBlocks)
         {
-            mc.font.drawShadow(matrixStack, block.text, block.bounds.getX(), block.bounds.getY(), TextFormatting.YELLOW.getColor());
+            mc.font.drawShadow(matrixStack, block.text, block.bounds.getX(), block.bounds.getY(), ChatFormatting.YELLOW.getColor());
         }
     }
 
     @NotNull
     @Override
-    public List<ITextComponent> getTooltipStrings(@NotNull final T recipe, final double mouseX, final double mouseY)
+    public List<Component> getTooltipStrings(@NotNull final T recipe, final double mouseX, final double mouseY)
     {
-        final List<ITextComponent> tooltips = new ArrayList<>();
+        final List<Component> tooltips = new ArrayList<>();
 
         for (final InfoBlock block : this.infoBlocks)
         {
             if (block.tip == null) continue;
             if (block.bounds.contains((int) mouseX, (int) mouseY))
             {
-                tooltips.add(new StringTextComponent(block.tip));
+                tooltips.add(new TextComponent(block.tip));
             }
         }
 
@@ -156,27 +164,27 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
     }
 
     @NotNull
-    protected static List<InfoBlock> calculateInfoBlocks(@NotNull final List<ITextComponent> lines)
+    protected static List<InfoBlock> calculateInfoBlocks(@NotNull final List<Component> lines)
     {
         final Minecraft mc = Minecraft.getInstance();
         final List<InfoBlock> result = new ArrayList<>();
         int y = CITIZEN_Y;
-        for (final ITextComponent line : lines)
+        for (final Component line : lines)
         {
             final String text = line.getString();
             final int width = (int) mc.font.getSplitter().stringWidth(text);
             final int height = mc.font.lineHeight;
             final int x = WIDTH - width;
             String tip = null;
-            if (line instanceof TranslationTextComponent)
+            if (line instanceof TranslatableComponent)
             {
-                final String key = ((TranslationTextComponent) line).getKey() + ".tip";
+                final String key = ((TranslatableComponent) line).getKey() + ".tip";
                 if (I18n.exists(key))
                 {
-                    tip = (new TranslationTextComponent(key, ((TranslationTextComponent) line).getArgs())).getString();
+                    tip = (new TranslatableComponent(key, ((TranslatableComponent) line).getArgs())).getString();
                 }
             }
-            result.add(new InfoBlock(text, tip, new Rectangle2d(x, y, width, height)));
+            result.add(new InfoBlock(text, tip, new Rect2i(x, y, width, height)));
             y += height + 2;
         }
         return result;
@@ -184,7 +192,7 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
 
     protected static class InfoBlock
     {
-        public InfoBlock(final String text, final String tip, final Rectangle2d bounds)
+        public InfoBlock(final String text, final String tip, final Rect2i bounds)
         {
             this.text = text;
             this.tip = tip;
@@ -193,7 +201,7 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
 
         public final String text;
         public final String tip;
-        public final Rectangle2d bounds;
+        public final Rect2i bounds;
     }
 
     @NotNull
@@ -208,29 +216,29 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
     }
 
     @NotNull
-    private static List<ITextProperties> translateDescription(@NotNull final String... keys)
+    private static List<FormattedText> translateDescription(@NotNull final String... keys)
     {
-        return Arrays.stream(keys).map(TranslationTextComponent::new).collect(Collectors.toList());
+        return Arrays.stream(keys).map(TranslatableComponent::new).collect(Collectors.toList());
     }
 
     @NotNull
-    private static List<ITextProperties> breakLines(@NotNull final List<ITextProperties> input)
+    private static List<FormattedText> breakLines(@NotNull final List<FormattedText> input)
     {
-        final List<ITextProperties> lines = new ArrayList<>();
-        for (final ITextProperties component : input)
+        final List<FormattedText> lines = new ArrayList<>();
+        for (final FormattedText component : input)
         {
             final Optional<String[]> expanded = component.visit(line -> Optional.of(line.split("\\\\n")));
-            expanded.ifPresent(e -> lines.addAll(Arrays.stream(e).map(StringTextComponent::new).collect(Collectors.toList())));
+            expanded.ifPresent(e -> lines.addAll(Arrays.stream(e).map(TextComponent::new).collect(Collectors.toList())));
         }
         return lines;
     }
 
     @NotNull
-    private static List<ITextProperties> wordWrap(@NotNull final List<ITextProperties> input)
+    private static List<FormattedText> wordWrap(@NotNull final List<FormattedText> input)
     {
         final Minecraft mc = Minecraft.getInstance();
-        final List<ITextProperties> lines = new ArrayList<>();
-        for (final ITextProperties component : input)
+        final List<FormattedText> lines = new ArrayList<>();
+        for (final FormattedText component : input)
         {
             lines.addAll(mc.font.getSplitter().splitLines(component, WIDTH, Style.EMPTY));
         }
@@ -249,7 +257,7 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
         }
 
         @Override
-        public void onTooltip(final int slot, final boolean input, @NotNull final ItemStack stack, @NotNull final List<ITextComponent> tooltip)
+        public void onTooltip(final int slot, final boolean input, @NotNull final ItemStack stack, @NotNull final List<Component> tooltip)
         {
             final int index = slot - this.firstSlot;
             if (index >= 0 && index < this.drops.size())
@@ -261,12 +269,12 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
 
                 if (probability >= 1)
                 {
-                    tooltip.add(new TranslationTextComponent(key,
+                    tooltip.add(new TranslatableComponent(key,
                             Math.round(probability)));
                 }
                 else
                 {
-                    tooltip.add(new TranslationTextComponent(key,
+                    tooltip.add(new TranslatableComponent(key,
                             Math.round(probability * 100) / 100f));
                 }
             }

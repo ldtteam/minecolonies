@@ -20,11 +20,11 @@ import com.minecolonies.coremod.network.messages.server.colony.building.HireFire
 import com.minecolonies.coremod.network.messages.server.colony.citizen.PauseCitizenMessage;
 import com.minecolonies.coremod.network.messages.server.colony.citizen.RestartCitizenMessage;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.TranslatableComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -291,9 +291,9 @@ public class WindowHireWorker extends AbstractWindowSkeleton
                     rowPane.findPaneOfTypeByID(BUTTON_RESTART, Button.class).off();
                 }
 
-                final StringTextComponent intermString = new StringTextComponent(" ");
+                final TextComponent intermString = new TextComponent(" ");
                 final TextBuilder textBuilder = PaneBuilders.textBuilder();
-                textBuilder.append(new StringTextComponent(""));
+                textBuilder.append(new TextComponent(""));
                 int skillCount = citizen.getCitizenSkillHandler().getSkills().entrySet().size();
 
                 for (final Map.Entry<Skill, Tuple<Integer, Double>> entry : citizen.getCitizenSkillHandler().getSkills().entrySet())
@@ -302,8 +302,8 @@ public class WindowHireWorker extends AbstractWindowSkeleton
                     final int skillLevel = entry.getValue().getA();
                     final Style skillStyle = createColor(primary, secondary, entry.getKey());
 
-                    textBuilder.append(new TranslationTextComponent("com.minecolonies.coremod.gui.citizen.skills." + skillName).setStyle(skillStyle));
-                    textBuilder.append(new StringTextComponent(": " + skillLevel).setStyle(skillStyle));
+                    textBuilder.append(new TranslatableComponent("com.minecolonies.coremod.gui.citizen.skills." + skillName).setStyle(skillStyle));
+                    textBuilder.append(new TextComponent(": " + skillLevel).setStyle(skillStyle));
                     if (--skillCount > 0)
                     {
                         textBuilder.append(intermString);
@@ -330,11 +330,11 @@ public class WindowHireWorker extends AbstractWindowSkeleton
     {
         if (primary == current)
         {
-            return Style.EMPTY.applyFormat(TextFormatting.GREEN).applyFormat(TextFormatting.BOLD);
+            return Style.EMPTY.applyFormat(ChatFormatting.GREEN).applyFormat(ChatFormatting.BOLD);
         }
         if (secondary == current)
         {
-            return Style.EMPTY.applyFormat(TextFormatting.YELLOW).applyFormat(TextFormatting.ITALIC);
+            return Style.EMPTY.applyFormat(ChatFormatting.YELLOW).applyFormat(ChatFormatting.ITALIC);
         }
         return Style.EMPTY;
     }

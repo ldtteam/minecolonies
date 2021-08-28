@@ -1,12 +1,13 @@
 package com.minecolonies.coremod.enchants;
 
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.entity.EquipmentSlot;
 
 import static net.minecraft.enchantment.EnchantmentType.WEAPON;
 
-import net.minecraft.enchantment.Enchantment.Rarity;
+import net.mnetimport net.minecraft.world.item.enchantment.Enchantment.Rarity;
 
+.minecraft.world.item.enchantment.EnchantmentCategory
 /**
  * Enchant for adding extra damage against raiders
  */
@@ -17,7 +18,7 @@ public class RaiderDamageEnchant extends Enchantment
      */
     private final String NAME_ID = "raider_damage_enchant";
 
-    public RaiderDamageEnchant(final Rarity rarity, final EquipmentSlotType[] slotTypes)
+    public RaiderDamageEnchant(final Rarity rarity, final EquipmentSlot[] slotTypes)
     {
         super(rarity, WEAPON, slotTypes);
         setRegistryName(NAME_ID);

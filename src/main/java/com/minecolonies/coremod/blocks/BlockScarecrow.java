@@ -4,29 +4,29 @@ import com.minecolonies.api.blocks.huts.AbstractBlockMinecoloniesDefault;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockRenderType;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.material.Material;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.state.EnumProperty;
-import net.minecraft.state.StateContainer;
-import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.state.properties.DoubleBlockHalf;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.shapes.VoxelShapes;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.*;
 import net.minecraftforge.fml.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
@@ -34,8 +34,15 @@ import org.jetbrains.annotations.Nullable;
 
 import static net.minecraft.util.Direction.NORTH;
 
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
+
 /**
- * The class handling the fieldBlocks, placement and activation.
+ * The cnet.minecraft.core.Directions, placement and activation.
  */
 @SuppressWarnings("PMD.ExcessiveImports")
 public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarecrow>
@@ -54,18 +61,18 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
 
     @NotNull
     @Override
-    public BlockRenderType getRenderShape(final BlockState state)
+    public RenderShape getRenderShape(final BlockState state)
     {
-        return BlockRenderType.INVISIBLE;
+        return RenderShape.INVISIBLE;
     }
 
     @Override
     public VoxelShape getShape(
-      final BlockState state, final IBlockReader worldIn, final BlockPos pos, final ISelectionContext context)
+      final BlockState state, final BlockGetter worldIn, final BlockPos pos, final CollisionContext context)
     {
         // Force the different halves to share the same collision space;
         // the user will think it is one big block
-        return VoxelShapes.box(
+        return Shapes.box(
           (float) START_COLLISION,
           (float) (BOTTOM_COLLISION - (state.getValue(HALF) == DoubleBlockHalf.UPPER ? 1 : 0)),
           (float) START_COLLISION,
@@ -77,46 +84,46 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
 
     @Nullable
     @Override
-    public TileEntity createTileEntity(final BlockState state, final IBlockReader world)
+    public BlockEntity createTileEntity(final BlockState state, final BlockGetter world)
     {
         return new ScarecrowTileEntity();
     }
 
     @Override
-    public ActionResultType use(
+    public InteractionResult use(
       final BlockState state,
-      final World worldIn,
+      final Level worldIn,
       final BlockPos pos,
-      final PlayerEntity player,
-      final Hand hand,
-      final BlockRayTraceResult ray)
+      final Player player,
+      final InteractionHand hand,
+      final BlockHitResult ray)
     {
         //If the world is server, open the inventory of the field.
         if (!worldIn.isClientSide)
         {
             // Get the entity of the bottom half
             DoubleBlockHalf half = state.getValue(HALF);
-            final TileEntity entity = worldIn.getBlockEntity(
+            final BlockEntity entity = worldIn.getBlockEntity(
               half == DoubleBlockHalf.UPPER ? pos.below() : pos
             );
 
             if (entity instanceof ScarecrowTileEntity)
             {
-                NetworkHooks.openGui((ServerPlayerEntity) player, (ScarecrowTileEntity) entity, pos);
+                NetworkHooks.openGui((ServerPlayer) player, (ScarecrowTileEntity) entity, pos);
             }
             else
             {
-                return ActionResultType.FAIL;
+                return InteractionResult.FAIL;
             }
         }
 
         // This must succeed in Remote to stop more right click interactions like placing blocks
-        return ActionResultType.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 
     @javax.annotation.Nullable
     @Override
-    public BlockState getStateForPlacement(final BlockItemUseContext context)
+    public BlockState getStateForPlacement(final BlockPlaceContext context)
     {
         @NotNull final Direction dir = (context.getPlayer() == null) ? NORTH : Direction.fromYRot(context.getPlayer().yRot + 180);
 
@@ -131,7 +138,7 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
     }
 
     @Override
-    public boolean canSurvive(BlockState state, IWorldReader worldIn, BlockPos pos)
+    public boolean canSurvive(BlockState state, LevelReader worldIn, BlockPos pos)
     {
         BlockPos blockpos = pos.below();
         BlockState blockstate = worldIn.getBlockState(blockpos);
@@ -146,7 +153,7 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
     }
 
     @Override
-    public void onPlace(final BlockState state, final World worldIn, final BlockPos pos, final BlockState oldState, final boolean isMoving)
+    public void onPlace(final BlockState state, final Level worldIn, final BlockPos pos, final BlockState oldState, final boolean isMoving)
     {
         super.onPlace(state, worldIn, pos, oldState, isMoving);
         if (worldIn.isClientSide)
@@ -166,20 +173,20 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
     }
 
     @Override
-    public void setPlacedBy(World worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack)
+    public void setPlacedBy(Level worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack)
     {
         worldIn.setBlock(pos.above(), state.setValue(HALF, DoubleBlockHalf.UPPER), 3);
     }
 
     @Override
-    public void wasExploded(final World worldIn, final BlockPos pos, final Explosion explosionIn)
+    public void wasExploded(final Level worldIn, final BlockPos pos, final Explosion explosionIn)
     {
         notifyColonyAboutDestruction(worldIn, pos);
         super.wasExploded(worldIn, pos, explosionIn);
     }
 
     @Override
-    public void playerWillDestroy(final World worldIn, @NotNull final BlockPos pos, final BlockState state, @NotNull final PlayerEntity player)
+    public void playerWillDestroy(final Level worldIn, @NotNull final BlockPos pos, final BlockState state, @NotNull final Player player)
     {
         DoubleBlockHalf half = state.getValue(HALF);
         BlockPos otherpos = half == DoubleBlockHalf.LOWER ? pos.above() : pos.below();
@@ -202,11 +209,11 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
      * @param worldIn the world.
      * @param pos     the position.
      */
-    private static void notifyColonyAboutDestruction(final IWorld worldIn, final BlockPos pos)
+    private static void notifyColonyAboutDestruction(final LevelAccessor worldIn, final BlockPos pos)
     {
         if (!worldIn.isClientSide())
         {
-            @Nullable final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld((World) worldIn, pos);
+            @Nullable final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld((Level) worldIn, pos);
             if (colony != null)
             {
                 colony.getBuildingManager().removeField(pos);
@@ -215,7 +222,7 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
     }
 
     @Override
-    protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder)
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder)
     {
         builder.add(HALF, FACING);
     }

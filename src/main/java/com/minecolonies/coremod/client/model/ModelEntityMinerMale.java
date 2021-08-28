@@ -5,40 +5,40 @@ package com.minecolonies.coremod.client.model;
 
 import com.minecolonies.api.client.render.modeltype.CitizenModel;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.client.model.geom.ModelPart;
 
 public class ModelEntityMinerMale extends CitizenModel<AbstractEntityCitizen>
 {
     public ModelEntityMinerMale()
     {
-        ModelRenderer headDetail;
-        ModelRenderer hair;
-        ModelRenderer lamp;
-        ModelRenderer gloveleft;
-        ModelRenderer gloveright;
-        ModelRenderer backpack;
-        ModelRenderer stones;
-        ModelRenderer torchleft;
-        ModelRenderer pack;
-        ModelRenderer torchright;
+        ModelPart headDetail;
+        ModelPart hair;
+        ModelPart lamp;
+        ModelPart gloveleft;
+        ModelPart gloveright;
+        ModelPart backpack;
+        ModelPart stones;
+        ModelPart torchleft;
+        ModelPart pack;
+        ModelPart torchright;
 
         texWidth = 128;
         texHeight = 64;
 
-        leftLeg = new ModelRenderer(this);
+        leftLeg = new ModelPart(this);
         leftLeg.setPos(2.0F, 12.0F, 0.0F);
         leftLeg.texOffs(0, 16).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, false);
 
-        head = new ModelRenderer(this);
+        head = new ModelPart(this);
         head.setPos(0.0F, -0.4F, 0.0F);
         head.texOffs(0, 0).addBox(-4.0F, -7.6F, -4.0F, 8.0F, 8.0F, 8.0F, 0.0F, true);
 
-        headDetail = new ModelRenderer(this);
+        headDetail = new ModelPart(this);
         headDetail.setPos(0.0F, 0.4F, 1.0F);
         head.addChild(headDetail);
         headDetail.texOffs(32, 0).addBox(-4.0F, -8.0F, -5.0F, 8.0F, 8.0F, 8.0F, 0.5F, false);
 
-        hair = new ModelRenderer(this);
+        hair = new ModelPart(this);
         hair.setPos(0.0F, 24.4F, 0.0F);
         head.addChild(hair);
         hair.texOffs(19, 39).addBox(-2.5667F, -31.8667F, -4.5F, 4.0667F, 1.0F, 8.0F, 0.0F, true);
@@ -60,7 +60,7 @@ public class ModelEntityMinerMale extends CitizenModel<AbstractEntityCitizen>
         hair.texOffs(1, 58).addBox(-3.5F, -24.9F, 3.5F, 7.0F, 3.0F, 1.0F, 0.0F, true);
         hair.texOffs(65, 56).addBox(-2.5F, -31.9F, 3.5F, 7.0F, 7.0F, 1.0F, 0.0F, true);
 
-        lamp = new ModelRenderer(this);
+        lamp = new ModelPart(this);
         lamp.setPos(0.0F, 24.4F, 0.0F);
         head.addChild(lamp);
         lamp.texOffs(89, 50).addBox(-0.6333F, -32.45F, -4.9F, 1.1333F, 1.9333F, 9.6667F, 0.0F, true);
@@ -72,40 +72,40 @@ public class ModelEntityMinerMale extends CitizenModel<AbstractEntityCitizen>
         lamp.texOffs(62, 52).addBox(-1.5667F, -30.9667F, -5.0333F, 3.1333F, 1.4F, 0.7333F, 0.0F, true);
         lamp.texOffs(54, 52).addBox(-1.4F, -30.7333F, -5.3333F, 2.7333F, 1.0F, 0.6F, 0.0F, true);
 
-        rightLeg = new ModelRenderer(this);
+        rightLeg = new ModelPart(this);
         rightLeg.setPos(-2.0F, 12.0F, 0.0F);
         rightLeg.texOffs(0, 16).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, true);
 
-        leftArm = new ModelRenderer(this);
+        leftArm = new ModelPart(this);
         leftArm.setPos(5.0F, 2.0F, 0.0F);
         leftArm.texOffs(40, 16).addBox(-1.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, true);
 
-        gloveleft = new ModelRenderer(this);
+        gloveleft = new ModelPart(this);
         gloveleft.setPos(-5.0F, 22.0F, 0.0F);
         leftArm.addChild(gloveleft);
         gloveleft.texOffs(75, 9).addBox(3.4667F, -16.3333F, -2.6667F, 5.0F, 1.0F, 5.2667F, 0.0F, false);
         gloveleft.texOffs(78, 0).addBox(3.6F, -15.3333F, -2.4F, 4.7333F, 4.0F, 4.7333F, 0.0F, false);
 
-        rightArm = new ModelRenderer(this);
+        rightArm = new ModelPart(this);
         rightArm.setPos(-5.0F, 2.0F, 0.0F);
         rightArm.texOffs(40, 16).addBox(-3.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, false);
 
-        gloveright = new ModelRenderer(this);
+        gloveright = new ModelPart(this);
         gloveright.setPos(5.0F, 22.0F, 0.0F);
         rightArm.addChild(gloveright);
         gloveright.texOffs(96, 9).addBox(-8.5333F, -16.3333F, -2.6667F, 5.0F, 1.0F, 5.2667F, 0.0F, false);
         gloveright.texOffs(97, 0).addBox(-8.4F, -15.3333F, -2.4F, 4.7333F, 4.0F, 4.7333F, 0.0F, false);
 
-        body = new ModelRenderer(this);
+        body = new ModelPart(this);
         body.setPos(0.0F, 0.0F, 0.0F);
         body.texOffs(16, 16).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, 0.0F, false);
 
-        backpack = new ModelRenderer(this);
+        backpack = new ModelPart(this);
         backpack.setPos(0.0F, 24.0F, 0.0F);
         body.addChild(backpack);
 
 
-        stones = new ModelRenderer(this);
+        stones = new ModelPart(this);
         stones.setPos(0.0F, 0.0F, 0.0F);
         backpack.addChild(stones);
         stones.texOffs(98, 26).addBox(-1.3481F, -22.0152F, 3.3085F, 1.0F, 1.0F, 1.0F, 0.0F, false);
@@ -139,14 +139,14 @@ public class ModelEntityMinerMale extends CitizenModel<AbstractEntityCitizen>
         stones.texOffs(102, 34).addBox(-0.3308F, -21.8154F, 3.8916F, 1.0F, 1.1333F, 1.0F, 0.0F, false);
         stones.texOffs(106, 34).addBox(-0.3308F, -21.8154F, 2.825F, 1.0F, 1.1333F, 1.0F, 0.0F, false);
 
-        torchleft = new ModelRenderer(this);
+        torchleft = new ModelPart(this);
         torchleft.setPos(0.0F, 0.0F, 0.0F);
         backpack.addChild(torchleft);
         torchleft.texOffs(80, 25).addBox(3.1167F, -22.6167F, 5.15F, 0.75F, 0.75F, 0.75F, 0.0F, false);
         torchleft.texOffs(88, 25).addBox(3.25F, -21.4167F, 5.2833F, 0.4833F, 3.55F, 0.4833F, 0.0F, false);
         torchleft.texOffs(88, 23).addBox(2.9833F, -21.9367F, 5.0F, 1.0167F, 0.6167F, 1.0167F, 0.0F, false);
 
-        pack = new ModelRenderer(this);
+        pack = new ModelPart(this);
         pack.setPos(0.0F, 0.0F, 0.0F);
         backpack.addChild(pack);
         pack.texOffs(64, 16).addBox(-3.0F, -21.9333F, 5.0F, 6.0F, 7.4F, 1.0F, 0.0F, false);
@@ -156,7 +156,7 @@ public class ModelEntityMinerMale extends CitizenModel<AbstractEntityCitizen>
         pack.texOffs(79, 22).addBox(2.9833F, -20.6033F, 5.0F, 1.0167F, 0.6167F, 1.0167F, 0.0F, false);
         pack.texOffs(83, 22).addBox(-4.0167F, -20.6033F, 5.0F, 1.0167F, 0.6167F, 1.0167F, 0.0F, false);
 
-        torchright = new ModelRenderer(this);
+        torchright = new ModelPart(this);
         torchright.setPos(0.0F, 0.0F, 0.0F);
         backpack.addChild(torchright);
         torchright.texOffs(93, 22).addBox(-4.0167F, -21.9367F, 5.0F, 1.0167F, 0.6167F, 1.0167F, 0.0F, false);
@@ -166,7 +166,7 @@ public class ModelEntityMinerMale extends CitizenModel<AbstractEntityCitizen>
         hat.visible = false;
     }
 
-    public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z)
+    public void setRotationAngle(ModelPart modelRenderer, float x, float y, float z)
     {
         modelRenderer.xRot = x;
         modelRenderer.yRot = y;

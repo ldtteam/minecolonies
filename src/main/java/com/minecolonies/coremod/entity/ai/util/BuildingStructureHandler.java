@@ -15,16 +15,16 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilde
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
 import com.minecolonies.coremod.util.WorkerUtil;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -76,7 +76,7 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
      * @param entityAIStructure the AI handling this structure.
      */
     public BuildingStructureHandler(
-      final World world,
+      final Level world,
       final BlockPos worldPos,
       final String structureName,
       final PlacementSettings settings,
@@ -100,7 +100,7 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
      * @param entityAIStructure the AI handling this structure.
      */
     public BuildingStructureHandler(
-      final World world,
+      final Level world,
       final BlockPos worldPos,
       final Blueprint blueprint,
       final PlacementSettings settings,
@@ -172,17 +172,17 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
         WorkerUtil.faceBlock(worldPos, structureAI.getWorker());
         //Move out of the way when placing blocks
         final ItemStack item = BlockUtils.getItemStackFromBlockState(blockState);
-        structureAI.getWorker().setItemSlot(EquipmentSlotType.MAINHAND, item == null ? ItemStackUtils.EMPTY : item);
+        structureAI.getWorker().setItemSlot(EquipmentSlot.MAINHAND, item == null ? ItemStackUtils.EMPTY : item);
 
-        if (MathHelper.floor(structureAI.getWorker().getX()) == worldPos.getX()
-              && MathHelper.abs(worldPos.getY() - (int) structureAI.getWorker().getY()) <= 1
-              && MathHelper.floor(structureAI.getWorker().getZ()) == worldPos.getZ()
+        if (Mth.floor(structureAI.getWorker().getX()) == worldPos.getX()
+              && Mth.abs(worldPos.getY() - (int) structureAI.getWorker().getY()) <= 1
+              && Mth.floor(structureAI.getWorker().getZ()) == worldPos.getZ()
               && structureAI.getWorker().getNavigation().isDone())
         {
             structureAI.getWorker().getNavigation().moveAwayFromXYZ(worldPos, RUN_AWAY_SPEED, 1);
         }
 
-        structureAI.getWorker().swing(Hand.MAIN_HAND);
+        structureAI.getWorker().swing(InteractionHand.MAIN_HAND);
     }
 
     @Nullable

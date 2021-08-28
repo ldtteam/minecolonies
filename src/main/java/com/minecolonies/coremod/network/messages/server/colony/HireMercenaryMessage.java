@@ -4,9 +4,9 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.coremod.entity.mobs.EntityMercenary;
 import com.minecolonies.coremod.network.messages.server.AbstractColonyServerMessage;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.SoundEvents;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,7 +34,7 @@ public class HireMercenaryMessage extends AbstractColonyServerMessage
     @Override
     protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony)
     {
-        final PlayerEntity player = ctxIn.getSender();
+        final Player player = ctxIn.getSender();
         if (player == null)
         {
             return;
@@ -46,13 +46,13 @@ public class HireMercenaryMessage extends AbstractColonyServerMessage
     }
 
     @Override
-    protected void toBytesOverride(final PacketBuffer buf)
+    protected void toBytesOverride(final FriendlyByteBuf buf)
     {
 
     }
 
     @Override
-    protected void fromBytesOverride(final PacketBuffer buf)
+    protected void fromBytesOverride(final FriendlyByteBuf buf)
     {
 
     }

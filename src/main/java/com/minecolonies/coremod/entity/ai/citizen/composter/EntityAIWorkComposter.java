@@ -17,15 +17,15 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCompost
 import com.minecolonies.coremod.colony.jobs.JobComposter;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.tileentities.TileEntityBarrel;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Hand;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -106,12 +106,12 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
     private IAIState accelerateBarrels()
     {
         final int accelerationTicks = (worker.getCitizenData().getCitizenSkillHandler().getLevel(getOwnBuilding().getPrimarySkill()) / 10) * 2;
-        final World world = getOwnBuilding().getColony().getWorld();
+        final Level world = getOwnBuilding().getColony().getWorld();
         for (final BlockPos pos : getOwnBuilding().getBarrels())
         {
             if (WorldUtil.isBlockLoaded(world, pos))
             {
-                final TileEntity entity = world.getBlockEntity(pos);
+                final BlockEntity entity = world.getBlockEntity(pos);
                 if (entity instanceof TileEntityBarrel)
                 {
                     final TileEntityBarrel barrel = (TileEntityBarrel) entity;
@@ -163,11 +163,11 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
         );
         if (slot >= 0)
         {
-            worker.setItemInHand(Hand.MAIN_HAND, worker.getInventoryCitizen().getStackInSlot(slot));
+            worker.setItemInHand(InteractionHand.MAIN_HAND, worker.getInventoryCitizen().getStackInSlot(slot));
             return START_WORKING;
         }
 
-        worker.setItemInHand(Hand.MAIN_HAND, ItemStack.EMPTY);
+        worker.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
 
         if (!getOwnBuilding().hasWorkerOpenRequests(worker.getCitizenData()))
         {
@@ -195,7 +195,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
      */
     private IAIState decideWhatToDo()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_STATUS_IDLING));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslatableComponent(COM_MINECOLONIES_COREMOD_STATUS_IDLING));
         worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
 
         if (walkToBuilding())
@@ -208,7 +208,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
 
         for (final BlockPos barrel : building.getBarrels())
         {
-            final TileEntity te = world.getBlockEntity(barrel);
+            final BlockEntity te = world.getBlockEntity(barrel);
             if (te instanceof TileEntityBarrel)
             {
 
@@ -224,7 +224,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
 
         for (final BlockPos barrel : building.getBarrels())
         {
-            final TileEntity te = world.getBlockEntity(barrel);
+            final BlockEntity te = world.getBlockEntity(barrel);
             if (te instanceof TileEntityBarrel && !((TileEntityBarrel) te).checkIfWorking())
             {
                 this.currentTarget = barrel;
@@ -245,16 +245,16 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
      */
     private IAIState fillBarrels()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_STATUS_COMPOSTER_FILLING));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslatableComponent(COM_MINECOLONIES_COREMOD_STATUS_COMPOSTER_FILLING));
 
-        if (worker.getItemInHand(Hand.MAIN_HAND) == ItemStack.EMPTY)
+        if (worker.getItemInHand(InteractionHand.MAIN_HAND) == ItemStack.EMPTY)
         {
             final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(
               worker.getInventoryCitizen(), stack -> getOwnBuilding().getModuleMatching(ItemListModule.class, m -> m.getId().equals(COMPOSTABLE_LIST)).isItemInList(new ItemStorage(stack)));
 
             if (slot >= 0)
             {
-                worker.setItemInHand(Hand.MAIN_HAND, worker.getInventoryCitizen().getStackInSlot(slot));
+                worker.setItemInHand(InteractionHand.MAIN_HAND, worker.getInventoryCitizen().getStackInSlot(slot));
             }
             else
             {
@@ -273,10 +273,10 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
             final TileEntityBarrel barrel = (TileEntityBarrel) world.getBlockEntity(currentTarget);
 
             worker.getCitizenItemHandler().hitBlockWithToolInHand(currentTarget);
-            barrel.addItem(worker.getItemInHand(Hand.MAIN_HAND));
+            barrel.addItem(worker.getItemInHand(InteractionHand.MAIN_HAND));
             worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
             this.incrementActionsDoneAndDecSaturation();
-            worker.setItemInHand(Hand.MAIN_HAND, ItemStackUtils.EMPTY);
+            worker.setItemInHand(InteractionHand.MAIN_HAND, ItemStackUtils.EMPTY);
 
             incrementActionsDone();
         }
@@ -291,7 +291,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
      */
     private IAIState harvestBarrels()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_STATUS_COMPOSTER_HARVESTING));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslatableComponent(COM_MINECOLONIES_COREMOD_STATUS_COMPOSTER_HARVESTING));
 
         if (walkToBlock(currentTarget))
         {
@@ -376,9 +376,9 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
         if (ticksToComplain <= 0)
         {
             ticksToComplain = TICKS_UNTIL_COMPLAIN;
-            for (final PlayerEntity player : getOwnBuilding().getColony().getMessagePlayerEntities())
+            for (final Player player : getOwnBuilding().getColony().getMessagePlayerEntities())
             {
-                player.sendMessage(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_COMPOSTER_EMPTYLIST), player.getUUID());
+                player.sendMessage(new TranslatableComponent(COM_MINECOLONIES_COREMOD_ENTITY_COMPOSTER_EMPTYLIST), player.getUUID());
             }
         }
         else

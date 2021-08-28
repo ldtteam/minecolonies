@@ -2,14 +2,14 @@ package com.minecolonies.api.advancements.complete_build_request;
 
 import com.ldtteam.structurize.management.StructureName;
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.advancements.criterion.CriterionInstance;
-import net.minecraft.advancements.criterion.EntityPredicate;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.advancements.critereon.AbstractCriterionTriggerInstance;
+import net.minecraft.advancements.critereon.EntityPredicate;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * The test instance to check "hut_name" or "structure_name" for the "complete_build_request" trigger
  */
-public class CompleteBuildRequestCriterionInstance extends CriterionInstance
+public class CompleteBuildRequestCriterionInstance extends AbstractCriterionTriggerInstance
 {
     private String        hutName;
     private StructureName structureName;
@@ -17,7 +17,7 @@ public class CompleteBuildRequestCriterionInstance extends CriterionInstance
 
     public CompleteBuildRequestCriterionInstance()
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_COMPLETE_BUILD_REQUEST), EntityPredicate.AndPredicate.ANY);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_COMPLETE_BUILD_REQUEST), EntityPredicate.Composite.ANY);
     }
 
     /**

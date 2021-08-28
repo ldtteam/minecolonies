@@ -3,10 +3,10 @@ package com.minecolonies.api.advancements.click_gui_button;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.advancements.AbstractCriterionTrigger;
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.loot.ConditionArrayParser;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.advancements.critereon.DeserializationContext;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 public class ClickGuiButtonTrigger extends AbstractCriterionTrigger<ClickGuiButtonListeners, ClickGuiButtonCriterionInstance>
@@ -22,7 +22,7 @@ public class ClickGuiButtonTrigger extends AbstractCriterionTrigger<ClickGuiButt
      * @param buttonId the id of the button in blockout
      * @param windowResource the blockout window id to refer to
      */
-    public void trigger(final ServerPlayerEntity player, final String buttonId, final String windowResource)
+    public void trigger(final ServerPlayer player, final String buttonId, final String windowResource)
     {
         final ClickGuiButtonListeners listeners = this.getListeners(player.getAdvancements());
         if (listeners != null)
@@ -33,14 +33,14 @@ public class ClickGuiButtonTrigger extends AbstractCriterionTrigger<ClickGuiButt
 
     @NotNull
     @Override
-    public ClickGuiButtonCriterionInstance createInstance(@NotNull final JsonObject jsonObject, @NotNull final ConditionArrayParser conditionArrayParser)
+    public ClickGuiButtonCriterionInstance createInstance(@NotNull final JsonObject jsonObject, @NotNull final DeserializationContext conditionArrayParser)
     {
         if (jsonObject.has("button_id"))
         {
-            final String buttonId = JSONUtils.getAsString(jsonObject, "button_id");
+            final String buttonId = GsonHelper.getAsString(jsonObject, "button_id");
             if (jsonObject.has("window_resource_location"))
             {
-                final String windowResource = JSONUtils.getAsString(jsonObject, "window_resource_location");
+                final String windowResource = GsonHelper.getAsString(jsonObject, "window_resource_location");
                 return new ClickGuiButtonCriterionInstance(buttonId, windowResource);
             }
             return new ClickGuiButtonCriterionInstance(buttonId);

@@ -5,12 +5,12 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.network.IMessage;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.world.World;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.Registry;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.Nullable;
@@ -20,7 +20,7 @@ public abstract class AbstractColonyServerMessage implements IMessage
     /**
      * The dimensionId this message originates from
      */
-    private RegistryKey<World> dimensionId;
+    private ResourceKey<Level> dimensionId;
 
     /**
      * The colonyId this message originates from
@@ -48,7 +48,7 @@ public abstract class AbstractColonyServerMessage implements IMessage
      * @param dimensionId The dimension of the colony
      * @param colonyId    The colony ID
      */
-    public AbstractColonyServerMessage(final RegistryKey<World> dimensionId, final int colonyId)
+    public AbstractColonyServerMessage(final ResourceKey<Level> dimensionId, final int colonyId)
     {
         this.dimensionId = dimensionId;
         this.colonyId = colonyId;
@@ -72,12 +72,12 @@ public abstract class AbstractColonyServerMessage implements IMessage
      *
      * @param buf the used byteBuffer.
      */
-    protected abstract void toBytesOverride(final PacketBuffer buf);
+    protected abstract void toBytesOverride(final FriendlyByteBuf buf);
 
-    protected void toBytesAbstractOverride(final PacketBuffer buf) {}
+    protected void toBytesAbstractOverride(final FriendlyByteBuf buf) {}
 
     @Override
-    public final void toBytes(final PacketBuffer buf)
+    public final void toBytes(final FriendlyByteBuf buf)
     {
         buf.writeUtf(dimensionId.location().toString());
         buf.writeInt(colonyId);
@@ -90,14 +90,14 @@ public abstract class AbstractColonyServerMessage implements IMessage
      *
      * @param buf the used byteBuffer.
      */
-    protected abstract void fromBytesOverride(final PacketBuffer buf);
+    protected abstract void fromBytesOverride(final FriendlyByteBuf buf);
 
-    protected void fromBytesAbstractOverride(final PacketBuffer buf) {}
+    protected void fromBytesAbstractOverride(final FriendlyByteBuf buf) {}
 
     @Override
-    public final void fromBytes(final PacketBuffer buf)
+    public final void fromBytes(final FriendlyByteBuf buf)
     {
-        this.dimensionId = RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)));
+        this.dimensionId = ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)));
         this.colonyId = buf.readInt();
         fromBytesAbstractOverride(buf);
         fromBytesOverride(buf);
@@ -112,7 +112,7 @@ public abstract class AbstractColonyServerMessage implements IMessage
     @Override
     public final void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
-        final ServerPlayerEntity player = ctxIn.getSender();
+        final ServerPlayer player = ctxIn.getSender();
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, dimensionId);
         if (colony != null)
         {

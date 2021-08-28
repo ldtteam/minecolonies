@@ -1,13 +1,13 @@
 package com.minecolonies.coremod.network.messages.client;
 
 import com.minecolonies.api.network.IMessage;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.material.Material;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Material;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.BlockPos;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
@@ -50,13 +50,13 @@ public class CompostParticleMessage implements IMessage
     }
 
     @Override
-    public void fromBytes(@NotNull final PacketBuffer buf)
+    public void fromBytes(@NotNull final FriendlyByteBuf buf)
     {
         pos = buf.readBlockPos();
     }
 
     @Override
-    public void toBytes(@NotNull final PacketBuffer buf)
+    public void toBytes(@NotNull final FriendlyByteBuf buf)
     {
         buf.writeBlockPos(pos);
     }
@@ -71,7 +71,7 @@ public class CompostParticleMessage implements IMessage
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
-        final ClientWorld world = Minecraft.getInstance().level;
+        final ClientLevel world = Minecraft.getInstance().level;
         final int amount = random.nextInt(15) + 1;
         final BlockState BlockState = world.getBlockState(pos);
         double d0;

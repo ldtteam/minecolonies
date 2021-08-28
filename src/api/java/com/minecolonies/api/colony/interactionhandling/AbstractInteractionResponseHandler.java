@@ -4,10 +4,10 @@ import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.NbtTagConstants;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.world.World;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,12 +26,12 @@ public abstract class AbstractInteractionResponseHandler implements IInteraction
     /**
      * The text the citizen is saying.
      */
-    private ITextComponent inquiry;
+    private Component inquiry;
 
     /**
      * The map of response options of the player, to new inquires of the interacting entity.
      */
-    private Map<ITextComponent, ITextComponent> responses = new LinkedHashMap<>();
+    private Map<Component, Component> responses = new LinkedHashMap<>();
 
     /**
      * If the interaction is a primary (true) or secondary (false) interaction.
@@ -53,15 +53,15 @@ public abstract class AbstractInteractionResponseHandler implements IInteraction
      */
     @SafeVarargs
     public AbstractInteractionResponseHandler(
-      @NotNull final ITextComponent inquiry,
+      @NotNull final Component inquiry,
       final boolean primary,
       final IChatPriority priority,
-      final Tuple<ITextComponent, ITextComponent>... responseTuples)
+      final Tuple<Component, Component>... responseTuples)
     {
         this.inquiry = inquiry;
         this.primary = primary;
         this.priority = priority;
-        for (final Tuple<ITextComponent, ITextComponent> element : responseTuples)
+        for (final Tuple<Component, Component> element : responseTuples)
         {
             this.responses.put(element.getA(), element.getB());
         }
@@ -76,20 +76,20 @@ public abstract class AbstractInteractionResponseHandler implements IInteraction
     }
 
     @Override
-    public ITextComponent getInquiry()
+    public Component getInquiry()
     {
         return inquiry;
     }
 
     @Nullable
     @Override
-    public ITextComponent getResponseResult(final ITextComponent response)
+    public Component getResponseResult(final Component response)
     {
         return responses.getOrDefault(response, null);
     }
 
     @Override
-    public List<ITextComponent> getPossibleResponses()
+    public List<Component> getPossibleResponses()
     {
         return ImmutableList.copyOf(responses.keySet());
     }
@@ -99,16 +99,16 @@ public abstract class AbstractInteractionResponseHandler implements IInteraction
      *
      * @return the serialized data.
      */
-    public CompoundNBT serializeNBT()
+    public CompoundTag serializeNBT()
     {
-        final CompoundNBT tag = new CompoundNBT();
-        tag.putString(TAG_INQUIRY, ITextComponent.Serializer.toJson(this.inquiry));
-        final ListNBT list = new ListNBT();
-        for (final Map.Entry<ITextComponent, ITextComponent> element : responses.entrySet())
+        final CompoundTag tag = new CompoundTag();
+        tag.putString(TAG_INQUIRY, Component.Serializer.toJson(this.inquiry));
+        final ListTag list = new ListTag();
+        for (final Map.Entry<Component, Component> element : responses.entrySet())
         {
-            final CompoundNBT elementTag = new CompoundNBT();
-            elementTag.putString(TAG_RESPONSE, ITextComponent.Serializer.toJson(element.getKey()));
-            elementTag.putString(TAG_NEXT_INQUIRY, ITextComponent.Serializer.toJson(element.getValue()));
+            final CompoundTag elementTag = new CompoundTag();
+            elementTag.putString(TAG_RESPONSE, Component.Serializer.toJson(element.getKey()));
+            elementTag.putString(TAG_NEXT_INQUIRY, Component.Serializer.toJson(element.getValue()));
 
             list.add(elementTag);
         }
@@ -122,14 +122,14 @@ public abstract class AbstractInteractionResponseHandler implements IInteraction
     /**
      * Deserialize the response handler from NBT.
      */
-    public void deserializeNBT(@NotNull final CompoundNBT compoundNBT)
+    public void deserializeNBT(@NotNull final CompoundTag compoundNBT)
     {
-        this.inquiry = ITextComponent.Serializer.fromJson(compoundNBT.getString(TAG_INQUIRY));
-        final ListNBT list = compoundNBT.getList(TAG_RESPONSES, Constants.NBT.TAG_COMPOUND);
+        this.inquiry = Component.Serializer.fromJson(compoundNBT.getString(TAG_INQUIRY));
+        final ListTag list = compoundNBT.getList(TAG_RESPONSES, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < list.size(); i++)
         {
-            final CompoundNBT nbt = list.getCompound(i);
-            this.responses.put(ITextComponent.Serializer.fromJson(nbt.getString(TAG_RESPONSE)), ITextComponent.Serializer.fromJson(nbt.getString(TAG_NEXT_INQUIRY)));
+            final CompoundTag nbt = list.getCompound(i);
+            this.responses.put(Component.Serializer.fromJson(nbt.getString(TAG_RESPONSE)), Component.Serializer.fromJson(nbt.getString(TAG_NEXT_INQUIRY)));
         }
         this.primary = compoundNBT.getBoolean(TAG_PRIMARY);
         this.priority = ChatPriority.values()[compoundNBT.getInt(TAG_PRIORITY)];
@@ -148,7 +148,7 @@ public abstract class AbstractInteractionResponseHandler implements IInteraction
     }
 
     @Override
-    public boolean isVisible(final World world)
+    public boolean isVisible(final Level world)
     {
         return true;
     }

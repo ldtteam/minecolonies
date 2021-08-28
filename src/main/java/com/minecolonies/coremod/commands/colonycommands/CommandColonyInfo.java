@@ -8,11 +8,11 @@ import com.minecolonies.coremod.commands.commandTypes.IMCCommand;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import net.minecraft.command.CommandSource;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.ChatFormatting;
 
 import static com.minecolonies.coremod.commands.CommandArgumentNames.COLONYID_ARG;
 
@@ -34,7 +34,7 @@ public class CommandColonyInfo implements IMCCommand
      * @param context the context of the command execution
      */
     @Override
-    public int onExecute(final CommandContext<CommandSource> context)
+    public int onExecute(final CommandContext<CommandSourceStack> context)
     {
         // Colony
         final int colonyID = IntegerArgumentType.getInteger(context, COLONYID_ARG);
@@ -52,20 +52,20 @@ public class CommandColonyInfo implements IMCCommand
         }
 
         final BlockPos position = colony.getCenter();
-        context.getSource().sendSuccess(new StringTextComponent(ID_TEXT + colony.getID() + NAME_TEXT + colony.getName()), true);
+        context.getSource().sendSuccess(new TextComponent(ID_TEXT + colony.getID() + NAME_TEXT + colony.getName()), true);
         final String mayor = colony.getPermissions().getOwnerName();
-        context.getSource().sendSuccess(new StringTextComponent(MAYOR_TEXT + mayor), true);
+        context.getSource().sendSuccess(new TextComponent(MAYOR_TEXT + mayor), true);
         context.getSource()
-          .sendSuccess(new StringTextComponent(CITIZENS + colony.getCitizenManager().getCurrentCitizenCount() + "/" + colony.getCitizenManager().getMaxCitizens()), true);
+          .sendSuccess(new TextComponent(CITIZENS + colony.getCitizenManager().getCurrentCitizenCount() + "/" + colony.getCitizenManager().getMaxCitizens()), true);
         context.getSource()
-          .sendSuccess(new StringTextComponent(COORDINATES_TEXT + String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())).setStyle(Style.EMPTY.withColor(
-            TextFormatting.GREEN)), true);
-        context.getSource().sendSuccess(new StringTextComponent(String.format(LAST_CONTACT_TEXT, colony.getLastContactInHours())), true);
-        context.getSource().sendSuccess(new StringTextComponent(IS_DELETABLE + !colony.canBeAutoDeleted()), true);
+          .sendSuccess(new TextComponent(COORDINATES_TEXT + String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())).setStyle(Style.EMPTY.withColor(
+            ChatFormatting.GREEN)), true);
+        context.getSource().sendSuccess(new TextComponent(String.format(LAST_CONTACT_TEXT, colony.getLastContactInHours())), true);
+        context.getSource().sendSuccess(new TextComponent(IS_DELETABLE + !colony.canBeAutoDeleted()), true);
 
         if (!colony.getRaiderManager().canHaveRaiderEvents())
         {
-            context.getSource().sendSuccess(new StringTextComponent(CANNOT_BE_RAIDED), true);
+            context.getSource().sendSuccess(new TextComponent(CANNOT_BE_RAIDED), true);
         }
 
         return 1;
@@ -81,7 +81,7 @@ public class CommandColonyInfo implements IMCCommand
     }
 
     @Override
-    public LiteralArgumentBuilder<CommandSource> build()
+    public LiteralArgumentBuilder<CommandSourceStack> build()
     {
         return IMCCommand.newLiteral(getName())
                  .then(IMCCommand.newArgument(COLONYID_ARG, IntegerArgumentType.integer(1)).executes(this::checkPreConditionAndExecute));

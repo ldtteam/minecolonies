@@ -17,13 +17,13 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.colony.jobs.JobPupil;
 import com.minecolonies.coremod.colony.jobs.JobTeacher;
-import net.minecraft.block.Block;
-import net.minecraft.block.CarpetBlock;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.WoolCarpetBlock;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -180,23 +180,23 @@ public class BuildingSchool extends AbstractBuildingWorker
     }
 
     @Override
-    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
+    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final Level world)
     {
         super.registerBlockPosition(block, pos, world);
-        if (block instanceof CarpetBlock)
+        if (block instanceof WoolCarpetBlock)
         {
             carpet.add(pos);
         }
     }
 
     @Override
-    public void deserializeNBT(final CompoundNBT compound)
+    public void deserializeNBT(final CompoundTag compound)
     {
         super.deserializeNBT(compound);
-        final ListNBT carpetTagList = compound.getList(TAG_CARPET, Constants.NBT.TAG_COMPOUND);
+        final ListTag carpetTagList = compound.getList(TAG_CARPET, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < carpetTagList.size(); ++i)
         {
-            final CompoundNBT bedCompound = carpetTagList.getCompound(i);
+            final CompoundTag bedCompound = carpetTagList.getCompound(i);
             final BlockPos pos = BlockPosUtil.read(bedCompound, TAG_POS);
             if (!carpet.contains(pos))
             {
@@ -206,15 +206,15 @@ public class BuildingSchool extends AbstractBuildingWorker
     }
 
     @Override
-    public CompoundNBT serializeNBT()
+    public CompoundTag serializeNBT()
     {
-        final CompoundNBT compound = super.serializeNBT();
+        final CompoundTag compound = super.serializeNBT();
         if (!carpet.isEmpty())
         {
-            @NotNull final ListNBT carpetTagList = new ListNBT();
+            @NotNull final ListTag carpetTagList = new ListTag();
             for (@NotNull final BlockPos pos : carpet)
             {
-                final CompoundNBT carpetCompound = new CompoundNBT();
+                final CompoundTag carpetCompound = new CompoundTag();
                 BlockPosUtil.write(carpetCompound, NbtTagConstants.TAG_POS, pos);
                 carpetTagList.add(carpetCompound);
             }
@@ -231,7 +231,7 @@ public class BuildingSchool extends AbstractBuildingWorker
     }
 
     @Override
-    public void serializeToView(@NotNull final PacketBuffer buf)
+    public void serializeToView(@NotNull final FriendlyByteBuf buf)
     {
         super.serializeToView(buf);
         buf.writeBoolean(hasTeacher);
@@ -275,7 +275,7 @@ public class BuildingSchool extends AbstractBuildingWorker
             return null;
         }
         final BlockPos returnPos = carpet.get(random.nextInt(carpet.size()));
-        if (colony.getWorld().getBlockState(returnPos).getBlock() instanceof CarpetBlock)
+        if (colony.getWorld().getBlockState(returnPos).getBlock() instanceof WoolCarpetBlock)
         {
             return returnPos;
         }
@@ -322,7 +322,7 @@ public class BuildingSchool extends AbstractBuildingWorker
         }
 
         @Override
-        public void deserialize(@NotNull final PacketBuffer buf)
+        public void deserialize(@NotNull final FriendlyByteBuf buf)
         {
             super.deserialize(buf);
             this.hasTeacher = buf.readBoolean();

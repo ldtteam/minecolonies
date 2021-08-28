@@ -1,10 +1,10 @@
 package com.minecolonies.api.entity;
 
 import com.google.common.collect.Sets;
-import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.entity.ai.goal.GoalSelector;
-import net.minecraft.entity.ai.goal.PrioritizedGoal;
-import net.minecraft.profiler.IProfiler;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.goal.GoalSelector;
+import net.minecraft.world.entity.ai.goal.WrappedGoal;
+import net.minecraft.util.profiling.ProfilerFiller;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ public class CustomGoalSelector extends GoalSelector
     /**
      * Dummy Goal, used for filling up the list.
      */
-    private static final PrioritizedGoal DUMMY = new PrioritizedGoal(Integer.MAX_VALUE, new Goal()
+    private static final WrappedGoal DUMMY = new WrappedGoal(Integer.MAX_VALUE, new Goal()
     {
         @Override
         public boolean canUse()
@@ -39,17 +39,17 @@ public class CustomGoalSelector extends GoalSelector
     /**
      * By vanilla design there is max 1 running goal per flag, which is running is determined by priorities. This array contains the current goal for each flag.
      */
-    private final PrioritizedGoal[] flagGoalsArray = new PrioritizedGoal[FLAG_COUNT];
+    private final WrappedGoal[] flagGoalsArray = new WrappedGoal[FLAG_COUNT];
 
     /**
      * All goals added to this selector
      */
-    public Set<PrioritizedGoal> availableGoals = Sets.newHashSet();
+    public Set<WrappedGoal> availableGoals = Sets.newHashSet();
 
     /**
      * Profiler used for debug information /debug
      */
-    private Supplier<IProfiler> profiler;
+    private Supplier<ProfilerFiller> profiler;
 
     /**
      * Array of flags, true if currently disabled
@@ -84,7 +84,7 @@ public class CustomGoalSelector extends GoalSelector
      *
      * @param profiler the profiler to use, usually attached to a world object
      */
-    public CustomGoalSelector(@NotNull final Supplier<IProfiler> profiler)
+    public CustomGoalSelector(@NotNull final Supplier<ProfilerFiller> profiler)
     {
         super(profiler);
         this.profiler = profiler;
@@ -132,7 +132,7 @@ public class CustomGoalSelector extends GoalSelector
     @Override
     public void addGoal(int priority, Goal task)
     {
-        this.availableGoals.add(new PrioritizedGoal(priority, task));
+        this.availableGoals.add(new WrappedGoal(priority, task));
     }
 
     /**
@@ -141,7 +141,7 @@ public class CustomGoalSelector extends GoalSelector
     @Override
     public void removeGoal(Goal task)
     {
-        for(final PrioritizedGoal prioritizedGoal : new ArrayList<>(availableGoals))
+        for(final WrappedGoal prioritizedGoal : new ArrayList<>(availableGoals))
         {
             if (prioritizedGoal.getGoal() == task)
             {
@@ -157,7 +157,7 @@ public class CustomGoalSelector extends GoalSelector
      * @param goal the goal to check.
      * @return whether one of the goals flags is within the disabled flags.
      */
-    private boolean goalContainsDisabledFlag(final PrioritizedGoal goal)
+    private boolean goalContainsDisabledFlag(final WrappedGoal goal)
     {
         for (int i = 0; i < FLAG_COUNT; i++)
         {
@@ -178,11 +178,11 @@ public class CustomGoalSelector extends GoalSelector
      * @param goal1 goal to check
      * @return true if it overrules the existing goal.
      */
-    private boolean isPreemptedByAll(final PrioritizedGoal goal1)
+    private boolean isPreemptedByAll(final WrappedGoal goal1)
     {
         for (int i = 0; i < FLAG_COUNT; i++)
         {
-            final PrioritizedGoal compareGoal = flagGoalsArray[i];
+            final WrappedGoal compareGoal = flagGoalsArray[i];
             if (compareGoal.isRunning() && !compareGoal.canBeReplacedBy(goal1) && goal1.getFlags().contains(Goal.Flag.values()[i]))
             {
                 return false;
@@ -204,7 +204,7 @@ public class CustomGoalSelector extends GoalSelector
         boolean hasFlags;
         counter++;
 
-        for (final PrioritizedGoal currentGoal : new ArrayList<>(availableGoals))
+        for (final WrappedGoal currentGoal : new ArrayList<>(availableGoals))
         {
             hasFlags = !currentGoal.getFlags().isEmpty();
 
@@ -219,7 +219,7 @@ public class CustomGoalSelector extends GoalSelector
             {
                 for (Goal.Flag flag : currentGoal.getFlags())
                 {
-                    final PrioritizedGoal prioritizedgoal = flagGoalsArray[flag.ordinal()];
+                    final WrappedGoal prioritizedgoal = flagGoalsArray[flag.ordinal()];
                     prioritizedgoal.stop();
                     flagGoalsArray[flag.ordinal()] = currentGoal;
                 }
@@ -245,9 +245,9 @@ public class CustomGoalSelector extends GoalSelector
      * @return the stream of running goals.
      */
     @Override
-    public Stream<PrioritizedGoal> getRunningGoals()
+    public Stream<WrappedGoal> getRunningGoals()
     {
-        return this.availableGoals.stream().filter(PrioritizedGoal::isRunning);
+        return this.availableGoals.stream().filter(WrappedGoal::isRunning);
     }
 
     /**

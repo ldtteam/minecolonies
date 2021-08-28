@@ -16,10 +16,10 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingDeliveryman;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractRequestResolver;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -65,7 +65,7 @@ public abstract class DeliverymenRequestResolver<R extends IRequestable> extends
             return citizenList;
         }
 
-        for (final Vector3d hut : wareHouse.getRegisteredDeliverymen())
+        for (final Vec3 hut : wareHouse.getRegisteredDeliverymen())
         {
             final IBuilding building = colony.getBuildingManager().getBuilding(new BlockPos(hut));
             if (building instanceof BuildingDeliveryman)
@@ -178,9 +178,9 @@ public abstract class DeliverymenRequestResolver<R extends IRequestable> extends
 
     @NotNull
     @Override
-    public IFormattableTextComponent getRequesterDisplayName(
+    public MutableComponent getRequesterDisplayName(
       @NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
-        return new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN);
+        return new TranslatableComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN);
     }
 }

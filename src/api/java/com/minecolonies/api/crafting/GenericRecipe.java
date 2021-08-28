@@ -3,19 +3,19 @@ package com.minecolonies.api.crafting;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ItemStackUtils;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.CraftingInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.FurnaceRecipe;
-import net.minecraft.item.crafting.ICraftingRecipe;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.SmeltingRecipe;
+import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,7 +33,7 @@ import static com.ldtteam.structurize.items.ModItems.buildTool;
 public class GenericRecipe implements IGenericRecipe
 {
     @Nullable
-    public static IGenericRecipe of(@Nullable final IRecipe<?> recipe)
+    public static IGenericRecipe of(@Nullable final Recipe<?> recipe)
     {
         if (recipe == null) return null;
         final List<List<ItemStack>> inputs = recipe.getIngredients().stream()
@@ -41,7 +41,7 @@ public class GenericRecipe implements IGenericRecipe
                 .collect(Collectors.toList());
         final int size;
         final Block intermediate;
-        if (recipe instanceof FurnaceRecipe)
+        if (recipe instanceof SmeltingRecipe)
         {
             size = 1;
             intermediate = Blocks.FURNACE;
@@ -56,7 +56,7 @@ public class GenericRecipe implements IGenericRecipe
     }
 
     @Nullable
-    public static IGenericRecipe of(@Nullable final IRecipeStorage storage, @NotNull final List<ITextComponent> restrictions, final int levelSort)
+    public static IGenericRecipe of(@Nullable final IRecipeStorage storage, @NotNull final List<Component> restrictions, final int levelSort)
     {
         if (storage == null) return null;
         final List<List<ItemStack>> inputs = storage.getCleanedInput().stream()
@@ -87,7 +87,7 @@ public class GenericRecipe implements IGenericRecipe
     private final int gridSize;
     private final Block intermediate;
     private final ResourceLocation lootTable;
-    private final List<ITextComponent> restrictions;
+    private final List<Component> restrictions;
     private final int levelSort;
 
     public GenericRecipe(@NotNull final ItemStack output,
@@ -95,7 +95,7 @@ public class GenericRecipe implements IGenericRecipe
                          @NotNull final List<List<ItemStack>> inputs,
                          final int gridSize, @NotNull final Block intermediate,
                          @Nullable final ResourceLocation lootTable,
-                         @NotNull final List<ITextComponent> restrictions,
+                         @NotNull final List<Component> restrictions,
                          final int levelSort)
     {
         this.output = output;
@@ -115,7 +115,7 @@ public class GenericRecipe implements IGenericRecipe
                          @NotNull final List<List<ItemStack>> inputs,
                          final int gridSize, @NotNull final Block intermediate,
                          @Nullable final ResourceLocation lootTable,
-                         @NotNull final List<ITextComponent> restrictions,
+                         @NotNull final List<Component> restrictions,
                          final int levelSort)
     {
         this.output = output;
@@ -163,7 +163,7 @@ public class GenericRecipe implements IGenericRecipe
 
     @NotNull
     @Override
-    public List<ITextComponent> getRestrictions()
+    public List<Component> getRestrictions()
     {
         return this.restrictions;
     }
@@ -222,15 +222,15 @@ public class GenericRecipe implements IGenericRecipe
     }
 
     @NotNull
-    private static List<ItemStack> calculateSecondaryOutputs(@NotNull final IRecipe<?> recipe)
+    private static List<ItemStack> calculateSecondaryOutputs(@NotNull final Recipe<?> recipe)
     {
-        if (recipe instanceof ICraftingRecipe)
+        if (recipe instanceof CraftingRecipe)
         {
             final List<Ingredient> inputs = recipe.getIngredients();
-            final CraftingInventory inv = new CraftingInventory(new Container(ContainerType.CRAFTING, 0)
+            final CraftingContainer inv = new CraftingContainer(new AbstractContainerMenu(MenuType.CRAFTING, 0)
             {
                 @Override
-                public boolean stillValid(@NotNull final PlayerEntity playerIn)
+                public boolean stillValid(@NotNull final Player playerIn)
                 {
                     return false;
                 }
@@ -243,9 +243,9 @@ public class GenericRecipe implements IGenericRecipe
                     inv.setItem(slot, stacks[0]);
                 }
             }
-            if (((ICraftingRecipe) recipe).matches(inv, null))
+            if (((CraftingRecipe) recipe).matches(inv, null))
             {
-                return ((ICraftingRecipe) recipe).getRemainingItems(inv).stream()
+                return ((CraftingRecipe) recipe).getRemainingItems(inv).stream()
                         .filter(ItemStackUtils::isNotEmpty)
                         .filter(stack -> stack.getItem() != buildTool.get())  // this is filtered out of the inputs too
                         .collect(Collectors.toList());

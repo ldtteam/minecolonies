@@ -11,16 +11,16 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.moduleviews.CraftingModuleView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.network.messages.server.colony.building.worker.AddRemoveRecipeMessage;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -29,7 +29,7 @@ import java.util.List;
 /**
  * Furnace crafting gui.
  */
-public class WindowFurnaceCrafting extends ContainerScreen<ContainerCraftingFurnace>
+public class WindowFurnaceCrafting extends AbstractContainerScreen<ContainerCraftingFurnace>
 {
     private static final ResourceLocation CRAFTING_FURNACE = new ResourceLocation(Constants.MOD_ID, "textures/gui/furnace.png");
 
@@ -75,7 +75,7 @@ public class WindowFurnaceCrafting extends ContainerScreen<ContainerCraftingFurn
      * @param playerInventory the player inv.
      * @param iTextComponent  the display text component.
      */
-    public WindowFurnaceCrafting(final ContainerCraftingFurnace container, final PlayerInventory playerInventory, final ITextComponent iTextComponent)
+    public WindowFurnaceCrafting(final ContainerCraftingFurnace container, final Inventory playerInventory, final Component iTextComponent)
     {
         super(container, playerInventory, iTextComponent);
         this.container = container;
@@ -97,7 +97,7 @@ public class WindowFurnaceCrafting extends ContainerScreen<ContainerCraftingFurn
         /*
          * The button to click done after finishing the recipe.
          */
-        final Button doneButton = new Button(leftPos + BUTTON_X_OFFSET, topPos + BUTTON_Y_POS, BUTTON_WIDTH, BUTTON_HEIGHT, new StringTextComponent(buttonDisplay), new OnButtonPress());
+        final Button doneButton = new Button(leftPos + BUTTON_X_OFFSET, topPos + BUTTON_Y_POS, BUTTON_WIDTH, BUTTON_HEIGHT, new TextComponent(buttonDisplay), new OnButtonPress());
         this.addButton(doneButton);
         if (!module.canLearnFurnaceRecipes())
         {
@@ -105,7 +105,7 @@ public class WindowFurnaceCrafting extends ContainerScreen<ContainerCraftingFurn
         }
     }
 
-    public class OnButtonPress implements Button.IPressable
+    public class OnButtonPress implements Button.OnPress
     {
         @Override
         public void onPress(@NotNull final Button button)
@@ -128,7 +128,7 @@ public class WindowFurnaceCrafting extends ContainerScreen<ContainerCraftingFurn
      * Draws the background layer of this container (behind the items).
      */
     @Override
-    protected void renderBg(@NotNull final MatrixStack stack, final float partialTicks, final int mouseX, final int mouseY)
+    protected void renderBg(@NotNull final PoseStack stack, final float partialTicks, final int mouseX, final int mouseY)
     {
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         this.minecraft.getTextureManager().bind(CRAFTING_FURNACE);
@@ -136,7 +136,7 @@ public class WindowFurnaceCrafting extends ContainerScreen<ContainerCraftingFurn
     }
 
     @Override
-    public void render(@NotNull final MatrixStack stack, int x, int y, float z)
+    public void render(@NotNull final PoseStack stack, int x, int y, float z)
     {
         this.renderBackground(stack);
         super.render(stack, x, y, z);

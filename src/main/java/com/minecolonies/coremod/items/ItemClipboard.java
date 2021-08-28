@@ -8,17 +8,17 @@ import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.MineColonies;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
@@ -45,12 +45,12 @@ public class ItemClipboard extends AbstractItemMinecolonies
 
     @Override
     @NotNull
-    public ActionResultType useOn(final ItemUseContext ctx)
+    public InteractionResult useOn(final UseOnContext ctx)
     {
         final ItemStack clipboard = ctx.getPlayer().getItemInHand(ctx.getHand());
 
-        final CompoundNBT compound = checkForCompound(clipboard);
-        final TileEntity entity = ctx.getLevel().getBlockEntity(ctx.getClickedPos());
+        final CompoundTag compound = checkForCompound(clipboard);
+        final BlockEntity entity = ctx.getLevel().getBlockEntity(ctx.getClickedPos());
 
         if (entity instanceof TileEntityColonyBuilding)
         {
@@ -68,7 +68,7 @@ public class ItemClipboard extends AbstractItemMinecolonies
             openWindow(compound, ctx.getLevel(), ctx.getPlayer());
         }
 
-        return ActionResultType.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 
     /**
@@ -81,20 +81,20 @@ public class ItemClipboard extends AbstractItemMinecolonies
      */
     @Override
     @NotNull
-    public ActionResult<ItemStack> use(
-            final World worldIn,
-            final PlayerEntity playerIn,
-            final Hand hand)
+    public InteractionResultHolder<ItemStack> use(
+            final Level worldIn,
+            final Player playerIn,
+            final InteractionHand hand)
     {
         final ItemStack clipboard = playerIn.getItemInHand(hand);
 
         if (!worldIn.isClientSide) {
-            return new ActionResult<>(ActionResultType.SUCCESS, clipboard);
+            return new InteractionResultHolder<>(InteractionResult.SUCCESS, clipboard);
         }
 
         openWindow(checkForCompound(clipboard), worldIn, playerIn);
 
-        return new ActionResult<>(ActionResultType.SUCCESS, clipboard);
+        return new InteractionResultHolder<>(InteractionResult.SUCCESS, clipboard);
     }
 
     /**
@@ -103,9 +103,9 @@ public class ItemClipboard extends AbstractItemMinecolonies
      * @param clipboard the clipboard to check for.
      * @return the compound of the clipboard.
      */
-    private static CompoundNBT checkForCompound(final ItemStack clipboard)
+    private static CompoundTag checkForCompound(final ItemStack clipboard)
     {
-        if (!clipboard.hasTag()) clipboard.setTag(new CompoundNBT());
+        if (!clipboard.hasTag()) clipboard.setTag(new CompoundTag());
         return clipboard.getTag();
     }
 
@@ -114,7 +114,7 @@ public class ItemClipboard extends AbstractItemMinecolonies
      * @param compound the item compound
      * @param player the player entity opening the window
      */
-    private static void openWindow(CompoundNBT compound, World world, PlayerEntity player)
+    private static void openWindow(CompoundTag compound, Level world, Player player)
     {
         if (compound.getAllKeys().contains(TAG_COLONY))
         {
@@ -123,7 +123,7 @@ public class ItemClipboard extends AbstractItemMinecolonies
         }
         else
         {
-            player.displayClientMessage(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_CLIPBOARD_NEED_COLONY), true);
+            player.displayClientMessage(new TranslatableComponent(TranslationConstants.COM_MINECOLONIES_CLIPBOARD_NEED_COLONY), true);
         }
     }
 }

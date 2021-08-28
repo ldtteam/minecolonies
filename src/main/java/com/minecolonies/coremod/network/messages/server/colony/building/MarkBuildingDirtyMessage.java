@@ -4,7 +4,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 /**
@@ -23,13 +23,13 @@ public class MarkBuildingDirtyMessage extends AbstractBuildingServerMessage<IBui
     }
 
     @Override
-    protected void toBytesOverride(final PacketBuffer buf)
+    protected void toBytesOverride(final FriendlyByteBuf buf)
     {
 
     }
 
     @Override
-    protected void fromBytesOverride(final PacketBuffer buf)
+    protected void fromBytesOverride(final FriendlyByteBuf buf)
     {
 
     }

@@ -4,7 +4,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.entity.citizen.Skill;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Tuple;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -39,14 +39,14 @@ public interface ICitizenSkillHandler
      * @return the handler written to NBT.
      */
     @NotNull
-    CompoundNBT write();
+    CompoundTag write();
 
     /**
      * Init the handler from NBT.
      *
      * @param compoundNBT the input nbt.
      */
-    void read(@NotNull final CompoundNBT compoundNBT);
+    void read(@NotNull final CompoundTag compoundNBT);
 
     /**
      * Attempt an intelligence level up with a base chance.

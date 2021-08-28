@@ -4,9 +4,9 @@ import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
 import com.minecolonies.api.tileentities.TileEntityGrave;
 import com.minecolonies.coremod.client.gui.modules.GraveyardManagementWindow;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.BlockPos;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +30,7 @@ public class GraveyardManagementModuleView extends AbstractBuildingModuleView
     private List<String> restingCitizen = new ArrayList<>();
 
     @Override
-    public void deserialize(@NotNull final PacketBuffer buf)
+    public void deserialize(@NotNull final FriendlyByteBuf buf)
     {
         graves = new ArrayList<>();
         final int size = buf.readInt();
@@ -86,7 +86,7 @@ public class GraveyardManagementModuleView extends AbstractBuildingModuleView
     {
         for (final BlockPos grave : new ArrayList<>(graves))
         {
-            final TileEntity entity = buildingView.getColony().getWorld().getBlockEntity(grave);
+            final BlockEntity entity = buildingView.getColony().getWorld().getBlockEntity(grave);
             if (!(entity instanceof TileEntityGrave))
             {
                 graves.remove(grave);

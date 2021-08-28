@@ -7,10 +7,10 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.BlockPos;
 
 /**
  * Helper manager to analyse and process the registry for {@link BuildingEntry}.
@@ -30,7 +30,7 @@ public interface IBuildingDataManager
      * @param compound The data from which to load new {@link IBuilding} stored in a {@link CompoundNBT}.
      * @return The {@link IBuilding} with the data loaded from {@link CompoundNBT}.
      */
-    IBuilding createFrom(final IColony colony, final CompoundNBT compound);
+    IBuilding createFrom(final IColony colony, final CompoundTag compound);
 
     /**
      * Creates a new entry from a given {@link IColony} and the data passed in as {@link AbstractTileEntityColonyBuilding}.
@@ -59,5 +59,5 @@ public interface IBuildingDataManager
      * @param networkBuffer The data from which to load the new {@link IBuildingView} stored in the networks {@link ByteBuf}.
      * @return The {@link IBuildingView} with the data loaded from the {@link ByteBuf}.
      */
-    IBuildingView createViewFrom(final IColonyView colony, final BlockPos position, final PacketBuffer networkBuffer);
+    IBuildingView createViewFrom(final IColonyView colony, final BlockPos position, final FriendlyByteBuf networkBuffer);
 }

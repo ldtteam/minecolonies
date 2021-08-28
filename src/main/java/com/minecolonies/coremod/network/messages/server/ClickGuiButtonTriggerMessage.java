@@ -2,8 +2,8 @@ package com.minecolonies.coremod.network.messages.server;
 
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.network.IMessage;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.Nullable;
@@ -36,14 +36,14 @@ public class ClickGuiButtonTriggerMessage implements IMessage
     }
 
     @Override
-    public void toBytes(final PacketBuffer buf)
+    public void toBytes(final FriendlyByteBuf buf)
     {
         buf.writeUtf(this.resource);
         buf.writeUtf(this.buttonId);
     }
 
     @Override
-    public void fromBytes(final PacketBuffer buf)
+    public void fromBytes(final FriendlyByteBuf buf)
     {
         this.resource = buf.readUtf(32767);
         this.buttonId = buf.readUtf(32767);
@@ -59,7 +59,7 @@ public class ClickGuiButtonTriggerMessage implements IMessage
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
-        final ServerPlayerEntity player = ctxIn.getSender();
+        final ServerPlayer player = ctxIn.getSender();
         if (player != null)
         {
             AdvancementTriggers.CLICK_GUI_BUTTON.trigger(player, this.buttonId, this.resource);

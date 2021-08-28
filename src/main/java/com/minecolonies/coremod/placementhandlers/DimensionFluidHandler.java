@@ -3,14 +3,14 @@ package com.minecolonies.coremod.placementhandlers;
 import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler;
 import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.util.WorldUtil;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.BubbleColumnBlock;
-import net.minecraft.block.FlowingFluidBlock;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.BubbleColumnBlock;
+import net.minecraft.world.level.block.LiquidBlock;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,17 +28,17 @@ import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler.Ac
 public class DimensionFluidHandler implements IPlacementHandler
 {
     @Override
-    public boolean canHandle(@NotNull World world, @NotNull BlockPos pos, @NotNull BlockState blockState)
+    public boolean canHandle(@NotNull Level world, @NotNull BlockPos pos, @NotNull BlockState blockState)
     {
-         return blockState.getBlock() instanceof FlowingFluidBlock || blockState.getBlock() instanceof BubbleColumnBlock;
+         return blockState.getBlock() instanceof LiquidBlock || blockState.getBlock() instanceof BubbleColumnBlock;
     }
 
     @Override
     public List<ItemStack> getRequiredItems(
-      @NotNull World world,
+      @NotNull Level world,
       @NotNull BlockPos pos,
       @NotNull BlockState blockState,
-      @Nullable CompoundNBT tileEntityData,
+      @Nullable CompoundTag tileEntityData,
       boolean complete)
     {
         if (WorldUtil.isNetherType(world) && blockState.getBlock() == Blocks.LAVA)
@@ -62,10 +62,10 @@ public class DimensionFluidHandler implements IPlacementHandler
 
     @Override
     public IPlacementHandler.ActionProcessingResult handle(
-      @NotNull World world,
+      @NotNull Level world,
       @NotNull BlockPos pos,
       @NotNull BlockState blockState,
-      @Nullable CompoundNBT tileEntityData,
+      @Nullable CompoundTag tileEntityData,
       boolean complete,
       BlockPos centerPos)
     {

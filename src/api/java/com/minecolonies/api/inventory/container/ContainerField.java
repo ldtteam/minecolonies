@@ -6,23 +6,23 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.inventory.ModContainers;
 import com.minecolonies.api.tileentities.AbstractScarecrowTileEntity;
 import com.minecolonies.api.util.ItemStackUtils;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.state.properties.DoubleBlockHalf;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.InventoryConstants.*;
 
-public class ContainerField extends Container
+public class ContainerField extends AbstractContainerMenu
 {
     /**
      * Inventory lines until the player inv starts.
@@ -52,7 +52,7 @@ public class ContainerField extends Container
      * @param packetBuffer network buffer
      * @return new instance
      */
-    public static ContainerField fromPacketBuffer(final int windowId, final PlayerInventory inv, final PacketBuffer packetBuffer)
+    public static ContainerField fromPacketBuffer(final int windowId, final Inventory inv, final FriendlyByteBuf packetBuffer)
     {
         final BlockPos tePos = packetBuffer.readBlockPos();
         return new ContainerField(windowId, inv, tePos);
@@ -65,11 +65,11 @@ public class ContainerField extends Container
      * @param playerInventory the player inventory.
      * @param pos             te world pos.
      */
-    public ContainerField(final int windowId, final PlayerInventory playerInventory, BlockPos pos)
+    public ContainerField(final int windowId, final Inventory playerInventory, BlockPos pos)
     {
         super(ModContainers.field, windowId);
 
-        final World world = playerInventory.player.level;
+        final Level world = playerInventory.player.level;
 
         if (world.getBlockState(pos).getValue(BlockStateProperties.DOUBLE_BLOCK_HALF) == DoubleBlockHalf.UPPER)
         {
@@ -112,7 +112,7 @@ public class ContainerField extends Container
 
     @NotNull
     @Override
-    public ItemStack quickMoveStack(@NotNull final PlayerEntity playerIn, final int index)
+    public ItemStack quickMoveStack(@NotNull final Player playerIn, final int index)
     {
         ItemStack transfer = ItemStackUtils.EMPTY;
         Slot slot = this.slots.get(index);
@@ -143,7 +143,7 @@ public class ContainerField extends Container
     }
 
     @Override
-    public boolean stillValid(@NotNull final PlayerEntity playerIn)
+    public boolean stillValid(@NotNull final Player playerIn)
     {
         if (colony == null)
         {

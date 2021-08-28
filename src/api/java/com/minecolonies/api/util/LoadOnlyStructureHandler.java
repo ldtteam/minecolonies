@@ -4,13 +4,13 @@ import com.ldtteam.structures.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.placement.structure.CreativeStructureHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.blocks.ModBlocks;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -29,7 +29,7 @@ public class LoadOnlyStructureHandler extends CreativeStructureHandler
      * @param settings       the placement settings.
      * @param fancyPlacement if fancy or complete.
      */
-    public LoadOnlyStructureHandler(final World world, final BlockPos pos, final String structureName, final PlacementSettings settings, final boolean fancyPlacement)
+    public LoadOnlyStructureHandler(final Level world, final BlockPos pos, final String structureName, final PlacementSettings settings, final boolean fancyPlacement)
     {
         super(world, pos, structureName, settings, fancyPlacement);
     }
@@ -43,7 +43,7 @@ public class LoadOnlyStructureHandler extends CreativeStructureHandler
      * @param settings       the placement settings.
      * @param fancyPlacement if fancy or complete.
      */
-    public LoadOnlyStructureHandler(final World world, final BlockPos pos, final Blueprint blueprint, final PlacementSettings settings, final boolean fancyPlacement)
+    public LoadOnlyStructureHandler(final Level world, final BlockPos pos, final Blueprint blueprint, final PlacementSettings settings, final boolean fancyPlacement)
     {
         super(world, pos, blueprint, settings, fancyPlacement);
     }

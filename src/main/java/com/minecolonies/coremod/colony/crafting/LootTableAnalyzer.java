@@ -6,14 +6,14 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.minecolonies.api.util.Log;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.loot.LootTable;
-import net.minecraft.loot.LootTableManager;
-import net.minecraft.nbt.JsonToNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.LootTables;
+import net.minecraft.nbt.TagParser;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,14 +35,14 @@ public final class LootTableAnalyzer
 {
     private LootTableAnalyzer() { }
 
-    private static JsonObject getLootTableJson(@NotNull final LootTableManager lootTableManager,
+    private static JsonObject getLootTableJson(@NotNull final LootTables lootTableManager,
                                                @NotNull final ResourceLocation lootTableId)
     {
         final LootTable lootTable = lootTableManager.get(lootTableId);
-        return LootTableManager.serialize(lootTable).getAsJsonObject();
+        return LootTables.serialize(lootTable).getAsJsonObject();
     }
 
-    public static List<LootDrop> toDrops(@NotNull final LootTableManager lootTableManager,
+    public static List<LootDrop> toDrops(@NotNull final LootTables lootTableManager,
                                          @NotNull final ResourceLocation lootTableId)
     {
         try
@@ -58,7 +58,7 @@ public final class LootTableAnalyzer
         }
     }
 
-    public static List<LootDrop> toDrops(@NotNull final LootTableManager lootTableManager,
+    public static List<LootDrop> toDrops(@NotNull final LootTables lootTableManager,
                                          @NotNull final JsonObject lootTableJson)
     {
         final List<LootDrop> drops = new ArrayList<>();
@@ -68,39 +68,39 @@ public final class LootTableAnalyzer
             return drops;
         }
 
-        final JsonArray pools = JSONUtils.getAsJsonArray(lootTableJson, "pools");
+        final JsonArray pools = GsonHelper.getAsJsonArray(lootTableJson, "pools");
         for (final JsonElement pool : pools)
         {
-            final JsonArray entries = JSONUtils.getAsJsonArray(pool.getAsJsonObject(), "entries", new JsonArray());
+            final JsonArray entries = GsonHelper.getAsJsonArray(pool.getAsJsonObject(), "entries", new JsonArray());
             final float totalWeight = StreamSupport.stream(entries.spliterator(), false)
                     .filter(entry ->
                     {
-                        final String type = JSONUtils.getAsString(entry.getAsJsonObject(), "type");
+                        final String type = GsonHelper.getAsString(entry.getAsJsonObject(), "type");
                         return type.equals("minecraft:empty") || type.equals("minecraft:item") || type.equals("minecraft:tag") || type.equals("minecraft:loot_table");
                     })
-                    .mapToInt(entry -> JSONUtils.getAsInt(entry.getAsJsonObject(), "weight", 1))
+                    .mapToInt(entry -> GsonHelper.getAsInt(entry.getAsJsonObject(), "weight", 1))
                     .sum();
 
             for (final JsonElement ej : entries)
             {
                 final JsonObject entryJson = ej.getAsJsonObject();
-                final String type = JSONUtils.getAsString(entryJson, "type");
+                final String type = GsonHelper.getAsString(entryJson, "type");
                 if (type.equals("minecraft:item"))
                 {
-                    final Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(JSONUtils.getAsString(entryJson, "name")));
-                    final float weight = JSONUtils.getAsFloat(entryJson, "weight", 1);
-                    final boolean variableQuality = JSONUtils.getAsFloat(entryJson, "quality", 0) != 0;
+                    final Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(GsonHelper.getAsString(entryJson, "name")));
+                    final float weight = GsonHelper.getAsFloat(entryJson, "weight", 1);
+                    final boolean variableQuality = GsonHelper.getAsFloat(entryJson, "quality", 0) != 0;
                     final ItemStack stack = new ItemStack(item);
                     if (entryJson.has("functions"))
                     {
-                        processFunctions(stack, JSONUtils.getAsJsonArray(entryJson, "functions"));
+                        processFunctions(stack, GsonHelper.getAsJsonArray(entryJson, "functions"));
                     }
 
                     drops.add(new LootDrop(Collections.singletonList(stack), weight / totalWeight, variableQuality));
                 }
                 else if (type.equals("minecraft:loot_table"))
                 {
-                    final ResourceLocation table = new ResourceLocation(JSONUtils.getAsString(entryJson, "name"));
+                    final ResourceLocation table = new ResourceLocation(GsonHelper.getAsString(entryJson, "name"));
                     drops.addAll(toDrops(lootTableManager, table));
                 }
             }
@@ -126,12 +126,12 @@ public final class LootTableAnalyzer
         for (final JsonElement je : functions)
         {
             final JsonObject function = je.getAsJsonObject();
-            switch (JSONUtils.getAsString(function, "function"))
+            switch (GsonHelper.getAsString(function, "function"))
             {
                 case "minecraft:set_nbt":
                     try
                     {
-                        stack.setTag(JsonToNBT.parseTag(JSONUtils.getAsString(function, "tag")));
+                        stack.setTag(TagParser.parseTag(GsonHelper.getAsString(function, "tag")));
                     }
                     catch (CommandSyntaxException e)
                     {
@@ -180,7 +180,7 @@ public final class LootTableAnalyzer
         }
 
         /** Copy a LootDrop to a packet buffer */
-        public void serialize(@NotNull final PacketBuffer buffer)
+        public void serialize(@NotNull final FriendlyByteBuf buffer)
         {
             buffer.writeVarInt(stacks.size());
             for (final ItemStack stack : stacks)
@@ -192,7 +192,7 @@ public final class LootTableAnalyzer
         }
 
         /** Recover a LootDrop from a packet buffer */
-        public static LootDrop deserialize(@NotNull final PacketBuffer buffer)
+        public static LootDrop deserialize(@NotNull final FriendlyByteBuf buffer)
         {
             final int size = buffer.readVarInt();
             final List<ItemStack> stacks = new ArrayList<>(size);

@@ -2,11 +2,11 @@ package com.minecolonies.api.colony;
 
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.NBTUtils;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.chunk.Chunk;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
@@ -27,7 +27,7 @@ public interface IColonyTagCapability
      * @param chunk the chunk to remove it from.
      * @param id    the id to remove.
      */
-    void removeColony(final int id, final Chunk chunk);
+    void removeColony(final int id, final LevelChunk chunk);
 
     /**
      * Add a new colony to the chunk. Only relevant in non dynamic claiming.
@@ -35,7 +35,7 @@ public interface IColonyTagCapability
      * @param chunk the chunk to add it to.
      * @param id    the id to add.
      */
-    void addColony(final int id, final Chunk chunk);
+    void addColony(final int id, final LevelChunk chunk);
 
     /**
      * Get a list of all close colonies.
@@ -51,7 +51,7 @@ public interface IColonyTagCapability
      * @param chunk the chunk to set it for.
      * @param id    the id to set.
      */
-    void setOwningColony(final int id, final Chunk chunk);
+    void setOwningColony(final int id, final LevelChunk chunk);
 
     /**
      * Get the owning colony.
@@ -65,7 +65,7 @@ public interface IColonyTagCapability
      *
      * @param chunk the chunk to reset.
      */
-    void reset(final Chunk chunk);
+    void reset(final LevelChunk chunk);
 
     /**
      * Add the building claim of a certain building.
@@ -74,7 +74,7 @@ public interface IColonyTagCapability
      * @param pos      the position of the building.
      * @param chunk    the chunk to add the claim for.
      */
-    void addBuildingClaim(final int colonyId, final BlockPos pos, final Chunk chunk);
+    void addBuildingClaim(final int colonyId, final BlockPos pos, final LevelChunk chunk);
 
     /**
      * Remove the building claim of a certain building.
@@ -83,7 +83,7 @@ public interface IColonyTagCapability
      * @param pos      the position of the building.
      * @param chunk    the chunk to remove it from.
      */
-    void removeBuildingClaim(final int colonyId, final BlockPos pos, final Chunk chunk);
+    void removeBuildingClaim(final int colonyId, final BlockPos pos, final LevelChunk chunk);
 
     /**
      * Sets all close colonies.
@@ -100,7 +100,7 @@ public interface IColonyTagCapability
     @NotNull
     Map<Integer, Set<BlockPos>> getAllClaimingBuildings();
 
-    void readFromNBT(CompoundNBT compound);
+    void readFromNBT(CompoundTag compound);
 
     /**
      * The implementation of the colonyTagCapability.
@@ -123,14 +123,14 @@ public interface IColonyTagCapability
         private final Map<Integer, Set<BlockPos>> claimingBuildings = new HashMap<>();
 
         @Override
-        public void addColony(final int id, final Chunk chunk)
+        public void addColony(final int id, final LevelChunk chunk)
         {
             colonies.add(id);
             chunk.markUnsaved();
         }
 
         @Override
-        public void removeColony(final int id, final Chunk chunk)
+        public void removeColony(final int id, final LevelChunk chunk)
         {
             colonies.remove(id);
             if (owningColony == id)
@@ -147,7 +147,7 @@ public interface IColonyTagCapability
         }
 
         @Override
-        public void reset(final Chunk chunk)
+        public void reset(final LevelChunk chunk)
         {
             colonies.clear();
             owningColony = 0;
@@ -156,7 +156,7 @@ public interface IColonyTagCapability
         }
 
         @Override
-        public void addBuildingClaim(final int colonyId, final BlockPos pos, final Chunk chunk)
+        public void addBuildingClaim(final int colonyId, final BlockPos pos, final LevelChunk chunk)
         {
             if (owningColony == 0)
             {
@@ -177,7 +177,7 @@ public interface IColonyTagCapability
         }
 
         @Override
-        public void removeBuildingClaim(final int colonyId, final BlockPos pos, final Chunk chunk)
+        public void removeBuildingClaim(final int colonyId, final BlockPos pos, final LevelChunk chunk)
         {
             if (claimingBuildings.containsKey(colonyId))
             {
@@ -209,7 +209,7 @@ public interface IColonyTagCapability
         }
 
         @Override
-        public void setOwningColony(final int id, final Chunk chunk)
+        public void setOwningColony(final int id, final LevelChunk chunk)
         {
             this.owningColony = id;
             chunk.markUnsaved();
@@ -236,7 +236,7 @@ public interface IColonyTagCapability
         }
 
         @Override
-        public void readFromNBT(final CompoundNBT compound)
+        public void readFromNBT(final CompoundTag compound)
         {
             // Set owning
             owningColony = compound.getInt(TAG_ID);
@@ -254,7 +254,7 @@ public interface IColonyTagCapability
          *
          * @param compound the compound to read it from.
          */
-        private void readClaims(final CompoundNBT compound)
+        private void readClaims(final CompoundTag compound)
         {
             final int id = compound.getInt(TAG_ID);
             NBTUtils.streamCompound(compound.getList(TAG_BUILDINGS, Constants.NBT.TAG_COMPOUND)).forEach(
@@ -280,9 +280,9 @@ public interface IColonyTagCapability
     class Storage implements Capability.IStorage<IColonyTagCapability>
     {
         @Override
-        public INBT writeNBT(@NotNull final Capability<IColonyTagCapability> capability, @NotNull final IColonyTagCapability instance, @Nullable final Direction side)
+        public Tag writeNBT(@NotNull final Capability<IColonyTagCapability> capability, @NotNull final IColonyTagCapability instance, @Nullable final Direction side)
         {
-            final CompoundNBT compound = new CompoundNBT();
+            final CompoundTag compound = new CompoundTag();
             compound.putInt(TAG_ID, instance.getOwningColony());
             compound.put(TAG_COLONIES, instance.getAllCloseColonies().stream().map(Storage::write).collect(NBTUtils.toListNBT()));
             compound.put(TAG_BUILDINGS_CLAIM, instance.getAllClaimingBuildings().entrySet().stream().map(Storage::writeClaims).collect(NBTUtils.toListNBT()));
@@ -294,11 +294,11 @@ public interface IColonyTagCapability
         @Override
         public void readNBT(
           @NotNull final Capability<IColonyTagCapability> capability, @NotNull final IColonyTagCapability instance,
-          @Nullable final Direction side, @NotNull final INBT nbt)
+          @Nullable final Direction side, @NotNull final Tag nbt)
         {
-            if (nbt instanceof CompoundNBT && ((CompoundNBT) nbt).contains(TAG_ID))
+            if (nbt instanceof CompoundTag && ((CompoundTag) nbt).contains(TAG_ID))
             {
-                instance.readFromNBT((CompoundNBT) nbt);
+                instance.readFromNBT((CompoundTag) nbt);
             }
         }
 
@@ -308,9 +308,9 @@ public interface IColonyTagCapability
          * @param id the id.
          * @return the compound of it.
          */
-        private static CompoundNBT write(final int id)
+        private static CompoundTag write(final int id)
         {
-            final CompoundNBT compound = new CompoundNBT();
+            final CompoundTag compound = new CompoundTag();
             compound.putInt(TAG_ID, id);
             return compound;
         }
@@ -321,11 +321,11 @@ public interface IColonyTagCapability
          * @param entry the entry.
          * @return the resulting compound.
          */
-        private static CompoundNBT writeClaims(@NotNull final Map.Entry<Integer, Set<BlockPos>> entry)
+        private static CompoundTag writeClaims(@NotNull final Map.Entry<Integer, Set<BlockPos>> entry)
         {
-            final CompoundNBT compound = new CompoundNBT();
+            final CompoundTag compound = new CompoundTag();
             compound.putInt(TAG_ID, entry.getKey());
-            compound.put(TAG_BUILDINGS, entry.getValue().stream().map(pos -> BlockPosUtil.write(new CompoundNBT(), TAG_BUILDING, pos)).collect(NBTUtils.toListNBT()));
+            compound.put(TAG_BUILDINGS, entry.getValue().stream().map(pos -> BlockPosUtil.write(new CompoundTag(), TAG_BUILDING, pos)).collect(NBTUtils.toListNBT()));
             return compound;
         }
     }

@@ -3,7 +3,7 @@ package com.minecolonies.api.tileentities;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.items.ItemStackHandler;
 
 import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.getPlayerActionPriority;
@@ -19,7 +19,7 @@ public class TileEntityStash extends TileEntityColonyBuilding
      *
      * @param type tile entity type
      */
-    public TileEntityStash(final TileEntityType<? extends TileEntityStash> type)
+    public TileEntityStash(final BlockEntityType<? extends TileEntityStash> type)
     {
         super(type);
     }

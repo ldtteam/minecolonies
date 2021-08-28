@@ -16,22 +16,22 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBeekeep
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.JobBeekeeper;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
-import net.minecraft.block.BeehiveBlock;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.entity.passive.BeeEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.BeehiveBlock;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.animal.Bee;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.tileentity.BeehiveTileEntity;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.entity.BeehiveBlockEntity;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -113,7 +113,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
      * @param allBees all bees in the area around the beehives/beenests
      * @return true if the maximum nuber of bees is reached els false
      */
-    private boolean hasMaxAnimals(final List<BeeEntity> allBees)
+    private boolean hasMaxAnimals(final List<Bee> allBees)
     {
         final int numOfBeesInHive = getBeesInHives();
         final int numOfAnimals = allBees.size();
@@ -134,8 +134,8 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
                  .stream()
                  .map(world::getBlockEntity)
                  .filter(Objects::nonNull)
-                 .map(BeehiveTileEntity.class::cast)
-                 .mapToInt(BeehiveTileEntity::getOccupantCount)
+                 .map(BeehiveBlockEntity.class::cast)
+                 .mapToInt(BeehiveBlockEntity::getOccupantCount)
                  .sum();
     }
 
@@ -181,7 +181,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
      */
     private IAIState startWorkingAtOwnBuilding()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_WORKER_GOINGTOHUT));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslatableComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_WORKER_GOINGTOHUT));
         if (walkToBuilding())
         {
             setDelay(2);
@@ -203,7 +203,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
 
         if (hives.isEmpty())
         {
-            worker.getCitizenData().triggerInteraction(new StandardInteraction(new TranslationTextComponent(NO_HIVES), ChatPriority.BLOCKING));
+            worker.getCitizenData().triggerInteraction(new StandardInteraction(new TranslatableComponent(NO_HIVES), ChatPriority.BLOCKING));
             setDelay(NO_HIVES_DELAY);
             return DECIDE;
         }
@@ -211,7 +211,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
         ItemListModule flowersModule = getOwnBuilding().getModuleMatching(ItemListModule.class, m -> m.getId().equals(BUILDING_FLOWER_LIST));
         if (flowersModule.getList().isEmpty())
         {
-            worker.getCitizenData().triggerInteraction(new StandardInteraction(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_BEEKEEPER_NOFLOWERS), ChatPriority.BLOCKING));
+            worker.getCitizenData().triggerInteraction(new StandardInteraction(new TranslatableComponent(COM_MINECOLONIES_COREMOD_BEEKEEPER_NOFLOWERS), ChatPriority.BLOCKING));
             setDelay(NO_FLOWERS_DELAY);
             return DECIDE;
         }
@@ -226,7 +226,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
 
         final Optional<BlockPos> hive = getOwnBuilding().getHives()
                                           .stream()
-                                          .filter(pos -> BeehiveTileEntity.getHoneyLevel(world.getBlockState(pos)) >= 5)
+                                          .filter(pos -> BeehiveBlockEntity.getHoneyLevel(world.getBlockState(pos)) >= 5)
                                           .findFirst();
 
         if (hive.isPresent())
@@ -234,7 +234,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
             return BEEKEEPER_HARVEST;
         }
 
-        final List<BeeEntity> bees = new ArrayList<>(searchForAnimals(world, getOwnBuilding()));
+        final List<Bee> bees = new ArrayList<>(searchForAnimals(world, getOwnBuilding()));
 
         final JobBeekeeper job = worker.getCitizenJobHandler().getColonyJob(JobBeekeeper.class);
         if (bees.isEmpty())
@@ -244,7 +244,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
                 job.tickNoBees();
                 if (job.checkForBeeInteraction())
                 {
-                    worker.getCitizenData().triggerInteraction(new StandardInteraction(new TranslationTextComponent(NO_BEES), ChatPriority.BLOCKING));
+                    worker.getCitizenData().triggerInteraction(new StandardInteraction(new TranslatableComponent(NO_BEES), ChatPriority.BLOCKING));
                 }
             }
             else
@@ -259,7 +259,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
             job.resetCounter();
         }
 
-        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_DECIDING));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslatableComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_DECIDING));
 
         final int breedableAnimals = (int) bees.stream()
                                              .filter(animal -> animal.getAge() == 0)
@@ -286,9 +286,9 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
     {
         setDelay(BREEDING_DELAY);
 
-        final List<BeeEntity> animals = searchForAnimals(world, getOwnBuilding());
+        final List<Bee> animals = searchForAnimals(world, getOwnBuilding());
 
-        final AnimalEntity animalOne = animals
+        final Animal animalOne = animals
                                          .stream()
                                          .filter(animal -> !animal.isBaby())
                                          .findAny()
@@ -299,7 +299,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
             return DECIDE;
         }
 
-        final AnimalEntity animalTwo = animals.stream().filter(animal ->
+        final Animal animalTwo = animals.stream().filter(animal ->
           {
               final float range = animal.distanceTo(animalOne);
               final boolean isAnimalOne = animalOne.equals(animal);
@@ -312,12 +312,12 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
             return DECIDE;
         }
 
-        if (!equipBreedItem(Hand.MAIN_HAND))
+        if (!equipBreedItem(InteractionHand.MAIN_HAND))
         {
             return START_WORKING;
         }
 
-        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_HERDER_BREEDING));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslatableComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_HERDER_BREEDING));
 
         breedTwoAnimals(animalOne, animalTwo);
 
@@ -332,12 +332,12 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
      */
     private IAIState harvestHoney()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_STATUS_BEEKEEPER_HARVESTING));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslatableComponent(COM_MINECOLONIES_COREMOD_STATUS_BEEKEEPER_HARVESTING));
 
         final List<BlockPos> hives = getOwnBuilding()
                                        .getHives()
                                        .stream()
-                                       .filter(pos -> BeehiveTileEntity.getHoneyLevel(world.getBlockState(pos)) >= 5)
+                                       .filter(pos -> BeehiveBlockEntity.getHoneyLevel(world.getBlockState(pos)) >= 5)
                                        .collect(Collectors.toList());
 
         if (hives.isEmpty())
@@ -346,14 +346,14 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
         }
         if (getOwnBuilding().getHarvestTypes().equals(BuildingBeekeeper.HONEYCOMB) || (getOwnBuilding().getHarvestTypes().equals(BuildingBeekeeper.BOTH) && lastHarvestedBottle))
         {
-            if (!equipTool(Hand.MAIN_HAND, ToolType.SHEARS))
+            if (!equipTool(InteractionHand.MAIN_HAND, ToolType.SHEARS))
             {
                 return PREPARING;
             }
         }
         else
         {
-            if (!equipItem(Hand.MAIN_HAND, new ItemStack(Items.GLASS_BOTTLE)))
+            if (!equipItem(InteractionHand.MAIN_HAND, new ItemStack(Items.GLASS_BOTTLE)))
             {
                 return PREPARING;
             }
@@ -369,11 +369,11 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
             return getState();
         }
 
-        worker.swing(Hand.MAIN_HAND);
+        worker.swing(InteractionHand.MAIN_HAND);
         final ItemStack itemStack = worker.getMainHandItem();
         if (!getOwnBuilding().getHarvestTypes().equals(BuildingBeekeeper.HONEY) && ItemStackUtils.isTool(itemStack, ToolType.SHEARS))
         {
-            worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, 1);
+            worker.getCitizenItemHandler().damageItemInHand(InteractionHand.MAIN_HAND, 1);
 
             for (ItemStack stackItem : Compatibility.getCombsFromHive(hive, world, getHoneycombsPerHarvest()))
             {
@@ -399,10 +399,10 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
         final int dex = getPrimarySkillLevel();
         if ((50 - (dex / 99. * 50.)) / 100 > worker.getRandom().nextDouble())
         {
-            final List<Entity> bees = ((BeehiveTileEntity) world.getBlockEntity(hive)).releaseAllOccupants(world.getBlockState(hive), BeehiveTileEntity.State.EMERGENCY);
+            final List<Entity> bees = ((BeehiveBlockEntity) world.getBlockEntity(hive)).releaseAllOccupants(world.getBlockState(hive), BeehiveBlockEntity.BeeReleaseStatus.EMERGENCY);
             bees.stream()
-              .filter(entity -> entity instanceof BeeEntity)
-              .map(entity -> (BeeEntity) entity)
+              .filter(entity -> entity instanceof Bee)
+              .map(entity -> (Bee) entity)
               .filter(bee -> worker.position().distanceToSqr(bee.position()) <= 16.0D)
               .forEach(bee -> {
                   bee.setRemainingPersistentAngerTime(400 + worker.getRandom().nextInt(400));
@@ -420,11 +420,11 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
      * @param animal the animal to walk to.
      * @return true if the herder is walking to the animal.
      */
-    public boolean walkingToAnimal(final AnimalEntity animal)
+    public boolean walkingToAnimal(final Animal animal)
     {
         if (animal != null)
         {
-            worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_HERDER_GOINGTOANIMAL));
+            worker.getCitizenStatusHandler().setLatestStatus(new TranslatableComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_HERDER_GOINGTOANIMAL));
             return walkToBlock(new BlockPos(animal.position()));
         }
         else
@@ -439,18 +439,18 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
      * @param animalOne the first {@link AnimalEntity} to breed.
      * @param animalTwo the second {@link AnimalEntity} to breed.
      */
-    private void breedTwoAnimals(final AnimalEntity animalOne, final AnimalEntity animalTwo)
+    private void breedTwoAnimals(final Animal animalOne, final Animal animalTwo)
     {
-        final List<AnimalEntity> animalsToBreed = new ArrayList<>();
+        final List<Animal> animalsToBreed = new ArrayList<>();
         animalsToBreed.add(animalOne);
         animalsToBreed.add(animalTwo);
 
-        for (final AnimalEntity animal : animalsToBreed)
+        for (final Animal animal : animalsToBreed)
         {
             if (!animal.isInLove() && !walkingToAnimal(animal))
             {
                 animal.setInLove(null);
-                worker.swing(Hand.MAIN_HAND);
+                worker.swing(InteractionHand.MAIN_HAND);
                 InventoryUtils.reduceStackInItemHandler(worker.getInventoryCitizen(), worker.getMainHandItem());
             }
         }
@@ -463,7 +463,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
      * @param hand     the hand to equip it in.
      * @return true if the tool was equipped.
      */
-    public boolean equipTool(final Hand hand, final ToolType toolType)
+    public boolean equipTool(final InteractionHand hand, final ToolType toolType)
     {
         if (getToolSlot(toolType) != -1)
         {
@@ -498,7 +498,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
      * @param hand      the hand to equip it in.
      * @return true if the item was equipped.
      */
-    public boolean equipItem(final Hand hand, final ItemStack itemStack)
+    public boolean equipItem(final InteractionHand hand, final ItemStack itemStack)
     {
         if (checkIfRequestForItemExistOrCreateAsynch(itemStack))
         {
@@ -514,7 +514,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
      * @param hand the hand to equip it in.
      * @return true if the item was equipped.
      */
-    public boolean equipBreedItem(final Hand hand)
+    public boolean equipBreedItem(final InteractionHand hand)
     {
         if (checkIfRequestForTagExistOrCreateAsynch(ItemTags.FLOWERS, 2))
         {
@@ -542,7 +542,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
      *
      * @return the {@link List} of animals in the area.
      */
-    public static List<BeeEntity> searchForAnimals(final World world, final BuildingBeekeeper ownBuilding)
+    public static List<Bee> searchForAnimals(final Level world, final BuildingBeekeeper ownBuilding)
     {
         if (ownBuilding == null)
         {
@@ -551,9 +551,9 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
         return ownBuilding
                  .getHives()
                  .stream()
-                 .map(AxisAlignedBB::new)
+                 .map(AABB::new)
                  .map(aabb -> aabb.inflate(HIVE_BEE_RADIUS))
-                 .map(aabb -> world.getLoadedEntitiesOfClass(BeeEntity.class, aabb))
+                 .map(aabb -> world.getLoadedEntitiesOfClass(Bee.class, aabb))
                  .flatMap(Collection::stream)
                  .collect(Collectors.toList());
     }

@@ -1,6 +1,6 @@
 package com.minecolonies.api.util.constant;
 
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.network.chat.Component;
 
 public interface IToolType
 {
@@ -25,6 +25,6 @@ public interface IToolType
      *
      * @return The text displayed to the user.
      */
-    ITextComponent getDisplayName();
+    Component getDisplayName();
 }
 

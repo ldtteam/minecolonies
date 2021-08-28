@@ -7,9 +7,9 @@ import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -46,9 +46,9 @@ public class SmeltableOre implements IDeliverable
         this.result = result;
     }
 
-    public static CompoundNBT serialize(final IFactoryController controller, final SmeltableOre ore)
+    public static CompoundTag serialize(final IFactoryController controller, final SmeltableOre ore)
     {
-        final CompoundNBT compound = new CompoundNBT();
+        final CompoundTag compound = new CompoundTag();
         compound.putInt(NBT_COUNT, ore.count);
 
         if (!ItemStackUtils.isEmpty(ore.result))
@@ -59,7 +59,7 @@ public class SmeltableOre implements IDeliverable
         return compound;
     }
 
-    public static SmeltableOre deserialize(final IFactoryController controller, final CompoundNBT compound)
+    public static SmeltableOre deserialize(final IFactoryController controller, final CompoundTag compound)
     {
         final int count = compound.getInt(NBT_COUNT);
         final ItemStack result = compound.getAllKeys().contains(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_RESULT)) : ItemStackUtils.EMPTY;
@@ -74,7 +74,7 @@ public class SmeltableOre implements IDeliverable
      * @param buffer     the the buffer to write to.
      * @param input      the input to serialize.
      */
-    public static void serialize(final IFactoryController controller, final PacketBuffer buffer, final SmeltableOre input)
+    public static void serialize(final IFactoryController controller, final FriendlyByteBuf buffer, final SmeltableOre input)
     {
         buffer.writeInt(input.getCount());
 
@@ -92,7 +92,7 @@ public class SmeltableOre implements IDeliverable
      * @param buffer     the buffer to read.
      * @return the deliverable.
      */
-    public static SmeltableOre deserialize(final IFactoryController controller, final PacketBuffer buffer)
+    public static SmeltableOre deserialize(final IFactoryController controller, final FriendlyByteBuf buffer)
     {
         final int count = buffer.readInt();
         final ItemStack result = buffer.readBoolean() ? buffer.readItem() : ItemStack.EMPTY;

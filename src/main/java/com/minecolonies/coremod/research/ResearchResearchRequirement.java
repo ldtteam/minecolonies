@@ -5,9 +5,9 @@ import com.minecolonies.api.research.IResearchRequirement;
 import com.minecolonies.api.research.ModResearchRequirements;
 import com.minecolonies.api.research.registry.ResearchRequirementEntry;
 import com.minecolonies.api.util.constant.TranslationConstants;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.TranslatableComponent;
 
 /**
  * Certain building research requirements.
@@ -32,7 +32,7 @@ public class ResearchResearchRequirement implements IResearchRequirement
     /**
      * The research name.
      */
-    private final TranslationTextComponent researchName;
+    private final TranslatableComponent researchName;
 
     /**
      * Create a research-based research requirement, assigning an auto-generation key.
@@ -42,7 +42,7 @@ public class ResearchResearchRequirement implements IResearchRequirement
     public ResearchResearchRequirement(final ResourceLocation researchId)
     {
         this.researchId = researchId;
-        this.researchName = new TranslationTextComponent("com." + researchId.getNamespace() + ".research." + researchId.getPath().replaceAll("[ /]",".") + ".name");
+        this.researchName = new TranslatableComponent("com." + researchId.getNamespace() + ".research." + researchId.getPath().replaceAll("[ /]",".") + ".name");
     }
 
     /**
@@ -51,7 +51,7 @@ public class ResearchResearchRequirement implements IResearchRequirement
      * @param researchId the required precursor research.
      * @param researchName the override name for the required research.
      */
-    public ResearchResearchRequirement(final ResourceLocation researchId, final TranslationTextComponent researchName)
+    public ResearchResearchRequirement(final ResourceLocation researchId, final TranslatableComponent researchName)
     {
         this.researchId = researchId;
         this.researchName = researchName;
@@ -61,10 +61,10 @@ public class ResearchResearchRequirement implements IResearchRequirement
      * Create a research-based research requirement from a CompoundNBT.
      * @param nbt       the nbt containing the research information.
      */
-    public ResearchResearchRequirement(final CompoundNBT nbt)
+    public ResearchResearchRequirement(final CompoundTag nbt)
     {
         this.researchId = new ResourceLocation(nbt.getString(TAG_ID));
-        this.researchName = new TranslationTextComponent(nbt.getString(TAG_NAME));
+        this.researchName = new TranslatableComponent(nbt.getString(TAG_NAME));
     }
 
     /**
@@ -82,18 +82,18 @@ public class ResearchResearchRequirement implements IResearchRequirement
     }
 
     @Override
-    public TranslationTextComponent getDesc()
+    public TranslatableComponent getDesc()
     {
-        return new TranslationTextComponent(TranslationConstants.RESEARCH_REQUIRES, researchName);
+        return new TranslatableComponent(TranslationConstants.RESEARCH_REQUIRES, researchName);
     }
 
     @Override
     public ResearchRequirementEntry getRegistryEntry() {return ModResearchRequirements.researchResearchRequirement;}
 
     @Override
-    public CompoundNBT writeToNBT()
+    public CompoundTag writeToNBT()
     {
-        CompoundNBT nbt = new CompoundNBT();
+        CompoundTag nbt = new CompoundTag();
         nbt.putString(TAG_ID, this.researchId.toString());
         nbt.putString(TAG_NAME, this.researchName.getKey());
         return nbt;

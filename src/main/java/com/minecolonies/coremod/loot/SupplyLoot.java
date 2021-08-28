@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.loot;
 
 import com.minecolonies.coremod.MineColonies;
-import net.minecraft.loot.LootPool;
-import net.minecraft.loot.LootTables;
-import net.minecraft.loot.TableLootEntry;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.level.storage.loot.LootPool;
+import net.minecraft.world.level.storage.loot.BuiltInLootTables;
+import net.minecraft.world.level.storage.loot.entries.LootTableReference;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.event.LootTableLoadEvent;
 
 import java.util.HashMap;
@@ -44,31 +44,31 @@ public class SupplyLoot
     protected void init()
     {
         // Camp
-        lootTables.put(LootTables.SPAWN_BONUS_CHEST, SUPPLY_CAMP_LT);
-        lootTables.put(LootTables.SIMPLE_DUNGEON, SUPPLY_CAMP_LT);
-        lootTables.put(LootTables.VILLAGE_CARTOGRAPHER, SUPPLY_CAMP_LT);
-        lootTables.put(LootTables.VILLAGE_MASON, SUPPLY_CAMP_LT);
-        lootTables.put(LootTables.VILLAGE_DESERT_HOUSE, SUPPLY_CAMP_LT);
-        lootTables.put(LootTables.ABANDONED_MINESHAFT, SUPPLY_CAMP_LT);
-        lootTables.put(LootTables.STRONGHOLD_LIBRARY, SUPPLY_CAMP_LT);
-        lootTables.put(LootTables.STRONGHOLD_CROSSING, SUPPLY_CAMP_LT);
-        lootTables.put(LootTables.STRONGHOLD_CORRIDOR, SUPPLY_CAMP_LT);
-        lootTables.put(LootTables.DESERT_PYRAMID, SUPPLY_CAMP_LT);
-        lootTables.put(LootTables.JUNGLE_TEMPLE, SUPPLY_CAMP_LT);
-        lootTables.put(LootTables.IGLOO_CHEST, SUPPLY_CAMP_LT);
-        lootTables.put(LootTables.WOODLAND_MANSION, SUPPLY_CAMP_LT);
-        lootTables.put(LootTables.PILLAGER_OUTPOST, SUPPLY_CAMP_LT);
+        lootTables.put(BuiltInLootTables.SPAWN_BONUS_CHEST, SUPPLY_CAMP_LT);
+        lootTables.put(BuiltInLootTables.SIMPLE_DUNGEON, SUPPLY_CAMP_LT);
+        lootTables.put(BuiltInLootTables.VILLAGE_CARTOGRAPHER, SUPPLY_CAMP_LT);
+        lootTables.put(BuiltInLootTables.VILLAGE_MASON, SUPPLY_CAMP_LT);
+        lootTables.put(BuiltInLootTables.VILLAGE_DESERT_HOUSE, SUPPLY_CAMP_LT);
+        lootTables.put(BuiltInLootTables.ABANDONED_MINESHAFT, SUPPLY_CAMP_LT);
+        lootTables.put(BuiltInLootTables.STRONGHOLD_LIBRARY, SUPPLY_CAMP_LT);
+        lootTables.put(BuiltInLootTables.STRONGHOLD_CROSSING, SUPPLY_CAMP_LT);
+        lootTables.put(BuiltInLootTables.STRONGHOLD_CORRIDOR, SUPPLY_CAMP_LT);
+        lootTables.put(BuiltInLootTables.DESERT_PYRAMID, SUPPLY_CAMP_LT);
+        lootTables.put(BuiltInLootTables.JUNGLE_TEMPLE, SUPPLY_CAMP_LT);
+        lootTables.put(BuiltInLootTables.IGLOO_CHEST, SUPPLY_CAMP_LT);
+        lootTables.put(BuiltInLootTables.WOODLAND_MANSION, SUPPLY_CAMP_LT);
+        lootTables.put(BuiltInLootTables.PILLAGER_OUTPOST, SUPPLY_CAMP_LT);
 
         // Ship
-        lootTables.put(LootTables.UNDERWATER_RUIN_SMALL, SUPPLY_SHIP_LT);
-        lootTables.put(LootTables.UNDERWATER_RUIN_BIG, SUPPLY_SHIP_LT);
-        lootTables.put(LootTables.BURIED_TREASURE, SUPPLY_SHIP_LT);
-        lootTables.put(LootTables.SHIPWRECK_MAP, SUPPLY_SHIP_LT);
-        lootTables.put(LootTables.SHIPWRECK_SUPPLY, SUPPLY_SHIP_LT);
-        lootTables.put(LootTables.SHIPWRECK_TREASURE, SUPPLY_SHIP_LT);
-        lootTables.put(LootTables.VILLAGE_FISHER, SUPPLY_SHIP_LT);
-        lootTables.put(LootTables.VILLAGE_ARMORER, SUPPLY_SHIP_LT);
-        lootTables.put(LootTables.VILLAGE_TEMPLE, SUPPLY_SHIP_LT);
+        lootTables.put(BuiltInLootTables.UNDERWATER_RUIN_SMALL, SUPPLY_SHIP_LT);
+        lootTables.put(BuiltInLootTables.UNDERWATER_RUIN_BIG, SUPPLY_SHIP_LT);
+        lootTables.put(BuiltInLootTables.BURIED_TREASURE, SUPPLY_SHIP_LT);
+        lootTables.put(BuiltInLootTables.SHIPWRECK_MAP, SUPPLY_SHIP_LT);
+        lootTables.put(BuiltInLootTables.SHIPWRECK_SUPPLY, SUPPLY_SHIP_LT);
+        lootTables.put(BuiltInLootTables.SHIPWRECK_TREASURE, SUPPLY_SHIP_LT);
+        lootTables.put(BuiltInLootTables.VILLAGE_FISHER, SUPPLY_SHIP_LT);
+        lootTables.put(BuiltInLootTables.VILLAGE_ARMORER, SUPPLY_SHIP_LT);
+        lootTables.put(BuiltInLootTables.VILLAGE_TEMPLE, SUPPLY_SHIP_LT);
     }
 
     public static SupplyLoot getInstance()
@@ -89,7 +89,7 @@ public class SupplyLoot
     {
         if (MineColonies.getConfig().getServer().generateSupplyLoot.get() && lootTables.containsKey(event.getName()))
         {
-            event.getTable().addPool(LootPool.lootPool().add(TableLootEntry.lootTableReference(lootTables.get(event.getName()))).name(MOD_ID + ":loot:" + event.getName()).build());
+            event.getTable().addPool(LootPool.lootPool().add(LootTableReference.lootTableReference(lootTables.get(event.getName()))).name(MOD_ID + ":loot:" + event.getName()).build());
         }
     }
 }

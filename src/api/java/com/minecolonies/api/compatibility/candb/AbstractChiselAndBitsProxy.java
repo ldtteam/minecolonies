@@ -1,8 +1,8 @@
 package com.minecolonies.api.compatibility.candb;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -30,7 +30,7 @@ public abstract class AbstractChiselAndBitsProxy
      * @param tileEntity the tileEntity.
      * @return if the tileEntity is a candb tileEntity.
      */
-    public boolean checkForChiselAndBitsTileEntity(@NotNull final TileEntity tileEntity)
+    public boolean checkForChiselAndBitsTileEntity(@NotNull final BlockEntity tileEntity)
     {
         return false;
     }
@@ -41,7 +41,7 @@ public abstract class AbstractChiselAndBitsProxy
      * @param tileEntity the tileEntity.
      * @return if the tileEntity is a candb tileEntity.
      */
-    public List<ItemStack> getChiseledStacks(@NotNull final TileEntity tileEntity)
+    public List<ItemStack> getChiseledStacks(@NotNull final BlockEntity tileEntity)
     {
         return Collections.emptyList();
     }

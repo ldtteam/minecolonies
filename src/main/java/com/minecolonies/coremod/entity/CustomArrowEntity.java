@@ -1,21 +1,21 @@
 package com.minecolonies.coremod.entity;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.ArrowEntity;
-import net.minecraft.network.IPacket;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.math.EntityRayTraceResult;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.Arrow;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Custom arrow entity class which remove themselves when on the ground for a bit to not cause lag and they do not scale in damage with their motion.
  */
-public class CustomArrowEntity extends ArrowEntity
+public class CustomArrowEntity extends Arrow
 {
     /**
      * Max time the arrow is stuck before removing it
@@ -27,7 +27,7 @@ public class CustomArrowEntity extends ArrowEntity
      */
     private boolean armorPiercePlayer = false;
 
-    public CustomArrowEntity(final EntityType<? extends ArrowEntity> type, final World world)
+    public CustomArrowEntity(final EntityType<? extends Arrow> type, final Level world)
     {
         super(type, world);
     }
@@ -41,13 +41,13 @@ public class CustomArrowEntity extends ArrowEntity
 
     @Override
     @NotNull
-    public IPacket<?> getAddEntityPacket()
+    public Packet<?> getAddEntityPacket()
     {
         return NetworkHooks.getEntitySpawningPacket(this);
     }
 
     @Override
-    protected void onHitEntity(EntityRayTraceResult traceResult)
+    protected void onHitEntity(EntityHitResult traceResult)
     {
         final double prevDamage = getBaseDamage();
 
@@ -61,7 +61,7 @@ public class CustomArrowEntity extends ArrowEntity
         if (armorPiercePlayer)
         {
             final Entity player = traceResult.getEntity();
-            if (player instanceof PlayerEntity)
+            if (player instanceof Player)
             {
                 Entity shooter = this.getOwner();
                 DamageSource source;

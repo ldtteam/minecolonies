@@ -12,16 +12,16 @@ import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import org.jetbrains.annotations.NotNull;
@@ -38,7 +38,7 @@ import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_W
 /**
  * Abstract class for all Citizen Herder AIs
  */
-public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B extends AbstractBuildingWorker, T extends AnimalEntity> extends AbstractEntityAIInteract<J, B>
+public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B extends AbstractBuildingWorker, T extends Animal> extends AbstractEntityAIInteract<J, B>
 {
     /**
      * How many animals per hut level the worker should max have.
@@ -166,11 +166,11 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
             return DECIDE;
         }
 
-        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_DECIDING));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslatableComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_DECIDING));
 
         int numOfBreedableAnimals = 0;
         int numOfFeedableAnimals = 0;
-        for (final AnimalEntity entity : animals)
+        for (final Animal entity : animals)
         {
             if (isBreedAble(entity))
             {
@@ -211,7 +211,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      * @param entity to check
      * @return true if breed able
      */
-    protected boolean isBreedAble(final AnimalEntity entity)
+    protected boolean isBreedAble(final Animal entity)
     {
         return entity.getAge() == 0 && entity.canFallInLove();
     }
@@ -232,7 +232,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      */
     private IAIState startWorkingAtOwnBuilding()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_WORKER_GOINGTOHUT));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslatableComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_WORKER_GOINGTOHUT));
         if (walkToBuilding())
         {
             return getState();
@@ -280,12 +280,12 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
             return DECIDE;
         }
 
-        if (!equipTool(Hand.MAIN_HAND, ToolType.AXE))
+        if (!equipTool(InteractionHand.MAIN_HAND, ToolType.AXE))
         {
             return START_WORKING;
         }
 
-        final AnimalEntity animal = animals
+        final Animal animal = animals
                                       .stream()
                                       .filter(animalToButcher -> !animalToButcher.isBaby())
                                       .findFirst()
@@ -316,7 +316,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
     {
         final List<T> animals = searchForAnimals();
 
-        final AnimalEntity animalOne = animals
+        final Animal animalOne = animals
                                          .stream()
                                          .filter(this::isBreedAble)
                                          .findAny()
@@ -327,7 +327,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
             return DECIDE;
         }
 
-        final AnimalEntity animalTwo = animals.stream().filter(animal ->
+        final Animal animalTwo = animals.stream().filter(animal ->
           {
               final float range = animal.distanceTo(animalOne);
               final boolean isAnimalOne = animalOne.equals(animal);
@@ -340,12 +340,12 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
             return DECIDE;
         }
 
-        if (!equipItem(Hand.MAIN_HAND, getBreedingItem()))
+        if (!equipItem(InteractionHand.MAIN_HAND, getBreedingItem()))
         {
             return START_WORKING;
         }
 
-        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_HERDER_BREEDING));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslatableComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_HERDER_BREEDING));
 
         breedTwoAnimals(animalOne, animalTwo);
         worker.decreaseSaturationForContinuousAction();
@@ -361,7 +361,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
     {
         final List<T> animals = searchForAnimals();
 
-        final AnimalEntity animalOne = animals
+        final Animal animalOne = animals
                                          .stream()
                                          .filter(entity -> entity.isBaby() && MAX_ENTITY_AGE / entity.getAge() <= 1 + getSecondarySkillLevel()/100.0)
                                          .findAny()
@@ -372,18 +372,18 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
             return DECIDE;
         }
 
-        if (!equipItem(Hand.MAIN_HAND, getBreedingItem()))
+        if (!equipItem(InteractionHand.MAIN_HAND, getBreedingItem()))
         {
             return START_WORKING;
         }
 
-        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_HERDER_FEEDING));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslatableComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_HERDER_FEEDING));
 
         if (!walkingToAnimal(animalOne))
         {
             // Values taken from vanilla.
             animalOne.ageUp((int)((float)(-animalOne.getAge() / 20) * 0.1F), true);
-            worker.swing(Hand.MAIN_HAND);
+            worker.swing(InteractionHand.MAIN_HAND);
             InventoryUtils.reduceStackInItemHandler(worker.getInventoryCitizen(), getBreedingItem());
             worker.getCitizenExperienceHandler().addExperience(XP_PER_ACTION);
             animalOne.playSound(SoundEvents.GENERIC_EAT, 1.0F, 1.0F);
@@ -452,11 +452,11 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      * @param animal the animal to walk to.
      * @return true if the herder is walking to the animal.
      */
-    public boolean walkingToAnimal(final AnimalEntity animal)
+    public boolean walkingToAnimal(final Animal animal)
     {
         if (animal != null)
         {
-            worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_HERDER_GOINGTOANIMAL));
+            worker.getCitizenStatusHandler().setLatestStatus(new TranslatableComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_HERDER_GOINGTOANIMAL));
             return walkToBlock(new BlockPos(animal.position()));
         }
         else
@@ -471,18 +471,18 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      * @param animalOne the first {@link AnimalEntity} to breed.
      * @param animalTwo the second {@link AnimalEntity} to breed.
      */
-    private void breedTwoAnimals(final AnimalEntity animalOne, final AnimalEntity animalTwo)
+    private void breedTwoAnimals(final Animal animalOne, final Animal animalTwo)
     {
-        final List<AnimalEntity> animalsToBreed = new ArrayList<>();
+        final List<Animal> animalsToBreed = new ArrayList<>();
         animalsToBreed.add(animalOne);
         animalsToBreed.add(animalTwo);
 
-        for (final AnimalEntity animal : animalsToBreed)
+        for (final Animal animal : animalsToBreed)
         {
             if (!animal.isInLove() && !walkingToAnimal(animal))
             {
                 animal.setInLove(null);
-                worker.swing(Hand.MAIN_HAND);
+                worker.swing(InteractionHand.MAIN_HAND);
                 InventoryUtils.reduceStackInItemHandler(worker.getInventoryCitizen(), getBreedingItem());
                 worker.getCitizenExperienceHandler().addExperience(XP_PER_ACTION);
             }
@@ -517,7 +517,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      * @param hand     the hand to equip it in.
      * @return true if the tool was equipped.
      */
-    public boolean equipTool(final Hand hand, final ToolType toolType)
+    public boolean equipTool(final InteractionHand hand, final ToolType toolType)
     {
         if (getToolSlot(toolType) != -1)
         {
@@ -552,7 +552,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      * @param hand      the hand to equip it in.
      * @return true if the item was equipped.
      */
-    public boolean equipItem(final Hand hand, final ItemStack itemStack)
+    public boolean equipItem(final InteractionHand hand, final ItemStack itemStack)
     {
         if (checkIfRequestForItemExistOrCreateAsynch(itemStack))
         {
@@ -578,16 +578,16 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      *
      * @param animal the {@link AnimalEntity} we are butchering
      */
-    protected void butcherAnimal(@Nullable final AnimalEntity animal)
+    protected void butcherAnimal(@Nullable final Animal animal)
     {
-        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_HERDER_BUTCHERING));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslatableComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_HERDER_BUTCHERING));
         if (animal != null && !walkingToAnimal(animal) && !ItemStackUtils.isEmpty(worker.getMainHandItem()))
         {
-            worker.swing(Hand.MAIN_HAND);
-            final FakePlayer fp = FakePlayerFactory.getMinecraft((ServerWorld) worker.getCommandSenderWorld());
+            worker.swing(InteractionHand.MAIN_HAND);
+            final FakePlayer fp = FakePlayerFactory.getMinecraft((ServerLevel) worker.getCommandSenderWorld());
             final DamageSource ds = DamageSource.playerAttack(fp);
             animal.hurt(ds, (float) getButcheringAttackDamage());
-            worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, 1);
+            worker.getCitizenItemHandler().damageItemInHand(InteractionHand.MAIN_HAND, 1);
         }
     }
 

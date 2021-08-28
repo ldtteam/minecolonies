@@ -1,6 +1,6 @@
 package com.minecolonies.api.items;
 
-import net.minecraft.item.Item;
+import net.minecraft.world.item.Item;
 
 /**
  * Class handling the registering of the mod items.

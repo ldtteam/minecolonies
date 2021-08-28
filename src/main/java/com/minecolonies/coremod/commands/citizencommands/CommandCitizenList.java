@@ -9,10 +9,10 @@ import com.minecolonies.coremod.commands.commandTypes.IMCCommand;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import net.minecraft.command.CommandSource;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.core.BlockPos;
 import net.minecraft.util.text.*;
-import net.minecraft.util.text.event.ClickEvent;
+import net.minecraft.network.chat.ClickEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -20,6 +20,11 @@ import java.util.List;
 
 import static com.minecolonies.coremod.commands.CommandArgumentNames.COLONYID_ARG;
 import static com.minecolonies.coremod.commands.colonycommands.CommandListColonies.START_PAGE_ARG;
+
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 
 /**
  * Lists all citizen of a given colony.
@@ -37,12 +42,12 @@ public class CommandCitizenList implements IMCColonyOfficerCommand
      * @param context the context of the command execution
      */
     @Override
-    public int onExecute(final CommandContext<CommandSource> context)
+    public int onExecute(final CommandContext<CommandSourceStack> context)
     {
         return displayListFor(context, 1);
     }
 
-    private int executeWithPage(final CommandContext<CommandSource> context)
+    private int executeWithPage(final CommandContext<CommandSourceStack> context)
     {
         if (!checkPreCondition(context))
         {
@@ -52,7 +57,7 @@ public class CommandCitizenList implements IMCColonyOfficerCommand
         return displayListFor(context, IntegerArgumentType.getInteger(context, START_PAGE_ARG));
     }
 
-    private int displayListFor(final CommandContext<CommandSource> context, int page)
+    private int displayListFor(final CommandContext<CommandSourceStack> context, int page)
     {
         // Colony
         final int colonyID = IntegerArgumentType.getInteger(context, COLONYID_ARG);
@@ -79,7 +84,7 @@ public class CommandCitizenList implements IMCColonyOfficerCommand
         final int pageStopIndex = Math.min(CITIZENS_ON_PAGE * page, citizenCount);
 
         final List<ICitizenData> citizensPage = getCitizensOnPage(citizens, citizenCount, pageStartIndex, pageStopIndex);
-        final ITextComponent headerLine = LanguageHandler.buildChatComponent("com.minecolonies.command.citizenlist.pagetop", page, pageCount);
+        final Component headerLine = LanguageHandler.buildChatComponent("com.minecolonies.command.citizenlist.pagetop", page, pageCount);
         context.getSource().sendSuccess(headerLine, true);
 
         drawCitizens(context, citizensPage);
@@ -103,7 +108,7 @@ public class CommandCitizenList implements IMCColonyOfficerCommand
         return citizensPage;
     }
 
-    private void drawCitizens(@NotNull final CommandContext<CommandSource> context, final List<ICitizenData> citizensPage)
+    private void drawCitizens(@NotNull final CommandContext<CommandSourceStack> context, final List<ICitizenData> citizensPage)
     {
         for (final ICitizenData citizen : citizensPage)
         {
@@ -129,22 +134,22 @@ public class CommandCitizenList implements IMCColonyOfficerCommand
      * @param halfPage the halfPage.
      * @param colonyId the colony id.
      */
-    private static void drawPageSwitcher(@NotNull final CommandContext<CommandSource> context, final int page, final int count, final int halfPage, final int colonyId)
+    private static void drawPageSwitcher(@NotNull final CommandContext<CommandSourceStack> context, final int page, final int count, final int halfPage, final int colonyId)
     {
         final int prevPage = Math.max(0, page - 1);
         final int nextPage = Math.min(page + 1, (count / CITIZENS_ON_PAGE) + halfPage);
 
-        final ITextComponent prevButton =
-          LanguageHandler.buildChatComponent("com.minecolonies.command.citizenlist.prev").setStyle(Style.EMPTY.withBold(true).withColor(TextFormatting.GOLD).withClickEvent(
+        final Component prevButton =
+          LanguageHandler.buildChatComponent("com.minecolonies.command.citizenlist.prev").setStyle(Style.EMPTY.withBold(true).withColor(ChatFormatting.GOLD).withClickEvent(
             new ClickEvent(ClickEvent.Action.RUN_COMMAND, String.format(LIST_COMMAND_SUGGESTED, colonyId, prevPage))
           ));
-        final ITextComponent nextButton =
-          LanguageHandler.buildChatComponent("com.minecolonies.command.citizenlist.next").setStyle(Style.EMPTY.withBold(true).withColor(TextFormatting.GOLD).withClickEvent(
+        final Component nextButton =
+          LanguageHandler.buildChatComponent("com.minecolonies.command.citizenlist.next").setStyle(Style.EMPTY.withBold(true).withColor(ChatFormatting.GOLD).withClickEvent(
             new ClickEvent(ClickEvent.Action.RUN_COMMAND, String.format(LIST_COMMAND_SUGGESTED, colonyId, nextPage))
           ));
 
-        final IFormattableTextComponent beginLine = LanguageHandler.buildChatComponent("com.minecolonies.command.citizenlist.pageline");
-        final IFormattableTextComponent endLine = LanguageHandler.buildChatComponent("com.minecolonies.command.citizenlist.pageline");
+        final MutableComponent beginLine = LanguageHandler.buildChatComponent("com.minecolonies.command.citizenlist.pageline");
+        final MutableComponent endLine = LanguageHandler.buildChatComponent("com.minecolonies.command.citizenlist.pageline");
 
         context.getSource().sendSuccess(beginLine.append(prevButton)
                                            .append(LanguageHandler.buildChatComponent("com.minecolonies.command.citizenlist.pagestyle"))
@@ -162,7 +167,7 @@ public class CommandCitizenList implements IMCColonyOfficerCommand
     }
 
     @Override
-    public LiteralArgumentBuilder<CommandSource> build()
+    public LiteralArgumentBuilder<CommandSourceStack> build()
     {
         return IMCCommand.newLiteral(getName())
                  .then(IMCCommand.newArgument(COLONYID_ARG, IntegerArgumentType.integer(1))

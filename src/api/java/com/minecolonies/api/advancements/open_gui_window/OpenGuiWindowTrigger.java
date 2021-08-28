@@ -3,10 +3,10 @@ package com.minecolonies.api.advancements.open_gui_window;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.advancements.AbstractCriterionTrigger;
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.loot.ConditionArrayParser;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.advancements.critereon.DeserializationContext;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -24,7 +24,7 @@ public class OpenGuiWindowTrigger extends AbstractCriterionTrigger<OpenGuiWindow
      * @param player the player the check regards
      * @param windowResource the window id that was just opened
      */
-    public void trigger(final ServerPlayerEntity player, final String windowResource)
+    public void trigger(final ServerPlayer player, final String windowResource)
     {
         final OpenGuiWindowListeners listeners = this.getListeners(player.getAdvancements());
         if (listeners != null)
@@ -35,11 +35,11 @@ public class OpenGuiWindowTrigger extends AbstractCriterionTrigger<OpenGuiWindow
 
     @NotNull
     @Override
-    public OpenGuiWindowCriterionInstance createInstance(@NotNull final JsonObject jsonObject, @NotNull final ConditionArrayParser conditionArrayParser)
+    public OpenGuiWindowCriterionInstance createInstance(@NotNull final JsonObject jsonObject, @NotNull final DeserializationContext conditionArrayParser)
     {
         if (jsonObject.has("window_resource_location"))
         {
-            final String windowResource = JSONUtils.getAsString(jsonObject, "window_resource_location");
+            final String windowResource = GsonHelper.getAsString(jsonObject, "window_resource_location");
             return new OpenGuiWindowCriterionInstance(windowResource);
         }
         return new OpenGuiWindowCriterionInstance();

@@ -11,11 +11,11 @@ import com.minecolonies.coremod.entity.CustomArrowEntity;
 import com.minecolonies.coremod.entity.ai.combat.AttackMoveAI;
 import com.minecolonies.coremod.entity.ai.combat.CombatUtils;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.AbstractArrowEntity;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundEvents;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.sounds.SoundEvents;
 
 import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
 
@@ -95,7 +95,7 @@ public class RaiderRangedAI<T extends AbstractEntityMinecoloniesMob & IThreatTab
         user.getNavigation().stop();
 
         // Setup arrow
-        AbstractArrowEntity arrowEntity = CombatUtils.createArrowForShooter(user);
+        AbstractArrow arrowEntity = CombatUtils.createArrowForShooter(user);
 
         arrowEntity.setBaseDamage(user.getAttribute(MOB_ATTACK_DAMAGE).getValue());
         if (flightCounter > 5)
@@ -114,7 +114,7 @@ public class RaiderRangedAI<T extends AbstractEntityMinecoloniesMob & IThreatTab
         CombatUtils.shootArrow(arrowEntity, target, 10.0f);
 
         // Visuals
-        user.swing(Hand.MAIN_HAND);
+        user.swing(InteractionHand.MAIN_HAND);
         user.playSound(SoundEvents.SKELETON_SHOOT, (float) 1.0D, (float) getRandomPitch());
     }
 
@@ -154,7 +154,7 @@ public class RaiderRangedAI<T extends AbstractEntityMinecoloniesMob & IThreatTab
     @Override
     protected boolean isAttackableTarget(final LivingEntity target)
     {
-        return target instanceof EntityCitizen || (target instanceof PlayerEntity && !((PlayerEntity) target).isCreative() && !target.isSpectator());
+        return target instanceof EntityCitizen || (target instanceof Player && !((Player) target).isCreative() && !target.isSpectator());
     }
 
     @Override

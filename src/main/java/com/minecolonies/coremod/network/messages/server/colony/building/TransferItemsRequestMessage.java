@@ -9,9 +9,9 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -65,7 +65,7 @@ public class TransferItemsRequestMessage extends AbstractBuildingServerMessage<I
     }
 
     @Override
-    public void fromBytesOverride(@NotNull final PacketBuffer buf)
+    public void fromBytesOverride(@NotNull final FriendlyByteBuf buf)
     {
         itemStack = buf.readItem();
         quantity = buf.readInt();
@@ -73,7 +73,7 @@ public class TransferItemsRequestMessage extends AbstractBuildingServerMessage<I
     }
 
     @Override
-    public void toBytesOverride(@NotNull final PacketBuffer buf)
+    public void toBytesOverride(@NotNull final FriendlyByteBuf buf)
     {
         buf.writeItem(itemStack);
         buf.writeInt(quantity);
@@ -89,7 +89,7 @@ public class TransferItemsRequestMessage extends AbstractBuildingServerMessage<I
             return;
         }
 
-        final PlayerEntity player = ctxIn.getSender();
+        final Player player = ctxIn.getSender();
         if (player == null)
         {
             return;

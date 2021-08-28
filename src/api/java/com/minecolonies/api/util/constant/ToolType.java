@@ -1,7 +1,7 @@
 package com.minecolonies.api.util.constant;
 
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,21 +14,21 @@ public enum ToolType implements IToolType
      * Note to future coders: You must add these to both: com.minecolonies.api.colony.requestsystem.requestable.Tool.getToolClasses and,
      * com.minecolonies.api.util.ItemStackUtils.isTool to be usable by the RS system
      */
-    NONE("", false, new TranslationTextComponent(COM_MINECOLONIES_TOOLTYPE_NONE)),
-    PICKAXE("pickaxe", true, new TranslationTextComponent(COM_MINECOLONIES_TOOLTYPE_PICKAXE)),
-    SHOVEL("shovel", true, new TranslationTextComponent(COM_MINECOLONIES_TOOLTYPE_SHOVEL)),
-    AXE("axe", true, new TranslationTextComponent(COM_MINECOLONIES_TOOLTYPE_AXE)),
-    HOE("hoe", true, new TranslationTextComponent(COM_MINECOLONIES_TOOLTYPE_HOE)),
-    SWORD("weapon", true, new TranslationTextComponent(COM_MINECOLONIES_TOOLTYPE_SWORD)),
-    BOW("bow", false, new TranslationTextComponent(COM_MINECOLONIES_TOOLTYPE_BOW)),
-    FISHINGROD("rod", false, new TranslationTextComponent(COM_MINECOLONIES_TOOLTYPE_FISHINGROD)),
-    SHEARS("shears", false, new TranslationTextComponent(COM_MINECOLONIES_TOOLTYPE_SHEARS)),
-    SHIELD("shield", false, new TranslationTextComponent(COM_MINECOLONIES_TOOLTYPE_SHIELD)),
-    HELMET("helmet", false, new TranslationTextComponent(COM_MINECOLONIES_TOOLTYPE_HELMET)),
-    LEGGINGS("leggings", false, new TranslationTextComponent(COM_MINECOLONIES_TOOLTYPE_LEGGINGS)),
-    CHESTPLATE("chestplate", false, new TranslationTextComponent(COM_MINECOLONIES_TOOLTYPE_CHESTPLATE)),
-    BOOTS("boots", false, new TranslationTextComponent(COM_MINECOLONIES_TOOLTYPE_BOOTS)),
-    FLINT_N_STEEL("flintandsteel", false, new TranslationTextComponent(COM_MINECOLONIES_TOOLTYPE_LIGHTER));
+    NONE("", false, new TranslatableComponent(COM_MINECOLONIES_TOOLTYPE_NONE)),
+    PICKAXE("pickaxe", true, new TranslatableComponent(COM_MINECOLONIES_TOOLTYPE_PICKAXE)),
+    SHOVEL("shovel", true, new TranslatableComponent(COM_MINECOLONIES_TOOLTYPE_SHOVEL)),
+    AXE("axe", true, new TranslatableComponent(COM_MINECOLONIES_TOOLTYPE_AXE)),
+    HOE("hoe", true, new TranslatableComponent(COM_MINECOLONIES_TOOLTYPE_HOE)),
+    SWORD("weapon", true, new TranslatableComponent(COM_MINECOLONIES_TOOLTYPE_SWORD)),
+    BOW("bow", false, new TranslatableComponent(COM_MINECOLONIES_TOOLTYPE_BOW)),
+    FISHINGROD("rod", false, new TranslatableComponent(COM_MINECOLONIES_TOOLTYPE_FISHINGROD)),
+    SHEARS("shears", false, new TranslatableComponent(COM_MINECOLONIES_TOOLTYPE_SHEARS)),
+    SHIELD("shield", false, new TranslatableComponent(COM_MINECOLONIES_TOOLTYPE_SHIELD)),
+    HELMET("helmet", false, new TranslatableComponent(COM_MINECOLONIES_TOOLTYPE_HELMET)),
+    LEGGINGS("leggings", false, new TranslatableComponent(COM_MINECOLONIES_TOOLTYPE_LEGGINGS)),
+    CHESTPLATE("chestplate", false, new TranslatableComponent(COM_MINECOLONIES_TOOLTYPE_CHESTPLATE)),
+    BOOTS("boots", false, new TranslatableComponent(COM_MINECOLONIES_TOOLTYPE_BOOTS)),
+    FLINT_N_STEEL("flintandsteel", false, new TranslatableComponent(COM_MINECOLONIES_TOOLTYPE_LIGHTER));
 
     static final private Map<String, IToolType> tools = new HashMap<>();
     static
@@ -40,9 +40,9 @@ public enum ToolType implements IToolType
     }
     private final String         name;
     private final boolean        variableMaterials;
-    private final ITextComponent displayName;
+    private final Component displayName;
 
-    private ToolType(final String name, final boolean variableMaterials, final ITextComponent displayName)
+    private ToolType(final String name, final boolean variableMaterials, final Component displayName)
     {
         this.name = name;
         this.variableMaterials = variableMaterials;
@@ -69,7 +69,7 @@ public enum ToolType implements IToolType
     }
 
     @Override
-    public ITextComponent getDisplayName()
+    public Component getDisplayName()
     {
         return displayName;
     }

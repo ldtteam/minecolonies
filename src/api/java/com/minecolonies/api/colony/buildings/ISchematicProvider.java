@@ -1,14 +1,14 @@
 package com.minecolonies.api.colony.buildings;
 
 import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
 import net.minecraftforge.common.util.INBTSerializable;
 
 import java.util.Set;
 
-public interface ISchematicProvider extends INBTSerializable<CompoundNBT>
+public interface ISchematicProvider extends INBTSerializable<CompoundTag>
 {
     /**
      * Returns the {@code BlockPos} of the current object, also used as ID.

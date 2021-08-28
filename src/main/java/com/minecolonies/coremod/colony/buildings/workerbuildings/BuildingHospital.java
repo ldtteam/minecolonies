@@ -20,17 +20,17 @@ import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerVie
 import com.minecolonies.coremod.colony.jobs.JobHealer;
 import com.minecolonies.coremod.entity.ai.citizen.healer.Patient;
 import com.minecolonies.coremod.util.AttributeModifierUtils;
-import net.minecraft.block.BedBlock;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.state.properties.BedPart;
+import net.minecraft.world.level.block.BedBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.world.level.block.state.properties.BedPart;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
@@ -133,13 +133,13 @@ public class BuildingHospital extends AbstractBuildingFurnaceUser
     }
 
     @Override
-    public void deserializeNBT(final CompoundNBT compound)
+    public void deserializeNBT(final CompoundTag compound)
     {
         super.deserializeNBT(compound);
-        final ListNBT bedTagList = compound.getList(TAG_BEDS, Constants.NBT.TAG_COMPOUND);
+        final ListTag bedTagList = compound.getList(TAG_BEDS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < bedTagList.size(); ++i)
         {
-            final CompoundNBT bedCompound = bedTagList.getCompound(i);
+            final CompoundTag bedCompound = bedTagList.getCompound(i);
             final BlockPos bedPos = BlockPosUtil.read(bedCompound, TAG_POS);
             if (!bedMap.containsKey(bedPos))
             {
@@ -147,10 +147,10 @@ public class BuildingHospital extends AbstractBuildingFurnaceUser
             }
         }
 
-        final ListNBT patientTagList = compound.getList(TAG_PATIENTS, Constants.NBT.TAG_COMPOUND);
+        final ListTag patientTagList = compound.getList(TAG_PATIENTS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < patientTagList.size(); ++i)
         {
-            final CompoundNBT patientCompound = patientTagList.getCompound(i);
+            final CompoundTag patientCompound = patientTagList.getCompound(i);
             final int patientId = patientCompound.getInt(TAG_ID);
             if (!patients.containsKey(patientId))
             {
@@ -160,15 +160,15 @@ public class BuildingHospital extends AbstractBuildingFurnaceUser
     }
 
     @Override
-    public CompoundNBT serializeNBT()
+    public CompoundTag serializeNBT()
     {
-        final CompoundNBT compound = super.serializeNBT();
+        final CompoundTag compound = super.serializeNBT();
         if (!bedMap.isEmpty())
         {
-            @NotNull final ListNBT bedTagList = new ListNBT();
+            @NotNull final ListTag bedTagList = new ListTag();
             for (@NotNull final Map.Entry<BlockPos, Integer> entry : bedMap.entrySet())
             {
-                final CompoundNBT bedCompound = new CompoundNBT();
+                final CompoundTag bedCompound = new CompoundTag();
                 BlockPosUtil.write(bedCompound, NbtTagConstants.TAG_POS, entry.getKey());
                 bedCompound.putInt(TAG_ID, entry.getValue());
                 bedTagList.add(bedCompound);
@@ -178,10 +178,10 @@ public class BuildingHospital extends AbstractBuildingFurnaceUser
 
         if (!patients.isEmpty())
         {
-            @NotNull final ListNBT patientTagList = new ListNBT();
+            @NotNull final ListTag patientTagList = new ListTag();
             for (@NotNull final Patient patient : patients.values())
             {
-                final CompoundNBT patientCompound = new CompoundNBT();
+                final CompoundTag patientCompound = new CompoundTag();
                 patient.write(patientCompound);
                 patientTagList.add(patientCompound);
             }
@@ -192,7 +192,7 @@ public class BuildingHospital extends AbstractBuildingFurnaceUser
     }
 
     @Override
-    public void registerBlockPosition(@NotNull final BlockState blockState, @NotNull final BlockPos pos, @NotNull final World world)
+    public void registerBlockPosition(@NotNull final BlockState blockState, @NotNull final BlockPos pos, @NotNull final Level world)
     {
         super.registerBlockPosition(blockState, pos, world);
 

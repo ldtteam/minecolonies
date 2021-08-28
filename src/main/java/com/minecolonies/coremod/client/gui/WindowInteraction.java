@@ -10,8 +10,8 @@ import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandl
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.client.gui.citizen.MainWindowCitizen;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -85,7 +85,7 @@ public class WindowInteraction extends AbstractWindowSkeleton
         chatText.setAlignment(Alignment.TOP_LEFT);
         chatText.setText(citizen.getName() + ": " + handler.getInquiry().getString());
         int responseIndex = 1;
-        for (final ITextComponent component : handler.getPossibleResponses())
+        for (final Component component : handler.getPossibleResponses())
         {
             final ButtonImage button = new ButtonImage();
             button.setImage(new ResourceLocation(Constants.MOD_ID, MEDIUM_SIZED_BUTTON_RES));
@@ -121,7 +121,7 @@ public class WindowInteraction extends AbstractWindowSkeleton
         if (!interactions.isEmpty())
         {
             final IInteractionResponseHandler handler = interactions.get(currentInteraction);
-            for (final ITextComponent component : handler.getPossibleResponses())
+            for (final Component component : handler.getPossibleResponses())
             {
                 if (component.getString().equals(button.getTextAsString()))
                 {

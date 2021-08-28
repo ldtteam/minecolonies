@@ -12,11 +12,11 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
-import net.minecraft.entity.ai.goal.GoalSelector;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.DamageSource;
+import net.minecraft.world.entity.ai.goal.GoalSelector;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -111,9 +111,9 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
     }
 
     @Override
-    public CompoundNBT serializeNBT()
+    public CompoundTag serializeNBT()
     {
-        final CompoundNBT compound = new CompoundNBT();
+        final CompoundTag compound = new CompoundTag();
 
         compound.putString(TAG_JOB_TYPE, getJobRegistryEntry().getRegistryName().toString());
         compound.put(TAG_ASYNC_REQUESTS,
@@ -127,7 +127,7 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
     }
 
     @Override
-    public void deserializeNBT(final CompoundNBT compound)
+    public void deserializeNBT(final CompoundTag compound)
     {
         this.asyncRequests.clear();
         if (compound.getAllKeys().contains(TAG_ASYNC_REQUESTS))
@@ -144,7 +144,7 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
     }
 
     @Override
-    public void serializeToView(final PacketBuffer buffer)
+    public void serializeToView(final FriendlyByteBuf buffer)
     {
         buffer.writeUtf(getJobRegistryEntry().getRegistryName().toString());
         buffer.writeUtf(getName());

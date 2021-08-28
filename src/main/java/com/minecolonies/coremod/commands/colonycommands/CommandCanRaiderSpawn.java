@@ -9,7 +9,7 @@ import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import net.minecraft.command.CommandSource;
+import net.minecraft.commands.CommandSourceStack;
 
 import static com.minecolonies.coremod.commands.CommandArgumentNames.COLONYID_ARG;
 
@@ -23,7 +23,7 @@ public class CommandCanRaiderSpawn implements IMCOPCommand
      * @param context the context of the command execution
      */
     @Override
-    public int onExecute(final CommandContext<CommandSource> context)
+    public int onExecute(final CommandContext<CommandSourceStack> context)
     {
         // Colony
         final int colonyID = IntegerArgumentType.getInteger(context, COLONYID_ARG);
@@ -52,7 +52,7 @@ public class CommandCanRaiderSpawn implements IMCOPCommand
     }
 
     @Override
-    public LiteralArgumentBuilder<CommandSource> build()
+    public LiteralArgumentBuilder<CommandSourceStack> build()
     {
         return IMCCommand.newLiteral(getName())
                  .then(IMCCommand.newArgument(COLONYID_ARG, IntegerArgumentType.integer(1))

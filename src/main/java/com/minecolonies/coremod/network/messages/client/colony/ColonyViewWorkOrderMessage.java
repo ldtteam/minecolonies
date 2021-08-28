@@ -6,11 +6,11 @@ import com.minecolonies.api.colony.workorders.WorkOrderView;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.coremod.colony.Colony;
 import io.netty.buffer.Unpooled;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.world.World;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.Registry;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
@@ -24,8 +24,8 @@ import java.util.List;
 public class ColonyViewWorkOrderMessage implements IMessage
 {
     private int                colonyId;
-    private RegistryKey<World> dimension;
-    private PacketBuffer       workOrderBuffer;
+    private ResourceKey<Level> dimension;
+    private FriendlyByteBuf       workOrderBuffer;
 
     /**
      * Empty constructor used when registering the
@@ -44,7 +44,7 @@ public class ColonyViewWorkOrderMessage implements IMessage
     public ColonyViewWorkOrderMessage(@NotNull final Colony colony, @NotNull final List<IWorkOrder> workOrderList)
     {
         this.colonyId = colony.getID();
-        this.workOrderBuffer = new PacketBuffer(Unpooled.buffer());
+        this.workOrderBuffer = new FriendlyByteBuf(Unpooled.buffer());
         this.dimension = colony.getDimension();
 
         workOrderBuffer.writeInt(workOrderList.size());
@@ -55,16 +55,16 @@ public class ColonyViewWorkOrderMessage implements IMessage
     }
 
     @Override
-    public void fromBytes(@NotNull final PacketBuffer buf)
+    public void fromBytes(@NotNull final FriendlyByteBuf buf)
     {
-        final PacketBuffer newbuf = new PacketBuffer(buf.retain());
+        final FriendlyByteBuf newbuf = new FriendlyByteBuf(buf.retain());
         colonyId = newbuf.readInt();
-        dimension = RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(newbuf.readUtf(32767)));
+        dimension = ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(newbuf.readUtf(32767)));
         workOrderBuffer = newbuf;
     }
 
     @Override
-    public void toBytes(@NotNull final PacketBuffer buf)
+    public void toBytes(@NotNull final FriendlyByteBuf buf)
     {
         buf.writeInt(colonyId);
         buf.writeUtf(dimension.location().toString());

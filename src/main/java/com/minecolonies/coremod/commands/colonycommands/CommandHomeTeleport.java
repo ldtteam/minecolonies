@@ -5,10 +5,10 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.commands.commandTypes.IMCCommand;
 import com.minecolonies.coremod.util.TeleportHelper;
 import com.mojang.brigadier.context.CommandContext;
-import net.minecraft.command.CommandSource;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
 
 public class CommandHomeTeleport implements IMCCommand
 {
@@ -18,17 +18,17 @@ public class CommandHomeTeleport implements IMCCommand
      * @param context the context of the command execution
      */
     @Override
-    public int onExecute(final CommandContext<CommandSource> context)
+    public int onExecute(final CommandContext<CommandSourceStack> context)
     {
         final Entity sender = context.getSource().getEntity();
 
         if (!MineColonies.getConfig().getServer().canPlayerUseHomeTPCommand.get())
         {
-            LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.notenabledinconfig");
+            LanguageHandler.sendPlayerMessage((Player) sender, "com.minecolonies.command.notenabledinconfig");
             return 0;
         }
 
-        TeleportHelper.homeTeleport((ServerPlayerEntity) sender);
+        TeleportHelper.homeTeleport((ServerPlayer) sender);
         return 1;
     }
 

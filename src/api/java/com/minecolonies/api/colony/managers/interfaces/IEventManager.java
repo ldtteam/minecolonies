@@ -3,10 +3,10 @@ package com.minecolonies.api.colony.managers.interfaces;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -65,7 +65,7 @@ public interface IEventManager
      * @param eventID ID of the related event
      * @param te      tileentity to use
      */
-    void onTileEntityBreak(int eventID, TileEntity te);
+    void onTileEntityBreak(int eventID, BlockEntity te);
 
     /**
      * Update function, which is called from the colony every 500 ticks. Used to update event states/remove them if needed. Forwarded to events aswell to allow them tick based
@@ -95,14 +95,14 @@ public interface IEventManager
      *
      * @param compound the compound to read from.
      */
-    void readFromNBT(@NotNull CompoundNBT compound);
+    void readFromNBT(@NotNull CompoundTag compound);
 
     /**
      * Write the eventmanager and all events to NBT
      *
      * @param compound the compound to write to.
      */
-    void writeToNBT(@NotNull CompoundNBT compound);
+    void writeToNBT(@NotNull CompoundTag compound);
 
     /**
      * Returns the associated structure manager, which manages structure spawn/despawn for events.

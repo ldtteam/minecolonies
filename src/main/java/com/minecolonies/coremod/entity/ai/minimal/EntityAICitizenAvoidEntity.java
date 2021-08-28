@@ -11,11 +11,11 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHospital;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.TranslatableComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,6 +27,8 @@ import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.R
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.SAFE;
 import static com.minecolonies.api.util.constant.CitizenConstants.MAX_GUARD_CALL_RANGE;
 import static com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenDiseaseHandler.SEEK_DOCTOR_HEALTH;
+
+import net.minecraft.world.entity.ai.goal.Goal.Flag;
 
 /**
  * AI task to avoid an Entity class.
@@ -159,7 +161,7 @@ public class EntityAICitizenAvoidEntity extends Goal
      */
     private Entity getClosestToAvoid()
     {
-        if (targetEntityClass == PlayerEntity.class)
+        if (targetEntityClass == Player.class)
         {
             return CompatibilityUtils.getWorldFromCitizen(citizen).getNearestPlayer(citizen, (double) distanceFromEntity);
         }
@@ -191,7 +193,7 @@ public class EntityAICitizenAvoidEntity extends Goal
         {
             moveAwayPath =
               citizen.getNavigation().moveAwayFromXYZ(citizen.blockPosition().offset(rand.nextInt(2), 0, rand.nextInt(2)), distanceFromEntity + getMoveAwayDist(citizen), nearSpeed);
-            citizen.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.avoiding"));
+            citizen.getCitizenStatusHandler().setLatestStatus(new TranslatableComponent("com.minecolonies.coremod.status.avoiding"));
             return true;
         }
         return false;

@@ -10,9 +10,9 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.arguments.GameProfileArgument;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.arguments.GameProfileArgument;
+import net.minecraft.world.entity.player.Player;
 
 import static com.minecolonies.coremod.commands.CommandArgumentNames.COLONYID_ARG;
 import static com.minecolonies.coremod.commands.CommandArgumentNames.PLAYERNAME_ARG;
@@ -26,7 +26,7 @@ public class CommandChangeOwner implements IMCColonyOfficerCommand
      * @param context the context of the command execution
      */
     @Override
-    public int onExecute(final CommandContext<CommandSource> context)
+    public int onExecute(final CommandContext<CommandSourceStack> context)
     {
         final int colonyID = IntegerArgumentType.getInteger(context, COLONYID_ARG);
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getLevel().dimension());
@@ -46,7 +46,7 @@ public class CommandChangeOwner implements IMCColonyOfficerCommand
             return 0;
         }
 
-        final PlayerEntity player = context.getSource().getServer().getPlayerList().getPlayer(profile.getId());
+        final Player player = context.getSource().getServer().getPlayerList().getPlayer(profile.getId());
         if (player == null)
         {
             // could not find player with given name.
@@ -70,7 +70,7 @@ public class CommandChangeOwner implements IMCColonyOfficerCommand
     }
 
     @Override
-    public LiteralArgumentBuilder<CommandSource> build()
+    public LiteralArgumentBuilder<CommandSourceStack> build()
     {
         return IMCCommand.newLiteral(getName())
                  .then(IMCCommand.newArgument(COLONYID_ARG, IntegerArgumentType.integer(1))

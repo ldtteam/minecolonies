@@ -8,11 +8,11 @@ import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenExperienceHan
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import net.minecraft.entity.item.ExperienceOrbEntity;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.GameRules;
+import net.minecraft.world.entity.ExperienceOrb;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.GameRules;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.research.util.ResearchConstants.LEVELING;
@@ -121,10 +121,10 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
 
             while (experience > 0)
             {
-                final int j = ExperienceOrbEntity.getExperienceValue(experience);
+                final int j = ExperienceOrb.getExperienceValue(experience);
                 experience -= j;
                 CompatibilityUtils.getWorldFromCitizen(citizen)
-                  .addFreshEntity(new ExperienceOrbEntity(CompatibilityUtils.getWorldFromCitizen(citizen), citizen.getX(), citizen.getY(), citizen.getZ(), j));
+                  .addFreshEntity(new ExperienceOrb(CompatibilityUtils.getWorldFromCitizen(citizen), citizen.getX(), citizen.getY(), citizen.getZ(), j));
             }
         }
 
@@ -154,7 +154,7 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
 
         final int growSize = counterMovedXp > 0 || citizen.getRandom().nextInt(100) < 20 ? 8 : 2;
 
-        final AxisAlignedBB box = citizen.getBoundingBox().inflate(growSize);
+        final AABB box = citizen.getBoundingBox().inflate(growSize);
         if (!WorldUtil.isAABBLoaded(citizen.level, box))
         {
             return;
@@ -162,14 +162,14 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
 
         boolean movedXp = false;
 
-        for (@NotNull final ExperienceOrbEntity orb : citizen.level.getLoadedEntitiesOfClass(ExperienceOrbEntity.class, box))
+        for (@NotNull final ExperienceOrb orb : citizen.level.getLoadedEntitiesOfClass(ExperienceOrb.class, box))
         {
             if (orb.tickCount < 5)
             {
                 continue;
             }
 
-            Vector3d vec3d = new Vector3d(citizen.getX() - orb.getX(), citizen.getY() + (double) this.citizen.getEyeHeight() / 2.0D - orb.getY(), citizen.getZ() - orb.getZ());
+            Vec3 vec3d = new Vec3(citizen.getX() - orb.getX(), citizen.getY() + (double) this.citizen.getEyeHeight() / 2.0D - orb.getY(), citizen.getZ() - orb.getZ());
             double d1 = vec3d.lengthSqr();
 
             if (d1 < 1.0D)

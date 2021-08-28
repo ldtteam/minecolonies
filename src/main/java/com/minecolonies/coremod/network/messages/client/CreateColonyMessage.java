@@ -10,14 +10,14 @@ import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.stats.Stats;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.Nullable;
@@ -46,13 +46,13 @@ public class CreateColonyMessage implements IMessage
     }
 
     @Override
-    public void toBytes(final PacketBuffer buf)
+    public void toBytes(final FriendlyByteBuf buf)
     {
         buf.writeBlockPos(townHall);
     }
 
     @Override
-    public void fromBytes(final PacketBuffer buf)
+    public void fromBytes(final FriendlyByteBuf buf)
     {
         townHall = buf.readBlockPos();
     }
@@ -67,8 +67,8 @@ public class CreateColonyMessage implements IMessage
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
-        final ServerPlayerEntity sender = ctxIn.getSender();
-        final World world = ctxIn.getSender().level;
+        final ServerPlayer sender = ctxIn.getSender();
+        final Level world = ctxIn.getSender().level;
 
         if (sender == null)
         {
@@ -84,7 +84,7 @@ public class CreateColonyMessage implements IMessage
         final IColony colony = IColonyManager.getInstance().getClosestColony(world, townHall);
 
         String style = Constants.DEFAULT_STYLE;
-        final TileEntity tileEntity = world.getBlockEntity(townHall);
+        final BlockEntity tileEntity = world.getBlockEntity(townHall);
 
         if (!(tileEntity instanceof TileEntityColonyBuilding))
         {
@@ -99,7 +99,7 @@ public class CreateColonyMessage implements IMessage
 
         if (MineColonies.getConfig().getServer().restrictColonyPlacement.get())
         {
-            final double spawnDistance = Math.sqrt(BlockPosUtil.getDistanceSquared2D(townHall, ((ServerWorld) world).getSharedSpawnPos()));
+            final double spawnDistance = Math.sqrt(BlockPosUtil.getDistanceSquared2D(townHall, ((ServerLevel) world).getSharedSpawnPos()));
             if (spawnDistance < MineColonies.getConfig().getServer().minDistanceFromWorldSpawn.get())
             {
                 if (!world.isClientSide)
@@ -130,10 +130,10 @@ public class CreateColonyMessage implements IMessage
             {
                 IColonyManager.getInstance().createColony(world, townHall, sender, style);
                 IColonyManager.getInstance().getIColonyByOwner(world, sender).getBuildingManager().addNewBuilding((TileEntityColonyBuilding) tileEntity, world);
-                LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.coremod.progress.colony_founded");
+                LanguageHandler.sendPlayerMessage((Player) sender, "com.minecolonies.coremod.progress.colony_founded");
                 return;
             }
 
-        LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.coremod.gui.colony.create.failed");
+        LanguageHandler.sendPlayerMessage((Player) sender, "com.minecolonies.coremod.gui.colony.create.failed");
     }
 }

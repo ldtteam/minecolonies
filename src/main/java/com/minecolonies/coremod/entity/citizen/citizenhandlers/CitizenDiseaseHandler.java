@@ -10,8 +10,8 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.colony.jobs.JobHealer;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.TAG_DISEASE;
@@ -124,14 +124,14 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
     }
 
     @Override
-    public void write(final CompoundNBT compound)
+    public void write(final CompoundTag compound)
     {
         compound.putString(TAG_DISEASE, disease);
         compound.putInt(TAG_IMMUNITY, immunityTicks);
     }
 
     @Override
-    public void read(final CompoundNBT compound)
+    public void read(final CompoundTag compound)
     {
         // cure diseases that have been removed from the configuration file.
         if(IColonyManager.getInstance().getCompatibilityManager().getDisease(compound.getString(TAG_DISEASE)) != null)

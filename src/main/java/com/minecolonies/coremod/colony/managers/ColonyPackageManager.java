@@ -14,9 +14,9 @@ import com.minecolonies.coremod.network.messages.client.ColonyStylesMessage;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewMessage;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewWorkOrderMessage;
 import io.netty.buffer.Unpooled;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.world.World;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -33,17 +33,17 @@ public class ColonyPackageManager implements IColonyPackageManager
      * List of players close to the colony receiving updates. Populated by chunk entry events
      */
     @NotNull
-    private Set<ServerPlayerEntity> closeSubscribers = new HashSet<>();
+    private Set<ServerPlayer> closeSubscribers = new HashSet<>();
 
     /**
      * List of players with global permissions, like receiving important messages from far away. Populated on player login and logoff.
      */
-    private Set<ServerPlayerEntity> importantColonyPlayers = new HashSet<>();
+    private Set<ServerPlayer> importantColonyPlayers = new HashSet<>();
 
     /**
      * New subscribers which havent received a view yet.
      */
-    private Set<ServerPlayerEntity> newSubscribers = new HashSet<>();
+    private Set<ServerPlayer> newSubscribers = new HashSet<>();
 
     /**
      * Variables taking care of updating the views.
@@ -88,7 +88,7 @@ public class ColonyPackageManager implements IColonyPackageManager
     }
 
     @Override
-    public Set<ServerPlayerEntity> getCloseSubscribers()
+    public Set<ServerPlayer> getCloseSubscribers()
     {
         return closeSubscribers;
     }
@@ -96,7 +96,7 @@ public class ColonyPackageManager implements IColonyPackageManager
     @Override
     public void updateSubscribers()
     {
-        final World world = colony.getWorld();
+        final Level world = colony.getWorld();
         // If the world or server is null, don't try to update the closeSubscribers this tick.
         if (world == null || world.getServer() == null)
         {
@@ -172,9 +172,9 @@ public class ColonyPackageManager implements IColonyPackageManager
     {
         if (isDirty || !newSubscribers.isEmpty())
         {
-            final PacketBuffer colonyPacketBuffer = new PacketBuffer(Unpooled.buffer());
+            final FriendlyByteBuf colonyPacketBuffer = new FriendlyByteBuf(Unpooled.buffer());
             ColonyView.serializeNetworkData(colony, colonyPacketBuffer, !newSubscribers.isEmpty());
-            final Set<ServerPlayerEntity> players = new HashSet<>();
+            final Set<ServerPlayer> players = new HashSet<>();
             if (isDirty)
             {
                 players.addAll(closeSubscribers);
@@ -192,7 +192,7 @@ public class ColonyPackageManager implements IColonyPackageManager
         final Permissions permissions = colony.getPermissions();
         if (permissions.isDirty() || !newSubscribers.isEmpty())
         {
-            final Set<ServerPlayerEntity> players = new HashSet<>();
+            final Set<ServerPlayer> players = new HashSet<>();
             if (isDirty)
             {
                 players.addAll(closeSubscribers);
@@ -208,7 +208,7 @@ public class ColonyPackageManager implements IColonyPackageManager
         final IWorkManager workManager = colony.getWorkManager();
         if (workManager.isDirty() || !newSubscribers.isEmpty())
         {
-            final Set<ServerPlayerEntity> players = new HashSet<>();
+            final Set<ServerPlayer> players = new HashSet<>();
 
             players.addAll(closeSubscribers);
             players.addAll(newSubscribers);
@@ -232,7 +232,7 @@ public class ColonyPackageManager implements IColonyPackageManager
     {
         if (Structures.isDirty() || !newSubscribers.isEmpty())
         {
-            final Set<ServerPlayerEntity> players = new HashSet<>();
+            final Set<ServerPlayer> players = new HashSet<>();
             if (isDirty)
             {
                 players.addAll(closeSubscribers);
@@ -250,7 +250,7 @@ public class ColonyPackageManager implements IColonyPackageManager
     }
 
     @Override
-    public void addCloseSubscriber(@NotNull final ServerPlayerEntity subscriber)
+    public void addCloseSubscriber(@NotNull final ServerPlayer subscriber)
     {
         if (!closeSubscribers.contains(subscriber))
         {
@@ -260,7 +260,7 @@ public class ColonyPackageManager implements IColonyPackageManager
     }
 
     @Override
-    public void removeCloseSubscriber(@NotNull final ServerPlayerEntity player)
+    public void removeCloseSubscriber(@NotNull final ServerPlayer player)
     {
         newSubscribers.remove(player);
         closeSubscribers.remove(player);
@@ -270,7 +270,7 @@ public class ColonyPackageManager implements IColonyPackageManager
      * On login we're adding global subscribers.
      */
     @Override
-    public void addImportantColonyPlayer(@NotNull final ServerPlayerEntity subscriber)
+    public void addImportantColonyPlayer(@NotNull final ServerPlayer subscriber)
     {
         importantColonyPlayers.add(subscriber);
         newSubscribers.add(subscriber);
@@ -280,7 +280,7 @@ public class ColonyPackageManager implements IColonyPackageManager
      * On logoff we're removing global subscribers.
      */
     @Override
-    public void removeImportantColonyPlayer(@NotNull final ServerPlayerEntity subscriber)
+    public void removeImportantColonyPlayer(@NotNull final ServerPlayer subscriber)
     {
         importantColonyPlayers.remove(subscriber);
         newSubscribers.remove(subscriber);
@@ -290,7 +290,7 @@ public class ColonyPackageManager implements IColonyPackageManager
      * Returns the list of online global subscribers of the colony.
      */
     @Override
-    public Set<ServerPlayerEntity> getImportantColonyPlayers()
+    public Set<ServerPlayer> getImportantColonyPlayers()
     {
         return importantColonyPlayers;
     }

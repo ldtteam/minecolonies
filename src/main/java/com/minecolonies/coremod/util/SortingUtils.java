@@ -4,9 +4,9 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.inventory.api.CombinedItemHandler;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistry;
@@ -37,7 +37,7 @@ public final class SortingUtils
      */
     public static void sort(final CombinedItemHandler inv)
     {
-        final CompoundNBT backup = inv.serializeNBT();
+        final CompoundTag backup = inv.serializeNBT();
         final AtomicInteger runCount = new AtomicInteger(0);
 
         try

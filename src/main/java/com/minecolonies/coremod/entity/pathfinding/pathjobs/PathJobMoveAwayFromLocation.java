@@ -3,10 +3,10 @@ package com.minecolonies.coremod.entity.pathfinding.pathjobs;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.entity.pathfinding.Node;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.pathfinding.Path;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.pathfinder.Path;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,7 +38,7 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
      * @param entity        the entity.
      */
     public PathJobMoveAwayFromLocation(
-      final World world,
+      final Level world,
       @NotNull final BlockPos start,
       @NotNull final BlockPos avoid,
       final int avoidDistance,

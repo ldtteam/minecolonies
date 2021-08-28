@@ -18,8 +18,8 @@ import com.minecolonies.coremod.network.messages.server.DecorationBuildRequestMe
 import com.minecolonies.coremod.network.messages.server.DecorationControllerUpdateMessage;
 import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 
 import java.util.Optional;
 
@@ -53,7 +53,7 @@ public class WindowDecorationController extends AbstractWindowSkeleton
     /**
      * The world the player of the GUI is in.
      */
-    private final World world = Minecraft.getInstance().level;
+    private final Level world = Minecraft.getInstance().level;
 
     /**
      * If the player opening the GUI is an isCreative.

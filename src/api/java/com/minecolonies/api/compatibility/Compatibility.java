@@ -4,14 +4,14 @@ import com.minecolonies.api.compatibility.dynamictrees.DynamicTreeProxy;
 import com.minecolonies.api.compatibility.resourcefulbees.IBeehiveCompat;
 import com.minecolonies.api.compatibility.tinkers.*;
 import com.minecolonies.api.util.constant.IToolType;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.NonNullList;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.ModList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -217,7 +217,7 @@ public final class Compatibility
      * @param leaf       The leaf to check
      * @return the list of drops
      */
-    public static NonNullList<ItemStack> getDropsForDynamicLeaf(final IWorld world, final BlockPos pos, final BlockState blockState, final int fortune, final Block leaf)
+    public static NonNullList<ItemStack> getDropsForDynamicLeaf(final LevelAccessor world, final BlockPos pos, final BlockState blockState, final int fortune, final Block leaf)
     {
         return dynamicTreesCompat.getDropsForLeaf(world, pos, blockState, fortune, leaf);
     }
@@ -230,7 +230,7 @@ public final class Compatibility
      * @param sapling  Itemstack of the sapling
      * @return true if successful
      */
-    public static boolean plantDynamicSapling(final World world, final BlockPos location, final ItemStack sapling)
+    public static boolean plantDynamicSapling(final Level world, final BlockPos location, final ItemStack sapling)
     {
         return dynamicTreesCompat.plantDynamicSaplingCompat(world, location, sapling);
     }
@@ -244,7 +244,7 @@ public final class Compatibility
      * @param workerPos    The position the fakeplayer breaks the tree from, optional
      * @return Runnable to break the Tree
      */
-    public static Runnable getDynamicTreeBreakAction(final World world, final BlockPos blockToBreak, final ItemStack toolToUse, final BlockPos workerPos)
+    public static Runnable getDynamicTreeBreakAction(final Level world, final BlockPos blockToBreak, final ItemStack toolToUse, final BlockPos workerPos)
     {
         return dynamicTreesCompat.getTreeBreakActionCompat(world, blockToBreak, toolToUse, workerPos);
     }
@@ -279,7 +279,7 @@ public final class Compatibility
      * @param world  the world to check.
      * @return true when same family
      */
-    public static boolean isDynamicFamilyFitting(final BlockPos block1, final BlockPos block2, final IWorld world)
+    public static boolean isDynamicFamilyFitting(final BlockPos block1, final BlockPos block2, final LevelAccessor world)
     {
         return dynamicTreesCompat.hasFittingTreeFamilyCompat(block1, block2, world);
     }
@@ -292,7 +292,7 @@ public final class Compatibility
      * @param amount comb amount
      * @return list of drops
      */
-    public static List<ItemStack> getCombsFromHive(BlockPos pos, World world, int amount)
+    public static List<ItemStack> getCombsFromHive(BlockPos pos, Level world, int amount)
     {
         return beeHiveCompat.getCombsFromHive(pos, world, amount);
     }

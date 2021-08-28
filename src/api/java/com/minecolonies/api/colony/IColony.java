@@ -7,17 +7,17 @@ import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.research.IResearchManager;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.scoreboard.ScorePlayerTeam;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.world.scores.PlayerTeam;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.core.BlockPos;
+import net.minecraft.ChatFormatting;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.event.TickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,9 +32,9 @@ import static com.minecolonies.api.util.constant.ColonyConstants.TEAM_COLONY_NAM
 public interface IColony
 {
 
-    void onWorldLoad(@NotNull World w);
+    void onWorldLoad(@NotNull Level w);
 
-    void onWorldUnload(@NotNull World w);
+    void onWorldUnload(@NotNull Level w);
 
     void onServerTick(@NotNull TickEvent.ServerTickEvent event);
 
@@ -73,7 +73,7 @@ public interface IColony
      * @param pos Block Position.
      * @return True if inside colony, otherwise false.
      */
-    boolean isCoordInColony(World w, BlockPos pos);
+    boolean isCoordInColony(Level w, BlockPos pos);
 
     /**
      * Returns the squared (x, z) distance to the center.
@@ -129,7 +129,7 @@ public interface IColony
      *
      * @return a list of pattern-color pairs
      */
-    ListNBT getColonyFlag();
+    ListTag getColonyFlag();
 
     /**
      * Whether it is day for the colony
@@ -143,7 +143,7 @@ public interface IColony
      *
      * @return Team of the colony
      */
-    ScorePlayerTeam getTeam();
+    PlayerTeam getTeam();
 
     /**
      * Get the last contact of a player to the colony in hours.
@@ -157,7 +157,7 @@ public interface IColony
      *
      * @return the World the colony is in.
      */
-    World getWorld();
+    Level getWorld();
 
     /**
      * Get the current {@link IRequestManager} for this Colony. Returns null if the current Colony does not support the request system.
@@ -193,7 +193,7 @@ public interface IColony
      *
      * @param player the player.
      */
-    void removeVisitingPlayer(final PlayerEntity player);
+    void removeVisitingPlayer(final Player player);
 
     /**
      * Get the players in the colony which should receive the message.
@@ -201,7 +201,7 @@ public interface IColony
      * @return list of players
      */
     @NotNull
-    List<PlayerEntity> getMessagePlayerEntities();
+    List<Player> getMessagePlayerEntities();
 
     @NotNull
     default List<BlockPos> getWayPoints(@NotNull BlockPos position, @NotNull BlockPos target)
@@ -284,14 +284,14 @@ public interface IColony
      *
      * @param player the player.
      */
-    void addVisitingPlayer(final PlayerEntity player);
+    void addVisitingPlayer(final Player player);
 
     /**
      * Get the colony dimension.
      *
      * @return the dimension id.
      */
-    RegistryKey<World> getDimension();
+    ResourceKey<Level> getDimension();
 
     /**
      * Check if the colony is on the server or client.
@@ -319,23 +319,23 @@ public interface IColony
      */
     long getMercenaryUseTime();
 
-    CompoundNBT getColonyTag();
+    CompoundTag getColonyTag();
 
     boolean isColonyUnderAttack();
 
-    boolean isValidAttackingPlayer(PlayerEntity entity);
+    boolean isValidAttackingPlayer(Player entity);
 
     boolean isValidAttackingGuard(AbstractEntityCitizen entity);
 
-    void setColonyColor(TextFormatting color);
+    void setColonyColor(ChatFormatting color);
 
-    void setColonyFlag(ListNBT patterns);
+    void setColonyFlag(ListTag patterns);
 
     void setManualHousing(boolean manualHousing);
 
     void addWayPoint(BlockPos pos, BlockState newWayPointState);
 
-    void addGuardToAttackers(AbstractEntityCitizen entityCitizen, PlayerEntity followPlayer);
+    void addGuardToAttackers(AbstractEntityCitizen entityCitizen, Player followPlayer);
 
     void addFreePosition(BlockPos pos);
 
@@ -349,9 +349,9 @@ public interface IColony
 
     void setManualHiring(boolean manualHiring);
 
-    CompoundNBT write(CompoundNBT colonyCompound);
+    CompoundTag write(CompoundTag colonyCompound);
 
-    void read(CompoundNBT compound);
+    void read(CompoundTag compound);
 
     void setMoveIn(boolean newMoveIn);
 
@@ -361,7 +361,7 @@ public interface IColony
      * @return set of players.
      */
     @NotNull
-    List<PlayerEntity> getImportantMessageEntityPlayers();
+    List<Player> getImportantMessageEntityPlayers();
 
     boolean isManualHiring();
 
@@ -387,7 +387,7 @@ public interface IColony
      *
      * @param chunkPos chunk to add
      */
-    void addLoadedChunk(long chunkPos, final Chunk chunk);
+    void addLoadedChunk(long chunkPos, final LevelChunk chunk);
 
     /**
      * Adds a chunk from the colony list

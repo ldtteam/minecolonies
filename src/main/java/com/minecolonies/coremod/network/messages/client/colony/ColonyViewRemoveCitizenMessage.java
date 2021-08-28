@@ -4,7 +4,7 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
@@ -39,14 +39,14 @@ public class ColonyViewRemoveCitizenMessage implements IMessage
     }
 
     @Override
-    public void fromBytes(@NotNull final PacketBuffer buf)
+    public void fromBytes(@NotNull final FriendlyByteBuf buf)
     {
         colonyId = buf.readInt();
         citizenId = buf.readInt();
     }
 
     @Override
-    public void toBytes(@NotNull final PacketBuffer buf)
+    public void toBytes(@NotNull final FriendlyByteBuf buf)
     {
         buf.writeInt(colonyId);
         buf.writeInt(citizenId);

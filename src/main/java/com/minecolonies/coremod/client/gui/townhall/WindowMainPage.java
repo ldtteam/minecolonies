@@ -13,12 +13,17 @@ import com.minecolonies.coremod.commands.ClickEventWithExecutable;
 import com.minecolonies.coremod.network.messages.server.colony.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.text.*;
-import net.minecraft.util.text.event.ClickEvent;
+import net.minecraft.network.chat.ClickEvent;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.Constants.TICKS_FOURTY_MIN;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
+
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextComponent;
 
 /**
  * Window for the town hall.
@@ -63,8 +68,8 @@ public class WindowMainPage extends AbstractWindowTownHall
     {
         final int row = alliesList.getListElementIndexByPane(button);
         final CompactColonyReference ally = building.getColony().getAllies().get(row);
-        final ITextComponent teleport = new StringTextComponent(LanguageHandler.format(DO_REALLY_WANNA_TP, ally.name))
-                                          .setStyle(Style.EMPTY.withBold(true).withColor(TextFormatting.GOLD).withClickEvent(
+        final Component teleport = new TextComponent(LanguageHandler.format(DO_REALLY_WANNA_TP, ally.name))
+                                          .setStyle(Style.EMPTY.withBold(true).withColor(ChatFormatting.GOLD).withClickEvent(
                                             new ClickEventWithExecutable(ClickEvent.Action.RUN_COMMAND, "",
                                               () -> Network.getNetwork().sendToServer(new TeleportToColonyMessage(
                                                 ally.dimension, ally.id)))));

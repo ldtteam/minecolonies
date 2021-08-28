@@ -2,7 +2,7 @@ package com.minecolonies.api.colony.managers.interfaces;
 
 import com.minecolonies.api.colony.colonyEvents.descriptions.IColonyEventDescription;
 
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraftforge.common.util.INBTSerializable;
 
 import java.util.List;
@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Interface for the event description manager, the event description manager deals the colony event log events.
  */
-public interface IEventDescriptionManager extends INBTSerializable<CompoundNBT>
+public interface IEventDescriptionManager extends INBTSerializable<CompoundTag>
 {
     /**
      * Adds an event description.

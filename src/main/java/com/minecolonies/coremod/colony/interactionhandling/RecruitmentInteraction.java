@@ -15,13 +15,13 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -51,13 +51,13 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
     /**
      * The recruit answer
      */
-    private static final Tuple<ITextComponent, ITextComponent> recruitAnswer = new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.recruit"), null);
+    private static final Tuple<Component, Component> recruitAnswer = new Tuple<>(new TranslatableComponent("com.minecolonies.coremod.gui.chat.recruit"), null);
 
     @SuppressWarnings("unchecked")
-    private static final Tuple<ITextComponent, ITextComponent>[] responses = (Tuple<ITextComponent, ITextComponent>[]) new Tuple[] {
-      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.showstats"), null),
+    private static final Tuple<Component, Component>[] responses = (Tuple<Component, Component>[]) new Tuple[] {
+      new Tuple<>(new TranslatableComponent("com.minecolonies.coremod.gui.chat.showstats"), null),
       recruitAnswer,
-      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.notnow"), null)};
+      new Tuple<>(new TranslatableComponent("com.minecolonies.coremod.gui.chat.notnow"), null)};
 
     public RecruitmentInteraction(final ICitizen data)
     {
@@ -65,7 +65,7 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
     }
 
     public RecruitmentInteraction(
-      final ITextComponent inquiry,
+      final Component inquiry,
       final IChatPriority priority)
     {
         super(inquiry, true, priority, d -> true, null, responses);
@@ -97,10 +97,10 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
             final IColonyView colony = ((IVisitorViewData) dataView).getColonyView();
 
             window.findPaneOfTypeByID(CHAT_LABEL_ID, Text.class).setText(PaneBuilders.textBuilder()
-                .append(new StringTextComponent(dataView.getName() + ": "))
+                .append(new TextComponent(dataView.getName() + ": "))
                 .append(this.getInquiry())
                 .emptyLines(1)
-                .append(new TranslationTextComponent(
+                .append(new TranslatableComponent(
                     colony.getCitizens().size() < colony.getCitizenCountLimit() ? "com.minecolonies.coremod.gui.chat.recruitcost"
                         : "com.minecolonies.coremod.gui.chat.nospacerecruit",
                     dataView.getName().split(" ")[0],
@@ -121,7 +121,7 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public boolean onClientResponseTriggered(final ITextComponent response, final PlayerEntity player, final ICitizenDataView data, final Window window)
+    public boolean onClientResponseTriggered(final Component response, final Player player, final ICitizenDataView data, final Window window)
     {
         // Validate recruitment before returning true
         if (response.equals(recruitAnswer.getA()) && data instanceof IVisitorViewData)
@@ -140,7 +140,7 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
     }
 
     @Override
-    public void onServerResponseTriggered(final ITextComponent response, final PlayerEntity player, final ICitizenData data)
+    public void onServerResponseTriggered(final Component response, final Player player, final ICitizenData data)
     {
         if (response.equals(recruitAnswer.getA()) && data instanceof IVisitorData)
         {

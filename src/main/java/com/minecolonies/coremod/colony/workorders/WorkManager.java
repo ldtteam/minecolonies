@@ -14,12 +14,12 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.util.AdvancementUtils;
 import com.minecolonies.coremod.util.ColonyUtils;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.Constants.NBT;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -187,13 +187,13 @@ public class WorkManager implements IWorkManager
      * @param compound Compound to save to.
      */
     @Override
-    public void write(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundTag compound)
     {
         //  Work Orders
-        @NotNull final ListNBT list = new ListNBT();
+        @NotNull final ListTag list = new ListTag();
         for (@NotNull final IWorkOrder o : workOrders.values())
         {
-            @NotNull final CompoundNBT orderCompound = new CompoundNBT();
+            @NotNull final CompoundTag orderCompound = new CompoundTag();
             o.write(orderCompound);
             list.add(orderCompound);
         }
@@ -206,14 +206,14 @@ public class WorkManager implements IWorkManager
      * @param compound Compound to read from.
      */
     @Override
-    public void read(@NotNull final CompoundNBT compound)
+    public void read(@NotNull final CompoundTag compound)
     {
         workOrders.clear();
         //  Work Orders
-        final ListNBT list = compound.getList(TAG_WORK_ORDERS, NBT.TAG_COMPOUND);
+        final ListTag list = compound.getList(TAG_WORK_ORDERS, NBT.TAG_COMPOUND);
         for (int i = 0; i < list.size(); ++i)
         {
-            final CompoundNBT orderCompound = list.getCompound(i);
+            final CompoundTag orderCompound = list.getCompound(i);
             @Nullable final AbstractWorkOrder o = AbstractWorkOrder.createFromNBT(orderCompound, this);
             if (o != null)
             {
@@ -304,7 +304,7 @@ public class WorkManager implements IWorkManager
      */
     private boolean isWorkOrderWithinColony(final WorkOrderBuildDecoration order)
     {
-        final World world = colony.getWorld();
+        final Level world = colony.getWorld();
         final Tuple<BlockPos, BlockPos> corners
           = ColonyUtils.calculateCorners(order.getSchematicLocation(),
           world,

@@ -9,10 +9,10 @@ import com.minecolonies.api.colony.interactionhandling.InteractionValidatorRegis
 import com.minecolonies.api.colony.interactionhandling.ModInteractionResponseHandlers;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -29,11 +29,11 @@ public class PosBasedInteraction extends ServerCitizenInteraction
     private static final String POS_TAG = "pos";
 
     @SuppressWarnings("unchecked")
-    private static final Tuple<ITextComponent, ITextComponent>[] responses = (Tuple<ITextComponent, ITextComponent>[]) new Tuple[] {
-      new Tuple<>(new TranslationTextComponent(INTERACTION_R_OKAY), null),
-      new Tuple<>(new TranslationTextComponent(INTERACTION_R_IGNORE), null),
-      new Tuple<>(new TranslationTextComponent(INTERACTION_R_REMIND), null),
-      new Tuple<>(new TranslationTextComponent(INTERACTION_R_SKIP), null)};
+    private static final Tuple<Component, Component>[] responses = (Tuple<Component, Component>[]) new Tuple[] {
+      new Tuple<>(new TranslatableComponent(INTERACTION_R_OKAY), null),
+      new Tuple<>(new TranslatableComponent(INTERACTION_R_IGNORE), null),
+      new Tuple<>(new TranslatableComponent(INTERACTION_R_REMIND), null),
+      new Tuple<>(new TranslatableComponent(INTERACTION_R_SKIP), null)};
 
     /**
      * The position this is related to.
@@ -54,9 +54,9 @@ public class PosBasedInteraction extends ServerCitizenInteraction
      * @param validator the validator id.
      */
     public PosBasedInteraction(
-      final ITextComponent inquiry,
+      final Component inquiry,
       final IChatPriority priority,
-      final ITextComponent validator,
+      final Component validator,
       final BlockPos pos)
     {
         super(inquiry, true, priority, null, validator, responses);
@@ -72,7 +72,7 @@ public class PosBasedInteraction extends ServerCitizenInteraction
      * @param pos      the pos this is related to.
      */
     public PosBasedInteraction(
-      final ITextComponent inquiry,
+      final Component inquiry,
       final IChatPriority priority,
       final BlockPos pos)
     {
@@ -112,15 +112,15 @@ public class PosBasedInteraction extends ServerCitizenInteraction
     }
 
     @Override
-    public CompoundNBT serializeNBT()
+    public CompoundTag serializeNBT()
     {
-        final CompoundNBT tag = super.serializeNBT();
+        final CompoundTag tag = super.serializeNBT();
         BlockPosUtil.writeToNBT(tag, POS_TAG, pos);
         return tag;
     }
 
     @Override
-    public void deserializeNBT(@NotNull final CompoundNBT compoundNBT)
+    public void deserializeNBT(@NotNull final CompoundTag compoundNBT)
     {
         super.deserializeNBT(compoundNBT);
         this.pos = BlockPosUtil.readFromNBT(compoundNBT, POS_TAG);

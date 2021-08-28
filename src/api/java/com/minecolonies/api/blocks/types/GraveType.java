@@ -1,12 +1,12 @@
 package com.minecolonies.api.blocks.types;
 
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesGrave;
-import net.minecraft.util.IStringSerializable;
+import net.minecraft.util.StringRepresentable;
 
 /**
  * Defines the types of Grave that the {@link AbstractBlockMinecoloniesGrave} supports.
  */
-public enum GraveType implements IStringSerializable
+public enum GraveType implements StringRepresentable
 {
     DEFAULT(0, "blockgravedefault", "default"),
     DECAYED(1, "blockgravedecayed", "decayed");

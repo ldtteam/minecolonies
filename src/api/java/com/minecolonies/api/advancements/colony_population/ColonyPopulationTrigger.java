@@ -3,10 +3,10 @@ package com.minecolonies.api.advancements.colony_population;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.advancements.AbstractCriterionTrigger;
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.loot.ConditionArrayParser;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.advancements.critereon.DeserializationContext;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 public class ColonyPopulationTrigger extends AbstractCriterionTrigger<ColonyPopulationListeners, ColonyPopulationCriterionInstance>
@@ -20,7 +20,7 @@ public class ColonyPopulationTrigger extends AbstractCriterionTrigger<ColonyPopu
      * Triggers the listener checks if there are any listening in
      * @param player the player the check regards
      */
-    public void trigger(final ServerPlayerEntity player, final int populationCount)
+    public void trigger(final ServerPlayer player, final int populationCount)
     {
         final ColonyPopulationListeners listeners = this.getListeners(player.getAdvancements());
         if (listeners != null)
@@ -31,9 +31,9 @@ public class ColonyPopulationTrigger extends AbstractCriterionTrigger<ColonyPopu
 
     @NotNull
     @Override
-    public ColonyPopulationCriterionInstance createInstance(@NotNull final JsonObject jsonObject, @NotNull final ConditionArrayParser conditionArrayParser)
+    public ColonyPopulationCriterionInstance createInstance(@NotNull final JsonObject jsonObject, @NotNull final DeserializationContext conditionArrayParser)
     {
-        final int populationCount = JSONUtils.getAsInt(jsonObject, "population_count");
+        final int populationCount = GsonHelper.getAsInt(jsonObject, "population_count");
         return new ColonyPopulationCriterionInstance(populationCount);
     }
 }

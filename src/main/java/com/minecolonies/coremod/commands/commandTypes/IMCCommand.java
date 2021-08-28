@@ -5,8 +5,8 @@ import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import net.minecraft.command.CommandSource;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.world.entity.player.Player;
 
 /**
  * Interface for commands, uses Mojang's Brigadier command framework, @see <a href=https://github.com/Mojang/brigadier></a> .
@@ -20,7 +20,7 @@ public interface IMCCommand
      *
      * @return the built command.
      */
-    default LiteralArgumentBuilder<CommandSource> build()
+    default LiteralArgumentBuilder<CommandSourceStack> build()
     {
         return newLiteral(getName()).executes(this::checkPreConditionAndExecute);
     }
@@ -31,12 +31,12 @@ public interface IMCCommand
      * @param name name of the new command.
      * @return the builder.
      */
-    static LiteralArgumentBuilder<CommandSource> newLiteral(final String name)
+    static LiteralArgumentBuilder<CommandSourceStack> newLiteral(final String name)
     {
         return LiteralArgumentBuilder.literal(name);
     }
 
-    static <T> RequiredArgumentBuilder<CommandSource, T> newArgument(final String name, final ArgumentType<T> type)
+    static <T> RequiredArgumentBuilder<CommandSourceStack, T> newArgument(final String name, final ArgumentType<T> type)
     {
         return RequiredArgumentBuilder.argument(name, type);
     }
@@ -47,7 +47,7 @@ public interface IMCCommand
      * @param context the context.
      * @return 1 if successful and 0 if incomplete.
      */
-    default int checkPreConditionAndExecute(final CommandContext<CommandSource> context)
+    default int checkPreConditionAndExecute(final CommandContext<CommandSourceStack> context)
     {
         if (!checkPreCondition(context))
         {
@@ -57,7 +57,7 @@ public interface IMCCommand
         return onExecute(context);
     }
 
-    default ICommandCallbackBuilder<CommandSource> executePreConditionCheck()
+    default ICommandCallbackBuilder<CommandSourceStack> executePreConditionCheck()
     {
         return executeCallback -> context -> {
             if (!checkPreCondition(context))
@@ -75,9 +75,9 @@ public interface IMCCommand
      * @param context the command context.
      * @return true if fine.
      */
-    default boolean checkPreCondition(final CommandContext<CommandSource> context)
+    default boolean checkPreCondition(final CommandContext<CommandSourceStack> context)
     {
-        return context.getSource().getEntity() instanceof PlayerEntity || context.getSource().hasPermission(OP_PERM_LEVEL);
+        return context.getSource().getEntity() instanceof Player || context.getSource().hasPermission(OP_PERM_LEVEL);
     }
 
     /**
@@ -86,7 +86,7 @@ public interface IMCCommand
      * @param context the context of the command execution
      * @return 1 if successful and 0 if incomplete.
      */
-    int onExecute(final CommandContext<CommandSource> context);
+    int onExecute(final CommandContext<CommandSourceStack> context);
 
     /**
      * Name string of the command.
@@ -95,7 +95,7 @@ public interface IMCCommand
      */
     String getName();
 
-    static boolean isPlayerOped(final PlayerEntity player)
+    static boolean isPlayerOped(final Player player)
     {
         if (player.getServer() == null)
         {
@@ -108,6 +108,6 @@ public interface IMCCommand
     interface ICommandCallbackBuilder<S>
     {
 
-        Command<S> then(final Command<CommandSource> executeCallback);
+        Command<S> then(final Command<CommandSourceStack> executeCallback);
     }
 }

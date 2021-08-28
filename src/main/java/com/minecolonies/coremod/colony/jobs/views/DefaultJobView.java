@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.jobs.IJobView;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -41,7 +41,7 @@ public class DefaultJobView implements IJobView
     }
 
     @Override
-    public void deserialize(final PacketBuffer buffer)
+    public void deserialize(final FriendlyByteBuf buffer)
     {
         this.asyncRequests.clear();
         this.name = buffer.readUtf(32767);

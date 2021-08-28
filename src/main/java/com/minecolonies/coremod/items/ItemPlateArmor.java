@@ -1,18 +1,24 @@
 package com.minecolonies.coremod.items;
 
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.item.*;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.util.SoundEvents;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.sounds.SoundEvents;
 import org.jetbrains.annotations.NotNull;
+
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.ArmorMaterial;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item.Properties;
+import net.minecraft.world.item.Items;
 
 /**
  * Class handling the Plate Armor.
  */
 public class ItemPlateArmor extends ArmorItem
 {
-    public static final IArmorMaterial PLATE_ARMOR =
+    public static final ArmorMaterial PLATE_ARMOR =
       new MineColoniesArmorMaterial("minecolonies:plate_armor", 20, new int[] {4, 7, 9, 4}, 6, SoundEvents.ARMOR_EQUIP_IRON, 2F, Ingredient.of(Items.IRON_INGOT));
 
     /**
@@ -26,9 +32,9 @@ public class ItemPlateArmor extends ArmorItem
      */
     public ItemPlateArmor(
       @NotNull final String name,
-      @NotNull final ItemGroup tab,
-      @NotNull final IArmorMaterial materialIn,
-      @NotNull final EquipmentSlotType equipmentSlotIn,
+      @NotNull final CreativeModeTab tab,
+      @NotNull final ArmorMaterial materialIn,
+      @NotNull final EquipmentSlot equipmentSlotIn,
       final Properties properties)
     {
         super(materialIn, equipmentSlotIn, properties.tab(tab));

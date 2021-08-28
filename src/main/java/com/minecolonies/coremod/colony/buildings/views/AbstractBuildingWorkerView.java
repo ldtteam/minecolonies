@@ -7,8 +7,8 @@ import com.minecolonies.api.colony.buildings.IBuildingWorkerView;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.server.colony.building.worker.BuildingHiringModeMessage;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -80,7 +80,7 @@ public abstract class AbstractBuildingWorkerView extends AbstractBuildingView im
     }
 
     @Override
-    public void deserialize(@NotNull final PacketBuffer buf)
+    public void deserialize(@NotNull final FriendlyByteBuf buf)
     {
         super.deserialize(buf);
         final int size = buf.readInt();

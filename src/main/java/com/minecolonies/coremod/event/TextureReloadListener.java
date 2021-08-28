@@ -3,11 +3,11 @@ package com.minecolonies.coremod.event;
 import com.ldtteam.blockout.Log;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.ReloadListener;
-import net.minecraft.profiler.IProfiler;
-import net.minecraft.resources.IResourceManager;
-import net.minecraft.resources.SimpleReloadableResourceManager;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
+import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.resources.SimpleReloadableResourceManager;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -25,7 +25,7 @@ import static net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus.MOD;
  * Specific texture reload listener.
  */
 @Mod.EventBusSubscriber(value= Dist.CLIENT, modid= Constants.MOD_ID, bus=MOD)
-public class TextureReloadListener extends ReloadListener<TextureReloadListener.TexturePacks>
+public class TextureReloadListener extends SimplePreparableReloadListener<TextureReloadListener.TexturePacks>
 {
     /**
      * List of all texture packs available.
@@ -34,7 +34,7 @@ public class TextureReloadListener extends ReloadListener<TextureReloadListener.
 
     @NotNull
     @Override
-    protected TexturePacks prepare(@NotNull final IResourceManager manager, @NotNull final IProfiler profiler)
+    protected TexturePacks prepare(@NotNull final ResourceManager manager, @NotNull final ProfilerFiller profiler)
     {
         final Set<String> set = new HashSet<>();
         final List<ResourceLocation> resLocs = new ArrayList<>(manager.listResources("textures/entity/citizen", f -> true));
@@ -56,7 +56,7 @@ public class TextureReloadListener extends ReloadListener<TextureReloadListener.
     }
 
     @Override
-    protected void apply(@NotNull final TexturePacks packs, @NotNull final IResourceManager manager, @NotNull final IProfiler profiler)
+    protected void apply(@NotNull final TexturePacks packs, @NotNull final ResourceManager manager, @NotNull final ProfilerFiller profiler)
     {
        TextureReloadListener.TEXTURE_PACKS.clear();
        TextureReloadListener.TEXTURE_PACKS.addAll(packs.packs);

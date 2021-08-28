@@ -8,12 +8,12 @@ import com.minecolonies.api.crafting.RecipeStorage;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.recipes.FoodIngredient;
-import net.minecraft.block.Blocks;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipeType;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.item.crafting.RecipeManager;
-import net.minecraft.util.NonNullList;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraft.core.NonNullList;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -43,7 +43,7 @@ public class FurnaceRecipes implements IFurnaceRecipes
         recipes.clear();
         reverseRecipes.clear();
         loadUtilityPredicates();
-        recipeManager.byType(IRecipeType.SMELTING).values().forEach(recipe -> {
+        recipeManager.byType(RecipeType.SMELTING).values().forEach(recipe -> {
             final NonNullList<Ingredient> list = recipe.getIngredients();
             if (list.size() == 1)
             {

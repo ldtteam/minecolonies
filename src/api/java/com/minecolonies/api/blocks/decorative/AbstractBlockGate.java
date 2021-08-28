@@ -2,33 +2,40 @@ package com.minecolonies.api.blocks.decorative;
 
 import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.block.*;
-import net.minecraft.block.material.Material;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.state.StateContainer;
-import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.state.properties.DoorHingeSide;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.shapes.VoxelShapes;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.IWorldReader;
-import net.minecraft.world.World;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.DoorHingeSide;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import static net.minecraft.state.properties.BlockStateProperties.WATERLOGGED;
 
 /**
- * Block class for gates, which expand and retract and act as one big door
+ * Blocknet.miimport net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.DoorBlock;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
+import net.minecraft.world.level.block.state.BlockState;
+
+necraft.world.level.block.state.properties.BlockStatePropertiesas one big door
  */
 public abstract class AbstractBlockGate extends DoorBlock
 {
@@ -53,8 +60,8 @@ public abstract class AbstractBlockGate extends DoorBlock
     /**
      * The bounding boxes.
      */
-    protected static final VoxelShape E_W_SHAPE = VoxelShapes.box(0.3D, 0.0D, 0.0D, 0.7D, 1.0D, 1.0D);
-    protected static final VoxelShape N_S_SHAPE = VoxelShapes.box(0.0D, 0.0D, 0.3D, 1.0D, 1.0D, 0.7D);
+    protected static final VoxelShape E_W_SHAPE = Shapes.box(0.3D, 0.0D, 0.0D, 0.7D, 1.0D, 1.0D);
+    protected static final VoxelShape N_S_SHAPE = Shapes.box(0.0D, 0.0D, 0.3D, 1.0D, 1.0D, 0.7D);
 
     public AbstractBlockGate(final String name, final float hardness, final int maxWidth, final int maxHeight)
     {
@@ -68,22 +75,22 @@ public abstract class AbstractBlockGate extends DoorBlock
     }
 
     @Override
-    public ActionResultType use(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit)
+    public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult hit)
     {
         if (this.material == Material.METAL)
         {
-            return ActionResultType.PASS;
+            return InteractionResult.PASS;
         }
         else
         {
             toggleGate(worldIn, pos, state.getValue(FACING).getClockWise());
             worldIn.levelEvent(player, state.getValue(OPEN) ? 1005 : 1011, pos, 0);
-            return ActionResultType.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
     }
 
     @Override
-    public void playerWillDestroy(World worldIn, BlockPos pos, BlockState state, PlayerEntity player)
+    public void playerWillDestroy(Level worldIn, BlockPos pos, BlockState state, Player player)
     {
         int count = removeGate(worldIn, pos, state.getValue(FACING).getClockWise());
         for (int i = 0; i < count; i++)
@@ -100,7 +107,7 @@ public abstract class AbstractBlockGate extends DoorBlock
      * @param facing   gate facing
      * @return amount of removed blocks
      */
-    public int removeGate(final World world, final BlockPos startPos, final Direction facing)
+    public int removeGate(final Level world, final BlockPos startPos, final Direction facing)
     {
         final BlockPos lowerLeftCorner = findLowerLeftCorner(world, facing, startPos);
         int amount = 0;
@@ -132,7 +139,7 @@ public abstract class AbstractBlockGate extends DoorBlock
     }
 
     @Deprecated
-    public float getBlockHardness(BlockState blockState, IBlockReader worldIn, BlockPos pos)
+    public float getBlockHardness(BlockState blockState, BlockGetter worldIn, BlockPos pos)
     {
         if (worldIn == null)
         {
@@ -172,13 +179,13 @@ public abstract class AbstractBlockGate extends DoorBlock
     }
 
     @Override
-    public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos)
+    public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, LevelAccessor worldIn, BlockPos currentPos, BlockPos facingPos)
     {
         return stateIn;
     }
 
     @Override
-    public boolean canSurvive(BlockState state, IWorldReader worldIn, BlockPos pos)
+    public boolean canSurvive(BlockState state, LevelReader worldIn, BlockPos pos)
     {
         // Don't allow next to any existing gate
         BlockPos tPos = pos.offset(-1, -1, -1);
@@ -202,7 +209,7 @@ public abstract class AbstractBlockGate extends DoorBlock
     }
 
     @Override
-    public void setPlacedBy(@NotNull final World worldIn, @NotNull final BlockPos pos, final BlockState state, final LivingEntity placer, final ItemStack stack)
+    public void setPlacedBy(@NotNull final Level worldIn, @NotNull final BlockPos pos, final BlockState state, final LivingEntity placer, final ItemStack stack)
     {
         // Fills the rest of the gate upon placement
         final Direction facing = state.getValue(FACING).getClockWise();
@@ -267,7 +274,7 @@ public abstract class AbstractBlockGate extends DoorBlock
      * @param base  base block we start from
      * @param state state to put
      */
-    private void fillYStates(final World world, final BlockPos base, final BlockState state, final ItemStack stack)
+    private void fillYStates(final Level world, final BlockPos base, final BlockState state, final ItemStack stack)
     {
         for (int vert = 1; vert < maxHeight; vert++)
         {
@@ -302,7 +309,7 @@ public abstract class AbstractBlockGate extends DoorBlock
 
     @NotNull
     @Override
-    public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context)
+    public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context)
     {
         return getShapeForState(state);
     }
@@ -329,36 +336,36 @@ public abstract class AbstractBlockGate extends DoorBlock
     }
 
     @Override
-    public VoxelShape getCollisionShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context)
+    public VoxelShape getCollisionShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context)
     {
         if (state.getValue(OPEN))
         {
-            return VoxelShapes.empty();
+            return Shapes.empty();
         }
         return getShapeForState(state);
     }
 
     @Override
-    public VoxelShape getOcclusionShape(BlockState state, IBlockReader worldIn, BlockPos pos)
+    public VoxelShape getOcclusionShape(BlockState state, BlockGetter worldIn, BlockPos pos)
     {
         return getShapeForState(state);
     }
 
     @Override
-    public BlockRenderType getRenderShape(BlockState state)
+    public RenderShape getRenderShape(BlockState state)
     {
         if (state.getValue(OPEN))
         {
-            return BlockRenderType.INVISIBLE;
+            return RenderShape.INVISIBLE;
         }
         else
         {
-            return BlockRenderType.MODEL;
+            return RenderShape.MODEL;
         }
     }
 
     @Override
-    protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder)
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder)
     {
         builder.add(HALF, FACING, OPEN, HINGE, POWERED, WATERLOGGED);
     }
@@ -370,7 +377,7 @@ public abstract class AbstractBlockGate extends DoorBlock
      * @param blockPos start pos
      * @return bottom left corner pos
      */
-    private BlockPos findLowerLeftCorner(final IBlockReader world, final Direction facing, final BlockPos blockPos)
+    private BlockPos findLowerLeftCorner(final BlockGetter world, final Direction facing, final BlockPos blockPos)
     {
         BlockPos tePos = blockPos;
 
@@ -399,7 +406,7 @@ public abstract class AbstractBlockGate extends DoorBlock
     }
 
     @Override
-    public void setOpen(final World worldIn, final BlockState state, final BlockPos pos, final boolean open)
+    public void setOpen(final Level worldIn, final BlockState state, final BlockPos pos, final boolean open)
     {
         BlockState blockstate = worldIn.getBlockState(pos);
         if (blockstate.getBlock() == this && blockstate.getValue(OPEN) != open)
@@ -415,7 +422,7 @@ public abstract class AbstractBlockGate extends DoorBlock
      * @param clickedBlock block thats clicked/used
      * @param facing       facing to check
      */
-    public void toggleGate(final World world, final BlockPos clickedBlock, final Direction facing)
+    public void toggleGate(final Level world, final BlockPos clickedBlock, final Direction facing)
     {
         final BlockPos lowerLeftCorner = findLowerLeftCorner(world, facing, clickedBlock);
         // State to put the gate into, all replicate the corner's state
@@ -456,7 +463,7 @@ public abstract class AbstractBlockGate extends DoorBlock
      * Mostly redstone stuff for opening
      */
     @Override
-    public void neighborChanged(final BlockState state, final World worldIn, @NotNull final BlockPos pos, Block blockIn, final BlockPos fromPos, boolean isMoving)
+    public void neighborChanged(final BlockState state, final Level worldIn, @NotNull final BlockPos pos, Block blockIn, final BlockPos fromPos, boolean isMoving)
     {
         boolean powered = worldIn.hasNeighborSignal(pos);
         if (powered != state.getValue(OPEN))
@@ -466,7 +473,7 @@ public abstract class AbstractBlockGate extends DoorBlock
     }
 
     @Override
-    public BlockState getStateForPlacement(BlockItemUseContext context)
+    public BlockState getStateForPlacement(BlockPlaceContext context)
     {
         BlockPos blockpos = context.getClickedPos();
 

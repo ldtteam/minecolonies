@@ -1,30 +1,30 @@
 package com.minecolonies.coremod.client.model.raiders;
 
 import com.minecolonies.api.client.render.modeltype.NorsemenModel;
-import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.client.model.geom.ModelPart;
 
 public class ModelChiefNorsemen extends NorsemenModel
 {
     public ModelChiefNorsemen()
     {
-        final ModelRenderer hornr;
-        final ModelRenderer boner;
-        final ModelRenderer boner2;
-        final ModelRenderer hornl2;
-        final ModelRenderer bonel3;
-        final ModelRenderer bonel4;
-        final ModelRenderer robe2;
-        final ModelRenderer robe1;
-        final ModelRenderer robe3;
+        final ModelPart hornr;
+        final ModelPart boner;
+        final ModelPart boner2;
+        final ModelPart hornl2;
+        final ModelPart bonel3;
+        final ModelPart bonel4;
+        final ModelPart robe2;
+        final ModelPart robe1;
+        final ModelPart robe3;
 
         texWidth = 128;
         texHeight = 64;
 
-        leftLeg = new ModelRenderer(this);
+        leftLeg = new ModelPart(this);
         leftLeg.setPos(2.0F, 12.0F, 0.0F);
         leftLeg.texOffs(0, 16).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, false);
 
-        head = new ModelRenderer(this);
+        head = new ModelPart(this);
         head.setPos(0.0F, 0.0F, 0.0F);
         head.texOffs(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, 0.0F, true);
         head.texOffs(89, 44).addBox(-4.5F, -8.5F, -5.0F, 9.0F, 0.5F, 9.0F, 0.0F, false);
@@ -56,19 +56,19 @@ public class ModelChiefNorsemen extends NorsemenModel
         head.texOffs(64, 23).addBox(2.75F, 4.75F, -4.5F, 1.0F, 1.25F, 1.0F, 0.0F, false);
         head.texOffs(64, 23).addBox(-3.25F, 4.0F, -4.5F, 0.75F, 1.25F, 1.0F, 0.0F, false);
 
-        hornr = new ModelRenderer(this);
+        hornr = new ModelPart(this);
         hornr.setPos(0.5F, -8.5F, 3.0F);
         head.addChild(hornr);
         hornr.texOffs(2, 49).addBox(4.5F, 2.0F, -4.25F, 1.75F, 3.25F, 3.75F, 0.0F, false);
         hornr.texOffs(2, 49).addBox(6.0F, 2.25F, -4.0F, 2.25F, 2.75F, 3.25F, 0.0F, false);
 
-        boner = new ModelRenderer(this);
+        boner = new ModelPart(this);
         boner.setPos(6.25F, 0.5F, 0.0F);
         hornr.addChild(boner);
         setRotationAngle(boner, 0.6109F, 0.7854F, 0.6109F);
         boner.texOffs(2, 50).addBox(3.1411F, 0.3478F, -1.9003F, 2.0F, 2.75F, 2.25F, 0.0F, false);
 
-        boner2 = new ModelRenderer(this);
+        boner2 = new ModelPart(this);
         boner2.setPos(-2.9362F, -0.7956F, 1.0631F);
         boner.addChild(boner2);
         setRotationAngle(boner2, 0.0F, 0.1745F, 0.0F);
@@ -77,19 +77,19 @@ public class ModelChiefNorsemen extends NorsemenModel
         boner2.texOffs(2, 49).addBox(10.7569F, 1.8793F, -0.6498F, 1.5F, 1.0F, 0.75F, 0.0F, false);
         boner2.texOffs(2, 49).addBox(11.4919F, 1.9793F, -0.5364F, 1.5F, 0.8F, 0.5F, 0.0F, false);
 
-        hornl2 = new ModelRenderer(this);
+        hornl2 = new ModelPart(this);
         hornl2.setPos(-0.5F, -8.5F, 3.0F);
         head.addChild(hornl2);
         hornl2.texOffs(2, 49).addBox(-6.25F, 2.0F, -4.25F, 1.75F, 3.25F, 3.75F, 0.0F, true);
         hornl2.texOffs(2, 49).addBox(-8.25F, 2.25F, -4.0F, 2.25F, 2.75F, 3.25F, 0.0F, true);
 
-        bonel3 = new ModelRenderer(this);
+        bonel3 = new ModelPart(this);
         bonel3.setPos(-6.25F, 0.5F, 0.0F);
         hornl2.addChild(bonel3);
         setRotationAngle(bonel3, 0.6109F, -0.7854F, -0.6109F);
         bonel3.texOffs(2, 50).addBox(-5.1411F, 0.3478F, -1.9003F, 2.0F, 2.75F, 2.25F, 0.0F, true);
 
-        bonel4 = new ModelRenderer(this);
+        bonel4 = new ModelPart(this);
         bonel4.setPos(2.9362F, -0.7956F, 1.0631F);
         bonel3.addChild(bonel4);
         setRotationAngle(bonel4, 0.0F, -0.1745F, 0.0F);
@@ -98,11 +98,11 @@ public class ModelChiefNorsemen extends NorsemenModel
         bonel4.texOffs(2, 49).addBox(-12.2569F, 1.8793F, -0.6498F, 1.5F, 1.0F, 0.75F, 0.0F, true);
         bonel4.texOffs(2, 49).addBox(-12.9919F, 1.9793F, -0.5364F, 1.5F, 0.8F, 0.5F, 0.0F, true);
 
-        rightLeg = new ModelRenderer(this);
+        rightLeg = new ModelPart(this);
         rightLeg.setPos(-2.0F, 12.0F, 0.0F);
         rightLeg.texOffs(0, 16).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, true);
 
-        leftArm = new ModelRenderer(this);
+        leftArm = new ModelPart(this);
         leftArm.setPos(5.0F, 2.0F, 0.0F);
         leftArm.texOffs(40, 16).addBox(-1.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, true);
         leftArm.texOffs(0, 36).addBox(-1.25F, 10.0F, -2.25F, 4.5F, 0.5F, 3.25F, 0.0F, false);
@@ -122,7 +122,7 @@ public class ModelChiefNorsemen extends NorsemenModel
         leftArm.texOffs(0, 36).addBox(-1.25F, -2.5F, 1.0F, 4.5F, 0.5F, 1.25F, 0.0F, false);
         leftArm.texOffs(0, 36).addBox(-1.25F, -2.5F, -2.25F, 4.5F, 0.5F, 3.25F, 0.0F, false);
 
-        robe2 = new ModelRenderer(this);
+        robe2 = new ModelPart(this);
         robe2.setPos(-3.0F, 0.0F, 2.0F);
         leftArm.addChild(robe2);
         robe2.texOffs(58, 47).addBox(2.25F, -3.0F, -5.0F, 4.5F, 0.5F, 6.0F, 0.0F, true);
@@ -133,7 +133,7 @@ public class ModelChiefNorsemen extends NorsemenModel
         robe2.texOffs(58, 47).addBox(4.25F, -0.5F, -5.0F, 1.75F, 1.0F, 1.0F, 0.0F, true);
         robe2.texOffs(58, 47).addBox(2.25F, -0.5F, -5.0F, 2.0F, 0.5F, 1.0F, 0.0F, true);
 
-        rightArm = new ModelRenderer(this);
+        rightArm = new ModelPart(this);
         rightArm.setPos(-4.0F, 2.0F, 0.0F);
         rightArm.texOffs(40, 16).addBox(-4.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, false);
         rightArm.texOffs(0, 36).addBox(-4.25F, -2.5F, -2.25F, 4.5F, 0.5F, 3.25F, 0.0F, false);
@@ -153,7 +153,7 @@ public class ModelChiefNorsemen extends NorsemenModel
         rightArm.texOffs(0, 36).addBox(-4.25F, 10.0F, 1.0F, 4.5F, 0.5F, 1.25F, 0.0F, false);
         rightArm.texOffs(0, 36).addBox(-4.25F, 10.0F, -2.25F, 4.5F, 0.5F, 3.25F, 0.0F, false);
 
-        robe1 = new ModelRenderer(this);
+        robe1 = new ModelPart(this);
         robe1.setPos(2.0F, 0.0F, 2.0F);
         rightArm.addChild(robe1);
         robe1.texOffs(58, 47).addBox(-6.75F, -3.0F, -5.0F, 4.5F, 0.5F, 6.0F, 0.0F, false);
@@ -164,7 +164,7 @@ public class ModelChiefNorsemen extends NorsemenModel
         robe1.texOffs(58, 47).addBox(-6.0F, -0.5F, -5.0F, 1.75F, 1.0F, 1.0F, 0.0F, false);
         robe1.texOffs(58, 47).addBox(-4.25F, -0.5F, -5.0F, 2.0F, 0.5F, 1.0F, 0.0F, false);
 
-        body = new ModelRenderer(this);
+        body = new ModelPart(this);
         body.setPos(0.0F, 0.0F, 0.0F);
         body.texOffs(16, 16).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, 0.0F, true);
         body.texOffs(70, 5).addBox(-4.5F, 10.0F, -2.5F, 9.0F, 3.0F, 0.5F, 0.0F, false);
@@ -199,7 +199,7 @@ public class ModelChiefNorsemen extends NorsemenModel
         body.texOffs(27, 49).addBox(-2.0F, 2.0F, 2.0F, 1.75F, 2.0F, 0.5F, 0.0F, false);
         body.texOffs(27, 49).addBox(-3.75F, 0.0F, 2.0F, 1.75F, 2.0F, 0.5F, 0.0F, false);
 
-        robe3 = new ModelRenderer(this);
+        robe3 = new ModelPart(this);
         robe3.setPos(0.0F, 24.0F, 0.0F);
         body.addChild(robe3);
         setRotationAngle(robe3, 0.4363F, 0.0F, 0.0F);
@@ -213,7 +213,7 @@ public class ModelChiefNorsemen extends NorsemenModel
         hat.visible = false;
     }
 
-    private void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z)
+    private void setRotationAngle(ModelPart modelRenderer, float x, float y, float z)
     {
         modelRenderer.xRot = x;
         modelRenderer.yRot = y;

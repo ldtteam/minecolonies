@@ -1,8 +1,8 @@
 package com.minecolonies.api.advancements.citizen_eat_food;
 
 import com.minecolonies.api.advancements.CriterionListeners;
-import net.minecraft.advancements.PlayerAdvancements;
-import net.minecraft.item.ItemStack;
+import net.minecraft.server.PlayerAdvancements;
+import net.minecraft.world.item.ItemStack;
 
 /**
  * The listener instantiated for every advancement that listens to the associated criterion.

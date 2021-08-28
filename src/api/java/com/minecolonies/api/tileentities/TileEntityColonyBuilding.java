@@ -12,23 +12,23 @@ import com.minecolonies.api.inventory.api.CombinedItemHandler;
 import com.minecolonies.api.inventory.container.ContainerBuildingInventory;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.WorldUtil;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SUpdateTileEntityPacket;
-import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.Connection;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.level.block.entity.TickableBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -48,7 +48,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BUILDING_TY
  * Class which handles the tileEntity of our colonyBuildings.
  */
 @SuppressWarnings("PMD.ExcessiveImports")
-public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding implements ITickableTileEntity
+public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding implements TickableBlockEntity
 {
     /**
      * NBTTag to store the colony id.
@@ -105,7 +105,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
      *
      * @param type the entity type.
      */
-    public TileEntityColonyBuilding(final TileEntityType<? extends AbstractTileEntityColonyBuilding> type)
+    public TileEntityColonyBuilding(final BlockEntityType<? extends AbstractTileEntityColonyBuilding> type)
     {
         super(type);
     }
@@ -200,7 +200,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
             {
                 if (WorldUtil.isBlockLoaded(level, pos))
                 {
-                    final TileEntity entity = getLevel().getBlockEntity(pos);
+                    final BlockEntity entity = getLevel().getBlockEntity(pos);
                     if (entity instanceof AbstractTileEntityRack)
                     {
                         if (((AbstractTileEntityRack) entity).hasItemStack(notEmptyPredicate))
@@ -242,30 +242,30 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     }
 
     @Override
-    public SUpdateTileEntityPacket getUpdatePacket()
+    public ClientboundBlockEntityDataPacket getUpdatePacket()
     {
-        final CompoundNBT compound = new CompoundNBT();
+        final CompoundTag compound = new CompoundTag();
         save(compound);
-        return new SUpdateTileEntityPacket(this.getPosition(), 0, compound);
+        return new ClientboundBlockEntityDataPacket(this.getPosition(), 0, compound);
     }
 
     @NotNull
     @Override
-    public CompoundNBT getUpdateTag()
+    public CompoundTag getUpdateTag()
     {
-        return save(new CompoundNBT());
+        return save(new CompoundTag());
     }
 
     @Override
-    public void handleUpdateTag(final BlockState state, final CompoundNBT tag)
+    public void handleUpdateTag(final BlockState state, final CompoundTag tag)
     {
         this.load(state, tag);
     }
 
     @Override
-    public void onDataPacket(final NetworkManager net, final SUpdateTileEntityPacket packet)
+    public void onDataPacket(final Connection net, final ClientboundBlockEntityDataPacket packet)
     {
-        final CompoundNBT compound = packet.getTag();
+        final CompoundTag compound = packet.getTag();
         colonyId = compound.getInt(TAG_COLONY);
         super.onDataPacket(net, packet);
     }
@@ -307,13 +307,13 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
 
     @NotNull
     @Override
-    public ITextComponent getDisplayName()
+    public Component getDisplayName()
     {
         if (getBlockState() == null)
         {
             return super.getDisplayName();
         }
-        return new StringTextComponent(LanguageHandler.format(getBlockState().getBlock().getDescriptionId() + ".name"));
+        return new TextComponent(LanguageHandler.format(getBlockState().getBlock().getDescriptionId() + ".name"));
     }
 
     /**
@@ -329,7 +329,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     }
 
     @Override
-    public void load(final BlockState state, @NotNull final CompoundNBT compound)
+    public void load(final BlockState state, @NotNull final CompoundTag compound)
     {
         super.load(state, compound);
         if (compound.getAllKeys().contains(TAG_COLONY))
@@ -345,7 +345,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
 
     @NotNull
     @Override
-    public CompoundNBT save(@NotNull final CompoundNBT compound)
+    public CompoundTag save(@NotNull final CompoundTag compound)
     {
         super.save(compound);
         compound.putInt(TAG_COLONY, colonyId);
@@ -378,7 +378,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
         }
     }
 
-    public boolean isUsableByPlayer(@NotNull final PlayerEntity player)
+    public boolean isUsableByPlayer(@NotNull final Player player)
     {
         return this.hasAccessPermission(player);
     }
@@ -390,7 +390,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
      * @return True when player has access, or building doesn't exist, otherwise false.
      */
     @Override
-    public boolean hasAccessPermission(final PlayerEntity player)
+    public boolean hasAccessPermission(final Player player)
     {
         //TODO This is called every tick the GUI is open. Is that bad?
         return building == null || building.getColony().getPermissions().hasPermission(player, Action.ACCESS_HUTS);
@@ -474,14 +474,14 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
             {
                 //Add additional containers
                 final Set<IItemHandlerModifiable> handlers = new LinkedHashSet<>();
-                final World world = colony.getWorld();
+                final Level world = colony.getWorld();
                 if (world != null)
                 {
                     for (final BlockPos pos : building.getContainers())
                     {
                         if (WorldUtil.isBlockLoaded(world, pos) && !pos.equals(this.worldPosition))
                         {
-                            final TileEntity te = world.getBlockEntity(pos);
+                            final BlockEntity te = world.getBlockEntity(pos);
                             if (te != null)
                             {
                                 if (te instanceof AbstractTileEntityRack)
@@ -514,7 +514,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
 
     @Nullable
     @Override
-    public Container createMenu(final int id, @NotNull final PlayerInventory inv, @NotNull final PlayerEntity player)
+    public AbstractContainerMenu createMenu(final int id, @NotNull final Inventory inv, @NotNull final Player player)
     {
         return new ContainerBuildingInventory(id, inv, colonyId, getBlockPos());
     }

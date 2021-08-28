@@ -11,14 +11,14 @@ import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingArchery;
 import com.minecolonies.coremod.colony.jobs.JobArcherTraining;
 import com.minecolonies.coremod.util.WorkerUtil;
-import net.minecraft.entity.MoverType;
-import net.minecraft.entity.projectile.ArrowEntity;
-import net.minecraft.util.Hand;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.entity.projectile.Arrow;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
@@ -77,7 +77,7 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
     /**
      * Shooting arrow in progress.
      */
-    private ArrowEntity arrowInProgress;
+    private Arrow arrowInProgress;
 
     /**
      * Creates the abstract part of the AI.inte Always use this constructor!
@@ -161,16 +161,16 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
         if (worker.isUsingItem())
         {
             WorkerUtil.faceBlock(currentShootingTarget, worker);
-            worker.swing(Hand.MAIN_HAND);
+            worker.swing(InteractionHand.MAIN_HAND);
 
-            final ArrowEntity arrow = ModEntities.MC_NORMAL_ARROW.create(world);
+            final Arrow arrow = ModEntities.MC_NORMAL_ARROW.create(world);
             arrow.setBaseDamage(0);
             arrow.setOwner(worker);
             arrow.setPos(worker.getX(), worker.getY() + 1, worker.getZ());
             final double xVector = currentShootingTarget.getX() - worker.getX();
             final double yVector = currentShootingTarget.getY() - arrow.getY();
             final double zVector = currentShootingTarget.getZ() - worker.getZ();
-            final double distance = (double) MathHelper.sqrt(xVector * xVector + zVector * zVector);
+            final double distance = (double) Mth.sqrt(xVector * xVector + zVector * zVector);
 
             final double chance = HIT_CHANCE_DIVIDER / (getPrimarySkillLevel()/2.0 + 1);
             arrow.shoot(xVector, yVector + distance * RANGED_AIM_SLIGHTLY_HIGHER_MULTIPLIER, zVector, RANGED_VELOCITY, (float) chance);
@@ -182,11 +182,11 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
             final double zDiff = currentShootingTarget.getZ() - worker.getZ();
             final double goToX = xDiff > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
             final double goToZ = zDiff > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
-            worker.move(MoverType.SELF, new Vector3d(goToX, 0, goToZ));
+            worker.move(MoverType.SELF, new Vec3(goToX, 0, goToZ));
 
             if (worker.getRandom().nextBoolean())
             {
-                worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, 1);
+                worker.getCitizenItemHandler().damageItemInHand(InteractionHand.MAIN_HAND, 1);
             }
             worker.stopUsingItem();
             this.incrementActionsDoneAndDecSaturation();
@@ -198,7 +198,7 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
             reduceAttackDelay();
             if (currentAttackDelay <= 0)
             {
-                worker.startUsingItem(Hand.MAIN_HAND);
+                worker.startUsingItem(InteractionHand.MAIN_HAND);
             }
             return ARCHER_SHOOT;
         }
@@ -209,7 +209,7 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
 
     private IAIState checkShot()
     {
-        if (arrowInProgress.distanceToSqr(new Vector3d(currentShootingTarget.getX(), currentShootingTarget.getY(), currentShootingTarget.getZ())) < MIN_DISTANCE_FOR_SUCCESS)
+        if (arrowInProgress.distanceToSqr(new Vec3(currentShootingTarget.getX(), currentShootingTarget.getY(), currentShootingTarget.getZ())) < MIN_DISTANCE_FOR_SUCCESS)
         {
             worker.getCitizenExperienceHandler().addExperience(XP_PER_SUCCESSFUL_SHOT);
         }
@@ -232,7 +232,7 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
         }
 
         final int bowSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(getInventory(), ToolType.BOW, 0, getOwnBuilding().getMaxToolLevel());
-        worker.getCitizenItemHandler().setHeldItem(Hand.MAIN_HAND, bowSlot);
+        worker.getCitizenItemHandler().setHeldItem(InteractionHand.MAIN_HAND, bowSlot);
         return true;
     }
 

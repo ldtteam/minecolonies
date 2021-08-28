@@ -2,7 +2,7 @@ package com.minecolonies.api.research.util;
 
 import com.ldtteam.blockout.Color;
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * Class for research constants.

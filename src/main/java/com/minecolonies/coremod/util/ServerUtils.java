@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.util;
 
 import com.minecolonies.api.colony.permissions.Player;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,7 +34,7 @@ public final class ServerUtils
      * @return the Player
      */
     @Nullable
-    public static PlayerEntity getPlayerFromUUID(@NotNull final World world, @NotNull final UUID id)
+    public static Player getPlayerFromUUID(@NotNull final Level world, @NotNull final UUID id)
     {
         for (int i = 0; i < world.players().size(); ++i)
         {
@@ -54,19 +54,19 @@ public final class ServerUtils
      * @return list of PlayerEntitys
      */
     @NotNull
-    public static List<PlayerEntity> getPlayersFromUUID(@Nullable final World world, @NotNull final Collection<UUID> ids)
+    public static List<Player> getPlayersFromUUID(@Nullable final Level world, @NotNull final Collection<UUID> ids)
     {
         if (world == null)
         {
             return Collections.emptyList();
         }
-        @NotNull final List<PlayerEntity> players = new ArrayList<>();
+        @NotNull final List<Player> players = new ArrayList<>();
 
         for (final Object o : world.players())
         {
-            if (o instanceof PlayerEntity)
+            if (o instanceof Player)
             {
-                @NotNull final PlayerEntity player = (PlayerEntity) o;
+                @NotNull final Player player = (Player) o;
                 if (ids.contains(player.getGameProfile().getId()))
                 {
                     players.add(player);
@@ -92,9 +92,9 @@ public final class ServerUtils
      * @return A list of {@link PlayerEntity}s
      */
     @NotNull
-    public static List<PlayerEntity> getPlayersFromPermPlayer(@NotNull final List<Player> players, @NotNull final World world)
+    public static List<Player> getPlayersFromPermPlayer(@NotNull final List<Player> players, @NotNull final Level world)
     {
-        @NotNull final List<PlayerEntity> playerList = new ArrayList<>();
+        @NotNull final List<Player> playerList = new ArrayList<>();
 
         for (@NotNull final Player player : players)
         {
@@ -116,7 +116,7 @@ public final class ServerUtils
      * @return The {@link PlayerEntity} reference.
      */
     @Nullable
-    public static PlayerEntity getPlayerFromPermPlayer(@NotNull final Player player, @NotNull final World world)
+    public static Player getPlayerFromPermPlayer(@NotNull final Player player, @NotNull final Level world)
     {
         return ServerUtils.getPlayerFromUUID(player.getID(), world);
     }
@@ -131,14 +131,14 @@ public final class ServerUtils
      * @return The player the player if found or null
      */
     @Nullable
-    public static PlayerEntity getPlayerFromUUID(@Nullable final UUID uuid, @NotNull final World world)
+    public static Player getPlayerFromUUID(@Nullable final UUID uuid, @NotNull final Level world)
     {
         if (uuid == null)
         {
             return null;
         }
-        final List<ServerPlayerEntity> allPlayers = world.getServer().getPlayerList().getPlayers();
-        for (@NotNull final ServerPlayerEntity player : allPlayers)
+        final List<ServerPlayer> allPlayers = world.getServer().getPlayerList().getPlayers();
+        for (@NotNull final ServerPlayer player : allPlayers)
         {
             if (player.getUUID().equals(uuid))
             {

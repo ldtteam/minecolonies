@@ -3,23 +3,23 @@ package com.minecolonies.coremod.client.render;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.blocks.huts.AbstractBlockMinecoloniesDefault;
 import com.minecolonies.api.tileentities.TileEntityNamedGrave;
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.texture.NativeImage;
-import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.util.Direction;
-import net.minecraft.util.IReorderingProcessor;
-import net.minecraft.util.math.vector.Vector3f;
-import net.minecraft.util.text.Style;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.renderer.MultiBufferSource;
+import com.mojang.blaze3d.platform.NativeImage;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
+import net.minecraft.core.Direction;
+import net.minecraft.util.FormattedCharSequence;
+import com.mojang.math.Vector3f;
+import net.minecraft.network.chat.Style;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 @OnlyIn(Dist.CLIENT)
-public class TileEntityNamedGraveRenderer extends TileEntityRenderer<TileEntityNamedGrave> {
+public class TileEntityNamedGraveRenderer extends BlockEntityRenderer<TileEntityNamedGrave> {
 
     /**
      * Basic rotation to achieve a certain direction.
@@ -43,14 +43,14 @@ public class TileEntityNamedGraveRenderer extends TileEntityRenderer<TileEntityN
 
     private final int textColor = NativeImage.combine(0, 220, 220, 220);
 
-    public TileEntityNamedGraveRenderer(TileEntityRendererDispatcher rendererDispatcher)
+    public TileEntityNamedGraveRenderer(BlockEntityRenderDispatcher rendererDispatcher)
     {
         super(rendererDispatcher);
     }
 
 
     @Override
-    public void render(@NotNull final TileEntityNamedGrave tileEntity, final float partialTicks, final MatrixStack matrixStack, @NotNull final IRenderTypeBuffer buffer, final int combinedLight, final int combinedOverlay)
+    public void render(@NotNull final TileEntityNamedGrave tileEntity, final float partialTicks, final PoseStack matrixStack, @NotNull final MultiBufferSource buffer, final int combinedLight, final int combinedOverlay)
     {
         matrixStack.pushPose();
 
@@ -103,7 +103,7 @@ public class TileEntityNamedGraveRenderer extends TileEntityRenderer<TileEntityN
         matrixStack.popPose();
     }
 
-    private void renderText(final MatrixStack matrixStack, final IRenderTypeBuffer buffer, final int combinedLight, String text, final int line)
+    private void renderText(final PoseStack matrixStack, final MultiBufferSource buffer, final int combinedLight, String text, final int line)
     {
         final int maxSize = 20;
         if (text.length() > maxSize)
@@ -111,10 +111,10 @@ public class TileEntityNamedGraveRenderer extends TileEntityRenderer<TileEntityN
             text = text.substring(0, maxSize);
         }
 
-        final IReorderingProcessor iReorderingProcessor = IReorderingProcessor.forward(text, Style.EMPTY);
+        final FormattedCharSequence iReorderingProcessor = FormattedCharSequence.forward(text, Style.EMPTY);
         if (iReorderingProcessor != null)
         {
-            final FontRenderer fontRenderer = this.renderer.getFont();
+            final Font fontRenderer = this.renderer.getFont();
 
             float x = (float) (-fontRenderer.width(iReorderingProcessor) / 2); //render width of text divided by 2
             fontRenderer.drawInBatch(iReorderingProcessor, x, line * 10f,

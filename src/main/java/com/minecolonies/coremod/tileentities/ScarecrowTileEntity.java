@@ -9,20 +9,20 @@ import com.minecolonies.api.tileentities.ScareCrowType;
 import com.minecolonies.api.tileentities.ScarecrowFieldStage;
 import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.block.*;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SUpdateTileEntityPacket;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.network.Connection;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
@@ -34,6 +34,14 @@ import java.util.Random;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND;
+
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.CropBlock;
+import net.minecraft.world.level.block.FenceBlock;
+import net.minecraft.world.level.block.FenceGateBlock;
+import net.minecraft.world.level.block.WallBlock;
+import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * The scarecrow tile entity to store extra data.
@@ -108,7 +116,7 @@ public class ScarecrowTileEntity extends AbstractScarecrowTileEntity
             public boolean isItemValid(int slot, @Nonnull ItemStack stack)
             {
                 return Tags.Items.SEEDS.contains(stack.getItem())
-                         || (stack.getItem() instanceof BlockItem && ((BlockItem) stack.getItem()).getBlock() instanceof CropsBlock);
+                         || (stack.getItem() instanceof BlockItem && ((BlockItem) stack.getItem()).getBlock() instanceof CropBlock);
             }
         };
     }
@@ -158,7 +166,7 @@ public class ScarecrowTileEntity extends AbstractScarecrowTileEntity
      * @return true if it is.
      */
     @Override
-    public boolean isNoPartOfField(@NotNull final World world, @NotNull final BlockPos position)
+    public boolean isNoPartOfField(@NotNull final Level world, @NotNull final BlockPos position)
     {
         return world.isEmptyBlock(position) || isValidDelimiter(world.getBlockState(position.above()).getBlock());
     }
@@ -374,29 +382,29 @@ public class ScarecrowTileEntity extends AbstractScarecrowTileEntity
     ///////////---- Following methods are used to update the tileEntity between client and server ----///////////
 
     @Override
-    public SUpdateTileEntityPacket getUpdatePacket()
+    public ClientboundBlockEntityDataPacket getUpdatePacket()
     {
-        final CompoundNBT compound = new CompoundNBT();
+        final CompoundTag compound = new CompoundTag();
 
         this.save(compound);
         if (colony != null)
         {
             compound.putInt(TAG_COLONY_ID, colony.getID());
         }
-        return new SUpdateTileEntityPacket(this.getPosition(), 0, compound);
+        return new ClientboundBlockEntityDataPacket(this.getPosition(), 0, compound);
     }
 
     @NotNull
     @Override
-    public CompoundNBT getUpdateTag()
+    public CompoundTag getUpdateTag()
     {
-        return save(new CompoundNBT());
+        return save(new CompoundTag());
     }
 
     @Override
-    public void onDataPacket(final NetworkManager net, final SUpdateTileEntityPacket packet)
+    public void onDataPacket(final Connection net, final ClientboundBlockEntityDataPacket packet)
     {
-        final CompoundNBT compound = packet.getTag();
+        final CompoundTag compound = packet.getTag();
         this.load(getBlockState(), compound);
         if (compound.getAllKeys().contains(TAG_COLONY_ID))
         {
@@ -407,12 +415,12 @@ public class ScarecrowTileEntity extends AbstractScarecrowTileEntity
     /////////////--------------------------- End Synchronization-area ---------------------------- /////////////
 
     @Override
-    public void load(final BlockState state, final CompoundNBT compound)
+    public void load(final BlockState state, final CompoundTag compound)
     {
-        final ListNBT inventoryTagList = compound.getList(TAG_INVENTORY, TAG_COMPOUND);
+        final ListTag inventoryTagList = compound.getList(TAG_INVENTORY, TAG_COMPOUND);
         for (int i = 0; i < inventoryTagList.size(); ++i)
         {
-            final CompoundNBT inventoryCompound = inventoryTagList.getCompound(i);
+            final CompoundTag inventoryCompound = inventoryTagList.getCompound(i);
             final ItemStack stack = ItemStack.of(inventoryCompound);
             if (ItemStackUtils.getSize(stack) <= 0)
             {
@@ -438,12 +446,12 @@ public class ScarecrowTileEntity extends AbstractScarecrowTileEntity
 
     @NotNull
     @Override
-    public CompoundNBT save(final CompoundNBT compound)
+    public CompoundTag save(final CompoundTag compound)
     {
-        @NotNull final ListNBT inventoryTagList = new ListNBT();
+        @NotNull final ListTag inventoryTagList = new ListTag();
         for (int slot = 0; slot < inventory.getSlots(); slot++)
         {
-            @NotNull final CompoundNBT inventoryCompound = new CompoundNBT();
+            @NotNull final CompoundTag inventoryCompound = new CompoundTag();
             final ItemStack stack = inventory.getStackInSlot(slot);
             if (stack == ItemStackUtils.EMPTY)
             {
@@ -501,15 +509,15 @@ public class ScarecrowTileEntity extends AbstractScarecrowTileEntity
 
     @Nullable
     @Override
-    public Container createMenu(final int id, @NotNull final PlayerInventory inv, @NotNull final PlayerEntity player)
+    public AbstractContainerMenu createMenu(final int id, @NotNull final Inventory inv, @NotNull final Player player)
     {
         return new ContainerField(id, inv, getBlockPos());
     }
 
     @NotNull
     @Override
-    public ITextComponent getDisplayName()
+    public Component getDisplayName()
     {
-        return new StringTextComponent(owner);
+        return new TextComponent(owner);
     }
 }

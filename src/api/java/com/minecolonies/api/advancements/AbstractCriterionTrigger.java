@@ -1,17 +1,17 @@
 package com.minecolonies.api.advancements;
 
 import com.google.common.collect.Maps;
-import net.minecraft.advancements.ICriterionInstance;
-import net.minecraft.advancements.ICriterionTrigger;
-import net.minecraft.advancements.PlayerAdvancements;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.advancements.CriterionTriggerInstance;
+import net.minecraft.advancements.CriterionTrigger;
+import net.minecraft.server.PlayerAdvancements;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 import java.util.function.Function;
 
-import net.minecraft.advancements.ICriterionTrigger.Listener;
+import net.minecraft.advancements.CriterionTrigger.Listener;
 
 /**
  * The base class of a Trigger that tracks listeners and defines criterion
@@ -19,7 +19,7 @@ import net.minecraft.advancements.ICriterionTrigger.Listener;
  * @param <T> the class of the individual listener that will perform the trigger
  * @param <U> the criterion the individual listener is checking
  */
-public abstract class AbstractCriterionTrigger<T extends CriterionListeners<U>, U extends ICriterionInstance> implements ICriterionTrigger<U>
+public abstract class AbstractCriterionTrigger<T extends CriterionListeners<U>, U extends CriterionTriggerInstance> implements CriterionTrigger<U>
 {
     /** The designation for this trigger. Used by JSON advancement data. */
     private final ResourceLocation                id;

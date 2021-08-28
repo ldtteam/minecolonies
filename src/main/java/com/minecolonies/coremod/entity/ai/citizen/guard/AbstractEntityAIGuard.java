@@ -33,13 +33,13 @@ import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.client.SleepingParticleMessage;
 import com.minecolonies.coremod.util.NamedDamageSource;
 import com.minecolonies.coremod.util.TeleportHelper;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;
@@ -244,7 +244,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         }
         else
         {
-            worker.swing(Hand.OFF_HAND);
+            worker.swing(InteractionHand.OFF_HAND);
             sleepingGuard.get().hurt(new NamedDamageSource("wakeywakey", worker).bypassArmor(), 1);
             sleepingGuard.get().setLastHurtByMob(worker);
             return CombatAIStates.NO_TARGET;
@@ -357,12 +357,12 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      */
     private IAIState regen()
     {
-        if (!worker.hasEffect(Effects.MOVEMENT_SPEED))
+        if (!worker.hasEffect(MobEffects.MOVEMENT_SPEED))
         {
             final double effect = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(FLEEING_SPEED);
             if (effect > 0)
             {
-                worker.addEffect(new EffectInstance(Effects.MOVEMENT_SPEED, 200, (int) (0 + effect)));
+                worker.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 200, (int) (0 + effect)));
             }
         }
 
@@ -373,9 +373,9 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
 
         if (worker.getHealth() < ((int) worker.getMaxHealth() * 0.75D) && buildingGuards.shallRetrieveOnLowHealth())
         {
-            if (!worker.hasEffect(Effects.REGENERATION))
+            if (!worker.hasEffect(MobEffects.REGENERATION))
             {
-                worker.addEffect(new EffectInstance(Effects.REGENERATION, 200));
+                worker.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 200));
             }
             return GUARD_REGEN;
         }
@@ -446,14 +446,14 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
                                                randomGenerator.nextInt(GUARD_FOLLOW_TIGHT_RANGE) - GUARD_FOLLOW_TIGHT_RANGE / 2),
           GUARD_FOLLOW_TIGHT_RANGE) && citizenData != null)
         {
-            if (!worker.hasEffect(Effects.MOVEMENT_SPEED))
+            if (!worker.hasEffect(MobEffects.MOVEMENT_SPEED))
             {
                 // Guards will rally faster with higher skill.
                 // Considering 99 is the maximum for any skill, the maximum theoretical getJobModifier() = 99 + 99/4 = 124. We want them to have Speed 5
                 // when they're at half-max, so at about skill60. Therefore, divide the skill by 20.
-                worker.addEffect(new EffectInstance(Effects.MOVEMENT_SPEED,
+                worker.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED,
                   5 * TICKS_SECOND,
-                  MathHelper.clamp((citizenData.getCitizenSkillHandler().getLevel(Skill.Adaptability) / 20), 2, 5),
+                  Mth.clamp((citizenData.getCitizenSkillHandler().getLevel(Skill.Adaptability) / 20), 2, 5),
                   false,
                   false));
             }
@@ -652,7 +652,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
 
         if (rallyLocation != null || buildingGuards.getTask().equals(GuardTaskSetting.FOLLOW))
         {
-            worker.addEffect(new EffectInstance(GLOW_EFFECT, GLOW_EFFECT_DURATION, GLOW_EFFECT_MULTIPLIER, false, false));
+            worker.addEffect(new MobEffectInstance(GLOW_EFFECT, GLOW_EFFECT_DURATION, GLOW_EFFECT_MULTIPLIER, false, false));
         }
         else
         {
@@ -794,8 +794,8 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         }
 
         // Players
-        if (entity instanceof PlayerEntity && (colony.getPermissions().hasPermission((PlayerEntity) entity, Action.GUARDS_ATTACK)
-                                                 || colony.isValidAttackingPlayer((PlayerEntity) entity)))
+        if (entity instanceof Player && (colony.getPermissions().hasPermission((Player) entity, Action.GUARDS_ATTACK)
+                                                 || colony.isValidAttackingPlayer((Player) entity)))
         {
             return true;
         }

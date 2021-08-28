@@ -10,10 +10,10 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
 import com.minecolonies.coremod.util.TeleportHelper;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -46,7 +46,7 @@ public class RecallCitizenHutMessage extends AbstractBuildingServerMessage<IBuil
     protected void onExecute(@NotNull final NetworkEvent.Context ctxIn, final boolean isLogicalServer, @NotNull final IColony colony, @NotNull final IBuilding building)
     {
         final BlockPos location = building.getPosition();
-        final World world = colony.getWorld();
+        final Level world = colony.getWorld();
         for (final ICitizenData citizenData : building.getAssignedCitizen())
         {
             Optional<AbstractEntityCitizen> optionalEntityCitizen = citizenData.getEntity();
@@ -60,7 +60,7 @@ public class RecallCitizenHutMessage extends AbstractBuildingServerMessage<IBuil
 
             if (optionalEntityCitizen.isPresent() && !TeleportHelper.teleportCitizen(optionalEntityCitizen.get(), world, location))
             {
-                final PlayerEntity player = ctxIn.getSender();
+                final Player player = ctxIn.getSender();
                 if (player == null)
                 {
                     return;
@@ -72,13 +72,13 @@ public class RecallCitizenHutMessage extends AbstractBuildingServerMessage<IBuil
     }
 
     @Override
-    protected void toBytesOverride(final PacketBuffer buf)
+    protected void toBytesOverride(final FriendlyByteBuf buf)
     {
 
     }
 
     @Override
-    protected void fromBytesOverride(final PacketBuffer buf)
+    protected void fromBytesOverride(final FriendlyByteBuf buf)
     {
 
     }

@@ -29,21 +29,21 @@ import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.entity.pathfinding.MovementHandler;
 import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMessage;
 import net.minecraft.entity.*;
-import net.minecraft.entity.ai.goal.LookAtGoal;
-import net.minecraft.entity.ai.goal.LookAtWithoutMovingGoal;
-import net.minecraft.entity.ai.goal.OpenDoorGoal;
-import net.minecraft.entity.ai.goal.SwimGoal;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.NameTagItem;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.InteractGoal;
+import net.minecraft.world.entity.ai.goal.OpenDoorGoal;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.NameTagItem;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -52,6 +52,12 @@ import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.coremod.entity.ai.minimal.EntityAIInteractToggleAble.*;
+
+import net.minecraft.world.entity.AgableMob;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 
 /**
  * Visitor citizen entity
@@ -130,7 +136,7 @@ public class VisitorCitizen extends AbstractEntityCitizen
      * @param type  the Entity type.
      * @param world the world.
      */
-    public VisitorCitizen(final EntityType<? extends AgeableEntity> type, final World world)
+    public VisitorCitizen(final EntityType<? extends AgableMob> type, final Level world)
     {
         super(type, world);
         this.goalSelector = new CustomGoalSelector(this.goalSelector);
@@ -154,12 +160,12 @@ public class VisitorCitizen extends AbstractEntityCitizen
     private void initTasks()
     {
         int priority = 0;
-        this.goalSelector.addGoal(priority, new SwimGoal(this));
+        this.goalSelector.addGoal(priority, new FloatGoal(this));
         this.goalSelector.addGoal(++priority, new OpenDoorGoal(this, true));
         this.goalSelector.addGoal(priority, new EntityAIInteractToggleAble(this, FENCE_TOGGLE, TRAP_TOGGLE, DOOR_TOGGLE));
-        this.goalSelector.addGoal(++priority, new LookAtWithoutMovingGoal(this, PlayerEntity.class, WATCH_CLOSEST2, 1.0F));
-        this.goalSelector.addGoal(++priority, new LookAtWithoutMovingGoal(this, EntityCitizen.class, WATCH_CLOSEST2_FAR, WATCH_CLOSEST2_FAR_CHANCE));
-        this.goalSelector.addGoal(++priority, new LookAtGoal(this, LivingEntity.class, WATCH_CLOSEST));
+        this.goalSelector.addGoal(++priority, new InteractGoal(this, Player.class, WATCH_CLOSEST2, 1.0F));
+        this.goalSelector.addGoal(++priority, new InteractGoal(this, EntityCitizen.class, WATCH_CLOSEST2_FAR, WATCH_CLOSEST2_FAR_CHANCE));
+        this.goalSelector.addGoal(++priority, new LookAtPlayerGoal(this, LivingEntity.class, WATCH_CLOSEST));
         this.goalSelector.addGoal(++priority, new EntityAIVisitor(this));
     }
 
@@ -274,7 +280,7 @@ public class VisitorCitizen extends AbstractEntityCitizen
     @Override
     public void setCitizensize(@NotNull final float width, @NotNull final float height)
     {
-        this.dimensions = new EntitySize(width, height, false);
+        this.dimensions = new EntityDimensions(width, height, false);
     }
 
     @Override
@@ -498,8 +504,8 @@ public class VisitorCitizen extends AbstractEntityCitizen
 
     @javax.annotation.Nullable
     @Override
-    public Container createMenu(
-      final int id, final PlayerInventory playerInventory, final PlayerEntity playerEntity)
+    public AbstractContainerMenu createMenu(
+      final int id, final Inventory playerInventory, final Player playerEntity)
     {
         return new ContainerCitizenInventory(id, playerInventory, citizenColonyHandler.getColonyId(), citizenId);
     }
@@ -511,12 +517,12 @@ public class VisitorCitizen extends AbstractEntityCitizen
      * @return If citizen should interact or not.
      */
     @Override
-    public ActionResultType checkAndHandleImportantInteractions(final PlayerEntity player, @NotNull final Hand hand)
+    public InteractionResult checkAndHandleImportantInteractions(final Player player, @NotNull final InteractionHand hand)
     {
         final IColonyView iColonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), player.level.dimension());
         if (iColonyView != null && !iColonyView.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
         {
-            return ActionResultType.FAIL;
+            return InteractionResult.FAIL;
         }
 
         if (!ItemStackUtils.isEmpty(player.getItemInHand(hand)) && player.getItemInHand(hand).getItem() instanceof NameTagItem)
@@ -539,7 +545,7 @@ public class VisitorCitizen extends AbstractEntityCitizen
                 }
             }
         }
-        return ActionResultType.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 
     @Override
@@ -606,7 +612,7 @@ public class VisitorCitizen extends AbstractEntityCitizen
     }
 
     @Override
-    public void addAdditionalSaveData(final CompoundNBT compound)
+    public void addAdditionalSaveData(final CompoundTag compound)
     {
         super.addAdditionalSaveData(compound);
         compound.putInt(TAG_STATUS, citizenStatusHandler.getStatus().ordinal());
@@ -620,7 +626,7 @@ public class VisitorCitizen extends AbstractEntityCitizen
     }
 
     @Override
-    public void readAdditionalSaveData(final CompoundNBT compound)
+    public void readAdditionalSaveData(final CompoundTag compound)
     {
         super.readAdditionalSaveData(compound);
 

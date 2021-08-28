@@ -14,14 +14,14 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CreativeBuildingStructureHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.util.CreativeRaiderStructureHandler;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Mirror;
-import net.minecraft.util.Rotation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
@@ -90,17 +90,17 @@ public class EventStructureManager implements IEventStructureManager
             return false;
         }
 
-        final World world = colony.getWorld();
+        final Level world = colony.getWorld();
 
         int y = 3;
 
         final BlockInfo info = structure.getBlockInfoAsMap().getOrDefault(structure.getPrimaryBlockOffset(), null);
         if (info.getTileEntityData() != null)
         {
-            final CompoundNBT teData = structure.getTileEntityData(targetSpawnPoint, structure.getPrimaryBlockOffset());
+            final CompoundTag teData = structure.getTileEntityData(targetSpawnPoint, structure.getPrimaryBlockOffset());
             if (teData != null && teData.contains(TAG_BLUEPRINTDATA))
             {
-                final TileEntity entity = TileEntity.loadStatic(info.getState(), info.getTileEntityData());
+                final BlockEntity entity = BlockEntity.loadStatic(info.getState(), info.getTileEntityData());
                 if (entity instanceof IBlueprintDataProvider)
                 {
                     for (final Map.Entry<BlockPos, List<String>> entry : ((IBlueprintDataProvider) entity).getPositionedTags().entrySet())
@@ -192,17 +192,17 @@ public class EventStructureManager implements IEventStructureManager
     }
 
     @Override
-    public void readFromNBT(@NotNull final CompoundNBT compound)
+    public void readFromNBT(@NotNull final CompoundTag compound)
     {
         if (compound.contains(TAG_EVENT_STRUCTURE_MANAGER))
         {
             backupSchematics.clear();
-            final CompoundNBT structureManagerCompound = compound.getCompound(TAG_EVENT_STRUCTURE_MANAGER);
-            final ListNBT schematicTags = structureManagerCompound.getList(TAG_SCHEMATIC_LIST, Constants.NBT.TAG_COMPOUND);
+            final CompoundTag structureManagerCompound = compound.getCompound(TAG_EVENT_STRUCTURE_MANAGER);
+            final ListTag schematicTags = structureManagerCompound.getList(TAG_SCHEMATIC_LIST, Constants.NBT.TAG_COMPOUND);
 
-            for (final INBT base : schematicTags)
+            for (final Tag base : schematicTags)
             {
-                final CompoundNBT tagCompound = (CompoundNBT) base;
+                final CompoundTag tagCompound = (CompoundTag) base;
                 final BlockPos pos = BlockPosUtil.read(tagCompound, TAG_POS);
                 final int eventID = tagCompound.getInt(TAG_EVENT_ID);
                 if (eventManager.getEventByID(eventID) != null)
@@ -219,14 +219,14 @@ public class EventStructureManager implements IEventStructureManager
     }
 
     @Override
-    public void writeToNBT(@NotNull final CompoundNBT compound)
+    public void writeToNBT(@NotNull final CompoundTag compound)
     {
-        final CompoundNBT structureManagerCompound = new CompoundNBT();
-        @NotNull final ListNBT schematicTagList = new ListNBT();
+        final CompoundTag structureManagerCompound = new CompoundTag();
+        @NotNull final ListTag schematicTagList = new ListTag();
 
         for (final Map.Entry<BlockPos, Integer> entry : backupSchematics.entrySet())
         {
-            final CompoundNBT entryCompound = new CompoundNBT();
+            final CompoundTag entryCompound = new CompoundTag();
             entryCompound.putInt(TAG_EVENT_ID, entry.getValue());
             BlockPosUtil.write(entryCompound, TAG_POS, entry.getKey());
             schematicTagList.add(entryCompound);

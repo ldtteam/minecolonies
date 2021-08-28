@@ -5,21 +5,27 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.tileentities.TileEntityColonyFlag;
 import net.minecraft.block.*;
-import net.minecraft.block.material.Material;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.DyeColor;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
+
+import net.minecraft.world.level.block.AbstractBannerBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
+import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * Represents the common functions of both the wall and floor colony flag banner blocks
@@ -41,21 +47,21 @@ public class AbstractColonyFlagBanner<B extends AbstractColonyFlagBanner<B>> ext
     }
 
     @Override
-    public TileEntity newBlockEntity(IBlockReader worldIn) { return new TileEntityColonyFlag(); }
+    public BlockEntity newBlockEntity(BlockGetter worldIn) { return new TileEntityColonyFlag(); }
 
     @Override
-    public void setPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack)
+    public void setPlacedBy(Level worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack)
     {
         if (worldIn.isClientSide) return;
 
-        TileEntity te = worldIn.getBlockEntity(pos);
+        BlockEntity te = worldIn.getBlockEntity(pos);
         if (te instanceof TileEntityColonyFlag && ((TileEntityColonyFlag) te).colonyId == -1 )
         {
             IColony colony = IColonyManager.getInstance().getIColony(worldIn, pos);
 
             // Allow the player to place their own beyond the colony
-            if (colony == null && placer instanceof PlayerEntity)
-                colony = IColonyManager.getInstance().getIColonyByOwner(worldIn, (PlayerEntity) placer);
+            if (colony == null && placer instanceof Player)
+                colony = IColonyManager.getInstance().getIColonyByOwner(worldIn, (Player) placer);
 
             if (colony != null)
                 ((TileEntityColonyFlag) te).colonyId = colony.getID();
@@ -65,12 +71,12 @@ public class AbstractColonyFlagBanner<B extends AbstractColonyFlagBanner<B>> ext
 
     @NotNull
     @Override
-    public ItemStack getCloneItemStack(final IBlockReader worldIn, @NotNull final BlockPos pos, @NotNull final BlockState state)
+    public ItemStack getCloneItemStack(final BlockGetter worldIn, @NotNull final BlockPos pos, @NotNull final BlockState state)
     {
-        TileEntity tileentity = worldIn.getBlockEntity(pos);
+        BlockEntity tileentity = worldIn.getBlockEntity(pos);
         if (tileentity instanceof TileEntityColonyFlag)
         {
-            if (worldIn instanceof ClientWorld)
+            if (worldIn instanceof ClientLevel)
             {
                 ((TileEntityColonyFlag)tileentity).getItemClient();
             }

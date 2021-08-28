@@ -4,12 +4,12 @@ import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.coremod.blocks.schematic.BlockWaypoint;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,17 +21,17 @@ import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler.Ac
 public class WayPointBlockPlacementHandler implements IPlacementHandler
 {
     @Override
-    public boolean canHandle(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final BlockState blockState)
+    public boolean canHandle(@NotNull final Level world, @NotNull final BlockPos pos, @NotNull final BlockState blockState)
     {
         return blockState.getBlock() instanceof BlockWaypoint;
     }
 
     @Override
     public ActionProcessingResult handle(
-      @NotNull final World world,
+      @NotNull final Level world,
       @NotNull final BlockPos pos,
       @NotNull final BlockState blockState,
-      @Nullable final CompoundNBT tileEntityData,
+      @Nullable final CompoundTag tileEntityData,
       final boolean complete,
       final BlockPos centerPos)
     {
@@ -53,10 +53,10 @@ public class WayPointBlockPlacementHandler implements IPlacementHandler
 
     @Override
     public List<ItemStack> getRequiredItems(
-      @NotNull final World world,
+      @NotNull final Level world,
       @NotNull final BlockPos pos,
       @NotNull final BlockState blockState,
-      @Nullable final CompoundNBT tileEntityData,
+      @Nullable final CompoundTag tileEntityData,
       final boolean complete)
     {
         return new ArrayList<>();

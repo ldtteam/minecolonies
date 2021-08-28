@@ -7,8 +7,8 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.modules.EntityListModuleWindow;
 import com.minecolonies.coremod.network.messages.server.colony.building.AssignFilterableEntityMessage;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -104,7 +104,7 @@ public class EntityListModuleView extends AbstractBuildingModuleView implements 
     }
 
     @Override
-    public void deserialize(@NotNull final PacketBuffer buf)
+    public void deserialize(@NotNull final FriendlyByteBuf buf)
     {
         listOfEntities.clear();
         final int size = buf.readInt();

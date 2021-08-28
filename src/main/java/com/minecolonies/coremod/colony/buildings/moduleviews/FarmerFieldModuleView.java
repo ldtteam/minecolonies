@@ -8,8 +8,8 @@ import com.minecolonies.coremod.client.gui.modules.FarmerFieldsModuleWindow;
 import com.minecolonies.coremod.network.messages.server.colony.building.farmer.AssignFieldMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.farmer.AssignmentModeMessage;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.BlockPos;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
@@ -46,7 +46,7 @@ public class FarmerFieldModuleView extends AbstractBuildingModuleView
     }
 
     @Override
-    public void deserialize(@NotNull final PacketBuffer buf)
+    public void deserialize(@NotNull final FriendlyByteBuf buf)
     {
         fields = new ArrayList<>();
 

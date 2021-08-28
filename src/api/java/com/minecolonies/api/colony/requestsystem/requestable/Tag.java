@@ -5,13 +5,13 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.tags.ITag;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.tags.Tag;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -38,7 +38,7 @@ public class Tag implements IDeliverable
      * The tag.
      */
     @NotNull
-    private final ITag<Item> theTag;
+    private final Tag<Item> theTag;
 
     /**
      * The result of the request.
@@ -62,7 +62,7 @@ public class Tag implements IDeliverable
      * @param tag   the required containing tag.
      * @param count the count.
      */
-    public Tag(@NotNull final ITag<Item> tag, final int count)
+    public Tag(@NotNull final Tag<Item> tag, final int count)
     {
         this(tag, count, count);
     }
@@ -74,7 +74,7 @@ public class Tag implements IDeliverable
      * @param count    the count.
      * @param minCount the min count.
      */
-    public Tag(@NotNull final ITag<Item> tag, final int count, final int minCount)
+    public Tag(@NotNull final Tag<Item> tag, final int count, final int minCount)
     {
         this(tag, ItemStackUtils.EMPTY, count, minCount);
     }
@@ -87,7 +87,7 @@ public class Tag implements IDeliverable
      * @param count    the count.
      * @param minCount the min count.
      */
-    public Tag(@NotNull final ITag<Item> tag, @NotNull final ItemStack result, final int count, final int minCount)
+    public Tag(@NotNull final Tag<Item> tag, @NotNull final ItemStack result, final int count, final int minCount)
     {
         this.theTag = tag;
         this.result = result;
@@ -142,7 +142,7 @@ public class Tag implements IDeliverable
     }
 
     @NotNull
-    public ITag<Item> getTag()
+    public Tag<Item> getTag()
     {
         return theTag;
     }
@@ -203,9 +203,9 @@ public class Tag implements IDeliverable
      * @param input      the input.
      * @return the compound.
      */
-    public static CompoundNBT serialize(final IFactoryController controller, final Tag input)
+    public static CompoundTag serialize(final IFactoryController controller, final Tag input)
     {
-        final CompoundNBT compound = new CompoundNBT();
+        final CompoundTag compound = new CompoundTag();
         compound.putString(NBT_TAG, ItemTags.getAllTags().getIdOrThrow(input.getTag()).toString());
         if (!ItemStackUtils.isEmpty(input.getResult()))
         {
@@ -216,7 +216,7 @@ public class Tag implements IDeliverable
         return compound;
     }
 
-    public static void serialize(final IFactoryController controller, final PacketBuffer buffer, final Tag input)
+    public static void serialize(final IFactoryController controller, final FriendlyByteBuf buffer, final Tag input)
     {
         buffer.writeUtf(ItemTags.getAllTags().getIdOrThrow(input.getTag()).toString());
         buffer.writeBoolean(!ItemStackUtils.isEmpty(input.getResult()));
@@ -229,9 +229,9 @@ public class Tag implements IDeliverable
         buffer.writeInt(input.getMinimumCount());
     }
 
-    public static Tag deserialize(final IFactoryController controller, final PacketBuffer buffer)
+    public static Tag deserialize(final IFactoryController controller, final FriendlyByteBuf buffer)
     {
-        final ITag<Item> theTag = ItemTags.getAllTags().getTag(ResourceLocation.tryParse(buffer.readUtf(32767)));
+        final Tag<Item> theTag = ItemTags.getAllTags().getTag(ResourceLocation.tryParse(buffer.readUtf(32767)));
         final ItemStack result = buffer.readBoolean() ? buffer.readItem() : ItemStack.EMPTY;
         final int count = buffer.readInt();
         final int minCount = buffer.readInt();
@@ -246,9 +246,9 @@ public class Tag implements IDeliverable
      * @param compound   the compound.
      * @return the deliverable.
      */
-    public static Tag deserialize(final IFactoryController controller, final CompoundNBT compound)
+    public static Tag deserialize(final IFactoryController controller, final CompoundTag compound)
     {
-        final ITag<Item> theTag = ItemTags.bind(compound.getString(NBT_TAG));
+        final Tag<Item> theTag = ItemTags.bind(compound.getString(NBT_TAG));
         final ItemStack result = compound.getAllKeys().contains(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_RESULT)) : ItemStackUtils.EMPTY;
 
         int count = compound.getInt("size");

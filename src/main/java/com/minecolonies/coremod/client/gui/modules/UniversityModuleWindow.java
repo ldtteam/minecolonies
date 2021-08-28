@@ -12,7 +12,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.client.gui.AbstractModuleWindow;
 import com.minecolonies.coremod.client.gui.WindowResearchTree;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingUniversity;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.text.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,6 +23,12 @@ import java.util.List;
 
 import static com.minecolonies.api.research.util.ResearchConstants.COLOR_TEXT_UNFULFILLED;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
+
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 
 /**
  * Window for the university.
@@ -41,10 +47,10 @@ public class UniversityModuleWindow extends AbstractModuleWindow
         final List<ResourceLocation> inputBranches = IGlobalResearchTree.getInstance().getBranches();
         inputBranches.sort(Comparator.comparingInt(branchId -> IGlobalResearchTree.getInstance().getBranchData(branchId).getSortOrder()));
         final List<ResourceLocation> visibleBranches = new ArrayList<>();
-        final List<List<IFormattableTextComponent>> allReqs = new ArrayList<>();
+        final List<List<MutableComponent>> allReqs = new ArrayList<>();
         for (final ResourceLocation branch : inputBranches)
         {
-            final List<IFormattableTextComponent> requirements = getHidingRequirementDesc(branch);
+            final List<MutableComponent> requirements = getHidingRequirementDesc(branch);
             if(requirements.isEmpty() || !IGlobalResearchTree.getInstance().getBranchData(branch).getHidden())
             {
                 visibleBranches.add(branch);
@@ -62,9 +68,9 @@ public class UniversityModuleWindow extends AbstractModuleWindow
      * @param branch  The identifier for a branch.
      * @return An empty list if at least one primary research is visible, or a list of IFormattableTextComponents describing the dependencies for each hidden primary research.
      */
-    public List<IFormattableTextComponent> getHidingRequirementDesc(final ResourceLocation branch)
+    public List<MutableComponent> getHidingRequirementDesc(final ResourceLocation branch)
     {
-        final List<IFormattableTextComponent> requirements = new ArrayList<>();
+        final List<MutableComponent> requirements = new ArrayList<>();
         for(final ResourceLocation primary : IGlobalResearchTree.getInstance().getPrimaryResearch(branch))
         {
             if(!IGlobalResearchTree.getInstance().getResearch(branch, primary).isHidden()
@@ -76,22 +82,22 @@ public class UniversityModuleWindow extends AbstractModuleWindow
             {
                 if(requirements.isEmpty())
                 {
-                    requirements.add(new TranslationTextComponent("com.minecolonies.coremod.research.locked"));
+                    requirements.add(new TranslatableComponent("com.minecolonies.coremod.research.locked"));
                 }
                 else
                 {
-                    requirements.add(new TranslationTextComponent("Or").setStyle((Style.EMPTY).withColor(TextFormatting.BLUE)));
+                    requirements.add(new TranslatableComponent("Or").setStyle((Style.EMPTY).withColor(ChatFormatting.BLUE)));
                 }
                 for(IResearchRequirement req : IGlobalResearchTree.getInstance().getResearch(branch, primary).getResearchRequirement())
                 {
                     // We'll include even completed partial components in the requirement list.
                     if (!req.isFulfilled(buildingView.getColony()))
                     {
-                        requirements.add(new StringTextComponent("-").append(req.getDesc().setStyle((Style.EMPTY).withColor(TextFormatting.RED))));
+                        requirements.add(new TextComponent("-").append(req.getDesc().setStyle((Style.EMPTY).withColor(ChatFormatting.RED))));
                     }
                     else
                     {
-                        requirements.add(new StringTextComponent("-").append(req.getDesc().setStyle((Style.EMPTY).withColor(TextFormatting.AQUA))));
+                        requirements.add(new TextComponent("-").append(req.getDesc().setStyle((Style.EMPTY).withColor(ChatFormatting.AQUA))));
                     }
                 }
             }
@@ -117,7 +123,7 @@ public class UniversityModuleWindow extends AbstractModuleWindow
     public void updateResearchCount(final int offset)
     {
         this.findPaneOfTypeByID("maxresearchwarn", Text.class)
-          .setText(new TranslationTextComponent("com.minecolonies.coremod.gui.research.countinprogress",
+          .setText(new TranslatableComponent("com.minecolonies.coremod.gui.research.countinprogress",
             buildingView.getColony().getResearchManager().getResearchTree().getResearchInProgress().size() + offset, buildingView.getBuildingLevel()));
         if(buildingView.getBuildingLevel() <= buildingView.getColony().getResearchManager().getResearchTree().getResearchInProgress().size() + offset)
         {
@@ -132,9 +138,9 @@ public class UniversityModuleWindow extends AbstractModuleWindow
     private static class ResearchListProvider implements ScrollingList.DataProvider
     {
         private final List<ResourceLocation> branches;
-        private final List<List<IFormattableTextComponent>> requirements;
+        private final List<List<MutableComponent>> requirements;
 
-        ResearchListProvider(List<ResourceLocation> branches, List<List<IFormattableTextComponent>> requirements)
+        ResearchListProvider(List<ResourceLocation> branches, List<List<MutableComponent>> requirements)
         {
             this.branches = branches;
             this.requirements = requirements;
@@ -157,7 +163,7 @@ public class UniversityModuleWindow extends AbstractModuleWindow
             }
             else
             {
-                button.setText(new TranslationTextComponent("----------"));
+                button.setText(new TranslatableComponent("----------"));
                 button.disable();
             }
 
@@ -171,7 +177,7 @@ public class UniversityModuleWindow extends AbstractModuleWindow
                 }
                 if (!requirements.get(index).isEmpty())
                 {
-                    for (IFormattableTextComponent req : requirements.get(index))
+                    for (MutableComponent req : requirements.get(index))
                     {
                         hoverText.append(req).color(COLOR_TEXT_UNFULFILLED).paragraphBreak();
                     }

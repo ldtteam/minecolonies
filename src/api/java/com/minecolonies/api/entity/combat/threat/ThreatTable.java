@@ -1,6 +1,6 @@
 package com.minecolonies.api.entity.combat.threat;
 
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.world.entity.LivingEntity;
 
 import java.util.ArrayList;
 import java.util.List;

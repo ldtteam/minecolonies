@@ -6,10 +6,10 @@ import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.NBTUtils;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -35,7 +35,7 @@ public class EnchanterStationsModule extends AbstractBuildingModule implements I
     private Random random = new Random();
 
     @Override
-    public void deserializeNBT(final CompoundNBT compound)
+    public void deserializeNBT(final CompoundTag compound)
     {
         buildingToGatherFrom.clear();
         NBTUtils.streamCompound(compound.getList(TAG_GATHER_LIST, Constants.NBT.TAG_COMPOUND))
@@ -44,13 +44,13 @@ public class EnchanterStationsModule extends AbstractBuildingModule implements I
     }
 
     @Override
-    public void serializeNBT(final CompoundNBT compound)
+    public void serializeNBT(final CompoundTag compound)
     {
         compound.put(TAG_GATHER_LIST, buildingToGatherFrom.entrySet().stream().map(this::serializeListElement).collect(NBTUtils.toListNBT()));
     }
 
     @Override
-    public void serializeToView(@NotNull final PacketBuffer buf)
+    public void serializeToView(@NotNull final FriendlyByteBuf buf)
     {
         buf.writeInt(buildingToGatherFrom.size());
         for (final BlockPos pos : buildingToGatherFrom.keySet())
@@ -65,7 +65,7 @@ public class EnchanterStationsModule extends AbstractBuildingModule implements I
      * @param nbtTagCompound the compound to deserialize from.
      * @return the resulting blockPos/boolean tuple.
      */
-    private Tuple<BlockPos, Boolean> deserializeListElement(final CompoundNBT nbtTagCompound)
+    private Tuple<BlockPos, Boolean> deserializeListElement(final CompoundTag nbtTagCompound)
     {
         final BlockPos pos = BlockPosUtil.read(nbtTagCompound, TAG_POS);
         final boolean gatheredAlready = nbtTagCompound.getBoolean(TAG_GATHERED_ALREADY);
@@ -77,9 +77,9 @@ public class EnchanterStationsModule extends AbstractBuildingModule implements I
      * @param entry the entry to serialize.
      * @return the resulting compound.
      */
-    private CompoundNBT serializeListElement(final Map.Entry<BlockPos, Boolean> entry)
+    private CompoundTag serializeListElement(final Map.Entry<BlockPos, Boolean> entry)
     {
-        final CompoundNBT compound = new CompoundNBT();
+        final CompoundTag compound = new CompoundTag();
         BlockPosUtil.write(compound, TAG_POS, entry.getKey());
         compound.putBoolean(TAG_GATHERED_ALREADY, entry.getValue());
         return compound;

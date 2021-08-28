@@ -6,9 +6,9 @@ import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
-import net.minecraft.block.BlockState;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 
 /**
  * Load only structure handler just to get dimensions etc from structures, not for placement specific for worker usage.
@@ -29,7 +29,7 @@ public final class WorkerLoadOnlyStructureHandler<J extends AbstractJobStructure
      * @param settings       the placement settings.
      * @param fancyPlacement if fancy or complete.
      */
-    public WorkerLoadOnlyStructureHandler(final World world, final BlockPos pos, final Blueprint blueprint, final PlacementSettings settings, final boolean fancyPlacement,
+    public WorkerLoadOnlyStructureHandler(final Level world, final BlockPos pos, final Blueprint blueprint, final PlacementSettings settings, final boolean fancyPlacement,
       final AbstractEntityAIStructure<J, B> entityAIStructure)
     {
         super(world, pos, blueprint, settings, fancyPlacement);

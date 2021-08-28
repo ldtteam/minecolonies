@@ -2,16 +2,16 @@ package com.minecolonies.api.inventory;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.util.ItemStackUtils;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.Hand;
-import net.minecraft.util.INameable;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.Nameable;
+import net.minecraft.core.NonNullList;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,7 +25,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_SIZE;
 /**
  * Basic inventory for the citizens.
  */
-public class InventoryCitizen implements IItemHandlerModifiable, INameable
+public class InventoryCitizen implements IItemHandlerModifiable, Nameable
 {
     /**
      * The returned slot if a slot hasn't been found.
@@ -110,9 +110,9 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
      * @param hand the hand it is held in.
      * @return {@link ItemStack} currently being held by citizen.
      */
-    public ItemStack getHeldItem(final Hand hand)
+    public ItemStack getHeldItem(final InteractionHand hand)
     {
-        if (hand.equals(Hand.MAIN_HAND))
+        if (hand.equals(InteractionHand.MAIN_HAND))
         {
             return getStackInSlot(mainItem);
         }
@@ -126,9 +126,9 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
      * @param hand the hand it is held in.
      * @param slot Slot index with item to be held by citizen.
      */
-    public void setHeldItem(final Hand hand, final int slot)
+    public void setHeldItem(final InteractionHand hand, final int slot)
     {
-        if (hand.equals(Hand.MAIN_HAND))
+        if (hand.equals(InteractionHand.MAIN_HAND))
         {
             this.mainItem = slot;
         }
@@ -142,9 +142,9 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
      * @param hand the hand it is held in.
      * @return Slot index of held item
      */
-    public int getHeldItemSlot(final Hand hand)
+    public int getHeldItemSlot(final InteractionHand hand)
     {
-        if (hand.equals(Hand.MAIN_HAND))
+        if (hand.equals(InteractionHand.MAIN_HAND))
         {
             return mainItem;
         }
@@ -217,9 +217,9 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
      */
     @NotNull
     @Override
-    public ITextComponent getName()
+    public Component getName()
     {
-        return new TranslationTextComponent(this.hasCustomName() ? this.customName : "citizen.inventory");
+        return new TranslatableComponent(this.hasCustomName() ? this.customName : "citizen.inventory");
     }
 
     /**
@@ -424,9 +424,9 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
      */
     @NotNull
     @Override
-    public ITextComponent getDisplayName()
+    public Component getDisplayName()
     {
-        return this.hasCustomName() ? new StringTextComponent(customName) : new StringTextComponent(citizen.getName());
+        return this.hasCustomName() ? new TextComponent(customName) : new TextComponent(citizen.getName());
     }
 
     /**
@@ -435,7 +435,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
      * @param nbtTagList the taglist in.
      * @return the filled list.
      */
-    public ListNBT write(final ListNBT nbtTagList)
+    public ListTag write(final ListTag nbtTagList)
     {
         if (citizen != null && citizen.getColony() != null)
         {
@@ -446,7 +446,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
             }
         }
 
-        final CompoundNBT sizeNbt = new CompoundNBT();
+        final CompoundTag sizeNbt = new CompoundTag();
         sizeNbt.putInt(TAG_SIZE, this.mainInventory.size());
         nbtTagList.add(sizeNbt);
 
@@ -455,7 +455,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
         {
             if (!(this.mainInventory.get(i)).isEmpty())
             {
-                final CompoundNBT compoundNBT = new CompoundNBT();
+                final CompoundTag compoundNBT = new CompoundTag();
                 compoundNBT.putByte("Slot", (byte) i);
                 (this.mainInventory.get(i)).save(compoundNBT);
                 nbtTagList.add(compoundNBT);
@@ -471,7 +471,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
      *
      * @param nbtTagList the tag list.
      */
-    public void read(final ListNBT nbtTagList)
+    public void read(final ListTag nbtTagList)
     {
         if (this.mainInventory.size() < nbtTagList.getCompound(0).getInt(TAG_SIZE))
         {
@@ -484,7 +484,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
 
         for (int i = 1; i < nbtTagList.size(); ++i)
         {
-            final CompoundNBT compoundNBT = nbtTagList.getCompound(i);
+            final CompoundTag compoundNBT = nbtTagList.getCompound(i);
 
             final int j = compoundNBT.getByte("Slot") & 255;
             final ItemStack itemstack = ItemStack.of(compoundNBT);

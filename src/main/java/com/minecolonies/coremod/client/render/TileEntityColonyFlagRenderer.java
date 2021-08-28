@@ -4,28 +4,28 @@ import com.ldtteam.structurize.blocks.ModBlocks;
 import com.minecolonies.api.tileentities.TileEntityColonyFlag;
 import com.minecolonies.coremod.blocks.decorative.BlockColonyFlagBanner;
 import com.minecolonies.coremod.blocks.decorative.BlockColonyFlagWallBanner;
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.block.BlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.model.ModelBakery;
-import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.renderer.tileentity.BannerTileEntityRenderer;
-import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.item.BannerItem;
-import net.minecraft.item.DyeColor;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.BannerPattern;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3f;
-import net.minecraft.world.GameType;
+import net.minecraft.client.renderer.blockentity.BannerRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
+import net.minecraft.world.item.BannerItem;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BannerPattern;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
+import com.mojang.math.Vector3f;
+import net.minecraft.world.level.GameType;
 
 import java.util.List;
 
@@ -33,13 +33,13 @@ import java.util.List;
  * The custom renderer to render the colony flag patterns if they exist,
  * and a placeholder marker if in Creative mode.
  */
-public class TileEntityColonyFlagRenderer extends TileEntityRenderer<TileEntityColonyFlag>
+public class TileEntityColonyFlagRenderer extends BlockEntityRenderer<TileEntityColonyFlag>
 {
-    private final ModelRenderer cloth     = BannerTileEntityRenderer.makeFlag();
-    private final ModelRenderer standPost = new ModelRenderer(64, 64, 44, 0);
-    private final ModelRenderer crossbar  = new ModelRenderer(64, 64, 0, 42);;
+    private final ModelPart cloth     = BannerRenderer.makeFlag();
+    private final ModelPart standPost = new ModelPart(64, 64, 44, 0);
+    private final ModelPart crossbar  = new ModelPart(64, 64, 0, 42);;
 
-    public TileEntityColonyFlagRenderer(TileEntityRendererDispatcher dispatcher)
+    public TileEntityColonyFlagRenderer(BlockEntityRenderDispatcher dispatcher)
     {
         super(dispatcher);
         standPost.addBox(-1.0F, -30.0F, -1.0F, 2.0F, 42.0F, 2.0F, 0.0F);
@@ -47,7 +47,7 @@ public class TileEntityColonyFlagRenderer extends TileEntityRenderer<TileEntityC
     }
 
     @Override
-    public void render(TileEntityColonyFlag flagIn, float partialTicks, MatrixStack transform, IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn)
+    public void render(TileEntityColonyFlag flagIn, float partialTicks, PoseStack transform, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn)
     {
         List<Pair<BannerPattern, DyeColor>> list = flagIn.getPatternList();
 
@@ -90,21 +90,21 @@ public class TileEntityColonyFlagRenderer extends TileEntityRenderer<TileEntityC
 
                 transform.translate(0.0D, 0.5D, 0.0D);
                 transform.scale(0.75F, 0.75F, 0.75F);
-                Minecraft.getInstance().getItemRenderer().renderStatic(placeholder, ItemCameraTransforms.TransformType.FIXED, combinedLightIn, OverlayTexture.NO_OVERLAY, transform, bufferIn);
+                Minecraft.getInstance().getItemRenderer().renderStatic(placeholder, ItemTransforms.TransformType.FIXED, combinedLightIn, OverlayTexture.NO_OVERLAY, transform, bufferIn);
                 transform.popPose();
             }
         }
 
         transform.pushPose();
         transform.scale(2/3F, -2/3F, -2/3F);
-        IVertexBuilder ivertexbuilder = ModelBakery.BANNER_BASE.buffer(bufferIn, RenderType::entitySolid);
+        VertexConsumer ivertexbuilder = ModelBakery.BANNER_BASE.buffer(bufferIn, RenderType::entitySolid);
         this.standPost.render(transform, ivertexbuilder, combinedLightIn, combinedOverlayIn);
         this.crossbar.render(transform, ivertexbuilder, combinedLightIn, combinedOverlayIn);
         BlockPos blockpos = flagIn.getBlockPos();
         float f2 = ((float)Math.floorMod((long)(blockpos.getX() * 7 + blockpos.getY() * 9 + blockpos.getZ() * 13) + i, 100L) + partialTicks) / 100.0F;
-        this.cloth.xRot = (-0.0125F + 0.01F * MathHelper.cos(((float)Math.PI * 2F) * f2)) * (float)Math.PI;
+        this.cloth.xRot = (-0.0125F + 0.01F * Mth.cos(((float)Math.PI * 2F) * f2)) * (float)Math.PI;
         this.cloth.y = -32.0F;
-        BannerTileEntityRenderer.renderPatterns(transform, bufferIn, combinedLightIn, combinedOverlayIn, this.cloth, ModelBakery.BANNER_BASE, true, list);
+        BannerRenderer.renderPatterns(transform, bufferIn, combinedLightIn, combinedOverlayIn, this.cloth, ModelBakery.BANNER_BASE, true, list);
         transform.popPose();
         transform.popPose();
     }

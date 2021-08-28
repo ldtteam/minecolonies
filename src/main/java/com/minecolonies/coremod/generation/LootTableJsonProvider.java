@@ -3,8 +3,8 @@ package com.minecolonies.coremod.generation;
 import com.ldtteam.datagenerators.loot_table.LootTableJson;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DirectoryCache;
-import net.minecraft.data.IDataProvider;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.data.DataProvider;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -14,7 +14,7 @@ import java.util.Map;
 /**
  * Basic data generator for loot table JSON files, based around our LootTableJson rather than the vanilla one.
  */
-public abstract class LootTableJsonProvider implements IDataProvider
+public abstract class LootTableJsonProvider implements DataProvider
 {
     protected final DataGenerator generator;
 

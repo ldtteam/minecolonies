@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.colony.colonyEvents.citizenEvents;
 
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_DEATH_CAUSE;
@@ -56,29 +56,29 @@ public class CitizenDiedEvent extends AbstractCitizenEvent
     }
 
     @Override
-    public CompoundNBT serializeNBT()
+    public CompoundTag serializeNBT()
     {
-        CompoundNBT compound = super.serializeNBT();
+        CompoundTag compound = super.serializeNBT();
         compound.putString(TAG_DEATH_CAUSE, deathCause);
         return compound;
     }
 
     @Override
-    public void deserializeNBT(CompoundNBT compound)
+    public void deserializeNBT(CompoundTag compound)
     {
         super.deserializeNBT(compound);
         deathCause = compound.getString(TAG_DEATH_CAUSE);
     }
 
     @Override
-    public void serialize(PacketBuffer buf)
+    public void serialize(FriendlyByteBuf buf)
     {
         super.serialize(buf);
         buf.writeUtf(deathCause);
     }
 
     @Override
-    public void deserialize(PacketBuffer buf)
+    public void deserialize(FriendlyByteBuf buf)
     {
         super.deserialize(buf);
         deathCause = buf.readUtf();
@@ -110,7 +110,7 @@ public class CitizenDiedEvent extends AbstractCitizenEvent
      * @param compound the NBT compound
      * @return the colony to load.
      */
-    public static CitizenDiedEvent loadFromNBT(@NotNull final CompoundNBT compound)
+    public static CitizenDiedEvent loadFromNBT(@NotNull final CompoundTag compound)
     {
         final CitizenDiedEvent deathEvent = new CitizenDiedEvent();
         deathEvent.deserializeNBT(compound);
@@ -123,7 +123,7 @@ public class CitizenDiedEvent extends AbstractCitizenEvent
      * @param buf the packet buffer.
      * @return the colony to load.
      */
-    public static CitizenDiedEvent loadFromPacketBuffer(@NotNull final PacketBuffer buf)
+    public static CitizenDiedEvent loadFromPacketBuffer(@NotNull final FriendlyByteBuf buf)
     {
         final CitizenDiedEvent deathEvent = new CitizenDiedEvent();
         deathEvent.deserialize(buf);

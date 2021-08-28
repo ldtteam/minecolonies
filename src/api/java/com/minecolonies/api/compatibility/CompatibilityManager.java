@@ -13,26 +13,26 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.*;
 import net.minecraft.block.*;
-import net.minecraft.entity.EntityClassification;
-import net.minecraft.entity.EntityType;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.RecipeManager;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.NBTUtil;
-import net.minecraft.state.BooleanProperty;
-import net.minecraft.state.IntegerProperty;
-import net.minecraft.state.Property;
+import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.tileentity.FurnaceTileEntity;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
+import net.minecraft.core.NonNullList;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.BlockPos;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.ModList;
@@ -45,6 +45,12 @@ import java.util.stream.Collectors;
 import static com.minecolonies.api.util.ItemStackUtils.*;
 import static com.minecolonies.api.util.constant.Constants.ONE_HUNDRED_PERCENT;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_SAP_LEAF;
+
+import net.minecraft.world.level.block.AirBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.OreBlock;
+import net.minecraft.world.level.block.RedStoneOreBlock;
+import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * CompatibilityManager handling certain list and maps of itemStacks of certain types.
@@ -311,7 +317,7 @@ public class CompatibilityManager implements ICompatibilityManager
     @Override
     public boolean isOre(final BlockState block)
     {
-        if (block.getBlock() instanceof OreBlock || block.getBlock() instanceof RedstoneOreBlock)
+        if (block.getBlock() instanceof OreBlock || block.getBlock() instanceof RedStoneOreBlock)
         {
             return true;
         }
@@ -337,9 +343,9 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
-    public void write(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundTag compound)
     {
-        @NotNull final ListNBT saplingsLeavesTagList =
+        @NotNull final ListTag saplingsLeavesTagList =
                 leavesToSaplingMap.entrySet()
                         .stream()
                         .filter(entry -> entry.getKey() != null)
@@ -349,7 +355,7 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
-    public void read(@NotNull final CompoundNBT compound)
+    public void read(@NotNull final CompoundTag compound)
     {
         NBTUtils.streamCompound(compound.getList(TAG_SAP_LEAF, Constants.NBT.TAG_COMPOUND))
                 .map(CompatibilityManager::readLeafSaplingEntryFromNBT)
@@ -411,9 +417,9 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         Set<ResourceLocation> monsterSet = new HashSet<>();
 
-        for (final Map.Entry<RegistryKey<EntityType<?>>, EntityType<?>> entry : ForgeRegistries.ENTITIES.getEntries())
+        for (final Map.Entry<ResourceKey<EntityType<?>>, EntityType<?>> entry : ForgeRegistries.ENTITIES.getEntries())
         {
-            if (entry.getValue().getCategory() == EntityClassification.MONSTER)
+            if (entry.getValue().getCategory() == MobCategory.MONSTER)
             {
                 monsterSet.add(entry.getKey().location());
             }
@@ -485,7 +491,7 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         if (compostRecipes.isEmpty())
         {
-            for (final IRecipe<?> r : recipeManager.byType(CompostRecipe.TYPE).values())
+            for (final Recipe<?> r : recipeManager.byType(CompostRecipe.TYPE).values())
             {
                 final CompostRecipe recipe = (CompostRecipe) r;
                 for (final ItemStack stack : recipe.getInput().getItems())
@@ -526,7 +532,7 @@ public class CompatibilityManager implements ICompatibilityManager
         {
             for(ItemStack item : allItems)
             {
-                if(FurnaceTileEntity.isFuel(item))
+                if(FurnaceBlockEntity.isFuel(item))
                 {
                     fuel.add(new ItemStorage(item));
                 }
@@ -686,16 +692,16 @@ public class CompatibilityManager implements ICompatibilityManager
         Log.getLogger().info("Finished discovering diseases");
     }
 
-    private static CompoundNBT writeLeafSaplingEntryToNBT(final BlockState state, final ItemStorage storage)
+    private static CompoundTag writeLeafSaplingEntryToNBT(final BlockState state, final ItemStorage storage)
     {
-        final CompoundNBT compound = NBTUtil.writeBlockState(state);
+        final CompoundTag compound = NbtUtils.writeBlockState(state);
         storage.getItemStack().save(compound);
         return compound;
     }
 
-    private static Tuple<BlockState, ItemStorage> readLeafSaplingEntryFromNBT(final CompoundNBT compound)
+    private static Tuple<BlockState, ItemStorage> readLeafSaplingEntryFromNBT(final CompoundTag compound)
     {
-        return new Tuple<>(NBTUtil.readBlockState(compound), new ItemStorage(ItemStack.of(compound), false, true));
+        return new Tuple<>(NbtUtils.readBlockState(compound), new ItemStorage(ItemStack.of(compound), false, true));
     }
 
     /**

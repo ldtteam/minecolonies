@@ -9,11 +9,11 @@ import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -246,7 +246,7 @@ public interface IRequest<R extends IRequestable>
      * @return The text that describes this Request.
      */
     @NotNull
-    ITextComponent getShortDisplayString();
+    Component getShortDisplayString();
 
     /**
      * Method used to get a {@link ITextComponent} that can be displayed to the Player and describes so that the player can complete it. Should represent the request, in case the
@@ -255,7 +255,7 @@ public interface IRequest<R extends IRequestable>
      * @return The text that describes this Request.
      */
     @NotNull
-    ITextComponent getLongDisplayString();
+    Component getLongDisplayString();
 
     /**
      * Method used to get a List of ItemStacks that represents the stack. This list is used in GUI to show what the request is. If an empty list is returned then no stack is shown.
@@ -294,7 +294,7 @@ public interface IRequest<R extends IRequestable>
      * @param colony the colony view to obtain information if necessary.
      * @return a list of strings or empty.
      */
-    List<IFormattableTextComponent> getResolverToolTip(IColonyView colony);
+    List<MutableComponent> getResolverToolTip(IColonyView colony);
 
     /**
      * Reset the deliveries of the request.

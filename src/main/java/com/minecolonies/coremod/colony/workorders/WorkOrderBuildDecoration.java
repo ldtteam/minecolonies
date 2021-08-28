@@ -11,9 +11,9 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.util.AdvancementUtils;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_LEVEL;
@@ -101,7 +101,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
      * @param compound NBT Tag compound.
      */
     @Override
-    public void read(@NotNull final CompoundNBT compound, final IWorkManager manager)
+    public void read(@NotNull final CompoundTag compound, final IWorkManager manager)
     {
         super.read(compound, manager);
         final StructureName sn = new StructureName(compound.getString(TAG_SCHEMATIC_NAME));
@@ -121,7 +121,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
      * @param compound NBT tag compound.
      */
     @Override
-    public void write(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundTag compound)
     {
         super.write(compound);
         if (workOrderName != null)
@@ -267,7 +267,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
      * @return building rotation.
      */
     @SuppressWarnings(UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED)
-    public int getRotation(final World world)
+    public int getRotation(final Level world)
     {
         return buildingRotation;
     }

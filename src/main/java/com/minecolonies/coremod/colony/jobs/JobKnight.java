@@ -10,12 +10,12 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard;
 import com.minecolonies.coremod.entity.ai.citizen.guard.EntityAIKnight;
 import com.minecolonies.coremod.util.AttributeModifierUtils;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.Hand;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.InteractionHand;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.research.util.ResearchConstants.SHIELD_USAGE;
@@ -120,12 +120,12 @@ public class JobKnight extends AbstractJobGuard<JobKnight>
                 return true;
             }
             final AbstractEntityCitizen worker = this.getCitizen().getEntity().get();
-            worker.getCitizenItemHandler().setHeldItem(Hand.OFF_HAND, InventoryUtils.findFirstSlotInItemHandlerWith(this.getCitizen().getInventory(), Items.SHIELD));
-            worker.startUsingItem(Hand.OFF_HAND);
+            worker.getCitizenItemHandler().setHeldItem(InteractionHand.OFF_HAND, InventoryUtils.findFirstSlotInItemHandlerWith(this.getCitizen().getInventory(), Items.SHIELD));
+            worker.startUsingItem(InteractionHand.OFF_HAND);
 
             // Apply the colony Flag to the shield
-            ItemStack shieldStack = worker.getInventoryCitizen().getHeldItem(Hand.OFF_HAND);
-            CompoundNBT nbt = shieldStack.getOrCreateTagElement("BlockEntityTag");
+            ItemStack shieldStack = worker.getInventoryCitizen().getHeldItem(InteractionHand.OFF_HAND);
+            CompoundTag nbt = shieldStack.getOrCreateTagElement("BlockEntityTag");
             nbt.put(TAG_BANNER_PATTERNS, worker.getCitizenColonyHandler().getColony().getColonyFlag());
 
             worker.decreaseSaturationForContinuousAction();

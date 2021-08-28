@@ -6,11 +6,11 @@ import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
-import net.minecraft.block.BlockState;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,23 +19,25 @@ import java.util.List;
 
 import static com.ldtteam.structurize.placement.handlers.placement.PlacementHandlers.handleTileEntityPlacement;
 
+import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler.ActionProcessingResult;
+
 /**
  * Barrackstower handler.
  */
 public class BarracksTowerHandler implements IPlacementHandler
 {
     @Override
-    public boolean canHandle(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final BlockState blockState)
+    public boolean canHandle(@NotNull final Level world, @NotNull final BlockPos pos, @NotNull final BlockState blockState)
     {
          return blockState.getBlock() == ModBlocks.blockHutBarracksTower;
     }
 
     @Override
     public List<ItemStack> getRequiredItems(
-      @NotNull final World world,
+      @NotNull final Level world,
       @NotNull final BlockPos pos,
       @NotNull final BlockState blockState,
-      @Nullable final CompoundNBT tileEntityData,
+      @Nullable final CompoundTag tileEntityData,
       final boolean complete)
     {
         return Collections.emptyList();
@@ -43,10 +45,10 @@ public class BarracksTowerHandler implements IPlacementHandler
 
     @Override
     public ActionProcessingResult handle(
-      @NotNull final World world,
+      @NotNull final Level world,
       @NotNull final BlockPos pos,
       @NotNull final BlockState blockState,
-      @Nullable final CompoundNBT tileEntityData,
+      @Nullable final CompoundTag tileEntityData,
       boolean complete,
       final BlockPos centerPos,
       final PlacementSettings settings)

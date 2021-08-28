@@ -1,8 +1,8 @@
 package com.minecolonies.api.research.registry;
 
 import com.minecolonies.api.research.IResearchRequirement;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 import org.apache.commons.lang3.Validate;
 
@@ -14,14 +14,14 @@ import java.util.function.Function;
 @SuppressWarnings("PMD.MissingStaticMethodInNonInstantiatableClass") //Use the builder to create one.
 public class ResearchRequirementEntry extends ForgeRegistryEntry<ResearchRequirementEntry>
 {
-    private final Function<CompoundNBT, IResearchRequirement> readFromNBT;
+    private final Function<CompoundTag, IResearchRequirement> readFromNBT;
 
     /**
      * A builder class for {@link ResearchRequirementEntry}.
      */
     public static final class Builder
     {
-        private Function<CompoundNBT, IResearchRequirement> readFromNBT;
+        private Function<CompoundTag, IResearchRequirement> readFromNBT;
         private ResourceLocation                            registryName;
 
         /**
@@ -32,7 +32,7 @@ public class ResearchRequirementEntry extends ForgeRegistryEntry<ResearchRequire
          * @param readFromNBT  a function taking CompoundNBT and returning an IResearchRequirement.
          * @return The builder.
          */
-        public Builder setReadFromNBT(final Function<CompoundNBT, IResearchRequirement> readFromNBT)
+        public Builder setReadFromNBT(final Function<CompoundTag, IResearchRequirement> readFromNBT)
         {
             this.readFromNBT = readFromNBT;
             return this;
@@ -65,13 +65,13 @@ public class ResearchRequirementEntry extends ForgeRegistryEntry<ResearchRequire
         }
     }
 
-    public IResearchRequirement readFromNBT(CompoundNBT nbt)
+    public IResearchRequirement readFromNBT(CompoundTag nbt)
     {
         return readFromNBT.apply(nbt);
     }
 
     private ResearchRequirementEntry(
-      final Function<CompoundNBT, IResearchRequirement> readFromNBT)
+      final Function<CompoundTag, IResearchRequirement> readFromNBT)
     {
         super();
         this.readFromNBT = readFromNBT;

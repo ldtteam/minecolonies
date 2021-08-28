@@ -5,20 +5,20 @@ package com.minecolonies.coremod.client.model;
 
 import com.minecolonies.api.client.render.modeltype.CitizenModel;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.client.model.geom.ModelPart;
 
 public class ModelEntityFletcherMale extends CitizenModel<AbstractEntityCitizen>
 {
     public ModelEntityFletcherMale()
     {
-        ModelRenderer knifeblade;
-        ModelRenderer hair;
-        ModelRenderer headDetail;
+        ModelPart knifeblade;
+        ModelPart hair;
+        ModelPart headDetail;
 
         texWidth = 128;
         texHeight = 64;
 
-        body = new ModelRenderer(this);
+        body = new ModelPart(this);
         body.setPos(0.0F, 0.0F, 0.0F);
         body.texOffs(87, 18).addBox(-4.25F, 10.0F, -3.0F, 8.5F, 1.0F, 5.25F, 0.0F, true);
         body.texOffs(5, 38).addBox(-2.5F, 8.5F, -2.75F, 0.5F, 2.5F, 0.5F, 0.0F, true);
@@ -26,7 +26,7 @@ public class ModelEntityFletcherMale extends CitizenModel<AbstractEntityCitizen>
         body.texOffs(12, 39).addBox(2.0F, 8.5F, -2.75F, 0.5F, 2.5F, 0.5F, 0.0F, false);
         body.texOffs(16, 16).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, 0.0F, false);
 
-        knifeblade = new ModelRenderer(this);
+        knifeblade = new ModelPart(this);
         knifeblade.setPos(2.5F, 26.0F, 0.5F);
         body.addChild(knifeblade);
         knifeblade.texOffs(72, 26).addBox(-5.0F, -15.5F, -3.25F, 0.25F, 2.5F, 0.5F, 0.0F, true);
@@ -40,29 +40,29 @@ public class ModelEntityFletcherMale extends CitizenModel<AbstractEntityCitizen>
         knifeblade.texOffs(83, 26).addBox(-0.75F, -15.5F, -3.35F, 0.25F, 2.25F, 0.6F, 0.0F, false);
         knifeblade.texOffs(83, 26).addBox(-1.0F, -15.5F, -3.35F, 0.25F, 1.75F, 0.6F, 0.0F, false);
 
-        leftArm = new ModelRenderer(this);
+        leftArm = new ModelPart(this);
         leftArm.setPos(5.0F, 2.0F, 0.0F);
         leftArm.texOffs(40, 16).addBox(-1.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, false);
         leftArm.texOffs(69, 19).addBox(-1.25F, 7.0F, -2.25F, 4.5F, 1.0F, 4.5F, 0.0F, true);
 
-        rightLeg = new ModelRenderer(this);
+        rightLeg = new ModelPart(this);
         rightLeg.setPos(-2.0F, 12.0F, 0.0F);
         rightLeg.texOffs(0, 16).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, false);
 
-        leftLeg = new ModelRenderer(this);
+        leftLeg = new ModelPart(this);
         leftLeg.setPos(2.0F, 12.0F, 0.0F);
         leftLeg.texOffs(0, 16).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, true);
 
-        rightArm = new ModelRenderer(this);
+        rightArm = new ModelPart(this);
         rightArm.setPos(-5.0F, 2.0F, 0.0F);
         rightArm.texOffs(40, 16).addBox(-3.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, true);
         rightArm.texOffs(69, 13).addBox(-3.25F, 7.0F, -2.25F, 4.5F, 1.0F, 4.5F, 0.0F, true);
 
-        head = new ModelRenderer(this);
+        head = new ModelPart(this);
         head.setPos(0.0F, 0.0F, 0.0F);
         head.texOffs(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, 0.0F, false);
 
-        hair = new ModelRenderer(this);
+        hair = new ModelPart(this);
         hair.setPos(0.0F, 24.0F, 0.0F);
         head.addChild(hair);
         hair.texOffs(101, 47).addBox(-4.0F, -32.0F, 3.0F, 8.0F, 9.5F, 1.25F, 0.0F, false);
@@ -87,7 +87,7 @@ public class ModelEntityFletcherMale extends CitizenModel<AbstractEntityCitizen>
         hair.texOffs(76, 47).addBox(4.0F, -32.0F, -1.5F, 0.25F, 5.25F, 5.5F, 0.0F, false);
         hair.texOffs(88, 47).addBox(-4.25F, -32.0F, -1.5F, 0.25F, 5.25F, 5.5F, 0.0F, false);
 
-        headDetail = new ModelRenderer(this);
+        headDetail = new ModelPart(this);
         headDetail.setPos(0.0F, 24.0F, 0.0F);
         head.addChild(headDetail);
         headDetail.texOffs(32, 0).addBox(-4.0F, -32.0F, -4.0F, 8.0F, 8.0F, 8.0F, 0.5F, true);
@@ -95,7 +95,7 @@ public class ModelEntityFletcherMale extends CitizenModel<AbstractEntityCitizen>
         hat.visible = false;
     }
 
-    public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z)
+    public void setRotationAngle(ModelPart modelRenderer, float x, float y, float z)
     {
         modelRenderer.xRot = x;
         modelRenderer.yRot = y;

@@ -10,16 +10,16 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.moduleviews.CraftingModuleView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.network.messages.server.colony.building.worker.AddRemoveRecipeMessage;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
@@ -28,7 +28,7 @@ import java.util.List;
 /**
  * AbstractCrafting gui.
  */
-public class WindowCrafting extends ContainerScreen<ContainerCrafting>
+public class WindowCrafting extends AbstractContainerScreen<ContainerCrafting>
 {
     private static final ResourceLocation CRAFTING_TABLE_GUI_TEXTURES = new ResourceLocation(Constants.MOD_ID, "textures/gui/crafting2x2.png");
 
@@ -101,7 +101,7 @@ public class WindowCrafting extends ContainerScreen<ContainerCrafting>
      * @param playerInventory the player inv.
      * @param iTextComponent  the display text component.
      */
-    public WindowCrafting(final ContainerCrafting container, final PlayerInventory playerInventory, final ITextComponent iTextComponent)
+    public WindowCrafting(final ContainerCrafting container, final Inventory playerInventory, final Component iTextComponent)
     {
         super(container, playerInventory, iTextComponent);
         this.building = (AbstractBuildingWorkerView) IColonyManager.getInstance().getBuildingView(playerInventory.player.level.dimension(), container.getPos());
@@ -129,7 +129,7 @@ public class WindowCrafting extends ContainerScreen<ContainerCrafting>
          * The button to click done after finishing the recipe.
          */
         final Button
-          doneButton = new Button(leftPos + BUTTON_X_OFFSET, topPos + BUTTON_Y_POS, BUTTON_WIDTH, BUTTON_HEIGHT, new StringTextComponent(buttonDisplay), new WindowCrafting.OnButtonPress());
+          doneButton = new Button(leftPos + BUTTON_X_OFFSET, topPos + BUTTON_Y_POS, BUTTON_WIDTH, BUTTON_HEIGHT, new TextComponent(buttonDisplay), new WindowCrafting.OnButtonPress());
         this.addButton(doneButton);
         if (!module.canLearnCraftingRecipes())
         {
@@ -137,7 +137,7 @@ public class WindowCrafting extends ContainerScreen<ContainerCrafting>
         }
     }
 
-    public class OnButtonPress implements Button.IPressable
+    public class OnButtonPress implements Button.OnPress
     {
         @Override
         public void onPress(final Button button)
@@ -170,7 +170,7 @@ public class WindowCrafting extends ContainerScreen<ContainerCrafting>
      * Draw the foreground layer for the GuiContainer (everything in front of the items)
      */
     @Override
-    protected void renderLabels(@NotNull final MatrixStack stack, final int mouseX, final int mouseY)
+    protected void renderLabels(@NotNull final PoseStack stack, final int mouseX, final int mouseY)
     {
         this.font.draw(stack, I18n.get("container.crafting"), X_OFFSET, Y_OFFSET, GUI_COLOR);
     }
@@ -179,7 +179,7 @@ public class WindowCrafting extends ContainerScreen<ContainerCrafting>
      * Draws the background layer of this container (behind the items).
      */
     @Override
-    protected void renderBg(@NotNull final MatrixStack stack, final float partialTicks, final int mouseX, final int mouseY)
+    protected void renderBg(@NotNull final PoseStack stack, final float partialTicks, final int mouseX, final int mouseY)
     {
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         if (completeCrafting)
@@ -194,7 +194,7 @@ public class WindowCrafting extends ContainerScreen<ContainerCrafting>
     }
 
     @Override
-    public void render(@NotNull final MatrixStack stack, int x, int y, float z)
+    public void render(@NotNull final PoseStack stack, int x, int y, float z)
     {
         this.renderBackground(stack);
         super.render(stack, x, y, z);

@@ -1,9 +1,9 @@
 package com.minecolonies.api.colony.managers.interfaces;
 
 import com.ldtteam.structures.blueprints.v1.Blueprint;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Mirror;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -36,12 +36,12 @@ public interface IEventStructureManager
      *
      * @param compound the compound to read from.
      */
-    void readFromNBT(@NotNull CompoundNBT compound);
+    void readFromNBT(@NotNull CompoundTag compound);
 
     /**
      * Writes all backup schematics to NBT
      *
      * @param compound the compound to write to.
      */
-    void writeToNBT(@NotNull CompoundNBT compound);
+    void writeToNBT(@NotNull CompoundTag compound);
 }

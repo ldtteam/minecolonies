@@ -1,9 +1,9 @@
 package com.minecolonies.api.research;
 
 import com.minecolonies.api.research.effects.IResearchEffectManager;
-import net.minecraft.block.Block;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -16,14 +16,14 @@ public interface IResearchManager
      *
      * @param compound the compound.
      */
-    void readFromNBT(@NotNull final CompoundNBT compound);
+    void readFromNBT(@NotNull final CompoundTag compound);
 
     /**
      * Write all stats to nbt.
      *
      * @param statsCompound the compound.
      */
-    void writeToNBT(@NotNull final CompoundNBT statsCompound);
+    void writeToNBT(@NotNull final CompoundTag statsCompound);
 
     /**
      * Get the instance of the researchTree.

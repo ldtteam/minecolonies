@@ -2,7 +2,7 @@ package com.minecolonies.coremod.network.messages.client;
 
 import com.ldtteam.structurize.management.Structures;
 import com.minecolonies.api.network.IMessage;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
@@ -27,13 +27,13 @@ public class ColonyStylesMessage implements IMessage
     }
 
     @Override
-    public void fromBytes(@NotNull final PacketBuffer buf)
+    public void fromBytes(@NotNull final FriendlyByteBuf buf)
     {
         md5Map = readMD5MapFromByteBuf(buf);
     }
 
     @NotNull
-    private static Map<String, String> readMD5MapFromByteBuf(@NotNull final PacketBuffer buf)
+    private static Map<String, String> readMD5MapFromByteBuf(@NotNull final FriendlyByteBuf buf)
     {
         @NotNull final Map<String, String> map = new HashMap<>();
 
@@ -48,12 +48,12 @@ public class ColonyStylesMessage implements IMessage
     }
 
     @Override
-    public void toBytes(@NotNull final PacketBuffer buf)
+    public void toBytes(@NotNull final FriendlyByteBuf buf)
     {
         writeMD5MapToByteBuf(buf);
     }
 
-    private static void writeMD5MapToByteBuf(@NotNull final PacketBuffer buf)
+    private static void writeMD5MapToByteBuf(@NotNull final FriendlyByteBuf buf)
     {
         final Map<String, String> md5s = Structures.getMD5s();
         buf.writeInt(md5s.size());

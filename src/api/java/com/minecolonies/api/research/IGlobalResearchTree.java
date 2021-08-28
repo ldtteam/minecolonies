@@ -6,9 +6,9 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.research.effects.IResearchEffect;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import org.jetbrains.annotations.Nullable;
@@ -158,7 +158,7 @@ public interface IGlobalResearchTree
      * Only used for remote clients.
      * @param buf       the buffer of received network data.
      */
-    IMessage handleGlobalResearchTreeMessage(final PacketBuffer buf);
+    IMessage handleGlobalResearchTreeMessage(final FriendlyByteBuf buf);
 
     /**
      * Sends messages to the client from the server describing the Global Research Tree.
@@ -166,5 +166,5 @@ public interface IGlobalResearchTree
      * @param player        the player to send the message
      *                      all players should be updated on a data pack reload.
      */
-    void sendGlobalResearchTreePackets(final ServerPlayerEntity player);
+    void sendGlobalResearchTreePackets(final ServerPlayer player);
 }

@@ -10,10 +10,10 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.BlockPos;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BUILDING_TYPE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_LOCATION;
@@ -21,7 +21,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_LOCATION;
 public class BuildingDataManager implements IBuildingDataManager
 {
     @Override
-    public IBuilding createFrom(final IColony colony, final CompoundNBT compound)
+    public IBuilding createFrom(final IColony colony, final CompoundTag compound)
     {
         final ResourceLocation type = new ResourceLocation(compound.getString(TAG_BUILDING_TYPE));
         final BlockPos pos = BlockPosUtil.read(compound, TAG_LOCATION);
@@ -62,7 +62,7 @@ public class BuildingDataManager implements IBuildingDataManager
     }
 
     @Override
-    public IBuildingView createViewFrom(final IColonyView colony, final BlockPos position, final PacketBuffer networkBuffer)
+    public IBuildingView createViewFrom(final IColonyView colony, final BlockPos position, final FriendlyByteBuf networkBuffer)
     {
         final ResourceLocation buildingName = new ResourceLocation(networkBuffer.readUtf(32767));
         final BuildingEntry entry = IBuildingRegistry.getInstance().getValue(buildingName);

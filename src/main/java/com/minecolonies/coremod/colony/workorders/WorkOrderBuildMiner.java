@@ -4,8 +4,8 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.util.BlockPosUtil;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
@@ -57,7 +57,7 @@ public class WorkOrderBuildMiner extends WorkOrderBuildDecoration
      * @param manager  the work manager.
      */
     @Override
-    public void read(@NotNull final CompoundNBT compound, final IWorkManager manager)
+    public void read(@NotNull final CompoundTag compound, final IWorkManager manager)
     {
         super.read(compound, manager);
         minerBuilding = BlockPosUtil.read(compound, TAG_POS);
@@ -69,7 +69,7 @@ public class WorkOrderBuildMiner extends WorkOrderBuildDecoration
      * @param compound NBT tag compound.
      */
     @Override
-    public void write(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundTag compound)
     {
         super.write(compound);
         BlockPosUtil.write(compound, TAG_POS, minerBuilding);

@@ -3,20 +3,22 @@ package com.minecolonies.coremod.items;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
-import net.minecraft.block.Block;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
+import net.minecraft.ChatFormatting;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
+
+import net.minecraft.world.item.Item.Properties;
 
 /**
  * Item for gates
@@ -26,7 +28,7 @@ public class ItemGate extends BlockItem
     public ItemGate(
       @NotNull final String name,
       final Block block,
-      @NotNull final ItemGroup tab,
+      @NotNull final CreativeModeTab tab,
       final Properties properties)
     {
         super(block, properties.tab(tab));
@@ -37,10 +39,10 @@ public class ItemGate extends BlockItem
 
     @Override
     public void appendHoverText(
-      @NotNull final ItemStack stack, @Nullable final World worldIn, @NotNull final List<ITextComponent> tooltip, @NotNull final ITooltipFlag flagIn)
+      @NotNull final ItemStack stack, @Nullable final Level worldIn, @NotNull final List<Component> tooltip, @NotNull final TooltipFlag flagIn)
     {
-        final IFormattableTextComponent guiHint2 = LanguageHandler.buildChatComponent(TranslationConstants.GATE_PLACEMENT_TOOLTIP);
-        guiHint2.setStyle(Style.EMPTY.withColor(TextFormatting.DARK_AQUA));
+        final MutableComponent guiHint2 = LanguageHandler.buildChatComponent(TranslationConstants.GATE_PLACEMENT_TOOLTIP);
+        guiHint2.setStyle(Style.EMPTY.withColor(ChatFormatting.DARK_AQUA));
         tooltip.add(guiHint2);
     }
 }

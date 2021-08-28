@@ -1,6 +1,6 @@
 package com.minecolonies.api.colony.requestsystem.requestable;
 
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 /**

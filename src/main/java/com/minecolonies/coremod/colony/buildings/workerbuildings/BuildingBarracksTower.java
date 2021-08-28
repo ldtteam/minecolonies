@@ -13,11 +13,11 @@ import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.util.AdvancementUtils;
 import com.minecolonies.coremod.util.ChunkDataHelper;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.NBTUtil;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.TranslatableComponent;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -67,7 +67,7 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
     }
 
     @Override
-    public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
+    public void requestUpgrade(final Player player, final BlockPos builder)
     {
         final int buildingLevel = getBuildingLevel();
         final IBuilding building = getColony().getBuildingManager().getBuilding(barracks);
@@ -77,7 +77,7 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
         }
         else
         {
-            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.worker.needbarracks"), player.getUUID());
+            player.sendMessage(new TranslatableComponent("com.minecolonies.coremod.worker.needbarracks"), player.getUUID());
         }
     }
 
@@ -143,19 +143,19 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
     }
 
     @Override
-    public void deserializeNBT(final CompoundNBT compound)
+    public void deserializeNBT(final CompoundTag compound)
     {
         super.deserializeNBT(compound);
-        barracks = NBTUtil.readBlockPos(compound.getCompound(TAG_POS));
+        barracks = NbtUtils.readBlockPos(compound.getCompound(TAG_POS));
     }
 
     @Override
-    public CompoundNBT serializeNBT()
+    public CompoundTag serializeNBT()
     {
-        final CompoundNBT compound = super.serializeNBT();
+        final CompoundTag compound = super.serializeNBT();
         if (barracks != null)
         {
-            compound.put(TAG_POS, NBTUtil.writeBlockPos(barracks));
+            compound.put(TAG_POS, NbtUtils.writeBlockPos(barracks));
         }
 
         return compound;

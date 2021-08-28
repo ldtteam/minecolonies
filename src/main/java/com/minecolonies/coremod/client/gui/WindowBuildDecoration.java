@@ -28,10 +28,10 @@ import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderVi
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.network.messages.server.BuildToolPlaceMessage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -173,7 +173,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
      */
     private void updateResources()
     {
-        final World world = Minecraft.getInstance().level;
+        final Level world = Minecraft.getInstance().level;
         resources.clear();
 
         final LoadOnlyStructureHandler structure = new LoadOnlyStructureHandler(

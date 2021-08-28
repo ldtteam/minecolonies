@@ -9,13 +9,13 @@ import com.minecolonies.coremod.colony.colonyEvents.raidEvents.HordeRaidEvent;
 import com.minecolonies.coremod.entity.mobs.pirates.EntityArcherPirate;
 import com.minecolonies.coremod.entity.mobs.pirates.EntityCaptainPirate;
 import com.minecolonies.coremod.entity.mobs.pirates.EntityPirate;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
 
 import static com.minecolonies.api.entity.ModEntities.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.RAID_PIRATE;
@@ -139,7 +139,7 @@ public class PirateGroundRaidEvent extends HordeRaidEvent
      * @param compound NBTcompound with saved values
      * @return the raid event.
      */
-    public static PirateGroundRaidEvent loadFromNBT(final IColony colony, final CompoundNBT compound)
+    public static PirateGroundRaidEvent loadFromNBT(final IColony colony, final CompoundTag compound)
     {
         PirateGroundRaidEvent event = new PirateGroundRaidEvent(colony);
         event.deserializeNBT(compound);
@@ -165,8 +165,8 @@ public class PirateGroundRaidEvent extends HordeRaidEvent
     }
 
     @Override
-    protected IFormattableTextComponent getDisplayName()
+    protected MutableComponent getDisplayName()
     {
-        return new StringTextComponent(LanguageHandler.format(RAID_PIRATE));
+        return new TextComponent(LanguageHandler.format(RAID_PIRATE));
     }
 }

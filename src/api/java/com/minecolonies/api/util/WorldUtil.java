@@ -2,23 +2,23 @@ package com.minecolonies.api.util;
 
 import com.google.common.collect.Lists;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.pathfinding.PathNavigator;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.entity.ai.navigation.PathNavigation;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.registry.DynamicRegistries;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.Registry;
 import net.minecraft.world.*;
-import net.minecraft.world.chunk.AbstractChunkProvider;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.ChunkStatus;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.level.chunk.ChunkSource;
+import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.chunk.ChunkStatus;
+import net.minecraft.server.level.ServerLevel;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -29,6 +29,11 @@ import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.NIGHT;
 import static com.minecolonies.api.util.constant.CitizenConstants.NOON;
+
+import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.dimension.DimensionType;
 
 /**
  * Class which has world related util functions like chunk load checks
@@ -42,7 +47,7 @@ public class WorldUtil
      * @param pos   position to check
      * @return true if block is accessible/loaded
      */
-    public static boolean isBlockLoaded(final IWorld world, final BlockPos pos)
+    public static boolean isBlockLoaded(final LevelAccessor world, final BlockPos pos)
     {
         return isChunkLoaded(world, pos.getX() >> 4, pos.getZ() >> 4);
     }
@@ -55,7 +60,7 @@ public class WorldUtil
      * @param z     chunk position
      * @return true if loaded
      */
-    public static boolean isChunkLoaded(final IWorld world, final int x, final int z)
+    public static boolean isChunkLoaded(final LevelAccessor world, final int x, final int z)
     {
         return world.getChunk(x, z, ChunkStatus.FULL, false) != null;
     }
@@ -66,7 +71,7 @@ public class WorldUtil
      * @param world the world to mark it dirty in.
      * @param pos   the position within the chunk.
      */
-    public static void markChunkDirty(final World world, final BlockPos pos)
+    public static void markChunkDirty(final Level world, final BlockPos pos)
     {
         if (WorldUtil.isBlockLoaded(world, pos))
         {
@@ -83,7 +88,7 @@ public class WorldUtil
      * @param pos   chunk position
      * @return true if loaded
      */
-    public static boolean isChunkLoaded(final IWorld world, final ChunkPos pos)
+    public static boolean isChunkLoaded(final LevelAccessor world, final ChunkPos pos)
     {
         return isChunkLoaded(world, pos.x, pos.z);
     }
@@ -95,7 +100,7 @@ public class WorldUtil
      * @param pos   position to check
      * @return true if block is accessible/loaded
      */
-    public static boolean isEntityBlockLoaded(final IWorld world, final BlockPos pos)
+    public static boolean isEntityBlockLoaded(final LevelAccessor world, final BlockPos pos)
     {
         return isEntityChunkLoaded(world, pos.getX() >> 4, pos.getZ() >> 4);
     }
@@ -108,7 +113,7 @@ public class WorldUtil
      * @param z     chunk position
      * @return true if loaded
      */
-    public static boolean isEntityChunkLoaded(final IWorld world, final int x, final int z)
+    public static boolean isEntityChunkLoaded(final LevelAccessor world, final int x, final int z)
     {
         return isEntityChunkLoaded(world, new ChunkPos(x, z));
     }
@@ -120,7 +125,7 @@ public class WorldUtil
      * @param pos   chunk position
      * @return true if loaded
      */
-    public static boolean isEntityChunkLoaded(final IWorld world, final ChunkPos pos)
+    public static boolean isEntityChunkLoaded(final LevelAccessor world, final ChunkPos pos)
     {
         return world.getChunkSource().isEntityTickingChunk(pos);
     }
@@ -132,7 +137,7 @@ public class WorldUtil
      * @param box   the box.
      * @return true if loaded.
      */
-    public static boolean isAABBLoaded(final World world, final AxisAlignedBB box)
+    public static boolean isAABBLoaded(final Level world, final AABB box)
     {
         return isChunkLoaded(world, ((int) box.minX) >> 4, ((int) box.minZ) >> 4) && isChunkLoaded(world, ((int) box.maxX) >> 4, ((int) box.maxZ) >> 4);
     }
@@ -143,7 +148,7 @@ public class WorldUtil
      * @param world the world to check.
      * @return true if so.
      */
-    public static boolean isDayTime(final World world)
+    public static boolean isDayTime(final Level world)
     {
         return world.getDayTime() % 24000 <= NIGHT;
     }
@@ -154,7 +159,7 @@ public class WorldUtil
      * @param world the world to check.
      * @return true if so.
      */
-    public static boolean isPastTime(final World world, final int pastTime)
+    public static boolean isPastTime(final Level world, final int pastTime)
     {
         return world.getDayTime() % 24000 <= pastTime;
     }
@@ -165,7 +170,7 @@ public class WorldUtil
      * @param world the world to check.
      * @return true if so.
      */
-    public static boolean isPastNoon(final World world)
+    public static boolean isPastNoon(final Level world)
     {
         return isPastTime(world, NOON);
     }
@@ -176,7 +181,7 @@ public class WorldUtil
      * @param world the world to check.
      * @return true if so.
      */
-    public static boolean isOverworldType(@NotNull final World world)
+    public static boolean isOverworldType(@NotNull final Level world)
     {
         return isOfWorldType(world, DimensionType.OVERWORLD_LOCATION);
     }
@@ -187,7 +192,7 @@ public class WorldUtil
      * @param world the world to check.
      * @return true if so.
      */
-    public static boolean isNetherType(@NotNull final World world)
+    public static boolean isNetherType(@NotNull final Level world)
     {
         return isOfWorldType(world, DimensionType.NETHER_LOCATION);
     }
@@ -199,9 +204,9 @@ public class WorldUtil
      * @param type  the type to compare.
      * @return true if it matches.
      */
-    public static boolean isOfWorldType(@NotNull final World world, @NotNull final RegistryKey<DimensionType> type)
+    public static boolean isOfWorldType(@NotNull final Level world, @NotNull final ResourceKey<DimensionType> type)
     {
-        DynamicRegistries dynRegistries = world.registryAccess();
+        RegistryAccess dynRegistries = world.registryAccess();
         ResourceLocation loc = dynRegistries.dimensionTypes().getKey(world.dimensionType());
         if (loc == null)
         {
@@ -212,7 +217,7 @@ public class WorldUtil
             }
             return false;
         }
-        RegistryKey<DimensionType> regKey = RegistryKey.create(Registry.DIMENSION_TYPE_REGISTRY, loc);
+        ResourceKey<DimensionType> regKey = ResourceKey.create(Registry.DIMENSION_TYPE_REGISTRY, loc);
         return regKey == type;
     }
 
@@ -224,7 +229,7 @@ public class WorldUtil
      * @param world world to check
      * @return true if peaceful
      */
-    public static boolean isPeaceful(@NotNull final World world)
+    public static boolean isPeaceful(@NotNull final Level world)
     {
         return !world.getLevelData().getGameRules().getBoolean(GameRules.RULE_DOMOBSPAWNING) || world.getDifficulty().equals(Difficulty.PEACEFUL);
     }
@@ -237,7 +242,7 @@ public class WorldUtil
      * @param pos   position to set
      * @param state state to set
      */
-    public static boolean setBlockState(final IWorld world, final BlockPos pos, final BlockState state)
+    public static boolean setBlockState(final LevelAccessor world, final BlockPos pos, final BlockState state)
     {
         if (world.isClientSide())
         {
@@ -255,19 +260,19 @@ public class WorldUtil
      * @param state state to set
      * @param flags flags to use
      */
-    public static boolean setBlockState(final IWorld world, final BlockPos pos, final BlockState state, int flags)
+    public static boolean setBlockState(final LevelAccessor world, final BlockPos pos, final BlockState state, int flags)
     {
-        if (world.isClientSide() || !(world instanceof ServerWorld))
+        if (world.isClientSide() || !(world instanceof ServerLevel))
         {
             return world.setBlock(pos, state, flags);
         }
 
         if ((flags & 2) != 0)
         {
-            final Set<PathNavigator> navigators = ((ServerWorld) world).navigations;
-            ((ServerWorld) world).navigations = Collections.emptySet();
+            final Set<PathNavigation> navigators = ((ServerLevel) world).navigations;
+            ((ServerLevel) world).navigations = Collections.emptySet();
             final boolean result = world.setBlock(pos, state, flags);
-            ((ServerWorld) world).navigations = navigators;
+            ((ServerLevel) world).navigations = navigators;
             return result;
         }
         else
@@ -284,7 +289,7 @@ public class WorldUtil
      * @param isMoving moving flag
      * @return true if success
      */
-    public static boolean removeBlock(final IWorld world, BlockPos pos, boolean isMoving)
+    public static boolean removeBlock(final LevelAccessor world, BlockPos pos, boolean isMoving)
     {
         final FluidState fluidstate = world.getFluidState(pos);
         return setBlockState(world, pos, fluidstate.createLegacyBlock(), 3 | (isMoving ? 64 : 0));
@@ -301,7 +306,7 @@ public class WorldUtil
      * @return a list of all within those borders.
      */
     public static <T extends Entity> List<T> getEntitiesWithinBuilding(
-      final @NotNull World world,
+      final @NotNull Level world,
       final @NotNull Class<? extends T> clazz,
       final @NotNull IBuilding building,
       @Nullable final Predicate<? super T> predicate)
@@ -316,7 +321,7 @@ public class WorldUtil
         int maxY = Math.min(corners.getB().getY(), world.getHeight()) >> 4;
 
         List<T> list = Lists.newArrayList();
-        AbstractChunkProvider abstractchunkprovider = world.getChunkSource();
+        ChunkSource abstractchunkprovider = world.getChunkSource();
 
         for (int x = minX; x <= maxX; ++x)
         {
@@ -324,7 +329,7 @@ public class WorldUtil
             {
                 if (isEntityChunkLoaded(world, x, z))
                 {
-                    Chunk chunk = abstractchunkprovider.getChunkNow(x, z);
+                    LevelChunk chunk = abstractchunkprovider.getChunkNow(x, z);
                     if (chunk != null)
                     {
                         for (int y = minY; y <= maxY; y++)

@@ -3,29 +3,29 @@ package com.minecolonies.coremod.client.render;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityEnchanter;
 import com.minecolonies.api.util.constant.Constants;
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.entity.model.BookModel;
-import net.minecraft.client.renderer.model.RenderMaterial;
-import net.minecraft.client.renderer.texture.AtlasTexture;
-import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.client.model.BookModel;
+import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
+import com.mojang.math.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 @OnlyIn(Dist.CLIENT)
-public class TileEntityEnchanterRenderer extends TileEntityRenderer<TileEntityColonyBuilding>
+public class TileEntityEnchanterRenderer extends BlockEntityRenderer<TileEntityColonyBuilding>
 {
-    public static final RenderMaterial TEXTURE_BOOK;
+    public static final Material TEXTURE_BOOK;
     static
     {
-        TEXTURE_BOOK = new RenderMaterial(AtlasTexture.LOCATION_BLOCKS, new ResourceLocation(Constants.MOD_ID, "blocks/enchanting_table_book"));
+        TEXTURE_BOOK = new Material(TextureAtlas.LOCATION_BLOCKS, new ResourceLocation(Constants.MOD_ID, "blocks/enchanting_table_book"));
     }
 
     /**
@@ -38,7 +38,7 @@ public class TileEntityEnchanterRenderer extends TileEntityRenderer<TileEntityCo
      *
      * @param dispatcher the dispatcher.
      */
-    public TileEntityEnchanterRenderer(final TileEntityRendererDispatcher dispatcher)
+    public TileEntityEnchanterRenderer(final BlockEntityRenderDispatcher dispatcher)
     {
         super(dispatcher);
     }
@@ -47,8 +47,8 @@ public class TileEntityEnchanterRenderer extends TileEntityRenderer<TileEntityCo
     public void render(
       @NotNull final TileEntityColonyBuilding ent,
       float partialTicks,
-      @NotNull final MatrixStack matrixStack,
-      @NotNull final IRenderTypeBuffer renderTypeBuffer,
+      @NotNull final PoseStack matrixStack,
+      @NotNull final MultiBufferSource renderTypeBuffer,
       final int lightA,
       final int lightB)
     {
@@ -58,7 +58,7 @@ public class TileEntityEnchanterRenderer extends TileEntityRenderer<TileEntityCo
             matrixStack.pushPose();
             matrixStack.translate(0.5D, 0.75D, 0.5D);
             float tick = (float) entity.tickCount + partialTicks;
-            matrixStack.translate(0.0D, (0.1F + MathHelper.sin(tick * 0.1F) * 0.01F), 0.0D);
+            matrixStack.translate(0.0D, (0.1F + Mth.sin(tick * 0.1F) * 0.01F), 0.0D);
 
             double rotVPrev = entity.bookRotation - entity.bookRotationPrev;
             float circleRot = (float) ((rotVPrev + Math.PI % (2 * Math.PI)) - Math.PI);
@@ -66,12 +66,12 @@ public class TileEntityEnchanterRenderer extends TileEntityRenderer<TileEntityCo
             float tickBasedRot = entity.bookRotationPrev + circleRot * partialTicks;
             matrixStack.mulPose(Vector3f.YP.rotation(-tickBasedRot));
             matrixStack.mulPose(Vector3f.ZP.rotationDegrees(80.0F));
-            float pageFlip = MathHelper.lerp(partialTicks, entity.pageFlipPrev, entity.pageFlip);
-            float flipA = MathHelper.frac(pageFlip + 0.25F) * 1.6F - 0.3F;
-            float flipB = MathHelper.frac(pageFlip + 0.75F) * 1.6F - 0.3F;
-            float bookSpread = MathHelper.lerp(partialTicks, entity.bookSpreadPrev, entity.bookSpread);
-            this.modelBook.setupAnim(tick, MathHelper.clamp(flipA, 0.0F, 1.0F), MathHelper.clamp(flipB, 0.0F, 1.0F), bookSpread);
-            IVertexBuilder vertexConsumer = TEXTURE_BOOK.buffer(renderTypeBuffer, RenderType::entitySolid);
+            float pageFlip = Mth.lerp(partialTicks, entity.pageFlipPrev, entity.pageFlip);
+            float flipA = Mth.frac(pageFlip + 0.25F) * 1.6F - 0.3F;
+            float flipB = Mth.frac(pageFlip + 0.75F) * 1.6F - 0.3F;
+            float bookSpread = Mth.lerp(partialTicks, entity.bookSpreadPrev, entity.bookSpread);
+            this.modelBook.setupAnim(tick, Mth.clamp(flipA, 0.0F, 1.0F), Mth.clamp(flipB, 0.0F, 1.0F), bookSpread);
+            VertexConsumer vertexConsumer = TEXTURE_BOOK.buffer(renderTypeBuffer, RenderType::entitySolid);
             this.modelBook.renderToBuffer(matrixStack, vertexConsumer, lightA, lightB, 1.0F, 1.0F, 1.0F, 1.0F);
             matrixStack.popPose();
         }

@@ -15,11 +15,11 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenGrownUpEvent;
 import com.minecolonies.coremod.colony.jobs.JobPupil;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
-import net.minecraft.entity.AgeableEntity;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.entity.AgableMob;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;
@@ -194,7 +194,7 @@ public class EntityAICitizenChild extends Goal
               1.0D,
               (double) START_FOLLOW_DISTANCE),
             // Limit entity classes
-            target -> target.isAlive() && (target instanceof AgeableEntity || target instanceof PlayerEntity))
+            target -> target.isAlive() && (target instanceof AgableMob || target instanceof Player))
           // Take the first entity
           .stream()
           .findFirst()

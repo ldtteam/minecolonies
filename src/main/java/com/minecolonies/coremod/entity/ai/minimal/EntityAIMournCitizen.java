@@ -10,14 +10,14 @@ import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityPredicate;
-import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.core.BlockPos;
 
 import java.util.EnumSet;
 
-import net.minecraft.entity.ai.goal.Goal.Flag;
+import net.minecraft.world.entity.ai.goal.Goal.Flag;
 
 /**
  * Citizen mourning goal. Has citizens randomly walk around townhall.
@@ -136,7 +136,7 @@ public class EntityAIMournCitizen extends Goal
         if (closestEntity == null)
         {
             closestEntity = this.citizen.level.getNearestEntity(EntityCitizen.class,
-              EntityPredicate.DEFAULT,
+              TargetingConditions.DEFAULT,
               citizen,
               citizen.getX(),
               citizen.getY(),

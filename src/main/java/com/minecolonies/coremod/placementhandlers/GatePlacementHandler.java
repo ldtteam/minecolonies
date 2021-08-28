@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.placementhandlers;
 
 import com.minecolonies.api.blocks.decorative.AbstractBlockGate;
-import net.minecraft.block.BlockState;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 public class GatePlacementHandler extends GeneralBlockPlacementHandler
 {
     @Override
-    public boolean canHandle(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final BlockState blockState)
+    public boolean canHandle(@NotNull final Level world, @NotNull final BlockPos pos, @NotNull final BlockState blockState)
     {
         return blockState.getBlock() instanceof AbstractBlockGate;
     }

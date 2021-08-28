@@ -1,20 +1,26 @@
 package com.minecolonies.coremod.items;
 
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.item.*;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.util.SoundEvents;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.sounds.SoundEvents;
 import org.jetbrains.annotations.NotNull;
+
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.ArmorMaterial;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 
 /**
  * Class handling the Pirate Gear.
  */
 public class ItemPirateGear extends ArmorItem
 {
-    public static final IArmorMaterial PIRATE_ARMOR_1 =
+    public static final ArmorMaterial PIRATE_ARMOR_1 =
       new MineColoniesArmorMaterial("minecolonies:pirate", 33, new int[] {3, 6, 8, 3}, 5, SoundEvents.ARMOR_EQUIP_LEATHER, 1F, Ingredient.of(Items.DIAMOND));
-    public static final IArmorMaterial PIRATE_ARMOR_2 =
+    public static final ArmorMaterial PIRATE_ARMOR_2 =
       new MineColoniesArmorMaterial("minecolonies:pirate2", 15, new int[] {2, 5, 7, 2}, 5, SoundEvents.ARMOR_EQUIP_LEATHER, 4F, Ingredient.of(Items.DIAMOND));
 
     /**
@@ -28,9 +34,9 @@ public class ItemPirateGear extends ArmorItem
      */
     public ItemPirateGear(
       @NotNull final String name,
-      @NotNull final ItemGroup tab,
-      @NotNull final IArmorMaterial materialIn,
-      @NotNull final EquipmentSlotType equipmentSlotIn,
+      @NotNull final CreativeModeTab tab,
+      @NotNull final ArmorMaterial materialIn,
+      @NotNull final EquipmentSlot equipmentSlotIn,
       final Item.Properties properties)
     {
         super(materialIn, equipmentSlotIn, properties.tab(tab));

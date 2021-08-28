@@ -3,13 +3,13 @@ package com.minecolonies.coremod.proxy;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.coremod.colony.CitizenDataView;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.RecipeBook;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.stats.RecipeBook;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -101,7 +101,7 @@ public interface IProxy
      * @return The recipe book.
      */
     @NotNull
-    RecipeBook getRecipeBookFromPlayer(@NotNull final PlayerEntity player);
+    RecipeBook getRecipeBookFromPlayer(@NotNull final Player player);
 
     /**
      * Open the Window of the decoration controller.
@@ -116,5 +116,5 @@ public interface IProxy
      * @param dimension the dimension.
      * @return the world.
      */
-    World getWorld(RegistryKey<World> dimension);
+    Level getWorld(ResourceKey<Level> dimension);
 }

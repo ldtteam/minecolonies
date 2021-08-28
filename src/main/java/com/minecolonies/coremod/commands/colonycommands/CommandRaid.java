@@ -13,8 +13,8 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.ISuggestionProvider;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.SharedSuggestionProvider;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,12 +29,12 @@ public class CommandRaid implements IMCOPCommand
      * @param context the context of the command execution
      */
     @Override
-    public int onExecute(final CommandContext<CommandSource> context)
+    public int onExecute(final CommandContext<CommandSourceStack> context)
     {
         return raidExecute(context, "");
     }
 
-    public int onSpecificExecute(final CommandContext<CommandSource> context)
+    public int onSpecificExecute(final CommandContext<CommandSourceStack> context)
     {
         if(!checkPreCondition(context))
         {
@@ -49,7 +49,7 @@ public class CommandRaid implements IMCOPCommand
      * @param raidType      type of raid, or "" if determining naturally.
      * @return              zero if failed, one if successful.
      */
-    public int raidExecute(final CommandContext<CommandSource> context, final String raidType)
+    public int raidExecute(final CommandContext<CommandSourceStack> context, final String raidType)
     {
         // Colony
         final int colonyID = IntegerArgumentType.getInteger(context, COLONYID_ARG);
@@ -83,7 +83,7 @@ public class CommandRaid implements IMCOPCommand
     }
 
     @Override
-    public LiteralArgumentBuilder<CommandSource> build()
+    public LiteralArgumentBuilder<CommandSourceStack> build()
     {
         final List<String> raidTypes = new ArrayList<>();
         for(final ColonyEventTypeRegistryEntry type : IMinecoloniesAPI.getInstance().getColonyEventRegistry().getValues())
@@ -101,10 +101,10 @@ public class CommandRaid implements IMCOPCommand
 
         return IMCCommand.newLiteral(getName())
                  .then(IMCCommand.newArgument(RAID_TIME_ARG, StringArgumentType.string())
-                         .suggests((ctx, builder) -> ISuggestionProvider.suggest(opt, builder))
+                         .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(opt, builder))
                  .then(IMCCommand.newArgument(COLONYID_ARG, IntegerArgumentType.integer(1))
                          .then(IMCCommand.newArgument(RAID_TYPE_ARG, StringArgumentType.string())
-                                 .suggests((ctx, builder) -> ISuggestionProvider.suggest(raidTypes, builder))
+                                 .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(raidTypes, builder))
                                  .executes(this::onSpecificExecute))
                          .executes(this::checkPreConditionAndExecute)));
     }

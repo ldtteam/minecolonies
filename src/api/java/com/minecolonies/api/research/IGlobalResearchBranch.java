@@ -1,7 +1,7 @@
 package com.minecolonies.api.research;
 
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.TranslatableComponent;
 
 public interface IGlobalResearchBranch
 {
@@ -9,13 +9,13 @@ public interface IGlobalResearchBranch
      * Get the human-readable name or translation key for the Research Branch
      * @return Human-readable name or translation key.
      */
-    TranslationTextComponent getName();
+    TranslatableComponent getName();
 
     /**
      * Get the optional human-readable subtitle or its translation key for the Research Branch
      * @return Human-readable subtitle or translation key.
      */
-    TranslationTextComponent getSubtitle();
+    TranslatableComponent getSubtitle();
 
     /**
      * Get the base progress requirements for non-instant research on the branch.
@@ -55,5 +55,5 @@ public interface IGlobalResearchBranch
      * Write the Branch characteristics to an NBT for serialization.
      * @return a compoundNBT containing the necessary traits to make the branch data on a client.
      */
-    CompoundNBT writeToNBT();
+    CompoundTag writeToNBT();
 }

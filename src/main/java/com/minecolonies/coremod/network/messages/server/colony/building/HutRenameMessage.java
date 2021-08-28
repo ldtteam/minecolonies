@@ -4,7 +4,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -39,14 +39,14 @@ public class HutRenameMessage extends AbstractBuildingServerMessage<IBuilding>
     }
 
     @Override
-    public void fromBytesOverride(@NotNull final PacketBuffer buf)
+    public void fromBytesOverride(@NotNull final FriendlyByteBuf buf)
     {
 
         name = buf.readUtf(32767);
     }
 
     @Override
-    public void toBytesOverride(@NotNull final PacketBuffer buf)
+    public void toBytesOverride(@NotNull final FriendlyByteBuf buf)
     {
 
         buf.writeUtf(name);

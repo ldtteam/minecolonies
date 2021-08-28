@@ -2,18 +2,18 @@ package com.minecolonies.coremod.client.gui.containers;
 
 import com.minecolonies.api.inventory.container.ContainerCitizenInventory;
 import com.minecolonies.api.util.constant.Constants;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * ------------ Class not Documented ------------
  */
-public class WindowCitizenInventory extends ContainerScreen<ContainerCitizenInventory>
+public class WindowCitizenInventory extends AbstractContainerScreen<ContainerCitizenInventory>
 {
     /**
      * Texture res loc.
@@ -55,7 +55,7 @@ public class WindowCitizenInventory extends ContainerScreen<ContainerCitizenInve
      */
     private final int inventoryRows;
 
-    public WindowCitizenInventory(final ContainerCitizenInventory container, final PlayerInventory playerInventory, final ITextComponent iTextComponent)
+    public WindowCitizenInventory(final ContainerCitizenInventory container, final Inventory playerInventory, final Component iTextComponent)
     {
         super(container, playerInventory, iTextComponent);
         this.inventoryRows = (container.getItems().size() - 36) / 9;
@@ -68,7 +68,7 @@ public class WindowCitizenInventory extends ContainerScreen<ContainerCitizenInve
     }
 
     @Override
-    public void render(@NotNull final MatrixStack stack, int x, int y, float z)
+    public void render(@NotNull final PoseStack stack, int x, int y, float z)
     {
         this.renderBackground(stack);
         super.render(stack, x, y, z);
@@ -78,7 +78,7 @@ public class WindowCitizenInventory extends ContainerScreen<ContainerCitizenInve
     /**
      * Draw the foreground layer for the GuiContainer (everything in front of the items)
      */
-    protected void renderLabels(@NotNull final MatrixStack stack, final int mouseX, final int mouseY)
+    protected void renderLabels(@NotNull final PoseStack stack, final int mouseX, final int mouseY)
     {
         this.font.draw(stack, this.menu.getDisplayName(), 8, 6, 4210752);
         this.font.draw(stack, this.inventory.getDisplayName().getString(), 8, 20 + this.inventoryRows * SLOT_OFFSET, 4210752);
@@ -87,7 +87,7 @@ public class WindowCitizenInventory extends ContainerScreen<ContainerCitizenInve
     /**
      * Draws the background layer of this container (behind the items).
      */
-    protected void renderBg(@NotNull final MatrixStack stack, float partialTicks, int mouseX, int mouseY)
+    protected void renderBg(@NotNull final PoseStack stack, float partialTicks, int mouseX, int mouseY)
     {
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 

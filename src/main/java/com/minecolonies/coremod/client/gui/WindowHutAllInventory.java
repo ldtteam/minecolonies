@@ -13,13 +13,13 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.event.HighlightManager;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.Level;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -116,13 +116,13 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
 
         for (BlockPos blockPos : containerList)
         {
-            final TileEntity rack = Minecraft.getInstance().level.getBlockEntity(blockPos);
+            final BlockEntity rack = Minecraft.getInstance().level.getBlockEntity(blockPos);
             if (rack instanceof TileEntityRack)
             {
                 if (((TileEntityRack) rack).hasItemStack(storage.getItemStack(), 1, false))
                 {
                     HighlightManager.HIGHLIGHT_MAP.put("inventoryHighlight", new Tuple<>(blockPos, Minecraft.getInstance().level.getGameTime() + 120 * 20));
-                    Minecraft.getInstance().player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.locating"), Minecraft.getInstance().player.getUUID());
+                    Minecraft.getInstance().player.sendMessage(new TranslatableComponent("com.minecolonies.coremod.locating"), Minecraft.getInstance().player.getUUID());
                     close();
                     return;
                 }
@@ -187,12 +187,12 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
         final Set<BlockPos> containerList = new HashSet<>(building.getContainerList());
 
         final Map<ItemStorage, Integer> storedItems = new HashMap<>();
-        final World world = building.getColony().getWorld();
+        final Level world = building.getColony().getWorld();
         containerList.add(building.getPosition());
 
         for (final BlockPos blockPos : containerList)
         {
-            final TileEntity rack = world.getBlockEntity(blockPos);
+            final BlockEntity rack = world.getBlockEntity(blockPos);
             if (rack instanceof TileEntityRack)
             {
                 final Map<ItemStorage, Integer> rackStorage = ((TileEntityRack) rack).getAllContent();

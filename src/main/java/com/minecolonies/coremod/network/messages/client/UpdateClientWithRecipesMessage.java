@@ -5,8 +5,8 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.RecipeStorage;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.coremod.util.FurnaceRecipes;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
@@ -45,7 +45,7 @@ public class UpdateClientWithRecipesMessage implements IMessage
     }
 
     @Override
-    public void fromBytes(@NotNull final PacketBuffer buf)
+    public void fromBytes(@NotNull final FriendlyByteBuf buf)
     {
         recipes = new HashMap<>();
         final int size = buf.readInt();
@@ -58,7 +58,7 @@ public class UpdateClientWithRecipesMessage implements IMessage
     }
 
     @Override
-    public void toBytes(@NotNull final PacketBuffer buf)
+    public void toBytes(@NotNull final FriendlyByteBuf buf)
     {
         buf.writeInt(recipes.size());
         for (final Map.Entry<ItemStorage, RecipeStorage> entry : recipes.entrySet())

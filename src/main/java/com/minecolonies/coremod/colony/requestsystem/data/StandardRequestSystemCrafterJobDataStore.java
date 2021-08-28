@@ -9,8 +9,8 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
@@ -115,10 +115,10 @@ public class StandardRequestSystemCrafterJobDataStore implements IRequestSystemC
 
         @NotNull
         @Override
-        public CompoundNBT serialize(
+        public CompoundTag serialize(
           @NotNull final IFactoryController controller, @NotNull final StandardRequestSystemCrafterJobDataStore standardRequestSystemCrafterJobDataStore)
         {
-            final CompoundNBT compound = new CompoundNBT();
+            final CompoundTag compound = new CompoundTag();
 
             compound.put(TAG_TOKEN, controller.serialize(standardRequestSystemCrafterJobDataStore.id));
             compound.put(TAG_LIST, standardRequestSystemCrafterJobDataStore.queue.stream().map(controller::serialize).collect(NBTUtils.toListNBT()));
@@ -129,7 +129,7 @@ public class StandardRequestSystemCrafterJobDataStore implements IRequestSystemC
 
         @NotNull
         @Override
-        public StandardRequestSystemCrafterJobDataStore deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt) throws Throwable
+        public StandardRequestSystemCrafterJobDataStore deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt) throws Throwable
         {
             final IToken<?> token = controller.deserialize(nbt.getCompound(TAG_TOKEN));
             final LinkedList<IToken<?>> queue = NBTUtils.streamCompound(nbt.getList(TAG_LIST, Constants.NBT.TAG_COMPOUND))
@@ -145,7 +145,7 @@ public class StandardRequestSystemCrafterJobDataStore implements IRequestSystemC
         @Override
         public void serialize(
           IFactoryController controller, StandardRequestSystemCrafterJobDataStore input,
-          PacketBuffer packetBuffer)
+          FriendlyByteBuf packetBuffer)
         {
             controller.serialize(packetBuffer, input.id);
             packetBuffer.writeInt(input.queue.size());
@@ -155,7 +155,7 @@ public class StandardRequestSystemCrafterJobDataStore implements IRequestSystemC
         }
 
         @Override
-        public StandardRequestSystemCrafterJobDataStore deserialize(IFactoryController controller, PacketBuffer buffer)
+        public StandardRequestSystemCrafterJobDataStore deserialize(IFactoryController controller, FriendlyByteBuf buffer)
           throws Throwable
         {
             final IToken<?> id = controller.deserialize(buffer);

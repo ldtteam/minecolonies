@@ -7,14 +7,18 @@ import com.minecolonies.api.research.AbstractResearchProvider;
 import com.minecolonies.api.research.ResearchBranchType;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.item.Items;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.item.Items;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import static com.minecolonies.api.research.util.ResearchConstants.*;
+
+import com.minecolonies.api.research.AbstractResearchProvider.Research;
+import com.minecolonies.api.research.AbstractResearchProvider.ResearchBranch;
+import com.minecolonies.api.research.AbstractResearchProvider.ResearchEffect;
 
 /**
  * A class for creating the Research-related JSONs, including Research, ResearchEffects, and (optional) Branches.

@@ -2,8 +2,8 @@ package com.minecolonies.coremod.entity.ai.citizen.miner;
 
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Vec2i;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -96,7 +96,7 @@ public class Node
      * @return Node created from compound
      */
     @NotNull
-    public static Node createFromNBT(@NotNull final CompoundNBT compound)
+    public static Node createFromNBT(@NotNull final CompoundTag compound)
     {
         // for backwards compatibility check if the types are doubles
         final boolean hasDoubles = compound.getAllKeys().contains(TAG_X);
@@ -105,8 +105,8 @@ public class Node
         final int z;
         if (hasDoubles)
         {
-            x = MathHelper.floor(compound.getDouble(TAG_X));
-            z = MathHelper.floor(compound.getDouble(TAG_Z));
+            x = Mth.floor(compound.getDouble(TAG_X));
+            z = Mth.floor(compound.getDouble(TAG_Z));
         }
         else
         {
@@ -123,8 +123,8 @@ public class Node
             if (hasDoubles)
             {
                 parent = new Vec2i(
-                  MathHelper.floor(compound.getDouble(TAG_PARENTX)),
-                  MathHelper.floor(compound.getDouble(TAG_PARENTZ)));
+                  Mth.floor(compound.getDouble(TAG_PARENTX)),
+                  Mth.floor(compound.getDouble(TAG_PARENTZ)));
             }
             else
             {
@@ -154,7 +154,7 @@ public class Node
      *
      * @param compound Compound to write to
      */
-    public void write(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundTag compound)
     {
         compound.putInt(TAG_X, x);
         compound.putInt(TAG_Z, z);

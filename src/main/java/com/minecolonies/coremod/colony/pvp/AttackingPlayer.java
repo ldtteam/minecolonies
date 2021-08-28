@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.coremod.colony.Colony;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.player.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +18,7 @@ public class AttackingPlayer
     /**
      * The player which is attacking.
      */
-    private final PlayerEntity player;
+    private final Player player;
 
     /**
      * The guards coming with him.
@@ -30,7 +30,7 @@ public class AttackingPlayer
      *
      * @param player the attacking player.
      */
-    public AttackingPlayer(final PlayerEntity player)
+    public AttackingPlayer(final Player player)
     {
         this.player = player;
     }
@@ -40,7 +40,7 @@ public class AttackingPlayer
      *
      * @return the PlayerEntity.
      */
-    public PlayerEntity getPlayer()
+    public Player getPlayer()
     {
         return player;
     }

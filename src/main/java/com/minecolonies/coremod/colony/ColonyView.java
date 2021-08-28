@@ -30,22 +30,22 @@ import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.coremod.network.messages.PermissionsMessage;
 import com.minecolonies.coremod.network.messages.server.colony.ColonyFlagChangeMessage;
 import com.minecolonies.coremod.network.messages.server.colony.TownHallRenameMessage;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.DyeColor;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.scoreboard.ScorePlayerTeam;
-import net.minecraft.tileentity.BannerPattern;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.scores.PlayerTeam;
+import net.minecraft.world.level.block.entity.BannerPattern;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
+import net.minecraft.ChatFormatting;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
@@ -80,17 +80,17 @@ public final class ColonyView implements IColonyView
     private final Map<Integer, ICitizenDataView> citizens    = new HashMap<>();
     private       Map<Integer, IVisitorViewData> visitors    = new HashMap<>();
     private       String                         name        = "Unknown";
-    private       RegistryKey<World>                            dimensionId;
+    private       ResourceKey<Level>                            dimensionId;
 
     /**
      * Colony team color.
      */
-    private TextFormatting teamColonyColor = TextFormatting.WHITE;
+    private ChatFormatting teamColonyColor = ChatFormatting.WHITE;
 
     /**
      * The colony flag (set to plain white as default)
      */
-    private ListNBT        colonyFlag      = new BannerPattern.Builder()
+    private ListTag        colonyFlag      = new BannerPattern.Builder()
         .addPattern(BannerPattern.BASE, DyeColor.WHITE)
         .toListTag();
 
@@ -173,7 +173,7 @@ public final class ColonyView implements IColonyView
     /**
      * The world.
      */
-    private World world;
+    private Level world;
 
     /**
      * Print progress.
@@ -246,7 +246,7 @@ public final class ColonyView implements IColonyView
      * @param buf               {@link PacketBuffer} to write data in.
      * @param hasNewSubscribers true if there is a new subscription.
      */
-    public static void serializeNetworkData(@NotNull Colony colony, @NotNull PacketBuffer buf, boolean hasNewSubscribers)
+    public static void serializeNetworkData(@NotNull Colony colony, @NotNull FriendlyByteBuf buf, boolean hasNewSubscribers)
     {
         //  General Attributes
         buf.writeUtf(colony.getName());
@@ -313,7 +313,7 @@ public final class ColonyView implements IColonyView
 
         buf.writeInt(colony.getTeamColonyColor().ordinal());
 
-        CompoundNBT flagNBT = new CompoundNBT();
+        CompoundTag flagNBT = new CompoundTag();
         flagNBT.put(TAG_BANNER_PATTERNS, colony.getColonyFlag());
         buf.writeNbt(flagNBT);
 
@@ -376,7 +376,7 @@ public final class ColonyView implements IColonyView
             buf.writeUtf(col.getDimension().location().toString());
         }
 
-        final CompoundNBT treeTag = new CompoundNBT();
+        final CompoundTag treeTag = new CompoundTag();
         colony.getResearchManager().writeToNBT(treeTag);
         buf.writeNbt(treeTag);
 
@@ -472,7 +472,7 @@ public final class ColonyView implements IColonyView
      * @return dimension ID of the view.
      */
     @Override
-    public RegistryKey<World> getDimension()
+    public ResourceKey<Level> getDimension()
     {
         return dimensionId;
     }
@@ -500,13 +500,13 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public CompoundNBT write(final CompoundNBT colonyCompound)
+    public CompoundTag write(final CompoundTag colonyCompound)
     {
-        return new CompoundNBT();
+        return new CompoundTag();
     }
 
     @Override
-    public void read(final CompoundNBT compound)
+    public void read(final CompoundTag compound)
     {
         //Noop
     }
@@ -574,7 +574,7 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public void addLoadedChunk(final long chunkPos, final Chunk chunk)
+    public void addLoadedChunk(final long chunkPos, final LevelChunk chunk)
     {
 
     }
@@ -789,12 +789,12 @@ public final class ColonyView implements IColonyView
      */
     @Override
     @Nullable
-    public IMessage handleColonyViewMessage(@NotNull final PacketBuffer buf, @NotNull final World world, final boolean isNewSubscription)
+    public IMessage handleColonyViewMessage(@NotNull final FriendlyByteBuf buf, @NotNull final Level world, final boolean isNewSubscription)
     {
         this.world = world;
         //  General Attributes
         name = buf.readUtf(32767);
-        dimensionId = RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)));
+        dimensionId = ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)));
         center = buf.readBlockPos();
         manualHiring = buf.readBoolean();
         //  Citizenry
@@ -850,7 +850,7 @@ public final class ColonyView implements IColonyView
         }
         Collections.reverse(lastSpawnPoints);
 
-        this.teamColonyColor = TextFormatting.values()[buf.readInt()];
+        this.teamColonyColor = ChatFormatting.values()[buf.readInt()];
         this.colonyFlag = buf.readNbt().getList(TAG_BANNER_PATTERNS, Constants.TAG_COMPOUND);
 
         this.printProgress = buf.readBoolean();
@@ -868,13 +868,13 @@ public final class ColonyView implements IColonyView
         final int noOfAllies = buf.readInt();
         for (int i = 0; i < noOfAllies; i++)
         {
-            allies.add(new CompactColonyReference(buf.readUtf(32767), buf.readBlockPos(), buf.readInt(), buf.readBoolean(), RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)))));
+            allies.add(new CompactColonyReference(buf.readUtf(32767), buf.readBlockPos(), buf.readInt(), buf.readBoolean(), ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)))));
         }
 
         final int noOfFeuds = buf.readInt();
         for (int i = 0; i < noOfFeuds; i++)
         {
-            feuds.add(new CompactColonyReference(buf.readUtf(32767), buf.readBlockPos(), buf.readInt(), false, RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)))));
+            feuds.add(new CompactColonyReference(buf.readUtf(32767), buf.readBlockPos(), buf.readInt(), false, ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)))));
         }
 
         this.manager.readFromNBT(buf.readNbt());
@@ -899,7 +899,7 @@ public final class ColonyView implements IColonyView
      */
     @Override
     @Nullable
-    public IMessage handlePermissionsViewMessage(@NotNull final PacketBuffer buf)
+    public IMessage handlePermissionsViewMessage(@NotNull final FriendlyByteBuf buf)
     {
         permissions.deserialize(buf);
         return null;
@@ -913,7 +913,7 @@ public final class ColonyView implements IColonyView
      */
     @Override
     @Nullable
-    public IMessage handleColonyViewWorkOrderMessage(final PacketBuffer buf)
+    public IMessage handleColonyViewWorkOrderMessage(final FriendlyByteBuf buf)
     {
         workOrders.clear();
         final int amount = buf.readInt();
@@ -938,7 +938,7 @@ public final class ColonyView implements IColonyView
      */
     @Override
     @Nullable
-    public IMessage handleColonyViewCitizensMessage(final int id, final PacketBuffer buf)
+    public IMessage handleColonyViewCitizensMessage(final int id, final FriendlyByteBuf buf)
     {
         final ICitizenDataView citizen = ICitizenDataManager.getInstance().createFromNetworkData(id, buf, this);
         if (citizen != null)
@@ -950,7 +950,7 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public void handleColonyViewVisitorMessage(final PacketBuffer visitorBuf, final boolean refresh)
+    public void handleColonyViewVisitorMessage(final FriendlyByteBuf visitorBuf, final boolean refresh)
     {
         final Map<Integer, IVisitorViewData> visitorCache = new HashMap<>(visitors);
 
@@ -1032,7 +1032,7 @@ public final class ColonyView implements IColonyView
      */
     @Override
     @Nullable
-    public IMessage handleColonyBuildingViewMessage(final BlockPos buildingId, @NotNull final PacketBuffer buf)
+    public IMessage handleColonyBuildingViewMessage(final BlockPos buildingId, @NotNull final FriendlyByteBuf buf)
     {
         if (buildings.containsKey(buildingId))
         {
@@ -1108,7 +1108,7 @@ public final class ColonyView implements IColonyView
      * @return the color.
      */
     @Override
-    public TextFormatting getTeamColonyColor()
+    public ChatFormatting getTeamColonyColor()
     {
         return teamColonyColor;
     }
@@ -1119,7 +1119,7 @@ public final class ColonyView implements IColonyView
      * @return the ListNBT of flag (banner) patterns
      */
     @Override
-    public ListNBT getColonyFlag() { return colonyFlag; }
+    public ListTag getColonyFlag() { return colonyFlag; }
 
     /**
      * Sets the name of the view.
@@ -1141,9 +1141,9 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public boolean isCoordInColony(@NotNull final World w, @NotNull final BlockPos pos)
+    public boolean isCoordInColony(@NotNull final Level w, @NotNull final BlockPos pos)
     {
-        final Chunk chunk = w.getChunkAt(pos);
+        final LevelChunk chunk = w.getChunkAt(pos);
         final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
         return cap.getOwningColony() == this.getID();
     }
@@ -1213,7 +1213,7 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public ScorePlayerTeam getTeam()
+    public PlayerTeam getTeam()
     {
         return world.getScoreboard().getPlayerTeam(getTeamName());
     }
@@ -1225,7 +1225,7 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public World getWorld()
+    public Level getWorld()
     {
         return world;
     }
@@ -1261,7 +1261,7 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public void removeVisitingPlayer(final PlayerEntity player)
+    public void removeVisitingPlayer(final Player player)
     {
         /*
          * Intentionally left empty.
@@ -1270,13 +1270,13 @@ public final class ColonyView implements IColonyView
 
     @NotNull
     @Override
-    public List<PlayerEntity> getMessagePlayerEntities()
+    public List<Player> getMessagePlayerEntities()
     {
         return new ArrayList<>();
     }
 
     @Override
-    public void addVisitingPlayer(final PlayerEntity player)
+    public void addVisitingPlayer(final Player player)
     {
         /*
          * Intentionally left empty.
@@ -1284,13 +1284,13 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public void onWorldLoad(@NotNull final World w)
+    public void onWorldLoad(@NotNull final Level w)
     {
 
     }
 
     @Override
-    public void onWorldUnload(@NotNull final World w)
+    public void onWorldUnload(@NotNull final Level w)
     {
 
     }
@@ -1349,7 +1349,7 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public CompoundNBT getColonyTag()
+    public CompoundTag getColonyTag()
     {
         return null;
     }
@@ -1361,25 +1361,25 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public boolean isValidAttackingPlayer(final PlayerEntity entity)
+    public boolean isValidAttackingPlayer(final Player entity)
     {
         return false;
     }
 
     @Override
-    public void addGuardToAttackers(final AbstractEntityCitizen entityCitizen, final PlayerEntity followPlayer)
+    public void addGuardToAttackers(final AbstractEntityCitizen entityCitizen, final Player followPlayer)
     {
 
     }
 
     @Override
-    public void setColonyColor(final TextFormatting color)
+    public void setColonyColor(final ChatFormatting color)
     {
 
     }
 
     @Override
-    public void setColonyFlag(ListNBT colonyFlag)
+    public void setColonyFlag(ListTag colonyFlag)
     {
         this.colonyFlag = colonyFlag;
         Network.getNetwork().sendToServer(new ColonyFlagChangeMessage(this, colonyFlag));
@@ -1398,7 +1398,7 @@ public final class ColonyView implements IColonyView
 
     @NotNull
     @Override
-    public List<PlayerEntity> getImportantMessageEntityPlayers()
+    public List<Player> getImportantMessageEntityPlayers()
     {
         return new ArrayList<>();
     }

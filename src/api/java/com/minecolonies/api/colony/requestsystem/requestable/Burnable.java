@@ -5,10 +5,10 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.FurnaceTileEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -49,9 +49,9 @@ public class Burnable implements IDeliverable
      * @param burnable   the input.
      * @return the compound.
      */
-    public static CompoundNBT serialize(final IFactoryController controller, final Burnable burnable)
+    public static CompoundTag serialize(final IFactoryController controller, final Burnable burnable)
     {
-        final CompoundNBT compound = new CompoundNBT();
+        final CompoundTag compound = new CompoundTag();
         compound.putInt(NBT_COUNT, burnable.count);
 
         if (!ItemStackUtils.isEmpty(burnable.result))
@@ -69,7 +69,7 @@ public class Burnable implements IDeliverable
      * @param compound   the compound.
      * @return the deliverable.
      */
-    public static Burnable deserialize(final IFactoryController controller, final CompoundNBT compound)
+    public static Burnable deserialize(final IFactoryController controller, final CompoundTag compound)
     {
         final int count = compound.getInt(NBT_COUNT);
         final ItemStack result = compound.getAllKeys().contains(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_RESULT)) : ItemStackUtils.EMPTY;
@@ -84,7 +84,7 @@ public class Burnable implements IDeliverable
      * @param buffer     the the buffer to write to.
      * @param input      the input to serialize.
      */
-    public static void serialize(final IFactoryController controller, final PacketBuffer buffer, final Burnable input)
+    public static void serialize(final IFactoryController controller, final FriendlyByteBuf buffer, final Burnable input)
     {
         buffer.writeInt(input.count);
 
@@ -102,7 +102,7 @@ public class Burnable implements IDeliverable
      * @param buffer     the buffer to read.
      * @return the deliverable.
      */
-    public static Burnable deserialize(final IFactoryController controller, final PacketBuffer buffer)
+    public static Burnable deserialize(final IFactoryController controller, final FriendlyByteBuf buffer)
     {
         final int count = buffer.readInt();
         final ItemStack result = buffer.readBoolean() ? buffer.readItem() : ItemStack.EMPTY;
@@ -113,7 +113,7 @@ public class Burnable implements IDeliverable
     @Override
     public boolean matches(@NotNull final ItemStack stack)
     {
-        return FurnaceTileEntity.isFuel(stack);
+        return FurnaceBlockEntity.isFuel(stack);
     }
 
     @Override

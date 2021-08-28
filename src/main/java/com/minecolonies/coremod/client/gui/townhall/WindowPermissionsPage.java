@@ -18,12 +18,12 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.network.messages.PermissionsMessage;
 import com.minecolonies.coremod.network.messages.server.colony.*;
-import net.minecraft.block.Block;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.ResourceLocationException;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.ResourceLocationException;
+import net.minecraft.core.BlockPos;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
@@ -250,7 +250,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
         fillRanks();
         fillPermissionList();
 
-        PlayerEntity player = Minecraft.getInstance().player;
+        Player player = Minecraft.getInstance().player;
         Text label = findPaneOfTypeByID(TOWNHALL_PERMISSION_ERROR, Text.class);
         Button button = findPaneOfTypeByID(BUTTON_ADD_PLAYER, Button.class);
         if (building.getColony().getPermissions().hasPermission(player, Action.EDIT_PERMISSIONS))

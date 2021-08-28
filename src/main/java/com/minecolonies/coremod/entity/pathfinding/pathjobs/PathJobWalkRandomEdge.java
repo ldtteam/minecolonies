@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.entity.pathfinding.pathjobs;
 
 import com.minecolonies.coremod.entity.pathfinding.Node;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -18,7 +18,7 @@ public class PathJobWalkRandomEdge extends AbstractPathJob
     private static final int NODE_EDGE_CHANCE = 10;
 
     public PathJobWalkRandomEdge(
-      final World world,
+      final Level world,
       @NotNull final BlockPos start, final int range, final LivingEntity entity)
     {
         super(world, AbstractPathJob.prepareStart(entity), start, range, entity);

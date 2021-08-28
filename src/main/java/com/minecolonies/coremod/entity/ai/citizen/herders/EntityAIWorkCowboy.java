@@ -9,12 +9,12 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCowboy;
 import com.minecolonies.coremod.colony.jobs.JobCowboy;
-import net.minecraft.entity.passive.CowEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.util.Hand;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.entity.animal.Cow;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.TranslatableComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -24,7 +24,7 @@ import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*
 /**
  * The AI behind the {@link JobCowboy} for Breeding, Killing and Milking Cows.
  */
-public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, BuildingCowboy, CowEntity>
+public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, BuildingCowboy, Cow>
 {
     /**
      * Max amount of animals per Hut Level.
@@ -71,9 +71,9 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
     }
 
     @Override
-    public Class<CowEntity> getAnimalClass()
+    public Class<Cow> getAnimalClass()
     {
-        return CowEntity.class;
+        return Cow.class;
     }
 
     @Override
@@ -109,7 +109,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
      */
     private IAIState milkCows()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_COWBOY_MILKING));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslatableComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_COWBOY_MILKING));
         worker.getCitizenData().setVisibleStatus(HERD_COW);
 
         if (!worker.getCitizenInventoryHandler().hasItemInInventory(getBreedingItem().getItem()) && InventoryUtils.getCountFromBuilding(getOwnBuilding(), new ItemStorage(new ItemStack(Items.BUCKET, 1))) > 1)
@@ -124,19 +124,19 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
             }
         }
 
-        final CowEntity cow = searchForAnimals().stream().findFirst().orElse(null);
+        final Cow cow = searchForAnimals().stream().findFirst().orElse(null);
 
         if (cow == null)
         {
             return DECIDE;
         }
 
-        if (!walkingToAnimal(cow) && equipItem(Hand.MAIN_HAND, new ItemStack(Items.BUCKET, 1)))
+        if (!walkingToAnimal(cow) && equipItem(InteractionHand.MAIN_HAND, new ItemStack(Items.BUCKET, 1)))
         {
             if (InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), new ItemStack(Items.MILK_BUCKET)))
             {
                 worker.getCitizenItemHandler().removeHeldItem();
-                equipItem(Hand.MAIN_HAND, new ItemStack(Items.MILK_BUCKET));
+                equipItem(InteractionHand.MAIN_HAND, new ItemStack(Items.MILK_BUCKET));
                 InventoryUtils.tryRemoveStackFromItemHandler(worker.getInventoryCitizen(), new ItemStack(Items.BUCKET, 1));
             }
 

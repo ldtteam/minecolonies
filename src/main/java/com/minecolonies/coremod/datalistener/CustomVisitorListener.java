@@ -10,12 +10,12 @@ import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.interactionhandling.RecruitmentInteraction;
-import net.minecraft.client.resources.JsonReloadListener;
-import net.minecraft.item.ItemStack;
-import net.minecraft.profiler.IProfiler;
-import net.minecraft.resources.IResourceManager;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.TranslatableComponent;
 
 import java.util.Map;
 import java.util.Random;
@@ -24,7 +24,7 @@ import java.util.UUID;
 /**
  * Loads and listens to custom visitor data added
  */
-public class CustomVisitorListener extends JsonReloadListener
+public class CustomVisitorListener extends SimpleJsonResourceReloadListener
 {
     /**
      * Gson instance
@@ -60,7 +60,7 @@ public class CustomVisitorListener extends JsonReloadListener
 
     @Override
     protected void apply(
-      final Map<ResourceLocation, JsonElement> jsonElementMap, final IResourceManager resourceManager, final IProfiler profiler)
+      final Map<ResourceLocation, JsonElement> jsonElementMap, final ResourceManager resourceManager, final ProfilerFiller profiler)
     {
         visitorDataPack = ImmutableList.of();
         for (final Map.Entry<ResourceLocation, JsonElement> entry : jsonElementMap.entrySet())
@@ -211,7 +211,7 @@ public class CustomVisitorListener extends JsonReloadListener
 
             if (storykey != null)
             {
-                visitorData.triggerInteraction(new RecruitmentInteraction(new TranslationTextComponent(storykey, visitorData.getName().split(" ")[0]), ChatPriority.IMPORTANT));
+                visitorData.triggerInteraction(new RecruitmentInteraction(new TranslatableComponent(storykey, visitorData.getName().split(" ")[0]), ChatPriority.IMPORTANT));
             }
 
             visitorData.markDirty();

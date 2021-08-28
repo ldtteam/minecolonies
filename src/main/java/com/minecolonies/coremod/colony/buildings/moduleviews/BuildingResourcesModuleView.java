@@ -5,8 +5,8 @@ import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.client.gui.modules.WindowBuilderResModule;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
@@ -39,7 +39,7 @@ public class BuildingResourcesModuleView extends AbstractBuildingModuleView
     private int totalStages    = 1;
 
     @Override
-    public void deserialize(@NotNull final PacketBuffer buf)
+    public void deserialize(@NotNull final FriendlyByteBuf buf)
     {
         final int size = buf.readInt();
         resources.clear();

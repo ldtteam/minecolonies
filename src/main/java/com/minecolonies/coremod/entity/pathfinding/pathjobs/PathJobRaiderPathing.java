@@ -4,12 +4,12 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.pathfinding.PathingOptions;
 import com.minecolonies.coremod.colony.managers.RaidManager;
 import com.minecolonies.coremod.entity.pathfinding.Node;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.LadderBlock;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LadderBlock;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -43,7 +43,7 @@ public class PathJobRaiderPathing extends AbstractPathJob
 
     public PathJobRaiderPathing(
       final List<IBuilding> buildings,
-      final World world,
+      final Level world,
       @NotNull final BlockPos start, final BlockPos targetSpawnPoint, final int range)
     {
         super(world, start, targetSpawnPoint, range, null);

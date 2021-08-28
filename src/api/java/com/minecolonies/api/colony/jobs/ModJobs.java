@@ -2,7 +2,7 @@ package com.minecolonies.api.colony.jobs;
 
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 public final class ModJobs
 {

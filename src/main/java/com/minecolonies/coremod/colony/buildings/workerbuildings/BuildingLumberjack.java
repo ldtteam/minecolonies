@@ -28,20 +28,20 @@ import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
 import com.minecolonies.coremod.util.AttributeModifierUtils;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.IGrowable;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.NBTUtil;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.BonemealableBlock;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -178,13 +178,13 @@ public class BuildingLumberjack extends AbstractBuildingWorker implements IBuild
     }
 
     @Override
-    public void deserializeNBT(final CompoundNBT compound)
+    public void deserializeNBT(final CompoundTag compound)
     {
         super.deserializeNBT(compound);
 
         if (compound.getAllKeys().contains(TAG_RESTRICT_START))
         {
-            startRestriction = NBTUtil.readBlockPos(compound.getCompound(TAG_RESTRICT_START));
+            startRestriction = NbtUtils.readBlockPos(compound.getCompound(TAG_RESTRICT_START));
         }
         else
         {
@@ -193,14 +193,14 @@ public class BuildingLumberjack extends AbstractBuildingWorker implements IBuild
 
         if (compound.getAllKeys().contains(TAG_RESTRICT_END))
         {
-            endRestriction = NBTUtil.readBlockPos(compound.getCompound(TAG_RESTRICT_END));
+            endRestriction = NbtUtils.readBlockPos(compound.getCompound(TAG_RESTRICT_END));
         }
         else
         {
             endRestriction = null;
         }
 
-        final ListNBT netherTreeBinTagList = compound.getList(TAG_NETHER_TREE_LIST, Constants.NBT.TAG_COMPOUND);
+        final ListTag netherTreeBinTagList = compound.getList(TAG_NETHER_TREE_LIST, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < netherTreeBinTagList.size(); i++)
         {
             netherTrees.add(BlockPosUtil.readFromListNBT(netherTreeBinTagList, i));
@@ -208,21 +208,21 @@ public class BuildingLumberjack extends AbstractBuildingWorker implements IBuild
     }
 
     @Override
-    public CompoundNBT serializeNBT()
+    public CompoundTag serializeNBT()
     {
-        final CompoundNBT compound = super.serializeNBT();
+        final CompoundTag compound = super.serializeNBT();
 
         if (startRestriction != null)
         {
-            compound.put(TAG_RESTRICT_START, NBTUtil.writeBlockPos(startRestriction));
+            compound.put(TAG_RESTRICT_START, NbtUtils.writeBlockPos(startRestriction));
         }
 
         if (endRestriction != null)
         {
-            compound.put(TAG_RESTRICT_END, NBTUtil.writeBlockPos(endRestriction));
+            compound.put(TAG_RESTRICT_END, NbtUtils.writeBlockPos(endRestriction));
         }
 
-        @NotNull final ListNBT netherTreeBinCompoundList = new ListNBT();
+        @NotNull final ListTag netherTreeBinCompoundList = new ListTag();
         for (@NotNull final BlockPos pos : netherTrees)
         {
             BlockPosUtil.writeToListNBT(netherTreeBinCompoundList, pos);
@@ -321,7 +321,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker implements IBuild
         for (Iterator<BlockPos> iterator = netherTrees.iterator(); iterator.hasNext(); )
         {
             final BlockPos pos = iterator.next();
-            final World world = colony.getWorld();
+            final Level world = colony.getWorld();
             if (WorldUtil.isBlockLoaded(world, pos))
             {
                 final BlockState blockState = world.getBlockState(pos);
@@ -332,14 +332,14 @@ public class BuildingLumberjack extends AbstractBuildingWorker implements IBuild
                     final int rand = world.getRandom().nextInt(100);
                     if (rand < threshold)
                     {
-                        final IGrowable growable = (IGrowable) block;
+                        final BonemealableBlock growable = (BonemealableBlock) block;
                         if (growable.isValidBonemealTarget(world, pos, blockState, world.isClientSide))
                         {
                             if (!world.isClientSide)
                             {
                                 if (growable.isBonemealSuccess(world, world.random, pos, blockState))
                                 {
-                                    growable.performBonemeal((ServerWorld) world, world.random, pos, blockState);
+                                    growable.performBonemeal((ServerLevel) world, world.random, pos, blockState);
                                     return;
                                 }
                             }

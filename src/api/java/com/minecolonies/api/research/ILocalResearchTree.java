@@ -2,10 +2,10 @@ package com.minecolonies.api.research;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.research.effects.IResearchEffectManager;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.nbt.CompoundTag;
 
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
@@ -66,7 +66,7 @@ public interface ILocalResearchTree
      * @param colony     the colony doing the research
      * @param research   the research.
      */
-    void attemptBeginResearch(final PlayerEntity player, final IColony colony, final IGlobalResearch research);
+    void attemptBeginResearch(final Player player, final IColony colony, final IGlobalResearch research);
 
     /**
      * Reset a research, and optionally undo its effects.  If the research is begun but incomplete, cancel it.
@@ -75,14 +75,14 @@ public interface ILocalResearchTree
      * @param colony     the colony to remove effects from, or null if no effect reset is desired.
      * @param research   the local research descriptor.
      */
-    void attemptResetResearch(PlayerEntity player, @Nullable final IColony colony, ILocalResearch research);
+    void attemptResetResearch(Player player, @Nullable final IColony colony, ILocalResearch research);
 
     /**
      * Write the research tree to NBT.
      *
      * @param compound the compound.
      */
-    void writeToNBT(final CompoundNBT compound);
+    void writeToNBT(final CompoundTag compound);
 
     /**
      * Read the research tree from NBT.
@@ -90,5 +90,5 @@ public interface ILocalResearchTree
      * @param compound the compound to read it from.
      * @param effects  the effects.
      */
-    void readFromNBT(final CompoundNBT compound, final IResearchEffectManager effects);
+    void readFromNBT(final CompoundTag compound, final IResearchEffectManager effects);
 }

@@ -2,31 +2,31 @@ package com.minecolonies.coremod.entity;
 
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.MoverType;
-import net.minecraft.entity.item.ExperienceOrbEntity;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.projectile.ProjectileHelper;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.entity.ExperienceOrb;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.loot.*;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.IPacket;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.network.datasync.DataSerializers;
-import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.tags.FluidTags;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.EntityRayTraceResult;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.util.Mth;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
@@ -37,9 +37,15 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import net.minecraft.world.level.storage.loot.BuiltInLootTables;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+
 public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnData
 {
-    private static final DataParameter<Integer> DATA_HOOKED_ENTITY = EntityDataManager.defineId(NewBobberEntity.class, DataSerializers.INT);
+    private static final EntityDataAccessor<Integer> DATA_HOOKED_ENTITY = SynchedEntityData.defineId(NewBobberEntity.class, EntityDataSerializers.INT);
     private static final int                    XP_PER_CATCH       = 2;
     private              boolean                inGround;
     private              int                    ticksInGround;
@@ -60,15 +66,15 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
     /**
      * Saves the bobber position upon catch
      */
-    private Vector3d onWaterPos;
+    private Vec3 onWaterPos;
 
-    public NewBobberEntity(final EntityType<?> type, final World world)
+    public NewBobberEntity(final EntityType<?> type, final Level world)
     {
         super(type, world);
         this.noCulling = true;
     }
 
-    public NewBobberEntity(final FMLPlayMessages.SpawnEntity spawnEntity, final World world)
+    public NewBobberEntity(final FMLPlayMessages.SpawnEntity spawnEntity, final Level world)
     {
         this(ModEntities.FISHHOOK, world);
     }
@@ -85,22 +91,22 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
         this.angler = citizen;
         final float pitch = (float) (Math.random()*40.0-10.0);
         final float yaw = this.angler.yRot;
-        final float cowYaw = MathHelper.cos(-yaw * ((float) Math.PI / 180F) - (float) Math.PI);
-        final float sinYaw = MathHelper.sin(-yaw * ((float) Math.PI / 180F) - (float) Math.PI);
-        final float cosPitch = -MathHelper.cos(-pitch * ((float) Math.PI / 180F));
-        final float sinPitch = MathHelper.sin(-pitch * ((float) Math.PI / 180F));
+        final float cowYaw = Mth.cos(-yaw * ((float) Math.PI / 180F) - (float) Math.PI);
+        final float sinYaw = Mth.sin(-yaw * ((float) Math.PI / 180F) - (float) Math.PI);
+        final float cosPitch = -Mth.cos(-pitch * ((float) Math.PI / 180F));
+        final float sinPitch = Mth.sin(-pitch * ((float) Math.PI / 180F));
         final double xYaw = this.angler.getX() - (double) sinYaw * 0.3D;
         final double eyePos = this.angler.getEyeY();
         final double zYaw = this.angler.getZ() - (double) cowYaw * 0.3D;
         this.moveTo(xYaw, eyePos, zYaw, yaw, pitch);
-        Vector3d vec = new Vector3d( (-sinYaw),  MathHelper.clamp(-(sinPitch / cosPitch), -5.0F, 5.0F), (-cowYaw));
+        Vec3 vec = new Vec3( (-sinYaw),  Mth.clamp(-(sinPitch / cosPitch), -5.0F, 5.0F), (-cowYaw));
         final double d3 = vec.length();
         vec = vec.multiply(0.6D / d3 + 0.5D + this.random.nextGaussian() * 0.0045D,
           0.6D / d3 + 0.5D + this.random.nextGaussian() * 0.0045D,
           0.6D / d3 + 0.5D + this.random.nextGaussian() * 0.0045D);
         this.setDeltaMovement(vec);
-        this.yRot = (float) (MathHelper.atan2(vec.x, vec.z) * (double) (180F / (float) Math.PI));
-        this.xRot = (float) (MathHelper.atan2(vec.y, (double) MathHelper.sqrt(getHorizontalDistanceSqr(vec))) * (double) (180F / (float) Math.PI));
+        this.yRot = (float) (Mth.atan2(vec.x, vec.z) * (double) (180F / (float) Math.PI));
+        this.xRot = (float) (Mth.atan2(vec.y, (double) Mth.sqrt(getHorizontalDistanceSqr(vec))) * (double) (180F / (float) Math.PI));
         this.yRotO = this.yRot;
         this.xRotO = this.xRot;
         this.luck = Math.max(0, luck);
@@ -112,7 +118,7 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
         this.getEntityData().define(DATA_HOOKED_ENTITY, 0);
     }
 
-    public void onSyncedDataUpdated(final DataParameter<?> key)
+    public void onSyncedDataUpdated(final EntityDataAccessor<?> key)
     {
         if (DATA_HOOKED_ENTITY.equals(key))
         {
@@ -133,13 +139,13 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
     }
 
     @Override
-    protected void readAdditionalSaveData(@NotNull final CompoundNBT compound)
+    protected void readAdditionalSaveData(@NotNull final CompoundTag compound)
     {
 
     }
 
     @Override
-    protected void addAdditionalSaveData(final CompoundNBT compound)
+    protected void addAdditionalSaveData(final CompoundTag compound)
     {
 
     }
@@ -214,7 +220,7 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
             {
                 if (this.caughtEntity != null)
                 {
-                    this.setDeltaMovement(Vector3d.ZERO);
+                    this.setDeltaMovement(Vec3.ZERO);
                     this.currentState = NewBobberEntity.State.HOOKED_IN_ENTITY;
                     return;
                 }
@@ -238,7 +244,7 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
                 else
                 {
                     this.ticksInAir = 0;
-                    this.setDeltaMovement(Vector3d.ZERO);
+                    this.setDeltaMovement(Vec3.ZERO);
                 }
             }
             else
@@ -263,7 +269,7 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
 
                 if (this.currentState == NewBobberEntity.State.BOBBING)
                 {
-                    final Vector3d Vector3d = this.getDeltaMovement();
+                    final Vec3 Vector3d = this.getDeltaMovement();
                     double d0 = this.getY() + Vector3d.y - (double) blockpos.getY() - (double) f;
                     if (Math.abs(d0) < 0.01D)
                     {
@@ -294,8 +300,8 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
     {
         final ItemStack itemstack = this.angler.getMainHandItem();
         final ItemStack itemstack1 = this.angler.getOffhandItem();
-        final boolean flag = itemstack.getItem() instanceof net.minecraft.item.FishingRodItem;
-        final boolean flag1 = itemstack1.getItem() instanceof net.minecraft.item.FishingRodItem;
+        final boolean flag = itemstack.getItem() instanceof net.minecraft.world.item.FishingRodItem;
+        final boolean flag1 = itemstack1.getItem() instanceof net.minecraft.world.item.FishingRodItem;
         if (!this.angler.removed && this.angler.isAlive() && (flag || flag1) && !(this.distanceToSqr(this.angler) > 1024.0D))
         {
             return false;
@@ -309,11 +315,11 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
 
     private void updateRotation()
     {
-        final Vector3d Vector3d = this.getDeltaMovement();
-        final float f = MathHelper.sqrt(getHorizontalDistanceSqr(Vector3d));
-        this.yRot = (float) (MathHelper.atan2(Vector3d.x, Vector3d.z) * (double) (180F / (float) Math.PI));
+        final Vec3 Vector3d = this.getDeltaMovement();
+        final float f = Mth.sqrt(getHorizontalDistanceSqr(Vector3d));
+        this.yRot = (float) (Mth.atan2(Vector3d.x, Vector3d.z) * (double) (180F / (float) Math.PI));
 
-        for (this.xRot = (float) (MathHelper.atan2(Vector3d.y, (double) f) * (double) (180F / (float) Math.PI));
+        for (this.xRot = (float) (Mth.atan2(Vector3d.y, (double) f) * (double) (180F / (float) Math.PI));
           this.xRot - this.xRotO < -180.0F;
           this.xRotO -= 360.0F)
         {
@@ -335,19 +341,19 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
             this.yRotO += 360.0F;
         }
 
-        this.xRot = MathHelper.lerp(0.2F, this.xRotO, this.xRot);
-        this.yRot = MathHelper.lerp(0.2F, this.yRotO, this.yRot);
+        this.xRot = Mth.lerp(0.2F, this.xRotO, this.xRot);
+        this.yRot = Mth.lerp(0.2F, this.yRotO, this.yRot);
     }
 
     private void checkCollision()
     {
-        final RayTraceResult raytraceresult = ProjectileHelper.getHitResult(this,
+        final HitResult raytraceresult = ProjectileUtil.getHitResult(this,
           (entity) -> !entity.isSpectator() && (entity.isPickable() || entity instanceof ItemEntity) && (entity != this.angler || this.ticksInAir >= 5));
-        if (raytraceresult.getType() != RayTraceResult.Type.MISS)
+        if (raytraceresult.getType() != HitResult.Type.MISS)
         {
-            if (raytraceresult.getType() == RayTraceResult.Type.ENTITY)
+            if (raytraceresult.getType() == HitResult.Type.ENTITY)
             {
-                this.caughtEntity = ((EntityRayTraceResult) raytraceresult).getEntity();
+                this.caughtEntity = ((EntityHitResult) raytraceresult).getEntity();
                 this.setHookedEntity();
             }
             else
@@ -364,7 +370,7 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
 
     private void catchingFish(final BlockPos p_190621_1_)
     {
-        final ServerWorld serverworld = (ServerWorld) this.level;
+        final ServerLevel serverworld = (ServerLevel) this.level;
         int i = 1;
         final BlockPos blockpos = p_190621_1_.above();
         if (this.random.nextFloat() < 0.25F && this.level.isRainingAt(blockpos))
@@ -397,12 +403,12 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
             {
                 this.fishApproachAngle = (float) ((double) this.fishApproachAngle + this.random.nextGaussian() * 4.0D);
                 final float f = this.fishApproachAngle * ((float) Math.PI / 180F);
-                final float f1 = MathHelper.sin(f);
-                final float f2 = MathHelper.cos(f);
+                final float f1 = Mth.sin(f);
+                final float f2 = Mth.cos(f);
                 final double d0 = this.getX() + (double) (f1 * (float) this.ticksCatchableDelay * 0.1F);
-                final double d1 = (double) ((float) MathHelper.floor(this.getY()) + 1.0F);
+                final double d1 = (double) ((float) Mth.floor(this.getY()) + 1.0F);
                 final double d2 = this.getZ() + (double) (f2 * (float) this.ticksCatchableDelay * 0.1F);
-                if (serverworld.getBlockState(new BlockPos((int) d0, (int) d1 - 1, (int) d2)).getMaterial() == net.minecraft.block.material.Material.WATER)
+                if (serverworld.getBlockState(new BlockPos((int) d0, (int) d1 - 1, (int) d2)).getMaterial() == net.minecraft.world.level.material.Material.WATER)
                 {
                     if (this.random.nextFloat() < 0.15F)
                     {
@@ -418,10 +424,10 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
             else
             {
                 readyToCatch = true;
-                onWaterPos = new Vector3d(getX(), getY(), getZ());
+                onWaterPos = new Vec3(getX(), getY(), getZ());
 
-                final Vector3d Vector3d = this.getDeltaMovement();
-                this.setDeltaMovement(Vector3d.x, (double) (-0.4F * MathHelper.nextFloat(this.random, 0.6F, 1.0F)), Vector3d.z);
+                final Vec3 Vector3d = this.getDeltaMovement();
+                this.setDeltaMovement(Vector3d.x, (double) (-0.4F * Mth.nextFloat(this.random, 0.6F, 1.0F)), Vector3d.z);
                 this.playSound(SoundEvents.FISHING_BOBBER_SPLASH, 0.25F, 1.0F + (this.random.nextFloat() - this.random.nextFloat()) * 0.4F);
                 final double d3 = this.getY() + 0.5D;
                 serverworld.sendParticles(ParticleTypes.BUBBLE,
@@ -442,7 +448,7 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
                   0.0D,
                   (double) this.getBbWidth(),
                   (double) 0.2F);
-                this.ticksCatchable = MathHelper.nextInt(this.random, 20, 40);
+                this.ticksCatchable = Mth.nextInt(this.random, 20, 40);
             }
         }
         else if (this.ticksCaughtDelay > 0)
@@ -464,12 +470,12 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
 
             if (this.random.nextFloat() < f5)
             {
-                final float f6 = MathHelper.nextFloat(this.random, 0.0F, 360.0F) * ((float) Math.PI / 180F);
-                final float f7 = MathHelper.nextFloat(this.random, 25.0F, 60.0F);
-                final double d4 = this.getX() + (double) (MathHelper.sin(f6) * f7 * 0.1F);
-                final double d5 = (double) ((float) MathHelper.floor(this.getY()) + 1.0F);
-                final double d6 = this.getZ() + (double) (MathHelper.cos(f6) * f7 * 0.1F);
-                if (serverworld.getBlockState(new BlockPos(d4, d5 - 1.0D, d6)).getMaterial() == net.minecraft.block.material.Material.WATER)
+                final float f6 = Mth.nextFloat(this.random, 0.0F, 360.0F) * ((float) Math.PI / 180F);
+                final float f7 = Mth.nextFloat(this.random, 25.0F, 60.0F);
+                final double d4 = this.getX() + (double) (Mth.sin(f6) * f7 * 0.1F);
+                final double d5 = (double) ((float) Mth.floor(this.getY()) + 1.0F);
+                final double d6 = this.getZ() + (double) (Mth.cos(f6) * f7 * 0.1F);
+                if (serverworld.getBlockState(new BlockPos(d4, d5 - 1.0D, d6)).getMaterial() == net.minecraft.world.level.material.Material.WATER)
                 {
                     serverworld.sendParticles(ParticleTypes.SPLASH, d4, d5, d6, 2 + this.random.nextInt(2), (double) 0.1F, 0.0D, (double) 0.1F, 0.0D);
                 }
@@ -477,13 +483,13 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
 
             if (this.ticksCaughtDelay <= 0)
             {
-                this.fishApproachAngle = MathHelper.nextFloat(this.random, 0.0F, 360.0F);
-                this.ticksCatchableDelay = MathHelper.nextInt(this.random, 20, 80);
+                this.fishApproachAngle = Mth.nextFloat(this.random, 0.0F, 360.0F);
+                this.ticksCatchableDelay = Mth.nextInt(this.random, 20, 80);
             }
         }
         else
         {
-            this.ticksCaughtDelay = MathHelper.nextInt(this.random, 1060, 1300);
+            this.ticksCaughtDelay = Mth.nextInt(this.random, 1060, 1300);
             this.ticksCaughtDelay -= this.lureSpeed * 20 * 5;
             this.ticksCaughtDelay = Math.max(5, ticksCaughtDelay);
         }
@@ -503,16 +509,16 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
             }
             else if (this.ticksCatchable > 0)
             {
-                LootContext.Builder lootcontext$builder = (new LootContext.Builder((ServerWorld)this.level))
-                                                            .withParameter(LootParameters.ORIGIN, this.position())
-                                                            .withParameter(LootParameters.TOOL, this.getAngler().getMainHandItem())
-                                                            .withParameter(LootParameters.THIS_ENTITY, this)
+                LootContext.Builder lootcontext$builder = (new LootContext.Builder((ServerLevel)this.level))
+                                                            .withParameter(LootContextParams.ORIGIN, this.position())
+                                                            .withParameter(LootContextParams.TOOL, this.getAngler().getMainHandItem())
+                                                            .withParameter(LootContextParams.THIS_ENTITY, this)
                                                             .withRandom(this.random)
                                                             .withLuck((float)this.luck);
 
-                lootcontext$builder.withParameter(LootParameters.KILLER_ENTITY, this.angler).withParameter(LootParameters.THIS_ENTITY, this);
-                final LootTable loottable = this.level.getServer().getLootTables().get(LootTables.FISHING);
-                final List<ItemStack> list = loottable.getRandomItems(lootcontext$builder.create(LootParameterSets.FISHING));
+                lootcontext$builder.withParameter(LootContextParams.KILLER_ENTITY, this.angler).withParameter(LootContextParams.THIS_ENTITY, this);
+                final LootTable loottable = this.level.getServer().getLootTables().get(BuiltInLootTables.FISHING);
+                final List<ItemStack> list = loottable.getRandomItems(lootcontext$builder.create(LootContextParamSets.FISHING));
 
                 for (final ItemStack itemstack : list)
                 {
@@ -523,7 +529,7 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
                     itementity.noPhysics = true;
                     itementity.setDeltaMovement(d0 * 0.1D, d1 * 0.1D + Math.sqrt(Math.sqrt(d0 * d0 + d1 * d1 + d2 * d2)) * 0.08D, d2 * 0.1D);
                     this.level.addFreshEntity(itementity);
-                    this.angler.level.addFreshEntity(new ExperienceOrbEntity(this.angler.level,
+                    this.angler.level.addFreshEntity(new ExperienceOrb(this.angler.level,
                       this.angler.getX(),
                       this.angler.getY() + 0.5D,
                       this.angler.getZ() + 0.5D,
@@ -565,7 +571,7 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
     {
         if (this.angler != null)
         {
-            final Vector3d Vector3d = (new Vector3d(this.angler.getX() - this.getX(), this.angler.getY() - this.getY(), this.angler.getZ() - this.getZ())).scale(0.1D);
+            final Vec3 Vector3d = (new Vec3(this.angler.getX() - this.getX(), this.angler.getY() - this.getY(), this.angler.getZ() - this.getZ())).scale(0.1D);
             this.caughtEntity.setDeltaMovement(this.caughtEntity.getDeltaMovement().add(Vector3d));
         }
     }
@@ -594,13 +600,13 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
 
     @Override
     @NotNull
-    public IPacket<?> getAddEntityPacket()
+    public Packet<?> getAddEntityPacket()
     {
         return NetworkHooks.getEntitySpawningPacket(this);
     }
 
     @Override
-    public void writeSpawnData(final PacketBuffer buffer)
+    public void writeSpawnData(final FriendlyByteBuf buffer)
     {
         if (angler != null)
         {
@@ -613,7 +619,7 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
     }
 
     @Override
-    public void readSpawnData(final PacketBuffer additionalData)
+    public void readSpawnData(final FriendlyByteBuf additionalData)
     {
         final int citizenId = additionalData.readInt();
         if (citizenId != -1)

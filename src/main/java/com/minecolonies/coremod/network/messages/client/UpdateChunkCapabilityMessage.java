@@ -6,10 +6,10 @@ import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.util.ChunkCapData;
 import com.minecolonies.coremod.util.ChunkClientDataHelper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.chunk.Chunk;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
@@ -48,13 +48,13 @@ public class UpdateChunkCapabilityMessage implements IMessage
     }
 
     @Override
-    public void fromBytes(@NotNull final PacketBuffer buf)
+    public void fromBytes(@NotNull final FriendlyByteBuf buf)
     {
         chunkCapData = ChunkCapData.fromBytes(buf);
     }
 
     @Override
-    public void toBytes(@NotNull final PacketBuffer buf)
+    public void toBytes(@NotNull final FriendlyByteBuf buf)
     {
         chunkCapData.toBytes(buf);
     }
@@ -69,7 +69,7 @@ public class UpdateChunkCapabilityMessage implements IMessage
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
-        final ClientWorld world = Minecraft.getInstance().level;
+        final ClientLevel world = Minecraft.getInstance().level;
 
         if (!WorldUtil.isChunkLoaded(world, new ChunkPos(chunkCapData.x, chunkCapData.z)))
         {
@@ -77,7 +77,7 @@ public class UpdateChunkCapabilityMessage implements IMessage
             return;
         }
 
-        final Chunk chunk = world.getChunk(chunkCapData.x, chunkCapData.z);
+        final LevelChunk chunk = world.getChunk(chunkCapData.x, chunkCapData.z);
         final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
 
         if (cap != null && cap.getOwningColony() != chunkCapData.owningColony)

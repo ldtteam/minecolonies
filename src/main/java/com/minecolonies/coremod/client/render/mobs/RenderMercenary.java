@@ -1,18 +1,18 @@
 package com.minecolonies.coremod.client.render.mobs;
 
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.client.renderer.entity.layers.BipedArmorLayer;
-import net.minecraft.client.renderer.entity.layers.HeldItemLayer;
-import net.minecraft.client.renderer.entity.model.BipedModel;
-import net.minecraft.entity.CreatureEntity;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
+import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
+import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * Renderer for EntityMercenary.
  */
-public class RenderMercenary extends MobRenderer<CreatureEntity, BipedModel<CreatureEntity>>
+public class RenderMercenary extends MobRenderer<PathfinderMob, HumanoidModel<PathfinderMob>>
 {
     /**
      * Texture of the entity.
@@ -24,16 +24,16 @@ public class RenderMercenary extends MobRenderer<CreatureEntity, BipedModel<Crea
      *
      * @param renderManagerIn RenderManager
      */
-    public RenderMercenary(final EntityRendererManager renderManagerIn)
+    public RenderMercenary(final EntityRenderDispatcher renderManagerIn)
     {
-        super(renderManagerIn, new BipedModel<>(1.0F), 0.5f);
+        super(renderManagerIn, new HumanoidModel<>(1.0F), 0.5f);
 
-        this.addLayer(new HeldItemLayer<>(this));
-        this.addLayer(new BipedArmorLayer<>(this, new BipedModel<>(1.0F), new BipedModel<>(1.0F)));
+        this.addLayer(new ItemInHandLayer<>(this));
+        this.addLayer(new HumanoidArmorLayer<>(this, new HumanoidModel<>(1.0F), new HumanoidModel<>(1.0F)));
     }
 
     @Override
-    public ResourceLocation getTextureLocation(final CreatureEntity entity)
+    public ResourceLocation getTextureLocation(final PathfinderMob entity)
     {
         return TEXTURE;
     }

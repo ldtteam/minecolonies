@@ -1,7 +1,7 @@
 package com.minecolonies.api.sounds;
 
 import com.minecolonies.api.entity.mobs.RaiderType;
-import net.minecraft.util.SoundEvent;
+import net.minecraft.sounds.SoundEvent;
 
 import java.util.HashMap;
 import java.util.Map;

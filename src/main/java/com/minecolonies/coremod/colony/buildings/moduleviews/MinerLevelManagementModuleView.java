@@ -4,7 +4,7 @@ import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
 import com.minecolonies.api.colony.workorders.WorkOrderView;
 import com.minecolonies.coremod.client.gui.modules.WindowHutMinerModule;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -34,7 +34,7 @@ public class MinerLevelManagementModuleView extends AbstractBuildingModuleView
     private List<WorkOrderView> workOrders = new ArrayList<>();
 
     @Override
-    public void deserialize(@NotNull final PacketBuffer buf)
+    public void deserialize(@NotNull final FriendlyByteBuf buf)
     {
         current = buf.readInt();
         final int size = buf.readInt();

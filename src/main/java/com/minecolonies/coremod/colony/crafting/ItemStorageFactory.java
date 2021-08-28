@@ -6,9 +6,9 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.crafting.IItemStorageFactory;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.constant.TypeConstants;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -62,10 +62,10 @@ public class ItemStorageFactory implements IItemStorageFactory
 
     @NotNull
     @Override
-    public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final ItemStorage storage)
+    public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final ItemStorage storage)
     {
-        final CompoundNBT compound = new CompoundNBT();
-        @NotNull CompoundNBT stackTag = new CompoundNBT();
+        final CompoundTag compound = new CompoundTag();
+        @NotNull CompoundTag stackTag = new CompoundTag();
         storage.getItemStack().save(stackTag);
         compound.put(TAG_STACK, stackTag);
         compound.putInt(TAG_SIZE, storage.getAmount());
@@ -76,7 +76,7 @@ public class ItemStorageFactory implements IItemStorageFactory
 
     @NotNull
     @Override
-    public ItemStorage deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
+    public ItemStorage deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
     {
         final ItemStack stack = ItemStack.of(nbt.getCompound(TAG_STACK));
         final int size = nbt.getInt(TAG_SIZE);
@@ -86,7 +86,7 @@ public class ItemStorageFactory implements IItemStorageFactory
     }
 
     @Override
-    public void serialize(IFactoryController controller, ItemStorage input, PacketBuffer packetBuffer)
+    public void serialize(IFactoryController controller, ItemStorage input, FriendlyByteBuf packetBuffer)
     {
         packetBuffer.writeItem(input.getItemStack());
         packetBuffer.writeVarInt(input.getAmount());
@@ -95,7 +95,7 @@ public class ItemStorageFactory implements IItemStorageFactory
     }
 
     @Override
-    public ItemStorage deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
+    public ItemStorage deserialize(IFactoryController controller, FriendlyByteBuf buffer) throws Throwable
     {
         final ItemStack stack = buffer.readItem();
         final int size = buffer.readVarInt();

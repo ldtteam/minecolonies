@@ -3,11 +3,11 @@ package com.minecolonies.api.advancements.citizen_eat_food;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.advancements.AbstractCriterionTrigger;
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.advancements.criterion.ItemPredicate;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.loot.ConditionArrayParser;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.advancements.critereon.ItemPredicate;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.advancements.critereon.DeserializationContext;
+import net.minecraft.resources.ResourceLocation;
 
 public class CitizenEatFoodTrigger extends AbstractCriterionTrigger<CitizenEatFoodListeners, CitizenEatFoodCriterionInstance>
 {
@@ -21,7 +21,7 @@ public class CitizenEatFoodTrigger extends AbstractCriterionTrigger<CitizenEatFo
      * @param player the player the check regards
      * @param foodItemStack the food eaten by the citizen
      */
-    public void trigger(final ServerPlayerEntity player, final ItemStack foodItemStack)
+    public void trigger(final ServerPlayer player, final ItemStack foodItemStack)
     {
         if (player != null)
         {
@@ -34,7 +34,7 @@ public class CitizenEatFoodTrigger extends AbstractCriterionTrigger<CitizenEatFo
     }
     
     @Override
-    public CitizenEatFoodCriterionInstance createInstance(final JsonObject jsonObject, final ConditionArrayParser conditionArrayParser)
+    public CitizenEatFoodCriterionInstance createInstance(final JsonObject jsonObject, final DeserializationContext conditionArrayParser)
     {
         if (jsonObject.has("items"))
         {

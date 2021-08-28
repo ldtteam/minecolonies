@@ -34,7 +34,7 @@ import com.minecolonies.coremod.entity.ai.registry.MobAIRegistry;
 import com.minecolonies.coremod.entity.pathfinding.registry.PathNavigateRegistry;
 import com.minecolonies.coremod.research.GlobalResearchTree;
 import com.minecolonies.coremod.util.FurnaceRecipes;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryBuilder;

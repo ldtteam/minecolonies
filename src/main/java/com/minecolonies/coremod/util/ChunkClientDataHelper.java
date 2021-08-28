@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.util;
 
 import com.minecolonies.api.colony.IColonyTagCapability;
-import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.level.chunk.LevelChunk;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -34,7 +34,7 @@ public class ChunkClientDataHelper
      *
      * @param chunk the chunk to apply it to.
      */
-    public static void applyLate(final Chunk chunk)
+    public static void applyLate(final LevelChunk chunk)
     {
         if (chunkCapsToAdd.isEmpty())
         {
@@ -60,7 +60,7 @@ public class ChunkClientDataHelper
      * @param chunkCapData colony data to apply
      * @param chunk        the chunk to apply to
      */
-    public static void applyCap(final ChunkCapData chunkCapData, final Chunk chunk)
+    public static void applyCap(final ChunkCapData chunkCapData, final LevelChunk chunk)
     {
         final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
         if (cap != null)

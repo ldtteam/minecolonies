@@ -13,11 +13,11 @@ import com.minecolonies.coremod.entity.mobs.aitasks.RaiderMeleeAI;
 import com.minecolonies.coremod.entity.mobs.aitasks.RaiderRangedAI;
 import com.minecolonies.coremod.entity.mobs.aitasks.RaiderWalkAI;
 import com.minecolonies.coremod.util.MultimapCollector;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.entity.ai.goal.LookAtGoal;
-import net.minecraft.entity.ai.goal.SwimGoal;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -46,11 +46,11 @@ public class MobAIRegistry implements IMobAIRegistry
     private static void setupMobAiTasks(final IMobAIRegistry registry)
     {
         registry
-          .registerNewAiTaskForMobs(PRIORITY_ZERO, SwimGoal::new)
+          .registerNewAiTaskForMobs(PRIORITY_ZERO, FloatGoal::new)
           .registerNewAiTargetTaskForMobs(PRIORITY_THREE, mob -> new EntityAIInteractToggleAble(mob, FENCE_TOGGLE))
           .registerNewAiTargetTaskForMobs(PRIORITY_THREE, mob -> new EntityAIBreakDoor(mob))
-          .registerNewAiTaskForMobs(PRIORITY_FIVE, mob -> new LookAtGoal(mob, PlayerEntity.class, MAX_WATCH_DISTANCE))
-          .registerNewAiTaskForMobs(PRIORITY_SIX, mob -> new LookAtGoal(mob, EntityCitizen.class, MAX_WATCH_DISTANCE))
+          .registerNewAiTaskForMobs(PRIORITY_FIVE, mob -> new LookAtPlayerGoal(mob, Player.class, MAX_WATCH_DISTANCE))
+          .registerNewAiTaskForMobs(PRIORITY_SIX, mob -> new LookAtPlayerGoal(mob, EntityCitizen.class, MAX_WATCH_DISTANCE))
           .registerNewStateAI(mob -> new RaiderMeleeAI<>(mob, mob.getAI()), mob -> !(mob instanceof IArcherMobEntity))
           .registerNewStateAI(mob -> new RaiderRangedAI<>(mob, mob.getAI()), mob -> mob instanceof IArcherMobEntity)
           .registerNewStateAI(mob -> new RaiderWalkAI(mob, mob.getAI()), mob -> true);

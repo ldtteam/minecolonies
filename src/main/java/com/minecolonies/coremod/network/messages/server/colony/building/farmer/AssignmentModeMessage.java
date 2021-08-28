@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.colony.buildings.modules.FarmerFieldModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFarmer;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,14 +37,14 @@ public class AssignmentModeMessage extends AbstractBuildingServerMessage<Buildin
     }
 
     @Override
-    public void fromBytesOverride(@NotNull final PacketBuffer buf)
+    public void fromBytesOverride(@NotNull final FriendlyByteBuf buf)
     {
 
         assignmentMode = buf.readBoolean();
     }
 
     @Override
-    public void toBytesOverride(@NotNull final PacketBuffer buf)
+    public void toBytesOverride(@NotNull final FriendlyByteBuf buf)
     {
 
         buf.writeBoolean(assignmentMode);

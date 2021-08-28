@@ -3,9 +3,9 @@ package com.minecolonies.api.colony.buildings.workerbuildings;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.AbstractTileEntityWareHouse;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 
 import java.util.Set;
 
@@ -39,14 +39,14 @@ public interface IWareHouse extends IBuilding
      *
      * @return the unmodifiable List of positions of them.
      */
-    Set<Vector3d> getRegisteredDeliverymen();
+    Set<Vec3> getRegisteredDeliverymen();
 
     /**
      * Upgrade all containers by 9 slots.
      *
      * @param world the world object.
      */
-    void upgradeContainers(World world);
+    void upgradeContainers(Level world);
 
     /**
      * Returns the tile entity that belongs to the colony building.

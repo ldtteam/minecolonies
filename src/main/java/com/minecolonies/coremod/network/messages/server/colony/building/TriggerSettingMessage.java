@@ -9,8 +9,8 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.modules.SettingsModule;
 import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -51,14 +51,14 @@ public class TriggerSettingMessage extends AbstractBuildingServerMessage<Abstrac
     }
 
     @Override
-    public void fromBytesOverride(@NotNull final PacketBuffer buf)
+    public void fromBytesOverride(@NotNull final FriendlyByteBuf buf)
     {
         this.key = buf.readResourceLocation();
         this.value = StandardFactoryController.getInstance().deserialize(buf);
     }
 
     @Override
-    public void toBytesOverride(@NotNull final PacketBuffer buf)
+    public void toBytesOverride(@NotNull final FriendlyByteBuf buf)
     {
         buf.writeResourceLocation(this.key);
         StandardFactoryController.getInstance().serialize(buf, this.value);

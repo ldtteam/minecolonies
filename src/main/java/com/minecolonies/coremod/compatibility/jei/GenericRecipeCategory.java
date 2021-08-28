@@ -10,21 +10,21 @@ import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.crafting.CustomRecipe;
 import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
 import com.minecolonies.coremod.colony.crafting.LootTableAnalyzer;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.gui.drawable.IDrawableStatic;
 import mezz.jei.api.gui.ingredient.IGuiItemStackGroup;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.ingredients.IIngredients;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.client.renderer.Rectangle2d;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipeType;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.client.renderer.Rect2i;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
@@ -249,7 +249,7 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
     }
 
     @Override
-    public void draw(@NotNull final IGenericRecipe recipe, @NotNull final MatrixStack matrixStack, final double mouseX, final double mouseY)
+    public void draw(@NotNull final IGenericRecipe recipe, @NotNull final PoseStack matrixStack, final double mouseX, final double mouseY)
     {
         super.draw(recipe, matrixStack, mouseX, mouseY);
 
@@ -267,15 +267,15 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
 
     @NotNull
     @Override
-    public List<ITextComponent> getTooltipStrings(@NotNull final IGenericRecipe recipe, final double mouseX, final double mouseY)
+    public List<Component> getTooltipStrings(@NotNull final IGenericRecipe recipe, final double mouseX, final double mouseY)
     {
-        final List<ITextComponent> tooltips = new ArrayList<>(super.getTooltipStrings(recipe, mouseX, mouseY));
+        final List<Component> tooltips = new ArrayList<>(super.getTooltipStrings(recipe, mouseX, mouseY));
 
         if (recipe.getIntermediate() != Blocks.AIR)
         {
-            if (new Rectangle2d(CITIZEN_X + CITIZEN_W + 4, CITIZEN_Y - 2, 24, 24).contains((int) mouseX, (int) mouseY))
+            if (new Rect2i(CITIZEN_X + CITIZEN_W + 4, CITIZEN_Y - 2, 24, 24).contains((int) mouseX, (int) mouseY))
             {
-                tooltips.add(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_JEI_PREFIX + "intermediate.tip", recipe.getIntermediate().getName()));
+                tooltips.add(new TranslatableComponent(TranslationConstants.COM_MINECOLONIES_JEI_PREFIX + "intermediate.tip", recipe.getIntermediate().getName()));
             }
         }
 
@@ -294,14 +294,14 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
     }
 
     @NotNull
-    public List<IGenericRecipe> findRecipes(@NotNull final Map<IRecipeType<?>, List<IGenericRecipe>> vanilla)
+    public List<IGenericRecipe> findRecipes(@NotNull final Map<RecipeType<?>, List<IGenericRecipe>> vanilla)
     {
         final List<IGenericRecipe> recipes = new ArrayList<>();
 
         // vanilla shaped and shapeless crafting recipes
         if (this.crafting.canLearnCraftingRecipes())
         {
-            for (final IGenericRecipe recipe : vanilla.get(IRecipeType.CRAFTING))
+            for (final IGenericRecipe recipe : vanilla.get(RecipeType.CRAFTING))
             {
                 if (!this.crafting.canLearnLargeRecipes() && recipe.getGridSize() > 2) continue;
                 if (!this.crafting.isRecipeCompatible(recipe)) continue;
@@ -313,7 +313,7 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
         // vanilla furnace recipes (do we want to check smoking and blasting too?)
         if (this.crafting.canLearnFurnaceRecipes())
         {
-            for (final IGenericRecipe recipe : vanilla.get(IRecipeType.SMELTING))
+            for (final IGenericRecipe recipe : vanilla.get(RecipeType.SMELTING))
             {
                 if (!this.crafting.isRecipeCompatible(recipe)) continue;
 

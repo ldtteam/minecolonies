@@ -1,11 +1,11 @@
 package com.minecolonies.coremod.util.text;
 
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.ChatFormatting;
 import org.jetbrains.annotations.NotNull;
 
-public class NonSiblingFormattingTextComponent extends StringTextComponent
+public class NonSiblingFormattingTextComponent extends TextComponent
 {
     public NonSiblingFormattingTextComponent()
     {
@@ -18,7 +18,7 @@ public class NonSiblingFormattingTextComponent extends StringTextComponent
     {
         StringBuilder stringbuilder = new StringBuilder();
 
-        for (ITextComponent itextcomponent : this.siblings)
+        for (Component itextcomponent : this.siblings)
         {
             String s = itextcomponent.getString();
 
@@ -28,7 +28,7 @@ public class NonSiblingFormattingTextComponent extends StringTextComponent
             }
         }
 
-        stringbuilder.append(TextFormatting.RESET);
+        stringbuilder.append(ChatFormatting.RESET);
 
         return stringbuilder.toString();
     }

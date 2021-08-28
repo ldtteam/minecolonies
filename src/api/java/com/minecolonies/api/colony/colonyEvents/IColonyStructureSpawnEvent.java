@@ -1,7 +1,7 @@
 package com.minecolonies.api.colony.colonyEvents;
 
 import com.minecolonies.api.util.Tuple;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
 
 import java.util.List;
 

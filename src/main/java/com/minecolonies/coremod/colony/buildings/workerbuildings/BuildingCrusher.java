@@ -21,11 +21,11 @@ import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildin
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.colony.jobs.JobCrusher;
 import com.minecolonies.coremod.network.messages.server.colony.building.crusher.CrusherSetModeMessage;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -242,7 +242,7 @@ public class BuildingCrusher extends AbstractBuildingWorker
     }
 
     @Override
-    public void deserializeNBT(final CompoundNBT compound)
+    public void deserializeNBT(final CompoundTag compound)
     {
         super.deserializeNBT(compound);
         this.dailyQuantity = compound.getInt(TAG_DAILY);
@@ -259,14 +259,14 @@ public class BuildingCrusher extends AbstractBuildingWorker
     }
 
     @Override
-    public CompoundNBT serializeNBT()
+    public CompoundTag serializeNBT()
     {
-        final CompoundNBT compound = super.serializeNBT();
+        final CompoundTag compound = super.serializeNBT();
         compound.putInt(TAG_DAILY, dailyQuantity);
         compound.putInt(TAG_CURRENT_DAILY, currentDailyQuantity);
         if (crusherMode != null)
         {
-            final CompoundNBT crusherModeNBT = new CompoundNBT();
+            final CompoundTag crusherModeNBT = new CompoundTag();
             crusherMode.getItemStack().save(crusherModeNBT);
             compound.put(TAG_CRUSHER_MODE, crusherModeNBT);
         }
@@ -276,7 +276,7 @@ public class BuildingCrusher extends AbstractBuildingWorker
     }
 
     @Override
-    public void serializeToView(@NotNull final PacketBuffer buf)
+    public void serializeToView(@NotNull final FriendlyByteBuf buf)
     {
         super.serializeToView(buf);
 
@@ -342,7 +342,7 @@ public class BuildingCrusher extends AbstractBuildingWorker
         }
 
         @Override
-        public void deserialize(@NotNull final PacketBuffer buf)
+        public void deserialize(@NotNull final FriendlyByteBuf buf)
         {
             super.deserialize(buf);
 

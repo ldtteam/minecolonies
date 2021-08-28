@@ -8,8 +8,8 @@ import mezz.jei.api.gui.ingredient.IGuiIngredient;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandlerHelper;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -41,7 +41,7 @@ public class PrivateSmeltingTeachingTransferHandler implements IRecipeTransferHa
             @NotNull final ContainerCraftingFurnace craftingGUIBuilding,
             @NotNull final Object recipe,
             @NotNull final IRecipeLayout recipeLayout,
-            @NotNull final PlayerEntity player,
+            @NotNull final Player player,
             final boolean maxTransfer,
             final boolean doTransfer)
     {

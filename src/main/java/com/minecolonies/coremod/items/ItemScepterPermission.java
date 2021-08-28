@@ -6,18 +6,18 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.server.colony.ChangeFreeToInteractBlockMessage;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -53,9 +53,9 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
     }
 
     @NotNull
-    private static ActionResultType handleAddBlockType(
-      final PlayerEntity playerIn,
-      final World worldIn,
+    private static InteractionResult handleAddBlockType(
+      final Player playerIn,
+      final Level worldIn,
       final BlockPos pos,
       final IColonyView iColonyView)
     {
@@ -68,20 +68,20 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
           ChangeFreeToInteractBlockMessage.MessageType.ADD_BLOCK);
         Network.getNetwork().sendToServer(message);
 
-        return ActionResultType.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 
     @NotNull
-    private static ActionResultType handleAddLocation(
-      final PlayerEntity playerIn,
-      final World worldIn,
+    private static InteractionResult handleAddLocation(
+      final Player playerIn,
+      final Level worldIn,
       final BlockPos pos,
       final IColonyView iColonyView)
     {
         final ChangeFreeToInteractBlockMessage message = new ChangeFreeToInteractBlockMessage(iColonyView, pos, ChangeFreeToInteractBlockMessage.MessageType.ADD_BLOCK);
         Network.getNetwork().sendToServer(message);
 
-        return ActionResultType.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 
     /**
@@ -91,24 +91,24 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
      */
     @Override
     @NotNull
-    public ActionResultType useOn(final ItemUseContext ctx)
+    public InteractionResult useOn(final UseOnContext ctx)
     {
         if (!ctx.getLevel().isClientSide)
         {
-            return ActionResultType.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
         final ItemStack scepter = ctx.getPlayer().getItemInHand(ctx.getHand());
         if (!scepter.hasTag())
         {
-            scepter.setTag(new CompoundNBT());
+            scepter.setTag(new CompoundTag());
         }
 
         final IColonyView iColonyView = IColonyManager.getInstance().getClosestColonyView(ctx.getLevel(), ctx.getClickedPos());
         if (iColonyView == null)
         {
-            return ActionResultType.FAIL;
+            return InteractionResult.FAIL;
         }
-        final CompoundNBT compound = scepter.getTag();
+        final CompoundTag compound = scepter.getTag();
         return handleItemAction(compound, ctx.getPlayer(), ctx.getLevel(), ctx.getClickedPos(), iColonyView);
     }
 
@@ -122,28 +122,28 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
      */
     @Override
     @NotNull
-    public ActionResult<ItemStack> use(
-      final World worldIn,
-      final PlayerEntity playerIn,
-      final Hand hand)
+    public InteractionResultHolder<ItemStack> use(
+      final Level worldIn,
+      final Player playerIn,
+      final InteractionHand hand)
     {
         final ItemStack scepter = playerIn.getItemInHand(hand);
         if (worldIn.isClientSide)
         {
-            return new ActionResult<>(ActionResultType.SUCCESS, scepter);
+            return new InteractionResultHolder<>(InteractionResult.SUCCESS, scepter);
         }
         if (!scepter.hasTag())
         {
-            scepter.setTag(new CompoundNBT());
+            scepter.setTag(new CompoundTag());
         }
-        final CompoundNBT compound = scepter.getTag();
+        final CompoundTag compound = scepter.getTag();
 
         toggleItemMode(playerIn, compound);
 
-        return new ActionResult<>(ActionResultType.SUCCESS, scepter);
+        return new InteractionResultHolder<>(InteractionResult.SUCCESS, scepter);
     }
 
-    private static void toggleItemMode(final PlayerEntity playerIn, final CompoundNBT compound)
+    private static void toggleItemMode(final Player playerIn, final CompoundTag compound)
     {
         final String itemMode = compound.getString(TAG_ITEM_MODE);
 
@@ -164,10 +164,10 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
     }
 
     @NotNull
-    private static ActionResultType handleItemAction(
-      final CompoundNBT compound,
-      final PlayerEntity playerIn,
-      final World worldIn,
+    private static InteractionResult handleItemAction(
+      final CompoundTag compound,
+      final Player playerIn,
+      final Level worldIn,
       final BlockPos pos,
       final IColonyView iColonyView)
     {

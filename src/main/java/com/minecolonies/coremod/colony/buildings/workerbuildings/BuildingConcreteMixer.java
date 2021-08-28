@@ -18,16 +18,16 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.colony.jobs.JobConcreteMixer;
-import net.minecraft.block.BlockState;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.NBTUtil;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -77,7 +77,7 @@ public class BuildingConcreteMixer extends AbstractBuildingWorker implements IBu
     }
 
     @Override
-    public void registerBlockPosition(@NotNull final BlockState blockState, @NotNull final BlockPos pos, @NotNull final World world)
+    public void registerBlockPosition(@NotNull final BlockState blockState, @NotNull final BlockPos pos, @NotNull final Level world)
     {
         if (!blockState.getFluidState().isEmpty())
         {
@@ -97,21 +97,21 @@ public class BuildingConcreteMixer extends AbstractBuildingWorker implements IBu
     }
 
     @Override
-    public CompoundNBT serializeNBT()
+    public CompoundTag serializeNBT()
     {
-        final CompoundNBT compound = super.serializeNBT();
+        final CompoundTag compound = super.serializeNBT();
 
-        @NotNull final ListNBT waterMap = new ListNBT();
+        @NotNull final ListTag waterMap = new ListTag();
         for (@NotNull final Map.Entry<Integer, List<BlockPos>> entry : waterPos.entrySet())
         {
-            final CompoundNBT waterCompound = new CompoundNBT();
+            final CompoundTag waterCompound = new CompoundTag();
 
             waterCompound.putInt(TAG_LEVEL, entry.getKey());
 
-            @NotNull final ListNBT waterList = new ListNBT();
+            @NotNull final ListTag waterList = new ListTag();
             for (@NotNull final BlockPos pos : entry.getValue())
             {
-                waterList.add(NBTUtil.writeBlockPos(pos));
+                waterList.add(NbtUtils.writeBlockPos(pos));
             }
             waterCompound.put(TAG_WATER, waterList);
             waterMap.add(waterCompound);
@@ -121,25 +121,25 @@ public class BuildingConcreteMixer extends AbstractBuildingWorker implements IBu
     }
 
     @Override
-    public void deserializeNBT(final CompoundNBT compound)
+    public void deserializeNBT(final CompoundTag compound)
     {
         super.deserializeNBT(compound);
 
         waterPos.clear();
-        final ListNBT waterMapList = compound.getList(TAG_WATER, Constants.NBT.TAG_COMPOUND);
+        final ListTag waterMapList = compound.getList(TAG_WATER, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < waterMapList.size(); ++i)
         {
-            final CompoundNBT waterCompound = waterMapList.getCompound(i);
+            final CompoundTag waterCompound = waterMapList.getCompound(i);
             final int level = waterCompound.getInt(TAG_LEVEL);
             minWaterLevel = Math.min(minWaterLevel, level);
 
-            final ListNBT waterTagList = waterCompound.getList(TAG_WATER, Constants.NBT.TAG_COMPOUND);
+            final ListTag waterTagList = waterCompound.getList(TAG_WATER, Constants.NBT.TAG_COMPOUND);
             final List<BlockPos> water = new ArrayList<>();
             for (int j = 0; j < waterTagList.size(); ++j)
             {
-                final CompoundNBT waterSubCompound = waterTagList.getCompound(j);
+                final CompoundTag waterSubCompound = waterTagList.getCompound(j);
 
-                final BlockPos waterPos = NBTUtil.readBlockPos(waterSubCompound);
+                final BlockPos waterPos = NbtUtils.readBlockPos(waterSubCompound);
                 if (!water.contains(waterPos))
                 {
                     water.add(waterPos);

@@ -2,13 +2,13 @@ package com.minecolonies.api.crafting;
 
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import net.minecraft.block.Block;
-import net.minecraft.item.ItemStack;
-import net.minecraft.loot.LootContext;
-import net.minecraft.loot.LootParameterSets;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -82,7 +82,7 @@ public interface IRecipeStorage
      */
     boolean canFullFillRecipe(final int qty, final Map<ItemStorage, Integer> existingRequirements, @NotNull final List<IItemHandler> citizen, @NotNull final IBuilding building);
 
-    default boolean fullFillRecipe(@NotNull final World world, @NotNull final IItemHandler... inventories)
+    default boolean fullFillRecipe(@NotNull final Level world, @NotNull final IItemHandler... inventories)
     {
         return fullfillRecipe(world, Arrays.asList(inventories));
     }
@@ -109,7 +109,7 @@ public interface IRecipeStorage
      * @param handlers the handlers to use.
      * @return true if succesful.
      */
-    default boolean fullfillRecipe(final World world, final List<IItemHandler> handlers)
+    default boolean fullfillRecipe(final Level world, final List<IItemHandler> handlers)
     {
         return fullfillRecipeAndCopy(world, handlers) != null;
     }
@@ -131,9 +131,9 @@ public interface IRecipeStorage
      * @return true if succesful.
      */
     @Nullable
-    default List<ItemStack> fullfillRecipeAndCopy(final World world, final List<IItemHandler> handlers)
+    default List<ItemStack> fullfillRecipeAndCopy(final Level world, final List<IItemHandler> handlers)
     {
-        return fullfillRecipeAndCopy((new LootContext.Builder((ServerWorld) world)).create(LootParameterSets.EMPTY), handlers);
+        return fullfillRecipeAndCopy((new LootContext.Builder((ServerLevel) world)).create(LootContextParamSets.EMPTY), handlers);
     }
 
     /**

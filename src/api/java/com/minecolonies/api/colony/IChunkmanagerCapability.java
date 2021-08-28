@@ -2,11 +2,11 @@ package com.minecolonies.api.colony;
 
 import com.minecolonies.api.util.ChunkLoadStorage;
 import com.minecolonies.api.util.NBTUtils;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.util.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.core.Direction;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
@@ -95,9 +95,9 @@ public interface IChunkmanagerCapability
     class Storage implements Capability.IStorage<IChunkmanagerCapability>
     {
         @Override
-        public INBT writeNBT(@NotNull final Capability<IChunkmanagerCapability> capability, @NotNull final IChunkmanagerCapability instance, @Nullable final Direction side)
+        public Tag writeNBT(@NotNull final Capability<IChunkmanagerCapability> capability, @NotNull final IChunkmanagerCapability instance, @Nullable final Direction side)
         {
-            final CompoundNBT compound = new CompoundNBT();
+            final CompoundTag compound = new CompoundTag();
             compound.put(TAG_ALL_CHUNK_STORAGES,
               instance.getAllChunkStorages().entrySet().stream().map(entry -> write(entry.getKey(), entry.getValue())).collect(NBTUtils.toListNBT()));
             return compound;
@@ -106,11 +106,11 @@ public interface IChunkmanagerCapability
         @Override
         public void readNBT(
           @NotNull final Capability<IChunkmanagerCapability> capability, @NotNull final IChunkmanagerCapability instance,
-          @Nullable final Direction side, @NotNull final INBT nbt)
+          @Nullable final Direction side, @NotNull final Tag nbt)
         {
-            if (nbt instanceof CompoundNBT && ((CompoundNBT) nbt).getAllKeys().contains(TAG_ALL_CHUNK_STORAGES))
+            if (nbt instanceof CompoundTag && ((CompoundTag) nbt).getAllKeys().contains(TAG_ALL_CHUNK_STORAGES))
             {
-                NBTUtils.streamCompound(((CompoundNBT) nbt).getList(TAG_ALL_CHUNK_STORAGES, Constants.NBT.TAG_COMPOUND))
+                NBTUtils.streamCompound(((CompoundTag) nbt).getList(TAG_ALL_CHUNK_STORAGES, Constants.NBT.TAG_COMPOUND))
                   .map(Storage::read).forEach(key -> instance.addChunkStorage(key.getA().x, key.getA().z, key.getB()));
             }
         }
@@ -122,9 +122,9 @@ public interface IChunkmanagerCapability
          * @param value the value
          * @return the resulting compound.
          */
-        private static CompoundNBT write(final ChunkPos key, final ChunkLoadStorage value)
+        private static CompoundTag write(final ChunkPos key, final ChunkLoadStorage value)
         {
-            final CompoundNBT compound = new CompoundNBT();
+            final CompoundTag compound = new CompoundTag();
             compound.put(TAG_CHUNK_STORAGE, value.toNBT());
             compound.putInt(TAG_X, key.x);
             compound.putInt(TAG_Z, key.z);
@@ -137,7 +137,7 @@ public interface IChunkmanagerCapability
          * @param compound the compound to read it from.
          * @return a tuple for both.
          */
-        private static Tuple<ChunkPos, ChunkLoadStorage> read(final CompoundNBT compound)
+        private static Tuple<ChunkPos, ChunkLoadStorage> read(final CompoundTag compound)
         {
             final ChunkLoadStorage storage = new ChunkLoadStorage(compound.getCompound(TAG_CHUNK_STORAGE));
             final int x = compound.getInt(TAG_X);

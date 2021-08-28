@@ -14,12 +14,12 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.Network;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import io.netty.buffer.Unpooled;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.JsonToNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.TagParser;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -223,15 +223,15 @@ public class GlobalResearchTree implements IGlobalResearchTree
     }
 
     @Override
-    public void sendGlobalResearchTreePackets(final ServerPlayerEntity player)
+    public void sendGlobalResearchTreePackets(final ServerPlayer player)
     {
-        final PacketBuffer researchTreePacketBuffer = new PacketBuffer(Unpooled.buffer());
+        final FriendlyByteBuf researchTreePacketBuffer = new FriendlyByteBuf(Unpooled.buffer());
         serializeNetworkData(researchTreePacketBuffer);
 
         Network.getNetwork().sendToPlayer(new GlobalResearchTreeMessage(researchTreePacketBuffer), player);
     }
 
-    public void serializeNetworkData(final PacketBuffer buf)
+    public void serializeNetworkData(final FriendlyByteBuf buf)
     {
         buf.writeVarInt(researchTree.size());
         for(final Map<ResourceLocation, IGlobalResearch> branch : researchTree.values())
@@ -251,7 +251,7 @@ public class GlobalResearchTree implements IGlobalResearchTree
     }
 
     @Override
-    public IMessage handleGlobalResearchTreeMessage(final PacketBuffer buf)
+    public IMessage handleGlobalResearchTreeMessage(final FriendlyByteBuf buf)
     {
         researchTree.clear();
         branchDatas.clear();
@@ -325,7 +325,7 @@ public class GlobalResearchTree implements IGlobalResearchTree
             {
                 try
                 {
-                    stack.setTag(JsonToNBT.parseTag(tag));
+                    stack.setTag(TagParser.parseTag(tag));
                     outputList.add(new ItemStorage(stack, false, false));
                 }
                 catch (CommandSyntaxException parseException)

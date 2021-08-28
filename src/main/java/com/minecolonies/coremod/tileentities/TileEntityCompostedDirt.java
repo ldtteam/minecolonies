@@ -3,16 +3,16 @@ package com.minecolonies.coremod.tileentities;
 import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.WorldUtil;
-import net.minecraft.block.AirBlock;
-import net.minecraft.block.DoublePlantBlock;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.level.block.AirBlock;
+import net.minecraft.world.level.block.DoublePlantBlock;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.level.block.entity.TickableBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
@@ -23,7 +23,7 @@ import static com.minecolonies.api.util.constant.Constants.UPDATE_FLAG;
 /**
  * The composted dirty tileEntity to grow all kinds of flowers.
  */
-public class TileEntityCompostedDirt extends TileEntity implements ITickableTileEntity
+public class TileEntityCompostedDirt extends BlockEntity implements TickableBlockEntity
 {
     /**
      * If currently composted.
@@ -66,7 +66,7 @@ public class TileEntityCompostedDirt extends TileEntity implements ITickableTile
     @Override
     public void tick()
     {
-        final World world = this.getLevel();
+        final Level world = this.getLevel();
         if (!world.isClientSide && this.composted && ticker % TICKS_SECOND == 0)
         {
             this.updateTick(world);
@@ -79,7 +79,7 @@ public class TileEntityCompostedDirt extends TileEntity implements ITickableTile
      *
      * @param worldIn the server world.
      */
-    private void updateTick(@NotNull final World worldIn)
+    private void updateTick(@NotNull final Level worldIn)
     {
         if (flower == null || flower.isEmpty())
         {
@@ -89,7 +89,7 @@ public class TileEntityCompostedDirt extends TileEntity implements ITickableTile
 
         if (this.composted)
         {
-            ((ServerWorld) worldIn).sendParticles(
+            ((ServerLevel) worldIn).sendParticles(
               ParticleTypes.HAPPY_VILLAGER, this.getBlockPos().getX() + 0.5,
               this.getBlockPos().getY() + 1, this.getBlockPos().getZ() + 0.5,
               1, 0.2, 0, 0.2, 0);

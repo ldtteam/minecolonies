@@ -2,24 +2,24 @@ package com.minecolonies.coremod.client.gui;
 
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.coremod.client.gui.townhall.AbstractWindowTownHall;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.model.ModelBakery;
-import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.renderer.MultiBufferSource;
+import com.mojang.blaze3d.platform.Lighting;
+import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.renderer.tileentity.BannerTileEntityRenderer;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.item.DyeColor;
-import net.minecraft.tileentity.BannerPattern;
-import net.minecraft.tileentity.BannerTileEntity;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.client.renderer.blockentity.BannerRenderer;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.level.block.entity.BannerPattern;
+import net.minecraft.world.level.block.entity.BannerBlockEntity;
+import net.minecraft.util.Mth;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.Nullable;
@@ -95,7 +95,7 @@ public class WindowBannerPicker extends Screen
     private final AbstractWindowTownHall window;
 
     /** The assigned renderer for the banner models */
-    private final ModelRenderer modelRender;
+    private final ModelPart modelRender;
 
     /** The currently selected palette color. */
     private ColorPalette colors;
@@ -115,11 +115,11 @@ public class WindowBannerPicker extends Screen
      */
     public WindowBannerPicker(IColonyView colony, AbstractWindowTownHall hallWindow)
     {
-        super(new StringTextComponent("Flag"));
+        super(new TextComponent("Flag"));
 
         this.colony = colony;
         this.window = hallWindow;
-        this.modelRender = BannerTileEntityRenderer.makeFlag();
+        this.modelRender = BannerRenderer.makeFlag();
 
         /* Get all patterns, then remove excluded and item-required patterns */
         List<BannerPattern> exclusion = new ArrayList<>();
@@ -129,7 +129,7 @@ public class WindowBannerPicker extends Screen
         this.patterns.removeAll(exclusion);
 
         // Fetch the patterns as a List and not ListNBT
-        this.layers = BannerTileEntity.createPatterns(DyeColor.WHITE, colony.getColonyFlag());
+        this.layers = BannerBlockEntity.createPatterns(DyeColor.WHITE, colony.getColonyFlag());
         // Remove the extra base layer created by the above function
         if (this.layers.size() > 1)
             this.layers.remove(0);
@@ -163,11 +163,11 @@ public class WindowBannerPicker extends Screen
         this.addButton(new Button(
                 center(this.width, 6, SIDE, 7, 0), GUI_Y,
                 SIDE, SIDE,
-                new StringTextComponent(TextFormatting.RED + "X"),
+                new TextComponent(ChatFormatting.RED + "X"),
                 pressed -> layers.remove(activeLayer))
         {
             @Override
-            public void render(final MatrixStack stack, int mouseX, int mouseY, float partialTicks)
+            public void render(final PoseStack stack, int mouseX, int mouseY, float partialTicks)
             {
                 this.active = activeLayer < layers.size() && activeLayer != 0; // TODO: port this last vital condition
                 super.render(stack, mouseX, mouseY, partialTicks);
@@ -198,7 +198,7 @@ public class WindowBannerPicker extends Screen
                 center(this.width, 2, 80, 1, 10),
                 this.height - 40,
                 80, SIDE,
-                new TranslationTextComponent("gui.done"),
+                new TranslatableComponent("gui.done"),
                 pressed -> {
                     BannerPattern.Builder builder = new BannerPattern.Builder();
                     for (Pair<BannerPattern, DyeColor> pair : layers)
@@ -212,7 +212,7 @@ public class WindowBannerPicker extends Screen
                 center(this.width, 2, 80, 0, 10),
                 this.height - 40,
                 80, SIDE,
-                new TranslationTextComponent("gui.cancel"),
+                new TranslatableComponent("gui.cancel"),
                 pressed -> window.open()
         ));
     }
@@ -254,7 +254,7 @@ public class WindowBannerPicker extends Screen
     }
 
     @Override
-    public void render(final MatrixStack stack, int mouseX, int mouseY, float partialTicks)
+    public void render(final PoseStack stack, int mouseX, int mouseY, float partialTicks)
     {
         this.renderBackground(stack);
         super.render(stack, mouseX, mouseY, partialTicks);
@@ -289,11 +289,11 @@ public class WindowBannerPicker extends Screen
      */
     private void drawFlag()
     {
-        RenderHelper.setupForFlatItems();
+        Lighting.setupForFlatItems();
         double posX = (this.width + PATTERN_HEIGHT/2.0 * PATTERN_COLUMNS) / 2 + SIDE *2;
         double posY = (this.height) / 2.0;
 
-        MatrixStack transform = new MatrixStack();
+        PoseStack transform = new PoseStack();
         transform.translate(posX, posY + 40, 0.0D);
         transform.scale(40.0F, -40.0F, 1.0F);
         transform.translate(0.5D, 0.5D, 0.5D);
@@ -310,13 +310,13 @@ public class WindowBannerPicker extends Screen
      */
     private void drawBannerPattern(BannerPattern pattern, int x, int y)
     {
-        RenderHelper.setupForFlatItems();
+        Lighting.setupForFlatItems();
 
         List<Pair<BannerPattern, DyeColor>> list = new ArrayList<>();
         list.add(new Pair<>(BannerPattern.BASE, DyeColor.GRAY));
         list.add(new Pair<>(pattern, DyeColor.WHITE));
 
-        MatrixStack transform = new MatrixStack();
+        PoseStack transform = new PoseStack();
         transform.pushPose();
         transform.translate(x+2.5, y + 29, 0.0D);
         transform.scale(10.0F, -11.0F, 1.0F);
@@ -331,13 +331,13 @@ public class WindowBannerPicker extends Screen
      * @param transform the transformation matrix stack to render with
      * @param layers the pattern-color pairs that form the banner
      */
-    public void renderBanner(MatrixStack transform, List<Pair<BannerPattern, DyeColor>> layers)
+    public void renderBanner(PoseStack transform, List<Pair<BannerPattern, DyeColor>> layers)
     {
         this.modelRender.xRot = 0.0F;
         this.modelRender.y = -32.0F;
 
-        IRenderTypeBuffer.Impl source = this.minecraft.renderBuffers().bufferSource();
-        BannerTileEntityRenderer.renderPatterns(
+        MultiBufferSource.BufferSource source = this.minecraft.renderBuffers().bufferSource();
+        BannerRenderer.renderPatterns(
                 transform,
                 source, 15728880,
                 OverlayTexture.NO_OVERLAY,
@@ -354,7 +354,7 @@ public class WindowBannerPicker extends Screen
     public boolean mouseScrolled(double mouseX, double mouseY, double scroll)
     {
         if (activeLayer > 0) {
-            this.scrollRow = (int) MathHelper.clamp(
+            this.scrollRow = (int) Mth.clamp(
                     this.scrollRow - scroll,
                     0,
                     Math.ceil(this.patterns.size() / PATTERN_COLUMNS) - PATTERN_ROWS + 1 // Extra 1 so it is inclusive
@@ -386,7 +386,7 @@ public class WindowBannerPicker extends Screen
             int trackStart = center(this.height, PATTERN_ROWS, PATTERN_HEIGHT, 0, PATTERN_MARGIN);
             int trackLength = PATTERN_ROWS*(PATTERN_HEIGHT + PATTERN_MARGIN);
 
-            double scrollRatio = MathHelper.clamp(
+            double scrollRatio = Mth.clamp(
                     (mouseY - trackStart) / trackLength,
                     0, 1
             );
@@ -418,8 +418,8 @@ public class WindowBannerPicker extends Screen
                     x - (layer == 0 ? width*2 : 0), y,
                     width * (layer == 0 ? 3 : 1), height,
                     layer == 0
-                            ? new TranslationTextComponent("com.minecolonies.coremod.gui.flag.base_layer")
-                            : new StringTextComponent(String.valueOf(layer)),
+                            ? new TranslatableComponent("com.minecolonies.coremod.gui.flag.base_layer")
+                            : new TextComponent(String.valueOf(layer)),
                     pressed -> {}
             );
             this.layer = layer;
@@ -437,7 +437,7 @@ public class WindowBannerPicker extends Screen
         }
 
         @Override
-        public void render(final MatrixStack stack, int p_render_1_, int p_render_2_, float p_render_3_)
+        public void render(final PoseStack stack, int p_render_1_, int p_render_2_, float p_render_3_)
         {
             this.active = this.layer <= layers.size();
             super.render(stack, p_render_1_, p_render_2_, p_render_3_);
@@ -463,7 +463,7 @@ public class WindowBannerPicker extends Screen
          */
         public PatternButton(int x, int y, int height, BannerPattern pattern)
         {
-            super(x, y, height/2, height, new StringTextComponent(""), btn -> {});
+            super(x, y, height/2, height, new TextComponent(""), btn -> {});
             this.pattern = pattern;
             this.index = WindowBannerPicker.this.patterns.indexOf(pattern);
         }
@@ -472,7 +472,7 @@ public class WindowBannerPicker extends Screen
         public void onPress() { setLayer(this.pattern, colors.getSelected()); }
 
         @Override
-        public void render(final MatrixStack stack, int p_render_1_, int p_render_2_, float p_render_3_)
+        public void render(final PoseStack stack, int p_render_1_, int p_render_2_, float p_render_3_)
         {
             this.visible = scrollRow * PATTERN_COLUMNS <= this.index && this.index < PATTERN_COLUMNS * (scrollRow + PATTERN_ROWS);
             this.active = activeLayer != 0;
@@ -488,7 +488,7 @@ public class WindowBannerPicker extends Screen
         }
 
         @Override
-        public void renderButton(final MatrixStack stack, int p_renderButton_1_, int p_renderButton_2_, float p_renderButton_3_)
+        public void renderButton(final PoseStack stack, int p_renderButton_1_, int p_renderButton_2_, float p_renderButton_3_)
         {
             if (this.visible)
             {

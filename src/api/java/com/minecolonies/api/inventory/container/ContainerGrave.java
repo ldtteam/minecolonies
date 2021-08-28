@@ -3,14 +3,14 @@ package com.minecolonies.api.inventory.container;
 import com.minecolonies.api.inventory.ModContainers;
 import com.minecolonies.api.tileentities.AbstractTileEntityGrave;
 import com.minecolonies.api.util.ItemStackUtils;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.ClickType;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.BlockPos;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -20,7 +20,7 @@ import static com.minecolonies.api.util.constant.InventoryConstants.*;
 /**
  * The container class for the grave.
  */
-public class ContainerGrave extends Container
+public class ContainerGrave extends AbstractContainerMenu
 {
     /**
      * The inventory.
@@ -45,7 +45,7 @@ public class ContainerGrave extends Container
      * @param packetBuffer network buffer
      * @return new instance
      */
-    public static ContainerGrave fromPacketBuffer(final int windowId, final PlayerInventory inv, final PacketBuffer packetBuffer)
+    public static ContainerGrave fromPacketBuffer(final int windowId, final Inventory inv, final FriendlyByteBuf packetBuffer)
     {
         return new ContainerGrave(windowId, inv, packetBuffer);
     }
@@ -57,7 +57,7 @@ public class ContainerGrave extends Container
      * @param inv      the inventory.
      * @param extra    some extra data.
      */
-    public ContainerGrave(final int windowId, final PlayerInventory inv, final PacketBuffer extra)
+    public ContainerGrave(final int windowId, final Inventory inv, final FriendlyByteBuf extra)
     {
         super(ModContainers.graveInv, windowId);
         final BlockPos grave = extra.readBlockPos();
@@ -118,7 +118,7 @@ public class ContainerGrave extends Container
 
     @NotNull
     @Override
-    public ItemStack clicked(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player)
+    public ItemStack clicked(int slotId, int dragType, ClickType clickTypeIn, Player player)
     {
         if (player.level.isClientSide || slotId >= inventory.getSlots() || slotId < 0)
         {
@@ -131,7 +131,7 @@ public class ContainerGrave extends Container
 
     @NotNull
     @Override
-    public ItemStack quickMoveStack(final PlayerEntity playerIn, final int index)
+    public ItemStack quickMoveStack(final Player playerIn, final int index)
     {
         final Slot slot = this.slots.get(index);
 
@@ -178,7 +178,7 @@ public class ContainerGrave extends Container
     }
 
     @Override
-    public boolean stillValid(final PlayerEntity playerIn)
+    public boolean stillValid(final Player playerIn)
     {
         return true;
     }

@@ -4,11 +4,11 @@ import com.google.gson.JsonObject;
 import com.minecolonies.api.advancements.AbstractCriterionTrigger;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.advancements.criterion.ItemPredicate;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.loot.ConditionArrayParser;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.advancements.critereon.ItemPredicate;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.advancements.critereon.DeserializationContext;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -26,7 +26,7 @@ public class BuildingAddRecipeTrigger extends AbstractCriterionTrigger<BuildingA
      * @param player the player the check regards
      * @param recipeStorage details about the recipe that was added
      */
-    public void trigger(final ServerPlayerEntity player, final IRecipeStorage recipeStorage)
+    public void trigger(final ServerPlayer player, final IRecipeStorage recipeStorage)
     {
         final BuildingAddRecipeListeners listeners = this.getListeners(player.getAdvancements());
         if (listeners != null)
@@ -37,14 +37,14 @@ public class BuildingAddRecipeTrigger extends AbstractCriterionTrigger<BuildingA
 
     @NotNull
     @Override
-    public BuildingAddRecipeCriterionInstance createInstance(@NotNull final JsonObject jsonObject, @NotNull final ConditionArrayParser jsonDeserializationContext)
+    public BuildingAddRecipeCriterionInstance createInstance(@NotNull final JsonObject jsonObject, @NotNull final DeserializationContext jsonDeserializationContext)
     {
         if (jsonObject.has("items"))
         {
             final ItemPredicate[] outputItemPredicates = ItemPredicate.fromJsonArray(jsonObject.get("items"));
             if (jsonObject.has("crafting_size"))
             {
-                final int craftingSize = JSONUtils.getAsInt(jsonObject, "crafting_size");
+                final int craftingSize = GsonHelper.getAsInt(jsonObject, "crafting_size");
                 return new BuildingAddRecipeCriterionInstance(outputItemPredicates, craftingSize);
             }
             return new BuildingAddRecipeCriterionInstance(outputItemPredicates);

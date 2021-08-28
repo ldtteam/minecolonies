@@ -3,7 +3,7 @@ package com.minecolonies.coremod.network.messages.server.colony;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.coremod.network.messages.server.AbstractColonyServerMessage;
 import net.minecraft.nbt.ListNBT;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 /**
@@ -43,13 +43,13 @@ public class ColonyTextureStyleMessage extends AbstractColonyServerMessage
     }
 
     @Override
-    protected void toBytesOverride(PacketBuffer buf)
+    protected void toBytesOverride(FriendlyByteBuf buf)
     {
         buf.writeUtf(style);
     }
 
     @Override
-    protected void fromBytesOverride(PacketBuffer buf)
+    protected void fromBytesOverride(FriendlyByteBuf buf)
     {
         this.style = buf.readUtf(32767);
     }

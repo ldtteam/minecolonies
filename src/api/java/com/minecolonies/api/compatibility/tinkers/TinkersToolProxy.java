@@ -1,7 +1,7 @@
 package com.minecolonies.api.compatibility.tinkers;
 
 import com.minecolonies.api.util.constant.IToolType;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

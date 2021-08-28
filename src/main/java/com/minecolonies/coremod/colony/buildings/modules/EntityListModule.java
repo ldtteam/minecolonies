@@ -5,11 +5,11 @@ import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IEntityListModule;
 import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
 
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.StringNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
@@ -48,9 +48,9 @@ public class EntityListModule extends AbstractBuildingModule implements IEntityL
     }
 
     @Override
-    public void deserializeNBT(final CompoundNBT compound)
+    public void deserializeNBT(final CompoundTag compound)
     {
-        final ListNBT filterableList = compound.getCompound(id).getList(TAG_MOBLIST, Constants.NBT.TAG_STRING);
+        final ListTag filterableList = compound.getCompound(id).getList(TAG_MOBLIST, Constants.NBT.TAG_STRING);
         for (int i = 0; i < filterableList.size(); ++i)
         {
             final ResourceLocation res = new ResourceLocation(filterableList.getString(i));
@@ -62,13 +62,13 @@ public class EntityListModule extends AbstractBuildingModule implements IEntityL
     }
 
     @Override
-    public void serializeNBT(final CompoundNBT compound)
+    public void serializeNBT(final CompoundTag compound)
     {
-        final CompoundNBT moduleCompound = new CompoundNBT();
-        @NotNull final ListNBT filteredMobs = new ListNBT();
+        final CompoundTag moduleCompound = new CompoundTag();
+        @NotNull final ListTag filteredMobs = new ListTag();
         for (@NotNull final ResourceLocation mob : mobsAllowed)
         {
-            filteredMobs.add(StringNBT.valueOf(mob.toString()));
+            filteredMobs.add(StringTag.valueOf(mob.toString()));
         }
         moduleCompound.put(TAG_MOBLIST, filteredMobs);
         compound.put(id, moduleCompound);
@@ -107,7 +107,7 @@ public class EntityListModule extends AbstractBuildingModule implements IEntityL
     }
 
     @Override
-    public void serializeToView(@NotNull final PacketBuffer buf)
+    public void serializeToView(@NotNull final FriendlyByteBuf buf)
     {
         buf.writeInt(mobsAllowed.size());
         for (final ResourceLocation entity : mobsAllowed)

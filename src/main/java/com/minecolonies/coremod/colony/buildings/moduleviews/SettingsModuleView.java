@@ -11,8 +11,8 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.modules.SettingsModuleWindow;
 import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.coremod.network.messages.server.colony.building.TriggerSettingMessage;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +30,7 @@ public class SettingsModuleView extends AbstractBuildingModuleView implements IS
     final Map<ISettingKey<?>, ISetting> settings = new LinkedHashMap<>();
 
     @Override
-    public void deserialize(@NotNull final PacketBuffer buf)
+    public void deserialize(@NotNull final FriendlyByteBuf buf)
     {
         settings.clear();
 

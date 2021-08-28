@@ -23,9 +23,9 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequestManager;
 import com.minecolonies.coremod.colony.requestsystem.management.handlers.*;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.wrapped.WrappedStaticStateRequestManager;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -420,9 +420,9 @@ public class StandardRequestManager implements IStandardRequestManager
      * @return The NBTData that describes the current request system
      */
     @Override
-    public CompoundNBT serializeNBT()
+    public CompoundTag serializeNBT()
     {
-        final CompoundNBT systemCompound = new CompoundNBT();
+        final CompoundTag systemCompound = new CompoundTag();
         systemCompound.putInt(NBT_VERSION, version);
 
         systemCompound.put(NBT_DATASTORE, getFactoryController().serialize(dataStoreManager));
@@ -444,47 +444,47 @@ public class StandardRequestManager implements IStandardRequestManager
      * @param nbt The data to deserialize.
      */
     @Override
-    public void deserializeNBT(final CompoundNBT nbt)
+    public void deserializeNBT(final CompoundTag nbt)
     {
         executeDeserializationStepOrMarkForUpdate(nbt,
           NBT_VERSION,
-          CompoundNBT::getInt,
+          CompoundTag::getInt,
           v -> version = v);
 
         executeDeserializationStepOrMarkForUpdate(nbt,
           NBT_DATASTORE,
-          CompoundNBT::getCompound,
+          CompoundTag::getCompound,
           c -> dataStoreManager = getFactoryController().deserialize(c));
 
         executeDeserializationStepOrMarkForUpdate(nbt,
           NBT_ID_REQUEST_IDENTITIES,
-          CompoundNBT::getCompound,
+          CompoundTag::getCompound,
           c -> requestIdentitiesDataStoreId = getFactoryController().deserialize(c));
         executeDeserializationStepOrMarkForUpdate(nbt,
           NBT_ID_REQUEST_RESOLVER_IDENTITIES,
-          CompoundNBT::getCompound,
+          CompoundTag::getCompound,
           c -> requestResolverIdentitiesDataStoreId = getFactoryController().deserialize(c));
         executeDeserializationStepOrMarkForUpdate(nbt,
           NBT_ID_PROVIDER_ASSIGNMENTS,
-          CompoundNBT::getCompound,
+          CompoundTag::getCompound,
           c -> providerRequestResolverAssignmentDataStoreId = getFactoryController().deserialize(c));
         executeDeserializationStepOrMarkForUpdate(nbt,
           NBT_ID_REQUEST_RESOLVER_ASSIGNMENTS,
-          CompoundNBT::getCompound,
+          CompoundTag::getCompound,
           c -> requestResolverRequestAssignmentDataStoreId = getFactoryController().deserialize(c));
         executeDeserializationStepOrMarkForUpdate(nbt,
           NBT_ID_REQUESTABLE_TYPE_ASSIGNMENTS,
-          CompoundNBT::getCompound,
+          CompoundTag::getCompound,
           c -> requestableTypeRequestResolverAssignmentDataStoreId = getFactoryController().deserialize(c));
 
         executeDeserializationStepOrMarkForUpdate(nbt,
           NBT_ID_PLAYER,
-          CompoundNBT::getCompound,
+          CompoundTag::getCompound,
           c -> playerRequestResolverId = getFactoryController().deserialize(c));
 
         executeDeserializationStepOrMarkForUpdate(nbt,
           NBT_ID_RETRYING,
-          CompoundNBT::getCompound,
+          CompoundTag::getCompound,
           c -> retryingRequestResolverId = getFactoryController().deserialize(c));
 
         if (dataStoreManager == null)
@@ -496,7 +496,7 @@ public class StandardRequestManager implements IStandardRequestManager
     }
 
     @Override
-    public void serialize(IFactoryController controller, PacketBuffer buffer)
+    public void serialize(IFactoryController controller, FriendlyByteBuf buffer)
     {
         buffer.writeInt(version);
         controller.serialize(buffer, dataStoreManager);
@@ -510,7 +510,7 @@ public class StandardRequestManager implements IStandardRequestManager
     }
 
     @Override
-    public void deserialize(IFactoryController controller, PacketBuffer buffer)
+    public void deserialize(IFactoryController controller, FriendlyByteBuf buffer)
     {
         version = buffer.readInt();
         dataStoreManager = controller.deserialize(buffer);
@@ -524,9 +524,9 @@ public class StandardRequestManager implements IStandardRequestManager
     }
 
     private <T> void executeDeserializationStepOrMarkForUpdate(
-      @NotNull final CompoundNBT nbt,
+      @NotNull final CompoundTag nbt,
       @NotNull final String key,
-      @NotNull final BiFunction<CompoundNBT, String, T> extractor,
+      @NotNull final BiFunction<CompoundTag, String, T> extractor,
       @NotNull final Consumer<T> valueConsumer)
     {
         if (!nbt.getAllKeys().contains(key))

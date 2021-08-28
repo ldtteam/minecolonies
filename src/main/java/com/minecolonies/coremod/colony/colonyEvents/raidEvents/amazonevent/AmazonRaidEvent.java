@@ -12,14 +12,14 @@ import com.minecolonies.coremod.colony.colonyEvents.raidEvents.barbarianEvent.Ho
 import com.minecolonies.coremod.entity.mobs.amazons.EntityAmazonChief;
 import com.minecolonies.coremod.entity.mobs.amazons.EntityArcherAmazon;
 import com.minecolonies.coremod.network.messages.client.PlayAudioMessage;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
 
 import static com.minecolonies.api.entity.ModEntities.AMAZON;
 import static com.minecolonies.api.entity.ModEntities.AMAZONCHIEF;
@@ -83,9 +83,9 @@ public class AmazonRaidEvent extends HordeRaidEvent
     }
 
     @Override
-    protected IFormattableTextComponent getDisplayName()
+    protected MutableComponent getDisplayName()
     {
-        return new StringTextComponent(LanguageHandler.format(RAID_AMAZON));
+        return new TextComponent(LanguageHandler.format(RAID_AMAZON));
     }
 
     @Override
@@ -151,7 +151,7 @@ public class AmazonRaidEvent extends HordeRaidEvent
      * @param compound NBTcompound with saved values
      * @return the raid event.
      */
-    public static AmazonRaidEvent loadFromNBT(final IColony colony, final CompoundNBT compound)
+    public static AmazonRaidEvent loadFromNBT(final IColony colony, final CompoundTag compound)
     {
         AmazonRaidEvent event = new AmazonRaidEvent(colony);
         event.deserializeNBT(compound);

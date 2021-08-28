@@ -4,9 +4,9 @@ import com.minecolonies.api.colony.permissions.*;
 import com.minecolonies.api.network.PacketUtils;
 import com.minecolonies.api.util.Utils;
 import com.mojang.authlib.GameProfile;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -62,7 +62,7 @@ public class PermissionsView implements IPermissions
     }
 
     @Override
-    public boolean setPlayerRank(final UUID id, final Rank rank, final World world)
+    public boolean setPlayerRank(final UUID id, final Rank rank, final Level world)
     {
         return false;
     }
@@ -199,7 +199,7 @@ public class PermissionsView implements IPermissions
     }
 
     @Override
-    public boolean setOwner(final PlayerEntity player)
+    public boolean setOwner(final Player player)
     {
         return false;
     }
@@ -233,7 +233,7 @@ public class PermissionsView implements IPermissions
      *
      * @param buf the buffer.
      */
-    public void deserialize(@NotNull final PacketBuffer buf)
+    public void deserialize(@NotNull final FriendlyByteBuf buf)
     {
         final int ranksSize = buf.readInt();
         for (int i = 0; i < ranksSize; ++i)
@@ -278,7 +278,7 @@ public class PermissionsView implements IPermissions
      * @return the rank.
      */
     @NotNull
-    public Rank getRank(@NotNull final PlayerEntity player)
+    public Rank getRank(@NotNull final Player player)
     {
         return getRank(player.getUUID());
     }
@@ -304,13 +304,13 @@ public class PermissionsView implements IPermissions
     }
 
     @Override
-    public boolean hasPermission(@NotNull final PlayerEntity player, @NotNull final Action action)
+    public boolean hasPermission(@NotNull final Player player, @NotNull final Action action)
     {
         return hasPermission(getRank(player), action);
     }
 
     @Override
-    public boolean addPlayer(@NotNull final String player, final Rank rank, final World world)
+    public boolean addPlayer(@NotNull final String player, final Rank rank, final Level world)
     {
         return false;
     }
@@ -337,13 +337,13 @@ public class PermissionsView implements IPermissions
     }
 
     @Override
-    public boolean isSubscriber(@NotNull final PlayerEntity player)
+    public boolean isSubscriber(@NotNull final Player player)
     {
         return false;
     }
 
     @Override
-    public boolean isColonyMember(@NotNull final PlayerEntity player)
+    public boolean isColonyMember(@NotNull final Player player)
     {
         return players.containsKey(player.getUUID());
     }

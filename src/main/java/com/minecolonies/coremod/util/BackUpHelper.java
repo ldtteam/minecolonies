@@ -7,16 +7,16 @@ import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtIo;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.DimensionType;
-import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.storage.FolderName;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.dimension.DimensionType;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.storage.LevelResource;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -74,10 +74,10 @@ public final class BackUpHelper
         try (FileOutputStream fos = new FileOutputStream(getBackupSaveLocation(new Date())))
         {
             @NotNull final File saveDir =
-              new File(ServerLifecycleHooks.getCurrentServer().getWorldPath(FolderName.ROOT).toFile(), FILENAME_MINECOLONIES_PATH);
+              new File(ServerLifecycleHooks.getCurrentServer().getWorldPath(LevelResource.ROOT).toFile(), FILENAME_MINECOLONIES_PATH);
             final ZipOutputStream zos = new ZipOutputStream(fos);
 
-            for (final RegistryKey<World> dimensionType : ServerLifecycleHooks.getCurrentServer().levels.keySet())
+            for (final ResourceKey<Level> dimensionType : ServerLifecycleHooks.getCurrentServer().levels.keySet())
             {
                 for (int i = 1; i <= IColonyManager.getInstance().getTopColonyId() + 1; i++)
                 {
@@ -125,7 +125,7 @@ public final class BackUpHelper
         try
         {
             @NotNull final File file = BackUpHelper.getSaveLocation();
-            @Nullable final CompoundNBT data = BackUpHelper.loadNBTFromPath(file);
+            @Nullable final CompoundTag data = BackUpHelper.loadNBTFromPath(file);
             if (data != null)
             {
                 Log.getLogger().info("Loading Minecolonies colony manager Backup Data");
@@ -144,9 +144,9 @@ public final class BackUpHelper
      */
     public static void loadMissingColonies()
     {
-        @NotNull final File saveDir = new File(ServerLifecycleHooks.getCurrentServer().getWorldPath(FolderName.ROOT).toFile(), FILENAME_MINECOLONIES_PATH);
+        @NotNull final File saveDir = new File(ServerLifecycleHooks.getCurrentServer().getWorldPath(LevelResource.ROOT).toFile(), FILENAME_MINECOLONIES_PATH);
 
-        for (final RegistryKey<World> dimensionType : ServerLifecycleHooks.getCurrentServer().levels.keySet())
+        for (final ResourceKey<Level> dimensionType : ServerLifecycleHooks.getCurrentServer().levels.keySet())
         {
             int missingFilesInRow = 0;
             for (int i = 1; i <= MAX_COLONY_LOAD && missingFilesInRow < 5; i++)
@@ -180,7 +180,7 @@ public final class BackUpHelper
     private static File getBackupSaveLocation(final Date date)
     {
         @NotNull final File saveDir =
-          new File(ServerLifecycleHooks.getCurrentServer().getWorldPath(FolderName.ROOT).toFile(), FILENAME_MINECOLONIES_PATH);
+          new File(ServerLifecycleHooks.getCurrentServer().getWorldPath(LevelResource.ROOT).toFile(), FILENAME_MINECOLONIES_PATH);
         return new File(saveDir, String.format(FILENAME_MINECOLONIES_BACKUP, new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss").format(date)));
     }
 
@@ -228,7 +228,7 @@ public final class BackUpHelper
     @NotNull
     public static File getSaveLocation()
     {
-        @NotNull final File saveDir = new File(ServerLifecycleHooks.getCurrentServer().getWorldPath(FolderName.ROOT).toFile(), FILENAME_MINECOLONIES_PATH);
+        @NotNull final File saveDir = new File(ServerLifecycleHooks.getCurrentServer().getWorldPath(LevelResource.ROOT).toFile(), FILENAME_MINECOLONIES_PATH);
         return new File(saveDir, FILENAME_MINECOLONIES);
     }
 
@@ -238,14 +238,14 @@ public final class BackUpHelper
      * @param file     The destination file to write the data to.
      * @param compound The CompoundNBT to write to the file.
      */
-    public static void saveNBTToPath(@Nullable final File file, @NotNull final CompoundNBT compound)
+    public static void saveNBTToPath(@Nullable final File file, @NotNull final CompoundTag compound)
     {
         try
         {
             if (file != null)
             {
                 file.getParentFile().mkdirs();
-                CompressedStreamTools.write(compound, file);
+                NbtIo.write(compound, file);
             }
         }
         catch (final IOException exception)
@@ -260,13 +260,13 @@ public final class BackUpHelper
      * @param file The path to the file.
      * @return the data from the file as an CompoundNBT, or null.
      */
-    public static CompoundNBT loadNBTFromPath(@Nullable final File file)
+    public static CompoundTag loadNBTFromPath(@Nullable final File file)
     {
         try
         {
             if (file != null && file.exists())
             {
-                return CompressedStreamTools.read(file);
+                return NbtIo.read(file);
             }
         }
         catch (final IOException exception)
@@ -281,15 +281,15 @@ public final class BackUpHelper
      */
     public static void saveColonies()
     {
-        @NotNull final CompoundNBT compound = new CompoundNBT();
+        @NotNull final CompoundTag compound = new CompoundTag();
         IColonyManager.getInstance().write(compound);
 
         @NotNull final File file = getSaveLocation();
         saveNBTToPath(file, compound);
-        @NotNull final File saveDir = new File(ServerLifecycleHooks.getCurrentServer().getWorldPath(FolderName.ROOT).toFile(), FILENAME_MINECOLONIES_PATH);
+        @NotNull final File saveDir = new File(ServerLifecycleHooks.getCurrentServer().getWorldPath(LevelResource.ROOT).toFile(), FILENAME_MINECOLONIES_PATH);
         for (final IColony colony : IColonyManager.getInstance().getAllColonies())
         {
-            final CompoundNBT colonyCompound = new CompoundNBT();
+            final CompoundTag colonyCompound = new CompoundTag();
             colony.write(colonyCompound);
             saveNBTToPath(new File(saveDir, getFolderForDimension(colony.getDimension().location()) + String.format(FILENAME_COLONY, colony.getID())), colonyCompound);
         }
@@ -301,10 +301,10 @@ public final class BackUpHelper
      * @param colonyID    id of the colony to delete
      * @param dimensionID dimension of the colony to delete
      */
-    public static void markColonyDeleted(final int colonyID, final RegistryKey<World> dimensionID)
+    public static void markColonyDeleted(final int colonyID, final ResourceKey<Level> dimensionID)
     {
         @NotNull final File saveDir =
-          new File(ServerLifecycleHooks.getCurrentServer().getWorldPath(FolderName.ROOT).toFile(), FILENAME_MINECOLONIES_PATH);
+          new File(ServerLifecycleHooks.getCurrentServer().getWorldPath(LevelResource.ROOT).toFile(), FILENAME_MINECOLONIES_PATH);
         final File toDelete = new File(saveDir, getFolderForDimension(dimensionID.location()) + String.format(FILENAME_COLONY, colonyID));
         if (toDelete.exists())
         {
@@ -319,7 +319,7 @@ public final class BackUpHelper
      */
     public static void loadAllBackups()
     {
-        @NotNull final File saveDir = new File(ServerLifecycleHooks.getCurrentServer().getWorldPath(FolderName.ROOT).toFile(), FILENAME_MINECOLONIES_PATH);
+        @NotNull final File saveDir = new File(ServerLifecycleHooks.getCurrentServer().getWorldPath(LevelResource.ROOT).toFile(), FILENAME_MINECOLONIES_PATH);
 
         ServerLifecycleHooks.getCurrentServer().levels.keySet().forEach(dimensionType -> {
             for (int i = 1; i <= IColonyManager.getInstance().getTopColonyId() + 1; i++)
@@ -352,11 +352,11 @@ public final class BackUpHelper
      * @param loadDeleted whether to load deleted colonies aswell.
      * @param claimChunks if chunks shall be claimed on loading.
      */
-    public static void loadColonyBackup(final int colonyId, final RegistryKey<World> dimension, boolean loadDeleted, boolean claimChunks)
+    public static void loadColonyBackup(final int colonyId, final ResourceKey<Level> dimension, boolean loadDeleted, boolean claimChunks)
     {
-        @NotNull final File saveDir = new File(ServerLifecycleHooks.getCurrentServer().getWorldPath(FolderName.ROOT).toFile(), FILENAME_MINECOLONIES_PATH);
+        @NotNull final File saveDir = new File(ServerLifecycleHooks.getCurrentServer().getWorldPath(LevelResource.ROOT).toFile(), FILENAME_MINECOLONIES_PATH);
         @NotNull final File backupFile = new File(saveDir, getFolderForDimension(dimension.location()) + String.format(FILENAME_COLONY, colonyId));
-        CompoundNBT compound = loadNBTFromPath(backupFile);
+        CompoundTag compound = loadNBTFromPath(backupFile);
         if (compound == null)
         {
             if (loadDeleted)
@@ -378,7 +378,7 @@ public final class BackUpHelper
         else
         {
             Log.getLogger().warn("Colony:" + colonyId + " is missing, loading backup!");
-            final World colonyWorld = ServerLifecycleHooks.getCurrentServer().getLevel(dimension);
+            final Level colonyWorld = ServerLifecycleHooks.getCurrentServer().getLevel(dimension);
             final Colony loadedColony = Colony.loadColony(compound, colonyWorld);
             if (loadedColony == null || colonyWorld == null)
             {
@@ -390,7 +390,7 @@ public final class BackUpHelper
 
             if (claimChunks)
             {
-                final Chunk chunk = ((Chunk) colonyWorld.getChunk(loadedColony.getCenter()));
+                final LevelChunk chunk = ((LevelChunk) colonyWorld.getChunk(loadedColony.getCenter()));
                 final int id = chunk.getCapability(CLOSE_COLONY_CAP, null).map(IColonyTagCapability::getOwningColony).orElse(0);
                 if (id != colonyId)
                 {
@@ -419,7 +419,7 @@ public final class BackUpHelper
     public static String exportColony(final IColony colony)
     {
         final MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
-        final File topworldDir = server.getWorldPath(FolderName.ROOT).toFile();
+        final File topworldDir = server.getWorldPath(LevelResource.ROOT).toFile();
         final File minecraftDir = new File(topworldDir.getAbsolutePath().replace(topworldDir.getPath(), ""));
 
         final String worldname = topworldDir.getParent().replace("." + File.separator, "");
@@ -430,7 +430,7 @@ public final class BackUpHelper
             final ZipOutputStream zos = new ZipOutputStream(fos);
 
             // Save region content for Colony
-            final File regionDir = new File(DimensionType.getStorageFolder(colony.getDimension(), server.getWorldPath(FolderName.ROOT).toFile()), REGION_FOLDER);
+            final File regionDir = new File(DimensionType.getStorageFolder(colony.getDimension(), server.getWorldPath(LevelResource.ROOT).toFile()), REGION_FOLDER);
 
             int maxX = Integer.MIN_VALUE;
             int minX = Integer.MAX_VALUE;

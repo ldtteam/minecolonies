@@ -1,7 +1,7 @@
 package com.minecolonies.api.colony;
 
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.StringNBT;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.StringTag;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -28,7 +28,7 @@ public class GraveData implements IGraveData
      * The data NBT of the citizen .
      */
     @Nullable
-    private CompoundNBT citizenDataNBT = null;
+    private CompoundTag citizenDataNBT = null;
 
     /**
      * The name of the citizen.
@@ -46,7 +46,7 @@ public class GraveData implements IGraveData
      * get the data NBT of the citizen .
      */
     @Nullable
-    public CompoundNBT getCitizenDataNBT()
+    public CompoundTag getCitizenDataNBT()
     {
         return citizenDataNBT;
     }
@@ -54,7 +54,7 @@ public class GraveData implements IGraveData
     /**
      * Set data NBT of the citizen .
      */
-    public void setCitizenDataNBT(@Nullable final CompoundNBT citizenDataNBT)
+    public void setCitizenDataNBT(@Nullable final CompoundTag citizenDataNBT)
     {
         this.citizenDataNBT = citizenDataNBT;
     }
@@ -94,7 +94,7 @@ public class GraveData implements IGraveData
     }
 
     @Override
-    public void read(CompoundNBT compound)
+    public void read(CompoundTag compound)
     {
         citizenDataNBT  = compound.getAllKeys().contains(TAG_CITIZEN_NBT) ? compound.getCompound(TAG_CITIZEN_NBT) : null;
         citizenName     = compound.getAllKeys().contains(TAG_CITIZEN_NAME) ? compound.getString(TAG_CITIZEN_NAME) : null;
@@ -102,12 +102,12 @@ public class GraveData implements IGraveData
     }
 
     @Override
-    public CompoundNBT write()
+    public CompoundTag write()
     {
-        final CompoundNBT compound = new CompoundNBT();
+        final CompoundTag compound = new CompoundTag();
         if (citizenDataNBT != null) { compound.put(TAG_CITIZEN_NBT, citizenDataNBT); }
-        if (citizenName != null)    { compound.put(TAG_CITIZEN_NAME, StringNBT.valueOf(citizenName)); }
-        if (citizenJobName != null) { compound.put(TAG_CITIZEN_JOB_NAME,StringNBT.valueOf(citizenJobName)); }
+        if (citizenName != null)    { compound.put(TAG_CITIZEN_NAME, StringTag.valueOf(citizenName)); }
+        if (citizenJobName != null) { compound.put(TAG_CITIZEN_JOB_NAME,StringTag.valueOf(citizenJobName)); }
 
         return compound;
     }

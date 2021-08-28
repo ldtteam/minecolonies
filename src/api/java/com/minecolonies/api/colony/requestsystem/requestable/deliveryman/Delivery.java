@@ -6,9 +6,9 @@ import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -55,9 +55,9 @@ public class Delivery extends AbstractDeliverymanRequestable
     }
 
     @NotNull
-    public static CompoundNBT serialize(@NotNull final IFactoryController controller, final Delivery delivery)
+    public static CompoundTag serialize(@NotNull final IFactoryController controller, final Delivery delivery)
     {
-        final CompoundNBT compound = new CompoundNBT();
+        final CompoundTag compound = new CompoundTag();
 
         compound.put(NBT_START, controller.serialize(delivery.getStart()));
         compound.put(NBT_TARGET, controller.serialize(delivery.getTarget()));
@@ -68,7 +68,7 @@ public class Delivery extends AbstractDeliverymanRequestable
     }
 
     @NotNull
-    public static Delivery deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT compound)
+    public static Delivery deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag compound)
     {
         final ILocation start = controller.deserialize(compound.getCompound(NBT_START));
         final ILocation target = controller.deserialize(compound.getCompound(NBT_TARGET));
@@ -85,7 +85,7 @@ public class Delivery extends AbstractDeliverymanRequestable
      * @param buffer     the the buffer to write to.
      * @param input      the input to serialize.
      */
-    public static void serialize(final IFactoryController controller, final PacketBuffer buffer, final Delivery input)
+    public static void serialize(final IFactoryController controller, final FriendlyByteBuf buffer, final Delivery input)
     {
         controller.serialize(buffer, input.getStart());
         controller.serialize(buffer, input.getTarget());
@@ -100,7 +100,7 @@ public class Delivery extends AbstractDeliverymanRequestable
      * @param buffer     the buffer to read.
      * @return the deliverable.
      */
-    public static Delivery deserialize(final IFactoryController controller, final PacketBuffer buffer)
+    public static Delivery deserialize(final IFactoryController controller, final FriendlyByteBuf buffer)
     {
         final ILocation start = controller.deserialize(buffer);
         final ILocation target = controller.deserialize(buffer);

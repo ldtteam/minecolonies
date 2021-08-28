@@ -2,7 +2,7 @@ package com.minecolonies.api.compatibility;
 
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.RecipeStorage;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.Map;
 import java.util.function.Predicate;

@@ -10,11 +10,11 @@ import com.minecolonies.coremod.generation.LootTableBuilder;
 import com.minecolonies.coremod.generation.LootTableJsonProvider;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DirectoryCache;
-import net.minecraft.data.IDataProvider;
+import net.minecraft.data.DataProvider;
 import net.minecraft.data.IFinishedRecipe;
-import net.minecraft.item.Item;
+import net.minecraft.world.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
+import net.minecraft.world.item.Items;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +31,7 @@ import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 
 import com.minecolonies.coremod.generation.CustomRecipeProvider.CustomRecipeBuilder;
 
-public class DefaultSifterCraftingProvider implements IDataProvider
+public class DefaultSifterCraftingProvider implements DataProvider
 {
     private final SifterRecipeProvider recipeProvider;
     private final SifterLootTableProvider lootTableProvider;

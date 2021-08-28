@@ -19,10 +19,10 @@ import com.minecolonies.coremod.network.messages.server.colony.building.OpenCraf
 import com.minecolonies.coremod.network.messages.server.colony.building.worker.AddRemoveRecipeMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.worker.ChangeRecipePriorityMessage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -148,7 +148,7 @@ public class WindowListRecipes extends AbstractModuleWindow
             return;
         }
         final BlockPos pos = buildingView.getPosition();
-        Minecraft.getInstance().player.openMenu((INamedContainerProvider) Minecraft.getInstance().level.getBlockEntity(pos));
+        Minecraft.getInstance().player.openMenu((MenuProvider) Minecraft.getInstance().level.getBlockEntity(pos));
         Network.getNetwork().sendToServer(new OpenCraftingGUIMessage((AbstractBuildingView) buildingView, module.getId()));
     }
 

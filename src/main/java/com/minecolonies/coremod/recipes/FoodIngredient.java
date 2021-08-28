@@ -3,12 +3,12 @@ package com.minecolonies.coremod.recipes;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.item.Food;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.crafting.IIngredientSerializer;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
@@ -18,8 +18,8 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import net.minecraft.item.crafting.Ingredient.IItemList;
-import net.minecraft.item.crafting.Ingredient.SingleItemList;
+import net.minecraft.world.item.crafting.Ingredient.Value;
+import net.minecraft.world.item.crafting.Ingredient.ItemValue;
 
 /**
  * An ingredient that can be used in a vanilla recipe to match food items.
@@ -76,13 +76,13 @@ public class FoodIngredient extends Ingredient
     public static final Predicate<ItemStack> ISFOOD
             = stack -> ItemStackUtils.isNotEmpty(stack) && stack.getItem().isEdible() && stack.getItem().getFoodProperties().getNutrition() > 0 && stack.getItem().getFoodProperties().getSaturationModifier() > 0;
 
-    private static Stream<IItemList> buildItemLists(final Builder builder)
+    private static Stream<Value> buildItemLists(final Builder builder)
     {
         return ForgeRegistries.ITEMS.getValues().stream()
                 .map(ItemStack::new)
                 .filter(ISFOOD)
                 .filter(builder::matchesFood)
-                .map(SingleItemList::new);
+                .map(ItemValue::new);
     }
 
     @NotNull
@@ -111,7 +111,7 @@ public class FoodIngredient extends Ingredient
 
         private boolean matchesFood(@NotNull final ItemStack stack)
         {
-            @NotNull final Food food = Objects.requireNonNull(stack.getItem().getFoodProperties());
+            @NotNull final FoodProperties food = Objects.requireNonNull(stack.getItem().getFoodProperties());
             return minHealing.map(healing -> food.getNutrition() >= healing).orElse(true) &&
                     maxHealing.map(healing -> food.getNutrition() < healing).orElse(true) &&
                     minSaturation.map(saturation -> food.getSaturationModifier() >= saturation).orElse(true) &&
@@ -133,17 +133,17 @@ public class FoodIngredient extends Ingredient
         {
             final Builder builder = new Builder();
 
-            if (json.has(MIN_HEALING_PROP)) builder.minHealing(JSONUtils.getAsInt(json, MIN_HEALING_PROP));
-            if (json.has(MAX_HEALING_PROP)) builder.maxHealing(JSONUtils.getAsInt(json, MAX_HEALING_PROP));
-            if (json.has(MIN_SATURATION_PROP)) builder.minSaturation(JSONUtils.getAsFloat(json, MIN_SATURATION_PROP));
-            if (json.has(MAX_SATURATION_PROP)) builder.maxSaturation(JSONUtils.getAsFloat(json, MAX_SATURATION_PROP));
+            if (json.has(MIN_HEALING_PROP)) builder.minHealing(GsonHelper.getAsInt(json, MIN_HEALING_PROP));
+            if (json.has(MAX_HEALING_PROP)) builder.maxHealing(GsonHelper.getAsInt(json, MAX_HEALING_PROP));
+            if (json.has(MIN_SATURATION_PROP)) builder.minSaturation(GsonHelper.getAsFloat(json, MIN_SATURATION_PROP));
+            if (json.has(MAX_SATURATION_PROP)) builder.maxSaturation(GsonHelper.getAsFloat(json, MAX_SATURATION_PROP));
 
             return builder.build();
         }
 
         @NotNull
         @Override
-        public FoodIngredient parse(@NotNull final PacketBuffer buffer)
+        public FoodIngredient parse(@NotNull final FriendlyByteBuf buffer)
         {
             final Builder builder = new Builder();
             final int flags = buffer.readVarInt();
@@ -157,7 +157,7 @@ public class FoodIngredient extends Ingredient
         }
 
         @Override
-        public void write(@NotNull final PacketBuffer buffer, @NotNull final FoodIngredient ingredient)
+        public void write(@NotNull final FriendlyByteBuf buffer, @NotNull final FoodIngredient ingredient)
         {
             buffer.writeVarInt((ingredient.minHealing.isPresent() ? 1 : 0) |
                     (ingredient.maxHealing.isPresent() ? 2 : 0) |

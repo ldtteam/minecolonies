@@ -6,7 +6,7 @@ import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.coremod.entity.ai.citizen.research.EntityAIWorkResearcher;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateConstants.MAX_TICKRATE;
@@ -103,15 +103,15 @@ public class JobResearch extends AbstractJob<EntityAIWorkResearcher, JobResearch
     }
 
     @Override
-    public CompoundNBT serializeNBT()
+    public CompoundTag serializeNBT()
     {
-        final CompoundNBT compoundNBT = super.serializeNBT();
+        final CompoundTag compoundNBT = super.serializeNBT();
         compoundNBT.putInt(TAG_CURR_MANA, this.currentMana);
         return compoundNBT;
     }
 
     @Override
-    public void deserializeNBT(final CompoundNBT compound)
+    public void deserializeNBT(final CompoundTag compound)
     {
         super.deserializeNBT(compound);
         this.currentMana = compound.getInt(TAG_CURR_MANA);

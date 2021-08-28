@@ -8,10 +8,10 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.entity.ai.citizen.fisherman.EntityAIWorkFisherman;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.core.BlockPos;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
@@ -79,21 +79,21 @@ public class JobFisherman extends AbstractJob<EntityAIWorkFisherman, JobFisherma
     }
 
     @Override
-    public CompoundNBT serializeNBT()
+    public CompoundTag serializeNBT()
     {
-        final CompoundNBT compound = super.serializeNBT();
+        final CompoundTag compound = super.serializeNBT();
 
-        @NotNull final CompoundNBT waterTag = new CompoundNBT();
+        @NotNull final CompoundTag waterTag = new CompoundTag();
         if (water != null)
         {
             BlockPosUtil.write(waterTag, TAG_WATER_POND, water.getA());
             BlockPosUtil.write(waterTag, TAG_PARENT_POND, water.getB());
         }
 
-        @NotNull final ListNBT lakes = new ListNBT();
+        @NotNull final ListTag lakes = new ListTag();
         for (@NotNull final Tuple<BlockPos, BlockPos> pond : ponds)
         {
-            final CompoundNBT compoundNBT = new CompoundNBT();
+            final CompoundTag compoundNBT = new CompoundTag();
             BlockPosUtil.write(compoundNBT, TAG_WATER_POND, pond.getA());
             BlockPosUtil.write(compoundNBT, TAG_PARENT_POND, pond.getB());
             lakes.add(compoundNBT);
@@ -104,7 +104,7 @@ public class JobFisherman extends AbstractJob<EntityAIWorkFisherman, JobFisherma
     }
 
     @Override
-    public void deserializeNBT(final CompoundNBT compound)
+    public void deserializeNBT(final CompoundTag compound)
     {
         super.deserializeNBT(compound);
 
@@ -117,7 +117,7 @@ public class JobFisherman extends AbstractJob<EntityAIWorkFisherman, JobFisherma
 
         if (compound.getAllKeys().contains(TAG_PONDS))
         {
-            final ListNBT listOfPonds = compound.getList(TAG_PONDS, Constants.NBT.TAG_COMPOUND);
+            final ListTag listOfPonds = compound.getList(TAG_PONDS, Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < listOfPonds.size(); i++)
             {
                 ponds.add(new Tuple<>(BlockPosUtil.read(listOfPonds.getCompound(i), TAG_WATER_POND), BlockPosUtil.read(listOfPonds.getCompound(i), TAG_PARENT_POND)));

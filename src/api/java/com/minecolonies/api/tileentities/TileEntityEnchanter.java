@@ -1,9 +1,9 @@
 package com.minecolonies.api.tileentities;
 
 import com.minecolonies.api.util.WorldUtil;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.util.Mth;
 
 import java.util.Random;
 
@@ -39,7 +39,7 @@ public class TileEntityEnchanter extends TileEntityColonyBuilding
      *
      * @param type the entity type.
      */
-    public TileEntityEnchanter(final TileEntityType<? extends TileEntityEnchanter> type)
+    public TileEntityEnchanter(final BlockEntityType<? extends TileEntityEnchanter> type)
     {
         super(type);
     }
@@ -56,12 +56,12 @@ public class TileEntityEnchanter extends TileEntityColonyBuilding
 
         this.bookSpreadPrev = this.bookSpread;
         this.bookRotationPrev = this.bookRotation;
-        PlayerEntity player = this.level.getNearestPlayer(((float) this.worldPosition.getX() + 0.5F), ((float) this.worldPosition.getY() + 0.5F), ((float) this.worldPosition.getZ() + 0.5F), 3.0D, false);
+        Player player = this.level.getNearestPlayer(((float) this.worldPosition.getX() + 0.5F), ((float) this.worldPosition.getY() + 0.5F), ((float) this.worldPosition.getZ() + 0.5F), 3.0D, false);
         if (player != null)
         {
             double playerXPos = player.getX() - (double) ((float) this.worldPosition.getX() + 0.5F);
             double playerZPos = player.getZ() - (double) ((float) this.worldPosition.getZ() + 0.5F);
-            this.tRot = (float) MathHelper.atan2(playerZPos, playerXPos);
+            this.tRot = (float) Mth.atan2(playerZPos, playerXPos);
             this.bookSpread += 0.1F;
             if (this.bookSpread < 0.5F || rand.nextInt(40) == 0)
             {
@@ -99,11 +99,11 @@ public class TileEntityEnchanter extends TileEntityColonyBuilding
         float circleBasedRot = (float) ((this.tRot - this.bookRotation + Math.PI % (2 * Math.PI)) - Math.PI);
 
         this.bookRotation += circleBasedRot * 0.4F;
-        this.bookSpread = MathHelper.clamp(this.bookSpread, 0.0F, 1.0F);
+        this.bookSpread = Mth.clamp(this.bookSpread, 0.0F, 1.0F);
         ++this.tickCount;
         this.pageFlipPrev = this.pageFlip;
         float pageFlip = (this.flipT - this.pageFlip) * 0.4F;
-        pageFlip = MathHelper.clamp(pageFlip, -0.2F, 0.2F);
+        pageFlip = Mth.clamp(pageFlip, -0.2F, 0.2F);
         this.flipA += (pageFlip - this.flipA) * 0.9F;
         this.pageFlip += this.flipA;
     }

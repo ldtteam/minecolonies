@@ -4,11 +4,11 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.world.World;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.Registry;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.LogicalSide;
@@ -34,12 +34,12 @@ public class ColonyViewMessage implements IMessage
     /**
      * The buffer with the data.
      */
-    private PacketBuffer colonyBuffer;
+    private FriendlyByteBuf colonyBuffer;
 
     /**
      * The dimension of the colony.
      */
-    private RegistryKey<World> dim;
+    private ResourceKey<Level> dim;
 
     /**
      * Empty constructor used when registering the
@@ -56,26 +56,26 @@ public class ColonyViewMessage implements IMessage
      * @param buf               the bytebuffer.
      * @param isNewSubscription Boolean whether or not this is a new subscription.
      */
-    public ColonyViewMessage(@NotNull final Colony colony, final PacketBuffer buf, final boolean isNewSubscription)
+    public ColonyViewMessage(@NotNull final Colony colony, final FriendlyByteBuf buf, final boolean isNewSubscription)
     {
         this.colonyId = colony.getID();
         this.isNewSubscription = isNewSubscription;
         this.dim = colony.getDimension();
-        this.colonyBuffer = new PacketBuffer(buf.copy());
+        this.colonyBuffer = new FriendlyByteBuf(buf.copy());
     }
 
     @Override
-    public void fromBytes(@NotNull final PacketBuffer buf)
+    public void fromBytes(@NotNull final FriendlyByteBuf buf)
     {
-        final PacketBuffer newBuf = new PacketBuffer(buf.retain());
+        final FriendlyByteBuf newBuf = new FriendlyByteBuf(buf.retain());
         colonyId = newBuf.readInt();
         isNewSubscription = newBuf.readBoolean();
-        dim = RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(newBuf.readUtf(32767)));
+        dim = ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(newBuf.readUtf(32767)));
         colonyBuffer = newBuf;
     }
 
     @Override
-    public void toBytes(@NotNull final PacketBuffer buf)
+    public void toBytes(@NotNull final FriendlyByteBuf buf)
     {
         buf.writeInt(colonyId);
         buf.writeBoolean(isNewSubscription);

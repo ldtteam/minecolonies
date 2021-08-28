@@ -18,13 +18,13 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.modules.BedHandlingModule;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.client.SleepingParticleMessage;
-import net.minecraft.block.BedBlock;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.state.properties.BedPart;
+import net.minecraft.world.level.block.BedBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.level.block.state.properties.BedPart;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -34,7 +34,7 @@ import java.util.List;
 import static com.minecolonies.api.util.constant.CitizenConstants.RANGE_TO_BE_HOME;
 import static com.minecolonies.coremod.entity.ai.minimal.EntityAISleep.SleepState.*;
 
-import net.minecraft.entity.ai.goal.Goal.Flag;
+import net.minecraft.world.entity.ai.goal.Goal.Flag;
 
 /**
  * AI to send Entity to sleep.
@@ -232,7 +232,7 @@ public class EntityAISleep extends Goal
                 {
                     if (WorldUtil.isEntityBlockLoaded(citizen.level, pos))
                     {
-                        final World world = citizen.level;
+                        final Level world = citizen.level;
                         final BlockState state = world.getBlockState(pos);
                         if (state.getBlock().is(BlockTags.BEDS)
                               && !state.getValue(BedBlock.OCCUPIED)

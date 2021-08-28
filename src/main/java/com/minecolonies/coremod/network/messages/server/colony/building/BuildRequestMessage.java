@@ -4,9 +4,9 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.BlockPos;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -60,14 +60,14 @@ public class BuildRequestMessage extends AbstractBuildingServerMessage<IBuilding
     }
 
     @Override
-    public void fromBytesOverride(@NotNull final PacketBuffer buf)
+    public void fromBytesOverride(@NotNull final FriendlyByteBuf buf)
     {
         mode = Mode.values()[buf.readInt()];
         builder = buf.readBlockPos();
     }
 
     @Override
-    public void toBytesOverride(@NotNull final PacketBuffer buf)
+    public void toBytesOverride(@NotNull final FriendlyByteBuf buf)
     {
         buf.writeInt(mode.ordinal());
         buf.writeBlockPos(builder);
@@ -76,7 +76,7 @@ public class BuildRequestMessage extends AbstractBuildingServerMessage<IBuilding
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuilding building)
     {
-        final PlayerEntity player = ctxIn.getSender();
+        final Player player = ctxIn.getSender();
         if (building.hasWorkOrder())
         {
             building.removeWorkOrder();

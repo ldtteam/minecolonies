@@ -10,7 +10,7 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.network.messages.server.colony.HireMercenaryMessage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.SoundEvents;
+import net.minecraft.sounds.SoundEvents;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_DONE;

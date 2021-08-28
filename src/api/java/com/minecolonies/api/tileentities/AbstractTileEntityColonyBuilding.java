@@ -6,14 +6,14 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingContainer;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.InventoryFunctions;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -52,7 +52,7 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
      */
     private int version = 0;
 
-    public AbstractTileEntityColonyBuilding(final TileEntityType<? extends AbstractTileEntityColonyBuilding> type)
+    public AbstractTileEntityColonyBuilding(final BlockEntityType<? extends AbstractTileEntityColonyBuilding> type)
     {
         super(type);
     }
@@ -134,7 +134,7 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
      * @param player Player to check permission of.
      * @return True when player has access, or building doesn't exist, otherwise false.
      */
-    public abstract boolean hasAccessPermission(PlayerEntity player);
+    public abstract boolean hasAccessPermission(Player player);
 
     /**
      * Set if the entity is mirrored.
@@ -209,7 +209,7 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
     }
 
     @Override
-    public void load(final BlockState state, @NotNull final CompoundNBT compound)
+    public void load(final BlockState state, @NotNull final CompoundTag compound)
     {
         super.load(state, compound);
         readSchematicDataFromNBT(compound);
@@ -217,7 +217,7 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
     }
 
     @Override
-    public void readSchematicDataFromNBT(final CompoundNBT originalCompound)
+    public void readSchematicDataFromNBT(final CompoundTag originalCompound)
     {
         final String old = getSchematicName();
         IBlueprintDataProvider.super.readSchematicDataFromNBT(originalCompound);
@@ -237,7 +237,7 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
 
     @NotNull
     @Override
-    public CompoundNBT save(@NotNull final CompoundNBT compound)
+    public CompoundTag save(@NotNull final CompoundTag compound)
     {
         super.save(compound);
         writeSchematicDataToNBT(compound);

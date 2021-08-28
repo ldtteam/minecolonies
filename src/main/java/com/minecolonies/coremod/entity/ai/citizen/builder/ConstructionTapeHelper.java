@@ -7,15 +7,15 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.blocks.decorative.BlockConstructionTape;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.util.ColonyUtils;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.HorizontalBlock;
-import net.minecraft.state.BooleanProperty;
-import net.minecraft.state.DirectionProperty;
-import net.minecraft.util.Direction;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.core.Direction;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public final class ConstructionTapeHelper
 {
-    public static final DirectionProperty FACING    = HorizontalBlock.FACING;
+    public static final DirectionProperty FACING    = HorizontalDirectionalBlock.FACING;
     public static final BooleanProperty   CORNER    = BooleanProperty.create("corner");
 
     /**
@@ -38,7 +38,7 @@ public final class ConstructionTapeHelper
      * @param workOrder the workOrder.
      * @param world     the world.
      */
-    public static void placeConstructionTape(@NotNull final WorkOrderBuildDecoration workOrder, @NotNull final World world)
+    public static void placeConstructionTape(@NotNull final WorkOrderBuildDecoration workOrder, @NotNull final Level world)
     {
         final Tuple<BlockPos, BlockPos> corners
           = ColonyUtils.calculateCorners(workOrder.getSchematicLocation(),
@@ -55,7 +55,7 @@ public final class ConstructionTapeHelper
      * @param corners the corner positions.
      * @param world   the world.
      */
-    public static void placeConstructionTape(final Tuple<BlockPos, BlockPos> orgCorners, @NotNull final World world)
+    public static void placeConstructionTape(final Tuple<BlockPos, BlockPos> orgCorners, @NotNull final Level world)
     {
         if (!MineColonies.getConfig().getServer().builderPlaceConstructionTape.get())
         {
@@ -125,7 +125,7 @@ public final class ConstructionTapeHelper
      * @return The new block position or null if no valid one is found.
      */
     @Nullable
-    public static BlockPos firstValidPosition(@NotNull final BlockPos target, @NotNull final World world, final int height)
+    public static BlockPos firstValidPosition(@NotNull final BlockPos target, @NotNull final Level world, final int height)
     {
         for (int i = 0; i <= height + 5; i++)
         {
@@ -148,7 +148,7 @@ public final class ConstructionTapeHelper
      * @param workOrder the workOrder.
      * @param world     the world.
      */
-    public static void removeConstructionTape(@NotNull final WorkOrderBuildDecoration workOrder, @NotNull final World world)
+    public static void removeConstructionTape(@NotNull final WorkOrderBuildDecoration workOrder, @NotNull final Level world)
     {
         final LoadOnlyStructureHandler structure =
           new LoadOnlyStructureHandler(world, workOrder.getSchematicLocation(), workOrder.getStructureName(), new PlacementSettings(), true);
@@ -166,7 +166,7 @@ public final class ConstructionTapeHelper
      * @param corners the corner positions.
      * @param world   the world.
      */
-    public static void removeConstructionTape(final Tuple<BlockPos, BlockPos> orgCorners, @NotNull final World world)
+    public static void removeConstructionTape(final Tuple<BlockPos, BlockPos> orgCorners, @NotNull final Level world)
     {
         final Tuple<BlockPos, BlockPos> corners = new Tuple<>(orgCorners.getA().offset(-1, 0, -1), orgCorners.getB().offset(1, 0, 1));
 
@@ -234,7 +234,7 @@ public final class ConstructionTapeHelper
      * @param block            the block.
      * @param tapeOrTapeCorner Is the checked block supposed to be ConstructionTape or ConstructionTapeCorner.
      */
-    public static void removeTapeIfNecessary(@NotNull final World world, @NotNull final BlockPos block, @NotNull final Block tapeOrTapeCorner, final int minHeight, final int maxHeight)
+    public static void removeTapeIfNecessary(@NotNull final Level world, @NotNull final BlockPos block, @NotNull final Block tapeOrTapeCorner, final int minHeight, final int maxHeight)
     {
         for (int y = minHeight; y <= maxHeight; y++)
         {

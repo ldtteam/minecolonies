@@ -7,9 +7,9 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -166,9 +166,9 @@ public class Stack implements IConcreteDeliverable
      * @param input      the input.
      * @return the compound.
      */
-    public static CompoundNBT serialize(final IFactoryController controller, final Stack input)
+    public static CompoundTag serialize(final IFactoryController controller, final Stack input)
     {
-        final CompoundNBT compound = new CompoundNBT();
+        final CompoundTag compound = new CompoundTag();
         compound.put(NBT_STACK, input.theStack.serializeNBT());
         compound.putBoolean(NBT_MATCHMETA, input.matchDamage);
         compound.putBoolean(NBT_MATCHNBT, input.matchNBT);
@@ -190,7 +190,7 @@ public class Stack implements IConcreteDeliverable
      * @param compound   the compound.
      * @return the deliverable.
      */
-    public static Stack deserialize(final IFactoryController controller, final CompoundNBT compound)
+    public static Stack deserialize(final IFactoryController controller, final CompoundTag compound)
     {
         final ItemStack stack = ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_STACK));
         final boolean matchMeta = compound.getBoolean(NBT_MATCHMETA);
@@ -216,7 +216,7 @@ public class Stack implements IConcreteDeliverable
      * @param buffer     the the buffer to write to.
      * @param input      the input to serialize.
      */
-    public static void serialize(final IFactoryController controller, final PacketBuffer buffer, final Stack input)
+    public static void serialize(final IFactoryController controller, final FriendlyByteBuf buffer, final Stack input)
     {
         buffer.writeItem(input.theStack);
         buffer.writeBoolean(input.matchDamage);
@@ -239,7 +239,7 @@ public class Stack implements IConcreteDeliverable
      * @param buffer     the buffer to read.
      * @return the deliverable.
      */
-    public static Stack deserialize(final IFactoryController controller, final PacketBuffer buffer)
+    public static Stack deserialize(final IFactoryController controller, final FriendlyByteBuf buffer)
     {
         final ItemStack stack = buffer.readItem();
         final boolean matchMeta = buffer.readBoolean();

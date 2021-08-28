@@ -4,18 +4,18 @@ import com.google.gson.JsonObject;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.tileentities.AbstractTileEntityBarrel;
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.IRecipeType;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
+import net.minecraft.world.Container;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.core.NonNullList;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,10 +25,10 @@ import org.jetbrains.annotations.Nullable;
  * assign different "strength" ratings to different input items; currently the actual outputs of the barrel
  * are fixed.
  */
-public class CompostRecipe implements IRecipe<IInventory>
+public class CompostRecipe implements Recipe<Container>
 {
     public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "composting");
-    public static final IRecipeType<CompostRecipe> TYPE = IRecipeType.register(ID.toString());
+    public static final RecipeType<CompostRecipe> TYPE = RecipeType.register(ID.toString());
 
     private static final int FERMENT_TIME = 24000;
     private static final int COMPOST_RESULT = 6;
@@ -49,7 +49,7 @@ public class CompostRecipe implements IRecipe<IInventory>
 
     @NotNull
     @Override
-    public IRecipeType<?> getType() { return TYPE; }
+    public RecipeType<?> getType() { return TYPE; }
 
     @NotNull
     @Override
@@ -80,14 +80,14 @@ public class CompostRecipe implements IRecipe<IInventory>
     public int getFermentTime() { return FERMENT_TIME; }
 
     @Override
-    public boolean matches(final IInventory inv, final World worldIn)
+    public boolean matches(final Container inv, final Level worldIn)
     {
         return false;
     }
 
     @NotNull
     @Override
-    public ItemStack assemble(final IInventory inv)
+    public ItemStack assemble(final Container inv)
     {
         return this.output.copy();
     }
@@ -107,7 +107,7 @@ public class CompostRecipe implements IRecipe<IInventory>
 
     @NotNull
     @Override
-    public IRecipeSerializer<?> getSerializer()
+    public RecipeSerializer<?> getSerializer()
     {
         return Serializer.getInstance();
     }
@@ -140,8 +140,8 @@ public class CompostRecipe implements IRecipe<IInventory>
         return new CompostRecipe(recipe.getId(), Ingredient.of(item), recipe.getStrength());
     }
 
-    public static class Serializer extends ForgeRegistryEntry<IRecipeSerializer<?>>
-            implements IRecipeSerializer<CompostRecipe>
+    public static class Serializer extends ForgeRegistryEntry<RecipeSerializer<?>>
+            implements RecipeSerializer<CompostRecipe>
     {
         private static final Serializer INSTANCE = new Serializer();
 
@@ -154,14 +154,14 @@ public class CompostRecipe implements IRecipe<IInventory>
         public CompostRecipe fromJson(@NotNull final ResourceLocation recipeId, @NotNull final JsonObject json)
         {
             final Ingredient ingredient = Ingredient.fromJson(json.get("input"));
-            final int strength = JSONUtils.getAsInt(json, "strength", 1);
+            final int strength = GsonHelper.getAsInt(json, "strength", 1);
 
             return new CompostRecipe(recipeId, ingredient, strength);
         }
 
         @Nullable
         @Override
-        public CompostRecipe fromNetwork(@NotNull final ResourceLocation recipeId, @NotNull final PacketBuffer buffer)
+        public CompostRecipe fromNetwork(@NotNull final ResourceLocation recipeId, @NotNull final FriendlyByteBuf buffer)
         {
             final Ingredient ingredient = Ingredient.fromNetwork(buffer);
             final int strength = buffer.readVarInt();
@@ -170,7 +170,7 @@ public class CompostRecipe implements IRecipe<IInventory>
         }
 
         @Override
-        public void toNetwork(@NotNull final PacketBuffer buffer, @NotNull final CompostRecipe recipe)
+        public void toNetwork(@NotNull final FriendlyByteBuf buffer, @NotNull final CompostRecipe recipe)
         {
             recipe.getInput().toNetwork(buffer);
             buffer.writeVarInt(recipe.getStrength());

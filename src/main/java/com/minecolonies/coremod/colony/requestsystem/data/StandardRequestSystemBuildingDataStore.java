@@ -9,8 +9,8 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
@@ -115,14 +115,14 @@ public class StandardRequestSystemBuildingDataStore implements IRequestSystemBui
 
         @NotNull
         @Override
-        public CompoundNBT serialize(
+        public CompoundTag serialize(
           @NotNull final IFactoryController controller, @NotNull final StandardRequestSystemBuildingDataStore standardRequestSystemBuildingDataStore)
         {
-            final CompoundNBT compound = new CompoundNBT();
+            final CompoundTag compound = new CompoundTag();
 
             compound.put(TAG_TOKEN, controller.serialize(standardRequestSystemBuildingDataStore.id));
             compound.put(TAG_OPEN_REQUESTS_BY_TYPE, standardRequestSystemBuildingDataStore.openRequestsByRequestableType.keySet().stream().map(typeToken -> {
-                final CompoundNBT entryCompound = new CompoundNBT();
+                final CompoundTag entryCompound = new CompoundTag();
 
                 entryCompound.put(TAG_TOKEN, controller.serialize(typeToken));
                 entryCompound.put(TAG_LIST, standardRequestSystemBuildingDataStore.openRequestsByRequestableType.get(typeToken)
@@ -133,7 +133,7 @@ public class StandardRequestSystemBuildingDataStore implements IRequestSystemBui
                 return entryCompound;
             }).collect(NBTUtils.toListNBT()));
             compound.put(TAG_OPEN_REQUESTS_BY_CITIZEN, standardRequestSystemBuildingDataStore.openRequestsByCitizen.keySet().stream().map(integer -> {
-                final CompoundNBT entryCompound = new CompoundNBT();
+                final CompoundTag entryCompound = new CompoundTag();
 
                 entryCompound.put(TAG_TOKEN, controller.serialize(integer));
                 entryCompound.put(TAG_LIST, standardRequestSystemBuildingDataStore.openRequestsByCitizen.get(integer)
@@ -144,7 +144,7 @@ public class StandardRequestSystemBuildingDataStore implements IRequestSystemBui
                 return entryCompound;
             }).collect(NBTUtils.toListNBT()));
             compound.put(TAG_COMPLETED_REQUESTS_BY_CITIZEN, standardRequestSystemBuildingDataStore.completedRequestsByCitizen.keySet().stream().map(integer -> {
-                final CompoundNBT entryCompound = new CompoundNBT();
+                final CompoundTag entryCompound = new CompoundTag();
 
                 entryCompound.put(TAG_TOKEN, controller.serialize(integer));
                 entryCompound.put(TAG_LIST, standardRequestSystemBuildingDataStore.completedRequestsByCitizen.get(integer)
@@ -155,7 +155,7 @@ public class StandardRequestSystemBuildingDataStore implements IRequestSystemBui
                 return entryCompound;
             }).collect(NBTUtils.toListNBT()));
             compound.put(TAG_CITIZEN_BY_OPEN_REQUEST, standardRequestSystemBuildingDataStore.citizenByOpenRequest.keySet().stream().map(iToken -> {
-                final CompoundNBT entryCompound = new CompoundNBT();
+                final CompoundTag entryCompound = new CompoundTag();
 
                 entryCompound.put(TAG_TOKEN, controller.serialize(iToken));
                 entryCompound.put(TAG_VALUE, controller.serialize(standardRequestSystemBuildingDataStore.citizenByOpenRequest.get(iToken)));
@@ -168,7 +168,7 @@ public class StandardRequestSystemBuildingDataStore implements IRequestSystemBui
 
         @NotNull
         @Override
-        public StandardRequestSystemBuildingDataStore deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt) throws Throwable
+        public StandardRequestSystemBuildingDataStore deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt) throws Throwable
         {
             final IToken<?> token = controller.deserialize(nbt.getCompound(TAG_TOKEN));
             final Map<TypeToken<?>, Collection<IToken<?>>> openRequestsByRequestableType = NBTUtils
@@ -225,7 +225,7 @@ public class StandardRequestSystemBuildingDataStore implements IRequestSystemBui
         @Override
         public void serialize(
           IFactoryController controller, StandardRequestSystemBuildingDataStore input,
-          PacketBuffer packetBuffer)
+          FriendlyByteBuf packetBuffer)
         {
             controller.serialize(packetBuffer, input.id);
             packetBuffer.writeInt(input.openRequestsByRequestableType.size());
@@ -257,7 +257,7 @@ public class StandardRequestSystemBuildingDataStore implements IRequestSystemBui
         }
 
         @Override
-        public StandardRequestSystemBuildingDataStore deserialize(IFactoryController controller, PacketBuffer buffer)
+        public StandardRequestSystemBuildingDataStore deserialize(IFactoryController controller, FriendlyByteBuf buffer)
           throws Throwable
         {
             final IToken<?> id = controller.deserialize(buffer);

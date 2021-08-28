@@ -16,15 +16,15 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.colony.jobs.JobResearch;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.NBTUtil;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
@@ -119,25 +119,25 @@ public class BuildingUniversity extends AbstractBuildingWorker
     }
 
     @Override
-    public void deserializeNBT(final CompoundNBT compound)
+    public void deserializeNBT(final CompoundTag compound)
     {
         super.deserializeNBT(compound);
-        final ListNBT furnaceTagList = compound.getList(TAG_BOOKCASES, Constants.NBT.TAG_COMPOUND);
+        final ListTag furnaceTagList = compound.getList(TAG_BOOKCASES, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < furnaceTagList.size(); ++i)
         {
-            bookCases.add(NBTUtil.readBlockPos(furnaceTagList.getCompound(i).getCompound(TAG_POS)));
+            bookCases.add(NbtUtils.readBlockPos(furnaceTagList.getCompound(i).getCompound(TAG_POS)));
         }
     }
 
     @Override
-    public CompoundNBT serializeNBT()
+    public CompoundTag serializeNBT()
     {
-        final CompoundNBT compound = super.serializeNBT();
-        @NotNull final ListNBT bookcaseTagList = new ListNBT();
+        final CompoundTag compound = super.serializeNBT();
+        @NotNull final ListTag bookcaseTagList = new ListTag();
         for (@NotNull final BlockPos entry : bookCases)
         {
-            @NotNull final CompoundNBT bookCompound = new CompoundNBT();
-            bookCompound.put(TAG_POS, NBTUtil.writeBlockPos(entry));
+            @NotNull final CompoundTag bookCompound = new CompoundTag();
+            bookCompound.put(TAG_POS, NbtUtils.writeBlockPos(entry));
             bookcaseTagList.add(bookCompound);
         }
         compound.put(TAG_BOOKCASES, bookcaseTagList);
@@ -146,7 +146,7 @@ public class BuildingUniversity extends AbstractBuildingWorker
     }
 
     @Override
-    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
+    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final Level world)
     {
         super.registerBlockPosition(block, pos, world);
         //todo we might in the future want to add our own oredict tag to this.
@@ -243,10 +243,10 @@ public class BuildingUniversity extends AbstractBuildingWorker
             citizen.applyResearchEffects();
         }
 
-        final TranslationTextComponent message = new TranslationTextComponent(RESEARCH_CONCLUDED + ThreadLocalRandom.current().nextInt(3),
+        final TranslatableComponent message = new TranslatableComponent(RESEARCH_CONCLUDED + ThreadLocalRandom.current().nextInt(3),
          IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getName());
 
-        for(PlayerEntity player : colony.getMessagePlayerEntities())
+        for(Player player : colony.getMessagePlayerEntities())
         {
             player.sendMessage(message, player.getUUID());
         }

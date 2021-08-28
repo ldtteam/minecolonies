@@ -19,14 +19,14 @@ import com.minecolonies.apiimp.CommonMinecoloniesAPIImpl;
 import com.minecolonies.apiimp.initializer.*;
 import com.minecolonies.coremod.recipes.FoodIngredient;
 import com.minecolonies.coremod.recipes.PlantIngredient;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.RecipeBook;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.stats.RecipeBook;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.BlockPos;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -52,12 +52,12 @@ public abstract class CommonProxy implements IProxy
     /**
      * Used to store IExtendedEntityProperties data temporarily between player death and respawn.
      */
-    private static final Map<String, CompoundNBT> playerPropertiesData = new HashMap<>();
+    private static final Map<String, CompoundTag> playerPropertiesData = new HashMap<>();
 
     /**
      * The special townhall recipe.
      */
-    public static IRecipeSerializer<?> SPECIAL_REC;
+    public static RecipeSerializer<?> SPECIAL_REC;
 
     /**
      * Creates instance of proxy.
@@ -73,7 +73,7 @@ public abstract class CommonProxy implements IProxy
      * @param name     player UUID + Properties name, HashMap key.
      * @param compound An NBT Tag Compound that stores the IExtendedEntityProperties data only.
      */
-    public static void storeEntityData(final String name, final CompoundNBT compound)
+    public static void storeEntityData(final String name, final CompoundTag compound)
     {
         playerPropertiesData.put(name, compound);
     }
@@ -84,7 +84,7 @@ public abstract class CommonProxy implements IProxy
      * @param name player UUID + Properties name, HashMap key.
      * @return CompoundNBT PlayerProperties NBT compound.
      */
-    public static CompoundNBT getEntityData(final String name)
+    public static CompoundTag getEntityData(final String name)
     {
         return playerPropertiesData.remove(name);
     }
@@ -156,9 +156,9 @@ public abstract class CommonProxy implements IProxy
     }
 
     @SubscribeEvent
-    public static void registerRecipeSerializers(final RegistryEvent.Register<IRecipeSerializer<?>> event)
+    public static void registerRecipeSerializers(final RegistryEvent.Register<RecipeSerializer<?>> event)
     {
-        final IForgeRegistry<IRecipeSerializer<?>> r = event.getRegistry();
+        final IForgeRegistry<RecipeSerializer<?>> r = event.getRegistry();
         r.register(CompostRecipe.Serializer.getInstance().setRegistryName(CompostRecipe.ID));
 
         CraftingHelper.register(CountedIngredient.ID, CountedIngredient.Serializer.getInstance());
@@ -236,9 +236,9 @@ public abstract class CommonProxy implements IProxy
 
     @NotNull
     @Override
-    public RecipeBook getRecipeBookFromPlayer(@NotNull final PlayerEntity player)
+    public RecipeBook getRecipeBookFromPlayer(@NotNull final Player player)
     {
-        return ((ServerPlayerEntity) player).getRecipeBook();
+        return ((ServerPlayer) player).getRecipeBook();
     }
 
     @Override

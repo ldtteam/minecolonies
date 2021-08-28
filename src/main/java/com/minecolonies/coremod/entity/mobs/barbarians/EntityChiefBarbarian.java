@@ -2,9 +2,9 @@ package com.minecolonies.coremod.entity.mobs.barbarians;
 
 import com.minecolonies.api.entity.mobs.barbarians.AbstractEntityBarbarian;
 import com.minecolonies.api.entity.mobs.barbarians.IChiefBarbarianEntity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.level.Level;
 
 import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
 import static com.minecolonies.api.util.constant.RaiderConstants.BASE_ENV_DAMAGE_RESIST;
@@ -22,7 +22,7 @@ public class EntityChiefBarbarian extends AbstractEntityBarbarian implements ICh
      * @param worldIn world to construct it in.
      * @param type    the entity type.
      */
-    public EntityChiefBarbarian(final EntityType<? extends EntityChiefBarbarian> type, final World worldIn)
+    public EntityChiefBarbarian(final EntityType<? extends EntityChiefBarbarian> type, final Level worldIn)
     {
         super(type, worldIn);
     }

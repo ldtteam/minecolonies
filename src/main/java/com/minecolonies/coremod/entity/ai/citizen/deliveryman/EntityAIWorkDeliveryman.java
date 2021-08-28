@@ -28,13 +28,13 @@ import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests.DeliveryRequest;
 import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests.PickupRequest;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Hand;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -145,7 +145,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         }
 
         worker.getCitizenData().setVisibleStatus(DELIVERING);
-        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.gathering"));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslatableComponent("com.minecolonies.coremod.status.gathering"));
 
         final BlockPos pickupTarget = currentTask.getRequester().getLocation().getInDimensionLocation();
         if (pickupTarget != BlockPos.ZERO && !worker.isWorkerAtSiteWithMove(pickupTarget, MIN_DISTANCE_TO_WAREHOUSE))
@@ -236,7 +236,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
         // The worker gets a little bit of exp for every itemstack he grabs.
         worker.getCitizenExperienceHandler().addExperience(0.01D);
-        worker.getCitizenItemHandler().setHeldItem(Hand.MAIN_HAND, SLOT_HAND);
+        worker.getCitizenItemHandler().setHeldItem(InteractionHand.MAIN_HAND, SLOT_HAND);
         return false;
     }
 
@@ -274,7 +274,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     private IAIState dump()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.dumping"));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslatableComponent("com.minecolonies.coremod.status.dumping"));
 
         if (!worker.isWorkerAtSiteWithMove(getAndCheckWareHouse().getPosition(), MIN_DISTANCE_TO_WAREHOUSE))
         {
@@ -283,7 +283,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         }
 
         getAndCheckWareHouse().getTileEntity().dumpInventoryIntoWareHouse(worker.getInventoryCitizen());
-        worker.getCitizenItemHandler().setHeldItem(Hand.MAIN_HAND, SLOT_HAND);
+        worker.getCitizenItemHandler().setHeldItem(InteractionHand.MAIN_HAND, SLOT_HAND);
 
         return START_WORKING;
     }
@@ -330,7 +330,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         }
 
         worker.getCitizenData().setVisibleStatus(DELIVERING);
-        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.delivering"));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslatableComponent("com.minecolonies.coremod.status.delivering"));
 
         final ILocation targetBuildingLocation = ((Delivery) currentTask.getRequest()).getTarget();
         if (!targetBuildingLocation.isReachableFromLocation(worker.getLocation()))
@@ -345,7 +345,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return DELIVERY;
         }
 
-        final TileEntity tileEntity = world.getBlockEntity(targetBuildingLocation.getInDimensionLocation());
+        final BlockEntity tileEntity = world.getBlockEntity(targetBuildingLocation.getInDimensionLocation());
 
         if (!(tileEntity instanceof TileEntityColonyBuilding))
         {
@@ -404,19 +404,19 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                     if (targetBuilding instanceof AbstractBuildingWorker)
                     {
                         worker.getCitizenData()
-                          .triggerInteraction(new PosBasedInteraction(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_NAMEDCHESTFULL,
+                          .triggerInteraction(new PosBasedInteraction(new TranslatableComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_NAMEDCHESTFULL,
                             targetBuilding.getMainCitizen().getName()),
                             ChatPriority.IMPORTANT,
-                            new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL),
+                            new TranslatableComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL),
                             targetBuilding.getID()));
                     }
                     else
                     {
                         worker.getCitizenData()
-                          .triggerInteraction(new PosBasedInteraction(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL,
-                            new StringTextComponent(" :" + targetBuilding.getSchematicName())),
+                          .triggerInteraction(new PosBasedInteraction(new TranslatableComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL,
+                            new TextComponent(" :" + targetBuilding.getSchematicName())),
                             ChatPriority.IMPORTANT,
-                            new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL),
+                            new TranslatableComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL),
                             targetBuildingLocation.getInDimensionLocation()));
                     }
                 }
@@ -431,7 +431,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             // This can only happen if the dman's inventory was completely empty.
             // Let the retry-system handle this case.
             worker.decreaseSaturationForContinuousAction();
-            worker.getCitizenItemHandler().setHeldItem(Hand.MAIN_HAND, SLOT_HAND);
+            worker.getCitizenItemHandler().setHeldItem(InteractionHand.MAIN_HAND, SLOT_HAND);
             job.finishRequest(false);
 
             // No need to go dumping in this case.
@@ -440,7 +440,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
         worker.getCitizenExperienceHandler().addExperience(1.5D);
         worker.decreaseSaturationForContinuousAction();
-        worker.getCitizenItemHandler().setHeldItem(Hand.MAIN_HAND, SLOT_HAND);
+        worker.getCitizenItemHandler().setHeldItem(InteractionHand.MAIN_HAND, SLOT_HAND);
         job.finishRequest(true);
 
         return success ? START_WORKING : DUMPING;
@@ -509,7 +509,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return PREPARE_DELIVERY;
         }
 
-        final TileEntity tileEntity = world.getBlockEntity(location.getInDimensionLocation());
+        final BlockEntity tileEntity = world.getBlockEntity(location.getInDimensionLocation());
         job.addConcurrentDelivery(nextPickUp.getId());
         if (gatherIfInTileEntity(tileEntity, nextPickUp.getRequest().getStack()))
         {
@@ -535,7 +535,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      * @param is     the itemStack.
      * @return true if found the stack.
      */
-    public boolean gatherIfInTileEntity(final TileEntity entity, final ItemStack is)
+    public boolean gatherIfInTileEntity(final BlockEntity entity, final ItemStack is)
     {
         if (is == null)
         {
@@ -628,7 +628,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         if (worker.getCitizenData() != null)
         {
             worker.getCitizenData()
-              .triggerInteraction(new StandardInteraction(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_NOWAREHOUSE),
+              .triggerInteraction(new StandardInteraction(new TranslatableComponent(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_NOWAREHOUSE),
                 ChatPriority.BLOCKING));
         }
         return false;

@@ -1,7 +1,7 @@
 package com.minecolonies.api.entity.pathfinding;
 
 import com.minecolonies.api.util.Log;
-import net.minecraft.pathfinding.Path;
+import net.minecraft.world.level.pathfinder.Path;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.Callable;

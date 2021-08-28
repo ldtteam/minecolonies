@@ -3,19 +3,19 @@ package com.minecolonies.coremod.entity.pathfinding;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.entity.pathfinding.pathjobs.AbstractPathJob;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.math.vector.Matrix4f;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.client.gui.Font;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import net.minecraft.client.renderer.MultiBufferSource;
+import com.mojang.blaze3d.vertex.Tesselator;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import net.minecraft.world.entity.Entity;
+import com.mojang.math.Matrix4f;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
@@ -103,14 +103,14 @@ public final class Pathfinding
      * @param matrixStack the matrix stack to apply to.
      */
     @OnlyIn(Dist.CLIENT)
-    public static void debugDraw(final double frame, final MatrixStack matrixStack)
+    public static void debugDraw(final double frame, final PoseStack matrixStack)
     {
         if (AbstractPathJob.lastDebugNodesNotVisited == null)
         {
             return;
         }
 
-        final Vector3d vec = Minecraft.getInstance().getEntityRenderDispatcher().camera.getPosition();
+        final Vec3 vec = Minecraft.getInstance().getEntityRenderDispatcher().camera.getPosition();
         final double dx = vec.x();
         final double dy = vec.y();
         final double dz = vec.z();
@@ -171,7 +171,7 @@ public final class Pathfinding
     }
 
     @OnlyIn(Dist.CLIENT)
-    private static void debugDrawNode(@NotNull final Node n, final float r, final float g, final float b, final MatrixStack matrixStack)
+    private static void debugDrawNode(@NotNull final Node n, final float r, final float g, final float b, final PoseStack matrixStack)
     {
         matrixStack.pushPose();
         matrixStack.translate((double) n.pos.getX() + 0.375, (double) n.pos.getY() + 0.375, (double) n.pos.getZ() + 0.375);
@@ -187,11 +187,11 @@ public final class Pathfinding
 
         matrixStack.scale(0.25F, 0.25F, 0.25F);
 
-        final Tessellator tessellator = Tessellator.getInstance();
+        final Tesselator tessellator = Tesselator.getInstance();
         final BufferBuilder vertexBuffer = tessellator.getBuilder();
 
         final Matrix4f matrix4f = matrixStack.last().pose();
-        vertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
+        vertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormat.POSITION);
         RenderSystem.color3f(r, g, b);
 
         //  X+
@@ -237,7 +237,7 @@ public final class Pathfinding
             final float pdx = n.parent.pos.getX() - n.pos.getX() + 0.125f;
             final float pdy = n.parent.pos.getY() - n.pos.getY() + 0.125f;
             final float pdz = n.parent.pos.getZ() - n.pos.getZ() + 0.125f;
-            vertexBuffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
+            vertexBuffer.begin(GL11.GL_LINES, DefaultVertexFormat.POSITION_COLOR);
             vertexBuffer.vertex(matrix4f, 0.5f, 0.5f, 0.5f).color(0.75F, 0.75F, 0.75F, 1.0F).endVertex();
             vertexBuffer.vertex(matrix4f, pdx / 0.25f, pdy / 0.25f, pdz / 0.25f).color(0.75F, 0.75F, 0.75F, 1.0F).endVertex();
             tessellator.end();
@@ -247,17 +247,17 @@ public final class Pathfinding
     }
 
     @OnlyIn(Dist.CLIENT)
-    private static void renderDebugText(@NotNull final Node n, final MatrixStack matrixStack)
+    private static void renderDebugText(@NotNull final Node n, final PoseStack matrixStack)
     {
         final String s1 = String.format("F: %.3f [%d]", n.getCost(), n.getCounterAdded());
         final String s2 = String.format("G: %.3f [%d]", n.getScore(), n.getCounterVisited());
-        final FontRenderer fontrenderer = Minecraft.getInstance().font;
+        final Font fontrenderer = Minecraft.getInstance().font;
 
         matrixStack.pushPose();
         matrixStack.translate(0.0F, 0.75F, 0.0F);
         RenderSystem.normal3f(0.0F, 1.0F, 0.0F);
 
-        final EntityRendererManager renderManager = Minecraft.getInstance().getEntityRenderDispatcher();
+        final EntityRenderDispatcher renderManager = Minecraft.getInstance().getEntityRenderDispatcher();
         matrixStack.mulPose(renderManager.cameraOrientation());
         matrixStack.scale(-0.014F, -0.014F, 0.014F);
         matrixStack.translate(0.0F, 18F, 0.0F);
@@ -275,9 +275,9 @@ public final class Pathfinding
         final int i = Math.max(fontrenderer.width(s1), fontrenderer.width(s2)) / 2;
 
         final Matrix4f matrix4f = matrixStack.last().pose();
-        final Tessellator tessellator = Tessellator.getInstance();
+        final Tesselator tessellator = Tesselator.getInstance();
         final BufferBuilder vertexBuffer = tessellator.getBuilder();
-        vertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+        vertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormat.POSITION_COLOR);
         vertexBuffer.vertex(matrix4f, (-i - 1), -5.0f, 0.0f).color(0.0F, 0.0F, 0.0F, 0.7F).endVertex();
         vertexBuffer.vertex(matrix4f, (-i - 1), 12.0f, 0.0f).color(0.0F, 0.0F, 0.0F, 0.7F).endVertex();
         vertexBuffer.vertex(matrix4f, (i + 1), 12.0f, 0.0f).color(0.0F, 0.0F, 0.0F, 0.7F).endVertex();
@@ -286,7 +286,7 @@ public final class Pathfinding
 
         RenderSystem.enableTexture();
 
-        final IRenderTypeBuffer.Impl buffer = IRenderTypeBuffer.immediate(Tessellator.getInstance().getBuilder());
+        final MultiBufferSource.BufferSource buffer = MultiBufferSource.immediate(Tesselator.getInstance().getBuilder());
         matrixStack.translate(0.0F, -5F, 0.0F);
         fontrenderer.drawInBatch(s1, -fontrenderer.width(s1) / 2.0f, 0, 0xFFFFFFFF, false, matrix4f, buffer, false, 0, 15728880);
         matrixStack.translate(0.0F, 8F, 0.0F);

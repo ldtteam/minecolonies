@@ -2,9 +2,9 @@ package com.minecolonies.api.tileentities;
 
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.util.Tuple;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -12,7 +12,7 @@ import java.util.function.Predicate;
 
 public abstract class AbstractTileEntityWareHouse extends TileEntityColonyBuilding
 {
-    public AbstractTileEntityWareHouse(final TileEntityType<? extends AbstractTileEntityWareHouse> warehouse)
+    public AbstractTileEntityWareHouse(final BlockEntityType<? extends AbstractTileEntityWareHouse> warehouse)
     {
         super(warehouse);
     }

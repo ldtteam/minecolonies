@@ -4,7 +4,7 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.coremod.colony.jobs.JobCookAssistant;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIRequestSmelter;
-import net.minecraft.block.Blocks;
+import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
 
 /**

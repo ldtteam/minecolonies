@@ -5,14 +5,14 @@ import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.crafting.CustomRecipe;
 import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
-import net.minecraft.client.resources.JsonReloadListener;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.profiler.IProfiler;
-import net.minecraft.resources.DataPackRegistries;
-import net.minecraft.resources.IResourceManager;
+import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.server.ServerResources;
+import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,17 +23,17 @@ import static com.minecolonies.coremod.colony.crafting.CustomRecipe.*;
 /**
  * Loader for Json based crafter specific recipes
  */
-public class CrafterRecipeListener extends JsonReloadListener
+public class CrafterRecipeListener extends SimpleJsonResourceReloadListener
 {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
-    private final DataPackRegistries dataPackRegistries;
+    private final ServerResources dataPackRegistries;
 
     /**
      * Set up the core loading, with the directory in the datapack that contains this data
      * Directory is: <namespace>/crafterrecipes/<path>
      * @param dataPackRegistries
      */
-    public CrafterRecipeListener(@NotNull final DataPackRegistries dataPackRegistries)
+    public CrafterRecipeListener(@NotNull final ServerResources dataPackRegistries)
     {
         super(GSON, "crafterrecipes");
 
@@ -42,8 +42,8 @@ public class CrafterRecipeListener extends JsonReloadListener
 
     @Override
     protected void apply(@NotNull final Map<ResourceLocation, JsonElement> object,
-                         @NotNull final IResourceManager resourceManagerIn,
-                         @NotNull final IProfiler profilerIn)
+                         @NotNull final ResourceManager resourceManagerIn,
+                         @NotNull final ProfilerFiller profilerIn)
     {
         Log.getLogger().info("Beginning load of custom recipes for colony workers");
 
@@ -56,14 +56,14 @@ public class CrafterRecipeListener extends JsonReloadListener
             {
                 final JsonObject recipeJson = entry.getValue().getAsJsonObject();
 
-                switch (JSONUtils.getAsString(recipeJson, RECIPE_TYPE_PROP, ""))
+                switch (GsonHelper.getAsString(recipeJson, RECIPE_TYPE_PROP, ""))
                 {
                     case RECIPE_TYPE_RECIPE:
                     case RECIPE_TYPE_RECIPE_MULT_OUT:
                         recipeManager.addRecipe(CustomRecipe.parse(key, recipeJson));
                         break;
                     case RECIPE_TYPE_REMOVE:
-                        final ResourceLocation toRemove = new ResourceLocation(JSONUtils.getAsString(recipeJson, RECIPE_ID_TO_REMOVE_PROP, ""));
+                        final ResourceLocation toRemove = new ResourceLocation(GsonHelper.getAsString(recipeJson, RECIPE_ID_TO_REMOVE_PROP, ""));
                         recipeManager.removeRecipe(toRemove);
                         break;
                 }
@@ -84,7 +84,7 @@ public class CrafterRecipeListener extends JsonReloadListener
         MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
         if(server != null)
         {
-            for (ServerPlayerEntity player : server.getPlayerList().getPlayers())
+            for (ServerPlayer player : server.getPlayerList().getPlayers())
             {
                 recipeManager.sendCustomRecipeManagerPackets(player);
             }

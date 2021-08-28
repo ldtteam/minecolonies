@@ -6,9 +6,9 @@ import com.minecolonies.coremod.colony.buildings.moduleviews.CraftingModuleView;
 import com.minecolonies.coremod.compatibility.jei.GenericRecipeCategory;
 import com.minecolonies.coremod.network.messages.server.TransferRecipeCraftingTeachingMessage;
 import mezz.jei.api.gui.handlers.IGuiClickableArea;
-import net.minecraft.inventory.CraftingInventory;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -55,14 +55,14 @@ public class CraftingGuiHandler extends AbstractTeachingGuiHandler<WindowCraftin
     @Override
     protected boolean isSupportedSlot(@NotNull Slot slot)
     {
-        return slot.container instanceof CraftingInventory;
+        return slot.container instanceof CraftingContainer;
     }
 
     @Override
     protected void updateServer(@NotNull final WindowCrafting gui)
     {
         final Map<Integer, ItemStack> matrix = new HashMap<>();
-        final CraftingInventory inventory = gui.getMenu().getInv();
+        final CraftingContainer inventory = gui.getMenu().getInv();
         if (gui.isCompleteCrafting())
         {
             for (int i = 0; i < 9; ++i)

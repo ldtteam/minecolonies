@@ -11,10 +11,10 @@ import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.generation.DataGeneratorConstants;
-import net.minecraft.block.Block;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.DirectoryCache;
-import net.minecraft.data.IDataProvider;
+import net.minecraft.data.HashCache;
+import net.minecraft.data.DataProvider;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -23,7 +23,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class DefaultBlockLootTableProvider implements IDataProvider
+public class DefaultBlockLootTableProvider implements DataProvider
 {
 
     private final DataGenerator generator;
@@ -34,7 +34,7 @@ public class DefaultBlockLootTableProvider implements IDataProvider
     }
 
     @Override
-    public void run(@NotNull final DirectoryCache cache) throws IOException
+    public void run(@NotNull final HashCache cache) throws IOException
     {
         saveBlocks(Arrays.asList(ModBlocks.getHuts()), cache);
 
@@ -52,7 +52,7 @@ public class DefaultBlockLootTableProvider implements IDataProvider
         saveBlock(ModBlocks.blockWoodenGate, cache);
     }
 
-    private <T extends Block> void saveBlocks(final List<T> blocks, final DirectoryCache cache) throws IOException
+    private <T extends Block> void saveBlocks(final List<T> blocks, final HashCache cache) throws IOException
     {
         for (Block block : blocks)
         {
@@ -60,7 +60,7 @@ public class DefaultBlockLootTableProvider implements IDataProvider
         }
     }
 
-    private void saveBlock(final Block block, final DirectoryCache cache) throws IOException
+    private void saveBlock(final Block block, final HashCache cache) throws IOException
     {
         if (block.getRegistryName() != null)
         {

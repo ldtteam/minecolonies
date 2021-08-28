@@ -7,11 +7,11 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.util.BackUpHelper;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
@@ -35,7 +35,7 @@ public interface IColonyManagerCapability
      * @param pos the position of the colony.
      * @return the created colony.
      */
-    IColony createColony(@NotNull final World w, @NotNull final BlockPos pos);
+    IColony createColony(@NotNull final Level w, @NotNull final BlockPos pos);
 
     /**
      * Delete a colony with a certain id.
@@ -86,7 +86,7 @@ public interface IColonyManagerCapability
         private final ColonyList<IColony> colonies = new ColonyList<>();
 
         @Override
-        public IColony createColony(@NotNull final World w, @NotNull final BlockPos pos)
+        public IColony createColony(@NotNull final Level w, @NotNull final BlockPos pos)
         {
             return colonies.create(w, pos);
         }
@@ -129,11 +129,11 @@ public interface IColonyManagerCapability
     {
 
         @Override
-        public INBT writeNBT(@NotNull final Capability<IColonyManagerCapability> capability, @NotNull final IColonyManagerCapability instance, @Nullable final Direction side)
+        public Tag writeNBT(@NotNull final Capability<IColonyManagerCapability> capability, @NotNull final IColonyManagerCapability instance, @Nullable final Direction side)
         {
-            final CompoundNBT compound = new CompoundNBT();
+            final CompoundTag compound = new CompoundTag();
             compound.put(TAG_COLONIES, instance.getColonies().stream().map(IColony::getColonyTag).filter(Objects::nonNull).collect(NBTUtils.toListNBT()));
-            final CompoundNBT managerCompound = new CompoundNBT();
+            final CompoundTag managerCompound = new CompoundTag();
             IColonyManager.getInstance().write(managerCompound);
             compound.put(TAG_COLONY_MANAGER, managerCompound);
             return compound;
@@ -142,13 +142,13 @@ public interface IColonyManagerCapability
         @Override
         public void readNBT(
           @NotNull final Capability<IColonyManagerCapability> capability, @NotNull final IColonyManagerCapability instance,
-          @Nullable final Direction side, @NotNull final INBT nbt)
+          @Nullable final Direction side, @NotNull final Tag nbt)
         {
             // Notify that we did load the cap for this world
             IColonyManager.getInstance().setCapLoaded();
-            if (nbt instanceof CompoundNBT)
+            if (nbt instanceof CompoundTag)
             {
-                final CompoundNBT compound = (CompoundNBT) nbt;
+                final CompoundTag compound = (CompoundTag) nbt;
 
                 if (!compound.contains(TAG_COLONIES) || !compound.contains(TAG_COLONY_MANAGER))
                 {
@@ -159,9 +159,9 @@ public interface IColonyManagerCapability
 
                 // Load all colonies from Nbt
                 Multimap<BlockPos, IColony> tempColonies = ArrayListMultimap.create();
-                for (final INBT tag : compound.getList(TAG_COLONIES, Constants.NBT.TAG_COMPOUND))
+                for (final Tag tag : compound.getList(TAG_COLONIES, Constants.NBT.TAG_COMPOUND))
                 {
-                    final IColony colony = Colony.loadColony((CompoundNBT) tag, null);
+                    final IColony colony = Colony.loadColony((CompoundTag) tag, null);
                     if (colony != null)
                     {
                         tempColonies.put(colony.getCenter(), colony);

@@ -7,13 +7,13 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.projectile.AbstractArrowEntity;
-import net.minecraft.item.BowItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.item.BowItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
 
 import java.util.Map;
 
@@ -36,12 +36,12 @@ public class CombatUtils
      * @param shooter entity
      * @return arrow entity
      */
-    public static AbstractArrowEntity createArrowForShooter(final LivingEntity shooter)
+    public static AbstractArrow createArrowForShooter(final LivingEntity shooter)
     {
-        AbstractArrowEntity arrowEntity = ModEntities.MC_NORMAL_ARROW.create(shooter.level);
+        AbstractArrow arrowEntity = ModEntities.MC_NORMAL_ARROW.create(shooter.level);
         arrowEntity.setOwner(shooter);
 
-        final ItemStack bow = shooter.getItemInHand(Hand.MAIN_HAND);
+        final ItemStack bow = shooter.getItemInHand(InteractionHand.MAIN_HAND);
         if (bow.getItem() instanceof BowItem)
         {
             arrowEntity = ((BowItem) bow.getItem()).customArrow(arrowEntity);
@@ -58,13 +58,13 @@ public class CombatUtils
      * @param target
      * @param hitChance
      */
-    public static void shootArrow(final AbstractArrowEntity arrow, final LivingEntity target, final float hitChance)
+    public static void shootArrow(final AbstractArrow arrow, final LivingEntity target, final float hitChance)
     {
         final double xVector = target.getX() - arrow.getX();
         final double yVector = target.getBoundingBox().minY + target.getBbHeight() / AIM_HEIGHT - arrow.getY();
         final double zVector = target.getZ() - arrow.getZ();
-        final double distance = MathHelper.sqrt(xVector * xVector + zVector * zVector);
-        final double dist3d = MathHelper.sqrt(yVector * yVector + xVector * xVector + zVector * zVector);
+        final double distance = Mth.sqrt(xVector * xVector + zVector * zVector);
+        final double dist3d = Mth.sqrt(yVector * yVector + xVector * xVector + zVector * zVector);
         arrow.shoot(xVector, yVector + distance * AIM_SLIGHTLY_HIGHER_MULTIPLIER, zVector, (float) (ARROW_SPEED * 1 + (dist3d / SPEED_FOR_DIST)), (float) hitChance);
         target.level.addFreshEntity(arrow);
     }

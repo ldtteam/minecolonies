@@ -26,14 +26,14 @@ import mezz.jei.api.recipe.IRecipeManager;
 import mezz.jei.api.registration.*;
 import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.client.Minecraft;
-import net.minecraft.inventory.CraftingInventory;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.IRecipeType;
-import net.minecraft.item.crafting.RecipeManager;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.Container;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.EventPriority;
 import org.jetbrains.annotations.NotNull;
@@ -94,7 +94,7 @@ public class JEIPlugin implements IModPlugin
     public void registerRecipes(@NotNull final IRecipeRegistration registration)
     {
         registration.addIngredientInfo(new ItemStack(ModBlocks.blockHutComposter.asItem()), VanillaTypes.ITEM,
-                new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_JEI_PREFIX + ModJobs.COMPOSTER_ID.getPath()));
+                new TranslatableComponent(TranslationConstants.COM_MINECOLONIES_JEI_PREFIX + ModJobs.COMPOSTER_ID.getPath()));
 
         if (!recipesLoaded && !Minecraft.getInstance().isLocalServer())
         {
@@ -145,12 +145,12 @@ public class JEIPlugin implements IModPlugin
         this.weakRuntime = new WeakReference<>(jeiRuntime);
     }
 
-    private Map<IRecipeType<?>, List<IGenericRecipe>> buildVanillaRecipesMap()
+    private Map<RecipeType<?>, List<IGenericRecipe>> buildVanillaRecipesMap()
     {
         final RecipeManager recipeManager = Minecraft.getInstance().level.getRecipeManager();
 
         final List<IGenericRecipe> craftingRecipes = new ArrayList<>();
-        for (final IRecipe<CraftingInventory> recipe : recipeManager.byType(IRecipeType.CRAFTING).values())
+        for (final Recipe<CraftingContainer> recipe : recipeManager.byType(RecipeType.CRAFTING).values())
         {
             if (!recipe.canCraftInDimensions(3, 3)) continue;
 
@@ -158,19 +158,19 @@ public class JEIPlugin implements IModPlugin
         }
 
         final List<IGenericRecipe> smeltingRecipes = new ArrayList<>();
-        for (final IRecipe<IInventory> recipe : recipeManager.byType(IRecipeType.SMELTING).values())
+        for (final Recipe<Container> recipe : recipeManager.byType(RecipeType.SMELTING).values())
         {
             tryAddingVanillaRecipe(smeltingRecipes, recipe);
         }
 
-        return new ImmutableMap.Builder<IRecipeType<?>, List<IGenericRecipe>>()
-                .put(IRecipeType.CRAFTING, craftingRecipes)
-                .put(IRecipeType.SMELTING, smeltingRecipes)
+        return new ImmutableMap.Builder<RecipeType<?>, List<IGenericRecipe>>()
+                .put(RecipeType.CRAFTING, craftingRecipes)
+                .put(RecipeType.SMELTING, smeltingRecipes)
                 .build();
     }
 
     private void tryAddingVanillaRecipe(@NotNull final List<IGenericRecipe> recipes,
-                                        @NotNull final IRecipe<?> recipe)
+                                        @NotNull final Recipe<?> recipe)
     {
         if (recipe.getResultItem().isEmpty()) return;     // invalid or special recipes
 
@@ -187,7 +187,7 @@ public class JEIPlugin implements IModPlugin
         }
     }
 
-    private void populateRecipes(@NotNull final Map<IRecipeType<?>, List<IGenericRecipe>> vanilla,
+    private void populateRecipes(@NotNull final Map<RecipeType<?>, List<IGenericRecipe>> vanilla,
                                  @NotNull final BiConsumer<Collection<?>, ResourceLocation> registrar)
     {
         registrar.accept(CompostRecipeCategory.findRecipes(), CompostRecipe.ID);

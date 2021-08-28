@@ -3,11 +3,11 @@ package com.minecolonies.api.entity.mobs.vikings;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.entity.mobs.RaiderType;
 import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.SpawnReason;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
@@ -41,7 +41,7 @@ public abstract class AbstractEntityNorsemen extends AbstractEntityMinecoloniesM
      * @param type  the type.
      * @param world the world.
      */
-    public AbstractEntityNorsemen(final EntityType<? extends AbstractEntityNorsemen> type, final World world)
+    public AbstractEntityNorsemen(final EntityType<? extends AbstractEntityNorsemen> type, final Level world)
     {
         super(type, world);
         this.textureId = new Random().nextInt(NORSEMEN_TEXTURES);
@@ -65,7 +65,7 @@ public abstract class AbstractEntityNorsemen extends AbstractEntityMinecoloniesM
     }
 
     @Override
-    public boolean checkSpawnRules(final IWorld worldIn, final SpawnReason spawnReasonIn)
+    public boolean checkSpawnRules(final LevelAccessor worldIn, final MobSpawnType spawnReasonIn)
     {
         return true;
     }

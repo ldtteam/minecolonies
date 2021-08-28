@@ -6,10 +6,10 @@ import com.minecolonies.api.colony.colonyEvents.descriptions.IColonyEventDescrip
 import com.minecolonies.api.colony.colonyEvents.registry.ColonyEventDescriptionTypeRegistryEntry;
 import com.minecolonies.api.colony.managers.interfaces.IEventDescriptionManager;
 import com.minecolonies.api.util.Log;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
@@ -70,12 +70,12 @@ public class EventDescriptionManager implements IEventDescriptionManager
     }
 
     @Override
-    public void deserializeNBT(@NotNull final CompoundNBT eventManagerNBT)
+    public void deserializeNBT(@NotNull final CompoundTag eventManagerNBT)
     {
-        final ListNBT eventDescListNBT = eventManagerNBT.getList(TAG_EVENT_DESC_LIST, Constants.NBT.TAG_COMPOUND);
-        for (final INBT event : eventDescListNBT)
+        final ListTag eventDescListNBT = eventManagerNBT.getList(TAG_EVENT_DESC_LIST, Constants.NBT.TAG_COMPOUND);
+        for (final Tag event : eventDescListNBT)
         {
-            final CompoundNBT eventCompound = (CompoundNBT) event;
+            final CompoundTag eventCompound = (CompoundTag) event;
             final ResourceLocation eventTypeID = new ResourceLocation(MOD_ID, eventCompound.getString(TAG_NAME));
 
             final ColonyEventDescriptionTypeRegistryEntry registryEntry = MinecoloniesAPIProxy.getInstance().getColonyEventDescriptionRegistry().getValue(eventTypeID);
@@ -91,13 +91,13 @@ public class EventDescriptionManager implements IEventDescriptionManager
     }
 
     @Override
-    public CompoundNBT serializeNBT()
+    public CompoundTag serializeNBT()
     {
-        final CompoundNBT eventManagerNBT = new CompoundNBT();
-        final ListNBT eventDescsListNBT = new ListNBT();
+        final CompoundTag eventManagerNBT = new CompoundTag();
+        final ListTag eventDescsListNBT = new ListTag();
         for (final IColonyEventDescription event : eventDescs)
         {
-            final CompoundNBT eventNBT = event.serializeNBT();
+            final CompoundTag eventNBT = event.serializeNBT();
             eventNBT.putString(TAG_NAME, event.getEventTypeId().getPath());
             eventDescsListNBT.add(eventNBT);
         }

@@ -1,6 +1,6 @@
 package com.minecolonies.api.tileentities;
 
-import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 
 /**
  * Represent a TileEntity that will be built by a graveyard undertaker in a graveyard to honor a dead citizen
@@ -20,7 +20,7 @@ public class TileEntityNamedGrave extends AbstractTileEntityNamedGrave
      *
      * @param type the entity type.
      */
-    public TileEntityNamedGrave(final TileEntityType<? extends TileEntityNamedGrave> type)
+    public TileEntityNamedGrave(final BlockEntityType<? extends TileEntityNamedGrave> type)
     {
         super(type);
     }

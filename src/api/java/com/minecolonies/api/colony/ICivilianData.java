@@ -5,10 +5,10 @@ import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.citizen.AbstractCivilianEntity;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,7 +18,7 @@ import java.util.Optional;
 /**
  * Data for all civilians of a colony, can be citizen/trader/visitor etc
  */
-public interface ICivilianData extends ICitizen, INBTSerializable<CompoundNBT>
+public interface ICivilianData extends ICitizen, INBTSerializable<CompoundTag>
 {
     /**
      * Return the entity instance of the civilian data. Respawn the civilian if needed.
@@ -97,7 +97,7 @@ public interface ICivilianData extends ICitizen, INBTSerializable<CompoundNBT>
      *
      * @param buf Buffer to write to.
      */
-    void serializeViewNetworkData(@NotNull PacketBuffer buf);
+    void serializeViewNetworkData(@NotNull FriendlyByteBuf buf);
 
     /**
      * Getter for the saturation.
@@ -160,7 +160,7 @@ public interface ICivilianData extends ICitizen, INBTSerializable<CompoundNBT>
      * @param response the triggered response.
      * @param player   the world it was triggered in.
      */
-    void onResponseTriggered(@NotNull ITextComponent key, @NotNull ITextComponent response, PlayerEntity player);
+    void onResponseTriggered(@NotNull Component key, @NotNull Component response, Player player);
 
     /**
      * Tick the data to update values.

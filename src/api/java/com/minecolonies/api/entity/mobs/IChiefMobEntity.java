@@ -1,7 +1,7 @@
 package com.minecolonies.api.entity.mobs;
 
-import net.minecraft.entity.monster.IMob;
+import net.minecraft.world.entity.monster.Enemy;
 
-public interface IChiefMobEntity extends IMob
+public interface IChiefMobEntity extends Enemy
 {
 }

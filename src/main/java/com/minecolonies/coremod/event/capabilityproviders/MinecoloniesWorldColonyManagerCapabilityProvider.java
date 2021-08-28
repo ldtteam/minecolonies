@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.event.capabilityproviders;
 
 import com.minecolonies.coremod.colony.IColonyManagerCapability;
-import net.minecraft.nbt.INBT;
-import net.minecraft.util.Direction;
+import net.minecraft.nbt.Tag;
+import net.minecraft.core.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
@@ -14,7 +14,7 @@ import static com.minecolonies.coremod.MineColonies.COLONY_MANAGER_CAP;
 /**
  * Capability provider for the world capability of Minecolonies.
  */
-public class MinecoloniesWorldColonyManagerCapabilityProvider implements ICapabilitySerializable<INBT>
+public class MinecoloniesWorldColonyManagerCapabilityProvider implements ICapabilitySerializable<Tag>
 {
     /**
      * The chunk map capability optional.
@@ -36,13 +36,13 @@ public class MinecoloniesWorldColonyManagerCapabilityProvider implements ICapabi
     }
 
     @Override
-    public INBT serializeNBT()
+    public Tag serializeNBT()
     {
         return COLONY_MANAGER_CAP.getStorage().writeNBT(COLONY_MANAGER_CAP, colonyManager, null);
     }
 
     @Override
-    public void deserializeNBT(final INBT nbt)
+    public void deserializeNBT(final Tag nbt)
     {
         COLONY_MANAGER_CAP.getStorage().readNBT(COLONY_MANAGER_CAP, colonyManager, null, nbt);
     }

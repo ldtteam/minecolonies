@@ -9,24 +9,26 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.client.gui.townhall.WindowTownHallColonyManage;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.material.Material;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.TOWNHALL_BREAKING_MESSAGE;
+
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
 /**
  * Hut for the town hall. Sets the working range for the town hall in the constructor
@@ -55,9 +57,9 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
 
 
     @Override
-    public float getDestroyProgress(final BlockState state, @NotNull final PlayerEntity player, @NotNull final IBlockReader blockReader, @NotNull final BlockPos pos)
+    public float getDestroyProgress(final BlockState state, @NotNull final Player player, @NotNull final BlockGetter blockReader, @NotNull final BlockPos pos)
     {
-        if(MineColonies.getConfig().getServer().pvp_mode.get() && player.level instanceof ServerWorld)
+        if(MineColonies.getConfig().getServer().pvp_mode.get() && player.level instanceof ServerLevel)
         {
             final IBuilding building = IColonyManager.getInstance().getBuilding(player.level, pos);
             if (building != null && building.getColony().isCoordInColony(player.level, pos)
@@ -122,11 +124,11 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
      * @param attacker      Attacker name to apply to the message.
      * @param value         Progress value to apply to the message.
      */
-    private void sendPlayersMessage(List<PlayerEntity> players, String key, ITextComponent attacker, int value)
+    private void sendPlayersMessage(List<Player> players, String key, Component attacker, int value)
     {
-        for(PlayerEntity player : players)
+        for(Player player : players)
         {
-            player.sendMessage(new TranslationTextComponent(key, attacker, value), player.getUUID());
+            player.sendMessage(new TranslatableComponent(key, attacker, value), player.getUUID());
         }
     }
 
@@ -165,13 +167,13 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
      */
     @NotNull
     @Override
-    public ActionResultType use(
+    public InteractionResult use(
       final BlockState state,
-      final World worldIn,
+      final Level worldIn,
       final BlockPos pos,
-      final PlayerEntity player,
-      final Hand hand,
-      final BlockRayTraceResult ray)
+      final Player player,
+      final InteractionHand hand,
+      final BlockHitResult ray)
     {
        /*
         If the world is client, open the gui of the building
@@ -191,6 +193,6 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
                 new WindowTownHallColonyManage(player, pos, worldIn).open();
             }
         }
-        return ActionResultType.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 }

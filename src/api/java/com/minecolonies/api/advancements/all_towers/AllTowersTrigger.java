@@ -4,9 +4,9 @@ import com.google.gson.JsonObject;
 import com.minecolonies.api.advancements.AbstractCriterionTrigger;
 import com.minecolonies.api.advancements.CriterionListeners;
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.loot.ConditionArrayParser;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.advancements.critereon.DeserializationContext;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -27,7 +27,7 @@ public class AllTowersTrigger extends AbstractCriterionTrigger<CriterionListener
      * Triggers the listener checks if there is any listening in
      * @param player the player the check regards
      */
-    public void trigger(final ServerPlayerEntity player)
+    public void trigger(final ServerPlayer player)
     {
         final CriterionListeners<AllTowersCriterionInstance> listeners = this.getListeners(player.getAdvancements());
         if (listeners != null)
@@ -38,7 +38,7 @@ public class AllTowersTrigger extends AbstractCriterionTrigger<CriterionListener
 
     @NotNull
     @Override
-    public AllTowersCriterionInstance createInstance(@NotNull final JsonObject object, @NotNull final ConditionArrayParser conditions)
+    public AllTowersCriterionInstance createInstance(@NotNull final JsonObject object, @NotNull final DeserializationContext conditions)
     {
         return new AllTowersCriterionInstance();
     }

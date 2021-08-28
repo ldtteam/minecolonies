@@ -5,62 +5,62 @@ package com.minecolonies.coremod.client.model;
 
 import com.minecolonies.api.client.render.modeltype.CitizenModel;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.client.model.geom.ModelPart;
 
 public class ModelEntityChildMale extends CitizenModel<AbstractEntityCitizen>
 {
     public ModelEntityChildMale()
     {
-        ModelRenderer overRightLeg;
-        ModelRenderer overLeftLeg;
-        ModelRenderer pouch;
+        ModelPart overRightLeg;
+        ModelPart overLeftLeg;
+        ModelPart pouch;
 
         texWidth = 128;
         texHeight = 64;
 
-        rightLeg = new ModelRenderer(this);
+        rightLeg = new ModelPart(this);
         rightLeg.setPos(-2.0F, 12.0F, 0.0F);
         rightLeg.texOffs(0, 16).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, false);
 
-        overRightLeg = new ModelRenderer(this);
+        overRightLeg = new ModelPart(this);
         overRightLeg.setPos(-4.5F, 12.0F, -2.5F);
         rightLeg.addChild(overRightLeg);
         overRightLeg.texOffs(0, 33).addBox(2.0F, -12.0F, 0.0F, 5.0F, 12.0F, 5.0F, 0.0F, false);
 
-        leftLeg = new ModelRenderer(this);
+        leftLeg = new ModelPart(this);
         leftLeg.setPos(2.0F, 12.0F, 0.0F);
         leftLeg.texOffs(0, 16).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, true);
 
-        overLeftLeg = new ModelRenderer(this);
+        overLeftLeg = new ModelPart(this);
         overLeftLeg.setPos(-0.5F, 12.0F, -2.5F);
         leftLeg.addChild(overLeftLeg);
         overLeftLeg.texOffs(0, 33).addBox(-2.0F, -12.0F, 0.0F, 5.0F, 12.0F, 5.0F, 0.0F, true);
 
-        body = new ModelRenderer(this);
+        body = new ModelPart(this);
         body.setPos(0.0F, 0.0F, 0.0F);
         body.texOffs(16, 16).addBox(-4.5F, 0.0F, -2.5F, 9.0F, 12.0F, 5.0F, 0.0F, true);
 
-        pouch = new ModelRenderer(this);
+        pouch = new ModelPart(this);
         pouch.setPos(-4.0F, 9.5F, -3.5F);
         body.addChild(pouch);
         pouch.texOffs(20, 33).addBox(0.0F, 0.0F, 0.0F, 4.0F, 3.0F, 1.0F, 0.0F, true);
 
-        head = new ModelRenderer(this);
+        head = new ModelPart(this);
         head.setPos(0.0F, 0.0F, 0.0F);
         head.texOffs(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, 0.0F, false);
 
-        leftArm = new ModelRenderer(this);
+        leftArm = new ModelPart(this);
         leftArm.setPos(5.0F, 2.0F, 0.0F);
         leftArm.texOffs(44, 16).addBox(-1.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, true);
 
-        rightArm = new ModelRenderer(this);
+        rightArm = new ModelPart(this);
         rightArm.setPos(-5.0F, 2.0F, 0.0F);
         rightArm.texOffs(44, 16).addBox(-3.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, false);
 
         hat.visible = false;
     }
 
-    public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z)
+    public void setRotationAngle(ModelPart modelRenderer, float x, float y, float z)
     {
         modelRenderer.xRot = x;
         modelRenderer.yRot = y;

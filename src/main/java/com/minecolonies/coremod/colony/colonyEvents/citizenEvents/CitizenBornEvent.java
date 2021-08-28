@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.colony.colonyEvents.citizenEvents;
 
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -55,7 +55,7 @@ public class CitizenBornEvent extends AbstractCitizenEvent
      * @param compound the NBT compound
      * @return the colony to load.
      */
-    public static CitizenBornEvent loadFromNBT(@NotNull final CompoundNBT compound)
+    public static CitizenBornEvent loadFromNBT(@NotNull final CompoundTag compound)
     {
         final CitizenBornEvent birthEvent = new CitizenBornEvent();
         birthEvent.deserializeNBT(compound);
@@ -68,7 +68,7 @@ public class CitizenBornEvent extends AbstractCitizenEvent
      * @param buf the packet buffer.
      * @return the colony to load.
      */
-    public static CitizenBornEvent loadFromPacketBuffer(@NotNull final PacketBuffer buf)
+    public static CitizenBornEvent loadFromPacketBuffer(@NotNull final FriendlyByteBuf buf)
     {
         final CitizenBornEvent birthEvent = new CitizenBornEvent();
         birthEvent.deserialize(buf);

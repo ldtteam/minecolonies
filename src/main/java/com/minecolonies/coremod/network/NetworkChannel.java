@@ -35,13 +35,13 @@ import com.minecolonies.coremod.network.messages.splitting.SplitPacketMessage;
 import com.minecolonies.coremod.research.GlobalResearchTreeMessage;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.Registry;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.network.NetworkEvent.Context;
@@ -283,7 +283,7 @@ public class NetworkChannel
      * @param msg    message to send
      * @param player target player
      */
-    public void sendToPlayer(final IMessage msg, final ServerPlayerEntity player)
+    public void sendToPlayer(final IMessage msg, final ServerPlayer player)
     {
         handleSplitting(msg, s -> rawChannel.send(PacketDistributor.PLAYER.with(() -> player), s));
     }
@@ -296,7 +296,7 @@ public class NetworkChannel
      */
     public void sendToOrigin(final IMessage msg, final Context ctx)
     {
-        final ServerPlayerEntity player = ctx.getSender();
+        final ServerPlayer player = ctx.getSender();
         if (player != null) // side check
         {
             sendToPlayer(msg, player);
@@ -315,7 +315,7 @@ public class NetworkChannel
      */
     public void sendToDimension(final IMessage msg, final ResourceLocation dim)
     {
-        rawChannel.send(PacketDistributor.DIMENSION.with(() -> RegistryKey.create(Registry.DIMENSION_REGISTRY, dim)), msg);
+        rawChannel.send(PacketDistributor.DIMENSION.with(() -> ResourceKey.create(Registry.DIMENSION_REGISTRY, dim)), msg);
     }
 
     /**
@@ -380,7 +380,7 @@ public class NetworkChannel
      * @param msg   message to send
      * @param chunk target chunk to look at
      */
-    public void sendToTrackingChunk(final IMessage msg, final Chunk chunk)
+    public void sendToTrackingChunk(final IMessage msg, final LevelChunk chunk)
     {
         handleSplitting(msg, s -> rawChannel.send(PacketDistributor.TRACKING_CHUNK.with(() -> chunk), s));
     }
@@ -402,7 +402,7 @@ public class NetworkChannel
 
         //Write the message into a buffer and copy that buffer into a byte array for processing.
         final ByteBuf buffer = Unpooled.buffer();
-        final PacketBuffer innerPacketBuffer = new PacketBuffer(buffer);
+        final FriendlyByteBuf innerPacketBuffer = new FriendlyByteBuf(buffer);
         msg.toBytes(innerPacketBuffer);
         final byte[] data = buffer.array();
         buffer.release();

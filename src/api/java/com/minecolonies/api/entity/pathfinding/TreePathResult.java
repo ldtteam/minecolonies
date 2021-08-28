@@ -1,6 +1,6 @@
 package com.minecolonies.api.entity.pathfinding;
 
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
 
 /**
  * Custom result of the class which contains the position of the tree.

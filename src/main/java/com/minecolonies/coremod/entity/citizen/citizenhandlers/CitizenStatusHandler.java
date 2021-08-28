@@ -4,7 +4,7 @@ import com.minecolonies.api.entity.ai.Status;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenStatusHandler;
 import com.minecolonies.coremod.MineColonies;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.network.chat.Component;
 
 import java.util.Objects;
 
@@ -33,7 +33,7 @@ public class CitizenStatusHandler implements ICitizenStatusHandler
     /**
      * The 4 lines of the latest status.
      */
-    private final ITextComponent[] latestStatus = new ITextComponent[MAX_LINES_OF_LATEST_LOG];
+    private final Component[] latestStatus = new Component[MAX_LINES_OF_LATEST_LOG];
 
     /**
      * Constructor for the experience handler.
@@ -51,7 +51,7 @@ public class CitizenStatusHandler implements ICitizenStatusHandler
      * @return a ITextComponent with the length 4 describing it.
      */
     @Override
-    public ITextComponent[] getLatestStatus()
+    public Component[] getLatestStatus()
     {
         return latestStatus.clone();
     }
@@ -62,7 +62,7 @@ public class CitizenStatusHandler implements ICitizenStatusHandler
      * @param status the new status to set.
      */
     @Override
-    public void setLatestStatus(final ITextComponent... status)
+    public void setLatestStatus(final Component... status)
     {
         if (!enabled)
         {
@@ -72,7 +72,7 @@ public class CitizenStatusHandler implements ICitizenStatusHandler
         boolean hasChanged = false;
         for (int i = 0; i < latestStatus.length; i++)
         {
-            final ITextComponent newStatus;
+            final Component newStatus;
             if (i >= status.length)
             {
                 newStatus = null;
@@ -101,7 +101,7 @@ public class CitizenStatusHandler implements ICitizenStatusHandler
      * @param status the latest status to append
      */
     @Override
-    public void addLatestStatus(final ITextComponent status)
+    public void addLatestStatus(final Component status)
     {
         System.arraycopy(latestStatus, 0, latestStatus, 1, latestStatus.length - 1);
         latestStatus[0] = status;

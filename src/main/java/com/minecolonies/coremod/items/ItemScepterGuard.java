@@ -9,14 +9,14 @@ import com.minecolonies.api.colony.buildings.IGuardBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.modules.settings.GuardTaskSetting;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
@@ -44,20 +44,20 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
 
     @NotNull
     @Override
-    public ActionResultType useOn(final ItemUseContext ctx)
+    public InteractionResult useOn(final UseOnContext ctx)
     {
         // if server world, do nothing
         if (ctx.getLevel().isClientSide)
         {
-            return ActionResultType.FAIL;
+            return InteractionResult.FAIL;
         }
 
         final ItemStack scepter = ctx.getPlayer().getItemInHand(ctx.getHand());
         if (!scepter.hasTag())
         {
-            scepter.setTag(new CompoundNBT());
+            scepter.setTag(new CompoundTag());
         }
-        final CompoundNBT compound = scepter.getTag();
+        final CompoundTag compound = scepter.getTag();
 
         if (compound.getAllKeys().contains(TAG_LAST_POS))
         {
@@ -66,7 +66,7 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
             {
                 ctx.getPlayer().inventory.removeItemNoUpdate(ctx.getPlayer().inventory.selected);
                 LanguageHandler.sendPlayerMessage(ctx.getPlayer(), "com.minecolonies.coremod.job.guard.toolDoubleClick");
-                return ActionResultType.FAIL;
+                return InteractionResult.FAIL;
             }
         }
         return handleItemUsage(ctx.getLevel(), ctx.getClickedPos(), compound, ctx.getPlayer());
@@ -82,30 +82,30 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
      * @return if it has been successful.
      */
     @NotNull
-    private static ActionResultType handleItemUsage(final World worldIn, final BlockPos pos, final CompoundNBT compound, final PlayerEntity playerIn)
+    private static InteractionResult handleItemUsage(final Level worldIn, final BlockPos pos, final CompoundTag compound, final Player playerIn)
     {
         if (!compound.getAllKeys().contains(TAG_ID))
         {
-            return ActionResultType.FAIL;
+            return InteractionResult.FAIL;
         }
         final IColony colony = IColonyManager.getInstance().getColonyByWorld(compound.getInt(TAG_ID), worldIn);
         if (colony == null)
         {
-            return ActionResultType.FAIL;
+            return InteractionResult.FAIL;
         }
 
         final BlockPos guardTower = BlockPosUtil.read(compound, TAG_POS);
         final IBuilding hut = colony.getBuildingManager().getBuilding(guardTower);
         if (!(hut instanceof AbstractBuildingGuards))
         {
-            return ActionResultType.FAIL;
+            return InteractionResult.FAIL;
         }
         final IGuardBuilding tower = (IGuardBuilding) hut;
 
         if (BlockPosUtil.getDistance2D(pos, guardTower) > tower.getPatrolDistance())
         {
             LanguageHandler.sendPlayerMessage(playerIn, "com.minecolonies.coremod.job.guard.toolClickGuardTooFar");
-            return ActionResultType.FAIL;
+            return InteractionResult.FAIL;
         }
 
         final ICitizenData citizen = tower.getMainCitizen();
@@ -133,6 +133,6 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
         }
         BlockPosUtil.write(compound, TAG_LAST_POS, pos);
 
-        return ActionResultType.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 }

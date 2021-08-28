@@ -5,23 +5,23 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.util.MutableChunkPos;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.BufferBuilder.DrawState;
-import net.minecraft.client.renderer.GLAllocation;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldVertexBufferUploader;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.util.InputMappings;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.BufferBuilder.DrawState;
+import com.mojang.blaze3d.platform.MemoryTracker;
+import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.BufferUploader;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.platform.InputConstants;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
@@ -49,14 +49,14 @@ public class DebugRendererChunkBorder
 
     public static void renderWorldLastEvent(@NotNull final RenderWorldLastEvent event)
     {
-        final PlayerEntity player = Minecraft.getInstance().player;
+        final Player player = Minecraft.getInstance().player;
 
-        if (player.getItemInHand(Hand.MAIN_HAND).getItem() != ModItems.buildTool.get())
+        if (player.getItemInHand(InteractionHand.MAIN_HAND).getItem() != ModItems.buildTool.get())
         {
             return;
         }
 
-        final World world = Minecraft.getInstance().level;
+        final Level world = Minecraft.getInstance().level;
         final IColonyView nearestColonyView = IColonyManager.getInstance().getClosestColonyView(world, player.blockPosition());
 
         if (nearestColonyView == null)
@@ -81,7 +81,7 @@ public class DebugRendererChunkBorder
             {
                 for (int chunkZ = -range; chunkZ <= range; chunkZ++)
                 {
-                    final Chunk chunk = world.getChunk(playerChunkPos.x + chunkX, playerChunkPos.z + chunkZ);
+                    final LevelChunk chunk = world.getChunk(playerChunkPos.x + chunkX, playerChunkPos.z + chunkZ);
                     chunk.getCapability(CLOSE_COLONY_CAP, null).ifPresent(cap -> coloniesMap.put(chunk.getPos(), cap.getOwningColony()));
 
                     if (nearestColonyView.getTicketedChunks().contains(chunk.getPos().toLong()))
@@ -95,14 +95,14 @@ public class DebugRendererChunkBorder
                 }
             }
 
-            final BufferBuilder bufferbuilder = Tessellator.getInstance().getBuilder();
+            final BufferBuilder bufferbuilder = Tesselator.getInstance().getBuilder();
             colonies = draw(bufferbuilder, coloniesMap, nearestColonyView.getID(), playerChunkPos, playerRenderDist);
             chunktickets = draw(bufferbuilder, chunkticketsMap, nearestColonyView.getID(), playerChunkPos, playerRenderDist);
         }
 
-        final Vector3d currView = Minecraft.getInstance().getEntityRenderDispatcher().camera.getPosition();
-        final MatrixStack stack = event.getMatrixStack();
-        final Pair<DrawState, ByteBuffer> buffer = InputMappings.isKeyDown(Minecraft.getInstance().getWindow().getWindow(),
+        final Vec3 currView = Minecraft.getInstance().getEntityRenderDispatcher().camera.getPosition();
+        final PoseStack stack = event.getMatrixStack();
+        final Pair<DrawState, ByteBuffer> buffer = InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(),
             GLFW.GLFW_KEY_LEFT_CONTROL) ? chunktickets : colonies;
 
         stack.pushPose();
@@ -119,7 +119,7 @@ public class DebugRendererChunkBorder
         RenderSystem.pushMatrix();
         RenderSystem.loadIdentity();
         RenderSystem.multMatrix(stack.last().pose());
-        WorldVertexBufferUploader._end(buffer.getSecond(), buffer.getFirst().mode(), buffer.getFirst().format(), buffer.getFirst().vertexCount());
+        BufferUploader._end(buffer.getSecond(), buffer.getFirst().mode(), buffer.getFirst().format(), buffer.getFirst().vertexCount());
         RenderSystem.popMatrix();
 
         RenderSystem.lineWidth(1.0F);
@@ -136,7 +136,7 @@ public class DebugRendererChunkBorder
         final ChunkPos playerChunkPos,
         final int playerRenderDist)
     {
-        bufferbuilder.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
+        bufferbuilder.begin(GL11.GL_LINES, DefaultVertexFormat.POSITION_COLOR);
 
         final MutableChunkPos mutableChunkPos = new MutableChunkPos(0, 0);
 
@@ -313,7 +313,7 @@ public class DebugRendererChunkBorder
 
         // create bytebuffer copy since buffer builder uses slice
         final Pair<DrawState, ByteBuffer> preResult = bufferbuilder.popNextBuffer();
-        ByteBuffer temp = GLAllocation.createByteBuffer(preResult.getSecond().capacity());
+        ByteBuffer temp = MemoryTracker.createByteBuffer(preResult.getSecond().capacity());
         ((Buffer) preResult.getSecond()).clear();
         ((Buffer) temp).clear();
         temp.put(preResult.getSecond());

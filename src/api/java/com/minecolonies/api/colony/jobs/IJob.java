@@ -6,18 +6,18 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.entity.ai.goal.GoalSelector;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.DamageSource;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.goal.GoalSelector;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraftforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
+public interface IJob<AI extends Goal> extends INBTSerializable<CompoundTag>
 {
 
     /**
@@ -238,7 +238,7 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
      * Serialize the job to a buffer.
      * @param buffer the buffer to serialize it to.
      */
-    void serializeToView(final PacketBuffer buffer);
+    void serializeToView(final FriendlyByteBuf buffer);
 
     /**
      * Get the time limit in seconds after which the job considers itself inactive.

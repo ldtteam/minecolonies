@@ -1,6 +1,6 @@
 package com.minecolonies.api.util.constant;
 
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 

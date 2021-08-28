@@ -11,16 +11,16 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.loot.LootContext;
-import net.minecraft.loot.LootParameterSet;
-import net.minecraft.loot.LootParameters;
-import net.minecraft.loot.LootTable;
-import net.minecraft.util.Hand;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
@@ -112,13 +112,13 @@ public class RecipeStorage implements IRecipeStorage
     /**
      * The loot parameter set definition
      */
-    public static final LootParameterSet recipeLootParameters = (new LootParameterSet.Builder())
-                .required(LootParameters.ORIGIN)
-                .required(LootParameters.THIS_ENTITY)
-                .required(LootParameters.TOOL)
-                .optional(LootParameters.DAMAGE_SOURCE)
-                .optional(LootParameters.KILLER_ENTITY)
-                .optional(LootParameters.DIRECT_KILLER_ENTITY)
+    public static final LootContextParamSet recipeLootParameters = (new LootContextParamSet.Builder())
+                .required(LootContextParams.ORIGIN)
+                .required(LootContextParams.THIS_ENTITY)
+                .required(LootContextParams.TOOL)
+                .optional(LootContextParams.DAMAGE_SOURCE)
+                .optional(LootContextParams.KILLER_ENTITY)
+                .optional(LootContextParams.DIRECT_KILLER_ENTITY)
                 .build();
 
     /**
@@ -515,7 +515,7 @@ public class RecipeStorage implements IRecipeStorage
             return null;
         }
 
-        final AbstractEntityCitizen citizen = (AbstractEntityCitizen) context.getParamOrNull(LootParameters.THIS_ENTITY);
+        final AbstractEntityCitizen citizen = (AbstractEntityCitizen) context.getParamOrNull(LootContextParams.THIS_ENTITY);
 
         for (final ItemStorage storage : getCleanedInput())
         {
@@ -541,7 +541,7 @@ public class RecipeStorage implements IRecipeStorage
                         {
                             // The 4 parameter inner call from forge is for adding a callback to alter the damage caused,
                             // but unlike its description does not actually damage the item(despite the same function name). So used to just calculate the damage.
-                            toDamage.hurtAndBreak(toDamage.getItem().damageItem(stack, 1, citizen, item -> item.broadcastBreakEvent(Hand.MAIN_HAND)), citizen, item -> item.broadcastBreakEvent(Hand.MAIN_HAND));
+                            toDamage.hurtAndBreak(toDamage.getItem().damageItem(stack, 1, citizen, item -> item.broadcastBreakEvent(InteractionHand.MAIN_HAND)), citizen, item -> item.broadcastBreakEvent(InteractionHand.MAIN_HAND));
                         }
                         if (!ItemStackUtils.isEmpty(toDamage))
                         {

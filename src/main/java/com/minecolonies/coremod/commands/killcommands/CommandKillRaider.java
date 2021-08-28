@@ -5,9 +5,9 @@ import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.coremod.commands.commandTypes.IMCOPCommand;
 import com.mojang.brigadier.context.CommandContext;
-import net.minecraft.command.CommandSource;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.network.chat.TextComponent;
 
 public class CommandKillRaider implements IMCOPCommand
 {
@@ -19,7 +19,7 @@ public class CommandKillRaider implements IMCOPCommand
      * @param context the context of the command execution
      */
     @Override
-    public int onExecute(final CommandContext<CommandSource> context)
+    public int onExecute(final CommandContext<CommandSourceStack> context)
     {
         entitiesKilled = 0;
 
@@ -41,7 +41,7 @@ public class CommandKillRaider implements IMCOPCommand
                 entitiesKilled++;
             }
         });
-        context.getSource().sendSuccess(new StringTextComponent(entitiesKilled + " entities killed"), true);
+        context.getSource().sendSuccess(new TextComponent(entitiesKilled + " entities killed"), true);
         return 1;
     }
 

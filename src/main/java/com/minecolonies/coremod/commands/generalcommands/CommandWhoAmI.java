@@ -5,10 +5,10 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.coremod.commands.commandTypes.IMCCommand;
 import com.mojang.brigadier.context.CommandContext;
-import net.minecraft.command.CommandSource;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.BlockPos;
 
 public class CommandWhoAmI implements IMCCommand
 {
@@ -18,10 +18,10 @@ public class CommandWhoAmI implements IMCCommand
      * @param context the context of the command execution
      */
     @Override
-    public int onExecute(final CommandContext<CommandSource> context)
+    public int onExecute(final CommandContext<CommandSourceStack> context)
     {
         final Entity sender = context.getSource().getEntity();
-        if (!(sender instanceof PlayerEntity))
+        if (!(sender instanceof Player))
         {
             return 0;
         }
@@ -30,7 +30,7 @@ public class CommandWhoAmI implements IMCCommand
 
         if (colony == null)
         {
-            LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.whoami.nocolony");
+            LanguageHandler.sendPlayerMessage((Player) sender, "com.minecolonies.command.whoami.nocolony");
             return 0;
         }
 
@@ -38,7 +38,7 @@ public class CommandWhoAmI implements IMCCommand
         final String colonyName = colony.getName();
         final String playerName = sender.getDisplayName().getString();
         final String posString = "x: " + pos.getX() + " y: " + pos.getY() + " z: " + pos.getZ();
-        LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.whoami.hascolony", playerName, colonyName, colony.getID(), posString);
+        LanguageHandler.sendPlayerMessage((Player) sender, "com.minecolonies.command.whoami.hascolony", playerName, colonyName, colony.getID(), posString);
         return 1;
     }
 

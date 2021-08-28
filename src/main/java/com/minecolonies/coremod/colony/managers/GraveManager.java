@@ -13,12 +13,12 @@ import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesGrave;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
@@ -59,13 +59,13 @@ public class GraveManager implements IGraveManager
      * @param compound the compound.
      */
     @Override
-    public void read(@NotNull final CompoundNBT compound)
+    public void read(@NotNull final CompoundTag compound)
     {
         graves.clear();
-        final ListNBT gravesTagList = compound.getList(TAG_GRAVE, Constants.NBT.TAG_COMPOUND);
+        final ListTag gravesTagList = compound.getList(TAG_GRAVE, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < gravesTagList.size(); ++i)
         {
-            final CompoundNBT graveCompound = gravesTagList.getCompound(i);
+            final CompoundTag graveCompound = gravesTagList.getCompound(i);
             if (graveCompound.contains(TAG_POS) && graveCompound.contains(TAG_RESERVED))
             {
                 graves.put(BlockPosUtil.read(graveCompound, TAG_POS), graveCompound.getBoolean(TAG_RESERVED));
@@ -79,12 +79,12 @@ public class GraveManager implements IGraveManager
      * @param compound the compound.
      */
     @Override
-    public void write(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundTag compound)
     {
-        @NotNull final ListNBT gravesTagList = new ListNBT();
+        @NotNull final ListTag gravesTagList = new ListTag();
         for (@NotNull final BlockPos blockPos : graves.keySet())
         {
-            @NotNull final CompoundNBT graveCompound = new CompoundNBT();
+            @NotNull final CompoundTag graveCompound = new CompoundTag();
             BlockPosUtil.write(graveCompound, TAG_POS, blockPos);
             graveCompound.putBoolean(TAG_RESERVED, graves.get(blockPos));
             gravesTagList.add(graveCompound);
@@ -242,7 +242,7 @@ public class GraveManager implements IGraveManager
      * @param citizenData The citizenData
      */
     @Override
-    public void createCitizenGrave(final World world, final BlockPos pos, final ICitizenData citizenData)
+    public void createCitizenGrave(final Level world, final BlockPos pos, final ICitizenData citizenData)
     {
         final BlockPos firstValidPosition = ConstructionTapeHelper.firstValidPosition(pos, world, 10);
         if (firstValidPosition != null)
@@ -260,7 +260,7 @@ public class GraveManager implements IGraveManager
             graveData.setCitizenName(citizenData.getName());
             if (citizenData.getJob() != null)
             {
-                final IFormattableTextComponent jobName = new TranslationTextComponent(citizenData.getJob().getName().toLowerCase());
+                final MutableComponent jobName = new TranslatableComponent(citizenData.getJob().getName().toLowerCase());
                 graveData.setCitizenJobName(jobName.getString());
             }
             graveData.setCitizenDataNBT(citizenData.serializeNBT());

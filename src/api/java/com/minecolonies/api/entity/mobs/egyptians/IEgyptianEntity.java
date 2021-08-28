@@ -1,10 +1,10 @@
 package com.minecolonies.api.entity.mobs.egyptians;
 
-import net.minecraft.command.ICommandSource;
-import net.minecraft.entity.monster.IMob;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.commands.CommandSource;
+import net.minecraft.world.entity.monster.Enemy;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 
-public interface IEgyptianEntity extends IMob, ICommandSource, ICapabilitySerializable<CompoundNBT>
+public interface IEgyptianEntity extends Enemy, CommandSource, ICapabilitySerializable<CompoundTag>
 {
 }

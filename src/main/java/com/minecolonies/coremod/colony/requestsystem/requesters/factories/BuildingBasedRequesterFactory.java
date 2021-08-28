@@ -8,8 +8,8 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.requestsystem.requesters.BuildingBasedRequester;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 
 public class BuildingBasedRequesterFactory implements IFactory<AbstractBuilding, BuildingBasedRequester>
@@ -46,26 +46,26 @@ public class BuildingBasedRequesterFactory implements IFactory<AbstractBuilding,
 
     @NotNull
     @Override
-    public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final BuildingBasedRequester output)
+    public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final BuildingBasedRequester output)
     {
         return output.serialize(controller);
     }
 
     @NotNull
     @Override
-    public BuildingBasedRequester deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
+    public BuildingBasedRequester deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
     {
         return BuildingBasedRequester.deserialize(controller, nbt);
     }
 
     @Override
-    public void serialize(IFactoryController controller, BuildingBasedRequester output, PacketBuffer packetBuffer)
+    public void serialize(IFactoryController controller, BuildingBasedRequester output, FriendlyByteBuf packetBuffer)
     {
         output.serialize(controller, packetBuffer);
     }
 
     @Override
-    public BuildingBasedRequester deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
+    public BuildingBasedRequester deserialize(IFactoryController controller, FriendlyByteBuf buffer) throws Throwable
     {
         return BuildingBasedRequester.deserialize(controller, buffer);
     }

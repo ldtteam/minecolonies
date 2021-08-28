@@ -3,8 +3,8 @@ package com.minecolonies.coremod.colony;
 import com.google.common.annotations.VisibleForTesting;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.util.Log;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,7 +40,7 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
      * @param position The position for the Colony center.
      * @return The newly created Colony.
      */
-    public Colony create(final World world, final BlockPos position)
+    public Colony create(final Level world, final BlockPos position)
     {
         final int colonyID = getNextColonyID();
         if (colonyID >= list.length)

@@ -29,23 +29,23 @@ import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenHappinessH
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenMournHandler;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenSkillHandler;
 import com.minecolonies.coremod.util.AttributeModifierUtils;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.nbt.IntNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.IntTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -133,7 +133,7 @@ public class CitizenData implements ICitizenData
     /**
      * Report end message to:
      */
-    private ServerPlayerEntity originPlayerRestart;
+    private ServerPlayer originPlayerRestart;
 
     /**
      * The id of the citizens texture.
@@ -211,7 +211,7 @@ public class CitizenData implements ICitizenData
     /**
      * The citizen chat options on the server side.
      */
-    protected final Map<ITextComponent, IInteractionResponseHandler> citizenChatOptions = new HashMap<>();
+    protected final Map<Component, IInteractionResponseHandler> citizenChatOptions = new HashMap<>();
 
     /**
      * If idle at job.
@@ -290,7 +290,7 @@ public class CitizenData implements ICitizenData
     }
 
     @Override
-    public void onResponseTriggered(@NotNull final ITextComponent key, @NotNull final ITextComponent response, final PlayerEntity player)
+    public void onResponseTriggered(@NotNull final Component key, @NotNull final Component response, final Player player)
     {
         if (citizenChatOptions.containsKey(key))
         {
@@ -433,7 +433,7 @@ public class CitizenData implements ICitizenData
         citizen.getCitizenColonyHandler().setColonyId(getColony().getID());
 
         citizen.setIsChild(isChild());
-        citizen.setCustomName(new StringTextComponent(getName()));
+        citizen.setCustomName(new TextComponent(getName()));
 
         citizen.getAttribute(Attributes.MAX_HEALTH).setBaseValue(BASE_MAX_HEALTH);
 
@@ -470,7 +470,7 @@ public class CitizenData implements ICitizenData
      */
     private void applyItemModifiers(AbstractEntityCitizen citizen)
     {
-        for (final EquipmentSlotType slot : EquipmentSlotType.values())
+        for (final EquipmentSlot slot : EquipmentSlot.values())
         {
             final ItemStack stack = citizen.getItemBySlot(slot);
             if (!ItemStackUtils.isEmpty(stack))
@@ -842,7 +842,7 @@ public class CitizenData implements ICitizenData
     }
 
     @Override
-    public void serializeViewNetworkData(@NotNull final PacketBuffer buf)
+    public void serializeViewNetworkData(@NotNull final FriendlyByteBuf buf)
     {
         buf.writeUtf(name);
         buf.writeBoolean(female);
@@ -878,8 +878,8 @@ public class CitizenData implements ICitizenData
 
         buf.writeInt(colony.getID());
 
-        final CompoundNBT compound = new CompoundNBT();
-        compound.put("inventory", inventory.write(new ListNBT()));
+        final CompoundTag compound = new CompoundTag();
+        compound.put("inventory", inventory.write(new ListTag()));
         buf.writeNbt(compound);
         buf.writeBlockPos(lastPosition);
 
@@ -898,7 +898,7 @@ public class CitizenData implements ICitizenData
             buf.writeInt(0);
         }
 
-        final CompoundNBT happinessCompound = new CompoundNBT();
+        final CompoundTag happinessCompound = new CompoundTag();
         citizenHappinessHandler.write(happinessCompound);
         buf.writeNbt(happinessCompound);
 
@@ -1028,7 +1028,7 @@ public class CitizenData implements ICitizenData
     }
 
     @Override
-    public void scheduleRestart(final ServerPlayerEntity player)
+    public void scheduleRestart(final ServerPlayer player)
     {
         originPlayerRestart = player;
         restartScheduled = true;
@@ -1078,9 +1078,9 @@ public class CitizenData implements ICitizenData
     }
 
     @Override
-    public CompoundNBT serializeNBT()
+    public CompoundTag serializeNBT()
     {
-        final CompoundNBT nbtTagCompound = new CompoundNBT();
+        final CompoundTag nbtTagCompound = new CompoundTag();
 
         nbtTagCompound.putInt(TAG_ID, id);
         nbtTagCompound.putString(TAG_NAME, name);
@@ -1102,25 +1102,25 @@ public class CitizenData implements ICitizenData
 
         if (job != null)
         {
-            @NotNull final INBT jobCompound = job.serializeNBT();
+            @NotNull final Tag jobCompound = job.serializeNBT();
             nbtTagCompound.put("job", jobCompound);
         }
 
         citizenHappinessHandler.write(nbtTagCompound);
         citizenMournHandler.write(nbtTagCompound);
 
-        nbtTagCompound.put(TAG_INVENTORY, inventory.write(new ListNBT()));
-        nbtTagCompound.putInt(TAG_HELD_ITEM_SLOT, inventory.getHeldItemSlot(Hand.MAIN_HAND));
-        nbtTagCompound.putInt(TAG_OFFHAND_HELD_ITEM_SLOT, inventory.getHeldItemSlot(Hand.OFF_HAND));
+        nbtTagCompound.put(TAG_INVENTORY, inventory.write(new ListTag()));
+        nbtTagCompound.putInt(TAG_HELD_ITEM_SLOT, inventory.getHeldItemSlot(InteractionHand.MAIN_HAND));
+        nbtTagCompound.putInt(TAG_OFFHAND_HELD_ITEM_SLOT, inventory.getHeldItemSlot(InteractionHand.OFF_HAND));
 
         BlockPosUtil.write(nbtTagCompound, TAG_BEDS, bedPos);
         nbtTagCompound.putBoolean(TAG_ASLEEP, isAsleep);
         nbtTagCompound.putBoolean(TAG_JUST_ATE, justAte);
 
-        @NotNull final ListNBT chatTagList = new ListNBT();
+        @NotNull final ListTag chatTagList = new ListTag();
         for (@NotNull final IInteractionResponseHandler entry : citizenChatOptions.values())
         {
-            @NotNull final CompoundNBT chatOptionCompound = new CompoundNBT();
+            @NotNull final CompoundTag chatOptionCompound = new CompoundTag();
             chatOptionCompound.put(TAG_CHAT_OPTION, entry.serializeNBT());
             chatTagList.add(chatOptionCompound);
         }
@@ -1131,17 +1131,17 @@ public class CitizenData implements ICitizenData
         nbtTagCompound.putString(TAG_PARENT_A, parents.getA());
         nbtTagCompound.putString(TAG_PARENT_B, parents.getB());
 
-        @NotNull final ListNBT siblingsNBT = new ListNBT();
+        @NotNull final ListTag siblingsNBT = new ListTag();
         for (final int sibling : siblings)
         {
-            siblingsNBT.add(IntNBT.valueOf(sibling));
+            siblingsNBT.add(IntTag.valueOf(sibling));
         }
         nbtTagCompound.put(TAG_SIBLINGS, siblingsNBT);
 
-        @NotNull final ListNBT childrenNBT = new ListNBT();
+        @NotNull final ListTag childrenNBT = new ListTag();
         for (final int child : children)
         {
-            childrenNBT.add(IntNBT.valueOf(child));
+            childrenNBT.add(IntTag.valueOf(child));
         }
         nbtTagCompound.put(TAG_CHILDREN, childrenNBT);
         nbtTagCompound.putInt(TAG_PARTNER, partner);
@@ -1151,7 +1151,7 @@ public class CitizenData implements ICitizenData
     }
 
     @Override
-    public void deserializeNBT(final CompoundNBT nbtTagCompound)
+    public void deserializeNBT(final CompoundTag nbtTagCompound)
     {
         name = nbtTagCompound.getString(TAG_NAME);
         female = nbtTagCompound.getBoolean(TAG_FEMALE);
@@ -1186,10 +1186,10 @@ public class CitizenData implements ICitizenData
 
         if (nbtTagCompound.getAllKeys().contains(TAG_INVENTORY))
         {
-            final ListNBT nbttaglist = nbtTagCompound.getList(TAG_INVENTORY, 10);
+            final ListTag nbttaglist = nbtTagCompound.getList(TAG_INVENTORY, 10);
             this.inventory.read(nbttaglist);
-            this.inventory.setHeldItem(Hand.MAIN_HAND, nbtTagCompound.getInt(TAG_HELD_ITEM_SLOT));
-            this.inventory.setHeldItem(Hand.OFF_HAND, nbtTagCompound.getInt(TAG_OFFHAND_HELD_ITEM_SLOT));
+            this.inventory.setHeldItem(InteractionHand.MAIN_HAND, nbtTagCompound.getInt(TAG_HELD_ITEM_SLOT));
+            this.inventory.setHeldItem(InteractionHand.OFF_HAND, nbtTagCompound.getInt(TAG_OFFHAND_HELD_ITEM_SLOT));
         }
 
         if (name.isEmpty())
@@ -1211,7 +1211,7 @@ public class CitizenData implements ICitizenData
         //  Citizen chat options.
         if (nbtTagCompound.getAllKeys().contains(TAG_CHAT_OPTIONS))
         {
-            final ListNBT handlerTagList = nbtTagCompound.getList(TAG_CHAT_OPTIONS, Constants.NBT.TAG_COMPOUND);
+            final ListTag handlerTagList = nbtTagCompound.getList(TAG_CHAT_OPTIONS, Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < handlerTagList.size(); ++i)
             {
                 final ServerCitizenInteraction handler =
@@ -1229,10 +1229,10 @@ public class CitizenData implements ICitizenData
         {
             citizenSkillHandler.init((int) citizenHappinessHandler.getHappiness(getColony()));
             final Map<String, Integer> levels = new HashMap<>();
-            final ListNBT levelTagList = nbtTagCompound.getList(TAG_LEVEL_MAP, Constants.NBT.TAG_COMPOUND);
+            final ListTag levelTagList = nbtTagCompound.getList(TAG_LEVEL_MAP, Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < levelTagList.size(); ++i)
             {
-                final CompoundNBT levelExperienceAtJob = levelTagList.getCompound(i);
+                final CompoundTag levelExperienceAtJob = levelTagList.getCompound(i);
                 final String jobName = levelExperienceAtJob.getString(TAG_NAME);
                 final int level = Math.min(levelExperienceAtJob.getInt(TAG_LEVEL), MAX_CITIZEN_LEVEL);
                 levels.put(jobName, level);
@@ -1254,13 +1254,13 @@ public class CitizenData implements ICitizenData
         final String parentB = nbtTagCompound.getString(TAG_PARENT_B);
 
         this.parents = new Tuple<>(parentA, parentB);
-        @NotNull final ListNBT siblingsNBT = nbtTagCompound.getList(TAG_SIBLINGS, Constants.NBT.TAG_INT);
+        @NotNull final ListTag siblingsNBT = nbtTagCompound.getList(TAG_SIBLINGS, Constants.NBT.TAG_INT);
         for (int i = 0; i < siblingsNBT.size(); i++)
         {
             siblings.add(siblingsNBT.getInt(i));
         }
 
-        @NotNull final ListNBT childrenNBT = nbtTagCompound.getList(TAG_CHILDREN, Constants.NBT.TAG_INT);
+        @NotNull final ListTag childrenNBT = nbtTagCompound.getList(TAG_CHILDREN, Constants.NBT.TAG_INT);
         for (int i = 0; i < childrenNBT.size(); i++)
         {
             children.add(childrenNBT.getInt(i));
@@ -1310,7 +1310,7 @@ public class CitizenData implements ICitizenData
         for (final IInteractionResponseHandler handler : toRemove)
         {
             citizenChatOptions.remove(handler.getInquiry());
-            for (final ITextComponent comp : handler.getPossibleResponses())
+            for (final Component comp : handler.getPossibleResponses())
             {
                 if (citizenChatOptions.containsKey(handler.getResponseResult(comp)))
                 {
@@ -1420,7 +1420,7 @@ public class CitizenData implements ICitizenData
      * @param nbt    nbt compound to read from
      * @return new CitizenData
      */
-    public static CitizenData loadFromNBT(final IColony colony, final CompoundNBT nbt)
+    public static CitizenData loadFromNBT(final IColony colony, final CompoundTag nbt)
     {
         final CitizenData data = new CitizenData(nbt.getInt(TAG_ID), colony);
         data.deserializeNBT(nbt);
@@ -1464,15 +1464,15 @@ public class CitizenData implements ICitizenData
 
         if (workBuilding != null && !workBuilding.isGuardBuildingNear() && !WorldUtil.isPeaceful(colony.getWorld()))
         {
-            triggerInteraction(new StandardInteraction(new TranslationTextComponent(CITIZEN_NOT_GUARD_NEAR_WORK),
-              new TranslationTextComponent(CITIZEN_NOT_GUARD_NEAR_WORK),
+            triggerInteraction(new StandardInteraction(new TranslatableComponent(CITIZEN_NOT_GUARD_NEAR_WORK),
+              new TranslatableComponent(CITIZEN_NOT_GUARD_NEAR_WORK),
               ChatPriority.CHITCHAT));
         }
 
         if (homeBuilding != null && !homeBuilding.isGuardBuildingNear() && !WorldUtil.isPeaceful(colony.getWorld()))
         {
-            triggerInteraction(new StandardInteraction(new TranslationTextComponent(CITIZEN_NOT_GUARD_NEAR_HOME),
-              new TranslationTextComponent(CITIZEN_NOT_GUARD_NEAR_HOME),
+            triggerInteraction(new StandardInteraction(new TranslatableComponent(CITIZEN_NOT_GUARD_NEAR_HOME),
+              new TranslatableComponent(CITIZEN_NOT_GUARD_NEAR_HOME),
               ChatPriority.CHITCHAT));
         }
     }

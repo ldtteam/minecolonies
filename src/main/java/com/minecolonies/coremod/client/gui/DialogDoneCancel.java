@@ -8,7 +8,7 @@ import com.ldtteam.blockout.views.OverlayView;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.network.chat.MutableComponent;
 import java.util.List;
 import java.util.function.ObjIntConsumer;
 
@@ -100,7 +100,7 @@ public class DialogDoneCancel extends OverlayView implements ButtonHandler
      *
      * @return The textual content displayed in the dialog
      */
-    public List<IFormattableTextComponent> getTextContent()
+    public List<MutableComponent> getTextContent()
     {
         return contentText.getTextAsList();
     }

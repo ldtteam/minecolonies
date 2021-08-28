@@ -10,7 +10,7 @@ import com.minecolonies.api.entity.combat.CombatAIStates;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.HordeRaidEvent;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
 
 /**
  * AI for handling the raiders walking directions

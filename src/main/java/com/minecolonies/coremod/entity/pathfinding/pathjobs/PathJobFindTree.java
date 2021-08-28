@@ -7,12 +7,12 @@ import com.minecolonies.api.entity.pathfinding.TreePathResult;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.entity.ai.citizen.lumberjack.Tree;
 import com.minecolonies.coremod.entity.pathfinding.Node;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3i;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Vec3i;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -30,7 +30,7 @@ public class PathJobFindTree extends AbstractPathJob
     /**
      * How much should be restricted area shrinked because of isTree check
      */
-    private static final Vector3i AREA_SHRINK = new Vector3i(-1, 0, -1);
+    private static final Vec3i AREA_SHRINK = new Vec3i(-1, 0, -1);
 
     /**
      * The location of the hut of the lumberjack.
@@ -64,7 +64,7 @@ public class PathJobFindTree extends AbstractPathJob
      * @param colony     the colony.
      */
     public PathJobFindTree(
-      final World world,
+      final Level world,
       @NotNull final BlockPos start,
       final BlockPos home,
       final int range,
@@ -92,7 +92,7 @@ public class PathJobFindTree extends AbstractPathJob
      * @param colony           the colony.
      */
     public PathJobFindTree(
-      final World world,
+      final Level world,
       @NotNull final BlockPos start,
       final BlockPos home,
       final BlockPos startRestriction,

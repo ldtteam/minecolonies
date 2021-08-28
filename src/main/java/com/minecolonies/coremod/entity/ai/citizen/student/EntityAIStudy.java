@@ -9,9 +9,9 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLibrary;
 import com.minecolonies.coremod.colony.jobs.JobStudent;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAISkill;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -101,7 +101,7 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLib
         {
             // Default levelup
             data.getCitizenSkillHandler().tryLevelUpIntelligence(world.random, ONE_IN_X_CHANCE, data);
-            worker.setItemInHand(Hand.MAIN_HAND, ItemStackUtils.EMPTY);
+            worker.setItemInHand(InteractionHand.MAIN_HAND, ItemStackUtils.EMPTY);
 
             for (final StudyItem studyItem : getOwnBuilding().getStudyItems())
             {
@@ -126,7 +126,7 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLib
         {
             final StudyItem chosenItem = currentItems.get(world.random.nextInt(currentItems.size()));
 
-            worker.setItemInHand(Hand.MAIN_HAND, new ItemStack(chosenItem.getItem(), 1));
+            worker.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(chosenItem.getItem(), 1));
             data.getCitizenSkillHandler().tryLevelUpIntelligence(world.random, ONE_IN_X_CHANCE * (100D / chosenItem.getSkillIncreasePct()), data);
             // Break item rand
             if (world.random.nextInt(100) <= chosenItem.getBreakPct())

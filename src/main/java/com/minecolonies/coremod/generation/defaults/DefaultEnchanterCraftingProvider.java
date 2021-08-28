@@ -10,7 +10,7 @@ import com.minecolonies.coremod.generation.LootTableBuilder;
 import com.minecolonies.coremod.generation.LootTableJsonProvider;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DirectoryCache;
-import net.minecraft.data.IDataProvider;
+import net.minecraft.data.DataProvider;
 import net.minecraft.data.IFinishedRecipe;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentData;
@@ -29,7 +29,7 @@ import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 
 import com.minecolonies.coremod.generation.CustomRecipeProvider.CustomRecipeBuilder;
 
-public class DefaultEnchanterCraftingProvider implements IDataProvider
+public class DefaultEnchanterCraftingProvider implements DataProvider
 {
     private static final int MAX_BUILDING_LEVEL = 5;
 

@@ -4,23 +4,23 @@ import com.minecolonies.api.client.render.modeltype.CitizenModel;
 import com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.coremod.client.model.ModelEntityFemaleCitizen;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.BipedRenderer;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.client.renderer.entity.layers.BipedArmorLayer;
-import net.minecraft.client.renderer.entity.layers.HeldItemLayer;
-import net.minecraft.client.renderer.entity.model.BipedModel;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.UseAction;
-import net.minecraft.util.HandSide;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.Matrix4f;
-import net.minecraft.util.math.vector.Vector3f;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
+import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
+import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.resources.ResourceLocation;
+import com.mojang.math.Matrix4f;
+import com.mojang.math.Vector3f;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -36,11 +36,11 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
      *
      * @param renderManagerIn the RenderManager for this Renderer.
      */
-    public RenderBipedCitizen(final EntityRendererManager renderManagerIn)
+    public RenderBipedCitizen(final EntityRenderDispatcher renderManagerIn)
     {
         super(renderManagerIn, new CitizenModel<>(0.0F), (float) SHADOW_SIZE);
-        super.addLayer(new BipedArmorLayer<>(this, new CitizenModel<>(0.5F), new CitizenModel<>(1.0F)));
-        super.addLayer(new HeldItemLayer<>(this));
+        super.addLayer(new HumanoidArmorLayer<>(this, new CitizenModel<>(0.5F), new CitizenModel<>(1.0F)));
+        super.addLayer(new ItemInHandLayer<>(this));
     }
 
     @Override
@@ -48,8 +48,8 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
       @NotNull final AbstractEntityCitizen citizen,
       final float limbSwing,
       final float partialTicks,
-      @NotNull final MatrixStack matrixStack,
-      @NotNull final IRenderTypeBuffer renderTypeBuffer,
+      @NotNull final PoseStack matrixStack,
+      @NotNull final MultiBufferSource renderTypeBuffer,
       final int light)
     {
         setupMainModelFrom(citizen);
@@ -58,8 +58,8 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
 
         final ItemStack mainHandStack = citizen.getMainHandItem();
         final ItemStack offHandStack = citizen.getOffhandItem();
-        final BipedModel.ArmPose armPoseMainHand = getArmPoseFrom(citizen, mainHandStack);
-        final BipedModel.ArmPose armPoseOffHand = getArmPoseFrom(citizen, offHandStack);
+        final HumanoidModel.ArmPose armPoseMainHand = getArmPoseFrom(citizen, mainHandStack);
+        final HumanoidModel.ArmPose armPoseOffHand = getArmPoseFrom(citizen, offHandStack);
 
         updateArmPose(citizen, citizenModel, armPoseMainHand, armPoseOffHand);
 
@@ -103,9 +103,9 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
     @Override
     protected void renderNameTag(
       @NotNull final AbstractEntityCitizen entityIn,
-      @NotNull final ITextComponent str,
-      @NotNull final MatrixStack matrixStack,
-      @NotNull final IRenderTypeBuffer buffer,
+      @NotNull final Component str,
+      @NotNull final PoseStack matrixStack,
+      @NotNull final MultiBufferSource buffer,
       final int maxDistance)
     {
         super.renderNameTag(entityIn, str, matrixStack, buffer, maxDistance);
@@ -130,7 +130,7 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
                 matrixStack.scale(-0.025F, -0.025F, 0.025F);
 
                 final Matrix4f matrix = matrixStack.last().pose();
-                final IVertexBuilder r = buffer.getBuffer(MRenderTypes.customTextRenderer(texture));
+                final VertexConsumer r = buffer.getBuffer(MRenderTypes.customTextRenderer(texture));
 
                 r.vertex(matrix, 0, 0, 0).uv(0, 0).uv2(250).endVertex();
                 r.vertex(matrix, 0, 10, 0).uv(1, 0).uv2(250).endVertex();
@@ -141,23 +141,23 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
         }
     }
 
-    private BipedModel.ArmPose getArmPoseFrom(@NotNull final AbstractEntityCitizen citizen, final ItemStack mainHandStack)
+    private HumanoidModel.ArmPose getArmPoseFrom(@NotNull final AbstractEntityCitizen citizen, final ItemStack mainHandStack)
     {
-        final UseAction enumActionMainHand;
-        BipedModel.ArmPose pose = BipedModel.ArmPose.EMPTY;
+        final UseAnim enumActionMainHand;
+        HumanoidModel.ArmPose pose = HumanoidModel.ArmPose.EMPTY;
         if (!mainHandStack.isEmpty())
         {
-            pose = BipedModel.ArmPose.ITEM;
+            pose = HumanoidModel.ArmPose.ITEM;
             if (citizen.getUseItemRemainingTicks() > 0)
             {
                 enumActionMainHand = mainHandStack.getUseAnimation();
-                if (enumActionMainHand == UseAction.BLOCK)
+                if (enumActionMainHand == UseAnim.BLOCK)
                 {
-                    pose = BipedModel.ArmPose.BLOCK;
+                    pose = HumanoidModel.ArmPose.BLOCK;
                 }
-                else if (enumActionMainHand == UseAction.BOW)
+                else if (enumActionMainHand == UseAnim.BOW)
                 {
-                    pose = BipedModel.ArmPose.BOW_AND_ARROW;
+                    pose = HumanoidModel.ArmPose.BOW_AND_ARROW;
                 }
             }
         }
@@ -166,11 +166,11 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
 
     private void updateArmPose(
       @NotNull final AbstractEntityCitizen citizen,
-      final BipedModel<AbstractEntityCitizen> citizenModel,
-      final BipedModel.ArmPose armPoseMainHand,
-      final BipedModel.ArmPose armPoseOffHand)
+      final HumanoidModel<AbstractEntityCitizen> citizenModel,
+      final HumanoidModel.ArmPose armPoseMainHand,
+      final HumanoidModel.ArmPose armPoseOffHand)
     {
-        if (citizen.getMainArm() == HandSide.RIGHT)
+        if (citizen.getMainArm() == HumanoidArm.RIGHT)
         {
             citizenModel.rightArmPose = armPoseMainHand;
             citizenModel.leftArmPose = armPoseOffHand;

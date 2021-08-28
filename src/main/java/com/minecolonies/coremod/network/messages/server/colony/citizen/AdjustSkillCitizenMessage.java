@@ -7,8 +7,8 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.network.messages.server.AbstractColonyServerMessage;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -59,7 +59,7 @@ public class AdjustSkillCitizenMessage extends AbstractColonyServerMessage
     }
 
     @Override
-    public void fromBytesOverride(@NotNull final PacketBuffer buf)
+    public void fromBytesOverride(@NotNull final FriendlyByteBuf buf)
     {
         citizenId = buf.readInt();
         quantity = buf.readInt();
@@ -67,7 +67,7 @@ public class AdjustSkillCitizenMessage extends AbstractColonyServerMessage
     }
 
     @Override
-    public void toBytesOverride(@NotNull final PacketBuffer buf)
+    public void toBytesOverride(@NotNull final FriendlyByteBuf buf)
     {
         buf.writeInt(citizenId);
         buf.writeInt(quantity);
@@ -91,7 +91,7 @@ public class AdjustSkillCitizenMessage extends AbstractColonyServerMessage
             return;
         }
 
-        final PlayerEntity player = ctxIn.getSender();
+        final Player player = ctxIn.getSender();
         if (player == null)
         {
             return;

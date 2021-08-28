@@ -1,7 +1,9 @@
 package com.minecolonies.coremod.blocks.schematic;
 
 import com.minecolonies.api.blocks.AbstractBlockMinecolonies;
-import net.minecraft.block.material.Material;
+import net.minecraft.world.level.material.Material;
+
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
 /**
  * This block is a waypoint, which makes citizens path to it.

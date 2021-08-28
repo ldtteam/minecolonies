@@ -18,26 +18,26 @@ import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipBasedRaiderUtils;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipSize;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.NBTUtil;
-import net.minecraft.pathfinding.Path;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
-import net.minecraft.tileentity.MobSpawnerTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Mirror;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.BossInfo;
-import net.minecraft.world.server.ServerBossInfo;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.world.level.pathfinder.Path;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.BossEvent;
+import net.minecraft.server.level.ServerBossEvent;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
@@ -85,7 +85,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     /**
      * The raids visual raidbar
      */
-    protected final ServerBossInfo raidBar = new ServerBossInfo(new StringTextComponent("Colony Raid"), BossInfo.Color.RED, BossInfo.Overlay.NOTCHED_10);
+    protected final ServerBossEvent raidBar = new ServerBossEvent(new TextComponent("Colony Raid"), BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.NOTCHED_10);
 
     /**
      * The ID of this raid
@@ -215,10 +215,10 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     protected void updateRaidBar()
     {
         final String directionName = BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint);
-        raidBar.setName(getDisplayName().append(new StringTextComponent(" - " + directionName)));
-        for (final PlayerEntity player : colony.getPackageManager().getCloseSubscribers())
+        raidBar.setName(getDisplayName().append(new TextComponent(" - " + directionName)));
+        for (final Player player : colony.getPackageManager().getCloseSubscribers())
         {
-            raidBar.addPlayer((ServerPlayerEntity) player);
+            raidBar.addPlayer((ServerPlayer) player);
         }
         raidBar.setVisible(true);
     }
@@ -228,7 +228,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
      *
      * @return
      */
-    protected abstract IFormattableTextComponent getDisplayName();
+    protected abstract MutableComponent getDisplayName();
 
     @Override
     public void onUpdate()
@@ -287,7 +287,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
             {
                 if (entity instanceof LivingEntity)
                 {
-                    ((LivingEntity) entity).addEffect(new EffectInstance(Effects.GLOWING, 550));
+                    ((LivingEntity) entity).addEffect(new MobEffectInstance(MobEffects.GLOWING, 550));
                 }
             }
         }
@@ -311,9 +311,9 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     }
 
     @Override
-    public void onTileEntityBreak(final TileEntity te)
+    public void onTileEntityBreak(final BlockEntity te)
     {
-        if (te instanceof MobSpawnerTileEntity)
+        if (te instanceof SpawnerBlockEntity)
         {
             spawners.remove(te.getBlockPos());
 
@@ -465,18 +465,18 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     }
 
     @Override
-    public CompoundNBT serializeNBT()
+    public CompoundTag serializeNBT()
     {
-        CompoundNBT compound = new CompoundNBT();
+        CompoundTag compound = new CompoundTag();
         compound.putInt(TAG_EVENT_ID, id);
         compound.putInt(TAG_DAYS_LEFT, daysToGo);
         compound.putInt(TAG_EVENT_STATUS, status.ordinal());
 
-        @NotNull final ListNBT spawnerListCompound = new ListNBT();
+        @NotNull final ListTag spawnerListCompound = new ListTag();
         for (@NotNull final BlockPos entry : spawners)
         {
-            @NotNull final CompoundNBT spawnerCompound = new CompoundNBT();
-            spawnerCompound.put(TAG_POS, NBTUtil.writeBlockPos(entry));
+            @NotNull final CompoundTag spawnerCompound = new CompoundTag();
+            spawnerCompound.put(TAG_POS, NbtUtils.writeBlockPos(entry));
             spawnerListCompound.add(spawnerCompound);
         }
         compound.put(TAG_SPAWNERS, spawnerListCompound);
@@ -489,16 +489,16 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     }
 
     @Override
-    public void deserializeNBT(final CompoundNBT compound)
+    public void deserializeNBT(final CompoundTag compound)
     {
         id = compound.getInt(TAG_EVENT_ID);
         status = EventStatus.values()[compound.getInt(TAG_EVENT_STATUS)];
         daysToGo = compound.getInt(TAG_DAYS_LEFT);
 
-        @NotNull final ListNBT spawnerListCompound = compound.getList(TAG_SPAWNERS, Constants.NBT.TAG_COMPOUND);
+        @NotNull final ListTag spawnerListCompound = compound.getList(TAG_SPAWNERS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < spawnerListCompound.size(); i++)
         {
-            spawners.add(NBTUtil.readBlockPos(spawnerListCompound.getCompound(i).getCompound(TAG_POS)));
+            spawners.add(NbtUtils.readBlockPos(spawnerListCompound.getCompound(i).getCompound(TAG_POS)));
         }
 
         maxSpawners = compound.getInt(TAG_SPAWNER_COUNT);

@@ -2,7 +2,7 @@ package com.minecolonies.api.crafting;
 
 import com.minecolonies.api.crafting.registry.RecipeTypeEntry;
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 public final class ModRecipeTypes
 {

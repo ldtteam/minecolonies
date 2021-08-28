@@ -21,18 +21,18 @@ import com.minecolonies.coremod.colony.buildings.modules.settings.PlantationSett
 import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.colony.jobs.JobPlanter;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.NBTUtil;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -100,7 +100,7 @@ public class BuildingPlantation extends AbstractBuildingWorker implements IBuild
     }
 
     @Override
-    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
+    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final Level world)
     {
         super.registerBlockPosition(block, pos, world);
         if (block == Blocks.SAND)
@@ -114,30 +114,30 @@ public class BuildingPlantation extends AbstractBuildingWorker implements IBuild
     }
 
     @Override
-    public void deserializeNBT(final CompoundNBT compound)
+    public void deserializeNBT(final CompoundTag compound)
     {
         super.deserializeNBT(compound);
-        final ListNBT sandPos = compound.getList(TAG_PLANTGROUND, Constants.NBT.TAG_COMPOUND);
+        final ListTag sandPos = compound.getList(TAG_PLANTGROUND, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < sandPos.size(); ++i)
         {
-            sand.add(NBTUtil.readBlockPos(sandPos.getCompound(i).getCompound(TAG_POS)));
+            sand.add(NbtUtils.readBlockPos(sandPos.getCompound(i).getCompound(TAG_POS)));
         }
         this.currentPhase = ItemStack.of(compound.getCompound(TAG_CURRENT_PHASE)).getItem();
     }
 
     @Override
-    public CompoundNBT serializeNBT()
+    public CompoundTag serializeNBT()
     {
-        final CompoundNBT compound = super.serializeNBT();
-        @NotNull final ListNBT sandCompoundList = new ListNBT();
+        final CompoundTag compound = super.serializeNBT();
+        @NotNull final ListTag sandCompoundList = new ListTag();
         for (@NotNull final BlockPos entry : sand)
         {
-            @NotNull final CompoundNBT sandCompound = new CompoundNBT();
-            sandCompound.put(TAG_POS, NBTUtil.writeBlockPos(entry));
+            @NotNull final CompoundTag sandCompound = new CompoundTag();
+            sandCompound.put(TAG_POS, NbtUtils.writeBlockPos(entry));
             sandCompoundList.add(sandCompound);
         }
         compound.put(TAG_PLANTGROUND, sandCompoundList);
-        compound.put(TAG_CURRENT_PHASE, new ItemStack(currentPhase).save(new CompoundNBT()));
+        compound.put(TAG_CURRENT_PHASE, new ItemStack(currentPhase).save(new CompoundTag()));
         return compound;
     }
 

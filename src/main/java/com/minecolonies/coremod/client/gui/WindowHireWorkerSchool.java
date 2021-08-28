@@ -3,9 +3,9 @@ package com.minecolonies.coremod.client.gui;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.entity.citizen.Skill;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Style;
+import net.minecraft.ChatFormatting;
 
 import java.util.Comparator;
 import java.util.stream.Collectors;
@@ -47,7 +47,7 @@ public class WindowHireWorkerSchool extends WindowHireWorker
     {
         if (current == Skill.Intelligence)
         {
-            return Style.EMPTY.applyFormat(TextFormatting.GREEN).applyFormat(TextFormatting.BOLD);
+            return Style.EMPTY.applyFormat(ChatFormatting.GREEN).applyFormat(ChatFormatting.BOLD);
         }
         return super.createColor(primary, secondary, current);
     }

@@ -7,11 +7,11 @@ import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.compatibility.candb.ChiselAndBitsCheck;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
-import net.minecraft.block.BlockState;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,17 +25,17 @@ import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler.Ac
 public class GeneralBlockPlacementHandler implements IPlacementHandler
 {
     @Override
-    public boolean canHandle(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final BlockState blockState)
+    public boolean canHandle(@NotNull final Level world, @NotNull final BlockPos pos, @NotNull final BlockState blockState)
     {
         return true;
     }
 
     @Override
     public ActionProcessingResult handle(
-      @NotNull final World world,
+      @NotNull final Level world,
       @NotNull final BlockPos pos,
       @NotNull final BlockState blockState,
-      @Nullable final CompoundNBT tileEntityData,
+      @Nullable final CompoundTag tileEntityData,
       final boolean complete,
       final BlockPos centerPos,
       final PlacementSettings settings)
@@ -68,10 +68,10 @@ public class GeneralBlockPlacementHandler implements IPlacementHandler
 
     @Override
     public List<ItemStack> getRequiredItems(
-      @NotNull final World world,
+      @NotNull final Level world,
       @NotNull final BlockPos pos,
       @NotNull final BlockState blockState,
-      @Nullable final CompoundNBT tileEntityData,
+      @Nullable final CompoundTag tileEntityData,
       final boolean complete)
     {
         final List<ItemStack> itemList = new ArrayList<>();

@@ -2,18 +2,18 @@ package com.minecolonies.api.util;
 
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.material.Material;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.MobEntity;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3i;
-import net.minecraft.world.World;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
+import net.minecraft.core.Vec3i;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.FakePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -56,11 +56,11 @@ public final class EntityUtils
      * @return the PlayerEntity owner in the best case.
      */
     @NotNull
-    public static PlayerEntity getPlayerOfFakePlayer(@NotNull final PlayerEntity player, @NotNull final World world)
+    public static Player getPlayerOfFakePlayer(@NotNull final Player player, @NotNull final Level world)
     {
         if (player instanceof FakePlayer)
         {
-            final PlayerEntity tempPlayer = world.getPlayerByUUID(player.getUUID());
+            final Player tempPlayer = world.getPlayerByUUID(player.getUUID());
             if (tempPlayer != null)
             {
                 return tempPlayer;
@@ -76,7 +76,7 @@ public final class EntityUtils
      * @param id    the entity's UUID
      * @return the Entity
      */
-    public static Entity getPlayerByUUID(@NotNull final World world, @NotNull final UUID id)
+    public static Entity getPlayerByUUID(@NotNull final Level world, @NotNull final UUID id)
     {
         return world.getPlayerByUUID(id);
     }
@@ -88,7 +88,7 @@ public final class EntityUtils
      * @param ids   List of Entity id's
      * @return list of Entity's
      */
-    public static List<Entity> getEntitiesFromID(@NotNull final World world, @NotNull final List<Integer> ids)
+    public static List<Entity> getEntitiesFromID(@NotNull final Level world, @NotNull final List<Integer> ids)
     {
         return ids.stream()
                  .map(world::getEntity)
@@ -105,7 +105,7 @@ public final class EntityUtils
      */
     public static double updateRotation(final double currentRotation, final double intendedRotation, final double maxIncrement)
     {
-        double wrappedAngle = MathHelper.wrapDegrees(intendedRotation - currentRotation);
+        double wrappedAngle = Mth.wrapDegrees(intendedRotation - currentRotation);
 
         if (wrappedAngle > maxIncrement)
         {
@@ -129,7 +129,7 @@ public final class EntityUtils
      * @param groundPosition the position to maybe stand on
      * @return true if a suitable Place to walk to
      */
-    public static boolean checkForFreeSpace(@NotNull final World world, @NotNull final BlockPos groundPosition)
+    public static boolean checkForFreeSpace(@NotNull final Level world, @NotNull final BlockPos groundPosition)
     {
         for (int i = 1; i < AIR_SPACE_ABOVE_TO_CHECK; i++)
         {
@@ -150,7 +150,7 @@ public final class EntityUtils
      * @param blockPos the blocks position
      * @return true if solid or liquid
      */
-    public static boolean solidOrLiquid(@NotNull final World world, @NotNull final BlockPos blockPos)
+    public static boolean solidOrLiquid(@NotNull final Level world, @NotNull final BlockPos blockPos)
     {
         final Material material = world.getBlockState(blockPos).getMaterial();
         return material.isSolid()
@@ -165,7 +165,7 @@ public final class EntityUtils
      * @return The spawn position.
      */
     @Nullable
-    public static BlockPos getSpawnPoint(final World world, final BlockPos nearPoint)
+    public static BlockPos getSpawnPoint(final Level world, final BlockPos nearPoint)
     {
         return Utils.scanForBlockNearPoint(
           world,
@@ -190,7 +190,7 @@ public final class EntityUtils
      * @param z      z-coordinate
      * @return True if the path is set to destination, otherwise false
      */
-    public static boolean tryMoveLivingToXYZ(@NotNull final MobEntity living, final int x, final int y, final int z)
+    public static boolean tryMoveLivingToXYZ(@NotNull final Mob living, final int x, final int y, final int z)
     {
         return tryMoveLivingToXYZ(living, x, y, z, 1.0D);
     }
@@ -205,7 +205,7 @@ public final class EntityUtils
      * @param speedFactor  Speedfactor to modify base speed with
      * @return True if the path is set to destination, otherwise false
      */
-    public static boolean tryMoveLivingToXYZ(@NotNull final MobEntity living, final int x, final int y, final int z, final double speedFactor)
+    public static boolean tryMoveLivingToXYZ(@NotNull final Mob living, final int x, final int y, final int z, final double speedFactor)
     {
         return living.getNavigation().moveTo(x, y, z, speedFactor);
     }
@@ -279,17 +279,17 @@ public final class EntityUtils
      * @param placer the entity to get the itemstacks from to check.
      * @return true if there.
      */
-    public static boolean isEntityAtPosition(final Entity entity, final World world, final Entity placer)
+    public static boolean isEntityAtPosition(final Entity entity, final Level world, final Entity placer)
     {
         final List<ItemStorage> existingReq = ItemStackUtils.getListOfStackForEntity(entity, placer);
         final BlockPos pos = new BlockPos(entity.getX(), entity.getY(), entity.getZ());
-        return world.getLoadedEntitiesOfClass(Entity.class, new AxisAlignedBB(pos.offset(1, 1, 1), pos.offset(-1, -1, -1)))
+        return world.getLoadedEntitiesOfClass(Entity.class, new AABB(pos.offset(1, 1, 1), pos.offset(-1, -1, -1)))
                  .stream()
                  .anyMatch(ent -> ent.getX() == entity.getX() && ent.getY() == entity.getY() && ent.getZ() == entity.getZ() && ItemStackUtils.getListOfStackForEntity(entity, placer)
                                                                                                                      .equals(existingReq));
     }
 
-    public static boolean isEntityAtPosition(final Entity entity, final World world, final AbstractEntityCitizen entityCitizen)
+    public static boolean isEntityAtPosition(final Entity entity, final Level world, final AbstractEntityCitizen entityCitizen)
     {
         if (entity != null)
         {
@@ -312,7 +312,7 @@ public final class EntityUtils
     public static boolean isLivingAtSite(@NotNull final LivingEntity entityLiving, final int x, final int y, final int z, final int range)
     {
         final BlockPos pos = new BlockPos(entityLiving.getX(), entityLiving.getY(), entityLiving.getZ());
-        return pos.distSqr(new Vector3i(x, y, z)) < MathUtils.square(range);
+        return pos.distSqr(new Vec3i(x, y, z)) < MathUtils.square(range);
     }
 
     /**

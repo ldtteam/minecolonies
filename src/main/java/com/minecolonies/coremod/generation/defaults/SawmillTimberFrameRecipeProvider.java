@@ -8,9 +8,9 @@ import com.ldtteam.structurize.blocks.types.WoodType;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.coremod.generation.CustomRecipeProvider;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.IFinishedRecipe;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Arrays;
@@ -31,7 +31,7 @@ public class SawmillTimberFrameRecipeProvider extends CustomRecipeProvider
     }
 
     @Override
-    protected void registerRecipes(final Consumer<IFinishedRecipe> consumer)
+    protected void registerRecipes(final Consumer<FinishedRecipe> consumer)
     {
         for (final WoodType frameType : WoodType.values())
         {

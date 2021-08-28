@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.colony.buildings.views;
 
 import com.minecolonies.api.colony.IColonyView;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -60,7 +60,7 @@ public abstract class LivingBuildingView extends AbstractBuildingView
     }
 
     @Override
-    public void deserialize(@NotNull final PacketBuffer buf)
+    public void deserialize(@NotNull final FriendlyByteBuf buf)
     {
         super.deserialize(buf);
 

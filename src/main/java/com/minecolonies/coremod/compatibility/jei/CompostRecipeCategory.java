@@ -5,7 +5,7 @@ import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.blocks.types.BarrelType;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.crafting.CompostRecipe;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.gui.ITickTimer;
@@ -14,11 +14,11 @@ import mezz.jei.api.gui.ingredient.IGuiItemStackGroup;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.category.IRecipeCategory;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -110,7 +110,7 @@ public class CompostRecipeCategory implements IRecipeCategory<CompostRecipe>
     }
 
     @Override
-    public void draw(@NotNull final CompostRecipe recipe, @NotNull final MatrixStack matrixStack, final double mouseX, final double mouseY)
+    public void draw(@NotNull final CompostRecipe recipe, @NotNull final PoseStack matrixStack, final double mouseX, final double mouseY)
     {
         final BarrelType type = BarrelType.byMetadata(this.timer.getValue());
         final BlockState barrel = ModBlocks.blockBarrel.defaultBlockState()

@@ -12,13 +12,13 @@ import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.research.GlobalResearch;
 import com.minecolonies.coremod.research.GlobalResearchBranch;
 import com.minecolonies.coremod.research.ResearchEffectCategory;
-import net.minecraft.client.resources.JsonReloadListener;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.profiler.IProfiler;
-import net.minecraft.resources.IResourceManager;
+import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.dedicated.DedicatedServer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,7 +34,7 @@ import static com.minecolonies.coremod.research.ResearchEffectCategory.*;
 /**
  * Loader for Json-based researches
  */
-public class ResearchListener extends JsonReloadListener
+public class ResearchListener extends SimpleJsonResourceReloadListener
 {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
@@ -53,7 +53,7 @@ public class ResearchListener extends JsonReloadListener
     }
 
     @Override
-    protected void apply(@NotNull final Map<ResourceLocation, JsonElement> object, @NotNull final IResourceManager resourceManagerIn, @NotNull final IProfiler profilerIn)
+    protected void apply(@NotNull final Map<ResourceLocation, JsonElement> object, @NotNull final ResourceManager resourceManagerIn, @NotNull final ProfilerFiller profilerIn)
     {
         Log.getLogger().info("Beginning load of research for University.");
 
@@ -88,7 +88,7 @@ public class ResearchListener extends JsonReloadListener
         // We only need to send to players during a data pack reload event during live play.
         if(server != null)
         {
-            for (ServerPlayerEntity player : server.getPlayerList().getPlayers())
+            for (ServerPlayer player : server.getPlayerList().getPlayers())
             {
                 researchTree.sendGlobalResearchTreePackets(player);
             }

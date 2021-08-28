@@ -7,20 +7,22 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBeekeeper;
-import net.minecraft.block.BeehiveBlock;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.level.block.BeehiveBlock;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.core.BlockPos;
 
 import java.util.Collection;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
+
+import net.minecraft.world.item.Item.Properties;
 
 /**
  * Beekeeper Scepter Item class. Used to give tasks to Beekeeper.
@@ -38,18 +40,18 @@ public class ItemScepterBeekeeper extends AbstractItemMinecolonies
     }
 
     @Override
-    public ActionResultType useOn(final ItemUseContext useContext)
+    public InteractionResult useOn(final UseOnContext useContext)
     {
         // if server world, do nothing
         if (useContext.getLevel().isClientSide)
         {
-            return ActionResultType.FAIL;
+            return InteractionResult.FAIL;
         }
 
-        final PlayerEntity player = useContext.getPlayer();
+        final Player player = useContext.getPlayer();
 
         final ItemStack scepter = useContext.getPlayer().getItemInHand(useContext.getHand());
-        final CompoundNBT compound = scepter.getOrCreateTag();
+        final CompoundTag compound = scepter.getOrCreateTag();
 
         final IColony colony = IColonyManager.getInstance().getColonyByWorld(compound.getInt(TAG_ID), useContext.getLevel());
         final BlockPos hutPos = BlockPosUtil.read(compound, TAG_POS);
@@ -66,7 +68,7 @@ public class ItemScepterBeekeeper extends AbstractItemMinecolonies
             {
                 LanguageHandler.sendPlayerMessage(useContext.getPlayer(), "item.minecolonies.scepterbeekeeper.removehive");
                 building.removeHive(pos);
-                SoundUtils.playSoundForPlayer((ServerPlayerEntity) player, SoundEvents.NOTE_BLOCK_BELL,
+                SoundUtils.playSoundForPlayer((ServerPlayer) player, SoundEvents.NOTE_BLOCK_BELL,
                         (float) SoundUtils.VOLUME * 2, 0.5f);
             }
             else

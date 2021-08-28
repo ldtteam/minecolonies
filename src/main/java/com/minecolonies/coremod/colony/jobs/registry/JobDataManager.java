@@ -11,9 +11,9 @@ import com.minecolonies.api.colony.jobs.registry.IJobRegistry;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.NbtTagConstants;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,7 +22,7 @@ public final class JobDataManager implements IJobDataManager
     @Nullable
     @Override
     public IJob<?> createFrom(
-      final ICitizenData citizen, @NotNull final CompoundNBT compound)
+      final ICitizenData citizen, @NotNull final CompoundTag compound)
     {
         final ResourceLocation jobType =
           compound.getAllKeys().contains(NbtTagConstants.TAG_JOB_TYPE) ? new ResourceLocation(compound.getString(NbtTagConstants.TAG_JOB_TYPE)) : ModJobs.PLACEHOLDER_ID;
@@ -51,7 +51,7 @@ public final class JobDataManager implements IJobDataManager
 
     @Override
     public IJobView createViewFrom(
-      final IColonyView colony, final ICitizenDataView citizenDataView, final PacketBuffer networkBuffer)
+      final IColonyView colony, final ICitizenDataView citizenDataView, final FriendlyByteBuf networkBuffer)
     {
         final ResourceLocation jobName = new ResourceLocation(networkBuffer.readUtf(32767));
         final JobEntry entry = IJobRegistry.getInstance().getValue(jobName);

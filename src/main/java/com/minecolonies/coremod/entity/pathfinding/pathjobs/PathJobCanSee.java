@@ -1,12 +1,12 @@
 package com.minecolonies.coremod.entity.pathfinding.pathjobs;
 
 import com.minecolonies.coremod.entity.pathfinding.Node;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceContext;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -27,7 +27,7 @@ public class PathJobCanSee extends AbstractPathJob
     public PathJobCanSee(
       final LivingEntity searchingEntity,
       final LivingEntity lookTarget,
-      final World world,
+      final Level world,
       @NotNull final BlockPos start, final int range)
     {
         super(world, start, start, range, searchingEntity);
@@ -68,8 +68,8 @@ public class PathJobCanSee extends AbstractPathJob
 
     private boolean canSeeTargetFromPos(final BlockPos pos)
     {
-        Vector3d vec3d = new Vector3d(pos.getX(), pos.getY() + entity.get().getEyeHeight(), pos.getZ());
-        Vector3d vec3d1 = new Vector3d(lookTarget.getX(), lookTarget.getEyeY(), lookTarget.getZ());
-        return this.world.clip(new RayTraceContext(vec3d, vec3d1, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, entity.get())).getType() == RayTraceResult.Type.MISS;
+        Vec3 vec3d = new Vec3(pos.getX(), pos.getY() + entity.get().getEyeHeight(), pos.getZ());
+        Vec3 vec3d1 = new Vec3(lookTarget.getX(), lookTarget.getEyeY(), lookTarget.getZ());
+        return this.world.clip(new ClipContext(vec3d, vec3d1, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, entity.get())).getType() == HitResult.Type.MISS;
     }
 }

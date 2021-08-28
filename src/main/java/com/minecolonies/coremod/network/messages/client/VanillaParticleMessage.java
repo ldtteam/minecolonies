@@ -2,10 +2,10 @@ package com.minecolonies.coremod.network.messages.client;
 
 import com.minecolonies.api.network.IMessage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.particles.BasicParticleType;
-import net.minecraft.world.World;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.LogicalSide;
@@ -33,11 +33,11 @@ public class VanillaParticleMessage implements IMessage
     /**
      * Particle id
      */
-    private BasicParticleType type;
+    private SimpleParticleType type;
 
     public VanillaParticleMessage() {super();}
 
-    public VanillaParticleMessage(final double x, final double y, final double z, final BasicParticleType type)
+    public VanillaParticleMessage(final double x, final double y, final double z, final SimpleParticleType type)
     {
         this.x = x;
         this.y = y;
@@ -46,16 +46,16 @@ public class VanillaParticleMessage implements IMessage
     }
 
     @Override
-    public void fromBytes(final PacketBuffer byteBuf)
+    public void fromBytes(final FriendlyByteBuf byteBuf)
     {
         x = byteBuf.readDouble();
         y = byteBuf.readDouble();
         z = byteBuf.readDouble();
-        this.type = (BasicParticleType) ForgeRegistries.PARTICLE_TYPES.getValue(byteBuf.readResourceLocation());
+        this.type = (SimpleParticleType) ForgeRegistries.PARTICLE_TYPES.getValue(byteBuf.readResourceLocation());
     }
 
     @Override
-    public void toBytes(final PacketBuffer byteBuf)
+    public void toBytes(final FriendlyByteBuf byteBuf)
     {
         byteBuf.writeDouble(x);
         byteBuf.writeDouble(y);
@@ -74,7 +74,7 @@ public class VanillaParticleMessage implements IMessage
     @OnlyIn(Dist.CLIENT)
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
-        final ClientWorld world = Minecraft.getInstance().level;
+        final ClientLevel world = Minecraft.getInstance().level;
 
         spawnParticles(type, world, x, y, z);
     }
@@ -88,7 +88,7 @@ public class VanillaParticleMessage implements IMessage
      * @param y            y pos
      * @param z            z pos
      */
-    private void spawnParticles(BasicParticleType particleType, World world, double x, double y, double z)
+    private void spawnParticles(SimpleParticleType particleType, Level world, double x, double y, double z)
     {
         final Random rand = new Random();
         for (int i = 0; i < 5; ++i)

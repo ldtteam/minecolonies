@@ -2,9 +2,9 @@ package com.minecolonies.coremod.util;
 
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.util.InventoryUtils;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
 
 public final class BuildingUtils
 {
@@ -25,7 +25,7 @@ public final class BuildingUtils
      * @param hut       the hut to fetch.
      * @return the stack or if not found empty.
      */
-    public static ItemStack getItemStackForHutFromInventory(final PlayerInventory inventory, final String hut)
+    public static ItemStack getItemStackForHutFromInventory(final Inventory inventory, final String hut)
     {
         final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(inventory.player,
           item -> item.getItem() instanceof BlockItem && ((BlockItem) item.getItem()).getBlock() instanceof AbstractBlockHut && ((BlockItem) item.getItem()).getBlock()

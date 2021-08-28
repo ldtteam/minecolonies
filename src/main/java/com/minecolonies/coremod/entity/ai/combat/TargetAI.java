@@ -6,11 +6,11 @@ import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingT
 import com.minecolonies.api.entity.combat.CombatAIStates;
 import com.minecolonies.api.entity.combat.threat.IThreatTableEntity;
 import com.minecolonies.api.entity.combat.threat.ThreatTableEntry;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.monster.IMob;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.monster.Enemy;
+import net.minecraft.core.Direction;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.core.BlockPos;
 
 import java.util.List;
 
@@ -182,7 +182,7 @@ public class TargetAI<T extends LivingEntity & IThreatTableEntity> implements IS
      *
      * @return the {@link AxisAlignedBB}
      */
-    protected AxisAlignedBB getSearchArea()
+    protected AABB getSearchArea()
     {
         final BlockPos raiderPos = user.blockPosition();
         final Direction randomDirection = Direction.from3DDataValue(user.getRandom().nextInt(4) + 2);
@@ -194,7 +194,7 @@ public class TargetAI<T extends LivingEntity & IThreatTableEntity> implements IS
         final double z1 = raiderPos.getZ() + (Math.max(searchRange * randomDirection.getStepZ() + DEFAULT_VISION, DEFAULT_VISION));
         final double z2 = raiderPos.getZ() + (Math.min(searchRange * randomDirection.getStepZ() - DEFAULT_VISION, -DEFAULT_VISION));
 
-        return new AxisAlignedBB(x1, y1, z1, x2, y2, z2);
+        return new AABB(x1, y1, z1, x2, y2, z2);
     }
 
     /**
@@ -225,7 +225,7 @@ public class TargetAI<T extends LivingEntity & IThreatTableEntity> implements IS
      */
     protected boolean isAttackableTarget(final LivingEntity target)
     {
-        return target instanceof IMob && !user.getClass().isInstance(target);
+        return target instanceof Enemy && !user.getClass().isInstance(target);
     }
 
     /**

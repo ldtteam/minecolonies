@@ -8,8 +8,8 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.coremod.client.gui.AbstractModuleWindow;
 import com.minecolonies.coremod.colony.buildings.moduleviews.ItemListModuleView;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.chat.TranslatableComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -71,7 +71,7 @@ public class ItemListModuleWindow extends AbstractModuleWindow
         super(building, res);
 
         resourceList = window.findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class);
-        window.findPaneOfTypeByID(DESC_LABEL, Text.class).setText(new TranslationTextComponent(moduleView.getDesc().toLowerCase(Locale.US)));
+        window.findPaneOfTypeByID(DESC_LABEL, Text.class).setText(new TranslatableComponent(moduleView.getDesc().toLowerCase(Locale.US)));
         this.building = building;
         this.isInverted = moduleView.isInverted();
         this.id = moduleView.getId();
@@ -127,7 +127,7 @@ public class ItemListModuleWindow extends AbstractModuleWindow
     {
         final int row = resourceList.getListElementIndexByPane(button);
         final ItemStorage item = currentDisplayedList.get(row);
-        final boolean on = button.getText().equals(new TranslationTextComponent(ON));
+        final boolean on = button.getText().equals(new TranslatableComponent(ON));
         final boolean add = (on && isInverted) || (!on && !isInverted);
         final IItemListModuleView module = building.getModuleViewMatching(ItemListModuleView.class, view -> view.getId().equals(id));
 
@@ -234,11 +234,11 @@ public class ItemListModuleWindow extends AbstractModuleWindow
 
                 if ((isInverted && !isAllowedItem) || (!isInverted && isAllowedItem))
                 {
-                    switchButton.setText(new TranslationTextComponent(ON));
+                    switchButton.setText(new TranslatableComponent(ON));
                 }
                 else
                 {
-                    switchButton.setText(new TranslationTextComponent(OFF));
+                    switchButton.setText(new TranslatableComponent(OFF));
                 }
             }
         });

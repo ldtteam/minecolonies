@@ -1,13 +1,13 @@
 package com.minecolonies.api.blocks.types;
 
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesRack;
-import net.minecraft.util.IStringSerializable;
+import net.minecraft.util.StringRepresentable;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Defines the types of Racks that the {@link AbstractBlockMinecoloniesRack} supports.
  */
-public enum RackType implements IStringSerializable
+public enum RackType implements StringRepresentable
 {
     DEFAULT("blockrackemptysingle", "emptysingle"),
     FULL( "blockrackfullsingle", "fullsingle"),

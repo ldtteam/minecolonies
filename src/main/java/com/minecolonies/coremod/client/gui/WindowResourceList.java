@@ -22,11 +22,11 @@ import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.network.messages.server.colony.building.MarkBuildingDirtyMessage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -87,7 +87,7 @@ public class WindowResourceList extends AbstractWindowSkeleton
         if (newView instanceof BuildingBuilder.View)
         {
             final BuildingResourcesModuleView moduleView = newView.getModuleView(BuildingResourcesModuleView.class);
-            final PlayerInventory inventory = this.mc.player.inventory;
+            final Inventory inventory = this.mc.player.inventory;
             final boolean isCreative = this.mc.player.isCreative();
 
             final List<Delivery> deliveries = new ArrayList<>();
@@ -131,7 +131,7 @@ public class WindowResourceList extends AbstractWindowSkeleton
 
             if (total > 0)
             {
-                findPaneOfTypeByID(LABEL_PROGRESS, Text.class).setText(new TranslationTextComponent("com.minecolonies.coremod.gui.progress.res", (int) ((supplied / total) * 100) + "%", moduleView.getProgress() + "%"));
+                findPaneOfTypeByID(LABEL_PROGRESS, Text.class).setText(new TranslatableComponent("com.minecolonies.coremod.gui.progress.res", (int) ((supplied / total) * 100) + "%", moduleView.getProgress() + "%"));
             }
 
             resources.sort(new BuildingBuilderResource.ResourceComparator(NOT_NEEDED, HAVE_ENOUGH, IN_DELIVERY, NEED_MORE, DONT_HAVE));
@@ -164,10 +164,10 @@ public class WindowResourceList extends AbstractWindowSkeleton
     @Override
     public void onOpened()
     {
-        final ClientPlayerEntity player =Minecraft.getInstance().player;
+        final LocalPlayer player =Minecraft.getInstance().player;
         if (this.builder == null)
         {
-            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.resourcescroll.nobuilder"), player.getUUID());
+            player.sendMessage(new TranslatableComponent("com.minecolonies.coremod.resourcescroll.nobuilder"), player.getUUID());
             close();
             return;
         }
@@ -178,7 +178,7 @@ public class WindowResourceList extends AbstractWindowSkeleton
         final ScrollingList resourceList = findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class);
         if (resourceList == null)
         {
-            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.resourcescroll.null"), player.getUUID());
+            player.sendMessage(new TranslatableComponent("com.minecolonies.coremod.resourcescroll.null"), player.getUUID());
             close();
             return;
         }

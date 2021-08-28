@@ -6,10 +6,10 @@ import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenHappinessHandler;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
 import com.minecolonies.api.util.Tuple;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -80,7 +80,7 @@ public interface ICitizenDataView extends ICitizen
      *
      * @param buf Byte buffer to deserialize.
      */
-    void deserialize(@NotNull PacketBuffer buf);
+    void deserialize(@NotNull FriendlyByteBuf buf);
 
     /**
      * @return current health.
@@ -106,7 +106,7 @@ public interface ICitizenDataView extends ICitizen
      * @return the interaction or null.
      */
     @Nullable
-    IInteractionResponseHandler getSpecificInteraction(@NotNull ITextComponent component);
+    IInteractionResponseHandler getSpecificInteraction(@NotNull Component component);
 
     /**
      * Check if the citizen has important interactions.

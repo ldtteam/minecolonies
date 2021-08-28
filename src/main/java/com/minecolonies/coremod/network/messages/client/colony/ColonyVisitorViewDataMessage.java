@@ -3,11 +3,11 @@ package com.minecolonies.coremod.network.messages.client.colony;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.Log;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.world.World;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.Registry;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
@@ -28,7 +28,7 @@ public class ColonyVisitorViewDataMessage implements IMessage
     /**
      * The dimension the citizen is in.
      */
-    private RegistryKey<World> dimension;
+    private ResourceKey<Level> dimension;
 
     /**
      * Visiting entity data
@@ -38,7 +38,7 @@ public class ColonyVisitorViewDataMessage implements IMessage
     /**
      * Visitor buf to read on client side.
      */
-    private PacketBuffer visitorBuf;
+    private FriendlyByteBuf visitorBuf;
 
     /**
      * If a general refresh is necessary,
@@ -68,10 +68,10 @@ public class ColonyVisitorViewDataMessage implements IMessage
     }
 
     @Override
-    public void fromBytes(@NotNull final PacketBuffer buf)
+    public void fromBytes(@NotNull final FriendlyByteBuf buf)
     {
         colonyId = buf.readInt();
-        dimension = RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)));
+        dimension = ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)));
         refresh = buf.readBoolean();
         final IColonyView colony = IColonyManager.getInstance().getColonyView(colonyId, dimension);
 
@@ -81,11 +81,11 @@ public class ColonyVisitorViewDataMessage implements IMessage
             return;
         }
 
-        this.visitorBuf = new PacketBuffer(buf.retain());
+        this.visitorBuf = new FriendlyByteBuf(buf.retain());
     }
 
     @Override
-    public void toBytes(@NotNull final PacketBuffer buf)
+    public void toBytes(@NotNull final FriendlyByteBuf buf)
     {
         buf.writeInt(colonyId);
         buf.writeUtf(dimension.location().toString());

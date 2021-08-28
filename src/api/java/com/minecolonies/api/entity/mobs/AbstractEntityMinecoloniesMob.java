@@ -21,22 +21,22 @@ import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.items.IChiefSwordItem;
 import com.minecolonies.api.sounds.RaiderSounds;
 import com.minecolonies.api.util.Log;
-import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.entity.*;
-import net.minecraft.entity.ai.attributes.AttributeModifierMap;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.monster.IMob;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
-import net.minecraft.scoreboard.ScorePlayerTeam;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.SoundEvent;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.monster.Enemy;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.scores.PlayerTeam;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.IServerWorld;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.common.util.ITeleporter;
 import org.jetbrains.annotations.NotNull;
 
@@ -46,10 +46,17 @@ import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.RaiderConstants.*;
 
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.SpawnGroupData;
+
 /**
  * Abstract for all Barbarian entities.
  */
-public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements IStuckHandlerEntity, IThreatTableEntity, IMob
+public abstract class AbstractEntityMinecoloniesMob extends Mob implements IStuckHandlerEntity, IThreatTableEntity, Enemy
 {
     /**
      * Difficulty at which raiders team up
@@ -178,7 +185,7 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements
      * @param world the world.
      * @param type  the entity type.
      */
-    public AbstractEntityMinecoloniesMob(final EntityType<? extends AbstractEntityMinecoloniesMob> type, final World world)
+    public AbstractEntityMinecoloniesMob(final EntityType<? extends AbstractEntityMinecoloniesMob> type, final Level world)
     {
         super(type, world);
         worldTimeAtSpawn = world.getGameTime();
@@ -330,7 +337,7 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements
     }
 
     @Override
-    public void addAdditionalSaveData(final CompoundNBT compound)
+    public void addAdditionalSaveData(final CompoundTag compound)
     {
         compound.putLong(TAG_TIME, worldTimeAtSpawn);
         compound.putInt(TAG_STUCK_COUNTER, stuckCounter);
@@ -346,13 +353,13 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements
      */
     @Nullable
     @Override
-    public Entity changeDimension(@NotNull final ServerWorld serverWorld, @NotNull final ITeleporter teleporter)
+    public Entity changeDimension(@NotNull final ServerLevel serverWorld, @NotNull final ITeleporter teleporter)
     {
         return null;
     }
 
     @Override
-    public void readAdditionalSaveData(final CompoundNBT compound)
+    public void readAdditionalSaveData(final CompoundTag compound)
     {
         worldTimeAtSpawn = compound.getLong(TAG_TIME);
         stuckCounter = compound.getInt(TAG_STUCK_COUNTER);
@@ -427,8 +434,8 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements
                       && MinecoloniesAPIProxy.getInstance().getConfig().getServer().barbarianHordeDifficulty.get() >= BARBARIAN_HORDE_DIFFICULTY_FIVE)
                 {
                     RaiderMobUtils.getBarbariansCloseToEntity(this, SPEED_EFFECT_DISTANCE)
-                      .stream().filter(entity -> !entity.hasEffect(Effects.MOVEMENT_SPEED))
-                      .forEach(entity -> entity.addEffect(new EffectInstance(Effects.MOVEMENT_SPEED, SPEED_EFFECT_DURATION, SPEED_EFFECT_MULTIPLIER)));
+                      .stream().filter(entity -> !entity.hasEffect(MobEffects.MOVEMENT_SPEED))
+                      .forEach(entity -> entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, SPEED_EFFECT_DURATION, SPEED_EFFECT_MULTIPLIER)));
                 }
             }
             else
@@ -448,12 +455,12 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements
 
     @org.jetbrains.annotations.Nullable
     @Override
-    public ILivingEntityData finalizeSpawn(
-      final IServerWorld worldIn,
+    public SpawnGroupData finalizeSpawn(
+      final ServerLevelAccessor worldIn,
       final DifficultyInstance difficultyIn,
-      final SpawnReason reason,
-      @org.jetbrains.annotations.Nullable final ILivingEntityData spawnDataIn,
-      @org.jetbrains.annotations.Nullable final CompoundNBT dataTag)
+      final MobSpawnType reason,
+      @org.jetbrains.annotations.Nullable final SpawnGroupData spawnDataIn,
+      @org.jetbrains.annotations.Nullable final CompoundTag dataTag)
     {
         RaiderMobUtils.setEquipment(this);
         return super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
@@ -537,14 +544,14 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements
             }
 
             final Entity source = damageSource.getEntity();
-            if (source instanceof PlayerEntity)
+            if (source instanceof Player)
             {
                 if (damage > MIN_THORNS_DAMAGE && random.nextInt(THORNS_CHANCE) == 0)
                 {
                     source.hurt(DamageSource.thorns(this), damage * 0.5f);
                 }
 
-                final float raiderDamageEnchantLevel = EnchantmentHelper.getItemEnchantmentLevel(ModEnchants.raiderDamage, ((PlayerEntity) source).getMainHandItem());
+                final float raiderDamageEnchantLevel = EnchantmentHelper.getItemEnchantmentLevel(ModEnchants.raiderDamage, ((Player) source).getMainHandItem());
 
                 // Up to 7 damage are converted to health scaling damage, 7 is the damage of a diamond sword
                 float baseScalingDamage = Math.min(damage, MAX_SCALED_DAMAGE);
@@ -561,7 +568,7 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements
      * Get the default attributes with their values.
      * @return the attribute modifier map.
      */
-    public static AttributeModifierMap.MutableAttribute getDefaultAttributes()
+    public static AttributeSupplier.Builder getDefaultAttributes()
     {
         return LivingEntity.createLivingAttributes()
                  .add(MOB_ATTACK_DAMAGE)
@@ -650,7 +657,7 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements
      *
      * @return Scoreboard team
      */
-    private ScorePlayerTeam checkOrCreateTeam()
+    private PlayerTeam checkOrCreateTeam()
     {
         if (this.level.getScoreboard().getPlayerTeam(getTeamName()) == null)
         {

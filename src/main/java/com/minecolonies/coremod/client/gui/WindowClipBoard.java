@@ -15,8 +15,8 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.server.colony.UpdateRequestStateMessage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3i;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Vec3i;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -117,7 +117,7 @@ public class WindowClipBoard extends AbstractWindowRequestTree
 
         final BlockPos playerPos = new BlockPos(Minecraft.getInstance().player.position());
         requests.sort(Comparator.comparing((IRequest<?> request) -> request.getRequester().getLocation().getInDimensionLocation()
-                                                                      .distSqr(new Vector3i(playerPos.getX(), playerPos.getY(), playerPos.getZ())))
+                                                                      .distSqr(new Vec3i(playerPos.getX(), playerPos.getY(), playerPos.getZ())))
                         .thenComparingInt((IRequest<?> request) -> request.getId().hashCode()));
 
         return ImmutableList.copyOf(requests);

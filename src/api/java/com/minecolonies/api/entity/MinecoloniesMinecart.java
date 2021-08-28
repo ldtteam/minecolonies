@@ -2,44 +2,51 @@ package com.minecolonies.api.entity;
 
 import com.google.common.collect.Maps;
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.block.AbstractRailBlock;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.PoweredRailBlock;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.item.minecart.AbstractMinecartEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.IPacket;
-import net.minecraft.state.properties.RailShape;
+import net.minecraft.world.level.block.BaseRailBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.PoweredRailBlock;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.vehicle.AbstractMinecart;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.world.level.block.state.properties.RailShape;
 import net.minecraft.util.*;
 import net.minecraft.util.math.*;
-import net.minecraft.util.math.shapes.IBooleanFunction;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.shapes.VoxelShapes;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.math.vector.Vector3i;
-import net.minecraft.world.World;
+import net.minecraft.world.phys.shapes.BooleanOp;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.core.Vec3i;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.stream.Stream;
 
+import net.minecraft.Util;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.phys.AABB;
+
 /**
  * Special minecolonies minecart that doesn't collide.
  */
-public class MinecoloniesMinecart extends AbstractMinecartEntity
+public class MinecoloniesMinecart extends AbstractMinecart
 {
     /**
      * Railshape matrix.
      */
-    private static final Map<RailShape, Pair<Vector3i, Vector3i>> MATRIX = Util.make(Maps.newEnumMap(RailShape.class), (entry) ->
+    private static final Map<RailShape, Pair<Vec3i, Vec3i>> MATRIX = Util.make(Maps.newEnumMap(RailShape.class), (entry) ->
     {
-        Vector3i westVec = Direction.WEST.getNormal();
-        Vector3i eastVec = Direction.EAST.getNormal();
-        Vector3i northVec = Direction.NORTH.getNormal();
-        Vector3i southVec = Direction.SOUTH.getNormal();
+        Vec3i westVec = Direction.WEST.getNormal();
+        Vec3i eastVec = Direction.EAST.getNormal();
+        Vec3i northVec = Direction.NORTH.getNormal();
+        Vec3i southVec = Direction.SOUTH.getNormal();
 
         entry.put(RailShape.NORTH_SOUTH, Pair.of(northVec, southVec));
         entry.put(RailShape.EAST_WEST, Pair.of(westVec, eastVec));
@@ -59,7 +66,7 @@ public class MinecoloniesMinecart extends AbstractMinecartEntity
      * @param type  the entity type.
      * @param world the world.
      */
-    public MinecoloniesMinecart(final EntityType<?> type, final World world)
+    public MinecoloniesMinecart(final EntityType<?> type, final Level world)
     {
         super(type, world);
     }
@@ -71,18 +78,18 @@ public class MinecoloniesMinecart extends AbstractMinecartEntity
         double x = this.getX();
         double y = this.getY();
         double z = this.getZ();
-        Vector3d posVec = this.getPos(x, y, z);
+        Vec3 posVec = this.getPos(x, y, z);
         y = pos.getY();
         boolean isPowered = false;
         boolean flag = false;
-        AbstractRailBlock abstractrailblock = (AbstractRailBlock) state.getBlock();
+        BaseRailBlock abstractrailblock = (BaseRailBlock) state.getBlock();
         if (abstractrailblock instanceof PoweredRailBlock && !((PoweredRailBlock) abstractrailblock).isActivatorRail())
         {
             isPowered = state.getValue(PoweredRailBlock.POWERED);
             flag = !isPowered;
         }
 
-        RailShape railshape = ((AbstractRailBlock) state.getBlock()).getRailDirection(state, this.level, pos, this);
+        RailShape railshape = ((BaseRailBlock) state.getBlock()).getRailDirection(state, this.level, pos, this);
         switch (railshape)
         {
             case ASCENDING_EAST:
@@ -96,10 +103,10 @@ public class MinecoloniesMinecart extends AbstractMinecartEntity
                 break;
         }
 
-        Vector3d motion = this.getDeltaMovement();
-        Pair<Vector3i, Vector3i> pair = getShapeMatrix(railshape);
-        Vector3i vecIn = pair.getFirst();
-        Vector3i vecOut = pair.getSecond();
+        Vec3 motion = this.getDeltaMovement();
+        Pair<Vec3i, Vec3i> pair = getShapeMatrix(railshape);
+        Vec3i vecIn = pair.getFirst();
+        Vec3i vecOut = pair.getSecond();
         double xDif = (vecOut.getX() - vecIn.getX());
         double zDif = (vecOut.getZ() - vecIn.getZ());
         double difSq = Math.sqrt(xDif * xDif + zDif * zDif);
@@ -111,7 +118,7 @@ public class MinecoloniesMinecart extends AbstractMinecartEntity
         }
 
         double veloc = Math.min(2.0D, Math.sqrt(getHorizontalDistanceSqr(motion)));
-        motion = new Vector3d(veloc * xDif / difSq, motion.y, veloc * zDif / difSq);
+        motion = new Vec3(veloc * xDif / difSq, motion.y, veloc * zDif / difSq);
         this.setDeltaMovement(motion);
 
         if (flag && shouldDoRailFunctions())
@@ -119,7 +126,7 @@ public class MinecoloniesMinecart extends AbstractMinecartEntity
             double tempMot = Math.sqrt(getHorizontalDistanceSqr(this.getDeltaMovement()));
             if (tempMot < 0.03D)
             {
-                this.setDeltaMovement(Vector3d.ZERO);
+                this.setDeltaMovement(Vec3.ZERO);
             }
             else
             {
@@ -153,21 +160,21 @@ public class MinecoloniesMinecart extends AbstractMinecartEntity
         z = zInDif + zDif * xzDif;
         this.setPos(x, y, z);
         this.moveMinecartOnRail(pos);
-        if (vecIn.getY() != 0 && MathHelper.floor(this.getX()) - pos.getX() == vecIn.getX() && MathHelper.floor(this.getZ()) - pos.getZ() == vecIn.getZ())
+        if (vecIn.getY() != 0 && Mth.floor(this.getX()) - pos.getX() == vecIn.getX() && Mth.floor(this.getZ()) - pos.getZ() == vecIn.getZ())
         {
             this.setPos(this.getX(), this.getY() + (double) vecIn.getY(), this.getZ());
         }
-        else if (vecOut.getY() != 0 && MathHelper.floor(this.getX()) - pos.getX() == vecOut.getX() && MathHelper.floor(this.getZ()) - pos.getZ() == vecOut.getZ())
+        else if (vecOut.getY() != 0 && Mth.floor(this.getX()) - pos.getX() == vecOut.getX() && Mth.floor(this.getZ()) - pos.getZ() == vecOut.getZ())
         {
             this.setPos(this.getX(), this.getY() + (double) vecOut.getY(), this.getZ());
         }
 
         this.applyNaturalSlowdown();
-        Vector3d newPos = this.getPos(this.getX(), this.getY(), this.getZ());
+        Vec3 newPos = this.getPos(this.getX(), this.getY(), this.getZ());
         if (newPos != null && posVec != null)
         {
             double yMot = (posVec.y - newPos.y) * 0.05D;
-            Vector3d tempMot = this.getDeltaMovement();
+            Vec3 tempMot = this.getDeltaMovement();
             double tempVeloc = Math.sqrt(getHorizontalDistanceSqr(tempMot));
             if (tempVeloc > 0.0D)
             {
@@ -177,23 +184,23 @@ public class MinecoloniesMinecart extends AbstractMinecartEntity
             this.setPos(this.getX(), newPos.y, this.getZ());
         }
 
-        int xFloor = MathHelper.floor(this.getX());
-        int zFloor = MathHelper.floor(this.getZ());
+        int xFloor = Mth.floor(this.getX());
+        int zFloor = Mth.floor(this.getZ());
         if (xFloor != pos.getX() || zFloor != pos.getZ())
         {
-            Vector3d tempMot = this.getDeltaMovement();
+            Vec3 tempMot = this.getDeltaMovement();
             double temoVeloc = Math.sqrt(getHorizontalDistanceSqr(tempMot));
             this.setDeltaMovement(temoVeloc * (double) (xFloor - pos.getX()), tempMot.y, temoVeloc * (double) (zFloor - pos.getZ()));
         }
 
         if (shouldDoRailFunctions())
         {
-            ((AbstractRailBlock) state.getBlock()).onMinecartPass(state, level, pos, this);
+            ((BaseRailBlock) state.getBlock()).onMinecartPass(state, level, pos, this);
         }
 
         if (isPowered && shouldDoRailFunctions())
         {
-            Vector3d tempMot = this.getDeltaMovement();
+            Vec3 tempMot = this.getDeltaMovement();
             double tempVeloc = Math.sqrt(getHorizontalDistanceSqr(tempMot));
             if (tempVeloc > 0.01D)
             {
@@ -201,7 +208,7 @@ public class MinecoloniesMinecart extends AbstractMinecartEntity
             }
             else
             {
-                Vector3d mot = this.getDeltaMovement();
+                Vec3 mot = this.getDeltaMovement();
                 double tempX = mot.x;
                 double tempZ = mot.z;
                 if (railshape == RailShape.EAST_WEST)
@@ -242,15 +249,15 @@ public class MinecoloniesMinecart extends AbstractMinecartEntity
         return this.level.getBlockState(pos).isRedstoneConductor(this.level, pos);
     }
 
-    private static Pair<Vector3i, Vector3i> getShapeMatrix(RailShape p_226573_0_)
+    private static Pair<Vec3i, Vec3i> getShapeMatrix(RailShape p_226573_0_)
     {
         return MATRIX.get(p_226573_0_);
     }
 
     @Override
-    public ActionResultType interact(final PlayerEntity p_184230_1_, final Hand p_184230_2_)
+    public InteractionResult interact(final Player p_184230_1_, final InteractionHand p_184230_2_)
     {
-        return ActionResultType.FAIL;
+        return InteractionResult.FAIL;
     }
 
     @Override
@@ -260,9 +267,9 @@ public class MinecoloniesMinecart extends AbstractMinecartEntity
     }
 
     @NotNull
-    public AbstractMinecartEntity.Type getMinecartType()
+    public AbstractMinecart.Type getMinecartType()
     {
-        return AbstractMinecartEntity.Type.RIDEABLE;
+        return AbstractMinecart.Type.RIDEABLE;
     }
 
     @Override
@@ -272,7 +279,7 @@ public class MinecoloniesMinecart extends AbstractMinecartEntity
     }
 
     @Override
-    public void playerTouch(final PlayerEntity entityIn)
+    public void playerTouch(final Player entityIn)
     {
         // Do nothing
     }
@@ -285,30 +292,30 @@ public class MinecoloniesMinecart extends AbstractMinecartEntity
 
     @NotNull
     @Override
-    public Vector3d collide(Vector3d vec)
+    public Vec3 collide(Vec3 vec)
     {
-        final AxisAlignedBB axisalignedbb = this.getBoundingBox();
-        final ISelectionContext iselectioncontext = ISelectionContext.of(this);
+        final AABB axisalignedbb = this.getBoundingBox();
+        final CollisionContext iselectioncontext = CollisionContext.of(this);
         final VoxelShape voxelshape = this.level.getWorldBorder().getCollisionShape();
-        final Stream<VoxelShape> stream = VoxelShapes.joinIsNotEmpty(voxelshape, VoxelShapes.create(axisalignedbb.deflate(1.0E-7D)), IBooleanFunction.AND) ? Stream.empty() : Stream.of(voxelshape);
-        final ReuseableStream<VoxelShape> reuseablestream = new ReuseableStream<>(stream);
-        final Vector3d vector3d = vec.lengthSqr() == 0.0D ? vec : collideBoundingBoxHeuristically(this, vec, axisalignedbb, this.level, iselectioncontext, reuseablestream);
+        final Stream<VoxelShape> stream = Shapes.joinIsNotEmpty(voxelshape, Shapes.create(axisalignedbb.deflate(1.0E-7D)), BooleanOp.AND) ? Stream.empty() : Stream.of(voxelshape);
+        final RewindableStream<VoxelShape> reuseablestream = new RewindableStream<>(stream);
+        final Vec3 vector3d = vec.lengthSqr() == 0.0D ? vec : collideBoundingBoxHeuristically(this, vec, axisalignedbb, this.level, iselectioncontext, reuseablestream);
         final boolean xDif = vec.x != vector3d.x;
         final boolean yDif = vec.y != vector3d.y;
         final boolean zDif = vec.z != vector3d.z;
         final boolean groundDif = this.onGround || yDif && vec.y < 0.0D;
         if (this.maxUpStep > 0.0F && groundDif && (xDif || zDif)) {
-            Vector3d vector3d1 = collideBoundingBoxHeuristically(this, new Vector3d(vec.x, (double)this.maxUpStep, vec.z), axisalignedbb, this.level, iselectioncontext, reuseablestream);
-            final Vector3d vector3d2 = collideBoundingBoxHeuristically(this, new Vector3d(0.0D, (double)this.maxUpStep, 0.0D), axisalignedbb.expandTowards(vec.x, 0.0D, vec.z), this.level, iselectioncontext, reuseablestream);
+            Vec3 vector3d1 = collideBoundingBoxHeuristically(this, new Vec3(vec.x, (double)this.maxUpStep, vec.z), axisalignedbb, this.level, iselectioncontext, reuseablestream);
+            final Vec3 vector3d2 = collideBoundingBoxHeuristically(this, new Vec3(0.0D, (double)this.maxUpStep, 0.0D), axisalignedbb.expandTowards(vec.x, 0.0D, vec.z), this.level, iselectioncontext, reuseablestream);
             if (vector3d2.y < (double)this.maxUpStep) {
-                Vector3d vector3d3 = collideBoundingBoxHeuristically(this, new Vector3d(vec.x, 0.0D, vec.z), axisalignedbb.move(vector3d2), this.level, iselectioncontext, reuseablestream).add(vector3d2);
+                Vec3 vector3d3 = collideBoundingBoxHeuristically(this, new Vec3(vec.x, 0.0D, vec.z), axisalignedbb.move(vector3d2), this.level, iselectioncontext, reuseablestream).add(vector3d2);
                 if (getHorizontalDistanceSqr(vector3d3) > getHorizontalDistanceSqr(vector3d1)) {
                     vector3d1 = vector3d3;
                 }
             }
 
             if (getHorizontalDistanceSqr(vector3d1) > getHorizontalDistanceSqr(vector3d)) {
-                return vector3d1.add(collideBoundingBoxHeuristically(this, new Vector3d(0.0D, -vector3d1.y + vec.y, 0.0D), axisalignedbb.move(vector3d1), this.level, iselectioncontext, reuseablestream));
+                return vector3d1.add(collideBoundingBoxHeuristically(this, new Vec3(0.0D, -vector3d1.y + vec.y, 0.0D), axisalignedbb.move(vector3d1), this.level, iselectioncontext, reuseablestream));
             }
         }
 
@@ -328,7 +335,7 @@ public class MinecoloniesMinecart extends AbstractMinecartEntity
 
     @NotNull
     @Override
-    public IPacket<?> getAddEntityPacket()
+    public Packet<?> getAddEntityPacket()
     {
         return NetworkHooks.getEntitySpawningPacket(this);
     }

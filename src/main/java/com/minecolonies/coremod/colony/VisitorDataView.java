@@ -7,10 +7,10 @@ import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.tileentity.SkullTileEntityRenderer;
 import net.minecraft.client.resources.DefaultPlayerSkin;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.SkullTileEntity;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.level.block.entity.SkullBlockEntity;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -54,7 +54,7 @@ public class VisitorDataView extends CitizenDataView implements IVisitorViewData
     }
 
     @Override
-    public void deserialize(@NotNull final PacketBuffer buf)
+    public void deserialize(@NotNull final FriendlyByteBuf buf)
     {
         super.deserialize(buf);
         recruitmentCosts = buf.readItem();
@@ -87,7 +87,7 @@ public class VisitorDataView extends CitizenDataView implements IVisitorViewData
         {
             Minecraft minecraft = Minecraft.getInstance();
             GameProfile profile = new GameProfile(textureUUID, "_Raycoms_");
-            profile = SkullTileEntity.updateGameprofile(profile);
+            profile = SkullBlockEntity.updateGameprofile(profile);
             Map<MinecraftProfileTexture.Type, MinecraftProfileTexture> map = minecraft.getSkinManager().getInsecureSkinInformation(profile);
             if (!map.isEmpty())
             {

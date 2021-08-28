@@ -4,10 +4,10 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCrusher;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -49,7 +49,7 @@ public class CrusherSetModeMessage extends AbstractBuildingServerMessage<Buildin
     }
 
     @Override
-    public void fromBytesOverride(@NotNull final PacketBuffer buf)
+    public void fromBytesOverride(@NotNull final FriendlyByteBuf buf)
     {
 
         quantity = buf.readInt();
@@ -57,7 +57,7 @@ public class CrusherSetModeMessage extends AbstractBuildingServerMessage<Buildin
     }
 
     @Override
-    public void toBytesOverride(@NotNull final PacketBuffer buf)
+    public void toBytesOverride(@NotNull final FriendlyByteBuf buf)
     {
 
         buf.writeInt(quantity);
@@ -68,7 +68,7 @@ public class CrusherSetModeMessage extends AbstractBuildingServerMessage<Buildin
     protected void onExecute(
       final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final BuildingCrusher building)
     {
-        final PlayerEntity player = ctxIn.getSender();
+        final Player player = ctxIn.getSender();
         if (player == null)
         {
             return;
@@ -78,7 +78,7 @@ public class CrusherSetModeMessage extends AbstractBuildingServerMessage<Buildin
         if (qty > building.getMaxDailyQuantity())
         {
             qty = building.getMaxDailyQuantity();
-            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.crusher.toomuch", qty), player.getUUID());
+            player.sendMessage(new TranslatableComponent("com.minecolonies.coremod.crusher.toomuch", qty), player.getUUID());
         }
         building.setCrusherMode(new ItemStorage(crusherMode), qty);
     }

@@ -6,13 +6,13 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.inventory.ModContainers;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.ItemStackUtils;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.BlockPos;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -22,7 +22,7 @@ import static com.minecolonies.api.util.constant.InventoryConstants.*;
 /**
  * Container for Mie
  */
-public class ContainerBuildingInventory extends Container
+public class ContainerBuildingInventory extends AbstractContainerMenu
 {
     /**
      * Lower chest inventory.
@@ -44,7 +44,7 @@ public class ContainerBuildingInventory extends Container
      * @param packetBuffer network buffer
      * @return new instance
      */
-    public static ContainerBuildingInventory fromPacketBuffer(final int windowId, final PlayerInventory inv, final PacketBuffer packetBuffer)
+    public static ContainerBuildingInventory fromPacketBuffer(final int windowId, final Inventory inv, final FriendlyByteBuf packetBuffer)
     {
         final int colonyId = packetBuffer.readVarInt();
         final BlockPos tePos = packetBuffer.readBlockPos();
@@ -59,7 +59,7 @@ public class ContainerBuildingInventory extends Container
      * @param colonyId colony id
      * @param pos      te world pos
      */
-    public ContainerBuildingInventory(final int windowId, final PlayerInventory inv, final int colonyId, final BlockPos pos)
+    public ContainerBuildingInventory(final int windowId, final Inventory inv, final int colonyId, final BlockPos pos)
     {
         super(ModContainers.buildingInv, windowId);
 
@@ -138,7 +138,7 @@ public class ContainerBuildingInventory extends Container
      * @param index    Index of the {@link Slot}. This index is relative to the list of slots in this {@code Container}, {@link #inventorySlots}.
      */
     @Override
-    public ItemStack quickMoveStack(final PlayerEntity playerIn, final int index)
+    public ItemStack quickMoveStack(final Player playerIn, final int index)
     {
         final Slot slot = this.slots.get(index);
 
@@ -179,7 +179,7 @@ public class ContainerBuildingInventory extends Container
      * Called when the container is closed.
      */
     @Override
-    public void removed(final PlayerEntity playerIn)
+    public void removed(final Player playerIn)
     {
         super.removed(playerIn);
     }
@@ -188,7 +188,7 @@ public class ContainerBuildingInventory extends Container
      * Determines whether supplied player can use this container
      */
     @Override
-    public boolean stillValid(@NotNull final PlayerEntity playerIn)
+    public boolean stillValid(@NotNull final Player playerIn)
     {
         return this.tileEntityColonyBuilding.isUsableByPlayer(playerIn);
     }

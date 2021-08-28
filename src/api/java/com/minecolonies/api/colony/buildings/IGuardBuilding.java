@@ -3,8 +3,8 @@ package com.minecolonies.api.colony.buildings;
 import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
 public interface IGuardBuilding extends IBuildingWorker
@@ -21,7 +21,7 @@ public interface IGuardBuilding extends IBuildingWorker
      * @param player  the player.
      * @return false if in follow mode and following the player.
      */
-    static boolean checkIfGuardShouldTakeDamage(final AbstractEntityCitizen citizen, final PlayerEntity player)
+    static boolean checkIfGuardShouldTakeDamage(final AbstractEntityCitizen citizen, final Player player)
     {
         final IBuildingWorker buildingWorker = citizen.getCitizenColonyHandler().getWorkBuilding();
         if (!(buildingWorker instanceof IGuardBuilding))
@@ -111,14 +111,14 @@ public interface IGuardBuilding extends IBuildingWorker
      *
      * @return the PlayerEntity reference.
      */
-    PlayerEntity getPlayerToFollowOrRally();
+    Player getPlayerToFollowOrRally();
 
     /**
      * Sets the player to follow.
      *
      * @param player the player to follow.
      */
-    void setPlayerToFollow(PlayerEntity player);
+    void setPlayerToFollow(Player player);
 
     /**
      * Location to to rally to.

@@ -2,8 +2,8 @@ package com.minecolonies.api.entity.ai.pathfinding;
 
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.EntityUtils;
-import net.minecraft.entity.MobEntity;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,7 +33,7 @@ public abstract class AbstractWalkToProxy implements IWalkToProxy
     /**
      * The entity entity associated with the proxy.
      */
-    private final MobEntity entity;
+    private final Mob entity;
 
     /**
      * List of proxies the entity has to follow.
@@ -55,7 +55,7 @@ public abstract class AbstractWalkToProxy implements IWalkToProxy
      *
      * @param entity the entity.
      */
-    protected AbstractWalkToProxy(final MobEntity entity)
+    protected AbstractWalkToProxy(final Mob entity)
     {
         this.entity = entity;
     }
@@ -169,7 +169,7 @@ public abstract class AbstractWalkToProxy implements IWalkToProxy
      * @param range  the range.
      * @return true if so.
      */
-    public boolean isLivingAtSiteWithMove(final MobEntity entity, final int x, final int y, final int z, final int range)
+    public boolean isLivingAtSiteWithMove(final Mob entity, final int x, final int y, final int z, final int range)
     {
         if (!EntityUtils.isLivingAtSiteWithMove(entity, x, y, z, range))
         {
@@ -184,7 +184,7 @@ public abstract class AbstractWalkToProxy implements IWalkToProxy
      *
      * @return the entity.
      */
-    public MobEntity getEntity()
+    public Mob getEntity()
     {
         return entity;
     }

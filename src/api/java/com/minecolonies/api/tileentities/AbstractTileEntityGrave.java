@@ -1,8 +1,8 @@
 package com.minecolonies.api.tileentities;
 
 import com.minecolonies.api.colony.IGraveData;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.util.constant.Constants.*;
@@ -10,7 +10,7 @@ import static com.minecolonies.api.util.constant.Constants.*;
 /**
  * Abstract class for minecolonies graves.
  */
-public abstract class AbstractTileEntityGrave extends TileEntityRack implements INamedContainerProvider
+public abstract class AbstractTileEntityGrave extends TileEntityRack implements MenuProvider
 {
     /**
      * default duration of the countdown before the grave disapear, in ticks (20 ticks / seconds)
@@ -33,7 +33,7 @@ public abstract class AbstractTileEntityGrave extends TileEntityRack implements 
     @Nullable
     protected IGraveData graveData;
 
-    public AbstractTileEntityGrave(final TileEntityType<? extends AbstractTileEntityGrave> tileEntityTypeIn)
+    public AbstractTileEntityGrave(final BlockEntityType<? extends AbstractTileEntityGrave> tileEntityTypeIn)
     {
         super(tileEntityTypeIn);
         decay_timer = DEFAULT_DECAY_TIMER;

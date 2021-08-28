@@ -7,11 +7,11 @@ import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.AbstractShipRaidEvent;
 
-import net.minecraft.entity.EntityType;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.RAID_PIRATE;
@@ -60,7 +60,7 @@ public class PirateRaidEvent extends AbstractShipRaidEvent
      * @param compound the NBT compound
      * @return the colony to load.
      */
-    public static IColonyEvent loadFromNBT(@NotNull final IColony colony, @NotNull final CompoundNBT compound)
+    public static IColonyEvent loadFromNBT(@NotNull final IColony colony, @NotNull final CompoundTag compound)
     {
         final PirateRaidEvent raidEvent = new PirateRaidEvent(colony);
         raidEvent.deserializeNBT(compound);
@@ -86,8 +86,8 @@ public class PirateRaidEvent extends AbstractShipRaidEvent
     }
 
     @Override
-    protected IFormattableTextComponent getDisplayName()
+    protected MutableComponent getDisplayName()
     {
-        return new StringTextComponent(LanguageHandler.format(RAID_PIRATE));
+        return new TextComponent(LanguageHandler.format(RAID_PIRATE));
     }
 }

@@ -10,7 +10,7 @@ import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingsModuleView;
 import com.minecolonies.api.colony.buildings.modules.settings.IStringSetting;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -94,7 +94,7 @@ public class StringSetting implements IStringSetting
     @Override
     public void render(final ISettingKey<?> key, final Pane pane, final ISettingsModuleView settingsModuleView, final IBuildingView building, final Window window)
     {
-        pane.findPaneOfTypeByID("trigger", ButtonImage.class).setText(new TranslationTextComponent(settings.get(currentIndex)));
+        pane.findPaneOfTypeByID("trigger", ButtonImage.class).setText(new TranslatableComponent(settings.get(currentIndex)));
     }
 
     @Override

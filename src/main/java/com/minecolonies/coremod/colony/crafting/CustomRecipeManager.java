@@ -4,12 +4,12 @@ import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.coremod.Network;
 import io.netty.buffer.Unpooled;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.loot.LootTableManager;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.storage.loot.LootTables;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -226,7 +226,7 @@ public class CustomRecipeManager
      * Analyses and builds an approximate list of possible loot drops from registered recipes.
      * @param lootTableManager the loot table manager
      */
-    public void buildLootData(@NotNull final LootTableManager lootTableManager)
+    public void buildLootData(@NotNull final LootTables lootTableManager)
     {
         lootTables.clear();
         lootTables.putAll(recipeMap.values().stream()
@@ -242,9 +242,9 @@ public class CustomRecipeManager
      * Sends relevant Custom Recipes loaded from the Custom Recipe Manager to the client.
      * @param player the player to send the new data to.
      */
-    public void sendCustomRecipeManagerPackets(final ServerPlayerEntity player)
+    public void sendCustomRecipeManagerPackets(final ServerPlayer player)
     {
-        final PacketBuffer recipeMgrPacketBuffer = new PacketBuffer(Unpooled.buffer());
+        final FriendlyByteBuf recipeMgrPacketBuffer = new FriendlyByteBuf(Unpooled.buffer());
         serializeNetworkData(recipeMgrPacketBuffer);
         Network.getNetwork().sendToPlayer(new CustomRecipeManagerMessage(recipeMgrPacketBuffer), player);
     }
@@ -254,7 +254,7 @@ public class CustomRecipeManager
      * This version sends the full Custom Recipe Manager.
      * @param recipeMgrPacketBuffer packet buffer to encode the data into.
      */
-    private void serializeNetworkData(final PacketBuffer recipeMgrPacketBuffer)
+    private void serializeNetworkData(final FriendlyByteBuf recipeMgrPacketBuffer)
     {
         // Custom Recipe Manager packets can potentially get very large, and individual CompoundNBTs can not be parsed if they exceed 2MB.
         // For safety with arbitrary data packs (or sets of data packs), we can not wrap the entire CustomRecipeManager into single ListNBT.
@@ -288,7 +288,7 @@ public class CustomRecipeManager
      * Ingests the custom recipes packet, and applies it to the recipe manager.
      * @param buff packet buffer containing the received data.
      */
-    public void handleCustomRecipeManagerMessage(final PacketBuffer buff)
+    public void handleCustomRecipeManagerMessage(final FriendlyByteBuf buff)
     {
         recipeOutputMap.clear();
         recipeMap.clear();

@@ -11,17 +11,17 @@ import com.minecolonies.api.entity.mobs.vikings.INorsemenChiefEntity;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.ai.attributes.Attribute;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.ai.attributes.RangedAttribute;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.attributes.RangedAttribute;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.Level;
 
 import java.util.List;
 import java.util.Random;
@@ -109,7 +109,7 @@ public final class RaiderMobUtils
       final EntityType<?> entityToSpawn,
       final int numberOfSpawns,
       final BlockPos spawnLocation,
-      final World world,
+      final Level world,
       final IColony colony,
       final int eventID)
     {
@@ -127,7 +127,7 @@ public final class RaiderMobUtils
 
                 if (entity != null)
                 {
-                    entity.absMoveTo(x + spawnDeviationX, y + 1.0, z + spawnDeviationZ, (float) MathHelper.wrapDegrees(world.random.nextDouble() * WHOLE_CIRCLE), 0.0F);
+                    entity.absMoveTo(x + spawnDeviationX, y + 1.0, z + spawnDeviationZ, (float) Mth.wrapDegrees(world.random.nextDouble() * WHOLE_CIRCLE), 0.0F);
                     CompatibilityUtils.addEntity(world, entity);
                     entity.setColony(colony);
                     entity.setEventID(eventID);
@@ -153,42 +153,42 @@ public final class RaiderMobUtils
     {
         if (mob instanceof IMeleeBarbarianEntity || mob instanceof IMeleeNorsemenEntity || mob instanceof INorsemenChiefEntity)
         {
-            mob.setItemSlot(EquipmentSlotType.MAINHAND, new ItemStack(Items.STONE_AXE));
+            mob.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.STONE_AXE));
         }
         else if (mob instanceof IPharaoEntity)
         {
-            mob.setItemSlot(EquipmentSlotType.MAINHAND, new ItemStack(ModItems.pharaoscepter));
+            mob.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ModItems.pharaoscepter));
         }
         else if (mob instanceof IArcherMobEntity)
         {
-            mob.setItemSlot(EquipmentSlotType.MAINHAND, new ItemStack(Items.BOW));
+            mob.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.BOW));
         }
         else if (mob instanceof IChiefBarbarianEntity)
         {
-            mob.setItemSlot(EquipmentSlotType.MAINHAND, new ItemStack(ModItems.chiefSword));
-            mob.setItemSlot(EquipmentSlotType.HEAD, new ItemStack(Items.CHAINMAIL_HELMET));
-            mob.setItemSlot(EquipmentSlotType.CHEST, new ItemStack(Items.CHAINMAIL_CHESTPLATE));
-            mob.setItemSlot(EquipmentSlotType.LEGS, new ItemStack(Items.CHAINMAIL_LEGGINGS));
-            mob.setItemSlot(EquipmentSlotType.FEET, new ItemStack(Items.CHAINMAIL_BOOTS));
+            mob.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ModItems.chiefSword));
+            mob.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.CHAINMAIL_HELMET));
+            mob.setItemSlot(EquipmentSlot.CHEST, new ItemStack(Items.CHAINMAIL_CHESTPLATE));
+            mob.setItemSlot(EquipmentSlot.LEGS, new ItemStack(Items.CHAINMAIL_LEGGINGS));
+            mob.setItemSlot(EquipmentSlot.FEET, new ItemStack(Items.CHAINMAIL_BOOTS));
         }
         else if (mob instanceof IPirateEntity)
         {
-            mob.setItemSlot(EquipmentSlotType.MAINHAND, new ItemStack(ModItems.scimitar));
+            mob.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ModItems.scimitar));
             if (mob instanceof ICaptainPirateEntity)
             {
                 if (new Random().nextBoolean())
                 {
-                    mob.setItemSlot(EquipmentSlotType.HEAD, new ItemStack(ModItems.pirateHelmet_1));
-                    mob.setItemSlot(EquipmentSlotType.CHEST, new ItemStack(ModItems.pirateChest_1));
-                    mob.setItemSlot(EquipmentSlotType.LEGS, new ItemStack(ModItems.pirateLegs_1));
-                    mob.setItemSlot(EquipmentSlotType.FEET, new ItemStack(ModItems.pirateBoots_1));
+                    mob.setItemSlot(EquipmentSlot.HEAD, new ItemStack(ModItems.pirateHelmet_1));
+                    mob.setItemSlot(EquipmentSlot.CHEST, new ItemStack(ModItems.pirateChest_1));
+                    mob.setItemSlot(EquipmentSlot.LEGS, new ItemStack(ModItems.pirateLegs_1));
+                    mob.setItemSlot(EquipmentSlot.FEET, new ItemStack(ModItems.pirateBoots_1));
                 }
                 else
                 {
-                    mob.setItemSlot(EquipmentSlotType.HEAD, new ItemStack(ModItems.pirateHelmet_2));
-                    mob.setItemSlot(EquipmentSlotType.CHEST, new ItemStack(ModItems.pirateChest_2));
-                    mob.setItemSlot(EquipmentSlotType.LEGS, new ItemStack(ModItems.pirateLegs_2));
-                    mob.setItemSlot(EquipmentSlotType.FEET, new ItemStack(ModItems.pirateBoots_2));
+                    mob.setItemSlot(EquipmentSlot.HEAD, new ItemStack(ModItems.pirateHelmet_2));
+                    mob.setItemSlot(EquipmentSlot.CHEST, new ItemStack(ModItems.pirateChest_2));
+                    mob.setItemSlot(EquipmentSlot.LEGS, new ItemStack(ModItems.pirateLegs_2));
+                    mob.setItemSlot(EquipmentSlot.FEET, new ItemStack(ModItems.pirateBoots_2));
                 }
             }
         }

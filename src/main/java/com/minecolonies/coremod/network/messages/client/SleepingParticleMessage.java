@@ -3,7 +3,7 @@ package com.minecolonies.coremod.network.messages.client;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.apiimp.initializer.ModParticleTypesInitializer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.LogicalSide;
@@ -35,7 +35,7 @@ public class SleepingParticleMessage implements IMessage
     }
 
     @Override
-    public void fromBytes(final PacketBuffer byteBuf)
+    public void fromBytes(final FriendlyByteBuf byteBuf)
     {
         x = byteBuf.readDouble();
         y = byteBuf.readDouble();
@@ -43,7 +43,7 @@ public class SleepingParticleMessage implements IMessage
     }
 
     @Override
-    public void toBytes(final PacketBuffer byteBuf)
+    public void toBytes(final FriendlyByteBuf byteBuf)
     {
         byteBuf.writeDouble(x);
         byteBuf.writeDouble(y);

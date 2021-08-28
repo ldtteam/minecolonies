@@ -4,7 +4,7 @@ import com.google.common.collect.Multimap;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.entity.ai.IStateAI;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
-import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.goal.Goal;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;

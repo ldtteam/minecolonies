@@ -4,13 +4,13 @@ import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.location.ILocationFactory;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.world.World;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -24,9 +24,9 @@ public class StaticLocation implements ILocation
     @NotNull
     private final BlockPos pos;
 
-    private final RegistryKey<World> dimension;
+    private final ResourceKey<Level> dimension;
 
-    public StaticLocation(@NotNull final BlockPos pos, final RegistryKey<World> dimension)
+    public StaticLocation(@NotNull final BlockPos pos, final ResourceKey<Level> dimension)
     {
         this.pos = pos;
         this.dimension = dimension;
@@ -51,7 +51,7 @@ public class StaticLocation implements ILocation
      */
     @NotNull
     @Override
-    public RegistryKey<World> getDimension()
+    public ResourceKey<Level> getDimension()
     {
         return dimension;
     }
@@ -149,9 +149,9 @@ public class StaticLocation implements ILocation
          */
         @NotNull
         @Override
-        public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final StaticLocation request)
+        public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final StaticLocation request)
         {
-            final CompoundNBT compound = new CompoundNBT();
+            final CompoundTag compound = new CompoundTag();
             compound.putLong(NBT_POS, request.getInDimensionLocation().asLong());
             compound.putString(NBT_DIM, request.getDimension().location().toString());
             return compound;
@@ -166,11 +166,11 @@ public class StaticLocation implements ILocation
          */
         @NotNull
         @Override
-        public StaticLocation deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
+        public StaticLocation deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
         {
             final BlockPos pos = BlockPos.of(nbt.getLong(NBT_POS));
             final String dim = nbt.getString(NBT_DIM);
-            return new StaticLocation(pos, RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(dim)));
+            return new StaticLocation(pos, ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(dim)));
         }
 
         @NotNull
@@ -182,12 +182,12 @@ public class StaticLocation implements ILocation
                 throw new IllegalArgumentException("Unsupported context - Not the correct amount available. Needed is 1!");
             }
 
-            if (!(context[0] instanceof RegistryKey))
+            if (!(context[0] instanceof ResourceKey))
             {
                 throw new IllegalArgumentException("Unsupported context - First context object is not a ResourceLocation. Provide an ResourceLocation as Dimension.");
             }
 
-            return new StaticLocation(blockPos, (RegistryKey<World>) context[0]);
+            return new StaticLocation(blockPos, (ResourceKey<Level>) context[0]);
         }
 
         /**
@@ -200,18 +200,18 @@ public class StaticLocation implements ILocation
         @Override
         public StaticLocation getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final BlockPos input)
         {
-            return new StaticLocation(input, World.OVERWORLD);
+            return new StaticLocation(input, Level.OVERWORLD);
         }
 
         @Override
-        public void serialize(@NotNull IFactoryController controller, @NotNull StaticLocation input, PacketBuffer packetBuffer)
+        public void serialize(@NotNull IFactoryController controller, @NotNull StaticLocation input, FriendlyByteBuf packetBuffer)
         {
             StaticLocation.serialize(packetBuffer, input);
         }
 
         @NotNull
         @Override
-        public StaticLocation deserialize(@NotNull IFactoryController controller, @NotNull PacketBuffer buffer) throws Throwable
+        public StaticLocation deserialize(@NotNull IFactoryController controller, @NotNull FriendlyByteBuf buffer) throws Throwable
         {
             return StaticLocation.deserialize(buffer);
         }
@@ -228,7 +228,7 @@ public class StaticLocation implements ILocation
      *
      * @param buffer the buffer to serialize this location to.
      */
-    public static void serialize(PacketBuffer buffer, StaticLocation location)
+    public static void serialize(FriendlyByteBuf buffer, StaticLocation location)
     {
         buffer.writeBlockPos(location.pos);
         buffer.writeUtf(location.dimension.location().toString());
@@ -240,11 +240,11 @@ public class StaticLocation implements ILocation
      * @param buffer the buffer to read.
      * @return the deserialized location.
      */
-    public static StaticLocation deserialize(PacketBuffer buffer)
+    public static StaticLocation deserialize(FriendlyByteBuf buffer)
     {
         final BlockPos pos = buffer.readBlockPos();
         final ResourceLocation dimension = new ResourceLocation(buffer.readUtf(32767));
 
-        return new StaticLocation(pos, RegistryKey.create(Registry.DIMENSION_REGISTRY, dimension));
+        return new StaticLocation(pos, ResourceKey.create(Registry.DIMENSION_REGISTRY, dimension));
     }
 }

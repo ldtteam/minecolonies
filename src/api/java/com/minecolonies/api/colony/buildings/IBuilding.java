@@ -13,13 +13,13 @@ import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverProvider;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.ItemStorage;
-import net.minecraft.block.Block;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -117,14 +117,14 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
      *
      * @param player entering player
      */
-    default void onPlayerEnterNearby(final PlayerEntity player) {}
+    default void onPlayerEnterNearby(final Player player) {}
 
     /**
      * Called when a player enters the building area
      *
      * @param player entering player
      */
-    default void onPlayerEnterBuilding(final PlayerEntity player) {}
+    default void onPlayerEnterBuilding(final Player player) {}
 
     /**
      * Checks if a block matches the current object.
@@ -187,7 +187,7 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
      *
      * @param buf PacketBuffer to write to.
      */
-    void serializeToView(@NotNull PacketBuffer buf);
+    void serializeToView(@NotNull FriendlyByteBuf buf);
 
     /**
      * Set the custom building name of the building.
@@ -209,7 +209,7 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
      * @param player  the requesting player.
      * @param builder the assigned builder.
      */
-    void requestUpgrade(PlayerEntity player, BlockPos builder);
+    void requestUpgrade(Player player, BlockPos builder);
 
     /**
      * Requests a removal for the current building.
@@ -217,7 +217,7 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
      * @param player  the requesting player.
      * @param builder the assigned builder.
      */
-    void requestRemoval(PlayerEntity player, BlockPos builder);
+    void requestRemoval(Player player, BlockPos builder);
 
     /**
      * Requests a repair for the current building.
@@ -285,7 +285,7 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
      * @return the itemStack which has been replaced or the itemStack which could not be transfered
      */
     @Nullable
-    ItemStack forceTransferStack(ItemStack stack, World world);
+    ItemStack forceTransferStack(ItemStack stack, Level world);
 
     /**
      * Create a request for a citizen.
@@ -425,5 +425,5 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
      * Pickup the building including the level and put it in the players inv.
      * @param player the player picking it up.
      */
-    void pickUp(final PlayerEntity player);
+    void pickUp(final Player player);
 }

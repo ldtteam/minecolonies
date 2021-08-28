@@ -11,14 +11,14 @@ import com.minecolonies.api.util.CreativeBuildingStructureHandler;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.util.CreativeRaiderStructureHandler;
-import net.minecraft.block.AirBlock;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.material.Material;
-import net.minecraft.entity.EntityType;
-import net.minecraft.tileentity.MobSpawnerTileEntity;
-import net.minecraft.util.Mirror;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.AirBlock;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -64,7 +64,7 @@ public final class ShipBasedRaiderUtils
      */
     public static boolean spawnPirateShip(
       final BlockPos targetSpawnPoint,
-      final World world,
+      final Level world,
       final IColony colony,
       final String shipSize,
       final IColonyRaidEvent event,
@@ -102,11 +102,11 @@ public final class ShipBasedRaiderUtils
      * @param event    the event.
      * @param colonyId the colony id.
      */
-    public static void setupSpawner(final BlockPos location, final World world, final EntityType<?> mob, final IColonyRaidEvent event, final int colonyId)
+    public static void setupSpawner(final BlockPos location, final Level world, final EntityType<?> mob, final IColonyRaidEvent event, final int colonyId)
     {
         world.removeBlock(location, false);
         world.setBlockAndUpdate(location, Blocks.SPAWNER.defaultBlockState());
-        final MobSpawnerTileEntity spawner = new MobSpawnerTileEntity();
+        final SpawnerBlockEntity spawner = new SpawnerBlockEntity();
 
         spawner.getSpawner().requiredPlayerRange = SPAWNER_DISTANCE;
         spawner.getSpawner().setEntityId(mob);
@@ -134,7 +134,7 @@ public final class ShipBasedRaiderUtils
             return false;
         }
 
-        final World world = colony.getWorld();
+        final Level world = colony.getWorld();
         final String shipSize = ShipSize.getShipForRaiderAmount(raidLevel).schematicPrefix + shipName;
 
         final CreativeBuildingStructureHandler
@@ -152,7 +152,7 @@ public final class ShipBasedRaiderUtils
      * @param world the world to use
      * @return true if ship fits
      */
-    public static boolean canPlaceShipAt(final BlockPos pos, final Blueprint ship, final World world)
+    public static boolean canPlaceShipAt(final BlockPos pos, final Blueprint ship, final Level world)
     {
         final BlockPos zeroPos = pos.subtract(ship.getPrimaryBlockOffset());
 
@@ -175,7 +175,7 @@ public final class ShipBasedRaiderUtils
      */
     public static boolean isSurfaceAreaMostlyMaterial(
       @NotNull final List<Material> materials,
-      @NotNull final World world,
+      @NotNull final Level world,
       final int baseY, @NotNull final BlockPos from,
       @NotNull final BlockPos to,
       final double percentRequired)
@@ -287,7 +287,7 @@ public final class ShipBasedRaiderUtils
      * @param radius   the radius to check for.
      * @return the position.
      */
-    public static BlockPos findSpawnPosOnShip(final BlockPos spawnPos, final World world, final int radius)
+    public static BlockPos findSpawnPosOnShip(final BlockPos spawnPos, final Level world, final int radius)
     {
         for (int y = 0; y <= radius * 2; y += 2)
         {

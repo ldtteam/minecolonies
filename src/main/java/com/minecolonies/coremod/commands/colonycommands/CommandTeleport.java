@@ -10,10 +10,10 @@ import com.minecolonies.coremod.util.TeleportHelper;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import net.minecraft.command.CommandSource;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
 
 import static com.minecolonies.coremod.commands.CommandArgumentNames.COLONYID_ARG;
 
@@ -28,13 +28,13 @@ public class CommandTeleport implements IMCColonyOfficerCommand
      * @param context the context of the command execution
      */
     @Override
-    public int onExecute(final CommandContext<CommandSource> context)
+    public int onExecute(final CommandContext<CommandSourceStack> context)
     {
         final Entity sender = context.getSource().getEntity();
 
-        if (!IMCCommand.isPlayerOped((PlayerEntity) sender) && !MineColonies.getConfig().getServer().canPlayerUseColonyTPCommand.get())
+        if (!IMCCommand.isPlayerOped((Player) sender) && !MineColonies.getConfig().getServer().canPlayerUseColonyTPCommand.get())
         {
-            LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.notenabledinconfig");
+            LanguageHandler.sendPlayerMessage((Player) sender, "com.minecolonies.command.notenabledinconfig");
             return 0;
         }
 
@@ -43,11 +43,11 @@ public class CommandTeleport implements IMCColonyOfficerCommand
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getLevel().dimension());
         if (colony == null)
         {
-            LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.colonyidnotfound", colonyID);
+            LanguageHandler.sendPlayerMessage((Player) sender, "com.minecolonies.command.colonyidnotfound", colonyID);
             return 0;
         }
 
-        final ServerPlayerEntity player = (ServerPlayerEntity) sender;
+        final ServerPlayer player = (ServerPlayer) sender;
         TeleportHelper.colonyTeleport(player, colony);
         return 1;
     }
@@ -62,7 +62,7 @@ public class CommandTeleport implements IMCColonyOfficerCommand
     }
 
     @Override
-    public LiteralArgumentBuilder<CommandSource> build()
+    public LiteralArgumentBuilder<CommandSourceStack> build()
     {
         return IMCCommand.newLiteral(getName())
                  .then(IMCCommand.newArgument(COLONYID_ARG, IntegerArgumentType.integer(1)).executes(this::checkPreConditionAndExecute));

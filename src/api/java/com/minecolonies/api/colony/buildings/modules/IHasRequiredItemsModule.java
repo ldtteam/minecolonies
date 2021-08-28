@@ -1,7 +1,7 @@
 package com.minecolonies.api.colony.buildings.modules;
 
 import com.minecolonies.api.crafting.ItemStorage;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.util.Tuple;
 
 import java.util.Map;

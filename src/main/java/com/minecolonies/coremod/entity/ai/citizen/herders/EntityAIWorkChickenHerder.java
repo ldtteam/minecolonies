@@ -8,13 +8,13 @@ import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingChickenHerder;
 import com.minecolonies.coremod.colony.jobs.JobChickenHerder;
 import com.minecolonies.coremod.util.NamedDamageSource;
-import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.entity.passive.ChickenEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.util.Hand;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.animal.Chicken;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.TranslatableComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,7 +23,7 @@ import static com.minecolonies.api.util.constant.Constants.ONE_HUNDRED_PERCENT;
 /**
  * The AI behind the {@link JobChickenHerder} for Breeding and Killing Chickens.
  */
-public class EntityAIWorkChickenHerder extends AbstractEntityAIHerder<JobChickenHerder, BuildingChickenHerder, ChickenEntity>
+public class EntityAIWorkChickenHerder extends AbstractEntityAIHerder<JobChickenHerder, BuildingChickenHerder, Chicken>
 {
     /**
      * Max amount of animals per Hut Level.
@@ -67,9 +67,9 @@ public class EntityAIWorkChickenHerder extends AbstractEntityAIHerder<JobChicken
     }
 
     @Override
-    public Class<ChickenEntity> getAnimalClass()
+    public Class<Chicken> getAnimalClass()
     {
-        return ChickenEntity.class;
+        return Chicken.class;
     }
 
     @Override
@@ -87,17 +87,17 @@ public class EntityAIWorkChickenHerder extends AbstractEntityAIHerder<JobChicken
     }
 
     @Override
-    protected void butcherAnimal(@Nullable final AnimalEntity animal)
+    protected void butcherAnimal(@Nullable final Animal animal)
     {
-        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_HERDER_BUTCHERING));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslatableComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_HERDER_BUTCHERING));
         if (animal != null && !walkingToAnimal(animal) && !ItemStackUtils.isEmpty(worker.getMainHandItem()))
         {
-            worker.swing(Hand.MAIN_HAND);
+            worker.swing(InteractionHand.MAIN_HAND);
 
             if (worker.getRandom().nextInt(1 + (ONE_HUNDRED_PERCENT - getSecondarySkillLevel()) / 5) <= 1)
             {
                 animal.hurt(new NamedDamageSource(worker.getName().getString(), worker), (float) getButcheringAttackDamage());
-                worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, 1);
+                worker.getCitizenItemHandler().damageItemInHand(InteractionHand.MAIN_HAND, 1);
             }
         }
     }

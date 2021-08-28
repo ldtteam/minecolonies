@@ -7,8 +7,8 @@ import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverFactor
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PickupRequestResolver;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -48,10 +48,10 @@ public class PickupRequestResolverFactory implements IRequestResolverFactory<Pic
 
     @NotNull
     @Override
-    public CompoundNBT serialize(
+    public CompoundTag serialize(
       @NotNull final IFactoryController controller, @NotNull final PickupRequestResolver pickupRequestResolver)
     {
-        final CompoundNBT compound = new CompoundNBT();
+        final CompoundTag compound = new CompoundTag();
         compound.put(NBT_TOKEN, controller.serialize(pickupRequestResolver.getId()));
         compound.put(NBT_LOCATION, controller.serialize(pickupRequestResolver.getLocation()));
         return compound;
@@ -59,7 +59,7 @@ public class PickupRequestResolverFactory implements IRequestResolverFactory<Pic
 
     @NotNull
     @Override
-    public PickupRequestResolver deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
+    public PickupRequestResolver deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
     {
         final IToken<?> token = controller.deserialize(nbt.getCompound(NBT_TOKEN));
         final ILocation location = controller.deserialize(nbt.getCompound(NBT_LOCATION));
@@ -68,14 +68,14 @@ public class PickupRequestResolverFactory implements IRequestResolverFactory<Pic
     }
 
     @Override
-    public void serialize(IFactoryController controller, PickupRequestResolver input, PacketBuffer packetBuffer)
+    public void serialize(IFactoryController controller, PickupRequestResolver input, FriendlyByteBuf packetBuffer)
     {
         controller.serialize(packetBuffer, input.getId());
         controller.serialize(packetBuffer, input.getLocation());
     }
 
     @Override
-    public PickupRequestResolver deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
+    public PickupRequestResolver deserialize(IFactoryController controller, FriendlyByteBuf buffer) throws Throwable
     {
         final IToken<?> token = controller.deserialize(buffer);
         final ILocation location = controller.deserialize(buffer);

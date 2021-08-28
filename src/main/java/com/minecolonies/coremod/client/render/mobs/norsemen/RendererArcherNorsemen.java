@@ -2,8 +2,8 @@ package com.minecolonies.coremod.client.render.mobs.norsemen;
 
 import com.minecolonies.api.entity.mobs.vikings.AbstractEntityNorsemen;
 import com.minecolonies.coremod.client.model.raiders.ModelArcherNorsemen;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -22,7 +22,7 @@ public class RendererArcherNorsemen extends AbstractRendererNorsemen<AbstractEnt
      *
      * @param renderManagerIn the renderManager
      */
-    public RendererArcherNorsemen(final EntityRendererManager renderManagerIn)
+    public RendererArcherNorsemen(final EntityRenderDispatcher renderManagerIn)
     {
         super(renderManagerIn, new ModelArcherNorsemen(), 0.5F);
     }

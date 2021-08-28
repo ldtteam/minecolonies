@@ -2,8 +2,8 @@ package com.minecolonies.api.crafting;
 
 import java.util.List;
 import com.google.common.collect.ImmutableList;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * Base class for RecipeStorage types

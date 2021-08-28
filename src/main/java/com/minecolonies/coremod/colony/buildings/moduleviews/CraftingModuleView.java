@@ -8,7 +8,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.client.gui.modules.WindowListRecipes;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
@@ -55,7 +55,7 @@ public class CraftingModuleView extends AbstractBuildingModuleView
     private boolean isVisible = false;
 
     @Override
-    public void deserialize(@NotNull PacketBuffer buf)
+    public void deserialize(@NotNull FriendlyByteBuf buf)
     {
         if (buf.readBoolean())
         {

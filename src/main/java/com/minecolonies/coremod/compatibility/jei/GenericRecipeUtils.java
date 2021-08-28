@@ -7,15 +7,15 @@ import com.minecolonies.api.research.IGlobalResearch;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.crafting.CustomRecipe;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.core.NonNullList;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -32,29 +32,29 @@ public final class GenericRecipeUtils
     private GenericRecipeUtils() { }
 
     @NotNull
-    public static List<ITextComponent> calculateRestrictions(@NotNull final CustomRecipe customRecipe)
+    public static List<Component> calculateRestrictions(@NotNull final CustomRecipe customRecipe)
     {
-        final List<ITextComponent> restrictions = new ArrayList<>();
+        final List<Component> restrictions = new ArrayList<>();
         if (customRecipe.getMinBuildingLevel() == customRecipe.getMaxBuildingLevel())
         {
-            restrictions.add(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_JEI_PREFIX + "onelevelrestriction",
+            restrictions.add(new TranslatableComponent(TranslationConstants.COM_MINECOLONIES_JEI_PREFIX + "onelevelrestriction",
                     customRecipe.getMinBuildingLevel()));
         }
         else if (customRecipe.getMinBuildingLevel() > 1 || customRecipe.getMaxBuildingLevel() < CONST_DEFAULT_MAX_BUILDING_LEVEL)
         {
-            restrictions.add(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_JEI_PREFIX + "levelrestriction",
+            restrictions.add(new TranslatableComponent(TranslationConstants.COM_MINECOLONIES_JEI_PREFIX + "levelrestriction",
                     customRecipe.getMinBuildingLevel(), customRecipe.getMaxBuildingLevel()));
         }
         if (customRecipe.getRequiredResearchId() != null)
         {
-            final ITextComponent researchName = getResearchDisplayName(customRecipe.getRequiredResearchId());
-            restrictions.add(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_JEI_PREFIX + "minresearch",
+            final Component researchName = getResearchDisplayName(customRecipe.getRequiredResearchId());
+            restrictions.add(new TranslatableComponent(TranslationConstants.COM_MINECOLONIES_JEI_PREFIX + "minresearch",
                     researchName));
         }
         if (customRecipe.getExcludedResearchId() != null)
         {
-            final ITextComponent researchName = getResearchDisplayName(customRecipe.getExcludedResearchId());
-            restrictions.add(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_JEI_PREFIX + "maxresearch",
+            final Component researchName = getResearchDisplayName(customRecipe.getExcludedResearchId());
+            restrictions.add(new TranslatableComponent(TranslationConstants.COM_MINECOLONIES_JEI_PREFIX + "maxresearch",
                     researchName));
         }
         return restrictions;
@@ -63,12 +63,12 @@ public final class GenericRecipeUtils
     @NotNull
     public static IGenericRecipe create(@NotNull final CustomRecipe customRecipe, @NotNull final IRecipeStorage storage)
     {
-        final List<ITextComponent> restrictions = calculateRestrictions(customRecipe);
+        final List<Component> restrictions = calculateRestrictions(customRecipe);
         return Objects.requireNonNull(GenericRecipe.of(storage, restrictions, customRecipe.getMinBuildingLevel()));
     }
 
     @NotNull
-    public static IGenericRecipe create(@NotNull final IRecipe<?> recipe)
+    public static IGenericRecipe create(@NotNull final Recipe<?> recipe)
     {
         final IGenericRecipe original = Objects.requireNonNull(GenericRecipe.of(recipe));
         final List<List<ItemStack>> inputs = compact(recipe.getIngredients());
@@ -77,7 +77,7 @@ public final class GenericRecipeUtils
     }
 
     @NotNull
-    private static ITextComponent getResearchDisplayName(@NotNull final ResourceLocation researchId)
+    private static Component getResearchDisplayName(@NotNull final ResourceLocation researchId)
     {
         final IGlobalResearchTree researchTree = IGlobalResearchTree.getInstance();
 
@@ -97,7 +97,7 @@ public final class GenericRecipeUtils
         }
 
         // otherwise it may be an effect with no research (perhaps disabled via datapack)
-        return new StringTextComponent("???");
+        return new TextComponent("???");
     }
 
     private static List<List<ItemStack>> compact(final NonNullList<Ingredient> inputs)

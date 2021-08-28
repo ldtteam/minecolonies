@@ -1,6 +1,6 @@
 package com.minecolonies.api.entity.citizen.happiness;
 
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
 
 import java.util.function.DoubleSupplier;
 
@@ -100,14 +100,14 @@ public class ExpirationBasedHappinessModifier extends StaticHappinessModifier
     }
 
     @Override
-    public void read(final CompoundNBT compoundNBT)
+    public void read(final CompoundTag compoundNBT)
     {
         super.read(compoundNBT);
         this.days = compoundNBT.getInt(TAG_DAY);
     }
 
     @Override
-    public void write(final CompoundNBT compoundNBT)
+    public void write(final CompoundTag compoundNBT)
     {
         super.write(compoundNBT);
         compoundNBT.putInt(TAG_DAY, days);

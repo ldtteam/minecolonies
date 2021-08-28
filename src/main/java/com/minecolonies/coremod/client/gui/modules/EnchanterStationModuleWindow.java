@@ -12,8 +12,8 @@ import com.minecolonies.coremod.client.gui.AbstractModuleWindow;
 import com.minecolonies.coremod.colony.buildings.moduleviews.EnchanterStationsModuleView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingEnchanter;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.TranslatableComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -105,11 +105,11 @@ public class EnchanterStationModuleWindow extends AbstractModuleWindow
                     final Button switchButton = rowPane.findPaneOfTypeByID(BUTTON_SWITCH, Button.class);
                     if (selectedBuildings.contains(bView.getID()))
                     {
-                        switchButton.setText(new TranslationTextComponent(ON));
+                        switchButton.setText(new TranslatableComponent(ON));
                     }
                     else
                     {
-                        switchButton.setText(new TranslationTextComponent(OFF));
+                        switchButton.setText(new TranslatableComponent(OFF));
                     }
                 }
             }
@@ -126,12 +126,12 @@ public class EnchanterStationModuleWindow extends AbstractModuleWindow
         final int row = workerList.getListElementIndexByPane(button);
         if (button.getTextAsString().equals(LanguageHandler.format(OFF)))
         {
-            button.setText(new TranslationTextComponent(ON));
+            button.setText(new TranslatableComponent(ON));
             module.addWorker(allBuildings.get(row).getID());
         }
         else
         {
-            button.setText(new TranslationTextComponent(OFF));
+            button.setText(new TranslatableComponent(OFF));
             module.removeWorker(allBuildings.get(row).getID());
         }
         selectedBuildings = module.getBuildingsToGatherFrom();

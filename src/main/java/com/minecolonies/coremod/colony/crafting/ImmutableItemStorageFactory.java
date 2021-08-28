@@ -8,9 +8,9 @@ import com.minecolonies.api.crafting.IImmutableItemStorageFactory;
 import com.minecolonies.api.crafting.ImmutableItemStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.constant.TypeConstants;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -40,28 +40,28 @@ public class ImmutableItemStorageFactory implements IImmutableItemStorageFactory
     }
 
     @Override
-    public CompoundNBT serialize(IFactoryController controller, ImmutableItemStorage output)
+    public CompoundTag serialize(IFactoryController controller, ImmutableItemStorage output)
     {
-        @NotNull final CompoundNBT compound = StandardFactoryController.getInstance().serialize(output.copy());
+        @NotNull final CompoundTag compound = StandardFactoryController.getInstance().serialize(output.copy());
 
         return compound;
     }
 
     @Override
-    public ImmutableItemStorage deserialize(IFactoryController controller, CompoundNBT nbt) throws Throwable
+    public ImmutableItemStorage deserialize(IFactoryController controller, CompoundTag nbt) throws Throwable
     {
         final ItemStorage readStorage = StandardFactoryController.getInstance().deserialize(nbt);
         return readStorage.toImmutable();
     }
 
     @Override
-    public void serialize(IFactoryController controller, ImmutableItemStorage output, PacketBuffer packetBuffer)
+    public void serialize(IFactoryController controller, ImmutableItemStorage output, FriendlyByteBuf packetBuffer)
     {
         StandardFactoryController.getInstance().serialize(packetBuffer, output.copy());
     }
 
     @Override
-    public ImmutableItemStorage deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
+    public ImmutableItemStorage deserialize(IFactoryController controller, FriendlyByteBuf buffer) throws Throwable
     {
         @NotNull final ItemStorage newItem = StandardFactoryController.getInstance().deserialize(buffer);
         return newItem.toImmutable();

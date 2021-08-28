@@ -2,14 +2,14 @@ package com.minecolonies.coremod.network.messages.client.colony;
 
 import com.minecolonies.api.network.IMessage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.world.World;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.LogicalSide;
@@ -34,7 +34,7 @@ public class PlayMusicAtPosMessage implements IMessage
     /**
      * The dimension id to play in
      */
-    private RegistryKey<World> dimensionID;
+    private ResourceKey<Level> dimensionID;
 
     /**
      * The volume to use
@@ -59,7 +59,7 @@ public class PlayMusicAtPosMessage implements IMessage
      *
      * @param event the sound event.
      */
-    public PlayMusicAtPosMessage(final SoundEvent event, final BlockPos pos, final World world, final float volume, final float pitch)
+    public PlayMusicAtPosMessage(final SoundEvent event, final BlockPos pos, final Level world, final float volume, final float pitch)
     {
         super();
         this.soundEvent = event;
@@ -70,7 +70,7 @@ public class PlayMusicAtPosMessage implements IMessage
     }
 
     @Override
-    public void toBytes(final PacketBuffer buf)
+    public void toBytes(final FriendlyByteBuf buf)
     {
         buf.writeVarInt(Registry.SOUND_EVENT.getId(this.soundEvent));
         buf.writeBlockPos(pos);
@@ -80,11 +80,11 @@ public class PlayMusicAtPosMessage implements IMessage
     }
 
     @Override
-    public void fromBytes(final PacketBuffer buf)
+    public void fromBytes(final FriendlyByteBuf buf)
     {
         this.soundEvent = Registry.SOUND_EVENT.byId(buf.readVarInt());
         this.pos = buf.readBlockPos();
-        this.dimensionID = RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)));
+        this.dimensionID = ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)));
         this.volume = buf.readFloat();
         this.pitch = buf.readFloat();
     }
@@ -102,7 +102,7 @@ public class PlayMusicAtPosMessage implements IMessage
     {
         if (Minecraft.getInstance().level.dimension() == dimensionID)
         {
-            Minecraft.getInstance().level.playSound(Minecraft.getInstance().player, pos.getX(), pos.getY(), pos.getZ(), soundEvent, SoundCategory.AMBIENT, volume, pitch);
+            Minecraft.getInstance().level.playSound(Minecraft.getInstance().player, pos.getX(), pos.getY(), pos.getZ(), soundEvent, SoundSource.AMBIENT, volume, pitch);
         }
     }
 }

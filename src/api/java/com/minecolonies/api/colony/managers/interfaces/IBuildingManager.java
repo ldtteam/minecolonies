@@ -8,13 +8,13 @@ import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.tileentities.AbstractScarecrowTileEntity;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
-import net.minecraft.block.Block;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.chunk.LevelChunk;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,14 +33,14 @@ public interface IBuildingManager
      *
      * @param compound the compound.
      */
-    void read(@NotNull final CompoundNBT compound);
+    void read(@NotNull final CompoundTag compound);
 
     /**
      * Write the buildings to NBT.
      *
      * @param compound the compound.
      */
-    void write(@NotNull final CompoundNBT compound);
+    void write(@NotNull final CompoundTag compound);
 
     /**
      * Clear the isDirty of the buildings.
@@ -53,7 +53,7 @@ public interface IBuildingManager
      * @param closeSubscribers the old subs.
      * @param newSubscribers   new subs.
      */
-    void sendPackets(Set<ServerPlayerEntity> closeSubscribers, final Set<ServerPlayerEntity> newSubscribers);
+    void sendPackets(Set<ServerPlayer> closeSubscribers, final Set<ServerPlayer> newSubscribers);
 
     /**
      * Tick the buildings on colony tick.
@@ -154,7 +154,7 @@ public interface IBuildingManager
      * @param pos        Position where the field has been placed.
      * @param world      the world of the field.
      */
-    void addNewField(final AbstractScarecrowTileEntity tileEntity, final BlockPos pos, final World world);
+    void addNewField(final AbstractScarecrowTileEntity tileEntity, final BlockPos pos, final Level world);
 
     /**
      * Returns a field which has not been taken yet.
@@ -164,7 +164,7 @@ public interface IBuildingManager
      * @return a field if there is one available, else null.
      */
     @Nullable
-    AbstractScarecrowTileEntity getFreeField(final int owner, final World world);
+    AbstractScarecrowTileEntity getFreeField(final int owner, final Level world);
 
     /**
      * Remove a IBuilding from the Colony (when it is destroyed).
@@ -172,7 +172,7 @@ public interface IBuildingManager
      * @param subscribers the subscribers of the colony to message.
      * @param building    IBuilding to remove.
      */
-    void removeBuilding(@NotNull final IBuilding building, final Set<ServerPlayerEntity> subscribers);
+    void removeBuilding(@NotNull final IBuilding building, final Set<ServerPlayer> subscribers);
 
     /**
      * Marks building data dirty.
@@ -187,7 +187,7 @@ public interface IBuildingManager
      * @return IBuilding that was created and added.
      */
     @Nullable
-    IBuilding addNewBuilding(@NotNull final AbstractTileEntityColonyBuilding tileEntity, final World world);
+    IBuilding addNewBuilding(@NotNull final AbstractTileEntityColonyBuilding tileEntity, final Level world);
 
     /**
      * Removes a field from the farmerFields list.
@@ -280,14 +280,14 @@ public interface IBuildingManager
      * @param player the player trying to place
      * @return true if placement allowed
      */
-    boolean canPlaceAt(Block block, BlockPos pos, PlayerEntity player);
+    boolean canPlaceAt(Block block, BlockPos pos, Player player);
 
     /**
      * Check if the chunk position it within of the building zone of the colony.
      * @param chunk the chunk to check
      * @return true if within.
      */
-    boolean isWithinBuildingZone(final Chunk chunk);
+    boolean isWithinBuildingZone(final LevelChunk chunk);
 
     /**
      * Get a house with a spare bed.

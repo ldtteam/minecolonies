@@ -5,10 +5,10 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -177,10 +177,10 @@ public class StackList implements IConcreteDeliverable, INonExhaustiveDeliverabl
      * @param input      the input.
      * @return the compound.
      */
-    public static CompoundNBT serialize(final IFactoryController controller, final StackList input)
+    public static CompoundTag serialize(final IFactoryController controller, final StackList input)
     {
-        final CompoundNBT compound = new CompoundNBT();
-        @NotNull final ListNBT neededResTagList = new ListNBT();
+        final CompoundTag compound = new CompoundTag();
+        @NotNull final ListTag neededResTagList = new ListTag();
         for (@NotNull final ItemStack resource : input.theStacks)
         {
             neededResTagList.add(resource.serializeNBT());
@@ -210,14 +210,14 @@ public class StackList implements IConcreteDeliverable, INonExhaustiveDeliverabl
      * @param compound   the compound.
      * @return the deliverable.
      */
-    public static StackList deserialize(final IFactoryController controller, final CompoundNBT compound)
+    public static StackList deserialize(final IFactoryController controller, final CompoundTag compound)
     {
         final List<ItemStack> stacks = new ArrayList<>();
 
-        final ListNBT neededResTagList = compound.getList(NBT_STACK_LIST, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
+        final ListTag neededResTagList = compound.getList(NBT_STACK_LIST, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < neededResTagList.size(); ++i)
         {
-            final CompoundNBT neededRes = neededResTagList.getCompound(i);
+            final CompoundTag neededRes = neededResTagList.getCompound(i);
             stacks.add(ItemStack.of(neededRes));
         }
 
@@ -245,7 +245,7 @@ public class StackList implements IConcreteDeliverable, INonExhaustiveDeliverabl
      * @param buffer     the the buffer to write to.
      * @param input      the input to serialize.
      */
-    public static void serialize(final IFactoryController controller, final PacketBuffer buffer, final StackList input)
+    public static void serialize(final IFactoryController controller, final FriendlyByteBuf buffer, final StackList input)
     {
         buffer.writeInt(input.theStacks.size());
         input.theStacks.forEach(res -> buffer.writeItem(res));
@@ -272,7 +272,7 @@ public class StackList implements IConcreteDeliverable, INonExhaustiveDeliverabl
      * @param buffer     the buffer to read.
      * @return the deliverable.
      */
-    public static StackList deserialize(final IFactoryController controller, final PacketBuffer buffer)
+    public static StackList deserialize(final IFactoryController controller, final FriendlyByteBuf buffer)
     {
         final List<ItemStack> stacks = new ArrayList<>();
 

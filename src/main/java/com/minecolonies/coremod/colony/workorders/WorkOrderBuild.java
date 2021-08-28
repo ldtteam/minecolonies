@@ -11,11 +11,11 @@ import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -60,7 +60,7 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
         this.buildingLocation = building.getID();
         this.upgradeLevel = level;
 
-        final TileEntity buildingTE = building.getColony().getWorld().getBlockEntity(buildingLocation);
+        final BlockEntity buildingTE = building.getColony().getWorld().getBlockEntity(buildingLocation);
         if (buildingTE instanceof AbstractTileEntityColonyBuilding)
         {
             if (!((AbstractTileEntityColonyBuilding) buildingTE).getSchematicName().isEmpty())
@@ -98,7 +98,7 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
     }
 
     @Override
-    public void serializeViewNetworkData(@NotNull final PacketBuffer buf)
+    public void serializeViewNetworkData(@NotNull final FriendlyByteBuf buf)
     {
         buf.writeInt(id);
         buf.writeInt(getPriority());
@@ -128,7 +128,7 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
      * @param manager  the work manager.
      */
     @Override
-    public void read(@NotNull final CompoundNBT compound, final IWorkManager manager)
+    public void read(@NotNull final CompoundTag compound, final IWorkManager manager)
     {
         super.read(compound, manager);
         upgradeLevel = compound.getInt(TAG_UPGRADE_LEVEL);
@@ -142,7 +142,7 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
      * @param compound NBT tag compound.
      */
     @Override
-    public void write(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundTag compound)
     {
         super.write(compound);
         compound.putInt(TAG_UPGRADE_LEVEL, upgradeLevel);
@@ -237,7 +237,7 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
     }
 
     @Override
-    public int getRotation(final World world)
+    public int getRotation(final Level world)
     {
         return buildingRotation;
     }

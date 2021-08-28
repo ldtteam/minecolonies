@@ -18,9 +18,9 @@ import com.minecolonies.coremod.client.gui.townhall.WindowInfoPage;
 import com.minecolonies.coremod.client.gui.townhall.WindowMainPage;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
@@ -100,7 +100,7 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
     }
 
     @Override
-    public void serializeToView(@NotNull final PacketBuffer buf)
+    public void serializeToView(@NotNull final FriendlyByteBuf buf)
     {
         super.serializeToView(buf);
 
@@ -205,7 +205,7 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
         }
 
         @Override
-        public void deserialize(@NotNull final PacketBuffer buf)
+        public void deserialize(@NotNull final FriendlyByteBuf buf)
         {
             super.deserialize(buf);
 

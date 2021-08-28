@@ -6,7 +6,7 @@ import com.minecolonies.api.colony.buildings.modules.IBuildingModuleView;
 import com.minecolonies.api.colony.buildings.modules.IModuleWindow;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 
 import java.util.Locale;
 import java.util.Random;
@@ -55,7 +55,7 @@ public abstract class AbstractModuleWindow extends AbstractWindowSkeleton implem
             this.addChild(image);
             this.addChild(iconImage);
 
-            PaneBuilders.tooltipBuilder().hoverPane(iconImage).build().setText(new TranslationTextComponent("com.minecolonies.coremod.gui.maintab"));
+            PaneBuilders.tooltipBuilder().hoverPane(iconImage).build().setText(new TranslatableComponent("com.minecolonies.coremod.gui.maintab"));
         }
 
         for (IBuildingModuleView view : building.getAllModuleViews())
@@ -81,7 +81,7 @@ public abstract class AbstractModuleWindow extends AbstractWindowSkeleton implem
             this.addChild(image);
             this.addChild(iconImage);
 
-            PaneBuilders.tooltipBuilder().hoverPane(iconImage).build().setText(new TranslationTextComponent(view.getDesc().toLowerCase(Locale.US)));
+            PaneBuilders.tooltipBuilder().hoverPane(iconImage).build().setText(new TranslatableComponent(view.getDesc().toLowerCase(Locale.US)));
         }
     }
 }

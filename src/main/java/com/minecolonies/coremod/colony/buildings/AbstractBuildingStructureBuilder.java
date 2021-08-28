@@ -11,12 +11,12 @@ import com.minecolonies.coremod.colony.buildings.modules.BuildingResourcesModule
 import com.minecolonies.coremod.colony.buildings.utils.BuilderBucket;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.entity.ai.util.BuildingStructureHandler;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -183,7 +183,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     }
 
     @Override
-    public ItemStack forceTransferStack(final ItemStack stack, final World world)
+    public ItemStack forceTransferStack(final ItemStack stack, final Level world)
     {
         final ItemStack itemStack = super.forceTransferStack(stack, world);
         if (ItemStackUtils.isEmpty(itemStack))
@@ -195,7 +195,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     }
 
     @Override
-    public void deserializeNBT(final CompoundNBT compound)
+    public void deserializeNBT(final CompoundTag compound)
     {
         super.deserializeNBT(compound);
         if (compound.contains(TAG_PROGRESS_POS))
@@ -207,10 +207,10 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
         if (compound.contains(TAG_FLUIDS_REMOVE))
         {
             fluidsToRemove.clear();
-            ListNBT fluidsToRemove = (ListNBT) compound.get(TAG_FLUIDS_REMOVE);
+            ListTag fluidsToRemove = (ListTag) compound.get(TAG_FLUIDS_REMOVE);
             fluidsToRemove.forEach(fluidsRemove -> {
-                int y = ((CompoundNBT) fluidsRemove).getInt(TAG_FLUIDS_REMOVE_Y);
-                ListNBT positions = (ListNBT) ((CompoundNBT) fluidsRemove).get(TAG_FLUIDS_REMOVE_POSITIONS);
+                int y = ((CompoundTag) fluidsRemove).getInt(TAG_FLUIDS_REMOVE_Y);
+                ListTag positions = (ListTag) ((CompoundTag) fluidsRemove).get(TAG_FLUIDS_REMOVE_POSITIONS);
                 final List<BlockPos> fluids = new ArrayList<BlockPos>();
                 for (int i = 0; i < positions.size(); i++)
                 {
@@ -222,19 +222,19 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     }
 
     @Override
-    public CompoundNBT serializeNBT()
+    public CompoundTag serializeNBT()
     {
-        final CompoundNBT compound = super.serializeNBT();
+        final CompoundTag compound = super.serializeNBT();
         if (progressPos != null)
         {
             BlockPosUtil.write(compound, TAG_PROGRESS_POS, progressPos);
             compound.putInt(TAG_PROGRESS_STAGE, progressStage.ordinal());
         }
 
-        final ListNBT fluidsToRemove = new ListNBT();
+        final ListTag fluidsToRemove = new ListTag();
         this.fluidsToRemove.forEach((y, fluids) -> {
-            final CompoundNBT fluidsRemove = new CompoundNBT();
-            final ListNBT positions = new ListNBT();
+            final CompoundTag fluidsRemove = new CompoundTag();
+            final ListTag positions = new ListTag();
             fluids.forEach(fluid -> BlockPosUtil.writeToListNBT(positions, fluid));
             fluidsRemove.put(TAG_FLUIDS_REMOVE_POSITIONS, positions);
             fluidsRemove.putInt(TAG_FLUIDS_REMOVE_Y, y);
@@ -250,7 +250,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
      * @param buf the used ByteBuffer.
      */
     @Override
-    public void serializeToView(@NotNull final PacketBuffer buf)
+    public void serializeToView(@NotNull final FriendlyByteBuf buf)
     {
         super.serializeToView(buf);
         buf.writeUtf((getMainCitizen() == null || colony.getCitizenManager().getCivilian(getMainCitizen().getId()) == null) ? "" : getMainCitizen().getName());

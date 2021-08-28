@@ -2,11 +2,11 @@ package com.minecolonies.coremod.network.messages.client.colony;
 
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.network.IMessage;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.world.World;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.Registry;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.Nullable;
@@ -17,31 +17,31 @@ import org.jetbrains.annotations.Nullable;
 public class ColonyViewRemoveMessage implements IMessage
 {
     private int id;
-    private RegistryKey<World> dimension;
+    private ResourceKey<Level> dimension;
 
     public ColonyViewRemoveMessage()
     {
         super();
     }
 
-    public ColonyViewRemoveMessage(final int id, final RegistryKey<World> dimension)
+    public ColonyViewRemoveMessage(final int id, final ResourceKey<Level> dimension)
     {
         this.id = id;
         this.dimension = dimension;
     }
 
     @Override
-    public void toBytes(final PacketBuffer buf)
+    public void toBytes(final FriendlyByteBuf buf)
     {
         buf.writeInt(id);
         buf.writeUtf(dimension.location().toString());
     }
 
     @Override
-    public void fromBytes(final PacketBuffer buf)
+    public void fromBytes(final FriendlyByteBuf buf)
     {
         id = buf.readInt();
-        dimension = RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)));
+        dimension = ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)));
     }
 
     @Nullable

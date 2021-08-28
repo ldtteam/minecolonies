@@ -35,16 +35,16 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.network.messages.server.colony.building.BuildPickUpMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.BuildRequestMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.BuildingSetStyleMessage;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.client.Minecraft;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Mirror;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.Mirror;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.TriPredicate;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
@@ -138,7 +138,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
 
         if (building.getBuildingLevel() == 0)
         {
-            buttonBuild.setText(new TranslationTextComponent("com.minecolonies.coremod.gui.workerhuts.build"));
+            buttonBuild.setText(new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts.build"));
             findPaneOfTypeByID(BUTTON_REPAIR, Button.class).hide();
             findPaneOfTypeByID(BUTTON_DECONSTRUCT_BUILDING, Button.class).hide();
             findPaneOfTypeByID(BUTTON_PICKUP_BUILDING, Button.class).show();
@@ -149,12 +149,12 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         }
         else
         {
-            buttonBuild.setText(new TranslationTextComponent("com.minecolonies.coremod.gui.workerhuts.upgrade"));
+            buttonBuild.setText(new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts.upgrade"));
         }
 
         if (building.isDeconstructed())
         {
-            findPaneOfTypeByID(BUTTON_REPAIR, Button.class).setText(new TranslationTextComponent("com.minecolonies.coremod.gui.workerhuts.build"));
+            findPaneOfTypeByID(BUTTON_REPAIR, Button.class).setText(new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts.build"));
             findPaneOfTypeByID(BUTTON_PICKUP_BUILDING, Button.class).show();
         }
     }
@@ -294,7 +294,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
             return;
         }
 
-        final World world = Minecraft.getInstance().level;
+        final Level world = Minecraft.getInstance().level;
         resources.clear();
 
         final IBuildingView parentBuilding = building.getColony().getBuilding(building.getParent());
@@ -304,7 +304,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
             nextLevel = building.getBuildingLevel() + 1;
         }
 
-        final TileEntity tile = world.getBlockEntity(building.getID());
+        final BlockEntity tile = world.getBlockEntity(building.getID());
         String schematicName = building.getSchematicName();
         if (tile instanceof IBlueprintDataProvider)
         {

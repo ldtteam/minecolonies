@@ -12,8 +12,8 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.ISuggestionProvider;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.SharedSuggestionProvider;
 
 import static com.minecolonies.coremod.commands.CommandArgumentNames.COLONYID_ARG;
 
@@ -30,7 +30,7 @@ public class CommandDeleteColony implements IMCColonyOfficerCommand
      * @param context the context of the command execution
      */
     @Override
-    public int onExecute(final CommandContext<CommandSource> context)
+    public int onExecute(final CommandContext<CommandSourceStack> context)
     {
         if (!context.getSource().hasPermission(OP_PERM_LEVEL) && !MineColonies.getConfig().getServer().canPlayerUseDeleteColonyCommand.get())
         {
@@ -65,7 +65,7 @@ public class CommandDeleteColony implements IMCColonyOfficerCommand
     }
 
     @Override
-    public LiteralArgumentBuilder<CommandSource> build()
+    public LiteralArgumentBuilder<CommandSourceStack> build()
     {
         String[] s = new String[2];
         s[0] = "true delete buildings";
@@ -74,7 +74,7 @@ public class CommandDeleteColony implements IMCColonyOfficerCommand
         return IMCCommand.newLiteral(getName())
                  .then(IMCCommand.newArgument(COLONYID_ARG, IntegerArgumentType.integer(1))
                          .then(IMCCommand.newArgument(DELETE_BUILDNGS_ARG, BoolArgumentType.bool())
-                                 .suggests((ctx, builder) -> ISuggestionProvider.suggest(s, builder))
+                                 .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(s, builder))
                                  .then(IMCCommand.newArgument("", StringArgumentType.string())
                                          .then(IMCCommand.newArgument("", StringArgumentType.string())
                                                  .executes(this::checkPreConditionAndExecute)))));

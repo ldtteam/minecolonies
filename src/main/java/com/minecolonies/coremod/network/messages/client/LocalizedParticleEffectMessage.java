@@ -2,13 +2,13 @@ package com.minecolonies.coremod.network.messages.client;
 
 import com.minecolonies.api.network.IMessage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.particles.ItemParticleData;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.particles.ItemParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
@@ -62,7 +62,7 @@ public class LocalizedParticleEffectMessage implements IMessage
     }
 
     @Override
-    public void fromBytes(@NotNull final PacketBuffer buf)
+    public void fromBytes(@NotNull final FriendlyByteBuf buf)
     {
         stack = buf.readItem();
         posX = buf.readDouble();
@@ -71,7 +71,7 @@ public class LocalizedParticleEffectMessage implements IMessage
     }
 
     @Override
-    public void toBytes(@NotNull final PacketBuffer buf)
+    public void toBytes(@NotNull final FriendlyByteBuf buf)
     {
         buf.writeItem(stack);
         buf.writeDouble(posX);
@@ -89,14 +89,14 @@ public class LocalizedParticleEffectMessage implements IMessage
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
-        final ClientWorld world = Minecraft.getInstance().level;
+        final ClientLevel world = Minecraft.getInstance().level;
         final ItemStack localStack = stack;
 
         for (int i = 0; i < 5; ++i)
         {
-            final Vector3d randomPos = new Vector3d((RAND.nextDouble() - 0.5D) * 0.1D, RAND.nextDouble() * 0.1D + 0.1D, 0.0D);
-            final Vector3d randomOffset = new Vector3d((RAND.nextDouble() - 0.5D) * 0.1D, RAND.nextDouble() - 0.5D * 0.1D, (RAND.nextDouble() - 0.5D) * 0.1D);
-            world.addParticle(new ItemParticleData(ParticleTypes.ITEM, localStack),
+            final Vec3 randomPos = new Vec3((RAND.nextDouble() - 0.5D) * 0.1D, RAND.nextDouble() * 0.1D + 0.1D, 0.0D);
+            final Vec3 randomOffset = new Vec3((RAND.nextDouble() - 0.5D) * 0.1D, RAND.nextDouble() - 0.5D * 0.1D, (RAND.nextDouble() - 0.5D) * 0.1D);
+            world.addParticle(new ItemParticleOption(ParticleTypes.ITEM, localStack),
               posX + randomOffset.x,
               posY + randomOffset.y,
               posZ + randomOffset.z,

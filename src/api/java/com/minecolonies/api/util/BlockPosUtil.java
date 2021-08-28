@@ -2,28 +2,28 @@ package com.minecolonies.api.util;
 
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import net.minecraft.block.AirBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.material.Material;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.MobEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.loot.LootContext;
-import net.minecraft.loot.LootParameters;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Rotation;
+import net.minecraft.world.level.block.AirBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -64,9 +64,9 @@ public final class BlockPosUtil
      * @param pos      Coordinates to write to NBT.
      * @return the resulting compound.
      */
-    public static CompoundNBT write(@NotNull final CompoundNBT compound, final String name, @NotNull final BlockPos pos)
+    public static CompoundTag write(@NotNull final CompoundTag compound, final String name, @NotNull final BlockPos pos)
     {
-        @NotNull final CompoundNBT coordsCompound = new CompoundNBT();
+        @NotNull final CompoundTag coordsCompound = new CompoundTag();
         coordsCompound.putInt("x", pos.getX());
         coordsCompound.putInt("y", pos.getY());
         coordsCompound.putInt("z", pos.getZ());
@@ -82,7 +82,7 @@ public final class BlockPosUtil
      * @return the resulting compound.
      */
     @NotNull
-    public static CompoundNBT writeOptional(@NotNull final CompoundNBT compound, @NotNull final String name,
+    public static CompoundTag writeOptional(@NotNull final CompoundTag compound, @NotNull final String name,
                                             @Nullable final BlockPos value)
     {
         if (value != null)
@@ -113,7 +113,7 @@ public final class BlockPosUtil
      * @param maxDist         the maximum distance.
      * @return the BlockPos.
      */
-    public static BlockPos getRandomPosition(final World world, final BlockPos currentPosition, final BlockPos def, final int minDist, final int maxDist)
+    public static BlockPos getRandomPosition(final Level world, final BlockPos currentPosition, final BlockPos def, final int minDist, final int maxDist)
     {
         final Random random = world.random;
 
@@ -152,9 +152,9 @@ public final class BlockPosUtil
      * @return Chunk coordinates read from the compound.
      */
     @NotNull
-    public static BlockPos read(@NotNull final CompoundNBT compound, final String name)
+    public static BlockPos read(@NotNull final CompoundTag compound, final String name)
     {
-        final CompoundNBT coordsCompound = compound.getCompound(name);
+        final CompoundTag coordsCompound = compound.getCompound(name);
         final int x = coordsCompound.getInt("x");
         final int y = coordsCompound.getInt("y");
         final int z = coordsCompound.getInt("z");
@@ -168,7 +168,7 @@ public final class BlockPosUtil
      * @return Chunk coordinates read from the compound, or null if it was zero or absent.
      */
     @Nullable
-    public static BlockPos readOrNull(@NotNull final CompoundNBT compound, @NotNull final String name)
+    public static BlockPos readOrNull(@NotNull final CompoundTag compound, @NotNull final String name)
     {
         final BlockPos result = read(compound, name);
         return result.equals(BlockPos.ZERO) ? null : result;
@@ -180,9 +180,9 @@ public final class BlockPosUtil
      * @param tagList Tag list to write compound with chunk coordinates to.
      * @param pos     Coordinate to write to the tag list.
      */
-    public static void writeToListNBT(@NotNull final ListNBT tagList, @NotNull final BlockPos pos)
+    public static void writeToListNBT(@NotNull final ListTag tagList, @NotNull final BlockPos pos)
     {
-        @NotNull final CompoundNBT coordsCompound = new CompoundNBT();
+        @NotNull final CompoundTag coordsCompound = new CompoundTag();
         coordsCompound.putInt("x", pos.getX());
         coordsCompound.putInt("y", pos.getY());
         coordsCompound.putInt("z", pos.getZ());
@@ -196,9 +196,9 @@ public final class BlockPosUtil
      * @param tagname     key to save the list on
      * @param positions   block positions to write
      */
-    public static void writePosListToNBT(final CompoundNBT compoundNBT, final String tagname, final List<BlockPos> positions)
+    public static void writePosListToNBT(final CompoundTag compoundNBT, final String tagname, final List<BlockPos> positions)
     {
-        ListNBT listNBT = new ListNBT();
+        ListTag listNBT = new ListTag();
         for (final BlockPos pos : positions)
         {
             writeToListNBT(listNBT, pos);
@@ -213,10 +213,10 @@ public final class BlockPosUtil
      * @param tagname     key of the list
      * @return list of block positions
      */
-    public static List<BlockPos> readPosListFromNBT(final CompoundNBT compoundNBT, final String tagname)
+    public static List<BlockPos> readPosListFromNBT(final CompoundTag compoundNBT, final String tagname)
     {
         final List<BlockPos> result = new ArrayList<>();
-        ListNBT listNBT = compoundNBT.getList(tagname, Constants.NBT.TAG_COMPOUND);
+        ListTag listNBT = compoundNBT.getList(tagname, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < listNBT.size(); i++)
         {
             result.add(readFromListNBT(listNBT, i));
@@ -233,9 +233,9 @@ public final class BlockPosUtil
      * @return Chunk coordinate read from the tag list.
      */
     @NotNull
-    public static BlockPos readFromListNBT(@NotNull final ListNBT tagList, final int index)
+    public static BlockPos readFromListNBT(@NotNull final ListTag tagList, final int index)
     {
-        final CompoundNBT coordsCompound = tagList.getCompound(index);
+        final CompoundTag coordsCompound = tagList.getCompound(index);
         final int x = coordsCompound.getInt("x");
         final int y = coordsCompound.getInt("y");
         final int z = coordsCompound.getInt("z");
@@ -291,7 +291,7 @@ public final class BlockPosUtil
      * @param blockPos for the current block LOC
      * @return isSafe true=safe false=water or lava
      */
-    public static boolean isPositionSafe(@NotNull final World sender, final BlockPos blockPos)
+    public static boolean isPositionSafe(@NotNull final Level sender, final BlockPos blockPos)
     {
         return !(sender.getBlockState(blockPos).getBlock() instanceof AirBlock)
                  && !sender.getBlockState(blockPos).getMaterial().isLiquid()
@@ -306,7 +306,7 @@ public final class BlockPosUtil
      * @param world    the world to search in.
      * @return blockPos to be used for the TP.
      */
-    public static BlockPos findLand(final BlockPos blockPos, final World world)
+    public static BlockPos findLand(final BlockPos blockPos, final Level world)
     {
         int top = blockPos.getY();
         int bot = 0;
@@ -347,7 +347,7 @@ public final class BlockPosUtil
      * @param world    the world object.
      * @return Ground level at (position.x, position.z).
      */
-    public static double getValidHeight(@NotNull final Vector3d position, @NotNull final World world)
+    public static double getValidHeight(@NotNull final Vec3 position, @NotNull final Level world)
     {
         double returnHeight = position.y;
         if (position.y < 0)
@@ -355,15 +355,15 @@ public final class BlockPosUtil
             returnHeight = 0;
         }
 
-        while (returnHeight >= 1 && world.isEmptyBlock(new BlockPos(MathHelper.floor(position.x),
+        while (returnHeight >= 1 && world.isEmptyBlock(new BlockPos(Mth.floor(position.x),
           (int) returnHeight,
-          MathHelper.floor(position.z))))
+          Mth.floor(position.z))))
         {
             returnHeight -= 1.0D;
         }
 
         while (!world.isEmptyBlock(
-          new BlockPos(MathHelper.floor(position.x), (int) returnHeight, MathHelper.floor(position.z))))
+          new BlockPos(Mth.floor(position.x), (int) returnHeight, Mth.floor(position.z))))
         {
             returnHeight += 1.0D;
         }
@@ -466,7 +466,7 @@ public final class BlockPosUtil
      * @param pos   Coordinates of the tile entity.
      * @return Tile entity at the given coordinates.
      */
-    public static TileEntity getTileEntity(@NotNull final World world, @NotNull final BlockPos pos)
+    public static BlockEntity getTileEntity(@NotNull final Level world, @NotNull final BlockPos pos)
     {
         return world.getBlockEntity(pos);
     }
@@ -480,13 +480,13 @@ public final class BlockPosUtil
      * @param stack   the tool.
      * @return List of {@link ItemStack} with possible drops.
      */
-    public static List<ItemStack> getBlockDrops(@NotNull final World world, @NotNull final BlockPos coords, final int fortune, final ItemStack stack, final LivingEntity entity)
+    public static List<ItemStack> getBlockDrops(@NotNull final Level world, @NotNull final BlockPos coords, final int fortune, final ItemStack stack, final LivingEntity entity)
     {
-        return world.getBlockState(coords).getDrops(new LootContext.Builder((ServerWorld) world)
+        return world.getBlockState(coords).getDrops(new LootContext.Builder((ServerLevel) world)
                                                       .withLuck(fortune)
-                                                      .withOptionalParameter(LootParameters.BLOCK_ENTITY, world.getBlockEntity(coords))
-                                                      .withParameter(LootParameters.ORIGIN, entity.position())
-                                                      .withParameter(LootParameters.TOOL, stack));
+                                                      .withOptionalParameter(LootContextParams.BLOCK_ENTITY, world.getBlockEntity(coords))
+                                                      .withParameter(LootContextParams.ORIGIN, entity.position())
+                                                      .withParameter(LootContextParams.TOOL, stack));
     }
 
     /**
@@ -496,7 +496,7 @@ public final class BlockPosUtil
      * @param coords Coordinates of the block.
      * @return Block at the given coordinates.
      */
-    public static Block getBlock(@NotNull final World world, @NotNull final BlockPos coords)
+    public static Block getBlock(@NotNull final Level world, @NotNull final BlockPos coords)
     {
         return world.getBlockState(coords).getBlock();
     }
@@ -508,7 +508,7 @@ public final class BlockPosUtil
      * @param coords Coordinates of the block.
      * @return Metadata of the block at the given coordinates.
      */
-    public static BlockState getBlockState(@NotNull final World world, @NotNull final BlockPos coords)
+    public static BlockState getBlockState(@NotNull final Level world, @NotNull final BlockPos coords)
     {
         return world.getBlockState(coords);
     }
@@ -522,7 +522,7 @@ public final class BlockPosUtil
      * @param flag    Flag to set.
      * @return True if block is placed, otherwise false.
      */
-    public static boolean setBlock(@NotNull final World worldIn, @NotNull final BlockPos coords, final BlockState state, final int flag)
+    public static boolean setBlock(@NotNull final Level worldIn, @NotNull final BlockPos coords, final BlockState state, final int flag)
     {
         return worldIn.setBlock(coords, state, flag);
     }
@@ -551,7 +551,7 @@ public final class BlockPosUtil
      * @param destination chunk coordinates to check moving to.
      * @return True when XYZ is found, an set moving to, otherwise false.
      */
-    public static boolean tryMoveLivingToXYZ(@NotNull final MobEntity living, @NotNull final BlockPos destination)
+    public static boolean tryMoveLivingToXYZ(@NotNull final Mob living, @NotNull final BlockPos destination)
     {
         return EntityUtils.tryMoveLivingToXYZ(living, destination.getX(), destination.getY(), destination.getZ());
     }
@@ -562,7 +562,7 @@ public final class BlockPosUtil
      * @param pos    {@link net.minecraft.util.math.BlockPos.Mutable}.
      * @param newPos The new position to set.
      */
-    public static void set(@NotNull final BlockPos.Mutable pos, @NotNull final BlockPos newPos)
+    public static void set(@NotNull final BlockPos.MutableBlockPos pos, @NotNull final BlockPos newPos)
     {
         pos.set(newPos.getX(), newPos.getY(), newPos.getZ());
     }
@@ -590,7 +590,7 @@ public final class BlockPosUtil
     @NotNull
     public static BlockPos fromEntity(@NotNull final Entity entity)
     {
-        return new BlockPos(MathHelper.floor(entity.getX()), MathHelper.floor(entity.getY()), MathHelper.floor(entity.getZ()));
+        return new BlockPos(Mth.floor(entity.getX()), Mth.floor(entity.getY()), Mth.floor(entity.getZ()));
     }
 
     /**
@@ -601,9 +601,9 @@ public final class BlockPosUtil
      * @return returns BlockPos position with air above.
      */
     @NotNull
-    public static BlockPos getFloor(@NotNull final BlockPos position, @NotNull final World world)
+    public static BlockPos getFloor(@NotNull final BlockPos position, @NotNull final Level world)
     {
-        final BlockPos floor = getFloor(new BlockPos.Mutable(position.getX(), position.getY(), position.getZ()), 0, world);
+        final BlockPos floor = getFloor(new BlockPos.MutableBlockPos(position.getX(), position.getY(), position.getZ()), 0, world);
         if (floor == null)
         {
             return position;
@@ -620,7 +620,7 @@ public final class BlockPosUtil
      * @return returns BlockPos position with air above.
      */
     @Nullable
-    public static BlockPos getFloor(@NotNull final BlockPos.Mutable position, final int depth, @NotNull final World world)
+    public static BlockPos getFloor(@NotNull final BlockPos.MutableBlockPos position, final int depth, @NotNull final Level world)
     {
         if (depth > MAX_DEPTH)
         {
@@ -736,7 +736,7 @@ public final class BlockPosUtil
      * @param predicate check predicate for the right block
      * @return position or null
      */
-    public static BlockPos findAround(final World world, final BlockPos start, final int vRange, final int hRange, final BiPredicate<IBlockReader, BlockPos> predicate)
+    public static BlockPos findAround(final Level world, final BlockPos start, final int vRange, final int hRange, final BiPredicate<BlockGetter, BlockPos> predicate)
     {
         if (vRange < 1 && hRange < 1)
         {
@@ -819,7 +819,7 @@ public final class BlockPosUtil
      * @param start       startpos
      * @return
      */
-    public static BlockPos findSpawnPosAround(final World worldReader, final BlockPos start)
+    public static BlockPos findSpawnPosAround(final Level worldReader, final BlockPos start)
     {
         return findAround(worldReader, start, 1, 1,
           (world, pos) -> world.getBlockState(pos).getMaterial() == Material.AIR && world.getBlockState(pos.above()).getMaterial() == Material.AIR);

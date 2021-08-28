@@ -6,13 +6,19 @@ import com.minecolonies.coremod.commands.commandTypes.IMCCommand;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import net.minecraft.command.CommandSource;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.core.BlockPos;
 import net.minecraft.util.text.*;
-import net.minecraft.util.text.event.ClickEvent;
+import net.minecraft.network.chat.ClickEvent;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextComponent;
 
 public class CommandListColonies implements IMCCommand
 {
@@ -39,12 +45,12 @@ public class CommandListColonies implements IMCCommand
      * @param context the context of the command execution
      */
     @Override
-    public int onExecute(final CommandContext<CommandSource> context)
+    public int onExecute(final CommandContext<CommandSourceStack> context)
     {
         return executeCommand(context, 1);
     }
 
-    private int executeWithPage(final CommandContext<CommandSource> context)
+    private int executeWithPage(final CommandContext<CommandSourceStack> context)
     {
         if (checkPreCondition(context))
         {
@@ -53,7 +59,7 @@ public class CommandListColonies implements IMCCommand
         return 0;
     }
 
-    private int executeCommand(final CommandContext<CommandSource> context, final int startpage)
+    private int executeCommand(final CommandContext<CommandSourceStack> context, final int startpage)
     {
         int page = startpage;
         final List<IColony> colonies = IColonyManager.getInstance().getAllColonies();
@@ -87,35 +93,35 @@ public class CommandListColonies implements IMCCommand
             coloniesPage = colonies.subList(pageStartIndex, pageStopIndex);
         }
 
-        final ITextComponent headerLine = new StringTextComponent(PAGE_TOP_LEFT + page + PAGE_TOP_MIDDLE + pageCount + PAGE_TOP_RIGHT);
+        final Component headerLine = new TextComponent(PAGE_TOP_LEFT + page + PAGE_TOP_MIDDLE + pageCount + PAGE_TOP_RIGHT);
         context.getSource().sendSuccess(headerLine, true);
 
 
         for (final IColony colony : coloniesPage)
         {
-            context.getSource().sendSuccess(new StringTextComponent(String.format(
+            context.getSource().sendSuccess(new TextComponent(String.format(
               ID_AND_NAME_TEXT, colony.getID(), colony.getName())).setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
               String.format(COMMAND_COLONY_INFO, colony.getID())))), true);
             final BlockPos center = colony.getCenter();
 
-            final IFormattableTextComponent teleport = new StringTextComponent(COORDINATES_TEXT + String.format(COORDINATES_XYZ, center.getX(), center.getY(), center.getZ()));
-            teleport.setStyle(Style.EMPTY.withBold(true).withColor(TextFormatting.GOLD).withClickEvent(
+            final MutableComponent teleport = new TextComponent(COORDINATES_TEXT + String.format(COORDINATES_XYZ, center.getX(), center.getY(), center.getZ()));
+            teleport.setStyle(Style.EMPTY.withBold(true).withColor(ChatFormatting.GOLD).withClickEvent(
               new ClickEvent(ClickEvent.Action.RUN_COMMAND, TELEPORT_COMMAND + colony.getID())));
 
             context.getSource().sendSuccess(teleport, true);
         }
 
-        final ITextComponent prevButton = new StringTextComponent(PREV_PAGE).setStyle(Style.EMPTY.withBold(true).withColor(TextFormatting.GOLD).withClickEvent(
+        final Component prevButton = new TextComponent(PREV_PAGE).setStyle(Style.EMPTY.withBold(true).withColor(ChatFormatting.GOLD).withClickEvent(
           new ClickEvent(ClickEvent.Action.RUN_COMMAND, LIST_COMMAND_SUGGESTED + prevPage)));
 
-        final ITextComponent nextButton = new StringTextComponent(NEXT_PAGE).setStyle(Style.EMPTY.withBold(true).withColor(TextFormatting.GOLD).withClickEvent(
+        final Component nextButton = new TextComponent(NEXT_PAGE).setStyle(Style.EMPTY.withBold(true).withColor(ChatFormatting.GOLD).withClickEvent(
           new ClickEvent(ClickEvent.Action.RUN_COMMAND, LIST_COMMAND_SUGGESTED + nextPage)
         ));
 
-        final StringTextComponent beginLine = new StringTextComponent(PAGE_LINE);
-        final StringTextComponent endLine = new StringTextComponent(PAGE_LINE);
+        final TextComponent beginLine = new TextComponent(PAGE_LINE);
+        final TextComponent endLine = new TextComponent(PAGE_LINE);
         context.getSource()
-          .sendSuccess(beginLine.append(prevButton).append(new StringTextComponent(PAGE_LINE_DIVIDER)).append(nextButton).append(endLine), true);
+          .sendSuccess(beginLine.append(prevButton).append(new TextComponent(PAGE_LINE_DIVIDER)).append(nextButton).append(endLine), true);
         return 1;
     }
 
@@ -129,7 +135,7 @@ public class CommandListColonies implements IMCCommand
     }
 
     @Override
-    public LiteralArgumentBuilder<CommandSource> build()
+    public LiteralArgumentBuilder<CommandSourceStack> build()
     {
         return IMCCommand.newLiteral(getName())
                  .then(IMCCommand.newArgument(START_PAGE_ARG, IntegerArgumentType.integer(1)).executes(this::executeWithPage)).executes(this::checkPreConditionAndExecute);

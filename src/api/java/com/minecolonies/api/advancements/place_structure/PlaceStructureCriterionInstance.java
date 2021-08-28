@@ -2,21 +2,21 @@ package com.minecolonies.api.advancements.place_structure;
 
 import com.ldtteam.structurize.management.StructureName;
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.advancements.criterion.CriterionInstance;
-import net.minecraft.advancements.criterion.EntityPredicate;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.advancements.critereon.AbstractCriterionTriggerInstance;
+import net.minecraft.advancements.critereon.EntityPredicate;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * The test instance to check the "hut_name" or "structure_name" for the "place_structure" trigger
  */
-public class PlaceStructureCriterionInstance extends CriterionInstance
+public class PlaceStructureCriterionInstance extends AbstractCriterionTriggerInstance
 {
     private String        hutName;
     private StructureName structureName;
 
     public PlaceStructureCriterionInstance()
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_STRUCTURE_PLACED), EntityPredicate.AndPredicate.ANY);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_STRUCTURE_PLACED), EntityPredicate.Composite.ANY);
     }
 
     /**
@@ -25,7 +25,7 @@ public class PlaceStructureCriterionInstance extends CriterionInstance
      */
     public PlaceStructureCriterionInstance(final String hutName)
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_STRUCTURE_PLACED), EntityPredicate.AndPredicate.ANY);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_STRUCTURE_PLACED), EntityPredicate.Composite.ANY);
 
         this.hutName = hutName;
     }
@@ -36,7 +36,7 @@ public class PlaceStructureCriterionInstance extends CriterionInstance
      */
     public PlaceStructureCriterionInstance(final StructureName structureName)
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_STRUCTURE_PLACED), EntityPredicate.AndPredicate.ANY);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_STRUCTURE_PLACED), EntityPredicate.Composite.ANY);
 
         this.structureName = structureName;
     }

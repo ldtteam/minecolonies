@@ -9,14 +9,14 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.ModRecipeTypes;
 import com.minecolonies.api.crafting.RecipeStorage;
 import com.minecolonies.api.util.constant.TypeConstants;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.NBTUtil;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
@@ -103,13 +103,13 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
 
     @NotNull
     @Override
-    public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final RecipeStorage recipeStorage)
+    public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final RecipeStorage recipeStorage)
     {
-        final CompoundNBT compound = new CompoundNBT();
-        @NotNull final ListNBT inputTagList = new ListNBT();
+        final CompoundTag compound = new CompoundTag();
+        @NotNull final ListTag inputTagList = new ListTag();
         for (@NotNull final ItemStorage inputItem : recipeStorage.getInput())
         {
-            @NotNull final CompoundNBT neededRes = StandardFactoryController.getInstance().serialize(inputItem);
+            @NotNull final CompoundTag neededRes = StandardFactoryController.getInstance().serialize(inputItem);
             inputTagList.add(neededRes);
         }
         compound.put(INPUT_TAG, inputTagList);
@@ -117,7 +117,7 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
 
         if (recipeStorage.getIntermediate() != null)
         {
-            compound.put(BLOCK_TAG, NBTUtil.writeBlockState(recipeStorage.getIntermediate().defaultBlockState()));
+            compound.put(BLOCK_TAG, NbtUtils.writeBlockState(recipeStorage.getIntermediate().defaultBlockState()));
         }
         compound.putInt(TAG_GRID, recipeStorage.getGridSize());
         compound.put(TAG_TOKEN, StandardFactoryController.getInstance().serialize(recipeStorage.getToken()));
@@ -127,19 +127,19 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
         }
         compound.putString(TYPE_TAG, recipeStorage.getRecipeType().getId().toString());
 
-        @NotNull final ListNBT altOutputTagList = new ListNBT();
+        @NotNull final ListTag altOutputTagList = new ListTag();
         for (@NotNull final ItemStack stack : recipeStorage.getAlternateOutputs())
         {
-            @NotNull final CompoundNBT neededRes = new CompoundNBT();
+            @NotNull final CompoundTag neededRes = new CompoundTag();
             stack.save(neededRes);
             altOutputTagList.add(neededRes);
         }
         compound.put(ALTOUTPUT_TAG, altOutputTagList);
 
-        @NotNull final ListNBT secOutputTagList = new ListNBT();
+        @NotNull final ListTag secOutputTagList = new ListTag();
         for (@NotNull final ItemStack stack : recipeStorage.getCraftingToolsAndSecondaryOutputs())
         {
-            @NotNull final CompoundNBT neededRes = new CompoundNBT();
+            @NotNull final CompoundTag neededRes = new CompoundTag();
             stack.save(neededRes);
             secOutputTagList.add(neededRes);
         }
@@ -155,13 +155,13 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
 
     @NotNull
     @Override
-    public RecipeStorage deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
+    public RecipeStorage deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
     {
         final List<ItemStorage> input = new ArrayList<>();
-        final ListNBT inputTagList = nbt.getList(INPUT_TAG, Constants.NBT.TAG_COMPOUND);
+        final ListTag inputTagList = nbt.getList(INPUT_TAG, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < inputTagList.size(); ++i)
         {
-            final CompoundNBT inputTag = inputTagList.getCompound(i);
+            final CompoundTag inputTag = inputTagList.getCompound(i);
             if(inputTag.contains("Type")) //Check to see if it's something the factorycontroller can handle
             {
                 input.add(StandardFactoryController.getInstance().deserialize(inputTag));
@@ -175,7 +175,7 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
 
         final ItemStack primaryOutput = ItemStack.of(nbt);
 
-        final Block intermediate = NBTUtil.readBlockState(nbt.getCompound(BLOCK_TAG)).getBlock();
+        final Block intermediate = NbtUtils.readBlockState(nbt.getCompound(BLOCK_TAG)).getBlock();
 
         final int gridSize = nbt.getInt(TAG_GRID);
         final IToken<?> token = StandardFactoryController.getInstance().deserialize(nbt.getCompound(TAG_TOKEN));
@@ -184,21 +184,21 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
 
         final ResourceLocation type = nbt.contains(TYPE_TAG) ? new ResourceLocation(nbt.getString(TYPE_TAG).toLowerCase()): ModRecipeTypes.CLASSIC_ID;
 
-        final ListNBT altOutputTagList = nbt.getList(ALTOUTPUT_TAG, Constants.NBT.TAG_COMPOUND);
+        final ListTag altOutputTagList = nbt.getList(ALTOUTPUT_TAG, Constants.NBT.TAG_COMPOUND);
 
         final List<ItemStack> altOutputs = new ArrayList<>();
         for (int i = 0; i < altOutputTagList.size(); ++i)
         {
-            final CompoundNBT altOutputTag = altOutputTagList.getCompound(i);
+            final CompoundTag altOutputTag = altOutputTagList.getCompound(i);
             altOutputs.add(ItemStack.of(altOutputTag));
         }
 
-        final ListNBT secOutputTagList = nbt.getList(SECOUTPUT_TAG, Constants.NBT.TAG_COMPOUND);
+        final ListTag secOutputTagList = nbt.getList(SECOUTPUT_TAG, Constants.NBT.TAG_COMPOUND);
 
         final List<ItemStack> secOutputs = new ArrayList<>();
         for (int i = 0; i < secOutputTagList.size(); ++i)
         {
-            final CompoundNBT secOutputTag = secOutputTagList.getCompound(i);
+            final CompoundTag secOutputTag = secOutputTagList.getCompound(i);
             secOutputs.add(ItemStack.of(secOutputTag));
         }
 
@@ -208,7 +208,7 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
     }
 
     @Override
-    public void serialize(@NotNull final IFactoryController controller, final RecipeStorage input, final PacketBuffer packetBuffer)
+    public void serialize(@NotNull final IFactoryController controller, final RecipeStorage input, final FriendlyByteBuf packetBuffer)
     {
         packetBuffer.writeVarInt(input.getInput().size());
         input.getInput().forEach(stack -> StandardFactoryController.getInstance().serialize(packetBuffer, stack));
@@ -247,7 +247,7 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
 
     @NotNull
     @Override
-    public RecipeStorage deserialize(@NotNull final IFactoryController controller, final PacketBuffer buffer) throws Throwable
+    public RecipeStorage deserialize(@NotNull final IFactoryController controller, final FriendlyByteBuf buffer) throws Throwable
     {
         final List<ItemStorage> input = new ArrayList<>();
         final int inputSize = buffer.readVarInt();

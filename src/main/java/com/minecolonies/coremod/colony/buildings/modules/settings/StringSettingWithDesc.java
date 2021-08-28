@@ -9,7 +9,7 @@ import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingsModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -51,13 +51,13 @@ public class StringSettingWithDesc extends StringSetting
     {
         Loader.createFromXMLFile("minecolonies:gui/layouthuts/layoutstringsettingdesc.xml", (View) pane);
         pane.findPaneOfTypeByID("id", Text.class).setText(key.getUniqueId().toString());
-        pane.findPaneOfTypeByID("desc", Text.class).setText(new TranslationTextComponent("com.minecolonies.coremod.setting." + key.getUniqueId().toString()));
+        pane.findPaneOfTypeByID("desc", Text.class).setText(new TranslatableComponent("com.minecolonies.coremod.setting." + key.getUniqueId().toString()));
         pane.findPaneOfTypeByID("trigger", ButtonImage.class).setHandler(button -> settingsModuleView.trigger(key));
     }
 
     @Override
     public void render(final ISettingKey<?> key, final Pane pane, final ISettingsModuleView settingsModuleView, final IBuildingView building, final Window window)
     {
-        pane.findPaneOfTypeByID("trigger", ButtonImage.class).setText(new TranslationTextComponent(getSettings().get(getCurrentIndex())));
+        pane.findPaneOfTypeByID("trigger", ButtonImage.class).setText(new TranslatableComponent(getSettings().get(getCurrentIndex())));
     }
 }

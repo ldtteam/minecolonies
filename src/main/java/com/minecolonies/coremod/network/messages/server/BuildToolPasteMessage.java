@@ -20,18 +20,18 @@ import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.event.EventHandler;
 import com.minecolonies.coremod.util.BuildingUtils;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.stats.Stats;
-import net.minecraft.util.Mirror;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -104,7 +104,7 @@ public class BuildToolPasteMessage implements IMessage
      * @param buf The buffer begin read from.
      */
     @Override
-    public void fromBytes(@NotNull final PacketBuffer buf)
+    public void fromBytes(@NotNull final FriendlyByteBuf buf)
     {
         structureName = buf.readUtf(32767);
         workOrderName = buf.readUtf(32767);
@@ -128,7 +128,7 @@ public class BuildToolPasteMessage implements IMessage
      * @param buf The buffer being written to.
      */
     @Override
-    public void toBytes(@NotNull final PacketBuffer buf)
+    public void toBytes(@NotNull final FriendlyByteBuf buf)
     {
         buf.writeUtf(structureName);
         buf.writeUtf(workOrderName);
@@ -159,10 +159,10 @@ public class BuildToolPasteMessage implements IMessage
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
         final StructureName sn = new StructureName(structureName);
-        final ServerPlayerEntity player = ctxIn.getSender();
+        final ServerPlayer player = ctxIn.getSender();
         if (!Structures.hasMD5(sn))
         {
-            player.sendMessage(new StringTextComponent("Can not build " + workOrderName + ": schematic missing!"), player.getUUID());
+            player.sendMessage(new TextComponent("Can not build " + workOrderName + ": schematic missing!"), player.getUUID());
             return;
         }
 
@@ -239,7 +239,7 @@ public class BuildToolPasteMessage implements IMessage
      * @param playerEntity the player to check
      * @return whether the itemstack used allows a free placement.
      */
-    private boolean isFreeInstantPlacementMH(ServerPlayerEntity playerEntity)
+    private boolean isFreeInstantPlacementMH(ServerPlayer playerEntity)
     {
         final ItemStack mhItem = playerEntity.getMainHandItem();
         return !ItemStackUtils.isEmpty(mhItem) && mhItem.getTag() != null && mhItem.getTag().getString(PLACEMENT_NBT).equals(INSTANT_PLACEMENT);
@@ -258,7 +258,7 @@ public class BuildToolPasteMessage implements IMessage
      * @param complete If complete or not.
      */
     private static void handleHut(
-      @NotNull final World world, @NotNull final PlayerEntity player,
+      @NotNull final Level world, @NotNull final Player player,
       final StructureName sn,
       final int rotation, @NotNull final BlockPos buildPos, final boolean mirror, final BlockState state, final boolean complete)
     {
@@ -297,8 +297,8 @@ public class BuildToolPasteMessage implements IMessage
      * @param mirror   Whether or not the strcture is mirrored.
      */
     private static void setupBuilding(
-      @NotNull final World world,
-      @NotNull final PlayerEntity player,
+      @NotNull final Level world,
+      @NotNull final Player player,
       final StructureName sn,
       final int rotation,
       @NotNull final BlockPos buildPos,

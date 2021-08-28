@@ -2,9 +2,9 @@ package com.minecolonies.coremod.entity.mobs.norsemen;
 
 import com.minecolonies.api.entity.mobs.vikings.AbstractEntityNorsemen;
 import com.minecolonies.api.entity.mobs.vikings.INorsemenChiefEntity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.level.Level;
 
 import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
 import static com.minecolonies.api.util.constant.RaiderConstants.BASE_ENV_DAMAGE_RESIST;
@@ -21,7 +21,7 @@ public class EntityNorsemenChief extends AbstractEntityNorsemen implements INors
      * @param worldIn world to construct it in.
      * @param type    the entity type.
      */
-    public EntityNorsemenChief(final EntityType<? extends EntityNorsemenChief> type, final World worldIn)
+    public EntityNorsemenChief(final EntityType<? extends EntityNorsemenChief> type, final Level worldIn)
     {
         super(type, worldIn);
     }

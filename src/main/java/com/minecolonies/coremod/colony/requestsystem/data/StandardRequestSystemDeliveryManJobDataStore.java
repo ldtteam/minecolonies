@@ -9,8 +9,8 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
@@ -90,10 +90,10 @@ public class StandardRequestSystemDeliveryManJobDataStore implements IRequestSys
 
         @NotNull
         @Override
-        public CompoundNBT serialize(
+        public CompoundTag serialize(
           @NotNull final IFactoryController controller, @NotNull final StandardRequestSystemDeliveryManJobDataStore standardRequestSystemDeliveryManJobDataStore)
         {
-            final CompoundNBT compound = new CompoundNBT();
+            final CompoundTag compound = new CompoundTag();
             compound.put(TAG_TOKEN, controller.serialize(standardRequestSystemDeliveryManJobDataStore.id));
             compound.put(TAG_LIST, standardRequestSystemDeliveryManJobDataStore.queue.stream().map(controller::serialize).collect(NBTUtils.toListNBT()));
             compound.put(TAG_ONGOING_LIST, standardRequestSystemDeliveryManJobDataStore.ongoingDeliveries.stream().map(controller::serialize).collect(NBTUtils.toListNBT()));
@@ -102,7 +102,7 @@ public class StandardRequestSystemDeliveryManJobDataStore implements IRequestSys
 
         @NotNull
         @Override
-        public StandardRequestSystemDeliveryManJobDataStore deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt) throws Throwable
+        public StandardRequestSystemDeliveryManJobDataStore deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt) throws Throwable
         {
             final IToken<?> token = controller.deserialize(nbt.getCompound(TAG_TOKEN));
             final LinkedList<IToken<?>> queue = NBTUtils.streamCompound(nbt.getList(TAG_LIST, Constants.NBT.TAG_COMPOUND))
@@ -117,7 +117,7 @@ public class StandardRequestSystemDeliveryManJobDataStore implements IRequestSys
         @Override
         public void serialize(
           IFactoryController controller, StandardRequestSystemDeliveryManJobDataStore input,
-          PacketBuffer packetBuffer)
+          FriendlyByteBuf packetBuffer)
         {
             controller.serialize(packetBuffer, input.id);
             packetBuffer.writeInt(input.queue.size());
@@ -130,7 +130,7 @@ public class StandardRequestSystemDeliveryManJobDataStore implements IRequestSys
         @Override
         public StandardRequestSystemDeliveryManJobDataStore deserialize(
           IFactoryController controller,
-          @NotNull PacketBuffer buffer) throws Throwable
+          @NotNull FriendlyByteBuf buffer) throws Throwable
         {
             final IToken<?> id = controller.deserialize(buffer);
             final LinkedList<IToken<?>> queue = new LinkedList<>();

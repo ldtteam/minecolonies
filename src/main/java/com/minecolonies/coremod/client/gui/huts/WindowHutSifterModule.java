@@ -4,7 +4,7 @@ import com.ldtteam.blockout.controls.*;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.client.gui.AbstractWindowWorkerModuleBuilding;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingSifter;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -36,11 +36,11 @@ public class WindowHutSifterModule extends AbstractWindowWorkerModuleBuilding<Bu
         final Text label = findPaneOfTypeByID("maxSifted", Text.class);
         if (building.getMaxDailyQuantity() == Integer.MAX_VALUE)
         {
-            label.setText(new TranslationTextComponent("com.minecolonies.coremod.gui.workerhuts.sifterinfo.unlimited"));
+            label.setText(new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts.sifterinfo.unlimited"));
         }
         else
         {
-            label.setText(new TranslationTextComponent("com.minecolonies.coremod.gui.workerhuts.sifterinfo", building.getMaxDailyQuantity()));
+            label.setText(new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts.sifterinfo", building.getMaxDailyQuantity()));
         }
 
         sifterSettingsInput.setText(String.valueOf(building.getCurrentDailyQuantity()));

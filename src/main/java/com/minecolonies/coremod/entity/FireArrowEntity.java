@@ -1,11 +1,11 @@
 package com.minecolonies.coremod.entity;
 
 import com.minecolonies.api.items.ModItems;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.projectile.ArrowEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.projectile.Arrow;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -15,7 +15,7 @@ import javax.annotation.Nullable;
  */
 public class FireArrowEntity extends CustomArrowEntity
 {
-    public FireArrowEntity(EntityType<? extends ArrowEntity> entity, World world)
+    public FireArrowEntity(EntityType<? extends Arrow> entity, Level world)
     {
         super(entity, world);
     }

@@ -7,8 +7,8 @@ import com.minecolonies.api.colony.interactionhandling.registry.IInteractionResp
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.NbtTagConstants;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,7 +19,7 @@ public final class InteractionResponseHandlerManager implements IInteractionResp
 {
     @Nullable
     @Override
-    public IInteractionResponseHandler createFrom(@NotNull final ICitizen citizen, @NotNull final CompoundNBT compound)
+    public IInteractionResponseHandler createFrom(@NotNull final ICitizen citizen, @NotNull final CompoundTag compound)
     {
         final ResourceLocation handlerType =
           compound.getAllKeys().contains(NbtTagConstants.TAG_HANDLER_TYPE)

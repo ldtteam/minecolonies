@@ -2,7 +2,7 @@ package com.minecolonies.coremod.colony.crafting;
 
 import com.minecolonies.api.network.IMessage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.LogicalSide;
@@ -18,7 +18,7 @@ public class CustomRecipeManagerMessage implements IMessage
     /**
      * The buffer with the data.
      */
-    private PacketBuffer managerBuffer;
+    private FriendlyByteBuf managerBuffer;
 
     /**
      * Empty constructor used when registering the message
@@ -33,19 +33,19 @@ public class CustomRecipeManagerMessage implements IMessage
      *
      * @param buf               the bytebuffer.
      */
-    public CustomRecipeManagerMessage(final PacketBuffer buf)
+    public CustomRecipeManagerMessage(final FriendlyByteBuf buf)
     {
-        this.managerBuffer = new PacketBuffer(buf.copy());
+        this.managerBuffer = new FriendlyByteBuf(buf.copy());
     }
 
     @Override
-    public void fromBytes(@NotNull final PacketBuffer buf)
+    public void fromBytes(@NotNull final FriendlyByteBuf buf)
     {
-        managerBuffer = new PacketBuffer(buf.retain());
+        managerBuffer = new FriendlyByteBuf(buf.retain());
     }
 
     @Override
-    public void toBytes(@NotNull final PacketBuffer buf)
+    public void toBytes(@NotNull final FriendlyByteBuf buf)
     {
         buf.writeBytes(managerBuffer);
     }

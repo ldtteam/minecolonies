@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.items;
 
-import net.minecraft.item.Item;
+import net.minecraft.world.item.Item;
 
 /**
  * Handles simple things that all items need.

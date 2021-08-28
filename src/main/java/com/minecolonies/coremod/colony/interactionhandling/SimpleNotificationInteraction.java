@@ -4,9 +4,9 @@ import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.interactionhandling.IChatPriority;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -23,14 +23,14 @@ public class SimpleNotificationInteraction extends StandardInteraction
     private boolean active = true;
 
     public SimpleNotificationInteraction(
-      final ITextComponent inquiry,
+      final Component inquiry,
       final IChatPriority priority)
     {
         super(inquiry, null, priority);
     }
 
     @Override
-    public void onServerResponseTriggered(final ITextComponent response, final PlayerEntity player, final ICitizenData data)
+    public void onServerResponseTriggered(final Component response, final Player player, final ICitizenData data)
     {
         super.onServerResponseTriggered(response, player, data);
         onResponse(response);
@@ -38,7 +38,7 @@ public class SimpleNotificationInteraction extends StandardInteraction
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public boolean onClientResponseTriggered(final ITextComponent response, final PlayerEntity player, final ICitizenDataView data, final Window window)
+    public boolean onClientResponseTriggered(final Component response, final Player player, final ICitizenDataView data, final Window window)
     {
         onResponse(response);
         return super.onClientResponseTriggered(response, player, data, window);
@@ -49,12 +49,12 @@ public class SimpleNotificationInteraction extends StandardInteraction
      *
      * @param response response
      */
-    private void onResponse(final ITextComponent response)
+    private void onResponse(final Component response)
     {
-        if (response instanceof TranslationTextComponent)
+        if (response instanceof TranslatableComponent)
         {
-            if (((TranslationTextComponent) response).getKey().equals(INTERACTION_R_OKAY)
-                  || ((TranslationTextComponent) response).getKey().equals(INTERACTION_R_IGNORE))
+            if (((TranslatableComponent) response).getKey().equals(INTERACTION_R_OKAY)
+                  || ((TranslatableComponent) response).getKey().equals(INTERACTION_R_IGNORE))
             {
                 active = false;
             }

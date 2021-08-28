@@ -32,12 +32,12 @@ import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipS
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.pathfinding.Pathfinding;
 import com.minecolonies.coremod.entity.pathfinding.pathjobs.PathJobRaiderPathing;
-import net.minecraft.block.material.Material;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.World;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -483,15 +483,15 @@ public class RaidManager implements IRaiderManager
         final int xDiff = start.getX() - advancePos.getX();
         final int zDiff = start.getZ() - advancePos.getZ();
 
-        Vector3d rates = new Vector3d(1, 1, 1);
+        Vec3 rates = new Vec3(1, 1, 1);
 
         if (xDiff > zDiff)
         {
-            rates = new Vector3d((xDiff) / ((double) zDiff), 1, start.getZ() < advancePos.getZ() ? 1 : -1);
+            rates = new Vec3((xDiff) / ((double) zDiff), 1, start.getZ() < advancePos.getZ() ? 1 : -1);
         }
         else
         {
-            rates = new Vector3d(start.getX() < advancePos.getX() ? 1 : -1, 1, (zDiff) / ((double) xDiff));
+            rates = new Vec3(start.getX() < advancePos.getX() ? 1 : -1, 1, (zDiff) / ((double) xDiff));
         }
 
         int validChunkCount = 0;
@@ -719,7 +719,7 @@ public class RaidManager implements IRaiderManager
      * @param colony The colony to raid
      * @return Boolean value on whether to act this night
      */
-    private boolean raidThisNight(final World world, final IColony colony)
+    private boolean raidThisNight(final Level world, final IColony colony)
     {
         if (nightsSinceLastRaid < MineColonies.getConfig().getServer().minimumNumberOfNightsBetweenRaids.get())
         {
@@ -794,7 +794,7 @@ public class RaidManager implements IRaiderManager
     }
 
     @Override
-    public void write(final CompoundNBT compound)
+    public void write(final CompoundTag compound)
     {
         compound.putBoolean(TAG_RAIDABLE, canHaveRaiderEvents());
         compound.putInt(TAG_NIGHTS_SINCE_LAST_RAID, getNightsSinceLastRaid());
@@ -803,7 +803,7 @@ public class RaidManager implements IRaiderManager
     }
 
     @Override
-    public void read(final CompoundNBT compound)
+    public void read(final CompoundTag compound)
     {
         if (compound.getAllKeys().contains(TAG_RAIDABLE))
         {
@@ -819,7 +819,7 @@ public class RaidManager implements IRaiderManager
             setNightsSinceLastRaid(compound.getInt(TAG_NIGHTS_SINCE_LAST_RAID));
         }
 
-        raidDifficulty = MathHelper.clamp(compound.getInt(TAG_RAID_DIFFICULTY), MIN_RAID_DIFFICULTY, MAX_RAID_DIFFICULTY);
+        raidDifficulty = Mth.clamp(compound.getInt(TAG_RAID_DIFFICULTY), MIN_RAID_DIFFICULTY, MAX_RAID_DIFFICULTY);
         lostCitizens = compound.getInt(TAG_LOST_CITIZENS);
     }
 

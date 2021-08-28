@@ -9,8 +9,8 @@ import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenHappinessHand
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenMournHandler;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
 import com.minecolonies.api.util.Tuple;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -161,7 +161,7 @@ public interface ICitizenData extends ICivilianData
      *
      * @param player the player scheduling it.
      */
-    void scheduleRestart(ServerPlayerEntity player);
+    void scheduleRestart(ServerPlayer player);
 
     /**
      * AI will be restarted, also restart building etc

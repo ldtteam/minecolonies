@@ -14,6 +14,8 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
+import net.minecraft.network.chat.TextComponent;
+
 /**
  * Window for the citizen.
  */
@@ -48,7 +50,7 @@ public class MainWindowCitizen extends AbstractWindowCitizen
         {
             statusIcon.setImage(citizen.getVisibleStatus().getIcon());
             PaneBuilders.tooltipBuilder()
-                .append(new StringTextComponent(citizen.getVisibleStatus().getTranslatedText()))
+                .append(new TextComponent(citizen.getVisibleStatus().getTranslatedText()))
                 .hoverPane(statusIcon)
                 .build();
         }

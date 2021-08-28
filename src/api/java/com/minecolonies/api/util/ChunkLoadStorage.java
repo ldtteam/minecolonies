@@ -1,10 +1,10 @@
 package com.minecolonies.api.util;
 
 import com.minecolonies.api.colony.IColonyTagCapability;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.chunk.Chunk;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.ArrayList;
@@ -79,7 +79,7 @@ public class ChunkLoadStorage
      *
      * @param compound the compound to use.
      */
-    public ChunkLoadStorage(final CompoundNBT compound)
+    public ChunkLoadStorage(final CompoundTag compound)
     {
         if (compound.contains(TAG_ID))
         {
@@ -149,9 +149,9 @@ public class ChunkLoadStorage
      *
      * @return the compound.
      */
-    public CompoundNBT toNBT()
+    public CompoundTag toNBT()
     {
-        final CompoundNBT compound = new CompoundNBT();
+        final CompoundTag compound = new CompoundTag();
         compound.putLong(TAG_POS, xz);
         compound.putString(TAG_DIMENSION, dimension.toString());
 
@@ -164,9 +164,9 @@ public class ChunkLoadStorage
         return compound;
     }
 
-    private static CompoundNBT getCompoundOfColonyId(final int id)
+    private static CompoundTag getCompoundOfColonyId(final int id)
     {
-        final CompoundNBT compound = new CompoundNBT();
+        final CompoundTag compound = new CompoundTag();
         compound.putInt(TAG_COLONY_ID, id);
         return compound;
     }
@@ -224,7 +224,7 @@ public class ChunkLoadStorage
      * @param chunk the chunk to apply it to.
      * @param cap   the capability to apply it to.
      */
-    public void applyToCap(final IColonyTagCapability cap, final Chunk chunk)
+    public void applyToCap(final IColonyTagCapability cap, final LevelChunk chunk)
     {
         if (this.claimingBuilding.isEmpty() && unClaimingBuilding.isEmpty())
         {
@@ -326,9 +326,9 @@ public class ChunkLoadStorage
      * @param tuple the tuple to write.
      * @return the resulting compound.
      */
-    private static CompoundNBT writeTupleToNBT(final Tuple<Short, BlockPos> tuple)
+    private static CompoundTag writeTupleToNBT(final Tuple<Short, BlockPos> tuple)
     {
-        final CompoundNBT compound = new CompoundNBT();
+        final CompoundTag compound = new CompoundTag();
         compound.putShort(TAG_COLONY_ID, tuple.getA());
         BlockPosUtil.write(compound, TAG_BUILDING, tuple.getB());
         return compound;
@@ -340,7 +340,7 @@ public class ChunkLoadStorage
      * @param compound the compound to extract it from.
      * @return the tuple.
      */
-    private static Tuple<Short, BlockPos> readTupleFromNbt(final CompoundNBT compound)
+    private static Tuple<Short, BlockPos> readTupleFromNbt(final CompoundTag compound)
     {
         return new Tuple<>(compound.getShort(TAG_COLONY_ID), BlockPosUtil.read(compound, TAG_BUILDING));
     }

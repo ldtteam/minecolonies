@@ -12,9 +12,9 @@ import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
@@ -92,14 +92,14 @@ public class StandardRequestResolversIdentitiesDataStore implements IRequestReso
 
         @NotNull
         @Override
-        public CompoundNBT serialize(
+        public CompoundTag serialize(
           @NotNull final IFactoryController controller, @NotNull final StandardRequestResolversIdentitiesDataStore standardRequestIdentitiesDataStore)
         {
-            final CompoundNBT systemCompound = new CompoundNBT();
+            final CompoundTag systemCompound = new CompoundTag();
 
             systemCompound.put(TAG_TOKEN, controller.serialize(standardRequestIdentitiesDataStore.getId()));
             systemCompound.put(TAG_LIST, standardRequestIdentitiesDataStore.getIdentities().keySet().stream().map(token -> {
-                final CompoundNBT mapCompound = new CompoundNBT();
+                final CompoundTag mapCompound = new CompoundTag();
 
                 mapCompound.put(TAG_TOKEN, controller.serialize(token));
                 mapCompound.put(TAG_RESOLVER, controller.serialize(standardRequestIdentitiesDataStore.getIdentities().get(token)));
@@ -112,10 +112,10 @@ public class StandardRequestResolversIdentitiesDataStore implements IRequestReso
 
         @NotNull
         @Override
-        public StandardRequestResolversIdentitiesDataStore deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
+        public StandardRequestResolversIdentitiesDataStore deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
         {
             final IToken<?> token = controller.deserialize(nbt.getCompound(TAG_TOKEN));
-            final ListNBT list = nbt.getList(TAG_LIST, Constants.NBT.TAG_COMPOUND);
+            final ListTag list = nbt.getList(TAG_LIST, Constants.NBT.TAG_COMPOUND);
 
             final Map<IToken<?>, IRequestResolver<?>> map = NBTUtils.streamCompound(list).map(CompoundNBT -> {
                 final IToken<?> id = controller.deserialize(CompoundNBT.getCompound(TAG_TOKEN));
@@ -132,7 +132,7 @@ public class StandardRequestResolversIdentitiesDataStore implements IRequestReso
         @Override
         public void serialize(
           IFactoryController controller, StandardRequestResolversIdentitiesDataStore input,
-          PacketBuffer packetBuffer)
+          FriendlyByteBuf packetBuffer)
         {
             controller.serialize(packetBuffer, input.id);
             packetBuffer.writeInt(input.getIdentities().size());
@@ -145,7 +145,7 @@ public class StandardRequestResolversIdentitiesDataStore implements IRequestReso
         @Override
         public StandardRequestResolversIdentitiesDataStore deserialize(
           IFactoryController controller,
-          PacketBuffer buffer) throws Throwable
+          FriendlyByteBuf buffer) throws Throwable
         {
             final IToken<?> token = controller.deserialize(buffer);
             final Map<IToken<?>, IRequestResolver<?>> identities = new HashMap<>();

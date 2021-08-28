@@ -13,19 +13,19 @@ import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Mirror;
-import net.minecraft.util.Rotation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -52,7 +52,7 @@ public final class CreativeBuildingStructureHandler extends CreativeStructureHan
      * @param settings       the placement settings.
      * @param fancyPlacement if fancy or complete.
      */
-    public CreativeBuildingStructureHandler(final World world, final BlockPos pos, final String structureName, final PlacementSettings settings, final boolean fancyPlacement)
+    public CreativeBuildingStructureHandler(final Level world, final BlockPos pos, final String structureName, final PlacementSettings settings, final boolean fancyPlacement)
     {
         super(world, pos, structureName, settings, fancyPlacement);
         setupBuilding();
@@ -76,12 +76,12 @@ public final class CreativeBuildingStructureHandler extends CreativeStructureHan
         super.triggerSuccess(pos, list, placement);
         final BlockPos worldPos = getProgressPosInWorld(pos);
 
-        final CompoundNBT teData = getBluePrint().getTileEntityData(worldPos, pos);
+        final CompoundTag teData = getBluePrint().getTileEntityData(worldPos, pos);
         if (teData != null && teData.contains(TAG_BLUEPRINTDATA))
         {
-            final TileEntity te = getWorld().getBlockEntity(worldPos);
+            final BlockEntity te = getWorld().getBlockEntity(worldPos);
             ((IBlueprintDataProvider) te).readSchematicDataFromNBT(teData);
-            ((ServerWorld) getWorld()).getChunkSource().blockChanged(worldPos);
+            ((ServerLevel) getWorld()).getChunkSource().blockChanged(worldPos);
             te.setChanged();
         }
 
@@ -133,11 +133,11 @@ public final class CreativeBuildingStructureHandler extends CreativeStructureHan
      * @return the placed blueprint.
      */
     public static Blueprint loadAndPlaceStructureWithRotation(
-      final World worldObj, @NotNull final String name,
+      final Level worldObj, @NotNull final String name,
       @NotNull final BlockPos pos, final Rotation rotation,
       @NotNull final Mirror mirror,
       final boolean fancyPlacement,
-      @Nullable final ServerPlayerEntity player)
+      @Nullable final ServerPlayer player)
     {
         try
         {

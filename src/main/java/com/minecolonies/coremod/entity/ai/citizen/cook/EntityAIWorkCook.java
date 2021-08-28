@@ -25,13 +25,13 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.JobCook;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIUsesFurnace;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.FurnaceTileEntity;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -73,7 +73,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
     /**
      * The citizen the worker is currently trying to serve.
      */
-    private final List<PlayerEntity> playerToServe = new ArrayList<>();
+    private final List<Player> playerToServe = new ArrayList<>();
 
     /**
      * Cooking icon
@@ -112,7 +112,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
      * @param furnace the furnace to retrieve from.
      */
     @Override
-    protected void extractFromFurnace(final FurnaceTileEntity furnace)
+    protected void extractFromFurnace(final FurnaceBlockEntity furnace)
     {
         if(!getOwnBuilding().getIsCooking())
         {
@@ -155,7 +155,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
         final IRequestable smeltable = getSmeltAbleClass();
         if (smeltable != null && !getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(smeltable.getClass()))
         && !getOwnBuilding().hasWorkerOpenRequestsFiltered(worker.getCitizenData(),
-                req -> req.getShortDisplayString().getSiblings().contains(new TranslationTextComponent(COM_MINECOLONIES_REQUESTS_FOOD))))
+                req -> req.getShortDisplayString().getSiblings().contains(new TranslatableComponent(COM_MINECOLONIES_REQUESTS_FOOD))))
         {
             worker.getCitizenData().createRequestAsync(smeltable);
         }
@@ -172,7 +172,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
      */
     private IAIState serveFoodToCitizen()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_SERVING));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslatableComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_SERVING));
 
         if (citizenToServe.isEmpty() && playerToServe.isEmpty())
         {
@@ -232,9 +232,9 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
             citizenToServe.get(0).getCitizenData().setJustAte(true);
         }
 
-        if (citizenToServe.isEmpty() && living instanceof PlayerEntity)
+        if (citizenToServe.isEmpty() && living instanceof Player)
         {
-            LanguageHandler.sendPlayerMessage((PlayerEntity) living, "com.minecolonies.coremod.cook.serve.player", worker.getName().getString());
+            LanguageHandler.sendPlayerMessage((Player) living, "com.minecolonies.coremod.cook.serve.player", worker.getName().getString());
         }
         removeFromQueue();
 
@@ -300,7 +300,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
                                                           .sorted(Comparator.comparingInt(a -> (a.getCitizenJobHandler().getColonyJob() == null ? 1 : 0)))
                                                           .collect(Collectors.toList());
 
-        final List<PlayerEntity> playerList = WorldUtil.getEntitiesWithinBuilding(world, PlayerEntity.class,
+        final List<Player> playerList = WorldUtil.getEntitiesWithinBuilding(world, Player.class,
           getOwnBuilding(), player -> player != null
                       && player.getFoodData().getFoodLevel() < LEVEL_TO_FEED_PLAYER
                       && getOwnBuilding().getColony().getPermissions().hasPermission(player, Action.MANAGE_HUTS)
@@ -359,7 +359,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
                 if (worker.getCitizenData() != null)
                 {
                     worker.getCitizenData()
-                            .triggerInteraction(new StandardInteraction(new TranslationTextComponent(FURNACE_USER_NO_FOOD), ChatPriority.BLOCKING));
+                            .triggerInteraction(new StandardInteraction(new TranslatableComponent(FURNACE_USER_NO_FOOD), ChatPriority.BLOCKING));
                     return null;
                 }
             }

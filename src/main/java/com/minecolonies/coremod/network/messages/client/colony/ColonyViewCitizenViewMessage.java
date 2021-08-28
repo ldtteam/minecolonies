@@ -5,11 +5,11 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.coremod.colony.Colony;
 import io.netty.buffer.Unpooled;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.world.World;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.Registry;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
@@ -22,12 +22,12 @@ public class ColonyViewCitizenViewMessage implements IMessage
 {
     private int          colonyId;
     private int          citizenId;
-    private PacketBuffer citizenBuffer;
+    private FriendlyByteBuf citizenBuffer;
 
     /**
      * The dimension the citizen is in.
      */
-    private RegistryKey<World> dimension;
+    private ResourceKey<Level> dimension;
 
     /**
      * Empty constructor used when registering the
@@ -48,22 +48,22 @@ public class ColonyViewCitizenViewMessage implements IMessage
         super();
         this.colonyId = colony.getID();
         this.citizenId = citizen.getId();
-        this.citizenBuffer = new PacketBuffer(Unpooled.buffer());
+        this.citizenBuffer = new FriendlyByteBuf(Unpooled.buffer());
         this.dimension = citizen.getColony().getDimension();
         citizen.serializeViewNetworkData(citizenBuffer);
     }
 
     @Override
-    public void fromBytes(@NotNull final PacketBuffer buf)
+    public void fromBytes(@NotNull final FriendlyByteBuf buf)
     {
         colonyId = buf.readInt();
         citizenId = buf.readInt();
-        dimension = RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)));
-        this.citizenBuffer = new PacketBuffer(buf.retain());
+        dimension = ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)));
+        this.citizenBuffer = new FriendlyByteBuf(buf.retain());
     }
 
     @Override
-    public void toBytes(@NotNull final PacketBuffer buf)
+    public void toBytes(@NotNull final FriendlyByteBuf buf)
     {
         buf.writeInt(colonyId);
         buf.writeInt(citizenId);

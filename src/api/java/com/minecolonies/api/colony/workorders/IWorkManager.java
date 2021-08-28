@@ -2,8 +2,8 @@ package com.minecolonies.api.colony.workorders;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -84,14 +84,14 @@ public interface IWorkManager
      *
      * @param compound Compound to save to.
      */
-    void write(@NotNull CompoundNBT compound);
+    void write(@NotNull CompoundTag compound);
 
     /**
      * Restore the Work Manager.
      *
      * @param compound Compound to read from.
      */
-    void read(@NotNull CompoundNBT compound);
+    void read(@NotNull CompoundTag compound);
 
     /**
      * Adds work order to the work manager.

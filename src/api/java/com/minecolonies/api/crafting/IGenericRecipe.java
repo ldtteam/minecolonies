@@ -1,9 +1,9 @@
 package com.minecolonies.api.crafting;
 
-import net.minecraft.block.Block;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -111,7 +111,7 @@ public interface IGenericRecipe
      * @return A list of restrictions.
      */
     @NotNull
-    List<ITextComponent> getRestrictions();
+    List<Component> getRestrictions();
 
     /**
      * Returns an arbitrary integer that influences recipe sort order based on level.

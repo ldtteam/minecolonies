@@ -8,15 +8,25 @@ import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
-import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.item.*;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.BowItem;
+import net.minecraft.world.item.FishingRodItem;
+import net.minecraft.world.item.FlintAndSteelItem;
+import net.minecraft.world.item.HoeItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ShearsItem;
+import net.minecraft.world.item.ShieldItem;
+import net.minecraft.world.item.SwordItem;
 
 /**
  * Class used to represent tools inside the request system.
@@ -69,9 +79,9 @@ public class Tool implements IDeliverable
      * @return The CompoundNBT containing the tool data.
      */
     @NotNull
-    public static CompoundNBT serialize(final IFactoryController controller, final Tool tool)
+    public static CompoundTag serialize(final IFactoryController controller, final Tool tool)
     {
-        final CompoundNBT compound = new CompoundNBT();
+        final CompoundTag compound = new CompoundTag();
 
         compound.putString(NBT_TYPE, tool.getToolClass().getName());
         compound.putInt(NBT_MIN_LEVEL, tool.getMinLevel());
@@ -89,7 +99,7 @@ public class Tool implements IDeliverable
      * @return An instance of Tool with the data contained in the given NBT.
      */
     @NotNull
-    public static Tool deserialize(final IFactoryController controller, final CompoundNBT nbt)
+    public static Tool deserialize(final IFactoryController controller, final CompoundTag nbt)
     {
         //API:Map the given strings a proper way.
         final IToolType type = ToolType.getToolType(nbt.getString(NBT_TYPE));
@@ -107,7 +117,7 @@ public class Tool implements IDeliverable
      * @param buffer     the the buffer to write to.
      * @param input      the input to serialize.
      */
-    public static void serialize(final IFactoryController controller, final PacketBuffer buffer, final Tool input)
+    public static void serialize(final IFactoryController controller, final FriendlyByteBuf buffer, final Tool input)
     {
         buffer.writeUtf(input.getToolClass().getName());
         buffer.writeInt(input.getMinLevel());
@@ -126,7 +136,7 @@ public class Tool implements IDeliverable
      * @param buffer     the buffer to read.
      * @return the deliverable.
      */
-    public static Tool deserialize(final IFactoryController controller, final PacketBuffer buffer)
+    public static Tool deserialize(final IFactoryController controller, final FriendlyByteBuf buffer)
     {
         final IToolType type = ToolType.getToolType(buffer.readUtf(32767));
         final int minLevel = buffer.readInt();
@@ -247,19 +257,19 @@ public class Tool implements IDeliverable
              * system.
              */
             final ArmorItem armor = (ArmorItem) stack.getItem();
-            if (armor.getSlot() == EquipmentSlotType.CHEST)
+            if (armor.getSlot() == EquipmentSlot.CHEST)
             {
                 set.add("chestplate");
             }
-            else if (armor.getSlot() == EquipmentSlotType.FEET)
+            else if (armor.getSlot() == EquipmentSlot.FEET)
             {
                 set.add("boots");
             }
-            else if (armor.getSlot() == EquipmentSlotType.HEAD)
+            else if (armor.getSlot() == EquipmentSlot.HEAD)
             {
                 set.add("helmet");
             }
-            else if (armor.getSlot() == EquipmentSlotType.LEGS)
+            else if (armor.getSlot() == EquipmentSlot.LEGS)
             {
                 set.add("leggings");
             }

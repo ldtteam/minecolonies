@@ -11,12 +11,12 @@ import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.citizen.MainWindowCitizen;
 import com.minecolonies.coremod.network.messages.server.colony.InteractionResponse;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.Constants;
@@ -51,12 +51,12 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
     /**
      * The id of the validator.
      */
-    protected ITextComponent validatorId;
+    protected Component validatorId;
 
     /**
      * All registered parents of this response handler.
      */
-    protected Set<ITextComponent> parents = new HashSet<>();
+    protected Set<Component> parents = new HashSet<>();
 
     /**
      * The server interaction response handler.
@@ -70,12 +70,12 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
      */
     @SafeVarargs
     public ServerCitizenInteraction(
-      final ITextComponent inquiry,
+      final Component inquiry,
       final boolean primary,
       final IChatPriority priority,
       final Predicate<ICitizenData> validator,
-      final ITextComponent validatorId,
-      final Tuple<ITextComponent, ITextComponent>... responseTuples)
+      final Component validatorId,
+      final Tuple<Component, Component>... responseTuples)
     {
         super(inquiry, primary, priority, responseTuples);
         this.validator = validator;
@@ -93,7 +93,7 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
     }
 
     @Override
-    public boolean isVisible(final World world)
+    public boolean isVisible(final Level world)
     {
         return displayAtWorldTick == 0 || displayAtWorldTick < world.getGameTime();
     }
@@ -109,7 +109,7 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
      *
      * @param parent the parent to add.
      */
-    public void addParent(final ITextComponent parent)
+    public void addParent(final Component parent)
     {
         this.parents.add(parent);
     }
@@ -119,21 +119,21 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
      *
      * @param oldParent the parent to remove.
      */
-    public void removeParent(final ITextComponent oldParent)
+    public void removeParent(final Component oldParent)
     {
         this.parents.remove(oldParent);
     }
 
     @Override
-    public void onServerResponseTriggered(final ITextComponent response, final PlayerEntity player, final ICitizenData data)
+    public void onServerResponseTriggered(final Component response, final Player player, final ICitizenData data)
     {
-        if (response instanceof TranslationTextComponent)
+        if (response instanceof TranslatableComponent)
         {
-            if (((TranslationTextComponent) response).getKey().equals("com.minecolonies.coremod.gui.chat.remindmelater"))
+            if (((TranslatableComponent) response).getKey().equals("com.minecolonies.coremod.gui.chat.remindmelater"))
             {
                 displayAtWorldTick = (int) (player.level.getGameTime() + (TICKS_SECOND * 60 * 10));
             }
-            else if (((TranslationTextComponent) response).getKey().equals("com.minecolonies.coremod.gui.chat.ignore"))
+            else if (((TranslatableComponent) response).getKey().equals("com.minecolonies.coremod.gui.chat.ignore"))
             {
                 displayAtWorldTick = (int) (player.level.getGameTime() + (TICKS_SECOND * 60 * 20));
             }
@@ -142,9 +142,9 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public boolean onClientResponseTriggered(final ITextComponent response, final PlayerEntity player, final ICitizenDataView data, final Window window)
+    public boolean onClientResponseTriggered(final Component response, final Player player, final ICitizenDataView data, final Window window)
     {
-        if (((TranslationTextComponent) response).getKey().equals("com.minecolonies.coremod.gui.chat.skipchitchat"))
+        if (((TranslatableComponent) response).getKey().equals("com.minecolonies.coremod.gui.chat.skipchitchat"))
         {
             final MainWindowCitizen windowCitizen = new MainWindowCitizen(data);
             windowCitizen.open();
@@ -155,34 +155,34 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
     }
 
     @Override
-    public CompoundNBT serializeNBT()
+    public CompoundTag serializeNBT()
     {
-        final CompoundNBT compoundNBT = super.serializeNBT();
+        final CompoundTag compoundNBT = super.serializeNBT();
         compoundNBT.putInt(TAG_DELAY, displayAtWorldTick);
-        final ListNBT list = new ListNBT();
-        for (final ITextComponent element : parents)
+        final ListTag list = new ListTag();
+        for (final Component element : parents)
         {
-            final CompoundNBT elementTag = new CompoundNBT();
-            elementTag.putString(TAG_PARENT, ITextComponent.Serializer.toJson(element));
+            final CompoundTag elementTag = new CompoundTag();
+            elementTag.putString(TAG_PARENT, Component.Serializer.toJson(element));
             list.add(elementTag);
         }
         compoundNBT.put(TAG_PARENTS, list);
-        compoundNBT.putString(TAG_VALIDATOR_ID, ITextComponent.Serializer.toJson(validatorId));
+        compoundNBT.putString(TAG_VALIDATOR_ID, Component.Serializer.toJson(validatorId));
         return compoundNBT;
     }
 
     @Override
-    public void deserializeNBT(@NotNull final CompoundNBT compoundNBT)
+    public void deserializeNBT(@NotNull final CompoundTag compoundNBT)
     {
         super.deserializeNBT(compoundNBT);
         this.displayAtWorldTick = compoundNBT.getInt(TAG_DELAY);
         this.parents.clear();
-        final ListNBT list = compoundNBT.getList(TAG_PARENTS, Constants.NBT.TAG_COMPOUND);
+        final ListTag list = compoundNBT.getList(TAG_PARENTS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < list.size(); i++)
         {
-            this.parents.add(ITextComponent.Serializer.fromJson(compoundNBT.getString(TAG_PARENT)));
+            this.parents.add(Component.Serializer.fromJson(compoundNBT.getString(TAG_PARENT)));
         }
-        this.validatorId = ITextComponent.Serializer.fromJson(compoundNBT.getString(TAG_VALIDATOR_ID));
+        this.validatorId = Component.Serializer.fromJson(compoundNBT.getString(TAG_VALIDATOR_ID));
         loadValidator();
     }
 

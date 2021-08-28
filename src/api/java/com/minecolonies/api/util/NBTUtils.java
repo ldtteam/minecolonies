@@ -1,8 +1,8 @@
 package com.minecolonies.api.util;
 
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.ListTag;
 
 import java.util.Iterator;
 import java.util.Spliterator;
@@ -15,35 +15,35 @@ import java.util.stream.StreamSupport;
 public class NBTUtils
 {
 
-    public static Stream<CompoundNBT> streamCompound(final ListNBT list)
+    public static Stream<CompoundTag> streamCompound(final ListTag list)
     {
-        return streamBase(list).filter(b -> b instanceof CompoundNBT).map(b -> (CompoundNBT) b);
+        return streamBase(list).filter(b -> b instanceof CompoundTag).map(b -> (CompoundTag) b);
     }
 
-    public static Stream<INBT> streamBase(final ListNBT list)
+    public static Stream<Tag> streamBase(final ListTag list)
     {
         return StreamSupport.stream(Spliterators.spliteratorUnknownSize(new TagListIterator(list), Spliterator.ORDERED), false);
     }
 
-    public static Collector<CompoundNBT, ?, ListNBT> toListNBT()
+    public static Collector<CompoundTag, ?, ListTag> toListNBT()
     {
         return Collectors.collectingAndThen(
           Collectors.toList(),
           list -> {
-              final ListNBT tagList = new ListNBT();
+              final ListTag tagList = new ListTag();
               tagList.addAll(list);
 
               return tagList;
           });
     }
 
-    private static class TagListIterator implements Iterator<INBT>
+    private static class TagListIterator implements Iterator<Tag>
     {
 
-        private final ListNBT list;
+        private final ListTag list;
         private       int     currentIndex = 0;
 
-        private TagListIterator(final ListNBT list) {this.list = list;}
+        private TagListIterator(final ListTag list) {this.list = list;}
 
         @Override
         public boolean hasNext()
@@ -52,7 +52,7 @@ public class NBTUtils
         }
 
         @Override
-        public INBT next()
+        public Tag next()
         {
             return list.getCompound(currentIndex++);
         }

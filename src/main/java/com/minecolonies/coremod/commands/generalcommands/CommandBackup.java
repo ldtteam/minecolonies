@@ -4,7 +4,7 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.coremod.commands.commandTypes.IMCOPCommand;
 import com.minecolonies.coremod.util.BackUpHelper;
 import com.mojang.brigadier.context.CommandContext;
-import net.minecraft.command.CommandSource;
+import net.minecraft.commands.CommandSourceStack;
 
 public class CommandBackup implements IMCOPCommand
 {
@@ -14,7 +14,7 @@ public class CommandBackup implements IMCOPCommand
      * @param context the context of the command execution
      */
     @Override
-    public int onExecute(final CommandContext<CommandSource> context)
+    public int onExecute(final CommandContext<CommandSourceStack> context)
     {
         if (BackUpHelper.backupColonyData())
         {

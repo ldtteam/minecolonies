@@ -1,7 +1,7 @@
 package com.minecolonies.api.colony.requestsystem.request;
 
-import net.minecraft.nbt.IntNBT;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.nbt.IntTag;
+import net.minecraft.network.FriendlyByteBuf;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -102,7 +102,7 @@ public enum RequestState
      * @param nbt The nbt to deserialize from.
      * @return The RequestState that is stored in the given NBT.
      */
-    public static RequestState deserialize(final IntNBT nbt)
+    public static RequestState deserialize(final IntTag nbt)
     {
         return indexList.get(nbt.getAsInt());
     }
@@ -112,9 +112,9 @@ public enum RequestState
      *
      * @return The NBT representation of the state.
      */
-    public IntNBT serialize()
+    public IntTag serialize()
     {
-        return IntNBT.valueOf(indexList.indexOf(this));
+        return IntTag.valueOf(indexList.indexOf(this));
     }
 
     /**
@@ -123,7 +123,7 @@ public enum RequestState
      * @param buffer The buffer to deserialize from.
      * @return The RequestState that is stored in the given NBT.
      */
-    public static RequestState deserialize(final PacketBuffer buffer)
+    public static RequestState deserialize(final FriendlyByteBuf buffer)
     {
         return indexList.get(buffer.readInt());
     }
@@ -133,7 +133,7 @@ public enum RequestState
      *
      * @param buffer The buffer to write to.
      */
-    public void serialize(PacketBuffer buffer)
+    public void serialize(FriendlyByteBuf buffer)
     {
         buffer.writeInt(indexList.indexOf(this));
     }

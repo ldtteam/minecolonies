@@ -46,32 +46,32 @@ import com.minecolonies.coremod.entity.pathfinding.MovementHandler;
 import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMessage;
 import com.minecolonies.coremod.util.TeleportHelper;
 import net.minecraft.entity.*;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.ai.goal.LookAtGoal;
-import net.minecraft.entity.ai.goal.LookAtWithoutMovingGoal;
-import net.minecraft.entity.ai.goal.SwimGoal;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.monster.MonsterEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.NameTagItem;
-import net.minecraft.item.ShieldItem;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
-import net.minecraft.scoreboard.Team;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.InteractGoal;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.NameTagItem;
+import net.minecraft.world.item.ShieldItem;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.scores.Team;
 import net.minecraft.util.*;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -92,6 +92,19 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.Suppression.INCREMENT_AND_DECREMENT_OPERATORS_SHOULD_NOT_BE_USED_IN_A_METHOD_CALL_OR_MIXED_WITH_OTHER_OPERATORS_IN_AN_EXPRESSION;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.entity.ai.minimal.EntityAIInteractToggleAble.*;
+
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.damagesource.CombatRules;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.AgableMob;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.entity.Pose;
 
 /**
  * The Class used to represent the citizen entities.
@@ -238,7 +251,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
      * @param type  the entity type.
      * @param world the world.
      */
-    public EntityCitizen(final EntityType<? extends AgeableEntity> type, final World world)
+    public EntityCitizen(final EntityType<? extends AgableMob> type, final Level world)
     {
         super(type, world);
         this.goalSelector = new CustomGoalSelector(this.goalSelector);
@@ -334,17 +347,17 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     private void initTasks()
     {
         int priority = 0;
-        this.goalSelector.addGoal(priority, new SwimGoal(this));
+        this.goalSelector.addGoal(priority, new FloatGoal(this));
         this.goalSelector.addGoal(++priority,
-          new EntityAICitizenAvoidEntity(this, MonsterEntity.class, (float) DISTANCE_OF_ENTITY_AVOID, LATER_RUN_SPEED_AVOID, INITIAL_RUN_SPEED_AVOID));
+          new EntityAICitizenAvoidEntity(this, Monster.class, (float) DISTANCE_OF_ENTITY_AVOID, LATER_RUN_SPEED_AVOID, INITIAL_RUN_SPEED_AVOID));
         this.goalSelector.addGoal(++priority, new EntityAIEatTask(this));
         this.goalSelector.addGoal(++priority, new EntityAISickTask(this));
         this.goalSelector.addGoal(++priority, new EntityAISleep(this));
         this.goalSelector.addGoal(priority, new EntityAIInteractToggleAble(this, FENCE_TOGGLE, TRAP_TOGGLE, DOOR_TOGGLE));
-        this.goalSelector.addGoal(++priority, new LookAtWithoutMovingGoal(this, PlayerEntity.class, WATCH_CLOSEST2, 1.0F));
-        this.goalSelector.addGoal(++priority, new LookAtWithoutMovingGoal(this, EntityCitizen.class, WATCH_CLOSEST2_FAR, WATCH_CLOSEST2_FAR_CHANCE));
+        this.goalSelector.addGoal(++priority, new InteractGoal(this, Player.class, WATCH_CLOSEST2, 1.0F));
+        this.goalSelector.addGoal(++priority, new InteractGoal(this, EntityCitizen.class, WATCH_CLOSEST2_FAR, WATCH_CLOSEST2_FAR_CHANCE));
         this.goalSelector.addGoal(++priority, new EntityAICitizenWander(this, DEFAULT_SPEED, 1.0D));
-        this.goalSelector.addGoal(++priority, new LookAtGoal(this, LivingEntity.class, WATCH_CLOSEST));
+        this.goalSelector.addGoal(++priority, new LookAtPlayerGoal(this, LivingEntity.class, WATCH_CLOSEST));
         this.goalSelector.addGoal(++priority, new EntityAIMournCitizen(this, DEFAULT_SPEED));
     }
 
@@ -356,12 +369,12 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
      */
     @NotNull
     @Override
-    public ActionResultType checkAndHandleImportantInteractions(final PlayerEntity player, @NotNull final Hand hand)
+    public InteractionResult checkAndHandleImportantInteractions(final Player player, @NotNull final InteractionHand hand)
     {
         final IColonyView iColonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), player.level.dimension());
         if (iColonyView != null && !iColonyView.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
         {
-            return ActionResultType.FAIL;
+            return InteractionResult.FAIL;
         }
 
         if (!ItemStackUtils.isEmpty(player.getItemInHand(hand)) && player.getItemInHand(hand).getItem() instanceof NameTagItem)
@@ -384,7 +397,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                 }
             }
         }
-        return ActionResultType.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 
     @Override
@@ -422,7 +435,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     }
 
     @Override
-    public void addAdditionalSaveData(final CompoundNBT compound)
+    public void addAdditionalSaveData(final CompoundTag compound)
     {
         super.addAdditionalSaveData(compound);
         compound.putInt(TAG_STATUS, citizenStatusHandler.getStatus().ordinal());
@@ -435,7 +448,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     }
 
     @Override
-    public void readAdditionalSaveData(final CompoundNBT compound)
+    public void readAdditionalSaveData(final CompoundTag compound)
     {
         super.readAdditionalSaveData(compound);
 
@@ -507,19 +520,19 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
      */
     private boolean updateVisualData()
     {
-        final ItemStack hat = getItemBySlot(EquipmentSlotType.HEAD);
+        final ItemStack hat = getItemBySlot(EquipmentSlot.HEAD);
         if (LocalDate.now(Clock.systemDefaultZone()).getMonth() == Month.DECEMBER
               && MineColonies.getConfig().getServer().holidayFeatures.get()
               && !(getCitizenJobHandler().getColonyJob() instanceof JobStudent))
         {
             if (hat.isEmpty())
             {
-                this.setItemSlot(EquipmentSlotType.HEAD, new ItemStack(ModItems.santaHat));
+                this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(ModItems.santaHat));
             }
         }
         else if (!hat.isEmpty() && hat.getItem() == ModItems.santaHat)
         {
-            this.setItemSlot(EquipmentSlotType.HEAD, ItemStackUtils.EMPTY);
+            this.setItemSlot(EquipmentSlot.HEAD, ItemStackUtils.EMPTY);
         }
         this.setCustomNameVisible(MineColonies.getConfig().getServer().alwaysRenderNameTag.get());
 
@@ -543,14 +556,14 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         checkHeal();
         if (citizenData.getSaturation() <= 0)
         {
-            if (this.getEffect(Effects.MOVEMENT_SLOWDOWN) == null)
+            if (this.getEffect(MobEffects.MOVEMENT_SLOWDOWN) == null)
             {
-                this.addEffect(new EffectInstance(Effects.MOVEMENT_SLOWDOWN, TICKS_SECOND * 30));
+                this.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, TICKS_SECOND * 30));
             }
         }
         else
         {
-            this.removeEffect(Effects.MOVEMENT_SLOWDOWN);
+            this.removeEffect(MobEffects.MOVEMENT_SLOWDOWN);
         }
         return false;
     }
@@ -664,7 +677,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         //Will help track down some hard to find bugs (Pathfinding etc.)
         if (citizenJobHandler.getColonyJob() != null && MineColonies.getConfig().getServer().enableInDevelopmentFeatures.get())
         {
-            setCustomName(new StringTextComponent(
+            setCustomName(new TextComponent(
               citizenData.getName() + " (" + citizenStatusHandler.getStatus() + ")[" + citizenJobHandler.getColonyJob().getNameTagDescription() + "]"));
         }
     }
@@ -767,7 +780,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     @Override
     public void setCitizensize(final @NotNull float width, final @NotNull float height)
     {
-        this.dimensions = new EntitySize(width, height, false);
+        this.dimensions = new EntityDimensions(width, height, false);
     }
 
     /**
@@ -1031,7 +1044,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
 
         if (getCitizenColonyHandler().getColony().getRaiderManager().isRaided())
         {
-            citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_RAID), ChatPriority.IMPORTANT));
+            citizenData.triggerInteraction(new StandardInteraction(new TranslatableComponent(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_RAID), ChatPriority.IMPORTANT));
             setVisibleStatusIfNone(RAIDED);
             desiredActivity = DesiredActivity.SLEEP;
             return false;
@@ -1051,7 +1064,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                 citizenData.onGoSleep();
                 citizenData.decreaseSaturation(citizenColonyHandler.getPerBuildingFoodCost() * 2);
                 citizenData.markDirty();
-                citizenStatusHandler.setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.sleeping"));
+                citizenStatusHandler.setLatestStatus(new TranslatableComponent("com.minecolonies.coremod.status.sleeping"));
                 desiredActivity = DesiredActivity.SLEEP;
                 return false;
             }
@@ -1062,7 +1075,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         {
             if (!getCitizenColonyHandler().getColony().getRaiderManager().isRaided())
             {
-                citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_MOURNING, citizenData.getCitizenMournHandler().getDeceasedCitizens().iterator().next()), new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_MOURNING), ChatPriority.IMPORTANT));
+                citizenData.triggerInteraction(new StandardInteraction(new TranslatableComponent(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_MOURNING, citizenData.getCitizenMournHandler().getDeceasedCitizens().iterator().next()), new TranslatableComponent(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_MOURNING), ChatPriority.IMPORTANT));
             }
             setVisibleStatusIfNone(MOURNING);
             desiredActivity = DesiredActivity.MOURN;
@@ -1077,13 +1090,13 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         // Raining
         if (CompatibilityUtils.getWorldFromCitizen(this).isRaining() && !shouldWorkWhileRaining() && !WorldUtil.isNetherType(level))
         {
-            citizenStatusHandler.setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.waiting"),
-              new TranslationTextComponent("com.minecolonies.coremod.status.rainStop"));
+            citizenStatusHandler.setLatestStatus(new TranslatableComponent("com.minecolonies.coremod.status.waiting"),
+              new TranslatableComponent("com.minecolonies.coremod.status.rainStop"));
             setVisibleStatusIfNone(BAD_WEATHER);
             if (!citizenData.getColony().getRaiderManager().isRaided()
                   && !citizenData.getCitizenMournHandler().isMourning())
             {
-                citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_RAINING), ChatPriority.HIDDEN));
+                citizenData.triggerInteraction(new StandardInteraction(new TranslatableComponent(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_RAINING), ChatPriority.HIDDEN));
             }
             desiredActivity = DesiredActivity.SLEEP;
             return false;
@@ -1248,7 +1261,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             }
         }
 
-        if (sourceEntity instanceof ServerPlayerEntity)
+        if (sourceEntity instanceof ServerPlayer)
         {
             if (citizenColonyHandler.getColony().getRaiderManager().isRaided())
             {
@@ -1257,14 +1270,14 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
 
             if (getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard)
             {
-                return IGuardBuilding.checkIfGuardShouldTakeDamage(this, (PlayerEntity) sourceEntity);
+                return IGuardBuilding.checkIfGuardShouldTakeDamage(this, (Player) sourceEntity);
             }
         }
         return true;
     }
 
     @Override
-    public void move(final MoverType typeIn, final Vector3d pos)
+    public void move(final MoverType typeIn, final Vec3 pos)
     {
         //todo someaddons: remove this on the minimum AI rework.
         if (pos.x != 0 || pos.z != 0)
@@ -1347,7 +1360,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
      */
     private void performMoveAway(@Nullable final Entity attacker)
     {
-        this.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.avoiding"));
+        this.getCitizenStatusHandler().setLatestStatus(new TranslatableComponent("com.minecolonies.coremod.status.avoiding"));
 
         // Environmental damage
         if (!(attacker instanceof LivingEntity))
@@ -1474,7 +1487,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             citizenColonyHandler.getColony().getCitizenManager().removeCivilian(getCitizenData());
 
             final String deathCause =
-              new StringTextComponent(damageSource.getLocalizedDeathMessage(this).getString()).getString().replaceFirst(this.getDisplayName().getString(), "Citizen");
+              new TextComponent(damageSource.getLocalizedDeathMessage(this).getString()).getString().replaceFirst(this.getDisplayName().getString(), "Citizen");
             citizenColonyHandler.getColony().getEventDescriptionManager().addEventDescription(new CitizenDiedEvent(blockPosition(), citizenData.getName(), deathCause));
         }
         super.die(damageSource);
@@ -1607,7 +1620,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     }
 
     @Override
-    public void setCustomName(@Nullable final ITextComponent name)
+    public void setCustomName(@Nullable final Component name)
     {
         if (citizenData != null && citizenColonyHandler.getColony() != null && name != null)
         {
@@ -1716,7 +1729,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
 
     @Nullable
     @Override
-    public Container createMenu(final int id, @NotNull final PlayerInventory inv, @NotNull final PlayerEntity player)
+    public AbstractContainerMenu createMenu(final int id, @NotNull final Inventory inv, @NotNull final Player player)
     {
         return new ContainerCitizenInventory(id, inv, citizenColonyHandler.getColonyId(), citizenId);
     }
@@ -1740,18 +1753,18 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     @Override
     public void refreshDimensions()
     {
-        final EntitySize oldSize = this.dimensions;
+        final EntityDimensions oldSize = this.dimensions;
         final Pose pose = this.getPose();
-        final EntitySize newSize = this.getDimensions(pose);
+        final EntityDimensions newSize = this.getDimensions(pose);
         final net.minecraftforge.event.entity.EntityEvent.Size sizeEvent =
           net.minecraftforge.event.ForgeEventFactory.getEntitySizeForge(this, pose, newSize, this.getEyeHeight(pose, newSize));
-        final EntitySize afterEventSize = sizeEvent.getNewSize();
+        final EntityDimensions afterEventSize = sizeEvent.getNewSize();
         this.dimensions = afterEventSize;
         this.eyeHeight = sizeEvent.getNewEyeHeight();
         if (afterEventSize.width < oldSize.width)
         {
             double d0 = (double) afterEventSize.width / 2.0D;
-            this.setBoundingBox(new AxisAlignedBB(this.getX() - d0,
+            this.setBoundingBox(new AABB(this.getX() - d0,
               this.getY(),
               this.getZ() - d0,
               this.getX() + d0,
@@ -1760,8 +1773,8 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         }
         else
         {
-            final AxisAlignedBB axisalignedbb = this.getBoundingBox();
-            this.setBoundingBox(new AxisAlignedBB(axisalignedbb.minX,
+            final AABB axisalignedbb = this.getBoundingBox();
+            this.setBoundingBox(new AABB(axisalignedbb.minX,
               axisalignedbb.minY,
               axisalignedbb.minZ,
               axisalignedbb.minX + (double) afterEventSize.width,
@@ -1770,7 +1783,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             if (afterEventSize.width > oldSize.width && !this.firstTick && !this.level.isClientSide)
             {
                 final float f = oldSize.width - afterEventSize.width;
-                this.move(MoverType.SELF, new Vector3d((double) f, 0.0D, (double) f));
+                this.move(MoverType.SELF, new Vec3((double) f, 0.0D, (double) f));
             }
         }
     }

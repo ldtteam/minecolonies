@@ -1,12 +1,12 @@
 package com.minecolonies.api.client.render.modeltype;
 
 import com.minecolonies.api.entity.mobs.egyptians.AbstractEntityEgyptian;
-import net.minecraft.client.renderer.entity.model.BipedModel;
+import net.minecraft.client.model.HumanoidModel;
 
 /**
  * Egyptian model.
  */
-public class EgyptianModel<T extends AbstractEntityEgyptian> extends BipedModel<AbstractEntityEgyptian>
+public class EgyptianModel<T extends AbstractEntityEgyptian> extends HumanoidModel<AbstractEntityEgyptian>
 {
     /**
      * Create a model of a specific size.

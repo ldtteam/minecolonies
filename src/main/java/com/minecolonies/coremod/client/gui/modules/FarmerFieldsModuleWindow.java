@@ -15,9 +15,9 @@ import com.minecolonies.coremod.colony.buildings.moduleviews.FarmerFieldModuleVi
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFarmer;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -108,7 +108,7 @@ public class FarmerFieldsModuleWindow extends AbstractModuleWindow
     /**
      * The world.
      */
-    private final ClientWorld world = Minecraft.getInstance().level;
+    private final ClientLevel world = Minecraft.getInstance().level;
 
     /**
      * Constructor for the window of the farmer.
@@ -132,7 +132,7 @@ public class FarmerFieldsModuleWindow extends AbstractModuleWindow
     {
         final int row = fieldList.getListElementIndexByPane(button);
         final BlockPos field = fields.get(row);
-        final TileEntity entity = world.getBlockEntity(field);
+        final BlockEntity entity = world.getBlockEntity(field);
         if (entity instanceof ScarecrowTileEntity)
         {
             if (button.getTextAsString().equals(RED_X))
@@ -208,7 +208,7 @@ public class FarmerFieldsModuleWindow extends AbstractModuleWindow
                 final BlockPos field = fields.get(index);
                 @NotNull final String distance = Integer.toString((int) Math.sqrt(BlockPosUtil.getDistanceSquared(field, buildingView.getPosition())));
                 final String direction = BlockPosUtil.calcDirection(buildingView.getPosition(), field);
-                final TileEntity entity = world.getBlockEntity(field);
+                final BlockEntity entity = world.getBlockEntity(field);
                 if (entity instanceof ScarecrowTileEntity)
                 {
                     @NotNull final String owner =

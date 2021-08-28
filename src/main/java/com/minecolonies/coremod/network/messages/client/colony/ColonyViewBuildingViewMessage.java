@@ -4,12 +4,12 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.network.IMessage;
 import io.netty.buffer.Unpooled;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.world.World;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
@@ -22,12 +22,12 @@ public class ColonyViewBuildingViewMessage implements IMessage
 {
     private int          colonyId;
     private BlockPos     buildingId;
-    private PacketBuffer buildingData;
+    private FriendlyByteBuf buildingData;
 
     /**
      * Dimension of the colony.
      */
-    private RegistryKey<World> dimension;
+    private ResourceKey<Level> dimension;
 
     /**
      * Empty constructor used when registering the
@@ -47,23 +47,23 @@ public class ColonyViewBuildingViewMessage implements IMessage
         super();
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
-        this.buildingData = new PacketBuffer(Unpooled.buffer());
+        this.buildingData = new FriendlyByteBuf(Unpooled.buffer());
         building.serializeToView(this.buildingData);
         this.dimension = building.getColony().getDimension();
     }
 
     @Override
-    public void fromBytes(@NotNull final PacketBuffer buf)
+    public void fromBytes(@NotNull final FriendlyByteBuf buf)
     {
         colonyId = buf.readInt();
         buildingId = buf.readBlockPos();
-        dimension = RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)));
-        buildingData = new PacketBuffer(Unpooled.buffer(buf.readableBytes()));
+        dimension = ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)));
+        buildingData = new FriendlyByteBuf(Unpooled.buffer(buf.readableBytes()));
         buf.readBytes(buildingData, buf.readableBytes());
     }
 
     @Override
-    public void toBytes(@NotNull final PacketBuffer buf)
+    public void toBytes(@NotNull final FriendlyByteBuf buf)
     {
         buf.writeInt(colonyId);
         buf.writeBlockPos(buildingId);

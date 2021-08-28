@@ -26,14 +26,14 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder
 import com.minecolonies.coremod.colony.requestsystem.resolvers.BuildingRequestResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingProductionResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingRequestResolver;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
@@ -160,7 +160,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             handlers.add(workerEntity.getInventory());
         }
 
-        final TileEntity entity = colony.getWorld().getBlockEntity(getID());
+        final BlockEntity entity = colony.getWorld().getBlockEntity(getID());
         if (entity != null)
         {
             final LazyOptional<IItemHandler> handler = entity.getCapability(ITEM_HANDLER_CAPABILITY, null);
@@ -198,7 +198,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     }
 
     @Override
-    public void deserializeNBT(final CompoundNBT compound)
+    public void deserializeNBT(final CompoundTag compound)
     {
         super.deserializeNBT(compound);
 
@@ -206,7 +206,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         {
             try
             {
-                final ListNBT workersTagList = compound.getList(TAG_WORKER, Constants.NBT.TAG_COMPOUND);
+                final ListTag workersTagList = compound.getList(TAG_WORKER, Constants.NBT.TAG_COMPOUND);
                 for (int i = 0; i < workersTagList.size(); ++i)
                 {
                     final ICitizenData data;
@@ -241,15 +241,15 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     }
 
     @Override
-    public CompoundNBT serializeNBT()
+    public CompoundTag serializeNBT()
     {
-        final CompoundNBT compound = super.serializeNBT();
-        @NotNull final ListNBT workersTagList = new ListNBT();
+        final CompoundTag compound = super.serializeNBT();
+        @NotNull final ListTag workersTagList = new ListTag();
         for (@NotNull final ICitizenData data : getAssignedCitizen())
         {
             if (data != null)
             {
-                final CompoundNBT idCompound = new CompoundNBT();
+                final CompoundTag idCompound = new CompoundTag();
                 idCompound.putInt(TAG_WORKER_ID, data.getId());
                 workersTagList.add(idCompound);
             }
@@ -305,7 +305,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     }
 
     @Override
-    public void serializeToView(@NotNull final PacketBuffer buf)
+    public void serializeToView(@NotNull final FriendlyByteBuf buf)
     {
         super.serializeToView(buf);
 

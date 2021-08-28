@@ -18,12 +18,12 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
-import net.minecraft.item.ItemStack;
-import net.minecraft.loot.LootContext;
-import net.minecraft.loot.LootParameters;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.Hand;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import org.jetbrains.annotations.NotNull;
@@ -334,9 +334,9 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
 
         job.setProgress(job.getProgress() + 1);
 
-        worker.setItemInHand(Hand.MAIN_HAND,
+        worker.setItemInHand(InteractionHand.MAIN_HAND,
           currentRecipeStorage.getCleanedInput().get(worker.getRandom().nextInt(currentRecipeStorage.getCleanedInput().size())).getItemStack().copy());
-        worker.setItemInHand(Hand.OFF_HAND, currentRecipeStorage.getPrimaryOutput().copy());
+        worker.setItemInHand(InteractionHand.OFF_HAND, currentRecipeStorage.getPrimaryOutput().copy());
         worker.getCitizenItemHandler().hitBlockWithToolInHand(getOwnBuilding().getPosition());
 
         currentRequest = job.getCurrentTask();
@@ -414,8 +414,8 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
         job.setMaxCraftingCount(0);
         job.setProgress(0);
         job.setCraftCounter(0);
-        worker.setItemInHand(Hand.MAIN_HAND, ItemStackUtils.EMPTY);
-        worker.setItemInHand(Hand.OFF_HAND, ItemStackUtils.EMPTY);
+        worker.setItemInHand(InteractionHand.MAIN_HAND, ItemStackUtils.EMPTY);
+        worker.setItemInHand(InteractionHand.OFF_HAND, ItemStackUtils.EMPTY);
     }
 
     @Override
@@ -476,23 +476,23 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
     {
         if(playerDamageSource == null)
         {
-            FakePlayer fp = FakePlayerFactory.getMinecraft((ServerWorld) this.world);
+            FakePlayer fp = FakePlayerFactory.getMinecraft((ServerLevel) this.world);
             playerDamageSource = DamageSource.playerAttack(fp);
         }
 
-        LootContext.Builder builder =  (new LootContext.Builder((ServerWorld) this.world))
-        .withParameter(LootParameters.ORIGIN, worker.position())
-        .withParameter(LootParameters.THIS_ENTITY, worker)
-        .withParameter(LootParameters.TOOL, worker.getMainHandItem())
+        LootContext.Builder builder =  (new LootContext.Builder((ServerLevel) this.world))
+        .withParameter(LootContextParams.ORIGIN, worker.position())
+        .withParameter(LootContextParams.THIS_ENTITY, worker)
+        .withParameter(LootContextParams.TOOL, worker.getMainHandItem())
         .withRandom(worker.getRandom())
         .withLuck((float) getEffectiveSkillLevel(getPrimarySkillLevel()));
 
         if(includeKiller)
         {
             builder = builder
-                .withParameter(LootParameters.DAMAGE_SOURCE, playerDamageSource)
-                .withParameter(LootParameters.KILLER_ENTITY, playerDamageSource.getEntity())
-                .withParameter(LootParameters.DIRECT_KILLER_ENTITY, playerDamageSource.getDirectEntity());
+                .withParameter(LootContextParams.DAMAGE_SOURCE, playerDamageSource)
+                .withParameter(LootContextParams.KILLER_ENTITY, playerDamageSource.getEntity())
+                .withParameter(LootContextParams.DIRECT_KILLER_ENTITY, playerDamageSource.getDirectEntity());
             }
         
         return builder.create(RecipeStorage.recipeLootParameters);

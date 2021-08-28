@@ -7,15 +7,15 @@ import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingShepherd;
 import com.minecolonies.coremod.colony.jobs.JobShepherd;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.entity.passive.SheepEntity;
-import net.minecraft.item.DyeColor;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.entity.animal.Sheep;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.network.chat.TranslatableComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ import static net.minecraft.entity.passive.SheepEntity.ITEM_BY_DYE;
 /**
  * The AI behind the {@link JobShepherd} for Breeding, Killing and Shearing sheep.
  */
-public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, BuildingShepherd, SheepEntity>
+public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, BuildingShepherd, Sheep>
 {
     /**
      * Max amount of animals per Hut Level.
@@ -92,8 +92,8 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
 
         final IAIState result = super.decideWhatToDo();
 
-        final List<SheepEntity> animals = new ArrayList<>(searchForAnimals());
-        final SheepEntity shearingSheep = animals.stream().filter(sheepie -> !sheepie.isSheared() && !sheepie.isBaby()).findFirst().orElse(null);
+        final List<Sheep> animals = new ArrayList<>(searchForAnimals());
+        final Sheep shearingSheep = animals.stream().filter(sheepie -> !sheepie.isSheared() && !sheepie.isBaby()).findFirst().orElse(null);
 
         if (getOwnBuilding().getSetting(BuildingShepherd.SHEARING).getValue() && result.equals(START_WORKING) && shearingSheep != null)
         {
@@ -110,9 +110,9 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
     }
 
     @Override
-    public Class<SheepEntity> getAnimalClass()
+    public Class<Sheep> getAnimalClass()
     {
-        return SheepEntity.class;
+        return Sheep.class;
     }
 
     /**
@@ -122,21 +122,21 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
      */
     private IAIState shearSheep()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_SHEPHERD_SHEARING));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslatableComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_SHEPHERD_SHEARING));
 
-        final List<SheepEntity> sheeps = searchForAnimals();
+        final List<Sheep> sheeps = searchForAnimals();
 
         if (sheeps.isEmpty())
         {
             return DECIDE;
         }
 
-        if (!equipTool(Hand.MAIN_HAND, ToolType.SHEARS))
+        if (!equipTool(InteractionHand.MAIN_HAND, ToolType.SHEARS))
         {
             return PREPARING;
         }
 
-        final SheepEntity sheep = sheeps.stream().filter(sheepie -> !sheepie.isSheared()).findFirst().orElse(null);
+        final Sheep sheep = sheeps.stream().filter(sheepie -> !sheepie.isSheared()).findFirst().orElse(null);
 
         if (worker.getMainHandItem() != null && sheep != null)
         {
@@ -148,7 +148,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
             int enchantmentLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.BLOCK_FORTUNE, worker.getMainHandItem());
             enchantmentLevel *= Math.max(1.0, (getPrimarySkillLevel() / 5.0));
 
-            worker.swing(Hand.MAIN_HAND);
+            worker.swing(InteractionHand.MAIN_HAND);
 
             final List<ItemStack> items = new ArrayList<>();
             if (!this.world.isClientSide)
@@ -165,7 +165,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
 
             dyeSheepChance(sheep);
 
-            worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, 1);
+            worker.getCitizenItemHandler().damageItemInHand(InteractionHand.MAIN_HAND, 1);
 
             worker.getCitizenExperienceHandler().addExperience(XP_PER_ACTION);
             incrementActionsDoneAndDecSaturation();
@@ -184,7 +184,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
      *
      * @param sheep the {@link SheepEntity} to possibly dye.
      */
-    private void dyeSheepChance(final SheepEntity sheep)
+    private void dyeSheepChance(final Sheep sheep)
     {
         if (worker.getCitizenColonyHandler().getWorkBuilding() != null && getOwnBuilding().getSetting(BuildingShepherd.DYEING).getValue())
         {

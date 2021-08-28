@@ -18,13 +18,13 @@ import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructureWithWor
 import com.minecolonies.coremod.util.AdvancementUtils;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.*;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.TranslatableComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,6 +37,13 @@ import static com.minecolonies.api.util.constant.TranslationConstants.INVALID_MI
 import static com.minecolonies.api.util.constant.TranslationConstants.NEEDS_BETTER_HUT;
 import static com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner.initStructure;
 import static com.minecolonies.coremod.util.WorkerUtil.getLastLadder;
+
+import net.minecraft.world.level.block.AirBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.level.block.LadderBlock;
+import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * Class which handles the miner behaviour.
@@ -147,7 +154,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
 
         if (getOwnBuilding().getLadderLocation() == null || getOwnBuilding().getCobbleLocation() == null)
         {
-            worker.getCitizenData().triggerInteraction(new StandardInteraction(new TranslationTextComponent(INVALID_MINESHAFT), ChatPriority.BLOCKING));
+            worker.getCitizenData().triggerInteraction(new StandardInteraction(new TranslatableComponent(INVALID_MINESHAFT), ChatPriority.BLOCKING));
             return START_WORKING;
         }
 
@@ -240,7 +247,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
 
         if (!mineBlock(blockToMine, getCurrentWorkingPosition()))
         {
-            worker.swing(Hand.MAIN_HAND);
+            worker.swing(InteractionHand.MAIN_HAND);
             return getState();
         }
 
@@ -323,7 +330,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
             }
             //Get ladder orientation
             final BlockState metadata = Blocks.LADDER.defaultBlockState()
-                                          .setValue(HorizontalBlock.FACING,
+                                          .setValue(HorizontalDirectionalBlock.FACING,
                                             Direction.getNearest(nextLadder.getX() - nextCobble.getX(), 0, nextLadder.getZ() - nextCobble.getZ()));
             setBlockFromInventory(nextLadder, Blocks.LADDER, metadata);
             return getState();
@@ -361,7 +368,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
             //If the miner hut has been placed too deep.
             if (buildingMiner.getFirstModuleOccurance(MinerLevelManagementModule.class).getNumberOfLevels() == 0)
             {
-                worker.getCitizenData().triggerInteraction(new StandardInteraction(new TranslationTextComponent(NEEDS_BETTER_HUT), ChatPriority.BLOCKING));
+                worker.getCitizenData().triggerInteraction(new StandardInteraction(new TranslatableComponent(NEEDS_BETTER_HUT), ChatPriority.BLOCKING));
                 return IDLE;
             }
             worker.getCitizenData().setVisibleStatus(MINING);
@@ -386,7 +393,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
 
     private IAIState doShaftMining()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.mining"));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslatableComponent("com.minecolonies.coremod.status.mining"));
 
         minerWorkingLocation = getNextBlockInShaftToMine();
         if (minerWorkingLocation == null)

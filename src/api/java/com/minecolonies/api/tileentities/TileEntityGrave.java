@@ -9,20 +9,20 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.WorldUtil;
 import io.netty.buffer.Unpooled;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.network.play.server.SUpdateTileEntityPacket;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.network.Connection;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 
@@ -48,7 +48,7 @@ public class TileEntityGrave extends AbstractTileEntityGrave
      */
     private static final String TAG_GRAVE_DATA = "gravedata";
 
-    public TileEntityGrave(final TileEntityType<? extends TileEntityGrave> type)
+    public TileEntityGrave(final BlockEntityType<? extends TileEntityGrave> type)
     {
         super(type);
     }
@@ -136,15 +136,15 @@ public class TileEntityGrave extends AbstractTileEntityGrave
     }
 
     @Override
-    public void load(final BlockState state, final CompoundNBT compound)
+    public void load(final BlockState state, final CompoundTag compound)
     {
         super.load(state, compound);
         inventory = createInventory(DEFAULT_SIZE);
 
-        final ListNBT inventoryTagList = compound.getList(TAG_INVENTORY, TAG_COMPOUND);
+        final ListTag inventoryTagList = compound.getList(TAG_INVENTORY, TAG_COMPOUND);
         for (int i = 0; i < inventoryTagList.size(); i++)
         {
-            final CompoundNBT inventoryCompound = inventoryTagList.getCompound(i);
+            final CompoundTag inventoryCompound = inventoryTagList.getCompound(i);
             if (!inventoryCompound.contains(TAG_EMPTY))
             {
                 final ItemStack stack = ItemStack.of(inventoryCompound);
@@ -165,14 +165,14 @@ public class TileEntityGrave extends AbstractTileEntityGrave
 
     @NotNull
     @Override
-    public CompoundNBT save(final CompoundNBT compound)
+    public CompoundTag save(final CompoundTag compound)
     {
         super.save(compound);
 
-        @NotNull final ListNBT inventoryTagList = new ListNBT();
+        @NotNull final ListTag inventoryTagList = new ListTag();
         for (int slot = 0; slot < inventory.getSlots(); slot++)
         {
-            @NotNull final CompoundNBT inventoryCompound = new CompoundNBT();
+            @NotNull final CompoundTag inventoryCompound = new CompoundTag();
             final ItemStack stack = inventory.getStackInSlot(slot);
             if (stack.isEmpty())
             {
@@ -197,27 +197,27 @@ public class TileEntityGrave extends AbstractTileEntityGrave
     }
 
     @Override
-    public SUpdateTileEntityPacket getUpdatePacket()
+    public ClientboundBlockEntityDataPacket getUpdatePacket()
     {
-        final CompoundNBT compound = new CompoundNBT();
-        return new SUpdateTileEntityPacket(this.worldPosition, 0, this.save(compound));
+        final CompoundTag compound = new CompoundTag();
+        return new ClientboundBlockEntityDataPacket(this.worldPosition, 0, this.save(compound));
     }
 
     @NotNull
     @Override
-    public CompoundNBT getUpdateTag()
+    public CompoundTag getUpdateTag()
     {
-        return this.save(new CompoundNBT());
+        return this.save(new CompoundTag());
     }
 
     @Override
-    public void onDataPacket(final NetworkManager net, final SUpdateTileEntityPacket packet)
+    public void onDataPacket(final Connection net, final ClientboundBlockEntityDataPacket packet)
     {
         this.load(getBlockState(), packet.getTag());
     }
 
     @Override
-    public void handleUpdateTag(final BlockState state, final CompoundNBT tag)
+    public void handleUpdateTag(final BlockState state, final CompoundTag tag)
     {
         this.load(state, tag);
     }
@@ -230,9 +230,9 @@ public class TileEntityGrave extends AbstractTileEntityGrave
 
     @Nullable
     @Override
-    public Container createMenu(final int id, @NotNull final PlayerInventory inv, @NotNull final PlayerEntity player)
+    public AbstractContainerMenu createMenu(final int id, @NotNull final Inventory inv, @NotNull final Player player)
     {
-        final PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
+        final FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
         buffer.writeBlockPos(this.getBlockPos());
 
         return new ContainerGrave(id, inv, buffer);
@@ -240,9 +240,9 @@ public class TileEntityGrave extends AbstractTileEntityGrave
 
     @NotNull
     @Override
-    public ITextComponent getDisplayName()
+    public Component getDisplayName()
     {
-        return new StringTextComponent("Grave");
+        return new TextComponent("Grave");
     }
 
     /**

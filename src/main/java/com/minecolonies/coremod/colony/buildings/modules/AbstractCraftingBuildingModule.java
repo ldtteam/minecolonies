@@ -29,18 +29,18 @@ import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingProductionResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingRequestResolver;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.loot.LootContext;
-import net.minecraft.loot.LootParameters;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -173,10 +173,10 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
     }
 
     @Override
-    public void serializeNBT(@NotNull final CompoundNBT compound)
+    public void serializeNBT(@NotNull final CompoundTag compound)
     {
-        final CompoundNBT moduleCompound = new CompoundNBT();
-        @NotNull final ListNBT recipesTagList = recipes.stream()
+        final CompoundTag moduleCompound = new CompoundTag();
+        @NotNull final ListTag recipesTagList = recipes.stream()
                                                   .map(iToken -> StandardFactoryController.getInstance().serialize(iToken))
                                                   .collect(NBTUtils.toListNBT());
         moduleCompound.put(TAG_RECIPES, recipesTagList);
@@ -184,12 +184,12 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
     }
 
     @Override
-    public void deserializeNBT(CompoundNBT compound)
+    public void deserializeNBT(CompoundTag compound)
     {
 
 
-        final CompoundNBT compoundNBT = compound.getCompound(getId());
-        final ListNBT recipesTags = compoundNBT.getList(TAG_RECIPES, Constants.NBT.TAG_COMPOUND);
+        final CompoundTag compoundNBT = compound.getCompound(getId());
+        final ListTag recipesTags = compoundNBT.getList(TAG_RECIPES, Constants.NBT.TAG_COMPOUND);
 
 
         for (int i = 0; i < recipesTags.size(); i++)
@@ -204,7 +204,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
     }
 
     @Override
-    public void serializeToView(@NotNull final PacketBuffer buf)
+    public void serializeToView(@NotNull final FriendlyByteBuf buf)
     {
         final IJob<?> job = getMainBuildingJob().orElse(null);
         if (job != null)
@@ -502,13 +502,13 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
                 replaceRecipe(recipe.getToken(), IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage));
 
                 // Expected parameters for RECIPE_IMPROVED are Job, Result, Ingredient, Citizen
-                final TranslationTextComponent message = new TranslationTextComponent(RECIPE_IMPROVED + citizen.getRandom().nextInt(3),
-                  new TranslationTextComponent(citizen.getJob().getName().toLowerCase()),
+                final TranslatableComponent message = new TranslatableComponent(RECIPE_IMPROVED + citizen.getRandom().nextInt(3),
+                  new TranslatableComponent(citizen.getJob().getName().toLowerCase()),
                   recipe.getPrimaryOutput().getHoverName(),
                   reducedItem.getItemStack().getHoverName(),
                   citizen.getName());
 
-                for(PlayerEntity player : building.getColony().getMessagePlayerEntities())
+                for(Player player : building.getColony().getMessagePlayerEntities())
                 {
                     player.sendMessage(message, player.getUUID());
                 }
@@ -646,10 +646,10 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         final int primarySkill =worker.getCitizenData().getCitizenSkillHandler().getLevel(building.getPrimarySkill());
         final int luck = (int)(((primarySkill + 1) * 2) - Math.pow((primarySkill + 1 ) / 10.0, 2));
 
-        LootContext.Builder builder =  (new LootContext.Builder((ServerWorld) building.getColony().getWorld())
-                                          .withParameter(LootParameters.ORIGIN, worker.position())
-                                          .withParameter(LootParameters.THIS_ENTITY, worker)
-                                          .withParameter(LootParameters.TOOL, worker.getMainHandItem())
+        LootContext.Builder builder =  (new LootContext.Builder((ServerLevel) building.getColony().getWorld())
+                                          .withParameter(LootContextParams.ORIGIN, worker.position())
+                                          .withParameter(LootContextParams.THIS_ENTITY, worker)
+                                          .withParameter(LootContextParams.TOOL, worker.getMainHandItem())
                                           .withRandom(worker.getRandom())
                                           .withLuck((float) luck));
 

@@ -7,14 +7,14 @@ import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.workorders.WorkOrderView;
 import com.minecolonies.api.network.IMessage;
-import net.minecraft.block.Block;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.scoreboard.ScorePlayerTeam;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.scores.PlayerTeam;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.core.BlockPos;
+import net.minecraft.ChatFormatting;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -69,7 +69,7 @@ public interface IColonyView extends IColony
      *
      * @return dimension ID of the view.
      */
-    RegistryKey<World> getDimension();
+    ResourceKey<Level> getDimension();
 
     /**
      * Getter for the manual hiring or not.
@@ -216,7 +216,7 @@ public interface IColonyView extends IColony
      * @return null == no response.
      */
     @Nullable
-    IMessage handleColonyViewMessage(@NotNull PacketBuffer buf, @NotNull World world, boolean isNewSubscription);
+    IMessage handleColonyViewMessage(@NotNull FriendlyByteBuf buf, @NotNull Level world, boolean isNewSubscription);
 
     /**
      * Update permissions.
@@ -225,7 +225,7 @@ public interface IColonyView extends IColony
      * @return null == no response
      */
     @Nullable
-    IMessage handlePermissionsViewMessage(@NotNull PacketBuffer buf);
+    IMessage handlePermissionsViewMessage(@NotNull FriendlyByteBuf buf);
 
     /**
      * Update a ColonyView's workOrders given a network data ColonyView update packet. This uses a full-replacement - workOrders do not get updated and are instead overwritten.
@@ -234,7 +234,7 @@ public interface IColonyView extends IColony
      * @return null == no response.
      */
     @Nullable
-    IMessage handleColonyViewWorkOrderMessage(PacketBuffer buf);
+    IMessage handleColonyViewWorkOrderMessage(FriendlyByteBuf buf);
 
     /**
      * Update a ColonyView's citizens given a network data ColonyView update packet. This uses a full-replacement - citizens do not get updated and are instead overwritten.
@@ -244,14 +244,14 @@ public interface IColonyView extends IColony
      * @return null == no response.
      */
     @Nullable
-    IMessage handleColonyViewCitizensMessage(int id, PacketBuffer buf);
+    IMessage handleColonyViewCitizensMessage(int id, FriendlyByteBuf buf);
 
     /**
      * Handles visitor view messages
      * @param refresh if all need to be refreshed.
      * @param visitorViewData the new data to set
      */
-    void handleColonyViewVisitorMessage(final PacketBuffer visitorViewData, final boolean refresh);
+    void handleColonyViewVisitorMessage(final FriendlyByteBuf visitorViewData, final boolean refresh);
 
     /**
      * Remove a citizen from the ColonyView.
@@ -288,7 +288,7 @@ public interface IColonyView extends IColony
      * @return null == no response.
      */
     @Nullable
-    IMessage handleColonyBuildingViewMessage(BlockPos buildingId, @NotNull PacketBuffer buf);
+    IMessage handleColonyBuildingViewMessage(BlockPos buildingId, @NotNull FriendlyByteBuf buf);
 
     /**
      * Update a players permissions.
@@ -322,7 +322,7 @@ public interface IColonyView extends IColony
      *
      * @return the color.
      */
-    TextFormatting getTeamColonyColor();
+    ChatFormatting getTeamColonyColor();
 
     /**
      * Sets the name of the view.
@@ -336,7 +336,7 @@ public interface IColonyView extends IColony
     IPermissions getPermissions();
 
     @Override
-    boolean isCoordInColony(@NotNull World w, @NotNull BlockPos pos);
+    boolean isCoordInColony(@NotNull Level w, @NotNull BlockPos pos);
 
     @Override
     long getDistanceSquared(@NotNull BlockPos pos);
@@ -356,13 +356,13 @@ public interface IColonyView extends IColony
     boolean hasWarehouse();
 
     @Override
-    ScorePlayerTeam getTeam();
+    PlayerTeam getTeam();
 
     @Override
     int getLastContactInHours();
 
     @Override
-    World getWorld();
+    Level getWorld();
 
     @NotNull
     @Override
@@ -379,10 +379,10 @@ public interface IColonyView extends IColony
     IRequester getRequesterBuildingForPosition(@NotNull BlockPos pos);
 
     @Override
-    void removeVisitingPlayer(PlayerEntity player);
+    void removeVisitingPlayer(Player player);
 
     @Override
-    void addVisitingPlayer(PlayerEntity player);
+    void addVisitingPlayer(Player player);
 
     /**
      * Get a list of all barb spawn positions in the colony view.

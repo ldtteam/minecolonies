@@ -1,15 +1,15 @@
 package com.minecolonies.coremod.client.render.mobs.pirates;
 
 import com.minecolonies.api.entity.mobs.pirates.AbstractEntityPirate;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.client.renderer.entity.model.BipedModel;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Renderer used for Barbarians And Archer Barbarians.
  */
-public class RendererArcherPirate extends AbstractRendererPirate<AbstractEntityPirate, BipedModel<AbstractEntityPirate>>
+public class RendererArcherPirate extends AbstractRendererPirate<AbstractEntityPirate, HumanoidModel<AbstractEntityPirate>>
 {
     /**
      * Texture of the entity.
@@ -24,9 +24,9 @@ public class RendererArcherPirate extends AbstractRendererPirate<AbstractEntityP
      *
      * @param renderManagerIn the renderManager
      */
-    public RendererArcherPirate(final EntityRendererManager renderManagerIn)
+    public RendererArcherPirate(final EntityRenderDispatcher renderManagerIn)
     {
-        super(renderManagerIn, new BipedModel<>(1.0F), 0.5F);
+        super(renderManagerIn, new HumanoidModel<>(1.0F), 0.5F);
     }
 
     @NotNull

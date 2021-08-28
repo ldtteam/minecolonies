@@ -9,9 +9,9 @@ import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingsModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -73,7 +73,7 @@ public class PlantationSetting extends StringSetting
         }
         else
         {
-            pane.findPaneOfTypeByID("trigger", ButtonImage.class).setText(new TranslationTextComponent(getSettings().get(getCurrentIndex())));
+            pane.findPaneOfTypeByID("trigger", ButtonImage.class).setText(new TranslatableComponent(getSettings().get(getCurrentIndex())));
         }
     }
 
@@ -82,18 +82,18 @@ public class PlantationSetting extends StringSetting
      *
      * @return the combined setting.
      */
-    private IFormattableTextComponent getCombinedSetting()
+    private MutableComponent getCombinedSetting()
     {
-        final IFormattableTextComponent component = new TranslationTextComponent("");
+        final MutableComponent component = new TranslatableComponent("");
         for (int i = 0; i < getSettings().size(); i++)
         {
             if (i != getCurrentIndex())
             {
                 if (!component.getSiblings().isEmpty())
                 {
-                    component.append(new StringTextComponent(" & "));
+                    component.append(new TextComponent(" & "));
                 }
-                component.append(new TranslationTextComponent(getSettings().get(i)));
+                component.append(new TranslatableComponent(getSettings().get(i)));
             }
         }
 

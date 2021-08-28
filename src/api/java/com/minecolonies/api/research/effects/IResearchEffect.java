@@ -1,9 +1,9 @@
 package com.minecolonies.api.research.effects;
 
 import com.minecolonies.api.research.effects.registry.ResearchEffectEntry;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.TranslatableComponent;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -39,14 +39,14 @@ public interface IResearchEffect<T>
      *
      * @return the desc.
      */
-    TranslationTextComponent getDesc();
+    TranslatableComponent getDesc();
 
     /**
      * Human-readable effect subtitle description, or a translation key.
      *
      * @return the Subtitle desc.
      */
-    TranslationTextComponent getSubtitle();
+    TranslatableComponent getSubtitle();
 
     /**
      * Does this effect override another effect with the same id?
@@ -67,5 +67,5 @@ public interface IResearchEffect<T>
      * Write the ResearchEffect's traits to NBT, to simplify serialization for client-viewable data.
      * @return an NBT file containing at least the necessary traits to reassemble user-visible traits of the effect.
      */
-    CompoundNBT writeToNBT();
+    CompoundTag writeToNBT();
 }

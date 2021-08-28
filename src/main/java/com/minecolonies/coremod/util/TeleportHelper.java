@@ -6,14 +6,14 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.EntityUtils;
-import net.minecraft.block.material.Material;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraft.world.server.TicketType;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.TicketType;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -31,7 +31,7 @@ public final class TeleportHelper
         // Intentionally left empty.
     }
 
-    public static boolean teleportCitizen(final AbstractEntityCitizen citizen, final World world, final BlockPos location)
+    public static boolean teleportCitizen(final AbstractEntityCitizen citizen, final Level world, final BlockPos location)
     {
         if (citizen == null || world == null || world.isClientSide)
         {
@@ -74,7 +74,7 @@ public final class TeleportHelper
      *
      * @param player the player to teleport home.
      */
-    public static void homeTeleport(@NotNull final ServerPlayerEntity player)
+    public static void homeTeleport(@NotNull final ServerPlayer player)
     {
         final IColony colony = IColonyManager.getInstance().getIColonyByOwner(player.getCommandSenderWorld(), player);
         if (colony == null)
@@ -89,10 +89,10 @@ public final class TeleportHelper
     /**
      * Teleports the player to the nearest safe surface location above their current location
      */
-    public static void surfaceTeleport(@NotNull final ServerPlayerEntity player)
+    public static void surfaceTeleport(@NotNull final ServerPlayer player)
     {
         BlockPos position = new BlockPos(player.getX(), 250, player.getZ()); //start at current position
-        final ServerWorld world = player.getLevel();
+        final ServerLevel world = player.getLevel();
 
         position = BlockPosUtil.findLand(position, world);
 
@@ -114,7 +114,7 @@ public final class TeleportHelper
      * @param player    the player to teleport.
      * @param id        the colony id.
      */
-    public static void colonyTeleportByID(@NotNull final ServerPlayerEntity player, final int id, final RegistryKey<World> dimension)
+    public static void colonyTeleportByID(@NotNull final ServerPlayer player, final int id, final ResourceKey<Level> dimension)
     {
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(id, dimension);
         if (colony == null)
@@ -132,7 +132,7 @@ public final class TeleportHelper
      * @param colony the colony to teleport to.
      * @param player the player to teleport.
      */
-    public static void colonyTeleport(@NotNull final ServerPlayerEntity player, @NotNull final IColony colony)
+    public static void colonyTeleport(@NotNull final ServerPlayer player, @NotNull final IColony colony)
     {
         BlockPos position;
 
@@ -145,7 +145,7 @@ public final class TeleportHelper
             position = colony.getCenter();
         }
 
-        final ServerWorld world = player.getServer().getLevel(colony.getDimension());
+        final ServerLevel world = player.getServer().getLevel(colony.getDimension());
 
         position = BlockPosUtil.findAround(world,
           position,

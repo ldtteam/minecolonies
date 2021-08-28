@@ -4,17 +4,19 @@ import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.entity.mobs.RaiderMobUtils;
 import com.minecolonies.api.entity.mobs.barbarians.AbstractEntityBarbarian;
 import com.minecolonies.api.items.IChiefSwordItem;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemTier;
-import net.minecraft.item.SwordItem;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Tiers;
+import net.minecraft.world.item.SwordItem;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.Constants.*;
+
+import net.minecraft.world.item.Item.Properties;
 
 /**
  * Class handling the Chief Sword item.
@@ -31,26 +33,26 @@ public class ItemChiefSword extends SwordItem implements IChiefSwordItem
      */
     public ItemChiefSword(final Properties properties)
     {
-        super(ItemTier.DIAMOND, 3, -2.4f, properties.tab(ModCreativeTabs.MINECOLONIES));
+        super(Tiers.DIAMOND, 3, -2.4f, properties.tab(ModCreativeTabs.MINECOLONIES));
         setRegistryName(CHIEFSWORD_NAME);
     }
 
     @Override
-    public void inventoryTick(final ItemStack stack, final World worldIn, final Entity entityIn, final int itemSlot, final boolean isSelected)
+    public void inventoryTick(final ItemStack stack, final Level worldIn, final Entity entityIn, final int itemSlot, final boolean isSelected)
     {
-        if (entityIn instanceof PlayerEntity && isSelected)
+        if (entityIn instanceof Player && isSelected)
         {
             RaiderMobUtils.getBarbariansCloseToEntity(entityIn, GLOW_EFFECT_DISTANCE)
-              .forEach(entity -> entity.addEffect(new EffectInstance(GLOW_EFFECT, GLOW_EFFECT_DURATION, GLOW_EFFECT_MULTIPLIER)));
+              .forEach(entity -> entity.addEffect(new MobEffectInstance(GLOW_EFFECT, GLOW_EFFECT_DURATION, GLOW_EFFECT_MULTIPLIER)));
         }
     }
 
     @Override
     public boolean hurtEnemy(final ItemStack stack, final LivingEntity target, @NotNull final LivingEntity attacker)
     {
-        if (attacker instanceof PlayerEntity && target instanceof AbstractEntityBarbarian)
+        if (attacker instanceof Player && target instanceof AbstractEntityBarbarian)
         {
-            target.addEffect(new EffectInstance(LEVITATION_EFFECT, LEVITATION_EFFECT_DURATION, LEVITATION_EFFECT_MULTIPLIER));
+            target.addEffect(new MobEffectInstance(LEVITATION_EFFECT, LEVITATION_EFFECT_DURATION, LEVITATION_EFFECT_MULTIPLIER));
         }
 
         return super.hurtEnemy(stack, target, attacker);

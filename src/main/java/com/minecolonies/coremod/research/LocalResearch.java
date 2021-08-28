@@ -6,7 +6,7 @@ import com.minecolonies.api.research.ILocalResearchTree;
 import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.research.effects.IResearchEffectManager;
 import com.minecolonies.api.research.util.ResearchState;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * The implementation of the ILocalResearch interface which represents one type of research, stored in each colony.

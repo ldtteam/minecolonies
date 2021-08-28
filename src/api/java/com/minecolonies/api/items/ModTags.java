@@ -3,10 +3,10 @@ package com.minecolonies.api.items;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.minecraft.block.Block;
-import net.minecraft.entity.EntityType;
-import net.minecraft.item.Item;
-import net.minecraft.tags.ITag;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.Item;
+import net.minecraft.tags.Tag;
 
 public class ModTags
 {
@@ -15,26 +15,26 @@ public class ModTags
      */
     public static boolean tagsLoaded = false;
 
-    public static ITag<Block> decorationItems;
-    public static ITag<Item>  concretePowder;
-    public static ITag<Block> concreteBlock;
-    public static ITag<Block> pathingBlocks;
+    public static Tag<Block> decorationItems;
+    public static Tag<Item>  concretePowder;
+    public static Tag<Block> concreteBlock;
+    public static Tag<Block> pathingBlocks;
 
-    public static ITag<Block> colonyProtectionException;
-    public static ITag<Block> indestructible;
+    public static Tag<Block> colonyProtectionException;
+    public static Tag<Block> indestructible;
 
-    public static ITag<Block> oreChanceBlocks;
+    public static Tag<Block> oreChanceBlocks;
 
-    public static ITag<Item> fungi;
+    public static Tag<Item> fungi;
 
-    public static ITag<Item> meshes;
+    public static Tag<Item> meshes;
 
-    public static ITag<Item> floristFlowers;
+    public static Tag<Item> floristFlowers;
 
-    public static ITag<EntityType<?>> hostile;
+    public static Tag<EntityType<?>> hostile;
 
-    public static final Map<String, ITag<Item>> crafterProduct              = new HashMap<>();
-    public static final Map<String, ITag<Item>> crafterProductExclusions    = new HashMap<>();
-    public static final Map<String, ITag<Item>> crafterIngredient           = new HashMap<>();
-    public static final Map<String, ITag<Item>> crafterIngredientExclusions = new HashMap<>();
+    public static final Map<String, Tag<Item>> crafterProduct              = new HashMap<>();
+    public static final Map<String, Tag<Item>> crafterProductExclusions    = new HashMap<>();
+    public static final Map<String, Tag<Item>> crafterIngredient           = new HashMap<>();
+    public static final Map<String, Tag<Item>> crafterIngredientExclusions = new HashMap<>();
 }

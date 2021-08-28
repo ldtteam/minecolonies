@@ -1,6 +1,6 @@
 package com.minecolonies.api.colony.buildings.modules;
 
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * Client side version of the abstract class for all buildings which require a filterable list of allowed items.

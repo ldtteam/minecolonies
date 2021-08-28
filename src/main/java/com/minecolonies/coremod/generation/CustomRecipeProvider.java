@@ -8,15 +8,15 @@ import com.google.gson.JsonObject;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.crafting.CustomRecipe;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.DirectoryCache;
-import net.minecraft.data.IDataProvider;
-import net.minecraft.data.IFinishedRecipe;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.data.HashCache;
+import net.minecraft.data.DataProvider;
+import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -33,7 +33,7 @@ import java.util.function.Consumer;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
-public abstract class CustomRecipeProvider implements IDataProvider
+public abstract class CustomRecipeProvider implements DataProvider
 {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Gson GSON = (new GsonBuilder()).setPrettyPrinting().create();
@@ -45,7 +45,7 @@ public abstract class CustomRecipeProvider implements IDataProvider
     }
 
     @Override
-    public void run(final DirectoryCache cache) throws IOException
+    public void run(final HashCache cache) throws IOException
     {
         final Path path = this.generator.getOutputFolder();
         final Set<ResourceLocation> set = Sets.newHashSet();
@@ -62,7 +62,7 @@ public abstract class CustomRecipeProvider implements IDataProvider
         });
     }
 
-    private static void saveRecipe(final DirectoryCache cache, final JsonObject jsonObject, final Path recipeJson)
+    private static void saveRecipe(final HashCache cache, final JsonObject jsonObject, final Path recipeJson)
     {
         try
         {
@@ -91,7 +91,7 @@ public abstract class CustomRecipeProvider implements IDataProvider
         return "CustomRecipes";
     }
 
-    protected abstract void registerRecipes(final Consumer<IFinishedRecipe> consumer);
+    protected abstract void registerRecipes(final Consumer<FinishedRecipe> consumer);
 
     public static class CustomRecipeBuilder
     {
@@ -200,7 +200,7 @@ public abstract class CustomRecipeProvider implements IDataProvider
             return this;
         }
 
-        public void build(@NotNull final Consumer<IFinishedRecipe> consumer)
+        public void build(@NotNull final Consumer<FinishedRecipe> consumer)
         {
             this.json.addProperty(CustomRecipe.RECIPE_INTERMEDIATE_PROP, this.intermediate.getRegistryName().toString());
             consumer.accept(new Result(this.json, this.id));
@@ -259,7 +259,7 @@ public abstract class CustomRecipeProvider implements IDataProvider
             return jsonItemStorages;
         }
 
-        private static class Result implements IFinishedRecipe
+        private static class Result implements FinishedRecipe
         {
             final JsonObject json;
             final ResourceLocation id;
@@ -290,7 +290,7 @@ public abstract class CustomRecipeProvider implements IDataProvider
             }
 
             @Override
-            public IRecipeSerializer<?> getType()
+            public RecipeSerializer<?> getType()
             {
                 return null;
             }

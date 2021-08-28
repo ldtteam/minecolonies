@@ -10,7 +10,7 @@ import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerVie
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLibrary;
 import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMessage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 
 /**
  * Window for the citizen.
@@ -29,23 +29,23 @@ public abstract class AbstractWindowCitizen extends AbstractWindowRequestTree
 
         registerButton("mainTab", () -> new MainWindowCitizen(citizen).open());
         registerButton("mainIcon", () -> new MainWindowCitizen(citizen).open());
-        PaneBuilders.tooltipBuilder().hoverPane(findPaneByID("mainIcon")).build().setText(new TranslationTextComponent("com.minecolonies.coremod.gui.citizen.main"));
+        PaneBuilders.tooltipBuilder().hoverPane(findPaneByID("mainIcon")).build().setText(new TranslatableComponent("com.minecolonies.coremod.gui.citizen.main"));
 
         registerButton("requestTab", () -> new RequestWindowCitizen(citizen).open());
         registerButton("requestIcon", () -> new RequestWindowCitizen(citizen).open());
-        PaneBuilders.tooltipBuilder().hoverPane(findPaneByID("requestIcon")).build().setText(new TranslationTextComponent("com.minecolonies.coremod.gui.citizen.requests"));
+        PaneBuilders.tooltipBuilder().hoverPane(findPaneByID("requestIcon")).build().setText(new TranslatableComponent("com.minecolonies.coremod.gui.citizen.requests"));
 
         registerButton("inventoryTab", () -> Network.getNetwork().sendToServer(new OpenInventoryMessage(colony, citizen.getName(), citizen.getEntityId())));
         registerButton("inventoryIcon", () -> Network.getNetwork().sendToServer(new OpenInventoryMessage(colony, citizen.getName(), citizen.getEntityId())));
-        PaneBuilders.tooltipBuilder().hoverPane(findPaneByID("inventoryIcon")).build().setText(new TranslationTextComponent("com.minecolonies.coremod.gui.citizen.inventory"));
+        PaneBuilders.tooltipBuilder().hoverPane(findPaneByID("inventoryIcon")).build().setText(new TranslatableComponent("com.minecolonies.coremod.gui.citizen.inventory"));
 
         registerButton("happinessTab", () -> new HappinessWindowCitizen(citizen).open());
         registerButton("happinessIcon", () -> new HappinessWindowCitizen(citizen).open());
-        PaneBuilders.tooltipBuilder().hoverPane(findPaneByID("happinessIcon")).build().setText(new TranslationTextComponent("com.minecolonies.coremod.gui.citizen.happiness"));
+        PaneBuilders.tooltipBuilder().hoverPane(findPaneByID("happinessIcon")).build().setText(new TranslatableComponent("com.minecolonies.coremod.gui.citizen.happiness"));
 
         registerButton("familyTab", () -> new FamilyWindowCitizen(citizen).open());
         registerButton("familyIcon", () -> new FamilyWindowCitizen(citizen).open());
-        PaneBuilders.tooltipBuilder().hoverPane(findPaneByID("familyIcon")).build().setText(new TranslationTextComponent("com.minecolonies.coremod.gui.citizen.family"));
+        PaneBuilders.tooltipBuilder().hoverPane(findPaneByID("familyIcon")).build().setText(new TranslatableComponent("com.minecolonies.coremod.gui.citizen.family"));
 
         final IBuildingView building = colony.getBuilding(citizen.getWorkBuilding());
 
@@ -56,7 +56,7 @@ public abstract class AbstractWindowCitizen extends AbstractWindowRequestTree
 
             registerButton("jobTab", () -> new JobWindowCitizen(citizen).open());
             registerButton("jobIcon", () -> new JobWindowCitizen(citizen).open());
-            PaneBuilders.tooltipBuilder().hoverPane(findPaneByID("jobIcon")).build().setText(new TranslationTextComponent("com.minecolonies.coremod.gui.citizen.job"));
+            PaneBuilders.tooltipBuilder().hoverPane(findPaneByID("jobIcon")).build().setText(new TranslatableComponent("com.minecolonies.coremod.gui.citizen.job"));
         }
         else
         {

@@ -2,84 +2,84 @@ package com.minecolonies.coremod.client.model;
 
 import com.minecolonies.api.client.render.modeltype.CitizenModel;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.client.model.geom.ModelPart;
 import org.jetbrains.annotations.NotNull;
 
 public class ModelEntityLumberjackMale extends CitizenModel<AbstractEntityCitizen>
 {
     public ModelEntityLumberjackMale()
     {
-        ModelRenderer Log1;
-        ModelRenderer Log2;
-        ModelRenderer Log3;
-        ModelRenderer Basket1;
-        ModelRenderer Basket2;
-        ModelRenderer Basket3;
-        ModelRenderer Basket4;
-        ModelRenderer Basket5;
-        ModelRenderer Basket6;
-        ModelRenderer Basket7;
-        ModelRenderer Basket8;
-        ModelRenderer Basket9;
-        ModelRenderer Basket10;
-        ModelRenderer Basket11;
-        ModelRenderer BasketE1;
-        ModelRenderer BasketE2;
+        ModelPart Log1;
+        ModelPart Log2;
+        ModelPart Log3;
+        ModelPart Basket1;
+        ModelPart Basket2;
+        ModelPart Basket3;
+        ModelPart Basket4;
+        ModelPart Basket5;
+        ModelPart Basket6;
+        ModelPart Basket7;
+        ModelPart Basket8;
+        ModelPart Basket9;
+        ModelPart Basket10;
+        ModelPart Basket11;
+        ModelPart BasketE1;
+        ModelPart BasketE2;
 
         texWidth = 64;
         texHeight = 64;
 
-        head = new ModelRenderer(this, 0, 0);
+        head = new ModelPart(this, 0, 0);
         head.addBox(-4F, -8F, -4F, 8, 8, 8);
         head.setPos(0F, 0F, 0F);
         head.setTexSize(64, 64);
         setRotation(head, 0F, 0F, 0F);
 
-        hat = new ModelRenderer(this, 32, 0);
+        hat = new ModelPart(this, 32, 0);
         hat.addBox(-4F, -8F, -4F, 8, 8, 8, 0.5F);
         hat.setPos(0F, 0F, 0F);
         hat.setTexSize(64, 64);
         setRotation(hat, 0F, 0F, 0F);
 
-        body = new ModelRenderer(this, 16, 16);
+        body = new ModelPart(this, 16, 16);
         body.addBox(-4F, 0F, -2F, 8, 12, 4);
         body.setPos(0F, 0F, 0F);
         body.setTexSize(64, 64);
         setRotation(body, 0F, 0F, 0F);
 
-        rightArm = new ModelRenderer(this, 40, 16);
+        rightArm = new ModelPart(this, 40, 16);
         rightArm.addBox(-3F, -2F, -2F, 4, 12, 4);
         rightArm.setPos(-5F, 2F, 0F);
         rightArm.setTexSize(64, 64);
         setRotation(rightArm, 0F, 0F, 0F);
 
-        leftArm = new ModelRenderer(this, 40, 16);
+        leftArm = new ModelPart(this, 40, 16);
         leftArm.mirror = true;
         leftArm.addBox(-1F, -2F, -2F, 4, 12, 4);
         leftArm.setPos(5F, 2F, 0F);
         leftArm.setTexSize(64, 64);
         setRotation(leftArm, 0F, 0F, 0F);
 
-        rightLeg = new ModelRenderer(this, 0, 16);
+        rightLeg = new ModelPart(this, 0, 16);
         rightLeg.addBox(-2F, 0F, -2F, 4, 12, 4);
         rightLeg.setPos(-2F, 12F, 0F);
         rightLeg.setTexSize(64, 64);
         setRotation(rightLeg, 0F, 0F, 0F);
 
-        leftLeg = new ModelRenderer(this, 0, 16);
+        leftLeg = new ModelPart(this, 0, 16);
         leftLeg.mirror = true;
         leftLeg.addBox(-2F, 0F, -2F, 4, 12, 4);
         leftLeg.setPos(2F, 12F, 0F);
         leftLeg.setTexSize(64, 64);
         setRotation(leftLeg, 0F, 0F, 0F);
 
-        Log1 = new ModelRenderer(this, 25, 33);
+        Log1 = new ModelPart(this, 25, 33);
         Log1.addBox(-5F, 8F, 3F, 10, 3, 3);
         Log1.setPos(0F, 0F, 0F);
         Log1.setTexSize(64, 64);
         setRotation(Log1, 0F, 0F, 0F);
 
-        Log2 = new ModelRenderer(this, 28, 39);
+        Log2 = new ModelPart(this, 28, 39);
         Log2.addBox(-5F, 6F, -1F, 5, 3, 3);
         Log2.setPos(0F, 0F, 0F);
         Log2.setTexSize(64, 64);
@@ -91,85 +91,85 @@ public class ModelEntityLumberjackMale extends CitizenModel<AbstractEntityCitize
          * 64); setRotation(Log3, 0F, 0F, 1.099557F);
          */
 
-        Log3 = new ModelRenderer(this, 52, 33);
+        Log3 = new ModelPart(this, 52, 33);
         Log3.addBox(-3F, -2F, 3F, 3, 10, 3);
         Log3.setPos(0F, 0F, 0F);
         Log3.setTexSize(64, 64);
         setRotation(Log3, 0F, 0F, -0.5061455F);
 
-        Basket1 = new ModelRenderer(this, 1, 33);
+        Basket1 = new ModelPart(this, 1, 33);
         Basket1.addBox(-3F, 0F, 2F, 1, 12, 1);
         Basket1.setPos(0F, 0F, 0F);
         Basket1.setTexSize(64, 64);
         setRotation(Basket1, 0F, 0F, 0F);
 
-        Basket2 = new ModelRenderer(this, 1, 33);
+        Basket2 = new ModelPart(this, 1, 33);
         Basket2.addBox(2F, 0F, 2F, 1, 12, 1);
         Basket2.setPos(0F, 0F, 0F);
         Basket2.setTexSize(64, 64);
         setRotation(Basket2, 0F, 0F, 0F);
 
-        Basket3 = new ModelRenderer(this, 12, 33);
+        Basket3 = new ModelPart(this, 12, 33);
         Basket3.addBox(-3F, 4F, 6F, 1, 8, 1);
         Basket3.setPos(0F, 0F, 0F);
         Basket3.setTexSize(64, 64);
         setRotation(Basket3, 0F, 0F, 0F);
 
-        Basket4 = new ModelRenderer(this, 12, 33);
+        Basket4 = new ModelPart(this, 12, 33);
         Basket4.addBox(2F, 4F, 6F, 1, 8, 1);
         Basket4.setPos(0F, 0F, 0F);
         Basket4.setTexSize(64, 64);
         setRotation(Basket4, 0F, 0F, 0F);
 
-        Basket5 = new ModelRenderer(this, 1, 33);
+        Basket5 = new ModelPart(this, 1, 33);
         Basket5.addBox(2F, 11F, 3F, 1, 1, 3);
         Basket5.setPos(0F, 0F, 0F);
         Basket5.setTexSize(64, 64);
         setRotation(Basket5, 0F, 0F, 0F);
 
-        Basket6 = new ModelRenderer(this, 1, 33);
+        Basket6 = new ModelPart(this, 1, 33);
         Basket6.addBox(-3F, 11F, 3F, 1, 1, 3);
         Basket6.setPos(0F, 0F, 0F);
         Basket6.setTexSize(64, 64);
         setRotation(Basket6, 0F, 0F, 0F);
 
-        Basket7 = new ModelRenderer(this, 17, 33);
+        Basket7 = new ModelPart(this, 17, 33);
         Basket7.addBox(2F, 2F, 1F, 1, 6, 1);
         Basket7.setPos(0F, 0F, 0F);
         Basket7.setTexSize(64, 64);
         setRotation(Basket7, 0.8080874F, 0F, 0F);
 
-        Basket8 = new ModelRenderer(this, 17, 33);
+        Basket8 = new ModelPart(this, 17, 33);
         Basket8.addBox(-3F, 2F, 1F, 1, 6, 1);
         Basket8.setPos(0F, 0F, 0F);
         Basket8.setTexSize(64, 64);
         setRotation(Basket8, 0.8080874F, 0F, 0F);
 
-        Basket9 = new ModelRenderer(this, 12, 43);
+        Basket9 = new ModelPart(this, 12, 43);
         Basket9.addBox(-2F, 4F, 6F, 4, 1, 1);
         Basket9.setPos(0F, 0F, 0F);
         Basket9.setTexSize(64, 64);
         setRotation(Basket9, 0F, 0F, 0F);
 
-        Basket10 = new ModelRenderer(this, 1, 33);
+        Basket10 = new ModelPart(this, 1, 33);
         Basket10.addBox(-2F, 11F, 6F, 4, 1, 1);
         Basket10.setPos(0F, 0F, 0F);
         Basket10.setTexSize(64, 64);
         setRotation(Basket10, 0F, 0F, 0F);
 
-        Basket11 = new ModelRenderer(this, 1, 33);
+        Basket11 = new ModelPart(this, 1, 33);
         Basket11.addBox(-2F, 11F, 2F, 4, 1, 1);
         Basket11.setPos(0F, 0F, 0F);
         Basket11.setTexSize(64, 64);
         setRotation(Basket11, 0F, 0F, 0F);
 
-        BasketE1 = new ModelRenderer(this, 1, 47);
+        BasketE1 = new ModelPart(this, 1, 47);
         BasketE1.addBox(2F, 1F, 1F, 1, 12, 1);
         BasketE1.setPos(0F, 0F, 0F);
         BasketE1.setTexSize(64, 64);
         setRotation(BasketE1, 0.413643F, 0F, 0F);
 
-        BasketE2 = new ModelRenderer(this, 1, 47);
+        BasketE2 = new ModelPart(this, 1, 47);
         BasketE2.addBox(-3F, 1F, 1F, 1, 12, 1);
         BasketE2.setPos(0F, 0F, 0F);
         BasketE2.setTexSize(64, 64);
@@ -194,7 +194,7 @@ public class ModelEntityLumberjackMale extends CitizenModel<AbstractEntityCitize
         body.addChild(BasketE2);
     }
 
-    private void setRotation(@NotNull final ModelRenderer model, final float x, final float y, final float z)
+    private void setRotation(@NotNull final ModelPart model, final float x, final float y, final float z)
     {
         model.xRot = x;
         model.yRot = y;

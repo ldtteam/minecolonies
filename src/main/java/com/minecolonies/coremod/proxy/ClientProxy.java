@@ -9,15 +9,15 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.apiimp.ClientMinecoloniesAPIImpl;
 import com.minecolonies.coremod.client.gui.*;
-import net.minecraft.block.BlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.RecipeBook;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.stats.RecipeBook;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
@@ -75,7 +75,7 @@ public class ClientProxy extends CommonProxy
     }
 
     @Override
-    public World getWorld(final RegistryKey<World> dimension)
+    public Level getWorld(final ResourceKey<Level> dimension)
     {
         return Minecraft.getInstance().level;
     }
@@ -150,11 +150,11 @@ public class ClientProxy extends CommonProxy
 
     @NotNull
     @Override
-    public RecipeBook getRecipeBookFromPlayer(@NotNull final PlayerEntity player)
+    public RecipeBook getRecipeBookFromPlayer(@NotNull final Player player)
     {
-        if (player instanceof ClientPlayerEntity)
+        if (player instanceof LocalPlayer)
         {
-            return ((ClientPlayerEntity) player).getRecipeBook();
+            return ((LocalPlayer) player).getRecipeBook();
         }
 
         return super.getRecipeBookFromPlayer(player);

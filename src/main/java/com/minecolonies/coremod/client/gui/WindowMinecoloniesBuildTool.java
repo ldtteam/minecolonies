@@ -14,12 +14,12 @@ import com.minecolonies.coremod.items.ItemSupplyCampDeployer;
 import com.minecolonies.coremod.items.ItemSupplyChestDeployer;
 import com.minecolonies.coremod.network.messages.server.BuildToolPasteMessage;
 import com.minecolonies.coremod.network.messages.server.BuildToolPlaceMessage;
-import net.minecraft.block.BlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.BlockItem;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -193,7 +193,7 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
     }
 
     @Override
-    public boolean hasMatchingBlock(@NotNull final PlayerInventory inventory, final String hut)
+    public boolean hasMatchingBlock(@NotNull final Inventory inventory, final String hut)
     {
         return InventoryUtils.hasItemInProvider(inventory.player,
           item -> item.getItem() instanceof BlockItem && ((BlockItem) item.getItem()).getBlock() instanceof AbstractBlockHut && ((BlockItem) item.getItem()).getBlock()

@@ -27,16 +27,16 @@ import com.minecolonies.coremod.colony.requestsystem.resolvers.PickupRequestReso
 import com.minecolonies.coremod.colony.requestsystem.resolvers.WarehouseConcreteRequestResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.WarehouseRequestResolver;
 import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
-import net.minecraft.block.Block;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.NBTUtil;
-import net.minecraft.tileentity.ChestTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.world.level.block.entity.ChestBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -63,7 +63,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     /**
      * The list of deliverymen registered to this building.
      */
-    private final Set<Vector3d> registeredDeliverymen = new HashSet<>();
+    private final Set<Vec3> registeredDeliverymen = new HashSet<>();
 
     /**
      * Max level of the building.
@@ -94,7 +94,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
         {
             if (getColony().getWorld() != null)
             {
-                final TileEntity entity = getColony().getWorld().getBlockEntity(pos);
+                final BlockEntity entity = getColony().getWorld().getBlockEntity(pos);
                 if (entity instanceof TileEntityRack)
                 {
                     ((AbstractTileEntityRack) entity).setInWarehouse(true);
@@ -108,7 +108,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     @Override
     public boolean registerWithWareHouse(final IBuildingDeliveryman buildingWorker)
     {
-        if (registeredDeliverymen.contains(new Vector3d(buildingWorker.getID().getX(), buildingWorker.getID().getY(), buildingWorker.getID().getZ())))
+        if (registeredDeliverymen.contains(new Vec3(buildingWorker.getID().getX(), buildingWorker.getID().getY(), buildingWorker.getID().getZ())))
         {
             return true;
         }
@@ -126,14 +126,14 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
             }
         }
 
-        registeredDeliverymen.add(new Vector3d(buildingWorker.getID().getX(), buildingWorker.getID().getY(), buildingWorker.getID().getZ()));
+        registeredDeliverymen.add(new Vec3(buildingWorker.getID().getX(), buildingWorker.getID().getY(), buildingWorker.getID().getZ()));
         return true;
     }
 
     @Override
     public void unregisterFromWareHouse(final IBuildingDeliveryman buildingWorker)
     {
-        final Vector3d vec = new Vector3d(buildingWorker.getID().getX(), buildingWorker.getID().getY(), buildingWorker.getID().getZ());
+        final Vec3 vec = new Vec3(buildingWorker.getID().getX(), buildingWorker.getID().getY(), buildingWorker.getID().getZ());
         registeredDeliverymen.remove(vec);
     }
 
@@ -152,7 +152,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
      */
     private void checkForRegisteredDeliverymen()
     {
-        for (final Vector3d pos : new ArrayList<>(registeredDeliverymen))
+        for (final Vec3 pos : new ArrayList<>(registeredDeliverymen))
         {
             final IColony colony = getColony();
             final IBuilding building = colony.getBuildingManager().getBuilding(new BlockPos(pos));
@@ -172,7 +172,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     @Override
     public boolean canAccessWareHouse(final IBuildingDeliveryman buildingWorker)
     {
-        return registeredDeliverymen.contains(new Vector3d(buildingWorker.getID().getX(), buildingWorker.getID().getY(), buildingWorker.getID().getZ()));
+        return registeredDeliverymen.contains(new Vec3(buildingWorker.getID().getX(), buildingWorker.getID().getY(), buildingWorker.getID().getZ()));
     }
 
     /**
@@ -181,37 +181,37 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
      * @return the unmodifiable List of positions of them.
      */
     @Override
-    public Set<Vector3d> getRegisteredDeliverymen()
+    public Set<Vec3> getRegisteredDeliverymen()
     {
         return new HashSet<>(Collections.unmodifiableSet(registeredDeliverymen));
     }
 
     @Override
-    public void deserializeNBT(final CompoundNBT compound)
+    public void deserializeNBT(final CompoundTag compound)
     {
         super.deserializeNBT(compound);
 
         registeredDeliverymen.clear();
 
-        final ListNBT deliverymanTagList = compound.getList(TAG_DELIVERYMAN, Constants.NBT.TAG_COMPOUND);
+        final ListTag deliverymanTagList = compound.getList(TAG_DELIVERYMAN, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < deliverymanTagList.size(); i++)
         {
-            final BlockPos pos = NBTUtil.readBlockPos(deliverymanTagList.getCompound(i));
+            final BlockPos pos = NbtUtils.readBlockPos(deliverymanTagList.getCompound(i));
             if (getColony() != null && getColony().getBuildingManager().getBuilding(pos) instanceof AbstractBuildingWorker)
             {
-                registeredDeliverymen.add(new Vector3d(pos.getX(), pos.getY(), pos.getZ()));
+                registeredDeliverymen.add(new Vec3(pos.getX(), pos.getY(), pos.getZ()));
             }
         }
     }
 
     @Override
-    public CompoundNBT serializeNBT()
+    public CompoundTag serializeNBT()
     {
-        final CompoundNBT compound = super.serializeNBT();
-        @NotNull final ListNBT levelTagList = new ListNBT();
-        for (@NotNull final Vector3d deliverymanBuilding : registeredDeliverymen)
+        final CompoundTag compound = super.serializeNBT();
+        @NotNull final ListTag levelTagList = new ListTag();
+        for (@NotNull final Vec3 deliverymanBuilding : registeredDeliverymen)
         {
-            levelTagList.add(NBTUtil.writeBlockPos(new BlockPos(deliverymanBuilding)));
+            levelTagList.add(NbtUtils.writeBlockPos(new BlockPos(deliverymanBuilding)));
         }
         compound.put(TAG_DELIVERYMAN, levelTagList);
         return compound;
@@ -249,14 +249,14 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     }
 
     @Override
-    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
+    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final Level world)
     {
         if (block instanceof BlockMinecoloniesRack)
         {
-            final TileEntity entity = world.getBlockEntity(pos);
-            if (entity instanceof ChestTileEntity)
+            final BlockEntity entity = world.getBlockEntity(pos);
+            if (entity instanceof ChestBlockEntity)
             {
-                handleBuildingOverChest(pos, (ChestTileEntity) entity, world, null);
+                handleBuildingOverChest(pos, (ChestBlockEntity) entity, world, null);
             }
             if (entity instanceof TileEntityRack)
             {
@@ -274,7 +274,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
      * @param world          the world.
      * @param tileEntityData the rack te data.
      */
-    public static void handleBuildingOverChest(@NotNull final BlockPos pos, final ChestTileEntity chest, final World world, @Nullable final CompoundNBT tileEntityData)
+    public static void handleBuildingOverChest(@NotNull final BlockPos pos, final ChestBlockEntity chest, final Level world, @Nullable final CompoundTag tileEntityData)
     {
         final List<ItemStack> inventory = new ArrayList<>();
         final int size = chest.getContainerSize();
@@ -293,7 +293,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
         {
             handleTileEntityPlacement(tileEntityData, world, pos);
         }
-        final TileEntity entity = world.getBlockEntity(pos);
+        final BlockEntity entity = world.getBlockEntity(pos);
         if (entity instanceof TileEntityRack)
         {
             ((AbstractTileEntityRack) entity).setInWarehouse(true);
@@ -340,13 +340,13 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
      * @param world the world object.
      */
     @Override
-    public void upgradeContainers(final World world)
+    public void upgradeContainers(final Level world)
     {
         if (getFirstModuleOccurance(WarehouseModule.class).getStorageUpgrade() < MAX_STORAGE_UPGRADE)
         {
             for (final BlockPos pos : getContainers())
             {
-                final TileEntity entity = world.getBlockEntity(pos);
+                final BlockEntity entity = world.getBlockEntity(pos);
                 if (entity instanceof TileEntityRack && !(entity instanceof TileEntityColonyBuilding))
                 {
                     ((AbstractTileEntityRack) entity).upgradeItemStorage();

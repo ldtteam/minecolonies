@@ -1,15 +1,15 @@
 package com.minecolonies.coremod.items;
 
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.IArmorMaterial;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.util.SoundEvent;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ArmorMaterial;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.sounds.SoundEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Implementation for the IArmorMaterial interface so we can add custom armor types.
  */
-public class MineColoniesArmorMaterial implements IArmorMaterial
+public class MineColoniesArmorMaterial implements ArmorMaterial
 {
     /**
      * Max durability by equipment slot, taken from vanilla.
@@ -43,13 +43,13 @@ public class MineColoniesArmorMaterial implements IArmorMaterial
     }
 
     @Override
-    public int getDurabilityForSlot(@NotNull final EquipmentSlotType equipmentSlotType)
+    public int getDurabilityForSlot(@NotNull final EquipmentSlot equipmentSlotType)
     {
         return MAX_DAMAGE_ARRAY[equipmentSlotType.getIndex()] * this.maxDamageFactor;
     }
 
     @Override
-    public int getDefenseForSlot(@NotNull final EquipmentSlotType equipmentSlotType)
+    public int getDefenseForSlot(@NotNull final EquipmentSlot equipmentSlotType)
     {
         return this.damageReductionAmountArray[equipmentSlotType.getIndex()];
     }

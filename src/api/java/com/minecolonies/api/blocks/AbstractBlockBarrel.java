@@ -2,11 +2,13 @@ package com.minecolonies.api.blocks;
 
 import com.minecolonies.api.blocks.types.BarrelType;
 import com.minecolonies.api.tileentities.AbstractTileEntityBarrel;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.HorizontalBlock;
-import net.minecraft.state.DirectionProperty;
-import net.minecraft.state.EnumProperty;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import org.jetbrains.annotations.NotNull;
+
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
 public abstract class AbstractBlockBarrel<B extends AbstractBlockBarrel<B>> extends AbstractBlockMinecoloniesHorizontal<B>
 {
@@ -15,7 +17,7 @@ public abstract class AbstractBlockBarrel<B extends AbstractBlockBarrel<B>> exte
     /**
      * The position it faces.
      */
-    public static final DirectionProperty FACING = HorizontalBlock.FACING;
+    public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 
     public AbstractBlockBarrel(final Properties properties)
     {

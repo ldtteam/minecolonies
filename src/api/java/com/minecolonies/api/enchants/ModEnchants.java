@@ -1,6 +1,6 @@
 package com.minecolonies.api.enchants;
 
-import net.minecraft.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.Enchantment;
 
 /**
  * All our mods renchants

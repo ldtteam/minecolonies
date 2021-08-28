@@ -21,15 +21,15 @@ import com.minecolonies.coremod.entity.pathfinding.MinecoloniesAdvancedPathNavig
 import com.minecolonies.coremod.entity.pathfinding.pathjobs.AbstractPathJob;
 import com.minecolonies.coremod.entity.pathfinding.pathjobs.PathJobCanSee;
 import com.minecolonies.coremod.entity.pathfinding.pathjobs.PathJobMoveToLocation;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.projectile.AbstractArrowEntity;
-import net.minecraft.item.ArrowItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Hand;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvents;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.item.ArrowItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
 
 import static com.minecolonies.api.research.util.ResearchConstants.*;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
@@ -101,10 +101,10 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
 
         if (weaponSlot != -1)
         {
-            user.getCitizenItemHandler().setHeldItem(Hand.MAIN_HAND, weaponSlot);
+            user.getCitizenItemHandler().setHeldItem(InteractionHand.MAIN_HAND, weaponSlot);
             if (nextAttackTime - BOW_HOLDING_DELAY >= user.level.getGameTime())
             {
-                user.startUsingItem(Hand.MAIN_HAND);
+                user.startUsingItem(InteractionHand.MAIN_HAND);
             }
             return true;
         }
@@ -129,7 +129,7 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
         }
 
         user.getCitizenData().setVisibleStatus(ARCHER_COMBAT);
-        user.swing(Hand.MAIN_HAND);
+        user.swing(InteractionHand.MAIN_HAND);
 
         int amountOfArrows = 1;
         if (user.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(DOUBLE_ARROWS) > 0)
@@ -142,7 +142,7 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
 
         for (int i = 0; i < amountOfArrows; i++)
         {
-            final AbstractArrowEntity arrow = CombatUtils.createArrowForShooter(user);
+            final AbstractArrow arrow = CombatUtils.createArrowForShooter(user);
 
             if (user.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(ARROW_PIERCE) > 0)
             {
@@ -150,7 +150,7 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
             }
 
             // Add bow enchant effects: Knocback and fire
-            final ItemStack bow = user.getItemInHand(Hand.MAIN_HAND);
+            final ItemStack bow = user.getItemInHand(InteractionHand.MAIN_HAND);
 
             if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.FLAMING_ARROWS, bow) > 0)
             {
@@ -173,7 +173,7 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
         }
 
         target.setLastHurtByMob(user);
-        user.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, 1);
+        user.getCitizenItemHandler().damageItemInHand(InteractionHand.MAIN_HAND, 1);
         user.stopUsingItem();
         user.decreaseSaturationForContinuousAction();
     }
@@ -224,7 +224,7 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
     {
         int damage = user.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Agility) / 5;
 
-        final ItemStack heldItem = user.getItemInHand(Hand.MAIN_HAND);
+        final ItemStack heldItem = user.getItemInHand(InteractionHand.MAIN_HAND);
         damage += EnchantmentHelper.getDamageBonus(heldItem, target.getMobType()) / 2.5;
         damage += EnchantmentHelper.getItemEnchantmentLevel(Enchantments.POWER_ARROWS, heldItem);
         damage += user.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(ARCHER_DAMAGE);

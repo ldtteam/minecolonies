@@ -6,12 +6,12 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactory;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.constant.TypeConstants;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
@@ -87,14 +87,14 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
 
     @NotNull
     @Override
-    public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final CustomRecipe recipe)
+    public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final CustomRecipe recipe)
     {
         // CustomRecipes involve a large number of ItemStacks, and a number of data types that are inefficient in NBT form.  Individually, this isn't that big of a deal (~1.2KB vs 120bytes).
         // However, for large sets, such as CustomRecipeManager, this can grow into a very large total (ie, default Minecolonies + Structurize recipes alone can total >600KB).
         // If transmitting a large number of recipes at once across a network, favor the byte-based serializer instead.
         // This serialization also populates the RecipeStorage inside the Custom Recipe, which remains cached until the next data pack reload.
         // Be aware of the 2MB limit for CompoundNBTs if assigning a large number of these together into a listNBT.
-        final CompoundNBT compound = new CompoundNBT();
+        final CompoundTag compound = new CompoundTag();
         compound.putString(RECIPE_CRAFTER_PROP, recipe.getCrafter());
         compound.putString(CUSTOM_RECIPE_ID_PROP, recipe.getRecipeStorage().getRecipeSource().toString());
         if(recipe.getRequiredResearchId() != null)
@@ -113,30 +113,30 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
         compound.putInt(RECIPE_BUILDING_MAX_LEVEL_PROP, recipe.getMaxBuildingLevel());
         compound.putBoolean(RECIPE_MUST_EXIST, recipe.getMustExist());
         compound.putBoolean(RECIPE_SHOW_TOOLTIP, recipe.getShowTooltip());
-        final ListNBT inputs = new ListNBT();
+        final ListTag inputs = new ListTag();
         for(final ItemStorage in : recipe.getInputs())
         {
             inputs.add(controller.serialize(in));
         }
         compound.put(RECIPE_INPUTS_PROP, inputs);
 
-        compound.put(RECIPE_RESULT_PROP, recipe.getPrimaryOutput().save(new CompoundNBT()));
+        compound.put(RECIPE_RESULT_PROP, recipe.getPrimaryOutput().save(new CompoundTag()));
 
         if(recipe.getSecondaryOutput().size() > 0)
         {
-            final ListNBT secondaryOutputs = new ListNBT();
+            final ListTag secondaryOutputs = new ListTag();
             for (final ItemStack is : recipe.getSecondaryOutput())
             {
-                secondaryOutputs.add(is.save(new CompoundNBT()));
+                secondaryOutputs.add(is.save(new CompoundTag()));
             }
             compound.put(RECIPE_SECONDARY_PROP, secondaryOutputs);
         }
         if(recipe.getAltOutputs().size() > 0)
         {
-            final ListNBT altOutputs = new ListNBT();
+            final ListTag altOutputs = new ListTag();
             for (final ItemStack is : recipe.getAltOutputs())
             {
-                altOutputs.add(is.save(new CompoundNBT()));
+                altOutputs.add(is.save(new CompoundTag()));
             }
             compound.put(RECIPE_ALTERNATE_PROP, altOutputs);
         }
@@ -146,7 +146,7 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
 
     @NotNull
     @Override
-    public CustomRecipe deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
+    public CustomRecipe deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
     {
         final String crafter = nbt.getString(RECIPE_CRAFTER_PROP);
         final ResourceLocation recipeId;
@@ -189,34 +189,34 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
         final int maxBldgLevel = nbt.getInt(RECIPE_BUILDING_MAX_LEVEL_PROP);
         final boolean mustExist = nbt.getBoolean(RECIPE_MUST_EXIST);
         final boolean showTooltip = nbt.getBoolean(RECIPE_SHOW_TOOLTIP);
-        final ListNBT inputList = nbt.getList(RECIPE_INPUTS_PROP, Constants.NBT.TAG_COMPOUND);
+        final ListTag inputList = nbt.getList(RECIPE_INPUTS_PROP, Constants.NBT.TAG_COMPOUND);
         final List<ItemStorage> inputs = new ArrayList<>();
-        for(INBT input : inputList)
+        for(Tag input : inputList)
         {
-            if(input instanceof CompoundNBT)
+            if(input instanceof CompoundTag)
             {
-                inputs.add(controller.deserialize((CompoundNBT)input));
+                inputs.add(controller.deserialize((CompoundTag)input));
             }
         }
         final ItemStack primaryOutput = ItemStack.of(nbt.getCompound(RECIPE_RESULT_PROP));
 
-        final ListNBT secondaryList = nbt.getList(RECIPE_SECONDARY_PROP, Constants.NBT.TAG_COMPOUND);
+        final ListTag secondaryList = nbt.getList(RECIPE_SECONDARY_PROP, Constants.NBT.TAG_COMPOUND);
         final List<ItemStack> secondaryOutput = new ArrayList<>();
-        for(INBT secondary : secondaryList)
+        for(Tag secondary : secondaryList)
         {
-            if(secondary instanceof CompoundNBT)
+            if(secondary instanceof CompoundTag)
             {
-                secondaryOutput.add(ItemStack.of((CompoundNBT)secondary));
+                secondaryOutput.add(ItemStack.of((CompoundTag)secondary));
             }
         }
 
-        final ListNBT altList = nbt.getList(RECIPE_ALTERNATE_PROP, Constants.NBT.TAG_COMPOUND);
+        final ListTag altList = nbt.getList(RECIPE_ALTERNATE_PROP, Constants.NBT.TAG_COMPOUND);
         final List<ItemStack> altOutputs = new ArrayList<>();
-        for(INBT alt : altList)
+        for(Tag alt : altList)
         {
-            if(alt instanceof CompoundNBT)
+            if(alt instanceof CompoundTag)
             {
-                secondaryOutput.add(ItemStack.of((CompoundNBT)alt));
+                secondaryOutput.add(ItemStack.of((CompoundTag)alt));
             }
         }
 
@@ -224,7 +224,7 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
     }
 
     @Override
-    public void serialize(@NotNull IFactoryController controller, CustomRecipe recipe, PacketBuffer packetBuffer)
+    public void serialize(@NotNull IFactoryController controller, CustomRecipe recipe, FriendlyByteBuf packetBuffer)
     {
         // This serialization is drastically more efficient: expect <150 bytes per recipes, avg, compared to 800 bytes for CompoundNBT variant.
         // It also avoids populating the RecipeStorage cached inside the CustomRecipe.
@@ -269,7 +269,7 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
 
     @NotNull
     @Override
-    public CustomRecipe deserialize(@NotNull IFactoryController controller, PacketBuffer buffer) throws Throwable
+    public CustomRecipe deserialize(@NotNull IFactoryController controller, FriendlyByteBuf buffer) throws Throwable
     {
         final String crafter = buffer.readUtf();
         final ResourceLocation recipeId = buffer.readResourceLocation();

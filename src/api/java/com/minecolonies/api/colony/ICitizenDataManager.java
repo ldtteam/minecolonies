@@ -1,8 +1,8 @@
 package com.minecolonies.api.colony;
 
 import com.minecolonies.api.IMinecoloniesAPI;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -23,7 +23,7 @@ public interface ICitizenDataManager
      * @param colony   The colony to create an instance in.
      * @return The citizen data, loaded from the nbt into the colony.
      */
-    ICitizenData createFromNBT(@NotNull CompoundNBT compound, IColony colony);
+    ICitizenData createFromNBT(@NotNull CompoundTag compound, IColony colony);
 
     /**
      * Creates a citizen data view from a given network buffer, containing the views data.
@@ -33,5 +33,5 @@ public interface ICitizenDataManager
      * @param colonyView    the colony the citizen belongs to.
      * @return The citizen data view.
      */
-    ICitizenDataView createFromNetworkData(@NotNull final int id, @NotNull final PacketBuffer networkBuffer, final IColonyView colonyView);
+    ICitizenDataView createFromNetworkData(@NotNull final int id, @NotNull final FriendlyByteBuf networkBuffer, final IColonyView colonyView);
 }

@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.event.capabilityproviders;
 
 import com.minecolonies.api.colony.IColonyTagCapability;
-import net.minecraft.nbt.INBT;
-import net.minecraft.util.Direction;
+import net.minecraft.nbt.Tag;
+import net.minecraft.core.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
@@ -14,7 +14,7 @@ import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 /**
  * Capability provider for the chunk capability of Minecolonies.
  */
-public class MinecoloniesChunkCapabilityProvider implements ICapabilitySerializable<INBT>
+public class MinecoloniesChunkCapabilityProvider implements ICapabilitySerializable<Tag>
 {
     /**
      * The colony list capability. (For closest colony and claimed)
@@ -36,13 +36,13 @@ public class MinecoloniesChunkCapabilityProvider implements ICapabilitySerializa
     }
 
     @Override
-    public INBT serializeNBT()
+    public Tag serializeNBT()
     {
         return CLOSE_COLONY_CAP.getStorage().writeNBT(CLOSE_COLONY_CAP, tag, null);
     }
 
     @Override
-    public void deserializeNBT(final INBT nbt)
+    public void deserializeNBT(final Tag nbt)
     {
         CLOSE_COLONY_CAP.getStorage().readNBT(CLOSE_COLONY_CAP, tag, null, nbt);
     }

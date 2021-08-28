@@ -2,13 +2,13 @@ package com.minecolonies.api.client.render.modeltype;
 
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.entity.model.BipedModel;
+import net.minecraft.client.model.HumanoidModel;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Citizen model.
  */
-public class CitizenModel<T extends AbstractEntityCitizen> extends BipedModel<AbstractEntityCitizen>
+public class CitizenModel<T extends AbstractEntityCitizen> extends HumanoidModel<AbstractEntityCitizen>
 {
     public CitizenModel(final float size)
     {

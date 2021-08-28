@@ -14,9 +14,9 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.client.gui.citizen.RequestWindowCitizen;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.ChatFormatting;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -135,8 +135,8 @@ public class WindowRequestDetail extends Window implements ButtonHandler
     {
         final Box box = findPaneOfTypeByID(BOX_ID_REQUEST, Box.class);
         final Text description = PaneBuilders.textBuilder()
-            .style(TextFormatting.getByCode('r'))
-            .style(TextFormatting.getByCode('0'))
+            .style(ChatFormatting.getByCode('r'))
+            .style(ChatFormatting.getByCode('0'))
             .append(request.getLongDisplayString())
             .build();
         description.setPosition(1, 1);

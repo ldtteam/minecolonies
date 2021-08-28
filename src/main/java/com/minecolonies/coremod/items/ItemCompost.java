@@ -2,16 +2,16 @@ package com.minecolonies.coremod.items;
 
 import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.IGrowable;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.BonemealableBlock;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.event.ForgeEventFactory;
 
 /**
@@ -30,7 +30,7 @@ public class ItemCompost extends AbstractItemMinecolonies
     }
 
     @Override
-    public ActionResultType useOn(final ItemUseContext ctx)
+    public InteractionResult useOn(final UseOnContext ctx)
     {
         final ItemStack itemstack = ctx.getPlayer().getItemInHand(ctx.getHand());
         if (applyBonemeal(itemstack, ctx.getLevel(), ctx.getClickedPos(), ctx.getPlayer()))
@@ -39,12 +39,12 @@ public class ItemCompost extends AbstractItemMinecolonies
             {
                 ctx.getLevel().levelEvent(2005, ctx.getClickedPos(), 0);
             }
-            return ActionResultType.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
-        return ActionResultType.FAIL;
+        return InteractionResult.FAIL;
     }
 
-    public static boolean applyBonemeal(final ItemStack stack, final World worldIn, final BlockPos target, final PlayerEntity player)
+    public static boolean applyBonemeal(final ItemStack stack, final Level worldIn, final BlockPos target, final Player player)
     {
         final BlockState BlockState = worldIn.getBlockState(target);
         final int hook = ForgeEventFactory.onApplyBonemeal(player, worldIn, target, BlockState, stack);
@@ -54,16 +54,16 @@ public class ItemCompost extends AbstractItemMinecolonies
         }
         else
         {
-            if (BlockState.getBlock() instanceof IGrowable)
+            if (BlockState.getBlock() instanceof BonemealableBlock)
             {
-                final IGrowable igrowable = (IGrowable) BlockState.getBlock();
+                final BonemealableBlock igrowable = (BonemealableBlock) BlockState.getBlock();
                 if (igrowable.isValidBonemealTarget(worldIn, target, BlockState, worldIn.isClientSide))
                 {
                     if (!worldIn.isClientSide)
                     {
                         if (igrowable.isBonemealSuccess(worldIn, worldIn.random, target, BlockState))
                         {
-                            igrowable.performBonemeal((ServerWorld) worldIn, worldIn.random, target, BlockState);
+                            igrowable.performBonemeal((ServerLevel) worldIn, worldIn.random, target, BlockState);
                         }
                         stack.shrink(1);
                     }

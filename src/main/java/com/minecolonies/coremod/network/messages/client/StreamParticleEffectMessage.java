@@ -2,10 +2,10 @@ package com.minecolonies.coremod.network.messages.client;
 
 import com.minecolonies.api.network.IMessage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.particles.BasicParticleType;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -27,7 +27,7 @@ public class StreamParticleEffectMessage implements IMessage
     /**
      * The itemStack for the particles.
      */
-    private BasicParticleType type;
+    private SimpleParticleType type;
 
     /**
      * The start position.
@@ -70,7 +70,7 @@ public class StreamParticleEffectMessage implements IMessage
      * @param stage    the stage we're at
      * @param maxStage the max stage
      */
-    public StreamParticleEffectMessage(final Vector3d start, final Vector3d end, final BasicParticleType type, final int stage, final int maxStage)
+    public StreamParticleEffectMessage(final Vec3 start, final Vec3 end, final SimpleParticleType type, final int stage, final int maxStage)
     {
         super();
         this.sPosX = start.x;
@@ -88,7 +88,7 @@ public class StreamParticleEffectMessage implements IMessage
     }
 
     @Override
-    public void fromBytes(@NotNull final PacketBuffer buf)
+    public void fromBytes(@NotNull final FriendlyByteBuf buf)
     {
         this.sPosX = buf.readDouble();
         this.sPosY = buf.readDouble();
@@ -100,11 +100,11 @@ public class StreamParticleEffectMessage implements IMessage
 
         this.stage = buf.readInt();
         this.maxStage = buf.readInt();
-        this.type = (BasicParticleType) ForgeRegistries.PARTICLE_TYPES.getValue(buf.readResourceLocation());
+        this.type = (SimpleParticleType) ForgeRegistries.PARTICLE_TYPES.getValue(buf.readResourceLocation());
     }
 
     @Override
-    public void toBytes(@NotNull final PacketBuffer buf)
+    public void toBytes(@NotNull final FriendlyByteBuf buf)
     {
         buf.writeDouble(this.sPosX);
         buf.writeDouble(this.sPosY);
@@ -129,9 +129,9 @@ public class StreamParticleEffectMessage implements IMessage
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
-        final ClientWorld world = Minecraft.getInstance().level;
+        final ClientLevel world = Minecraft.getInstance().level;
 
-        final Vector3d end = new Vector3d(ePosX, ePosY, ePosZ);
+        final Vec3 end = new Vec3(ePosX, ePosY, ePosZ);
 
         double xDif = (sPosX - ePosX) / maxStage;
         double yDif = (sPosY - ePosY) / maxStage;
@@ -145,8 +145,8 @@ public class StreamParticleEffectMessage implements IMessage
 
             for (int i = 0; i < 10; ++i)
             {
-                final Vector3d randomPos = new Vector3d(RAND.nextDouble() * 0.1D + 0.1D, RAND.nextDouble() * 0.1D + 0.1D, RAND.nextDouble() * 0.1D + 0.1D);
-                final Vector3d randomOffset = new Vector3d((RAND.nextDouble() - 0.5D) * 0.1D, (RAND.nextDouble() - 0.5D) * 0.1D, (RAND.nextDouble() - 0.5D) * 0.1D);
+                final Vec3 randomPos = new Vec3(RAND.nextDouble() * 0.1D + 0.1D, RAND.nextDouble() * 0.1D + 0.1D, RAND.nextDouble() * 0.1D + 0.1D);
+                final Vec3 randomOffset = new Vec3((RAND.nextDouble() - 0.5D) * 0.1D, (RAND.nextDouble() - 0.5D) * 0.1D, (RAND.nextDouble() - 0.5D) * 0.1D);
                 world.addParticle(type,
                   end.x + randomOffset.x + xDif * step,
                   end.y + randomOffset.y + yDif * step + minDif,

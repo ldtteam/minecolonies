@@ -7,12 +7,12 @@ import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -81,12 +81,12 @@ public class FarmerFieldModule extends AbstractBuildingModule implements IPersis
     }
 
     @Override
-    public void deserializeNBT(final CompoundNBT compound)
+    public void deserializeNBT(final CompoundTag compound)
     {
-        final ListNBT fieldTagList = compound.getList(TAG_FIELDS, Constants.NBT.TAG_COMPOUND);
+        final ListTag fieldTagList = compound.getList(TAG_FIELDS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < fieldTagList.size(); ++i)
         {
-            final CompoundNBT fieldCompound = fieldTagList.getCompound(i);
+            final CompoundTag fieldCompound = fieldTagList.getCompound(i);
             final BlockPos fieldLocation = BlockPosUtil.read(fieldCompound, TAG_FIELDS_BLOCKPOS);
             farmerFields.add(fieldLocation);
         }
@@ -99,12 +99,12 @@ public class FarmerFieldModule extends AbstractBuildingModule implements IPersis
     }
 
     @Override
-    public void serializeNBT(final CompoundNBT compound)
+    public void serializeNBT(final CompoundTag compound)
     {
-        @NotNull final ListNBT fieldTagList = new ListNBT();
+        @NotNull final ListTag fieldTagList = new ListTag();
         for (@NotNull final BlockPos f : farmerFields)
         {
-            @NotNull final CompoundNBT fieldCompound = new CompoundNBT();
+            @NotNull final CompoundTag fieldCompound = new CompoundTag();
             BlockPosUtil.write(fieldCompound, TAG_FIELDS_BLOCKPOS, f);
             fieldTagList.add(fieldCompound);
         }
@@ -118,7 +118,7 @@ public class FarmerFieldModule extends AbstractBuildingModule implements IPersis
     }
 
     @Override
-    public void serializeToView(@NotNull final PacketBuffer buf)
+    public void serializeToView(@NotNull final FriendlyByteBuf buf)
     {
         buf.writeBoolean(shouldAssignManually);
 
@@ -131,7 +131,7 @@ public class FarmerFieldModule extends AbstractBuildingModule implements IPersis
         {
             if (WorldUtil.isBlockLoaded(building.getColony().getWorld(), field))
             {
-                final TileEntity scareCrow = building.getColony().getWorld().getBlockEntity(field);
+                final BlockEntity scareCrow = building.getColony().getWorld().getBlockEntity(field);
                 if (scareCrow instanceof ScarecrowTileEntity)
                 {
                     if (((ScarecrowTileEntity) scareCrow).isTaken())
@@ -188,7 +188,7 @@ public class FarmerFieldModule extends AbstractBuildingModule implements IPersis
      * @return a field to work on.
      */
     @Nullable
-    public BlockPos getFieldToWorkOn(final World world)
+    public BlockPos getFieldToWorkOn(final Level world)
     {
         final List<BlockPos> fields = new ArrayList<>(farmerFields);
         Collections.shuffle(fields);
@@ -203,7 +203,7 @@ public class FarmerFieldModule extends AbstractBuildingModule implements IPersis
         }
         for (@NotNull final BlockPos field : fields)
         {
-            final TileEntity scareCrow = building.getColony().getWorld().getBlockEntity(field);
+            final BlockEntity scareCrow = building.getColony().getWorld().getBlockEntity(field);
             if (scareCrow instanceof ScarecrowTileEntity && ((ScarecrowTileEntity) scareCrow).needsWork())
             {
                 currentField = field;
@@ -219,7 +219,7 @@ public class FarmerFieldModule extends AbstractBuildingModule implements IPersis
      *
      * @param world the world the building is in.
      */
-    public void syncWithColony(@NotNull final World world)
+    public void syncWithColony(@NotNull final Level world)
     {
         if (!farmerFields.isEmpty())
         {
@@ -227,7 +227,7 @@ public class FarmerFieldModule extends AbstractBuildingModule implements IPersis
 
             for (@NotNull final BlockPos field : tempFields)
             {
-                final TileEntity scarecrow = world.getBlockEntity(field);
+                final BlockEntity scarecrow = world.getBlockEntity(field);
                 if (scarecrow instanceof ScarecrowTileEntity)
                 {
                     building.getColony().getWorld()
@@ -279,7 +279,7 @@ public class FarmerFieldModule extends AbstractBuildingModule implements IPersis
      */
     public void addFarmerFields(final BlockPos field)
     {
-        final TileEntity scareCrow = building.getColony().getWorld().getBlockEntity(field);
+        final BlockEntity scareCrow = building.getColony().getWorld().getBlockEntity(field);
         if (scareCrow instanceof ScarecrowTileEntity)
         {
             farmerFields.add(field);
@@ -314,7 +314,7 @@ public class FarmerFieldModule extends AbstractBuildingModule implements IPersis
     {
         for (@NotNull final BlockPos field : farmerFields)
         {
-            final TileEntity scareCrow = building.getColony().getWorld().getBlockEntity(field);
+            final BlockEntity scareCrow = building.getColony().getWorld().getBlockEntity(field);
             if (scareCrow instanceof ScarecrowTileEntity)
             {
                 ((ScarecrowTileEntity) scareCrow).setNeedsWork(true);
@@ -329,7 +329,7 @@ public class FarmerFieldModule extends AbstractBuildingModule implements IPersis
      */
     public void freeField(final BlockPos position)
     {
-        final TileEntity scarecrow = building.getColony().getWorld().getBlockEntity(position);
+        final BlockEntity scarecrow = building.getColony().getWorld().getBlockEntity(position);
         if (scarecrow instanceof ScarecrowTileEntity)
         {
             farmerFields.remove(position);
@@ -350,7 +350,7 @@ public class FarmerFieldModule extends AbstractBuildingModule implements IPersis
      */
     public void assignField(final BlockPos position)
     {
-        final TileEntity scarecrow = building.getColony().getWorld().getBlockEntity(position);
+        final BlockEntity scarecrow = building.getColony().getWorld().getBlockEntity(position);
         if (scarecrow instanceof ScarecrowTileEntity)
         {
             ((ScarecrowTileEntity) scarecrow).setTaken(true);
@@ -374,7 +374,7 @@ public class FarmerFieldModule extends AbstractBuildingModule implements IPersis
     {
         for (@NotNull final BlockPos field : farmerFields)
         {
-            final TileEntity scareCrow = building.getColony().getWorld().getBlockEntity(field);
+            final BlockEntity scareCrow = building.getColony().getWorld().getBlockEntity(field);
             if (scareCrow instanceof ScarecrowTileEntity)
             {
                 ((ScarecrowTileEntity) scareCrow).setTaken(false);

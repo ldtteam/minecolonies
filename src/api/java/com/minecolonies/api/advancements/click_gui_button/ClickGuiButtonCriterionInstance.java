@@ -1,21 +1,21 @@
 package com.minecolonies.api.advancements.click_gui_button;
 
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.advancements.criterion.CriterionInstance;
-import net.minecraft.advancements.criterion.EntityPredicate;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.advancements.critereon.AbstractCriterionTriggerInstance;
+import net.minecraft.advancements.critereon.EntityPredicate;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * The test instance to check the various conditions for the "click_gui_button" trigger
  */
-public class ClickGuiButtonCriterionInstance extends CriterionInstance
+public class ClickGuiButtonCriterionInstance extends AbstractCriterionTriggerInstance
 {
     private String buttonId;
     private String windowResource;
 
     public ClickGuiButtonCriterionInstance()
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CLICK_GUI_BUTTON), EntityPredicate.AndPredicate.ANY);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CLICK_GUI_BUTTON), EntityPredicate.Composite.ANY);
     }
 
     /**
@@ -24,7 +24,7 @@ public class ClickGuiButtonCriterionInstance extends CriterionInstance
      */
     public ClickGuiButtonCriterionInstance(final String buttonId)
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CLICK_GUI_BUTTON), EntityPredicate.AndPredicate.ANY);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CLICK_GUI_BUTTON), EntityPredicate.Composite.ANY);
 
         this.buttonId = buttonId;
     }
@@ -36,7 +36,7 @@ public class ClickGuiButtonCriterionInstance extends CriterionInstance
      */
     public ClickGuiButtonCriterionInstance(final String buttonId, final String windowResource)
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CLICK_GUI_BUTTON), EntityPredicate.AndPredicate.ANY);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CLICK_GUI_BUTTON), EntityPredicate.Composite.ANY);
 
         this.windowResource = windowResource;
         this.buttonId = buttonId;

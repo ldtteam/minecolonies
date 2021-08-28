@@ -2,11 +2,11 @@ package com.minecolonies.api.crafting;
 
 import com.google.gson.JsonObject;
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.IIngredientSerializer;
 import org.jetbrains.annotations.NotNull;
@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import net.minecraft.item.crafting.Ingredient.SingleItemList;
+import net.minecraft.world.item.crafting.Ingredient.ItemValue;
 
 /**
  * An ingredient that can be used in a vanilla recipe to require more than one item in a particular input slot.
@@ -39,7 +39,7 @@ public class CountedIngredient extends Ingredient
 
     public CountedIngredient(@NotNull final Ingredient child, final int count)
     {
-        super(Arrays.stream(child.getItems()).map(SingleItemList::new));
+        super(Arrays.stream(child.getItems()).map(ItemValue::new));
 
         this.child = child;
         this.count = count;
@@ -86,13 +86,13 @@ public class CountedIngredient extends Ingredient
         public CountedIngredient parse(@NotNull final JsonObject json)
         {
             final Ingredient child = Ingredient.fromJson(json.get("item"));
-            final int count = JSONUtils.getAsInt(json, "count", 1);
+            final int count = GsonHelper.getAsInt(json, "count", 1);
             return new CountedIngredient(child, count);
         }
 
         @NotNull
         @Override
-        public CountedIngredient parse(@NotNull final PacketBuffer buffer)
+        public CountedIngredient parse(@NotNull final FriendlyByteBuf buffer)
         {
             final int count = buffer.readVarInt();
             final Ingredient child = Ingredient.fromNetwork(buffer);
@@ -100,7 +100,7 @@ public class CountedIngredient extends Ingredient
         }
 
         @Override
-        public void write(@NotNull final PacketBuffer buffer, @NotNull final CountedIngredient ingredient)
+        public void write(@NotNull final FriendlyByteBuf buffer, @NotNull final CountedIngredient ingredient)
         {
             buffer.writeVarInt(ingredient.getCount());
             CraftingHelper.write(buffer, ingredient.getChild());

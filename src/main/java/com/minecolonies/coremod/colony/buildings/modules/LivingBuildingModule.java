@@ -6,8 +6,8 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.modules.*;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.coremod.colony.buildings.AbstractCitizenAssignable;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_RESIDENTS;
 public class LivingBuildingModule extends AbstractBuildingModule implements IAssignsCitizen, IBuildingEventsModule, ITickingModule, IPersistentModule
 {
     @Override
-    public void deserializeNBT(final CompoundNBT compound)
+    public void deserializeNBT(final CompoundTag compound)
     {
         if (compound.getAllKeys().contains(TAG_RESIDENTS))
         {
@@ -37,7 +37,7 @@ public class LivingBuildingModule extends AbstractBuildingModule implements IAss
     }
 
     @Override
-    public void serializeNBT(final CompoundNBT compound)
+    public void serializeNBT(final CompoundTag compound)
     {
         if (building.hasAssignedCitizen())
         {
@@ -170,7 +170,7 @@ public class LivingBuildingModule extends AbstractBuildingModule implements IAss
     }
 
     @Override
-    public void serializeToView(@NotNull final PacketBuffer buf)
+    public void serializeToView(@NotNull final FriendlyByteBuf buf)
     {
         buf.writeInt(building.getAssignedCitizen().size());
         for (@NotNull final ICitizenData citizen : building.getAssignedCitizen())

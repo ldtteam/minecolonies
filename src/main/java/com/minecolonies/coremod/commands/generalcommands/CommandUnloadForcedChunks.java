@@ -3,14 +3,14 @@ package com.minecolonies.coremod.commands.generalcommands;
 import com.minecolonies.coremod.commands.commandTypes.IMCCommand;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import net.minecraft.command.CommandSource;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerChunkProvider;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerChunkCache;
+import net.minecraft.server.level.ServerLevel;
 
 /**
  * Cleanup task to remove the force flag from all loaded chunks.
@@ -23,27 +23,27 @@ public class CommandUnloadForcedChunks implements IMCCommand
      * @param context the context of the command execution
      */
     @Override
-    public int onExecute(final CommandContext<CommandSource> context)
+    public int onExecute(final CommandContext<CommandSourceStack> context)
     {
         final Entity sender = context.getSource().getEntity();
-        if (sender instanceof PlayerEntity)
+        if (sender instanceof Player)
         {
-            final World world = sender.level;
-            for (long chunk : ((ServerChunkProvider) sender.level.getChunkSource()).chunkMap.visibleChunkMap.keySet())
+            final Level world = sender.level;
+            for (long chunk : ((ServerChunkCache) sender.level.getChunkSource()).chunkMap.visibleChunkMap.keySet())
             {
-                ((ServerWorld) world).setChunkForced(ChunkPos.getX(chunk), ChunkPos.getZ(chunk), false);
+                ((ServerLevel) world).setChunkForced(ChunkPos.getX(chunk), ChunkPos.getZ(chunk), false);
             }
-            sender.sendMessage(new StringTextComponent("Successfully removed forceload flag!"), sender.getUUID());
+            sender.sendMessage(new TextComponent("Successfully removed forceload flag!"), sender.getUUID());
             return 1;
         }
         return 0;
     }
 
     @Override
-    public boolean checkPreCondition(final CommandContext<CommandSource> context)
+    public boolean checkPreCondition(final CommandContext<CommandSourceStack> context)
     {
         final Entity sender = context.getSource().getEntity();
-        return sender instanceof PlayerEntity && ((PlayerEntity) sender).isCreative();
+        return sender instanceof Player && ((Player) sender).isCreative();
     }
 
     /**
@@ -58,7 +58,7 @@ public class CommandUnloadForcedChunks implements IMCCommand
     }
 
     @Override
-    public LiteralArgumentBuilder<CommandSource> build()
+    public LiteralArgumentBuilder<CommandSourceStack> build()
     {
         return IMCCommand.newLiteral(getName()).executes(this::checkPreConditionAndExecute);
     }

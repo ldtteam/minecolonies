@@ -1,6 +1,6 @@
 package com.minecolonies.api.network;
 
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.Nullable;
@@ -15,14 +15,14 @@ public interface IMessage
      *
      * @param buf network data byte buffer
      */
-    void toBytes(final PacketBuffer buf);
+    void toBytes(final FriendlyByteBuf buf);
 
     /**
      * Reads message data from buffer.
      *
      * @param buf network data byte buffer
      */
-    void fromBytes(final PacketBuffer buf);
+    void fromBytes(final FriendlyByteBuf buf);
 
     /**
      * Which sides is message able to be executed at.

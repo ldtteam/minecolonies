@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.colony.colonyEvents.buildingEvents;
 
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -56,7 +56,7 @@ public class BuildingBuiltEvent extends AbstractBuildingEvent
      * @param compound the NBT compound
      * @return the colony to load.
      */
-    public static BuildingBuiltEvent loadFromNBT(@NotNull final CompoundNBT compound)
+    public static BuildingBuiltEvent loadFromNBT(@NotNull final CompoundTag compound)
     {
         final BuildingBuiltEvent buildEvent = new BuildingBuiltEvent();
         buildEvent.deserializeNBT(compound);
@@ -69,7 +69,7 @@ public class BuildingBuiltEvent extends AbstractBuildingEvent
      * @param buf the packet buffer.
      * @return the colony to load.
      */
-    public static BuildingBuiltEvent loadFromPacketBuffer(@NotNull final PacketBuffer buf)
+    public static BuildingBuiltEvent loadFromPacketBuffer(@NotNull final FriendlyByteBuf buf)
     {
         final BuildingBuiltEvent buildEvent = new BuildingBuiltEvent();
         buildEvent.deserialize(buf);

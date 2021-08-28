@@ -6,11 +6,11 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
@@ -46,13 +46,13 @@ public class GiveToolMessage extends AbstractBuildingServerMessage<AbstractBuild
     }
 
     @Override
-    protected void toBytesOverride(final PacketBuffer buf)
+    protected void toBytesOverride(final FriendlyByteBuf buf)
     {
         buf.writeItem(new ItemStack(item, 1));
     }
 
     @Override
-    protected void fromBytesOverride(final PacketBuffer buf)
+    protected void fromBytesOverride(final FriendlyByteBuf buf)
     {
         item = buf.readItem().getItem();
     }
@@ -60,14 +60,14 @@ public class GiveToolMessage extends AbstractBuildingServerMessage<AbstractBuild
     @Override
     protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final AbstractBuilding building)
     {
-        final PlayerEntity player = ctxIn.getSender();
+        final Player player = ctxIn.getSender();
         if (player == null)
         {
             return;
         }
 
         final ItemStack scepter = InventoryUtils.getOrCreateItemAndPutToHotbarAndSelectOrDrop(item, player, item::getDefaultInstance, true);
-        final CompoundNBT compound = scepter.getOrCreateTag();
+        final CompoundTag compound = scepter.getOrCreateTag();
         BlockPosUtil.write(compound, TAG_POS, building.getID());
         compound.putInt(TAG_ID, colony.getID());
 

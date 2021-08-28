@@ -1,15 +1,15 @@
 package com.minecolonies.coremod.client.render.mobs.pirates;
 
 import com.minecolonies.api.entity.mobs.pirates.AbstractEntityPirate;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.client.renderer.entity.model.BipedModel;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Renderer used for Chief Barbarians.
  */
-public class RendererChiefPirate extends AbstractRendererPirate<AbstractEntityPirate, BipedModel<AbstractEntityPirate>>
+public class RendererChiefPirate extends AbstractRendererPirate<AbstractEntityPirate, HumanoidModel<AbstractEntityPirate>>
 {
     /**
      * Texture of the entity.
@@ -24,9 +24,9 @@ public class RendererChiefPirate extends AbstractRendererPirate<AbstractEntityPi
      *
      * @param renderManagerIn the renderManager
      */
-    public RendererChiefPirate(final EntityRendererManager renderManagerIn)
+    public RendererChiefPirate(final EntityRenderDispatcher renderManagerIn)
     {
-        super(renderManagerIn, new BipedModel<>(0.0F), 0.5F);
+        super(renderManagerIn, new HumanoidModel<>(0.0F), 0.5F);
     }
 
     @NotNull

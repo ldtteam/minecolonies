@@ -10,13 +10,13 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.arguments.GameProfileArgument;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.arguments.GameProfileArgument;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 
 import java.util.Random;
 
@@ -34,9 +34,9 @@ public class CommandRTP implements IMCCommand
      * @param context the context of the command execution
      */
     @Override
-    public int onExecute(final CommandContext<CommandSource> context)
+    public int onExecute(final CommandContext<CommandSourceStack> context)
     {
-        rtp((PlayerEntity) context.getSource().getEntity());
+        rtp((Player) context.getSource().getEntity());
         return 1;
     }
 
@@ -47,11 +47,11 @@ public class CommandRTP implements IMCCommand
      * @return 1 if the command executed successfully, 0 otherwise
      * @throws CommandSyntaxException if the syntax isn't correct
      */
-    private int executeOtherPlayerRTP(final CommandContext<CommandSource> context) throws CommandSyntaxException
+    private int executeOtherPlayerRTP(final CommandContext<CommandSourceStack> context) throws CommandSyntaxException
     {
         final Entity sender = context.getSource().getEntity();
 
-        if (!checkPreCondition(context) || !IMCCommand.isPlayerOped((PlayerEntity) sender))
+        if (!checkPreCondition(context) || !IMCCommand.isPlayerOped((Player) sender))
         {
             return 0;
         }
@@ -61,7 +61,7 @@ public class CommandRTP implements IMCCommand
         if (profile == null || context.getSource().getServer().getPlayerList().getPlayer(profile.getId()) == null)
         {
             // could not find player with given name.
-            LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.playernotfound", profile != null ? profile.getName() : "null");
+            LanguageHandler.sendPlayerMessage((Player) sender, "com.minecolonies.command.playernotfound", profile != null ? profile.getName() : "null");
             return 0;
         }
 
@@ -70,22 +70,22 @@ public class CommandRTP implements IMCCommand
     }
 
     @Override
-    public boolean checkPreCondition(final CommandContext<CommandSource> context)
+    public boolean checkPreCondition(final CommandContext<CommandSourceStack> context)
     {
         final Entity sender = context.getSource().getEntity();
-        if (!(sender instanceof PlayerEntity))
+        if (!(sender instanceof Player))
         {
             return false;
         }
 
         if (!MineColonies.getConfig().getServer().canPlayerUseRTPCommand.get())
         {
-            LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.rtp.notallowed");
+            LanguageHandler.sendPlayerMessage((Player) sender, "com.minecolonies.command.rtp.notallowed");
             return false;
         }
-        else if (!MineColonies.getConfig().getServer().allowOtherDimColonies.get() && context.getSource().getLevel().dimension() != World.OVERWORLD)
+        else if (!MineColonies.getConfig().getServer().allowOtherDimColonies.get() && context.getSource().getLevel().dimension() != Level.OVERWORLD)
         {
-            LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.rtp.wrongdim");
+            LanguageHandler.sendPlayerMessage((Player) sender, "com.minecolonies.command.rtp.wrongdim");
             return false;
         }
         return true;
@@ -96,7 +96,7 @@ public class CommandRTP implements IMCCommand
      *
      * @param player player to teleport
      */
-    private void rtp(final PlayerEntity player)
+    private void rtp(final Player player)
     {
         //Now the position will be calculated, we will try up to 4 times to find a save position.
         for (int attCounter = 0; attCounter <= MineColonies.getConfig().getServer().numberOfAttemptsForSafeTP.get(); attCounter++)
@@ -104,7 +104,7 @@ public class CommandRTP implements IMCCommand
             /* this math is to get negative numbers */
             final int x = getRandCoordinate();
             final int z = getRandCoordinate();
-            final BlockPos spawnPoint = ((ServerWorld) player.getCommandSenderWorld()).getSharedSpawnPos();
+            final BlockPos spawnPoint = ((ServerLevel) player.getCommandSenderWorld()).getSharedSpawnPos();
             if (player.getCommandSenderWorld().getWorldBorder().getAbsoluteMaxSize()
                   < BlockPosUtil.getDistance2D(spawnPoint, spawnPoint.offset(x, 0, z)))
             {
@@ -176,7 +176,7 @@ public class CommandRTP implements IMCCommand
     }
 
     @Override
-    public LiteralArgumentBuilder<CommandSource> build()
+    public LiteralArgumentBuilder<CommandSourceStack> build()
     {
         return IMCCommand.newLiteral(getName())
                  .then(IMCCommand.newArgument(PLAYERNAME_ARG, GameProfileArgument.gameProfile()).executes(this::executeOtherPlayerRTP))

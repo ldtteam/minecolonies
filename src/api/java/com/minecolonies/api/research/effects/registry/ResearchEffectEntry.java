@@ -1,8 +1,8 @@
 package com.minecolonies.api.research.effects.registry;
 
 import com.minecolonies.api.research.effects.IResearchEffect;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 import org.apache.commons.lang3.Validate;
 
@@ -14,14 +14,14 @@ import java.util.function.Function;
 @SuppressWarnings("PMD.MissingStaticMethodInNonInstantiatableClass") //Use the builder to create one.
 public class ResearchEffectEntry extends ForgeRegistryEntry<ResearchEffectEntry>
 {
-    private final Function<CompoundNBT, IResearchEffect<?>> readFromNBT;
+    private final Function<CompoundTag, IResearchEffect<?>> readFromNBT;
 
     /**
      * A builder class for {@link ResearchEffectEntry}.
      */
     public static final class Builder
     {
-        private Function<CompoundNBT, IResearchEffect<?>>      readFromNBT;
+        private Function<CompoundTag, IResearchEffect<?>>      readFromNBT;
         private ResourceLocation                               registryName;
 
         /**
@@ -32,7 +32,7 @@ public class ResearchEffectEntry extends ForgeRegistryEntry<ResearchEffectEntry>
          * @param readFromNBT  a function taking CompoundNBT and returning an IResearchEffect.
          * @return The builder.
          */
-        public Builder setReadFromNBT(final Function<CompoundNBT, IResearchEffect<?>> readFromNBT)
+        public Builder setReadFromNBT(final Function<CompoundTag, IResearchEffect<?>> readFromNBT)
         {
             this.readFromNBT = readFromNBT;
             return this;
@@ -65,13 +65,13 @@ public class ResearchEffectEntry extends ForgeRegistryEntry<ResearchEffectEntry>
         }
     }
 
-    public IResearchEffect<?> readFromNBT(CompoundNBT nbt)
+    public IResearchEffect<?> readFromNBT(CompoundTag nbt)
     {
         return readFromNBT.apply(nbt);
     }
 
     private ResearchEffectEntry(
-      final Function<CompoundNBT, IResearchEffect<?>> readFromNBT)
+      final Function<CompoundTag, IResearchEffect<?>> readFromNBT)
     {
         super();
         this.readFromNBT = readFromNBT;

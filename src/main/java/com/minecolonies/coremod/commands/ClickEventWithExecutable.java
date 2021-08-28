@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.commands;
 
-import net.minecraft.util.text.event.ClickEvent;
+import net.minecraft.network.chat.ClickEvent;
 import org.jetbrains.annotations.NotNull;
 
-import net.minecraft.util.text.event.ClickEvent.Action;
+import net.minecraft.network.chat.ClickEvent.Action;
 
 /**
  * Small utility class to run an executable on a chat click event.

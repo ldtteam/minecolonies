@@ -12,15 +12,15 @@ import com.ldtteam.structurize.util.PlacementSettings;
 import com.ldtteam.structurize.util.TickedWorldOperation;
 import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipBasedRaiderUtils;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Mirror;
-import net.minecraft.util.Rotation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -63,7 +63,7 @@ public final class CreativeRaiderStructureHandler extends CreativeStructureHandl
      * @param colonyId       the colony id.
      */
     public CreativeRaiderStructureHandler(
-      final World world,
+      final Level world,
       final BlockPos pos,
       final String structureName,
       final PlacementSettings settings,
@@ -79,10 +79,10 @@ public final class CreativeRaiderStructureHandler extends CreativeStructureHandl
         final BlockInfo info = getBluePrint().getBlockInfoAsMap().getOrDefault(getBluePrint().getPrimaryBlockOffset(), null);
         if (info.getTileEntityData() != null)
         {
-            final CompoundNBT teData = getBluePrint().getTileEntityData(pos, getBluePrint().getPrimaryBlockOffset());
+            final CompoundTag teData = getBluePrint().getTileEntityData(pos, getBluePrint().getPrimaryBlockOffset());
             if (teData != null && teData.contains(TAG_BLUEPRINTDATA))
             {
-                final TileEntity entity = TileEntity.loadStatic(info.getState(), info.getTileEntityData());
+                final BlockEntity entity = BlockEntity.loadStatic(info.getState(), info.getTileEntityData());
                 if (entity instanceof IBlueprintDataProvider)
                 {
                     entity.setPosition(pos);
@@ -138,11 +138,11 @@ public final class CreativeRaiderStructureHandler extends CreativeStructureHandl
      * @return the placed blueprint.
      */
     public static Blueprint loadAndPlaceStructureWithRotation(
-      final World worldObj, @NotNull final String name,
+      final Level worldObj, @NotNull final String name,
       @NotNull final BlockPos pos, final Rotation rotation,
       @NotNull final Mirror mirror,
       final boolean fancyPlacement, final int colonyId, final IColonyRaidEvent event,
-      @Nullable final ServerPlayerEntity player)
+      @Nullable final ServerPlayer player)
     {
         try
         {

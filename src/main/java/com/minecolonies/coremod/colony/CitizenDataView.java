@@ -18,13 +18,13 @@ import com.minecolonies.coremod.colony.interactionhandling.ServerCitizenInteract
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenHappinessHandler;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenSkillHandler;
 import net.minecraft.client.Minecraft;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.Hand;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -103,7 +103,7 @@ public class CitizenDataView implements ICitizenDataView
     /**
      * The citizen chat options on the server side.
      */
-    private final Map<ITextComponent, IInteractionResponseHandler> citizenChatOptions = new LinkedHashMap<>();
+    private final Map<Component, IInteractionResponseHandler> citizenChatOptions = new LinkedHashMap<>();
 
     /**
      * List of primary interactions (sorted by priority).
@@ -268,7 +268,7 @@ public class CitizenDataView implements ICitizenDataView
     }
 
     @Override
-    public void deserialize(@NotNull final PacketBuffer buf)
+    public void deserialize(@NotNull final FriendlyByteBuf buf)
     {
         name = buf.readUtf(32767);
         female = buf.readBoolean();
@@ -292,12 +292,12 @@ public class CitizenDataView implements ICitizenDataView
 
         colonyId = buf.readInt();
 
-        final CompoundNBT compound = buf.readNbt();
+        final CompoundTag compound = buf.readNbt();
         inventory = new InventoryCitizen(this.name, true);
-        final ListNBT ListNBT = compound.getList("inventory", 10);
+        final ListTag ListNBT = compound.getList("inventory", 10);
         this.inventory.read(ListNBT);
-        this.inventory.setHeldItem(Hand.MAIN_HAND, compound.getInt(TAG_HELD_ITEM_SLOT));
-        this.inventory.setHeldItem(Hand.OFF_HAND, compound.getInt(TAG_OFFHAND_HELD_ITEM_SLOT));
+        this.inventory.setHeldItem(InteractionHand.MAIN_HAND, compound.getInt(TAG_HELD_ITEM_SLOT));
+        this.inventory.setHeldItem(InteractionHand.OFF_HAND, compound.getInt(TAG_OFFHAND_HELD_ITEM_SLOT));
 
         position = buf.readBlockPos();
 
@@ -305,7 +305,7 @@ public class CitizenDataView implements ICitizenDataView
         final int size = buf.readInt();
         for (int i = 0; i < size; i++)
         {
-            final CompoundNBT compoundNBT = buf.readNbt();
+            final CompoundTag compoundNBT = buf.readNbt();
             final ServerCitizenInteraction handler =
               (ServerCitizenInteraction) MinecoloniesAPIProxy.getInstance().getInteractionResponseHandlerDataManager().createFrom(this, compoundNBT);
             citizenChatOptions.put(handler.getInquiry(), handler);
@@ -365,7 +365,7 @@ public class CitizenDataView implements ICitizenDataView
 
     @Override
     @Nullable
-    public IInteractionResponseHandler getSpecificInteraction(@NotNull final ITextComponent component)
+    public IInteractionResponseHandler getSpecificInteraction(@NotNull final Component component)
     {
         return citizenChatOptions.getOrDefault(component, null);
     }

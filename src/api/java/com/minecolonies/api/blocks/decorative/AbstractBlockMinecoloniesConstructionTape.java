@@ -4,26 +4,33 @@ import com.minecolonies.api.blocks.AbstractBlockMinecoloniesFalling;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.block.*;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.state.BooleanProperty;
-import net.minecraft.state.DirectionProperty;
-import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.shapes.VoxelShapes;
-import net.minecraft.world.IBlockReader;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.level.BlockGetter;
 import org.jetbrains.annotations.NotNull;
 
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.level.block.PipeBlock;
+import net.minecraft.world.level.block.SimpleWaterloggedBlock;
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
+import net.minecraft.world.level.block.state.BlockState;
+
 public abstract class AbstractBlockMinecoloniesConstructionTape<B extends AbstractBlockMinecoloniesConstructionTape<B>> extends AbstractBlockMinecoloniesFalling<B>
-  implements IWaterLoggable
+  implements SimpleWaterloggedBlock
 {
-    public static final BooleanProperty NORTH       = SixWayBlock.NORTH;
-    public static final BooleanProperty EAST        = SixWayBlock.EAST;
-    public static final BooleanProperty SOUTH       = SixWayBlock.SOUTH;
-    public static final BooleanProperty WEST        = SixWayBlock.WEST;
+    public static final BooleanProperty NORTH       = PipeBlock.NORTH;
+    public static final BooleanProperty EAST        = PipeBlock.EAST;
+    public static final BooleanProperty SOUTH       = PipeBlock.SOUTH;
+    public static final BooleanProperty WEST        = PipeBlock.WEST;
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
     protected VoxelShape[] shapes = new VoxelShape[] {};
@@ -33,7 +40,7 @@ public abstract class AbstractBlockMinecoloniesConstructionTape<B extends Abstra
     /**
      * The default face for when there are no connections.
      */
-    public static final DirectionProperty FACING = HorizontalBlock.FACING;
+    public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 
     /**
      * Implies that the tape should revert to a corner if there are no connections. Must be set explicitly. For use by the builder handler.
@@ -47,7 +54,7 @@ public abstract class AbstractBlockMinecoloniesConstructionTape<B extends Abstra
 
     @NotNull
     @Override
-    public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context)
+    public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context)
     {
         return this.shapes[this.getIndex(state)];
     }
@@ -103,28 +110,28 @@ public abstract class AbstractBlockMinecoloniesConstructionTape<B extends Abstra
         VoxelShape south = Block.box(limbStart, limbBase, limbStart, limbEnd, limbTop, 16.0D);
         VoxelShape west = Block.box(0.0F, limbBase, limbStart, limbEnd, limbTop, limbEnd);
         VoxelShape east = Block.box(limbStart, limbBase, limbStart, 16.0D, limbTop, limbEnd);
-        VoxelShape cornernw = VoxelShapes.or(north, east);
-        VoxelShape cornerse = VoxelShapes.or(south, west);
+        VoxelShape cornernw = Shapes.or(north, east);
+        VoxelShape cornerse = Shapes.or(south, west);
 
         // All 16 possible block combinations, in a specific index to be retrieved by getIndex
         VoxelShape[] avoxelshape = new VoxelShape[]
                                      {
-                                       VoxelShapes.empty(), south, west, cornerse, north,
-                                       VoxelShapes.or(south, north),
-                                       VoxelShapes.or(west, north),
-                                       VoxelShapes.or(cornerse, north), east,
-                                       VoxelShapes.or(south, east),
-                                       VoxelShapes.or(west, east),
-                                       VoxelShapes.or(cornerse, east), cornernw,
-                                       VoxelShapes.or(south, cornernw),
-                                       VoxelShapes.or(west, cornernw),
-                                       VoxelShapes.or(cornerse, cornernw)
+                                       Shapes.empty(), south, west, cornerse, north,
+                                       Shapes.or(south, north),
+                                       Shapes.or(west, north),
+                                       Shapes.or(cornerse, north), east,
+                                       Shapes.or(south, east),
+                                       Shapes.or(west, east),
+                                       Shapes.or(cornerse, east), cornernw,
+                                       Shapes.or(south, cornernw),
+                                       Shapes.or(west, cornernw),
+                                       Shapes.or(cornerse, cornernw)
                                      };
 
         // Combine the arm voxel shapes with the main node for all combinations
         for (int i = 0; i < 16; ++i)
         {
-            avoxelshape[i] = VoxelShapes.or(node, avoxelshape[i]);
+            avoxelshape[i] = Shapes.or(node, avoxelshape[i]);
         }
 
         return avoxelshape;

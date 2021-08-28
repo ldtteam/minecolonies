@@ -1,7 +1,7 @@
 package com.minecolonies.api.blocks.interfaces;
 
-import net.minecraft.block.Block;
-import net.minecraft.item.Item;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.item.Item;
 import net.minecraftforge.registries.IForgeRegistry;
 
 public interface IBlockMinecolonies<B extends IBlockMinecolonies<B>>

@@ -12,8 +12,8 @@ import com.minecolonies.api.colony.buildings.modules.settings.ISettingsModuleVie
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.moduleviews.ToolModuleView;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -68,7 +68,7 @@ public class GuardTaskSetting extends StringSettingWithDesc
     {
         Loader.createFromXMLFile("minecolonies:gui/layouthuts/layoutguardtasksetting.xml", (View) pane);
         pane.findPaneOfTypeByID("id", Text.class).setText(key.getUniqueId().toString());
-        pane.findPaneOfTypeByID("desc", Text.class).setText(new TranslationTextComponent("com.minecolonies.coremod.setting." + key.getUniqueId().toString()));
+        pane.findPaneOfTypeByID("desc", Text.class).setText(new TranslatableComponent("com.minecolonies.coremod.setting." + key.getUniqueId().toString()));
         pane.findPaneOfTypeByID("trigger", ButtonImage.class).setHandler(button -> settingsModuleView.trigger(key));
     }
 
@@ -83,11 +83,11 @@ public class GuardTaskSetting extends StringSettingWithDesc
             mineLabel.setVisible(true);
             if (((AbstractBuildingGuards.View) building).getMinePos() != null)
             {
-                mineLabel.setText(new TranslationTextComponent("com.minecolonies.coremod.gui.worherhuts.patrollingmine", ((AbstractBuildingGuards.View) building).getMinePos().toShortString()));
+                mineLabel.setText(new TranslatableComponent("com.minecolonies.coremod.gui.worherhuts.patrollingmine", ((AbstractBuildingGuards.View) building).getMinePos().toShortString()));
             }
             else
             {
-                mineLabel.setText(new TranslationTextComponent("com.minecolonies.coremod.job.guard.assignmine"));
+                mineLabel.setText(new TranslatableComponent("com.minecolonies.coremod.job.guard.assignmine"));
             }
             targetButton.setVisible(false);
         }
@@ -103,12 +103,12 @@ public class GuardTaskSetting extends StringSettingWithDesc
                 }
                 else
                 {
-                    targetButton.setText(new TranslationTextComponent("com.minecolonies.coremod.gui.workerhuts.targetpatrol"));
+                    targetButton.setText(new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts.targetpatrol"));
                 }
             }
             else
             {
-                targetButton.setText(new TranslationTextComponent("com.minecolonies.coremod.gui.workerhuts.targetguard"));
+                targetButton.setText(new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts.targetguard"));
             }
 
             targetButton.setHandler(button -> building.getModuleView(ToolModuleView.class).getWindow().open());
@@ -118,11 +118,11 @@ public class GuardTaskSetting extends StringSettingWithDesc
             mineLabel.setVisible(false);
             targetButton.setVisible(false);
         }
-        pane.findPaneOfTypeByID("trigger", ButtonImage.class).setText(new TranslationTextComponent(setting));
+        pane.findPaneOfTypeByID("trigger", ButtonImage.class).setText(new TranslatableComponent(setting));
     }
 
     @Override
-    public void onUpdate(final IBuilding building, final ServerPlayerEntity sender)
+    public void onUpdate(final IBuilding building, final ServerPlayer sender)
     {
         if (building instanceof AbstractBuildingGuards && getValue().equals(FOLLOW))
         {

@@ -4,9 +4,9 @@ import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.items.ModTags;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tags.ITag;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.tags.Tag;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -78,28 +78,28 @@ public final class CraftingUtils
     public static Optional<Boolean> isRecipeCompatibleBasedOnTags(@NotNull final IGenericRecipe recipe, @NotNull final String crafterJobName)
     {
         // Check against excluded products
-        final ITag<Item> excludedProducts = ModTags.crafterProductExclusions.get(crafterJobName);
+        final Tag<Item> excludedProducts = ModTags.crafterProductExclusions.get(crafterJobName);
         if (excludedProducts != null && recipe.matchesOutput(stack -> excludedProducts.contains(stack.getItem())))
         {
             return Optional.of(false);
         }
 
         // Check against allowed products
-        final ITag<Item> allowedProducts = ModTags.crafterProduct.get(crafterJobName);
+        final Tag<Item> allowedProducts = ModTags.crafterProduct.get(crafterJobName);
         if (allowedProducts != null && recipe.matchesOutput(stack -> allowedProducts.contains(stack.getItem())))
         {
             return Optional.of(true);
         }
 
         // Check against excluded ingredients
-        final ITag<Item> excludedIngredients = ModTags.crafterIngredientExclusions.get(crafterJobName);
+        final Tag<Item> excludedIngredients = ModTags.crafterIngredientExclusions.get(crafterJobName);
         if (excludedIngredients != null && recipe.matchesInput(stack -> excludedIngredients.contains(stack.getItem())))
         {
             return Optional.of(false);
         }
 
         // Check against allowed ingredients
-        final ITag<Item> allowedIngredients = ModTags.crafterIngredient.get(crafterJobName);
+        final Tag<Item> allowedIngredients = ModTags.crafterIngredient.get(crafterJobName);
         if (allowedIngredients != null && recipe.matchesInput(stack -> allowedIngredients.contains(stack.getItem())))
         {
             return Optional.of(true);

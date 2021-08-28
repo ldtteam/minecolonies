@@ -1,22 +1,22 @@
 package com.minecolonies.api.advancements.citizen_eat_food;
 
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.advancements.criterion.CriterionInstance;
-import net.minecraft.advancements.criterion.EntityPredicate;
-import net.minecraft.advancements.criterion.ItemPredicate;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.advancements.critereon.AbstractCriterionTriggerInstance;
+import net.minecraft.advancements.critereon.EntityPredicate;
+import net.minecraft.advancements.critereon.ItemPredicate;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * The test instance to check the "items" condition for the "citizen_eat_food" trigger
  */
-public class CitizenEatFoodCriterionInstance extends CriterionInstance
+public class CitizenEatFoodCriterionInstance extends AbstractCriterionTriggerInstance
 {
     private ItemPredicate[] itemPredicates;
 
     public CitizenEatFoodCriterionInstance()
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CITIZEN_EAT_FOOD), EntityPredicate.AndPredicate.ANY);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CITIZEN_EAT_FOOD), EntityPredicate.Composite.ANY);
     }
 
     /**
@@ -25,7 +25,7 @@ public class CitizenEatFoodCriterionInstance extends CriterionInstance
      */
     public CitizenEatFoodCriterionInstance(final ItemPredicate[] itemPredicates)
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CITIZEN_EAT_FOOD), EntityPredicate.AndPredicate.ANY);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CITIZEN_EAT_FOOD), EntityPredicate.Composite.ANY);
 
         this.itemPredicates = itemPredicates;
     }

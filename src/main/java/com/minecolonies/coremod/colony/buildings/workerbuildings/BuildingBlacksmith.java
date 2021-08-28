@@ -18,11 +18,18 @@ import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildin
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.colony.jobs.JobBlacksmith;
 import net.minecraft.item.*;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
+
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.DiggerItem;
+import net.minecraft.world.item.HoeItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ShieldItem;
+import net.minecraft.world.item.SwordItem;
 
 /**
  * Creates a new building for the blacksmith.
@@ -146,7 +153,7 @@ public class BuildingBlacksmith extends AbstractBuildingWorker implements IBuild
             final ItemStack output = recipe.getPrimaryOutput();
 
             final boolean matchOverride =
-                    output.getItem() instanceof ToolItem ||
+                    output.getItem() instanceof DiggerItem ||
                     output.getItem() instanceof SwordItem ||
                     output.getItem() instanceof ArmorItem ||
                     output.getItem() instanceof HoeItem ||

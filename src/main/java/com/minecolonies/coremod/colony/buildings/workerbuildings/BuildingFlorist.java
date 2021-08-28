@@ -18,16 +18,16 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.colony.jobs.JobFlorist;
-import net.minecraft.block.Block;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.NBTUtil;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -127,7 +127,7 @@ public class BuildingFlorist extends AbstractBuildingWorker
     }
 
     @Override
-    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
+    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final Level world)
     {
         super.registerBlockPosition(block, pos, world);
         if (block == ModBlocks.blockCompostedDirt && !plantGround.contains(pos))
@@ -137,25 +137,25 @@ public class BuildingFlorist extends AbstractBuildingWorker
     }
 
     @Override
-    public void deserializeNBT(final CompoundNBT compound)
+    public void deserializeNBT(final CompoundTag compound)
     {
         super.deserializeNBT(compound);
-        final ListNBT compostBinTagList = compound.getList(TAG_PLANTGROUND, Constants.NBT.TAG_COMPOUND);
+        final ListTag compostBinTagList = compound.getList(TAG_PLANTGROUND, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < compostBinTagList.size(); ++i)
         {
-            plantGround.add(NBTUtil.readBlockPos(compostBinTagList.getCompound(i).getCompound(TAG_POS)));
+            plantGround.add(NbtUtils.readBlockPos(compostBinTagList.getCompound(i).getCompound(TAG_POS)));
         }
     }
 
     @Override
-    public CompoundNBT serializeNBT()
+    public CompoundTag serializeNBT()
     {
-        final CompoundNBT compound = super.serializeNBT();
-        @NotNull final ListNBT compostBinTagList = new ListNBT();
+        final CompoundTag compound = super.serializeNBT();
+        @NotNull final ListTag compostBinTagList = new ListTag();
         for (@NotNull final BlockPos entry : plantGround)
         {
-            @NotNull final CompoundNBT compostBinCompound = new CompoundNBT();
-            compostBinCompound.put(TAG_POS, NBTUtil.writeBlockPos(entry));
+            @NotNull final CompoundTag compostBinCompound = new CompoundTag();
+            compostBinCompound.put(TAG_POS, NbtUtils.writeBlockPos(entry));
             compostBinTagList.add(compostBinCompound);
         }
         compound.put(TAG_PLANTGROUND, compostBinTagList);

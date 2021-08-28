@@ -1,8 +1,8 @@
 package com.minecolonies.api.colony.managers.interfaces;
 
 import com.minecolonies.api.colony.ICitizenData;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.BlockPos;
 
 import java.util.List;
 
@@ -166,13 +166,13 @@ public interface IRaiderManager
      * Writes the raid manager to nbt
      * @param compound to write to
      */
-    void write(CompoundNBT compound);
+    void write(CompoundTag compound);
 
     /**
      * Reads the raid manager form nbt
      * @param compound to read from
      */
-    void read(CompoundNBT compound);
+    void read(CompoundTag compound);
 
     /**
      * Gets the amount of citizens lost in a raid.

@@ -1,6 +1,6 @@
 package com.minecolonies.api.colony;
 
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 
 /**
  * View data for visitors

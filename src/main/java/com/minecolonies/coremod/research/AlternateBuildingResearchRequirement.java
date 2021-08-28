@@ -5,9 +5,9 @@ import com.minecolonies.api.research.IResearchRequirement;
 import com.minecolonies.api.research.ModResearchRequirements;
 import com.minecolonies.api.research.registry.ResearchRequirementEntry;
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.network.chat.TranslatableComponent;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -69,12 +69,12 @@ public class AlternateBuildingResearchRequirement implements IResearchRequiremen
      * Creates and returns an Alternate Building Requirement, reassembled from a compoundNBT
      * @param nbt the NBT containing the Building Names and Levels data
      */
-    public AlternateBuildingResearchRequirement(CompoundNBT nbt)
+    public AlternateBuildingResearchRequirement(CompoundTag nbt)
     {
-        ListNBT buildingsNBT = nbt.getList(TAG_BUILDINGS_LIST, Constants.TAG_COMPOUND);
+        ListTag buildingsNBT = nbt.getList(TAG_BUILDINGS_LIST, Constants.TAG_COMPOUND);
         for(int i = 0; i < buildingsNBT.size(); i++)
         {
-            CompoundNBT indNBT = buildingsNBT.getCompound(i);
+            CompoundTag indNBT = buildingsNBT.getCompound(i);
             buildings.put(indNBT.getString(TAG_BUILDING_NAME), indNBT.getInt(TAG_BUILDING_LVL));
         }
     }
@@ -102,19 +102,19 @@ public class AlternateBuildingResearchRequirement implements IResearchRequiremen
     }
 
     @Override
-    public TranslationTextComponent getDesc()
+    public TranslatableComponent getDesc()
     {
-        final TranslationTextComponent requirementList = new TranslationTextComponent("");
+        final TranslatableComponent requirementList = new TranslatableComponent("");
         final Iterator<Map.Entry<String, Integer>> iterator = buildings.entrySet().iterator();
         while (iterator.hasNext())
         {
             final Map.Entry<String, Integer> kvp = iterator.next();
-            requirementList.append(new TranslationTextComponent("com.minecolonies.coremod.research.requirement.building.level",
-              new TranslationTextComponent("block.minecolonies.blockhut" + kvp.getKey()),
+            requirementList.append(new TranslatableComponent("com.minecolonies.coremod.research.requirement.building.level",
+              new TranslatableComponent("block.minecolonies.blockhut" + kvp.getKey()),
               kvp.getValue()));
             if (iterator.hasNext())
             {
-                requirementList.append(new TranslationTextComponent("com.minecolonies.coremod.research.requirement.building.or"));
+                requirementList.append(new TranslatableComponent("com.minecolonies.coremod.research.requirement.building.or"));
             }
         }
         return requirementList;
@@ -124,13 +124,13 @@ public class AlternateBuildingResearchRequirement implements IResearchRequiremen
     public ResearchRequirementEntry getRegistryEntry() { return ModResearchRequirements.alternateBuildingResearchRequirement;}
 
     @Override
-    public CompoundNBT writeToNBT()
+    public CompoundTag writeToNBT()
     {
-        CompoundNBT nbt = new CompoundNBT();
-        ListNBT buildingsNBT = new ListNBT();
+        CompoundTag nbt = new CompoundTag();
+        ListTag buildingsNBT = new ListTag();
         for(Map.Entry<String, Integer> build : buildings.entrySet())
         {
-            CompoundNBT indNBT = new CompoundNBT();
+            CompoundTag indNBT = new CompoundTag();
             indNBT.putString(TAG_BUILDING_NAME, build.getKey());
             indNBT.putInt(TAG_BUILDING_LVL, build.getValue());
             buildingsNBT.add(indNBT);

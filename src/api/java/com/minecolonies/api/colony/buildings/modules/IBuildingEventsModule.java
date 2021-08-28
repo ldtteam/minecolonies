@@ -1,7 +1,7 @@
 package com.minecolonies.api.colony.buildings.modules;
 
 import com.minecolonies.api.colony.buildings.IBuilding;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.player.Player;
 
 /**
  * Module interface for all building based events.
@@ -34,5 +34,5 @@ public interface IBuildingEventsModule extends IBuildingModule
      * On player entering hook.
      * @param player the player that entered the building.
      */
-    default void onPlayerEnterBuilding(PlayerEntity player) { }
+    default void onPlayerEnterBuilding(Player player) { }
 }

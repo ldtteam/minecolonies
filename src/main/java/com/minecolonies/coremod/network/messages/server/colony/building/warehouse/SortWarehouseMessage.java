@@ -6,7 +6,7 @@ import com.minecolonies.api.inventory.api.CombinedItemHandler;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
 import com.minecolonies.coremod.util.SortingUtils;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.items.CapabilityItemHandler;
 
@@ -34,13 +34,13 @@ public class SortWarehouseMessage extends AbstractBuildingServerMessage<Building
     }
 
     @Override
-    protected void toBytesOverride(final PacketBuffer buf)
+    protected void toBytesOverride(final FriendlyByteBuf buf)
     {
 
     }
 
     @Override
-    protected void fromBytesOverride(final PacketBuffer buf)
+    protected void fromBytesOverride(final FriendlyByteBuf buf)
     {
 
     }

@@ -1,6 +1,6 @@
 package com.minecolonies.api.entity.citizen.happiness;
 
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_VALUE;
 
@@ -38,13 +38,13 @@ public abstract class AbstractHappinessModifier implements IHappinessModifier
     }
 
     @Override
-    public void read(final CompoundNBT compoundNBT)
+    public void read(final CompoundTag compoundNBT)
     {
 
     }
 
     @Override
-    public void write(final CompoundNBT compoundNBT)
+    public void write(final CompoundTag compoundNBT)
     {
         compoundNBT.putDouble(TAG_VALUE, getFactor());
     }

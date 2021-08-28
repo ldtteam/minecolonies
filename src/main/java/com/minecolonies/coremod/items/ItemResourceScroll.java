@@ -11,22 +11,22 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
@@ -61,12 +61,12 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
      */
     @Override
     @NotNull
-    public ActionResultType useOn(ItemUseContext ctx)
+    public InteractionResult useOn(UseOnContext ctx)
     {
         final ItemStack scroll = ctx.getPlayer().getItemInHand(ctx.getHand());
 
-        final CompoundNBT compound = checkForCompound(scroll);
-        TileEntity entity = ctx.getLevel().getBlockEntity(ctx.getClickedPos());
+        final CompoundTag compound = checkForCompound(scroll);
+        BlockEntity entity = ctx.getLevel().getBlockEntity(ctx.getClickedPos());
 
         if (entity instanceof TileEntityColonyBuilding)
         {
@@ -85,7 +85,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
             openWindow(compound, ctx.getPlayer());
         }
 
-        return ActionResultType.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 
     /**
@@ -98,32 +98,32 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
      */
     @Override
     @NotNull
-    public ActionResult<ItemStack> use(
-      final World worldIn,
-      final PlayerEntity playerIn,
-      final Hand hand)
+    public InteractionResultHolder<ItemStack> use(
+      final Level worldIn,
+      final Player playerIn,
+      final InteractionHand hand)
     {
         final ItemStack clipboard = playerIn.getItemInHand(hand);
 
         if (!worldIn.isClientSide)
         {
-            return new ActionResult<>(ActionResultType.SUCCESS, clipboard);
+            return new InteractionResultHolder<>(InteractionResult.SUCCESS, clipboard);
         }
 
         openWindow(checkForCompound(clipboard), playerIn);
 
-        return new ActionResult<>(ActionResultType.SUCCESS, clipboard);
+        return new InteractionResultHolder<>(InteractionResult.SUCCESS, clipboard);
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void appendHoverText(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn)
+    public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn)
     {
         super.appendHoverText(stack, worldIn, tooltip, flagIn);
 
         if (worldIn == null) return;
 
-        final CompoundNBT compound = checkForCompound(stack);
+        final CompoundTag compound = checkForCompound(stack);
         final int colonyId = compound.getInt(TAG_COLONY_ID);
         final BlockPos builderPos = BlockPosUtil.read(compound, TAG_BUILDER);
 
@@ -135,8 +135,8 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
             {
                 String name = ((BuildingBuilder.View) buildingView).getWorkerName();
                 tooltip.add(name != null && !name.trim().isEmpty()
-                  ? new StringTextComponent(TextFormatting.DARK_PURPLE + name)
-                  : new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_SCROLL_NO_BUILDER));
+                  ? new TextComponent(ChatFormatting.DARK_PURPLE + name)
+                  : new TranslatableComponent(TranslationConstants.COM_MINECOLONIES_SCROLL_NO_BUILDER));
             }
         }
     }
@@ -147,11 +147,11 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
      * @param item the item to check in for.
      * @return the compound of the item.
      */
-    private static CompoundNBT checkForCompound(final ItemStack item)
+    private static CompoundTag checkForCompound(final ItemStack item)
     {
         if (!item.hasTag())
         {
-            item.setTag(new CompoundNBT());
+            item.setTag(new CompoundTag());
         }
         return item.getTag();
     }
@@ -161,7 +161,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
      * @param compound the item compound
      * @param player the player entity opening the window
      */
-    private static void openWindow(CompoundNBT compound, PlayerEntity player)
+    private static void openWindow(CompoundTag compound, Player player)
     {
         if (compound.getAllKeys().contains(TAG_COLONY_ID) && compound.getAllKeys().contains(TAG_BUILDER))
         {
@@ -171,7 +171,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
         }
         else
         {
-            player.displayClientMessage(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_SCROLL_NEED_BUILDER), true);
+            player.displayClientMessage(new TranslatableComponent(TranslationConstants.COM_MINECOLONIES_SCROLL_NEED_BUILDER), true);
         }
     }
 }

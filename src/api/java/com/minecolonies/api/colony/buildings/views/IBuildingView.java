@@ -9,8 +9,8 @@ import com.minecolonies.api.colony.buildings.modules.IBuildingModuleView;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -171,7 +171,7 @@ public interface IBuildingView extends IRequester
      *
      * @param buf The buffer to read this view from.
      */
-    void deserialize(@NotNull PacketBuffer buf);
+    void deserialize(@NotNull FriendlyByteBuf buf);
 
     Map<Integer, Collection<IToken<?>>> getOpenRequestsByCitizen();
 

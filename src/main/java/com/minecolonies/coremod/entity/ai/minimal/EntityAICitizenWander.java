@@ -2,11 +2,11 @@ package com.minecolonies.coremod.entity.ai.minimal;
 
 import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.goal.Goal;
 
 import java.util.EnumSet;
 
-import net.minecraft.entity.ai.goal.Goal.Flag;
+import net.minecraft.world.entity.ai.goal.Goal.Flag;
 
 /**
  * Entity action to wander randomly around.

@@ -6,8 +6,8 @@ import java.util.List;
 import com.google.common.collect.ImmutableList;
 
 import com.minecolonies.api.util.ItemStackUtils;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * The Classic Recipe type

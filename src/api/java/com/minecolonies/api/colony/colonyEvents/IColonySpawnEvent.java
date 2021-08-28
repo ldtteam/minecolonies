@@ -1,6 +1,6 @@
 package com.minecolonies.api.colony.colonyEvents;
 
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
 
 /**
  * An colony event which spawns at a certain position

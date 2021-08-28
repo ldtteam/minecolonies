@@ -1,10 +1,10 @@
 package com.minecolonies.api.blocks.types;
 
-import net.minecraft.block.material.MaterialColor;
-import net.minecraft.util.IStringSerializable;
+import net.minecraft.world.level.material.MaterialColor;
+import net.minecraft.util.StringRepresentable;
 import org.jetbrains.annotations.NotNull;
 
-public enum BarrelType implements IStringSerializable
+public enum BarrelType implements StringRepresentable
 {
     ZERO(0, "0perc", MaterialColor.WOOD),
     TWENTY(1, "20perc", MaterialColor.WOOD),

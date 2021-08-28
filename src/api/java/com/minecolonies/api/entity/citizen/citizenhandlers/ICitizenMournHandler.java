@@ -2,7 +2,7 @@ package com.minecolonies.api.entity.citizen.citizenhandlers;
 
 import java.util.Set;
 
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
 
 /**
  * The citizen happiness handler interface.
@@ -14,14 +14,14 @@ public interface ICitizenMournHandler
      *
      * @param compound the compound to read it from.
      */
-    void read(CompoundNBT compound);
+    void read(CompoundTag compound);
 
     /**
      * Write the handler to NBT.
      *
      * @param compound the compound to write it to.
      */
-    void write(CompoundNBT compound);
+    void write(CompoundTag compound);
 
     /**
      * Add a deceased citizen to the handler.

@@ -1,7 +1,7 @@
 package com.minecolonies.api.network;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -27,7 +27,7 @@ public final class PacketUtils
      * @param buf  Buf to write in.
      * @param uuid UUID to write.
      */
-    public static void writeUUID(@NotNull final PacketBuffer buf, @NotNull final UUID uuid)
+    public static void writeUUID(@NotNull final FriendlyByteBuf buf, @NotNull final UUID uuid)
     {
         buf.writeLong(uuid.getLeastSignificantBits());
         buf.writeLong(uuid.getMostSignificantBits());
@@ -40,7 +40,7 @@ public final class PacketUtils
      * @return The read UUID.
      */
     @NotNull
-    public static UUID readUUID(@NotNull final PacketBuffer buf)
+    public static UUID readUUID(@NotNull final FriendlyByteBuf buf)
     {
         final long lsb = buf.readLong();
         final long msb = buf.readLong();

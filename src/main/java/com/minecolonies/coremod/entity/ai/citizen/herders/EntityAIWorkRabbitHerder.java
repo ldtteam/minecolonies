@@ -4,14 +4,14 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingRabbitHutch;
 import com.minecolonies.coremod.colony.jobs.JobRabbitHerder;
-import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.entity.passive.RabbitEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.Hand;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.animal.Rabbit;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import org.jetbrains.annotations.NotNull;
@@ -22,7 +22,7 @@ import static com.minecolonies.api.util.constant.Constants.ONE_HUNDRED_PERCENT;
 /**
  * The AI behind the {@link JobRabbitHerder} for Breeding and Killing Rabbits.
  */
-public class EntityAIWorkRabbitHerder extends AbstractEntityAIHerder<JobRabbitHerder, BuildingRabbitHutch, RabbitEntity>
+public class EntityAIWorkRabbitHerder extends AbstractEntityAIHerder<JobRabbitHerder, BuildingRabbitHutch, Rabbit>
 {
     /**
      * Max amount of animals per Hut Level.
@@ -66,25 +66,25 @@ public class EntityAIWorkRabbitHerder extends AbstractEntityAIHerder<JobRabbitHe
     }
 
     @Override
-    public Class<RabbitEntity> getAnimalClass()
+    public Class<Rabbit> getAnimalClass()
     {
-        return RabbitEntity.class;
+        return Rabbit.class;
     }
 
     @Override
-    protected void butcherAnimal(@Nullable final AnimalEntity animal)
+    protected void butcherAnimal(@Nullable final Animal animal)
     {
-        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_HERDER_BUTCHERING));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslatableComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_HERDER_BUTCHERING));
         if (animal != null && !walkingToAnimal(animal) && !ItemStackUtils.isEmpty(worker.getMainHandItem()))
         {
-            worker.swing(Hand.MAIN_HAND);
+            worker.swing(InteractionHand.MAIN_HAND);
 
             if (worker.getRandom().nextInt(1 + (ONE_HUNDRED_PERCENT - getPrimarySkillLevel()) / 5) <= 1)
             {
-                final FakePlayer fp = FakePlayerFactory.getMinecraft((ServerWorld) worker.getCommandSenderWorld());
+                final FakePlayer fp = FakePlayerFactory.getMinecraft((ServerLevel) worker.getCommandSenderWorld());
                 final DamageSource ds = DamageSource.playerAttack(fp);
                 animal.hurt(ds, (float) getButcheringAttackDamage());
-                worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, 1);
+                worker.getCitizenItemHandler().damageItemInHand(InteractionHand.MAIN_HAND, 1);
             }
         }
     }

@@ -2,10 +2,10 @@ package com.minecolonies.coremod.util;
 
 import com.ldtteam.structures.blueprints.v1.Blueprint;
 import com.minecolonies.api.util.BlockPosUtil;
-import net.minecraft.util.Mirror;
+import net.minecraft.world.level.block.Mirror;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 
 /**
  * Contains colony specific utility.
@@ -34,7 +34,7 @@ public final class ColonyUtils
      */
     public static Tuple<BlockPos, BlockPos> calculateCorners(
       final BlockPos pos,
-      final World world,
+      final Level world,
       final Blueprint blueprint,
       final int rotation,
       final boolean isMirrored)

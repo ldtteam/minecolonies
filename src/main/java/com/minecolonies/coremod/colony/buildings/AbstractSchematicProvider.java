@@ -17,12 +17,12 @@ import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.api.util.Log;
-import net.minecraft.block.BlockState;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Mirror;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.Mirror;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -121,9 +121,9 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     }
 
     @Override
-    public CompoundNBT serializeNBT()
+    public CompoundTag serializeNBT()
     {
-        final CompoundNBT compound = new CompoundNBT();
+        final CompoundTag compound = new CompoundTag();
         BlockPosUtil.write(compound, TAG_LOCATION, location);
         final StructureName structureName = new StructureName(Structures.SCHEMATICS_PREFIX, style, this.getSchematicName() + buildingLevel);
         if (Structures.hasMD5(structureName))
@@ -152,7 +152,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     }
 
     @Override
-    public void deserializeNBT(final CompoundNBT compound)
+    public void deserializeNBT(final CompoundTag compound)
     {
         buildingLevel = compound.getInt(TAG_SCHEMATIC_LEVEL);
 
@@ -190,7 +190,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
         childSchematics = ImmutableSet.copyOf(BlockPosUtil.readPosListFromNBT(compound, TAG_CHILD_SCHEM));
     }
 
-    private void deserializerStructureInformationFrom(final CompoundNBT compound)
+    private void deserializerStructureInformationFrom(final CompoundTag compound)
     {
         final String md5 = compound.getString(TAG_SCHEMATIC_MD5);
         final int testLevel = buildingLevel == 0 ? 1 : buildingLevel;
@@ -496,7 +496,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     @Override
     public void upgradeBuildingLevelToSchematicData()
     {
-        final TileEntity tileEntity = colony.getWorld().getBlockEntity(getID());
+        final BlockEntity tileEntity = colony.getWorld().getBlockEntity(getID());
         if (tileEntity instanceof IBlueprintDataProvider)
         {
             final IBlueprintDataProvider blueprintDataProvider = (IBlueprintDataProvider) tileEntity;

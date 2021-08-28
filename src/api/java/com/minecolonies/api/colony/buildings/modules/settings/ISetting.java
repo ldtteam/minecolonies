@@ -4,7 +4,7 @@ import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.server.level.ServerPlayer;
 
 /**
  * Generic ISetting that represents all possible setting objects (string, numbers, boolean, etc).
@@ -58,5 +58,5 @@ public interface ISetting
      * @param building the building its updated for.
      * @param sender the player triggering the update.
      */
-    default void onUpdate(IBuilding building, final ServerPlayerEntity sender) { };
+    default void onUpdate(IBuilding building, final ServerPlayer sender) { };
 }

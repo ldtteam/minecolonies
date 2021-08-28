@@ -32,17 +32,17 @@ import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.util.WorkerUtil;
-import net.minecraft.block.BlockState;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.ITag;
-import net.minecraft.tileentity.ChestTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.tags.Tag;
+import net.minecraft.world.level.block.entity.ChestBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -231,7 +231,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      */
     private IAIState getNeededItem()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_STATUS_GATHERING));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslatableComponent(COM_MINECOLONIES_COREMOD_STATUS_GATHERING));
 
         if (walkTo == null && walkToBuilding())
         {
@@ -315,7 +315,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     @Override
     protected void onException(final RuntimeException e)
     {
-        worker.getCitizenData().triggerInteraction(new StandardInteraction(new TranslationTextComponent(WORKER_AI_EXCEPTION), ChatPriority.BLOCKING));
+        worker.getCitizenData().triggerInteraction(new StandardInteraction(new TranslatableComponent(WORKER_AI_EXCEPTION), ChatPriority.BLOCKING));
 
         try
         {
@@ -517,7 +517,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         if (!requests.isEmpty())
         {
             worker.getCitizenStatusHandler()
-              .setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.waiting"), requests.iterator().next().getShortDisplayString());
+              .setLatestStatus(new TranslatableComponent("com.minecolonies.coremod.status.waiting"), requests.iterator().next().getShortDisplayString());
         }
     }
 
@@ -698,7 +698,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         @Nullable final IBuildingWorker building = getOwnBuilding();
         for (final BlockPos pos : building.getContainers())
         {
-            final TileEntity entity = world.getBlockEntity(pos);
+            final BlockEntity entity = world.getBlockEntity(pos);
             if (entity instanceof TileEntityRack && ((TileEntityRack) entity).hasItemStack(is, 1, false))
             {
                 entity.getCapability(ITEM_HANDLER_CAPABILITY, null)
@@ -763,7 +763,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      * @param maxLevel the max tool level.
      * @return true if found the tool.
      */
-    public boolean retrieveToolInTileEntity(final TileEntity entity, final IToolType toolType, final int minLevel, final int maxLevel)
+    public boolean retrieveToolInTileEntity(final BlockEntity entity, final IToolType toolType, final int minLevel, final int maxLevel)
     {
         if (ToolType.NONE.equals(toolType))
         {
@@ -919,7 +919,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             final Predicate<ItemStack> toolPredicate = stack -> ItemStackUtils.hasToolLevel(stack, toolType, minimalLevel, getOwnBuilding().getMaxToolLevel());
             for (final BlockPos pos : building.getContainers())
             {
-                final TileEntity entity = world.getBlockEntity(pos);
+                final BlockEntity entity = world.getBlockEntity(pos);
                 if (entity instanceof TileEntityRack)
                 {
                     if (ToolType.NONE.equals(toolType))
@@ -935,7 +935,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
                         }
                     }
                 }
-                else if (entity instanceof ChestTileEntity)
+                else if (entity instanceof ChestBlockEntity)
                 {
                     if (retrieveToolInTileEntity(building.getTileEntity(), toolType, minimalLevel, getOwnBuilding().getMaxToolLevel()))
                     {
@@ -975,7 +975,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             if (citizenData != null)
             {
                 citizenData
-                  .triggerInteraction(new StandardInteraction(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST),
+                  .triggerInteraction(new StandardInteraction(new TranslatableComponent(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST),
                     ChatPriority.IMPORTANT));
             }
 
@@ -1132,7 +1132,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         if (bestSlot >= 0)
         {
             worker.getCitizenData().setIdleAtJob(false);
-            worker.getCitizenItemHandler().setHeldItem(Hand.MAIN_HAND, bestSlot);
+            worker.getCitizenItemHandler().setHeldItem(InteractionHand.MAIN_HAND, bestSlot);
             return true;
         }
         requestTool(target, pos);
@@ -1152,9 +1152,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         if (getOwnBuilding().getMaxToolLevel() < required && worker.getCitizenData() != null)
         {
             worker.getCitizenData().triggerInteraction(new PosBasedInteraction(
-              new TranslationTextComponent(BUILDING_LEVEL_TOO_LOW, new ItemStack(target.getBlock()).getHoverName(), pos.getX(), pos.getY(), pos.getZ()),
+              new TranslatableComponent(BUILDING_LEVEL_TOO_LOW, new ItemStack(target.getBlock()).getHoverName(), pos.getX(), pos.getY(), pos.getZ()),
               ChatPriority.IMPORTANT,
-              new TranslationTextComponent(BUILDING_LEVEL_TOO_LOW),
+              new TranslatableComponent(BUILDING_LEVEL_TOO_LOW),
               pos));
         }
         updateToolFlag(toolType, required);
@@ -1192,7 +1192,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
 
         if (toolType == ToolType.NONE)
         {
-            final int heldSlot = worker.getInventoryCitizen().getHeldItemSlot(Hand.MAIN_HAND);
+            final int heldSlot = worker.getInventoryCitizen().getHeldItemSlot(InteractionHand.MAIN_HAND);
             return heldSlot >= 0 ? heldSlot : 0;
         }
 
@@ -1508,7 +1508,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      * @param tag the requested tag.
      * @return true if in the inventory, else false.
      */
-    public boolean checkIfRequestForTagExistOrCreateAsynch(@NotNull final ITag<Item> tag, final int count)
+    public boolean checkIfRequestForTagExistOrCreateAsynch(@NotNull final Tag<Item> tag, final int count)
     {
         if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), stack -> stack.getItem().is(tag) && stack.getCount() >= count))
         {
@@ -1547,7 +1547,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
 
     private boolean tryTransferFromPosToWorkerIfNeeded(final BlockPos pos, @NotNull final Tuple<Predicate<ItemStack>, Integer> predicate)
     {
-        final TileEntity entity = world.getBlockEntity(pos);
+        final BlockEntity entity = world.getBlockEntity(pos);
         if (entity == null)
         {
             return true;

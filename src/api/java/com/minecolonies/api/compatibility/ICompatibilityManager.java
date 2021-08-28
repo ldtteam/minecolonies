@@ -5,14 +5,14 @@ import com.minecolonies.api.crafting.CompostRecipe;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.Disease;
 import com.minecolonies.api.util.Tuple;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.RecipeManager;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -163,14 +163,14 @@ public interface ICompatibilityManager
      *
      * @param compound NBT-Tag.
      */
-    void write(@NotNull final CompoundNBT compound);
+    void write(@NotNull final CompoundTag compound);
 
     /**
      * Read Colonies from saved NBT data.
      *
      * @param compound NBT Tag.
      */
-    void read(@NotNull final CompoundNBT compound);
+    void read(@NotNull final CompoundTag compound);
 
     /**
      * Connect a certain block as leave to an ItemStack as sapling.

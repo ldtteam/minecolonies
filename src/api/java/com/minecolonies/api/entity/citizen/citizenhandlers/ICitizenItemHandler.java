@@ -1,9 +1,9 @@
 package com.minecolonies.api.entity.citizen.citizenhandlers;
 
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,7 +27,7 @@ public interface ICitizenItemHandler
      * @param hand what hand we're setting
      * @param slot from the inventory slot.
      */
-    void setHeldItem(Hand hand, int slot);
+    void setHeldItem(InteractionHand hand, int slot);
 
     /**
      * Sets the currently held for mainHand item.
@@ -61,7 +61,7 @@ public interface ICitizenItemHandler
      * @param hand   hand the item is in.
      * @param damage amount of damage.
      */
-    void damageItemInHand(Hand hand, int damage);
+    void damageItemInHand(InteractionHand hand, int damage);
 
     /**
      * Pick up all items in a range around the citizen.

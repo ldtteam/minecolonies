@@ -1,17 +1,17 @@
 package com.minecolonies.api.advancements.place_supply;
 
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.advancements.criterion.CriterionInstance;
-import net.minecraft.advancements.criterion.EntityPredicate;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.advancements.critereon.AbstractCriterionTriggerInstance;
+import net.minecraft.advancements.critereon.EntityPredicate;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * A default instance for the "place_supply" trigger, as the conditions are handled in events
  */
-public class PlaceSupplyCriterionInstance extends CriterionInstance
+public class PlaceSupplyCriterionInstance extends AbstractCriterionTriggerInstance
 {
     public PlaceSupplyCriterionInstance()
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_SUPPLY_PLACED), EntityPredicate.AndPredicate.ANY);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_SUPPLY_PLACED), EntityPredicate.Composite.ANY);
     }
 }

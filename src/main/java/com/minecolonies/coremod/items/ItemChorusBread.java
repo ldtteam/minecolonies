@@ -5,22 +5,24 @@ import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.util.TeleportHelper;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.Food;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.World;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
+import net.minecraft.ChatFormatting;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
+
+import net.minecraft.world.item.Item.Properties;
 
 /**
  * Chorus Bread, made by the baker. Teleports user to surface.
@@ -31,7 +33,7 @@ public class ItemChorusBread extends AbstractItemMinecolonies
     /**
      * Setup the food definition
      */
-    private static Food chorusBread = (new Food.Builder())
+    private static FoodProperties chorusBread = (new FoodProperties.Builder())
                                         .nutrition(5)
                                         .saturationMod(2.0F)
                                         .alwaysEat()
@@ -51,11 +53,11 @@ public class ItemChorusBread extends AbstractItemMinecolonies
     * Teleport to the surface. 
     */
     @Override
-    public ItemStack finishUsingItem(ItemStack stack, World worldIn, LivingEntity entityLiving)
+    public ItemStack finishUsingItem(ItemStack stack, Level worldIn, LivingEntity entityLiving)
     {
-        if (!worldIn.isClientSide && entityLiving instanceof ServerPlayerEntity && WorldUtil.isOverworldType(worldIn))
+        if (!worldIn.isClientSide && entityLiving instanceof ServerPlayer && WorldUtil.isOverworldType(worldIn))
         {
-            TeleportHelper.surfaceTeleport((ServerPlayerEntity)entityLiving);
+            TeleportHelper.surfaceTeleport((ServerPlayer)entityLiving);
         }
 
         return super.finishUsingItem(stack, worldIn, entityLiving);
@@ -63,10 +65,10 @@ public class ItemChorusBread extends AbstractItemMinecolonies
 
     @Override
     public void appendHoverText(
-    @NotNull final ItemStack stack, @Nullable final World worldIn, @NotNull final List<ITextComponent> tooltip, @NotNull final ITooltipFlag flagIn)
+    @NotNull final ItemStack stack, @Nullable final Level worldIn, @NotNull final List<Component> tooltip, @NotNull final TooltipFlag flagIn)
     {
-        final IFormattableTextComponent guiHint = LanguageHandler.buildChatComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_CHORUS_BREAD_TOOLTIP_GUI);
-        guiHint.setStyle(Style.EMPTY.withColor(TextFormatting.GRAY));
+        final MutableComponent guiHint = LanguageHandler.buildChatComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_CHORUS_BREAD_TOOLTIP_GUI);
+        guiHint.setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY));
         tooltip.add(guiHint);
 
         super.appendHoverText(stack, worldIn, tooltip, flagIn);

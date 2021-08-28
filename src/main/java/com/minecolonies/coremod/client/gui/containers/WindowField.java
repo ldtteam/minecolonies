@@ -8,18 +8,18 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.server.FieldPlotResizeMessage;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.util.text.*;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -27,11 +27,17 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+import net.minecraft.ChatFormatting;
+import net.minecraft.locale.Language;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
+import net.minecraft.network.chat.TextComponent;
+
 /**
  * Class which creates the GUI of our field inventory.
  */
 @OnlyIn(Dist.CLIENT)
-public class WindowField extends ContainerScreen<ContainerField>
+public class WindowField extends AbstractContainerScreen<ContainerField>
 {
     /**
      * The resource location of the GUI background.
@@ -76,7 +82,7 @@ public class WindowField extends ContainerScreen<ContainerField>
      * @param playerInventory the player inv.
      * @param iTextComponent  the display text component.
      */
-    public WindowField(final ContainerField container, final PlayerInventory playerInventory, final ITextComponent iTextComponent)
+    public WindowField(final ContainerField container, final Inventory playerInventory, final Component iTextComponent)
     {
         super(container, playerInventory, iTextComponent);
         this.tileEntity = container.getTileEntity();
@@ -101,7 +107,7 @@ public class WindowField extends ContainerScreen<ContainerField>
               centerY - 40 + yFromPolar - 12,
               BUTTON_SIDE_LENGTH,
               BUTTON_SIDE_LENGTH,
-              new StringTextComponent(String.valueOf(this.radii[dir.get2DDataValue()])),
+              new TextComponent(String.valueOf(this.radii[dir.get2DDataValue()])),
               dir
             );
             this.addButton(db);
@@ -109,7 +115,7 @@ public class WindowField extends ContainerScreen<ContainerField>
     }
 
     @Override
-    protected void renderLabels(@NotNull final MatrixStack stack, final int mouseX, final int mouseY)
+    protected void renderLabels(@NotNull final PoseStack stack, final int mouseX, final int mouseY)
     {
         if (!tileEntity.getOwner().isEmpty())
         {
@@ -118,7 +124,7 @@ public class WindowField extends ContainerScreen<ContainerField>
 
         this.font.draw(stack, LanguageHandler.format("block.minecolonies.blockhutfield"), X_OFFSET, Y_OFFSET, TEXT_COLOR);
 
-        for (Widget widget : this.buttons)
+        for (AbstractWidget widget : this.buttons)
         {
             if (widget.isHovered())
             {
@@ -136,7 +142,7 @@ public class WindowField extends ContainerScreen<ContainerField>
      * @param mouseY       the mouseY position.
      */
     @Override
-    protected void renderBg(@NotNull final MatrixStack stack, final float partialTicks, final int mouseX, final int mouseY)
+    protected void renderBg(@NotNull final PoseStack stack, final float partialTicks, final int mouseX, final int mouseY)
     {
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         minecraft.getTextureManager().bind(TEXTURE);
@@ -146,7 +152,7 @@ public class WindowField extends ContainerScreen<ContainerField>
     }
 
     @Override
-    public void render(@NotNull final MatrixStack stack, int x, int y, float z)
+    public void render(@NotNull final PoseStack stack, int x, int y, float z)
     {
         this.renderBackground(stack);
         super.render(stack, x, y, z);
@@ -177,7 +183,7 @@ public class WindowField extends ContainerScreen<ContainerField>
          * @param text      the label on the button
          * @param direction the direction this button faces. Adjusts texture coordinates.
          */
-        public DirectionalButton(int x, int y, int width, int height, ITextComponent text, Direction direction)
+        public DirectionalButton(int x, int y, int width, int height, Component text, Direction direction)
         {
             super(x, y, width, height, text, button -> {});
             this.direction = direction;
@@ -195,7 +201,7 @@ public class WindowField extends ContainerScreen<ContainerField>
                 radii[index] = (radii[index] + delta) % (ScarecrowTileEntity.getMaxRange() + 1);
                 if (radii[index] < 0) radii[index] = ScarecrowTileEntity.getMaxRange();
 
-                this.setMessage(new StringTextComponent(String.valueOf(radii[index])));
+                this.setMessage(new TextComponent(String.valueOf(radii[index])));
                 Network.getNetwork().sendToServer(new FieldPlotResizeMessage(radii[index], this.direction, tileEntity.getBlockPos()));
 
                 return true;
@@ -247,10 +253,10 @@ public class WindowField extends ContainerScreen<ContainerField>
         }
 
         @Override
-        public void renderButton(@NotNull final MatrixStack stack, int mouseX, int mouseY, float partialTicks)
+        public void renderButton(@NotNull final PoseStack stack, int mouseX, int mouseY, float partialTicks)
         {
             Minecraft minecraft = Minecraft.getInstance();
-            FontRenderer fontrenderer = minecraft.font;
+            Font fontrenderer = minecraft.font;
             minecraft.getTextureManager().bind(WindowField.TEXTURE);
             RenderSystem.color4f(1.0F, 1.0F, 1.0F, this.alpha);
             int i = this.getYImage(this.isHovered());
@@ -264,12 +270,12 @@ public class WindowField extends ContainerScreen<ContainerField>
               fontrenderer, this.getMessage(),
               this.x + this.width / 2 + getTextOffset(Direction.Axis.X),
               this.y + (this.height - 8) / 2 + getTextOffset(Direction.Axis.Y),
-              j | MathHelper.ceil(this.alpha * 255.0F) << 24
+              j | Mth.ceil(this.alpha * 255.0F) << 24
             );
         }
 
         @Override
-        public void renderToolTip(@NotNull final MatrixStack stack, int mouseX, int mouseY)
+        public void renderToolTip(@NotNull final PoseStack stack, int mouseX, int mouseY)
         {
             // Don't render while they are dragging a stack around
             if (!inventory.getCarried().isEmpty())
@@ -277,12 +283,12 @@ public class WindowField extends ContainerScreen<ContainerField>
                 return;
             }
 
-            List<ITextProperties> lines = Lists.newArrayList(new StringTextComponent(
+            List<FormattedText> lines = Lists.newArrayList(new TextComponent(
               LanguageHandler.format("com.minecolonies.coremod.gui.field." + this.direction.getSerializedName())),
-              new StringTextComponent(TextFormatting.GRAY + "" + TextFormatting.ITALIC + LanguageHandler.format(getDirectionalTranslationKey())
+              new TextComponent(ChatFormatting.GRAY + "" + ChatFormatting.ITALIC + LanguageHandler.format(getDirectionalTranslationKey())
             ));
 
-            WindowField.this.renderTooltip(stack, LanguageMap.getInstance().getVisualOrder(lines), mouseX, mouseY);
+            WindowField.this.renderTooltip(stack, Language.getInstance().getVisualOrder(lines), mouseX, mouseY);
         }
 
         /**

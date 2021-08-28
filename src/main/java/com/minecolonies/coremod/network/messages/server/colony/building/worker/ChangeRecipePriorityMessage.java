@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -58,7 +58,7 @@ public class ChangeRecipePriorityMessage extends AbstractBuildingServerMessage<I
      * @param buf the used byteBuffer.
      */
     @Override
-    public void fromBytesOverride(@NotNull final PacketBuffer buf)
+    public void fromBytesOverride(@NotNull final FriendlyByteBuf buf)
     {
         this.recipeLocation = buf.readInt();
         this.up = buf.readBoolean();
@@ -71,7 +71,7 @@ public class ChangeRecipePriorityMessage extends AbstractBuildingServerMessage<I
      * @param buf the used byteBuffer.
      */
     @Override
-    public void toBytesOverride(@NotNull final PacketBuffer buf)
+    public void toBytesOverride(@NotNull final FriendlyByteBuf buf)
     {
         buf.writeInt(this.recipeLocation);
         buf.writeBoolean(this.up);

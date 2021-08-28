@@ -2,13 +2,13 @@ package com.minecolonies.coremod.network.messages.client;
 
 import com.minecolonies.api.network.IMessage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.UseAction;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.particles.ItemParticleData;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.UseAnim;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.particles.ItemParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
@@ -91,7 +91,7 @@ public class ItemParticleEffectMessage implements IMessage
     }
 
     @Override
-    public void fromBytes(@NotNull final PacketBuffer buf)
+    public void fromBytes(@NotNull final FriendlyByteBuf buf)
     {
         stack = buf.readItem();
         posX = buf.readDouble();
@@ -103,7 +103,7 @@ public class ItemParticleEffectMessage implements IMessage
     }
 
     @Override
-    public void toBytes(@NotNull final PacketBuffer buf)
+    public void toBytes(@NotNull final FriendlyByteBuf buf)
     {
         buf.writeItem(stack);
         buf.writeDouble(posX);
@@ -124,21 +124,21 @@ public class ItemParticleEffectMessage implements IMessage
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
-        final ClientWorld world = Minecraft.getInstance().level;
+        final ClientLevel world = Minecraft.getInstance().level;
         final ItemStack localStack = stack;
-        if (localStack.getUseAnimation() == UseAction.EAT)
+        if (localStack.getUseAnimation() == UseAnim.EAT)
         {
             for (int i = 0; i < 5; ++i)
             {
-                Vector3d randomPos = new Vector3d((RAND.nextDouble() - 0.5D) * 0.1D, Math.random() * 0.1D + 0.1D, 0.0D);
+                Vec3 randomPos = new Vec3((RAND.nextDouble() - 0.5D) * 0.1D, Math.random() * 0.1D + 0.1D, 0.0D);
                 randomPos = randomPos.xRot((float) (-rotationPitch * 0.017453292F));
                 randomPos = randomPos.yRot((float) (-rotationYaw * 0.017453292F));
                 final double d0 = -RAND.nextDouble() * 0.6D - 0.3D;
-                Vector3d randomOffset = new Vector3d((RAND.nextDouble() - 0.5D) * 0.3D, d0, 0.6D);
+                Vec3 randomOffset = new Vec3((RAND.nextDouble() - 0.5D) * 0.3D, d0, 0.6D);
                 randomOffset = randomOffset.xRot((float) (-rotationPitch * 0.017453292F));
                 randomOffset = randomOffset.yRot((float) (-rotationYaw * 0.017453292F));
                 randomOffset = randomOffset.add(posX, posY + eyeHeight, posZ);
-                world.addParticle(new ItemParticleData(ParticleTypes.ITEM, localStack),
+                world.addParticle(new ItemParticleOption(ParticleTypes.ITEM, localStack),
                   randomOffset.x,
                   randomOffset.y,
                   randomOffset.z,

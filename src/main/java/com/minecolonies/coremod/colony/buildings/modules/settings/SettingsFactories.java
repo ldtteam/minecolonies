@@ -5,12 +5,12 @@ import com.minecolonies.api.colony.buildings.modules.settings.*;
 import com.minecolonies.api.colony.requestsystem.factory.FactoryVoidInput;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.util.constant.TypeConstants;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
@@ -47,23 +47,23 @@ public class SettingsFactories
 
         @NotNull
         @Override
-        public T deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
+        public T deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
         {
             return this.getNewInstance(nbt.getBoolean(TAG_VALUE), nbt.getBoolean(TAG_DEFAULT));
         }
 
         @NotNull
         @Override
-        public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final T storage)
+        public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final T storage)
         {
-            final CompoundNBT compound = new CompoundNBT();
+            final CompoundTag compound = new CompoundTag();
             compound.putBoolean(TAG_VALUE, storage.getValue());
             compound.putBoolean(TAG_DEFAULT, storage.getDefault());
             return compound;
         }
 
         @Override
-        public void serialize(@NotNull final IFactoryController controller, @NotNull final T input, @NotNull final PacketBuffer packetBuffer)
+        public void serialize(@NotNull final IFactoryController controller, @NotNull final T input, @NotNull final FriendlyByteBuf packetBuffer)
         {
             packetBuffer.writeBoolean(input.getValue());
             packetBuffer.writeBoolean(input.getDefault());
@@ -71,7 +71,7 @@ public class SettingsFactories
 
         @NotNull
         @Override
-        public T deserialize(@NotNull final IFactoryController controller, @NotNull final PacketBuffer buffer) throws Throwable
+        public T deserialize(@NotNull final IFactoryController controller, @NotNull final FriendlyByteBuf buffer) throws Throwable
         {
             return this.getNewInstance(buffer.readBoolean(), buffer.readBoolean());
         }
@@ -127,15 +127,15 @@ public class SettingsFactories
 
         @NotNull
         @Override
-        public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final IStringSetting storage)
+        public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final IStringSetting storage)
         {
-            final CompoundNBT compound = new CompoundNBT();
+            final CompoundTag compound = new CompoundTag();
             compound.putInt(TAG_VALUE, storage.getCurrentIndex());
 
-            final ListNBT list = new ListNBT();
+            final ListTag list = new ListTag();
             for (final String setting: storage.getSettings())
             {
-                final CompoundNBT compoundNBT = new CompoundNBT();
+                final CompoundTag compoundNBT = new CompoundTag();
                 compoundNBT.putString(TAG_VALUE, setting);
                 list.add(compoundNBT);
             }
@@ -145,11 +145,11 @@ public class SettingsFactories
 
         @NotNull
         @Override
-        public T deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
+        public T deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
         {
             final int current = nbt.getInt(TAG_VALUE);
             final List<String> settings = new ArrayList<>();
-            final ListNBT list = nbt.getList(TAG_LIST, Constants.NBT.TAG_COMPOUND);
+            final ListTag list = nbt.getList(TAG_LIST, Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < list.size(); i++)
             {
                 settings.add(list.getCompound(i).getString(TAG_VALUE));
@@ -159,7 +159,7 @@ public class SettingsFactories
         }
 
         @Override
-        public void serialize(@NotNull final IFactoryController controller, @NotNull final IStringSetting input, @NotNull final PacketBuffer packetBuffer)
+        public void serialize(@NotNull final IFactoryController controller, @NotNull final IStringSetting input, @NotNull final FriendlyByteBuf packetBuffer)
         {
             packetBuffer.writeInt(input.getCurrentIndex());
             packetBuffer.writeInt(input.getSettings().size());
@@ -171,7 +171,7 @@ public class SettingsFactories
 
         @NotNull
         @Override
-        public T deserialize(@NotNull final IFactoryController controller, @NotNull final PacketBuffer buffer) throws Throwable
+        public T deserialize(@NotNull final IFactoryController controller, @NotNull final FriendlyByteBuf buffer) throws Throwable
         {
             final int currentIndex = buffer.readInt();
             final int size = buffer.readInt();
@@ -248,9 +248,9 @@ public class SettingsFactories
 
         @NotNull
         @Override
-        public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final BlockSetting storage)
+        public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final BlockSetting storage)
         {
-            final CompoundNBT compound = new CompoundNBT();
+            final CompoundTag compound = new CompoundTag();
             compound.putString(TAG_VALUE, storage.getValue().getRegistryName().toString());
             compound.putString(TAG_DEF, storage.getDefault().getRegistryName().toString());
             return compound;
@@ -258,7 +258,7 @@ public class SettingsFactories
 
         @NotNull
         @Override
-        public BlockSetting deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
+        public BlockSetting deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
         {
             final BlockItem value = (BlockItem) ForgeRegistries.ITEMS.getValue(new ResourceLocation(nbt.getString(TAG_VALUE)));
             final BlockItem def = (BlockItem) ForgeRegistries.ITEMS.getValue(new ResourceLocation(nbt.getString(TAG_DEF)));
@@ -266,7 +266,7 @@ public class SettingsFactories
         }
 
         @Override
-        public void serialize(@NotNull final IFactoryController controller, @NotNull final BlockSetting input, @NotNull final PacketBuffer packetBuffer)
+        public void serialize(@NotNull final IFactoryController controller, @NotNull final BlockSetting input, @NotNull final FriendlyByteBuf packetBuffer)
         {
             packetBuffer.writeItem(new ItemStack(input.getValue()));
             packetBuffer.writeItem(new ItemStack(input.getDefault()));
@@ -274,7 +274,7 @@ public class SettingsFactories
 
         @NotNull
         @Override
-        public BlockSetting deserialize(@NotNull final IFactoryController controller, @NotNull final PacketBuffer buffer) throws Throwable
+        public BlockSetting deserialize(@NotNull final IFactoryController controller, @NotNull final FriendlyByteBuf buffer) throws Throwable
         {
             final BlockItem value = (BlockItem) buffer.readItem().getItem();
             final BlockItem def = (BlockItem) buffer.readItem().getItem();
@@ -326,9 +326,9 @@ public class SettingsFactories
 
         @NotNull
         @Override
-        public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final IntSetting storage)
+        public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final IntSetting storage)
         {
-            final CompoundNBT compound = new CompoundNBT();
+            final CompoundTag compound = new CompoundTag();
             compound.putInt(TAG_VALUE, storage.getValue());
             compound.putInt(TAG_DEFAULT, storage.getDefault());
             return compound;
@@ -336,13 +336,13 @@ public class SettingsFactories
 
         @NotNull
         @Override
-        public IntSetting deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
+        public IntSetting deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
         {
             return this.getNewInstance(nbt.getInt(TAG_VALUE), nbt.getInt(TAG_DEFAULT));
         }
 
         @Override
-        public void serialize(@NotNull final IFactoryController controller, @NotNull final IntSetting input, @NotNull final PacketBuffer packetBuffer)
+        public void serialize(@NotNull final IFactoryController controller, @NotNull final IntSetting input, @NotNull final FriendlyByteBuf packetBuffer)
         {
             packetBuffer.writeInt(input.getValue());
             packetBuffer.writeInt(input.getDefault());
@@ -350,7 +350,7 @@ public class SettingsFactories
 
         @NotNull
         @Override
-        public IntSetting deserialize(@NotNull final IFactoryController controller, @NotNull final PacketBuffer buffer) throws Throwable
+        public IntSetting deserialize(@NotNull final IFactoryController controller, @NotNull final FriendlyByteBuf buffer) throws Throwable
         {
             return this.getNewInstance(buffer.readInt(), buffer.readInt());
         }

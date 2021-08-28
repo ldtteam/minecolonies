@@ -17,8 +17,8 @@ import com.minecolonies.coremod.client.gui.AbstractWindowSkeleton;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLibrary;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.text.*;
 import org.jetbrains.annotations.NotNull;
@@ -32,6 +32,9 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 import static com.minecolonies.coremod.client.gui.modules.WindowBuilderResModule.BLACK;
 import static com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenExperienceHandler.PRIMARY_DEPENDENCY_SHARE;
 import static com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenExperienceHandler.SECONDARY_DEPENDENCY_SHARE;
+
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 
 /**
  * Window for the citizen.
@@ -274,7 +277,7 @@ public class CitizenWindowUtils
         for (final Map.Entry<Skill, Tuple<Integer, Double>> entry : citizen.getCitizenSkillHandler().getSkills().entrySet())
         {
             final String id = entry.getKey().name().toLowerCase(Locale.US);
-            window.findPaneOfTypeByID(id, Text.class).setText(new StringTextComponent(Integer.toString(entry.getValue().getA())));
+            window.findPaneOfTypeByID(id, Text.class).setText(new TextComponent(Integer.toString(entry.getValue().getA())));
 
             final Pane buttons = window.findPaneByID(id + "_bts");
             if (buttons != null)
@@ -309,13 +312,13 @@ public class CitizenWindowUtils
             label.setColors(BLACK);
             label.setText(LanguageHandler.format("com.minecolonies.coremod.gui.townhall.happiness." + name));
             window.addChild(label);
-            PaneBuilders.tooltipBuilder().hoverPane(label).append(new TranslationTextComponent("com.minecolonies.coremod.gui.townhall.happiness.desc." + name)).build();
+            PaneBuilders.tooltipBuilder().hoverPane(label).append(new TranslatableComponent("com.minecolonies.coremod.gui.townhall.happiness.desc." + name)).build();
 
             if (value > 1.0)
             {
                 image.setImage(GREEN_ICON);
                 PaneBuilders.tooltipBuilder()
-                    .append(new TranslationTextComponent("com.minecolonies.coremod.gui.happiness.positive"))
+                    .append(new TranslatableComponent("com.minecolonies.coremod.gui.happiness.positive"))
                     .hoverPane(image)
                     .build();
             }
@@ -323,7 +326,7 @@ public class CitizenWindowUtils
             {
                 image.setImage(BLUE_ICON);
                 PaneBuilders.tooltipBuilder()
-                    .append(new TranslationTextComponent("com.minecolonies.coremod.gui.happiness.neutral"))
+                    .append(new TranslatableComponent("com.minecolonies.coremod.gui.happiness.neutral"))
                     .hoverPane(image)
                     .build();
             }
@@ -331,7 +334,7 @@ public class CitizenWindowUtils
             {
                 image.setImage(YELLOW_ICON);
                 PaneBuilders.tooltipBuilder()
-                    .append(new TranslationTextComponent("com.minecolonies.coremod.gui.happiness.slightlynegative"))
+                    .append(new TranslatableComponent("com.minecolonies.coremod.gui.happiness.slightlynegative"))
                     .hoverPane(image)
                     .build();
             }
@@ -339,7 +342,7 @@ public class CitizenWindowUtils
             {
                 image.setImage(RED_ICON);
                 PaneBuilders.tooltipBuilder()
-                    .append(new TranslationTextComponent("com.minecolonies.coremod.gui.happiness.negative"))
+                    .append(new TranslatableComponent("com.minecolonies.coremod.gui.happiness.negative"))
                     .hoverPane(image)
                     .build();
             }

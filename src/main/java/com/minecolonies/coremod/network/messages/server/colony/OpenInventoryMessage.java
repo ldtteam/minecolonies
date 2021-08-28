@@ -10,12 +10,12 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.coremod.network.messages.server.AbstractColonyServerMessage;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.StringUtils;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.util.StringUtil;
+import net.minecraft.core.BlockPos;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
@@ -83,7 +83,7 @@ public class OpenInventoryMessage extends AbstractColonyServerMessage
     }
 
     @Override
-    public void fromBytesOverride(@NotNull final PacketBuffer buf)
+    public void fromBytesOverride(@NotNull final FriendlyByteBuf buf)
     {
 
         inventoryType = InventoryType.values()[buf.readInt()];
@@ -101,7 +101,7 @@ public class OpenInventoryMessage extends AbstractColonyServerMessage
     }
 
     @Override
-    public void toBytesOverride(@NotNull final PacketBuffer buf)
+    public void toBytesOverride(@NotNull final FriendlyByteBuf buf)
     {
 
         buf.writeInt(inventoryType.ordinal());
@@ -121,7 +121,7 @@ public class OpenInventoryMessage extends AbstractColonyServerMessage
     @Override
     protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony)
     {
-        final ServerPlayerEntity player = ctxIn.getSender();
+        final ServerPlayer player = ctxIn.getSender();
         if (player == null)
         {
             return;
@@ -142,12 +142,12 @@ public class OpenInventoryMessage extends AbstractColonyServerMessage
         }
     }
 
-    private void doCitizenInventory(final ServerPlayerEntity player)
+    private void doCitizenInventory(final ServerPlayer player)
     {
         @Nullable final AbstractEntityCitizen citizen = (AbstractEntityCitizen) CompatibilityUtils.getWorldFromEntity(player).getEntity(entityID);
         if (citizen != null)
         {
-            if (!StringUtils.isNullOrEmpty(name))
+            if (!StringUtil.isNullOrEmpty(name))
             {
                 citizen.getInventoryCitizen().setCustomName(name);
             }
@@ -156,17 +156,17 @@ public class OpenInventoryMessage extends AbstractColonyServerMessage
         }
     }
 
-    private void doHutInventory(final ServerPlayerEntity player, final IColony colony)
+    private void doHutInventory(final ServerPlayer player, final IColony colony)
     {
-        final TileEntity tileEntity = BlockPosUtil.getTileEntity(player.level, tePos);
+        final BlockEntity tileEntity = BlockPosUtil.getTileEntity(player.level, tePos);
 
         if(tileEntity instanceof TileEntityRack || tileEntity instanceof TileEntityGrave)
         {
-            NetworkHooks.openGui(player, (INamedContainerProvider) tileEntity, packetBuffer -> packetBuffer.writeVarInt(colony.getID()).writeBlockPos(tileEntity.getBlockPos()));
+            NetworkHooks.openGui(player, (MenuProvider) tileEntity, packetBuffer -> packetBuffer.writeVarInt(colony.getID()).writeBlockPos(tileEntity.getBlockPos()));
         }
     }
 
-    private void doFieldInventory(final ServerPlayerEntity player)
+    private void doFieldInventory(final ServerPlayer player)
     {
         @NotNull final ScarecrowTileEntity scarecrowTileEntity = (ScarecrowTileEntity) BlockPosUtil.getTileEntity(CompatibilityUtils.getWorldFromEntity(player), tePos);
         NetworkHooks.openGui(player, scarecrowTileEntity);

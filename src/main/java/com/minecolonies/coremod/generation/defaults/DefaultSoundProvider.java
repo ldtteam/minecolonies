@@ -9,8 +9,8 @@ import com.minecolonies.api.sounds.EventType;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.generation.DataGeneratorConstants;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.DirectoryCache;
-import net.minecraft.data.IDataProvider;
+import net.minecraft.data.HashCache;
+import net.minecraft.data.DataProvider;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -21,7 +21,7 @@ import java.util.Locale;
 
 import static com.ldtteam.datagenerators.sounds.SoundsJson.createSoundJson;
 
-public class DefaultSoundProvider implements IDataProvider
+public class DefaultSoundProvider implements DataProvider
 {
     private final DataGenerator generator;
     private JsonObject sounds;
@@ -32,7 +32,7 @@ public class DefaultSoundProvider implements IDataProvider
     }
 
     @Override
-    public void run(@NotNull final DirectoryCache cache) throws IOException
+    public void run(@NotNull final HashCache cache) throws IOException
     {
         sounds = new JsonObject();
 

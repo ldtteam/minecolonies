@@ -16,9 +16,9 @@ import com.minecolonies.coremod.colony.jobs.JobMiner;
 import com.minecolonies.coremod.entity.ai.citizen.miner.Level;
 import com.minecolonies.coremod.entity.ai.citizen.miner.Node;
 import com.minecolonies.coremod.util.WorkerUtil;
-import net.minecraft.entity.MobEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -269,7 +269,7 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
      * @return true if so.
      */
     @Override
-    public boolean isLivingAtSiteWithMove(final MobEntity entity, final int x, final int y, final int z, final int range)
+    public boolean isLivingAtSiteWithMove(final Mob entity, final int x, final int y, final int z, final int range)
     {
         if (!WorkerUtil.isWorkerAtSiteWithMove((AbstractEntityCitizen) entity, x, y, z, range))
         {

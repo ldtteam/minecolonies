@@ -21,18 +21,18 @@ import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper
 import com.minecolonies.coremod.event.EventHandler;
 import com.minecolonies.coremod.util.AdvancementUtils;
 import com.minecolonies.coremod.util.BuildingUtils;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.Mirror;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -106,7 +106,7 @@ public class BuildToolPlaceMessage implements IMessage
      * @param buf The buffer begin read from.
      */
     @Override
-    public void fromBytes(@NotNull final PacketBuffer buf)
+    public void fromBytes(@NotNull final FriendlyByteBuf buf)
     {
         structureName = buf.readUtf(32767);
         workOrderName = buf.readUtf(32767);
@@ -130,7 +130,7 @@ public class BuildToolPlaceMessage implements IMessage
      * @param buf The buffer being written to.
      */
     @Override
-    public void toBytes(@NotNull final PacketBuffer buf)
+    public void toBytes(@NotNull final FriendlyByteBuf buf)
     {
         buf.writeUtf(structureName);
         buf.writeUtf(workOrderName);
@@ -160,11 +160,11 @@ public class BuildToolPlaceMessage implements IMessage
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
-        final PlayerEntity player = ctxIn.getSender();
+        final Player player = ctxIn.getSender();
         final StructureName sn = new StructureName(structureName);
         if (!Structures.hasMD5(sn))
         {
-            player.sendMessage(new StringTextComponent("Can not build " + workOrderName + ": schematic missing!"), player.getUUID());
+            player.sendMessage(new TextComponent("Can not build " + workOrderName + ": schematic missing!"), player.getUUID());
             return;
         }
         if (isHut)
@@ -189,8 +189,8 @@ public class BuildToolPlaceMessage implements IMessage
      * @param state    the state.
      */
     private static void handleHut(
-      @NotNull final World world,
-      @NotNull final PlayerEntity player,
+      @NotNull final Level world,
+      @NotNull final Player player,
       final StructureName sn,
       final int rotation,
       @NotNull final BlockPos buildPos,
@@ -218,7 +218,7 @@ public class BuildToolPlaceMessage implements IMessage
             return;
         }
 
-        final CompoundNBT compound = stack.getTag();
+        final CompoundTag compound = stack.getTag();
         if (tempColony != null && compound != null && compound.contains(TAG_COLONY_ID) && tempColony.getID() != compound.getInt(TAG_COLONY_ID))
         {
             LanguageHandler.sendPlayerMessage(player, WRONG_COLONY, compound.getInt(TAG_COLONY_ID));
@@ -235,7 +235,7 @@ public class BuildToolPlaceMessage implements IMessage
                 }
                 else
                 {
-                    AdvancementTriggers.PLACE_STRUCTURE.trigger((ServerPlayerEntity) player, sn);
+                    AdvancementTriggers.PLACE_STRUCTURE.trigger((ServerPlayer) player, sn);
                 }
 
                 world.destroyBlock(buildPos, true);
@@ -257,7 +257,7 @@ public class BuildToolPlaceMessage implements IMessage
                         schematic = schematic.substring(0, schematic.length() - 1);
                         schematic += level;
                         CreativeBuildingStructureHandler.loadAndPlaceStructureWithRotation(player.level, schematic,
-                          buildPos, BlockPosUtil.getRotationFromRotations(rotation), mirror ? Mirror.FRONT_BACK : Mirror.NONE, true, (ServerPlayerEntity) player);
+                          buildPos, BlockPosUtil.getRotationFromRotations(rotation), mirror ? Mirror.FRONT_BACK : Mirror.NONE, true, (ServerPlayer) player);
                         complete = true;
                     }
                 }
@@ -284,7 +284,7 @@ public class BuildToolPlaceMessage implements IMessage
      * @param mirror        Whether or not the strcture is mirrored.
      */
     private static void handleDecoration(
-      @NotNull final World world, @NotNull final PlayerEntity player,
+      @NotNull final Level world, @NotNull final Player player,
       final StructureName sn, final String workOrderName,
       final int rotation, @NotNull final BlockPos buildPos, final boolean mirror,
       BlockPos builder)
@@ -339,7 +339,7 @@ public class BuildToolPlaceMessage implements IMessage
      * @param complete if pasted.
      */
     private static void setupBuilding(
-      @NotNull final World world, @NotNull final PlayerEntity player,
+      @NotNull final Level world, @NotNull final Player player,
       final StructureName sn,
       final int rotation, @NotNull final BlockPos buildPos, final boolean mirror, final int level, final boolean complete)
     {

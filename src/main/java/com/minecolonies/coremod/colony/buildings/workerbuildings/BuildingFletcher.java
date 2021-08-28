@@ -16,11 +16,11 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.colony.jobs.JobFletcher;
-import net.minecraft.item.ArmorMaterial;
-import net.minecraft.item.ArrowItem;
-import net.minecraft.item.DyeableArmorItem;
-import net.minecraft.item.Item;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.item.ArmorMaterials;
+import net.minecraft.world.item.ArrowItem;
+import net.minecraft.world.item.DyeableArmorItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -154,7 +154,7 @@ public class BuildingFletcher extends AbstractBuildingWorker implements IBuildin
             final Item output = recipe.getPrimaryOutput().getItem();
             return output instanceof ArrowItem ||
                     (output instanceof DyeableArmorItem &&
-                    ((DyeableArmorItem) output).getMaterial() == ArmorMaterial.LEATHER);
+                    ((DyeableArmorItem) output).getMaterial() == ArmorMaterials.LEATHER);
         }
     }
 }

@@ -18,28 +18,28 @@ import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.block.BlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.entity.*;
-import net.minecraft.entity.ai.attributes.AttributeModifierMap;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.ai.goal.GoalSelector;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ShieldItem;
-import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.network.datasync.DataSerializers;
-import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.network.play.server.SEntityEquipmentPacket;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.GoalSelector;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ShieldItem;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -49,29 +49,35 @@ import java.util.Random;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 
+import net.minecraft.world.entity.AgableMob;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Pose;
+
 /**
  * The abstract citizen entity.
  */
 @SuppressWarnings({"PMD.ExcessiveImports", "PMD.CouplingBetweenObjects"})
-public abstract class AbstractEntityCitizen extends AbstractCivilianEntity implements INamedContainerProvider
+public abstract class AbstractEntityCitizen extends AbstractCivilianEntity implements MenuProvider
 {
     /**
      * Citizens swim speed factor
      */
     private static final double CITIZEN_SWIM_BONUS = 2.0;
 
-    public static final DataParameter<Integer>  DATA_LEVEL           = EntityDataManager.defineId(AbstractEntityCitizen.class, DataSerializers.INT);
-    public static final DataParameter<Integer>  DATA_TEXTURE         = EntityDataManager.defineId(AbstractEntityCitizen.class, DataSerializers.INT);
-    public static final DataParameter<Integer>  DATA_IS_FEMALE       = EntityDataManager.defineId(AbstractEntityCitizen.class, DataSerializers.INT);
-    public static final DataParameter<Integer>  DATA_COLONY_ID       = EntityDataManager.defineId(AbstractEntityCitizen.class, DataSerializers.INT);
-    public static final DataParameter<Integer>  DATA_CITIZEN_ID      = EntityDataManager.defineId(AbstractEntityCitizen.class, DataSerializers.INT);
-    public static final DataParameter<String>   DATA_MODEL           = EntityDataManager.defineId(AbstractEntityCitizen.class, DataSerializers.STRING);
-    public static final DataParameter<String>   DATA_RENDER_METADATA = EntityDataManager.defineId(AbstractEntityCitizen.class, DataSerializers.STRING);
-    public static final DataParameter<Boolean>  DATA_IS_ASLEEP       = EntityDataManager.defineId(AbstractEntityCitizen.class, DataSerializers.BOOLEAN);
-    public static final DataParameter<Boolean>  DATA_IS_CHILD        = EntityDataManager.defineId(AbstractEntityCitizen.class, DataSerializers.BOOLEAN);
-    public static final DataParameter<BlockPos> DATA_BED_POS         = EntityDataManager.defineId(AbstractEntityCitizen.class, DataSerializers.BLOCK_POS);
-    public static final DataParameter<String>   DATA_STYLE           = EntityDataManager.defineId(AbstractEntityCitizen.class, DataSerializers.STRING);
-    public static final DataParameter<String>   DATA_TEXTURE_SUFFIX  = EntityDataManager.defineId(AbstractEntityCitizen.class, DataSerializers.STRING);
+    public static final EntityDataAccessor<Integer>  DATA_LEVEL           = SynchedEntityData.defineId(AbstractEntityCitizen.class, EntityDataSerializers.INT);
+    public static final EntityDataAccessor<Integer>  DATA_TEXTURE         = SynchedEntityData.defineId(AbstractEntityCitizen.class, EntityDataSerializers.INT);
+    public static final EntityDataAccessor<Integer>  DATA_IS_FEMALE       = SynchedEntityData.defineId(AbstractEntityCitizen.class, EntityDataSerializers.INT);
+    public static final EntityDataAccessor<Integer>  DATA_COLONY_ID       = SynchedEntityData.defineId(AbstractEntityCitizen.class, EntityDataSerializers.INT);
+    public static final EntityDataAccessor<Integer>  DATA_CITIZEN_ID      = SynchedEntityData.defineId(AbstractEntityCitizen.class, EntityDataSerializers.INT);
+    public static final EntityDataAccessor<String>   DATA_MODEL           = SynchedEntityData.defineId(AbstractEntityCitizen.class, EntityDataSerializers.STRING);
+    public static final EntityDataAccessor<String>   DATA_RENDER_METADATA = SynchedEntityData.defineId(AbstractEntityCitizen.class, EntityDataSerializers.STRING);
+    public static final EntityDataAccessor<Boolean>  DATA_IS_ASLEEP       = SynchedEntityData.defineId(AbstractEntityCitizen.class, EntityDataSerializers.BOOLEAN);
+    public static final EntityDataAccessor<Boolean>  DATA_IS_CHILD        = SynchedEntityData.defineId(AbstractEntityCitizen.class, EntityDataSerializers.BOOLEAN);
+    public static final EntityDataAccessor<BlockPos> DATA_BED_POS         = SynchedEntityData.defineId(AbstractEntityCitizen.class, EntityDataSerializers.BLOCK_POS);
+    public static final EntityDataAccessor<String>   DATA_STYLE           = SynchedEntityData.defineId(AbstractEntityCitizen.class, EntityDataSerializers.STRING);
+    public static final EntityDataAccessor<String>   DATA_TEXTURE_SUFFIX  = SynchedEntityData.defineId(AbstractEntityCitizen.class, EntityDataSerializers.STRING);
 
     /**
      * The default model.
@@ -126,7 +132,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      * @param type  the Entity type.
      * @param world the world.
      */
-    public AbstractEntityCitizen(final EntityType<? extends AgeableEntity> type, final World world)
+    public AbstractEntityCitizen(final EntityType<? extends AgableMob> type, final Level world)
     {
         super(type, world);
     }
@@ -135,7 +141,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      * Get the default attributes with their values.
      * @return the attribute modifier map.
      */
-    public static AttributeModifierMap.MutableAttribute getDefaultAttributes()
+    public static AttributeSupplier.Builder getDefaultAttributes()
     {
         return LivingEntity.createLivingAttributes()
                  .add(Attributes.MAX_HEALTH, BASE_MAX_HEALTH)
@@ -179,7 +185,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
 
     @NotNull
     @Override
-    public ActionResultType interactAt(final PlayerEntity player, final Vector3d vec, final Hand hand)
+    public InteractionResult interactAt(final Player player, final Vec3 vec, final InteractionHand hand)
     {
         if (!player.level.isClientSide())
         {
@@ -264,7 +270,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      */
     @Nullable
     @Override
-    public AgeableEntity getBreedOffspring(final ServerWorld world, final AgeableEntity parent)
+    public AgableMob getBreedOffspring(final ServerLevel world, final AgableMob parent)
     {
         return null;
     }
@@ -459,9 +465,9 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     {
         if (!onGround)
         {
-            final int px = MathHelper.floor(getX());
+            final int px = Mth.floor(getX());
             final int py = (int) getY();
-            final int pz = MathHelper.floor(getZ());
+            final int pz = Mth.floor(getZ());
 
             this.onGround =
               CompatibilityUtils.getWorldFromCitizen(this).getBlockState(new BlockPos(px, py, pz)).getBlock().isLadder(level.getBlockState(
@@ -699,20 +705,20 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
         if (this.isEquipmentDirty)
         {
             this.isEquipmentDirty = false;
-            List<Pair<EquipmentSlotType, ItemStack>> list = Lists.newArrayListWithCapacity(6);
+            List<Pair<EquipmentSlot, ItemStack>> list = Lists.newArrayListWithCapacity(6);
 
-            list.add(new Pair<>(EquipmentSlotType.CHEST, getItemBySlot(EquipmentSlotType.CHEST)));
-            list.add(new Pair<>(EquipmentSlotType.FEET, getItemBySlot(EquipmentSlotType.FEET)));
-            list.add(new Pair<>(EquipmentSlotType.HEAD, getItemBySlot(EquipmentSlotType.HEAD)));
-            list.add(new Pair<>(EquipmentSlotType.LEGS, getItemBySlot(EquipmentSlotType.LEGS)));
-            list.add(new Pair<>(EquipmentSlotType.OFFHAND, getItemBySlot(EquipmentSlotType.OFFHAND)));
-            list.add(new Pair<>(EquipmentSlotType.MAINHAND, getItemBySlot(EquipmentSlotType.MAINHAND)));
-            ((ServerWorld) this.level).getChunkSource().broadcast(this, new SEntityEquipmentPacket(this.getId(), list));
+            list.add(new Pair<>(EquipmentSlot.CHEST, getItemBySlot(EquipmentSlot.CHEST)));
+            list.add(new Pair<>(EquipmentSlot.FEET, getItemBySlot(EquipmentSlot.FEET)));
+            list.add(new Pair<>(EquipmentSlot.HEAD, getItemBySlot(EquipmentSlot.HEAD)));
+            list.add(new Pair<>(EquipmentSlot.LEGS, getItemBySlot(EquipmentSlot.LEGS)));
+            list.add(new Pair<>(EquipmentSlot.OFFHAND, getItemBySlot(EquipmentSlot.OFFHAND)));
+            list.add(new Pair<>(EquipmentSlot.MAINHAND, getItemBySlot(EquipmentSlot.MAINHAND)));
+            ((ServerLevel) this.level).getChunkSource().broadcast(this, new ClientboundSetEquipmentPacket(this.getId(), list));
         }
     }
 
     @Override
-    public void setItemSlot(final EquipmentSlotType slot, @NotNull final ItemStack newItem)
+    public void setItemSlot(final EquipmentSlot slot, @NotNull final ItemStack newItem)
     {
         if (!level.isClientSide)
         {

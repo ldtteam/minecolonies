@@ -6,8 +6,8 @@ import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.jobs.IJobView;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,7 +27,7 @@ public interface IJobDataManager
      * @return New Job created from the data, or null.
      */
     @Nullable
-    IJob<?> createFrom(ICitizenData citizen, @NotNull CompoundNBT compound);
+    IJob<?> createFrom(ICitizenData citizen, @NotNull CompoundTag compound);
 
     /**
      * Create a job view from the saved network buffer.
@@ -36,5 +36,5 @@ public interface IJobDataManager
      * @param networkBuffer the buffer/
      * @return the new job view.
      */
-    IJobView createViewFrom(final IColonyView colony, final ICitizenDataView citizenDataView, final PacketBuffer networkBuffer);
+    IJobView createViewFrom(final IColonyView colony, final ICitizenDataView citizenDataView, final FriendlyByteBuf networkBuffer);
 }

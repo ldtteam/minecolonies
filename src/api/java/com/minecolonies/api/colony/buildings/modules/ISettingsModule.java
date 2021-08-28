@@ -2,7 +2,7 @@ package com.minecolonies.api.colony.buildings.modules;
 
 import com.minecolonies.api.colony.buildings.modules.settings.ISetting;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.server.level.ServerPlayer;
 
 /**
  * Settings module interface.
@@ -31,5 +31,5 @@ public interface ISettingsModule extends IBuildingModule
      * @param value the value.
      * @param sender the player that updated the setting.
      */
-    void updateSetting(ISettingKey<?> settingKey, ISetting value, final ServerPlayerEntity sender);
+    void updateSetting(ISettingKey<?> settingKey, ISetting value, final ServerPlayer sender);
 }

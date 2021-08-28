@@ -4,10 +4,10 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.Log;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 public abstract class AbstractBuildingServerMessage<T extends IBuilding> extends AbstractColonyServerMessage
@@ -41,7 +41,7 @@ public abstract class AbstractBuildingServerMessage<T extends IBuilding> extends
      * @param colonyId    the ID of the colony we're executing on.
      * @param dimensionId the ID of the dimension we're executing on.
      */
-    public AbstractBuildingServerMessage(final RegistryKey<World> dimensionId, final int colonyId, final BlockPos buildingId)
+    public AbstractBuildingServerMessage(final ResourceKey<Level> dimensionId, final int colonyId, final BlockPos buildingId)
     {
         super(dimensionId, colonyId);
         this.buildingId = buildingId;
@@ -55,13 +55,13 @@ public abstract class AbstractBuildingServerMessage<T extends IBuilding> extends
     protected abstract void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final T building);
 
     @Override
-    protected final void toBytesAbstractOverride(final PacketBuffer buf)
+    protected final void toBytesAbstractOverride(final FriendlyByteBuf buf)
     {
         buf.writeBlockPos(buildingId);
     }
 
     @Override
-    protected final void fromBytesAbstractOverride(final PacketBuffer buf)
+    protected final void fromBytesAbstractOverride(final FriendlyByteBuf buf)
     {
         this.buildingId = buf.readBlockPos();
     }

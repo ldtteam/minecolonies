@@ -1,6 +1,6 @@
 package com.minecolonies.api.sounds;
 
-import net.minecraft.util.SoundEvent;
+import net.minecraft.sounds.SoundEvent;
 
 /**
  * Sounds for the mercenaries

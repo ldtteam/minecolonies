@@ -4,13 +4,15 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.util.constant.NbtTagConstants;
-import net.minecraft.entity.Entity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
+
+import net.minecraft.world.item.Item.Properties;
 
 /**
  * Class describing the Ancient Tome item.
@@ -28,13 +30,13 @@ public class ItemAncientTome extends AbstractItemMinecolonies
     }
 
     @Override
-    public void inventoryTick(final ItemStack stack, final World worldIn, final Entity entityIn, final int itemSlot, final boolean isSelected)
+    public void inventoryTick(final ItemStack stack, final Level worldIn, final Entity entityIn, final int itemSlot, final boolean isSelected)
     {
         super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
         if (!worldIn.isClientSide)
         {
             final IColony colony = IColonyManager.getInstance().getClosestColony(worldIn, new BlockPos(entityIn.position()));
-            final CompoundNBT tag = new CompoundNBT();
+            final CompoundTag tag = new CompoundTag();
 
             if (colony != null)
             {

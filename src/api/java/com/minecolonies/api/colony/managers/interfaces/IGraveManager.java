@@ -2,9 +2,9 @@ package com.minecolonies.api.colony.managers.interfaces;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,14 +20,14 @@ public interface IGraveManager
      *
      * @param compound the compound.
      */
-    void read(@NotNull final CompoundNBT compound);
+    void read(@NotNull final CompoundTag compound);
 
     /**
      * Write the graves to NBT.
      *
      * @param compound the compound.
      */
-    void write(@NotNull final CompoundNBT compound);
+    void write(@NotNull final CompoundTag compound);
 
     /**
      * Tick the graves on colony tick.
@@ -67,7 +67,7 @@ public interface IGraveManager
      * @param pos          The position where to spawn a grave
      * @param citizenData  The citizenData
      */
-    void createCitizenGrave(final World world, final BlockPos pos, final ICitizenData citizenData);
+    void createCitizenGrave(final Level world, final BlockPos pos, final ICitizenData citizenData);
 
     /**
      * Returns a map with all graves within the colony. Key is ID (Coordinates), value is isReserved boolean.

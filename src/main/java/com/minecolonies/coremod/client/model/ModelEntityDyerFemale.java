@@ -2,7 +2,7 @@ package com.minecolonies.coremod.client.model;
 
 import com.minecolonies.api.client.render.modeltype.CitizenModel;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.client.model.geom.ModelPart;
 
 public class ModelEntityDyerFemale extends CitizenModel<AbstractEntityCitizen>
 {
@@ -11,7 +11,7 @@ public class ModelEntityDyerFemale extends CitizenModel<AbstractEntityCitizen>
         texWidth = 128;
         texHeight = 64;
 
-        head = new ModelRenderer(this);
+        head = new ModelPart(this);
         head.setPos(0.0F, 0.0F, 0.0F);
         head.texOffs(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, 0.0F, false);
         head.texOffs(62, 1).addBox(-4.3333F, -5.0F, 0.0F, 1.0F, 1.0F, 4.0667F, 0.0F, false);
@@ -77,13 +77,13 @@ public class ModelEntityDyerFemale extends CitizenModel<AbstractEntityCitizen>
         head.texOffs(62, 1).addBox(2.4333F, -3.1333F, -1.1033F, 1.6667F, 1.4F, 5.5333F, 0.0F, false);
         head.texOffs(62, 1).addBox(-3.0333F, -4.6F, 2.255F, 5.9333F, 2.7333F, 2.2F, 0.0F, false);
 
-        ModelRenderer fronttail2 = new ModelRenderer(this);
+        ModelPart fronttail2 = new ModelPart(this);
         fronttail2.setPos(2.8F, -6.2667F, -9.3333F);
         head.addChild(fronttail2);
         setRotationAngle(fronttail2, 0.0F, 0.0F, -0.1745F);
         fronttail2.texOffs(97, 40).addBox(-6.5656F, -0.7096F, 4.8233F, 3.5333F, 2.3333F, 0.8667F, 0.0F, false);
 
-        ModelRenderer fronttail = new ModelRenderer(this);
+        ModelPart fronttail = new ModelPart(this);
         fronttail.setPos(2.8F, -6.2667F, -9.2F);
         head.addChild(fronttail);
         setRotationAngle(fronttail, 0.0F, 0.0F, 0.5236F);
@@ -94,47 +94,47 @@ public class ModelEntityDyerFemale extends CitizenModel<AbstractEntityCitizen>
         fronttail.texOffs(97, 40).addBox(-4.6188F, -0.3136F, 4.7F, 1.9333F, 1.9333F, 0.8667F, 0.0F, false);
         fronttail.texOffs(97, 40).addBox(-5.8711F, 0.7174F, 4.7F, 1.9333F, 1.9333F, 0.8667F, 0.0F, false);
 
-        ModelRenderer ponytail1 = new ModelRenderer(this);
+        ModelPart ponytail1 = new ModelPart(this);
         ponytail1.setPos(2.8F, -0.9333F, 1.4667F);
         head.addChild(ponytail1);
         setRotationAngle(ponytail1, 0.6109F, 0.0F, 0.0F);
         ponytail1.texOffs(99, 17).addBox(-4.3033F, -2.7267F, 4.5533F, 2.2F, 5.5333F, 1.4F, 0.0F, false);
 
-        ModelRenderer ponytail2 = new ModelRenderer(this);
+        ModelPart ponytail2 = new ModelPart(this);
         ponytail2.setPos(2.8F, -0.5333F, 1.4667F);
         head.addChild(ponytail2);
         setRotationAngle(ponytail2, -0.1745F, 0.0F, 0.0F);
         ponytail2.texOffs(101, 18).addBox(-4.17F, -2.773F, 5.0826F, 1.8F, 5.2667F, 0.8667F, 0.0F, false);
 
-        body = new ModelRenderer(this);
+        body = new ModelPart(this);
         body.setPos(0.0F, 0.0F, 0.0F);
         body.texOffs(16, 16).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, 0.0F, false);
 
-        ModelRenderer chest = new ModelRenderer(this);
+        ModelPart chest = new ModelPart(this);
         chest.setPos(3.0667F, 8.8F, -1.7333F);
         body.addChild(chest);
         setRotationAngle(chest, 0.7854F, 0.0F, 0.0F);
         chest.texOffs(18, 21).addBox(-6.0F, -5.2627F, 2.2627F, 6.0F, 3.0F, 3.0F, 0.0F, false);
 
-        rightArm = new ModelRenderer(this);
+        rightArm = new ModelPart(this);
         rightArm.setPos(-5.0F, 2.0F, 0.0F);
         rightArm.texOffs(40, 16).addBox(-3.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, false);
 
-        leftArm = new ModelRenderer(this);
+        leftArm = new ModelPart(this);
         leftArm.setPos(5.0F, 2.0F, 0.0F);
         leftArm.texOffs(40, 16).addBox(-1.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, false);
 
-        rightLeg = new ModelRenderer(this);
+        rightLeg = new ModelPart(this);
         rightLeg.setPos(-1.9F, 12.0F, 0.0F);
         rightLeg.texOffs(0, 16).addBox(-2.1F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, false);
 
-        leftLeg = new ModelRenderer(this);
+        leftLeg = new ModelPart(this);
         leftLeg.setPos(1.9F, 12.0F, 0.0F);
         leftLeg.texOffs(0, 16).addBox(-1.9F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, true);
         hat.visible = false;
     }
 
-    private void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z)
+    private void setRotationAngle(ModelPart modelRenderer, float x, float y, float z)
     {
         modelRenderer.xRot = x;
         modelRenderer.yRot = y;

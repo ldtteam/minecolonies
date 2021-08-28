@@ -1,6 +1,6 @@
 package com.minecolonies.api.entity.ai.util;
 
-import net.minecraft.item.Item;
+import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.NotNull;
 
 public class StudyItem

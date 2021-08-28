@@ -2,7 +2,7 @@ package com.minecolonies.api.colony.buildings.modules;
 
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 
 /**
  * Module for adding minimum stocks to buildings.

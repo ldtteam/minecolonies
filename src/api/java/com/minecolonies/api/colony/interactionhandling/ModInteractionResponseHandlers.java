@@ -2,7 +2,7 @@ package com.minecolonies.api.colony.interactionhandling;
 
 import com.minecolonies.api.colony.interactionhandling.registry.InteractionResponseHandlerEntry;
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * List of mod interaction handlers.

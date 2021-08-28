@@ -6,8 +6,8 @@ import com.minecolonies.coremod.colony.buildings.moduleviews.CraftingModuleView;
 import com.minecolonies.coremod.compatibility.jei.GenericRecipeCategory;
 import com.minecolonies.coremod.network.messages.server.TransferRecipeCraftingTeachingMessage;
 import mezz.jei.api.gui.handlers.IGuiClickableArea;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;

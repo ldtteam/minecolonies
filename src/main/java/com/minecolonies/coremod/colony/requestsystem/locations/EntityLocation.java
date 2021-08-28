@@ -4,14 +4,14 @@ import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.location.ILocationFactory;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 
@@ -43,7 +43,7 @@ public class EntityLocation implements ILocation
             return;
         }
 
-        for (final ServerWorld world : ServerLifecycleHooks.getCurrentServer().levels.values())
+        for (final ServerLevel world : ServerLifecycleHooks.getCurrentServer().levels.values())
         {
             try
             {
@@ -89,13 +89,13 @@ public class EntityLocation implements ILocation
      */
     @NotNull
     @Override
-    public RegistryKey<World> getDimension()
+    public ResourceKey<Level> getDimension()
     {
         checkEntity();
         final Entity entityRef = entity.get();
         if (entityRef == null)
         {
-            return World.OVERWORLD;
+            return Level.OVERWORLD;
         }
         else
         {
@@ -121,11 +121,11 @@ public class EntityLocation implements ILocation
      *
      * @return player entity being tracked, or null if the tracked entity is not a player.
      */
-    public PlayerEntity getPlayerEntity()
+    public Player getPlayerEntity()
     {
         checkEntity();
         final Entity entityRef = entity.get();
-        return entityRef instanceof PlayerEntity ? (PlayerEntity) entityRef : null;
+        return entityRef instanceof Player ? (Player) entityRef : null;
     }
 
     @SuppressWarnings("squid:S2972")
@@ -170,9 +170,9 @@ public class EntityLocation implements ILocation
          */
         @NotNull
         @Override
-        public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final EntityLocation request)
+        public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final EntityLocation request)
         {
-            final CompoundNBT compound = new CompoundNBT();
+            final CompoundTag compound = new CompoundTag();
 
             compound.putLong(NBT_LSB, request.uuid.getLeastSignificantBits());
             compound.putLong(NBT_MSB, request.uuid.getMostSignificantBits());
@@ -189,7 +189,7 @@ public class EntityLocation implements ILocation
          */
         @NotNull
         @Override
-        public EntityLocation deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
+        public EntityLocation deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
         {
             final UUID uuid = new UUID(nbt.getLong(NBT_MSB), nbt.getLong(NBT_LSB));
 
@@ -211,13 +211,13 @@ public class EntityLocation implements ILocation
         }
 
         @Override
-        public void serialize(IFactoryController controller, EntityLocation input, PacketBuffer packetBuffer)
+        public void serialize(IFactoryController controller, EntityLocation input, FriendlyByteBuf packetBuffer)
         {
             EntityLocation.serialize(packetBuffer, input);
         }
 
         @Override
-        public EntityLocation deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
+        public EntityLocation deserialize(IFactoryController controller, FriendlyByteBuf buffer) throws Throwable
         {
             return EntityLocation.deserialize(buffer);
         }
@@ -234,7 +234,7 @@ public class EntityLocation implements ILocation
      *
      * @param buffer the buffer to serialize this location to.
      */
-    public static void serialize(PacketBuffer buffer, EntityLocation location)
+    public static void serialize(FriendlyByteBuf buffer, EntityLocation location)
     {
         buffer.writeUUID(location.uuid);
     }
@@ -245,7 +245,7 @@ public class EntityLocation implements ILocation
      * @param buffer the buffer to read.
      * @return the deserialized location.
      */
-    public static EntityLocation deserialize(PacketBuffer buffer)
+    public static EntityLocation deserialize(FriendlyByteBuf buffer)
     {
         final UUID uuid = buffer.readUUID();
 

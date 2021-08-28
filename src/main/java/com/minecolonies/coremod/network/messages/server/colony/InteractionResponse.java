@@ -3,10 +3,10 @@ package com.minecolonies.coremod.network.messages.server.colony;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.coremod.network.messages.server.AbstractColonyServerMessage;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.world.World;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,12 +23,12 @@ public class InteractionResponse extends AbstractColonyServerMessage
     /**
      * The key of the handler to trigger.
      */
-    private ITextComponent key;
+    private Component key;
 
     /**
      * The chosen response.
      */
-    private ITextComponent response;
+    private Component response;
 
     /**
      * Empty public constructor.
@@ -50,9 +50,9 @@ public class InteractionResponse extends AbstractColonyServerMessage
     public InteractionResponse(
       final int colonyId,
       final int citizenId,
-      final RegistryKey<World> dimension,
-      @NotNull final ITextComponent key,
-      @NotNull final ITextComponent response)
+      final ResourceKey<Level> dimension,
+      @NotNull final Component key,
+      @NotNull final Component response)
     {
         super(dimension, colonyId);
         this.citizenId = citizenId;
@@ -66,7 +66,7 @@ public class InteractionResponse extends AbstractColonyServerMessage
      * @param buf the used byteBuffer.
      */
     @Override
-    public void fromBytesOverride(@NotNull final PacketBuffer buf)
+    public void fromBytesOverride(@NotNull final FriendlyByteBuf buf)
     {
         this.citizenId = buf.readInt();
         this.key = buf.readComponent();
@@ -79,7 +79,7 @@ public class InteractionResponse extends AbstractColonyServerMessage
      * @param buf the used byteBuffer.
      */
     @Override
-    public void toBytesOverride(@NotNull final PacketBuffer buf)
+    public void toBytesOverride(@NotNull final FriendlyByteBuf buf)
     {
         buf.writeInt(this.citizenId);
         buf.writeComponent(key);

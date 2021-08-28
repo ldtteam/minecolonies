@@ -2,17 +2,17 @@ package com.minecolonies.api.entity.citizen;
 
 import com.minecolonies.api.colony.ICivilianData;
 import com.minecolonies.api.entity.pathfinding.IStuckHandlerEntity;
-import net.minecraft.entity.AgeableEntity;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.INPC;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.entity.AgableMob;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.npc.Npc;
+import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.common.util.ITeleporter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class AbstractCivilianEntity extends AgeableEntity implements INPC, IStuckHandlerEntity
+public abstract class AbstractCivilianEntity extends AgableMob implements Npc, IStuckHandlerEntity
 {
 
     /**
@@ -20,7 +20,7 @@ public abstract class AbstractCivilianEntity extends AgeableEntity implements IN
      */
     private boolean canBeStuck = true;
 
-    protected AbstractCivilianEntity(final EntityType<? extends AgeableEntity> type, final World worldIn)
+    protected AbstractCivilianEntity(final EntityType<? extends AgableMob> type, final Level worldIn)
     {
         super(type, worldIn);
     }
@@ -72,7 +72,7 @@ public abstract class AbstractCivilianEntity extends AgeableEntity implements IN
      */
     @Nullable
     @Override
-    public Entity changeDimension(@NotNull final ServerWorld serverWorld, @NotNull final ITeleporter teleporter)
+    public Entity changeDimension(@NotNull final ServerLevel serverWorld, @NotNull final ITeleporter teleporter)
     {
         return null;
     }

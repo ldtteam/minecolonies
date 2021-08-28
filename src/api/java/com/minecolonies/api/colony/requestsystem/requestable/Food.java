@@ -7,10 +7,10 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
@@ -70,9 +70,9 @@ public class Food implements IDeliverable
      * @param food       the input.
      * @return the compound.
      */
-    public static CompoundNBT serialize(final IFactoryController controller, final Food food)
+    public static CompoundTag serialize(final IFactoryController controller, final Food food)
     {
-        final CompoundNBT compound = new CompoundNBT();
+        final CompoundTag compound = new CompoundTag();
         compound.putInt(NBT_COUNT, food.count);
 
         if (!ItemStackUtils.isEmpty(food.result))
@@ -81,10 +81,10 @@ public class Food implements IDeliverable
         }
         if (!food.exclusionList.isEmpty())
         {
-            @NotNull final ListNBT items = new ListNBT();
+            @NotNull final ListTag items = new ListTag();
             for (@NotNull final ItemStorage item : food.exclusionList)
             {
-                @NotNull final CompoundNBT itemCompound = new CompoundNBT();
+                @NotNull final CompoundTag itemCompound = new CompoundTag();
                 item.getItemStack().save(itemCompound);
                 items.add(itemCompound);
             }
@@ -100,7 +100,7 @@ public class Food implements IDeliverable
      * @param compound   the compound.
      * @return the deliverable.
      */
-    public static Food deserialize(final IFactoryController controller, final CompoundNBT compound)
+    public static Food deserialize(final IFactoryController controller, final CompoundTag compound)
     {
         final int count = compound.getInt(NBT_COUNT);
         final ItemStack result = compound.getAllKeys().contains(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_RESULT)) : ItemStackUtils.EMPTY;
@@ -108,7 +108,7 @@ public class Food implements IDeliverable
 
         if (compound.contains(NBT_EXCLUSION))
         {
-            final ListNBT filterableItems = compound.getList(NBT_EXCLUSION, Constants.NBT.TAG_COMPOUND);
+            final ListTag filterableItems = compound.getList(NBT_EXCLUSION, Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < filterableItems.size(); ++i)
             {
                 items.add(new ItemStorage(ItemStack.of(filterableItems.getCompound(i))));
@@ -125,7 +125,7 @@ public class Food implements IDeliverable
      * @param buffer     the the buffer to write to.
      * @param input      the input to serialize.
      */
-    public static void serialize(final IFactoryController controller, final PacketBuffer buffer, final Food input)
+    public static void serialize(final IFactoryController controller, final FriendlyByteBuf buffer, final Food input)
     {
         buffer.writeInt(input.count);
 
@@ -149,7 +149,7 @@ public class Food implements IDeliverable
      * @param buffer     the buffer to read.
      * @return the deliverable.
      */
-    public static Food deserialize(final IFactoryController controller, final PacketBuffer buffer) {
+    public static Food deserialize(final IFactoryController controller, final FriendlyByteBuf buffer) {
         final int count = buffer.readInt();
         final ItemStack result = buffer.readBoolean() ? buffer.readItem() : ItemStack.EMPTY;
 

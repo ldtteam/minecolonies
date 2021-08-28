@@ -2,9 +2,9 @@ package com.minecolonies.api.entity.mobs.barbarians;
 
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.entity.mobs.RaiderType;
-import net.minecraft.entity.EntityType;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.level.Level;
 
 import static com.minecolonies.api.util.constant.RaiderConstants.ONE;
 import static com.minecolonies.api.util.constant.RaiderConstants.OUT_OF_ONE_HUNDRED;
@@ -25,7 +25,7 @@ public abstract class AbstractEntityBarbarian extends AbstractEntityMinecolonies
      * @param type  the type.
      * @param world the world.
      */
-    public AbstractEntityBarbarian(final EntityType<? extends AbstractEntityBarbarian> type, final World world)
+    public AbstractEntityBarbarian(final EntityType<? extends AbstractEntityBarbarian> type, final Level world)
     {
         super(type, world);
     }

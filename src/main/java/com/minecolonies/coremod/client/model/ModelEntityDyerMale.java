@@ -2,7 +2,7 @@ package com.minecolonies.coremod.client.model;
 
 import com.minecolonies.api.client.render.modeltype.CitizenModel;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.client.model.geom.ModelPart;
 
 public class ModelEntityDyerMale extends CitizenModel<AbstractEntityCitizen>
 {
@@ -11,7 +11,7 @@ public class ModelEntityDyerMale extends CitizenModel<AbstractEntityCitizen>
         texWidth = 128;
         texHeight = 64;
 
-        head = new ModelRenderer(this);
+        head = new ModelPart(this);
         head.setPos(0.0F, 0.0F, 0.0F);
         head.texOffs(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, 0.0F, false);
         head.texOffs(58, 0).addBox(-4.4667F, -6.8667F, 0.0F, 0.4667F, 4.3333F, 4.3333F, 0.0F, false);
@@ -71,23 +71,23 @@ public class ModelEntityDyerMale extends CitizenModel<AbstractEntityCitizen>
         head.texOffs(75, 15).addBox(-2.1F, -2.9267F, -4.2F, 1.1333F, 1.0F, 0.8667F, 0.0F, false);
         head.texOffs(75, 15).addBox(0.9667F, -2.9267F, -4.2F, 1.1333F, 1.0F, 0.8667F, 0.0F, false);
 
-        body = new ModelRenderer(this);
+        body = new ModelPart(this);
         body.setPos(0.0F, 0.0F, 0.0F);
         body.texOffs(16, 16).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, 0.0F, false);
 
-        rightArm = new ModelRenderer(this);
+        rightArm = new ModelPart(this);
         rightArm.setPos(-5.0F, 2.0F, 0.0F);
         rightArm.texOffs(40, 16).addBox(-3.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, true);
 
-        leftArm = new ModelRenderer(this);
+        leftArm = new ModelPart(this);
         leftArm.setPos(5.0F, 2.0F, 0.0F);
         leftArm.texOffs(40, 16).addBox(-1.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, true);
 
-        rightLeg = new ModelRenderer(this);
+        rightLeg = new ModelPart(this);
         rightLeg.setPos(-1.9F, 12.0F, 0.0F);
         rightLeg.texOffs(0, 16).addBox(-2.1F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, true);
 
-        leftLeg = new ModelRenderer(this);
+        leftLeg = new ModelPart(this);
         leftLeg.setPos(1.9F, 12.0F, 0.0F);
         leftLeg.texOffs(0, 16).addBox(-1.9F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, true);
 

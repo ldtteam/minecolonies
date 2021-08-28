@@ -23,12 +23,12 @@ import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.colony.jobs.JobFarmer;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -80,7 +80,7 @@ public class BuildingFarmer extends AbstractBuildingWorker implements IBuildingP
             {
                 for (@NotNull final BlockPos field : module.getFarmerFields())
                 {
-                    final TileEntity scareCrow = getColony().getWorld().getBlockEntity(field);
+                    final BlockEntity scareCrow = getColony().getWorld().getBlockEntity(field);
                     if (scareCrow instanceof ScarecrowTileEntity)
                     {
                         ((ScarecrowTileEntity) scareCrow).setOwner(citizen.getId());
@@ -134,7 +134,7 @@ public class BuildingFarmer extends AbstractBuildingWorker implements IBuildingP
         {
             for (final BlockPos field : module.getFarmerFields())
             {
-                final TileEntity scareCrow = getColony().getWorld().getBlockEntity(field);
+                final BlockEntity scareCrow = getColony().getWorld().getBlockEntity(field);
                 if (scareCrow instanceof ScarecrowTileEntity && !ItemStackUtils.isEmpty(((ScarecrowTileEntity) scareCrow).getSeed()))
                 {
                     final ItemStack seedStack = ((ScarecrowTileEntity) scareCrow).getSeed();
@@ -185,7 +185,7 @@ public class BuildingFarmer extends AbstractBuildingWorker implements IBuildingP
         {
             for (final BlockPos field : module.getFarmerFields())
             {
-                final TileEntity scareCrow = getColony().getWorld().getBlockEntity(field);
+                final BlockEntity scareCrow = getColony().getWorld().getBlockEntity(field);
                 if (scareCrow instanceof ScarecrowTileEntity && !ItemStackUtils.isEmpty(((ScarecrowTileEntity) scareCrow).getSeed()))
                 {
                     if (ItemStackUtils.compareItemStacksIgnoreStackSize(((ScarecrowTileEntity) scareCrow).getSeed(), stack))

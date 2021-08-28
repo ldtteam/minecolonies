@@ -2,9 +2,9 @@ package com.minecolonies.coremod.entity.mobs.egyptians;
 
 import com.minecolonies.api.entity.mobs.egyptians.AbstractEntityEgyptian;
 import com.minecolonies.api.entity.mobs.egyptians.IPharaoEntity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.level.Level;
 
 import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
 import static com.minecolonies.api.util.constant.RaiderConstants.BASE_ENV_DAMAGE_RESIST;
@@ -22,7 +22,7 @@ public class EntityPharao extends AbstractEntityEgyptian implements IPharaoEntit
      * @param type    the entity type.
      * @param worldIn world to construct it in.
      */
-    public EntityPharao(final EntityType<? extends EntityPharao> type, final World worldIn)
+    public EntityPharao(final EntityType<? extends EntityPharao> type, final Level worldIn)
     {
         super(type, worldIn);
     }

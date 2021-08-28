@@ -3,12 +3,12 @@ package com.minecolonies.coremod.network.messages.server;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.coremod.blocks.BlockDecorationController;
 import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
@@ -55,7 +55,7 @@ public class DecorationControllerUpdateMessage implements IMessage
     }
 
     @Override
-    public void fromBytes(@NotNull final PacketBuffer buf)
+    public void fromBytes(@NotNull final FriendlyByteBuf buf)
     {
         this.name = buf.readUtf(32767);
         this.pos = buf.readBlockPos();
@@ -63,7 +63,7 @@ public class DecorationControllerUpdateMessage implements IMessage
     }
 
     @Override
-    public void toBytes(@NotNull final PacketBuffer buf)
+    public void toBytes(@NotNull final FriendlyByteBuf buf)
     {
         buf.writeUtf(this.name);
         buf.writeBlockPos(this.pos);
@@ -80,8 +80,8 @@ public class DecorationControllerUpdateMessage implements IMessage
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
-        final PlayerEntity player = ctxIn.getSender();
-        final TileEntity tileEntity = player.getCommandSenderWorld().getBlockEntity(pos);
+        final Player player = ctxIn.getSender();
+        final BlockEntity tileEntity = player.getCommandSenderWorld().getBlockEntity(pos);
         if (tileEntity instanceof TileEntityDecorationController)
         {
             final BlockState state = player.getCommandSenderWorld().getBlockState(pos);

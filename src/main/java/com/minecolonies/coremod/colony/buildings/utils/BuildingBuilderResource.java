@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.colony.buildings.utils;
 
 import com.minecolonies.api.crafting.ItemStorage;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;

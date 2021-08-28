@@ -34,15 +34,15 @@ import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewBuildingViewMessage;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewRemoveBuildingMessage;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
-import net.minecraft.block.Block;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -116,7 +116,7 @@ public class BuildingManager implements IBuildingManager
     }
 
     @Override
-    public void read(@NotNull final CompoundNBT compound)
+    public void read(@NotNull final CompoundTag compound)
     {
         buildings.clear();
         maxChunkX = colony.getCenter().getX() >> 4;
@@ -125,10 +125,10 @@ public class BuildingManager implements IBuildingManager
         minChunkZ = colony.getCenter().getZ() >> 4;
 
         //  Buildings
-        final ListNBT buildingTagList = compound.getList(TAG_BUILDINGS, Constants.NBT.TAG_COMPOUND);
+        final ListTag buildingTagList = compound.getList(TAG_BUILDINGS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < buildingTagList.size(); ++i)
         {
-            final CompoundNBT buildingCompound = buildingTagList.getCompound(i);
+            final CompoundTag buildingCompound = buildingTagList.getCompound(i);
             @Nullable final IBuilding b = IBuildingDataManager.getInstance().createFrom(colony, buildingCompound);
             if (b != null)
             {
@@ -140,7 +140,7 @@ public class BuildingManager implements IBuildingManager
         if (compound.getAllKeys().contains(TAG_NEW_FIELDS))
         {
             // Fields before Buildings, because the Farmer needs them.
-            final ListNBT fieldTagList = compound.getList(TAG_NEW_FIELDS, Constants.NBT.TAG_COMPOUND);
+            final ListTag fieldTagList = compound.getList(TAG_NEW_FIELDS, Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < fieldTagList.size(); ++i)
             {
                 addField(BlockPosUtil.read(fieldTagList.getCompound(i), TAG_POS));
@@ -179,22 +179,22 @@ public class BuildingManager implements IBuildingManager
     }
 
     @Override
-    public void write(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundTag compound)
     {
         //  Buildings
-        @NotNull final ListNBT buildingTagList = new ListNBT();
+        @NotNull final ListTag buildingTagList = new ListTag();
         for (@NotNull final IBuilding b : buildings.values())
         {
-            @NotNull final CompoundNBT buildingCompound = b.serializeNBT();
+            @NotNull final CompoundTag buildingCompound = b.serializeNBT();
             buildingTagList.add(buildingCompound);
         }
         compound.put(TAG_BUILDINGS, buildingTagList);
 
         // Fields
-        @NotNull final ListNBT fieldTagList = new ListNBT();
+        @NotNull final ListTag fieldTagList = new ListTag();
         for (@NotNull final BlockPos pos : fields)
         {
-            @NotNull final CompoundNBT fieldCompound = new CompoundNBT();
+            @NotNull final CompoundTag fieldCompound = new CompoundTag();
             BlockPosUtil.write(fieldCompound, TAG_POS, pos);
             fieldTagList.add(fieldCompound);
         }
@@ -209,7 +209,7 @@ public class BuildingManager implements IBuildingManager
     }
 
     @Override
-    public void sendPackets(final Set<ServerPlayerEntity> closeSubscribers, final Set<ServerPlayerEntity> newSubscribers)
+    public void sendPackets(final Set<ServerPlayer> closeSubscribers, final Set<ServerPlayer> newSubscribers)
     {
         sendBuildingPackets(closeSubscribers, newSubscribers);
         sendFieldPackets(closeSubscribers, newSubscribers);
@@ -329,7 +329,7 @@ public class BuildingManager implements IBuildingManager
     }
 
     @Override
-    public boolean isWithinBuildingZone(final Chunk chunk)
+    public boolean isWithinBuildingZone(final LevelChunk chunk)
     {
         final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
         if (cap != null)
@@ -414,7 +414,7 @@ public class BuildingManager implements IBuildingManager
     }
 
     @Override
-    public void addNewField(final AbstractScarecrowTileEntity tileEntity, final BlockPos pos, final World world)
+    public void addNewField(final AbstractScarecrowTileEntity tileEntity, final BlockPos pos, final Level world)
     {
         addField(pos);
         markFieldsDirty();
@@ -435,11 +435,11 @@ public class BuildingManager implements IBuildingManager
     }
 
     @Override
-    public ScarecrowTileEntity getFreeField(final int owner, final World world)
+    public ScarecrowTileEntity getFreeField(final int owner, final Level world)
     {
         for (@NotNull final BlockPos pos : fields)
         {
-            final TileEntity field = world.getBlockEntity(pos);
+            final BlockEntity field = world.getBlockEntity(pos);
             if (field instanceof ScarecrowTileEntity && !((ScarecrowTileEntity) field).isTaken())
             {
                 return (ScarecrowTileEntity) field;
@@ -449,7 +449,7 @@ public class BuildingManager implements IBuildingManager
     }
 
     @Override
-    public IBuilding addNewBuilding(@NotNull final AbstractTileEntityColonyBuilding tileEntity, final World world)
+    public IBuilding addNewBuilding(@NotNull final AbstractTileEntityColonyBuilding tileEntity, final Level world)
     {
         tileEntity.setColony(colony);
         if (!buildings.containsKey(tileEntity.getPosition()))
@@ -503,11 +503,11 @@ public class BuildingManager implements IBuildingManager
     }
 
     @Override
-    public void removeBuilding(@NotNull final IBuilding building, final Set<ServerPlayerEntity> subscribers)
+    public void removeBuilding(@NotNull final IBuilding building, final Set<ServerPlayer> subscribers)
     {
         if (buildings.remove(building.getID()) != null)
         {
-            for (final ServerPlayerEntity player : subscribers)
+            for (final ServerPlayer player : subscribers)
             {
                 Network.getNetwork().sendToPlayer(new ColonyViewRemoveBuildingMessage(colony, building.getID()), player);
             }
@@ -715,11 +715,11 @@ public class BuildingManager implements IBuildingManager
      * @param closeSubscribers the current event subscribers.
      * @param newSubscribers   the new event subscribers.
      */
-    private void sendBuildingPackets(final Set<ServerPlayerEntity> closeSubscribers, final Set<ServerPlayerEntity> newSubscribers)
+    private void sendBuildingPackets(final Set<ServerPlayer> closeSubscribers, final Set<ServerPlayer> newSubscribers)
     {
         if (isBuildingsDirty || !newSubscribers.isEmpty())
         {
-            final Set<ServerPlayerEntity> players = new HashSet<>();
+            final Set<ServerPlayer> players = new HashSet<>();
             if (isBuildingsDirty)
             {
                 players.addAll(closeSubscribers);
@@ -741,11 +741,11 @@ public class BuildingManager implements IBuildingManager
      * @param closeSubscribers the current event subscribers.
      * @param newSubscribers   the new event subscribers.
      */
-    private void sendFieldPackets(final Set<ServerPlayerEntity> closeSubscribers, final Set<ServerPlayerEntity> newSubscribers)
+    private void sendFieldPackets(final Set<ServerPlayer> closeSubscribers, final Set<ServerPlayer> newSubscribers)
     {
         if (isFieldsDirty || !newSubscribers.isEmpty())
         {
-            final Set<ServerPlayerEntity> players = new HashSet<>();
+            final Set<ServerPlayer> players = new HashSet<>();
             if (isFieldsDirty)
             {
                 players.addAll(closeSubscribers);
@@ -776,7 +776,7 @@ public class BuildingManager implements IBuildingManager
     }
 
     @Override
-    public boolean canPlaceAt(final Block block, final BlockPos pos, final PlayerEntity player)
+    public boolean canPlaceAt(final Block block, final BlockPos pos, final Player player)
     {
         if (block instanceof BlockHutWareHouse)
         {

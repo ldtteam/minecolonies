@@ -12,10 +12,10 @@ import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
@@ -91,7 +91,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
      */
     protected IAIState startWorkingAtOwnBuilding()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_WORKER_GOINGTOHUT));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslatableComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_WORKER_GOINGTOHUT));
         if (walkToBuilding())
         {
             return getState();
@@ -253,18 +253,18 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
      */
     public void cleanArmor()
     {
-        updateArmorInSlot(EquipmentSlotType.CHEST);
-        updateArmorInSlot(EquipmentSlotType.FEET);
-        updateArmorInSlot(EquipmentSlotType.HEAD);
-        updateArmorInSlot(EquipmentSlotType.LEGS);
-        updateArmorInSlot(EquipmentSlotType.OFFHAND);
+        updateArmorInSlot(EquipmentSlot.CHEST);
+        updateArmorInSlot(EquipmentSlot.FEET);
+        updateArmorInSlot(EquipmentSlot.HEAD);
+        updateArmorInSlot(EquipmentSlot.LEGS);
+        updateArmorInSlot(EquipmentSlot.OFFHAND);
     }
 
     /**
      * Check if the armor is still in the inventory, if not empty the equipment slot.
      * @param type the type of armor.
      */
-    private void updateArmorInSlot(final EquipmentSlotType type)
+    private void updateArmorInSlot(final EquipmentSlot type)
     {
         final ItemStack stack = worker.getItemBySlot(type);
         if (stack.isEmpty() || InventoryUtils.findFirstSlotInItemHandlerWith(getInventory(), itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack, false, true)) == -1)

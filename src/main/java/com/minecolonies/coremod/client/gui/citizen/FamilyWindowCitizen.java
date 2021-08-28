@@ -5,8 +5,8 @@ import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.WindowConstants.CITIZEN_FAM_RESOURCE_SUFFIX;
@@ -48,8 +48,8 @@ public class FamilyWindowCitizen extends AbstractWindowCitizen
         final String firstParent = citizen.getParents().getA();
         final String secondParent = citizen.getParents().getB();
 
-        findPaneOfTypeByID("parentA", Text.class).setText(firstParent.isEmpty() ? new TranslationTextComponent("com.minecolonies.coremod.gui.citizen.family.unknown") : new StringTextComponent(firstParent));
-        findPaneOfTypeByID("parentB", Text.class).setText(secondParent.isEmpty() ? new TranslationTextComponent("com.minecolonies.coremod.gui.citizen.family.unknown") : new StringTextComponent(secondParent));
+        findPaneOfTypeByID("parentA", Text.class).setText(firstParent.isEmpty() ? new TranslatableComponent("com.minecolonies.coremod.gui.citizen.family.unknown") : new TextComponent(firstParent));
+        findPaneOfTypeByID("parentB", Text.class).setText(secondParent.isEmpty() ? new TranslatableComponent("com.minecolonies.coremod.gui.citizen.family.unknown") : new TextComponent(secondParent));
 
         final int partner = citizen.getPartner();
         final ICitizenDataView partnerView = colony.getCitizen(partner);
@@ -57,11 +57,11 @@ public class FamilyWindowCitizen extends AbstractWindowCitizen
 
         if (partnerView == null)
         {
-            partnerText.setText(new StringTextComponent("-"));
+            partnerText.setText(new TextComponent("-"));
         }
         else
         {
-            partnerText.setText(new StringTextComponent(partnerView.getName()));
+            partnerText.setText(new TextComponent(partnerView.getName()));
         }
 
         childrenList.setDataProvider(new ScrollingList.DataProvider()
@@ -84,7 +84,7 @@ public class FamilyWindowCitizen extends AbstractWindowCitizen
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                rowPane.findPaneOfTypeByID("name", Text.class).setText(new StringTextComponent(colony.getCitizen(citizen.getChildren().get(index)).getName()));
+                rowPane.findPaneOfTypeByID("name", Text.class).setText(new TextComponent(colony.getCitizen(citizen.getChildren().get(index)).getName()));
             }
         });
 
@@ -108,7 +108,7 @@ public class FamilyWindowCitizen extends AbstractWindowCitizen
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                rowPane.findPaneOfTypeByID("name", Text.class).setText(new StringTextComponent(colony.getCitizen(citizen.getSiblings().get(index)).getName()));
+                rowPane.findPaneOfTypeByID("name", Text.class).setText(new TextComponent(colony.getCitizen(citizen.getSiblings().get(index)).getName()));
             }
         });
     }

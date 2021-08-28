@@ -12,13 +12,13 @@ import com.minecolonies.api.tileentities.TileEntityGrave;
 import com.minecolonies.api.tileentities.TileEntityNamedGrave;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.StringNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -54,12 +54,12 @@ public class GraveyardManagementModule extends AbstractBuildingModule implements
     private GraveData lastGraveData;
 
     @Override
-    public void deserializeNBT(final CompoundNBT compound)
+    public void deserializeNBT(final CompoundTag compound)
     {
         restingCitizen.clear();
         if (compound.getAllKeys().contains(TAG_RIP_CITIZEN_LIST))
         {
-            final ListNBT ripCitizen = compound.getList(TAG_RIP_CITIZEN_LIST, TAG_STRING);
+            final ListTag ripCitizen = compound.getList(TAG_RIP_CITIZEN_LIST, TAG_STRING);
             for (int i = 0; i < ripCitizen.size(); i++)
             {
                 final String citizenName = ripCitizen.getString(i);
@@ -76,12 +76,12 @@ public class GraveyardManagementModule extends AbstractBuildingModule implements
     }
 
     @Override
-    public void serializeNBT(final CompoundNBT compound)
+    public void serializeNBT(final CompoundTag compound)
     {
-        @NotNull final ListNBT ripCitizen = new ListNBT();
+        @NotNull final ListTag ripCitizen = new ListTag();
         for (@NotNull final String citizenName : restingCitizen)
         {
-            ripCitizen.add(StringNBT.valueOf(citizenName));
+            ripCitizen.add(StringTag.valueOf(citizenName));
         }
         compound.put(TAG_RIP_CITIZEN_LIST, ripCitizen);
 
@@ -92,7 +92,7 @@ public class GraveyardManagementModule extends AbstractBuildingModule implements
     }
 
     @Override
-    public void serializeToView(@NotNull final PacketBuffer buf)
+    public void serializeToView(@NotNull final FriendlyByteBuf buf)
     {
         final IColony colony = building.getColony();
         final List<BlockPos> graves = new ArrayList<>(colony.getGraveManager().getGraves().keySet());
@@ -102,7 +102,7 @@ public class GraveyardManagementModule extends AbstractBuildingModule implements
         {
             if (WorldUtil.isBlockLoaded(colony.getWorld(), grave))
             {
-                final TileEntity tileEntity = colony.getWorld().getBlockEntity(grave);
+                final BlockEntity tileEntity = colony.getWorld().getBlockEntity(grave);
                 if (tileEntity instanceof TileEntityGrave)
                 {
                     cleanList.add(grave);
@@ -159,7 +159,7 @@ public class GraveyardManagementModule extends AbstractBuildingModule implements
             }
             colony.getWorld().setBlockAndUpdate(positionAndDirection.getA(), ModBlocks.blockNamedGrave.defaultBlockState().setValue(AbstractBlockMinecoloniesNamedGrave.FACING, facing));
 
-            TileEntity tileEntity = colony.getWorld().getBlockEntity(positionAndDirection.getA());
+            BlockEntity tileEntity = colony.getWorld().getBlockEntity(positionAndDirection.getA());
             if (tileEntity instanceof TileEntityNamedGrave)
             {
                 final String firstName = StringUtils.split(lastGraveData.getCitizenName())[0];

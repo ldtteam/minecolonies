@@ -7,8 +7,8 @@ import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverFactor
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.WarehouseConcreteRequestResolver;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 
 public class WarehouseConcreteRequestResolverFactory implements IRequestResolverFactory<WarehouseConcreteRequestResolver>
@@ -45,10 +45,10 @@ public class WarehouseConcreteRequestResolverFactory implements IRequestResolver
 
     @NotNull
     @Override
-    public CompoundNBT serialize(
+    public CompoundTag serialize(
       @NotNull final IFactoryController controller, @NotNull final WarehouseConcreteRequestResolver warehouseConcreteRequestResolver)
     {
-        final CompoundNBT compound = new CompoundNBT();
+        final CompoundTag compound = new CompoundTag();
         compound.put(NBT_TOKEN, controller.serialize(warehouseConcreteRequestResolver.getId()));
         compound.put(NBT_LOCATION, controller.serialize(warehouseConcreteRequestResolver.getLocation()));
         return compound;
@@ -56,7 +56,7 @@ public class WarehouseConcreteRequestResolverFactory implements IRequestResolver
 
     @NotNull
     @Override
-    public WarehouseConcreteRequestResolver deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
+    public WarehouseConcreteRequestResolver deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
     {
         final IToken<?> token = controller.deserialize(nbt.getCompound(NBT_TOKEN));
         final ILocation location = controller.deserialize(nbt.getCompound(NBT_LOCATION));
@@ -65,14 +65,14 @@ public class WarehouseConcreteRequestResolverFactory implements IRequestResolver
     }
 
     @Override
-    public void serialize(IFactoryController controller, WarehouseConcreteRequestResolver input, PacketBuffer packetBuffer)
+    public void serialize(IFactoryController controller, WarehouseConcreteRequestResolver input, FriendlyByteBuf packetBuffer)
     {
         controller.serialize(packetBuffer, input.getId());
         controller.serialize(packetBuffer, input.getLocation());
     }
 
     @Override
-    public WarehouseConcreteRequestResolver deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
+    public WarehouseConcreteRequestResolver deserialize(IFactoryController controller, FriendlyByteBuf buffer) throws Throwable
     {
         final IToken<?> token = controller.deserialize(buffer);
         final ILocation location = controller.deserialize(buffer);

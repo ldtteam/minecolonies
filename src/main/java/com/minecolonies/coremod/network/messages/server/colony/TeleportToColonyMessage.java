@@ -4,9 +4,9 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.coremod.network.messages.server.AbstractColonyServerMessage;
 import com.minecolonies.coremod.util.TeleportHelper;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.world.World;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,7 +20,7 @@ public class TeleportToColonyMessage extends AbstractColonyServerMessage
         super();
     }
 
-    public TeleportToColonyMessage(final RegistryKey<World> dimensionId, final int colonyId)
+    public TeleportToColonyMessage(final ResourceKey<Level> dimensionId, final int colonyId)
     {
         super(dimensionId, colonyId);
     }
@@ -47,13 +47,13 @@ public class TeleportToColonyMessage extends AbstractColonyServerMessage
     }
 
     @Override
-    protected void toBytesOverride(final PacketBuffer buf)
+    protected void toBytesOverride(final FriendlyByteBuf buf)
     {
 
     }
 
     @Override
-    protected void fromBytesOverride(final PacketBuffer buf)
+    protected void fromBytesOverride(final FriendlyByteBuf buf)
     {
 
     }

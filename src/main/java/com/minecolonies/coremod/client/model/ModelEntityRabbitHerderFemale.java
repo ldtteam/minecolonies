@@ -5,35 +5,35 @@ package com.minecolonies.coremod.client.model;
 
 import com.minecolonies.api.client.render.modeltype.CitizenModel;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.client.model.geom.ModelPart;
 
 public class ModelEntityRabbitHerderFemale extends CitizenModel<AbstractEntityCitizen>
 {
     public ModelEntityRabbitHerderFemale()
     {
-        ModelRenderer headDetail;
-        ModelRenderer hair;
-        ModelRenderer chest;
-        ModelRenderer carrot1;
-        ModelRenderer carrot2;
+        ModelPart headDetail;
+        ModelPart hair;
+        ModelPart chest;
+        ModelPart carrot1;
+        ModelPart carrot2;
 
         texWidth = 128;
         texHeight = 64;
 
-        leftLeg = new ModelRenderer(this);
+        leftLeg = new ModelPart(this);
         leftLeg.setPos(2.0F, 12.0F, 0.0F);
         leftLeg.texOffs(0, 16).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, false);
 
-        head = new ModelRenderer(this);
+        head = new ModelPart(this);
         head.setPos(0.0F, 0.0F, 0.0F);
         head.texOffs(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, 0.0F, false);
 
-        headDetail = new ModelRenderer(this);
+        headDetail = new ModelPart(this);
         headDetail.setPos(0.0F, 24.0F, 0.0F);
         head.addChild(headDetail);
         headDetail.texOffs(32, 0).addBox(-4.0F, -32.0F, -4.0F, 8.0F, 8.0F, 8.0F, 0.5F, true);
 
-        hair = new ModelRenderer(this);
+        hair = new ModelPart(this);
         hair.setPos(0.0F, 24.0F, 0.0F);
         head.addChild(hair);
         hair.texOffs(96, 56).addBox(-4.25F, -25.0F, 1.02F, 0.25F, 3.25F, 2.0F, 0.0F, false);
@@ -59,21 +59,21 @@ public class ModelEntityRabbitHerderFemale extends CitizenModel<AbstractEntityCi
         hair.texOffs(92, 45).addBox(-4.35F, -32.25F, 0.02F, 0.35F, 6.25F, 4.0F, 0.0F, true);
         hair.texOffs(92, 56).addBox(-4.35F, -26.0F, 3.02F, 0.35F, 5.0F, 1.0F, 0.0F, true);
 
-        rightLeg = new ModelRenderer(this);
+        rightLeg = new ModelPart(this);
         rightLeg.setPos(-2.0F, 12.0F, 0.0F);
         rightLeg.texOffs(0, 16).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, true);
 
-        leftArm = new ModelRenderer(this);
+        leftArm = new ModelPart(this);
         leftArm.setPos(5.0F, 2.0F, 0.0F);
         leftArm.texOffs(40, 16).addBox(-1.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F, 0.0F, true);
         leftArm.texOffs(21, 32).addBox(-1.5F, 5.0F, -2.25F, 4.0F, 0.75F, 4.5F, 0.0F, false);
 
-        rightArm = new ModelRenderer(this);
+        rightArm = new ModelPart(this);
         rightArm.setPos(-5.0F, 2.0F, 0.0F);
         rightArm.texOffs(40, 16).addBox(-2.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F, 0.0F, false);
         rightArm.texOffs(1, 32).addBox(-2.5F, 5.0F, -2.25F, 4.0F, 0.75F, 4.5F, 0.0F, true);
 
-        body = new ModelRenderer(this);
+        body = new ModelPart(this);
         body.setPos(0.0F, 0.0F, 0.0F);
         body.texOffs(16, 16).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, 0.0F, false);
         body.texOffs(5, 53).addBox(3.0F, 0.0F, -3.25F, 1.0F, 10.0F, 1.25F, 0.0F, false);
@@ -85,13 +85,13 @@ public class ModelEntityRabbitHerderFemale extends CitizenModel<AbstractEntityCi
         body.texOffs(62, 34).addBox(-3.0F, 9.5F, -5.0F, 6.0F, 0.5F, 3.0F, 0.0F, false);
         body.texOffs(12, 58).addBox(-3.0F, -0.25F, -2.25F, 6.0F, 0.75F, 4.5F, 0.0F, false);
 
-        chest = new ModelRenderer(this);
+        chest = new ModelPart(this);
         chest.setPos(0.0F, 2.0F, -2.0F);
         body.addChild(chest);
         setRotationAngle(chest, 0.7854F, 0.0F, 0.0F);
         chest.texOffs(41, 32).addBox(-3.0F, -1.0F, -2.0F, 6.0F, 3.0F, 3.0F, 0.0F, false);
 
-        carrot1 = new ModelRenderer(this);
+        carrot1 = new ModelPart(this);
         carrot1.setPos(-15.5F, 4.0F, 29.0F);
         body.addChild(carrot1);
         carrot1.texOffs(63, 25).addBox(14.8647F, 5.1066F, -33.5601F, 0.1698F, 0.1698F, 0.1698F, 0.0F, false);
@@ -191,7 +191,7 @@ public class ModelEntityRabbitHerderFemale extends CitizenModel<AbstractEntityCi
         carrot1.texOffs(68, 12).addBox(12.6569F, 5.1066F, -32.711F, 0.1698F, 0.1698F, 0.1698F, 0.0F, false);
         carrot1.texOffs(67, 12).addBox(12.6569F, 5.1066F, -32.8808F, 0.1698F, 0.1698F, 0.1698F, 0.0F, false);
 
-        carrot2 = new ModelRenderer(this);
+        carrot2 = new ModelPart(this);
         carrot2.setPos(15.5F, 4.0F, 29.0F);
         body.addChild(carrot2);
         carrot2.texOffs(63, 25).addBox(-15.0345F, 5.1066F, -33.5601F, 0.1698F, 0.1698F, 0.1698F, 0.0F, true);
@@ -294,7 +294,7 @@ public class ModelEntityRabbitHerderFemale extends CitizenModel<AbstractEntityCi
         hat.visible = false;
     }
 
-    public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z)
+    public void setRotationAngle(ModelPart modelRenderer, float x, float y, float z)
     {
         modelRenderer.xRot = x;
         modelRenderer.yRot = y;

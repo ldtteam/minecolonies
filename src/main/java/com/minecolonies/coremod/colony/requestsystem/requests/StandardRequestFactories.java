@@ -19,11 +19,11 @@ import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.requestable.SmeltableOre;
 import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests.*;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.IntNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.IntTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
@@ -94,7 +94,7 @@ public final class StandardRequestFactories
          */
         @NotNull
         @Override
-        public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final StandardRequests.ItemStackRequest request)
+        public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final StandardRequests.ItemStackRequest request)
         {
             return serializeToNBT(controller, request, Stack::serialize);
         }
@@ -109,7 +109,7 @@ public final class StandardRequestFactories
         @NotNull
         @Override
         @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
-        public StandardRequests.ItemStackRequest deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
+        public StandardRequests.ItemStackRequest deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
         {
             return deserializeFromNBT(controller, nbt, Stack::deserialize,
               (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.ItemStackRequest.class),
@@ -121,14 +121,14 @@ public final class StandardRequestFactories
 
         @NotNull
         @Override
-        public void serialize(@NotNull final IFactoryController controller, @NotNull final StandardRequests.ItemStackRequest input, final PacketBuffer packetBuffer)
+        public void serialize(@NotNull final IFactoryController controller, @NotNull final StandardRequests.ItemStackRequest input, final FriendlyByteBuf packetBuffer)
         {
             serializeToPacketBuffer(controller, input, packetBuffer, Stack::serialize);
         }
 
         @NotNull
         @Override
-        public StandardRequests.ItemStackRequest deserialize(@NotNull final IFactoryController controller, @NotNull final PacketBuffer buffer) throws Throwable
+        public StandardRequests.ItemStackRequest deserialize(@NotNull final IFactoryController controller, @NotNull final FriendlyByteBuf buffer) throws Throwable
         {
             return deserializeFromPacketBuffer(controller,
               buffer,
@@ -194,7 +194,7 @@ public final class StandardRequestFactories
          */
         @NotNull
         @Override
-        public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final StandardRequests.ItemStackListRequest request)
+        public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final StandardRequests.ItemStackListRequest request)
         {
             return serializeToNBT(controller, request, StackList::serialize);
         }
@@ -209,7 +209,7 @@ public final class StandardRequestFactories
         @NotNull
         @Override
         @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
-        public StandardRequests.ItemStackListRequest deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
+        public StandardRequests.ItemStackListRequest deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
         {
             return deserializeFromNBT(controller, nbt, StackList::deserialize,
               (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.ItemStackListRequest.class),
@@ -220,13 +220,13 @@ public final class StandardRequestFactories
         }
 
         @Override
-        public void serialize(IFactoryController controller, ItemStackListRequest input, PacketBuffer packetBuffer)
+        public void serialize(IFactoryController controller, ItemStackListRequest input, FriendlyByteBuf packetBuffer)
         {
             serializeToPacketBuffer(controller, input, packetBuffer, StackList::serialize);
         }
 
         @Override
-        public ItemStackListRequest deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
+        public ItemStackListRequest deserialize(IFactoryController controller, FriendlyByteBuf buffer) throws Throwable
         {
             return deserializeFromPacketBuffer(controller,
               buffer,
@@ -292,7 +292,7 @@ public final class StandardRequestFactories
          */
         @NotNull
         @Override
-        public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final StandardRequests.ItemTagRequest request)
+        public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final StandardRequests.ItemTagRequest request)
         {
             return serializeToNBT(controller, request, Tag::serialize);
         }
@@ -307,7 +307,7 @@ public final class StandardRequestFactories
         @NotNull
         @Override
         @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
-        public StandardRequests.ItemTagRequest deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
+        public StandardRequests.ItemTagRequest deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
         {
             return deserializeFromNBT(controller, nbt, Tag::deserialize,
               (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.ItemTagRequest.class),
@@ -319,14 +319,14 @@ public final class StandardRequestFactories
 
         @NotNull
         @Override
-        public void serialize(@NotNull final IFactoryController controller, @NotNull final StandardRequests.ItemTagRequest itemTagRequest, final PacketBuffer packetBuffer)
+        public void serialize(@NotNull final IFactoryController controller, @NotNull final StandardRequests.ItemTagRequest itemTagRequest, final FriendlyByteBuf packetBuffer)
         {
             serializeToPacketBuffer(controller, itemTagRequest, packetBuffer, Tag::serialize);
         }
 
         @NotNull
         @Override
-        public StandardRequests.ItemTagRequest deserialize(@NotNull final IFactoryController controller, @NotNull final PacketBuffer buffer) throws Throwable
+        public StandardRequests.ItemTagRequest deserialize(@NotNull final IFactoryController controller, @NotNull final FriendlyByteBuf buffer) throws Throwable
         {
             return deserializeFromPacketBuffer(controller,
               buffer,
@@ -374,7 +374,7 @@ public final class StandardRequestFactories
          */
         @NotNull
         @Override
-        public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final StandardRequests.DeliveryRequest request)
+        public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final StandardRequests.DeliveryRequest request)
         {
             return serializeToNBT(controller, request, Delivery::serialize);
         }
@@ -389,7 +389,7 @@ public final class StandardRequestFactories
         @NotNull
         @Override
         @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
-        public StandardRequests.DeliveryRequest deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
+        public StandardRequests.DeliveryRequest deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
         {
             return deserializeFromNBT(controller, nbt, Delivery::deserialize,
               (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.DeliveryRequest.class),
@@ -419,13 +419,13 @@ public final class StandardRequestFactories
         }
 
         @Override
-        public void serialize(IFactoryController controller, DeliveryRequest input, PacketBuffer packetBuffer)
+        public void serialize(IFactoryController controller, DeliveryRequest input, FriendlyByteBuf packetBuffer)
         {
             serializeToPacketBuffer(controller, input, packetBuffer, Delivery::serialize);
         }
 
         @Override
-        public DeliveryRequest deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
+        public DeliveryRequest deserialize(IFactoryController controller, FriendlyByteBuf buffer) throws Throwable
         {
             return deserializeFromPacketBuffer(controller,
               buffer,
@@ -473,7 +473,7 @@ public final class StandardRequestFactories
          */
         @NotNull
         @Override
-        public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final StandardRequests.PickupRequest request)
+        public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final StandardRequests.PickupRequest request)
         {
             return serializeToNBT(controller, request, Pickup::serialize);
         }
@@ -488,7 +488,7 @@ public final class StandardRequestFactories
         @NotNull
         @Override
         @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
-        public StandardRequests.PickupRequest deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
+        public StandardRequests.PickupRequest deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
         {
             return deserializeFromNBT(controller, nbt, Pickup::deserialize,
               (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.PickupRequest.class),
@@ -518,13 +518,13 @@ public final class StandardRequestFactories
         }
 
         @Override
-        public void serialize(IFactoryController controller, PickupRequest input, PacketBuffer packetBuffer)
+        public void serialize(IFactoryController controller, PickupRequest input, FriendlyByteBuf packetBuffer)
         {
             serializeToPacketBuffer(controller, input, packetBuffer, Pickup::serialize);
         }
 
         @Override
-        public PickupRequest deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
+        public PickupRequest deserialize(IFactoryController controller, FriendlyByteBuf buffer) throws Throwable
         {
             return deserializeFromPacketBuffer(controller,
               buffer,
@@ -596,14 +596,14 @@ public final class StandardRequestFactories
 
         @NotNull
         @Override
-        public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final R r)
+        public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final R r)
         {
             return serializeToNBT(controller, r, nbtSerializer);
         }
 
         @NotNull
         @Override
-        public R deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt) throws Throwable
+        public R deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt) throws Throwable
         {
             return deserializeFromNBT(controller, nbt, nbtDeserializer, (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(rClass),
               requested,
@@ -613,13 +613,13 @@ public final class StandardRequestFactories
         }
 
         @Override
-        public void serialize(IFactoryController controller, R input, PacketBuffer packetBuffer)
+        public void serialize(IFactoryController controller, R input, FriendlyByteBuf packetBuffer)
         {
             serializeToPacketBuffer(controller, input, packetBuffer, packetSerializer);
         }
 
         @Override
-        public R deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
+        public R deserialize(IFactoryController controller, FriendlyByteBuf buffer) throws Throwable
         {
             return deserializeFromPacketBuffer(controller,
               buffer,
@@ -707,14 +707,14 @@ public final class StandardRequestFactories
 
         @NotNull
         @Override
-        public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final StandardRequests.ToolRequest request)
+        public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final StandardRequests.ToolRequest request)
         {
             return serializeToNBT(controller, request, Tool::serialize);
         }
 
         @NotNull
         @Override
-        public StandardRequests.ToolRequest deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
+        public StandardRequests.ToolRequest deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
         {
             return deserializeFromNBT(controller, nbt, Tool::deserialize,
               (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.ToolRequest.class),
@@ -725,13 +725,13 @@ public final class StandardRequestFactories
         }
 
         @Override
-        public void serialize(IFactoryController controller, ToolRequest input, PacketBuffer packetBuffer)
+        public void serialize(IFactoryController controller, ToolRequest input, FriendlyByteBuf packetBuffer)
         {
             serializeToPacketBuffer(controller, input, packetBuffer, Tool::serialize);
         }
 
         @Override
-        public ToolRequest deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
+        public ToolRequest deserialize(IFactoryController controller, FriendlyByteBuf buffer) throws Throwable
         {
             return deserializeFromPacketBuffer(controller,
               buffer,
@@ -780,14 +780,14 @@ public final class StandardRequestFactories
 
         @NotNull
         @Override
-        public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final StandardRequests.FoodRequest request)
+        public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final StandardRequests.FoodRequest request)
         {
             return serializeToNBT(controller, request, Food::serialize);
         }
 
         @NotNull
         @Override
-        public StandardRequests.FoodRequest deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
+        public StandardRequests.FoodRequest deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
         {
             return deserializeFromNBT(controller, nbt, Food::deserialize,
               (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.FoodRequest.class),
@@ -798,13 +798,13 @@ public final class StandardRequestFactories
         }
 
         @Override
-        public void serialize(IFactoryController controller, FoodRequest input, PacketBuffer packetBuffer)
+        public void serialize(IFactoryController controller, FoodRequest input, FriendlyByteBuf packetBuffer)
         {
             serializeToPacketBuffer(controller, input, packetBuffer, Food::serialize);
         }
 
         @Override
-        public FoodRequest deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
+        public FoodRequest deserialize(IFactoryController controller, FriendlyByteBuf buffer) throws Throwable
         {
             return deserializeFromPacketBuffer(controller,
               buffer,
@@ -853,14 +853,14 @@ public final class StandardRequestFactories
 
         @NotNull
         @Override
-        public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final StandardRequests.SmeltAbleOreRequest request)
+        public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final StandardRequests.SmeltAbleOreRequest request)
         {
             return serializeToNBT(controller, request, SmeltableOre::serialize);
         }
 
         @NotNull
         @Override
-        public StandardRequests.SmeltAbleOreRequest deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
+        public StandardRequests.SmeltAbleOreRequest deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
         {
             return deserializeFromNBT(controller, nbt, SmeltableOre::deserialize,
               (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.SmeltAbleOreRequest.class),
@@ -871,13 +871,13 @@ public final class StandardRequestFactories
         }
 
         @Override
-        public void serialize(IFactoryController controller, SmeltAbleOreRequest input, PacketBuffer packetBuffer)
+        public void serialize(IFactoryController controller, SmeltAbleOreRequest input, FriendlyByteBuf packetBuffer)
         {
             serializeToPacketBuffer(controller, input, packetBuffer, SmeltableOre::serialize);
         }
 
         @Override
-        public SmeltAbleOreRequest deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
+        public SmeltAbleOreRequest deserialize(IFactoryController controller, FriendlyByteBuf buffer) throws Throwable
         {
             return deserializeFromPacketBuffer(controller,
               buffer,
@@ -926,14 +926,14 @@ public final class StandardRequestFactories
 
         @NotNull
         @Override
-        public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final StandardRequests.BurnableRequest request)
+        public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final StandardRequests.BurnableRequest request)
         {
             return serializeToNBT(controller, request, Burnable::serialize);
         }
 
         @NotNull
         @Override
-        public StandardRequests.BurnableRequest deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
+        public StandardRequests.BurnableRequest deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
         {
             return deserializeFromNBT(controller, nbt, Burnable::deserialize,
               (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.BurnableRequest.class),
@@ -944,13 +944,13 @@ public final class StandardRequestFactories
         }
 
         @Override
-        public void serialize(IFactoryController controller, BurnableRequest input, PacketBuffer packetBuffer)
+        public void serialize(IFactoryController controller, BurnableRequest input, FriendlyByteBuf packetBuffer)
         {
             serializeToPacketBuffer(controller, input, packetBuffer, Burnable::serialize);
         }
 
         @Override
-        public BurnableRequest deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
+        public BurnableRequest deserialize(IFactoryController controller, FriendlyByteBuf buffer) throws Throwable
         {
             return deserializeFromPacketBuffer(controller,
               buffer,
@@ -976,19 +976,19 @@ public final class StandardRequestFactories
     {
     }
 
-    public static <T extends IRequestable> CompoundNBT serializeToNBT(
+    public static <T extends IRequestable> CompoundTag serializeToNBT(
       final IFactoryController controller,
       final IRequest<T> request,
       final IObjectToNBTConverter<T> typeSerialization)
     {
-        final CompoundNBT compound = new CompoundNBT();
+        final CompoundTag compound = new CompoundTag();
 
-        final CompoundNBT requesterCompound = controller.serialize(request.getRequester());
-        final CompoundNBT tokenCompound = controller.serialize(request.getId());
-        final IntNBT stateCompound = request.getState().serialize();
-        final CompoundNBT requestedCompound = typeSerialization.apply(controller, request.getRequest());
+        final CompoundTag requesterCompound = controller.serialize(request.getRequester());
+        final CompoundTag tokenCompound = controller.serialize(request.getId());
+        final IntTag stateCompound = request.getState().serialize();
+        final CompoundTag requestedCompound = typeSerialization.apply(controller, request.getRequest());
 
-        final ListNBT childrenCompound = new ListNBT();
+        final ListTag childrenCompound = new ListTag();
         for (final IToken<?> token : request.getChildren())
         {
             childrenCompound.add(controller.serialize(token));
@@ -1011,8 +1011,8 @@ public final class StandardRequestFactories
 
         compound.put(NBT_CHILDREN, childrenCompound);
 
-        final ListNBT deliveriesList = new ListNBT();
-        request.getDeliveries().forEach(itemStack -> deliveriesList.add(itemStack.save(new CompoundNBT())));
+        final ListTag deliveriesList = new ListTag();
+        request.getDeliveries().forEach(itemStack -> deliveriesList.add(itemStack.save(new CompoundTag())));
 
         compound.put(NBT_DELIVERIES, deliveriesList);
 
@@ -1022,7 +1022,7 @@ public final class StandardRequestFactories
     public static <T extends IRequestable> void serializeToPacketBuffer(
       final IFactoryController controller,
       final IRequest<T> request,
-      final PacketBuffer packetBuffer,
+      final FriendlyByteBuf packetBuffer,
       final IObjectToPackBufferWriter<T> typeSerialization)
     {
 
@@ -1055,17 +1055,17 @@ public final class StandardRequestFactories
 
     public static <T extends IRequestable, R extends IRequest<T>> R deserializeFromNBT(
       final IFactoryController controller,
-      final CompoundNBT compound,
+      final CompoundTag compound,
       final INBTToObjectConverter<T> typeDeserialization,
       final IObjectConstructor<T, R> objectConstructor)
     {
         final IRequester requester = controller.deserialize(compound.getCompound(NBT_REQUESTER));
         final IToken<?> token = controller.deserialize(compound.getCompound(NBT_TOKEN));
-        final RequestState state = RequestState.deserialize((IntNBT) compound.get(NBT_STATE));
+        final RequestState state = RequestState.deserialize((IntTag) compound.get(NBT_STATE));
         final T requested = typeDeserialization.apply(controller, compound.getCompound(NBT_REQUESTED));
 
         final List<IToken<?>> childTokens = new ArrayList<>();
-        final ListNBT childCompound = compound.getList(NBT_CHILDREN, Constants.NBT.TAG_COMPOUND);
+        final ListTag childCompound = compound.getList(NBT_CHILDREN, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < childCompound.size(); i++)
         {
             childTokens.add(controller.deserialize(childCompound.getCompound(i)));
@@ -1088,7 +1088,7 @@ public final class StandardRequestFactories
         if (compound.getAllKeys().contains(NBT_DELIVERIES))
         {
             final ImmutableList.Builder<ItemStack> stackBuilder = ImmutableList.builder();
-            final ListNBT deliveriesList = compound.getList(NBT_DELIVERIES, Constants.NBT.TAG_COMPOUND);
+            final ListTag deliveriesList = compound.getList(NBT_DELIVERIES, Constants.NBT.TAG_COMPOUND);
             NBTUtils.streamCompound(deliveriesList).forEach(itemStackCompound -> stackBuilder.add(ItemStack.of(itemStackCompound)));
 
             request.overrideCurrentDeliveries(stackBuilder.build());
@@ -1099,7 +1099,7 @@ public final class StandardRequestFactories
 
     public static <T extends IRequestable, R extends IRequest<T>> R deserializeFromPacketBuffer(
       final IFactoryController controller,
-      final PacketBuffer buffer,
+      final FriendlyByteBuf buffer,
       final IPacketBufferToObjectReader<T> typeDeserialization,
       final IObjectConstructor<T, R> objectConstructor)
     {
@@ -1142,25 +1142,25 @@ public final class StandardRequestFactories
     @FunctionalInterface
     public interface IObjectToNBTConverter<O>
     {
-        CompoundNBT apply(IFactoryController controller, O object);
+        CompoundTag apply(IFactoryController controller, O object);
     }
 
     @FunctionalInterface
     public interface INBTToObjectConverter<O>
     {
-        O apply(IFactoryController controller, CompoundNBT compound);
+        O apply(IFactoryController controller, CompoundTag compound);
     }
 
     @FunctionalInterface
     public interface IObjectToPackBufferWriter<O>
     {
-        void apply(IFactoryController controller, PacketBuffer buffer, O input);
+        void apply(IFactoryController controller, FriendlyByteBuf buffer, O input);
     }
 
     @FunctionalInterface
     public interface IPacketBufferToObjectReader<O>
     {
-        O apply(IFactoryController controller, PacketBuffer buffer);
+        O apply(IFactoryController controller, FriendlyByteBuf buffer);
     }
 
     @FunctionalInterface

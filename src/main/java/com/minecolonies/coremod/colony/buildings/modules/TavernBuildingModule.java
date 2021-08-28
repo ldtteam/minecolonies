@@ -16,17 +16,17 @@ import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.VisitorSpawned
 import com.minecolonies.coremod.colony.interactionhandling.RecruitmentInteraction;
 import com.minecolonies.coremod.datalistener.CustomVisitorListener;
 import com.minecolonies.coremod.network.messages.client.colony.PlayMusicAtPosMessage;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.TranslatableComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -103,7 +103,7 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
     }
 
     @Override
-    public void onPlayerEnterBuilding(final PlayerEntity player)
+    public void onPlayerEnterBuilding(final Player player)
     {
         if (musicCooldown <= 0 && building.getBuildingLevel() > 0 && !building.getColony().isDay())
         {
@@ -129,7 +129,7 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
 
             avg = new BlockPos(avg.getX() / count, avg.getY() / count, avg.getZ() / count);
             final PlayMusicAtPosMessage message = new PlayMusicAtPosMessage(TavernSounds.tavernTheme, avg, building.getColony().getWorld(), 0.7f, 1.0f);
-            for (final ServerPlayerEntity curPlayer : building.getColony().getPackageManager().getCloseSubscribers())
+            for (final ServerPlayer curPlayer : building.getColony().getPackageManager().getCloseSubscribers())
             {
                 Network.getNetwork().sendToPlayer(message, curPlayer);
             }
@@ -230,7 +230,7 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
 
         if (!CustomVisitorListener.chanceCustomVisitors(newCitizen))
         {
-            newCitizen.triggerInteraction(new RecruitmentInteraction(new TranslationTextComponent(
+            newCitizen.triggerInteraction(new RecruitmentInteraction(new TranslatableComponent(
               "com.minecolonies.coremod.gui.chat.recruitstory" + (building.getColony().getWorld().random.nextInt(MAX_STORY) + 1), newCitizen.getName().split(" ")[0]),
               ChatPriority.IMPORTANT));
         }
@@ -238,18 +238,18 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
         building.getColony().getVisitorManager().spawnOrCreateCivilian(newCitizen, building.getColony().getWorld(), spawnPos, true);
         if (newCitizen.getEntity().isPresent())
         {
-            newCitizen.getEntity().get().setItemSlot(EquipmentSlotType.FEET, boots);
+            newCitizen.getEntity().get().setItemSlot(EquipmentSlot.FEET, boots);
         }
         building.getColony().getEventDescriptionManager().addEventDescription(new VisitorSpawnedEvent(spawnPos, newCitizen.getName()));
     }
 
     @Override
-    public void serializeNBT(final CompoundNBT nbt)
+    public void serializeNBT(final CompoundTag nbt)
     {
-        final ListNBT visitorlist = new ListNBT();
+        final ListTag visitorlist = new ListTag();
         for (final Integer id : externalCitizens)
         {
-            CompoundNBT visitorCompound = new CompoundNBT();
+            CompoundTag visitorCompound = new CompoundTag();
             visitorCompound.putInt(TAG_VISITOR_ID, id);
             visitorlist.add(visitorCompound);
         }
@@ -259,12 +259,12 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
     }
 
     @Override
-    public void deserializeNBT(final CompoundNBT nbt)
+    public void deserializeNBT(final CompoundTag nbt)
     {
-        final ListNBT visitorlist = nbt.getList(TAG_VISITORS, TAG_COMPOUND);
-        for (final INBT data : visitorlist)
+        final ListTag visitorlist = nbt.getList(TAG_VISITORS, TAG_COMPOUND);
+        for (final Tag data : visitorlist)
         {
-            final int id = ((CompoundNBT) data).getInt(TAG_VISITOR_ID);
+            final int id = ((CompoundTag) data).getInt(TAG_VISITOR_ID);
             final ICitizenData citizenData = building.getColony().getVisitorManager().getCivilian(id);
             if (citizenData != null)
             {

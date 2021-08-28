@@ -19,22 +19,22 @@ import com.minecolonies.coremod.entity.pathfinding.pathjobs.AbstractPathJob;
 import com.minecolonies.coremod.entity.pathfinding.pathjobs.PathJobMoveToWithPassable;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.*;
-import net.minecraft.block.material.Material;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.pathfinding.Path;
-import net.minecraft.pathfinding.PathPoint;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.pathfinder.Path;
+import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.ITag;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.tags.Tag;
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.common.IPlantable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -46,6 +46,13 @@ import java.util.Objects;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.items.ModTags.fungi;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
+
+import net.minecraft.world.level.block.AirBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.NetherrackBlock;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * The lumberjack AI class.
@@ -313,7 +320,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     {
         if (job.getTree() == null)
         {
-            worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.searchingtree"));
+            worker.getCitizenStatusHandler().setLatestStatus(new TranslatableComponent("com.minecolonies.coremod.status.searchingtree"));
 
             return findTree();
         }
@@ -429,7 +436,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
      */
     private IAIState chopTree()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.chopping"));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslatableComponent("com.minecolonies.coremod.status.chopping"));
 
         if (job.getTree().hasLogs() || (job.getTree().hasLeaves() && job.getTree().isNetherTree()) || checkedInHut)
         {
@@ -491,7 +498,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
                 if (!mineBlock(log, workFrom, false, false, Compatibility.getDynamicTreeBreakAction(
                   world,
                   log,
-                  worker.getItemInHand(Hand.MAIN_HAND),
+                  worker.getItemInHand(InteractionHand.MAIN_HAND),
                   worker.blockPosition())))
                 {
                     return getState();
@@ -639,7 +646,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
             {
                 // Unstuck with path
                 final List<BlockPos> checkPositions = new ArrayList<>();
-                PathPoint next = path.getNode(Math.min(path.getNextNodeIndex() + 1, path.getNodeCount() - 1));
+                Node next = path.getNode(Math.min(path.getNextNodeIndex() + 1, path.getNodeCount() - 1));
 
                 // Blocks in front of the worker
                 for (int i = 0; i < 2; i++)
@@ -686,7 +693,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
      * @param blockPositions block positions
      * @param tag            tag to check
      */
-    private boolean mineIfEqualsBlockTag(List<BlockPos> blockPositions, ITag<Block> tag)
+    private boolean mineIfEqualsBlockTag(List<BlockPos> blockPositions, Tag<Block> tag)
     {
         for (BlockPos currentPos : blockPositions)
         {
@@ -747,14 +754,14 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
             return true;
         }
 
-        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.planting"));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslatableComponent("com.minecolonies.coremod.status.planting"));
 
         final int saplingSlot = findSaplingSlot();
 
         if (saplingSlot != -1)
         {
             final ItemStack stack = getInventory().getStackInSlot(saplingSlot);
-            worker.getCitizenItemHandler().setHeldItem(Hand.MAIN_HAND, saplingSlot);
+            worker.getCitizenItemHandler().setHeldItem(InteractionHand.MAIN_HAND, saplingSlot);
 
             if (job.getTree().isDynamicTree() && Compatibility.isDynamicTreeSapling(stack))
             {
@@ -775,7 +782,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
                 world.playSound(null,
                   this.worker.blockPosition(),
                   soundType.getPlaceSound(),
-                  SoundCategory.BLOCKS,
+                  SoundSource.BLOCKS,
                   soundType.getVolume(),
                   soundType.getPitch());
             }
@@ -805,7 +812,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     {
         if (job.getTree() != null)
         {
-            searchForItems(new AxisAlignedBB(job.getTree().getLocation())
+            searchForItems(new AABB(job.getTree().getLocation())
                              .expandTowards(RANGE_HORIZONTAL_PICKUP, RANGE_VERTICAL_PICKUP, RANGE_HORIZONTAL_PICKUP)
                              .expandTowards(-RANGE_HORIZONTAL_PICKUP, -RANGE_VERTICAL_PICKUP, -RANGE_HORIZONTAL_PICKUP));
         }
@@ -911,7 +918,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
      */
     private IAIState gathering()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.gathering"));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslatableComponent("com.minecolonies.coremod.status.gathering"));
 
         if (getItemsForPickUp() == null)
         {

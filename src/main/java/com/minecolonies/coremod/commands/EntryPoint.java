@@ -8,7 +8,7 @@ import com.minecolonies.coremod.commands.colonycommands.requestsystem.CommandRSR
 import com.minecolonies.coremod.commands.generalcommands.*;
 import com.minecolonies.coremod.commands.killcommands.*;
 import com.mojang.brigadier.CommandDispatcher;
-import net.minecraft.command.CommandSource;
+import net.minecraft.commands.CommandSourceStack;
 
 /**
  * Entry point to commands.
@@ -21,7 +21,7 @@ public class EntryPoint
         // Intentionally left empty
     }
 
-    public static void register(final CommandDispatcher<CommandSource> dispatcher)
+    public static void register(final CommandDispatcher<CommandSourceStack> dispatcher)
     {
         /**
          * Kill commands subtree

@@ -4,8 +4,8 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.research.IResearchRequirement;
 import com.minecolonies.api.research.ModResearchRequirements;
 import com.minecolonies.api.research.registry.ResearchRequirementEntry;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.TranslatableComponent;
 
 /**
  * Certain building research requirements.
@@ -60,7 +60,7 @@ public class BuildingResearchRequirement implements IResearchRequirement
      *
      * @param nbt           the nbt containing the relevant tags.
      */
-    public BuildingResearchRequirement(CompoundNBT nbt)
+    public BuildingResearchRequirement(CompoundTag nbt)
     {
         this.buildingLevel = nbt.getInt(TAG_BUILDING_LVL);
         this.building = nbt.getString(TAG_BUILDING_NAME);
@@ -90,18 +90,18 @@ public class BuildingResearchRequirement implements IResearchRequirement
     }
 
     @Override
-    public TranslationTextComponent getDesc()
+    public TranslatableComponent getDesc()
     {
         if(singleBuilding)
         {
-            return new TranslationTextComponent("com.minecolonies.coremod.research.requirement.building.mandatory.level",
-              new TranslationTextComponent("block.minecolonies.blockhut" + this.building),
+            return new TranslatableComponent("com.minecolonies.coremod.research.requirement.building.mandatory.level",
+              new TranslatableComponent("block.minecolonies.blockhut" + this.building),
               this.buildingLevel);
         }
         else
         {
-            return new TranslationTextComponent("com.minecolonies.coremod.research.requirement.building.level",
-              new TranslationTextComponent("block.minecolonies.blockhut" + this.building),
+            return new TranslatableComponent("com.minecolonies.coremod.research.requirement.building.level",
+              new TranslatableComponent("block.minecolonies.blockhut" + this.building),
               this.buildingLevel);
         }
     }
@@ -110,9 +110,9 @@ public class BuildingResearchRequirement implements IResearchRequirement
     public ResearchRequirementEntry getRegistryEntry() {return ModResearchRequirements.buildingResearchRequirement;}
 
     @Override
-    public CompoundNBT writeToNBT()
+    public CompoundTag writeToNBT()
     {
-        CompoundNBT nbt = new CompoundNBT();
+        CompoundTag nbt = new CompoundTag();
         nbt.putString(TAG_BUILDING_NAME, building);
         nbt.putInt(TAG_BUILDING_LVL, buildingLevel);
         nbt.putBoolean(TAG_BUILDING_SINGLE, singleBuilding);

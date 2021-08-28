@@ -8,12 +8,12 @@ import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.tileentities.TileEntityGrave;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesGrave;
-import net.minecraft.block.BlockState;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,17 +28,17 @@ import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler.Ac
 public class GravePlacementHandler implements IPlacementHandler
 {
     @Override
-    public boolean canHandle(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final BlockState blockState)
+    public boolean canHandle(@NotNull final Level world, @NotNull final BlockPos pos, @NotNull final BlockState blockState)
     {
         return blockState.getBlock() instanceof BlockMinecoloniesGrave;
     }
 
     @Override
     public ActionProcessingResult handle(
-      @NotNull final World world,
+      @NotNull final Level world,
       @NotNull final BlockPos pos,
       @NotNull final BlockState blockState,
-      @Nullable final CompoundNBT tileEntityData,
+      @Nullable final CompoundTag tileEntityData,
       final boolean complete,
       final BlockPos centerPos,
       final PlacementSettings settings)
@@ -54,7 +54,7 @@ public class GravePlacementHandler implements IPlacementHandler
             handleTileEntityPlacement(tileEntityData, world, pos, settings);
         }
 
-        TileEntity entity = world.getBlockEntity(pos);
+        BlockEntity entity = world.getBlockEntity(pos);
         if (entity instanceof TileEntityGrave)
         {
             ((TileEntityGrave) entity).updateBlockState();
@@ -65,10 +65,10 @@ public class GravePlacementHandler implements IPlacementHandler
 
     @Override
     public List<ItemStack> getRequiredItems(
-      @NotNull final World world,
+      @NotNull final Level world,
       @NotNull final BlockPos pos,
       @NotNull final BlockState blockState,
-      @Nullable final CompoundNBT tileEntityData,
+      @Nullable final CompoundTag tileEntityData,
       final boolean complete)
     {
         final List<ItemStack> itemList = new ArrayList<>();

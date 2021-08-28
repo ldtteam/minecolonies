@@ -1,7 +1,7 @@
 package com.minecolonies.api.util.constant;
 
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * Constants used by the Undertaker AIs.

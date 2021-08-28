@@ -3,10 +3,10 @@ package com.minecolonies.api.colony.managers.interfaces;
 import com.minecolonies.api.colony.ICivilianData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.entity.citizen.AbstractCivilianEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -36,14 +36,14 @@ public interface IEntityManager
      *
      * @param compound the compound to read it from.
      */
-    void read(@NotNull CompoundNBT compound);
+    void read(@NotNull CompoundTag compound);
 
     /**
      * Write the civilian to nbt.
      *
      * @param compoundNBT the compound to write it to.
      */
-    void write(@NotNull CompoundNBT compoundNBT);
+    void write(@NotNull CompoundTag compoundNBT);
 
     /**
      * Sends packages to update the civilian.
@@ -52,8 +52,8 @@ public interface IEntityManager
      * @param newSubscribers   new subscribers
      */
     void sendPackets(
-      @NotNull Set<ServerPlayerEntity> closeSubscribers,
-      @NotNull Set<ServerPlayerEntity> newSubscribers);
+      @NotNull Set<ServerPlayer> closeSubscribers,
+      @NotNull Set<ServerPlayer> newSubscribers);
 
     /**
      * Returns a map of civilian in the colony. The map has ID as key, and civilian data as value.
@@ -80,7 +80,7 @@ public interface IEntityManager
      * @param force    True to skip max civilian test, false when not.
      * @return the new civilian.
      */
-    <T extends ICivilianData> T spawnOrCreateCivilian(T data, World world, BlockPos spawnPos, boolean force);
+    <T extends ICivilianData> T spawnOrCreateCivilian(T data, Level world, BlockPos spawnPos, boolean force);
 
     /**
      * Creates Civilian Data for a new civilian

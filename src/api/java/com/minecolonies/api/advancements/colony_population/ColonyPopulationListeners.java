@@ -1,7 +1,7 @@
 package com.minecolonies.api.advancements.colony_population;
 
 import com.minecolonies.api.advancements.CriterionListeners;
-import net.minecraft.advancements.PlayerAdvancements;
+import net.minecraft.server.PlayerAdvancements;
 
 /**
  * The listener instantiated for every advancement that listens to the associated criterion.

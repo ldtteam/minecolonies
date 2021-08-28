@@ -4,14 +4,14 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.coremod.Network;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.ISound;
-import net.minecraft.client.audio.SimpleSound;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.client.resources.sounds.SoundInstance;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.core.Registry;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.LogicalSide;
@@ -29,7 +29,7 @@ public class PlayAudioMessage implements IMessage
      * The sound event to play.
      */
     private SoundEvent soundEvent;
-    private SoundCategory category = SoundCategory.MUSIC;
+    private SoundSource category = SoundSource.MUSIC;
 
     /**
      * Default constructor.
@@ -56,7 +56,7 @@ public class PlayAudioMessage implements IMessage
      * @param event the sound event.
      * @param category the sound category to play on
      */
-    public PlayAudioMessage(final SoundEvent event, final SoundCategory category)
+    public PlayAudioMessage(final SoundEvent event, final SoundSource category)
     {
         super();
         this.soundEvent = event;
@@ -64,7 +64,7 @@ public class PlayAudioMessage implements IMessage
     }
 
     @Override
-    public void toBytes(final PacketBuffer buf)
+    public void toBytes(final FriendlyByteBuf buf)
     {
         // TODO: switch to proper registry
         buf.writeVarInt(category.ordinal());
@@ -72,9 +72,9 @@ public class PlayAudioMessage implements IMessage
     }
 
     @Override
-    public void fromBytes(final PacketBuffer buf)
+    public void fromBytes(final FriendlyByteBuf buf)
     {
-        this.category = SoundCategory.values()[buf.readVarInt()];
+        this.category = SoundSource.values()[buf.readVarInt()];
         this.soundEvent = Registry.SOUND_EVENT.byId(buf.readVarInt());
     }
 
@@ -89,10 +89,10 @@ public class PlayAudioMessage implements IMessage
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
-        Minecraft.getInstance().getSoundManager().play(new SimpleSound(
+        Minecraft.getInstance().getSoundManager().play(new SimpleSoundInstance(
           soundEvent.getLocation(), category,
           1.0F, 1.0F, false, 0,
-          ISound.AttenuationType.NONE, 0, 0, 0, true));
+          SoundInstance.Attenuation.NONE, 0, 0, 0, true));
     }
 
     /**
@@ -104,20 +104,20 @@ public class PlayAudioMessage implements IMessage
      */
     public static void sendToAll(IColony col, boolean important, boolean stop, PlayAudioMessage... messages)
     {
-        List<PlayerEntity> players = important
+        List<Player> players = important
           ? col.getImportantMessageEntityPlayers()
           : col.getMessagePlayerEntities();
 
-        for (PlayerEntity player : players)
+        for (Player player : players)
         {
             if (stop)
             {
-                Network.getNetwork().sendToPlayer(new StopMusicMessage(), (ServerPlayerEntity) player);
+                Network.getNetwork().sendToPlayer(new StopMusicMessage(), (ServerPlayer) player);
             }
 
             for (PlayAudioMessage pam : messages)
             {
-                Network.getNetwork().sendToPlayer(pam, (ServerPlayerEntity) player);
+                Network.getNetwork().sendToPlayer(pam, (ServerPlayer) player);
             }
         }
     }

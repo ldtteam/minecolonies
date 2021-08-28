@@ -10,27 +10,27 @@ import com.minecolonies.api.util.BlockStateUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.Colony;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.material.Material;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.loot.LootContext;
-import net.minecraft.loot.LootParameters;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.state.Property;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.util.NonNullList;
+import net.minecraft.core.NonNullList;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.IWorldReader;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -137,7 +137,7 @@ public class Tree
      * @param log   the position of the found log.
      * @param colony the colony the tree is in.
      */
-    public Tree(@NotNull final World world, @NotNull final BlockPos log, final IColony colony)
+    public Tree(@NotNull final Level world, @NotNull final BlockPos log, final IColony colony)
     {
         final Block block = BlockPosUtil.getBlock(world, log);
         if (block.is(BlockTags.LOGS) || Compatibility.isSlimeBlock(block) || Compatibility.isDynamicBlock(block))
@@ -178,7 +178,7 @@ public class Tree
      * @param world world the tree is in
      * @return ItemStack of the sapling found
      */
-    private ItemStack calcSapling(final World world)
+    private ItemStack calcSapling(final Level world)
     {
         if (topLog == null)
         {
@@ -224,7 +224,7 @@ public class Tree
      * @param checkFitsBase boolean whether we should check leaf and tree's log compatibility
      * @return the sapling to plant at the given position
      */
-    private ItemStack calcSaplingForPos(final World world, final BlockPos pos, final boolean checkFitsBase)
+    private ItemStack calcSaplingForPos(final Level world, final BlockPos pos, final boolean checkFitsBase)
     {
         BlockState blockState = world.getBlockState(pos);
         final Block block = blockState.getBlock();
@@ -252,7 +252,7 @@ public class Tree
             }
             else
             {
-                list.addAll(getSaplingsForLeaf((ServerWorld) world, pos));
+                list.addAll(getSaplingsForLeaf((ServerLevel) world, pos));
             }
 
             for (final ItemStack stack : list)
@@ -288,7 +288,7 @@ public class Tree
      * @param position position of the leaf
      * @return the list of saplings.
      */
-    public static List<ItemStack> getSaplingsForLeaf(ServerWorld world, BlockPos position)
+    public static List<ItemStack> getSaplingsForLeaf(ServerLevel world, BlockPos position)
     {
         NonNullList<ItemStack> list = NonNullList.create();
         BlockState state = world.getBlockState(position);
@@ -296,9 +296,9 @@ public class Tree
         for (int i = 1; i < 100; i++)
         {
             list.addAll(state.getDrops(new LootContext.Builder(world)
-                                         .withParameter(LootParameters.TOOL,
+                                         .withParameter(LootContextParams.TOOL,
                                            new ItemStack(Items.WOODEN_AXE)).withLuck(100)
-                                         .withParameter(LootParameters.ORIGIN, new Vector3d(position.getX(), position.getY(), position.getZ()))));
+                                         .withParameter(LootContextParams.ORIGIN, new Vec3(position.getX(), position.getY(), position.getZ()))));
             if (!list.isEmpty())
             {
                 for (ItemStack stack : list)
@@ -319,7 +319,7 @@ public class Tree
      * @param world the world to search in
      * @return leaf pos found
      */
-    private BlockPos getFirstLeaf(final IWorld world)
+    private BlockPos getFirstLeaf(final LevelAccessor world)
     {
         // Find the closest leaf above, stay below max height
         for (int i = 1; (i + topLog.getY()) < 255 && i < 10; i++)
@@ -341,7 +341,7 @@ public class Tree
      * @param treesToNotCut the trees the lumberjack is not supposed to cut.
      * @return true if the log is part of a tree.
      */
-    public static boolean checkTree(@NotNull final IWorldReader world, final BlockPos pos, final List<ItemStorage> treesToNotCut)
+    public static boolean checkTree(@NotNull final LevelReader world, final BlockPos pos, final List<ItemStorage> treesToNotCut)
     {
         //Is the first block a log?
         final BlockState state = world.getBlockState(pos);
@@ -382,7 +382,7 @@ public class Tree
      */
     @NotNull
     private static Tuple<BlockPos, BlockPos> getBottomAndTopLog(
-      @NotNull final IWorldReader world,
+      @NotNull final LevelReader world,
       @NotNull final BlockPos log,
       @NotNull final LinkedList<BlockPos> woodenBlocks,
       final BlockPos bottomLog,
@@ -434,7 +434,7 @@ public class Tree
      * @param treesToNotCut the trees the lj is not supposed to cut.
      * @return true if so.
      */
-    private static boolean hasEnoughLeavesAndIsSupposedToCut(@NotNull final IWorldReader world, final BlockPos pos, final List<ItemStorage> treesToNotCut)
+    private static boolean hasEnoughLeavesAndIsSupposedToCut(@NotNull final LevelReader world, final BlockPos pos, final List<ItemStorage> treesToNotCut)
     {
         boolean checkedLeaves = false;
         int leafCount = 0;
@@ -481,7 +481,7 @@ public class Tree
      * @param leafPos       the position a leaf is at.
      * @return false if not.
      */
-    private static boolean supposedToCut(final IWorldReader world, final List<ItemStorage> treesToNotCut, final BlockPos leafPos)
+    private static boolean supposedToCut(final LevelReader world, final List<ItemStorage> treesToNotCut, final BlockPos leafPos)
     {
         final ItemStack sap = IColonyManager.getInstance().getCompatibilityManager().getSaplingForLeaf(world.getBlockState(leafPos));
 
@@ -508,20 +508,20 @@ public class Tree
      * @return a new tree object.
      */
     @NotNull
-    public static Tree read(@NotNull final CompoundNBT compound)
+    public static Tree read(@NotNull final CompoundTag compound)
     {
         @NotNull final Tree tree = new Tree();
         tree.location = BlockPosUtil.read(compound, TAG_LOCATION);
 
         tree.woodBlocks = new LinkedList<>();
-        final ListNBT logs = compound.getList(TAG_LOGS, Constants.NBT.TAG_COMPOUND);
+        final ListTag logs = compound.getList(TAG_LOGS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < logs.size(); i++)
         {
             tree.woodBlocks.add(BlockPosUtil.readFromListNBT(logs, i));
         }
 
         tree.stumpLocations = new ArrayList<>();
-        final ListNBT stumps = compound.getList(TAG_STUMPS, Constants.NBT.TAG_COMPOUND);
+        final ListTag stumps = compound.getList(TAG_STUMPS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < stumps.size(); i++)
         {
             tree.stumpLocations.add(BlockPosUtil.readFromListNBT(stumps, i));
@@ -552,7 +552,7 @@ public class Tree
 
         if (compound.contains(TAG_LEAVES))
         {
-            final ListNBT leavesBin = compound.getList(TAG_LEAVES, Constants.NBT.TAG_COMPOUND);
+            final ListTag leavesBin = compound.getList(TAG_LEAVES, Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < leavesBin.size(); i++)
             {
                 tree.leaves.add(BlockPosUtil.readFromListNBT(leavesBin, i));
@@ -568,7 +568,7 @@ public class Tree
      * @param world  The world the tree is in.
      * @param topLog The most upper log of the tree.
      */
-    private void checkTree(@NotNull final World world, @NotNull final BlockPos topLog)
+    private void checkTree(@NotNull final Level world, @NotNull final BlockPos topLog)
     {
         if (!world.getBlockState(new BlockPos(location.getX(), location.getY() - 1, location.getZ())).getMaterial().isSolid())
         {
@@ -600,7 +600,7 @@ public class Tree
      *
      * @param world The world where the blocks are in.
      */
-    public void findLogs(@NotNull final World world, final IColony colony)
+    public void findLogs(@NotNull final Level world, final IColony colony)
     {
         addAndSearch(world, location, colony);
         woodBlocks.sort((c1, c2) -> (int) (c1.distSqr(location) - c2.distSqr(location)));
@@ -632,7 +632,7 @@ public class Tree
      * @param world The world the log is in.
      * @param log   the log to add.
      */
-    private void addAndSearch(@NotNull final World world, @NotNull final BlockPos log, final IColony colony)
+    private void addAndSearch(@NotNull final Level world, @NotNull final BlockPos log, final IColony colony)
     {
         if (woodBlocks.size() >= MineColonies.getConfig().getServer().maxTreeSize.get())
         {
@@ -699,7 +699,7 @@ public class Tree
      *
      * @param world The world the leaf is in.
      */
-    private void addAndSearch(@NotNull final World world)
+    private void addAndSearch(@NotNull final Level world)
     {
         int locXMin = location.getX() - LEAVES_WIDTH;
         int locXMax = location.getX() + LEAVES_WIDTH;
@@ -898,7 +898,7 @@ public class Tree
      *
      * @param compound the compound of the tree.
      */
-    public void write(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundTag compound)
     {
         if (!isTree)
         {
@@ -907,14 +907,14 @@ public class Tree
 
         BlockPosUtil.write(compound, TAG_LOCATION, location);
 
-        @NotNull final ListNBT logs = new ListNBT();
+        @NotNull final ListTag logs = new ListTag();
         for (@NotNull final BlockPos log : woodBlocks)
         {
             BlockPosUtil.writeToListNBT(logs, log);
         }
         compound.put(TAG_LOGS, logs);
 
-        @NotNull final ListNBT stumps = new ListNBT();
+        @NotNull final ListTag stumps = new ListTag();
         for (@NotNull final BlockPos stump : stumpLocations)
         {
             BlockPosUtil.writeToListNBT(stumps, stump);
@@ -926,13 +926,13 @@ public class Tree
         compound.putBoolean(TAG_IS_SLIME_TREE, slimeTree);
         compound.putBoolean(TAG_DYNAMIC_TREE, dynamicTree);
 
-        CompoundNBT saplingNBT = new CompoundNBT();
+        CompoundTag saplingNBT = new CompoundTag();
         sapling.save(saplingNBT);
 
         compound.put(TAG_SAPLING, saplingNBT);
         compound.putBoolean(TAG_NETHER_TREE, netherTree);
 
-        @NotNull final ListNBT leavesBin = new ListNBT();
+        @NotNull final ListTag leavesBin = new ListTag();
         for (@NotNull final BlockPos pos : leaves)
         {
             BlockPosUtil.writeToListNBT(leavesBin, pos);

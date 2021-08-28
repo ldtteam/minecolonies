@@ -1,9 +1,9 @@
 package com.minecolonies.api.advancements;
 
 import com.google.common.collect.Sets;
-import net.minecraft.advancements.ICriterionInstance;
-import net.minecraft.advancements.ICriterionTrigger;
-import net.minecraft.advancements.PlayerAdvancements;
+import net.minecraft.advancements.CriterionTriggerInstance;
+import net.minecraft.advancements.CriterionTrigger;
+import net.minecraft.server.PlayerAdvancements;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,10 +15,10 @@ import java.util.function.Predicate;
  * and checks each advancement when the criterion is triggered
  * @param <T> the Instance of the criterion that will be tested against
  */
-public class CriterionListeners<T extends ICriterionInstance>
+public class CriterionListeners<T extends CriterionTriggerInstance>
 {
     private final PlayerAdvancements                 playerAdvancements;
-    private final Set<ICriterionTrigger.Listener<T>> listeners = Sets.newHashSet();
+    private final Set<CriterionTrigger.Listener<T>> listeners = Sets.newHashSet();
 
     /**
      * The base manager for the listeners, where each listener is an advancement
@@ -36,13 +36,13 @@ public class CriterionListeners<T extends ICriterionInstance>
     }
 
     /** add a new criterion listener */
-    public void add(ICriterionTrigger.Listener<T> listener)
+    public void add(CriterionTrigger.Listener<T> listener)
     {
         this.listeners.add(listener);
     }
 
     /** remove an existing criterion listener */
-    public void remove(ICriterionTrigger.Listener<T> listener)
+    public void remove(CriterionTrigger.Listener<T> listener)
     {
         this.listeners.remove(listener);
     }
@@ -61,8 +61,8 @@ public class CriterionListeners<T extends ICriterionInstance>
      */
     public void trigger(Predicate<T> test)
     {
-        final List<ICriterionTrigger.Listener<T>> toGrant = new ArrayList<>();
-        for (ICriterionTrigger.Listener<T> listener : this.listeners)
+        final List<CriterionTrigger.Listener<T>> toGrant = new ArrayList<>();
+        for (CriterionTrigger.Listener<T> listener : this.listeners)
         {
             if (test.test(listener.getTriggerInstance()))
             {

@@ -2,25 +2,27 @@ package com.minecolonies.coremod.items;
 
 import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.items.ModItems;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.AbstractArrowEntity;
-import net.minecraft.item.ArrowItem;
-import net.minecraft.item.BowItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.item.ArrowItem;
+import net.minecraft.world.item.BowItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.stats.Stats;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.world.World;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+
+import net.minecraft.world.item.Item.Properties;
 
 /**
  * Class handling the Pharao Scepter item.
@@ -40,26 +42,26 @@ public class ItemPharaoScepter extends BowItem
 
     @NotNull
     @Override
-    public ActionResult<ItemStack> use(@NotNull final World worldIn, PlayerEntity playerIn, @NotNull final Hand handIn)
+    public InteractionResultHolder<ItemStack> use(@NotNull final Level worldIn, Player playerIn, @NotNull final InteractionHand handIn)
     {
         ItemStack itemstack = playerIn.getItemInHand(handIn);
 
-        ActionResult<ItemStack> ret = net.minecraftforge.event.ForgeEventFactory.onArrowNock(itemstack, worldIn, playerIn, handIn, true);
+        InteractionResultHolder<ItemStack> ret = net.minecraftforge.event.ForgeEventFactory.onArrowNock(itemstack, worldIn, playerIn, handIn, true);
         if (ret != null)
         {
             return ret;
         }
 
         playerIn.startUsingItem(handIn);
-        return ActionResult.consume(itemstack);
+        return InteractionResultHolder.consume(itemstack);
     }
 
     @Override
-    public void releaseUsing(@NotNull final ItemStack stack, @NotNull final World worldIn, LivingEntity entityLiving, int timeLeft)
+    public void releaseUsing(@NotNull final ItemStack stack, @NotNull final Level worldIn, LivingEntity entityLiving, int timeLeft)
     {
-        if (entityLiving instanceof PlayerEntity)
+        if (entityLiving instanceof Player)
         {
-            PlayerEntity playerentity = (PlayerEntity) entityLiving;
+            Player playerentity = (Player) entityLiving;
 
             int useDuration = this.getUseDuration(stack) - timeLeft;
             useDuration = net.minecraftforge.event.ForgeEventFactory.onArrowLoose(stack, worldIn, playerentity, useDuration, true);
@@ -74,7 +76,7 @@ public class ItemPharaoScepter extends BowItem
                 if (!worldIn.isClientSide)
                 {
                     ArrowItem arrowitem = (ArrowItem) Items.ARROW;
-                    AbstractArrowEntity abstractarrowentity = arrowitem.createArrow(worldIn, new ItemStack(arrowitem, 1), playerentity);
+                    AbstractArrow abstractarrowentity = arrowitem.createArrow(worldIn, new ItemStack(arrowitem, 1), playerentity);
                     abstractarrowentity = customArrow(abstractarrowentity);
                     abstractarrowentity.shootFromRotation(playerentity, playerentity.xRot, playerentity.yRot, 0.0F, speed * 3.0F, 1.0F);
                     if (speed == 1.0F)
@@ -99,15 +101,15 @@ public class ItemPharaoScepter extends BowItem
                         abstractarrowentity.setSecondsOnFire(100);
                     }
 
-                    stack.hurtAndBreak(1, playerentity, new Consumer<PlayerEntity>() {
+                    stack.hurtAndBreak(1, playerentity, new Consumer<Player>() {
                         @Override
-                        public void accept(final PlayerEntity player)
+                        public void accept(final Player player)
                         {
                             player.broadcastBreakEvent(playerentity.getUsedItemHand());
                         }
                     });
 
-                    abstractarrowentity.pickup = AbstractArrowEntity.PickupStatus.CREATIVE_ONLY;
+                    abstractarrowentity.pickup = AbstractArrow.Pickup.CREATIVE_ONLY;
 
                     worldIn.addFreshEntity(abstractarrowentity);
                 }
@@ -117,7 +119,7 @@ public class ItemPharaoScepter extends BowItem
                   playerentity.getY(),
                   playerentity.getZ(),
                   SoundEvents.ARROW_SHOOT,
-                  SoundCategory.PLAYERS,
+                  SoundSource.PLAYERS,
                   1.0F,
                   1.0F / (random.nextFloat() * 0.4F + 1.2F) + speed * 0.5F);
                 playerentity.awardStat(Stats.ITEM_USED.get(this));
@@ -134,10 +136,10 @@ public class ItemPharaoScepter extends BowItem
 
     @NotNull
     @Override
-    public AbstractArrowEntity customArrow(@NotNull AbstractArrowEntity arrow)
+    public AbstractArrow customArrow(@NotNull AbstractArrow arrow)
     {
-        AbstractArrowEntity entity = ((ArrowItem) ModItems.firearrow).createArrow(arrow.level, new ItemStack(ModItems.firearrow, 1), (LivingEntity) arrow.getOwner());
-        entity.pickup = AbstractArrowEntity.PickupStatus.DISALLOWED;
+        AbstractArrow entity = ((ArrowItem) ModItems.firearrow).createArrow(arrow.level, new ItemStack(ModItems.firearrow, 1), (LivingEntity) arrow.getOwner());
+        entity.pickup = AbstractArrow.Pickup.DISALLOWED;
         entity.setSecondsOnFire(3);
 
         return entity;

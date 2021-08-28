@@ -4,10 +4,10 @@ import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.buildings.modules.*;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.Log;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
@@ -46,12 +46,12 @@ public class ItemListModule extends AbstractBuildingModule implements IItemListM
     }
 
     @Override
-    public void deserializeNBT(final CompoundNBT compound)
+    public void deserializeNBT(final CompoundTag compound)
     {
         final List<ItemStorage> allowedItems = new ArrayList<>();
         if (compound.contains(id))
         {
-            final ListNBT filterableList = compound.getCompound(id).getList(TAG_ITEMLIST, Constants.NBT.TAG_COMPOUND);
+            final ListTag filterableList = compound.getCompound(id).getList(TAG_ITEMLIST, Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < filterableList.size(); ++i)
             {
                 allowedItems.add(new ItemStorage(ItemStack.of(filterableList.getCompound(i))));
@@ -61,13 +61,13 @@ public class ItemListModule extends AbstractBuildingModule implements IItemListM
     }
 
     @Override
-    public void serializeNBT(final CompoundNBT compound)
+    public void serializeNBT(final CompoundTag compound)
     {
-        final CompoundNBT moduleCompound = new CompoundNBT();
-        @NotNull final ListNBT filteredItems = new ListNBT();
+        final CompoundTag moduleCompound = new CompoundTag();
+        @NotNull final ListTag filteredItems = new ListTag();
         for (@NotNull final ItemStorage item : itemsAllowed)
         {
-            @NotNull final CompoundNBT itemCompound = new CompoundNBT();
+            @NotNull final CompoundTag itemCompound = new CompoundTag();
             item.getItemStack().save(itemCompound);
             filteredItems.add(itemCompound);
         }
@@ -113,7 +113,7 @@ public class ItemListModule extends AbstractBuildingModule implements IItemListM
     }
 
     @Override
-    public void serializeToView(@NotNull final PacketBuffer buf)
+    public void serializeToView(@NotNull final FriendlyByteBuf buf)
     {
         buf.writeInt(itemsAllowed.size());
         for (final ItemStorage item : itemsAllowed)

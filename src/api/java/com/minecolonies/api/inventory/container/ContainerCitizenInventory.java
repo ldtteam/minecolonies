@@ -5,13 +5,13 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.inventory.ModContainers;
 import com.minecolonies.api.util.ItemStackUtils;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.BlockPos;
 import net.minecraftforge.items.SlotItemHandler;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,12 +20,12 @@ import static com.minecolonies.api.util.constant.InventoryConstants.*;
 /**
  * Container for Mie
  */
-public class ContainerCitizenInventory extends Container
+public class ContainerCitizenInventory extends AbstractContainerMenu
 {
     /**
      * Player inventory.
      */
-    private final PlayerInventory playerInventory;
+    private final Inventory playerInventory;
 
     /**
      * Amount of rows.
@@ -41,7 +41,7 @@ public class ContainerCitizenInventory extends Container
      * @param packetBuffer network buffer
      * @return new instance
      */
-    public static ContainerCitizenInventory fromPacketBuffer(final int windowId, final PlayerInventory inv, final PacketBuffer packetBuffer)
+    public static ContainerCitizenInventory fromPacketBuffer(final int windowId, final Inventory inv, final FriendlyByteBuf packetBuffer)
     {
         final int colonyId = packetBuffer.readVarInt();
         final int citizenId = packetBuffer.readVarInt();
@@ -56,7 +56,7 @@ public class ContainerCitizenInventory extends Container
      * @param colonyId  colony id
      * @param citizenId citizen id
      */
-    public ContainerCitizenInventory(final int windowId, final PlayerInventory inv, final int colonyId, final int citizenId)
+    public ContainerCitizenInventory(final int windowId, final Inventory inv, final int colonyId, final int citizenId)
     {
         super(ModContainers.citizenInv, windowId);
         this.playerInventory = inv;
@@ -177,7 +177,7 @@ public class ContainerCitizenInventory extends Container
      */
     @NotNull
     @Override
-    public ItemStack quickMoveStack(final PlayerEntity playerIn, final int index)
+    public ItemStack quickMoveStack(final Player playerIn, final int index)
     {
         final Slot slot = this.slots.get(index);
 
@@ -218,7 +218,7 @@ public class ContainerCitizenInventory extends Container
      * Determines whether supplied player can use this container
      */
     @Override
-    public boolean stillValid(@NotNull final PlayerEntity playerIn)
+    public boolean stillValid(@NotNull final Player playerIn)
     {
         return true;
     }

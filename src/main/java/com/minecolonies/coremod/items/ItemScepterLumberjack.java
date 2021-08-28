@@ -7,18 +7,20 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLumberjack;
 import com.minecolonies.coremod.entity.ai.citizen.lumberjack.EntityAIWorkLumberjack;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
+
+import net.minecraft.world.item.Item.Properties;
 
 /**
  * Lumberjack Scepter Item class. Used to give tasks to Lumberjacks.
@@ -40,11 +42,11 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies
 
     @NotNull
     @Override
-    public ActionResultType useOn(final ItemUseContext context)
+    public InteractionResult useOn(final UseOnContext context)
     {
         if (context.getLevel().isClientSide)
         {
-            return ActionResultType.FAIL;
+            return InteractionResult.FAIL;
         }
 
         final ItemStack scepter = context.getPlayer().getItemInHand(context.getHand());
@@ -53,11 +55,11 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies
         {
             storeRestrictedArea(context.getPlayer(), scepter.getOrCreateTag(), context.getLevel());
         }
-        return ActionResultType.FAIL;
+        return InteractionResult.FAIL;
     }
 
     @Override
-    public boolean canAttackBlock(@NotNull final BlockState state, @NotNull final World world, @NotNull final BlockPos pos, @NotNull final PlayerEntity player)
+    public boolean canAttackBlock(@NotNull final BlockState state, @NotNull final Level world, @NotNull final BlockPos pos, @NotNull final Player player)
     {
         if (!world.isClientSide)
         {
@@ -76,7 +78,7 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies
         return 3.4028235E38F;
     }
 
-    private void storeRestrictedArea(final PlayerEntity player, final CompoundNBT compound, final World worldIn)
+    private void storeRestrictedArea(final Player player, final CompoundTag compound, final Level worldIn)
     {
         final BlockPos startRestriction = BlockPosUtil.read(compound, NBT_START_POS);
         final BlockPos endRestriction = BlockPosUtil.read(compound, NBT_END_POS);
@@ -120,7 +122,7 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies
      * @param player the player entity.
      * @return true if continue.
      */
-    private boolean setPosition(final CompoundNBT compound, final String key, final BlockPos pos, final PlayerEntity player)
+    private boolean setPosition(final CompoundTag compound, final String key, final BlockPos pos, final Player player)
     {
         if (compound.contains(key))
         {

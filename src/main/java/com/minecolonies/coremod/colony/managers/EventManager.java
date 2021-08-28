@@ -8,13 +8,13 @@ import com.minecolonies.api.colony.colonyEvents.registry.ColonyEventTypeRegistry
 import com.minecolonies.api.colony.managers.interfaces.IEventManager;
 import com.minecolonies.api.colony.managers.interfaces.IEventStructureManager;
 import com.minecolonies.api.util.Log;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
@@ -145,7 +145,7 @@ public class EventManager implements IEventManager
     }
 
     @Override
-    public void onTileEntityBreak(final int eventID, final TileEntity te)
+    public void onTileEntityBreak(final int eventID, final BlockEntity te)
     {
         final IColonyEvent event = events.get(eventID);
         if (event != null)
@@ -218,15 +218,15 @@ public class EventManager implements IEventManager
     }
 
     @Override
-    public void readFromNBT(@NotNull final CompoundNBT compound)
+    public void readFromNBT(@NotNull final CompoundTag compound)
     {
         if (compound.contains(TAG_EVENT_MANAGER))
         {
-            final CompoundNBT eventManagerNBT = compound.getCompound(TAG_EVENT_MANAGER);
-            final ListNBT eventListNBT = eventManagerNBT.getList(TAG_EVENT_LIST, Constants.NBT.TAG_COMPOUND);
-            for (final INBT base : eventListNBT)
+            final CompoundTag eventManagerNBT = compound.getCompound(TAG_EVENT_MANAGER);
+            final ListTag eventListNBT = eventManagerNBT.getList(TAG_EVENT_LIST, Constants.NBT.TAG_COMPOUND);
+            for (final Tag base : eventListNBT)
             {
-                final CompoundNBT tagCompound = (CompoundNBT) base;
+                final CompoundTag tagCompound = (CompoundTag) base;
                 final ResourceLocation eventTypeID = new ResourceLocation(MOD_ID, tagCompound.getString(TAG_NAME));
 
                 final ColonyEventTypeRegistryEntry registryEntry = MinecoloniesAPIProxy.getInstance().getColonyEventRegistry().getValue(eventTypeID);
@@ -246,13 +246,13 @@ public class EventManager implements IEventManager
     }
 
     @Override
-    public void writeToNBT(@NotNull final CompoundNBT compound)
+    public void writeToNBT(@NotNull final CompoundTag compound)
     {
-        final CompoundNBT eventManagerNBT = new CompoundNBT();
-        final ListNBT eventListNBT = new ListNBT();
+        final CompoundTag eventManagerNBT = new CompoundTag();
+        final ListTag eventListNBT = new ListTag();
         for (final IColonyEvent event : events.values())
         {
-            final CompoundNBT eventNBT = event.serializeNBT();
+            final CompoundTag eventNBT = event.serializeNBT();
             eventNBT.putString(TAG_NAME, event.getEventTypeID().getPath());
             eventListNBT.add(eventNBT);
         }

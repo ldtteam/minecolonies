@@ -2,14 +2,14 @@ package com.minecolonies.api.util;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.sounds.EventType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.play.server.SPlaySoundEffectPacket;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.protocol.game.ClientboundSoundPacket;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.event.world.NoteBlockEvent.Note;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -91,10 +91,10 @@ public final class SoundUtils
      * @param pos     the pos to play it at.
      * @param citizen the citizen to play it for.
      */
-    public static void playRandomSound(@NotNull final World worldIn, @NotNull final BlockPos pos, @NotNull final ICitizenData citizen)
+    public static void playRandomSound(@NotNull final Level worldIn, @NotNull final BlockPos pos, @NotNull final ICitizenData citizen)
     {
         boolean playerCloseEnough = false;
-        for (final PlayerEntity player : citizen.getColony().getPackageManager().getCloseSubscribers())
+        for (final Player player : citizen.getColony().getPackageManager().getCloseSubscribers())
         {
             if (player.blockPosition().distSqr(pos) < MIN_REQUIRED_SOUND_DIST)
             {
@@ -160,12 +160,12 @@ public final class SoundUtils
      * @param position the position to play the sound at.
      * @param event    sound to play.
      */
-    public static void playSoundAtCitizen(@NotNull final World worldIn, @NotNull final BlockPos position, @NotNull final SoundEvent event)
+    public static void playSoundAtCitizen(@NotNull final Level worldIn, @NotNull final BlockPos position, @NotNull final SoundEvent event)
     {
         worldIn.playSound(null,
           position,
           event,
-          SoundCategory.NEUTRAL,
+          SoundSource.NEUTRAL,
           (float) VOLUME,
           (float) PITCH);
     }
@@ -175,12 +175,12 @@ public final class SoundUtils
      * @param player the player to play it for.
      * @param position the position it is played at.
      */
-    public static void playSuccessSound(@NotNull final PlayerEntity player, @NotNull final BlockPos position)
+    public static void playSuccessSound(@NotNull final Player player, @NotNull final BlockPos position)
     {
-        if (player instanceof ServerPlayerEntity)
+        if (player instanceof ServerPlayer)
         {
-            ((ServerPlayerEntity) player).connection.send(new SPlaySoundEffectPacket(SoundEvents.NOTE_BLOCK_BELL,
-              SoundCategory.NEUTRAL,
+            ((ServerPlayer) player).connection.send(new ClientboundSoundPacket(SoundEvents.NOTE_BLOCK_BELL,
+              SoundSource.NEUTRAL,
               position.getX(),
               position.getY(),
               position.getZ(),
@@ -194,12 +194,12 @@ public final class SoundUtils
      * @param player the player to play it for.
      * @param position the position it is played at.
      */
-    public static void playErrorSound(@NotNull final PlayerEntity player, @NotNull final BlockPos position)
+    public static void playErrorSound(@NotNull final Player player, @NotNull final BlockPos position)
     {
-        if (player instanceof ServerPlayerEntity)
+        if (player instanceof ServerPlayer)
         {
-            ((ServerPlayerEntity) player).connection.send(new SPlaySoundEffectPacket(SoundEvents.NOTE_BLOCK_DIDGERIDOO,
-              SoundCategory.NEUTRAL,
+            ((ServerPlayer) player).connection.send(new ClientboundSoundPacket(SoundEvents.NOTE_BLOCK_DIDGERIDOO,
+              SoundSource.NEUTRAL,
               position.getX(),
               position.getY(),
               position.getZ(),
@@ -217,7 +217,7 @@ public final class SoundUtils
      * @param citizenData the citizen.
      */
     public static void playSoundAtCitizenWith(
-      @NotNull final World worldIn,
+      @NotNull final Level worldIn,
       @NotNull final BlockPos position,
       @Nullable final EventType type,
       @Nullable final ICitizenData citizenData)
@@ -244,7 +244,7 @@ public final class SoundUtils
             worldIn.playSound(null,
               position,
               event,
-              SoundCategory.NEUTRAL,
+              SoundSource.NEUTRAL,
               (float) VOLUME,
               (float) PITCH);
         }
@@ -277,9 +277,9 @@ public final class SoundUtils
     /**
      * Plays a sound for the given player, but not for surrounding entities
      */
-    public static void playSoundForPlayer(final ServerPlayerEntity playerEntity, final SoundEvent sound, float volume, final float pitch)
+    public static void playSoundForPlayer(final ServerPlayer playerEntity, final SoundEvent sound, float volume, final float pitch)
     {
-        playerEntity.connection.send(new SPlaySoundEffectPacket(sound,
+        playerEntity.connection.send(new ClientboundSoundPacket(sound,
           playerEntity.getSoundSource(),
           playerEntity.getX(),
           playerEntity.getY(),

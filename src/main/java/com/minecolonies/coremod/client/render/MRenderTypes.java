@@ -1,18 +1,18 @@
 package com.minecolonies.coremod.client.render;
 
 import com.google.common.collect.ImmutableList;
-import net.minecraft.client.renderer.RenderState;
+import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.util.ResourceLocation;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.VertexFormat;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.OptionalDouble;
 
-import static net.minecraft.client.renderer.vertex.DefaultVertexFormats.*;
+import static com.mojang.blaze3d.vertex.DefaultVertexFormat.*;
 
-import net.minecraft.client.renderer.RenderType.State;
+import net.minecraft.client.renderer.RenderType.CompositeState;
 
 /**
  * Holding all kind of render types of minecolonies
@@ -46,10 +46,10 @@ public final class MRenderTypes extends RenderType
      */
     public static RenderType customTextRenderer(@NotNull final ResourceLocation resourceLocation)
     {
-        final State state = State.builder()
-                              .setTextureState(new RenderState.TextureState(resourceLocation, false, false))//Texture state
-                              .setAlphaState(RenderState.MIDWAY_ALPHA)
-                              .setDepthTestState(RenderState.NO_DEPTH_TEST)
+        final CompositeState state = CompositeState.builder()
+                              .setTextureState(new RenderStateShard.TextureStateShard(resourceLocation, false, false))//Texture state
+                              .setAlphaState(RenderStateShard.MIDWAY_ALPHA)
+                              .setDepthTestState(RenderStateShard.NO_DEPTH_TEST)
                               .createCompositeState(true);
 
         return create("custommctextrenderer", format, 7, 256, true, false, state);
@@ -62,7 +62,7 @@ public final class MRenderTypes extends RenderType
      */
     public static RenderType customLineRenderer()
     {
-        return create("minecolonieslines", DefaultVertexFormats.POSITION_COLOR, 1, 256,
-          State.builder().setLineState(new RenderState.LineState(OptionalDouble.empty())).createCompositeState(false));
+        return create("minecolonieslines", DefaultVertexFormat.POSITION_COLOR, 1, 256,
+          CompositeState.builder().setLineState(new RenderStateShard.LineStateShard(OptionalDouble.empty())).createCompositeState(false));
     }
 }

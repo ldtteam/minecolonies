@@ -3,15 +3,15 @@ package com.minecolonies.api.inventory.container;
 import com.minecolonies.api.inventory.ModContainers;
 import com.minecolonies.api.tileentities.AbstractTileEntityRack;
 import com.minecolonies.api.util.ItemStackUtils;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.ClickType;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.BlockPos;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
@@ -22,7 +22,7 @@ import static com.minecolonies.api.util.constant.InventoryConstants.*;
 /**
  * The container class for the rack.
  */
-public class ContainerRack extends Container
+public class ContainerRack extends AbstractContainerMenu
 {
     /**
      * The inventory.
@@ -52,7 +52,7 @@ public class ContainerRack extends Container
      * @param packetBuffer network buffer
      * @return new instance
      */
-    public static ContainerRack fromPacketBuffer(final int windowId, final PlayerInventory inv, final PacketBuffer packetBuffer)
+    public static ContainerRack fromPacketBuffer(final int windowId, final Inventory inv, final FriendlyByteBuf packetBuffer)
     {
         final BlockPos tePos = packetBuffer.readBlockPos();
         final BlockPos neighborPos = packetBuffer.readBlockPos();
@@ -67,7 +67,7 @@ public class ContainerRack extends Container
      * @param rack     te world pos.
      * @param neighbor neighbor te world pos
      */
-    public ContainerRack(final int windowId, final PlayerInventory inv, final BlockPos rack, final BlockPos neighbor)
+    public ContainerRack(final int windowId, final Inventory inv, final BlockPos rack, final BlockPos neighbor)
     {
         super(ModContainers.rackInv, windowId);
 
@@ -145,7 +145,7 @@ public class ContainerRack extends Container
 
     @NotNull
     @Override
-    public ItemStack clicked(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player)
+    public ItemStack clicked(int slotId, int dragType, ClickType clickTypeIn, Player player)
     {
         if (player.level.isClientSide || slotId >= inventory.getSlots() || slotId < 0)
         {
@@ -165,7 +165,7 @@ public class ContainerRack extends Container
 
     @NotNull
     @Override
-    public ItemStack quickMoveStack(final PlayerEntity playerIn, final int index)
+    public ItemStack quickMoveStack(final Player playerIn, final int index)
     {
         final Slot slot = this.slots.get(index);
 
@@ -200,7 +200,7 @@ public class ContainerRack extends Container
             slot.setChanged();
         }
 
-        if (playerIn instanceof ServerPlayerEntity)
+        if (playerIn instanceof ServerPlayer)
         {
             this.updateRacks(stackCopy);
         }
@@ -236,7 +236,7 @@ public class ContainerRack extends Container
     }
 
     @Override
-    public boolean stillValid(final PlayerEntity playerIn)
+    public boolean stillValid(final Player playerIn)
     {
         return true;
     }

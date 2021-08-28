@@ -3,10 +3,10 @@ package com.minecolonies.api.advancements.army_population;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.advancements.AbstractCriterionTrigger;
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.loot.ConditionArrayParser;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.advancements.critereon.DeserializationContext;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -24,7 +24,7 @@ public class ArmyPopulationTrigger extends AbstractCriterionTrigger<ArmyPopulati
      * @param player the player the check regards
      * @param armySize the related colony's current army size
      */
-    public void trigger(final ServerPlayerEntity player, final int armySize)
+    public void trigger(final ServerPlayer player, final int armySize)
     {
         final ArmyPopulationListeners listeners = this.getListeners(player.getAdvancements());
         if (listeners != null)
@@ -35,9 +35,9 @@ public class ArmyPopulationTrigger extends AbstractCriterionTrigger<ArmyPopulati
 
     @NotNull
     @Override
-    public ArmyPopulationCriterionInstance createInstance(@NotNull final JsonObject object, @NotNull final ConditionArrayParser conditions)
+    public ArmyPopulationCriterionInstance createInstance(@NotNull final JsonObject object, @NotNull final DeserializationContext conditions)
     {
-        final int populationCount = JSONUtils.getAsInt(object, "population_count");
+        final int populationCount = GsonHelper.getAsInt(object, "population_count");
         return new ArmyPopulationCriterionInstance(populationCount);
     }
 }

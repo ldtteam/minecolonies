@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.entity.pathfinding.pathjobs;
 
 import com.minecolonies.coremod.entity.pathfinding.Node;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
@@ -30,7 +30,7 @@ public class PathJobMoveToWithPassable extends PathJobMoveToLocation
      * @param isPassable passable check
      */
     public PathJobMoveToWithPassable(
-      final World world,
+      final Level world,
       @NotNull final BlockPos start,
       @NotNull final BlockPos end, final int range, final LivingEntity entity, final Function<BlockState, Boolean> isPassable)
     {

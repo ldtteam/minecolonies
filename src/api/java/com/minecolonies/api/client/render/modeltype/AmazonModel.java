@@ -1,13 +1,13 @@
 package com.minecolonies.api.client.render.modeltype;
 
 import com.minecolonies.api.entity.mobs.amazons.AbstractEntityAmazon;
-import net.minecraft.client.renderer.entity.model.BipedModel;
+import net.minecraft.client.model.HumanoidModel;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Amazon model.
  */
-public class AmazonModel<T extends AbstractEntityAmazon> extends BipedModel<AbstractEntityAmazon>
+public class AmazonModel<T extends AbstractEntityAmazon> extends HumanoidModel<AbstractEntityAmazon>
 {
     /**
      * Create a model of a specific size.

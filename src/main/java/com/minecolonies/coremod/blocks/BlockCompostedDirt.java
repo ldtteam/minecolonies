@@ -2,21 +2,23 @@ package com.minecolonies.coremod.blocks;
 
 import com.minecolonies.api.blocks.AbstractBlockMinecolonies;
 import com.minecolonies.coremod.tileentities.TileEntityCompostedDirt;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.SoundType;
-import net.minecraft.block.material.Material;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.shapes.VoxelShapes;
-import net.minecraft.world.IBlockReader;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.ToolType;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
+
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
 /**
  * Block that if activated with BoneMeal or Compost by an AI will produce flowers by intervals until it deactivates
@@ -26,7 +28,7 @@ public class BlockCompostedDirt extends AbstractBlockMinecolonies<BlockComposted
     private static final String     BLOCK_NAME     = "composted_dirt";
     private static final float      BLOCK_HARDNESS = 5f;
     private static final float      RESISTANCE     = 1f;
-    private final static VoxelShape SHAPE          = VoxelShapes.box(0, 0, 0, 1, 1, 1);
+    private final static VoxelShape SHAPE          = Shapes.box(0, 0, 0, 1, 1, 1);
 
     /**
      * The constructor of the block.
@@ -46,14 +48,14 @@ public class BlockCompostedDirt extends AbstractBlockMinecolonies<BlockComposted
 
     @Nullable
     @Override
-    public TileEntity createTileEntity(final BlockState state, final IBlockReader world)
+    public BlockEntity createTileEntity(final BlockState state, final BlockGetter world)
     {
         return new TileEntityCompostedDirt();
     }
 
     @NotNull
     @Override
-    public VoxelShape getShape(final BlockState state, final IBlockReader worldIn, final BlockPos pos, final ISelectionContext context)
+    public VoxelShape getShape(final BlockState state, final BlockGetter worldIn, final BlockPos pos, final CollisionContext context)
     {
         return SHAPE;
     }
@@ -61,7 +63,7 @@ public class BlockCompostedDirt extends AbstractBlockMinecolonies<BlockComposted
     @Override
     public boolean canSustainPlant(
       @NotNull final BlockState state,
-      @NotNull final IBlockReader world,
+      @NotNull final BlockGetter world,
       final BlockPos pos,
       @NotNull final Direction facing,
       final IPlantable plantable)

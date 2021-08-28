@@ -16,27 +16,34 @@ import com.minecolonies.coremod.colony.buildings.modules.settings.GuardTaskSetti
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard;
 import com.minecolonies.coremod.network.messages.client.VanillaParticleMessage;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.passive.horse.LlamaEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.animal.horse.Llama;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.core.BlockPos;
 import net.minecraft.util.text.*;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
+
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.item.Item.Properties;
 
 /**
  * Magic scroll which summons guards to the users aid, with a limited duration. Only works within the same world as the colony.
@@ -55,7 +62,7 @@ public class ItemScrollGuardHelp extends AbstractItemScroll
 
     @Override
     protected ItemStack onItemUseSuccess(
-      final ItemStack itemStack, final World world, final ServerPlayerEntity player)
+      final ItemStack itemStack, final Level world, final ServerPlayer player)
     {
         final IColony colony = getColony(itemStack);
         final BlockPos buildingPos = BlockPosUtil.read(itemStack.getTag(), TAG_BUILDING_POS);
@@ -72,12 +79,12 @@ public class ItemScrollGuardHelp extends AbstractItemScroll
         if (world.random.nextInt(10) == 0 || colony.getWorld() != world)
         {
             // Fail
-            final LlamaEntity entity = EntityType.LLAMA.create(world);
+            final Llama entity = EntityType.LLAMA.create(world);
             entity.setPos(player.getX(), player.getY(), player.getZ());
             world.addFreshEntity(entity);
 
-            player.displayClientMessage(new TranslationTextComponent("minecolonies.scroll.failed" + (world.random.nextInt(FAIL_RESPONSES_TOTAL) + 1)).setStyle(Style.EMPTY.withColor(
-              TextFormatting.GOLD)), true);
+            player.displayClientMessage(new TranslatableComponent("minecolonies.scroll.failed" + (world.random.nextInt(FAIL_RESPONSES_TOTAL) + 1)).setStyle(Style.EMPTY.withColor(
+              ChatFormatting.GOLD)), true);
 
             SoundUtils.playSoundForPlayer(player, SoundEvents.EVOKER_CAST_SPELL, 0.5f, 1.0f);
             return itemStack;
@@ -152,16 +159,16 @@ public class ItemScrollGuardHelp extends AbstractItemScroll
 
     @Override
     @NotNull
-    public ActionResultType useOn(ItemUseContext ctx)
+    public InteractionResult useOn(UseOnContext ctx)
     {
-        final ActionResultType result = super.useOn(ctx);
+        final InteractionResult result = super.useOn(ctx);
 
         if (ctx.getLevel().isClientSide)
         {
             return result;
         }
 
-        final TileEntity te = ctx.getLevel().getBlockEntity(ctx.getClickedPos());
+        final BlockEntity te = ctx.getLevel().getBlockEntity(ctx.getClickedPos());
         if (te instanceof TileEntityColonyBuilding && ctx.getPlayer() != null)
         {
             final IBuilding building = ((TileEntityColonyBuilding) te).getColony().getBuildingManager().getBuilding(ctx.getClickedPos());
@@ -175,7 +182,7 @@ public class ItemScrollGuardHelp extends AbstractItemScroll
     }
 
     @Override
-    public void onUseTick(World worldIn, LivingEntity entity, ItemStack stack, int count)
+    public void onUseTick(Level worldIn, LivingEntity entity, ItemStack stack, int count)
     {
         if (!worldIn.isClientSide && worldIn.getGameTime() % 5 == 0)
         {
@@ -184,19 +191,19 @@ public class ItemScrollGuardHelp extends AbstractItemScroll
                 entity);
             Network.getNetwork()
               .sendToPlayer(new VanillaParticleMessage(entity.getX(), entity.getY(), entity.getZ(), ParticleTypes.ENCHANT),
-                (ServerPlayerEntity) entity);
+                (ServerPlayer) entity);
         }
     }
 
     @Override
     public void appendHoverText(
-      @NotNull final ItemStack stack, @Nullable final World worldIn, @NotNull final List<ITextComponent> tooltip, @NotNull final ITooltipFlag flagIn)
+      @NotNull final ItemStack stack, @Nullable final Level worldIn, @NotNull final List<Component> tooltip, @NotNull final TooltipFlag flagIn)
     {
-        final IFormattableTextComponent guiHint = LanguageHandler.buildChatComponent("item.minecolonies.scroll_guard_help.tip");
-        guiHint.setStyle(Style.EMPTY.withColor(TextFormatting.DARK_GREEN));
+        final MutableComponent guiHint = LanguageHandler.buildChatComponent("item.minecolonies.scroll_guard_help.tip");
+        guiHint.setStyle(Style.EMPTY.withColor(ChatFormatting.DARK_GREEN));
         tooltip.add(guiHint);
 
-        String colonyDesc = new TranslationTextComponent("item.minecolonies.scroll.colony.none").getString();
+        String colonyDesc = new TranslatableComponent("item.minecolonies.scroll.colony.none").getString();
 
         final IColony colony = getColonyView(stack);
         if (colony != null)
@@ -204,8 +211,8 @@ public class ItemScrollGuardHelp extends AbstractItemScroll
             colonyDesc = colony.getName();
         }
 
-        final IFormattableTextComponent guiHint2 = new TranslationTextComponent("item.minecolonies.scroll.colony.tip", colonyDesc);
-        guiHint2.setStyle(Style.EMPTY.withColor(TextFormatting.GOLD));
+        final MutableComponent guiHint2 = new TranslatableComponent("item.minecolonies.scroll.colony.tip", colonyDesc);
+        guiHint2.setStyle(Style.EMPTY.withColor(ChatFormatting.GOLD));
         tooltip.add(guiHint2);
     }
 }

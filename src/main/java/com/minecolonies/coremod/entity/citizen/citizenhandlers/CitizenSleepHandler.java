@@ -10,15 +10,15 @@ import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.colony.interactionhandling.SimpleNotificationInteraction;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.HorizontalBlock;
-import net.minecraft.entity.Pose;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -138,7 +138,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
           ((float) bedLocation.getZ() + HALF_BLOCK));
         citizen.setSleepingPos(bedLocation);
 
-        citizen.setDeltaMovement(Vector3d.ZERO);
+        citizen.setDeltaMovement(Vec3.ZERO);
         citizen.hasImpulse = true;
 
         //Remove item while citizen is asleep.
@@ -146,7 +146,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
 
         setIsAsleep(true);
 
-        citizen.getCitizenData().triggerInteraction(new StandardInteraction(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_SLEEPING), ChatPriority.HIDDEN));
+        citizen.getCitizenData().triggerInteraction(new StandardInteraction(new TranslatableComponent(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_SLEEPING), ChatPriority.HIDDEN));
 
         if (citizen.getCitizenData() != null)
         {
@@ -181,7 +181,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
     {
         if (citizen.getCitizenColonyHandler().getWorkBuilding() != null)
         {
-            citizen.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.working"));
+            citizen.getCitizenStatusHandler().setLatestStatus(new TranslatableComponent("com.minecolonies.coremod.status.working"));
             citizen.getCitizenColonyHandler().getWorkBuilding().onWakeUp();
         }
         if (citizen.getCitizenJobHandler().getColonyJob() != null)
@@ -201,7 +201,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
         final BlockPos spawn;
         if (!getBedLocation().equals(BlockPos.ZERO) && citizen.level.getBlockState(getBedLocation()).getBlock().is(BlockTags.BEDS))
         {
-            final Optional<Vector3d> spawnVec = Blocks.RED_BED.getBedSpawnPosition(ModEntities.CITIZEN, citizen.level.getBlockState(getBedLocation()), citizen.level, getBedLocation(), 0, citizen);
+            final Optional<Vec3> spawnVec = Blocks.RED_BED.getBedSpawnPosition(ModEntities.CITIZEN, citizen.level.getBlockState(getBedLocation()), citizen.level, getBedLocation(), 0, citizen);
             spawn = spawnVec.map(BlockPos::new).orElseGet(() -> getBedLocation().above());
         }
         else
@@ -265,7 +265,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
 
         final BlockState state = WorldUtil.isEntityBlockLoaded(citizen.level, getBedLocation()) ? citizen.level.getBlockState(getBedLocation()) : null;
         final boolean isBed = state != null && state.getBlock().isBed(state, citizen.level, getBedLocation(), citizen);
-        final Direction Direction = isBed && state.getBlock() instanceof HorizontalBlock ? state.getValue(HorizontalBlock.FACING) : null;
+        final Direction Direction = isBed && state.getBlock() instanceof HorizontalDirectionalBlock ? state.getValue(HorizontalDirectionalBlock.FACING) : null;
 
         if (Direction == null)
         {
@@ -290,7 +290,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
 
         final BlockState state = WorldUtil.isEntityBlockLoaded(citizen.level, getBedLocation()) ? citizen.level.getBlockState(getBedLocation()) : null;
         final boolean isBed = state != null && state.getBlock().isBed(state, citizen.level, getBedLocation(), citizen);
-        final Direction Direction = isBed && state.getBlock() instanceof HorizontalBlock ? state.getValue(HorizontalBlock.FACING) : null;
+        final Direction Direction = isBed && state.getBlock() instanceof HorizontalDirectionalBlock ? state.getValue(HorizontalDirectionalBlock.FACING) : null;
 
         if (Direction == null)
         {
@@ -334,7 +334,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
                 if (workHomeDistance > MAX_NO_COMPLAIN_DISTANCE)
                 {
                     citizen.getCitizenData()
-                      .triggerInteraction(new SimpleNotificationInteraction(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.hometoofar"), ChatPriority.IMPORTANT));
+                      .triggerInteraction(new SimpleNotificationInteraction(new TranslatableComponent("com.minecolonies.coremod.gui.chat.hometoofar"), ChatPriority.IMPORTANT));
                 }
             }
             return true;

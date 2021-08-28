@@ -18,12 +18,12 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.HutRenameMessage;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -372,7 +372,7 @@ public abstract class AbstractBuildingView implements IBuildingView
      * @param buf The buffer to read this view from.
      */
     @Override
-    public void deserialize(@NotNull final PacketBuffer buf)
+    public void deserialize(@NotNull final FriendlyByteBuf buf)
     {
         buildingLevel = buf.readInt();
         buildingMaxLevel = buf.readInt();
@@ -391,7 +391,7 @@ public abstract class AbstractBuildingView implements IBuildingView
         final int resolverSize = buf.readInt();
         for (int i = 0; i < resolverSize; i++)
         {
-            final CompoundNBT compound = buf.readNbt();
+            final CompoundTag compound = buf.readNbt();
             if (compound != null)
             {
                 list.add(StandardFactoryController.getInstance().deserialize(compound));
@@ -399,7 +399,7 @@ public abstract class AbstractBuildingView implements IBuildingView
         }
 
         resolvers = ImmutableList.copyOf(list);
-        final CompoundNBT compound = buf.readNbt();
+        final CompoundTag compound = buf.readNbt();
         if (compound != null)
         {
             requesterId = StandardFactoryController.getInstance().deserialize(compound);
@@ -419,7 +419,7 @@ public abstract class AbstractBuildingView implements IBuildingView
         }
     }
 
-    private void loadRequestSystemFromNBT(final CompoundNBT compound)
+    private void loadRequestSystemFromNBT(final CompoundTag compound)
     {
         this.rsDataStoreToken = StandardFactoryController.getInstance().deserialize(compound.getCompound(TAG_RS_BUILDING_DATASTORE));
     }
@@ -545,12 +545,12 @@ public abstract class AbstractBuildingView implements IBuildingView
 
     @NotNull
     @Override
-    public IFormattableTextComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
+    public MutableComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
         try
         {
-            final StringTextComponent component = new StringTextComponent("");
-            component.append(new TranslationTextComponent(this.getCustomName().isEmpty() ? this.getSchematicName() : this.getCustomName()));
+            final TextComponent component = new TextComponent("");
+            component.append(new TranslatableComponent(this.getCustomName().isEmpty() ? this.getSchematicName() : this.getCustomName()));
             if (getColony() == null || !getCitizensByRequest().containsKey(request.getId()))
             {
                 return component;
@@ -562,14 +562,14 @@ public abstract class AbstractBuildingView implements IBuildingView
                 return component;
             }
 
-            component.append(new StringTextComponent(": "));
-            component.append(new StringTextComponent(getColony().getCitizen(getCitizensByRequest().get(request.getId())).getName()));
+            component.append(new TextComponent(": "));
+            component.append(new TextComponent(getColony().getCitizen(getCitizensByRequest().get(request.getId())).getName()));
             return component;
         }
         catch (final Exception ex)
         {
             Log.getLogger().warn(ex);
-            return new StringTextComponent("");
+            return new TextComponent("");
         }
     }
 

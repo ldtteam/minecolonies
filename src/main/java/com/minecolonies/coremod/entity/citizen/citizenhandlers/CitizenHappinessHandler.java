@@ -10,8 +10,8 @@ import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.colony.jobs.JobPupil;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.TranslatableComponent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -118,13 +118,13 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
         for (final IHappinessModifier happinessModifier : happinessFactors.values())
         {
             happinessModifier.dayEnd();
-            if (InteractionValidatorRegistry.hasValidator(new TranslationTextComponent(NO + happinessModifier.getId())))
+            if (InteractionValidatorRegistry.hasValidator(new TranslatableComponent(NO + happinessModifier.getId())))
             {
-                citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(NO + happinessModifier.getId()), ChatPriority.CHITCHAT));
+                citizenData.triggerInteraction(new StandardInteraction(new TranslatableComponent(NO + happinessModifier.getId()), ChatPriority.CHITCHAT));
             }
-            if (InteractionValidatorRegistry.hasValidator(new TranslationTextComponent(DEMANDS + happinessModifier.getId())))
+            if (InteractionValidatorRegistry.hasValidator(new TranslatableComponent(DEMANDS + happinessModifier.getId())))
             {
-                citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(DEMANDS + happinessModifier.getId()), ChatPriority.CHITCHAT));
+                citizenData.triggerInteraction(new StandardInteraction(new TranslatableComponent(DEMANDS + happinessModifier.getId()), ChatPriority.CHITCHAT));
             }
         }
         cachedHappiness = -1;
@@ -151,9 +151,9 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
     }
 
     @Override
-    public void read(final CompoundNBT compound)
+    public void read(final CompoundTag compound)
     {
-        final CompoundNBT tag = compound.getCompound(TAG_HAPPINESS);
+        final CompoundTag tag = compound.getCompound(TAG_HAPPINESS);
         for (final IHappinessModifier happinessModifier : happinessFactors.values())
         {
             if (tag.contains(happinessModifier.getId()))
@@ -164,13 +164,13 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
     }
 
     @Override
-    public void write(final CompoundNBT compound)
+    public void write(final CompoundTag compound)
     {
-        final CompoundNBT tag = new CompoundNBT();
+        final CompoundTag tag = new CompoundTag();
 
         for (final IHappinessModifier happinessModifier : happinessFactors.values())
         {
-            final CompoundNBT compoundNbt = new CompoundNBT();
+            final CompoundTag compoundNbt = new CompoundTag();
             happinessModifier.write(compoundNbt);
             tag.put(happinessModifier.getId(), compoundNbt);
         }

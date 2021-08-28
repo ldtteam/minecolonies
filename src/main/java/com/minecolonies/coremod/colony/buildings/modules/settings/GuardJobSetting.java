@@ -10,9 +10,9 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.colony.guardtype.registry.IGuardTypeRegistry;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.TranslatableComponent;
 
 import java.util.List;
 import java.util.Random;
@@ -44,7 +44,7 @@ public class GuardJobSetting extends StringSettingWithDesc
     @Override
     public void render(final ISettingKey<?> key, final Pane pane, final ISettingsModuleView settingsModuleView, final IBuildingView building, final Window window)
     {
-        pane.findPaneOfTypeByID("trigger", ButtonImage.class).setText(new TranslationTextComponent(getGuardType().getButtonTranslationKey()));
+        pane.findPaneOfTypeByID("trigger", ButtonImage.class).setText(new TranslatableComponent(getGuardType().getButtonTranslationKey()));
     }
 
     /**
@@ -57,7 +57,7 @@ public class GuardJobSetting extends StringSettingWithDesc
     }
 
     @Override
-    public void onUpdate(final IBuilding building, final ServerPlayerEntity sender)
+    public void onUpdate(final IBuilding building, final ServerPlayer sender)
     {
         if (building instanceof AbstractBuildingGuards)
         {

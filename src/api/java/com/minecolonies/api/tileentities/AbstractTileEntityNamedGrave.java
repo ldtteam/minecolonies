@@ -1,16 +1,16 @@
 package com.minecolonies.api.tileentities;
 
 import com.minecolonies.api.util.WorldUtil;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.HorizontalBlock;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.StringNBT;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SUpdateTileEntityPacket;
-import net.minecraft.state.DirectionProperty;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.network.Connection;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -18,19 +18,19 @@ import java.util.ArrayList;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
-public class AbstractTileEntityNamedGrave extends TileEntity
+public class AbstractTileEntityNamedGrave extends BlockEntity
 {
     /**
      * The position it faces.
      */
-    public static final DirectionProperty FACING       = HorizontalBlock.FACING;
+    public static final DirectionProperty FACING       = HorizontalDirectionalBlock.FACING;
 
     /**
      * The text displayed on the name plate
      */
     private ArrayList<String> textLines = new ArrayList<>();
 
-    public AbstractTileEntityNamedGrave(TileEntityType<?> tileEntityTypeIn)
+    public AbstractTileEntityNamedGrave(BlockEntityType<?> tileEntityTypeIn)
     {
         super(tileEntityTypeIn);
         textLines.add("Unknown Citizen");
@@ -48,14 +48,14 @@ public class AbstractTileEntityNamedGrave extends TileEntity
     }
 
     @Override
-    public void load(final BlockState state, final CompoundNBT compound)
+    public void load(final BlockState state, final CompoundTag compound)
     {
         super.load(state, compound);
 
         textLines.clear();
         if (compound.getAllKeys().contains(TAG_CONTENT))
         {
-            final ListNBT lines = compound.getList(TAG_CONTENT, TAG_STRING);
+            final ListTag lines = compound.getList(TAG_CONTENT, TAG_STRING);
             for (int i = 0; i < lines.size(); i++)
             {
                 final String line = lines.getString(i);
@@ -66,14 +66,14 @@ public class AbstractTileEntityNamedGrave extends TileEntity
 
     @NotNull
     @Override
-    public CompoundNBT save(final CompoundNBT compound)
+    public CompoundTag save(final CompoundTag compound)
     {
         super.save(compound);
 
-        @NotNull final ListNBT lines = new ListNBT();
+        @NotNull final ListTag lines = new ListTag();
         for (@NotNull final String line : textLines)
         {
-            lines.add(StringNBT.valueOf(line));
+            lines.add(StringTag.valueOf(line));
         }
         compound.put(TAG_CONTENT, lines);
 
@@ -81,27 +81,27 @@ public class AbstractTileEntityNamedGrave extends TileEntity
     }
 
     @Override
-    public SUpdateTileEntityPacket getUpdatePacket()
+    public ClientboundBlockEntityDataPacket getUpdatePacket()
     {
-        final CompoundNBT compound = new CompoundNBT();
-        return new SUpdateTileEntityPacket(this.worldPosition, 0, this.save(compound));
+        final CompoundTag compound = new CompoundTag();
+        return new ClientboundBlockEntityDataPacket(this.worldPosition, 0, this.save(compound));
     }
 
     @NotNull
     @Override
-    public CompoundNBT getUpdateTag()
+    public CompoundTag getUpdateTag()
     {
-        return this.save(new CompoundNBT());
+        return this.save(new CompoundTag());
     }
 
     @Override
-    public void onDataPacket(final NetworkManager net, final SUpdateTileEntityPacket packet)
+    public void onDataPacket(final Connection net, final ClientboundBlockEntityDataPacket packet)
     {
         this.load(getBlockState(), packet.getTag());
     }
 
     @Override
-    public void handleUpdateTag(final BlockState state, final CompoundNBT tag)
+    public void handleUpdateTag(final BlockState state, final CompoundTag tag)
     {
         this.load(state, tag);
     }

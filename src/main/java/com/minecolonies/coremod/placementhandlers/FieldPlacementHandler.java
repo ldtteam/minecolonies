@@ -4,13 +4,13 @@ import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler;
 import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.coremod.blocks.BlockScarecrow;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.DoorBlock;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.state.properties.DoubleBlockHalf;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.DoorBlock;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,17 +22,17 @@ import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler.Ac
 public class FieldPlacementHandler implements IPlacementHandler
 {
     @Override
-    public boolean canHandle(@NotNull World world, @NotNull BlockPos pos, @NotNull BlockState blockState)
+    public boolean canHandle(@NotNull Level world, @NotNull BlockPos pos, @NotNull BlockState blockState)
     {
         return blockState.getBlock() instanceof BlockScarecrow;
     }
 
     @Override
     public ActionProcessingResult handle(
-      @NotNull World world,
+      @NotNull Level world,
       @NotNull BlockPos pos,
       @NotNull BlockState blockState,
-      @Nullable CompoundNBT tileEntityData,
+      @Nullable CompoundTag tileEntityData,
       boolean complete,
       BlockPos centerPos)
     {
@@ -51,7 +51,7 @@ public class FieldPlacementHandler implements IPlacementHandler
     }
 
     @Override
-    public List<ItemStack> getRequiredItems(@NotNull World world, @NotNull BlockPos pos, @NotNull BlockState blockState, @Nullable CompoundNBT tileEntityData, boolean complete)
+    public List<ItemStack> getRequiredItems(@NotNull Level world, @NotNull BlockPos pos, @NotNull BlockState blockState, @Nullable CompoundTag tileEntityData, boolean complete)
     {
         List<ItemStack> itemList = new ArrayList<>();
         if (blockState.getValue(DoorBlock.HALF).equals(DoubleBlockHalf.LOWER))

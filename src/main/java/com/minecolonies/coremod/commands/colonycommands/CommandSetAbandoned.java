@@ -8,9 +8,9 @@ import com.minecolonies.coremod.commands.commandTypes.IMCCommand;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import net.minecraft.command.CommandSource;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 
 import static com.minecolonies.coremod.commands.CommandArgumentNames.COLONYID_ARG;
 
@@ -22,7 +22,7 @@ public class CommandSetAbandoned implements IMCColonyOfficerCommand
      * @param context the context of the command execution
      */
     @Override
-    public int onExecute(final CommandContext<CommandSource> context)
+    public int onExecute(final CommandContext<CommandSourceStack> context)
     {
         final Entity sender = context.getSource().getEntity();
 
@@ -35,7 +35,7 @@ public class CommandSetAbandoned implements IMCColonyOfficerCommand
         }
 
         boolean addOfficer = false;
-        if (sender != null && (colony.getPermissions().getRank((PlayerEntity) sender).isColonyManager()))
+        if (sender != null && (colony.getPermissions().getRank((Player) sender).isColonyManager()))
         {
             addOfficer = true;
         }
@@ -44,7 +44,7 @@ public class CommandSetAbandoned implements IMCColonyOfficerCommand
 
         if (addOfficer)
         {
-            colony.getPermissions().addPlayer(((PlayerEntity) sender).getGameProfile(), colony.getPermissions().getRankOfficer());
+            colony.getPermissions().addPlayer(((Player) sender).getGameProfile(), colony.getPermissions().getRankOfficer());
         }
 
         context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.ownerchange.success", "[abandoned]", colony.getName()), true);
@@ -61,7 +61,7 @@ public class CommandSetAbandoned implements IMCColonyOfficerCommand
     }
 
     @Override
-    public LiteralArgumentBuilder<CommandSource> build()
+    public LiteralArgumentBuilder<CommandSourceStack> build()
     {
         return IMCCommand.newLiteral(getName())
                  .then(IMCCommand.newArgument(COLONYID_ARG, IntegerArgumentType.integer(1)).executes(this::checkPreConditionAndExecute));

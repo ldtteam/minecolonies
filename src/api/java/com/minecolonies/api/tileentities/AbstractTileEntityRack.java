@@ -8,11 +8,11 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ItemStackUtils;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.core.BlockPos;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
@@ -22,7 +22,7 @@ import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_SIZE;
 
-public abstract class AbstractTileEntityRack extends TileEntity implements INamedContainerProvider
+public abstract class AbstractTileEntityRack extends BlockEntity implements MenuProvider
 {
     /**
      * Variable which determines if it is a single or doublechest.
@@ -54,7 +54,7 @@ public abstract class AbstractTileEntityRack extends TileEntity implements IName
      */
     protected ItemStackHandler inventory;
 
-    public AbstractTileEntityRack(final TileEntityType<?> tileEntityTypeIn)
+    public AbstractTileEntityRack(final BlockEntityType<?> tileEntityTypeIn)
     {
         super(tileEntityTypeIn);
         inventory = createInventory(DEFAULT_SIZE);
@@ -267,7 +267,7 @@ public abstract class AbstractTileEntityRack extends TileEntity implements IName
      */
     public void neighborChanged(final BlockPos newNeighbor)
     {
-        final TileEntity entity = level.getBlockEntity(newNeighbor);
+        final BlockEntity entity = level.getBlockEntity(newNeighbor);
 
         if (relativeNeighbor == null && level.getBlockState(newNeighbor).getBlock() instanceof AbstractBlockMinecoloniesRack
               && !(entity instanceof AbstractTileEntityRack && ((AbstractTileEntityRack) entity).getOtherChest() != null))

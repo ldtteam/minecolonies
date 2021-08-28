@@ -9,11 +9,11 @@ import com.minecolonies.coremod.compatibility.jei.JobBasedRecipeCategory;
 import mezz.jei.api.gui.handlers.IGhostIngredientHandler;
 import mezz.jei.api.gui.handlers.IGuiContainerHandler;
 import mezz.jei.api.registration.IGuiHandlerRegistration;
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.client.renderer.Rectangle2d;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.renderer.Rect2i;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,7 +28,7 @@ import mezz.jei.api.gui.handlers.IGhostIngredientHandler.Target;
 /**
  * Common base class for JEI teaching GUI extensions.
  */
-public abstract class AbstractTeachingGuiHandler<W extends ContainerScreen<?>>
+public abstract class AbstractTeachingGuiHandler<W extends AbstractContainerScreen<?>>
         implements IGuiContainerHandler<W>, IGhostIngredientHandler<W>
 {
     @NotNull
@@ -85,13 +85,13 @@ public abstract class AbstractTeachingGuiHandler<W extends ContainerScreen<?>>
             {
                 if (!slot.isActive() || !isSupportedSlot(slot)) continue;
 
-                final Rectangle2d bounds = new Rectangle2d(gui.getGuiLeft() + slot.x, gui.getGuiTop() + slot.y, 17, 17);
+                final Rect2i bounds = new Rect2i(gui.getGuiLeft() + slot.x, gui.getGuiTop() + slot.y, 17, 17);
 
                 targets.add(new Target<I>()
                 {
                     @NotNull
                     @Override
-                    public Rectangle2d getArea()
+                    public Rect2i getArea()
                     {
                         return bounds;
                     }

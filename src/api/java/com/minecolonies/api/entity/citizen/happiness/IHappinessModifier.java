@@ -1,6 +1,6 @@
 package com.minecolonies.api.entity.citizen.happiness;
 
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
 
 /**
  * Interface describing possible happiness factors.
@@ -33,14 +33,14 @@ public interface IHappinessModifier
      *
      * @param compoundNBT the compound to read it from.
      */
-    void read(final CompoundNBT compoundNBT);
+    void read(final CompoundTag compoundNBT);
 
     /**
      * Write it to NBT.
      *
      * @param compoundNBT the compound to write it to.
      */
-    void write(final CompoundNBT compoundNBT);
+    void write(final CompoundTag compoundNBT);
 
     /**
      * Called at the end of each day.

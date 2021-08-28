@@ -2,10 +2,10 @@ package com.minecolonies.coremod.network.messages.server;
 
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.tileentities.AbstractScarecrowTileEntity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.Nullable;
@@ -45,7 +45,7 @@ public class FieldPlotResizeMessage implements IMessage
     }
 
     @Override
-    public void toBytes(PacketBuffer buf)
+    public void toBytes(FriendlyByteBuf buf)
     {
         buf.writeInt(this.size);
         buf.writeInt(this.direction.get2DDataValue());
@@ -53,7 +53,7 @@ public class FieldPlotResizeMessage implements IMessage
     }
 
     @Override
-    public void fromBytes(PacketBuffer buf)
+    public void fromBytes(FriendlyByteBuf buf)
     {
         this.size = buf.readInt();
         this.direction = Direction.from2DDataValue(buf.readInt());
@@ -67,7 +67,7 @@ public class FieldPlotResizeMessage implements IMessage
     @Override
     public void onExecute(NetworkEvent.Context ctxIn, boolean isLogicalServer)
     {
-        final TileEntity te = ctxIn.getSender().getCommandSenderWorld().getBlockEntity(this.pos);
+        final BlockEntity te = ctxIn.getSender().getCommandSenderWorld().getBlockEntity(this.pos);
         if (te instanceof AbstractScarecrowTileEntity)
         {
             ((AbstractScarecrowTileEntity) te).setRadius(this.direction, this.size);

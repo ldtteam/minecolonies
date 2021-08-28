@@ -12,15 +12,15 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.blocks.BlockDecorationController;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
@@ -52,7 +52,7 @@ public class DecorationBuildRequestMessage implements IMessage
     /**
      * The dimension.
      */
-    private RegistryKey<World> dimension;
+    private ResourceKey<Level> dimension;
 
     /**
      * Empty constructor used when registering the
@@ -70,7 +70,7 @@ public class DecorationBuildRequestMessage implements IMessage
      * @param level     the level.
      * @param dimension the dimension we're executing on.
      */
-    public DecorationBuildRequestMessage(@NotNull final BlockPos pos, final String name, final int level, final RegistryKey<World> dimension)
+    public DecorationBuildRequestMessage(@NotNull final BlockPos pos, final String name, final int level, final ResourceKey<Level> dimension)
     {
         super();
         this.pos = pos;
@@ -80,16 +80,16 @@ public class DecorationBuildRequestMessage implements IMessage
     }
 
     @Override
-    public void fromBytes(@NotNull final PacketBuffer buf)
+    public void fromBytes(@NotNull final FriendlyByteBuf buf)
     {
         this.pos = buf.readBlockPos();
         this.name = buf.readUtf(32767);
         this.level = buf.readInt();
-        this.dimension = RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)));
+        this.dimension = ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)));
     }
 
     @Override
-    public void toBytes(@NotNull final PacketBuffer buf)
+    public void toBytes(@NotNull final FriendlyByteBuf buf)
     {
         buf.writeBlockPos(this.pos);
         buf.writeUtf(this.name);
@@ -112,7 +112,7 @@ public class DecorationBuildRequestMessage implements IMessage
         {
             return;
         }
-        final PlayerEntity player = ctxIn.getSender();
+        final Player player = ctxIn.getSender();
 
         //Verify player has permission to change this huts settings
         if (!colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS))
@@ -120,7 +120,7 @@ public class DecorationBuildRequestMessage implements IMessage
             return;
         }
 
-        final TileEntity entity = player.getCommandSenderWorld().getBlockEntity(pos);
+        final BlockEntity entity = player.getCommandSenderWorld().getBlockEntity(pos);
         if (entity instanceof TileEntityDecorationController)
         {
             final Optional<Map.Entry<Integer, IWorkOrder>> wo = colony.getWorkManager().getWorkOrders().entrySet().stream()

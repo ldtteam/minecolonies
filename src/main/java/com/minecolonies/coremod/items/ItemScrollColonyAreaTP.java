@@ -7,22 +7,29 @@ import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.client.VanillaParticleMessage;
 import com.minecolonies.coremod.util.TeleportHelper;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.SoundEvents;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.text.*;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_DESC;
+
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.item.Item.Properties;
 
 /**
  * Colony teleport scroll, which teleports the user and any nearby players to the colony, invite a friend-style
@@ -46,13 +53,13 @@ public class ItemScrollColonyAreaTP extends AbstractItemScroll
     }
 
     @Override
-    protected ItemStack onItemUseSuccess(final ItemStack itemStack, final World world, final ServerPlayerEntity player)
+    protected ItemStack onItemUseSuccess(final ItemStack itemStack, final Level world, final ServerPlayer player)
     {
         if (world.random.nextInt(10) == 0)
         {
             // Fail chance
-            player.displayClientMessage(new TranslationTextComponent("minecolonies.scroll.failed" + (world.random.nextInt(FAIL_RESPONSES_TOTAL) + 1)).setStyle(Style.EMPTY.withColor(
-              TextFormatting.GOLD)), true);
+            player.displayClientMessage(new TranslatableComponent("minecolonies.scroll.failed" + (world.random.nextInt(FAIL_RESPONSES_TOTAL) + 1)).setStyle(Style.EMPTY.withColor(
+              ChatFormatting.GOLD)), true);
 
             itemStack.shrink(1);
             if (!ItemStackUtils.isEmpty(itemStack))
@@ -61,14 +68,14 @@ public class ItemScrollColonyAreaTP extends AbstractItemScroll
                 itemStack.setCount(0);
             }
 
-            for (final ServerPlayerEntity sPlayer : getAffectedPlayers(player))
+            for (final ServerPlayer sPlayer : getAffectedPlayers(player))
             {
                 SoundUtils.playSoundForPlayer(sPlayer, SoundEvents.EVOKER_PREPARE_SUMMON, 0.3f, 1.0f);
             }
         }
         else
         {
-            for (final ServerPlayerEntity sPlayer : getAffectedPlayers(player))
+            for (final ServerPlayer sPlayer : getAffectedPlayers(player))
             {
                 doTeleport(sPlayer, getColony(itemStack), itemStack);
                 SoundUtils.playSoundForPlayer(sPlayer, SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, 0.1f, 1.0f);
@@ -92,17 +99,17 @@ public class ItemScrollColonyAreaTP extends AbstractItemScroll
      * @param player user of the item
      * @param colony colony to teleport to
      */
-    protected void doTeleport(final ServerPlayerEntity player, final IColony colony, final ItemStack stack)
+    protected void doTeleport(final ServerPlayer player, final IColony colony, final ItemStack stack)
     {
         TeleportHelper.colonyTeleport(player, colony);
     }
 
     @Override
-    public void onUseTick(World worldIn, LivingEntity entity, ItemStack stack, int count)
+    public void onUseTick(Level worldIn, LivingEntity entity, ItemStack stack, int count)
     {
-        if (!worldIn.isClientSide && worldIn.getGameTime() % 5 == 0 && entity instanceof PlayerEntity)
+        if (!worldIn.isClientSide && worldIn.getGameTime() % 5 == 0 && entity instanceof Player)
         {
-            final ServerPlayerEntity sPlayer = (ServerPlayerEntity) entity;
+            final ServerPlayer sPlayer = (ServerPlayer) entity;
             for (final Entity player : getAffectedPlayers(sPlayer))
             {
                 Network.getNetwork()
@@ -119,20 +126,20 @@ public class ItemScrollColonyAreaTP extends AbstractItemScroll
     /**
      * Get the list of players affected by the area teleport
      */
-    private List<ServerPlayerEntity> getAffectedPlayers(final ServerPlayerEntity user)
+    private List<ServerPlayer> getAffectedPlayers(final ServerPlayer user)
     {
-        return user.level.getLoadedEntitiesOfClass(ServerPlayerEntity.class, user.getBoundingBox().inflate(10, 2, 10));
+        return user.level.getLoadedEntitiesOfClass(ServerPlayer.class, user.getBoundingBox().inflate(10, 2, 10));
     }
 
     @Override
     public void appendHoverText(
-      @NotNull final ItemStack stack, @Nullable final World worldIn, @NotNull final List<ITextComponent> tooltip, @NotNull final ITooltipFlag flagIn)
+      @NotNull final ItemStack stack, @Nullable final Level worldIn, @NotNull final List<Component> tooltip, @NotNull final TooltipFlag flagIn)
     {
-        final IFormattableTextComponent guiHint = LanguageHandler.buildChatComponent("item.minecolonies.scroll_area_tp.tip");
-        guiHint.setStyle(Style.EMPTY.withColor(TextFormatting.DARK_GREEN));
+        final MutableComponent guiHint = LanguageHandler.buildChatComponent("item.minecolonies.scroll_area_tp.tip");
+        guiHint.setStyle(Style.EMPTY.withColor(ChatFormatting.DARK_GREEN));
         tooltip.add(guiHint);
 
-        String colonyDesc = new TranslationTextComponent("item.minecolonies.scroll.colony.none").getString();
+        String colonyDesc = new TranslatableComponent("item.minecolonies.scroll.colony.none").getString();
 
         if (stack.getOrCreateTag().contains(TAG_DESC))
         {
@@ -148,8 +155,8 @@ public class ItemScrollColonyAreaTP extends AbstractItemScroll
             }
         }
 
-        final IFormattableTextComponent guiHint2 = new TranslationTextComponent("item.minecolonies.scroll.colony.tip", colonyDesc);
-        guiHint2.setStyle(Style.EMPTY.withColor(TextFormatting.GOLD));
+        final MutableComponent guiHint2 = new TranslatableComponent("item.minecolonies.scroll.colony.tip", colonyDesc);
+        guiHint2.setStyle(Style.EMPTY.withColor(ChatFormatting.GOLD));
         tooltip.add(guiHint2);
     }
 }

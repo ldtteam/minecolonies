@@ -13,12 +13,12 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.server.colony.UpdateRequestStateMessage;
 import com.minecolonies.coremod.network.messages.server.colony.citizen.TransferItemsToCitizenRequestMessage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.ChatFormatting;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,7 +42,7 @@ public class RequestWindowCitizen extends AbstractWindowCitizen
     /**
      * Inventory of the player.
      */
-    private final PlayerInventory inventory = this.mc.player.inventory;
+    private final Inventory inventory = this.mc.player.inventory;
 
     /**
      * Is the player in creative or not.
@@ -124,9 +124,9 @@ public class RequestWindowCitizen extends AbstractWindowCitizen
 
             if (slot == -1)
             {
-                final ITextComponent chatMessage = new StringTextComponent("<" + citizen.getName() + "> " +
+                final Component chatMessage = new TextComponent("<" + citizen.getName() + "> " +
                                                                              LanguageHandler.format(COM_MINECOLONIES_CANT_TAKE_EQUIPPED, citizen.getName()))
-                                                     .setStyle(Style.EMPTY.withBold(false).withColor(TextFormatting.WHITE)
+                                                     .setStyle(Style.EMPTY.withBold(false).withColor(ChatFormatting.WHITE)
                                                      );
                 Minecraft.getInstance().player.sendMessage(chatMessage, Minecraft.getInstance().player.getUUID());
 

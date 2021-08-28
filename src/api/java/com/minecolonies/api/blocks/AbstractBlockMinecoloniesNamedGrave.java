@@ -1,12 +1,14 @@
 package com.minecolonies.api.blocks;
 
 import com.minecolonies.api.util.constant.Suppression;
-import net.minecraft.block.Block;
-import net.minecraft.block.HorizontalBlock;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.state.DirectionProperty;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraftforge.registries.IForgeRegistry;
+
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
 /**
  * Abstract class for minecolonies named graves.
@@ -16,7 +18,7 @@ public abstract class AbstractBlockMinecoloniesNamedGrave<B extends AbstractBloc
     /**
      * The direction the block is facing.
      */
-    public static final DirectionProperty FACING = HorizontalBlock.FACING;
+    public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 
     public AbstractBlockMinecoloniesNamedGrave(final Properties properties)
     {

@@ -3,7 +3,7 @@ package com.minecolonies.api.crafting.registry;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.AbstractRecipeType;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 import org.apache.commons.lang3.Validate;
 

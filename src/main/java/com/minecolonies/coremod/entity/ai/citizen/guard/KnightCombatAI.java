@@ -20,23 +20,23 @@ import com.minecolonies.coremod.entity.ai.combat.AttackMoveAI;
 import com.minecolonies.coremod.entity.ai.combat.CombatUtils;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.util.NamedDamageSource;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.MobEntity;
-import net.minecraft.entity.item.ArmorStandEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.item.SwordItem;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.Hand;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.SwordItem;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.Mth;
+import net.minecraft.server.level.ServerLevel;
 
 import java.util.List;
 
@@ -105,12 +105,12 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
         if (shieldSlot != -1 && target != null && target.isAlive() && nextAttackTime - user.level.getGameTime() >= MIN_TIME_TO_ATTACK &&
               user.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SHIELD_USAGE) > 0)
         {
-            user.getCitizenItemHandler().setHeldItem(Hand.OFF_HAND, shieldSlot);
-            user.startUsingItem(Hand.OFF_HAND);
+            user.getCitizenItemHandler().setHeldItem(InteractionHand.OFF_HAND, shieldSlot);
+            user.startUsingItem(InteractionHand.OFF_HAND);
 
             // Apply the colony Flag to the shield
-            ItemStack shieldStack = user.getInventoryCitizen().getHeldItem(Hand.OFF_HAND);
-            CompoundNBT nbt = shieldStack.getOrCreateTagElement("BlockEntityTag");
+            ItemStack shieldStack = user.getInventoryCitizen().getHeldItem(InteractionHand.OFF_HAND);
+            CompoundTag nbt = shieldStack.getOrCreateTagElement("BlockEntityTag");
             nbt.put(TAG_BANNER_PATTERNS, user.getCitizenColonyHandler().getColony().getColonyFlag());
 
             user.lookAt(target, (float) TURN_AROUND, (float) TURN_AROUND);
@@ -128,7 +128,7 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
 
         if (weaponSlot != -1)
         {
-            user.getCitizenItemHandler().setHeldItem(Hand.MAIN_HAND, weaponSlot);
+            user.getCitizenItemHandler().setHeldItem(InteractionHand.MAIN_HAND, weaponSlot);
             return true;
         }
 
@@ -143,17 +143,17 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
             moveInAttackPosition(target);
         }
 
-        user.swing(Hand.MAIN_HAND);
+        user.swing(InteractionHand.MAIN_HAND);
         user.playSound(SoundEvents.PLAYER_ATTACK_SWEEP, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(user.getRandom()));
 
         final double damageToBeDealt = getAttackDamage();
         final DamageSource source = new NamedDamageSource(user.getName().getString(), user);
-        if (MineColonies.getConfig().getServer().pvp_mode.get() && target instanceof PlayerEntity)
+        if (MineColonies.getConfig().getServer().pvp_mode.get() && target instanceof Player)
         {
             source.bypassArmor();
         }
 
-        final int fireLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.FIRE_ASPECT, user.getItemInHand(Hand.MAIN_HAND));
+        final int fireLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.FIRE_ASPECT, user.getItemInHand(InteractionHand.MAIN_HAND));
         if (fireLevel > 0)
         {
             target.setSecondsOnFire(fireLevel * 80);
@@ -167,9 +167,9 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
         target.hurt(source, (float) damageToBeDealt);
         target.setLastHurtByMob(user);
 
-        if (target instanceof MobEntity && user.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(KNIGHT_TAUNT) > 0)
+        if (target instanceof Mob && user.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(KNIGHT_TAUNT) > 0)
         {
-            ((MobEntity) target).setTarget(user);
+            ((Mob) target).setTarget(user);
             if (target instanceof IThreatTableEntity)
             {
                 ((IThreatTableEntity) target).getThreatTable().addThreat(user, 5);
@@ -179,7 +179,7 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
         user.stopUsingItem();
         user.decreaseSaturationForContinuousAction();
         user.getCitizenData().setVisibleStatus(KNIGHT_COMBAT);
-        user.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, 1);
+        user.getCitizenItemHandler().damageItemInHand(InteractionHand.MAIN_HAND, 1);
     }
 
     /**
@@ -196,12 +196,12 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
             List<LivingEntity> entities = user.level.getLoadedEntitiesOfClass(LivingEntity.class, user.getBoundingBox().inflate(2.0D, 0.5D, 2.0D));
             for (LivingEntity livingentity : entities)
             {
-                if (livingentity != user && isEntityValidTarget(livingentity) && (!(livingentity instanceof ArmorStandEntity)))
+                if (livingentity != user && isEntityValidTarget(livingentity) && (!(livingentity instanceof ArmorStand)))
                 {
                     livingentity.knockback(
                       2F,
-                      MathHelper.sin(livingentity.yRot * ((float) Math.PI)),
-                      (-MathHelper.cos(livingentity.yRot * ((float) Math.PI))));
+                      Mth.sin(livingentity.yRot * ((float) Math.PI)),
+                      (-Mth.cos(livingentity.yRot * ((float) Math.PI))));
                     livingentity.hurt(source, (float) (damageToBeDealt / entities.size()));
                 }
             }
@@ -215,11 +215,11 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
               1.0F,
               1.0F);
 
-            double d0 = (double) (-MathHelper.sin(user.yRot * ((float) Math.PI / 180)));
-            double d1 = (double) MathHelper.cos(user.yRot * ((float) Math.PI / 180));
-            if (user.level instanceof ServerWorld)
+            double d0 = (double) (-Mth.sin(user.yRot * ((float) Math.PI / 180)));
+            double d1 = (double) Mth.cos(user.yRot * ((float) Math.PI / 180));
+            if (user.level instanceof ServerLevel)
             {
-                ((ServerWorld) user.level).sendParticles(ParticleTypes.SWEEP_ATTACK,
+                ((ServerLevel) user.level).sendParticles(ParticleTypes.SWEEP_ATTACK,
                   user.getX() + d0,
                   user.getY(0.5D),
                   user.getZ() + d1,
@@ -243,7 +243,7 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
     {
         int addDmg = 0;
 
-        final ItemStack heldItem = user.getItemInHand(Hand.MAIN_HAND);
+        final ItemStack heldItem = user.getItemInHand(InteractionHand.MAIN_HAND);
 
         if (ItemStackUtils.doesItemServeAsWeapon(heldItem))
         {

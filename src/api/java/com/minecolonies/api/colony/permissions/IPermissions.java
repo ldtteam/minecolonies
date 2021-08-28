@@ -1,8 +1,8 @@
 package com.minecolonies.api.colony.permissions;
 
 import com.mojang.authlib.GameProfile;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -81,9 +81,9 @@ public interface IPermissions
      * @param action {@link Action} action.
      * @return true if has permission, otherwise false.
      */
-    boolean hasPermission(PlayerEntity player, Action action);
+    boolean hasPermission(Player player, Action action);
 
-    boolean addPlayer(@NotNull String player, Rank rank, World world);
+    boolean addPlayer(@NotNull String player, Rank rank, Level world);
 
     boolean addPlayer(@NotNull UUID id, String name, Rank rank);
 
@@ -96,7 +96,7 @@ public interface IPermissions
      * @param player {@link PlayerEntity} to check for subscription.
      * @return True is subscriber, otherwise false.
      */
-    boolean isSubscriber(@NotNull PlayerEntity player);
+    boolean isSubscriber(@NotNull Player player);
 
     /**
      * Returns whether the player is a member of the colony.
@@ -104,14 +104,14 @@ public interface IPermissions
      * @param player {@link PlayerEntity} to check.
      * @return true if the player is a member of the colony.
      */
-    boolean isColonyMember(PlayerEntity player);
+    boolean isColonyMember(Player player);
 
     void togglePermission(Rank rank, @NotNull Action action);
 
     @Nullable
     Map.Entry<UUID, Player> getOwnerEntry();
 
-    boolean setOwner(PlayerEntity player);
+    boolean setOwner(Player player);
 
     /**
      * Sets the owner to abandoned
@@ -129,7 +129,7 @@ public interface IPermissions
     @NotNull
     Map<UUID, Player> getPlayers();
 
-    boolean setPlayerRank(UUID id, Rank rank, World world);
+    boolean setPlayerRank(UUID id, Rank rank, Level world);
 
     boolean addPlayer(@NotNull GameProfile gameprofile, Rank rank);
 
@@ -142,7 +142,7 @@ public interface IPermissions
     @NotNull
     Rank getRank(UUID player);
 
-    Rank getRank(PlayerEntity player);
+    Rank getRank(Player player);
 
     void restoreOwnerIfNull();
 

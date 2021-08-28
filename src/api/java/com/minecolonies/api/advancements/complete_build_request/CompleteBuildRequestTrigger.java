@@ -4,10 +4,10 @@ import com.google.gson.JsonObject;
 import com.ldtteam.structurize.management.StructureName;
 import com.minecolonies.api.advancements.AbstractCriterionTrigger;
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.loot.ConditionArrayParser;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.advancements.critereon.DeserializationContext;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 public class CompleteBuildRequestTrigger extends AbstractCriterionTrigger<CompleteBuildRequestListeners, CompleteBuildRequestCriterionInstance>
@@ -23,7 +23,7 @@ public class CompleteBuildRequestTrigger extends AbstractCriterionTrigger<Comple
      * @param structureName the structure that was just completed
      * @param level the level the structure got upgraded to, or 0
      */
-    public void trigger(final ServerPlayerEntity player, final StructureName structureName, final int level)
+    public void trigger(final ServerPlayer player, final StructureName structureName, final int level)
     {
         final CompleteBuildRequestListeners listeners = this.getListeners(player.getAdvancements());
         if (listeners != null)
@@ -34,14 +34,14 @@ public class CompleteBuildRequestTrigger extends AbstractCriterionTrigger<Comple
 
     @NotNull
     @Override
-    public CompleteBuildRequestCriterionInstance createInstance(@NotNull final JsonObject jsonObject, @NotNull final ConditionArrayParser jsonDeserializationContext)
+    public CompleteBuildRequestCriterionInstance createInstance(@NotNull final JsonObject jsonObject, @NotNull final DeserializationContext jsonDeserializationContext)
     {
         if (jsonObject.has("hut_name"))
         {
-            final String hutName = JSONUtils.getAsString(jsonObject, "hut_name");
+            final String hutName = GsonHelper.getAsString(jsonObject, "hut_name");
             if (jsonObject.has("level"))
             {
-                final int level = JSONUtils.getAsInt(jsonObject, "level");
+                final int level = GsonHelper.getAsInt(jsonObject, "level");
                 return new CompleteBuildRequestCriterionInstance(hutName, level);
             }
             return new CompleteBuildRequestCriterionInstance(hutName);
@@ -49,10 +49,10 @@ public class CompleteBuildRequestTrigger extends AbstractCriterionTrigger<Comple
 
         if (jsonObject.has("structure_name"))
         {
-            final StructureName structureName = new StructureName(JSONUtils.getAsString(jsonObject, "structure_name"));
+            final StructureName structureName = new StructureName(GsonHelper.getAsString(jsonObject, "structure_name"));
             if (jsonObject.has("structure_name"))
             {
-                final int level = JSONUtils.getAsInt(jsonObject, "level");
+                final int level = GsonHelper.getAsInt(jsonObject, "level");
                 return new CompleteBuildRequestCriterionInstance(structureName, level);
             }
             return new CompleteBuildRequestCriterionInstance(structureName);

@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.util;
 
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -33,7 +33,7 @@ public class ChunkCapData
      *
      * @param buf the buffer to write it to.
      */
-    public void toBytes(@NotNull final PacketBuffer buf)
+    public void toBytes(@NotNull final FriendlyByteBuf buf)
     {
         buf.writeInt(x);
         buf.writeInt(z);
@@ -51,7 +51,7 @@ public class ChunkCapData
      * @param buffer the bytebuffer.
      * @return the cap data.
      */
-    public static ChunkCapData fromBytes(@NotNull final PacketBuffer buffer)
+    public static ChunkCapData fromBytes(@NotNull final FriendlyByteBuf buffer)
     {
         int x = buffer.readInt();
         int z = buffer.readInt();

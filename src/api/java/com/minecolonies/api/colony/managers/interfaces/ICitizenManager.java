@@ -1,9 +1,9 @@
 package com.minecolonies.api.colony.managers.interfaces;
 
 import com.minecolonies.api.colony.ICitizenData;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,7 +27,7 @@ public interface ICitizenManager extends IEntityManager
      * @param world the world to spawn it in.
      * @return the citizen data of the spawned citizen.
      */
-    default ICitizenData spawnOrCreateCitizen(final ICitizenData data, @NotNull final World world)
+    default ICitizenData spawnOrCreateCitizen(final ICitizenData data, @NotNull final Level world)
     {
         return this.spawnOrCreateCivilian(data, world, null, false);
     }
@@ -40,7 +40,7 @@ public interface ICitizenManager extends IEntityManager
      * @param spawnPos the Blockposition to spawn at
      * @return the new citizen.
      */
-    default ICitizenData spawnOrCreateCitizen(final ICitizenData data, @NotNull final World world, final BlockPos spawnPos)
+    default ICitizenData spawnOrCreateCitizen(final ICitizenData data, @NotNull final Level world, final BlockPos spawnPos)
     {
         return this.spawnOrCreateCivilian(data, world, spawnPos, false);
     }
@@ -70,7 +70,7 @@ public interface ICitizenManager extends IEntityManager
      * @param spawnPos position where to resurrect the citizen
      * @return the citizenData of the resurrected citizen
      */
-    ICitizenData resurrectCivilianData(@NotNull final CompoundNBT compoundNBT, final boolean resetId, @NotNull final World world, final BlockPos spawnPos);
+    ICitizenData resurrectCivilianData(@NotNull final CompoundTag compoundNBT, final boolean resetId, @NotNull final Level world, final BlockPos spawnPos);
 
     /**
      * Get all citizens.

@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.util;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.util.EntityDamageSource;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.damagesource.EntityDamageSource;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -27,9 +27,9 @@ public class NamedDamageSource extends EntityDamageSource
 
     @NotNull
     @Override
-    public ITextComponent getLocalizedDeathMessage(LivingEntity entityLivingBaseIn)
+    public Component getLocalizedDeathMessage(LivingEntity entityLivingBaseIn)
     {
-        return new TranslationTextComponent(this.msgId, entityLivingBaseIn.getName());
+        return new TranslatableComponent(this.msgId, entityLivingBaseIn.getName());
     }
 
     /**

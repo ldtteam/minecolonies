@@ -6,11 +6,11 @@ import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.util.ChunkCapData;
 import com.minecolonies.coremod.util.ChunkClientDataHelper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
@@ -48,7 +48,7 @@ public class UpdateChunkRangeCapabilityMessage implements IMessage
      * @param range       the range.
      * @param checkLoaded are we checking for loaded?
      */
-    public UpdateChunkRangeCapabilityMessage(@NotNull final World world, final int xC, final int zC, final int range, boolean checkLoaded)
+    public UpdateChunkRangeCapabilityMessage(@NotNull final Level world, final int xC, final int zC, final int range, boolean checkLoaded)
     {
         for (int x = -range; x <= range; x++)
         {
@@ -58,7 +58,7 @@ public class UpdateChunkRangeCapabilityMessage implements IMessage
                 final int chunkZ = zC + z;
                 if (!checkLoaded || WorldUtil.isEntityChunkLoaded(world, chunkX, chunkZ))
                 {
-                    final Chunk chunk = world.getChunk(chunkX, chunkZ);
+                    final LevelChunk chunk = world.getChunk(chunkX, chunkZ);
                     final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
                     if (cap != null)
                     {
@@ -70,7 +70,7 @@ public class UpdateChunkRangeCapabilityMessage implements IMessage
     }
 
     @Override
-    public void fromBytes(@NotNull final PacketBuffer buf)
+    public void fromBytes(@NotNull final FriendlyByteBuf buf)
     {
         final int size = buf.readInt();
         for (int i = 0; i < size; i++)
@@ -80,7 +80,7 @@ public class UpdateChunkRangeCapabilityMessage implements IMessage
     }
 
     @Override
-    public void toBytes(@NotNull final PacketBuffer buf)
+    public void toBytes(@NotNull final FriendlyByteBuf buf)
     {
         buf.writeInt(caps.size());
         for (final ChunkCapData c : caps)
@@ -99,7 +99,7 @@ public class UpdateChunkRangeCapabilityMessage implements IMessage
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
-        final ClientWorld world = Minecraft.getInstance().level;
+        final ClientLevel world = Minecraft.getInstance().level;
         for (final ChunkCapData data : caps)
         {
             if (!WorldUtil.isChunkLoaded(world, new ChunkPos(data.x, data.z)))
@@ -108,7 +108,7 @@ public class UpdateChunkRangeCapabilityMessage implements IMessage
                 continue;
             }
 
-            final Chunk chunk = world.getChunk(data.x, data.z);
+            final LevelChunk chunk = world.getChunk(data.x, data.z);
             ChunkClientDataHelper.applyCap(data, chunk);
         }
     }

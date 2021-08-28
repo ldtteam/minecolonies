@@ -2,15 +2,15 @@ package com.minecolonies.coremod.client.gui.containers;
 
 import com.minecolonies.api.inventory.container.ContainerBuildingInventory;
 import com.minecolonies.api.util.constant.Constants;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
-public class WindowBuildingInventory extends ContainerScreen<ContainerBuildingInventory>
+public class WindowBuildingInventory extends AbstractContainerScreen<ContainerBuildingInventory>
 {
     /**
      * Texture res loc.
@@ -42,7 +42,7 @@ public class WindowBuildingInventory extends ContainerScreen<ContainerBuildingIn
      */
     private final int inventoryRows;
 
-    public WindowBuildingInventory(final ContainerBuildingInventory container, final PlayerInventory playerInventory, final ITextComponent component)
+    public WindowBuildingInventory(final ContainerBuildingInventory container, final Inventory playerInventory, final Component component)
     {
         super(container, playerInventory, component);
         this.passEvents = false;
@@ -51,7 +51,7 @@ public class WindowBuildingInventory extends ContainerScreen<ContainerBuildingIn
     }
 
     @Override
-    public void render(@NotNull MatrixStack matrixStack, int x, int y, float z)
+    public void render(@NotNull PoseStack matrixStack, int x, int y, float z)
     {
         this.renderBackground(matrixStack);
         super.render(matrixStack, x, y, z);
@@ -62,7 +62,7 @@ public class WindowBuildingInventory extends ContainerScreen<ContainerBuildingIn
      * Draw the foreground layer for the GuiContainer (everything in front of the items)
      */
     @Override
-    protected void renderLabels(@NotNull final MatrixStack stack, int mouseX, int mouseY)
+    protected void renderLabels(@NotNull final PoseStack stack, int mouseX, int mouseY)
     {
         this.font.draw(stack, this.title.getString(), 8.0F, 6.0F, 4210752);
         this.font.draw(stack, this.inventory.getDisplayName().getString(), 8.0F, (float) (this.imageHeight - 96 + 2), 4210752);
@@ -72,7 +72,7 @@ public class WindowBuildingInventory extends ContainerScreen<ContainerBuildingIn
      * Draws the background layer of this container (behind the items).
      */
     @Override
-    protected void renderBg(@NotNull MatrixStack stack, float partialTicks, int mouseX, int mouseY)
+    protected void renderBg(@NotNull PoseStack stack, float partialTicks, int mouseX, int mouseY)
     {
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         this.minecraft.getTextureManager().bind(TEXT);

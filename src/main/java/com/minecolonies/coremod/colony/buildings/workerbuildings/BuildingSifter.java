@@ -15,9 +15,9 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.colony.jobs.JobSifter;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -145,7 +145,7 @@ public class BuildingSifter extends AbstractBuildingWorker implements IBuildingP
     }
 
     @Override
-    public void deserializeNBT(final CompoundNBT compound)
+    public void deserializeNBT(final CompoundTag compound)
     {
         super.deserializeNBT(compound);
 
@@ -153,9 +153,9 @@ public class BuildingSifter extends AbstractBuildingWorker implements IBuildingP
     }
 
     @Override
-    public CompoundNBT serializeNBT()
+    public CompoundTag serializeNBT()
     {
-        final CompoundNBT compound = super.serializeNBT();
+        final CompoundTag compound = super.serializeNBT();
 
         compound.putInt(TAG_CURRENT_DAILY, currentDailyQuantity);
 
@@ -163,7 +163,7 @@ public class BuildingSifter extends AbstractBuildingWorker implements IBuildingP
     }
 
     @Override
-    public void serializeToView(@NotNull final PacketBuffer buf)
+    public void serializeToView(@NotNull final FriendlyByteBuf buf)
     {
         super.serializeToView(buf);
         buf.writeInt(getMaxDailyQuantity());
@@ -203,7 +203,7 @@ public class BuildingSifter extends AbstractBuildingWorker implements IBuildingP
         }
 
         @Override
-        public void deserialize(@NotNull final PacketBuffer buf)
+        public void deserialize(@NotNull final FriendlyByteBuf buf)
         {
             super.deserialize(buf);
             maxDailyQuantity = buf.readInt();

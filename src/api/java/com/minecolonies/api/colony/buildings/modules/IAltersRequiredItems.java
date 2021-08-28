@@ -1,6 +1,6 @@
 package com.minecolonies.api.colony.buildings.modules;
 
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import org.apache.logging.log4j.util.TriConsumer;
 
 import java.util.function.Predicate;

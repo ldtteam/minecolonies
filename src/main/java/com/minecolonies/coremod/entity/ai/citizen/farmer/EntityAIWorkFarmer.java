@@ -31,20 +31,20 @@ import com.minecolonies.coremod.network.messages.client.CompostParticleMessage;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.util.AdvancementUtils;
 import net.minecraft.block.*;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.loot.LootContext;
-import net.minecraft.loot.LootParameters;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.core.NonNullList;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.fml.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
@@ -62,6 +62,14 @@ import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
+
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.CropBlock;
+import net.minecraft.world.level.block.FarmBlock;
+import net.minecraft.world.level.block.GrassBlock;
+import net.minecraft.world.level.block.StemBlock;
+import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * Farmer AI class. Created: December 20, 2014
@@ -243,7 +251,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         {
             if (worker.getCitizenData() != null)
             {
-                worker.getCitizenData().triggerInteraction(new StandardInteraction(new TranslationTextComponent(NO_FREE_FIELDS), ChatPriority.BLOCKING));
+                worker.getCitizenData().triggerInteraction(new StandardInteraction(new TranslatableComponent(NO_FREE_FIELDS), ChatPriority.BLOCKING));
             }
             worker.getCitizenData().setIdleAtJob(true);
             return PREPARING;
@@ -258,7 +266,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         }
 
         @Nullable final BlockPos currentField = module.getCurrentField();
-        final TileEntity entity = world.getBlockEntity(currentField);
+        final BlockEntity entity = world.getBlockEntity(currentField);
         if (entity instanceof ScarecrowTileEntity && ((ScarecrowTileEntity) entity).needsWork())
         {
             if (((ScarecrowTileEntity) entity).getFieldStage() == ScarecrowFieldStage.PLANTED && checkIfShouldExecute((ScarecrowTileEntity) entity, this::shouldHarvest))
@@ -356,9 +364,9 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         if (currentField.getSeed() == null || currentField.getSeed().isEmpty())
         {
             worker.getCitizenData()
-              .triggerInteraction(new PosBasedInteraction(new TranslationTextComponent(NO_SEED_SET, currentField.getBlockPos()),
+              .triggerInteraction(new PosBasedInteraction(new TranslatableComponent(NO_SEED_SET, currentField.getBlockPos()),
                 ChatPriority.BLOCKING,
-                new TranslationTextComponent(NO_SEED_SET),
+                new TranslatableComponent(NO_SEED_SET),
                 currentField.getBlockPos()));
 
             final FarmerFieldModule module = buildingFarmer.getFirstModuleOccurance(FarmerFieldModule.class);
@@ -396,7 +404,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
     private boolean shouldHoe(@NotNull final BlockPos position, @NotNull final ScarecrowTileEntity field)
     {
 
-        return !field.isNoPartOfField(world, position) && !(world.getBlockState(position.above()).getBlock() instanceof CropsBlock)
+        return !field.isNoPartOfField(world, position) && !(world.getBlockState(position.above()).getBlock() instanceof CropBlock)
                  && !(world.getBlockState(position.above()).getBlock() instanceof BlockScarecrow)
                  && (world.getBlockState(position).getBlock().is(Tags.Blocks.DIRT) || world.getBlockState(position).getBlock() instanceof GrassBlock);
     }
@@ -491,7 +499,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
 
         worker.getCitizenData().setVisibleStatus(FARMING_ICON);
         @Nullable final BlockPos field = module.getCurrentField();
-        final TileEntity entity = world.getBlockEntity(field);
+        final BlockEntity entity = world.getBlockEntity(field);
         if (entity instanceof ScarecrowTileEntity)
         {
             final ScarecrowTileEntity scarecrow = (ScarecrowTileEntity) entity;
@@ -515,7 +523,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
                 switch ((AIWorkerState) getState())
                 {
                     case FARMER_HOE:
-                        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.hoeing"));
+                        worker.getCitizenStatusHandler().setLatestStatus(new TranslatableComponent("com.minecolonies.coremod.status.hoeing"));
 
                         if (!hoeIfAble(position, scarecrow))
                         {
@@ -523,14 +531,14 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
                         }
                         break;
                     case FARMER_PLANT:
-                        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.planting"));
+                        worker.getCitizenStatusHandler().setLatestStatus(new TranslatableComponent("com.minecolonies.coremod.status.planting"));
                         if (!tryToPlant(scarecrow, position))
                         {
                             return PREPARING;
                         }
                         break;
                     case FARMER_HARVEST:
-                        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.harvesting"));
+                        worker.getCitizenStatusHandler().setLatestStatus(new TranslatableComponent("com.minecolonies.coremod.status.harvesting"));
                         if (!harvestIfAble(position))
                         {
                             return getState();
@@ -575,7 +583,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
                 equipHoe();
                 worker.swing(worker.getUsedItemHand());
                 world.setBlockAndUpdate(position, Blocks.FARMLAND.defaultBlockState());
-                worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, 1);
+                worker.getCitizenItemHandler().damageItemInHand(InteractionHand.MAIN_HAND, 1);
                 worker.decreaseSaturationForContinuousAction();
                 return true;
             }
@@ -641,7 +649,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
      */
     private void equipHoe()
     {
-        worker.getCitizenItemHandler().setHeldItem(Hand.MAIN_HAND, getHoeSlot());
+        worker.getCitizenItemHandler().setHeldItem(InteractionHand.MAIN_HAND, getHoeSlot());
     }
 
     /**
@@ -653,9 +661,9 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
      */
     private boolean shouldPlant(@NotNull final BlockPos position, @NotNull final ScarecrowTileEntity field)
     {
-        return !field.isNoPartOfField(world, position) && !(world.getBlockState(position.above()).getBlock() instanceof CropsBlock)
+        return !field.isNoPartOfField(world, position) && !(world.getBlockState(position.above()).getBlock() instanceof CropBlock)
                  && !(world.getBlockState(position.above()).getBlock() instanceof StemBlock)
-                 && !(world.getBlockState(position).getBlock() instanceof BlockScarecrow) && world.getBlockState(position).getBlock() instanceof FarmlandBlock;
+                 && !(world.getBlockState(position).getBlock() instanceof BlockScarecrow) && world.getBlockState(position).getBlock() instanceof FarmBlock;
     }
 
     /**
@@ -677,7 +685,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
             return false;
         }
 
-        if (item.getItem() instanceof BlockItem && (((BlockItem) item.getItem()).getBlock() instanceof CropsBlock || ((BlockItem) item.getItem()).getBlock() instanceof StemBlock))
+        if (item.getItem() instanceof BlockItem && (((BlockItem) item.getItem()).getBlock() instanceof CropBlock || ((BlockItem) item.getItem()).getBlock() instanceof StemBlock))
         {
             @NotNull final Item seed = item.getItem();
             if ((seed == Items.MELON_SEEDS || seed == Items.PUMPKIN_SEEDS) && prevPos != null && !world.isEmptyBlock(prevPos.above()))
@@ -710,7 +718,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
 
         if (isCrop(block))
         {
-            @NotNull CropsBlock crop = (CropsBlock) block;
+            @NotNull CropBlock crop = (CropBlock) block;
             if (crop.isMaxAge(state))
             {
                 return true;
@@ -730,7 +738,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
                 block = state.getBlock();
                 if (isCrop(block))
                 {
-                    crop = (CropsBlock) block;
+                    crop = (CropBlock) block;
                 }
                 else
                 {
@@ -751,7 +759,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
      */
     public boolean isCrop(final Block block)
     {
-        return block instanceof CropsBlock;
+        return block instanceof CropBlock;
     }
 
     @Override
@@ -791,11 +799,11 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         final double chance = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(FARMING);
 
         final NonNullList<ItemStack> drops = NonNullList.create();
-        state.getDrops(new LootContext.Builder((ServerWorld) world).withLuck(fortune)
+        state.getDrops(new LootContext.Builder((ServerLevel) world).withLuck(fortune)
                          .withLuck(fortune)
-                         .withParameter(LootParameters.ORIGIN, worker.position())
-                         .withParameter(LootParameters.TOOL, tool)
-                         .withParameter(LootParameters.THIS_ENTITY, getCitizen()));
+                         .withParameter(LootContextParams.ORIGIN, worker.position())
+                         .withParameter(LootContextParams.TOOL, tool)
+                         .withParameter(LootContextParams.THIS_ENTITY, getCitizen()));
         for (final ItemStack item : drops)
         {
             final ItemStack drop = item.copy();
@@ -806,9 +814,9 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
             InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), drop);
         }
 
-        if (state.getBlock() instanceof CropsBlock)
+        if (state.getBlock() instanceof CropBlock)
         {
-            final CropsBlock crops = (CropsBlock) state.getBlock();
+            final CropBlock crops = (CropBlock) state.getBlock();
             world.setBlockAndUpdate(pos, crops.getStateForAge(0));
         }
 

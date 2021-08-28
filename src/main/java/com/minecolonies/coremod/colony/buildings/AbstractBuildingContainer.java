@@ -8,18 +8,18 @@ import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.NBTUtil;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.Direction;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.LazyOptional;
@@ -74,15 +74,15 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
     }
 
     @Override
-    public void deserializeNBT(final CompoundNBT compound)
+    public void deserializeNBT(final CompoundTag compound)
     {
         super.deserializeNBT(compound);
 
-        final ListNBT containerTagList = compound.getList(TAG_CONTAINERS, Constants.NBT.TAG_COMPOUND);
+        final ListTag containerTagList = compound.getList(TAG_CONTAINERS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < containerTagList.size(); ++i)
         {
-            final CompoundNBT containerCompound = containerTagList.getCompound(i);
-            containerList.add(NBTUtil.readBlockPos(containerCompound));
+            final CompoundTag containerCompound = containerTagList.getCompound(i);
+            containerList.add(NbtUtils.readBlockPos(containerCompound));
         }
         if (compound.getAllKeys().contains(TAG_PRIO))
         {
@@ -99,14 +99,14 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
     }
 
     @Override
-    public CompoundNBT serializeNBT()
+    public CompoundTag serializeNBT()
     {
-        final CompoundNBT compound = super.serializeNBT();
+        final CompoundTag compound = super.serializeNBT();
 
-        @NotNull final ListNBT containerTagList = new ListNBT();
+        @NotNull final ListTag containerTagList = new ListTag();
         for (@NotNull final BlockPos pos : containerList)
         {
-            containerTagList.add(NBTUtil.writeBlockPos(pos));
+            containerTagList.add(NbtUtils.writeBlockPos(pos));
         }
         compound.put(TAG_CONTAINERS, containerTagList);
         compound.putInt(TAG_PRIO, this.unscaledPickUpPriority);
@@ -123,7 +123,7 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
     @Override
     public void alterPickUpPriority(final int value)
     {
-        this.unscaledPickUpPriority = MathHelper.clamp(this.unscaledPickUpPriority + value, 0, getMaxBuildingPriority(false));
+        this.unscaledPickUpPriority = Mth.clamp(this.unscaledPickUpPriority + value, 0, getMaxBuildingPriority(false));
     }
 
     @Override
@@ -150,18 +150,18 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
     }
 
     @Override
-    public void registerBlockPosition(@NotNull final BlockState blockState, @NotNull final BlockPos pos, @NotNull final World world)
+    public void registerBlockPosition(@NotNull final BlockState blockState, @NotNull final BlockPos pos, @NotNull final Level world)
     {
         registerBlockPosition(blockState.getBlock(), pos, world);
     }
 
     @Override
     @SuppressWarnings("squid:S1172")
-    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
+    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final Level world)
     {
         if (block instanceof AbstractBlockHut)
         {
-            final TileEntity entity = world.getBlockEntity(pos);
+            final BlockEntity entity = world.getBlockEntity(pos);
             if (entity instanceof TileEntityColonyBuilding)
             {
                 ((TileEntityColonyBuilding) entity).setStyle(this.getStyle());
@@ -180,7 +180,7 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
             addContainerPosition(pos);
             if (block instanceof BlockMinecoloniesRack)
             {
-                final TileEntity entity = world.getBlockEntity(pos);
+                final BlockEntity entity = world.getBlockEntity(pos);
                 if (entity instanceof TileEntityRack)
                 {
                     ((TileEntityRack) entity).setBuildingPos(this.getID());

@@ -11,7 +11,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.util.AdvancementUtils;
-import net.minecraft.entity.ai.goal.PrioritizedGoal;
+import net.minecraft.world.entity.ai.goal.WrappedGoal;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -101,7 +101,7 @@ public class CitizenJobHandler implements ICitizenJobHandler
         setModelDependingOnJob(job);
 
         //  AI Tasks
-        for (@NotNull final PrioritizedGoal task : new ArrayList<>(citizen.getTasks().availableGoals))
+        for (@NotNull final WrappedGoal task : new ArrayList<>(citizen.getTasks().availableGoals))
         {
             if (task.getGoal() instanceof AbstractAISkeleton)
             {

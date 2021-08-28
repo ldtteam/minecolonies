@@ -2,12 +2,12 @@ package com.minecolonies.coremod.client.gui.containers;
 
 import com.minecolonies.api.inventory.container.ContainerRack;
 import com.minecolonies.api.util.constant.Constants;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.items.IItemHandler;
@@ -15,7 +15,7 @@ import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 @OnlyIn(Dist.CLIENT)
-public class WindowRack extends ContainerScreen<ContainerRack>
+public class WindowRack extends AbstractContainerScreen<ContainerRack>
 {
     /**
      * The resource LOCATION of the texture.
@@ -87,7 +87,7 @@ public class WindowRack extends ContainerScreen<ContainerRack>
      */
     private final int inventoryRows;
 
-    public WindowRack(final ContainerRack container, final PlayerInventory playerInventory, final ITextComponent iTextComponent)
+    public WindowRack(final ContainerRack container, final Inventory playerInventory, final Component iTextComponent)
     {
         super(container, playerInventory, iTextComponent);
         if (container.neighborRack != null)
@@ -119,7 +119,7 @@ public class WindowRack extends ContainerScreen<ContainerRack>
      * Draw the foreground layer for the GuiContainer (everything in front of the items)
      */
     @Override
-    protected void renderLabels(@NotNull final MatrixStack stack, int mouseX, int mouseY)
+    protected void renderLabels(@NotNull final PoseStack stack, int mouseX, int mouseY)
     {
         this.font.draw(stack, this.title.getString(), 8.0F, 6.0F, 4210752);
         this.font.draw(stack, this.inventory.getDisplayName().getString(), 8.0F, (float) (this.imageHeight - (inventoryRows > 6 ? 110 : 94)), 4210752);
@@ -129,7 +129,7 @@ public class WindowRack extends ContainerScreen<ContainerRack>
      * Draws the background layer of this container (behind the items).
      */
     @Override
-    protected void renderBg(@NotNull final MatrixStack stack, final float partialTicks, final int mouseX, final int mouseY)
+    protected void renderBg(@NotNull final PoseStack stack, final float partialTicks, final int mouseX, final int mouseY)
     {
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         this.minecraft.getTextureManager().bind(getCorrectTextureForSlots(inventoryRows));
@@ -176,7 +176,7 @@ public class WindowRack extends ContainerScreen<ContainerRack>
     }
 
     @Override
-    public void render(@NotNull final MatrixStack stack, int x, int y, float z)
+    public void render(@NotNull final PoseStack stack, int x, int y, float z)
     {
         this.renderBackground(stack);
         super.render(stack, x, y, z);

@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.commands;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import net.minecraft.command.CommandSource;
+import net.minecraft.commands.CommandSourceStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +11,7 @@ public class CommandTree
     /**
      * Tree root node
      */
-    private final LiteralArgumentBuilder<CommandSource> rootNode;
+    private final LiteralArgumentBuilder<CommandSourceStack> rootNode;
     /**
      * List of child trees, commands are directly baked into rootNode
      */
@@ -46,7 +46,7 @@ public class CommandTree
      * @param command new commnad to add
      * @return this
      */
-    protected CommandTree addNode(final LiteralArgumentBuilder<CommandSource> command)
+    protected CommandTree addNode(final LiteralArgumentBuilder<CommandSourceStack> command)
     {
         rootNode.then(command.build());
         return this;
@@ -57,7 +57,7 @@ public class CommandTree
      *
      * @return tree as command node
      */
-    protected LiteralArgumentBuilder<CommandSource> build()
+    protected LiteralArgumentBuilder<CommandSourceStack> build()
     {
         for (final CommandTree ct : childNodes)
         {

@@ -13,13 +13,13 @@ import com.minecolonies.coremod.client.gui.AbstractWindowSkeleton;
 import com.minecolonies.coremod.network.messages.client.CreateColonyMessage;
 import com.minecolonies.coremod.network.messages.client.VanillaParticleMessage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.chunk.LevelChunk;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 import static com.minecolonies.api.util.constant.TranslationConstants.CANT_PLACE_COLONY_TOO_CLOSE_TO_SPAWN;
@@ -44,7 +44,7 @@ public class WindowTownHallColonyManage extends AbstractWindowSkeleton
      */
     private final BlockPos pos;
 
-    public WindowTownHallColonyManage(final PlayerEntity player, final BlockPos pos, final World world)
+    public WindowTownHallColonyManage(final Player player, final BlockPos pos, final Level world)
     {
         super(MOD_ID + TOWNHALL_COLONY_MANAGEMENT_GUI);
 
@@ -147,7 +147,7 @@ public class WindowTownHallColonyManage extends AbstractWindowSkeleton
     {
         new VanillaParticleMessage(pos.getX(), pos.getY(), pos.getZ(), ParticleTypes.DRAGON_BREATH).onExecute(null, false);
         Minecraft.getInstance().level.playSound(Minecraft.getInstance().player, new BlockPos(Minecraft.getInstance().player.position()),
-          SoundEvents.CAMPFIRE_CRACKLE, SoundCategory.AMBIENT, 2.5f, 0.8f);
+          SoundEvents.CAMPFIRE_CRACKLE, SoundSource.AMBIENT, 2.5f, 0.8f);
         Network.getNetwork().sendToServer(new CreateColonyMessage(pos));
         close();
     }
@@ -160,7 +160,7 @@ public class WindowTownHallColonyManage extends AbstractWindowSkeleton
      * @param range search range
      * @return the id of the found colony
      */
-    private static int findNextNearbyColony(final World world, final BlockPos start, final int range)
+    private static int findNextNearbyColony(final Level world, final BlockPos start, final int range)
     {
         int startX = start.getX() >> 4;
         int startZ = start.getZ() >> 4;
@@ -171,7 +171,7 @@ public class WindowTownHallColonyManage extends AbstractWindowSkeleton
             {
                 final int chunkX = startX + x;
                 final int chunkZ = startZ + z;
-                final Chunk chunk = world.getChunk(chunkX, chunkZ);
+                final LevelChunk chunk = world.getChunk(chunkX, chunkZ);
                 final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
                 if (cap != null)
                 {

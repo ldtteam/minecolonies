@@ -1,7 +1,7 @@
 package com.minecolonies.api.entity.citizen.citizenhandlers;
 
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -26,14 +26,14 @@ public interface ICitizenDiseaseHandler
      *
      * @param compound the nbt to write it to.
      */
-    void write(final CompoundNBT compound);
+    void write(final CompoundTag compound);
 
     /**
      * Read the handler from NBT.
      *
      * @param compound the nbt to read it from.
      */
-    void read(final CompoundNBT compound);
+    void read(final CompoundTag compound);
 
     /**
      * get the disease identifier.

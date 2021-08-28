@@ -14,9 +14,9 @@ import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestR
 import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequestManager;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -217,25 +217,25 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
     }
 
     @Override
-    public CompoundNBT serializeNBT()
+    public CompoundTag serializeNBT()
     {
         return wrappedManager.serializeNBT();
     }
 
     @Override
-    public void deserializeNBT(final CompoundNBT nbt)
+    public void deserializeNBT(final CompoundTag nbt)
     {
         wrappedManager.deserializeNBT(nbt);
     }
 
     @Override
-    public void serialize(IFactoryController controller, PacketBuffer buffer)
+    public void serialize(IFactoryController controller, FriendlyByteBuf buffer)
     {
         wrappedManager.serialize(controller, buffer);
     }
 
     @Override
-    public void deserialize(IFactoryController controller, PacketBuffer buffer)
+    public void deserialize(IFactoryController controller, FriendlyByteBuf buffer)
     {
         wrappedManager.deserialize(controller, buffer);
     }

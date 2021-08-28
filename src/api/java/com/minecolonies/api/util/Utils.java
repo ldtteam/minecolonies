@@ -1,9 +1,9 @@
 package com.minecolonies.api.util;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.io.File;
@@ -50,7 +50,7 @@ public final class Utils
      */
     @Nullable
     public static BlockPos scanForBlockNearPoint(
-      @NotNull final World world,
+      @NotNull final Level world,
       @NotNull final BlockPos point,
       final int radiusX,
       final int radiusY,
@@ -98,7 +98,7 @@ public final class Utils
      * @param blocks the block types required.
      * @return true if all blocks are of that type.
      */
-    private static boolean checkHeight(@NotNull final World world, final int x, final int y, final int z, final int height, @NotNull final Block... blocks)
+    private static boolean checkHeight(@NotNull final Level world, final int x, final int y, final int z, final int height, @NotNull final Block... blocks)
     {
         for (int dy = 0; dy < height; dy++)
         {
@@ -141,7 +141,7 @@ public final class Utils
      * @param range the range to check around the point.
      * @return true if he found the block.
      */
-    public static boolean isBlockInRange(@NotNull final World world, final Block block, final int posX, final int posY, final int posZ, final int range)
+    public static boolean isBlockInRange(@NotNull final Level world, final Block block, final int posX, final int posY, final int posZ, final int range)
     {
         for (int x = posX - range; x < posX + range; x++)
         {

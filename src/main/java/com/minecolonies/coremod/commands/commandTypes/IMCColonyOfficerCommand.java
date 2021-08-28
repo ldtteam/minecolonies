@@ -5,9 +5,9 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.context.CommandContext;
-import net.minecraft.command.CommandSource;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 
 import static com.minecolonies.coremod.commands.CommandArgumentNames.COLONYID_ARG;
 
@@ -20,7 +20,7 @@ public interface IMCColonyOfficerCommand extends IMCCommand
      * Executes pre-checks before issuing the command. Checks for the senders type and OP rights.
      */
     @Override
-    default boolean checkPreCondition(final CommandContext<CommandSource> context)
+    default boolean checkPreCondition(final CommandContext<CommandSourceStack> context)
     {
         if (context.getSource().hasPermission(OP_PERM_LEVEL))
         {
@@ -29,7 +29,7 @@ public interface IMCColonyOfficerCommand extends IMCCommand
 
 
         final Entity sender = context.getSource().getEntity();
-        if (!(sender instanceof PlayerEntity))
+        if (!(sender instanceof Player))
         {
             return false;
         }
@@ -39,12 +39,12 @@ public interface IMCColonyOfficerCommand extends IMCCommand
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getLevel().dimension());
         if (colony == null)
         {
-            LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.colonyidnotfound", colonyID);
+            LanguageHandler.sendPlayerMessage((Player) sender, "com.minecolonies.command.colonyidnotfound", colonyID);
             return false;
         }
 
         // Check colony permissions
-        if (IMCCommand.isPlayerOped((PlayerEntity) sender) || colony.getPermissions().getRank((PlayerEntity) sender).isColonyManager())
+        if (IMCCommand.isPlayerOped((Player) sender) || colony.getPermissions().getRank((Player) sender).isColonyManager())
         {
             return true;
         }

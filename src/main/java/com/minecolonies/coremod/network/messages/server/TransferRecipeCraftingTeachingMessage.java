@@ -4,9 +4,9 @@ import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.api.inventory.container.ContainerCraftingFurnace;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.ItemStackUtils;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.Nullable;
@@ -51,7 +51,7 @@ public class TransferRecipeCraftingTeachingMessage implements IMessage
     }
 
     @Override
-    public void fromBytes(final PacketBuffer buf)
+    public void fromBytes(final FriendlyByteBuf buf)
     {
         itemStacks.clear();
         final int count = buf.readInt();
@@ -63,7 +63,7 @@ public class TransferRecipeCraftingTeachingMessage implements IMessage
     }
 
     @Override
-    public void toBytes(final PacketBuffer buf)
+    public void toBytes(final FriendlyByteBuf buf)
     {
         buf.writeInt(itemStacks.size());
         itemStacks.forEach((slot, stack) ->
@@ -84,7 +84,7 @@ public class TransferRecipeCraftingTeachingMessage implements IMessage
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
-        final PlayerEntity player = ctxIn.getSender();
+        final Player player = ctxIn.getSender();
         if (player.containerMenu instanceof ContainerCrafting)
         {
             final ContainerCrafting container = (ContainerCrafting) player.containerMenu;

@@ -43,14 +43,14 @@ import com.minecolonies.coremod.proxy.CommonProxy;
 import com.minecolonies.coremod.proxy.IProxy;
 import com.minecolonies.coremod.proxy.ServerProxy;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.RenderTypeLookup;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.entity.MinecartRenderer;
-import net.minecraft.client.renderer.entity.TippedArrowRenderer;
-import net.minecraft.client.renderer.texture.AtlasTexture;
-import net.minecraft.entity.ai.attributes.Attribute;
+import net.minecraft.client.renderer.entity.TippableArrowRenderer;
+import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.TextureStitchEvent;
@@ -141,7 +141,7 @@ public class MineColonies
     @OnlyIn(Dist.CLIENT)
     public static void onStitch(final TextureStitchEvent.Pre event)
     {
-        if (!event.getMap().location().equals(AtlasTexture.LOCATION_BLOCKS))
+        if (!event.getMap().location().equals(TextureAtlas.LOCATION_BLOCKS))
         {
             return;
         }
@@ -235,7 +235,7 @@ public class MineColonies
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.VISITOR, RenderBipedCitizen::new);
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.FISHHOOK, RenderFishHook::new);
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.FIREARROW, FireArrowRenderer::new);
-        RenderingRegistry.registerEntityRenderingHandler(ModEntities.MC_NORMAL_ARROW, TippedArrowRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(ModEntities.MC_NORMAL_ARROW, TippableArrowRenderer::new);
 
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.BARBARIAN, RendererBarbarian::new);
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.ARCHERBARBARIAN, RendererBarbarian::new);
@@ -266,13 +266,13 @@ public class MineColonies
         ClientRegistry.bindTileEntityRenderer(MinecoloniesTileEntities.NAMED_GRAVE, TileEntityNamedGraveRenderer::new);
 
         Arrays.stream(ModBlocks.getHuts())
-          .forEach(hut -> RenderTypeLookup.setRenderLayer(hut, renderType -> renderType.equals(RenderType.cutout()) || renderType.equals(RenderType.solid())));
-        RenderTypeLookup.setRenderLayer(ModBlocks.blockScarecrow, RenderType.cutout());
-        RenderTypeLookup.setRenderLayer(ModBlocks.blockRack, RenderType.cutout());
-        RenderTypeLookup.setRenderLayer(ModBlocks.blockDecorationPlaceholder, RenderType.cutout());
-        RenderTypeLookup.setRenderLayer(ModBlocks.blockCompostedDirt, RenderType.cutout());
-        RenderTypeLookup.setRenderLayer(ModBlocks.blockBarrel, RenderType.cutout());
-        RenderTypeLookup.setRenderLayer(ModBlocks.blockWayPoint, RenderType.cutout());
+          .forEach(hut -> ItemBlockRenderTypes.setRenderLayer(hut, renderType -> renderType.equals(RenderType.cutout()) || renderType.equals(RenderType.solid())));
+        ItemBlockRenderTypes.setRenderLayer(ModBlocks.blockScarecrow, RenderType.cutout());
+        ItemBlockRenderTypes.setRenderLayer(ModBlocks.blockRack, RenderType.cutout());
+        ItemBlockRenderTypes.setRenderLayer(ModBlocks.blockDecorationPlaceholder, RenderType.cutout());
+        ItemBlockRenderTypes.setRenderLayer(ModBlocks.blockCompostedDirt, RenderType.cutout());
+        ItemBlockRenderTypes.setRenderLayer(ModBlocks.blockBarrel, RenderType.cutout());
+        ItemBlockRenderTypes.setRenderLayer(ModBlocks.blockWayPoint, RenderType.cutout());
     }
 
     /**

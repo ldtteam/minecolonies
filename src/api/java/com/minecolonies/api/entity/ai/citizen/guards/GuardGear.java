@@ -2,10 +2,10 @@ package com.minecolonies.api.entity.ai.citizen.guards;
 
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.IToolType;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ArmorItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ShieldItem;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ShieldItem;
 import net.minecraft.util.Tuple;
 
 import java.util.function.Predicate;
@@ -48,7 +48,7 @@ public class GuardGear implements Predicate<ItemStack>
     /**
      * Item type that is required.
      */
-    private final EquipmentSlotType type;
+    private final EquipmentSlot type;
 
     /**
      * Tool type that is needed.
@@ -66,7 +66,7 @@ public class GuardGear implements Predicate<ItemStack>
      * @param buildingLevelRange level range that the item will be required.
      */
     public GuardGear(
-      final IToolType item, final EquipmentSlotType type,
+      final IToolType item, final EquipmentSlot type,
       final int minArmorLevel,
       final int maxArmorLevel, final Tuple<Integer, Integer> citizenLevelRange,
       final Tuple<Integer, Integer> buildingLevelRange)
@@ -100,7 +100,7 @@ public class GuardGear implements Predicate<ItemStack>
     /**
      * @return type of the item
      */
-    public EquipmentSlotType getType()
+    public EquipmentSlot getType()
     {
         return type;
     }
@@ -151,6 +151,6 @@ public class GuardGear implements Predicate<ItemStack>
         return
           (ItemStackUtils.hasToolLevel(stack, itemNeeded, minArmorLevel, maxArmorLevel) && stack.getItem() instanceof ArmorItem
              && ((ArmorItem) stack.getItem()).getSlot() == getType())
-            || (stack.getItem() instanceof ShieldItem && getType() == EquipmentSlotType.OFFHAND);
+            || (stack.getItem() instanceof ShieldItem && getType() == EquipmentSlot.OFFHAND);
     }
 }

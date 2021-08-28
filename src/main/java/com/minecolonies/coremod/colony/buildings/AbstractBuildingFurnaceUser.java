@@ -4,15 +4,15 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
-import net.minecraft.block.Block;
-import net.minecraft.block.FurnaceBlock;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.NBTUtil;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.FurnaceBlock;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
@@ -79,33 +79,33 @@ public abstract class AbstractBuildingFurnaceUser extends AbstractBuildingWorker
     }
 
     @Override
-    public void deserializeNBT(final CompoundNBT compound)
+    public void deserializeNBT(final CompoundTag compound)
     {
         super.deserializeNBT(compound);
-        final ListNBT furnaceTagList = compound.getList(TAG_FURNACES, Constants.NBT.TAG_COMPOUND);
+        final ListTag furnaceTagList = compound.getList(TAG_FURNACES, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < furnaceTagList.size(); ++i)
         {
             if(furnaceTagList.getCompound(i).contains(TAG_POS))
             {
-                furnaces.add(NBTUtil.readBlockPos(furnaceTagList.getCompound(i).getCompound(TAG_POS)));
+                furnaces.add(NbtUtils.readBlockPos(furnaceTagList.getCompound(i).getCompound(TAG_POS)));
             }
             if(furnaceTagList.getCompound(i).contains(TAG_POS_COMPAT))
             {
-                furnaces.add(NBTUtil.readBlockPos(furnaceTagList.getCompound(i).getCompound(TAG_POS_COMPAT)));
+                furnaces.add(NbtUtils.readBlockPos(furnaceTagList.getCompound(i).getCompound(TAG_POS_COMPAT)));
             }
         }
     }
 
     @Override
-    public CompoundNBT serializeNBT()
+    public CompoundTag serializeNBT()
     {
-        final CompoundNBT compound = super.serializeNBT();
+        final CompoundTag compound = super.serializeNBT();
 
-        @NotNull final ListNBT furnacesTagList = new ListNBT();
+        @NotNull final ListTag furnacesTagList = new ListTag();
         for (@NotNull final BlockPos entry : furnaces)
         {
-            @NotNull final CompoundNBT furnaceCompound = new CompoundNBT();
-            furnaceCompound.put(TAG_POS, NBTUtil.writeBlockPos(entry));
+            @NotNull final CompoundTag furnaceCompound = new CompoundTag();
+            furnaceCompound.put(TAG_POS, NbtUtils.writeBlockPos(entry));
             furnacesTagList.add(furnaceCompound);
         }
         compound.put(TAG_FURNACES, furnacesTagList);
@@ -114,7 +114,7 @@ public abstract class AbstractBuildingFurnaceUser extends AbstractBuildingWorker
     }
 
     @Override
-    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
+    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final Level world)
     {
         super.registerBlockPosition(block, pos, world);
         if (block instanceof FurnaceBlock && !furnaces.contains(pos))

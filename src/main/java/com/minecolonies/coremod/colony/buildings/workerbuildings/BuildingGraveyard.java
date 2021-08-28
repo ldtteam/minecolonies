@@ -21,14 +21,14 @@ import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.colony.jobs.JobUndertaker;
-import net.minecraft.block.BlockState;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.item.Items;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -121,7 +121,7 @@ public class BuildingGraveyard extends AbstractBuildingWorker implements IBuildi
         {
             if (WorldUtil.isBlockLoaded(colony.getWorld(), currentGrave))
             {
-                final TileEntity tileEntity = getColony().getWorld().getBlockEntity(currentGrave);
+                final BlockEntity tileEntity = getColony().getWorld().getBlockEntity(currentGrave);
                 if (tileEntity instanceof TileEntityGrave)
                 {
                     return currentGrave;
@@ -144,7 +144,7 @@ public class BuildingGraveyard extends AbstractBuildingWorker implements IBuildi
     }
 
     @Override
-    public void deserializeNBT(final CompoundNBT compound)
+    public void deserializeNBT(final CompoundTag compound)
     {
         super.deserializeNBT(compound);
 
@@ -154,10 +154,10 @@ public class BuildingGraveyard extends AbstractBuildingWorker implements IBuildi
         }
 
         visualGravePositions.clear();
-        final ListNBT visualGraveTagList = compound.getList(TAG_VISUAL_GRAVES, Constants.NBT.TAG_COMPOUND);
+        final ListTag visualGraveTagList = compound.getList(TAG_VISUAL_GRAVES, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < visualGraveTagList.size(); ++i)
         {
-            final CompoundNBT graveCompound = visualGraveTagList.getCompound(i);
+            final CompoundTag graveCompound = visualGraveTagList.getCompound(i);
             final BlockPos graveLocation = BlockPosUtil.read(graveCompound, TAG_VISUAL_GRAVES_BLOCKPOS);
             final Direction graveFacing = Direction.byName(graveCompound.getString(TAG_VISUAL_GRAVES_FACING));
             visualGravePositions.add(new Tuple<>(graveLocation, graveFacing));
@@ -165,19 +165,19 @@ public class BuildingGraveyard extends AbstractBuildingWorker implements IBuildi
     }
 
     @Override
-    public CompoundNBT serializeNBT()
+    public CompoundTag serializeNBT()
     {
-        final CompoundNBT compound = super.serializeNBT();
+        final CompoundTag compound = super.serializeNBT();
 
         if (currentGrave != null)
         {
             BlockPosUtil.write(compound, TAG_CURRENT_GRAVE, currentGrave);
         }
 
-        @NotNull final ListNBT visualGraveTagList = new ListNBT();
+        @NotNull final ListTag visualGraveTagList = new ListTag();
         for (@NotNull final Tuple<BlockPos, Direction> vgp : visualGravePositions)
         {
-            @NotNull final CompoundNBT graveCompound = new CompoundNBT();
+            @NotNull final CompoundTag graveCompound = new CompoundTag();
             BlockPosUtil.write(graveCompound, TAG_VISUAL_GRAVES_BLOCKPOS, vgp.getA());
             graveCompound.putString(TAG_VISUAL_GRAVES_FACING, vgp.getB().getName());
             visualGraveTagList.add(graveCompound);
@@ -224,7 +224,7 @@ public class BuildingGraveyard extends AbstractBuildingWorker implements IBuildi
     }
 
     @Override
-    public void registerBlockPosition(@NotNull final BlockState state, @NotNull final BlockPos pos, @NotNull final World world)
+    public void registerBlockPosition(@NotNull final BlockState state, @NotNull final BlockPos pos, @NotNull final Level world)
     {
         super.registerBlockPosition(state, pos, world);
         if (state.getBlock() == ModBlocks.blockNamedGrave)

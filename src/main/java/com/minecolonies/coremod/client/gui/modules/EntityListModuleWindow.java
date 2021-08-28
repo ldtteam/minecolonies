@@ -9,8 +9,8 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.modules.IEntityListModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.client.gui.AbstractModuleWindow;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
@@ -73,7 +73,7 @@ public class EntityListModuleWindow extends AbstractModuleWindow
         super(building, res);
 
         resourceList = window.findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class);
-        window.findPaneOfTypeByID(DESC_LABEL, Text.class).setText(new TranslationTextComponent(moduleView.getDesc().toLowerCase(Locale.US)));
+        window.findPaneOfTypeByID(DESC_LABEL, Text.class).setText(new TranslatableComponent(moduleView.getDesc().toLowerCase(Locale.US)));
         this.building = building;
         this.isInverted = moduleView.isInverted();
         this.id = moduleView.getId();
@@ -129,7 +129,7 @@ public class EntityListModuleWindow extends AbstractModuleWindow
     {
         final int row = resourceList.getListElementIndexByPane(button);
         final ResourceLocation item = currentDisplayedList.get(row);
-        final boolean on = button.getText().equals(new TranslationTextComponent(ON));
+        final boolean on = button.getText().equals(new TranslatableComponent(ON));
         final boolean add = (on && isInverted) || (!on && !isInverted);
         final IEntityListModuleView module = building.getModuleViewMatching(IEntityListModuleView.class, view -> view.getId().equals(id));
 
@@ -231,11 +231,11 @@ public class EntityListModuleWindow extends AbstractModuleWindow
 
                 if ((isInverted && !isAllowedItem) || (!isInverted && isAllowedItem))
                 {
-                    switchButton.setText(new TranslationTextComponent(ON));
+                    switchButton.setText(new TranslatableComponent(ON));
                 }
                 else
                 {
-                    switchButton.setText(new TranslationTextComponent(OFF));
+                    switchButton.setText(new TranslatableComponent(OFF));
                 }
             }
         });

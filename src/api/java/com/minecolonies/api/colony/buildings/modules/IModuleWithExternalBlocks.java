@@ -1,8 +1,8 @@
 package com.minecolonies.api.colony.buildings.modules;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -18,7 +18,7 @@ public interface IModuleWithExternalBlocks extends IBuildingModule
      * @param pos the position.
      * @param world the world.
      */
-    void onBlockPlacedInBuilding(@NotNull BlockState blockState, @NotNull BlockPos pos, @NotNull World world);
+    void onBlockPlacedInBuilding(@NotNull BlockState blockState, @NotNull BlockPos pos, @NotNull Level world);
 
     /**
      * Get the list of registered blocks.

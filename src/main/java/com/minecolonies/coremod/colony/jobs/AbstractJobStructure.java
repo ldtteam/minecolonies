@@ -7,10 +7,10 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import org.jetbrains.annotations.Nullable;
 
 import static com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider.TAG_BLUEPRINTDATA;
@@ -98,9 +98,9 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
     }
 
     @Override
-    public CompoundNBT serializeNBT()
+    public CompoundTag serializeNBT()
     {
-        final CompoundNBT compound = super.serializeNBT();
+        final CompoundTag compound = super.serializeNBT();
         if (workOrderId != 0)
         {
             compound.putInt(TAG_WORK_ORDER, workOrderId);
@@ -110,7 +110,7 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
     }
 
     @Override
-    public void deserializeNBT(final CompoundNBT compound)
+    public void deserializeNBT(final CompoundTag compound)
     {
         super.deserializeNBT(compound);
         if (compound.getAllKeys().contains(TAG_WORK_ORDER))
@@ -126,22 +126,22 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
     {
         getWorkOrder().onCompleted(getCitizen().getColony(), this.getCitizen());
 
-        final CompoundNBT[][][] tileEntityData = blueprint.getTileEntities();
+        final CompoundTag[][][] tileEntityData = blueprint.getTileEntities();
         for (short x = 0; x < blueprint.getSizeX(); x++)
         {
             for (short y = 0; y < blueprint.getSizeY(); y++)
             {
                 for (short z = 0; z < blueprint.getSizeZ(); z++)
                 {
-                    final CompoundNBT compoundNBT = tileEntityData[y][z][x];
+                    final CompoundTag compoundNBT = tileEntityData[y][z][x];
                     if (compoundNBT != null && compoundNBT.contains(TAG_BLUEPRINTDATA))
                     {
                         final BlockPos tePos = getWorkOrder().getSchematicLocation().subtract(blueprint.getPrimaryBlockOffset()).offset(x, y, z);
-                        final TileEntity te = getColony().getWorld().getBlockEntity(tePos);
+                        final BlockEntity te = getColony().getWorld().getBlockEntity(tePos);
                         if (te instanceof IBlueprintDataProvider)
                         {
                             ((IBlueprintDataProvider) te).readSchematicDataFromNBT(compoundNBT);
-                            ((ServerWorld) getColony().getWorld()).getChunkSource().blockChanged(tePos);
+                            ((ServerLevel) getColony().getWorld()).getChunkSource().blockChanged(tePos);
                             te.setChanged();
                         }
                     }

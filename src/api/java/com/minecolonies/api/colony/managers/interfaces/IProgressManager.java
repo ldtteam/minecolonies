@@ -3,8 +3,8 @@ package com.minecolonies.api.colony.managers.interfaces;
 import com.minecolonies.api.colony.ColonyProgressType;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
-import net.minecraft.block.Block;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.NotNull;
 
 public interface IProgressManager
@@ -69,14 +69,14 @@ public interface IProgressManager
      *
      * @param compound the compound to read it from.
      */
-    void read(@NotNull CompoundNBT compound);
+    void read(@NotNull CompoundTag compound);
 
     /**
      * Writes the progress manager to NBT.
      *
      * @param compound the compound to write it to.
      */
-    void write(@NotNull CompoundNBT compound);
+    void write(@NotNull CompoundTag compound);
 
     /**
      * Check if progress should be printed.

@@ -13,10 +13,10 @@ import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.client.gui.WindowRequestDetail;
 import com.minecolonies.coremod.client.gui.citizen.RequestWindowCitizen;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
@@ -35,18 +35,18 @@ public class RequestBasedInteraction extends ServerCitizenInteraction
     private static final String TOKEN_TAG = "token";
 
     @SuppressWarnings("unchecked")
-    private static final Tuple<ITextComponent, ITextComponent>[] tuples = (Tuple<ITextComponent, ITextComponent>[]) new Tuple[] {
-      new Tuple<>(new TranslationTextComponent(INTERACTION_R_OKAY), null),
-      new Tuple<>(new TranslationTextComponent(INTERACTION_R_REMIND), null),
-      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.cancel"), null),
-      new Tuple<>(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.fulfill"), null)};
+    private static final Tuple<Component, Component>[] tuples = (Tuple<Component, Component>[]) new Tuple[] {
+      new Tuple<>(new TranslatableComponent(INTERACTION_R_OKAY), null),
+      new Tuple<>(new TranslatableComponent(INTERACTION_R_REMIND), null),
+      new Tuple<>(new TranslatableComponent("com.minecolonies.coremod.gui.chat.cancel"), null),
+      new Tuple<>(new TranslatableComponent("com.minecolonies.coremod.gui.chat.fulfill"), null)};
 
     @SuppressWarnings("unchecked")
-    private static final Tuple<ITextComponent, ITextComponent>[] tuplesAsync = (Tuple<ITextComponent, ITextComponent>[]) new Tuple[] {
-      new Tuple<>(new TranslationTextComponent(INTERACTION_R_OKAY), null),
-      new Tuple<>(new TranslationTextComponent(INTERACTION_R_IGNORE), null),
-      new Tuple<>(new TranslationTextComponent(INTERACTION_R_REMIND), null),
-      new Tuple<>(new TranslationTextComponent(INTERACTION_R_SKIP), null)};
+    private static final Tuple<Component, Component>[] tuplesAsync = (Tuple<Component, Component>[]) new Tuple[] {
+      new Tuple<>(new TranslatableComponent(INTERACTION_R_OKAY), null),
+      new Tuple<>(new TranslatableComponent(INTERACTION_R_IGNORE), null),
+      new Tuple<>(new TranslatableComponent(INTERACTION_R_REMIND), null),
+      new Tuple<>(new TranslatableComponent(INTERACTION_R_SKIP), null)};
 
     /**
      * The request this is related to.
@@ -67,9 +67,9 @@ public class RequestBasedInteraction extends ServerCitizenInteraction
      * @param validator the validator id.
      */
     public RequestBasedInteraction(
-      final ITextComponent inquiry,
+      final Component inquiry,
       final IChatPriority priority,
-      final ITextComponent validator,
+      final Component validator,
       final IToken<?> token)
     {
         super(inquiry, true, priority, null, validator, priority == ChatPriority.BLOCKING ? tuples : tuplesAsync);
@@ -85,7 +85,7 @@ public class RequestBasedInteraction extends ServerCitizenInteraction
      * @param token    the token this is related to.
      */
     public RequestBasedInteraction(
-      final ITextComponent inquiry,
+      final Component inquiry,
       final IChatPriority priority,
       final IToken<?> token)
     {
@@ -117,15 +117,15 @@ public class RequestBasedInteraction extends ServerCitizenInteraction
     }
 
     @Override
-    public CompoundNBT serializeNBT()
+    public CompoundTag serializeNBT()
     {
-        final CompoundNBT tag = super.serializeNBT();
+        final CompoundTag tag = super.serializeNBT();
         tag.put(TOKEN_TAG, StandardFactoryController.getInstance().serialize(token));
         return tag;
     }
 
     @Override
-    public void deserializeNBT(@NotNull final CompoundNBT compoundNBT)
+    public void deserializeNBT(@NotNull final CompoundTag compoundNBT)
     {
         super.deserializeNBT(compoundNBT);
         this.token = StandardFactoryController.getInstance().deserialize(compoundNBT.getCompound(TOKEN_TAG));
@@ -164,9 +164,9 @@ public class RequestBasedInteraction extends ServerCitizenInteraction
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public boolean onClientResponseTriggered(final ITextComponent response, final PlayerEntity player, final ICitizenDataView data, final Window window)
+    public boolean onClientResponseTriggered(final Component response, final Player player, final ICitizenDataView data, final Window window)
     {
-        if (response.equals(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.fulfill")))
+        if (response.equals(new TranslatableComponent("com.minecolonies.coremod.gui.chat.fulfill")))
         {
             final IColony colony = IColonyManager.getInstance().getColonyView(data.getColonyId(), player.level.dimension());
 
@@ -194,10 +194,10 @@ public class RequestBasedInteraction extends ServerCitizenInteraction
     }
 
     @Override
-    public void onServerResponseTriggered(final ITextComponent response, final PlayerEntity player, final ICitizenData data)
+    public void onServerResponseTriggered(final Component response, final Player player, final ICitizenData data)
     {
         super.onServerResponseTriggered(response, player, data);
-        if (response.equals(new TranslationTextComponent("com.minecolonies.coremod.gui.chat.cancel")) && data.getColony() != null)
+        if (response.equals(new TranslatableComponent("com.minecolonies.coremod.gui.chat.cancel")) && data.getColony() != null)
         {
             data.getColony().getRequestManager().updateRequestState(token, RequestState.CANCELLED);
         }

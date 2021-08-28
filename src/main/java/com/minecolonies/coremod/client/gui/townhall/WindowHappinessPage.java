@@ -6,7 +6,7 @@ import com.ldtteam.blockout.views.View;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 
 import java.util.*;
 
@@ -86,7 +86,7 @@ public class WindowHappinessPage extends AbstractWindowTownHall
             }
             pane.addChild(image);
             pane.addChild(label);
-            PaneBuilders.tooltipBuilder().hoverPane(label).append(new TranslationTextComponent("com.minecolonies.coremod.gui.townhall.happiness.desc." + entry.getKey())).build();
+            PaneBuilders.tooltipBuilder().hoverPane(label).append(new TranslatableComponent("com.minecolonies.coremod.gui.townhall.happiness.desc." + entry.getKey())).build();
 
             yPos += 12;
         }

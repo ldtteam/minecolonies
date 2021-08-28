@@ -14,15 +14,15 @@ import com.minecolonies.coremod.colony.buildings.modules.TavernBuildingModule;
 import com.minecolonies.coremod.entity.SittingEntity;
 import com.minecolonies.coremod.entity.citizen.VisitorCitizen;
 import com.minecolonies.coremod.util.NamedDamageSource;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumSet;
 
-import net.minecraft.entity.ai.goal.Goal.Flag;
+import net.minecraft.world.entity.ai.goal.Goal.Flag;
 
 /**
  * AI for visitors, they do sometimes nap on their place, sit on their place, randomly walk around inside building outline
@@ -134,7 +134,7 @@ public class EntityAIVisitor extends Goal
 
         if (citizen.isWorkerAtSiteWithMove(new BlockPos(target.position()), 2) && citizen.canSee(target))
         {
-            citizen.swing(Hand.MAIN_HAND);
+            citizen.swing(InteractionHand.MAIN_HAND);
             target.hurt(new NamedDamageSource(citizen.getName().getString(), citizen), 10.0f);
         }
 

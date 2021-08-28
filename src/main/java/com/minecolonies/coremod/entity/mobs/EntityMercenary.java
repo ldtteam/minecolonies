@@ -18,28 +18,28 @@ import com.minecolonies.coremod.entity.ai.minimal.EntityAIInteractToggleAble;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.entity.pathfinding.GeneralEntityWalkToProxy;
 import com.minecolonies.coremod.entity.pathfinding.MinecoloniesAdvancedPathNavigate;
-import net.minecraft.block.BlockState;
-import net.minecraft.enchantment.Enchantments;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.entity.*;
-import net.minecraft.entity.ai.attributes.AttributeModifierMap;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
-import net.minecraft.entity.ai.goal.SwimGoal;
-import net.minecraft.entity.monster.IMob;
-import net.minecraft.entity.monster.MonsterEntity;
-import net.minecraft.entity.passive.horse.LlamaEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.monster.Enemy;
+import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.animal.horse.Llama;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.*;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.World;
-import net.minecraft.world.gen.Heightmap;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
@@ -55,11 +55,21 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_TIME;
 import static com.minecolonies.api.util.constant.RaiderConstants.FOLLOW_RANGE;
 import static com.minecolonies.coremod.entity.ai.minimal.EntityAIInteractToggleAble.*;
 
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.EntityDamageSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.npc.Npc;
+
 /**
  * Class for Mercenary entities, which can be spawned to protect the colony
  */
 @SuppressWarnings("PMD.ExcessiveImports")
-public class EntityMercenary extends CreatureEntity implements INPC, IColonyRelated
+public class EntityMercenary extends PathfinderMob implements Npc, IColonyRelated
 {
     /**
      * The minimum time inbetween, in ticks.
@@ -128,16 +138,16 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
      * @param type  the type.
      * @param world the world.
      */
-    public EntityMercenary(final EntityType<EntityMercenary> type, final World world)
+    public EntityMercenary(final EntityType<EntityMercenary> type, final Level world)
     {
         super(type, world);
 
         this.goalSelector = new CustomGoalSelector(this.goalSelector);
         this.targetSelector = new CustomGoalSelector(this.targetSelector);
-        this.goalSelector.addGoal(0, new SwimGoal(this));
+        this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new EntityMercenaryAI(this));
         this.goalSelector.addGoal(4, new EntityAIInteractToggleAble(this, FENCE_TOGGLE, TRAP_TOGGLE, DOOR_TOGGLE));
-        this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, MonsterEntity.class, 10, true, false, e -> e instanceof IMob && !(e instanceof LlamaEntity)));
+        this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, Monster.class, 10, true, false, e -> e instanceof Enemy && !(e instanceof Llama)));
 
         this.forcedLoading = true;
         setCustomNameVisible(true);
@@ -145,21 +155,21 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
 
         final ItemStack mainhand = new ItemStack(Items.GOLDEN_SWORD, 1);
         mainhand.enchant(Enchantments.FIRE_ASPECT, 1);
-        this.setItemSlot(EquipmentSlotType.MAINHAND, mainhand);
+        this.setItemSlot(EquipmentSlot.MAINHAND, mainhand);
 
         final ItemStack helmet = new ItemStack(Items.DIAMOND_HELMET, 1);
         helmet.enchant(Enchantments.ALL_DAMAGE_PROTECTION, 4);
-        this.setItemSlot(EquipmentSlotType.HEAD, helmet);
+        this.setItemSlot(EquipmentSlot.HEAD, helmet);
 
         final ItemStack chest = new ItemStack(Items.GOLDEN_CHESTPLATE, 1);
         chest.enchant(Enchantments.ALL_DAMAGE_PROTECTION, 4);
-        this.setItemSlot(EquipmentSlotType.CHEST, chest);
+        this.setItemSlot(EquipmentSlot.CHEST, chest);
 
         final ItemStack legs = new ItemStack(Items.CHAINMAIL_LEGGINGS, 1);
-        this.setItemSlot(EquipmentSlotType.LEGS, legs);
+        this.setItemSlot(EquipmentSlot.LEGS, legs);
 
         final ItemStack boots = new ItemStack(Items.CHAINMAIL_BOOTS, 1);
-        this.setItemSlot(EquipmentSlotType.FEET, boots);
+        this.setItemSlot(EquipmentSlot.FEET, boots);
 
         this.getAttribute(Attributes.FOLLOW_RANGE).setBaseValue(FOLLOW_RANGE);
         this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(0.3);
@@ -325,7 +335,7 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
     }
 
     @Override
-    public void addAdditionalSaveData(final CompoundNBT compound)
+    public void addAdditionalSaveData(final CompoundTag compound)
     {
         compound.putLong(TAG_TIME, worldTimeAtSpawn);
         compound.putInt(TAG_COLONY_ID, this.colony == null ? 0 : colony.getID());
@@ -333,7 +343,7 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
     }
 
     @Override
-    public void readAdditionalSaveData(final CompoundNBT compound)
+    public void readAdditionalSaveData(final CompoundTag compound)
     {
         worldTimeAtSpawn = compound.getLong(TAG_TIME);
         if (compound.getAllKeys().contains(TAG_COLONY_ID))
@@ -348,9 +358,9 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
     }
 
     @Override
-    public ITextComponent getName()
+    public Component getName()
     {
-        return new StringTextComponent(ENTITY_NAME);
+        return new TextComponent(ENTITY_NAME);
     }
 
     @Override
@@ -363,7 +373,7 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
      * Get the default attributes with their values.
      * @return the attribute modifier map.
      */
-    public static AttributeModifierMap.MutableAttribute getDefaultAttributes()
+    public static AttributeSupplier.Builder getDefaultAttributes()
     {
         return LivingEntity.createLivingAttributes()
                  .add(Attributes.ATTACK_DAMAGE, Attributes.ATTACK_DAMAGE.getDefaultValue())
@@ -403,11 +413,11 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
     @Override
     protected void doPush(final Entity entityIn)
     {
-        if (slapTimer == 0 && entityIn instanceof PlayerEntity)
+        if (slapTimer == 0 && entityIn instanceof Player)
         {
             slapTimer = SLAP_INTERVAL;
             entityIn.hurt(new EntityDamageSource("slap", this), 1.0f);
-            this.swing(Hand.OFF_HAND);
+            this.swing(InteractionHand.OFF_HAND);
         }
 
         if (slapTimer == 0 && entityIn instanceof EntityCitizen && colony != null && ((EntityCitizen) entityIn).isActive())
@@ -417,7 +427,7 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
             final ItemStack stack = handler.extractItem(rand.nextInt(handler.getSlots()), 5, false);
             if (!ItemStackUtils.isEmpty(stack))
             {
-                this.swing(Hand.OFF_HAND);
+                this.swing(InteractionHand.OFF_HAND);
                 LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
                   "com.minecolonies.coremod.mercenary.mercenaryStealCitizen",
                   entityIn.getName().getString(),
@@ -482,7 +492,7 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
      */
     public static void spawnMercenariesInColony(@NotNull final IColony colony)
     {
-        final World world = colony.getWorld();
+        final Level world = colony.getWorld();
 
         if (colony.getMercenaryUseTime() != 0 && world.getGameTime() - colony.getMercenaryUseTime() < TICKS_FOURTY_MIN)
         {
@@ -527,7 +537,7 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
     {
         final Tuple<BlockPos, BlockPos> buildingArea = colony.getBuildingManager().getTownHall().getCorners();
         BlockPos spawn = new BlockPos((buildingArea.getB().getX() + buildingArea.getA().getX()) / 2, 0, buildingArea.getA().getZ());
-        double height = colony.getWorld().getHeight(Heightmap.Type.WORLD_SURFACE, spawn.getX(), spawn.getZ());
+        double height = colony.getWorld().getHeight(Heightmap.Types.WORLD_SURFACE, spawn.getX(), spawn.getZ());
         if (height > buildingArea.getB().getY())
         {
             height = buildingArea.getA().getY() + 1;
@@ -555,7 +565,7 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
      * @param amountOfMercenaries how many we're spawning
      * @return true if enough air
      */
-    private static boolean isValidSpawnForMercenaries(final IWorld world, final BlockPos spawn, final int amountOfMercenaries)
+    private static boolean isValidSpawnForMercenaries(final LevelAccessor world, final BlockPos spawn, final int amountOfMercenaries)
     {
         for (int i = 0; i < amountOfMercenaries; i++)
         {

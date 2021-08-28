@@ -2,15 +2,15 @@ package com.minecolonies.coremod.entity.ai.citizen.herders;
 
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingSwineHerder;
 import com.minecolonies.coremod.colony.jobs.JobSwineHerder;
-import net.minecraft.entity.passive.PigEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
+import net.minecraft.world.entity.animal.Pig;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * The AI behind the {@link JobSwineHerder} for Breeding and Killing Pigs.
  */
-public class EntityAIWorkSwineHerder extends AbstractEntityAIHerder<JobSwineHerder, BuildingSwineHerder, PigEntity>
+public class EntityAIWorkSwineHerder extends AbstractEntityAIHerder<JobSwineHerder, BuildingSwineHerder, Pig>
 {
     /**
      * Max amount of animals per Hut Level.
@@ -60,8 +60,8 @@ public class EntityAIWorkSwineHerder extends AbstractEntityAIHerder<JobSwineHerd
     }
 
     @Override
-    public Class<PigEntity> getAnimalClass()
+    public Class<Pig> getAnimalClass()
     {
-        return PigEntity.class;
+        return Pig.class;
     }
 }

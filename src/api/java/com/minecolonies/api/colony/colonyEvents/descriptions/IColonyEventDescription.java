@@ -1,15 +1,15 @@
 package com.minecolonies.api.colony.colonyEvents.descriptions;
 
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.BlockPos;
 import net.minecraftforge.common.util.INBTSerializable;
 
 /**
  * Description for an event that happened in the colony.
  */
-public interface IColonyEventDescription extends INBTSerializable<CompoundNBT>
+public interface IColonyEventDescription extends INBTSerializable<CompoundTag>
 {
     /**
      * Gets this event types registry id.
@@ -54,12 +54,12 @@ public interface IColonyEventDescription extends INBTSerializable<CompoundNBT>
      * 
      * @param buf the {@link PacketBuffer} to serialize to.
      */
-    void serialize(final PacketBuffer buf);
+    void serialize(final FriendlyByteBuf buf);
 
     /**
      * Deserializes this event from the given {@link PacketBuffer}.
      * 
      * @param buf the {@link PacketBuffer} to deserialize from.
      */
-    void deserialize(final PacketBuffer buf);
+    void deserialize(final FriendlyByteBuf buf);
 }

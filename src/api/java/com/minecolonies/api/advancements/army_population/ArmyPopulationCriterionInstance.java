@@ -1,14 +1,14 @@
 package com.minecolonies.api.advancements.army_population;
 
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.advancements.criterion.CriterionInstance;
-import net.minecraft.advancements.criterion.EntityPredicate;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.advancements.critereon.AbstractCriterionTriggerInstance;
+import net.minecraft.advancements.critereon.EntityPredicate;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * The test instance to check the "population_count" for the "army_population" trigger
  */
-public class ArmyPopulationCriterionInstance extends CriterionInstance
+public class ArmyPopulationCriterionInstance extends AbstractCriterionTriggerInstance
 {
     private final int populationCount;
 
@@ -18,7 +18,7 @@ public class ArmyPopulationCriterionInstance extends CriterionInstance
      */
     public ArmyPopulationCriterionInstance(final int populationCount)
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_ARMY_POPULATION), EntityPredicate.AndPredicate.ANY);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_ARMY_POPULATION), EntityPredicate.Composite.ANY);
 
         this.populationCount = populationCount;
     }

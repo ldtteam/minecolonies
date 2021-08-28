@@ -16,10 +16,10 @@ import com.minecolonies.coremod.colony.jobs.JobSifter;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
 import com.minecolonies.coremod.network.messages.client.LocalizedParticleEffectMessage;
 import com.minecolonies.coremod.util.WorkerUtil;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.network.chat.TranslatableComponent;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -128,17 +128,17 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
                 }
                 if(worker.getCitizenData() != null)
                 {
-                    worker.getCitizenData().triggerInteraction(new StandardInteraction(new TranslationTextComponent(SIFTER_NO_MESH), ChatPriority.IMPORTANT));
+                    worker.getCitizenData().triggerInteraction(new StandardInteraction(new TranslatableComponent(SIFTER_NO_MESH), ChatPriority.IMPORTANT));
                     setDelay(NO_MESH_DELAY);
                 }
             }
             if (!ItemStackUtils.isEmpty(worker.getMainHandItem()))
             {
-                worker.setItemInHand(Hand.MAIN_HAND, ItemStack.EMPTY);
+                worker.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
             }
             if (!ItemStackUtils.isEmpty(worker.getOffhandItem()))
             {
-                worker.setItemInHand(Hand.OFF_HAND, ItemStack.EMPTY);
+                worker.setItemInHand(InteractionHand.OFF_HAND, ItemStack.EMPTY);
             }
 
             progress = 0;
@@ -159,11 +159,11 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
 
         if (!inputItem.isEmpty() && (ItemStackUtils.isEmpty(worker.getMainHandItem()) || ItemStackUtils.compareItemStacksIgnoreStackSize(worker.getMainHandItem(), inputItem)))
         {
-            worker.setItemInHand(Hand.MAIN_HAND, inputItem);
+            worker.setItemInHand(InteractionHand.MAIN_HAND, inputItem);
         }
         if (!meshItem.isEmpty() && (ItemStackUtils.isEmpty(worker.getOffhandItem()) || ItemStackUtils.compareItemStacksIgnoreStackSize(worker.getOffhandItem(), meshItem, false, true)))
         {
-            worker.setItemInHand(Hand.OFF_HAND, meshItem);
+            worker.setItemInHand(InteractionHand.OFF_HAND, meshItem);
         }
 
         WorkerUtil.faceBlock(getOwnBuilding().getPosition(), worker);
@@ -193,7 +193,7 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
         Network.getNetwork()
             .sendToTrackingEntity(new LocalizedParticleEffectMessage(inputItem, sifterBuilding.getID().below()), worker);
         
-        worker.swing(Hand.MAIN_HAND);
+        worker.swing(InteractionHand.MAIN_HAND);
         SoundUtils.playSoundAtCitizen(world, getOwnBuilding().getID(), SoundEvents.LEASH_KNOT_BREAK);
         return getState();
     }

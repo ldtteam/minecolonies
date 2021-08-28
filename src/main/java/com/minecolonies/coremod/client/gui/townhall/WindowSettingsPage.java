@@ -11,9 +11,9 @@ import com.minecolonies.coremod.client.gui.WindowBannerPicker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.network.messages.server.colony.*;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.TranslatableComponent;
 import org.jetbrains.annotations.NotNull;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -92,7 +92,7 @@ public class WindowSettingsPage extends AbstractWindowTownHall
         colorDropDownList = findPaneOfTypeByID(DROPDOWN_COLOR_ID, DropDownList.class);
         colorDropDownList.setHandler(this::onDropDownListChanged);
 
-        final List<TextFormatting> textColors = Arrays.stream(TextFormatting.values()).filter(TextFormatting::isColor).collect(Collectors.toList());
+        final List<ChatFormatting> textColors = Arrays.stream(ChatFormatting.values()).filter(ChatFormatting::isColor).collect(Collectors.toList());
 
         colorDropDownList.setDataProvider(new DropDownList.DataProvider()
         {
@@ -310,7 +310,7 @@ public class WindowSettingsPage extends AbstractWindowTownHall
         {
             pane.disable();
             AbstractTextBuilder.TooltipBuilder hoverText = PaneBuilders.tooltipBuilder().hoverPane(pane);
-            hoverText.append(new TranslationTextComponent("com.minecolonies.core.townhall.patreon")).paragraphBreak();
+            hoverText.append(new TranslatableComponent("com.minecolonies.core.townhall.patreon")).paragraphBreak();
             hoverText.build();
         }
     }

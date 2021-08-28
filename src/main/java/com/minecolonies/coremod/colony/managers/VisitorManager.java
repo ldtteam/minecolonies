@@ -13,12 +13,12 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.VisitorData;
 import com.minecolonies.coremod.entity.citizen.VisitorCitizen;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyVisitorViewDataMessage;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
@@ -110,15 +110,15 @@ public class VisitorManager implements IVisitorManager
     }
 
     @Override
-    public void read(@NotNull final CompoundNBT compound)
+    public void read(@NotNull final CompoundTag compound)
     {
         if (compound.contains(TAG_VISIT_MANAGER))
         {
-            final CompoundNBT visitorManagerNBT = compound.getCompound(TAG_VISIT_MANAGER);
-            final ListNBT citizenList = visitorManagerNBT.getList(TAG_VISITORS, Constants.NBT.TAG_COMPOUND);
-            for (final INBT citizen : citizenList)
+            final CompoundTag visitorManagerNBT = compound.getCompound(TAG_VISIT_MANAGER);
+            final ListTag citizenList = visitorManagerNBT.getList(TAG_VISITORS, Constants.NBT.TAG_COMPOUND);
+            for (final Tag citizen : citizenList)
             {
-                final IVisitorData data = VisitorData.loadVisitorFromNBT(colony, (CompoundNBT) citizen);
+                final IVisitorData data = VisitorData.loadVisitorFromNBT(colony, (CompoundTag) citizen);
                 visitorMap.put(data.getId(), data);
             }
 
@@ -128,11 +128,11 @@ public class VisitorManager implements IVisitorManager
     }
 
     @Override
-    public void write(@NotNull final CompoundNBT compoundNBT)
+    public void write(@NotNull final CompoundTag compoundNBT)
     {
-        final CompoundNBT visitorManagerNBT = new CompoundNBT();
+        final CompoundTag visitorManagerNBT = new CompoundTag();
 
-        final ListNBT citizenList = new ListNBT();
+        final ListTag citizenList = new ListTag();
         for (Map.Entry<Integer, IVisitorData> entry : visitorMap.entrySet())
         {
             citizenList.add(entry.getValue().serializeNBT());
@@ -144,9 +144,9 @@ public class VisitorManager implements IVisitorManager
     }
 
     @Override
-    public void sendPackets(@NotNull final Set<ServerPlayerEntity> closeSubscribers, @NotNull final Set<ServerPlayerEntity> newSubscribers)
+    public void sendPackets(@NotNull final Set<ServerPlayer> closeSubscribers, @NotNull final Set<ServerPlayer> newSubscribers)
     {
-        Set<ServerPlayerEntity> players = new HashSet<>(newSubscribers);
+        Set<ServerPlayer> players = new HashSet<>(newSubscribers);
         players.addAll(closeSubscribers);
         Set<IVisitorData> toSend = new HashSet<>();
         boolean refresh = !newSubscribers.isEmpty() || this.isDirty;
@@ -179,7 +179,7 @@ public class VisitorManager implements IVisitorManager
 
         final ColonyVisitorViewDataMessage message = new ColonyVisitorViewDataMessage(colony, toSend, refresh);
 
-        for (final ServerPlayerEntity player : players)
+        for (final ServerPlayer player : players)
         {
             Network.getNetwork().sendToPlayer(message, player);
         }
@@ -205,7 +205,7 @@ public class VisitorManager implements IVisitorManager
     }
 
     @Override
-    public IVisitorData spawnOrCreateCivilian(ICivilianData data, final World world, final BlockPos spawnPos, final boolean force)
+    public IVisitorData spawnOrCreateCivilian(ICivilianData data, final Level world, final BlockPos spawnPos, final boolean force)
     {
         if (!WorldUtil.isEntityBlockLoaded(world, spawnPos))
         {

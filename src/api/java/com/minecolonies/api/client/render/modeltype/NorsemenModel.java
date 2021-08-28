@@ -1,12 +1,12 @@
 package com.minecolonies.api.client.render.modeltype;
 
 import com.minecolonies.api.entity.mobs.vikings.AbstractEntityNorsemen;
-import net.minecraft.client.renderer.entity.model.BipedModel;
+import net.minecraft.client.model.HumanoidModel;
 
 /**
  * Norsemen model.
  */
-public class NorsemenModel extends BipedModel<AbstractEntityNorsemen>
+public class NorsemenModel extends HumanoidModel<AbstractEntityNorsemen>
 {
     /**
      * Create a model of a specific size.

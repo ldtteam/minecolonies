@@ -17,24 +17,24 @@ import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.barbarianEvent.Horde;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipBasedRaiderUtils;
 import com.minecolonies.coremod.network.messages.client.PlayAudioMessage;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.pathfinding.Path;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.BossInfo;
-import net.minecraft.world.server.ServerBossInfo;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.world.level.pathfinder.Path;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.BossEvent;
+import net.minecraft.server.level.ServerBossEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -73,7 +73,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
     /**
      * The raids visual raidbar
      */
-    protected final ServerBossInfo raidBar = new ServerBossInfo(new StringTextComponent("Colony Raid"), BossInfo.Color.RED, BossInfo.Overlay.NOTCHED_10);
+    protected final ServerBossEvent raidBar = new ServerBossEvent(new TextComponent("Colony Raid"), BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.NOTCHED_10);
 
     /**
      * The references to living raiders left
@@ -343,7 +343,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
           colony.getImportantMessageEntityPlayers(),
           RAID_EVENT_MESSAGE + horde.getMessageID(), BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint), colony.getName());
 
-        PlayAudioMessage audio = new PlayAudioMessage(horde.initialSize <= SMALL_HORDE_SIZE ? RaidSounds.WARNING_EARLY : RaidSounds.WARNING, SoundCategory.RECORDS);
+        PlayAudioMessage audio = new PlayAudioMessage(horde.initialSize <= SMALL_HORDE_SIZE ? RaidSounds.WARNING_EARLY : RaidSounds.WARNING, SoundSource.RECORDS);
         PlayAudioMessage.sendToAll(getColony(), false, false, audio);
     }
 
@@ -363,10 +363,10 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
     protected void updateRaidBar()
     {
         final String directionName = BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint);
-        raidBar.setName(getDisplayName().append(new StringTextComponent(" - " + directionName)));
-        for (final PlayerEntity player : colony.getPackageManager().getCloseSubscribers())
+        raidBar.setName(getDisplayName().append(new TextComponent(" - " + directionName)));
+        for (final Player player : colony.getPackageManager().getCloseSubscribers())
         {
-            raidBar.addPlayer((ServerPlayerEntity) player);
+            raidBar.addPlayer((ServerPlayer) player);
         }
         raidBar.setVisible(true);
     }
@@ -376,7 +376,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
      *
      * @return
      */
-    protected abstract IFormattableTextComponent getDisplayName();
+    protected abstract MutableComponent getDisplayName();
 
     @Override
     public void onUpdate()
@@ -434,7 +434,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
 
             if (colony.getRaiderManager().areSpiesEnabled())
             {
-                ((LivingEntity) entity).addEffect(new EffectInstance(Effects.GLOWING, 550));
+                ((LivingEntity) entity).addEffect(new MobEffectInstance(MobEffects.GLOWING, 550));
             }
         }
     }
@@ -459,7 +459,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
         {
             LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), LanguageHandler.translateKey(ALL_BARBARIANS_KILLED_MESSAGE), colony.getName());
 
-            PlayAudioMessage audio = new PlayAudioMessage(horde.initialSize <= SMALL_HORDE_SIZE ? RaidSounds.VICTORY_EARLY : RaidSounds.VICTORY, SoundCategory.RECORDS);
+            PlayAudioMessage audio = new PlayAudioMessage(horde.initialSize <= SMALL_HORDE_SIZE ? RaidSounds.VICTORY_EARLY : RaidSounds.VICTORY, SoundSource.RECORDS);
             PlayAudioMessage.sendToAll(getColony(), false, true, audio);
 
             if (colony.getRaiderManager().getLostCitizen() == 0)
@@ -474,16 +474,16 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
     }
 
     @Override
-    public CompoundNBT serializeNBT()
+    public CompoundTag serializeNBT()
     {
-        CompoundNBT compound = new CompoundNBT();
+        CompoundTag compound = new CompoundTag();
         compound.putInt(TAG_EVENT_ID, id);
         BlockPosUtil.write(compound, TAG_SPAWN_POS, spawnPoint);
-        ListNBT campFiresNBT = new ListNBT();
+        ListTag campFiresNBT = new ListTag();
 
         for (final BlockPos pos : campFires)
         {
-            campFiresNBT.add(BlockPosUtil.write(new CompoundNBT(), NbtTagConstants.TAG_POS, pos));
+            campFiresNBT.add(BlockPosUtil.write(new CompoundTag(), NbtTagConstants.TAG_POS, pos));
         }
 
         compound.put(TAG_CAMPFIRE_LIST, campFiresNBT);
@@ -494,15 +494,15 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
     }
 
     @Override
-    public void deserializeNBT(final CompoundNBT compound)
+    public void deserializeNBT(final CompoundTag compound)
     {
         id = compound.getInt(TAG_EVENT_ID);
         setHorde(Horde.loadFromNbt(compound));
         spawnPoint = BlockPosUtil.read(compound, TAG_SPAWN_POS);
 
-        for (final INBT posCompound : compound.getList(TAG_CAMPFIRE_LIST, TAG_COMPOUND))
+        for (final Tag posCompound : compound.getList(TAG_CAMPFIRE_LIST, TAG_COMPOUND))
         {
-            campFires.add(BlockPosUtil.read((CompoundNBT) posCompound, NbtTagConstants.TAG_POS));
+            campFires.add(BlockPosUtil.read((CompoundTag) posCompound, NbtTagConstants.TAG_POS));
         }
 
         status = EventStatus.values()[compound.getInt(TAG_EVENT_STATUS)];

@@ -10,10 +10,10 @@ import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
 import com.minecolonies.coremod.util.TeleportHelper;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.BlockPos;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.Optional;
@@ -34,13 +34,13 @@ public class RecallCitizenMessage extends AbstractBuildingServerMessage<IBuildin
     }
 
     @Override
-    protected void toBytesOverride(final PacketBuffer buf)
+    protected void toBytesOverride(final FriendlyByteBuf buf)
     {
 
     }
 
     @Override
-    protected void fromBytesOverride(final PacketBuffer buf)
+    protected void fromBytesOverride(final FriendlyByteBuf buf)
     {
 
     }
@@ -86,7 +86,7 @@ public class RecallCitizenMessage extends AbstractBuildingServerMessage<IBuildin
             final BlockPos loc = building.getPosition();
             if (optionalEntityCitizen.isPresent() && !TeleportHelper.teleportCitizen(optionalEntityCitizen.get(), colony.getWorld(), loc))
             {
-                final PlayerEntity player = ctxIn.getSender();
+                final Player player = ctxIn.getSender();
                 if (player == null)
                 {
                     return;

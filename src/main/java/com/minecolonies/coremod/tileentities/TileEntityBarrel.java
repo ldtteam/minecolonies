@@ -9,17 +9,17 @@ import com.minecolonies.api.tileentities.AbstractTileEntityBarrel;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.WorldUtil;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SUpdateTileEntityPacket;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.Connection;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -59,7 +59,7 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel
     @Override
     public void tick()
     {
-        final World world = this.getLevel();
+        final Level world = this.getLevel();
 
         if (!world.isClientSide && (world.getGameTime() % (world.random.nextInt(AVERAGE_TICKS * 2) + 1) == 0))
         {
@@ -75,7 +75,7 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel
      * @param state   the state of the block
      * @param rand    Random class
      */
-    public void updateTick(final World worldIn, final BlockPos pos, final BlockState state, final Random rand)
+    public void updateTick(final Level worldIn, final BlockPos pos, final BlockState state, final Random rand)
     {
         if (getItems() == AbstractTileEntityBarrel.MAX_ITEMS)
         {
@@ -83,14 +83,14 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel
         }
         if (this.done)
         {
-            ((ServerWorld) worldIn).sendParticles(
+            ((ServerLevel) worldIn).sendParticles(
               ParticleTypes.HAPPY_VILLAGER, this.getBlockPos().getX() + 0.5,
               this.getBlockPos().getY() + 1.5, this.getBlockPos().getZ() + 0.5,
               1, 0.2, 0, 0.2, 0);
         }
     }
 
-    private void doBarrelCompostTick(final World worldIn, final BlockPos pos, final BlockState blockState)
+    private void doBarrelCompostTick(final Level worldIn, final BlockPos pos, final BlockState blockState)
     {
         timer++;
         if (timer >= TIMER_END / AVERAGE_TICKS)
@@ -109,7 +109,7 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel
      * @param itemstack the itemStack on the hand of the player
      * @return if the barrel took any item
      */
-    public boolean useBarrel(final PlayerEntity playerIn, final ItemStack itemstack)
+    public boolean useBarrel(final Player playerIn, final ItemStack itemstack)
     {
         if (done)
         {
@@ -126,7 +126,7 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel
 
         if (items == AbstractTileEntityBarrel.MAX_ITEMS)
         {
-            playerIn.sendMessage(new TranslationTextComponent("entity.barrel.working"), playerIn.getUUID());
+            playerIn.sendMessage(new TranslatableComponent("entity.barrel.working"), playerIn.getUUID());
             return false;
         }
         else
@@ -169,7 +169,7 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel
      *
      * @param worldIn the world
      */
-    public void updateBlock(final World worldIn)
+    public void updateBlock(final Level worldIn)
     {
         final BlockState barrel = level.getBlockState(worldPosition);
         if (barrel.getBlock() == ModBlocks.blockBarrel)
@@ -180,7 +180,7 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel
     }
 
     @Override
-    public CompoundNBT save(final CompoundNBT compound)
+    public CompoundTag save(final CompoundTag compound)
     {
         super.save(compound);
 
@@ -192,7 +192,7 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel
     }
 
     @Override
-    public void load(final BlockState state, final CompoundNBT compound)
+    public void load(final BlockState state, final CompoundTag compound)
     {
         super.load(state, compound);
         this.items = compound.getInt("items");
@@ -201,24 +201,24 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel
     }
 
     @Override
-    public SUpdateTileEntityPacket getUpdatePacket()
+    public ClientboundBlockEntityDataPacket getUpdatePacket()
     {
-        final CompoundNBT compound = new CompoundNBT();
+        final CompoundTag compound = new CompoundTag();
         this.save(compound);
-        return new SUpdateTileEntityPacket(this.worldPosition, 0, compound);
+        return new ClientboundBlockEntityDataPacket(this.worldPosition, 0, compound);
     }
 
     @NotNull
     @Override
-    public CompoundNBT getUpdateTag()
+    public CompoundTag getUpdateTag()
     {
-        return save(new CompoundNBT());
+        return save(new CompoundTag());
     }
 
     @Override
-    public void onDataPacket(final NetworkManager net, final SUpdateTileEntityPacket packet)
+    public void onDataPacket(final Connection net, final ClientboundBlockEntityDataPacket packet)
     {
-        final CompoundNBT compound = packet.getTag();
+        final CompoundTag compound = packet.getTag();
         this.load(getBlockState(), compound);
         setChanged();
     }
@@ -230,7 +230,7 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel
     }
 
     @Override
-    public final void handleUpdateTag(final BlockState state, final CompoundNBT tag)
+    public final void handleUpdateTag(final BlockState state, final CompoundTag tag)
     {
         this.items = tag.getInt("items");
         this.timer = tag.getInt("timer");

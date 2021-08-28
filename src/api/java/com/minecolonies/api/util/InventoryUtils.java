@@ -8,20 +8,20 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.constant.IToolType;
-import net.minecraft.block.Block;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.Food;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.ChestTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.ChestBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.IItemHandler;
 
@@ -731,18 +731,18 @@ public class InventoryUtils
     public static int hasBuildingEnoughElseCount(@NotNull final IBuilding provider, @NotNull final ItemStorage stack, final int count)
     {
         int totalCount = 0;
-        final World world = provider.getColony().getWorld();
+        final Level world = provider.getColony().getWorld();
 
         for (final BlockPos pos : provider.getContainers())
         {
             if (WorldUtil.isBlockLoaded(world, pos))
             {
-                final TileEntity entity = world.getBlockEntity(pos);
+                final BlockEntity entity = world.getBlockEntity(pos);
                 if (entity instanceof TileEntityRack)
                 {
                     totalCount += ((TileEntityRack) entity).getCount(stack);
                 }
-                else if (entity instanceof ChestTileEntity)
+                else if (entity instanceof ChestBlockEntity)
                 {
                     totalCount += getItemCountInProvider(entity, itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack.getItemStack(), !stack.ignoreDamageValue(), !stack.ignoreNBT() ));
                 }
@@ -786,18 +786,18 @@ public class InventoryUtils
     public static int getCountFromBuilding(@NotNull final IBuilding provider, @NotNull final ItemStorage stack)
     {
         int totalCount = 0;
-        final World world = provider.getColony().getWorld();
+        final Level world = provider.getColony().getWorld();
 
         for (final BlockPos pos : provider.getContainers())
         {
             if (WorldUtil.isBlockLoaded(world, pos))
             {
-                final TileEntity entity = world.getBlockEntity(pos);
+                final BlockEntity entity = world.getBlockEntity(pos);
                 if (entity instanceof TileEntityRack)
                 {
                     totalCount += ((TileEntityRack) entity).getCount(stack);
                 }
-                else if (entity instanceof ChestTileEntity)
+                else if (entity instanceof ChestBlockEntity)
                 {
                     totalCount += getItemCountInProvider(entity, itemStack -> itemStack.sameItem(stack.getItemStack()));
                 }
@@ -817,18 +817,18 @@ public class InventoryUtils
     public static int getCountFromBuilding(@NotNull final IBuilding provider, @NotNull final Predicate<ItemStack> predicate)
     {
         int totalCount = 0;
-        final World world = provider.getColony().getWorld();
+        final Level world = provider.getColony().getWorld();
 
         for (final BlockPos pos : provider.getContainers())
         {
             if (WorldUtil.isBlockLoaded(world, pos))
             {
-                final TileEntity entity = world.getBlockEntity(pos);
+                final BlockEntity entity = world.getBlockEntity(pos);
                 if (entity instanceof TileEntityRack)
                 {
                     totalCount += ((TileEntityRack) entity).getItemCount(predicate);
                 }
-                else if (entity instanceof ChestTileEntity)
+                else if (entity instanceof ChestBlockEntity)
                 {
                     totalCount += getItemCountInProvider(entity, predicate);
                 }
@@ -2373,7 +2373,7 @@ public class InventoryUtils
      * @param y       the y pos.
      * @param z       the z pos.
      */
-    public static void dropItemHandler(final IItemHandler handler, final World world, final int x, final int y, final int z)
+    public static void dropItemHandler(final IItemHandler handler, final Level world, final int x, final int y, final int z)
     {
         for (int i = 0; i < handler.getSlots(); ++i)
         {
@@ -2420,7 +2420,7 @@ public class InventoryUtils
      * @param z       the z pos.
      * @param stack   the stack to drop.
      */
-    public static void spawnItemStack(final World worldIn, final double x, final double y, final double z, final ItemStack stack)
+    public static void spawnItemStack(final Level worldIn, final double x, final double y, final double z, final ItemStack stack)
     {
         final Random random = new Random();
         final double spawnX = random.nextDouble() * SPAWN_MODIFIER + SPAWN_ADDITION;
@@ -2874,7 +2874,7 @@ public class InventoryUtils
                 if (!ItemStackUtils.isEmpty(stack) && foodPredicate.test(stack))
                 {
                     // Found food
-                    final Food itemFood = stack.getItem().getFoodProperties();
+                    final FoodProperties itemFood = stack.getItem().getFoodProperties();
                     if (itemFood == null)
                     {
                         continue;
@@ -2929,9 +2929,9 @@ public class InventoryUtils
      * @param player player entity
      * @return true if item was put into player's inv, false if dropped
      */
-    public static boolean putItemToHotbarAndSelectOrDrop(final ItemStack itemStack, final PlayerEntity player)
+    public static boolean putItemToHotbarAndSelectOrDrop(final ItemStack itemStack, final Player player)
     {
-        final PlayerInventory playerInv = player.inventory;
+        final Inventory playerInv = player.inventory;
 
         final int emptySlot = playerInv.getFreeSlot();
         if (emptySlot == -1) // try full inv first
@@ -2966,7 +2966,7 @@ public class InventoryUtils
      * @param player player entity
      * @return true if item was put into player's inv, false if dropped
      */
-    public static boolean putItemToHotbarAndSelectOrDropMessage(final ItemStack itemStack, final PlayerEntity player)
+    public static boolean putItemToHotbarAndSelectOrDropMessage(final ItemStack itemStack, final Player player)
     {
         final boolean result = putItemToHotbarAndSelectOrDrop(itemStack, player);
 
@@ -2974,7 +2974,7 @@ public class InventoryUtils
         {
             player.sendMessage(itemStack.getHoverName()
                 .copy()
-                .append(new TranslationTextComponent("com.minecolonies.coremod.playerinvfull.hotbarinsert")), player.getUUID());
+                .append(new TranslatableComponent("com.minecolonies.coremod.playerinvfull.hotbarinsert")), player.getUUID());
         }
         return result;
     }
@@ -2990,18 +2990,18 @@ public class InventoryUtils
      * @return itemstack in hotbar or dropped in front of player
      */
     public static ItemStack getOrCreateItemAndPutToHotbarAndSelectOrDrop(final Item item,
-        final PlayerEntity player,
+        final Player player,
         final Supplier<ItemStack> itemStackFactory,
         final boolean messageOnDrop)
     {
-        final PlayerInventory playerInv = player.inventory;
+        final Inventory playerInv = player.inventory;
 
         for (int slot = 0; slot < playerInv.items.size(); slot++)
         {
             final ItemStack itemSlot = playerInv.getItem(slot);
             if (itemSlot.getItem() == item)
             {
-                if (!PlayerInventory.isHotbarSlot(slot))
+                if (!Inventory.isHotbarSlot(slot))
                 {
                     playerInv.pickSlot(slot);
                 }
@@ -3032,11 +3032,11 @@ public class InventoryUtils
      *
      * @param player player to sync
      */
-    private static void updateHeldItemFromServer(final PlayerEntity player)
+    private static void updateHeldItemFromServer(final Player player)
     {
-        if (player instanceof ServerPlayerEntity)
+        if (player instanceof ServerPlayer)
         {
-            ((ServerPlayerEntity) player).server.getPlayerList().sendAllPlayerInfo((ServerPlayerEntity) player);
+            ((ServerPlayer) player).server.getPlayerList().sendAllPlayerInfo((ServerPlayer) player);
         }
     }
 
@@ -3047,7 +3047,7 @@ public class InventoryUtils
      * @param count the count.
      * @return true if enough.
      */
-    public static boolean hasEnoughInProvider(final TileEntity entity, final ItemStack stack, final int count)
+    public static boolean hasEnoughInProvider(final BlockEntity entity, final ItemStack stack, final int count)
     {
         if (entity instanceof TileEntityColonyBuilding)
         {

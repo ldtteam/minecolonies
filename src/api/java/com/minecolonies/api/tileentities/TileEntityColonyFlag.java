@@ -6,16 +6,16 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.items.ModItems;
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.block.BlockState;
-import net.minecraft.item.DyeColor;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SUpdateTileEntityPacket;
-import net.minecraft.tileentity.BannerPattern;
-import net.minecraft.tileentity.BannerTileEntity;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.network.Connection;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.level.block.entity.BannerPattern;
+import net.minecraft.world.level.block.entity.BannerBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -23,13 +23,13 @@ import java.util.List;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
-public class TileEntityColonyFlag extends TileEntity
+public class TileEntityColonyFlag extends BlockEntity
 {
     /** The last known flag. Required for when the colony is not available. */
-    private ListNBT flag = new ListNBT();
+    private ListTag flag = new ListTag();
 
     /** A list of the default banner patterns, for colonies that have not chosen a flag */
-    private ListNBT patterns = new ListNBT();
+    private ListTag patterns = new ListTag();
 
     /** The colony of the player that placed this banner */
     public int colonyId = -1;
@@ -37,7 +37,7 @@ public class TileEntityColonyFlag extends TileEntity
     public TileEntityColonyFlag () { super(MinecoloniesTileEntities.COLONY_FLAG); }
 
     @Override
-    public CompoundNBT save(CompoundNBT compound)
+    public CompoundTag save(CompoundTag compound)
     {
         super.save(compound);
 
@@ -50,7 +50,7 @@ public class TileEntityColonyFlag extends TileEntity
     }
 
     @Override
-    public void load(final BlockState state, CompoundNBT compound)
+    public void load(final BlockState state, CompoundTag compound)
     {
         super.load(state, compound);
 
@@ -70,18 +70,18 @@ public class TileEntityColonyFlag extends TileEntity
     }
 
     @Override
-    public SUpdateTileEntityPacket getUpdatePacket()
+    public ClientboundBlockEntityDataPacket getUpdatePacket()
     {
-        return new SUpdateTileEntityPacket(this.worldPosition, 6, this.getUpdateTag());
+        return new ClientboundBlockEntityDataPacket(this.worldPosition, 6, this.getUpdateTag());
     }
 
     @Override
-    public CompoundNBT getUpdateTag() { return this.save(new CompoundNBT()); }
+    public CompoundTag getUpdateTag() { return this.save(new CompoundTag()); }
 
     @Override
-    public void onDataPacket(final NetworkManager net, final SUpdateTileEntityPacket packet)
+    public void onDataPacket(final Connection net, final ClientboundBlockEntityDataPacket packet)
     {
-        final CompoundNBT compound = packet.getTag();
+        final CompoundTag compound = packet.getTag();
         this.load(getBlockState(), compound);
     }
 
@@ -103,7 +103,7 @@ public class TileEntityColonyFlag extends TileEntity
             }
         }
 
-        return BannerTileEntity.createPatterns(
+        return BannerBlockEntity.createPatterns(
                 DyeColor.WHITE,
                 this.flag.size() > 1 ? this.flag : this.patterns
         );
@@ -118,11 +118,11 @@ public class TileEntityColonyFlag extends TileEntity
     {
         ItemStack itemstack = new ItemStack(ModBlocks.blockColonyBanner);
         List<Pair<BannerPattern, DyeColor>> list = getPatternList();
-        ListNBT nbt = new ListNBT();
+        ListTag nbt = new ListTag();
 
         for (Pair<BannerPattern, DyeColor> pair : list)
         {
-            CompoundNBT pairNBT = new CompoundNBT();
+            CompoundTag pairNBT = new CompoundTag();
             pairNBT.putString(TAG_SINGLE_PATTERN, pair.getFirst().getHashname());
             pairNBT.putInt(TAG_PATTERN_COLOR, pair.getSecond().getId());
             nbt.add(pairNBT);

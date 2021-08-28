@@ -9,11 +9,11 @@ import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingT
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.sounds.MercenarySounds;
 import com.minecolonies.api.util.*;
-import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.EntityDamageSource;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.damagesource.EntityDamageSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.core.BlockPos;
 import net.minecraftforge.items.IItemHandler;
 
 import java.util.*;
@@ -162,7 +162,7 @@ public class EntityMercenaryAI extends Goal
 
                     if (!ItemStackUtils.isEmpty(stack))
                     {
-                        entity.swing(Hand.OFF_HAND);
+                        entity.swing(InteractionHand.OFF_HAND);
                         LanguageHandler.sendPlayersMessage(entity.getColony().getMessagePlayerEntities(),
                           "com.minecolonies.coremod.mercenary.stealBuilding",
                           stack.getHoverName().getString());
@@ -233,7 +233,7 @@ public class EntityMercenaryAI extends Goal
         // Check if we can attack
         if (distance < MELEE_ATTACK_DIST && attacktimer == 0)
         {
-            entity.swing(Hand.MAIN_HAND);
+            entity.swing(InteractionHand.MAIN_HAND);
             entity.playSound(MercenarySounds.mercenaryAttack, 0.55f, 1.0f);
             entity.getTarget().hurt(new EntityDamageSource(entity.getType().getDescriptionId(), entity), 15);
             entity.getTarget().setSecondsOnFire(3);

@@ -1,14 +1,14 @@
 package com.minecolonies.coremod.client.render.mobs.barbarians;
 
 import com.minecolonies.api.entity.mobs.barbarians.AbstractEntityBarbarian;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.client.renderer.entity.model.BipedModel;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * Renderer used for Chief Barbarians.
  */
-public class RendererChiefBarbarian extends AbstractRendererBarbarian<AbstractEntityBarbarian, BipedModel<AbstractEntityBarbarian>>
+public class RendererChiefBarbarian extends AbstractRendererBarbarian<AbstractEntityBarbarian, HumanoidModel<AbstractEntityBarbarian>>
 {
     /**
      * Texture of the entity.
@@ -20,9 +20,9 @@ public class RendererChiefBarbarian extends AbstractRendererBarbarian<AbstractEn
      *
      * @param renderManagerIn the renderManager
      */
-    public RendererChiefBarbarian(final EntityRendererManager renderManagerIn)
+    public RendererChiefBarbarian(final EntityRenderDispatcher renderManagerIn)
     {
-        super(renderManagerIn, new BipedModel<>(0.0F), 0.5F);
+        super(renderManagerIn, new HumanoidModel<>(0.0F), 0.5F);
     }
 
     @Override

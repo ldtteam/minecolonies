@@ -11,10 +11,10 @@ import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import net.minecraft.command.CommandSource;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.BlockPos;
 
 import static com.minecolonies.api.util.constant.ColonyManagerConstants.UNABLE_TO_FIND_WORLD_CAP_TEXT;
 import static com.minecolonies.api.util.constant.Constants.CHUNKS_TO_CLAIM_THRESHOLD;
@@ -29,11 +29,11 @@ public class CommandClaimChunks implements IMCOPCommand
      * @param context the context of the command execution
      */
     @Override
-    public int onExecute(final CommandContext<CommandSource> context)
+    public int onExecute(final CommandContext<CommandSourceStack> context)
     {
         final Entity sender = context.getSource().getEntity();
 
-        if (!(sender instanceof PlayerEntity))
+        if (!(sender instanceof Player))
         {
             return 0;
         }
@@ -45,7 +45,7 @@ public class CommandClaimChunks implements IMCOPCommand
         final int range = IntegerArgumentType.getInteger(context, RANGE_ARG);
         if (range > MineColonies.getConfig().getServer().maxColonySize.get())
         {
-            LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.claim.toolarge", colonyID);
+            LanguageHandler.sendPlayerMessage((Player) sender, "com.minecolonies.command.claim.toolarge", colonyID);
             return 0;
         }
 
@@ -61,18 +61,18 @@ public class CommandClaimChunks implements IMCOPCommand
 
         if (chunkManager.getAllChunkStorages().size() > CHUNKS_TO_CLAIM_THRESHOLD)
         {
-            LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.claim.maxchunks");
+            LanguageHandler.sendPlayerMessage((Player) sender, "com.minecolonies.command.claim.maxchunks");
             return 0;
         }
 
         ChunkDataHelper.claimChunksInRange(colonyID, context.getSource().getLevel().dimension(), add, new BlockPos(sender.position()), range, 0, sender.level);
         if(add)
         {
-            LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.claim.success");
+            LanguageHandler.sendPlayerMessage((Player) sender, "com.minecolonies.command.claim.success");
         }
         else
         {
-            LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.claim.unclaim");
+            LanguageHandler.sendPlayerMessage((Player) sender, "com.minecolonies.command.claim.unclaim");
         }
         return 1;
     }
@@ -86,7 +86,7 @@ public class CommandClaimChunks implements IMCOPCommand
         return "claim";
     }
 
-    public LiteralArgumentBuilder<CommandSource> build()
+    public LiteralArgumentBuilder<CommandSourceStack> build()
     {
         return IMCCommand.newLiteral(getName())
                  .then(IMCCommand.newArgument(COLONYID_ARG, IntegerArgumentType.integer(1))

@@ -15,12 +15,12 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.research.LocalResearch;
 import com.minecolonies.coremod.research.LocalResearchTree;
 import com.minecolonies.coremod.research.ResearchEffectManager;
-import net.minecraft.block.Block;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.TranslatableComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -57,13 +57,13 @@ public class ResearchManager implements IResearchManager
     private final IColony colony;
 
     @Override
-    public void readFromNBT(@NotNull final CompoundNBT compound)
+    public void readFromNBT(@NotNull final CompoundTag compound)
     {
         tree.readFromNBT(compound, effects);
     }
 
     @Override
-    public void writeToNBT(@NotNull final CompoundNBT compound)
+    public void writeToNBT(@NotNull final CompoundTag compound)
     {
         tree.writeToNBT(compound);
     }
@@ -147,9 +147,9 @@ public class ResearchManager implements IResearchManager
             // if research has item requirements, only notify player; we don't want to have items disappearing from inventories.
             if (!research.getCostList().isEmpty())
             {
-                for (PlayerEntity player : colony.getMessagePlayerEntities())
+                for (Player player : colony.getMessagePlayerEntities())
                 {
-                    player.sendMessage(new TranslationTextComponent(TranslationConstants.RESEARCH_AVAILABLE, research.getName()), player.getUUID());
+                    player.sendMessage(new TranslatableComponent(TranslationConstants.RESEARCH_AVAILABLE, research.getName()), player.getUUID());
                     SoundUtils.playSuccessSound(player, player.blockPosition());
                 }
             }
@@ -172,7 +172,7 @@ public class ResearchManager implements IResearchManager
     private void startCostlessResearch(IGlobalResearch research)
     {
         boolean creativePlayer = false;
-        for (PlayerEntity player : colony.getMessagePlayerEntities())
+        for (Player player : colony.getMessagePlayerEntities())
         {
             if (player.isCreative())
             {
@@ -194,9 +194,9 @@ public class ResearchManager implements IResearchManager
             {
                 citizen.applyResearchEffects();
             }
-            final TranslationTextComponent message = new TranslationTextComponent(RESEARCH_CONCLUDED + ThreadLocalRandom.current().nextInt(3),
+            final TranslatableComponent message = new TranslatableComponent(RESEARCH_CONCLUDED + ThreadLocalRandom.current().nextInt(3),
               IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getName());
-            for (PlayerEntity player : colony.getMessagePlayerEntities())
+            for (Player player : colony.getMessagePlayerEntities())
             {
                 player.sendMessage(message, player.getUUID());
                 SoundUtils.playSuccessSound(player, player.blockPosition());
@@ -204,10 +204,10 @@ public class ResearchManager implements IResearchManager
         }
         else
         {
-            for (PlayerEntity player : colony.getMessagePlayerEntities())
+            for (Player player : colony.getMessagePlayerEntities())
             {
-                player.sendMessage(new TranslationTextComponent(TranslationConstants.RESEARCH_AVAILABLE, research.getName())
-                                     .append(new TranslationTextComponent("com.minecolonies.coremod.research.started",
+                player.sendMessage(new TranslatableComponent(TranslationConstants.RESEARCH_AVAILABLE, research.getName())
+                                     .append(new TranslatableComponent("com.minecolonies.coremod.research.started",
                                       research.getName())),
                   player.getUUID());
                 SoundUtils.playSuccessSound(player, player.blockPosition());

@@ -8,12 +8,12 @@ import com.minecolonies.coremod.commands.commandTypes.IMCOPCommand;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import net.minecraft.command.CommandSource;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.DimensionType;
-import net.minecraft.world.World;
-import net.minecraft.world.storage.FolderName;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.level.dimension.DimensionType;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.LevelResource;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 import java.io.File;
@@ -43,12 +43,12 @@ public class CommandPruneWorld implements IMCOPCommand
     private static final String REGION_FOLDER = "region";
 
     @Override
-    public int onExecute(final CommandContext<CommandSource> context)
+    public int onExecute(final CommandContext<CommandSourceStack> context)
     {
         return tryPrune(context, 0);
     }
 
-    private int executeWithPage(final CommandContext<CommandSource> context)
+    private int executeWithPage(final CommandContext<CommandSourceStack> context)
     {
         if (!checkPreCondition(context))
         {
@@ -65,7 +65,7 @@ public class CommandPruneWorld implements IMCOPCommand
      * @param arg     progress arg
      * @return command return
      */
-    private int tryPrune(final CommandContext<CommandSource> context, final int arg)
+    private int tryPrune(final CommandContext<CommandSourceStack> context, final int arg)
     {
         if (arg < 3)
         {
@@ -77,10 +77,10 @@ public class CommandPruneWorld implements IMCOPCommand
 
         int deleteCount = 0;
 
-        for (final World world : ServerLifecycleHooks.getCurrentServer().getAllLevels())
+        for (final Level world : ServerLifecycleHooks.getCurrentServer().getAllLevels())
         {
             // Local save folder for this word
-            final File saveDir = new File(DimensionType.getStorageFolder(world.dimension(), world.getServer().getWorldPath(FolderName.ROOT).toFile()), REGION_FOLDER);
+            final File saveDir = new File(DimensionType.getStorageFolder(world.dimension(), world.getServer().getWorldPath(LevelResource.ROOT).toFile()), REGION_FOLDER);
 
             // Colony list for this world
             List<IColony> colonies = new ArrayList<>();
@@ -113,19 +113,19 @@ public class CommandPruneWorld implements IMCOPCommand
                     {
                         if (!currentRegion.delete())
                         {
-                            context.getSource().sendSuccess(new StringTextComponent("Could not delete file:" + currentRegion.getPath()), true);
+                            context.getSource().sendSuccess(new TextComponent("Could not delete file:" + currentRegion.getPath()), true);
                         }
                         else
                         {
                             deleteCount++;
-                            context.getSource().sendSuccess(new StringTextComponent("Deleted file:" + currentRegion.getPath()), true);
+                            context.getSource().sendSuccess(new TextComponent("Deleted file:" + currentRegion.getPath()), true);
                         }
                     }
                 }
             }
         }
 
-        context.getSource().sendSuccess(new StringTextComponent("Successfully deleted " + deleteCount + " regions!"), true);
+        context.getSource().sendSuccess(new TextComponent("Successfully deleted " + deleteCount + " regions!"), true);
         return 0;
     }
 
@@ -166,7 +166,7 @@ public class CommandPruneWorld implements IMCOPCommand
     }
 
     @Override
-    public LiteralArgumentBuilder<CommandSource> build()
+    public LiteralArgumentBuilder<CommandSourceStack> build()
     {
         return IMCCommand.newLiteral(getName())
                  .then(IMCCommand.newArgument(COMMAND_STAGE, IntegerArgumentType.integer(1))

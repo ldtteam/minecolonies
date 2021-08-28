@@ -2,15 +2,17 @@ package com.minecolonies.coremod.items;
 
 import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.entity.ModEntities;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.projectile.AbstractArrowEntity;
-import net.minecraft.item.ArrowItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.item.ArrowItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
+
+import net.minecraft.world.item.Item.Properties;
 
 /**
  * Class handling the Scepter for the Pharao.
@@ -36,16 +38,16 @@ public class ItemFireArrow extends ArrowItem
 
     @NotNull
     @Override
-    public AbstractArrowEntity createArrow(@NotNull final World worldIn, @NotNull final ItemStack stack, final LivingEntity shooter)
+    public AbstractArrow createArrow(@NotNull final Level worldIn, @NotNull final ItemStack stack, final LivingEntity shooter)
     {
-        AbstractArrowEntity entity = ModEntities.FIREARROW.create(worldIn);
+        AbstractArrow entity = ModEntities.FIREARROW.create(worldIn);
         entity.setOwner(shooter);
         return entity;
     }
 
     @Nullable
     @Override
-    public Entity createEntity(final World world, final Entity location, final ItemStack itemstack)
+    public Entity createEntity(final Level world, final Entity location, final ItemStack itemstack)
     {
         return ModEntities.FIREARROW.create(world);
     }

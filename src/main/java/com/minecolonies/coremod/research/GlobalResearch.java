@@ -14,12 +14,12 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.client.Minecraft;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.JsonToNBT;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.nbt.TagParser;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
@@ -182,12 +182,12 @@ public class GlobalResearch implements IGlobalResearch
     /**
      * The pre-localized name for the research.
      */
-    private final TranslationTextComponent name;
+    private final TranslatableComponent name;
 
     /**
      * Subtitle names for the research.  Optional, and only shows up rarely.
      */
-    private final TranslationTextComponent subtitle;
+    private final TranslatableComponent subtitle;
 
     /**
      * The research effects of this research.
@@ -251,8 +251,8 @@ public class GlobalResearch implements IGlobalResearch
     {
         this.id = new ResourceLocation(id);
         this.effects.add(effect);
-        this.name = new TranslationTextComponent(name);
-        this.subtitle = new TranslationTextComponent("");
+        this.name = new TranslatableComponent(name);
+        this.subtitle = new TranslatableComponent("");
         this.depth = universityLevel;
         this.sortOrder = 1;
         this.branch = new ResourceLocation(branch);
@@ -283,9 +283,9 @@ public class GlobalResearch implements IGlobalResearch
     {
         this.id = id;
         final String autogenKey = "com." + this.id.getNamespace() + ".research." + this.id.getPath().replaceAll("[ /]",".");
-        this.name = new TranslationTextComponent(autogenKey + ".name");
+        this.name = new TranslatableComponent(autogenKey + ".name");
         this.parent = new ResourceLocation("");
-        this.subtitle = new TranslationTextComponent("");
+        this.subtitle = new TranslatableComponent("");
         this.effects.addAll(effects);
         this.depth = universityLevel;
         this.sortOrder = 1;
@@ -327,8 +327,8 @@ public class GlobalResearch implements IGlobalResearch
      * @param instant         if the research should be completed instantly (ish) from when begun.
      * @param immutable       if the research can not be reset once unlocked.
      */
-    public GlobalResearch(final ResourceLocation id, final ResourceLocation branch, final ResourceLocation parent, final TranslationTextComponent desc, final int universityLevel, final int sortOrder,
-      final ResourceLocation iconTexture, final ItemStack iconStack, final TranslationTextComponent subtitle, final boolean onlyChild, final boolean hidden, final boolean autostart, final boolean instant, final boolean immutable)
+    public GlobalResearch(final ResourceLocation id, final ResourceLocation branch, final ResourceLocation parent, final TranslatableComponent desc, final int universityLevel, final int sortOrder,
+      final ResourceLocation iconTexture, final ItemStack iconStack, final TranslatableComponent subtitle, final boolean onlyChild, final boolean hidden, final boolean autostart, final boolean instant, final boolean immutable)
     {
         this.id = id;
         this.name = desc;
@@ -415,10 +415,10 @@ public class GlobalResearch implements IGlobalResearch
     }
 
     @Override
-    public TranslationTextComponent getName() { return this.name; }
+    public TranslatableComponent getName() { return this.name; }
 
     @Override
-    public TranslationTextComponent getSubtitle()
+    public TranslatableComponent getSubtitle()
     {
         return this.subtitle;
     }
@@ -570,8 +570,8 @@ public class GlobalResearch implements IGlobalResearch
     {
         this.id = resourceLocation;
         final String autogenKey = "com." + this.id.getNamespace() + ".research." + this.id.getPath().replaceAll("[ /]",".");
-        this.name = new TranslationTextComponent(getStringSafe(researchJson, RESEARCH_NAME_PROP, autogenKey + ".name"));
-        this.subtitle = new TranslationTextComponent(getStringSafe(researchJson, RESEARCH_SUBTITLE_PROP, ""));
+        this.name = new TranslatableComponent(getStringSafe(researchJson, RESEARCH_NAME_PROP, autogenKey + ".name"));
+        this.subtitle = new TranslatableComponent(getStringSafe(researchJson, RESEARCH_SUBTITLE_PROP, ""));
         this.branch = new ResourceLocation(getBranch(researchJson, resourceLocation));
         this.depth = getUniversityLevel(researchJson);
         this.sortOrder = getSortOrder(researchJson);
@@ -834,7 +834,7 @@ public class GlobalResearch implements IGlobalResearch
                       reqArrayElement.getAsJsonObject().get(RESEARCH_NAME_PROP).isJsonPrimitive() && reqArrayElement.getAsJsonObject().get(RESEARCH_NAME_PROP).getAsJsonPrimitive().isString())
                     {
                         this.requirements.add(new ResearchResearchRequirement(new ResourceLocation(reqArrayElement.getAsJsonObject().get(RESEARCH_REQUIRED_RESEARCH_PROP).getAsString()),
-                          new TranslationTextComponent(reqArrayElement.getAsJsonObject().get(RESEARCH_NAME_PROP).getAsString())));
+                          new TranslatableComponent(reqArrayElement.getAsJsonObject().get(RESEARCH_NAME_PROP).getAsString())));
                     }
                     else
                     {
@@ -898,7 +898,7 @@ public class GlobalResearch implements IGlobalResearch
         {
             try
             {
-                stack.setTag(JsonToNBT.parseTag(tag));
+                stack.setTag(TagParser.parseTag(tag));
             }
             catch (CommandSyntaxException e1)
             {

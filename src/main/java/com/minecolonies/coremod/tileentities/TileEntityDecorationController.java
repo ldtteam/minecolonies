@@ -3,14 +3,14 @@ package com.minecolonies.coremod.tileentities;
 import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.WorldUtil;
-import net.minecraft.block.BlockState;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SUpdateTileEntityPacket;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.Connection;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.Direction;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -21,7 +21,7 @@ import java.util.Map;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_LEVEL;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_NAME;
 
-public class TileEntityDecorationController extends TileEntity implements IBlueprintDataProvider
+public class TileEntityDecorationController extends BlockEntity implements IBlueprintDataProvider
 {
     /**
      * Tag to store the basic facing to NBT
@@ -189,7 +189,7 @@ public class TileEntityDecorationController extends TileEntity implements IBluep
     }
 
     @Override
-    public void readSchematicDataFromNBT(CompoundNBT compound)
+    public void readSchematicDataFromNBT(CompoundTag compound)
     {
         IBlueprintDataProvider.super.readSchematicDataFromNBT(compound);
         if (compound.contains(TAG_NAME))
@@ -209,7 +209,7 @@ public class TileEntityDecorationController extends TileEntity implements IBluep
     }
 
     @Override
-    public void load(final BlockState state, final CompoundNBT compound)
+    public void load(final BlockState state, final CompoundTag compound)
     {
         super.load(state, compound);
         IBlueprintDataProvider.super.readSchematicDataFromNBT(compound);
@@ -220,7 +220,7 @@ public class TileEntityDecorationController extends TileEntity implements IBluep
 
     @NotNull
     @Override
-    public CompoundNBT save(final CompoundNBT compound)
+    public CompoundTag save(final CompoundTag compound)
     {
         super.save(compound);
         writeSchematicDataToNBT(compound);
@@ -232,22 +232,22 @@ public class TileEntityDecorationController extends TileEntity implements IBluep
 
     @Nullable
     @Override
-    public SUpdateTileEntityPacket getUpdatePacket()
+    public ClientboundBlockEntityDataPacket getUpdatePacket()
     {
-        return new SUpdateTileEntityPacket(this.worldPosition, 0x9, this.getUpdateTag());
+        return new ClientboundBlockEntityDataPacket(this.worldPosition, 0x9, this.getUpdateTag());
     }
 
     @NotNull
     @Override
-    public CompoundNBT getUpdateTag()
+    public CompoundTag getUpdateTag()
     {
-        return this.save(new CompoundNBT());
+        return this.save(new CompoundTag());
     }
 
     @Override
-    public void onDataPacket(final NetworkManager net, final SUpdateTileEntityPacket packet)
+    public void onDataPacket(final Connection net, final ClientboundBlockEntityDataPacket packet)
     {
-        final CompoundNBT compound = packet.getTag();
+        final CompoundTag compound = packet.getTag();
         this.load(getBlockState(), compound);
     }
 

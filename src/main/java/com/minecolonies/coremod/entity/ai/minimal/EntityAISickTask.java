@@ -18,20 +18,20 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHospita
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.client.CircleParticleEffectMessage;
-import net.minecraft.block.BedBlock;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.item.ItemStack;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
-import net.minecraft.state.properties.BedPart;
+import net.minecraft.world.level.block.BedBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.level.block.state.properties.BedPart;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.Level;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -43,7 +43,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.WAITING_FO
 import static com.minecolonies.coremod.entity.ai.minimal.EntityAISickTask.DiseaseState.*;
 import static com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenDiseaseHandler.SEEK_DOCTOR_HEALTH;
 
-import net.minecraft.entity.ai.goal.Goal.Flag;
+import net.minecraft.world.entity.ai.goal.Goal.Flag;
 
 /**
  * The AI task for citizens to execute when they are supposed to eat.
@@ -179,7 +179,7 @@ public class EntityAISickTask extends Goal
             citizenData.setWorking(false);
         }
 
-        citizen.addEffect(new EffectInstance(Effects.MOVEMENT_SLOWDOWN, TICKS_SECOND * 30));
+        citizen.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, TICKS_SECOND * 30));
         switch (currentState)
         {
             case CHECK_FOR_CURE:
@@ -241,7 +241,7 @@ public class EntityAISickTask extends Goal
             {
                 for (final BlockPos pos : ((BuildingHospital) hospital).getBedList())
                 {
-                    final World world = citizen.level;
+                    final Level world = citizen.level;
                     BlockState state = world.getBlockState(pos);
                     if (state.getBlock().is(BlockTags.BEDS)
                           && !state.getValue(BedBlock.OCCUPIED)
@@ -294,10 +294,10 @@ public class EntityAISickTask extends Goal
         }
 
         final List<ItemStack> list = IColonyManager.getInstance().getCompatibilityManager().getDisease(citizen.getCitizenDiseaseHandler().getDisease()).getCure();
-        citizen.setItemInHand(Hand.MAIN_HAND, list.get(citizen.getRandom().nextInt(list.size())));
+        citizen.setItemInHand(InteractionHand.MAIN_HAND, list.get(citizen.getRandom().nextInt(list.size())));
 
 
-        citizen.swing(Hand.MAIN_HAND);
+        citizen.swing(InteractionHand.MAIN_HAND);
         citizen.playSound(SoundEvents.NOTE_BLOCK_HARP, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPentatonic(citizen.getRandom()));
         Network.getNetwork().sendToTrackingEntity(
           new CircleParticleEffectMessage(
@@ -345,7 +345,7 @@ public class EntityAISickTask extends Goal
             usedBed = null;
             citizen.getCitizenData().setBedPos(BlockPos.ZERO);
         }
-        citizen.setItemInHand(Hand.MAIN_HAND, ItemStack.EMPTY);
+        citizen.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
         citizenData.markDirty();
         citizen.getCitizenDiseaseHandler().cure();
         citizen.setHealth(citizen.getMaxHealth());
@@ -470,16 +470,16 @@ public class EntityAISickTask extends Goal
                 return IDLE;
             }
             final Disease disease = IColonyManager.getInstance().getCompatibilityManager().getDisease(id);
-            citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(NO_HOSPITAL, disease.getName(), disease.getCureString()),
-              new TranslationTextComponent(NO_HOSPITAL),
+            citizenData.triggerInteraction(new StandardInteraction(new TranslatableComponent(NO_HOSPITAL, disease.getName(), disease.getCureString()),
+              new TranslatableComponent(NO_HOSPITAL),
               ChatPriority.BLOCKING));
             return IDLE;
         }
         else if (!citizen.getCitizenDiseaseHandler().getDisease().isEmpty())
         {
             final Disease disease = IColonyManager.getInstance().getCompatibilityManager().getDisease(citizen.getCitizenDiseaseHandler().getDisease());
-            citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(WAITING_FOR_CURE, disease.getName(), disease.getCureString()),
-              new TranslationTextComponent(WAITING_FOR_CURE),
+            citizenData.triggerInteraction(new StandardInteraction(new TranslatableComponent(WAITING_FOR_CURE, disease.getName(), disease.getCureString()),
+              new TranslatableComponent(WAITING_FOR_CURE),
               ChatPriority.BLOCKING));
         }
 
@@ -532,7 +532,7 @@ public class EntityAISickTask extends Goal
         waitingTicks = 0;
         citizen.releaseUsingItem();
         citizen.stopUsingItem();
-        citizen.setItemInHand(Hand.MAIN_HAND, ItemStack.EMPTY);
+        citizen.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
         placeToPath = null;
         currentState = CHECK_FOR_CURE;
     }

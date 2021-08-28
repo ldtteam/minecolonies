@@ -8,16 +8,16 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.MineColonies;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -63,24 +63,24 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
 
     @NotNull
     @Override
-    public ActionResultType useOn(final ItemUseContext ctx)
+    public InteractionResult useOn(final UseOnContext ctx)
     {
         if (ctx.getLevel().isClientSide)
         {
             if (!MineColonies.getConfig().getServer().allowOtherDimColonies.get() && !WorldUtil.isOverworldType(ctx.getLevel()))
             {
                 LanguageHandler.sendPlayerMessage(ctx.getPlayer(), CANT_PLACE_COLONY_IN_OTHER_DIM);
-                return ActionResultType.FAIL;
+                return InteractionResult.FAIL;
             }
             placeSupplyCamp(ctx.getClickedPos(), ctx.getPlayer().getDirection());
         }
 
-        return ActionResultType.FAIL;
+        return InteractionResult.FAIL;
     }
 
     @NotNull
     @Override
-    public ActionResult<ItemStack> use(final World worldIn, final PlayerEntity playerIn, final Hand hand)
+    public InteractionResultHolder<ItemStack> use(final Level worldIn, final Player playerIn, final InteractionHand hand)
     {
         final ItemStack stack = playerIn.getItemInHand(hand);
         if (worldIn.isClientSide)
@@ -88,12 +88,12 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
             if (!MineColonies.getConfig().getServer().allowOtherDimColonies.get() && !WorldUtil.isOverworldType(worldIn))
             {
                 LanguageHandler.sendPlayerMessage(playerIn, CANT_PLACE_COLONY_IN_OTHER_DIM);
-                return new ActionResult<>(ActionResultType.FAIL, stack);
+                return new InteractionResultHolder<>(InteractionResult.FAIL, stack);
             }
             placeSupplyCamp(null, playerIn.getDirection());
         }
 
-        return new ActionResult<>(ActionResultType.FAIL, stack);
+        return new InteractionResultHolder<>(InteractionResult.FAIL, stack);
     }
 
     /**
@@ -145,11 +145,11 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
      * @return true if so.
      */
     public static boolean canCampBePlaced(
-      @NotNull final World world,
+      @NotNull final Level world,
       @NotNull final BlockPos pos,
       final BlockPos size,
       @NotNull final List<PlacementError> placementErrorList,
-      final PlayerEntity placer)
+      final Player placer)
     {
         for (int z = pos.getZ() - size.getZ() / 2 + 1; z < pos.getZ() + size.getZ() / 2 + 1; z++)
         {
@@ -182,7 +182,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
      * @param placementErrorList a list of placement errors.
      * @param placer             the player placing the supply camp.
      */
-    private static void checkIfSolidAndNotInColony(final World world, final BlockPos pos, @NotNull final List<PlacementError> placementErrorList, final PlayerEntity placer)
+    private static void checkIfSolidAndNotInColony(final Level world, final BlockPos pos, @NotNull final List<PlacementError> placementErrorList, final Player placer)
     {
         final boolean isSolid = world.getBlockState(pos).getMaterial().isSolid();
         final boolean notInAnyColony = hasPlacePermission(world, pos, placer);
@@ -206,7 +206,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
      * @param placer the placer.
      * @return true if no colony found.
      */
-    private static boolean hasPlacePermission(final World world, final BlockPos pos, final PlayerEntity placer)
+    private static boolean hasPlacePermission(final Level world, final BlockPos pos, final Player placer)
     {
         final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, pos);
         return colony == null || colony.getPermissions().hasPermission(placer, Action.PLACE_BLOCKS);

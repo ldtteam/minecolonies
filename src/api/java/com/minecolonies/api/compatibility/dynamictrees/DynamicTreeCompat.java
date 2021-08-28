@@ -7,16 +7,16 @@ import com.ferreusveritas.dynamictrees.items.Seed;
 import com.ferreusveritas.dynamictrees.trees.Family;
 import com.minecolonies.api.util.Log;
 import com.mojang.authlib.GameProfile;
-import net.minecraft.block.Block;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.RegistryKey;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.FakePlayer;
 import org.jetbrains.annotations.NotNull;
@@ -32,7 +32,7 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
 
     private static final String DYNAMIC_TREE_DAMAGE = "fallingtree";
 
-    private static final Map<RegistryKey<World>, FakePlayer> fakePlayers = new HashMap<>();
+    private static final Map<ResourceKey<Level>, FakePlayer> fakePlayers = new HashMap<>();
 
     public DynamicTreeCompat()
     {

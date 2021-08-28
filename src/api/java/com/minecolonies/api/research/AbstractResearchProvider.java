@@ -5,11 +5,11 @@ import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.generation.DataGeneratorConstants;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.DirectoryCache;
-import net.minecraft.data.IDataProvider;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.data.HashCache;
+import net.minecraft.data.DataProvider;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -24,7 +24,7 @@ import java.util.Collection;
  *
  * Avoid changing research identifiers here unless necessary. If required, update ResearchCompatMap.
  */
-public abstract class AbstractResearchProvider implements IDataProvider
+public abstract class AbstractResearchProvider implements DataProvider
 {
     protected final DataGenerator generator;
 
@@ -62,7 +62,7 @@ public abstract class AbstractResearchProvider implements IDataProvider
     protected abstract Collection<Research> getResearchCollection();
 
     @Override
-    public void run(@NotNull final DirectoryCache cache) throws IOException
+    public void run(@NotNull final HashCache cache) throws IOException
     {
         final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
         final JsonObject langJson = new JsonObject();
@@ -70,7 +70,7 @@ public abstract class AbstractResearchProvider implements IDataProvider
         for(final ResearchBranch branch : getResearchBranchCollection())
         {
             final Path savePath = generator.getOutputFolder().resolve("data").resolve(branch.id.getNamespace()).resolve("researches").resolve(branch.id.getPath() + ".json");
-            IDataProvider.save(GSON, cache, branch.json, savePath);
+            DataProvider.save(GSON, cache, branch.json, savePath);
             if(branch.translatedName != null && !branch.translatedName.isEmpty())
             {
                 addLanguageKeySafe(langJson, "com." + branch.id.getNamespace() + ".research." + branch.id.getPath().replaceAll("[/]",".") + ".name", branch.translatedName);
@@ -83,7 +83,7 @@ public abstract class AbstractResearchProvider implements IDataProvider
         for(final ResearchEffect effect : getResearchEffectCollection())
         {
             final Path savePath = generator.getOutputFolder().resolve("data").resolve(effect.id.getNamespace()).resolve("researches").resolve(effect.id.getPath() + ".json");
-            IDataProvider.save(GSON, cache, effect.json, savePath);
+            DataProvider.save(GSON, cache, effect.json, savePath);
             if(effect.translatedName != null && !effect.translatedName.isEmpty())
             {
                 addLanguageKeySafe(langJson, "com." + effect.id.getNamespace() + ".research." + effect.id.getPath().replaceAll("[/]",".") + ".description", effect.translatedName);
@@ -96,7 +96,7 @@ public abstract class AbstractResearchProvider implements IDataProvider
         for(final Research research : getResearchCollection())
         {
             final Path savePath = generator.getOutputFolder().resolve("data").resolve(research.id.getNamespace()).resolve("researches").resolve(research.id.getPath() + ".json");
-            IDataProvider.save(GSON, cache, research.json, savePath);
+            DataProvider.save(GSON, cache, research.json, savePath);
             if(research.translatedName != null && !research.translatedName.isEmpty())
             {
                 addLanguageKeySafe(langJson, "com." + research.id.getNamespace() + ".research." + research.id.getPath().replaceAll("[/]",".") + ".name", research.translatedName);
@@ -106,7 +106,7 @@ public abstract class AbstractResearchProvider implements IDataProvider
                 addLanguageKeySafe(langJson, "com." + research.id.getNamespace() + ".research." + research.id.getPath().replaceAll("[/]",".") + ".subtitle", research.translatedSubtitle);
             }
         }
-        IDataProvider.save(DataGeneratorConstants.GSON, cache, langJson, generator.getOutputFolder().resolve("assets/" + Constants.MOD_ID + "/lang/default.json"));
+        DataProvider.save(DataGeneratorConstants.GSON, cache, langJson, generator.getOutputFolder().resolve("assets/" + Constants.MOD_ID + "/lang/default.json"));
     }
 
     /**

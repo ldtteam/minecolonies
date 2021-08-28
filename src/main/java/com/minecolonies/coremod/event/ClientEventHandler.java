@@ -37,21 +37,21 @@ import com.minecolonies.coremod.colony.crafting.CustomRecipe;
 import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
 import com.minecolonies.coremod.entity.pathfinding.Pathfinding;
 import com.minecolonies.coremod.items.ItemBannerRallyGuards;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
-import net.minecraft.block.Block;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.RenderTypeBuffers;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Mirror;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.client.renderer.RenderBuffers;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.BlockPos;
 import net.minecraft.util.text.*;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -75,6 +75,13 @@ import static com.minecolonies.api.util.constant.CitizenConstants.WAYPOINT_STRIN
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
+
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 
 /**
  * Used to handle client events.
@@ -107,10 +114,10 @@ public class ClientEventHandler
     /**
      * Render buffers.
      */
-    public static final RenderTypeBuffers renderBuffers = new RenderTypeBuffers();
-    private static final IRenderTypeBuffer.Impl renderBuffer = renderBuffers.bufferSource();
-    private static final Supplier<IVertexBuilder> linesWithCullAndDepth = () -> renderBuffer.getBuffer(RenderType.lines());
-    private static final Supplier<IVertexBuilder> linesWithoutCullAndDepth = () -> renderBuffer.getBuffer(RenderUtils.LINES_GLINT);
+    public static final RenderBuffers renderBuffers = new RenderBuffers();
+    private static final MultiBufferSource.BufferSource renderBuffer = renderBuffers.bufferSource();
+    private static final Supplier<VertexConsumer> linesWithCullAndDepth = () -> renderBuffer.getBuffer(RenderType.lines());
+    private static final Supplier<VertexConsumer> linesWithoutCullAndDepth = () -> renderBuffer.getBuffer(RenderUtils.LINES_GLINT);
 
     /**
      * Lazy cache for crafting module lookups.
@@ -130,8 +137,8 @@ public class ClientEventHandler
             Pathfinding.debugDraw(event.getPartialTicks(), event.getMatrixStack());
         }
         final Blueprint structure = Settings.instance.getActiveStructure();
-        final ClientWorld world = Minecraft.getInstance().level;
-        final PlayerEntity player = Minecraft.getInstance().player;
+        final ClientLevel world = Minecraft.getInstance().level;
+        final Player player = Minecraft.getInstance().player;
         if (structure != null)
         {
             handleRenderStructure(event, world, player);
@@ -218,7 +225,7 @@ public class ClientEventHandler
      * @param toolTip  The tooltip to add the text onto.
      * @param item     The item that will have the tooltip text added.
      */
-    private static void handleCrafterRecipeTooltips(@Nullable final IColony colony, final List<ITextComponent> toolTip, final Item item)
+    private static void handleCrafterRecipeTooltips(@Nullable final IColony colony, final List<Component> toolTip, final Item item)
     {
         final List<CustomRecipe> recipes = CustomRecipeManager.getInstance().getRecipeByOutput(item);
         if(recipes.isEmpty())
@@ -234,7 +241,7 @@ public class ClientEventHandler
             }
             final BuildingEntry craftingBuilding = crafterToBuilding.get().get(rec.getCrafter());
             if (craftingBuilding == null) continue;
-            final ITextComponent craftingBuildingName = getFullBuildingName(craftingBuilding);
+            final Component craftingBuildingName = getFullBuildingName(craftingBuilding);
             if (rec.getMinBuildingLevel() > 0)
             {
                 final String schematicName = craftingBuilding.getRegistryName().getPath();
@@ -243,21 +250,21 @@ public class ClientEventHandler
                 // appear to be an easy way to get the schematic name from a BuildingEntry ... or
                 // unless we can change how colony.hasBuilding uses its parameter...
 
-                final IFormattableTextComponent reqLevelText = new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ITEM_BUILDLEVEL_TOOLTIP_GUI, craftingBuildingName, rec.getMinBuildingLevel());
+                final MutableComponent reqLevelText = new TranslatableComponent(COM_MINECOLONIES_COREMOD_ITEM_BUILDLEVEL_TOOLTIP_GUI, craftingBuildingName, rec.getMinBuildingLevel());
                 if(colony != null && colony.hasBuilding(schematicName, rec.getMinBuildingLevel(), true))
                 {
-                    reqLevelText.setStyle(Style.EMPTY.withColor(TextFormatting.AQUA));
+                    reqLevelText.setStyle(Style.EMPTY.withColor(ChatFormatting.AQUA));
                 }
                 else
                 {
-                    reqLevelText.setStyle(Style.EMPTY.withColor(TextFormatting.RED));
+                    reqLevelText.setStyle(Style.EMPTY.withColor(ChatFormatting.RED));
                 }
                 toolTip.add(reqLevelText);
             }
             else
             {
-                final IFormattableTextComponent reqBuildingTxt = new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ITEM_AVAILABLE_TOOLTIP_GUI, craftingBuildingName)
-                    .setStyle(Style.EMPTY.withItalic(true).withColor(TextFormatting.GRAY));
+                final MutableComponent reqBuildingTxt = new TranslatableComponent(COM_MINECOLONIES_COREMOD_ITEM_AVAILABLE_TOOLTIP_GUI, craftingBuildingName)
+                    .setStyle(Style.EMPTY.withItalic(true).withColor(ChatFormatting.GRAY));
                 toolTip.add(reqBuildingTxt);
             }
             if(rec.getRequiredResearchId() != null)
@@ -274,20 +281,20 @@ public class ClientEventHandler
                 }
                 if(researches != null)
                 {
-                    final TextFormatting researchFormat;
+                    final ChatFormatting researchFormat;
                     if (colony != null && (colony.getResearchManager().getResearchTree().hasCompletedResearch(rec.getRequiredResearchId()) ||
                                              colony.getResearchManager().getResearchEffects().getEffectStrength(rec.getRequiredResearchId()) > 0))
                     {
-                        researchFormat = TextFormatting.AQUA;
+                        researchFormat = ChatFormatting.AQUA;
                     }
                     else
                     {
-                        researchFormat = TextFormatting.RED;
+                        researchFormat = ChatFormatting.RED;
                     }
 
                     for (IGlobalResearch research : researches)
                     {
-                        toolTip.add(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ITEM_REQUIRES_RESEARCH_TOOLTIP_GUI,
+                        toolTip.add(new TranslatableComponent(COM_MINECOLONIES_COREMOD_ITEM_REQUIRES_RESEARCH_TOOLTIP_GUI,
                           research.getName()).setStyle(Style.EMPTY.withColor(researchFormat)));
                     }
                 }
@@ -300,14 +307,14 @@ public class ClientEventHandler
      * @param building The building entry
      * @return The translated building name
      */
-    private static ITextComponent getFullBuildingName(@NotNull final BuildingEntry building)
+    private static Component getFullBuildingName(@NotNull final BuildingEntry building)
     {
         final String namespace = building.getBuildingBlock().getRegistryName().getNamespace();
         final String modName = ModList.get().getModContainerById(namespace)
                 .map(m -> m.getModInfo().getDisplayName())
                 .orElse(namespace);
-        final ITextComponent buildingName = building.getBuildingBlock().getName();
-        return new StringTextComponent(modName + " ").append(buildingName);
+        final Component buildingName = building.getBuildingBlock().getName();
+        return new TextComponent(modName + " ").append(buildingName);
     }
 
     /**
@@ -339,7 +346,7 @@ public class ClientEventHandler
      * @param tooltip  The tooltip to add the text onto.
      * @param block    The hut block
      */
-    private static void handleHutBlockResearchUnlocks(final IColony colony, final List<ITextComponent> tooltip, final Block block)
+    private static void handleHutBlockResearchUnlocks(final IColony colony, final List<Component> tooltip, final Block block)
     {
         if (colony == null)
         {
@@ -352,8 +359,8 @@ public class ClientEventHandler
         }
         if (MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().getResearchForEffect(effectId) != null)
         {
-            tooltip.add(new TranslationTextComponent(TranslationConstants.HUT_NEEDS_RESEARCH_TOOLTIP_1, block.getBlock().getName()));
-            tooltip.add(new TranslationTextComponent(TranslationConstants.HUT_NEEDS_RESEARCH_TOOLTIP_2, block.getBlock().getName()));
+            tooltip.add(new TranslatableComponent(TranslationConstants.HUT_NEEDS_RESEARCH_TOOLTIP_1, block.getBlock().getName()));
+            tooltip.add(new TranslatableComponent(TranslationConstants.HUT_NEEDS_RESEARCH_TOOLTIP_2, block.getBlock().getName()));
         }
     }
 
@@ -364,7 +371,7 @@ public class ClientEventHandler
      * @param world  The world in which to render
      * @param player The player for which to render
      */
-    private static void handleRenderBuildTool(@NotNull final RenderWorldLastEvent event, final ClientWorld world, final PlayerEntity player)
+    private static void handleRenderBuildTool(@NotNull final RenderWorldLastEvent event, final ClientLevel world, final Player player)
     {
         if (Settings.instance.getActiveStructure() == null)
         {
@@ -471,7 +478,7 @@ public class ClientEventHandler
      * @param world  The world in which to render
      * @param player The player for which to render
      */
-    private static void handleRenderStructure(@NotNull final RenderWorldLastEvent event, final ClientWorld world, final PlayerEntity player)
+    private static void handleRenderStructure(@NotNull final RenderWorldLastEvent event, final ClientLevel world, final Player player)
     {
         final PlacementSettings settings = new PlacementSettings(Settings.instance.getMirror(), BlockPosUtil.getRotationFromRotations(Settings.instance.getRotation()));
         if (Settings.instance.getStructureName() != null && Settings.instance.getStructureName().contains(WAYPOINT_STRING))
@@ -498,7 +505,7 @@ public class ClientEventHandler
      * @param world  The world in which to render
      * @param player The player for which to render
      */
-    private static void handleRenderScepterGuard(@NotNull final RenderWorldLastEvent event, final ClientWorld world, final PlayerEntity player)
+    private static void handleRenderScepterGuard(@NotNull final RenderWorldLastEvent event, final ClientLevel world, final Player player)
     {
         final PlacementSettings settings = new PlacementSettings(Settings.instance.getMirror(), BlockPosUtil.getRotationFromRotations(Settings.instance.getRotation()));
         final ItemStack stack = player.getMainHandItem();
@@ -506,7 +513,7 @@ public class ClientEventHandler
         {
             return;
         }
-        final CompoundNBT compound = stack.getTag();
+        final CompoundTag compound = stack.getTag();
 
         final IColonyView colony = IColonyManager.getInstance().getColonyView(compound.getInt(TAG_ID), player.level.dimension());
         if (colony == null)
@@ -535,7 +542,7 @@ public class ClientEventHandler
      * @param world  The world in which to render
      * @param player The player for which to render
      */
-    private static void handleRenderBannerRallyGuards(@NotNull final RenderWorldLastEvent event, final ClientWorld world, final PlayerEntity player)
+    private static void handleRenderBannerRallyGuards(@NotNull final RenderWorldLastEvent event, final ClientLevel world, final Player player)
     {
         final ItemStack stack = player.getMainHandItem();
 

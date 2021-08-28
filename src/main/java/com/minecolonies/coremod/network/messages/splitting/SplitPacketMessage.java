@@ -8,7 +8,7 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.NetworkChannel;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 
@@ -62,7 +62,7 @@ public class SplitPacketMessage implements IMessage
     }
 
     @Override
-    public void toBytes(final PacketBuffer buf)
+    public void toBytes(final FriendlyByteBuf buf)
     {
         buf.writeVarInt(this.communicationId);
         buf.writeVarInt(this.packetIndex);
@@ -72,7 +72,7 @@ public class SplitPacketMessage implements IMessage
     }
 
     @Override
-    public void fromBytes(final PacketBuffer buf)
+    public void fromBytes(final FriendlyByteBuf buf)
     {
         this.communicationId = buf.readVarInt();
         this.packetIndex = buf.readVarInt();
@@ -114,7 +114,7 @@ public class SplitPacketMessage implements IMessage
 
             //Create a new buffer that reads from the packet data and then deserialize the inner message.
             final ByteBuf buffer = Unpooled.wrappedBuffer(packetData);
-            message.fromBytes(new PacketBuffer(buffer));
+            message.fromBytes(new FriendlyByteBuf(buffer));
             buffer.release();
 
             //Execute the message.

@@ -13,15 +13,15 @@ import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.client.gui.huts.WindowBarracksBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.CapabilityItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -92,7 +92,7 @@ public class BuildingBarracks extends AbstractBuilding
     @Override
     public void onDestroyed()
     {
-        final World world = getColony().getWorld();
+        final Level world = getColony().getWorld();
 
         if (world != null)
         {
@@ -113,7 +113,7 @@ public class BuildingBarracks extends AbstractBuilding
     }
 
     @Override
-    public void registerBlockPosition(@NotNull final BlockState block, @NotNull final BlockPos pos, @NotNull final World world)
+    public void registerBlockPosition(@NotNull final BlockState block, @NotNull final BlockPos pos, @NotNull final Level world)
     {
         super.registerBlockPosition(block, pos, world);
         if (block.getBlock() == ModBlocks.blockHutBarracksTower)
@@ -189,7 +189,7 @@ public class BuildingBarracks extends AbstractBuilding
     }
 
     @Override
-    public void deserializeNBT(final CompoundNBT compound)
+    public void deserializeNBT(final CompoundTag compound)
     {
         super.deserializeNBT(compound);
         towers.clear();
@@ -199,10 +199,10 @@ public class BuildingBarracks extends AbstractBuilding
     }
 
     @Override
-    public CompoundNBT serializeNBT()
+    public CompoundTag serializeNBT()
     {
-        final CompoundNBT compound = super.serializeNBT();
-        final ListNBT towerTagList = towers.stream().map(pos -> BlockPosUtil.write(new CompoundNBT(), TAG_POS, pos)).collect(NBTUtils.toListNBT());
+        final CompoundTag compound = super.serializeNBT();
+        final ListTag towerTagList = towers.stream().map(pos -> BlockPosUtil.write(new CompoundTag(), TAG_POS, pos)).collect(NBTUtils.toListNBT());
         compound.put(TAG_TOWERS, towerTagList);
 
         return compound;

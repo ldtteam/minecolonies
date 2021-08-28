@@ -4,7 +4,7 @@ import com.google.common.collect.Maps;
 import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.coremod.entity.pathfinding.MinecoloniesAdvancedPathNavigate;
-import net.minecraft.entity.MobEntity;
+import net.minecraft.world.entity.Mob;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,22 +15,22 @@ import java.util.function.Predicate;
 
 public class PathNavigateRegistry implements IPathNavigateRegistry
 {
-    private static final Function<MobEntity, AbstractAdvancedPathNavigate> DEFAULT = (entityLiving -> new MinecoloniesAdvancedPathNavigate(entityLiving, entityLiving.level));
+    private static final Function<Mob, AbstractAdvancedPathNavigate> DEFAULT = (entityLiving -> new MinecoloniesAdvancedPathNavigate(entityLiving, entityLiving.level));
 
-    private final Map<Predicate<MobEntity>, Function<MobEntity, AbstractAdvancedPathNavigate>> registry = Maps.newLinkedHashMap();
+    private final Map<Predicate<Mob>, Function<Mob, AbstractAdvancedPathNavigate>> registry = Maps.newLinkedHashMap();
 
     @Override
     public IPathNavigateRegistry registerNewPathNavigate(
-      final Predicate<MobEntity> selectionPredicate, final Function<MobEntity, AbstractAdvancedPathNavigate> navigateProducer)
+      final Predicate<Mob> selectionPredicate, final Function<Mob, AbstractAdvancedPathNavigate> navigateProducer)
     {
         registry.put(selectionPredicate, navigateProducer);
         return this;
     }
 
     @Override
-    public AbstractAdvancedPathNavigate getNavigateFor(final MobEntity entityLiving)
+    public AbstractAdvancedPathNavigate getNavigateFor(final Mob entityLiving)
     {
-        final List<Predicate<MobEntity>> predicates = new ArrayList<>(registry.keySet());
+        final List<Predicate<Mob>> predicates = new ArrayList<>(registry.keySet());
         Collections.reverse(predicates);
 
         return predicates.stream().filter(predicate -> predicate.test(entityLiving)).findFirst().map(predicate -> registry.get(predicate)).orElse(DEFAULT).apply(entityLiving);

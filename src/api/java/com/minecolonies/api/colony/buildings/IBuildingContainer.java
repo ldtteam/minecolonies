@@ -1,12 +1,12 @@
 package com.minecolonies.api.colony.buildings;
 
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
@@ -18,10 +18,10 @@ import java.util.List;
 public interface IBuildingContainer extends ICitizenAssignable, ICapabilityProvider
 {
     @Override
-    void deserializeNBT(CompoundNBT compound);
+    void deserializeNBT(CompoundTag compound);
 
     @Override
-    CompoundNBT serializeNBT();
+    CompoundTag serializeNBT();
 
     /**
      * Get the pick up priority of the building.
@@ -65,7 +65,7 @@ public interface IBuildingContainer extends ICitizenAssignable, ICapabilityProvi
      * @param pos        of the blockState
      * @param world      world to register it at.
      */
-    void registerBlockPosition(@NotNull BlockState blockState, @NotNull BlockPos pos, @NotNull World world);
+    void registerBlockPosition(@NotNull BlockState blockState, @NotNull BlockPos pos, @NotNull Level world);
 
     /**
      * Register a block and position. We suppress this warning since this parameter will be used in child classes which override this method.
@@ -75,7 +75,7 @@ public interface IBuildingContainer extends ICitizenAssignable, ICapabilityProvi
      * @param world world to register it at.
      */
     @SuppressWarnings("squid:S1172")
-    void registerBlockPosition(@NotNull Block block, @NotNull BlockPos pos, @NotNull World world);
+    void registerBlockPosition(@NotNull Block block, @NotNull BlockPos pos, @NotNull Level world);
 
     /**
      * Returns the tile entity that belongs to the colony building.

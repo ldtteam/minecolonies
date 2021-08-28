@@ -2,15 +2,15 @@ package com.minecolonies.api.advancements.building_add_recipe;
 
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.advancements.criterion.CriterionInstance;
-import net.minecraft.advancements.criterion.EntityPredicate;
-import net.minecraft.advancements.criterion.ItemPredicate;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.advancements.critereon.AbstractCriterionTriggerInstance;
+import net.minecraft.advancements.critereon.EntityPredicate;
+import net.minecraft.advancements.critereon.ItemPredicate;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * The test instance to check the various conditions for "building_add_recipe"
  */
-public class BuildingAddRecipeCriterionInstance extends CriterionInstance
+public class BuildingAddRecipeCriterionInstance extends AbstractCriterionTriggerInstance
 {
     private ItemPredicate[] outputItemPredicates;
     private int             craftingSize = -1;
@@ -20,7 +20,7 @@ public class BuildingAddRecipeCriterionInstance extends CriterionInstance
      */
     public BuildingAddRecipeCriterionInstance()
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_BUILDING_ADD_RECIPE), EntityPredicate.AndPredicate.ANY);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_BUILDING_ADD_RECIPE), EntityPredicate.Composite.ANY);
     }
 
     /**
@@ -29,7 +29,7 @@ public class BuildingAddRecipeCriterionInstance extends CriterionInstance
      */
     public BuildingAddRecipeCriterionInstance(final ItemPredicate[] outputItemPredicates)
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_BUILDING_ADD_RECIPE), EntityPredicate.AndPredicate.ANY);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_BUILDING_ADD_RECIPE), EntityPredicate.Composite.ANY);
 
         this.outputItemPredicates = outputItemPredicates;
     }
@@ -41,7 +41,7 @@ public class BuildingAddRecipeCriterionInstance extends CriterionInstance
      */
     public BuildingAddRecipeCriterionInstance(final ItemPredicate[] outputItemPredicates, final int craftingSize)
     {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_BUILDING_ADD_RECIPE), EntityPredicate.AndPredicate.ANY);
+        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_BUILDING_ADD_RECIPE), EntityPredicate.Composite.ANY);
 
         this.outputItemPredicates = outputItemPredicates;
         this.craftingSize = craftingSize;

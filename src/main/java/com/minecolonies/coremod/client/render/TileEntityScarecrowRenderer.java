@@ -6,17 +6,17 @@ import com.minecolonies.api.tileentities.ScareCrowType;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.BlockScarecrow;
 import com.minecolonies.coremod.client.model.ModelScarecrowBoth;
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.model.RenderMaterial;
-import net.minecraft.client.renderer.texture.AtlasTexture;
-import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import com.mojang.math.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
  * Class to render the scarecrow.
  */
 @OnlyIn(Dist.CLIENT)
-public class TileEntityScarecrowRenderer extends TileEntityRenderer<AbstractScarecrowTileEntity>
+public class TileEntityScarecrowRenderer extends BlockEntityRenderer<AbstractScarecrowTileEntity>
 {
     /**
      * Offset to the block middle.
@@ -68,19 +68,19 @@ public class TileEntityScarecrowRenderer extends TileEntityRenderer<AbstractScar
     @NotNull
     private ModelScarecrowBoth model;
 
-    public static final RenderMaterial SCARECROW_A;
-    public static final RenderMaterial       SCARECROW_B;
+    public static final Material SCARECROW_A;
+    public static final Material       SCARECROW_B;
     static
     {
-        SCARECROW_A = new RenderMaterial(AtlasTexture.LOCATION_BLOCKS, new ResourceLocation(Constants.MOD_ID, "blocks/blockscarecrowpumpkin"));
-        SCARECROW_B = new RenderMaterial(AtlasTexture.LOCATION_BLOCKS, new ResourceLocation(Constants.MOD_ID, "blocks/blockscarecrownormal"));
+        SCARECROW_A = new Material(TextureAtlas.LOCATION_BLOCKS, new ResourceLocation(Constants.MOD_ID, "blocks/blockscarecrowpumpkin"));
+        SCARECROW_B = new Material(TextureAtlas.LOCATION_BLOCKS, new ResourceLocation(Constants.MOD_ID, "blocks/blockscarecrownormal"));
     }
     /**
      * The public constructor for the renderer.
      *
      * @param dispatcher the render dispatcher.
      */
-    public TileEntityScarecrowRenderer(final TileEntityRendererDispatcher dispatcher)
+    public TileEntityScarecrowRenderer(final BlockEntityRenderDispatcher dispatcher)
     {
         super(dispatcher);
         this.model = new ModelScarecrowBoth();
@@ -90,8 +90,8 @@ public class TileEntityScarecrowRenderer extends TileEntityRenderer<AbstractScar
     public void render(
       final AbstractScarecrowTileEntity te,
       final float partialTicks,
-      final MatrixStack matrixStack,
-      @NotNull final IRenderTypeBuffer iRenderTypeBuffer,
+      final PoseStack matrixStack,
+      @NotNull final MultiBufferSource iRenderTypeBuffer,
       final int lightA,
       final int lightB)
     {
@@ -121,7 +121,7 @@ public class TileEntityScarecrowRenderer extends TileEntityRenderer<AbstractScar
             }
         }
 
-        final IVertexBuilder vertexConsumer = getMaterial(te).buffer(iRenderTypeBuffer, RenderType::entitySolid);
+        final VertexConsumer vertexConsumer = getMaterial(te).buffer(iRenderTypeBuffer, RenderType::entitySolid);
         this.model.renderToBuffer(matrixStack, vertexConsumer, lightA, lightB, 1.0F, 1.0F, 1.0F, 1.0F);
         matrixStack.popPose();
     }
@@ -133,7 +133,7 @@ public class TileEntityScarecrowRenderer extends TileEntityRenderer<AbstractScar
      * @return the material.
      */
     @NotNull
-    private static RenderMaterial getMaterial(@NotNull final AbstractScarecrowTileEntity tileEntity)
+    private static Material getMaterial(@NotNull final AbstractScarecrowTileEntity tileEntity)
     {
         if (tileEntity.getScarecrowType() == ScareCrowType.PUMPKINHEAD)
         {

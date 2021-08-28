@@ -10,14 +10,14 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.MineColonies;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUseContext;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.util.*;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,6 +25,11 @@ import java.util.List;
 
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.CANT_PLACE_COLONY_IN_OTHER_DIM;
+
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 
 /**
  * Class to handle the placement of the supplychest and with it the supplyship.
@@ -73,23 +78,23 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
 
     @NotNull
     @Override
-    public ActionResultType useOn(final ItemUseContext ctx)
+    public InteractionResult useOn(final UseOnContext ctx)
     {
         if (ctx.getLevel().isClientSide)
         {
             if (!MineColonies.getConfig().getServer().allowOtherDimColonies.get() && !WorldUtil.isOverworldType(ctx.getLevel()))
             {
-                return ActionResultType.FAIL;
+                return InteractionResult.FAIL;
             }
             placeSupplyShip(ctx.getLevel(), ctx.getClickedPos(), ctx.getPlayer().getDirection());
         }
 
-        return ActionResultType.FAIL;
+        return InteractionResult.FAIL;
     }
 
     @NotNull
     @Override
-    public ActionResult<ItemStack> use(final World worldIn, final PlayerEntity playerIn, final Hand hand)
+    public InteractionResultHolder<ItemStack> use(final Level worldIn, final Player playerIn, final InteractionHand hand)
     {
         final ItemStack stack = playerIn.getItemInHand(hand);
         if (worldIn.isClientSide)
@@ -97,12 +102,12 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
             if (!MineColonies.getConfig().getServer().allowOtherDimColonies.get() && !WorldUtil.isOverworldType(worldIn))
             {
                 LanguageHandler.sendPlayerMessage(playerIn, CANT_PLACE_COLONY_IN_OTHER_DIM);
-                return new ActionResult<>(ActionResultType.FAIL, stack);
+                return new InteractionResultHolder<>(InteractionResult.FAIL, stack);
             }
             placeSupplyShip(worldIn, null, playerIn.getDirection());
         }
 
-        return new ActionResult<>(ActionResultType.FAIL, stack);
+        return new InteractionResultHolder<>(InteractionResult.FAIL, stack);
     }
 
     /**
@@ -111,7 +116,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      * @param pos       the position to place the supply chest at.
      * @param direction the direction the supply chest should face.
      */
-    private void placeSupplyShip(World world, @Nullable final BlockPos pos, @NotNull final Direction direction)
+    private void placeSupplyShip(Level world, @Nullable final BlockPos pos, @NotNull final Direction direction)
     {
         final String name = WorldUtil.isNetherType(world)
                 ? SUPPLY_SHIP_STRUCTURE_NAME_NETHER
@@ -158,8 +163,8 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      * @return true if so.
      */
     public static boolean canShipBePlaced(
-            @NotNull final World world, @NotNull final BlockPos pos, final Blueprint ship, @NotNull final List<PlacementError> placementErrorList, final
-    PlayerEntity placer)
+            @NotNull final Level world, @NotNull final BlockPos pos, final Blueprint ship, @NotNull final List<PlacementError> placementErrorList, final
+    Player placer)
     {
         final BlockPos size = new BlockPos(ship.getSizeX(), ship.getSizeY(), ship.getSizeZ());
 
@@ -201,7 +206,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      * @param placementErrorList a list of placement errors.
      * @param placer             the player placing the supply camp.
      */
-    private static void checkFluidAndNotInColony(final World world, final BlockPos pos, @NotNull final List<PlacementError> placementErrorList, final PlayerEntity placer)
+    private static void checkFluidAndNotInColony(final Level world, final BlockPos pos, @NotNull final List<PlacementError> placementErrorList, final Player placer)
     {
         final boolean isOverworld = WorldUtil.isOverworldType(world);
         final boolean isWater = BlockUtils.isWater(world.getBlockState(pos));
@@ -232,7 +237,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      * @param placer the placer.
      * @return true if no colony found.
      */
-    private static boolean hasPlacePermission(final World world, final BlockPos pos, final PlayerEntity placer)
+    private static boolean hasPlacePermission(final Level world, final BlockPos pos, final Player placer)
     {
         final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, pos);
         return colony == null || colony.getPermissions().hasPermission(placer, Action.PLACE_BLOCKS);

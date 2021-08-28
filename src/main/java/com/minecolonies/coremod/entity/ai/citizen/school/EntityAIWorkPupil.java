@@ -13,13 +13,13 @@ import com.minecolonies.coremod.entity.SittingEntity;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.client.CircleParticleEffectMessage;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.TranslatableComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Predicate;
@@ -96,7 +96,7 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil, Buildi
         final BlockPos pos = school.getRandomPlaceToSit();
         if (pos == null)
         {
-            worker.getCitizenData().triggerInteraction(new StandardInteraction(new TranslationTextComponent(PUPIL_NO_CARPET), ChatPriority.BLOCKING));
+            worker.getCitizenData().triggerInteraction(new StandardInteraction(new TranslatableComponent(PUPIL_NO_CARPET), ChatPriority.BLOCKING));
             return DECIDE;
         }
 
@@ -147,7 +147,7 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil, Buildi
         }
 
         if (!world.getLoadedEntitiesOfClass(EntityCitizen.class,
-          new AxisAlignedBB(studyPos.getX(), studyPos.getY(), studyPos.getZ(), studyPos.getX(), studyPos.getY(), studyPos.getZ())).isEmpty())
+          new AABB(studyPos.getX(), studyPos.getY(), studyPos.getZ(), studyPos.getX(), studyPos.getY(), studyPos.getZ())).isEmpty())
         {
             studyPos = null;
             return DECIDE;
@@ -164,12 +164,12 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil, Buildi
 
         if (slot != -1)
         {
-            worker.setItemSlot(EquipmentSlotType.MAINHAND, worker.getInventoryCitizen().getStackInSlot(slot));
+            worker.setItemSlot(EquipmentSlot.MAINHAND, worker.getInventoryCitizen().getStackInSlot(slot));
             Network.getNetwork().sendToTrackingEntity(new CircleParticleEffectMessage(worker.position().add(0, 1, 0), ParticleTypes.ENCHANT, sittingTicks), worker);
         }
         else
         {
-            worker.setItemSlot(EquipmentSlotType.MAINHAND, ItemStack.EMPTY);
+            worker.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
             Network.getNetwork().sendToTrackingEntity(new CircleParticleEffectMessage(worker.position().add(0, 1, 0), ParticleTypes.HAPPY_VILLAGER, sittingTicks), worker);
         }
 
@@ -179,7 +179,7 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil, Buildi
             return getState();
         }
 
-        worker.setItemSlot(EquipmentSlotType.MAINHAND, ItemStack.EMPTY);
+        worker.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
         if (worker.vehicle != null)
         {
             worker.stopRiding();

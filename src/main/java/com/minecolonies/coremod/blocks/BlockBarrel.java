@@ -4,26 +4,33 @@ import com.minecolonies.api.blocks.AbstractBlockBarrel;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.blocks.types.BarrelType;
 import com.minecolonies.coremod.tileentities.TileEntityBarrel;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.material.Material;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.state.StateContainer;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.util.*;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.shapes.VoxelShapes;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorldReader;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
+
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
 public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel>
 {
@@ -48,14 +55,14 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel>
     }
 
     @Override
-    protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder)
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder)
     {
         builder.add(AbstractBlockBarrel.FACING, VARIANT);
     }
 
     @Nullable
     @Override
-    public TileEntity createTileEntity(final BlockState state, final IBlockReader world)
+    public BlockEntity createTileEntity(final BlockState state, final BlockGetter world)
     {
         return new TileEntityBarrel();
     }
@@ -68,30 +75,30 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel>
 
     @NotNull
     @Override
-    public ActionResultType use(
+    public InteractionResult use(
       final BlockState state,
-      final World worldIn,
+      final Level worldIn,
       final BlockPos pos,
-      final PlayerEntity player,
-      final Hand hand,
-      final BlockRayTraceResult ray)
+      final Player player,
+      final InteractionHand hand,
+      final BlockHitResult ray)
     {
         final ItemStack itemstack = player.inventory.getSelected();
-        final TileEntity te = worldIn.getBlockEntity(pos);
+        final BlockEntity te = worldIn.getBlockEntity(pos);
         if (te instanceof TileEntityBarrel && !worldIn.isClientSide)
         {
             ((TileEntityBarrel) te).useBarrel(player, itemstack);
             ((TileEntityBarrel) te).updateBlock(worldIn);
         }
 
-        return ActionResultType.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 
     @NotNull
     @Override
-    public VoxelShape getShape(final BlockState state, final IBlockReader worldIn, final BlockPos pos, final ISelectionContext context)
+    public VoxelShape getShape(final BlockState state, final BlockGetter worldIn, final BlockPos pos, final CollisionContext context)
     {
-        return VoxelShapes.box(0, 0, 0, 1, 1.5, 1);
+        return Shapes.box(0, 0, 0, 1, 1.5, 1);
     }
 
     /**
@@ -120,13 +127,13 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel>
 
     @Nullable
     @Override
-    public BlockState getStateForPlacement(final BlockItemUseContext context)
+    public BlockState getStateForPlacement(final BlockPlaceContext context)
     {
         return super.getStateForPlacement(context).setValue(AbstractBlockBarrel.FACING, context.getHorizontalDirection());
     }
 
     @Override
-    public boolean canSurvive(final BlockState state, final IWorldReader worldIn, final BlockPos pos)
+    public boolean canSurvive(final BlockState state, final LevelReader worldIn, final BlockPos pos)
     {
         return !worldIn.isEmptyBlock(pos.below())
                  && worldIn.getBlockState(pos.below()).getBlock() != ModBlocks.blockBarrel;

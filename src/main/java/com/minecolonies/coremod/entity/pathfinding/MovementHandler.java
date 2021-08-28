@@ -1,33 +1,33 @@
 package com.minecolonies.coremod.entity.pathfinding;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.MobEntity;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
-import net.minecraft.entity.ai.controller.MovementController;
-import net.minecraft.pathfinding.NodeProcessor;
-import net.minecraft.pathfinding.PathNavigator;
-import net.minecraft.pathfinding.PathNodeType;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.control.MoveControl;
+import net.minecraft.world.level.pathfinder.NodeEvaluator;
+import net.minecraft.world.entity.ai.navigation.PathNavigation;
+import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
  * Custom movement handler for minecolonies citizens (avoid jumping so much).
  * Note that the "speed" variable of the super is a speedFactor to our attributes base speed.
  */
-public class MovementHandler extends MovementController
+public class MovementHandler extends MoveControl
 {
 
     /**
      * Speed attribute holder
      */
-    final ModifiableAttributeInstance speedAtr;
+    final AttributeInstance speedAtr;
 
-    public MovementHandler(MobEntity mob)
+    public MovementHandler(Mob mob)
     {
         super(mob);
         this.speedAtr = this.mob.getAttribute(Attributes.MOVEMENT_SPEED);
@@ -36,13 +36,13 @@ public class MovementHandler extends MovementController
     @Override
     public void tick()
     {
-        if (this.operation == net.minecraft.entity.ai.controller.MovementController.Action.STRAFE)
+        if (this.operation == net.minecraft.world.entity.ai.control.MoveControl.Operation.STRAFE)
         {
             final float speedAtt = (float) speedAtr.getValue();
             float speed = (float) this.speedModifier * speedAtt;
             float forward = this.strafeForwards;
             float strafe = this.strafeRight;
-            float totalMovement = MathHelper.sqrt(forward * forward + strafe * strafe);
+            float totalMovement = Mth.sqrt(forward * forward + strafe * strafe);
             if (totalMovement < 1.0F)
             {
                 totalMovement = 1.0F;
@@ -51,17 +51,17 @@ public class MovementHandler extends MovementController
             totalMovement = speed / totalMovement;
             forward = forward * totalMovement;
             strafe = strafe * totalMovement;
-            final float sinRotation = MathHelper.sin(this.mob.yRot * ((float) Math.PI / 180F));
-            final float cosRotation = MathHelper.cos(this.mob.yRot * ((float) Math.PI / 180F));
+            final float sinRotation = Mth.sin(this.mob.yRot * ((float) Math.PI / 180F));
+            final float cosRotation = Mth.cos(this.mob.yRot * ((float) Math.PI / 180F));
             final float rot1 = forward * cosRotation - strafe * sinRotation;
             final float rot2 = strafe * cosRotation + forward * sinRotation;
-            final PathNavigator pathnavigator = this.mob.getNavigation();
+            final PathNavigation pathnavigator = this.mob.getNavigation();
 
-            final NodeProcessor nodeprocessor = pathnavigator.getNodeEvaluator();
+            final NodeEvaluator nodeprocessor = pathnavigator.getNodeEvaluator();
             if (nodeprocessor.getBlockPathType(this.mob.level,
-              MathHelper.floor(this.mob.getX() + (double) rot1),
-              MathHelper.floor(this.mob.getY()),
-              MathHelper.floor(this.mob.getZ() + (double) rot2)) != PathNodeType.WALKABLE)
+              Mth.floor(this.mob.getX() + (double) rot1),
+              Mth.floor(this.mob.getY()),
+              Mth.floor(this.mob.getZ() + (double) rot2)) != BlockPathTypes.WALKABLE)
             {
                 this.strafeForwards = 1.0F;
                 this.strafeRight = 0.0F;
@@ -71,11 +71,11 @@ public class MovementHandler extends MovementController
             this.mob.setSpeed(speed);
             this.mob.setZza(this.strafeForwards);
             this.mob.setXxa(this.strafeRight);
-            this.operation = net.minecraft.entity.ai.controller.MovementController.Action.WAIT;
+            this.operation = net.minecraft.world.entity.ai.control.MoveControl.Operation.WAIT;
         }
-        else if (this.operation == net.minecraft.entity.ai.controller.MovementController.Action.MOVE_TO)
+        else if (this.operation == net.minecraft.world.entity.ai.control.MoveControl.Operation.MOVE_TO)
         {
-            this.operation = net.minecraft.entity.ai.controller.MovementController.Action.WAIT;
+            this.operation = net.minecraft.world.entity.ai.control.MoveControl.Operation.WAIT;
             final double xDif = this.wantedX - this.mob.getX();
             final double zDif = this.wantedZ - this.mob.getZ();
             final double yDif = this.wantedY - this.mob.getY();
@@ -86,7 +86,7 @@ public class MovementHandler extends MovementController
                 return;
             }
 
-            final float range = (float) (MathHelper.atan2(zDif, xDif) * (double) (180F / (float) Math.PI)) - 90.0F;
+            final float range = (float) (Mth.atan2(zDif, xDif) * (double) (180F / (float) Math.PI)) - 90.0F;
             this.mob.yRot = this.rotlerp(this.mob.yRot, range, 90.0F);
             this.mob.setSpeed((float) (this.speedModifier * speedAtr.getValue()));
             final BlockPos blockpos = new BlockPos(this.mob.position());
@@ -99,10 +99,10 @@ public class MovementHandler extends MovementController
                        && !block.isLadder(blockstate, this.mob.level, blockpos, this.mob))
             {
                 this.mob.getJumpControl().jump();
-                this.operation = net.minecraft.entity.ai.controller.MovementController.Action.JUMPING;
+                this.operation = net.minecraft.world.entity.ai.control.MoveControl.Operation.JUMPING;
             }
         }
-        else if (this.operation == net.minecraft.entity.ai.controller.MovementController.Action.JUMPING)
+        else if (this.operation == net.minecraft.world.entity.ai.control.MoveControl.Operation.JUMPING)
         {
             this.mob.setSpeed((float) (this.speedModifier * speedAtr.getValue()));
 
@@ -111,7 +111,7 @@ public class MovementHandler extends MovementController
             final BlockState blockstate = this.mob.level.getBlockState(blockpos);
             if (this.mob.isOnGround() || blockstate.getMaterial().isLiquid())
             {
-                this.operation = net.minecraft.entity.ai.controller.MovementController.Action.WAIT;
+                this.operation = net.minecraft.world.entity.ai.control.MoveControl.Operation.WAIT;
             }
         }
         else
@@ -124,6 +124,6 @@ public class MovementHandler extends MovementController
     public void setWantedPosition(double x, double y, double z, double speedIn)
     {
         super.setWantedPosition(x, y, z, speedIn);
-        this.operation = MovementController.Action.MOVE_TO;
+        this.operation = MoveControl.Operation.MOVE_TO;
     }
 }

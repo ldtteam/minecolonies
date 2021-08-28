@@ -2,9 +2,9 @@ package com.minecolonies.coremod.entity.citizen.citizenhandlers;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenMournHandler;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.StringNBT;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.*;
@@ -38,10 +38,10 @@ public class CitizenMournHandler implements ICitizenMournHandler
     }
 
     @Override
-    public void read(final CompoundNBT compound)
+    public void read(final CompoundTag compound)
     {
         isMourning = compound.getBoolean(TAG_MOURNING);
-        final ListNBT tag = compound.getList(TAG_DECEASED, Constants.NBT.TAG_STRING);
+        final ListTag tag = compound.getList(TAG_DECEASED, Constants.NBT.TAG_STRING);
         for (int i = 0; i < tag.size(); i++)
         {
             deceasedCitizens.add(tag.getString(i));
@@ -49,13 +49,13 @@ public class CitizenMournHandler implements ICitizenMournHandler
     }
 
     @Override
-    public void write(final CompoundNBT compound)
+    public void write(final CompoundTag compound)
     {
         compound.putBoolean(TAG_MOURNING, isMourning);
-        final ListNBT deceasedNbt = new ListNBT();
+        final ListTag deceasedNbt = new ListTag();
         for (final String deceased : deceasedCitizens)
         {
-            deceasedNbt.add(StringNBT.valueOf(deceased));
+            deceasedNbt.add(StringTag.valueOf(deceased));
         }
         compound.put(TAG_DECEASED, deceasedNbt);
     }

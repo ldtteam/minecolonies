@@ -12,9 +12,9 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -150,7 +150,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
      * @param manager  the work manager.
      * @return {@link AbstractWorkOrder} from the NBT
      */
-    public static AbstractWorkOrder createFromNBT(@NotNull final CompoundNBT compound, final WorkManager manager)
+    public static AbstractWorkOrder createFromNBT(@NotNull final CompoundTag compound, final WorkManager manager)
     {
         @Nullable AbstractWorkOrder order = null;
         @Nullable Class<? extends IWorkOrder> oclass = null;
@@ -200,7 +200,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
      * @param manager  the workManager calling this method.
      */
     @Override
-    public void read(@NotNull final CompoundNBT compound, final IWorkManager manager)
+    public void read(@NotNull final CompoundTag compound, final IWorkManager manager)
     {
         id = compound.getInt(TAG_ID);
         if (compound.getAllKeys().contains(TAG_TH_PRIORITY))
@@ -235,7 +235,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
      * @return View object of the workOrder
      */
     @Nullable
-    public static WorkOrderView createWorkOrderView(final PacketBuffer buf)
+    public static WorkOrderView createWorkOrderView(final FriendlyByteBuf buf)
     {
         @Nullable WorkOrderView workOrderView = new WorkOrderView();
 
@@ -389,7 +389,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
      * @param compound NBT tag compount
      */
     @Override
-    public void write(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundTag compound)
     {
         final String s = nameToClassBiMap.inverse().get(this.getClass());
 
@@ -430,7 +430,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
      * @param buf Buffer to write to
      */
     @Override
-    public void serializeViewNetworkData(@NotNull final PacketBuffer buf)
+    public void serializeViewNetworkData(@NotNull final FriendlyByteBuf buf)
     {
         buf.writeInt(id);
         buf.writeInt(priority);

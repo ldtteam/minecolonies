@@ -1,7 +1,7 @@
 package com.minecolonies.api.colony.jobs;
 
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 
 import java.util.Set;
 
@@ -25,5 +25,5 @@ public interface IJobView
      * Deserialize the job from the buffer.
      * @param buffer the buffer to read it from.
      */
-    void deserialize(final PacketBuffer buffer);
+    void deserialize(final FriendlyByteBuf buffer);
 }

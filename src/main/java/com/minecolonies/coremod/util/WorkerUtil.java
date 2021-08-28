@@ -15,22 +15,22 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFlorist
 import com.minecolonies.coremod.entity.ai.citizen.miner.Level;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.tileentities.TileEntityCompostedDirt;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.GlazedTerracottaBlock;
-import net.minecraft.block.material.Material;
-import net.minecraft.entity.MoverType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.item.ToolItem;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.SignTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.GlazedTerracottaBlock;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.DiggerItem;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.entity.SignBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.ChatFormatting;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -174,9 +174,9 @@ public final class WorkerUtil
             {
                 for (final Tuple<ToolType, ItemStack> tool : getOrInitTestTools())
                 {
-                    if (tool.getB() != null && tool.getB().getItem() instanceof ToolItem)
+                    if (tool.getB() != null && tool.getB().getItem() instanceof DiggerItem)
                     {
-                        final ToolItem toolItem = (ToolItem) tool.getB().getItem();
+                        final DiggerItem toolItem = (DiggerItem) tool.getB().getItem();
                         if (tool.getB().getDestroySpeed(state) >= toolItem.getTier().getSpeed())
                         {
                             toolName = tool.getA().getName();
@@ -249,7 +249,7 @@ public final class WorkerUtil
         final double goToZ = zDifference > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
 
         //Have to move the entity minimally into the direction to render his new rotation.
-        citizen.move(MoverType.SELF, new Vector3d((float) goToX, 0, (float) goToZ));
+        citizen.move(MoverType.SELF, new Vec3((float) goToX, 0, (float) goToZ));
     }
 
     /**
@@ -271,7 +271,7 @@ public final class WorkerUtil
                     final BlockInfo te = structure.getBlockInfoAsMap().get(localPos);
                     if (te != null)
                     {
-                        final CompoundNBT teData = te.getTileEntityData();
+                        final CompoundTag teData = te.getTileEntityData();
                         if (teData != null && teData.getString(LEVEL_SIGN_FIRST_ROW).equals(LEVEL_SIGN_TEXT))
                         {
                             // try to make an anchor in 0,0,0 instead of the middle of the structure
@@ -292,25 +292,25 @@ public final class WorkerUtil
      * @param level   the level to update.
      * @param levelId the id of the level.
      */
-    public static void updateLevelSign(final World world, final Level level, final int levelId)
+    public static void updateLevelSign(final Level world, final Level level, final int levelId)
     {
         @Nullable final BlockPos levelSignPos = level.getLevelSign();
 
         if (levelSignPos != null)
         {
-            final TileEntity te = world.getBlockEntity(levelSignPos);
+            final BlockEntity te = world.getBlockEntity(levelSignPos);
 
-            if (te instanceof SignTileEntity)
+            if (te instanceof SignBlockEntity)
             {
                 final BlockState BlockState = world.getBlockState(levelSignPos);
-                final SignTileEntity teLevelSign = (SignTileEntity) te;
+                final SignBlockEntity teLevelSign = (SignBlockEntity) te;
 
-                teLevelSign.setMessage(0, new StringTextComponent(TextFormatting.stripFormatting(
+                teLevelSign.setMessage(0, new TextComponent(ChatFormatting.stripFormatting(
                   LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.minerMineNode") + ": " + levelId)));
-                teLevelSign.setMessage(1, new StringTextComponent(TextFormatting.stripFormatting("Y: " + (level.getDepth() + 1))));
-                teLevelSign.setMessage(2, new StringTextComponent(TextFormatting.stripFormatting(
+                teLevelSign.setMessage(1, new TextComponent(ChatFormatting.stripFormatting("Y: " + (level.getDepth() + 1))));
+                teLevelSign.setMessage(2, new TextComponent(ChatFormatting.stripFormatting(
                   LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.minerNode") + ": " + level.getNumberOfBuiltNodes())));
-                teLevelSign.setMessage(3, new StringTextComponent(TextFormatting.stripFormatting("")));
+                teLevelSign.setMessage(3, new TextComponent(ChatFormatting.stripFormatting("")));
 
                 teLevelSign.setChanged();
                 world.sendBlockUpdated(levelSignPos, BlockState, BlockState, 3);
@@ -325,13 +325,13 @@ public final class WorkerUtil
      * @param world           the world to check it for.
      * @return true if there is any.
      */
-    public static boolean isThereCompostedLand(final BuildingFlorist buildingFlorist, final World world)
+    public static boolean isThereCompostedLand(final BuildingFlorist buildingFlorist, final Level world)
     {
         for (final BlockPos pos : buildingFlorist.getPlantGround())
         {
             if (WorldUtil.isBlockLoaded(world, pos))
             {
-                final TileEntity entity = world.getBlockEntity(pos);
+                final BlockEntity entity = world.getBlockEntity(pos);
                 if (entity instanceof TileEntityCompostedDirt)
                 {
                     if (((TileEntityCompostedDirt) entity).isComposted())
@@ -355,7 +355,7 @@ public final class WorkerUtil
      * @param world the world.
      * @return the y of the last one.
      */
-    public static int getLastLadder(@NotNull final BlockPos pos, final World world)
+    public static int getLastLadder(@NotNull final BlockPos pos, final Level world)
     {
         if (world.getBlockState(pos).getBlock().isLadder(world.getBlockState(pos), world, pos, null))
         {

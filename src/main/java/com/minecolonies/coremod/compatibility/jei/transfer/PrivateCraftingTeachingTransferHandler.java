@@ -11,11 +11,11 @@ import mezz.jei.api.gui.ingredient.IGuiItemStackGroup;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandlerHelper;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.CraftingInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -48,7 +48,7 @@ public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHa
             @NotNull final ContainerCrafting craftingGUIBuilding,
             @NotNull final Object recipe,
             @NotNull final IRecipeLayout recipeLayout,
-            @NotNull final PlayerEntity player,
+            @NotNull final Player player,
             final boolean maxTransfer,
             final boolean doTransfer)
     {
@@ -86,7 +86,7 @@ public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHa
                 {
                     if (badIndexes.contains(inputIndex))
                     {
-                        final ITextComponent tooltipMessage = new TranslationTextComponent("jei.tooltip.error.recipe.transfer.too.large.player.inventory");
+                        final Component tooltipMessage = new TranslatableComponent("jei.tooltip.error.recipe.transfer.too.large.player.inventory");
                         return handlerHelper.createUserErrorForSlots(tooltipMessage, badIndexes);
                     }
                     guiIngredients.put(inputIndex, ingredient.getDisplayedIngredient());
@@ -97,7 +97,7 @@ public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHa
 
         if (doTransfer)
         {
-            final CraftingInventory craftMatrix = craftingGUIBuilding.getInv();
+            final CraftingContainer craftMatrix = craftingGUIBuilding.getInv();
             if (craftingGUIBuilding.isComplete())
             {
                 craftMatrix.setItem(0, guiIngredients.get(0));

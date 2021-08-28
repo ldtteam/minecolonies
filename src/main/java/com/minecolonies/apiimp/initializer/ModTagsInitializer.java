@@ -2,12 +2,12 @@ package com.minecolonies.apiimp.initializer;
 
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.Log;
-import net.minecraft.block.Block;
-import net.minecraft.entity.EntityType;
-import net.minecraft.item.Item;
-import net.minecraft.tags.ITag;
-import net.minecraft.tags.ITagCollectionSupplier;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.Item;
+import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagContainer;
+import net.minecraft.resources.ResourceLocation;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 import static com.minecolonies.api.util.constant.TagConstants.*;
@@ -42,9 +42,9 @@ public class ModTagsInitializer
     /**
      * Cached tag supplier from the last successful TagUpdateEvent
      */
-    private static ITagCollectionSupplier supplier;
+    private static TagContainer supplier;
 
-    public static void init(final ITagCollectionSupplier tagSupplier)
+    public static void init(final TagContainer tagSupplier)
     {
         supplier = tagSupplier;
 
@@ -114,7 +114,7 @@ public class ModTagsInitializer
      * @param supplier         The tag supplier providing the tag lookup.
      * @return the tag collection
      */
-    private static ITag<Item> getItemTags(final ResourceLocation resourceLocation, final ITagCollectionSupplier supplier)
+    private static Tag<Item> getItemTags(final ResourceLocation resourceLocation, final TagContainer supplier)
     {
         return supplier.getItems().getTagOrEmpty(resourceLocation);
     }
@@ -125,7 +125,7 @@ public class ModTagsInitializer
      * @param supplier         The tag supplier providing the tag lookup.
      * @return the tag collection
      */
-    private static ITag<Block> getBlockTags(final ResourceLocation resourceLocation, final ITagCollectionSupplier supplier)
+    private static Tag<Block> getBlockTags(final ResourceLocation resourceLocation, final TagContainer supplier)
     {
         return supplier.getBlocks().getTagOrEmpty(resourceLocation);
     }
@@ -136,7 +136,7 @@ public class ModTagsInitializer
      * @param supplier         The tag supplier providing the tag lookup.
      * @return the tag collection
      */
-    private static ITag<EntityType<?>> getEntityTags(final ResourceLocation resourceLocation, final ITagCollectionSupplier supplier)
+    private static Tag<EntityType<?>> getEntityTags(final ResourceLocation resourceLocation, final TagContainer supplier)
     {
         return supplier.getEntityTypes().getTagOrEmpty(resourceLocation);
     }

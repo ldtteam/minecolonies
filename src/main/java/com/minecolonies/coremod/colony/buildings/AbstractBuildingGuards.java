@@ -38,19 +38,19 @@ import com.minecolonies.coremod.entity.pathfinding.Pathfinding;
 import com.minecolonies.coremod.entity.pathfinding.pathjobs.PathJobRandomPos;
 import com.minecolonies.coremod.items.ItemBannerRallyGuards;
 import com.minecolonies.coremod.util.AttributeModifierUtils;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ArmorItem;
-import net.minecraft.item.ArrowItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.NBTUtil;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.ArrowItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -130,7 +130,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     /**
      * The player the guard has been set to follow.
      */
-    private PlayerEntity followPlayer;
+    private Player followPlayer;
 
     /**
      * The location the guard has been set to rally to.
@@ -172,16 +172,16 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
 
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
                                  && itemStack.getItem() instanceof ArmorItem
-                                 && ((ArmorItem) itemStack.getItem()).getSlot() == EquipmentSlotType.CHEST, new Tuple<>(1, true));
+                                 && ((ArmorItem) itemStack.getItem()).getSlot() == EquipmentSlot.CHEST, new Tuple<>(1, true));
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
                                  && itemStack.getItem() instanceof ArmorItem
-                                 && ((ArmorItem) itemStack.getItem()).getSlot() == EquipmentSlotType.HEAD, new Tuple<>(1, true));
+                                 && ((ArmorItem) itemStack.getItem()).getSlot() == EquipmentSlot.HEAD, new Tuple<>(1, true));
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
                                  && itemStack.getItem() instanceof ArmorItem
-                                 && ((ArmorItem) itemStack.getItem()).getSlot() == EquipmentSlotType.LEGS, new Tuple<>(1, true));
+                                 && ((ArmorItem) itemStack.getItem()).getSlot() == EquipmentSlot.LEGS, new Tuple<>(1, true));
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
                                  && itemStack.getItem() instanceof ArmorItem
-                                 && ((ArmorItem) itemStack.getItem()).getSlot() == EquipmentSlotType.FEET, new Tuple<>(1, true));
+                                 && ((ArmorItem) itemStack.getItem()).getSlot() == EquipmentSlot.FEET, new Tuple<>(1, true));
 
         keepX.put(itemStack -> {
             if (ItemStackUtils.isEmpty(itemStack) || !(itemStack.getItem() instanceof ArrowItem))
@@ -259,7 +259,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     //// ---- Overrides ---- \\\\
 
     @Override
-    public void deserializeNBT(final CompoundNBT compound)
+    public void deserializeNBT(final CompoundTag compound)
     {
         super.deserializeNBT(compound);
 
@@ -268,39 +268,39 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             getSetting(JOB).set(compound.getString(NBT_JOB));
         }
 
-        final ListNBT wayPointTagList = compound.getList(NBT_PATROL_TARGETS, Constants.NBT.TAG_COMPOUND);
+        final ListTag wayPointTagList = compound.getList(NBT_PATROL_TARGETS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < wayPointTagList.size(); ++i)
         {
-            final CompoundNBT blockAtPos = wayPointTagList.getCompound(i);
+            final CompoundTag blockAtPos = wayPointTagList.getCompound(i);
             final BlockPos pos = BlockPosUtil.read(blockAtPos, NBT_TARGET);
             patrolTargets.add(pos);
         }
 
-        guardPos = NBTUtil.readBlockPos(compound.getCompound(NBT_GUARD));
+        guardPos = NbtUtils.readBlockPos(compound.getCompound(NBT_GUARD));
         if (compound.contains(NBT_MINE_POS))
         {
-            minePos = NBTUtil.readBlockPos(compound.getCompound(NBT_MINE_POS));
+            minePos = NbtUtils.readBlockPos(compound.getCompound(NBT_MINE_POS));
         }
     }
 
     @Override
-    public CompoundNBT serializeNBT()
+    public CompoundTag serializeNBT()
     {
-        final CompoundNBT compound = super.serializeNBT();
+        final CompoundTag compound = super.serializeNBT();
 
-        @NotNull final ListNBT wayPointTagList = new ListNBT();
+        @NotNull final ListTag wayPointTagList = new ListTag();
         for (@NotNull final BlockPos pos : patrolTargets)
         {
-            @NotNull final CompoundNBT wayPointCompound = new CompoundNBT();
+            @NotNull final CompoundTag wayPointCompound = new CompoundTag();
             BlockPosUtil.write(wayPointCompound, NBT_TARGET, pos);
 
             wayPointTagList.add(wayPointCompound);
         }
         compound.put(NBT_PATROL_TARGETS, wayPointTagList);
-        compound.put(NBT_GUARD, NBTUtil.writeBlockPos(guardPos));
+        compound.put(NBT_GUARD, NbtUtils.writeBlockPos(guardPos));
         if (minePos != null)
         {
-            compound.put(NBT_MINE_POS, NBTUtil.writeBlockPos(minePos));
+            compound.put(NBT_MINE_POS, NbtUtils.writeBlockPos(minePos));
         }
 
         return compound;
@@ -315,12 +315,12 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             if (optCitizen.isPresent())
             {
                 AttributeModifierUtils.removeAllHealthModifiers(optCitizen.get());
-                optCitizen.get().setItemSlot(EquipmentSlotType.CHEST, ItemStackUtils.EMPTY);
-                optCitizen.get().setItemSlot(EquipmentSlotType.FEET, ItemStackUtils.EMPTY);
-                optCitizen.get().setItemSlot(EquipmentSlotType.HEAD, ItemStackUtils.EMPTY);
-                optCitizen.get().setItemSlot(EquipmentSlotType.LEGS, ItemStackUtils.EMPTY);
-                optCitizen.get().setItemSlot(EquipmentSlotType.MAINHAND, ItemStackUtils.EMPTY);
-                optCitizen.get().setItemSlot(EquipmentSlotType.OFFHAND, ItemStackUtils.EMPTY);
+                optCitizen.get().setItemSlot(EquipmentSlot.CHEST, ItemStackUtils.EMPTY);
+                optCitizen.get().setItemSlot(EquipmentSlot.FEET, ItemStackUtils.EMPTY);
+                optCitizen.get().setItemSlot(EquipmentSlot.HEAD, ItemStackUtils.EMPTY);
+                optCitizen.get().setItemSlot(EquipmentSlot.LEGS, ItemStackUtils.EMPTY);
+                optCitizen.get().setItemSlot(EquipmentSlot.MAINHAND, ItemStackUtils.EMPTY);
+                optCitizen.get().setItemSlot(EquipmentSlot.OFFHAND, ItemStackUtils.EMPTY);
             }
             citizen.setHomeBuilding(null);
         }
@@ -328,7 +328,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     }
 
     @Override
-    public void serializeToView(@NotNull final PacketBuffer buf)
+    public void serializeToView(@NotNull final FriendlyByteBuf buf)
     {
         super.serializeToView(buf);
         buf.writeInt(patrolTargets.size());
@@ -363,7 +363,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
 
     @Override
     @Nullable
-    public PlayerEntity getPlayerToFollowOrRally()
+    public Player getPlayerToFollowOrRally()
     {
         return rallyLocation != null && rallyLocation instanceof EntityLocation ? ((EntityLocation) rallyLocation).getPlayerEntity() : followPlayer;
     }
@@ -684,7 +684,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
 
         if (rallyLocation instanceof EntityLocation)
         {
-            final PlayerEntity player = ((EntityLocation) rallyLocation).getPlayerEntity();
+            final Player player = ((EntityLocation) rallyLocation).getPlayerEntity();
             if (player == null)
             {
                 setRallyLocation(null);
@@ -743,7 +743,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     }
 
     @Override
-    public void setPlayerToFollow(final PlayerEntity player)
+    public void setPlayerToFollow(final Player player)
     {
         this.followPlayer = player;
 
@@ -882,7 +882,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         }
 
         @Override
-        public void deserialize(@NotNull final PacketBuffer buf)
+        public void deserialize(@NotNull final FriendlyByteBuf buf)
         {
             super.deserialize(buf);
 

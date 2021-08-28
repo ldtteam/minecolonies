@@ -2,8 +2,8 @@ package com.minecolonies.coremod.client.render.mobs.egyptians;
 
 import com.minecolonies.api.entity.mobs.egyptians.AbstractEntityEgyptian;
 import com.minecolonies.coremod.client.model.raiders.ModelPharaoh;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * Renderer used for the pharao.
@@ -20,7 +20,7 @@ public class RendererPharao extends AbstractRendererEgyptian<AbstractEntityEgypt
      *
      * @param renderManagerIn the renderManager
      */
-    public RendererPharao(final EntityRendererManager renderManagerIn)
+    public RendererPharao(final EntityRenderDispatcher renderManagerIn)
     {
         super(renderManagerIn, new ModelPharaoh(), 0.5F);
     }

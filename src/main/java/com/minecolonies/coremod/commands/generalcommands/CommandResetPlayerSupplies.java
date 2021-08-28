@@ -7,8 +7,8 @@ import com.minecolonies.coremod.commands.commandTypes.IMCOPCommand;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import net.minecraft.command.CommandSource;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.stats.Stats;
 
 import static com.minecolonies.coremod.commands.CommandArgumentNames.PLAYERNAME_ARG;
@@ -21,16 +21,16 @@ public class CommandResetPlayerSupplies implements IMCOPCommand
      * @param context the context of the command execution
      */
     @Override
-    public int onExecute(final CommandContext<CommandSource> context)
+    public int onExecute(final CommandContext<CommandSourceStack> context)
     {
         final String username = StringArgumentType.getString(context, PLAYERNAME_ARG);
-        final PlayerEntity player = context.getSource().getServer().getPlayerList().getPlayerByName(username);
+        final Player player = context.getSource().getServer().getPlayerList().getPlayerByName(username);
         if (player == null)
         {
-            if (context.getSource().getEntity() instanceof PlayerEntity)
+            if (context.getSource().getEntity() instanceof Player)
             {
                 // could not find player with given name.
-                LanguageHandler.sendPlayerMessage((PlayerEntity) context.getSource().getEntity(), "com.minecolonies.command.playernotfound", username);
+                LanguageHandler.sendPlayerMessage((Player) context.getSource().getEntity(), "com.minecolonies.command.playernotfound", username);
             }
             else
             {
@@ -46,7 +46,7 @@ public class CommandResetPlayerSupplies implements IMCOPCommand
     }
 
     @Override
-    public LiteralArgumentBuilder<CommandSource> build()
+    public LiteralArgumentBuilder<CommandSourceStack> build()
     {
         return IMCCommand.newLiteral(getName()).then(IMCCommand.newArgument(PLAYERNAME_ARG, StringArgumentType.string()).executes(this::checkPreConditionAndExecute));
     }

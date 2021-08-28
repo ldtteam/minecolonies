@@ -18,16 +18,16 @@ import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
 import com.minecolonies.coremod.network.messages.client.CircleParticleEffectMessage;
 import com.minecolonies.coremod.network.messages.client.StreamParticleEffectMessage;
 import com.minecolonies.coremod.util.WorkerUtil;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.item.EnchantedBookItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.EnchantedBookItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.network.chat.TranslatableComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -114,7 +114,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
      */
     protected IAIState decide()
     {
-        worker.setItemInHand(Hand.MAIN_HAND, ItemStack.EMPTY);
+        worker.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
         if (walkToBuilding())
         {
             return DECIDE;
@@ -135,7 +135,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
                 if (worker.getCitizenData() != null)
                 {
                     worker.getCitizenData()
-                      .triggerInteraction(new StandardInteraction(new TranslationTextComponent(NO_WORKERS_TO_DRAIN_SET), ChatPriority.BLOCKING));
+                      .triggerInteraction(new StandardInteraction(new TranslatableComponent(NO_WORKERS_TO_DRAIN_SET), ChatPriority.BLOCKING));
                 }
                 return IDLE;
             }
@@ -221,11 +221,11 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
 
             if (worker.getRandom().nextBoolean())
             {
-                worker.swing(Hand.MAIN_HAND);
+                worker.swing(InteractionHand.MAIN_HAND);
             }
             else
             {
-                worker.swing(Hand.OFF_HAND);
+                worker.swing(InteractionHand.OFF_HAND);
             }
             return getState();
         }
@@ -257,7 +257,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
         if (stack.getItem().equals(Items.ENCHANTED_BOOK))
         {
             return EnchantedBookItem.getEnchantments(stack).stream()
-                    .mapToInt(nbt -> ((CompoundNBT) nbt).getShort("lvl"))
+                    .mapToInt(nbt -> ((CompoundTag) nbt).getShort("lvl"))
                     .max().orElse(0);
         }
         return 0;
@@ -340,8 +340,8 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
         progressTicks++;
         if (progressTicks < MAX_PROGRESS_TICKS)
         {
-            final Vector3d start = worker.position().add(0, 2, 0);
-            final Vector3d goal = citizenToGatherFrom.getEntity().get().position().add(0, 2, 0);
+            final Vec3 start = worker.position().add(0, 2, 0);
+            final Vec3 goal = citizenToGatherFrom.getEntity().get().position().add(0, 2, 0);
 
             Network.getNetwork().sendToTrackingEntity(
               new StreamParticleEffectMessage(
@@ -361,11 +361,11 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
 
             if (worker.getRandom().nextBoolean())
             {
-                worker.swing(Hand.MAIN_HAND);
+                worker.swing(InteractionHand.MAIN_HAND);
             }
             else
             {
-                worker.swing(Hand.OFF_HAND);
+                worker.swing(InteractionHand.OFF_HAND);
             }
 
             return getState();

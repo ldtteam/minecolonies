@@ -7,11 +7,11 @@ import com.minecolonies.api.entity.mobs.egyptians.AbstractEntityEgyptian;
 import com.minecolonies.api.entity.mobs.pirates.AbstractEntityPirate;
 import com.minecolonies.api.entity.mobs.vikings.AbstractEntityNorsemen;
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.entity.CreatureEntity;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.projectile.AbstractArrowEntity;
-import net.minecraft.entity.projectile.ArrowEntity;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraftforge.registries.ObjectHolder;
 
 @ObjectHolder(Constants.MOD_ID)
@@ -30,7 +30,7 @@ public class ModEntities
     public static EntityType<? extends AbstractEntityBarbarian> BARBARIAN;
 
     @ObjectHolder("mercenary")
-    public static EntityType<? extends CreatureEntity> MERCENARY;
+    public static EntityType<? extends PathfinderMob> MERCENARY;
 
     @ObjectHolder("archerbarbarian")
     public static EntityType<? extends AbstractEntityBarbarian> ARCHERBARBARIAN;
@@ -78,7 +78,7 @@ public class ModEntities
     public static EntityType<MinecoloniesMinecart> MINECART;
 
     @ObjectHolder("firearrow")
-    public static EntityType<? extends AbstractArrowEntity> FIREARROW;
+    public static EntityType<? extends AbstractArrow> FIREARROW;
 
-    public static EntityType<? extends ArrowEntity> MC_NORMAL_ARROW;
+    public static EntityType<? extends Arrow> MC_NORMAL_ARROW;
 }

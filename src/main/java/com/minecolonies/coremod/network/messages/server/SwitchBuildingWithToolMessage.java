@@ -2,9 +2,9 @@ package com.minecolonies.coremod.network.messages.server;
 
 import com.ldtteam.structurize.items.ModItems;
 import com.minecolonies.api.network.IMessage;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
@@ -45,7 +45,7 @@ public class SwitchBuildingWithToolMessage implements IMessage
      * @param buf The buffer begin read from.
      */
     @Override
-    public void fromBytes(@NotNull final PacketBuffer buf)
+    public void fromBytes(@NotNull final FriendlyByteBuf buf)
     {
         stack = buf.readItem();
     }
@@ -56,7 +56,7 @@ public class SwitchBuildingWithToolMessage implements IMessage
      * @param buf The buffer being written to.
      */
     @Override
-    public void toBytes(@NotNull final PacketBuffer buf)
+    public void toBytes(@NotNull final FriendlyByteBuf buf)
     {
         buf.writeItem(stack);
     }
@@ -71,7 +71,7 @@ public class SwitchBuildingWithToolMessage implements IMessage
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
-        final ServerPlayerEntity player = ctxIn.getSender();
+        final ServerPlayer player = ctxIn.getSender();
 
         int stackSlot = -1;
         int buildToolSlot = -1;

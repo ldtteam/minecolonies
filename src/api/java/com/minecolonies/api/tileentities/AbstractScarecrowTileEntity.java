@@ -2,17 +2,17 @@ package com.minecolonies.api.tileentities;
 
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.util.WorldUtil;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class AbstractScarecrowTileEntity extends TileEntity implements INamedContainerProvider
+public abstract class AbstractScarecrowTileEntity extends BlockEntity implements MenuProvider
 {
 
     /**
@@ -30,7 +30,7 @@ public abstract class AbstractScarecrowTileEntity extends TileEntity implements 
      * @param position the position.
      * @return true if it is.
      */
-    public abstract boolean isNoPartOfField(@NotNull World world, @NotNull BlockPos position);
+    public abstract boolean isNoPartOfField(@NotNull Level world, @NotNull BlockPos position);
 
     /**
      * Returns the {@link BlockPos} of the current object, also used as ID.

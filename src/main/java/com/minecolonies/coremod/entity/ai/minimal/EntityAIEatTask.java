@@ -26,15 +26,15 @@ import com.minecolonies.coremod.entity.SittingEntity;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.client.ItemParticleEffectMessage;
 import com.minecolonies.coremod.util.AdvancementUtils;
-import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.item.AirItem;
-import net.minecraft.item.Food;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.item.AirItem;
+import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.TranslatableComponent;
 
 import java.util.EnumSet;
 
@@ -257,9 +257,9 @@ public class EntityAIEatTask extends Goal
             return CHECK_FOR_FOOD;
         }
 
-        citizen.setItemInHand(Hand.MAIN_HAND, stack);
+        citizen.setItemInHand(InteractionHand.MAIN_HAND, stack);
 
-        citizen.swing(Hand.MAIN_HAND);
+        citizen.swing(InteractionHand.MAIN_HAND);
         citizen.playSound(SoundEvents.GENERIC_EAT, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(citizen.getRandom()));
         Network.getNetwork()
           .sendToTrackingEntity(new ItemParticleEffectMessage(citizen.getMainHandItem(),
@@ -277,7 +277,7 @@ public class EntityAIEatTask extends Goal
         }
 
 
-        final Food itemFood = stack.getItem().getFoodProperties();
+        final FoodProperties itemFood = stack.getItem().getFoodProperties();
 
         final Item containerItem = stack.getItem().getCraftingRemainingItem();
 
@@ -312,7 +312,7 @@ public class EntityAIEatTask extends Goal
         }
 
         citizenData.markDirty();
-        citizen.setItemInHand(Hand.MAIN_HAND, ItemStack.EMPTY);
+        citizen.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
 
         if (citizenData.getSaturation() < CitizenConstants.FULL_SATURATION && !citizenData.getInventory().getStackInSlot(foodSlot).isEmpty())
         {
@@ -537,7 +537,7 @@ public class EntityAIEatTask extends Goal
 
         if (restaurantPos == null)
         {
-            citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(NO_RESTAURANT), ChatPriority.BLOCKING));
+            citizenData.triggerInteraction(new StandardInteraction(new TranslatableComponent(NO_RESTAURANT), ChatPriority.BLOCKING));
             return CHECK_FOR_FOOD;
         }
         return GO_TO_RESTAURANT;
@@ -561,17 +561,17 @@ public class EntityAIEatTask extends Goal
 
         if (InventoryUtils.hasItemInItemHandler(citizen.getInventoryCitizen(), ISCOOKABLE))
         {
-            citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(RAW_FOOD), ChatPriority.PENDING));
+            citizenData.triggerInteraction(new StandardInteraction(new TranslatableComponent(RAW_FOOD), ChatPriority.PENDING));
         }
         else if (InventoryUtils.hasItemInItemHandler(citizen.getInventoryCitizen(), stack -> CAN_EAT.test(stack) && !canEat(citizenData, stack)))
         {
             if (citizenData.isChild())
             {
-                citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(BETTER_FOOD_CHILDREN), ChatPriority.BLOCKING));
+                citizenData.triggerInteraction(new StandardInteraction(new TranslatableComponent(BETTER_FOOD_CHILDREN), ChatPriority.BLOCKING));
             }
             else
             {
-                citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(BETTER_FOOD), ChatPriority.BLOCKING));
+                citizenData.triggerInteraction(new StandardInteraction(new TranslatableComponent(BETTER_FOOD), ChatPriority.BLOCKING));
             }
         }
 
@@ -587,7 +587,7 @@ public class EntityAIEatTask extends Goal
         foodSlot = -1;
         citizen.releaseUsingItem();
         citizen.stopUsingItem();
-        citizen.setItemInHand(Hand.MAIN_HAND, ItemStack.EMPTY);
+        citizen.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
         restaurantPos = null;
         eatPos = null;
     }

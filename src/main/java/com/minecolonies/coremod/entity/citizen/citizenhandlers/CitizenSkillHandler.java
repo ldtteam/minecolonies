@@ -13,9 +13,9 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.network.messages.client.VanillaParticleMessage;
 import com.minecolonies.coremod.util.ExperienceUtils;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
@@ -113,16 +113,16 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
 
     @NotNull
     @Override
-    public CompoundNBT write()
+    public CompoundTag write()
     {
-        final CompoundNBT compoundNBT = new CompoundNBT();
+        final CompoundTag compoundNBT = new CompoundTag();
 
-        @NotNull final ListNBT levelTagList = new ListNBT();
+        @NotNull final ListTag levelTagList = new ListTag();
         for (@NotNull final Map.Entry<Skill, Tuple<Integer, Double>> entry : skillMap.entrySet())
         {
             if (entry.getKey() != null && entry.getValue() != null)
             {
-                @NotNull final CompoundNBT levelCompound = new CompoundNBT();
+                @NotNull final CompoundTag levelCompound = new CompoundTag();
                 levelCompound.putInt(TAG_SKILL, entry.getKey().ordinal());
                 levelCompound.putInt(TAG_LEVEL, entry.getValue().getA());
                 levelCompound.putDouble(TAG_EXPERIENCE, entry.getValue().getB());
@@ -135,12 +135,12 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
     }
 
     @Override
-    public void read(@NotNull final CompoundNBT compoundNBT)
+    public void read(@NotNull final CompoundTag compoundNBT)
     {
-        final ListNBT levelTagList = compoundNBT.getList(TAG_LEVEL_MAP, Constants.NBT.TAG_COMPOUND);
+        final ListTag levelTagList = compoundNBT.getList(TAG_LEVEL_MAP, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < levelTagList.size(); ++i)
         {
-            final CompoundNBT levelExperienceAtJob = levelTagList.getCompound(i);
+            final CompoundTag levelExperienceAtJob = levelTagList.getCompound(i);
             skillMap.put(Skill.values()[levelExperienceAtJob.getInt(TAG_SKILL)],
               new Tuple<>(Math.max(1, Math.min(levelExperienceAtJob.getInt(TAG_LEVEL), MAX_CITIZEN_LEVEL)), levelExperienceAtJob.getDouble(TAG_EXPERIENCE)));
         }

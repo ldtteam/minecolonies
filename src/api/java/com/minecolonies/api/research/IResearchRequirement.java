@@ -2,8 +2,8 @@ package com.minecolonies.api.research;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.research.registry.ResearchRequirementEntry;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.TranslatableComponent;
 
 /**
  * Interface of research requirements.
@@ -23,7 +23,7 @@ public interface IResearchRequirement
      *
      * @return translation text component.
      */
-    TranslationTextComponent getDesc();
+    TranslatableComponent getDesc();
 
     /**
      * Get the {@link ResearchRequirementEntry} for this Research Requirement.
@@ -37,5 +37,5 @@ public interface IResearchRequirement
      *
      * @return an NBT file which must, at minimum, contain the necessary traits to reassemble the effect.
      */
-    CompoundNBT writeToNBT();
+    CompoundTag writeToNBT();
 }

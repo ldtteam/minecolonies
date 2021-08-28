@@ -1,7 +1,7 @@
 package com.minecolonies.api.colony.colonyEvents;
 
-import net.minecraft.entity.EntityType;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.core.BlockPos;
 
 /**
  * Interface type for raid events

@@ -1,9 +1,11 @@
 package com.minecolonies.api.blocks;
 
 import com.minecolonies.api.blocks.types.GraveType;
-import net.minecraft.block.HorizontalBlock;
-import net.minecraft.state.DirectionProperty;
-import net.minecraft.state.EnumProperty;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
+
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
 public abstract class AbstractBlockMinecoloniesGrave<B extends AbstractBlockMinecoloniesGrave<B>> extends AbstractBlockMinecolonies<B>
 {
@@ -12,7 +14,7 @@ public abstract class AbstractBlockMinecoloniesGrave<B extends AbstractBlockMine
     /**
      * The position it faces.
      */
-    public static final DirectionProperty      FACING       = HorizontalBlock.FACING;
+    public static final DirectionProperty      FACING       = HorizontalDirectionalBlock.FACING;
 
     public AbstractBlockMinecoloniesGrave(final Properties properties)
     {

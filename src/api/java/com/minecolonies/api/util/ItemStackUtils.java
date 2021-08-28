@@ -10,21 +10,21 @@ import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
-import net.minecraft.block.Block;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.item.ArmorStandEntity;
-import net.minecraft.entity.item.ItemFrameEntity;
-import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.entity.decoration.ItemFrame;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.item.*;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.JsonToNBT;
-import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.TagParser;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.tileentity.FurnaceTileEntity;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.EntityRayTraceResult;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import org.jetbrains.annotations.NotNull;
@@ -40,6 +40,22 @@ import java.util.stream.Collectors;
 import static com.minecolonies.api.util.constant.Constants.FUEL_SLOT;
 import static com.minecolonies.api.util.constant.Constants.SMELTABLE_SLOT;
 import static com.minecolonies.api.items.ModTags.fungi;
+
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.ArmorMaterial;
+import net.minecraft.world.item.ArmorMaterials;
+import net.minecraft.world.item.BowItem;
+import net.minecraft.world.item.DiggerItem;
+import net.minecraft.world.item.FishingRodItem;
+import net.minecraft.world.item.FlintAndSteelItem;
+import net.minecraft.world.item.HoeItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.ShearsItem;
+import net.minecraft.world.item.ShieldItem;
+import net.minecraft.world.item.SwordItem;
+import net.minecraft.world.item.Tiers;
 
 /**
  * Utility methods for the inventories.
@@ -126,7 +142,7 @@ public final class ItemStackUtils
      * @return the output object or null.
      */
     @Nullable
-    public static Entity getEntityFromEntityInfoOrNull(final CompoundNBT entityData, final World world)
+    public static Entity getEntityFromEntityInfoOrNull(final CompoundTag entityData, final Level world)
     {
         try
         {
@@ -157,7 +173,7 @@ public final class ItemStackUtils
      * @param placer     the entity placer.
      * @return a list of stacks.
      */
-    public static List<ItemStorage> getListOfStackForEntityInfo(final CompoundNBT entityData, final World world, final Entity placer)
+    public static List<ItemStorage> getListOfStackForEntityInfo(final CompoundTag entityData, final Level world, final Entity placer)
     {
         if (entityData != null)
         {
@@ -182,7 +198,7 @@ public final class ItemStackUtils
      * @param placer     the entity placer.
      * @return a list of stacks.
      */
-    public static List<ItemStorage> getListOfStackForEntityInfo(final CompoundNBT entityData, final World world, final AbstractEntityCitizen placer)
+    public static List<ItemStorage> getListOfStackForEntityInfo(final CompoundTag entityData, final Level world, final AbstractEntityCitizen placer)
     {
         if (placer != null)
         {
@@ -204,9 +220,9 @@ public final class ItemStackUtils
         if (entity != null)
         {
             final List<ItemStorage> request = new ArrayList<>();
-            if (entity instanceof ItemFrameEntity)
+            if (entity instanceof ItemFrame)
             {
-                final ItemStack stack = ((ItemFrameEntity) entity).getItem();
+                final ItemStack stack = ((ItemFrame) entity).getItem();
                 if (!ItemStackUtils.isEmpty(stack))
                 {
                     ItemStackUtils.setSize(stack, 1);
@@ -214,9 +230,9 @@ public final class ItemStackUtils
                 }
                 request.add(new ItemStorage(new ItemStack(Items.ITEM_FRAME, 1)));
             }
-            else if (entity instanceof ArmorStandEntity)
+            else if (entity instanceof ArmorStand)
             {
-                request.add(new ItemStorage(entity.getPickedResult(new EntityRayTraceResult(placer))));
+                request.add(new ItemStorage(entity.getPickedResult(new EntityHitResult(placer))));
                 entity.getArmorSlots().forEach(item -> request.add(new ItemStorage(item)));
                 entity.getHandSlots().forEach(item -> request.add(new ItemStorage(item)));
             }
@@ -485,26 +501,26 @@ public final class ItemStackUtils
      * @param material type of material of the armor
      * @return armor level
      */
-    private static int getArmorLevel(final IArmorMaterial material)
+    private static int getArmorLevel(final ArmorMaterial material)
     {
-        final int damageReductionAmount = material.getDefenseForSlot(EquipmentSlotType.CHEST);
-        if (damageReductionAmount <= ArmorMaterial.LEATHER.getDefenseForSlot(EquipmentSlotType.CHEST))
+        final int damageReductionAmount = material.getDefenseForSlot(EquipmentSlot.CHEST);
+        if (damageReductionAmount <= ArmorMaterials.LEATHER.getDefenseForSlot(EquipmentSlot.CHEST))
         {
             return 0;
         }
-        else if (damageReductionAmount <= ArmorMaterial.GOLD.getDefenseForSlot(EquipmentSlotType.CHEST) && material != ArmorMaterial.CHAIN)
+        else if (damageReductionAmount <= ArmorMaterials.GOLD.getDefenseForSlot(EquipmentSlot.CHEST) && material != ArmorMaterials.CHAIN)
         {
             return 1;
         }
-        else if (damageReductionAmount <= ArmorMaterial.CHAIN.getDefenseForSlot(EquipmentSlotType.CHEST))
+        else if (damageReductionAmount <= ArmorMaterials.CHAIN.getDefenseForSlot(EquipmentSlot.CHEST))
         {
             return 2;
         }
-        else if (damageReductionAmount <= ArmorMaterial.IRON.getDefenseForSlot(EquipmentSlotType.CHEST))
+        else if (damageReductionAmount <= ArmorMaterials.IRON.getDefenseForSlot(EquipmentSlot.CHEST))
         {
             return 3;
         }
-        else if (damageReductionAmount <= ArmorMaterial.DIAMOND.getDefenseForSlot(EquipmentSlotType.CHEST))
+        else if (damageReductionAmount <= ArmorMaterials.DIAMOND.getDefenseForSlot(EquipmentSlot.CHEST))
         {
             return 4;
         }
@@ -529,11 +545,11 @@ public final class ItemStackUtils
             return 5;
         }
         final int rodDurability = itemStack.getMaxDamage();
-        if (rodDurability <= (ItemTier.WOOD.getUses() + MinecoloniesAPIProxy.getInstance().getConfig().getServer().fishingRodDurabilityAdjustT1.get()))
+        if (rodDurability <= (Tiers.WOOD.getUses() + MinecoloniesAPIProxy.getInstance().getConfig().getServer().fishingRodDurabilityAdjustT1.get()))
         {
             return 1;
         }
-        else if (rodDurability <= (ItemTier.IRON.getUses() + MinecoloniesAPIProxy.getInstance().getConfig().getServer().fishingRodDurabilityAdjustT2.get()))
+        else if (rodDurability <= (Tiers.IRON.getUses() + MinecoloniesAPIProxy.getInstance().getConfig().getServer().fishingRodDurabilityAdjustT2.get()))
         {
             return 2;
         }
@@ -555,7 +571,7 @@ public final class ItemStackUtils
         int maxLevel = 0;
         if (itemStack != null)
         {
-            final ListNBT ListNBT = itemStack.getEnchantmentTags();
+            final ListTag ListNBT = itemStack.getEnchantmentTags();
 
             if (ListNBT != null)
             {
@@ -585,7 +601,7 @@ public final class ItemStackUtils
         int fortune = 0;
         if (tool.isEnchanted())
         {
-            final ListNBT t = tool.getEnchantmentTags();
+            final ListTag t = tool.getEnchantmentTags();
 
             for (int i = 0; i < t.size(); i++)
             {
@@ -608,7 +624,7 @@ public final class ItemStackUtils
         boolean hasSilk = false;
         if (tool.isEnchanted())
         {
-            final ListNBT t = tool.getEnchantmentTags();
+            final ListTag t = tool.getEnchantmentTags();
 
             for (int i = 0; i < t.size(); i++)
             {
@@ -630,7 +646,7 @@ public final class ItemStackUtils
      */
     public static boolean doesItemServeAsWeapon(@NotNull final ItemStack stack)
     {
-        return stack.getItem() instanceof SwordItem || stack.getItem() instanceof ToolItem || Compatibility.isTinkersWeapon(stack);
+        return stack.getItem() instanceof SwordItem || stack.getItem() instanceof DiggerItem || Compatibility.isTinkersWeapon(stack);
     }
 
     /**
@@ -802,8 +818,8 @@ public final class ItemStackUtils
             // Then sort on NBT
             if (itemStack1.hasTag() && itemStack2.hasTag())
             {
-                CompoundNBT nbt1 = itemStack1.getTag();
-                CompoundNBT nbt2 = itemStack2.getTag();
+                CompoundTag nbt1 = itemStack1.getTag();
+                CompoundTag nbt2 = itemStack2.getTag();
 
                 for(String key :nbt1.getAllKeys())
                 {
@@ -890,7 +906,7 @@ public final class ItemStackUtils
      * @return The ItemStack stored in the NBT Data.
      */
     @NotNull
-    public static ItemStack deserializeFromNBT(@NotNull final CompoundNBT compound)
+    public static ItemStack deserializeFromNBT(@NotNull final CompoundTag compound)
     {
         return ItemStack.of(compound);
     }
@@ -917,7 +933,7 @@ public final class ItemStackUtils
      * @param entity the furnace.
      * @return true if so.
      */
-    public static boolean hasSmeltableInFurnaceAndNoFuel(final FurnaceTileEntity entity)
+    public static boolean hasSmeltableInFurnaceAndNoFuel(final FurnaceBlockEntity entity)
     {
         return !ItemStackUtils.isEmpty(entity.getItem(SMELTABLE_SLOT))
                  && ItemStackUtils.isEmpty(entity.getItem(FUEL_SLOT));
@@ -929,7 +945,7 @@ public final class ItemStackUtils
      * @param entity the furnace.
      * @return true if so.
      */
-    public static boolean hasNeitherFuelNorSmeltAble(final FurnaceTileEntity entity)
+    public static boolean hasNeitherFuelNorSmeltAble(final FurnaceBlockEntity entity)
     {
         return ItemStackUtils.isEmpty(entity.getItem(SMELTABLE_SLOT))
                  && ItemStackUtils.isEmpty(entity.getItem(FUEL_SLOT));
@@ -941,7 +957,7 @@ public final class ItemStackUtils
      * @param entity the furnace.
      * @return true if so.
      */
-    public static boolean hasFuelInFurnaceAndNoSmeltable(final FurnaceTileEntity entity)
+    public static boolean hasFuelInFurnaceAndNoSmeltable(final FurnaceBlockEntity entity)
     {
         return ItemStackUtils.isEmpty(entity.getItem(SMELTABLE_SLOT))
                  && !ItemStackUtils.isEmpty(entity.getItem(FUEL_SLOT));
@@ -977,7 +993,7 @@ public final class ItemStackUtils
         {
             try
             {
-                stack.setTag(JsonToNBT.parseTag(tag));
+                stack.setTag(TagParser.parseTag(tag));
             }
             catch (CommandSyntaxException e1)
             {

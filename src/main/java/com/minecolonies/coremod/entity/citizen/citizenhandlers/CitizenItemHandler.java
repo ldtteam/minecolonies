@@ -8,20 +8,20 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.client.BlockParticleEffectMessage;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ArmorItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.core.BlockPos;
 import net.minecraftforge.fml.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -81,7 +81,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
                     CompatibilityUtils.getWorldFromCitizen(citizen).playSound(null,
                       citizen.blockPosition(),
                       SoundEvents.ITEM_PICKUP,
-                      SoundCategory.AMBIENT,
+                      SoundSource.AMBIENT,
                       (float) DEFAULT_VOLUME,
                       (float) ((citizen.getRandom().nextGaussian() * DEFAULT_PITCH_MULTIPLIER + 1.0D) * 2.0D));
                     citizen.take(itemEntity, ItemStackUtils.getSize(itemStack) - resultingStackSize);
@@ -113,7 +113,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
     @Override
     public void removeHeldItem()
     {
-        citizen.setItemSlot(EquipmentSlotType.MAINHAND, ItemStackUtils.EMPTY);
+        citizen.setItemSlot(EquipmentSlot.MAINHAND, ItemStackUtils.EMPTY);
     }
 
     /**
@@ -123,16 +123,16 @@ public class CitizenItemHandler implements ICitizenItemHandler
      * @param slot from the inventory slot.
      */
     @Override
-    public void setHeldItem(final Hand hand, final int slot)
+    public void setHeldItem(final InteractionHand hand, final int slot)
     {
         citizen.getCitizenData().getInventory().setHeldItem(hand, slot);
-        if (hand.equals(Hand.MAIN_HAND))
+        if (hand.equals(InteractionHand.MAIN_HAND))
         {
-            citizen.setItemSlot(EquipmentSlotType.MAINHAND, citizen.getCitizenData().getInventory().getStackInSlot(slot));
+            citizen.setItemSlot(EquipmentSlot.MAINHAND, citizen.getCitizenData().getInventory().getStackInSlot(slot));
         }
-        else if (hand.equals(Hand.OFF_HAND))
+        else if (hand.equals(InteractionHand.OFF_HAND))
         {
-            citizen.setItemSlot(EquipmentSlotType.OFFHAND, citizen.getCitizenData().getInventory().getStackInSlot(slot));
+            citizen.setItemSlot(EquipmentSlot.OFFHAND, citizen.getCitizenData().getInventory().getStackInSlot(slot));
         }
     }
 
@@ -144,8 +144,8 @@ public class CitizenItemHandler implements ICitizenItemHandler
     @Override
     public void setMainHeldItem(final int slot)
     {
-        citizen.getCitizenData().getInventory().setHeldItem(Hand.MAIN_HAND, slot);
-        citizen.setItemSlot(EquipmentSlotType.MAINHAND, citizen.getCitizenData().getInventory().getStackInSlot(slot));
+        citizen.getCitizenData().getInventory().setHeldItem(InteractionHand.MAIN_HAND, slot);
+        citizen.setItemSlot(EquipmentSlot.MAINHAND, citizen.getCitizenData().getInventory().getStackInSlot(slot));
     }
 
     /**
@@ -199,7 +199,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
             CompatibilityUtils.getWorldFromCitizen(citizen).playSound(null,
               blockPos,
               block.getSoundType(blockState, CompatibilityUtils.getWorldFromCitizen(citizen), blockPos, citizen).getBreakSound(),
-              SoundCategory.BLOCKS,
+              SoundSource.BLOCKS,
               block.getSoundType(blockState, CompatibilityUtils.getWorldFromCitizen(citizen), blockPos, citizen).getVolume(),
               block.getSoundType(blockState, CompatibilityUtils.getWorldFromCitizen(citizen), blockPos, citizen).getPitch());
             WorldUtil.removeBlock(CompatibilityUtils.getWorldFromCitizen(citizen), blockPos, false);
@@ -221,7 +221,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
             CompatibilityUtils.getWorldFromCitizen(citizen).playSound(null,
               blockPos,
               block.getSoundType(blockState, CompatibilityUtils.getWorldFromCitizen(citizen), blockPos, citizen).getBreakSound(),
-              SoundCategory.BLOCKS,
+              SoundSource.BLOCKS,
               block.getSoundType(blockState, CompatibilityUtils.getWorldFromCitizen(citizen), blockPos, citizen).getVolume(),
               block.getSoundType(blockState, CompatibilityUtils.getWorldFromCitizen(citizen), blockPos, citizen).getPitch());
         }
@@ -233,7 +233,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
      * @param damage amount of damage.
      */
     @Override
-    public void damageItemInHand(final Hand hand, final int damage)
+    public void damageItemInHand(final InteractionHand hand, final int damage)
     {
         final ItemStack heldItem = citizen.getCitizenData().getInventory().getHeldItem(hand);
         //If we hit with bare hands, ignore
@@ -260,13 +260,13 @@ public class CitizenItemHandler implements ICitizenItemHandler
               .getInventory()
               .damageInventoryItem(citizen.getCitizenData().getInventory().getHeldItemSlot(hand), damage, citizen, item -> item.broadcastBreakEvent(hand)))
         {
-            if (hand == Hand.MAIN_HAND)
+            if (hand == InteractionHand.MAIN_HAND)
             {
-                citizen.setItemSlot(EquipmentSlotType.MAINHAND, ItemStackUtils.EMPTY);
+                citizen.setItemSlot(EquipmentSlot.MAINHAND, ItemStackUtils.EMPTY);
             }
             else
             {
-                citizen.setItemSlot(EquipmentSlotType.OFFHAND, ItemStackUtils.EMPTY);
+                citizen.setItemSlot(EquipmentSlot.OFFHAND, ItemStackUtils.EMPTY);
             }
         }
     }
@@ -278,7 +278,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
     public void pickupItems()
     {
         for (final ItemEntity item : CompatibilityUtils.getWorldFromCitizen(citizen).getLoadedEntitiesOfClass(ItemEntity.class,
-          new AxisAlignedBB(citizen.blockPosition())
+          new AABB(citizen.blockPosition())
             .expandTowards(2.0F, 1.0F, 2.0F)
             .expandTowards(-2.0F, -1.0F, -2.0F)))
         {
@@ -348,7 +348,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
             // Todo: rework damaging to the visual items atm they can be both, direct inventory item references or visual copies
 
             stack.hurtAndBreak(Math.max(1, (int) (damage / 4)), citizen, (i) -> {
-                i.broadcastBreakEvent(Hand.MAIN_HAND);
+                i.broadcastBreakEvent(InteractionHand.MAIN_HAND);
             });
         }
     }

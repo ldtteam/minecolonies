@@ -1,21 +1,21 @@
 package com.minecolonies.coremod.client.render.mobs.barbarians;
 
 import com.minecolonies.api.entity.mobs.barbarians.AbstractEntityBarbarian;
-import net.minecraft.client.renderer.entity.BipedRenderer;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.client.renderer.entity.layers.BipedArmorLayer;
-import net.minecraft.client.renderer.entity.layers.HeldItemLayer;
-import net.minecraft.client.renderer.entity.model.BipedModel;
+import net.minecraft.client.renderer.entity.HumanoidMobRenderer;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
+import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
+import net.minecraft.client.model.HumanoidModel;
 
 /**
  * Abstract for rendering Barbarians.
  */
-public abstract class AbstractRendererBarbarian<T extends AbstractEntityBarbarian, M extends BipedModel<T>> extends BipedRenderer<T, M>
+public abstract class AbstractRendererBarbarian<T extends AbstractEntityBarbarian, M extends HumanoidModel<T>> extends HumanoidMobRenderer<T, M>
 {
-    public AbstractRendererBarbarian(final EntityRendererManager renderManagerIn, final M modelBipedIn, final float shadowSize)
+    public AbstractRendererBarbarian(final EntityRenderDispatcher renderManagerIn, final M modelBipedIn, final float shadowSize)
     {
         super(renderManagerIn, modelBipedIn, shadowSize);
-        this.addLayer(new HeldItemLayer<>(this));
-        this.addLayer(new BipedArmorLayer<>(this, new BipedModel<>(0.5F), new BipedModel<>(1.0F)));
+        this.addLayer(new ItemInHandLayer<>(this));
+        this.addLayer(new HumanoidArmorLayer<>(this, new HumanoidModel<>(0.5F), new HumanoidModel<>(1.0F)));
     }
 }

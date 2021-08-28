@@ -5,25 +5,32 @@ import com.minecolonies.api.blocks.AbstractBlockMinecoloniesHorizontal;
 import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.material.Material;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.state.BooleanProperty;
-import net.minecraft.state.StateContainer;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.util.*;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.shapes.VoxelShapes;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
+
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
 /**
  * Creates a decoration controller block.
@@ -53,10 +60,10 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
     /**
      * The bounding boxes.
      */
-    protected static final VoxelShape AABB_SOUTH = VoxelShapes.box(0.25D, 0.314D, 0.97D, 0.75D, 0.86D, 1.0D);
-    protected static final VoxelShape AABB_NORTH = VoxelShapes.box(0.25D, 0.314D, 0.0D, 0.75D, 0.86D, 0.3D);
-    protected static final VoxelShape AABB_EAST  = VoxelShapes.box(0.97D, 0.314D, 0.25D, 1.0D, 0.86D, 0.75D);
-    protected static final VoxelShape AABB_WEST  = VoxelShapes.box(0.0D, 0.314D, 0.25D, 0.3D, 0.86D, 0.75D);
+    protected static final VoxelShape AABB_SOUTH = Shapes.box(0.25D, 0.314D, 0.97D, 0.75D, 0.86D, 1.0D);
+    protected static final VoxelShape AABB_NORTH = Shapes.box(0.25D, 0.314D, 0.0D, 0.75D, 0.86D, 0.3D);
+    protected static final VoxelShape AABB_EAST  = Shapes.box(0.97D, 0.314D, 0.25D, 1.0D, 0.86D, 0.75D);
+    protected static final VoxelShape AABB_WEST  = Shapes.box(0.0D, 0.314D, 0.25D, 0.3D, 0.86D, 0.75D);
 
     /**
      * Constructor for the deco controller.
@@ -69,7 +76,7 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
     }
 
     @Override
-    public VoxelShape getShape(final BlockState state, final IBlockReader worldIn, final BlockPos pos, final ISelectionContext context)
+    public VoxelShape getShape(final BlockState state, final BlockGetter worldIn, final BlockPos pos, final CollisionContext context)
     {
         Direction Direction = state.getValue(FACING);
         switch (Direction)
@@ -87,23 +94,23 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
     }
 
     @Override
-    public ActionResultType use(
+    public InteractionResult use(
       final BlockState state,
-      final World worldIn,
+      final Level worldIn,
       final BlockPos pos,
-      final PlayerEntity player,
-      final Hand hand,
-      final BlockRayTraceResult ray)
+      final Player player,
+      final InteractionHand hand,
+      final BlockHitResult ray)
     {
         if (worldIn.isClientSide)
         {
-            final TileEntity tileEntity = worldIn.getBlockEntity(pos);
+            final BlockEntity tileEntity = worldIn.getBlockEntity(pos);
             if (tileEntity instanceof TileEntityDecorationController)
             {
                 MineColonies.proxy.openDecorationControllerWindow(pos);
             }
         }
-        return ActionResultType.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 
     @Override
@@ -113,21 +120,21 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
     }
 
     @Override
-    protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder)
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder)
     {
         builder.add(FACING, MIRROR);
     }
 
     @Nullable
     @Override
-    public TileEntity createTileEntity(final BlockState state, final IBlockReader world)
+    public BlockEntity createTileEntity(final BlockState state, final BlockGetter world)
     {
         return new TileEntityDecorationController();
     }
 
     @Nullable
     @Override
-    public BlockState getStateForPlacement(final BlockItemUseContext context)
+    public BlockState getStateForPlacement(final BlockPlaceContext context)
     {
         return super.getStateForPlacement(context).setValue(FACING, context.getHorizontalDirection());
     }

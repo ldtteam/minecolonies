@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.colony.buildings.DefaultBuildingInstance;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -52,7 +52,7 @@ public class AssignUnassignMessage extends AbstractBuildingServerMessage<Default
      * @param buf the used byteBuffer.
      */
     @Override
-    public void fromBytesOverride(@NotNull final PacketBuffer buf)
+    public void fromBytesOverride(@NotNull final FriendlyByteBuf buf)
     {
 
         assign = buf.readBoolean();
@@ -65,7 +65,7 @@ public class AssignUnassignMessage extends AbstractBuildingServerMessage<Default
      * @param buf the used byteBuffer.
      */
     @Override
-    public void toBytesOverride(@NotNull final PacketBuffer buf)
+    public void toBytesOverride(@NotNull final FriendlyByteBuf buf)
     {
         buf.writeBoolean(assign);
         buf.writeInt(citizenID);

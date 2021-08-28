@@ -2,9 +2,9 @@ package com.minecolonies.coremod.colony.colonyEvents.citizenEvents;
 
 import com.minecolonies.api.colony.colonyEvents.descriptions.ICitizenEventDescription;
 import com.minecolonies.api.util.BlockPosUtil;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.BlockPos;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
@@ -61,30 +61,30 @@ public abstract class AbstractCitizenEvent implements ICitizenEventDescription
     }
 
     @Override
-    public CompoundNBT serializeNBT()
+    public CompoundTag serializeNBT()
     {
-        CompoundNBT compound = new CompoundNBT();
+        CompoundTag compound = new CompoundTag();
         BlockPosUtil.write(compound, TAG_EVENT_POS, eventPos);
         compound.putString(TAG_CITIZEN_NAME, citizenName);
         return compound;
     }
 
     @Override
-    public void deserializeNBT(CompoundNBT compound)
+    public void deserializeNBT(CompoundTag compound)
     {
         eventPos = BlockPosUtil.read(compound, TAG_EVENT_POS);
         citizenName = compound.getString(TAG_CITIZEN_NAME);
     }
 
     @Override
-    public void serialize(PacketBuffer buf)
+    public void serialize(FriendlyByteBuf buf)
     {
         buf.writeBlockPos(eventPos);
         buf.writeUtf(citizenName);
     }
 
     @Override
-    public void deserialize(PacketBuffer buf)
+    public void deserialize(FriendlyByteBuf buf)
     {
         eventPos = buf.readBlockPos();
         citizenName = buf.readUtf();

@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.client.render;
 
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
@@ -13,10 +13,10 @@ import org.jetbrains.annotations.NotNull;
  * Renderer for a normal tile entity (Nothing special with rendering).
  */
 @OnlyIn(Dist.CLIENT)
-public class EmptyTileEntitySpecialRenderer extends TileEntityRenderer<AbstractTileEntityColonyBuilding>
+public class EmptyTileEntitySpecialRenderer extends BlockEntityRenderer<AbstractTileEntityColonyBuilding>
 {
 
-    public EmptyTileEntitySpecialRenderer(final TileEntityRendererDispatcher dispatcher)
+    public EmptyTileEntitySpecialRenderer(final BlockEntityRenderDispatcher dispatcher)
     {
         super(dispatcher);
     }
@@ -25,8 +25,8 @@ public class EmptyTileEntitySpecialRenderer extends TileEntityRenderer<AbstractT
     public void render(
       @NotNull final AbstractTileEntityColonyBuilding tileEntity,
       final float v,
-      @NotNull final MatrixStack matrixStack,
-      @NotNull final IRenderTypeBuffer iRenderTypeBuffer,
+      @NotNull final PoseStack matrixStack,
+      @NotNull final MultiBufferSource iRenderTypeBuffer,
       final int i,
       final int i1)
     {

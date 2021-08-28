@@ -2,7 +2,7 @@ package com.minecolonies.api.crafting;
 
 import com.google.common.collect.ImmutableMap;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -61,14 +61,14 @@ public interface IRecipeManager
      *
      * @param compound NBT-Tag.
      */
-    void write(@NotNull final CompoundNBT compound);
+    void write(@NotNull final CompoundTag compound);
 
     /**
      * Read Colonies from saved NBT data.
      *
      * @param compound NBT Tag.
      */
-    void read(@NotNull final CompoundNBT compound);
+    void read(@NotNull final CompoundTag compound);
 
     /**
      * Clear the recipe list (used during shutdown)

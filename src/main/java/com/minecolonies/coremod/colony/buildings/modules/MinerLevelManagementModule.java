@@ -6,10 +6,10 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
 import com.minecolonies.coremod.entity.ai.citizen.miner.Level;
 import com.minecolonies.coremod.entity.ai.citizen.miner.Node;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.BlockPos;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -55,11 +55,11 @@ public class MinerLevelManagementModule extends AbstractBuildingModule implement
     private int startingLevelShaft = 0;
 
     @Override
-    public void deserializeNBT(final CompoundNBT compound)
+    public void deserializeNBT(final CompoundTag compound)
     {
         startingLevelShaft = compound.getInt(TAG_STARTING_LEVEL);
         currentLevel = compound.getInt(TAG_CURRENT_LEVEL);
-        final ListNBT levelTagList = compound.getList(TAG_LEVELS, Constants.NBT.TAG_COMPOUND);
+        final ListTag levelTagList = compound.getList(TAG_LEVELS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < levelTagList.size(); i++)
         {
             this.levels.add(new Level(levelTagList.getCompound(i)));
@@ -76,14 +76,14 @@ public class MinerLevelManagementModule extends AbstractBuildingModule implement
     }
 
     @Override
-    public void serializeNBT(final CompoundNBT compound)
+    public void serializeNBT(final CompoundTag compound)
     {
         compound.putInt(TAG_STARTING_LEVEL, startingLevelShaft);
         compound.putInt(TAG_CURRENT_LEVEL, currentLevel);
-        @NotNull final ListNBT levelTagList = new ListNBT();
+        @NotNull final ListTag levelTagList = new ListTag();
         for (@NotNull final Level level : levels)
         {
-            @NotNull final CompoundNBT levelCompound = new CompoundNBT();
+            @NotNull final CompoundTag levelCompound = new CompoundTag();
             level.write(levelCompound);
             levelTagList.add(levelCompound);
         }
@@ -91,21 +91,21 @@ public class MinerLevelManagementModule extends AbstractBuildingModule implement
 
         if (activeNode != null)
         {
-            final CompoundNBT nodeCompound = new CompoundNBT();
+            final CompoundTag nodeCompound = new CompoundTag();
             activeNode.write(nodeCompound);
             compound.put(TAG_ACTIVE, nodeCompound);
         }
 
         if (oldNode != null)
         {
-            final CompoundNBT nodeCompound = new CompoundNBT();
+            final CompoundTag nodeCompound = new CompoundTag();
             oldNode.write(nodeCompound);
             compound.put(TAG_OLD, nodeCompound);
         }
     }
 
     @Override
-    public void serializeToView(final PacketBuffer buf)
+    public void serializeToView(final FriendlyByteBuf buf)
     {
         buf.writeInt(currentLevel);
         buf.writeInt(levels.size());

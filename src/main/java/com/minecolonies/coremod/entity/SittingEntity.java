@@ -1,17 +1,17 @@
 package com.minecolonies.coremod.entity;
 
 import com.minecolonies.api.entity.ModEntities;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.MobEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.IPacket;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 import java.util.List;
@@ -26,7 +26,7 @@ public class SittingEntity extends Entity
      */
     int maxLifeTime = 100;
 
-    public SittingEntity(final EntityType<?> type, final World worldIn)
+    public SittingEntity(final EntityType<?> type, final Level worldIn)
     {
         super(type, worldIn);
 
@@ -36,7 +36,7 @@ public class SittingEntity extends Entity
         this.setNoGravity(true);
     }
 
-    public SittingEntity(final EntityType<?> type, final World worldIn, double x, double y, double z, int lifeTime)
+    public SittingEntity(final EntityType<?> type, final Level worldIn, double x, double y, double z, int lifeTime)
     {
         super(type, worldIn);
 
@@ -66,19 +66,19 @@ public class SittingEntity extends Entity
     }
 
     @Override
-    protected void readAdditionalSaveData(final CompoundNBT compound)
+    protected void readAdditionalSaveData(final CompoundTag compound)
     {
 
     }
 
     @Override
-    protected void addAdditionalSaveData(final CompoundNBT compound)
+    protected void addAdditionalSaveData(final CompoundTag compound)
     {
 
     }
 
     @Override
-    public IPacket<?> getAddEntityPacket()
+    public Packet<?> getAddEntityPacket()
     {
         return NetworkHooks.getEntitySpawningPacket(this);
     }
@@ -155,7 +155,7 @@ public class SittingEntity extends Entity
      * @param entity      entity to sit down
      * @param maxLifeTime max time to sit
      */
-    public static void sitDown(final BlockPos pos, final MobEntity entity, final int maxLifeTime)
+    public static void sitDown(final BlockPos pos, final Mob entity, final int maxLifeTime)
     {
         if (entity.getVehicle() != null)
         {
@@ -169,8 +169,8 @@ public class SittingEntity extends Entity
         final BlockState state = entity.level.getBlockState(pos);
         double minY = 1;
 
-        final List<AxisAlignedBB> shapes = state.getCollisionShape(entity.level, pos).toAabbs();
-        for (final AxisAlignedBB box : shapes)
+        final List<AABB> shapes = state.getCollisionShape(entity.level, pos).toAabbs();
+        for (final AABB box : shapes)
         {
             if (box.maxY < minY)
             {

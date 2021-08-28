@@ -7,14 +7,14 @@ import com.minecolonies.api.inventory.container.ContainerCraftingFurnace;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
@@ -49,13 +49,13 @@ public class OpenCraftingGUIMessage extends AbstractBuildingServerMessage<IBuild
     }
 
     @Override
-    public void fromBytesOverride(@NotNull final PacketBuffer buf)
+    public void fromBytesOverride(@NotNull final FriendlyByteBuf buf)
     {
         this.id = buf.readUtf(32767);
     }
 
     @Override
-    public void toBytesOverride(@NotNull final PacketBuffer buf)
+    public void toBytesOverride(@NotNull final FriendlyByteBuf buf)
     {
         buf.writeUtf(id);
     }
@@ -63,7 +63,7 @@ public class OpenCraftingGUIMessage extends AbstractBuildingServerMessage<IBuild
     @Override
     protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuilding building)
     {
-        final ServerPlayerEntity player = ctxIn.getSender();
+        final ServerPlayer player = ctxIn.getSender();
         if (player == null)
         {
             return;
@@ -72,41 +72,41 @@ public class OpenCraftingGUIMessage extends AbstractBuildingServerMessage<IBuild
         final AbstractCraftingBuildingModule module = building.getModuleMatching(AbstractCraftingBuildingModule.class, m -> m.getId().equals(id));
         if (module.canLearnFurnaceRecipes())
         {
-            NetworkHooks.openGui(player, new INamedContainerProvider()
+            NetworkHooks.openGui(player, new MenuProvider()
             {
                 @NotNull
                 @Override
-                public ITextComponent getDisplayName()
+                public Component getDisplayName()
                 {
-                    return new StringTextComponent("Furnace Crafting GUI");
+                    return new TextComponent("Furnace Crafting GUI");
                 }
 
                 @NotNull
                 @Override
-                public Container createMenu(final int id, @NotNull final PlayerInventory inv, @NotNull final PlayerEntity player)
+                public AbstractContainerMenu createMenu(final int id, @NotNull final Inventory inv, @NotNull final Player player)
                 {
                     return new ContainerCraftingFurnace(id, inv, building.getID(), module.getId());
                 }
-            }, buffer -> new PacketBuffer(buffer.writeBlockPos(building.getID()).writeUtf(module.getId())));
+            }, buffer -> new FriendlyByteBuf(buffer.writeBlockPos(building.getID()).writeUtf(module.getId())));
         }
         else
         {
-            NetworkHooks.openGui(player, new INamedContainerProvider()
+            NetworkHooks.openGui(player, new MenuProvider()
             {
                 @NotNull
                 @Override
-                public ITextComponent getDisplayName()
+                public Component getDisplayName()
                 {
-                    return new StringTextComponent("Crafting GUI");
+                    return new TextComponent("Crafting GUI");
                 }
 
                 @NotNull
                 @Override
-                public Container createMenu(final int id, @NotNull final PlayerInventory inv, @NotNull final PlayerEntity player)
+                public AbstractContainerMenu createMenu(final int id, @NotNull final Inventory inv, @NotNull final Player player)
                 {
                     return new ContainerCrafting(id, inv, module.canLearnLargeRecipes(), building.getID(), module.getId());
                 }
-            }, buffer -> new PacketBuffer(buffer.writeBoolean(module.canLearnLargeRecipes())).writeBlockPos(building.getID()).writeUtf(module.getId()));
+            }, buffer -> new FriendlyByteBuf(buffer.writeBoolean(module.canLearnLargeRecipes())).writeBlockPos(building.getID()).writeUtf(module.getId()));
         }
     }
 }

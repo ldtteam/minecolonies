@@ -8,10 +8,10 @@ import com.minecolonies.api.entity.combat.threat.IThreatTableEntity;
 import com.minecolonies.api.entity.combat.threat.ThreatTableEntry;
 import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
 import com.minecolonies.api.entity.pathfinding.PathResult;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.MobEntity;
-import net.minecraft.util.EntityDamageSource;
-import net.minecraft.util.Hand;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.damagesource.EntityDamageSource;
+import net.minecraft.world.InteractionHand;
 
 import static com.minecolonies.api.util.constant.Constants.HALF_ROTATION;
 import static com.minecolonies.api.util.constant.GuardConstants.TURN_AROUND;
@@ -19,7 +19,7 @@ import static com.minecolonies.api.util.constant.GuardConstants.TURN_AROUND;
 /**
  * Moves the entity and triggers the attack
  */
-public class AttackMoveAI<T extends MobEntity & IThreatTableEntity> extends TargetAI<T>
+public class AttackMoveAI<T extends Mob & IThreatTableEntity> extends TargetAI<T>
 {
     /**
      * Time after which we ignore the target
@@ -181,7 +181,7 @@ public class AttackMoveAI<T extends MobEntity & IThreatTableEntity> extends Targ
     protected void doAttack(final LivingEntity target)
     {
         target.hurt(new EntityDamageSource("Default", user), 5);
-        user.swing(Hand.MAIN_HAND);
+        user.swing(InteractionHand.MAIN_HAND);
     }
 
     /**

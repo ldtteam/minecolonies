@@ -2,8 +2,8 @@ package com.minecolonies.api.colony.requestsystem.factory;
 
 import com.google.common.reflect.TypeToken;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -149,7 +149,7 @@ public interface IFactoryController
      * @return An NBTTag containing a serialized version of the given object.
      * @throws IllegalArgumentException is thrown when the output type is unknown to this controller.
      */
-    <Output extends Object> CompoundNBT serialize(@NotNull final Output object) throws IllegalArgumentException;
+    <Output extends Object> CompoundTag serialize(@NotNull final Output object) throws IllegalArgumentException;
 
     /**
      * Method used to quickly deserialize a object if it is known to this controller.
@@ -159,7 +159,7 @@ public interface IFactoryController
      * @return The deserialized version of the given data.
      * @throws IllegalArgumentException is thrown when the type stored in the data is unknown to this controller.
      */
-    <Output> Output deserialize(@NotNull final CompoundNBT compound) throws IllegalArgumentException;
+    <Output> Output deserialize(@NotNull final CompoundTag compound) throws IllegalArgumentException;
 
     /**
      * Method used to quickly write an object into the given {@link ByteBuf}.
@@ -169,7 +169,7 @@ public interface IFactoryController
      * @param <Output> The type of the object to write.
      * @throws IllegalArgumentException is thrown when the given output type is unknown to this controller.
      */
-    <Output extends Object> void serialize(@NotNull final PacketBuffer buffer, @NotNull final Output object) throws IllegalArgumentException;
+    <Output extends Object> void serialize(@NotNull final FriendlyByteBuf buffer, @NotNull final Output object) throws IllegalArgumentException;
 
     /**
      * Method used to quickly read an object from a given {@link ByteBuf}
@@ -179,7 +179,7 @@ public interface IFactoryController
      * @return An instance of the given output type, with its stored data from the buffer.
      * @throws IllegalArgumentException is thrown when the requested type is unknown to this controller.
      */
-    <Output> Output deserialize(@NotNull final PacketBuffer buffer) throws IllegalArgumentException;
+    <Output> Output deserialize(@NotNull final FriendlyByteBuf buffer) throws IllegalArgumentException;
 
     /**
      * Method used to create a new instance of the given input.

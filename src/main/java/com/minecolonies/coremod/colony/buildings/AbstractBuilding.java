@@ -48,23 +48,23 @@ import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper
 import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
 import com.minecolonies.coremod.util.ChunkDataHelper;
 import com.minecolonies.coremod.util.ColonyUtils;
-import net.minecraft.block.AirBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.ChestTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.level.block.AirBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.level.block.entity.ChestBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -275,13 +275,13 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     }
 
     @Override
-    public void onPlayerEnterBuilding(final PlayerEntity player)
+    public void onPlayerEnterBuilding(final Player player)
     {
         getModules(IBuildingEventsModule.class).forEach(module -> module.onPlayerEnterBuilding(player));
     }
 
     @Override
-    public void onPlayerEnterNearby(final PlayerEntity player)
+    public void onPlayerEnterNearby(final Player player)
     {
         if (getBuildingLevel() == 0 || getSchematicName() == null || getSchematicName().isEmpty())
         {
@@ -316,7 +316,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     }
 
     @Override
-    public void deserializeNBT(final CompoundNBT compound)
+    public void deserializeNBT(final CompoundTag compound)
     {
         super.deserializeNBT(compound);
         loadRequestSystemFromNBT(compound);
@@ -337,10 +337,10 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     }
 
     @Override
-    public CompoundNBT serializeNBT()
+    public CompoundTag serializeNBT()
     {
-        final CompoundNBT compound = super.serializeNBT();
-        final ListNBT list = new ListNBT();
+        final CompoundTag compound = super.serializeNBT();
+        final ListTag list = new ListTag();
         for (final IRequestResolver<?> requestResolver : getResolvers())
         {
             list.add(StandardFactoryController.getInstance().serialize(requestResolver.getId()));
@@ -380,7 +380,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     {
         super.onDestroyed();
         final AbstractTileEntityColonyBuilding tileEntityNew = this.getTileEntity();
-        final World world = colony.getWorld();
+        final Level world = colony.getWorld();
         final Block block = world.getBlockState(this.getPosition()).getBlock();
 
         if (tileEntityNew != null)
@@ -670,7 +670,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
      * @param buf PacketBuffer to write to.
      */
     @Override
-    public void serializeToView(@NotNull final PacketBuffer buf)
+    public void serializeToView(@NotNull final FriendlyByteBuf buf)
     {
         buf.writeUtf(getBuildingRegistryEntry().getRegistryName().toString());
         buf.writeInt(getBuildingLevel());
@@ -686,7 +686,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         buf.writeBoolean(isMirrored());
         buf.writeInt(getClaimRadius(getBuildingLevel()));
 
-        final CompoundNBT requestSystemCompound = new CompoundNBT();
+        final CompoundTag requestSystemCompound = new CompoundTag();
         writeRequestSystemToNBT(requestSystemCompound);
 
         final ImmutableCollection<IRequestResolver<?>> resolvers = getResolvers();
@@ -769,18 +769,18 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
      * @param builder the assigned builder.
      */
     @Override
-    public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
+    public void requestUpgrade(final Player player, final BlockPos builder)
     {
         final ResourceLocation hutResearch = colony.getResearchManager().getResearchEffectIdFrom(getBuildingRegistryEntry().getBuildingBlock());
 
         if (MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().hasResearchEffect(hutResearch) && colony.getResearchManager().getResearchEffects().getEffectStrength(hutResearch) < 1)
         {
-            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"), player.getUUID());
+            player.sendMessage(new TranslatableComponent("com.minecolonies.coremod.research.havetounlock"), player.getUUID());
             return;
         }
         if(MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().hasResearchEffect(hutResearch) && (colony.getResearchManager().getResearchEffects().getEffectStrength(hutResearch) <= getBuildingLevel()))
         {
-            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.unlocktoupgrade"), player.getUUID());
+            player.sendMessage(new TranslatableComponent("com.minecolonies.coremod.research.unlocktoupgrade"), player.getUUID());
             return;
         }
 
@@ -792,12 +792,12 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         }
         else
         {
-            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.worker.noupgrade"), player.getUUID());
+            player.sendMessage(new TranslatableComponent("com.minecolonies.coremod.worker.noupgrade"), player.getUUID());
         }
     }
 
     @Override
-    public void requestRemoval(final PlayerEntity player, final BlockPos builder)
+    public void requestRemoval(final Player player, final BlockPos builder)
     {
         if (this.isDeconstructed())
         {
@@ -810,7 +810,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     }
 
     @Override
-    public void pickUp(final PlayerEntity player)
+    public void pickUp(final Player player)
     {
         if (hasParent())
         {
@@ -819,7 +819,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         }
 
         final ItemStack stack = new ItemStack(colony.getWorld().getBlockState(getPosition()).getBlock(), 1);
-        final CompoundNBT compoundNBT = new CompoundNBT();
+        final CompoundTag compoundNBT = new CompoundTag();
         compoundNBT.putInt(TAG_COLONY_ID, this.getColony().getID());
         compoundNBT.putInt(TAG_OTHER_LEVEL, this.getBuildingLevel());
         stack.setTag(compoundNBT);
@@ -889,7 +889,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
               && !(colony.getWorld().getBlockState(getPosition()).getBlock() instanceof AirBlock)
               && colony.getWorld().getBlockState(this.getPosition()).getBlock() instanceof AbstractBlockHut)
         {
-            final TileEntity te = getColony().getWorld().getBlockEntity(getPosition());
+            final BlockEntity te = getColony().getWorld().getBlockEntity(getPosition());
             if (te instanceof TileEntityColonyBuilding)
             {
                 tileEntity = (TileEntityColonyBuilding) te;
@@ -1105,14 +1105,14 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
      */
     @Override
     @Nullable
-    public ItemStack forceTransferStack(final ItemStack stack, final World world)
+    public ItemStack forceTransferStack(final ItemStack stack, final Level world)
     {
         if (getTileEntity() == null)
         {
             for (final BlockPos pos : containerList)
             {
-                final TileEntity tempTileEntity = world.getBlockEntity(pos);
-                if (tempTileEntity instanceof ChestTileEntity && !InventoryUtils.isProviderFull(tempTileEntity))
+                final BlockEntity tempTileEntity = world.getBlockEntity(pos);
+                if (tempTileEntity instanceof ChestBlockEntity && !InventoryUtils.isProviderFull(tempTileEntity))
                 {
                     return forceItemStackToProvider(tempTileEntity, stack);
                 }
@@ -1138,7 +1138,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
 
     //------------------------- !START! RequestSystem handling for minecolonies buildings -------------------------//
 
-    protected void writeRequestSystemToNBT(final CompoundNBT compound)
+    protected void writeRequestSystemToNBT(final CompoundTag compound)
     {
         compound.put(TAG_REQUESTOR_ID, StandardFactoryController.getInstance().serialize(requester));
         compound.put(TAG_RS_BUILDING_DATASTORE, StandardFactoryController.getInstance().serialize(rsDataStoreToken));
@@ -1155,7 +1155,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
                                   .getId();
     }
 
-    private void loadRequestSystemFromNBT(final CompoundNBT compound)
+    private void loadRequestSystemFromNBT(final CompoundTag compound)
     {
         if (compound.getAllKeys().contains(TAG_REQUESTOR_ID))
         {
@@ -1220,13 +1220,13 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         if (async)
         {
             citizenData.getJob().getAsyncRequests().add(requestToken);
-            citizenData.triggerInteraction(new RequestBasedInteraction(new TranslationTextComponent(ASYNC_REQUEST,
-              request.getShortDisplayString()), ChatPriority.PENDING, new TranslationTextComponent(NORMAL_REQUEST), request.getId()));
+            citizenData.triggerInteraction(new RequestBasedInteraction(new TranslatableComponent(ASYNC_REQUEST,
+              request.getShortDisplayString()), ChatPriority.PENDING, new TranslatableComponent(NORMAL_REQUEST), request.getId()));
         }
         else
         {
-            citizenData.triggerInteraction(new RequestBasedInteraction(new TranslationTextComponent(NORMAL_REQUEST,
-              request.getShortDisplayString()), ChatPriority.BLOCKING, new TranslationTextComponent(NORMAL_REQUEST), request.getId()));
+            citizenData.triggerInteraction(new RequestBasedInteraction(new TranslatableComponent(NORMAL_REQUEST,
+              request.getShortDisplayString()), ChatPriority.BLOCKING, new TranslatableComponent(NORMAL_REQUEST), request.getId()));
         }
 
         addRequestToMaps(citizenData.getId(), requestToken, TypeToken.of(requested.getClass()));
@@ -1260,7 +1260,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     }
 
     @Override
-    public void registerBlockPosition(@NotNull final BlockState blockState, @NotNull final BlockPos pos, @NotNull final World world)
+    public void registerBlockPosition(@NotNull final BlockState blockState, @NotNull final BlockPos pos, @NotNull final Level world)
     {
         super.registerBlockPosition(blockState, pos, world);
         getModules(IModuleWithExternalBlocks.class).forEach(module -> module.onBlockPlacedInBuilding(blockState, pos, world));
@@ -1827,17 +1827,17 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
 
     @NotNull
     @Override
-    public IFormattableTextComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
+    public MutableComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
         if (!getCitizensByRequest().containsKey(request.getId()))
         {
-            return new StringTextComponent("<UNKNOWN>");
+            return new TextComponent("<UNKNOWN>");
         }
 
         final int citizenId = getCitizensByRequest().get(request.getId());
         final ICitizenData citizenData = getColony().getCitizenManager().getCivilian(citizenId);
-        final IFormattableTextComponent jobName =  new TranslationTextComponent(citizenData.getJob().getName().toLowerCase());
-        return jobName.append(new StringTextComponent(" " + citizenData.getName()));
+        final MutableComponent jobName =  new TranslatableComponent(citizenData.getJob().getName().toLowerCase());
+        return jobName.append(new TextComponent(" " + citizenData.getName()));
     }
 
     @Override

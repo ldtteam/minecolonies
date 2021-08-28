@@ -3,9 +3,9 @@ package com.minecolonies.apiimp.initializer;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.client.particles.SleepingParticle;
 import net.minecraft.client.Minecraft;
-import net.minecraft.particles.BasicParticleType;
-import net.minecraft.particles.ParticleType;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.core.particles.ParticleType;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
 import net.minecraftforge.event.RegistryEvent;
@@ -20,7 +20,7 @@ public class ModParticleTypesInitializer
     /**
      * Particle type
      */
-    public static final BasicParticleType SLEEPINGPARTICLE_TYPE = new BasicParticleType(true);
+    public static final SimpleParticleType SLEEPINGPARTICLE_TYPE = new SimpleParticleType(true);
     public static final ResourceLocation  SLEEPING_TEXTURE      = new ResourceLocation(Constants.MOD_ID, "particle/sleeping");
 
     /**

@@ -7,9 +7,9 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -42,9 +42,9 @@ public class PrivateCrafting extends AbstractCrafting
      * @param input      the input.
      * @return the compound.
      */
-    public static CompoundNBT serialize(final IFactoryController controller, final PrivateCrafting input)
+    public static CompoundTag serialize(final IFactoryController controller, final PrivateCrafting input)
     {
-        final CompoundNBT compound = new CompoundNBT();
+        final CompoundTag compound = new CompoundTag();
         compound.put(NBT_STACK, input.getStack().serializeNBT());
         compound.putInt(NBT_COUNT, input.getCount());
         compound.putInt(NBT_MIN_COUNT, input.getMinCount());
@@ -60,7 +60,7 @@ public class PrivateCrafting extends AbstractCrafting
      * @param compound   the compound.
      * @return the deliverable.
      */
-    public static PrivateCrafting deserialize(final IFactoryController controller, final CompoundNBT compound)
+    public static PrivateCrafting deserialize(final IFactoryController controller, final CompoundTag compound)
     {
         final ItemStack stack = ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_STACK));
         final int count = compound.getInt(NBT_COUNT);
@@ -77,7 +77,7 @@ public class PrivateCrafting extends AbstractCrafting
      * @param buffer     the the buffer to write to.
      * @param input      the input to serialize.
      */
-    public static void serialize(final IFactoryController controller, final PacketBuffer buffer, final PrivateCrafting input)
+    public static void serialize(final IFactoryController controller, final FriendlyByteBuf buffer, final PrivateCrafting input)
     {
         buffer.writeItem(input.getStack());
         buffer.writeInt(input.getCount());
@@ -92,7 +92,7 @@ public class PrivateCrafting extends AbstractCrafting
      * @param buffer     the buffer to read.
      * @return the deliverable.
      */
-    public static PrivateCrafting deserialize(final IFactoryController controller, final PacketBuffer buffer)
+    public static PrivateCrafting deserialize(final IFactoryController controller, final FriendlyByteBuf buffer)
     {
         final ItemStack stack = buffer.readItem();
         final int count = buffer.readInt();

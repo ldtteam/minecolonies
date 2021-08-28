@@ -22,13 +22,13 @@ import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderVi
 import com.minecolonies.coremod.colony.jobs.JobMiner;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
 import com.minecolonies.coremod.entity.ai.citizen.miner.Node;
-import net.minecraft.block.Blocks;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -171,7 +171,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
     }
 
     @Override
-    public void deserializeNBT(final CompoundNBT compound)
+    public void deserializeNBT(final CompoundTag compound)
     {
         super.deserializeNBT(compound);
 
@@ -180,9 +180,9 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
     }
 
     @Override
-    public CompoundNBT serializeNBT()
+    public CompoundTag serializeNBT()
     {
-        final CompoundNBT compound = super.serializeNBT();
+        final CompoundTag compound = super.serializeNBT();
 
         BlockPosUtil.writeOptional(compound, TAG_CLOCATION, cobbleLocation);
         BlockPosUtil.writeOptional(compound, TAG_LLOCATION, ladderLocation);
@@ -318,7 +318,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
      * @param rotateTimes  The amount of time to rotate the structure.
      * @param structurePos The position of the structure.
      */
-    public static void initStructure(final Node mineNode, final int rotateTimes, final BlockPos structurePos, final BuildingMiner buildingMiner, final World world, final JobMiner job)
+    public static void initStructure(final Node mineNode, final int rotateTimes, final BlockPos structurePos, final BuildingMiner buildingMiner, final Level world, final JobMiner job)
     {
         final String style = buildingMiner.getStyle();
         String requiredName = null;
@@ -398,7 +398,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
      * @param shaft the shaft.
      * @return the correct location.
      */
-    private static String getCorrectStyleLocation(final String style, final String shaft, final World world, final BuildingMiner buildingMiner)
+    private static String getCorrectStyleLocation(final String style, final String shaft, final Level world, final BuildingMiner buildingMiner)
     {
         final LoadOnlyStructureHandler
           wrapper = new LoadOnlyStructureHandler(world, buildingMiner.getPosition(), Structures.SCHEMATICS_PREFIX + "/" + style + shaft, new PlacementSettings(), true);

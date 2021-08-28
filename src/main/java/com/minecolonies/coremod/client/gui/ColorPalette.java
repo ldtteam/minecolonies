@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.item.DyeColor;
-import net.minecraft.util.text.StringTextComponent;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -76,12 +76,12 @@ public class ColorPalette
 
         public PaletteButton(int posX, int posY, int sideLength, DyeColor color)
         {
-            super(posX, posY, sideLength, sideLength, new StringTextComponent(""), pressed -> {});
+            super(posX, posY, sideLength, sideLength, new TextComponent(""), pressed -> {});
             this.color = color;
         }
 
         @Override
-        public void render(final MatrixStack stack, int mouseX, int mouseY, float partialTicks)
+        public void render(final PoseStack stack, int mouseX, int mouseY, float partialTicks)
         {
             this.active = selected != this.color;
 
@@ -89,7 +89,7 @@ public class ColorPalette
         }
 
         @Override
-        public void renderButton(final MatrixStack stack, int mouseX, int mouseY, float partialTicks)
+        public void renderButton(final PoseStack stack, int mouseX, int mouseY, float partialTicks)
         {
             int color = this.color.getColorValue();
             boolean pressed = selected == this.color;
@@ -126,7 +126,7 @@ public class ColorPalette
          * @param r the right offset
          * @param color the color to fill with, without alpha
          */
-        private void fillButton(final MatrixStack stack, int t, int l, int b, int r, int color)
+        private void fillButton(final PoseStack stack, int t, int l, int b, int r, int color)
         {
             color += 255 << 24;
             fill(stack,

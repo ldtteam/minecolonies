@@ -1,11 +1,13 @@
 package com.minecolonies.api.blocks;
 
 import com.minecolonies.api.blocks.types.RackType;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.HorizontalBlock;
-import net.minecraft.state.DirectionProperty;
-import net.minecraft.state.EnumProperty;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
+
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
 public abstract class AbstractBlockMinecoloniesRack<B extends AbstractBlockMinecoloniesRack<B>> extends AbstractBlockMinecolonies<B>
 {
@@ -14,7 +16,7 @@ public abstract class AbstractBlockMinecoloniesRack<B extends AbstractBlockMinec
     /**
      * The position it faces.
      */
-    public static final DirectionProperty      FACING       = HorizontalBlock.FACING;
+    public static final DirectionProperty      FACING       = HorizontalDirectionalBlock.FACING;
 
     public AbstractBlockMinecoloniesRack(final Properties properties)
     {

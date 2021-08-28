@@ -4,17 +4,17 @@ import com.minecolonies.api.blocks.decorative.AbstractBlockGate;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.coremod.MineColonies;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.MobEntity;
-import net.minecraft.entity.ai.goal.BreakDoorGoal;
-import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.goal.BreakDoorGoal;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.core.BlockPos;
 
 import java.util.EnumSet;
 
 import static com.minecolonies.api.research.util.ResearchConstants.MECHANIC_ENHANCED_GATES;
 
-import net.minecraft.entity.ai.goal.Goal.Flag;
+import net.minecraft.world.entity.ai.goal.Goal.Flag;
 
 /**
  * Break door entity AI with mutex.
@@ -36,7 +36,7 @@ public class EntityAIBreakDoor extends BreakDoorGoal
      */
     private int breakChance = 1;
 
-    public EntityAIBreakDoor(final MobEntity entityIn)
+    public EntityAIBreakDoor(final Mob entityIn)
     {
         super(entityIn, difficulty -> difficulty.getId() > 0);
         setFlags(EnumSet.of(Flag.MOVE));

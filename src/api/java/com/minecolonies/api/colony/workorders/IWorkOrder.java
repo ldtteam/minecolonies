@@ -2,9 +2,9 @@ package com.minecolonies.api.colony.workorders;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,7 +18,7 @@ public interface IWorkOrder
      * @param compound NBT Tag compound
      * @param manager  the workManager calling this method.
      */
-    void read(@NotNull CompoundNBT compound, IWorkManager manager);
+    void read(@NotNull CompoundTag compound, IWorkManager manager);
 
     /**
      * Getter for the priority.
@@ -101,7 +101,7 @@ public interface IWorkOrder
      *
      * @param compound NBT tag compount
      */
-    void write(@NotNull CompoundNBT compound);
+    void write(@NotNull CompoundTag compound);
 
     /**
      * Is this WorkOrder still valid?  If not, it will be deleted.
@@ -119,7 +119,7 @@ public interface IWorkOrder
      *
      * @param buf Buffer to write to
      */
-    void serializeViewNetworkData(@NotNull PacketBuffer buf);
+    void serializeViewNetworkData(@NotNull FriendlyByteBuf buf);
 
     /**
      * Executed when a work order is added.
