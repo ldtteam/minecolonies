@@ -342,4 +342,11 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
     {
         return 0;
     }
+
+    @Override
+    protected void onTargetDied(final LivingEntity entity)
+    {
+        parentAI.incrementActionsDoneAndDecSaturation();
+        user.getCitizenExperienceHandler().addExperience(EXP_PER_MOB_DEATH);
+    }
 }
