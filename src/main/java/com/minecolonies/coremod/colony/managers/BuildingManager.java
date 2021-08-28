@@ -619,7 +619,7 @@ public class BuildingManager implements IBuildingManager
             if (colonyBuilding instanceof IGuardBuilding)
             {
                 final MutableBoundingBox guardedRegion = BlockPosUtil.getChunkAlignedBB(colonyBuilding.getPosition(), colonyBuilding.getClaimRadius(colonyBuilding.getBuildingLevel()));
-                if (guardedRegion.isInside(colonyBuilding.getPosition()))
+                if (guardedRegion.isInside(building.getPosition()))
                 {
                     return true;
                 }
