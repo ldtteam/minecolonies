@@ -344,7 +344,7 @@ public class ColonyPermissionEventHandler
                 }
 
                 final ItemStack stack = event.getItemStack();
-                if (ItemStackUtils.isEmpty(stack) || stack.getItem().isEdible())
+                if (ItemStackUtils.isEmpty(stack) || stack.isEdible())
                 {
                     return;
                 }

@@ -93,8 +93,7 @@ public class CitizenChatHandler implements ICitizenChatHandler
         {
             final TextComponent colonyDescription = new TextComponent(" at " + citizen.getCitizenColonyHandler().getColony().getName() + ": ");
             final List<Player> players = new ArrayList<>(citizen.getCitizenColonyHandler().getColony().getMessagePlayerEntities());
-            final Player owner =
-              ServerUtils.getPlayerFromUUID(CompatibilityUtils.getWorldFromCitizen(citizen), citizen.getCitizenColonyHandler().getColony().getPermissions().getOwner());
+            final Player owner = ServerUtils.getPlayerFromUUID(CompatibilityUtils.getWorldFromCitizen(citizen), citizen.getCitizenColonyHandler().getColony().getPermissions().getOwner());
 
             if (owner != null)
             {

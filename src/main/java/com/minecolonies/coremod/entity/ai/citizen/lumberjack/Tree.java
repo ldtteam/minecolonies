@@ -158,7 +158,7 @@ public class Tree
             woodBlocks.clear();
             slimeTree = Compatibility.isSlimeBlock(block);
             sapling = calcSapling(world);
-            if (sapling.getItem().is(fungi))
+            if (sapling.is(fungi))
             {
                 netherTree = true;
             }
@@ -263,7 +263,7 @@ public class Tree
                     continue;
                 }
 
-                if (stack.getItem().is(ItemTags.SAPLINGS))
+                if (stack.is(ItemTags.SAPLINGS))
                 {
                     IColonyManager.getInstance().getCompatibilityManager().connectLeafToSapling(blockState, stack);
                     return stack;
@@ -303,7 +303,7 @@ public class Tree
             {
                 for (ItemStack stack : list)
                 {
-                    if (stack.getItem().is(ItemTags.SAPLINGS))
+                    if (stack.is(ItemTags.SAPLINGS))
                     {
                         return list;
                     }
@@ -325,7 +325,7 @@ public class Tree
         for (int i = 1; (i + topLog.getY()) < 255 && i < 10; i++)
         {
             final BlockState blockState = world.getBlockState(topLog.offset(0, i, 0));
-            if (blockState.getBlock().is(BlockTags.LEAVES))
+            if (blockState.is(BlockTags.LEAVES))
             {
                 return topLog.offset(0, i, 0);
             }
@@ -726,7 +726,7 @@ public class Tree
                 for (int locZ = locZMin; locZ <= locZMax; locZ++)
                 {
                     final BlockPos leaf = new BlockPos(locX, locY, locZ);
-                    if (world.getBlockState(leaf).getMaterial() == Material.LEAVES || world.getBlockState(leaf).getBlock().is(BlockTags.WART_BLOCKS) || world.getBlockState(leaf).getBlock() == Blocks.SHROOMLIGHT)
+                    if (world.getBlockState(leaf).getMaterial() == Material.LEAVES || world.getBlockState(leaf).is(BlockTags.WART_BLOCKS) || world.getBlockState(leaf).getBlock() == Blocks.SHROOMLIGHT)
                     {
                         leaves.add(leaf);
                     }

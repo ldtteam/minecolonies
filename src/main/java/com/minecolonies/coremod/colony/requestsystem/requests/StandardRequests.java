@@ -155,12 +155,12 @@ public final class StandardRequests
     /**
      * Request for a single ItemStack.
      */
-    public static class ItemTagRequest extends AbstractRequest<Tag>
+    public static class ItemTagRequest extends AbstractRequest<RequestTag>
     {
 
         private List<ItemStack> stacks;
 
-        public ItemTagRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final Tag requested)
+        public ItemTagRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final RequestTag requested)
         {
             super(requester, token, requested);
             stacks = requested.getTag().getValues().stream().flatMap(item -> {
@@ -170,7 +170,7 @@ public final class StandardRequests
             }).collect(Collectors.toList());
         }
 
-        public ItemTagRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final RequestState state, @NotNull final Tag requested)
+        public ItemTagRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final RequestState state, @NotNull final RequestTag requested)
         {
             super(requester, token, state, requested);
             stacks = requested.getTag().getValues().stream().flatMap(item -> {
@@ -598,7 +598,7 @@ public final class StandardRequests
                                                       .getCompatibilityManager()
                                                       .getListOfAllItems()
                                                       .stream()
-                                                      .filter(item -> item.getItem().isEdible())
+                                                      .filter(item -> item.isEdible())
                                                       .collect(Collectors.toList()));
             }
 

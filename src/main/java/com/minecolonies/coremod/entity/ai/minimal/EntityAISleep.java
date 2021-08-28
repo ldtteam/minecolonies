@@ -234,7 +234,7 @@ public class EntityAISleep extends Goal
                     {
                         final Level world = citizen.level;
                         final BlockState state = world.getBlockState(pos);
-                        if (state.getBlock().is(BlockTags.BEDS)
+                        if (state.is(BlockTags.BEDS)
                               && !state.getValue(BedBlock.OCCUPIED)
                               && state.getValue(BedBlock.PART).equals(BedPart.HEAD)
                               && !isBedOccupied(hut, pos)
@@ -302,7 +302,7 @@ public class EntityAISleep extends Goal
         final BlockPos feetPos = usedBed.relative(headState.getValue(BedBlock.FACING).getOpposite());
         final BlockState feetState = citizen.level.getBlockState(feetPos);
 
-        if (feetState.getBlock().is(BlockTags.BEDS))
+        if (feetState.is(BlockTags.BEDS))
         {
             citizen.level.setBlock(feetPos, feetState.setValue(BedBlock.OCCUPIED, occupied), 0x03);
         }
@@ -349,7 +349,7 @@ public class EntityAISleep extends Goal
         if (usedBed != null)
         {
             final BlockState state = citizen.level.getBlockState(usedBed);
-            if (state.getBlock().is(BlockTags.BEDS))
+            if (state.is(BlockTags.BEDS))
             {
                 final IColony colony = citizen.getCitizenColonyHandler().getColony();
                 if (colony != null && colony.getBuildingManager().getBuilding(citizen.getRestrictCenter()) != null)

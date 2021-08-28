@@ -133,7 +133,7 @@ public final class EntityUtils
     {
         for (int i = 1; i < AIR_SPACE_ABOVE_TO_CHECK; i++)
         {
-            if (solidOrLiquid(world, groundPosition.above(i)) || world.getBlockState(groundPosition.above(i)).getBlock().is(BlockTags.LEAVES))
+            if (solidOrLiquid(world, groundPosition.above(i)) || world.getBlockState(groundPosition.above(i)).is(BlockTags.LEAVES))
             {
                 return false;
             }

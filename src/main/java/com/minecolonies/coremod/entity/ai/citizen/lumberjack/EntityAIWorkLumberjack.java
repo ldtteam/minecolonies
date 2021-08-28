@@ -261,7 +261,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
      */
     private boolean isStackLog(@Nullable final ItemStack stack)
     {
-        return !ItemStackUtils.isEmpty(stack) && stack.getItem() instanceof BlockItem && ((BlockItem) stack.getItem()).getBlock().is(BlockTags.LOGS);
+        return !ItemStackUtils.isEmpty(stack) && stack.getItem() instanceof BlockItem && ((BlockItem) stack.getItem()).is(BlockTags.LOGS);
     }
 
     /**
@@ -574,7 +574,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
      */
     public boolean walkToTree(final BlockPos workAt)
     {
-        if (workFrom == null || world.getBlockState(workFrom.above()).getBlock().is(BlockTags.SAPLINGS) || world.getBlockState(workFrom).getBlock().is(BlockTags.SAPLINGS))
+        if (workFrom == null || world.getBlockState(workFrom.above()).is(BlockTags.SAPLINGS) || world.getBlockState(workFrom).is(BlockTags.SAPLINGS))
         {
             workFrom = getWorkingPosition(workAt);
         }
@@ -705,9 +705,9 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
                     currentPos.getY(),
                     currentPos.getZ(),
                     tag.toString(),
-                    world.getBlockState(currentPos).getBlock().is(tag)));
+                    world.getBlockState(currentPos).is(tag)));
             }
-            if (world.getBlockState(currentPos).getBlock().is(tag))
+            if (world.getBlockState(currentPos).is(tag))
             {
                 mineBlock(currentPos);
                 return true;
@@ -735,9 +735,9 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
      */
     private boolean isOnSapling()
     {
-        return world.getBlockState(worker.blockPosition()).getBlock().is(BlockTags.SAPLINGS)
-                 || world.getBlockState(worker.blockPosition().above()).getBlock().is(BlockTags.SAPLINGS)
-                 || world.getBlockState(worker.blockPosition().below()).getBlock().is(BlockTags.SAPLINGS);
+        return world.getBlockState(worker.blockPosition()).is(BlockTags.SAPLINGS)
+                 || world.getBlockState(worker.blockPosition().above()).is(BlockTags.SAPLINGS)
+                 || world.getBlockState(worker.blockPosition().below()).is(BlockTags.SAPLINGS);
     }
 
     /**

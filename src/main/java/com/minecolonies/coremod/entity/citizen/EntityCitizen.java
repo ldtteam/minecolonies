@@ -45,7 +45,7 @@ import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.entity.pathfinding.MovementHandler;
 import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMessage;
 import com.minecolonies.coremod.util.TeleportHelper;
-import net.minecraft.entity.*;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.InteractGoal;
@@ -55,7 +55,6 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.NameTagItem;
@@ -64,7 +63,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.scores.Team;
-import net.minecraft.util.*;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
@@ -98,13 +96,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.CombatRules;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.AgableMob;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityDimensions;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MoverType;
-import net.minecraft.world.entity.Pose;
 
 /**
  * The Class used to represent the citizen entities.
@@ -251,7 +242,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
      * @param type  the entity type.
      * @param world the world.
      */
-    public EntityCitizen(final EntityType<? extends AgableMob> type, final Level world)
+    public EntityCitizen(final EntityType<? extends AgeableMob> type, final Level world)
     {
         super(type, world);
         this.goalSelector = new CustomGoalSelector(this.goalSelector);
@@ -1156,13 +1147,13 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     @Override
     public float getRotationYaw()
     {
-        return this.yRot;
+        return this.getYRot();
     }
 
     @Override
     public float getRotationPitch()
     {
-        return this.xRot;
+        return this.getXRot();
     }
 
     @Override
@@ -1459,7 +1450,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             citizenColonyHandler.getColony().getRaiderManager().onLostCitizen(getCitizenData());
 
             citizenExperienceHandler.dropExperience();
-            this.remove();
+            this.remove(RemovalReason.KILLED);
             if (!(citizenJobHandler.getColonyJob() instanceof AbstractJobGuard))
             {
                 citizenColonyHandler.getColony().getCitizenManager().updateModifier("death");
@@ -1593,14 +1584,11 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         return Objects.hash(citizenId, citizenColonyHandler.getColonyId());
     }
 
-    /**
-     * Removes the entity from world.
-     */
     @Override
-    public void remove()
+    public void remove(final RemovalReason reason)
     {
         citizenColonyHandler.onCitizenRemoved();
-        super.remove();
+        super.remove(reason);
     }
 
     @Override

@@ -8,6 +8,7 @@ import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenExperienceHan
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.phys.AABB;
@@ -175,13 +176,13 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
             if (d1 < 1.0D)
             {
                 addExperience(orb.getValue() / 2.5D);
-                orb.remove();
+                orb.remove(Entity.RemovalReason.DISCARDED);
                 counterMovedXp = 0;
             }
             else if (counterMovedXp > MAX_XP_PICKUP_ATTEMPTS)
             {
                 addExperience(orb.getValue() / 2.0D);
-                orb.remove();
+                orb.remove(Entity.RemovalReason.DISCARDED);
                 counterMovedXp = 0;
                 return;
             }

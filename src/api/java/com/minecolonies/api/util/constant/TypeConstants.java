@@ -36,9 +36,9 @@ public class TypeConstants
     public static final TypeToken<IRequestable>     REQUESTABLE      = TypeToken.of(IRequestable.class);
     public static final TypeToken<IRetryable>       RETRYABLE        = TypeToken.of(IRetryable.class);
     public static final TypeToken<RecipeStorage>    RECIPE           = TypeToken.of(RecipeStorage.class);
-    public static final TypeToken<IDeliverable>     DELIVERABLE      = TypeToken.of(IDeliverable.class);
-    public static final TypeToken<Tag>              TAG_REQUEST      = TypeToken.of(Tag.class);
-    public static final TypeToken<ItemStorage>      ITEMSTORAGE      = TypeToken.of(ItemStorage.class);
+    public static final TypeToken<IDeliverable> DELIVERABLE = TypeToken.of(IDeliverable.class);
+    public static final TypeToken<RequestTag>   TAG_REQUEST = TypeToken.of(RequestTag.class);
+    public static final TypeToken<ItemStorage>  ITEMSTORAGE = TypeToken.of(ItemStorage.class);
 
     public static final TypeToken<ImmutableItemStorage> IMMUTABLEITEMSTORAGE = TypeToken.of(ImmutableItemStorage.class);
 

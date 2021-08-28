@@ -241,7 +241,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
      */
     private boolean hasFish()
     {
-        return InventoryUtils.hasItemInItemHandler(getInventory(), item -> item.getItem().is(ItemTags.FISHES));
+        return InventoryUtils.hasItemInItemHandler(getInventory(), item -> item.is(ItemTags.FISHES));
     }
 
     /**

@@ -32,7 +32,7 @@ public final class TinkersToolHelper extends TinkersToolProxy
     public boolean isTinkersWeapon(@NotNull final ItemStack stack)
     {
         return false;
-        //return !ItemStackUtils.isEmpty(stack) && stack.getItem().is(TinkerTags.Items.SWORD);
+        //return !ItemStackUtils.isEmpty(stack) && stack.is(TinkerTags.Items.SWORD);
     }
 
     /**
@@ -118,7 +118,7 @@ public final class TinkersToolHelper extends TinkersToolProxy
         }
         else
         {
-            return stack.getItem().is(TinkerTags.Items.HARVEST);
+            return stack.is(TinkerTags.Items.HARVEST);
         }*/
     }
 }

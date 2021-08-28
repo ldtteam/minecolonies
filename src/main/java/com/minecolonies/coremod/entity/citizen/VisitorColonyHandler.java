@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.Log;
+import net.minecraft.world.entity.Entity;
 
 /**
  * Colony handler for visitors
@@ -33,7 +34,7 @@ public class VisitorColonyHandler extends CitizenColonyHandler
 
         if (colonyId == 0 || citizen.getCivilianID() == 0)
         {
-            citizen.remove();
+            citizen.remove(Entity.RemovalReason.DISCARDED);
             return;
         }
 
@@ -42,7 +43,7 @@ public class VisitorColonyHandler extends CitizenColonyHandler
         if (colony == null)
         {
             Log.getLogger().warn(String.format("EntityCitizen '%s' unable to find Colony #%d", citizen.getUUID(), colonyId));
-            citizen.remove();
+            citizen.remove(Entity.RemovalReason.DISCARDED);
             return;
         }
 

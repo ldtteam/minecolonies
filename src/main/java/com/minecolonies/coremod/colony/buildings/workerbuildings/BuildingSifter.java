@@ -58,7 +58,7 @@ public class BuildingSifter extends AbstractBuildingWorker implements IBuildingP
     {
         super(c, l);
 
-        keepX.put(stack -> stack.getItem().is(ModTags.meshes), new net.minecraft.util.Tuple<>(4, false));
+        keepX.put(stack -> stack.is(ModTags.meshes), new net.minecraft.util.Tuple<>(4, false));
     }
 
     @NotNull

@@ -246,7 +246,7 @@ public final class StandardRequestFactories
     }
 
     @SuppressWarnings(Suppression.BIG_CLASS)
-    public static final class ItemTagRequestFactory implements IRequestFactory<Tag, StandardRequests.ItemTagRequest>
+    public static final class ItemTagRequestFactory implements IRequestFactory<RequestTag, StandardRequests.ItemTagRequest>
     {
         /**
          * Method to get a new instance of a request given the input and token.
@@ -259,7 +259,7 @@ public final class StandardRequestFactories
          */
         @Override
         public StandardRequests.ItemTagRequest getNewInstance(
-          @NotNull final Tag input,
+          @NotNull final RequestTag input,
           @NotNull final IRequester location,
           @NotNull final IToken<?> token,
           @NotNull final RequestState initialState)
@@ -278,9 +278,9 @@ public final class StandardRequestFactories
         @NotNull
         @Override
         @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
-        public TypeToken<Tag> getFactoryInputType()
+        public TypeToken<RequestTag> getFactoryInputType()
         {
-            return TypeToken.of(Tag.class);
+            return TypeToken.of(RequestTag.class);
         }
 
         /**
@@ -294,7 +294,7 @@ public final class StandardRequestFactories
         @Override
         public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final StandardRequests.ItemTagRequest request)
         {
-            return serializeToNBT(controller, request, Tag::serialize);
+            return serializeToNBT(controller, request, RequestTag::serialize);
         }
 
         /**
@@ -309,7 +309,7 @@ public final class StandardRequestFactories
         @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
         public StandardRequests.ItemTagRequest deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
         {
-            return deserializeFromNBT(controller, nbt, Tag::deserialize,
+            return deserializeFromNBT(controller, nbt, RequestTag::deserialize,
               (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.ItemTagRequest.class),
                 requested,
                 token,
@@ -321,7 +321,7 @@ public final class StandardRequestFactories
         @Override
         public void serialize(@NotNull final IFactoryController controller, @NotNull final StandardRequests.ItemTagRequest itemTagRequest, final FriendlyByteBuf packetBuffer)
         {
-            serializeToFriendlyByteBuf(controller, itemTagRequest, packetBuffer, Tag::serialize);
+            serializeToFriendlyByteBuf(controller, itemTagRequest, packetBuffer, RequestTag::serialize);
         }
 
         @NotNull
@@ -330,7 +330,7 @@ public final class StandardRequestFactories
         {
             return deserializeFromFriendlyByteBuf(controller,
               buffer,
-              Tag::deserialize,
+              RequestTag::deserialize,
               (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StandardRequests.ItemTagRequest.class),
                 requested,
                 token,

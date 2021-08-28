@@ -11,6 +11,7 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
+import com.minecolonies.api.colony.requestsystem.requestable.RequestTag;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.requestable.Tool;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -1332,7 +1333,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         {
             @NotNull final BlockPos positionInDirection = getPositionInDirection(direction, distance + offset, targetPos);
             if (EntityUtils.checkForFreeSpace(world, positionInDirection)
-                  && world.getBlockState(positionInDirection.above()).getBlock().is(BlockTags.SAPLINGS))
+                  && world.getBlockState(positionInDirection.above()).is(BlockTags.SAPLINGS))
             {
                 return positionInDirection;
             }
@@ -1510,15 +1511,15 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      */
     public boolean checkIfRequestForTagExistOrCreateAsynch(@NotNull final Tag<Item> tag, final int count)
     {
-        if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), stack -> stack.getItem().is(tag) && stack.getCount() >= count))
+        if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), stack -> stack.is(tag) && stack.getCount() >= count))
         {
             return true;
         }
 
         if (InventoryUtils.getCountFromBuilding(getOwnBuilding(),
-          itemStack -> itemStack.getItem().is(tag)) >= count &&
+          itemStack -> itemStack.is(tag)) >= count &&
               InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
-                getOwnBuilding(), itemStack -> itemStack.getItem().is(tag),
+                getOwnBuilding(), itemStack -> itemStack.is(tag),
                 count,
                 worker.getInventoryCitizen()))
         {
@@ -1526,11 +1527,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         }
 
         if (getOwnBuilding().getOpenRequestsOfTypeFiltered(worker.getCitizenData(), TypeConstants.TAG_REQUEST,
-          (IRequest<? extends com.minecolonies.api.colony.requestsystem.requestable.Tag> r) -> r.getRequest().getTag().equals(tag)).isEmpty()
+          (IRequest<? extends RequestTag> r) -> r.getRequest().getTag().equals(tag)).isEmpty()
             && getOwnBuilding().getCompletedRequestsOfTypeFiltered(worker.getCitizenData(), TypeConstants.TAG_REQUEST,
-          (IRequest<? extends com.minecolonies.api.colony.requestsystem.requestable.Tag> r) -> r.getRequest().getTag().equals(tag)).isEmpty())
+          (IRequest<? extends RequestTag> r) -> r.getRequest().getTag().equals(tag)).isEmpty())
         {
-            final IDeliverable tagRequest = new com.minecolonies.api.colony.requestsystem.requestable.Tag(tag, count);
+            final IDeliverable tagRequest = new RequestTag(tag, count);
             worker.getCitizenData().createRequestAsync(tagRequest);
         }
 

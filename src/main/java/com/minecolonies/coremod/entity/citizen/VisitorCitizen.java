@@ -28,7 +28,7 @@ import com.minecolonies.coremod.entity.citizen.citizenhandlers.*;
 import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.entity.pathfinding.MovementHandler;
 import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMessage;
-import net.minecraft.entity.*;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.InteractGoal;
 import net.minecraft.world.entity.ai.goal.OpenDoorGoal;
@@ -52,12 +52,6 @@ import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.coremod.entity.ai.minimal.EntityAIInteractToggleAble.*;
-
-import net.minecraft.world.entity.AgableMob;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityDimensions;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
 
 /**
  * Visitor citizen entity
@@ -136,7 +130,7 @@ public class VisitorCitizen extends AbstractEntityCitizen
      * @param type  the Entity type.
      * @param world the world.
      */
-    public VisitorCitizen(final EntityType<? extends AgableMob> type, final Level world)
+    public VisitorCitizen(final EntityType<? extends AgeableMob> type, final Level world)
     {
         super(type, world);
         this.goalSelector = new CustomGoalSelector(this.goalSelector);
@@ -439,13 +433,13 @@ public class VisitorCitizen extends AbstractEntityCitizen
     @Override
     public float getRotationYaw()
     {
-        return yRot;
+        return getYRot();
     }
 
     @Override
     public float getRotationPitch()
     {
-        return xRot;
+        return getXRot();
     }
 
     @Override
@@ -685,9 +679,9 @@ public class VisitorCitizen extends AbstractEntityCitizen
 
     // TODO:REMOVE DEBUG
     @Override
-    public void setPosRaw(double x, double y, double z)
+    public void setPos(final double x, final double y, final double z)
     {
-        super.setPosRaw(x, y, z);
+        super.setPos(x, y, z);
         if (level.isClientSide)
         {
             return;
@@ -696,7 +690,7 @@ public class VisitorCitizen extends AbstractEntityCitizen
         if (citizenStatusHandler != null && x < 1 && x > -1 && z < 1 && z > -1)
         {
             Log.getLogger().error("Visitor entity set to zero pos, report to mod author:", new Exception());
-            remove();
+            remove(RemovalReason.DISCARDED);
 
             if (getCitizenData() != null && citizenColonyHandler.getColony() != null)
             {

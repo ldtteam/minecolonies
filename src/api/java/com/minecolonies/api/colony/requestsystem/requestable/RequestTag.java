@@ -5,11 +5,11 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
+import net.minecraft.tags.Tag;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.tags.Tag;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
@@ -20,12 +20,12 @@ import java.util.stream.Collectors;
 /**
  * Deliverable that can only be fulfilled by a stack whos item is contained in a given tag with a given minimal amount of items.
  */
-public class Tag implements IDeliverable
+public class RequestTag implements IDeliverable
 {
     /**
      * Set of type tokens belonging to this class.
      */
-    private final static Set<TypeToken<?>> TYPE_TOKENS = ReflectionUtils.getSuperClasses(TypeToken.of(Tag.class)).stream().filter(type -> !type.equals(TypeConstants.OBJECT)).collect(Collectors.toSet());
+    private final static Set<TypeToken<?>> TYPE_TOKENS = ReflectionUtils.getSuperClasses(TypeToken.of(RequestTag.class)).stream().filter(type -> !type.equals(TypeConstants.OBJECT)).collect(Collectors.toSet());
 
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
     private static final String NBT_TAG      = "Tag";
@@ -62,7 +62,7 @@ public class Tag implements IDeliverable
      * @param tag   the required containing tag.
      * @param count the count.
      */
-    public Tag(@NotNull final Tag<Item> tag, final int count)
+    public RequestTag(@NotNull final Tag<Item> tag, final int count)
     {
         this(tag, count, count);
     }
@@ -74,7 +74,7 @@ public class Tag implements IDeliverable
      * @param count    the count.
      * @param minCount the min count.
      */
-    public Tag(@NotNull final Tag<Item> tag, final int count, final int minCount)
+    public RequestTag(@NotNull final Tag<Item> tag, final int count, final int minCount)
     {
         this(tag, ItemStackUtils.EMPTY, count, minCount);
     }
@@ -87,7 +87,7 @@ public class Tag implements IDeliverable
      * @param count    the count.
      * @param minCount the min count.
      */
-    public Tag(@NotNull final Tag<Item> tag, @NotNull final ItemStack result, final int count, final int minCount)
+    public RequestTag(@NotNull final Tag<Item> tag, @NotNull final ItemStack result, final int count, final int minCount)
     {
         this.theTag = tag;
         this.result = result;
@@ -104,7 +104,7 @@ public class Tag implements IDeliverable
     @Override
     public boolean matches(@NotNull final ItemStack stack)
     {
-        return stack.getItem().is(theTag);
+        return stack.is(theTag);
     }
 
     /**
@@ -167,7 +167,7 @@ public class Tag implements IDeliverable
     @Override
     public IDeliverable copyWithCount(final int newCount)
     {
-        return new Tag(theTag, result, newCount, minCount);
+        return new RequestTag(theTag, result, newCount, minCount);
     }
 
     @Override
@@ -181,7 +181,7 @@ public class Tag implements IDeliverable
         {
             return false;
         }
-        final Tag tag1 = (Tag) o;
+        final RequestTag tag1 = (RequestTag) o;
         return getCount() == tag1.getCount() &&
                  getMinimumCount() == tag1.getMinimumCount() &&
                  getTag().equals(tag1.getTag()) &&
@@ -191,7 +191,7 @@ public class Tag implements IDeliverable
     @Override
     public int hashCode()
     {
-        int result1 = ItemTags.getAllTags().getIdOrThrow(getTag()).toString().hashCode();
+        int result1 = ItemTags.getAllTags().getId(getTag()).toString().hashCode();
         result1 = 31 * result1 + getResult().hashCode();
         return result1;
     }
@@ -203,10 +203,10 @@ public class Tag implements IDeliverable
      * @param input      the input.
      * @return the compound.
      */
-    public static CompoundTag serialize(final IFactoryController controller, final Tag input)
+    public static CompoundTag serialize(final IFactoryController controller, final RequestTag input)
     {
         final CompoundTag compound = new CompoundTag();
-        compound.putString(NBT_TAG, ItemTags.getAllTags().getIdOrThrow(input.getTag()).toString());
+        compound.putString(NBT_TAG, ItemTags.getAllTags().getId(input.getTag()).toString());
         if (!ItemStackUtils.isEmpty(input.getResult()))
         {
             compound.put(NBT_RESULT, input.getResult().serializeNBT());
@@ -216,9 +216,9 @@ public class Tag implements IDeliverable
         return compound;
     }
 
-    public static void serialize(final IFactoryController controller, final FriendlyByteBuf buffer, final Tag input)
+    public static void serialize(final IFactoryController controller, final FriendlyByteBuf buffer, final RequestTag input)
     {
-        buffer.writeUtf(ItemTags.getAllTags().getIdOrThrow(input.getTag()).toString());
+        buffer.writeUtf(ItemTags.getAllTags().getId(input.getTag()).toString());
         buffer.writeBoolean(!ItemStackUtils.isEmpty(input.getResult()));
 
         if (!ItemStackUtils.isEmpty(input.getResult()))
@@ -229,14 +229,14 @@ public class Tag implements IDeliverable
         buffer.writeInt(input.getMinimumCount());
     }
 
-    public static Tag deserialize(final IFactoryController controller, final FriendlyByteBuf buffer)
+    public static RequestTag deserialize(final IFactoryController controller, final FriendlyByteBuf buffer)
     {
         final Tag<Item> theTag = ItemTags.getAllTags().getTag(ResourceLocation.tryParse(buffer.readUtf(32767)));
         final ItemStack result = buffer.readBoolean() ? buffer.readItem() : ItemStack.EMPTY;
         final int count = buffer.readInt();
         final int minCount = buffer.readInt();
 
-        return new Tag(theTag, result, count, minCount);
+        return new RequestTag(theTag, result, count, minCount);
     }
 
     /**
@@ -246,7 +246,7 @@ public class Tag implements IDeliverable
      * @param compound   the compound.
      * @return the deliverable.
      */
-    public static Tag deserialize(final IFactoryController controller, final CompoundTag compound)
+    public static RequestTag deserialize(final IFactoryController controller, final CompoundTag compound)
     {
         final Tag<Item> theTag = ItemTags.bind(compound.getString(NBT_TAG));
         final ItemStack result = compound.getAllKeys().contains(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_RESULT)) : ItemStackUtils.EMPTY;
@@ -258,7 +258,7 @@ public class Tag implements IDeliverable
             count = compound.getInt(NBT_COUNT);
             minCount = compound.getInt(NBT_MINCOUNT);
         }
-        return new Tag(theTag, result, count, minCount);
+        return new RequestTag(theTag, result, count, minCount);
     }
 
     @Override

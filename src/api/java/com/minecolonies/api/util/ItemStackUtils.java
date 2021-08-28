@@ -924,7 +924,7 @@ public final class ItemStackUtils
             return false;
         }
 
-        return stack.getItem().is(ItemTags.SAPLINGS) || stack.getItem().is(fungi) || Compatibility.isDynamicTreeSapling(stack);
+        return stack.is(ItemTags.SAPLINGS) || stack.is(fungi) || Compatibility.isDynamicTreeSapling(stack);
     }
 
     /**

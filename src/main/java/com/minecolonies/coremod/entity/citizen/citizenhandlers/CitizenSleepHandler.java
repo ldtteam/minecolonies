@@ -199,7 +199,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
     private void spawnCitizenFromBed()
     {
         final BlockPos spawn;
-        if (!getBedLocation().equals(BlockPos.ZERO) && citizen.level.getBlockState(getBedLocation()).getBlock().is(BlockTags.BEDS))
+        if (!getBedLocation().equals(BlockPos.ZERO) && citizen.level.getBlockState(getBedLocation()).is(BlockTags.BEDS))
         {
             final Optional<Vec3> spawnVec = Blocks.RED_BED.getBedSpawnPosition(ModEntities.CITIZEN, citizen.level.getBlockState(getBedLocation()), citizen.level, getBedLocation(), 0, citizen);
             spawn = spawnVec.map(BlockPos::new).orElseGet(() -> getBedLocation().above());

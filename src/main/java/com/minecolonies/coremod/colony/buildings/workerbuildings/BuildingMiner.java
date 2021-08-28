@@ -101,8 +101,8 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         keepX.put(stackTorch::sameItem, new Tuple<>(STACKSIZE, true));
         keepX.put(stackCobble::sameItem, new Tuple<>(STACKSIZE, true));
 
-        keepX.put(stack -> stack.getItem().is(ItemTags.SLABS), new Tuple<>(STACKSIZE, true));
-        keepX.put(stack -> stack.getItem().is(ItemTags.PLANKS), new Tuple<>(STACKSIZE, true));
+        keepX.put(stack -> stack.is(ItemTags.SLABS), new Tuple<>(STACKSIZE, true));
+        keepX.put(stack -> stack.is(ItemTags.PLANKS), new Tuple<>(STACKSIZE, true));
         keepX.put(stackDirt::sameItem, new Tuple<>(STACKSIZE, true));
         keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.PICKAXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
         keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.SHOVEL, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));

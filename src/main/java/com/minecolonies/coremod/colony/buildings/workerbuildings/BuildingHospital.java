@@ -325,14 +325,14 @@ public class BuildingHospital extends AbstractBuildingFurnaceUser
     private void setBedOccupation(final BlockPos bedPos, final boolean occupied)
     {
         final BlockState state = colony.getWorld().getBlockState(bedPos);
-        if (state.getBlock().is(BlockTags.BEDS))
+        if (state.is(BlockTags.BEDS))
         {
             colony.getWorld().setBlock(bedPos, state.setValue(BedBlock.OCCUPIED, occupied), 0x03);
 
             final BlockPos feetPos = bedPos.relative(state.getValue(BedBlock.FACING).getOpposite());
             final BlockState feetState = colony.getWorld().getBlockState(feetPos);
 
-            if (feetState.getBlock().is(BlockTags.BEDS))
+            if (feetState.is(BlockTags.BEDS))
             {
                 colony.getWorld().setBlock(feetPos, feetState.setValue(BedBlock.OCCUPIED, occupied), 0x03);
             }

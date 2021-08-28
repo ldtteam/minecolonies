@@ -339,7 +339,7 @@ public class CompatibilityManager implements ICompatibilityManager
     @Override
     public boolean isMineableOre(@NotNull final ItemStack stack)
     {
-        return !isEmpty(stack) && stack.getItem().is(Tags.Items.ORES);
+        return !isEmpty(stack) && stack.is(Tags.Items.ORES);
     }
 
     @Override

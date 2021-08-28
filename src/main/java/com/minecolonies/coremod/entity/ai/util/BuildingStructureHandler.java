@@ -276,7 +276,7 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
     {
         return itemStack == null
                  || itemStack.isEmpty()
-                 || itemStack.getItem().is(ItemTags.LEAVES)
+                 || itemStack.is(ItemTags.LEAVES)
                  || itemStack.getItem() == new ItemStack(ModBlocks.blockDecorationPlaceholder, 1).getItem();
     }
 

@@ -153,7 +153,7 @@ public class BuildingSawmill extends AbstractBuildingWorker implements IBuilding
                 final ItemStack stack = stacks.get(0);
                 if (!ItemStackUtils.isEmpty(stack))
                 {
-                    if (stack.getItem().is(ItemTags.PLANKS) || stack.getItem().is(ItemTags.LOGS))
+                    if (stack.is(ItemTags.PLANKS) || stack.is(ItemTags.LOGS))
                     {
                         amountOfValidBlocks += stack.getCount();
                         continue;
