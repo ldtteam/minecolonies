@@ -253,10 +253,9 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
     boolean isGuardBuildingNear();
 
     /**
-     * Sets whether this building has a guard building nearby
-     * @param guardBuildingNear
+     * Requests recalculation of whether this building has a guard building nearby
      */
-    void setGuardBuildingNear(boolean guardBuildingNear);
+    void resetGuardBuildingNear();
 
     /**
      * Check if the worker requires a certain amount of that item and the alreadykept list contains it. Always leave one stack behind if the worker requires a certain amount of it.

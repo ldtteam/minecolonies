@@ -628,20 +628,9 @@ public class BuildingManager implements IBuildingManager
     @Override
     public void guardBuildingChangedAt(final IBuilding guardBuilding, final int newLevel)
     {
-        for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
+        for (final IBuilding building : getBuildings().values())
         {
-            if (building.getPosition().getX() <= guardBuilding.getPosition().getX() + 16 * guardBuilding.getClaimRadius(newLevel)
-                  && building.getPosition().getZ() <= guardBuilding.getPosition().getZ() + 16 * guardBuilding.getClaimRadius(newLevel))
-            {
-                if (newLevel > 0)
-                {
-                    building.setGuardBuildingNear(true);
-                }
-                else
-                {
-                    building.setGuardBuildingNear(hasGuardBuildingNear(building));
-                }
-            }
+            building.resetGuardBuildingNear();
         }
     }
 
