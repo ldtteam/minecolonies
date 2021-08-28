@@ -30,7 +30,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECO
 import static com.minecolonies.api.util.constant.WindowConstants.CITIZEN_REQ_RESOURCE_SUFFIX;
 
 /**
- * Window for the citizen.
+ * BOWindow for the citizen.
  */
 public class RequestWindowCitizen extends AbstractWindowCitizen
 {

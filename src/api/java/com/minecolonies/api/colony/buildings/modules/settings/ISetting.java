@@ -1,7 +1,7 @@
 package com.minecolonies.api.colony.buildings.modules.settings;
 
 import com.ldtteam.blockui.Pane;
-import com.ldtteam.blockui.views.Window;
+import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import net.minecraft.server.level.ServerPlayer;
@@ -23,7 +23,7 @@ public interface ISetting
       final ISettingKey<?> key,
       final Pane rowPane,
       final ISettingsModuleView settingsModuleView,
-      final IBuildingView building, final Window window);
+      final IBuildingView building, final BOWindow window);
 
     /**
      * Update the handling (e.g update settings text).
@@ -37,7 +37,7 @@ public interface ISetting
       final ISettingKey<?> key,
       final Pane rowPane,
       final ISettingsModuleView settingsModuleView,
-      final IBuildingView building, final Window window);
+      final IBuildingView building, final BOWindow window);
 
     /**
      * Trigger a setting.

@@ -13,7 +13,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.TranslatableComponent;
 
 /**
- * Window for the citizen.
+ * BOWindow for the citizen.
  */
 public abstract class AbstractWindowCitizen extends AbstractWindowRequestTree
 {

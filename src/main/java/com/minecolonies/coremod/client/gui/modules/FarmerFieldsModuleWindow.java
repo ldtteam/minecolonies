@@ -26,7 +26,7 @@ import java.util.List;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
- * Window for the farmer hut.
+ * BOWindow for the farmer hut.
  */
 public class FarmerFieldsModuleWindow extends AbstractModuleWindow
 {

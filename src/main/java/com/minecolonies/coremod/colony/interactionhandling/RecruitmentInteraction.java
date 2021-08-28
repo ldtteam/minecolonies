@@ -5,7 +5,7 @@ import com.ldtteam.blockui.controls.ButtonImage;
 import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.Box;
-import com.ldtteam.blockui.views.Window;
+import com.ldtteam.blockui.views.BOWindow;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.interactionhandling.IChatPriority;
@@ -85,7 +85,7 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void onWindowOpened(final Window window, final ICitizenDataView dataView)
+    public void onWindowOpened(final BOWindow window, final ICitizenDataView dataView)
     {
         final ButtonImage recruitButton = window.findPaneOfTypeByID(BUTTON_RESPONSE_ID + 2, ButtonImage.class);
         final Box group = window.findPaneOfTypeByID(RESPONSE_BOX_ID, Box.class);
@@ -121,7 +121,7 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public boolean onClientResponseTriggered(final Component response, final Player player, final ICitizenDataView data, final Window window)
+    public boolean onClientResponseTriggered(final Component response, final Player player, final ICitizenDataView data, final BOWindow window)
     {
         // Validate recruitment before returning true
         if (response.equals(recruitAnswer.getA()) && data instanceof IVisitorViewData)

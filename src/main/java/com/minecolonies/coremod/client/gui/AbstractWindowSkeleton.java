@@ -3,8 +3,8 @@ package com.minecolonies.coremod.client.gui;
 import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.ButtonHandler;
 import com.ldtteam.blockui.controls.Text;
+import com.ldtteam.blockui.views.BOWindow;
 import com.ldtteam.blockui.views.SwitchView;
-import com.ldtteam.blockui.views.Window;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.server.ClickGuiButtonTriggerMessage;
 import com.minecolonies.coremod.network.messages.server.OpenGuiWindowTriggerMessage;
@@ -19,7 +19,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 /**
  * Manage windows and their events.
  */
-public abstract class AbstractWindowSkeleton extends Window implements ButtonHandler
+public abstract class AbstractWindowSkeleton extends BOWindow implements ButtonHandler
 {
     @NotNull
     private final HashMap<String, Consumer<Button>> buttons;
@@ -41,7 +41,7 @@ public abstract class AbstractWindowSkeleton extends Window implements ButtonHan
      * This window's parent
      */
     @Nullable
-    private Window parent;
+    private BOWindow parent;
 
     /**
      * Constructor with no parent window
@@ -58,7 +58,7 @@ public abstract class AbstractWindowSkeleton extends Window implements ButtonHan
      *
      * @param resource Resource location string.
      */
-    public AbstractWindowSkeleton(final String resource, @Nullable final Window parent)
+    public AbstractWindowSkeleton(final String resource, @Nullable final BOWindow parent)
     {
         super(resource);
         this.resource = resource;

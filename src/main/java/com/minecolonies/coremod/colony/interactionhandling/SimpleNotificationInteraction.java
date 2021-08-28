@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.colony.interactionhandling;
 
-import com.ldtteam.blockui.views.Window;
+import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.interactionhandling.IChatPriority;
@@ -38,7 +38,7 @@ public class SimpleNotificationInteraction extends StandardInteraction
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public boolean onClientResponseTriggered(final Component response, final Player player, final ICitizenDataView data, final Window window)
+    public boolean onClientResponseTriggered(final Component response, final Player player, final ICitizenDataView data, final BOWindow window)
     {
         onResponse(response);
         return super.onClientResponseTriggered(response, player, data, window);

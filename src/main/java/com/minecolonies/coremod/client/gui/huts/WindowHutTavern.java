@@ -22,7 +22,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECO
 import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_RECALL;
 
 /**
- * Window for the tavern
+ * BOWindow for the tavern
  */
 public class WindowHutTavern extends AbstractWindowModuleBuilding<TavernBuildingModule.View>
 {
@@ -57,7 +57,7 @@ public class WindowHutTavern extends AbstractWindowModuleBuilding<TavernBuilding
     private ScrollingList citizen;
 
     /**
-     * Creates the Window object.
+     * Creates the BOWindow object.
      *
      * @param building View of the home building.
      */

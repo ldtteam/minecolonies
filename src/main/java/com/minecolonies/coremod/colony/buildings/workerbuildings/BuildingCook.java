@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
-import com.ldtteam.blockui.views.Window;
+import com.ldtteam.blockui.views.BOWindow;
 import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenData;
@@ -397,7 +397,7 @@ public class BuildingCook extends AbstractBuildingFurnaceUser implements IBuildi
 
         @NotNull
         @Override
-        public Window getWindow()
+        public BOWindow getWindow()
         {
             return new WindowHutWorkerModulePlaceholder<>(this, COOK_DESC);
         }

@@ -42,7 +42,7 @@ import static com.minecolonies.coremod.client.gui.modules.WindowBuilderResModule
 import static com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource.RessourceAvailability.*;
 
 /**
- * Window for the resource list item.
+ * BOWindow for the resource list item.
  */
 public class WindowResourceList extends AbstractWindowSkeleton
 {

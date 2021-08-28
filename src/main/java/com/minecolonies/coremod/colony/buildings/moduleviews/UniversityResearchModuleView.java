@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.moduleviews;
 
-import com.ldtteam.blockui.views.Window;
+import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
 import com.minecolonies.coremod.client.gui.modules.UniversityModuleWindow;
 import net.minecraft.network.FriendlyByteBuf;
@@ -21,7 +21,7 @@ public class UniversityResearchModuleView extends AbstractBuildingModuleView
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public Window getWindow()
+    public BOWindow getWindow()
     {
         return new UniversityModuleWindow(buildingView);
     }

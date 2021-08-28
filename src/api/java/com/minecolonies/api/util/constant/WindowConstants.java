@@ -412,12 +412,12 @@ public final class WindowConstants
     public static final String GUIDE_CLOSE           = "close";
 
     /**
-     * Window resource list gui file.
+     * BOWindow resource list gui file.
      */
     public static final String RESOURCE_SCROLL_RESOURCE_SUFFIX = ":gui/windowresourcescroll.xml";
 
     /**
-     * Window all Items list gui file.
+     * BOWindow all Items list gui file.
      */
     public static final String HUT_ALL_INVENTORY_SUFFIX = ":gui/windowhutallinventory.xml";
     /**
@@ -450,7 +450,7 @@ public final class WindowConstants
     public static final String BUTTON_SORT              = "sortStorageFilter";
 
     /**
-     * Window resource list gui file.
+     * BOWindow resource list gui file.
      */
     public static final String R_TREE_RESOURCE_SUFFIX = ":gui/windowresearch.xml";
 

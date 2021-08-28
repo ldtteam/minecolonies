@@ -11,7 +11,7 @@ import java.util.Comparator;
 import java.util.stream.Collectors;
 
 /**
- * Window for the hiring or firing of a worker.
+ * BOWindow for the hiring or firing of a worker.
  */
 public class WindowHireWorkerSchool extends WindowHireWorker
 {

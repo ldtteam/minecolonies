@@ -31,7 +31,7 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 
 /**
- * Window for the university.
+ * BOWindow for the university.
  */
 public class UniversityModuleWindow extends AbstractModuleWindow
 {

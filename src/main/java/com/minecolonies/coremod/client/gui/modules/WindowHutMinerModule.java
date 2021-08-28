@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 /**
- * Window for the miner hut.
+ * BOWindow for the miner hut.
  */
 public class WindowHutMinerModule extends AbstractModuleWindow
 {

@@ -8,12 +8,12 @@ import net.minecraft.client.Minecraft;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Window for the school hut.
+ * BOWindow for the school hut.
  */
 public class WindowHutSchoolModule extends WindowHutWorkerModulePlaceholder<BuildingSchool.View>
 {
     /**
-     * Window for worker placeholder. Used by buildings not listed above this file.
+     * BOWindow for worker placeholder. Used by buildings not listed above this file.
      *
      * @param building AbstractBuilding extending {@link com.minecolonies.coremod.colony.buildings.AbstractBuildingWorkerView}.
      * @param name     Name of the the view (resource).

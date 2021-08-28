@@ -2,7 +2,7 @@ package com.minecolonies.coremod.colony.interactionhandling;
 
 import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.views.View;
-import com.ldtteam.blockui.views.Window;
+import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.interactionhandling.*;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
@@ -133,7 +133,7 @@ public class RequestBasedInteraction extends ServerCitizenInteraction
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void onWindowOpened(final Window window, final ICitizenDataView dataView)
+    public void onWindowOpened(final BOWindow window, final ICitizenDataView dataView)
     {
         final IColony colony = IColonyManager.getInstance().getColonyView(dataView.getColonyId(), Minecraft.getInstance().player.level.dimension());
 
@@ -164,7 +164,7 @@ public class RequestBasedInteraction extends ServerCitizenInteraction
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public boolean onClientResponseTriggered(final Component response, final Player player, final ICitizenDataView data, final Window window)
+    public boolean onClientResponseTriggered(final Component response, final Player player, final ICitizenDataView data, final BOWindow window)
     {
         if (response.equals(new TranslatableComponent("com.minecolonies.coremod.gui.chat.fulfill")))
         {

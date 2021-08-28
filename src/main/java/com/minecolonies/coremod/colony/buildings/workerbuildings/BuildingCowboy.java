@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
-import com.ldtteam.blockui.views.Window;
+import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
@@ -138,7 +138,7 @@ public class BuildingCowboy extends AbstractBuildingWorker
 
         @NotNull
         @Override
-        public Window getWindow()
+        public BOWindow getWindow()
         {
             return new WindowHutWorkerModulePlaceholder<>(this, HUT_NAME);
         }

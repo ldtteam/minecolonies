@@ -2,7 +2,7 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
-import com.ldtteam.blockui.views.Window;
+import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
@@ -381,7 +381,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
 
         @NotNull
         @Override
-        public Window getWindow()
+        public BOWindow getWindow()
         {
             return new WindowHutMinPlaceholder<>(this, WAREHOUSE);
         }

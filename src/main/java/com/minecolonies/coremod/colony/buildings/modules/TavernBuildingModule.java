@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.modules;
 
-import com.ldtteam.blockui.views.Window;
+import com.ldtteam.blockui.views.BOWindow;
 import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.modules.*;
@@ -429,7 +429,7 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
 
         @NotNull
         @Override
-        public Window getWindow()
+        public BOWindow getWindow()
         {
             return new WindowHutTavern(this);
         }

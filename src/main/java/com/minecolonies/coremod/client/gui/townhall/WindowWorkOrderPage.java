@@ -17,7 +17,7 @@ import java.util.*;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
- * Window for the town hall.
+ * BOWindow for the town hall.
  */
 public class WindowWorkOrderPage extends AbstractWindowTownHall
 {

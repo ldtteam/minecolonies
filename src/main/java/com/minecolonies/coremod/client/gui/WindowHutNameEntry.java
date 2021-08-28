@@ -3,7 +3,7 @@ package com.minecolonies.coremod.client.gui;
 import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.ButtonHandler;
 import com.ldtteam.blockui.controls.TextField;
-import com.ldtteam.blockui.views.Window;
+import com.ldtteam.blockui.views.BOWindow;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.constant.Constants;
@@ -14,9 +14,9 @@ import org.jetbrains.annotations.NotNull;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
- * Window for a hut name entry.
+ * BOWindow for a hut name entry.
  */
-public class WindowHutNameEntry extends Window implements ButtonHandler
+public class WindowHutNameEntry extends BOWindow implements ButtonHandler
 {
     /**
      * The max length of the name.

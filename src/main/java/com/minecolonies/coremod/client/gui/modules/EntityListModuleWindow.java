@@ -21,7 +21,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 import static org.jline.utils.AttributedStyle.WHITE;
 
 /**
- * Window for all the filterable entity lists.
+ * BOWindow for all the filterable entity lists.
  */
 public class EntityListModuleWindow extends AbstractModuleWindow
 {

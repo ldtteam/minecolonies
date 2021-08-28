@@ -6,7 +6,7 @@ import com.minecolonies.api.util.constant.Constants;
 import static com.minecolonies.api.util.constant.WindowConstants.CITIZEN_HAP_RESOURCE_SUFFIX;
 
 /**
- * Window for the citizen.
+ * BOWindow for the citizen.
  */
 public class HappinessWindowCitizen extends AbstractWindowCitizen
 {

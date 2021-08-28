@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
-import com.ldtteam.blockui.views.Window;
+import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
@@ -199,7 +199,7 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
 
         @NotNull
         @Override
-        public Window getWindow()
+        public BOWindow getWindow()
         {
             return new WindowMainPage(this);
         }

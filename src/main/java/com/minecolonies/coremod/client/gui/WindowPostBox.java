@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
- * Window for the replace block GUI.
+ * BOWindow for the replace block GUI.
  */
 public class WindowPostBox extends AbstractWindowRequestTree
 {

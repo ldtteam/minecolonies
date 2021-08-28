@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Window for the Graveyard building.
+ * BOWindow for the Graveyard building.
  */
 public class GraveyardManagementWindow extends AbstractModuleWindow
 {

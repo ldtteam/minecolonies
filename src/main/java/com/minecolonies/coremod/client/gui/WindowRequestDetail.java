@@ -4,7 +4,7 @@ import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.*;
 import com.ldtteam.blockui.views.Box;
-import com.ldtteam.blockui.views.Window;
+import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
@@ -28,9 +28,9 @@ import static com.minecolonies.api.util.constant.WindowConstants.REQUEST_FULLFIL
 import static com.minecolonies.coremod.colony.requestsystem.requests.AbstractRequest.MISSING;
 
 /**
- * Window for the request detail.
+ * BOWindow for the request detail.
  */
-public class WindowRequestDetail extends Window implements ButtonHandler
+public class WindowRequestDetail extends BOWindow implements ButtonHandler
 {
     /**
      * Link to the xml file of the window.
@@ -88,7 +88,7 @@ public class WindowRequestDetail extends Window implements ButtonHandler
     /**
      * The previous window.
      */
-    private final Window prevWindow;
+    private final BOWindow prevWindow;
 
     /**
      * Open the request detail.
@@ -97,7 +97,7 @@ public class WindowRequestDetail extends Window implements ButtonHandler
      * @param request    the request.
      * @param colonyId   the colony id.
      */
-    public WindowRequestDetail(@Nullable final Window prevWindow, final IRequest<?> request, final int colonyId)
+    public WindowRequestDetail(@Nullable final BOWindow prevWindow, final IRequest<?> request, final int colonyId)
     {
         super(Constants.MOD_ID + BUILDING_NAME_RESOURCE_SUFFIX);
         this.prevWindow = prevWindow;

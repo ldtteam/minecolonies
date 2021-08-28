@@ -1,6 +1,6 @@
 package com.minecolonies.api.colony.interactionhandling;
 
-import com.ldtteam.blockui.views.Window;
+import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.ICitizenDataView;
 import net.minecraft.world.entity.player.Player;
@@ -92,7 +92,7 @@ public interface IInteractionResponseHandler extends INBTSerializable<CompoundTa
      * @return if wishing to continue interacting.
      */
     @OnlyIn(Dist.CLIENT)
-    boolean onClientResponseTriggered(final Component response, final Player player, final ICitizenDataView data, final Window window);
+    boolean onClientResponseTriggered(final Component response, final Player player, final ICitizenDataView data, final BOWindow window);
 
     /**
      * Remove a certain parent.
@@ -118,7 +118,7 @@ public interface IInteractionResponseHandler extends INBTSerializable<CompoundTa
     /**
      * Callback for showing the interaction, to set interaction specific stuff
      */
-    default void onWindowOpened(final Window window, final ICitizenDataView dataView) {}
+    default void onWindowOpened(final BOWindow window, final ICitizenDataView dataView) {}
 
     /**
      * Gets the icon to render for this interaction

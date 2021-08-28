@@ -7,7 +7,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
- * Window for the builder hut.
+ * BOWindow for the builder hut.
  */
 public class WindowHutGuide extends AbstractWindowSkeleton
 {

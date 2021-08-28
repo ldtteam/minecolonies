@@ -285,7 +285,7 @@ public abstract class AbstractResearchProvider implements DataProvider
         }
 
         /**
-         * Sets hidden status.  Hidden research will not be visible in the University Window until all requirements are met.
+         * Sets hidden status.  Hidden research will not be visible in the University BOWindow until all requirements are met.
          * Research branches where all research is hidden or a descendant of a hidden research will be locked until at least one research is available.
          * Locked branches will notify what requirements will unlock the branch on mouseover.
          * @return this
@@ -898,7 +898,7 @@ public abstract class AbstractResearchProvider implements DataProvider
         }
 
         /**
-         * If true, hides a research branch within the University Window until at least one research has at least one research that isn't hidden, or with requirements met, or complete.
+         * If true, hides a research branch within the University BOWindow until at least one research has at least one research that isn't hidden, or with requirements met, or complete.
          * This is mostly intended to avoid spoilers, or to prevent branches with many primary researches from showing a giant and useless tooltip.
          * Only applies to branches where all primary researches are hidden.
          * Defaults to false.

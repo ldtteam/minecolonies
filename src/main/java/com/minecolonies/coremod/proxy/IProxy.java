@@ -104,7 +104,7 @@ public interface IProxy
     RecipeBook getRecipeBookFromPlayer(@NotNull final Player player);
 
     /**
-     * Open the Window of the decoration controller.
+     * Open the BOWindow of the decoration controller.
      *
      * @param pos the position of the block.
      */

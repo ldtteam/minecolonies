@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.moduleviews;
 
-import com.ldtteam.blockui.views.Window;
+import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
 import com.minecolonies.api.colony.buildings.modules.settings.ISetting;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
@@ -78,7 +78,7 @@ public class SettingsModuleView extends AbstractBuildingModuleView implements IS
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public Window getWindow()
+    public BOWindow getWindow()
     {
         return new SettingsModuleWindow(Constants.MOD_ID + ":gui/layouthuts/layoutsettings.xml", buildingView, this);
     }

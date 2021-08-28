@@ -22,7 +22,7 @@ import java.util.List;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
- * Window for the barracks building.
+ * BOWindow for the barracks building.
  */
 public class WindowBarracksBuilding extends AbstractWindowModuleBuilding<BuildingBarracks.View>
 {
@@ -81,7 +81,7 @@ public class WindowBarracksBuilding extends AbstractWindowModuleBuilding<Buildin
     private final IColonyView view;
 
     /**
-     * Creates the Window object.
+     * Creates the BOWindow object.
      *
      * @param building View of the home building.
      */

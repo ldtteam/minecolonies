@@ -27,7 +27,7 @@ import java.util.Locale;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
- * Window for the builder hut workorder list.
+ * BOWindow for the builder hut workorder list.
  */
 public class WorkOrderModuleWindow extends AbstractModuleWindow
 {

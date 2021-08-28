@@ -5,7 +5,7 @@ import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.ButtonHandler;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.OverlayView;
-import com.ldtteam.blockui.views.Window;
+import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.network.chat.MutableComponent;
@@ -62,7 +62,7 @@ public class DialogDoneCancel extends OverlayView implements ButtonHandler
      *
      * @param window in which the dialog will be displayed
      */
-    public DialogDoneCancel(final Window window)
+    public DialogDoneCancel(final BOWindow window)
     {
         super();
         Loader.createFromXMLFile(Constants.MOD_ID + DIALOG_OK_CANCEL_SUFFIX, this);

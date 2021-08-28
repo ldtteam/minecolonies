@@ -5,7 +5,7 @@ import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.controls.ButtonImage;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.View;
-import com.ldtteam.blockui.views.Window;
+import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingsModuleView;
 import com.minecolonies.api.colony.buildings.modules.settings.IStringSetting;
@@ -84,7 +84,7 @@ public class StringSetting implements IStringSetting
       final ISettingKey<?> key,
       final Pane pane,
       final ISettingsModuleView settingsModuleView,
-      final IBuildingView building, final Window window)
+      final IBuildingView building, final BOWindow window)
     {
         Loader.createFromXMLFile("minecolonies:gui/layouthuts/layoutstringsetting.xml", (View) pane);
         pane.findPaneOfTypeByID("id", Text.class).setText(key.getUniqueId().toString());
@@ -92,7 +92,7 @@ public class StringSetting implements IStringSetting
     }
 
     @Override
-    public void render(final ISettingKey<?> key, final Pane pane, final ISettingsModuleView settingsModuleView, final IBuildingView building, final Window window)
+    public void render(final ISettingKey<?> key, final Pane pane, final ISettingsModuleView settingsModuleView, final IBuildingView building, final BOWindow window)
     {
         pane.findPaneOfTypeByID("trigger", ButtonImage.class).setText(new TranslatableComponent(settings.get(currentIndex)));
     }

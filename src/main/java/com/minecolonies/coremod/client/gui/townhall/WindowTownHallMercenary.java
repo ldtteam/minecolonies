@@ -3,7 +3,7 @@ package com.minecolonies.coremod.client.gui.townhall;
 import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.ButtonHandler;
 import com.ldtteam.blockui.controls.Image;
-import com.ldtteam.blockui.views.Window;
+import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
@@ -18,7 +18,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_DONE;
 /**
  * Gui for hiring mercenaries
  */
-public class WindowTownHallMercenary extends Window implements ButtonHandler
+public class WindowTownHallMercenary extends BOWindow implements ButtonHandler
 {
     /**
      * The xml file for this gui

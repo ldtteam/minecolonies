@@ -26,7 +26,7 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextComponent;
 
 /**
- * Window for the town hall.
+ * BOWindow for the town hall.
  */
 public class WindowMainPage extends AbstractWindowTownHall
 {

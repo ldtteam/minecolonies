@@ -5,7 +5,7 @@ import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.ButtonHandler;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
-import com.ldtteam.blockui.views.Window;
+import com.ldtteam.blockui.views.BOWindow;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
@@ -29,9 +29,9 @@ import static com.minecolonies.coremod.client.gui.townhall.AbstractWindowTownHal
 import static com.minecolonies.coremod.client.gui.townhall.AbstractWindowTownHall.RED;
 
 /**
- * Window for the hiring or firing of a worker.
+ * BOWindow for the hiring or firing of a worker.
  */
-public class WindowAssignCitizen extends Window implements ButtonHandler
+public class WindowAssignCitizen extends BOWindow implements ButtonHandler
 {
     /**
      * Threshold that defines when the living quarters are too far away.

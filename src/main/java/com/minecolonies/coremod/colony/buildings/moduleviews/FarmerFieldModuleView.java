@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.moduleviews;
 
-import com.ldtteam.blockui.views.Window;
+import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.buildings.IBuildingWorkerView;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
 import com.minecolonies.coremod.Network;
@@ -131,7 +131,7 @@ public class FarmerFieldModuleView extends AbstractBuildingModuleView
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public Window getWindow()
+    public BOWindow getWindow()
     {
         return new FarmerFieldsModuleWindow(buildingView, this);
     }

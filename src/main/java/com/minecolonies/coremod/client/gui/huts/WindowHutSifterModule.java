@@ -8,7 +8,7 @@ import net.minecraft.network.chat.TranslatableComponent;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Window for the sifter hut.
+ * BOWindow for the sifter hut.
  */
 public class WindowHutSifterModule extends AbstractWindowWorkerModuleBuilding<BuildingSifter.View>
 {

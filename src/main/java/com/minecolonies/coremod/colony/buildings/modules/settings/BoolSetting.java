@@ -5,7 +5,7 @@ import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.controls.ButtonImage;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.View;
-import com.ldtteam.blockui.views.Window;
+import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.buildings.modules.settings.ISetting;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingsModuleView;
@@ -77,7 +77,7 @@ public class BoolSetting implements ISetting
       final ISettingKey<?> key,
       final Pane pane,
       final ISettingsModuleView settingsModuleView,
-      final IBuildingView building, final Window window)
+      final IBuildingView building, final BOWindow window)
     {
         Loader.createFromXMLFile("minecolonies:gui/layouthuts/layoutboolsetting.xml", (View) pane);
         pane.findPaneOfTypeByID("id", Text.class).setText(key.getUniqueId().toString());
@@ -86,7 +86,7 @@ public class BoolSetting implements ISetting
     }
 
     @Override
-    public void render(final ISettingKey<?> key, final Pane pane, final ISettingsModuleView settingsModuleView, final IBuildingView building, final Window window)
+    public void render(final ISettingKey<?> key, final Pane pane, final ISettingsModuleView settingsModuleView, final IBuildingView building, final BOWindow window)
     {
         pane.findPaneOfTypeByID("trigger", ButtonImage.class).setText(new TranslatableComponent(value ? ON : OFF));
     }

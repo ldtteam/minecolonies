@@ -21,6 +21,7 @@ apply from: 'https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remappe
 dependencies {
     implementation fg.deobf("mezz.jei:jei-${project.minecraftVersion}:${project.jei_version}")
 
+    apiImplementation fg.deobf("com.ldtteam:blockui:${project.minecraftVersion}-${project.blockUI_version}")
     implementation fg.deobf("com.ldtteam:blockui:${project.minecraftVersion}-${project.blockUI_version}")
     contained "com.ldtteam:blockui:${project.minecraftVersion}-${project.blockUI_version}"
 

@@ -8,7 +8,7 @@ import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.controls.TextField;
 import com.ldtteam.blockui.views.ScrollingList;
-import com.ldtteam.blockui.views.Window;
+import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.Log;
 import net.minecraft.world.item.ItemStack;
@@ -72,7 +72,7 @@ public class WindowSelectRes extends AbstractWindowSkeleton
      * @param building the building.
      * @param test     the testing predicate for the selector.
      */
-    public WindowSelectRes(final Window origin, final IBuildingView building, final Predicate<ItemStack> test, final BiConsumer<ItemStack, Integer> consumer, final boolean displayQty)
+    public WindowSelectRes(final BOWindow origin, final IBuildingView building, final Predicate<ItemStack> test, final BiConsumer<ItemStack, Integer> consumer, final boolean displayQty)
     {
         super("minecolonies:gui/windowselectres.xml", origin);
         this.resourceList = this.findPaneOfTypeByID("resources", ScrollingList.class);
@@ -134,7 +134,7 @@ public class WindowSelectRes extends AbstractWindowSkeleton
         }
         catch (final NumberFormatException ex)
         {
-            Log.getLogger().warn("Invalid input in Selection Window for Quantity, defaulting to 1!");
+            Log.getLogger().warn("Invalid input in Selection BOWindow for Quantity, defaulting to 1!");
         }
 
         this.consumer.accept(to, qty);

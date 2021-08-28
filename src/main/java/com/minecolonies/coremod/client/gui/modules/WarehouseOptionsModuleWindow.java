@@ -32,7 +32,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 import static com.minecolonies.coremod.client.gui.modules.WindowBuilderResModule.*;
 
 /**
- * Window for the warehouse options.
+ * BOWindow for the warehouse options.
  */
 public class WarehouseOptionsModuleWindow extends AbstractModuleWindow
 {

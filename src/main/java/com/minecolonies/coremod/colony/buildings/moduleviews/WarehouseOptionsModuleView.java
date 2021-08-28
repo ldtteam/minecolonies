@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.moduleviews;
 
-import com.ldtteam.blockui.views.Window;
+import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.client.gui.modules.WarehouseOptionsModuleWindow;
@@ -33,7 +33,7 @@ public class WarehouseOptionsModuleView extends AbstractBuildingModuleView
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public Window getWindow()
+    public BOWindow getWindow()
     {
         return new WarehouseOptionsModuleWindow(buildingView, this);
     }

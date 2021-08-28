@@ -3,7 +3,7 @@ package com.minecolonies.coremod.client.gui.townhall;
 import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.ButtonHandler;
 import com.ldtteam.blockui.controls.TextField;
-import com.ldtteam.blockui.views.Window;
+import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.ColonyView;
@@ -12,9 +12,9 @@ import org.jetbrains.annotations.NotNull;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
- * Window for a town hall name entry.
+ * BOWindow for a town hall name entry.
  */
-public class WindowTownHallNameEntry extends Window implements ButtonHandler
+public class WindowTownHallNameEntry extends BOWindow implements ButtonHandler
 {
     private static final String TOWNHALL_NAME_RESOURCE_SUFFIX = ":gui/townhall/windowtownhallnameentry.xml";
 

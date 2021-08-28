@@ -22,7 +22,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
- * Window for the home building.
+ * BOWindow for the home building.
  */
 public class WindowHutCitizen extends AbstractWindowModuleBuilding<HomeBuildingModule.View>
 {
@@ -41,7 +41,7 @@ public class WindowHutCitizen extends AbstractWindowModuleBuilding<HomeBuildingM
     private       ScrollingList           citizen;
 
     /**
-     * Creates the Window object.
+     * Creates the BOWindow object.
      *
      * @param building View of the home building.
      */

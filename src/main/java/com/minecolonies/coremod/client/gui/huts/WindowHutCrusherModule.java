@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 /**
- * Window for the crusher hut.
+ * BOWindow for the crusher hut.
  */
 public class WindowHutCrusherModule extends AbstractWindowWorkerModuleBuilding<BuildingCrusher.View>
 {

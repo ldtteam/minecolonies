@@ -37,7 +37,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 import static com.minecolonies.coremod.colony.requestsystem.requests.AbstractRequest.MISSING;
 
 /**
- * Window for the request trees.
+ * BOWindow for the request trees.
  */
 public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
 {

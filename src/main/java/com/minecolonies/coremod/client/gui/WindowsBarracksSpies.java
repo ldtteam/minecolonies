@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.blockui.controls.*;
-import com.ldtteam.blockui.views.Window;
+import com.ldtteam.blockui.views.BOWindow;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.tileentities.TileEntityRack;
@@ -18,7 +18,7 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 /**
  * UI for hiring spies on the barracks
  */
-public class WindowsBarracksSpies extends Window implements ButtonHandler
+public class WindowsBarracksSpies extends BOWindow implements ButtonHandler
 {
     /**
      * The xml file for this gui

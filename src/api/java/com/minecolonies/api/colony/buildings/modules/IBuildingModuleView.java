@@ -1,6 +1,6 @@
 package com.minecolonies.api.colony.buildings.modules;
 
-import com.ldtteam.blockui.views.Window;
+import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import net.minecraft.network.FriendlyByteBuf;
@@ -37,7 +37,7 @@ public interface IBuildingModuleView
      * @return the window.
      */
     @OnlyIn(Dist.CLIENT)
-    Window getWindow();
+    BOWindow getWindow();
 
     /**
      * Get the icon string for the module view.

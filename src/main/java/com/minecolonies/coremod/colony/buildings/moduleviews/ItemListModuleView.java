@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.moduleviews;
 
-import com.ldtteam.blockui.views.Window;
+import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.buildings.modules.*;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -131,7 +131,7 @@ public class ItemListModuleView extends AbstractBuildingModuleView implements II
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public Window getWindow()
+    public BOWindow getWindow()
     {
         return new ItemListModuleWindow(Constants.MOD_ID + ":gui/layouthuts/layoutfilterablelist.xml", buildingView, this);
     }

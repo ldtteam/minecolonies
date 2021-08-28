@@ -14,7 +14,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 import static com.minecolonies.coremod.client.gui.modules.WindowBuilderResModule.BLACK;
 
 /**
- * Window for the town hall.
+ * BOWindow for the town hall.
  */
 public class WindowHappinessPage extends AbstractWindowTownHall
 {

@@ -17,7 +17,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 import net.minecraft.network.chat.TextComponent;
 
 /**
- * Window for the citizen.
+ * BOWindow for the citizen.
  */
 public class MainWindowCitizen extends AbstractWindowCitizen
 {

@@ -33,7 +33,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 import static com.minecolonies.coremod.event.TextureReloadListener.TEXTURE_PACKS;
 
 /**
- * Window for the town hall.
+ * BOWindow for the town hall.
  */
 public class WindowSettingsPage extends AbstractWindowTownHall
 {
@@ -281,7 +281,7 @@ public class WindowSettingsPage extends AbstractWindowTownHall
     }
 
     /**
-     * Opens the banner picker window. Window does not use blockui, so is started manually.
+     * Opens the banner picker window. BOWindow does not use blockui, so is started manually.
      *
      * @param button the trigger button
      */

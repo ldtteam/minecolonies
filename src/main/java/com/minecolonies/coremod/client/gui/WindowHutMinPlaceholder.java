@@ -6,7 +6,7 @@ import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerVie
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Window for worker. Placeholder for many different jobs.
+ * BOWindow for worker. Placeholder for many different jobs.
  *
  * @param <B> Object extending {@link AbstractBuildingWorkerView}.
  */
@@ -16,7 +16,7 @@ public class WindowHutMinPlaceholder<B extends AbstractBuildingView> extends Abs
     private final        String name;
 
     /**
-     * Window for worker placeholder. Used by buildings not listed above this file.
+     * BOWindow for worker placeholder. Used by buildings not listed above this file.
      *
      * @param building AbstractBuilding extending {@link AbstractBuildingWorkerView}.
      * @param name     Name of the the view (resource).

@@ -17,7 +17,7 @@ import java.util.Locale;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
- * Window for all the settings of a hut.
+ * BOWindow for all the settings of a hut.
  */
 public class SettingsModuleWindow extends AbstractModuleWindow
 {

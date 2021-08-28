@@ -2,7 +2,7 @@ package com.minecolonies.coremod.colony.buildings.views;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
-import com.ldtteam.blockui.views.Window;
+import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.modules.IBuildingModuleView;
@@ -346,7 +346,7 @@ public abstract class AbstractBuildingView implements IBuildingView
         }
         else
         {
-            @Nullable final Window window = getWindow();
+            @Nullable final BOWindow window = getWindow();
             if (window != null)
             {
                 window.open();
@@ -361,7 +361,7 @@ public abstract class AbstractBuildingView implements IBuildingView
      */
     @Override
     @Nullable
-    public Window getWindow()
+    public BOWindow getWindow()
     {
         return null;
     }

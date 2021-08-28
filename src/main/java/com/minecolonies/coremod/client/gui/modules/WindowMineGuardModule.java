@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Window for the miner hut.
+ * BOWindow for the miner hut.
  */
 public class WindowMineGuardModule  extends AbstractModuleWindow
 {

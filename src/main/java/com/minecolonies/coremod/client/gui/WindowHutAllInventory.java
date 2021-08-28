@@ -3,7 +3,7 @@ package com.minecolonies.coremod.client.gui;
 import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.controls.*;
 import com.ldtteam.blockui.views.ScrollingList;
-import com.ldtteam.blockui.views.Window;
+import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.tileentities.TileEntityRack;
@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
- * Window for a hut name entry.
+ * BOWindow for a hut name entry.
  */
 public class WindowHutAllInventory extends AbstractWindowSkeleton
 {
@@ -63,7 +63,7 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
     /**
      * The previous window.
      */
-    private final Window prev;
+    private final BOWindow prev;
 
     /**
      * Update delay.
@@ -76,7 +76,7 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
      * @param b    {@link AbstractBuilding}
      * @param prev the previous window.
      */
-    public WindowHutAllInventory(final IBuildingView b, final Window prev)
+    public WindowHutAllInventory(final IBuildingView b, final BOWindow prev)
     {
         super(Constants.MOD_ID + HUT_ALL_INVENTORY_SUFFIX);
         this.building = b;

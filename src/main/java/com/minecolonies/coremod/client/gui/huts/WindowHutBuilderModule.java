@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
- * Window for the builder hut.
+ * BOWindow for the builder hut.
  */
 public class WindowHutBuilderModule extends AbstractWindowWorkerModuleBuilding<BuildingBuilder.View>
 {

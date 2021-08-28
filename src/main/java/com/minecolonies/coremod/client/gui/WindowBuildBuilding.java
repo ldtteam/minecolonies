@@ -57,7 +57,7 @@ import static com.ldtteam.structurize.placement.AbstractBlueprintIterator.NULL_P
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
- * Window for selecting the style and confirming the resources.
+ * BOWindow for selecting the style and confirming the resources.
  */
 public class WindowBuildBuilding extends AbstractWindowSkeleton
 {

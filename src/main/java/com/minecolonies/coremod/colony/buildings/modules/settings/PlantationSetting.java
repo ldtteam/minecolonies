@@ -5,7 +5,7 @@ import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.controls.ButtonImage;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.View;
-import com.ldtteam.blockui.views.Window;
+import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingsModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
@@ -56,7 +56,7 @@ public class PlantationSetting extends StringSetting
       final ISettingKey<?> key,
       final Pane pane,
       final ISettingsModuleView settingsModuleView,
-      final IBuildingView building, final Window window)
+      final IBuildingView building, final BOWindow window)
     {
         hasResearch = building.getColony().getResearchManager().getResearchEffects().getEffectStrength(PLANT_2) > 0;
         Loader.createFromXMLFile("minecolonies:gui/layouthuts/layoutstringsetting.xml", (View) pane);
@@ -65,7 +65,7 @@ public class PlantationSetting extends StringSetting
     }
 
     @Override
-    public void render(final ISettingKey<?> key, final Pane pane, final ISettingsModuleView settingsModuleView, final IBuildingView building, final Window window)
+    public void render(final ISettingKey<?> key, final Pane pane, final ISettingsModuleView settingsModuleView, final IBuildingView building, final BOWindow window)
     {
         if (hasResearch)
         {

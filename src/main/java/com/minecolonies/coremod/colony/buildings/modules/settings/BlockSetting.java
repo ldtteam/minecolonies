@@ -6,7 +6,7 @@ import com.ldtteam.blockui.controls.ButtonImage;
 import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.View;
-import com.ldtteam.blockui.views.Window;
+import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.buildings.modules.settings.ISetting;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingsModuleView;
@@ -94,7 +94,7 @@ public class BlockSetting implements ISetting
       final ISettingKey<?> key,
       final Pane pane,
       final ISettingsModuleView settingsModuleView,
-      final IBuildingView building, final Window window)
+      final IBuildingView building, final BOWindow window)
     {
 
         Loader.createFromXMLFile("minecolonies:gui/layouthuts/layoutblocksetting.xml", (View) pane);
@@ -111,7 +111,7 @@ public class BlockSetting implements ISetting
     }
 
     @Override
-    public void render(final ISettingKey<?> key, final Pane pane, final ISettingsModuleView settingsModuleView, final IBuildingView building, final Window window)
+    public void render(final ISettingKey<?> key, final Pane pane, final ISettingsModuleView settingsModuleView, final IBuildingView building, final BOWindow window)
     {
         pane.findPaneOfTypeByID("icon", ItemIcon.class).setItem(new ItemStack(value));
         pane.findPaneOfTypeByID("trigger", ButtonImage.class).setText(new TranslatableComponent(SWITCH));

@@ -33,7 +33,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
- * Window for the town hall.
+ * BOWindow for the town hall.
  */
 public class WindowPermissionsPage extends AbstractWindowTownHall
 {

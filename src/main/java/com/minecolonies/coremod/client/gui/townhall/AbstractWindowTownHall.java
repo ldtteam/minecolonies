@@ -10,7 +10,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHal
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
- * Window for the town hall.
+ * BOWindow for the town hall.
  */
 public abstract class AbstractWindowTownHall extends AbstractWindowModuleBuilding<ITownHallView>
 {

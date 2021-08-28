@@ -30,7 +30,7 @@ import java.util.Locale;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
- * Window for the builder hut.
+ * BOWindow for the builder hut.
  */
 public class WindowBuilderResModule extends AbstractModuleWindow
 {

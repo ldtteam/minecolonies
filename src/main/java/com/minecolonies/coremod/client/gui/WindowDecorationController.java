@@ -26,7 +26,7 @@ import java.util.Optional;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
- * Window for a hut name entry.
+ * BOWindow for a hut name entry.
  */
 public class WindowDecorationController extends AbstractWindowSkeleton
 {

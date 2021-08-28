@@ -37,7 +37,7 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 
 /**
- * Window for the citizen.
+ * BOWindow for the citizen.
  */
 public class CitizenWindowUtils
 {

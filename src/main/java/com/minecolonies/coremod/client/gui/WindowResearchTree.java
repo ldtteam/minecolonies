@@ -38,7 +38,7 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 
 /**
- * Window to display a particular branch of the tree.
+ * BOWindow to display a particular branch of the tree.
  */
 public class WindowResearchTree extends AbstractWindowSkeleton
 {

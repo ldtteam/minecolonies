@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.moduleviews;
 
-import com.ldtteam.blockui.views.Window;
+import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
 import com.minecolonies.api.tileentities.TileEntityGrave;
 import com.minecolonies.coremod.client.gui.modules.GraveyardManagementWindow;
@@ -50,7 +50,7 @@ public class GraveyardManagementModuleView extends AbstractBuildingModuleView
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public Window getWindow()
+    public BOWindow getWindow()
     {
         return new GraveyardManagementWindow(buildingView, this);
     }
