@@ -53,7 +53,8 @@ public class TargetAI<T extends LivingEntity & IThreatTableEntity> implements IS
     {
         if (target != null && !target.isAlive())
         {
-            onKill(target);
+            onTargetDied(target);
+            target = null;
         }
 
         final ThreatTableEntry nextTarget = user.getThreatTable().getTarget();
@@ -240,11 +241,11 @@ public class TargetAI<T extends LivingEntity & IThreatTableEntity> implements IS
     }
 
     /**
-     * When killing an entity
+     * When our previous target has died
      *
      * @param target
      */
-    protected void onKill(final LivingEntity target)
+    protected void onTargetDied(final LivingEntity target)
     {
 
     }
