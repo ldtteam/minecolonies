@@ -460,6 +460,24 @@ public final class BlockPosUtil
     }
 
     /**
+     * Returns a radial bounding box aligned to chunk boundaries.  Note that the Y coordinate
+     * is also aligned to chunk-like sizes; this does not return full world height.  (It also
+     * might return Y coordinates outside the world limits, so clip before using if needed.)
+     * @param pos A position inside the center chunk.
+     * @param chunkRadius 0 for one chunk, 1 for nine chunks, etc.
+     * @return The specified bounding box.
+     */
+    public static MutableBoundingBox getChunkAlignedBB(final BlockPos pos, final int chunkRadius)
+    {
+        final int blockRadius = chunkRadius * 16;
+        final int x1 = pos.getX() & ~15;
+        final int y1 = pos.getY() & ~15;
+        final int z1 = pos.getZ() & ~15;
+        return new MutableBoundingBox(x1 - blockRadius, y1 - blockRadius, z1 - blockRadius,
+                x1 + blockRadius + 15, y1 + blockRadius + 15, z1 + blockRadius + 15);
+    }
+
+    /**
      * Returns the tile entity at a specific chunk coordinate.
      *
      * @param world World the tile entity is in.

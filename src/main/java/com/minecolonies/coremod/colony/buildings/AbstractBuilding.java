@@ -983,9 +983,9 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     }
 
     @Override
-    public void setGuardBuildingNear(final boolean guardBuildingNear)
+    public void resetGuardBuildingNear()
     {
-        this.guardBuildingNear = guardBuildingNear;
+        this.recheckGuardBuildingNear = true;
     }
 
     //------------------------- Starting Required Tools/Item handling -------------------------//
