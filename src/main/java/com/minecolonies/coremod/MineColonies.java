@@ -44,6 +44,7 @@ import com.minecolonies.coremod.proxy.IProxy;
 import com.minecolonies.coremod.proxy.ServerProxy;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.entity.MinecartRenderer;
 import net.minecraft.client.renderer.entity.TippableArrowRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlas;
@@ -56,7 +57,7 @@ import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
-import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
@@ -64,6 +65,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
@@ -156,15 +158,20 @@ public class MineColonies
     public static void preInit(@NotNull final FMLCommonSetupEvent event)
     {
         StructureLoadingUtils.addOriginMod(Constants.MOD_ID);
-        CapabilityManager.INSTANCE.register(IColonyTagCapability.class, new IColonyTagCapability.Storage(), IColonyTagCapability.Impl::new);
-        CapabilityManager.INSTANCE.register(IChunkmanagerCapability.class, new IChunkmanagerCapability.Storage(), IChunkmanagerCapability.Impl::new);
-        CapabilityManager.INSTANCE.register(IColonyManagerCapability.class, new IColonyManagerCapability.Storage(), IColonyManagerCapability.Impl::new);
 
         Network.getNetwork().registerCommonMessages();
 
         AdvancementTriggers.preInit();
 
         StandardFactoryControllerInitializer.onPreInit();
+    }
+
+    @SubscribeEvent
+    public static void registerCaps(final RegisterCapabilitiesEvent event)
+    {
+        event.register(IColonyTagCapability.class);
+        event.register(IChunkmanagerCapability.class);
+        event.register(IColonyManagerCapability.class);
     }
 
     @SubscribeEvent
@@ -214,7 +221,7 @@ public class MineColonies
      * @param event event
      */
     @SubscribeEvent
-    public static void onConfigReload(final ModConfig.Reloading event)
+    public static void onConfigReload(final ModConfigEvent.Reloading event)
     {
         if(event.getConfig().getType() == ModConfig.Type.SERVER)
         {
@@ -256,11 +263,11 @@ public class MineColonies
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.SITTINGENTITY, RenderSitting::new);
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.MINECART, MinecartRenderer::new);
 
-        ClientRegistry.bindTileEntityRenderer(MinecoloniesTileEntities.BUILDING, EmptyTileEntitySpecialRenderer::new);
-        ClientRegistry.bindTileEntityRenderer(MinecoloniesTileEntities.SCARECROW, TileEntityScarecrowRenderer::new);
-        ClientRegistry.bindTileEntityRenderer(MinecoloniesTileEntities.ENCHANTER, TileEntityEnchanterRenderer::new);
-        ClientRegistry.bindTileEntityRenderer(MinecoloniesTileEntities.COLONY_FLAG, TileEntityColonyFlagRenderer::new);
-        ClientRegistry.bindTileEntityRenderer(MinecoloniesTileEntities.NAMED_GRAVE, TileEntityNamedGraveRenderer::new);
+        BlockEntityRenderers.register(MinecoloniesTileEntities.BUILDING, EmptyTileEntitySpecialRenderer::new);
+        BlockEntityRenderers.register(MinecoloniesTileEntities.SCARECROW, TileEntityScarecrowRenderer::new);
+        BlockEntityRenderers.register(MinecoloniesTileEntities.ENCHANTER, TileEntityEnchanterRenderer::new);
+        BlockEntityRenderers.register(MinecoloniesTileEntities.COLONY_FLAG, TileEntityColonyFlagRenderer::new);
+        BlockEntityRenderers.register(MinecoloniesTileEntities.NAMED_GRAVE, TileEntityNamedGraveRenderer::new);
 
         Arrays.stream(ModBlocks.getHuts())
           .forEach(hut -> ItemBlockRenderTypes.setRenderLayer(hut, renderType -> renderType.equals(RenderType.cutout()) || renderType.equals(RenderType.solid())));

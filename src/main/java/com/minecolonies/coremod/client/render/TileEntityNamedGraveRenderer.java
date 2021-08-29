@@ -4,12 +4,13 @@ import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.blocks.huts.AbstractBlockMinecoloniesDefault;
 import com.minecolonies.api.tileentities.TileEntityNamedGrave;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MultiBufferSource;
 import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.core.Direction;
 import net.minecraft.util.FormattedCharSequence;
 import com.mojang.math.Vector3f;
@@ -19,7 +20,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 @OnlyIn(Dist.CLIENT)
-public class TileEntityNamedGraveRenderer extends BlockEntityRenderer<TileEntityNamedGrave> {
+public class TileEntityNamedGraveRenderer implements BlockEntityRenderer<TileEntityNamedGrave> {
 
     /**
      * Basic rotation to achieve a certain direction.
@@ -43,9 +44,9 @@ public class TileEntityNamedGraveRenderer extends BlockEntityRenderer<TileEntity
 
     private final int textColor = NativeImage.combine(0, 220, 220, 220);
 
-    public TileEntityNamedGraveRenderer(BlockEntityRenderDispatcher rendererDispatcher)
+    public TileEntityNamedGraveRenderer(final BlockEntityRendererProvider.Context context)
     {
-        super(rendererDispatcher);
+        super();
     }
 
 
@@ -114,7 +115,7 @@ public class TileEntityNamedGraveRenderer extends BlockEntityRenderer<TileEntity
         final FormattedCharSequence iReorderingProcessor = FormattedCharSequence.forward(text, Style.EMPTY);
         if (iReorderingProcessor != null)
         {
-            final Font fontRenderer = this.renderer.getFont();
+            final Font fontRenderer = Minecraft.getInstance().font;
 
             float x = (float) (-fontRenderer.width(iReorderingProcessor) / 2); //render width of text divided by 2
             fontRenderer.drawInBatch(iReorderingProcessor, x, line * 10f,

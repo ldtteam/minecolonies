@@ -12,13 +12,9 @@ import com.minecolonies.api.crafting.CompostRecipe;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.*;
-import net.minecraft.block.*;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.nbt.CompoundTag;
@@ -442,7 +438,7 @@ public class CompatibilityManager implements ICompatibilityManager
         for(Item item : ForgeRegistries.ITEMS.getValues())
         {
             final NonNullList<ItemStack> list = NonNullList.create();
-            item.fillItemCategory(ItemGroup.TAB_SEARCH, list);
+            item.fillItemCategory(CreativeModeTab.TAB_SEARCH, list);
             builder.addAll(list);
         }
 
@@ -459,7 +455,7 @@ public class CompatibilityManager implements ICompatibilityManager
             for(Item item : Tags.Items.ORES.getValues())
             {
                 final NonNullList<ItemStack> list = NonNullList.create();
-                item.fillItemCategory(ItemGroup.TAB_SEARCH, list);
+                item.fillItemCategory(CreativeModeTab.TAB_SEARCH, list);
 
                 for (final ItemStack stack : list)
                 {
@@ -485,7 +481,7 @@ public class CompatibilityManager implements ICompatibilityManager
         for (final Item item : ItemTags.SAPLINGS.getValues())
         {
             final NonNullList<ItemStack> list = NonNullList.create();
-            item.fillItemCategory(ItemGroup.TAB_SEARCH, list);
+            item.fillItemCategory(CreativeModeTab.TAB_SEARCH, list);
             for (final ItemStack stack : list)
             {
                 saplings.add(new ItemStorage(stack, false, true));
@@ -527,7 +523,7 @@ public class CompatibilityManager implements ICompatibilityManager
             for (final Item item : ModTags.floristFlowers.getValues())
             {
                 final NonNullList<ItemStack> list = NonNullList.create();
-                item.fillItemCategory(ItemGroup.TAB_SEARCH, list);
+                item.fillItemCategory(CreativeModeTab.TAB_SEARCH, list);
                 for (final ItemStack stack : list)
                 {
                     if (stack.getItem() instanceof BlockItem)
@@ -779,7 +775,7 @@ public class CompatibilityManager implements ICompatibilityManager
         for (final Item item : ItemTags.FLOWERS.getValues())
         {
             final NonNullList<ItemStack> list = NonNullList.create();
-            item.fillItemCategory(ItemGroup.TAB_SEARCH, list);
+            item.fillItemCategory(CreativeModeTab.TAB_SEARCH, list);
             for (final ItemStack stack : list)
             {
                 flowers.add(new ItemStorage(stack));

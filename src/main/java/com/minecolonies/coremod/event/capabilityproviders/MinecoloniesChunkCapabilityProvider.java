@@ -38,13 +38,13 @@ public class MinecoloniesChunkCapabilityProvider implements ICapabilitySerializa
     @Override
     public Tag serializeNBT()
     {
-        return CLOSE_COLONY_CAP.getStorage().writeNBT(CLOSE_COLONY_CAP, tag, null);
+        return IColonyTagCapability.Storage.writeNBT(CLOSE_COLONY_CAP, tag, null);
     }
 
     @Override
     public void deserializeNBT(final Tag nbt)
     {
-        CLOSE_COLONY_CAP.getStorage().readNBT(CLOSE_COLONY_CAP, tag, null, nbt);
+        IColonyTagCapability.Storage.readNBT(CLOSE_COLONY_CAP, tag, null, nbt);
     }
 
     @Nonnull

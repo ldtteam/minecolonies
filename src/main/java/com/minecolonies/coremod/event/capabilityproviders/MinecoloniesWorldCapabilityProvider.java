@@ -38,13 +38,13 @@ public class MinecoloniesWorldCapabilityProvider implements ICapabilitySerializa
     @Override
     public Tag serializeNBT()
     {
-        return CHUNK_STORAGE_UPDATE_CAP.getStorage().writeNBT(CHUNK_STORAGE_UPDATE_CAP, chunkMap, null);
+        return IChunkmanagerCapability.Storage.writeNBT(CHUNK_STORAGE_UPDATE_CAP, chunkMap, null);
     }
 
     @Override
     public void deserializeNBT(final Tag nbt)
     {
-        CHUNK_STORAGE_UPDATE_CAP.getStorage().readNBT(CHUNK_STORAGE_UPDATE_CAP, chunkMap, null, nbt);
+        IChunkmanagerCapability.Storage.readNBT(CHUNK_STORAGE_UPDATE_CAP, chunkMap, null, nbt);
     }
 
     @Nonnull

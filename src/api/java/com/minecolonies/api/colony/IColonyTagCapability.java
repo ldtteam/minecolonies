@@ -277,10 +277,9 @@ public interface IColonyTagCapability
     /**
      * The storage class of the capability.
      */
-    class Storage implements Capability.IStorage<IColonyTagCapability>
+    class Storage
     {
-        @Override
-        public Tag writeNBT(@NotNull final Capability<IColonyTagCapability> capability, @NotNull final IColonyTagCapability instance, @Nullable final Direction side)
+        public static Tag writeNBT(@NotNull final Capability<IColonyTagCapability> capability, @NotNull final IColonyTagCapability instance, @Nullable final Direction side)
         {
             final CompoundTag compound = new CompoundTag();
             compound.putInt(TAG_ID, instance.getOwningColony());
@@ -291,8 +290,7 @@ public interface IColonyTagCapability
             return compound;
         }
 
-        @Override
-        public void readNBT(
+        public static void readNBT(
           @NotNull final Capability<IColonyTagCapability> capability, @NotNull final IColonyTagCapability instance,
           @Nullable final Direction side, @NotNull final Tag nbt)
         {

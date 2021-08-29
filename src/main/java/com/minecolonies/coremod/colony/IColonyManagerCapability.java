@@ -125,11 +125,10 @@ public interface IColonyManagerCapability
     /**
      * The storage class of the capability.
      */
-    public class Storage implements Capability.IStorage<IColonyManagerCapability>
+    class Storage
     {
 
-        @Override
-        public Tag writeNBT(@NotNull final Capability<IColonyManagerCapability> capability, @NotNull final IColonyManagerCapability instance, @Nullable final Direction side)
+        public static Tag writeNBT(@NotNull final Capability<IColonyManagerCapability> capability, @NotNull final IColonyManagerCapability instance, @Nullable final Direction side)
         {
             final CompoundTag compound = new CompoundTag();
             compound.put(TAG_COLONIES, instance.getColonies().stream().map(IColony::getColonyTag).filter(Objects::nonNull).collect(NBTUtils.toListNBT()));
@@ -139,8 +138,7 @@ public interface IColonyManagerCapability
             return compound;
         }
 
-        @Override
-        public void readNBT(
+        public static void readNBT(
           @NotNull final Capability<IColonyManagerCapability> capability, @NotNull final IColonyManagerCapability instance,
           @Nullable final Direction side, @NotNull final Tag nbt)
         {
