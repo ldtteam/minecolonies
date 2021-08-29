@@ -8,13 +8,12 @@ import com.minecolonies.coremod.commands.commandTypes.IMCOPCommand;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.world.level.dimension.DimensionType;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.storage.LevelResource;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
+import net.minecraft.command.CommandSource;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.world.DimensionType;
+import net.minecraft.world.World;
+import net.minecraft.world.storage.FolderName;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -77,49 +76,48 @@ public class CommandPruneWorld implements IMCOPCommand
 
         int deleteCount = 0;
 
-        for (final Level world : ServerLifecycleHooks.getCurrentServer().getAllLevels())
+        final World world = context.getSource().getLevel();
+
+        // Local save folder for this word
+        final File saveDir = new File(DimensionType.getStorageFolder(world.dimension(), world.getServer().getWorldPath(FolderName.ROOT).toFile()), REGION_FOLDER);
+
+        // Colony list for this world
+        List<IColony> colonies = new ArrayList<>();
+        final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null).orElseGet(null);
+        if (cap != null)
         {
-            // Local save folder for this word
-            final File saveDir = new File(DimensionType.getStorageFolder(world.dimension(), world.getServer().getWorldPath(LevelResource.ROOT).toFile()), REGION_FOLDER);
+            colonies = cap.getColonies();
+        }
+        else
+        {
+            return 0;
+        }
 
-            // Colony list for this world
-            List<IColony> colonies = new ArrayList<>();
-            final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null).orElseGet(null);
-            if (cap != null)
+        // Loop the region data files
+        for (final File currentRegion : saveDir.listFiles())
+        {
+            if (currentRegion != null && currentRegion.getName().contains(".mca"))
             {
-                colonies = cap.getColonies();
-            }
-            else
-            {
-                continue;
-            }
-
-            // Loop the region data files
-            for (final File currentRegion : saveDir.listFiles())
-            {
-                if (currentRegion != null && currentRegion.getName().contains(".mca"))
+                final String[] split = currentRegion.getName().split("\\.");
+                if (split.length != 4)
                 {
-                    final String[] split = currentRegion.getName().split("\\.");
-                    if (split.length != 4)
+                    continue;
+                }
+
+                // Current region file X/Z positions
+                final int regionX = Integer.parseInt(split[1]);
+                final int regionZ = Integer.parseInt(split[2]);
+
+                if (isFarEnoughFromColonies(regionX, regionZ, radius, colonies))
+                {
+                    if (!currentRegion.delete())
                     {
-                        continue;
+                        context.getSource().sendSuccess(new StringTextComponent("Could not delete file:" + currentRegion.getPath()), true);
                     }
-
-                    // Current region file X/Z positions
-                    final int regionX = Integer.parseInt(split[1]);
-                    final int regionZ = Integer.parseInt(split[2]);
-
-                    if (isFarEnoughFromColonies(regionX, regionZ, radius, colonies))
+                    else
                     {
-                        if (!currentRegion.delete())
-                        {
-                            context.getSource().sendSuccess(new TextComponent("Could not delete file:" + currentRegion.getPath()), true);
-                        }
-                        else
-                        {
-                            deleteCount++;
-                            context.getSource().sendSuccess(new TextComponent("Deleted file:" + currentRegion.getPath()), true);
-                        }
+                        deleteCount++;
+                        context.getSource().sendSuccess(new StringTextComponent("Deleted file:" + currentRegion.getPath()), true);
                     }
                 }
             }
