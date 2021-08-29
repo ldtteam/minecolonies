@@ -62,7 +62,7 @@ public class VisitorData extends CitizenData implements IVisitorData
         BlockPosUtil.write(compoundNBT, TAG_SITTING, sittingPosition);
         if (textureUUID != null)
         {
-            compoundNBT.putUUID(TAG_TEXTURE, textureUUID);
+            compoundNBT.putUUID(TAG_TEXTURE_UUID, textureUUID);
         }
         return compoundNBT;
     }
