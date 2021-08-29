@@ -15,10 +15,7 @@ import com.minecolonies.api.util.*;
 import net.minecraft.block.*;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
+import net.minecraft.item.*;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.RecipeManager;
 import net.minecraft.nbt.CompoundNBT;
@@ -133,6 +130,7 @@ public class CompatibilityManager implements ICompatibilityManager
      * Random obj.
      */
     private static final Random random = new Random();
+
 
     /**
      * List of all blocks.
@@ -431,12 +429,15 @@ public class CompatibilityManager implements ICompatibilityManager
      */
     private void discoverAllItems()
     {
-        final NonNullList<ItemStack> items = NonNullList.create();
+        final ImmutableList.Builder<ItemStack> builder = new ImmutableList.Builder<>();
         for(Item item : ForgeRegistries.ITEMS.getValues())
         {
-            items.add(new ItemStack(item));
+            final NonNullList<ItemStack> list = NonNullList.create();
+            item.fillItemCategory(ItemGroup.TAB_SEARCH, list);
+            builder.addAll(list);
         }
-        allItems = ImmutableList.copyOf(items);
+
+        allItems = builder.build();
     }
 
     /**
@@ -448,17 +449,23 @@ public class CompatibilityManager implements ICompatibilityManager
         {
             for(Item item : Tags.Items.ORES.getValues())
             {
-                if(item.getItem() instanceof BlockItem)
+                final NonNullList<ItemStack> list = NonNullList.create();
+                item.fillItemCategory(ItemGroup.TAB_SEARCH, list);
+
+                for (final ItemStack stack : list)
                 {
-                    oreBlocks.add(((BlockItem) item.getItem()).getBlock());
-                }
-                if (!MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getSmeltingResult(new ItemStack((item))).isEmpty())
-                {
-                    smeltableOres.add(new ItemStorage(new ItemStack(item)));
+                    if (stack.getItem() instanceof BlockItem)
+                    {
+                        oreBlocks.add(((BlockItem) stack.getItem()).getBlock());
+                    }
+                    if (!MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getSmeltingResult(stack).isEmpty())
+                    {
+                        smeltableOres.add(new ItemStorage(stack));
+                    }
                 }
             }
         }
-        Log.getLogger().info("Finished discovering Ores");
+        Log.getLogger().info("Finished discovering Ores " + oreBlocks.size() + " " + smeltableOres.size());
     }
 
     /**
@@ -468,12 +475,14 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         for (final Item item : ItemTags.SAPLINGS.getValues())
         {
-            final ItemStack stack = new ItemStack(item);
+            final NonNullList<ItemStack> list = NonNullList.create();
+            item.fillItemCategory(ItemGroup.TAB_SEARCH, list);
+            for (final ItemStack stack : list)
             {
                 saplings.add(new ItemStorage(stack, false, true));
             }
         }
-        Log.getLogger().info("Finished discovering saplings");
+        Log.getLogger().info("Finished discovering saplings " + saplings.size());
     }
 
     /**
@@ -495,7 +504,7 @@ public class CompatibilityManager implements ICompatibilityManager
                             (r1, r2) -> r1.getStrength() < r2.getStrength() ? r1 : r2);
                 }
             }
-            Log.getLogger().info("Finished discovering compostables");
+            Log.getLogger().info("Finished discovering compostables " + compostRecipes.size());
         }
     }
 
@@ -506,15 +515,20 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         if (plantables.isEmpty())
         {
-            for (Item item : ModTags.floristFlowers.getValues())
+            for (final Item item : ModTags.floristFlowers.getValues())
             {
-                if (item instanceof BlockItem)
+                final NonNullList<ItemStack> list = NonNullList.create();
+                item.fillItemCategory(ItemGroup.TAB_SEARCH, list);
+                for (final ItemStack stack : list)
                 {
-                    plantables.add(new ItemStorage(new ItemStack(item)));
+                    if (stack.getItem() instanceof BlockItem)
+                    {
+                        plantables.add(new ItemStorage(stack));
+                    }
                 }
             }
         }
-        Log.getLogger().info("Finished discovering plantables");
+        Log.getLogger().info("Finished discovering plantables " + plantables.size());
     }
 
     /**
@@ -532,7 +546,7 @@ public class CompatibilityManager implements ICompatibilityManager
                 }
             }
         }
-        Log.getLogger().info("Finished discovering fuel");
+        Log.getLogger().info("Finished discovering fuel " + fuel.size());
     }
 
     /**
@@ -554,7 +568,7 @@ public class CompatibilityManager implements ICompatibilityManager
                 }
             }
         }
-        Log.getLogger().info("Finished discovering food");
+        Log.getLogger().info("Finished discovering food " + edibles.size() + " " + food.size());
     }
 
     /**
@@ -595,7 +609,7 @@ public class CompatibilityManager implements ICompatibilityManager
                 }
             }
         }
-        Log.getLogger().info("Finished discovering lucky oreBlocks");
+        Log.getLogger().info("Finished discovering lucky oreBlocks " + luckyOres.size());
     }
 
     /**
@@ -752,7 +766,17 @@ public class CompatibilityManager implements ICompatibilityManager
     public static Set<ItemStorage> getAllBeekeeperFlowers()
     {
         Set<ItemStorage> flowers = new HashSet<>();
-        ItemTags.FLOWERS.getValues().forEach((item) -> flowers.add(new ItemStorage(new ItemStack(item))));
+
+        for (final Item item : ItemTags.FLOWERS.getValues())
+        {
+            final NonNullList<ItemStack> list = NonNullList.create();
+            item.fillItemCategory(ItemGroup.TAB_SEARCH, list);
+            for (final ItemStack stack : list)
+            {
+                flowers.add(new ItemStorage(stack));
+            }
+        }
+
         return flowers;
     }
 }
