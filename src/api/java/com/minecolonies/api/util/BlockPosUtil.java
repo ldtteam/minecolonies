@@ -5,6 +5,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -467,13 +468,13 @@ public final class BlockPosUtil
      * @param chunkRadius 0 for one chunk, 1 for nine chunks, etc.
      * @return The specified bounding box.
      */
-    public static MutableBoundingBox getChunkAlignedBB(final BlockPos pos, final int chunkRadius)
+    public static BoundingBox getChunkAlignedBB(final BlockPos pos, final int chunkRadius)
     {
         final int blockRadius = chunkRadius * 16;
         final int x1 = pos.getX() & ~15;
         final int y1 = pos.getY() & ~15;
         final int z1 = pos.getZ() & ~15;
-        return new MutableBoundingBox(x1 - blockRadius, y1 - blockRadius, z1 - blockRadius,
+        return new BoundingBox(x1 - blockRadius, y1 - blockRadius, z1 - blockRadius,
                 x1 + blockRadius + 15, y1 + blockRadius + 15, z1 + blockRadius + 15);
     }
 
@@ -546,7 +547,6 @@ public final class BlockPosUtil
     }
 
     /**
-     * {@link EntityUtils#tryMoveLivingToXYZ(net.minecraft.entity.MobEntity, int, int, int)}.
      *
      * @param living      A living entity.
      * @param destination chunk coordinates to check moving to.
@@ -563,7 +563,6 @@ public final class BlockPosUtil
     }
 
     /**
-     * {@link EntityUtils#tryMoveLivingToXYZ(net.minecraft.entity.MobEntity, int, int, int)}.
      *
      * @param living      A living entity.
      * @param destination chunk coordinates to check moving to.
@@ -575,9 +574,8 @@ public final class BlockPosUtil
     }
 
     /**
-     * Create a method for using a {@link BlockPos} when using {@link net.minecraft.util.math.BlockPos.Mutable#setPos(int, int, int)}.
+     * Create a method for using a {@link BlockPos}.
      *
-     * @param pos    {@link net.minecraft.util.math.BlockPos.Mutable}.
      * @param newPos The new position to set.
      */
     public static void set(@NotNull final BlockPos.MutableBlockPos pos, @NotNull final BlockPos newPos)

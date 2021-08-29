@@ -1,6 +1,5 @@
 package com.minecolonies.api.util;
 
-import com.google.common.collect.Lists;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.Entity;
@@ -15,8 +14,6 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.Registry;
 import net.minecraft.world.*;
-import net.minecraft.world.level.chunk.ChunkSource;
-import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.server.level.ServerLevel;
 import org.jetbrains.annotations.NotNull;
@@ -127,7 +124,7 @@ public class WorldUtil
      */
     public static boolean isEntityChunkLoaded(final LevelAccessor world, final ChunkPos pos)
     {
-        return world.getChunkSource().isEntityTickingChunk(pos);
+        return world.getChunkSource().hasChunk(pos.x, pos.z);
     }
 
     /**
@@ -207,12 +204,11 @@ public class WorldUtil
     public static boolean isOfWorldType(@NotNull final Level world, @NotNull final ResourceKey<DimensionType> type)
     {
         RegistryAccess dynRegistries = world.registryAccess();
-        ResourceLocation loc = dynRegistries.dimensionTypes().getKey(world.dimensionType());
+        ResourceLocation loc = dynRegistries.registry(Registry.DIMENSION_TYPE_REGISTRY).get().getKey(world.dimensionType());
         if (loc == null)
         {
             if (world.isClientSide)
             {
-                //todo Remove this line once forge fixes this.
                 return world.dimensionType().effectsLocation().equals(type.location());
             }
             return false;
@@ -269,10 +265,10 @@ public class WorldUtil
 
         if ((flags & 2) != 0)
         {
-            final Set<PathNavigation> navigators = ((ServerLevel) world).navigations;
-            ((ServerLevel) world).navigations = Collections.emptySet();
+            final Set<PathNavigation> navigators = ((ServerLevel) world).navigatingMobs;
+            ((ServerLevel) world).navigatingMobs = Collections.emptySet();
             final boolean result = world.setBlock(pos, state, flags);
-            ((ServerLevel) world).navigations = navigators;
+            ((ServerLevel) world).navigatingMobs = navigators;
             return result;
         }
         else
@@ -298,14 +294,14 @@ public class WorldUtil
     /**
      * Get all entities within a building.
      *
+     * @param <T>       the type of the predicate.
      * @param world     the world to check this for.
      * @param clazz     the entity class.
      * @param building  the building to check the range for.
      * @param predicate the predicate to check
-     * @param <T>       the type of the predicate.
      * @return a list of all within those borders.
      */
-    public static <T extends Entity> List<T> getEntitiesWithinBuilding(
+    public static <T extends Entity> List<? extends T> getEntitiesWithinBuilding(
       final @NotNull Level world,
       final @NotNull Class<? extends T> clazz,
       final @NotNull IBuilding building,
@@ -313,40 +309,6 @@ public class WorldUtil
     {
         final Tuple<BlockPos, BlockPos> corners = building.getCorners();
 
-        int minX = corners.getA().getX() >> 4;
-        int maxX = corners.getB().getX() >> 4;
-        int minZ = corners.getA().getZ() >> 4;
-        int maxZ = corners.getB().getZ() >> 4;
-        int minY = Math.max(0, corners.getA().getY()) >> 4;
-        int maxY = Math.min(corners.getB().getY(), world.getHeight()) >> 4;
-
-        List<T> list = Lists.newArrayList();
-        ChunkSource abstractchunkprovider = world.getChunkSource();
-
-        for (int x = minX; x <= maxX; ++x)
-        {
-            for (int z = minZ; z <= maxZ; ++z)
-            {
-                if (isEntityChunkLoaded(world, x, z))
-                {
-                    LevelChunk chunk = abstractchunkprovider.getChunkNow(x, z);
-                    if (chunk != null)
-                    {
-                        for (int y = minY; y <= maxY; y++)
-                        {
-                            for (final T entity : chunk.getEntitySections()[y].find(clazz))
-                            {
-                                if (building.isInBuilding(entity.blockPosition()) && (predicate == null || predicate.test(entity)))
-                                {
-                                    list.add(entity);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        return list;
+        return world.getEntitiesOfClass(clazz, new AABB(corners.getA().getX(), corners.getA().getY(), corners.getA().getZ(), corners.getB().getX(), corners.getB().getY(), corners.getB().getZ()), predicate);
     }
 }

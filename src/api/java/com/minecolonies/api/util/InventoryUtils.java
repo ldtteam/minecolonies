@@ -390,7 +390,7 @@ public class InventoryUtils
     }
 
     /**
-     * Adapted from {@link net.minecraft.entity.player.PlayerInventory#add(ItemStack)}.
+     * Force stack to handler.
      *
      * @param itemHandler              {@link IItemHandler} to add itemstack to.
      * @param itemStack                ItemStack to add.
@@ -922,7 +922,7 @@ public class InventoryUtils
     }
 
     /**
-     * Adapted from {@link net.minecraft.entity.player.PlayerInventory#add(ItemStack)}.
+     * Add stack to provider.
      *
      * @param provider  {@link ICapabilityProvider} to add itemstack to.
      * @param itemStack ItemStack to add.
@@ -934,7 +934,7 @@ public class InventoryUtils
     }
 
     /**
-     * Adapted from {@link net.minecraft.entity.player.PlayerInventory#add(ItemStack)}.
+     * Add stack to item handler.
      *
      * @param itemHandler {@link IItemHandler} to add itemstack to.
      * @param itemStack   ItemStack to add.
@@ -1008,7 +1008,7 @@ public class InventoryUtils
     }
 
     /**
-     * Adapted from {@link net.minecraft.entity.player.PlayerInventory#add(ItemStack)}.
+     * Add stack to provider with result.
      *
      * @param provider  {@link ICapabilityProvider} to add itemstack to.
      * @param itemStack ItemStack to add.
@@ -1032,7 +1032,7 @@ public class InventoryUtils
     }
 
     /**
-     * Adapted from {@link net.minecraft.entity.player.PlayerInventory#add(ItemStack)}.
+     * Add stack to handler with result.
      *
      * @param itemHandler {@link IItemHandler} to add itemstack to.
      * @param itemStack   ItemStack to add.
@@ -1081,7 +1081,7 @@ public class InventoryUtils
     }
 
     /**
-     * Adapted from {@link net.minecraft.entity.player.PlayerInventory#add(ItemStack)}.
+     * Force stack to provider.
      *
      * @param provider                 {@link ICapabilityProvider} to add itemstack to.
      * @param itemStack                ItemStack to add.

@@ -6,7 +6,7 @@ import com.minecolonies.coremod.util.FurnaceRecipes;
 import net.minecraftforge.client.event.RecipesUpdatedEvent;
 import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
+import net.minecraftforge.fmlserverevents.FMLServerStartedEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -77,7 +77,7 @@ public class TagWorkAroundEventHandler
          * Fires on a server side only, when the server has started.
          * This event is the first reliable point for server-only parsing of available smelting recipes, which are
          * required for FurnaceRecipes and CompatibilityManager.discoverOres and .discoverFood.
-         * @param event  {@link net.minecraftforge.fml.event.server.FMLServerStartedEvent}
+         * @param event  {@link net.minecraftforge.fmlserverevents.FMLServerStartedEvent}
          */
         @SubscribeEvent
         public static void onServerStarted(@NotNull final FMLServerStartedEvent event)

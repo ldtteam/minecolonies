@@ -170,13 +170,6 @@ public class ContainerCraftingFurnace extends AbstractContainerMenu
 
             @NotNull
             @Override
-            public ItemStack onTake(final Player player, @NotNull final ItemStack stack)
-            {
-                return ItemStack.EMPTY;
-            }
-
-            @NotNull
-            @Override
             public ItemStack remove(final int par1)
             {
                 return ItemStack.EMPTY;
@@ -225,9 +218,8 @@ public class ContainerCraftingFurnace extends AbstractContainerMenu
 
     @NotNull
     @Override
-    public ItemStack clicked(final int slotId, final int clickedButton, final ClickType mode, final Player playerIn)
+    public void clicked(final int slotId, final int clickedButton, final ClickType mode, final Player playerIn)
     {
-        final ItemStack clickResult;
         if (slotId >= 0 && slotId < FURNACE_SLOTS)
         {
             // 1 is shift-click
@@ -237,26 +229,17 @@ public class ContainerCraftingFurnace extends AbstractContainerMenu
             {
                 final Slot slot = this.slots.get(slotId);
 
-                final ItemStack dropping = playerIn.inventory.getCarried();
+                final ItemStack dropping = playerIn.inventoryMenu.getCarried();
 
-                clickResult = handleSlotClick(slot, dropping);
+                handleSlotClick(slot, dropping);
             }
-            else
-            {
-                clickResult = ItemStack.EMPTY;
-            }
-        }
-        else if (mode == ClickType.QUICK_MOVE)
-        {
-            clickResult = ItemStack.EMPTY;
         }
         else
         {
-            clickResult = super.clicked(slotId, clickedButton, mode, playerInventory.player);
+            super.clicked(slotId, clickedButton, mode, playerInventory.player);
         }
 
         updateFurnaceOutput();
-        return clickResult;
     }
 
     /**
@@ -304,7 +287,7 @@ public class ContainerCraftingFurnace extends AbstractContainerMenu
             final ItemStack result = IMinecoloniesAPI.getInstance().getFurnaceRecipes().getSmeltingResult(furnaceInventory.getStackInSlot(0));
 
             this.furnaceInventory.insertItem(1, result, false);
-            player.connection.send(new ClientboundContainerSetSlotPacket(this.containerId, 1, result));
+            player.connection.send(new ClientboundContainerSetSlotPacket(this.containerId, 0, 1, result));
         }
     }
 

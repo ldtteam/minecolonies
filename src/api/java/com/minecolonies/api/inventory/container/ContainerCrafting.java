@@ -140,13 +140,6 @@ public class ContainerCrafting extends AbstractContainerMenu
 
                     @NotNull
                     @Override
-                    public ItemStack onTake(final Player player, @NotNull final ItemStack stack)
-                    {
-                        return ItemStack.EMPTY;
-                    }
-
-                    @NotNull
-                    @Override
                     public ItemStack remove(final int par1)
                     {
                         return ItemStack.EMPTY;
@@ -216,12 +209,12 @@ public class ContainerCrafting extends AbstractContainerMenu
             {
                 stack = iRecipe.get().assemble(this.craftMatrix);
                 this.craftResultSlot.set(stack);
-                player.connection.send(new ClientboundContainerSetSlotPacket(this.containerId, 0, stack));
+                player.connection.send(new ClientboundContainerSetSlotPacket(this.containerId, 0, 0, stack));
             }
             else
             {
                 this.craftResultSlot.set(ItemStack.EMPTY);
-                player.connection.send(new ClientboundContainerSetSlotPacket(this.containerId, 0, ItemStack.EMPTY));
+                player.connection.send(new ClientboundContainerSetSlotPacket(this.containerId, 0, 0, ItemStack.EMPTY));
             }
         }
 
@@ -234,9 +227,8 @@ public class ContainerCrafting extends AbstractContainerMenu
         return true;
     }
 
-    @NotNull
     @Override
-    public ItemStack clicked(final int slotId, final int clickedButton, final ClickType mode, final Player playerIn)
+    public void clicked(final int slotId, final int clickedButton, final @NotNull ClickType mode, final @NotNull Player playerIn)
     {
         if (slotId >= 1 && slotId < CRAFTING_SLOTS + (complete ? ADDITIONAL_SLOTS : 0))
         {
@@ -247,20 +239,21 @@ public class ContainerCrafting extends AbstractContainerMenu
             {
                 final Slot slot = this.slots.get(slotId);
 
-                final ItemStack dropping = playerIn.inventory.getCarried();
+                final ItemStack dropping = playerIn.inventoryMenu.getCarried();
 
-                return handleSlotClick(slot, dropping);
+                handleSlotClick(slot, dropping);
+                return;
             }
 
-            return ItemStack.EMPTY;
+            return;
         }
 
         if (mode == ClickType.QUICK_MOVE)
         {
-            return ItemStack.EMPTY;
+            return;
         }
 
-        return super.clicked(slotId, clickedButton, mode, playerIn);
+        super.clicked(slotId, clickedButton, mode, playerIn);
     }
 
     /**

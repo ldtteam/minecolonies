@@ -143,24 +143,22 @@ public class ContainerRack extends AbstractContainerMenu
         }
     }
 
-    @NotNull
     @Override
-    public ItemStack clicked(int slotId, int dragType, ClickType clickTypeIn, Player player)
+    public void clicked(int slotId, int dragType, @NotNull ClickType clickTypeIn, Player player)
     {
         if (player.level.isClientSide || slotId >= inventory.getSlots() || slotId < 0)
         {
-            return super.clicked(slotId, dragType, clickTypeIn, player);
+            super.clicked(slotId, dragType, clickTypeIn, player);
+            return;
         }
         final ItemStack currentStack = inventory.getStackInSlot(slotId).copy();
-        final ItemStack result = super.clicked(slotId, dragType, clickTypeIn, player);
+        super.clicked(slotId, dragType, clickTypeIn, player);
         final ItemStack afterStack = inventory.getStackInSlot(slotId).copy();
 
         if (!ItemStack.matches(currentStack, afterStack))
         {
             this.updateRacks(afterStack);
         }
-
-        return result;
     }
 
     @NotNull

@@ -195,7 +195,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
             return getState();
         }
 
-        final IItemHandler handler = citizenToServe.isEmpty() ? new InvWrapper(playerToServe.get(0).inventory) : citizenToServe.get(0).getInventoryCitizen();
+        final IItemHandler handler = citizenToServe.isEmpty() ? new InvWrapper(playerToServe.get(0).getInventory()) : citizenToServe.get(0).getInventoryCitizen();
 
         if (InventoryUtils.isItemHandlerFull(handler))
         {
@@ -300,7 +300,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
                                                           .sorted(Comparator.comparingInt(a -> (a.getCitizenJobHandler().getColonyJob() == null ? 1 : 0)))
                                                           .collect(Collectors.toList());
 
-        final List<Player> playerList = WorldUtil.getEntitiesWithinBuilding(world, Player.class,
+        final List<? extends Player> playerList = WorldUtil.getEntitiesWithinBuilding(world, Player.class,
           getOwnBuilding(), player -> player != null
                       && player.getFoodData().getFoodLevel() < LEVEL_TO_FEED_PLAYER
                       && getOwnBuilding().getColony().getPermissions().hasPermission(player, Action.MANAGE_HUTS)

@@ -10,13 +10,13 @@ import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.item.*;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.nbt.ListTag;
@@ -25,10 +25,14 @@ import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.common.Tags;
+import net.minecraftforge.common.ToolAction;
+import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.lwjgl.system.CallbackI;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,22 +44,6 @@ import java.util.stream.Collectors;
 import static com.minecolonies.api.util.constant.Constants.FUEL_SLOT;
 import static com.minecolonies.api.util.constant.Constants.SMELTABLE_SLOT;
 import static com.minecolonies.api.items.ModTags.fungi;
-
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.ArmorMaterial;
-import net.minecraft.world.item.ArmorMaterials;
-import net.minecraft.world.item.BowItem;
-import net.minecraft.world.item.DiggerItem;
-import net.minecraft.world.item.FishingRodItem;
-import net.minecraft.world.item.FlintAndSteelItem;
-import net.minecraft.world.item.HoeItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.ShearsItem;
-import net.minecraft.world.item.ShieldItem;
-import net.minecraft.world.item.SwordItem;
-import net.minecraft.world.item.Tiers;
 
 /**
  * Utility methods for the inventories.
@@ -348,9 +336,9 @@ public final class ItemStackUtils
             //We need a hut level 1 minimum
             return 1;
         }
-        else
+        else if (stack.getItem() instanceof TieredItem)
         {
-            return stack.getItem().getHarvestLevel(stack, net.minecraftforge.common.ToolType.get(toolType.getName()), null, null);
+            return ((TieredItem) stack.getItem()).getTier().getLevel();
         }
         return -1;
     }
@@ -394,7 +382,14 @@ public final class ItemStackUtils
         }
         else if (ToolType.HOE.equals(toolType))
         {
-            isATool = itemStack.getItem() instanceof HoeItem || itemStack.getToolTypes().contains(net.minecraftforge.common.ToolType.HOE);
+            for (final ToolAction action : ToolActions.DEFAULT_HOE_ACTIONS)
+            {
+                if (!itemStack.canPerformAction(action))
+                {
+                    break;
+                }
+            }
+            isATool = true;
         }
         else if (ToolType.BOW.equals(toolType))
         {

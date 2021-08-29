@@ -12,7 +12,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.world.level.block.state.properties.RailShape;
 import net.minecraft.util.*;
-import net.minecraft.util.math.*;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -20,7 +19,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.core.Vec3i;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraftforge.fmllegacy.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -117,13 +116,13 @@ public class MinecoloniesMinecart extends AbstractMinecart
             zDif = -zDif;
         }
 
-        double veloc = Math.min(2.0D, Math.sqrt(getHorizontalDistanceSqr(motion)));
+        double veloc = Math.min(2.0D, Math.sqrt(motion.horizontalDistanceSqr()));
         motion = new Vec3(veloc * xDif / difSq, motion.y, veloc * zDif / difSq);
         this.setDeltaMovement(motion);
 
         if (flag && shouldDoRailFunctions())
         {
-            double tempMot = Math.sqrt(getHorizontalDistanceSqr(this.getDeltaMovement()));
+            double tempMot = Math.sqrt(this.getDeltaMovement().horizontalDistanceSqr());
             if (tempMot < 0.03D)
             {
                 this.setDeltaMovement(Vec3.ZERO);
@@ -175,7 +174,7 @@ public class MinecoloniesMinecart extends AbstractMinecart
         {
             double yMot = (posVec.y - newPos.y) * 0.05D;
             Vec3 tempMot = this.getDeltaMovement();
-            double tempVeloc = Math.sqrt(getHorizontalDistanceSqr(tempMot));
+            double tempVeloc = Math.sqrt(tempMot.horizontalDistanceSqr());
             if (tempVeloc > 0.0D)
             {
                 this.setDeltaMovement(tempMot.multiply((tempVeloc + yMot) / tempVeloc, 1.0D, (tempVeloc + yMot) / tempVeloc));
@@ -189,7 +188,7 @@ public class MinecoloniesMinecart extends AbstractMinecart
         if (xFloor != pos.getX() || zFloor != pos.getZ())
         {
             Vec3 tempMot = this.getDeltaMovement();
-            double temoVeloc = Math.sqrt(getHorizontalDistanceSqr(tempMot));
+            double temoVeloc = Math.sqrt(tempMot.horizontalDistanceSqr());
             this.setDeltaMovement(temoVeloc * (double) (xFloor - pos.getX()), tempMot.y, temoVeloc * (double) (zFloor - pos.getZ()));
         }
 
@@ -201,7 +200,7 @@ public class MinecoloniesMinecart extends AbstractMinecart
         if (isPowered && shouldDoRailFunctions())
         {
             Vec3 tempMot = this.getDeltaMovement();
-            double tempVeloc = Math.sqrt(getHorizontalDistanceSqr(tempMot));
+            double tempVeloc = Math.sqrt(tempMot.horizontalDistanceSqr());
             if (tempVeloc > 0.01D)
             {
                 this.setDeltaMovement(tempMot.add(tempMot.x / tempVeloc * 0.06D, 0.0D, tempMot.z / tempVeloc * 0.06D));
@@ -309,12 +308,12 @@ public class MinecoloniesMinecart extends AbstractMinecart
             final Vec3 vector3d2 = collideBoundingBoxHeuristically(this, new Vec3(0.0D, (double)this.maxUpStep, 0.0D), axisalignedbb.expandTowards(vec.x, 0.0D, vec.z), this.level, iselectioncontext, reuseablestream);
             if (vector3d2.y < (double)this.maxUpStep) {
                 Vec3 vector3d3 = collideBoundingBoxHeuristically(this, new Vec3(vec.x, 0.0D, vec.z), axisalignedbb.move(vector3d2), this.level, iselectioncontext, reuseablestream).add(vector3d2);
-                if (getHorizontalDistanceSqr(vector3d3) > getHorizontalDistanceSqr(vector3d1)) {
+                if (vector3d3.horizontalDistanceSqr() > vector3d1.horizontalDistanceSqr()) {
                     vector3d1 = vector3d3;
                 }
             }
 
-            if (getHorizontalDistanceSqr(vector3d1) > getHorizontalDistanceSqr(vector3d)) {
+            if (vector3d1.horizontalDistanceSqr() > vector3d.horizontalDistanceSqr()) {
                 return vector3d1.add(collideBoundingBoxHeuristically(this, new Vec3(0.0D, -vector3d1.y + vec.y, 0.0D), axisalignedbb.move(vector3d1), this.level, iselectioncontext, reuseablestream));
             }
         }
@@ -329,7 +328,7 @@ public class MinecoloniesMinecart extends AbstractMinecart
 
         if (this.tickCount % 20 == 19 && getPassengers().isEmpty())
         {
-            this.remove();
+            this.remove(RemovalReason.DISCARDED);
         }
     }
 

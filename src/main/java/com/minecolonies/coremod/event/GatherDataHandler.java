@@ -2,7 +2,7 @@ package com.minecolonies.coremod.event;
 
 import com.minecolonies.coremod.generation.defaults.*;
 import net.minecraft.data.DataGenerator;
-import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
+import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 
 public class GatherDataHandler
 {

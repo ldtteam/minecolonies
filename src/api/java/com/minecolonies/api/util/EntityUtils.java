@@ -182,7 +182,7 @@ public final class EntityUtils
     }
 
     /**
-     * Sets the movement of the entity to specific point. Returns true if direction is set, otherwise false. {@link #tryMoveLivingToXYZ(MobEntity, int, int, int, double)}
+     * Sets the movement of the entity to specific point. Returns true if direction is set, otherwise false.
      *
      * @param living Entity to move
      * @param x      x-coordinate
@@ -263,8 +263,8 @@ public final class EntityUtils
               spawnPoint.getX() + MIDDLE_BLOCK_OFFSET,
               spawnPoint.getY(),
               spawnPoint.getZ() + MIDDLE_BLOCK_OFFSET,
-              entity.yRot,
-              entity.xRot);
+              entity.getYRot(),
+              entity.getXRot());
             return true;
         }
 
@@ -283,7 +283,7 @@ public final class EntityUtils
     {
         final List<ItemStorage> existingReq = ItemStackUtils.getListOfStackForEntity(entity, placer);
         final BlockPos pos = new BlockPos(entity.getX(), entity.getY(), entity.getZ());
-        return world.getLoadedEntitiesOfClass(Entity.class, new AABB(pos.offset(1, 1, 1), pos.offset(-1, -1, -1)))
+        return world.getEntitiesOfClass(Entity.class, new AABB(pos.offset(1, 1, 1), pos.offset(-1, -1, -1)))
                  .stream()
                  .anyMatch(ent -> ent.getX() == entity.getX() && ent.getY() == entity.getY() && ent.getZ() == entity.getZ() && ItemStackUtils.getListOfStackForEntity(entity, placer)
                                                                                                                      .equals(existingReq));

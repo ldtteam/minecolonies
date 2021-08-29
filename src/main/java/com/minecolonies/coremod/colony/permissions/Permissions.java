@@ -14,7 +14,7 @@ import net.minecraft.nbt.StringTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
+import net.minecraftforge.fmllegacy.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -89,7 +89,7 @@ public class Permissions implements IPermissions
      * Players registered to the colony.
      */
     @NotNull
-    private final Map<UUID, Player> players = new HashMap<>();
+    private final Map<UUID, ColonyPlayer> players = new HashMap<>();
 
     /**
      * Permissions of these players.
@@ -293,15 +293,15 @@ public class Permissions implements IPermissions
                 rank = ranks.get(oldRank.ordinal());
             }
 
-            final GameProfile player = ServerLifecycleHooks.getCurrentServer().getProfileCache().get(id);
+            final GameProfile player = ServerLifecycleHooks.getCurrentServer().getProfileCache().get(id).get();
 
             if (player != null && rank != null)
             {
-                players.put(id, new Player(id, player.getName(), rank));
+                players.put(id, new ColonyPlayer(id, player.getName(), rank));
             }
             else if (!name.isEmpty() && rank != null)
             {
-                players.put(id, new Player(id, name, rank));
+                players.put(id, new ColonyPlayer(id, name, rank));
             }
         }
 
@@ -386,14 +386,14 @@ public class Permissions implements IPermissions
      */
     public void restoreOwnerIfNull()
     {
-        final Map.Entry<UUID, Player> owner = getOwnerEntry();
+        final Map.Entry<UUID, ColonyPlayer> owner = getOwnerEntry();
         if (owner == null && ownerUUID != null)
         {
-            final GameProfile player = ServerLifecycleHooks.getCurrentServer().getProfileCache().get(ownerUUID);
+            final GameProfile player = ServerLifecycleHooks.getCurrentServer().getProfileCache().get(ownerUUID).get();
 
             if (player != null)
             {
-                players.put(ownerUUID, new Player(ownerUUID, player.getName(), ranks.get(OWNER_RANK_ID)));
+                players.put(ownerUUID, new ColonyPlayer(ownerUUID, player.getName(), ranks.get(OWNER_RANK_ID)));
             }
         }
     }
@@ -407,9 +407,9 @@ public class Permissions implements IPermissions
      */
     @Override
     @Nullable
-    public Map.Entry<UUID, Player> getOwnerEntry()
+    public Map.Entry<UUID, ColonyPlayer> getOwnerEntry()
     {
-        for (@NotNull final Map.Entry<UUID, Player> entry : players.entrySet())
+        for (@NotNull final Map.Entry<UUID, ColonyPlayer> entry : players.entrySet())
         {
             if (entry.getValue().getRank().getId() == OWNER_RANK_ID)
             {
@@ -433,7 +433,7 @@ public class Permissions implements IPermissions
         ownerName = player.getName().getString();
         ownerUUID = player.getUUID();
 
-        players.put(ownerUUID, new Player(ownerUUID, player.getName().getString(), ranks.get(OWNER_RANK_ID)));
+        players.put(ownerUUID, new ColonyPlayer(ownerUUID, player.getName().getString(), ranks.get(OWNER_RANK_ID)));
 
         fullyAbandoned = false;
 
@@ -452,7 +452,7 @@ public class Permissions implements IPermissions
         ownerName = "[abandoned]";
         ownerUUID = UUID.randomUUID();
 
-        players.put(ownerUUID, new Player(ownerUUID, ownerName, ranks.get(OWNER_RANK_ID)));
+        players.put(ownerUUID, new ColonyPlayer(ownerUUID, ownerName, ranks.get(OWNER_RANK_ID)));
 
         checkFullyAbandoned();
         markDirty();
@@ -469,7 +469,7 @@ public class Permissions implements IPermissions
     {
         if (ownerUUID == null)
         {
-            final Map.Entry<UUID, Player> owner = getOwnerEntry();
+            final Map.Entry<UUID, ColonyPlayer> owner = getOwnerEntry();
             if (owner != null)
             {
                 ownerUUID = owner.getKey();
@@ -506,7 +506,7 @@ public class Permissions implements IPermissions
 
         //  Owners
         @NotNull final ListTag ownerTagList = new ListTag();
-        for (@NotNull final Player player : players.values())
+        for (@NotNull final ColonyPlayer player : players.values())
         {
             @NotNull final CompoundTag ownersCompound = new CompoundTag();
             ownersCompound.putString(TAG_ID, player.getID().toString());
@@ -556,7 +556,7 @@ public class Permissions implements IPermissions
 
     @Override
     @NotNull
-    public Map<UUID, Player> getPlayers()
+    public Map<UUID, ColonyPlayer> getPlayers()
     {
         return Collections.unmodifiableMap(players);
     }
@@ -583,7 +583,7 @@ public class Permissions implements IPermissions
      * @return set of players.
      */
     @Override
-    public Set<Player> getPlayersByRank(final Rank rank)
+    public Set<ColonyPlayer> getPlayersByRank(final Rank rank)
     {
         return this.players.values().stream()
                  .filter(player -> player.getRank() != null && player.getRank().equals(rank))
@@ -597,7 +597,7 @@ public class Permissions implements IPermissions
      * @return set of players.
      */
     @Override
-    public Set<Player> getPlayersByRank(@NotNull final Set<Rank> ranks)
+    public Set<ColonyPlayer> getPlayersByRank(@NotNull final Set<Rank> ranks)
     {
         return this.players.values().stream()
                  .filter(player -> ranks.contains(player.getRank()))
@@ -605,7 +605,7 @@ public class Permissions implements IPermissions
     }
 
     @Override
-    public Set<Player> getFilteredPlayers(@NotNull final Predicate<Rank> predicate)
+    public Set<ColonyPlayer> getFilteredPlayers(@NotNull final Predicate<Rank> predicate)
     {
         return this.players.values().stream()
           .filter(player -> predicate.test(player.getRank()))
@@ -626,7 +626,7 @@ public class Permissions implements IPermissions
     /**
      * Checks if the player has the permission of an action.
      *
-     * @param player {@link PlayerEntity} player.
+     * @param player {@link Player} player.
      * @param action {@link Action} action.
      * @return true if player has permissionMap, otherwise false.
      */
@@ -680,7 +680,7 @@ public class Permissions implements IPermissions
     public boolean setPlayerRank(final UUID id, final Rank rank, final Level world)
     {
 
-        final Player player = getPlayers().get(id);
+        final ColonyPlayer player = getPlayers().get(id);
 
         if (player != null)
         {
@@ -700,7 +700,7 @@ public class Permissions implements IPermissions
         else
         {
 
-            final GameProfile gameprofile = world.getServer().getProfileCache().get(id);
+            final GameProfile gameprofile = world.getServer().getProfileCache().get(id).get();
 
             return gameprofile != null && addPlayer(gameprofile, rank);
         }
@@ -719,7 +719,7 @@ public class Permissions implements IPermissions
     @Override
     public boolean addPlayer(@NotNull final UUID id, final String name, final Rank rank)
     {
-        @NotNull final Player p = new Player(id, name, rank);
+        @NotNull final ColonyPlayer p = new ColonyPlayer(id, name, rank);
 
         players.remove(p.getID());
         players.put(p.getID(), p);
@@ -743,7 +743,7 @@ public class Permissions implements IPermissions
     @Override
     public Rank getRank(final UUID id)
     {
-        final Player player = players.get(id);
+        final ColonyPlayer player = players.get(id);
         return player != null ? player.getRank() : ranks.get(NEUTRAL_RANK_ID);
     }
 
@@ -762,7 +762,7 @@ public class Permissions implements IPermissions
         {
             return false;
         }
-        final GameProfile gameprofile = world.getServer().getProfileCache().get(player);
+        final GameProfile gameprofile = world.getServer().getProfileCache().get(player).get();
         //Check if the player already exists so that their rank isn't overridden
 
         // Adds new subscribers
@@ -784,7 +784,7 @@ public class Permissions implements IPermissions
                 else
                 {
                     // Check claim
-                    final LevelChunk chunk = world.getChunk(playerEntity.xChunk, playerEntity.zChunk);
+                    final LevelChunk chunk = world.getChunk(playerEntity.chunkPosition().x, playerEntity.chunkPosition().z);
 
                     final IColonyTagCapability colonyCap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
                     if (colonyCap != null)
@@ -812,7 +812,7 @@ public class Permissions implements IPermissions
     @Override
     public boolean addPlayer(@NotNull final GameProfile gameprofile, final Rank rank)
     {
-        @NotNull final Player p = new Player(gameprofile.getId(), gameprofile.getName(), rank);
+        @NotNull final ColonyPlayer p = new ColonyPlayer(gameprofile.getId(), gameprofile.getName(), rank);
 
         players.remove(p.getID());
         players.put(p.getID(), p);
@@ -834,7 +834,7 @@ public class Permissions implements IPermissions
      */
     public boolean removePlayer(final UUID id)
     {
-        final Player player = players.get(id);
+        final ColonyPlayer player = players.get(id);
         if (player != null && player.getRank().getId() != OWNER_RANK_ID && players.remove(id) != null)
         {
             checkFullyAbandoned();
@@ -856,7 +856,7 @@ public class Permissions implements IPermissions
     {
         if (ownerName.isEmpty())
         {
-            final Map.Entry<UUID, Player> owner = getOwnerEntry();
+            final Map.Entry<UUID, ColonyPlayer> owner = getOwnerEntry();
             if (owner != null)
             {
                 ownerName = owner.getValue().getName();
@@ -868,7 +868,7 @@ public class Permissions implements IPermissions
     /**
      * Checks if a user is a subscriber.
      *
-     * @param player {@link PlayerEntity} to check for subscription.
+     * @param player {@link Player} to check for subscription.
      * @return True is subscriber, otherwise false.
      */
     @Override
@@ -878,7 +878,7 @@ public class Permissions implements IPermissions
     }
 
     /**
-     * See {@link #isSubscriber(PlayerEntity)}.
+     * See {@link #isSubscriber(Player)}.
      *
      * @param player {@link UUID} of the player.
      * @return True if subscriber, otherwise false.
@@ -929,7 +929,7 @@ public class Permissions implements IPermissions
 
         //  Owners
         buf.writeInt(players.size());
-        for (@NotNull final Map.Entry<UUID, Player> player : players.entrySet())
+        for (@NotNull final Map.Entry<UUID, ColonyPlayer> player : players.entrySet())
         {
             PacketUtils.writeUUID(buf, player.getKey());
             buf.writeUtf(player.getValue().getName());
@@ -1063,7 +1063,7 @@ public class Permissions implements IPermissions
         {
             return;
         }
-        for (Player player : getPlayersByRank(rank))
+        for (ColonyPlayer player : getPlayersByRank(rank))
         {
             player.setRank(getRankNeutral());
         }

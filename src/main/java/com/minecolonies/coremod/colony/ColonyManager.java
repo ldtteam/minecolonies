@@ -11,10 +11,12 @@ import com.minecolonies.api.compatibility.ICompatibilityManager;
 import com.minecolonies.api.crafting.IRecipeManager;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.Tuple;
 import com.minecolonies.apiimp.initializer.ModTagsInitializer;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRecipeManager;
+import com.minecolonies.coremod.event.EventHandler;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewRemoveMessage;
 import com.minecolonies.coremod.util.BackUpHelper;
 import com.minecolonies.coremod.util.ChunkDataHelper;
@@ -24,11 +26,13 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
+import net.minecraftforge.fmllegacy.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -73,12 +77,17 @@ public final class ColonyManager implements IColonyManager
     private boolean schematicDownloaded = false;
 
     /**
+     * Map of tracked players by uuid and position.
+     */
+    private final Map<UUID, Tuple<ChunkPos, ResourceKey<Level>>> trackedPlayers = new HashMap<>();
+
+    /**
      * If the manager finished loading already.
      */
     private boolean capLoaded = false;
 
     @Override
-    public void createColony(@NotNull final Level w, final BlockPos pos, @NotNull final ColonyPlayer player, @NotNull final String style)
+    public void createColony(@NotNull final Level w, final BlockPos pos, @NotNull final Player player, @NotNull final String style)
     {
         final IColonyManagerCapability cap = w.getCapability(COLONY_MANAGER_CAP, null).resolve().orElse(null);
         if (cap == null)
@@ -523,7 +532,7 @@ public final class ColonyManager implements IColonyManager
 
     @Override
     @Nullable
-    public IColony getIColonyByOwner(@NotNull final Level w, @NotNull final ColonyPlayer owner)
+    public IColony getIColonyByOwner(@NotNull final Level w, @NotNull final Player owner)
     {
         return getIColonyByOwner(w, w.isClientSide ? owner.getUUID() : owner.getGameProfile().getId());
     }
@@ -645,6 +654,20 @@ public final class ColonyManager implements IColonyManager
         if (event.phase == TickEvent.Phase.END)
         {
             getColonies(event.world).forEach(c -> c.onWorldTick(event));
+
+            if (!event.world.isClientSide && event.world.getGameTime() % 20 == 0)
+            {
+                for (final Player player : event.world.players())
+                {
+                    final Tuple<ChunkPos, ResourceKey<Level>> current = new Tuple<>(player.chunkPosition(), event.world.dimension());
+                    final Tuple<ChunkPos, ResourceKey<Level>> previous = trackedPlayers.getOrDefault(player.getUUID(), new Tuple<>(null, null));
+                    if (!current.equals(previous))
+                    {
+                        trackedPlayers.put(player.getUUID(), current);
+                        EventHandler.onEnteringChunk((ServerPlayer) player, previous.getA(), current.getA());
+                    }
+                }
+            }
         }
     }
 

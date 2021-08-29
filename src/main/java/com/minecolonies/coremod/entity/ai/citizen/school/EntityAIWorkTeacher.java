@@ -97,7 +97,7 @@ public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher, Bu
             return GATHERING_REQUIRED_MATERIALS;
         }
 
-        final List<AbstractEntityCitizen> pupils = WorldUtil.getEntitiesWithinBuilding(world,
+        final List<? extends AbstractEntityCitizen> pupils = WorldUtil.getEntitiesWithinBuilding(world,
           AbstractEntityCitizen.class,
           getOwnBuilding(),
           cit -> cit.isBaby() && cit.vehicle != null && cit.getCitizenJobHandler().getColonyJob() instanceof JobPupil);

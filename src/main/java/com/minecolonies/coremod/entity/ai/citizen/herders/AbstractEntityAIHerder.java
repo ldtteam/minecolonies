@@ -314,7 +314,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      */
     protected IAIState breedAnimals()
     {
-        final List<T> animals = searchForAnimals();
+        final List<? extends T> animals = searchForAnimals();
 
         final Animal animalOne = animals
                                          .stream()
@@ -359,7 +359,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      */
     protected IAIState feedAnimals()
     {
-        final List<T> animals = searchForAnimals();
+        final List<? extends T> animals = searchForAnimals();
 
         final Animal animalOne = animals
                                          .stream()
@@ -402,7 +402,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      */
     private IAIState pickupItems()
     {
-        final List<ItemEntity> items = searchForItemsInArea();
+        final List<? extends ItemEntity> items = searchForItemsInArea();
 
         if (!items.isEmpty() && walkToBlock(items.get(0).blockPosition()))
         {
@@ -419,7 +419,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      *
      * @return the {@link List} of animals in the area.
      */
-    public List<T> searchForAnimals()
+    public List<? extends T> searchForAnimals()
     {
         return WorldUtil.getEntitiesWithinBuilding(world, getAnimalClass(), getOwnBuilding(), null);
     }
@@ -434,7 +434,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      *
      * @return the {@link List} of {@link ItemEntity} in the area.
      */
-    public List<ItemEntity> searchForItemsInArea()
+    public List<? extends ItemEntity> searchForItemsInArea()
     {
         return WorldUtil.getEntitiesWithinBuilding(world, ItemEntity.class, getOwnBuilding(), null);
     }
@@ -468,8 +468,8 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
     /**
      * Breed two animals together!
      *
-     * @param animalOne the first {@link AnimalEntity} to breed.
-     * @param animalTwo the second {@link AnimalEntity} to breed.
+     * @param animalOne the first {@link Animal} to breed.
+     * @param animalTwo the second {@link Animal} to breed.
      */
     private void breedTwoAnimals(final Animal animalOne, final Animal animalTwo)
     {
@@ -576,7 +576,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
     /**
      * Butcher an animal.
      *
-     * @param animal the {@link AnimalEntity} we are butchering
+     * @param animal the {@link Animal} we are butchering
      */
     protected void butcherAnimal(@Nullable final Animal animal)
     {
