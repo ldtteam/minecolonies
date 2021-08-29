@@ -11,7 +11,7 @@ import net.minecraft.client.gui.Font;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import net.minecraft.client.renderer.MultiBufferSource;
 import com.mojang.blaze3d.vertex.Tesselator;
-import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import net.minecraft.world.entity.Entity;
 import com.mojang.math.Matrix4f;

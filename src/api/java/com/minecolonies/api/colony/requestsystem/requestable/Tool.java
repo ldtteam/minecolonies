@@ -9,9 +9,10 @@ import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.item.*;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.common.ToolAction;
+import net.minecraftforge.common.ToolActions;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -222,7 +223,30 @@ public class Tool implements IDeliverable
             return set;
         }
 
-        set.addAll(stack.getItem().getToolTypes(stack).stream().map(net.minecraftforge.common.ToolType::getName).collect(Collectors.toList()));
+        if (stack.canPerformAction(ToolActions.AXE_DIG))
+        {
+            set.add(ToolType.AXE.getName());
+        }
+
+        if (stack.canPerformAction(ToolActions.PICKAXE_DIG))
+        {
+            set.add(ToolType.PICKAXE.getName());
+        }
+
+        if (stack.canPerformAction(ToolActions.SHOVEL_DIG))
+        {
+            set.add(ToolType.SHOVEL.getName());
+        }
+
+        if (stack.canPerformAction(ToolActions.HOE_DIG))
+        {
+            set.add(ToolType.HOE.getName());
+        }
+
+        if (stack.canPerformAction(ToolActions.SWORD_SWEEP))
+        {
+            set.add(ToolType.SWORD.getName());
+        }
 
         if (stack.getItem() instanceof BowItem)
         {
@@ -234,7 +258,7 @@ public class Tool implements IDeliverable
         }
         else if (stack.getItem() instanceof HoeItem)
         {
-            set.add("hoe");
+            set.add(ToolType.HOE.getName());
         }
         else if (stack.getItem() instanceof FishingRodItem)
         {

@@ -2,7 +2,7 @@ package com.minecolonies.coremod.client.render.mobs.egyptians;
 
 import com.minecolonies.api.entity.mobs.egyptians.AbstractEntityEgyptian;
 import com.minecolonies.coremod.client.model.raiders.ModelMummy;
-import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 
 /**
@@ -18,11 +18,11 @@ public class RendererMummy extends AbstractRendererEgyptian<AbstractEntityEgypti
     /**
      * Constructor method for renderer
      *
-     * @param renderManagerIn the renderManager
+     * @param context the renderManager
      */
-    public RendererMummy(final EntityRenderDispatcher renderManagerIn)
+    public RendererMummy(final EntityRendererProvider.Context context)
     {
-        super(renderManagerIn, new ModelMummy(), 0.5F);
+        super(context, new ModelMummy(), 0.5F);
     }
 
     @Override

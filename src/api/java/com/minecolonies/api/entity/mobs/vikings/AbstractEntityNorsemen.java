@@ -59,7 +59,7 @@ public abstract class AbstractEntityNorsemen extends AbstractEntityMinecoloniesM
     }
 
     @Override
-    protected float getVoicePitch()
+    public float getVoicePitch()
     {
         return (this.random.nextFloat() - this.random.nextFloat()) * 0.1F + 1.0F;
     }

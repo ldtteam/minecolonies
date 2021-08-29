@@ -2,7 +2,7 @@ package com.minecolonies.coremod.client.render.mobs.norsemen;
 
 import com.minecolonies.api.entity.mobs.vikings.AbstractEntityNorsemen;
 import com.minecolonies.coremod.client.model.raiders.ModelShieldmaiden;
-import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,11 +20,11 @@ public class RendererShieldmaidenNorsemen extends AbstractRendererNorsemen<Abstr
     /**
      * Constructor method for renderer
      *
-     * @param renderManagerIn the renderManager
+     * @param context the renderManager
      */
-    public RendererShieldmaidenNorsemen(final EntityRenderDispatcher renderManagerIn)
+    public RendererShieldmaidenNorsemen(final EntityRendererProvider.Context context)
     {
-        super(renderManagerIn, new ModelShieldmaiden(), 0.5F);
+        super(context, new ModelShieldmaiden(), 0.5F);
     }
 
     @NotNull

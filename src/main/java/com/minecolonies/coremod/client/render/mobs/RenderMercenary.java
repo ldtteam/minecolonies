@@ -1,7 +1,8 @@
 package com.minecolonies.coremod.client.render.mobs;
 
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.model.geom.ModelLayers;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
@@ -22,14 +23,14 @@ public class RenderMercenary extends MobRenderer<PathfinderMob, HumanoidModel<Pa
     /**
      * Renders the mercenary mobs, with an held item and armorset.
      *
-     * @param renderManagerIn RenderManager
+     * @param context RenderManager
      */
-    public RenderMercenary(final EntityRenderDispatcher renderManagerIn)
+    public RenderMercenary(final EntityRendererProvider.Context context)
     {
-        super(renderManagerIn, new HumanoidModel<>(1.0F), 0.5f);
+        super(context, new HumanoidModel<>(context.bakeLayer(ModelLayers.PLAYER)), 0.5f);
 
         this.addLayer(new ItemInHandLayer<>(this));
-        this.addLayer(new HumanoidArmorLayer<>(this, new HumanoidModel<>(1.0F), new HumanoidModel<>(1.0F)));
+        this.addLayer(new HumanoidArmorLayer<>(this, new HumanoidModel<>(context.bakeLayer(ModelLayers.PLAYER_INNER_ARMOR)), new HumanoidModel<>(context.bakeLayer(ModelLayers.PLAYER_OUTER_ARMOR))));
     }
 
     @Override

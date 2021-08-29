@@ -8,8 +8,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.entity.BipedRenderer;
-import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
@@ -32,13 +31,13 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
     public static        boolean isItGhostTime = false;
 
     /**
-     * Renders model, see {@link BipedRenderer}.
+     * Renders model, see {@link MobRenderer}.
      *
-     * @param renderManagerIn the RenderManager for this Renderer.
+     * @param context the context for this Renderer.
      */
-    public RenderBipedCitizen(final EntityRenderDispatcher renderManagerIn)
+    public RenderBipedCitizen(final EntityRendererProvider.Context context)
     {
-        super(renderManagerIn, new CitizenModel<>(0.0F), (float) SHADOW_SIZE);
+        super(context, new CitizenModel<>(0.0F), (float) SHADOW_SIZE);
         super.addLayer(new HumanoidArmorLayer<>(this, new CitizenModel<>(0.5F), new CitizenModel<>(1.0F)));
         super.addLayer(new ItemInHandLayer<>(this));
     }
@@ -52,6 +51,7 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
       @NotNull final MultiBufferSource renderTypeBuffer,
       final int light)
     {
+
         setupMainModelFrom(citizen);
 
         final CitizenModel<AbstractEntityCitizen> citizenModel = model;
@@ -66,11 +66,11 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
         if (isItGhostTime)
         {
             RenderSystem.enableBlend();
-            RenderSystem.color4f(1.0F, 1.0F, 1.0F, 0.3F);
+            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 0.3F);
 
             super.render(citizen, limbSwing, partialTicks, matrixStack, renderTypeBuffer, light);
 
-            RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1F);
+            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
             RenderSystem.disableBlend();
         }

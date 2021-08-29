@@ -42,6 +42,7 @@ import com.minecolonies.coremod.proxy.ClientProxy;
 import com.minecolonies.coremod.proxy.CommonProxy;
 import com.minecolonies.coremod.proxy.IProxy;
 import com.minecolonies.coremod.proxy.ServerProxy;
+import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
@@ -53,6 +54,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
@@ -69,7 +71,6 @@ import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
-import net.minecraftforge.fmlclient.registry.ClientRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -230,44 +231,44 @@ public class MineColonies
             RequestSystemInitializer.reconfigureLogging();
         }
     }
-
+    
     @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
-    public static void doClientStuff(final FMLClientSetupEvent event)
+    public static void doClientStuff(final EntityRenderersEvent.RegisterRenderers event)
     {
-        RenderingRegistry.registerEntityRenderingHandler(ModEntities.CITIZEN, RenderBipedCitizen::new);
-        RenderingRegistry.registerEntityRenderingHandler(ModEntities.VISITOR, RenderBipedCitizen::new);
-        RenderingRegistry.registerEntityRenderingHandler(ModEntities.FISHHOOK, RenderFishHook::new);
-        RenderingRegistry.registerEntityRenderingHandler(ModEntities.FIREARROW, FireArrowRenderer::new);
-        RenderingRegistry.registerEntityRenderingHandler(ModEntities.MC_NORMAL_ARROW, TippableArrowRenderer::new);
+        event.registerEntityRenderer(ModEntities.CITIZEN, RenderBipedCitizen::new);
+        event.registerEntityRenderer(ModEntities.VISITOR, RenderBipedCitizen::new);
+        event.registerEntityRenderer(ModEntities.FISHHOOK, RenderFishHook::new);
+        event.registerEntityRenderer(ModEntities.FIREARROW, FireArrowRenderer::new);
+        event.registerEntityRenderer(ModEntities.MC_NORMAL_ARROW, TippableArrowRenderer::new);
 
-        RenderingRegistry.registerEntityRenderingHandler(ModEntities.BARBARIAN, RendererBarbarian::new);
-        RenderingRegistry.registerEntityRenderingHandler(ModEntities.ARCHERBARBARIAN, RendererBarbarian::new);
-        RenderingRegistry.registerEntityRenderingHandler(ModEntities.CHIEFBARBARIAN, RendererChiefBarbarian::new);
-        RenderingRegistry.registerEntityRenderingHandler(ModEntities.PIRATE, RendererPirate::new);
-        RenderingRegistry.registerEntityRenderingHandler(ModEntities.ARCHERPIRATE, RendererArcherPirate::new);
-        RenderingRegistry.registerEntityRenderingHandler(ModEntities.CHIEFPIRATE, RendererChiefPirate::new);
+        event.registerEntityRenderer(ModEntities.BARBARIAN, RendererBarbarian::new);
+        event.registerEntityRenderer(ModEntities.ARCHERBARBARIAN, RendererBarbarian::new);
+        event.registerEntityRenderer(ModEntities.CHIEFBARBARIAN, RendererChiefBarbarian::new);
+        event.registerEntityRenderer(ModEntities.PIRATE, RendererPirate::new);
+        event.registerEntityRenderer(ModEntities.ARCHERPIRATE, RendererArcherPirate::new);
+        event.registerEntityRenderer(ModEntities.CHIEFPIRATE, RendererChiefPirate::new);
 
-        RenderingRegistry.registerEntityRenderingHandler(ModEntities.MUMMY, RendererMummy::new);
-        RenderingRegistry.registerEntityRenderingHandler(ModEntities.ARCHERMUMMY, RendererArcherMummy::new);
-        RenderingRegistry.registerEntityRenderingHandler(ModEntities.PHARAO, RendererPharao::new);
+        event.registerEntityRenderer(ModEntities.MUMMY, RendererMummy::new);
+        event.registerEntityRenderer(ModEntities.ARCHERMUMMY, RendererArcherMummy::new);
+        event.registerEntityRenderer(ModEntities.PHARAO, RendererPharao::new);
 
-        RenderingRegistry.registerEntityRenderingHandler(ModEntities.SHIELDMAIDEN, RendererShieldmaidenNorsemen::new);
-        RenderingRegistry.registerEntityRenderingHandler(ModEntities.NORSEMEN_ARCHER, RendererArcherNorsemen::new);
-        RenderingRegistry.registerEntityRenderingHandler(ModEntities.NORSEMEN_CHIEF, RendererChiefNorsemen::new);
+        event.registerEntityRenderer(ModEntities.SHIELDMAIDEN, RendererShieldmaidenNorsemen::new);
+        event.registerEntityRenderer(ModEntities.NORSEMEN_ARCHER, RendererArcherNorsemen::new);
+        event.registerEntityRenderer(ModEntities.NORSEMEN_CHIEF, RendererChiefNorsemen::new);
 
-        RenderingRegistry.registerEntityRenderingHandler(ModEntities.AMAZON, RendererAmazon::new);
-        RenderingRegistry.registerEntityRenderingHandler(ModEntities.AMAZONCHIEF, RendererChiefAmazon::new);
+        event.registerEntityRenderer(ModEntities.AMAZON, RendererAmazon::new);
+        event.registerEntityRenderer(ModEntities.AMAZONCHIEF, RendererChiefAmazon::new);
 
-        RenderingRegistry.registerEntityRenderingHandler(ModEntities.MERCENARY, RenderMercenary::new);
-        RenderingRegistry.registerEntityRenderingHandler(ModEntities.SITTINGENTITY, RenderSitting::new);
-        RenderingRegistry.registerEntityRenderingHandler(ModEntities.MINECART, MinecartRenderer::new);
+        event.registerEntityRenderer(ModEntities.MERCENARY, RenderMercenary::new);
+        event.registerEntityRenderer(ModEntities.SITTINGENTITY, RenderSitting::new);
+        event.registerEntityRenderer(ModEntities.MINECART, (context) -> new MinecartRenderer<>(context, ModelLayers.MINECART));
 
-        BlockEntityRenderers.register(MinecoloniesTileEntities.BUILDING, EmptyTileEntitySpecialRenderer::new);
-        BlockEntityRenderers.register(MinecoloniesTileEntities.SCARECROW, TileEntityScarecrowRenderer::new);
-        BlockEntityRenderers.register(MinecoloniesTileEntities.ENCHANTER, TileEntityEnchanterRenderer::new);
-        BlockEntityRenderers.register(MinecoloniesTileEntities.COLONY_FLAG, TileEntityColonyFlagRenderer::new);
-        BlockEntityRenderers.register(MinecoloniesTileEntities.NAMED_GRAVE, TileEntityNamedGraveRenderer::new);
+        event.registerBlockEntityRenderer(MinecoloniesTileEntities.BUILDING, EmptyTileEntitySpecialRenderer::new);
+        event.registerBlockEntityRenderer(MinecoloniesTileEntities.SCARECROW, TileEntityScarecrowRenderer::new);
+        event.registerBlockEntityRenderer(MinecoloniesTileEntities.ENCHANTER, TileEntityEnchanterRenderer::new);
+        event.registerBlockEntityRenderer(MinecoloniesTileEntities.COLONY_FLAG, TileEntityColonyFlagRenderer::new);
+        event.registerBlockEntityRenderer(MinecoloniesTileEntities.NAMED_GRAVE, TileEntityNamedGraveRenderer::new);
 
         Arrays.stream(ModBlocks.getHuts())
           .forEach(hut -> ItemBlockRenderTypes.setRenderLayer(hut, renderType -> renderType.equals(RenderType.cutout()) || renderType.equals(RenderType.solid())));
@@ -278,7 +279,7 @@ public class MineColonies
         ItemBlockRenderTypes.setRenderLayer(ModBlocks.blockBarrel, RenderType.cutout());
         ItemBlockRenderTypes.setRenderLayer(ModBlocks.blockWayPoint, RenderType.cutout());
     }
-
+    
     /**
      * Get the config handler.
      *

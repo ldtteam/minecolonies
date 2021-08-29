@@ -6,7 +6,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
@@ -39,17 +39,17 @@ public class RenderFishHook extends EntityRenderer<Entity>
     /**
      * Required constructor, sets the RenderManager.
      *
-     * @param renderManagerIn RenderManager that we use.
+     * @param context context that we use.
      */
-    public RenderFishHook(final EntityRenderDispatcher renderManagerIn)
+    public RenderFishHook(final EntityRendererProvider.Context context)
     {
-        super(renderManagerIn);
+        super(context);
     }
 
     @Override
     public void render(final Entity entityIn, final float entityYaw, final float partialTicks, @NotNull final PoseStack matrixStackIn, @NotNull final MultiBufferSource bufferIn, final int packedLightIn)
     {
-        NewBobberEntity bobber = (NewBobberEntity) entityIn.getEntity();
+        NewBobberEntity bobber = (NewBobberEntity) entityIn;
         if (bobber != null && bobber.getAngler() != null)
         {
             final EntityCitizen citizen = bobber.getAngler();

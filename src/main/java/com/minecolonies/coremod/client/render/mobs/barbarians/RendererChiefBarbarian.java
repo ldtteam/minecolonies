@@ -1,7 +1,8 @@
 package com.minecolonies.coremod.client.render.mobs.barbarians;
 
 import com.minecolonies.api.entity.mobs.barbarians.AbstractEntityBarbarian;
-import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.model.geom.ModelLayers;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.resources.ResourceLocation;
 
@@ -18,11 +19,11 @@ public class RendererChiefBarbarian extends AbstractRendererBarbarian<AbstractEn
     /**
      * Constructor method for renderer
      *
-     * @param renderManagerIn the renderManager
+     * @param context the renderManager
      */
-    public RendererChiefBarbarian(final EntityRenderDispatcher renderManagerIn)
+    public RendererChiefBarbarian(final EntityRendererProvider.Context context)
     {
-        super(renderManagerIn, new HumanoidModel<>(0.0F), 0.5F);
+        super(context, new HumanoidModel<>(context.bakeLayer(ModelLayers.PLAYER)), 0.5F);
     }
 
     @Override

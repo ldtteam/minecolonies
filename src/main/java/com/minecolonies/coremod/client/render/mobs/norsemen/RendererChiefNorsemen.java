@@ -2,7 +2,7 @@ package com.minecolonies.coremod.client.render.mobs.norsemen;
 
 import com.minecolonies.api.entity.mobs.vikings.AbstractEntityNorsemen;
 import com.minecolonies.coremod.client.model.raiders.ModelChiefNorsemen;
-import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,11 +19,11 @@ public class RendererChiefNorsemen extends AbstractRendererNorsemen<AbstractEnti
     /**
      * Constructor method for renderer
      *
-     * @param renderManagerIn the renderManager
+     * @param context the renderManager
      */
-    public RendererChiefNorsemen(final EntityRenderDispatcher renderManagerIn)
+    public RendererChiefNorsemen(final EntityRendererProvider.Context context)
     {
-        super(renderManagerIn, new ModelChiefNorsemen(), 0.5F);
+        super(context, new ModelChiefNorsemen(), 0.5F);
     }
 
     @NotNull
