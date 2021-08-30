@@ -10,6 +10,7 @@ import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandlerHelper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.SmeltingRecipe;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -19,7 +20,7 @@ import java.util.Map;
 /**
  * JEI recipe transfer handler for teaching furnace recipes
  */
-public class PrivateSmeltingTeachingTransferHandler implements IRecipeTransferHandler<ContainerCraftingFurnace>
+public class PrivateSmeltingTeachingTransferHandler implements IRecipeTransferHandler<ContainerCraftingFurnace, SmeltingRecipe>
 {
     private final IRecipeTransferHandlerHelper handlerHelper;
 
@@ -35,11 +36,17 @@ public class PrivateSmeltingTeachingTransferHandler implements IRecipeTransferHa
         return ContainerCraftingFurnace.class;
     }
 
+    @Override
+    public Class<SmeltingRecipe> getRecipeClass()
+    {
+        return SmeltingRecipe.class;
+    }
+
     @Nullable
     @Override
     public IRecipeTransferError transferRecipe(
             @NotNull final ContainerCraftingFurnace craftingGUIBuilding,
-            @NotNull final Object recipe,
+            @NotNull final SmeltingRecipe recipe,
             @NotNull final IRecipeLayout recipeLayout,
             @NotNull final Player player,
             final boolean maxTransfer,
