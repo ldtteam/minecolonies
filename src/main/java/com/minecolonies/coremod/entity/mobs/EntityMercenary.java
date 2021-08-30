@@ -148,7 +148,6 @@ public class EntityMercenary extends PathfinderMob implements Npc, IColonyRelate
         this.goalSelector.addGoal(4, new EntityAIInteractToggleAble(this, FENCE_TOGGLE, TRAP_TOGGLE, DOOR_TOGGLE));
         this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, Monster.class, 10, true, false, e -> e instanceof Enemy && !(e instanceof Llama)));
 
-        //todo 1.17 this.forcedLoading = true;
         setCustomNameVisible(true);
         this.setPersistenceRequired();
 

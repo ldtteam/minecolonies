@@ -1,27 +1,15 @@
 package com.minecolonies.coremod.generation.defaults;
 
-import com.google.common.collect.Lists;
-import com.ldtteam.structurize.blocks.decorative.BlockTimberFrame;
-import com.ldtteam.structurize.blocks.types.TimberFrameCentreType;
-import com.ldtteam.structurize.blocks.types.TimberFrameType;
-import com.ldtteam.structurize.blocks.types.WoodType;
-import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.coremod.generation.CustomRecipeProvider;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
-
-import java.util.Arrays;
-import java.util.List;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 import static com.ldtteam.structurize.api.util.constant.Constants.MOD_ID;
-import static com.ldtteam.structurize.items.ModItems.buildTool;
 
-import com.minecolonies.coremod.generation.CustomRecipeProvider.CustomRecipeBuilder;
 
 public class SawmillTimberFrameRecipeProvider extends CustomRecipeProvider
 {
@@ -33,28 +21,7 @@ public class SawmillTimberFrameRecipeProvider extends CustomRecipeProvider
     @Override
     protected void registerRecipes(final Consumer<FinishedRecipe> consumer)
     {
-        for (final WoodType frameType : WoodType.values())
-        {
-            for (final TimberFrameCentreType centreType : TimberFrameCentreType.values())
-            {
-                    final String id = String.format("%s_%s_timber_frame", frameType.getSerializedName(), centreType.getSerializedName());
-                    final ItemStorage frame = new ItemStorage(new ItemStack(frameType.getMaterial(), 1));
-                    final ItemStorage centre = new ItemStorage(new ItemStack(centreType.getMaterial()));
-
-                    final List<ItemStack> results = Arrays.stream(TimberFrameType.values())
-                                                      .map(type -> idToStructurize(BlockTimberFrame.getName(type, frameType, centreType), 4))
-                                                      .collect(Collectors.toList());
-
-
-                    CustomRecipeBuilder.create("sawmill_crafting", id)
-                      .inputs(Lists.newArrayList(frame, centre, new ItemStorage(new ItemStack(buildTool.get()))))
-                      .alternateOutputs(results.subList(1, results.size()))
-                      .result(results.get(0))
-                      .mustExist(true)
-                      .build(consumer);
-
-            }
-        }
+       //todo 1.17
     }
 
     private static ItemStack idToStructurize(final String name, final int count)

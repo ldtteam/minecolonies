@@ -5,16 +5,12 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.util.MutableChunkPos;
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.*;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
-import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.BufferBuilder.DrawState;
 import com.mojang.blaze3d.platform.MemoryTracker;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.BufferUploader;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.InteractionHand;
@@ -109,23 +105,23 @@ public class DebugRendererChunkBorder
         stack.translate(-currView.x, -currView.y, -currView.z);
 
         RenderSystem.enableDepthTest();
-        RenderSystem.shadeModel(7425);
-        RenderSystem.enableAlphaTest();
-        RenderSystem.defaultAlphaFunc();
+        //todo 1.17 RenderSystem.shadeModel(7425);
+        //todo 1.17RenderSystem.enableAlphaTest();
+        //todo 1.17RenderSystem.defaultAlphaFunc();
         RenderSystem.disableTexture();
         RenderSystem.disableBlend();
         RenderSystem.lineWidth(1.0F);
 
-        RenderSystem.pushMatrix();
-        RenderSystem.loadIdentity();
-        RenderSystem.multMatrix(stack.last().pose());
-        BufferUploader._end(buffer.getSecond(), buffer.getFirst().mode(), buffer.getFirst().format(), buffer.getFirst().vertexCount());
-        RenderSystem.popMatrix();
+        //todo 1.17RenderSystem.pushMatrix();
+        //todo 1.17RenderSystem.loadIdentity();
+        //todo 1.17RenderSystem.multMatrix(stack.last().pose());
+        //todo 1.17BufferUploader._end(buffer.getSecond(), buffer.getFirst().mode(), buffer.getFirst().format(), buffer.getFirst().vertexCount());
+        //todo 1.17RenderSystem.popMatrix();
 
         RenderSystem.lineWidth(1.0F);
         RenderSystem.enableBlend();
         RenderSystem.enableTexture();
-        RenderSystem.shadeModel(7424);
+        //todo 1.17RenderSystem.shadeModel(7424);
 
         stack.popPose();
     }
@@ -136,7 +132,7 @@ public class DebugRendererChunkBorder
         final ChunkPos playerChunkPos,
         final int playerRenderDist)
     {
-        bufferbuilder.begin(GL11.GL_LINES, DefaultVertexFormat.POSITION_COLOR);
+        bufferbuilder.begin(VertexFormat.Mode.LINES, DefaultVertexFormat.POSITION_COLOR);
 
         final MutableChunkPos mutableChunkPos = new MutableChunkPos(0, 0);
 
@@ -313,7 +309,7 @@ public class DebugRendererChunkBorder
 
         // create bytebuffer copy since buffer builder uses slice
         final Pair<DrawState, ByteBuffer> preResult = bufferbuilder.popNextBuffer();
-        ByteBuffer temp = MemoryTracker.createByteBuffer(preResult.getSecond().capacity());
+        ByteBuffer temp = MemoryTracker.create(preResult.getSecond().capacity());
         ((Buffer) preResult.getSecond()).clear();
         ((Buffer) temp).clear();
         temp.put(preResult.getSecond());

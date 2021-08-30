@@ -82,7 +82,7 @@ public class DefaultBlockLootTableProvider implements DataProvider
             lootTableJson.setPools(Collections.singletonList(poolJson));
 
             final Path savePath = generator.getOutputFolder().resolve(DataGeneratorConstants.LOOT_TABLES_DIR).resolve(block.getRegistryName().getPath() + ".json");
-            IDataProvider.save(DataGeneratorConstants.GSON, cache, lootTableJson.serialize(), savePath);
+            DataProvider.save(DataGeneratorConstants.GSON, cache, lootTableJson.serialize(), savePath);
         }
     }
 

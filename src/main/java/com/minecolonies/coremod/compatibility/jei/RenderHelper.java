@@ -2,6 +2,7 @@ package com.minecolonies.coremod.compatibility.jei;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -38,7 +39,7 @@ public class RenderHelper
     {
         final Minecraft mc = Minecraft.getInstance();
 
-        matrixStack.pushPose();
+        /*matrixStack.pushPose();
         matrixStack.translate(x, y, z);
         matrixStack.scale(-scale, -scale, -scale);
         matrixStack.translate(-0.5F, -0.5F, 0);
@@ -58,7 +59,8 @@ public class RenderHelper
         buffers.endBatch();
         matrixStack.popPose();
 
-        matrixStack.popPose();
+        matrixStack.popPose();*/
+        //todo 1.17
     }
 
     /**
@@ -86,14 +88,14 @@ public class RenderHelper
         final Quaternion pitchRotation = Vector3f.XP.rotationDegrees(pitchAngle * 20.0F);
         matrixStack.mulPose(Vector3f.ZP.rotationDegrees(180.0F));
         matrixStack.mulPose(pitchRotation);
-        final float oldYawOffset = livingEntity.yBodgetYRot();
+        final float oldYawOffset = livingEntity.yBodyRot;
         final float oldYaw = livingEntity.getYRot();
         final float oldPitch = livingEntity.getXRot();
         final float oldPrevYawHead = livingEntity.yHeadRotO;
         final float oldYawHead = livingEntity.yHeadRot;
-        livingEntity.yBodgetYRot() = 180.0F + yawAngle * 20.0F;
-        livingEntity.getYRot() = 180.0F + yawAngle * 40.0F;
-        livingEntity.getXRot() = -pitchAngle * 20.0F;
+        livingEntity.yBodyRot = 180.0F + yawAngle * 20.0F;
+        livingEntity.setYRot(180.0F + yawAngle * 40.0F);
+        livingEntity.setXRot(-pitchAngle * 20.0F);
         livingEntity.yHeadRot = livingEntity.getYRot();
         livingEntity.yHeadRotO = livingEntity.getYRot();
         final EntityRenderDispatcher entityrenderermanager = mc.getEntityRenderDispatcher();
@@ -104,9 +106,9 @@ public class RenderHelper
         RenderSystem.runAsFancy(() -> entityrenderermanager.render(livingEntity, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F, matrixStack, buffers, 0x00F000F0));
         buffers.endBatch();
         entityrenderermanager.setRenderShadow(true);
-        livingEntity.yBodgetYRot() = oldYawOffset;
-        livingEntity.getYRot() = oldYaw;
-        livingEntity.getXRot() = oldPitch;
+        livingEntity.yBodyRot = oldYawOffset;
+        livingEntity.setYRot(oldYaw);
+        livingEntity.setXRot(oldPitch);
         livingEntity.yHeadRotO = oldPrevYawHead;
         livingEntity.yHeadRot = oldYawHead;
         matrixStack.popPose();
