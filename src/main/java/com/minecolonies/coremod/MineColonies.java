@@ -4,6 +4,7 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.util.StructureLoadingUtils;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.blocks.ModBlocks;
+import com.minecolonies.api.client.render.modeltype.AmazonModel;
 import com.minecolonies.api.colony.IChunkmanagerCapability;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.configuration.Configuration;
@@ -17,6 +18,8 @@ import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.apiimp.initializer.InteractionValidatorInitializer;
+import com.minecolonies.coremod.client.model.raiders.ModelAmazon;
+import com.minecolonies.coremod.client.model.raiders.ModelAmazonChief;
 import com.minecolonies.coremod.client.render.*;
 import com.minecolonies.coremod.client.render.mobs.RenderMercenary;
 import com.minecolonies.coremod.client.render.mobs.amazon.RendererAmazon;
@@ -42,6 +45,7 @@ import com.minecolonies.coremod.proxy.ClientProxy;
 import com.minecolonies.coremod.proxy.CommonProxy;
 import com.minecolonies.coremod.proxy.IProxy;
 import com.minecolonies.coremod.proxy.ServerProxy;
+import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
@@ -278,6 +282,18 @@ public class MineColonies
         ItemBlockRenderTypes.setRenderLayer(ModBlocks.blockCompostedDirt, RenderType.cutout());
         ItemBlockRenderTypes.setRenderLayer(ModBlocks.blockBarrel, RenderType.cutout());
         ItemBlockRenderTypes.setRenderLayer(ModBlocks.blockWayPoint, RenderType.cutout());
+    }
+
+    public static final ModelLayerLocation AMAZON = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "amazon"), "amazon");
+    public static final ModelLayerLocation AMAZON_CHIEF = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "amazon_chief"), "amazon_chief");
+
+
+    @OnlyIn(Dist.CLIENT)
+    @SubscribeEvent
+    public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event)
+    {
+        event.registerLayerDefinition(AMAZON, ModelAmazon::createMesh);
+        event.registerLayerDefinition(AMAZON_CHIEF, ModelAmazonChief::createMesh);
     }
     
     /**

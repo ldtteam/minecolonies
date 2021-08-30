@@ -1,6 +1,8 @@
 package com.minecolonies.coremod.client.render.mobs.amazon;
 
 import com.minecolonies.api.entity.mobs.amazons.AbstractEntityAmazon;
+import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.client.model.raiders.ModelAmazon;
 import com.minecolonies.coremod.client.model.raiders.ModelAmazonChief;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
@@ -23,7 +25,7 @@ public class RendererChiefAmazon extends AbstractRendererAmazon<AbstractEntityAm
      */
     public RendererChiefAmazon(final EntityRendererProvider.Context context)
     {
-        super(context, new ModelAmazonChief(), 0.5F);
+        super(context, new ModelAmazonChief(context.bakeLayer(MineColonies.AMAZON_CHIEF)), 0.5F);
     }
 
     @NotNull

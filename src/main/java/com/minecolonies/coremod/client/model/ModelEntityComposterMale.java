@@ -6,76 +6,80 @@ package com.minecolonies.coremod.client.model;
 import com.minecolonies.api.client.render.modeltype.CitizenModel;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.model.geom.PartPose;
+import net.minecraft.client.model.geom.builders.*;
+import net.minecraft.client.model.HumanoidModel;
 
 public class ModelEntityComposterMale extends CitizenModel<AbstractEntityCitizen>
 {
-    public ModelEntityComposterMale()
+
+    public ModelEntityComposterMale(final ModelPart part)
     {
-        ModelPart bootL;
-        ModelPart bootR;
-        ModelPart gloveL;
-        ModelPart gloveR;
-        ModelPart headDetail;
-
-        texWidth = 128;
-        texHeight = 64;
-
-        leftLeg = new ModelPart(this);
-        leftLeg.setPos(2.0F, 12.0F, 0.0F);
-        leftLeg.texOffs(0, 16).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, false);
-
-        bootL = new ModelPart(this);
-        bootL.setPos(2.0F, 12.0F, 0.0F);
-        leftLeg.addChild(bootL);
-        bootL.texOffs(0, 38).addBox(-4.5F, -8.0F, -2.5F, 5.0F, 2.0F, 5.0F, 0.0F, true);
-
-        rightLeg = new ModelPart(this);
-        rightLeg.setPos(-2.0F, 12.0F, 0.0F);
-        rightLeg.texOffs(0, 16).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, true);
-
-        bootR = new ModelPart(this);
-        bootR.setPos(-2.0F, 12.0F, 0.0F);
-        rightLeg.addChild(bootR);
-        bootR.texOffs(20, 38).addBox(-0.5F, -8.0F, -2.5F, 5.0F, 2.0F, 5.0F, 0.0F, true);
-
-        leftArm = new ModelPart(this);
-        leftArm.setPos(5.0F, 2.0F, 0.0F);
-        leftArm.texOffs(40, 16).addBox(-1.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, true);
-
-        gloveL = new ModelPart(this);
-        gloveL.setPos(5.0F, 2.0F, 0.0F);
-        leftArm.addChild(gloveL);
-        gloveL.texOffs(0, 32).addBox(-6.5F, 3.0F, -2.5F, 5.0F, 1.0F, 5.0F, 0.0F, true);
-
-        rightArm = new ModelPart(this);
-        rightArm.setPos(-5.0F, 2.0F, 0.0F);
-        rightArm.texOffs(40, 16).addBox(-3.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, false);
-
-        gloveR = new ModelPart(this);
-        gloveR.setPos(-5.0F, 2.0F, 0.0F);
-        rightArm.addChild(gloveR);
-        gloveR.texOffs(20, 32).addBox(1.5F, 3.0F, -2.5F, 5.0F, 1.0F, 5.0F, 0.0F, true);
-
-        head = new ModelPart(this);
-        head.setPos(0.0F, 0.0F, 0.0F);
-        head.texOffs(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, 0.0F, false);
-
-        headDetail = new ModelPart(this);
-        headDetail.setPos(0.0F, 0.0F, 1.0F);
-        head.addChild(headDetail);
-        headDetail.texOffs(32, 0).addBox(-4.0F, -8.0F, -5.0F, 8.0F, 8.0F, 8.0F, 0.5F, false);
-
-        body = new ModelPart(this);
-        body.setPos(0.0F, 0.0F, 0.0F);
-        body.texOffs(16, 16).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, 0.0F, false);
-
+        super(part);
         hat.visible = false;
     }
 
-    public void setRotationAngle(ModelPart modelRenderer, float x, float y, float z)
+    public static LayerDefinition createMesh()
     {
-        modelRenderer.xRot = x;
-        modelRenderer.yRot = y;
-        modelRenderer.zRot = z;
+        MeshDefinition meshdefinition = HumanoidModel.createMesh(CubeDeformation.NONE, 0.0F);
+        PartDefinition partDefinition = meshdefinition.getRoot();
+
+        PartDefinition leftLegDefinition = partDefinition.addOrReplaceChild("left_leg",
+          CubeListBuilder.create()
+            .texOffs(0, 16).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F)
+          , PartPose.offset(2.0F, 12.0F, 0.0F));
+
+        PartDefinition bootLDefinition = leftLegDefinition.addOrReplaceChild("bootL",
+          CubeListBuilder.create()
+            .texOffs(0, 38).addBox(-4.5F, -8.0F, -2.5F, 5.0F, 2.0F, 5.0F).mirror()
+          , PartPose.offset(2.0F, 12.0F, 0.0F));
+
+        PartDefinition rightLegDefinition = partDefinition.addOrReplaceChild("right_leg",
+          CubeListBuilder.create()
+            .texOffs(0, 16).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F).mirror()
+          , PartPose.offset(-2.0F, 12.0F, 0.0F));
+
+        PartDefinition bootRDefinition = rightLegDefinition.addOrReplaceChild("bootR",
+          CubeListBuilder.create()
+            .texOffs(20, 38).addBox(-0.5F, -8.0F, -2.5F, 5.0F, 2.0F, 5.0F).mirror()
+          , PartPose.offset(-2.0F, 12.0F, 0.0F));
+
+        PartDefinition leftArmDefinition = partDefinition.addOrReplaceChild("left_arm",
+          CubeListBuilder.create()
+            .texOffs(40, 16).addBox(-1.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F).mirror()
+          , PartPose.offset(5.0F, 2.0F, 0.0F));
+
+        PartDefinition gloveLDefinition = leftArmDefinition.addOrReplaceChild("gloveL",
+          CubeListBuilder.create()
+            .texOffs(0, 32).addBox(-6.5F, 3.0F, -2.5F, 5.0F, 1.0F, 5.0F).mirror()
+          , PartPose.offset(5.0F, 2.0F, 0.0F));
+
+        PartDefinition rightArmDefinition = partDefinition.addOrReplaceChild("right_arm",
+          CubeListBuilder.create()
+            .texOffs(40, 16).addBox(-3.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F)
+          , PartPose.offset(-5.0F, 2.0F, 0.0F));
+
+        PartDefinition gloveRDefinition = rightArmDefinition.addOrReplaceChild("gloveR",
+          CubeListBuilder.create()
+            .texOffs(20, 32).addBox(1.5F, 3.0F, -2.5F, 5.0F, 1.0F, 5.0F).mirror()
+          , PartPose.offset(-5.0F, 2.0F, 0.0F));
+
+        PartDefinition headDefinition = partDefinition.addOrReplaceChild("head",
+          CubeListBuilder.create()
+            .texOffs(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F)
+            .texOffs(32, 0).addBox(-4.0F, -8.0F, -5.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(0.5F))
+          , PartPose.offset(0.0F, 0.0F, 1.0F));
+
+        PartDefinition headDetailDefinition = headDefinition.addOrReplaceChild("headDetail",
+          CubeListBuilder.create()
+            .texOffs(32, 0).addBox(-4.0F, -8.0F, -5.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(0.5F))
+          , PartPose.offset(0.0F, 0.0F, 1.0F));
+
+        PartDefinition bodyDefinition = partDefinition.addOrReplaceChild("body",
+          CubeListBuilder.create()
+            .texOffs(16, 16).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F)
+          , PartPose.offset(0.0F, 0.0F, 0.0F));
+
+        return LayerDefinition.create(meshdefinition, 128, 64);
     }
 }
