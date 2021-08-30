@@ -651,11 +651,17 @@ public class CitizenData implements ICitizenData
     }
 
     @Override
-    public void setIsFemale(final boolean isFemale)
+    public void setGenderAndGenerateName(final boolean isFemale)
     {
         this.female = isFemale;
         this.name = generateName(random, isFemale, getColony());
         markDirty();
+    }
+
+    @Override
+    public void setGender(final boolean isFemale)
+    {
+        this.female = isFemale;
     }
 
     @Override

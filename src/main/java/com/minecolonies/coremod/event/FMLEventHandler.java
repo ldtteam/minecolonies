@@ -3,6 +3,7 @@ package com.minecolonies.coremod.event;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.datalistener.CrafterRecipeListener;
+import com.minecolonies.coremod.datalistener.CustomVisitorListener;
 import com.minecolonies.coremod.datalistener.ResearchListener;
 import com.minecolonies.coremod.entity.pathfinding.Pathfinding;
 import com.minecolonies.coremod.network.messages.client.ColonyStylesMessage;
@@ -58,6 +59,7 @@ public class FMLEventHandler
     {
         event.addListener(new CrafterRecipeListener(event.getDataPackRegistries()));
         event.addListener(new ResearchListener());
+        event.addListener(new CustomVisitorListener());
     }
 
     @SubscribeEvent

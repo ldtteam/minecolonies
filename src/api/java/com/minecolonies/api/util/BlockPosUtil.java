@@ -20,6 +20,7 @@ import net.minecraft.util.Rotation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.MutableBoundingBox;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
@@ -457,6 +458,24 @@ public final class BlockPosUtil
                                               + xDiff + " | " + zDiff);
         }
         return result;
+    }
+
+    /**
+     * Returns a radial bounding box aligned to chunk boundaries.  Note that the Y coordinate
+     * is also aligned to chunk-like sizes; this does not return full world height.  (It also
+     * might return Y coordinates outside the world limits, so clip before using if needed.)
+     * @param pos A position inside the center chunk.
+     * @param chunkRadius 0 for one chunk, 1 for nine chunks, etc.
+     * @return The specified bounding box.
+     */
+    public static MutableBoundingBox getChunkAlignedBB(final BlockPos pos, final int chunkRadius)
+    {
+        final int blockRadius = chunkRadius * 16;
+        final int x1 = pos.getX() & ~15;
+        final int y1 = pos.getY() & ~15;
+        final int z1 = pos.getZ() & ~15;
+        return new MutableBoundingBox(x1 - blockRadius, y1 - blockRadius, z1 - blockRadius,
+                x1 + blockRadius + 15, y1 + blockRadius + 15, z1 + blockRadius + 15);
     }
 
     /**

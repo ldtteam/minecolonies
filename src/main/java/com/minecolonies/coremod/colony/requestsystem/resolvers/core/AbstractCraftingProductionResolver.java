@@ -157,23 +157,23 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
                 //if recipe secondary produces craftinghelperstack, don't add it by count, add it once. If it's in the tools list, check to see if we need it first. 
                 if(!storage.getSecondaryOutputs().isEmpty() && ItemStackUtils.compareItemStackListIgnoreStackSize(storage.getSecondaryOutputs(), craftingHelperStack, false, true))
                 {
-                    materialRequests.add(createNewRequestForStack(manager, craftingHelperStack, ingredient.getAmount(), ingredient.getAmount()));
+                    materialRequests.add(createNewRequestForStack(manager, craftingHelperStack, ingredient.getAmount(), ingredient.getAmount(), false));
                 }
                 else if(!storage.getCraftingTools().isEmpty() && ItemStackUtils.compareItemStackListIgnoreStackSize(storage.getCraftingTools(), craftingHelperStack, false, true))
                 {
                     if(InventoryUtils.getItemCountInProvider(building, item -> ItemStackUtils.compareItemStacksIgnoreStackSize(item, craftingHelperStack, false, true)) <= ingredient.getAmount())
                     {
                         int requiredForDurability = (int) Math.ceil((double) count / ingredient.getRemainingDurablityValue());
-                        materialRequests.add(createNewRequestForStack(manager, craftingHelperStack, requiredForDurability , requiredForDurability));
+                        materialRequests.add(createNewRequestForStack(manager, craftingHelperStack, requiredForDurability , requiredForDurability, false));
                     }
                 }
                 else if (!ItemStackUtils.isEmpty(container) && ItemStackUtils.compareItemStacksIgnoreStackSize(container, craftingHelperStack, false, true))
                 {
-                    materialRequests.add(createNewRequestForStack(manager, craftingHelperStack, ingredient.getAmount(), ingredient.getAmount()));
+                    materialRequests.add(createNewRequestForStack(manager, craftingHelperStack, ingredient.getAmount(), ingredient.getAmount(), false));
                 } 
                 else
                 {
-                    materialRequests.add(createNewRequestForStack(manager, craftingHelperStack, ingredient.getAmount() * count, ingredient.getAmount() * minCount ));
+                    materialRequests.add(createNewRequestForStack(manager, craftingHelperStack, ingredient.getAmount() * count, ingredient.getAmount() * minCount, true ));
                 }
             }
         }
@@ -181,9 +181,9 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
     }
 
     @Nullable
-    protected IToken<?> createNewRequestForStack(@NotNull final IRequestManager manager, final ItemStack stack, final int count, final int minCount)
+    protected IToken<?> createNewRequestForStack(@NotNull final IRequestManager manager, final ItemStack stack, final int count, final int minCount, final boolean matchMeta)
     {
-        final Stack stackRequest = new Stack(stack, false, true, false, ItemStack.EMPTY, count, minCount);
+        final Stack stackRequest = new Stack(stack, matchMeta, true, false, ItemStack.EMPTY, count, minCount);
         return manager.createRequest(this, stackRequest);
     }
 

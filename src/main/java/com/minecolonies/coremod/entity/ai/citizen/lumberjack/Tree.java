@@ -9,6 +9,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.BlockStateUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -134,8 +135,9 @@ public class Tree
      *
      * @param world The world where the tree is in.
      * @param log   the position of the found log.
+     * @param colony the colony the tree is in.
      */
-    public Tree(@NotNull final World world, @NotNull final BlockPos log)
+    public Tree(@NotNull final World world, @NotNull final BlockPos log, final IColony colony)
     {
         final Block block = BlockPosUtil.getBlock(world, log);
         if (block.is(BlockTags.LOGS) || Compatibility.isSlimeBlock(block) || Compatibility.isDynamicBlock(block))
@@ -146,7 +148,7 @@ public class Tree
             location = log;
             topLog = log;
 
-            addAndSearch(world, log);
+            addAndSearch(world, log, colony);
             addAndSearch(world);
 
             checkTree(world, topLog);
@@ -598,9 +600,9 @@ public class Tree
      *
      * @param world The world where the blocks are in.
      */
-    public void findLogs(@NotNull final World world)
+    public void findLogs(@NotNull final World world, final IColony colony)
     {
-        addAndSearch(world, location);
+        addAndSearch(world, location, colony);
         woodBlocks.sort((c1, c2) -> (int) (c1.distSqr(location) - c2.distSqr(location)));
         if (getStumpLocations().isEmpty())
         {
@@ -630,9 +632,14 @@ public class Tree
      * @param world The world the log is in.
      * @param log   the log to add.
      */
-    private void addAndSearch(@NotNull final World world, @NotNull final BlockPos log)
+    private void addAndSearch(@NotNull final World world, @NotNull final BlockPos log, final IColony colony)
     {
         if (woodBlocks.size() >= MineColonies.getConfig().getServer().maxTreeSize.get())
+        {
+            return;
+        }
+
+        if (woodBlocks.contains(log))
         {
             return;
         }
@@ -653,6 +660,14 @@ public class Tree
             topLog = log;
         }
 
+        for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
+        {
+            if (building.isInBuilding(log))
+            {
+                return;
+            }
+        }
+
         woodBlocks.add(log);
 
         // Only add the base to a dynamic tree
@@ -660,6 +675,7 @@ public class Tree
         {
             return;
         }
+
 
         for (int y = -1; y <= 1; y++)
         {
@@ -669,9 +685,9 @@ public class Tree
                 {
                     final BlockPos temp = log.offset(x, y, z);
                     final Block block = BlockPosUtil.getBlock(world, temp);
-                    if ((block.is(BlockTags.LOGS) || Compatibility.isSlimeBlock(block)) && !woodBlocks.contains(temp))
+                    if ((block.is(BlockTags.LOGS) || Compatibility.isSlimeBlock(block)))
                     {
-                        addAndSearch(world, temp);
+                        addAndSearch(world, temp, colony);
                     }
                 }
             }

@@ -1004,7 +1004,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     @Override
     public boolean shouldBeFed()
     {
-        return this.getCitizenData() != null && this.getCitizenData().getSaturation() <= AVERAGE_SATURATION && !this.getCitizenData().justAte();
+        return this.getCitizenData() != null && this.getCitizenData().getSaturation() <= AVERAGE_SATURATION && !this.getCitizenData().justAte() && isOkayToEat();
     }
 
     /**
@@ -1042,12 +1042,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         {
             if (desiredActivity == DesiredActivity.SLEEP)
             {
-                if (!getCitizenColonyHandler().getColony().getRaiderManager().isRaided()
-                      && !citizenData.getCitizenMournHandler().isMourning()
-                      && !CompatibilityUtils.getWorldFromCitizen(this).isRaining())
-                {
-            	    citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_SLEEPING), ChatPriority.HIDDEN));
-                }
                 setVisibleStatusIfNone(SLEEP);
                 return false;
             }

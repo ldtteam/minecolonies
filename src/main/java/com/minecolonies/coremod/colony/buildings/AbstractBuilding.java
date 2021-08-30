@@ -983,9 +983,9 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     }
 
     @Override
-    public void setGuardBuildingNear(final boolean guardBuildingNear)
+    public void resetGuardBuildingNear()
     {
-        this.guardBuildingNear = guardBuildingNear;
+        this.recheckGuardBuildingNear = true;
     }
 
     //------------------------- Starting Required Tools/Item handling -------------------------//
@@ -1849,7 +1849,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         }
 
         final int citizenID = getCitizensByRequest().get(token);
-        if (getColony().getCitizenManager().getCivilian(citizenID) == null)
+        if (citizenID == -1 || getColony().getCitizenManager().getCivilian(citizenID) == null)
         {
             return Optional.empty();
         }

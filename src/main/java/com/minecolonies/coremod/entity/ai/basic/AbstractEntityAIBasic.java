@@ -1243,7 +1243,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      * <p>
      * After x blocks, bring everything back.
      */
-    protected final void incrementActionsDoneAndDecSaturation()
+    public final void incrementActionsDoneAndDecSaturation()
     {
         worker.decreaseSaturationForAction();
         incrementActionsDone();

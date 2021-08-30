@@ -109,7 +109,8 @@ public final class ModBuildingsInitializer
                                  .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
                                  .addBuildingModuleProducer(() -> new SettingsModule()
                                                                     .with(BuildingBuilder.MODE, new StringSetting(BuildingBuilder.AUTO_SETTING, BuildingBuilder.MANUAL_SETTING))
-                                                                    .with(AbstractCraftingBuildingModule.RECIPE_MODE, new CrafterRecipeSetting()), () -> SettingsModuleView::new)
+                                                                    .with(AbstractCraftingBuildingModule.RECIPE_MODE, new CrafterRecipeSetting())
+                                                                    .with(BuildingBuilder.BUILDING_MODE, new BuilderModeSetting()), () -> SettingsModuleView::new)
                                  .addBuildingModuleProducer(SimpleCraftingModule::new, () -> CraftingModuleView::new)
                                  .addBuildingModuleViewProducer(() -> WorkOrderListModuleView::new)
                                  .addBuildingModuleProducer(BuildingResourcesModule::new, () -> BuildingResourcesModuleView::new)
@@ -198,6 +199,7 @@ public final class ModBuildingsInitializer
                                                                    .with(BuildingFarmer.FERTILIZE, new BoolSetting(true))
                                                                    .with(AbstractCraftingBuildingModule.RECIPE_MODE, new CrafterRecipeSetting()), () -> SettingsModuleView::new)
                                 .addBuildingModuleProducer(FarmerFieldModule::new, () -> FarmerFieldModuleView::new)
+                                .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
                                 .createBuildingEntry();
 
         ModBuildings.fisherman = new BuildingEntry.Builder()
@@ -258,6 +260,7 @@ public final class ModBuildingsInitializer
                                                                        .with(BuildingLumberjack.RESTRICT, new BoolSetting(false))
                                                                        .with(AbstractCraftingBuildingModule.RECIPE_MODE, new CrafterRecipeSetting()), () -> SettingsModuleView::new)
                                     .addBuildingModuleViewProducer(() -> () -> new ToolModuleView(ModItems.scepterLumberjack))
+                                    .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
                                     .createBuildingEntry();
 
         ModBuildings.miner = new BuildingEntry.Builder()

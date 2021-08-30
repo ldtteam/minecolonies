@@ -332,7 +332,10 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
     @Override
     public void onRemoval()
     {
-
+        if (workerAI.get() != null)
+        {
+            workerAI.get().onRemoval();
+        }
     }
 
     @Override

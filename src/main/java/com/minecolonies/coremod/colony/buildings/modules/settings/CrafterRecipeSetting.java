@@ -4,7 +4,6 @@ import com.minecolonies.api.colony.buildings.modules.settings.ISettingsModuleVie
 import java.util.List;
 
 import static com.minecolonies.api.research.util.ResearchConstants.RECIPE_MODE;
-import static com.minecolonies.api.research.util.ResearchConstants.USE_TOTEM;
 
 /**
  * Stores the recipe setting for crafters.

@@ -42,9 +42,9 @@ public class Stack implements IConcreteDeliverable
     private final ItemStack theStack;
 
     /**
-     * If meta should match.
+     * If damage should match.
      */
-    private boolean matchMeta;
+    private boolean matchDamage;
 
     /**
      * If NBT should match.
@@ -129,7 +129,7 @@ public class Stack implements IConcreteDeliverable
      * Create a Stack deliverable.
      *
      * @param stack       the required stack.
-     * @param matchMeta   if meta has to be matched.
+     * @param matchDamage   if damage has to be matched.
      * @param matchNBT    if NBT has to be matched.
      * @param matchOreDic if the oredict has to be matched.
      * @param result      the result stack.
@@ -138,7 +138,7 @@ public class Stack implements IConcreteDeliverable
      */
     public Stack(
       @NotNull final ItemStack stack,
-      final boolean matchMeta,
+      final boolean matchDamage,
       final boolean matchNBT,
       final boolean matchOreDic,
       @NotNull final ItemStack result,
@@ -151,7 +151,7 @@ public class Stack implements IConcreteDeliverable
         }
 
         this.theStack = stack.copy();
-        this.matchMeta = matchMeta;
+        this.matchDamage = matchDamage;
         this.matchNBT = matchNBT;
         this.matchOreDic = matchOreDic;
         this.result = result;
@@ -170,7 +170,7 @@ public class Stack implements IConcreteDeliverable
     {
         final CompoundNBT compound = new CompoundNBT();
         compound.put(NBT_STACK, input.theStack.serializeNBT());
-        compound.putBoolean(NBT_MATCHMETA, input.matchMeta);
+        compound.putBoolean(NBT_MATCHMETA, input.matchDamage);
         compound.putBoolean(NBT_MATCHNBT, input.matchNBT);
         compound.putBoolean(NBT_MATCHOREDIC, input.matchOreDic);
         if (!ItemStackUtils.isEmpty(input.result))
@@ -219,7 +219,7 @@ public class Stack implements IConcreteDeliverable
     public static void serialize(final IFactoryController controller, final PacketBuffer buffer, final Stack input)
     {
         buffer.writeItem(input.theStack);
-        buffer.writeBoolean(input.matchMeta);
+        buffer.writeBoolean(input.matchDamage);
         buffer.writeBoolean(input.matchNBT);
         buffer.writeBoolean(input.matchOreDic);
 
@@ -265,7 +265,7 @@ public class Stack implements IConcreteDeliverable
             }
         }
 
-        return ItemStackUtils.compareItemStacksIgnoreStackSize(getStack(), stack, matchMeta, matchNBT);
+        return ItemStackUtils.compareItemStacksIgnoreStackSize(getStack(), stack, matchDamage, matchNBT);
     }
 
     @Override
@@ -301,10 +301,19 @@ public class Stack implements IConcreteDeliverable
         return matchNBT;
     }
 
+    /**
+     * Check if damage should be matched.
+     * @return true if so.
+     */
+    public boolean matchDamage()
+    {
+        return matchDamage;
+    }
+
     @Override
     public IDeliverable copyWithCount(final int newCount)
     {
-        return new Stack(this.theStack, this.matchMeta, this.matchNBT, this.matchOreDic, this.result, newCount, this.minCount);
+        return new Stack(this.theStack, this.matchDamage, this.matchNBT, this.matchOreDic, this.result, newCount, this.minCount);
     }
 
     @NotNull
@@ -328,7 +337,7 @@ public class Stack implements IConcreteDeliverable
 
         final Stack stack1 = (Stack) o;
 
-        if (matchMeta != stack1.matchMeta)
+        if (matchDamage != stack1.matchDamage)
         {
             return false;
         }
@@ -351,7 +360,7 @@ public class Stack implements IConcreteDeliverable
     public int hashCode()
     {
         int result1 = getStack().hashCode();
-        result1 = 31 * result1 + (matchMeta ? 1 : 0);
+        result1 = 31 * result1 + (matchDamage ? 1 : 0);
         result1 = 31 * result1 + (matchNBT ? 1 : 0);
         result1 = 31 * result1 + (matchOreDic ? 1 : 0);
         result1 = 31 * result1 + getResult().hashCode();

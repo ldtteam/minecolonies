@@ -577,11 +577,18 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         if (!this.isDone())
         {
             @NotNull final PathPointExtended pEx = (PathPointExtended) this.getPath().getNode(this.getPath().getNextNodeIndex());
-            final PathPointExtended pExNext = getPath().getNodeCount() > this.getPath().getNextNodeIndex() + 1
+            PathPointExtended pExNext = getPath().getNodeCount() > this.getPath().getNextNodeIndex() + 1
                                                 ? (PathPointExtended) this.getPath()
                                                                         .getNode(this.getPath()
-                                                                                                 .getNextNodeIndex() + 1)
-                                                : null;
+                                                                                                 .getNextNodeIndex() + 1): null;
+
+            if (pExNext != null && pEx.x == pExNext.x && pEx.z == pExNext.z)
+            {
+                pExNext = getPath().getNodeCount() > this.getPath().getNextNodeIndex() + 2
+                            ? (PathPointExtended) this.getPath()
+                                                    .getNode(this.getPath()
+                                                               .getNextNodeIndex() + 2): null;
+            }
 
             if (pEx.isOnRails() || pEx.isRailsExit())
             {
@@ -654,7 +661,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             {
                 case EAST:
                     forward = Math.min(Math.max(motion.x() - 1 * 0.01D, -1), 0);
-                    mob.vehicle.setDeltaMovement(motion.add(forward == -1 ? -1 : -1 * 0.01D, 0.0D, 0.0D));
+                    mob.vehicle.setDeltaMovement(motion.add(forward == -1 ? -1 : -0.01D, 0.0D, 0.0D));
                     break;
                 case WEST:
                     forward = Math.max(Math.min(motion.x() + 0.01D, 1), 0);
@@ -666,7 +673,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                     break;
                 case SOUTH:
                     forward = Math.min(Math.max(motion.z() - 1 * 0.01D, -1), 0);
-                    mob.vehicle.setDeltaMovement(motion.add(0.0D, 0.0D, forward == -1 ? -1 : -1 * 0.01D));
+                    mob.vehicle.setDeltaMovement(motion.add(0.0D, 0.0D, forward == -1 ? -1 : -0.01D));
                     break;
 
                 case DOWN:

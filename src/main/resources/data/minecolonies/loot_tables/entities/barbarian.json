@@ -16,22 +16,22 @@
         },
         {
           "type": "item",
-          "weight": 5,
+          "weight": 2,
           "name": "minecraft:golden_axe"
         },
         {
           "type": "item",
-          "weight": 15,
+          "weight": 5,
           "name": "minecraft:iron_axe"
         },
         {
           "type": "item",
-          "weight": 20,
+          "weight": 6,
           "name": "minecraft:stone_axe"
         },
         {
           "type": "item",
-          "weight": 10,
+          "weight": 3,
           "name": "minecolonies:ancienttome"
         }
       ]

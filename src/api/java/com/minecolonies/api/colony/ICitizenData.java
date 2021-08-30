@@ -369,4 +369,13 @@ public interface ICitizenData extends ICivilianData
      * On citizen being resurrected.
      */
     void onResurrect();
+
+    /**
+     * Check if the citizen has some kind of custom texture.
+     * @return true if so.
+     */
+    default boolean hasCustomTexture()
+    {
+        return false;
+    }
 }

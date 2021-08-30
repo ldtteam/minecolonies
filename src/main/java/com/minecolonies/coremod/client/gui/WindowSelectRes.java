@@ -23,7 +23,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_SELECT;
+import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 public class WindowSelectRes extends AbstractWindowSkeleton
 {
@@ -61,6 +61,11 @@ public class WindowSelectRes extends AbstractWindowSkeleton
     private String filter = "";
 
     /**
+     * Update delay.
+     */
+    private int tick;
+
+    /**
      * Create a selection window with the origin window as input.
      *
      * @param origin   the origin.
@@ -84,6 +89,15 @@ public class WindowSelectRes extends AbstractWindowSkeleton
         this.findPaneOfTypeByID("resourceName", Text.class).setText(new ItemStack(Items.AIR).getHoverName());
         this.test = test;
         this.consumer = consumer;
+
+        window.findPaneOfTypeByID(NAME_LABEL, TextField.class).setHandler(input -> {
+            final String newFilter = input.getText();
+            if (!newFilter.equals(filter))
+            {
+                filter = newFilter;
+                this.tick = 10;
+            }
+        });
     }
 
     /**
@@ -152,17 +166,13 @@ public class WindowSelectRes extends AbstractWindowSkeleton
     }
 
     @Override
-    public boolean onKeyTyped(char ch, int key)
+    public void onUpdate()
     {
-        boolean result = super.onKeyTyped(ch, key);
-        String name = this.findPaneOfTypeByID(INPUT_NAME, TextField.class).getText();
-        if (!name.isEmpty())
+        super.onUpdate();
+        if (tick > 0 && --tick == 0)
         {
-            this.filter = name;
+            updateResources();
         }
-
-        this.updateResources();
-        return result;
     }
 
     /**
