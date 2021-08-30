@@ -303,7 +303,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
           colony.getName());
         for (final Entity entity : raiders.keySet())
         {
-            entity.remove();
+            entity.remove(Entity.RemovalReason.DISCARDED);
         }
 
         raidBar.setVisible(false);
@@ -317,7 +317,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
         {
             spawners.remove(te.getBlockPos());
 
-            raidBar.setPercent((float) spawners.size() / maxSpawners);
+            raidBar.setProgress((float) spawners.size() / maxSpawners);
             // remove at nightfall after spawners are killed.
             if (spawners.isEmpty())
             {
@@ -352,7 +352,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     {
         if (!(entity instanceof AbstractEntityMinecoloniesMob) || !entity.isAlive())
         {
-            entity.remove();
+            entity.remove(Entity.RemovalReason.DISCARDED);
             return;
         }
 
@@ -362,7 +362,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
         }
         else
         {
-            entity.remove();
+            entity.remove(Entity.RemovalReason.DISCARDED);
         }
     }
 

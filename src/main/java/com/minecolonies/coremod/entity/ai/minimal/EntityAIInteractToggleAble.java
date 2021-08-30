@@ -1,11 +1,15 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
 import com.minecolonies.api.util.WorldUtil;
-import net.minecraft.block.*;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.DoorBlock;
+import net.minecraft.world.level.block.FenceGateBlock;
+import net.minecraft.world.level.block.TrapDoorBlock;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -18,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-import static net.minecraft.block.DoorBlock.OPEN;
+import static net.minecraft.world.level.block.FenceGateBlock.OPEN;
 
 /**
  * AI Taimport net.minecraft.world.level.block.Blocks;
@@ -328,7 +332,7 @@ public class EntityAIInteractToggleAble extends Goal
                 final BlockState state = entity.level.getBlockState(pos);
                 if (toggleAble.isBlockToggleAble(state))
                 {
-                    toggleAble.toggleBlockClosed(state, entity.level, pos);
+                    toggleAble.toggleBlockClosed(entity, state, entity.level, pos);
                     break;
                 }
             }
@@ -400,7 +404,7 @@ public class EntityAIInteractToggleAble extends Goal
                 {
                     if (toggleAble.isBlockToggleAble(blockState))
                     {
-                        toggleAble.toggleBlockClosed(blockState, entity.level, pos);
+                        toggleAble.toggleBlockClosed(entity, blockState, entity.level, pos);
                         break;
                     }
                 }
@@ -419,7 +423,7 @@ public class EntityAIInteractToggleAble extends Goal
                 {
                     if (toggleAble.isBlockToggleAble(state))
                     {
-                        toggleAble.toggleBlock(state, entity.level, chosen);
+                        toggleAble.toggleBlock(entity, state, entity.level, chosen);
                         break;
                     }
                 }
@@ -443,20 +447,22 @@ public class EntityAIInteractToggleAble extends Goal
         /**
          * Toggles the given state
          *
+         * @param entity the entity doing it.
          * @param state state to toggle
          * @param world world to use
          * @param pos   position the block is at
          */
-        public abstract void toggleBlock(final BlockState state, final Level world, final BlockPos pos);
+        public abstract void toggleBlock(final Entity entity, final BlockState state, final Level world, final BlockPos pos);
 
         /**
          * Toggles the given state to closed
          *
+         * @param entity the entity doing it.
          * @param state state to toggle
          * @param world world to use
          * @param pos   position the block is at
          */
-        public abstract void toggleBlockClosed(final BlockState state, final Level world, final BlockPos pos);
+        public abstract void toggleBlockClosed(final Entity entity, final BlockState state, final Level world, final BlockPos pos);
     }
 
     /**
@@ -471,13 +477,13 @@ public class EntityAIInteractToggleAble extends Goal
         }
 
         @Override
-        public void toggleBlock(final BlockState state, final Level world, final BlockPos pos)
+        public void toggleBlock(final Entity entity, final BlockState state, final Level world, final BlockPos pos)
         {
             WorldUtil.setBlockState(world, pos, state.cycle(BlockStateProperties.OPEN));
         }
 
         @Override
-        public void toggleBlockClosed(final BlockState state, final Level world, final BlockPos pos)
+        public void toggleBlockClosed(final Entity entity, final BlockState state, final Level world, final BlockPos pos)
         {
             WorldUtil.setBlockState(world, pos, state.setValue(BlockStateProperties.OPEN, false));
         }
@@ -495,13 +501,13 @@ public class EntityAIInteractToggleAble extends Goal
         }
 
         @Override
-        public void toggleBlock(final BlockState state, final Level world, final BlockPos pos)
+        public void toggleBlock(final Entity entity, final BlockState state, final Level world, final BlockPos pos)
         {
             WorldUtil.setBlockState(world, pos, state.cycle(BlockStateProperties.OPEN));
         }
 
         @Override
-        public void toggleBlockClosed(final BlockState state, final Level world, final BlockPos pos)
+        public void toggleBlockClosed(final Entity entity, final BlockState state, final Level world, final BlockPos pos)
         {
             WorldUtil.setBlockState(world, pos, state.setValue(BlockStateProperties.OPEN, false));
         }
@@ -519,7 +525,7 @@ public class EntityAIInteractToggleAble extends Goal
         }
 
         @Override
-        public void toggleBlock(final BlockState state, final Level world, final BlockPos pos)
+        public void toggleBlock(final Entity entity, final BlockState state, final Level world, final BlockPos pos)
         {
             // Custom vanilla doors opening logic
             if (state.getBlock().getClass() == DoorBlock.class)
@@ -538,14 +544,14 @@ public class EntityAIInteractToggleAble extends Goal
             }
             else
             {
-                ((DoorBlock) state.getBlock()).setOpen(world, state, pos, !state.getValue(BlockStateProperties.OPEN));
+                ((DoorBlock) state.getBlock()).setOpen(entity, world, state, pos, !state.getValue(BlockStateProperties.OPEN));
             }
         }
 
         @Override
-        public void toggleBlockClosed(final BlockState state, final Level world, final BlockPos pos)
+        public void toggleBlockClosed(final Entity entity, final BlockState state, final Level world, final BlockPos pos)
         {
-            ((DoorBlock) state.getBlock()).setOpen(world, state, pos, false);
+            ((DoorBlock) state.getBlock()).setOpen(entity, world, state, pos, false);
         }
     }
 }

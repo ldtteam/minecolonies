@@ -100,7 +100,7 @@ public class EntityAIBreakDoor extends BreakDoorGoal
                 fasterBreakPerXNearby += colony.getResearchManager().getResearchEffects().getEffectStrength(MECHANIC_ENHANCED_GATES);
             }
             breakChance = Math.max(1,
-              hardness / (1 + (mob.level.getLoadedEntitiesOfClass(AbstractEntityMinecoloniesMob.class, mob.getBoundingBox().inflate(5)).size() / fasterBreakPerXNearby)));
+              hardness / (1 + (mob.level.getEntitiesOfClass(AbstractEntityMinecoloniesMob.class, mob.getBoundingBox().inflate(5)).size() / fasterBreakPerXNearby)));
         }
 
         if (this.breakTime == this.getDoorBreakTime() - 1)

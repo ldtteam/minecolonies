@@ -353,7 +353,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             {
                 final Entity entity = ourEntity.vehicle;
                 ourEntity.stopRiding();
-                entity.remove();
+                entity.remove(Entity.RemovalReason.DISCARDED);
             }
             else if (!pEx.isOnRails())
             {
@@ -361,7 +361,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                 {
                     final Entity entity = ourEntity.vehicle;
                     ourEntity.stopRiding();
-                    entity.remove();
+                    entity.remove(Entity.RemovalReason.DISCARDED);
                 }
                 else
                 {
@@ -372,7 +372,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             {
                 final Entity entity = ourEntity.vehicle;
                 ourEntity.stopRiding();
-                entity.remove();
+                entity.remove(Entity.RemovalReason.DISCARDED);
             }
         }
         return true;

@@ -56,7 +56,7 @@ public class AmazonRaidEvent extends HordeRaidEvent
     {
         if (!(entity instanceof AbstractEntityMinecoloniesMob) || !entity.isAlive())
         {
-            entity.remove();
+            entity.remove(Entity.RemovalReason.DISCARDED);
             return;
         }
 
@@ -72,7 +72,7 @@ public class AmazonRaidEvent extends HordeRaidEvent
             return;
         }
 
-        entity.remove();
+        entity.remove(Entity.RemovalReason.DISCARDED);
     }
 
     @Override

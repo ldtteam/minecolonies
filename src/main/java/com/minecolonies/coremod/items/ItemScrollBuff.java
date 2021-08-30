@@ -13,7 +13,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.text.*;
+
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
@@ -49,7 +49,7 @@ public class ItemScrollBuff extends AbstractItemScroll
     {
         if (world.random.nextInt(8) > 0)
         {
-            for (final LivingEntity entity : world.getLoadedEntitiesOfClass(EntityCitizen.class, player.getBoundingBox().inflate(15, 2, 15)))
+            for (final LivingEntity entity : world.getEntitiesOfClass(EntityCitizen.class, player.getBoundingBox().inflate(15, 2, 15)))
             {
                 addRegenerationWithParticles(entity);
             }

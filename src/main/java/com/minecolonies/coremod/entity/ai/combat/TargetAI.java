@@ -137,7 +137,7 @@ public class TargetAI<T extends LivingEntity & IThreatTableEntity> implements IS
             return true;
         }
 
-        final List<LivingEntity> entities = user.level.getLoadedEntitiesOfClass(LivingEntity.class, getSearchArea());
+        final List<LivingEntity> entities = user.level.getEntitiesOfClass(LivingEntity.class, getSearchArea());
 
         if (entities.isEmpty())
         {

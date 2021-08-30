@@ -5,15 +5,16 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.coremod.colony.IColonyManagerCapability;
 import com.minecolonies.coremod.commands.commandTypes.IMCCommand;
 import com.minecolonies.coremod.commands.commandTypes.IMCOPCommand;
+import com.minecolonies.coremod.entity.ai.citizen.miner.Level;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import net.minecraft.command.CommandSource;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.DimensionType;
-import net.minecraft.world.World;
-import net.minecraft.world.storage.FolderName;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.dimension.DimensionType;
+import net.minecraft.world.level.storage.LevelResource;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -76,10 +77,10 @@ public class CommandPruneWorld implements IMCOPCommand
 
         int deleteCount = 0;
 
-        final World world = context.getSource().getLevel();
+        final ServerLevel world = context.getSource().getLevel();
 
         // Local save folder for this word
-        final File saveDir = new File(DimensionType.getStorageFolder(world.dimension(), world.getServer().getWorldPath(FolderName.ROOT).toFile()), REGION_FOLDER);
+        final File saveDir = new File(DimensionType.getStorageFolder(world.dimension(), world.getServer().getWorldPath(LevelResource.ROOT).toFile()), REGION_FOLDER);
 
         // Colony list for this world
         List<IColony> colonies = new ArrayList<>();
@@ -112,12 +113,12 @@ public class CommandPruneWorld implements IMCOPCommand
                 {
                     if (!currentRegion.delete())
                     {
-                        context.getSource().sendSuccess(new StringTextComponent("Could not delete file:" + currentRegion.getPath()), true);
+                        context.getSource().sendSuccess(new TextComponent("Could not delete file:" + currentRegion.getPath()), true);
                     }
                     else
                     {
                         deleteCount++;
-                        context.getSource().sendSuccess(new StringTextComponent("Deleted file:" + currentRegion.getPath()), true);
+                        context.getSource().sendSuccess(new TextComponent("Deleted file:" + currentRegion.getPath()), true);
                     }
                 }
             }

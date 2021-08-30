@@ -122,7 +122,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
             return getState();
         }
 
-        for (final ItemEntity item : world.getLoadedEntitiesOfClass(ItemEntity.class, new AABB(worker.blockPosition()).expandTowards(4.0F, 1.0F, 4.0F).expandTowards(-4.0F, -1.0F, -4.0F)))
+        for (final ItemEntity item : world.getEntitiesOfClass(ItemEntity.class, new AABB(worker.blockPosition()).expandTowards(4.0F, 1.0F, 4.0F).expandTowards(-4.0F, -1.0F, -4.0F)))
         {
             if (item != null)
             {

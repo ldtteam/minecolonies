@@ -338,7 +338,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
      */
     public void searchForItems(final AABB boundingBox)
     {
-        items = world.getLoadedEntitiesOfClass(ItemEntity.class, boundingBox)
+        items = world.getEntitiesOfClass(ItemEntity.class, boundingBox)
                   .stream()
                   .filter(item -> item != null && item.isAlive() &&
                                     (!item.getPersistentData().getAllKeys().contains("PreventRemoteMovement") || !item.getPersistentData().getBoolean("PreventRemoteMovement")))

@@ -1,10 +1,10 @@
 package com.minecolonies.api.util;
 
 import com.minecolonies.api.colony.buildings.IBuilding;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.material.FluidState;
-import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
@@ -19,7 +19,6 @@ import net.minecraft.server.level.ServerLevel;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -265,10 +264,10 @@ public class WorldUtil
 
         if ((flags & 2) != 0)
         {
-            final Set<PathNavigation> navigators = ((ServerLevel) world).navigatingMobs;
-            ((ServerLevel) world).navigatingMobs = Collections.emptySet();
+            final Set<Mob> navigators = ((ServerLevel) world).navigatingMobs;
+            ((ServerLevel) world).navigatingMobs.clear();;
             final boolean result = world.setBlock(pos, state, flags);
-            ((ServerLevel) world).navigatingMobs = navigators;
+            ((ServerLevel) world).navigatingMobs.addAll(navigators);
             return result;
         }
         else

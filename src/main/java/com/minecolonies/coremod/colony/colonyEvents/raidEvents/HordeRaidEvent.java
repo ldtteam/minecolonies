@@ -258,7 +258,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
     {
         for (final Entity entity : getEntities())
         {
-            entity.remove();
+            entity.remove(Entity.RemovalReason.DISCARDED);
         }
 
         for (final BlockPos pos : campFires)
@@ -427,7 +427,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
         {
             if (!entity.isAlive() || !WorldUtil.isEntityBlockLoaded(colony.getWorld(), new BlockPos(entity.position())))
             {
-                entity.remove();
+                entity.remove(Entity.RemovalReason.DISCARDED);
                 respawns.add(new Tuple<>(entity.getType(), new BlockPos(entity.position())));
                 continue;
             }
@@ -453,7 +453,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
                 total += ((HordeRaidEvent) event).horde.hordeSize;
             }
         }
-        raidBar.setPercent((float) horde.hordeSize / horde.initialSize);
+        raidBar.setProgress((float) horde.hordeSize / horde.initialSize);
 
         if (total == 0)
         {

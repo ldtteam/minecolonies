@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.entity.pathfinding.pathjobs;
 
-import com.ldtteam.structurize.blocks.decorative.BlockFloatingCarpet;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.blocks.AbstractBlockBarrel;
 import com.minecolonies.api.blocks.decorative.AbstractBlockMinecoloniesConstructionTape;
@@ -16,14 +15,12 @@ import com.minecolonies.coremod.entity.pathfinding.ChunkCache;
 import com.minecolonies.coremod.entity.pathfinding.Node;
 import com.minecolonies.coremod.entity.pathfinding.PathPointExtended;
 import com.minecolonies.coremod.util.WorkerUtil;
-import net.minecraft.block.*;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.pathfinder.Path;
-import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.core.Direction;
@@ -173,7 +170,7 @@ public abstract class AbstractPathJob implements Callable<Path>
      * @param range  maximum path range.
      * @param result path result.
      * @param entity the entity.
-     * @see AbstractPathJob#AbstractPathJob(World, BlockPos, BlockPos, int, LivingEntity)
+     * @see AbstractPathJob#AbstractPathJob(Level, BlockPos, BlockPos, int, LivingEntity)
      */
     public AbstractPathJob(final Level world, @NotNull final BlockPos start, @NotNull final BlockPos end, final int range, final PathResult result, final LivingEntity entity)
     {
@@ -1397,7 +1394,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         if (shape.isEmpty() || shape.max(Direction.Axis.Y) <= 0.1)
         {
             return !head
-                     || !(state.getBlock() instanceof WoolCarpetBlock || state.getBlock() instanceof BlockFloatingCarpet)
+                     || !(state.getBlock() instanceof WoolCarpetBlock )//todo 1.17 || state.getBlock() instanceof BlockFloatingCarpet)
                      || isLadder(state.getBlock(), pos);
         }
         return isPassable(state, pos, parent);
@@ -1447,7 +1444,7 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         if (blockState.getMaterial().isSolid()
               || (blockState.getBlock() == Blocks.SNOW && blockState.getValue(SnowLayerBlock.LAYERS) > 1)
-              || block instanceof BlockFloatingCarpet
+              //todo 1.17 || block instanceof BlockFloatingCarpet
               || block instanceof WoolCarpetBlock)
         {
             return SurfaceType.WALKABLE;

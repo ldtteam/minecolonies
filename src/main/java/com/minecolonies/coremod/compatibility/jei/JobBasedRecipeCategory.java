@@ -18,7 +18,7 @@ import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.text.*;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;

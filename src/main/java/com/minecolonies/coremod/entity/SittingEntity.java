@@ -12,7 +12,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraftforge.fmllegacy.network.NetworkHooks;
 
 import java.util.List;
 
@@ -106,7 +106,7 @@ public class SittingEntity extends Entity
                 this.ejectPassengers();
             }
 
-            this.remove();
+            this.remove(Entity.RemovalReason.DISCARDED);
         }
     }
 
