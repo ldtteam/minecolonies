@@ -3,6 +3,7 @@ package com.minecolonies.coremod.client.render.mobs.amazon;
 import com.minecolonies.api.entity.mobs.amazons.AbstractEntityAmazon;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.client.model.raiders.ModelAmazon;
+import com.minecolonies.coremod.event.ClientRegistryHandler;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
@@ -24,7 +25,7 @@ public class RendererAmazon extends AbstractRendererAmazon<AbstractEntityAmazon,
      */
     public RendererAmazon(final EntityRendererProvider.Context context)
     {
-        super(context, new ModelAmazon(context.bakeLayer(MineColonies.AMAZON)), 0.5F);
+        super(context, new ModelAmazon(context.bakeLayer(ClientRegistryHandler.AMAZON)), 0.5F);
     }
 
     @NotNull

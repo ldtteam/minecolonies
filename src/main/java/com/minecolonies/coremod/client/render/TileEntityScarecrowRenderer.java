@@ -6,6 +6,7 @@ import com.minecolonies.api.tileentities.ScareCrowType;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.BlockScarecrow;
 import com.minecolonies.coremod.client.model.ModelScarecrowBoth;
+import com.minecolonies.coremod.event.ClientRegistryHandler;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -83,7 +84,7 @@ public class TileEntityScarecrowRenderer implements BlockEntityRenderer<Abstract
     public TileEntityScarecrowRenderer(final BlockEntityRendererProvider.Context context)
     {
         super();
-        this.model = new ModelScarecrowBoth();
+        this.model = new ModelScarecrowBoth(context.bakeLayer(ClientRegistryHandler.SCARECROW));
     }
 
     @Override

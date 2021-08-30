@@ -120,6 +120,7 @@ public class MineColonies
         Mod.EventBusSubscriber.Bus.MOD.bus().get().addListener(GatherDataHandler::dataGeneratorSetup);
 
         Mod.EventBusSubscriber.Bus.MOD.bus().get().register(this.getClass());
+        Mod.EventBusSubscriber.Bus.MOD.bus().get().register(ClientRegistryHandler.class);
 
         // Temporary additional
         Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(TagWorkAroundEventHandler.TagEventHandler.class);
@@ -234,66 +235,6 @@ public class MineColonies
             // Request Systems logging only really needs to be changed on the server, and this reduced log spam.
             RequestSystemInitializer.reconfigureLogging();
         }
-    }
-    
-    @OnlyIn(Dist.CLIENT)
-    @SubscribeEvent
-    public static void doClientStuff(final EntityRenderersEvent.RegisterRenderers event)
-    {
-        event.registerEntityRenderer(ModEntities.CITIZEN, RenderBipedCitizen::new);
-        event.registerEntityRenderer(ModEntities.VISITOR, RenderBipedCitizen::new);
-        event.registerEntityRenderer(ModEntities.FISHHOOK, RenderFishHook::new);
-        event.registerEntityRenderer(ModEntities.FIREARROW, FireArrowRenderer::new);
-        event.registerEntityRenderer(ModEntities.MC_NORMAL_ARROW, TippableArrowRenderer::new);
-
-        event.registerEntityRenderer(ModEntities.BARBARIAN, RendererBarbarian::new);
-        event.registerEntityRenderer(ModEntities.ARCHERBARBARIAN, RendererBarbarian::new);
-        event.registerEntityRenderer(ModEntities.CHIEFBARBARIAN, RendererChiefBarbarian::new);
-        event.registerEntityRenderer(ModEntities.PIRATE, RendererPirate::new);
-        event.registerEntityRenderer(ModEntities.ARCHERPIRATE, RendererArcherPirate::new);
-        event.registerEntityRenderer(ModEntities.CHIEFPIRATE, RendererChiefPirate::new);
-
-        event.registerEntityRenderer(ModEntities.MUMMY, RendererMummy::new);
-        event.registerEntityRenderer(ModEntities.ARCHERMUMMY, RendererArcherMummy::new);
-        event.registerEntityRenderer(ModEntities.PHARAO, RendererPharao::new);
-
-        event.registerEntityRenderer(ModEntities.SHIELDMAIDEN, RendererShieldmaidenNorsemen::new);
-        event.registerEntityRenderer(ModEntities.NORSEMEN_ARCHER, RendererArcherNorsemen::new);
-        event.registerEntityRenderer(ModEntities.NORSEMEN_CHIEF, RendererChiefNorsemen::new);
-
-        event.registerEntityRenderer(ModEntities.AMAZON, RendererAmazon::new);
-        event.registerEntityRenderer(ModEntities.AMAZONCHIEF, RendererChiefAmazon::new);
-
-        event.registerEntityRenderer(ModEntities.MERCENARY, RenderMercenary::new);
-        event.registerEntityRenderer(ModEntities.SITTINGENTITY, RenderSitting::new);
-        event.registerEntityRenderer(ModEntities.MINECART, (context) -> new MinecartRenderer<>(context, ModelLayers.MINECART));
-
-        event.registerBlockEntityRenderer(MinecoloniesTileEntities.BUILDING, EmptyTileEntitySpecialRenderer::new);
-        event.registerBlockEntityRenderer(MinecoloniesTileEntities.SCARECROW, TileEntityScarecrowRenderer::new);
-        event.registerBlockEntityRenderer(MinecoloniesTileEntities.ENCHANTER, TileEntityEnchanterRenderer::new);
-        event.registerBlockEntityRenderer(MinecoloniesTileEntities.COLONY_FLAG, TileEntityColonyFlagRenderer::new);
-        event.registerBlockEntityRenderer(MinecoloniesTileEntities.NAMED_GRAVE, TileEntityNamedGraveRenderer::new);
-
-        Arrays.stream(ModBlocks.getHuts())
-          .forEach(hut -> ItemBlockRenderTypes.setRenderLayer(hut, renderType -> renderType.equals(RenderType.cutout()) || renderType.equals(RenderType.solid())));
-        ItemBlockRenderTypes.setRenderLayer(ModBlocks.blockScarecrow, RenderType.cutout());
-        ItemBlockRenderTypes.setRenderLayer(ModBlocks.blockRack, RenderType.cutout());
-        ItemBlockRenderTypes.setRenderLayer(ModBlocks.blockDecorationPlaceholder, RenderType.cutout());
-        ItemBlockRenderTypes.setRenderLayer(ModBlocks.blockCompostedDirt, RenderType.cutout());
-        ItemBlockRenderTypes.setRenderLayer(ModBlocks.blockBarrel, RenderType.cutout());
-        ItemBlockRenderTypes.setRenderLayer(ModBlocks.blockWayPoint, RenderType.cutout());
-    }
-
-    public static final ModelLayerLocation AMAZON = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "amazon"), "amazon");
-    public static final ModelLayerLocation AMAZON_CHIEF = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "amazon_chief"), "amazon_chief");
-
-
-    @OnlyIn(Dist.CLIENT)
-    @SubscribeEvent
-    public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event)
-    {
-        event.registerLayerDefinition(AMAZON, ModelAmazon::createMesh);
-        event.registerLayerDefinition(AMAZON_CHIEF, ModelAmazonChief::createMesh);
     }
     
     /**
