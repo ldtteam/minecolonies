@@ -222,7 +222,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
                     {
                         if (furnace.isLit()) 
                         {
-                            furnace.tick();
+                            FurnaceBlockEntity.serverTick(entity.getLevel(), entity.getBlockPos(), entity.getBlockState(), furnace);
                         }
                     }
                 }

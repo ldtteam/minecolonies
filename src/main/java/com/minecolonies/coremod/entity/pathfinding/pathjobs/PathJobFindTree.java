@@ -6,7 +6,7 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.pathfinding.TreePathResult;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.entity.ai.citizen.lumberjack.Tree;
-import com.minecolonies.coremod.entity.pathfinding.Node;
+import com.minecolonies.coremod.entity.pathfinding.MNode;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.tags.BlockTags;
@@ -133,12 +133,12 @@ public class PathJobFindTree extends AbstractPathJob
     }
 
     @Override
-    protected boolean isAtDestination(@NotNull final Node n)
+    protected boolean isAtDestination(@NotNull final MNode n)
     {
         return n.parent != null && isNearTree(n);
     }
 
-    private boolean isNearTree(@NotNull final Node n)
+    private boolean isNearTree(@NotNull final MNode n)
     {
         if (n.pos.getX() == n.parent.pos.getX())
         {
@@ -164,13 +164,13 @@ public class PathJobFindTree extends AbstractPathJob
     }
 
     @Override
-    protected double getNodeResultScore(final Node n)
+    protected double getNodeResultScore(final MNode n)
     {
         return 0;
     }
 
     @Override
-    protected boolean isPassable(@NotNull final BlockState block, final BlockPos pos, final Node parent)
+    protected boolean isPassable(@NotNull final BlockState block, final BlockPos pos, final MNode parent)
     {
         return super.isPassable(block, pos, parent) || (block.is(BlockTags.LEAVES) && isInRestrictedArea(pos)) || Compatibility.isDynamicTrunkShell(block.getBlock());
     }

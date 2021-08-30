@@ -2,6 +2,7 @@ package com.minecolonies.coremod.client.render.mobs.egyptians;
 
 import com.minecolonies.api.entity.mobs.egyptians.AbstractEntityEgyptian;
 import com.minecolonies.coremod.client.model.raiders.ModelMummy;
+import com.minecolonies.coremod.event.ClientRegistryHandler;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 
@@ -22,7 +23,7 @@ public class RendererMummy extends AbstractRendererEgyptian<AbstractEntityEgypti
      */
     public RendererMummy(final EntityRendererProvider.Context context)
     {
-        super(context, new ModelMummy(), 0.5F);
+        super(context, new ModelMummy(context.bakeLayer(ClientRegistryHandler.MUMMY)), 0.5F);
     }
 
     @Override

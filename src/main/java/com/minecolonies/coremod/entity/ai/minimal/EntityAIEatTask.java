@@ -266,8 +266,8 @@ public class EntityAIEatTask extends Goal
             citizen.getX(),
             citizen.getY(),
             citizen.getZ(),
-            citizen.xRot,
-            citizen.yRot,
+            citizen.getXRot(),
+            citizen.getYRot(),
             citizen.getEyeHeight()), citizen);
 
         waitingTicks++;

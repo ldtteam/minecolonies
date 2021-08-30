@@ -31,7 +31,7 @@ public class SittingEntity extends Entity
         super(type, worldIn);
 
         this.setInvisible(true);
-        this.forcedLoading = true;
+        //todo 1.17 this.forcedLoading = true;
         this.noPhysics = true;
         this.setNoGravity(true);
     }
@@ -43,7 +43,7 @@ public class SittingEntity extends Entity
         this.setPos(x, y, z);
 
         this.setInvisible(true);
-        this.forcedLoading = true;
+        //todo 1.17 this.forcedLoading = true;
         this.noPhysics = true;
         this.setNoGravity(true);
         this.maxLifeTime = lifeTime;

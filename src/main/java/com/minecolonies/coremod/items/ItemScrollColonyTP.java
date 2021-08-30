@@ -77,7 +77,7 @@ public class ItemScrollColonyTP extends AbstractItemScroll
             if (pos != null)
             {
                 player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, TICKS_SECOND * 7));
-                player.teleportTo((ServerLevel) world, pos.getX(), pos.getY(), pos.getZ(), player.yRot, player.xRot);
+                player.teleportTo((ServerLevel) world, pos.getX(), pos.getY(), pos.getZ(), player.getYRot(), player.getXRot());
             }
 
             SoundUtils.playSoundForPlayer(player, SoundEvents.BAT_TAKEOFF, 0.4f, 1.0f);

@@ -2,7 +2,7 @@ package com.minecolonies.coremod.entity.pathfinding.pathjobs;
 
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.entity.pathfinding.Node;
+import com.minecolonies.coremod.entity.pathfinding.MNode;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.core.BlockPos;
@@ -88,7 +88,7 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
      * @return true if so.
      */
     @Override
-    protected boolean isAtDestination(@NotNull final Node n)
+    protected boolean isAtDestination(@NotNull final MNode n)
     {
         return Math.sqrt(avoid.distSqr(n.pos)) > avoidDistance;
     }
@@ -100,7 +100,7 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
      * @return double amount.
      */
     @Override
-    protected double getNodeResultScore(@NotNull final Node n)
+    protected double getNodeResultScore(@NotNull final MNode n)
     {
         return -avoid.distSqr(n.pos);
     }

@@ -104,7 +104,7 @@ public final class TeleportHelper
             player.stopSleepInBed(true, true);
         }
 
-        player.teleportTo(world, position.getX(), position.getY() + 2.0, position.getZ(), player.yRot, player.xRot);
+        player.teleportTo(world, position.getX(), position.getY() + 2.0, position.getZ(), player.getYRot(), player.getXRot());
     }
 
     /**
@@ -166,7 +166,7 @@ public final class TeleportHelper
             player.stopSleepInBed(true, true);
         }
 
-        player.teleportTo(world, position.getX(), position.getY(), position.getZ(), player.yRot, player.xRot);
+        player.teleportTo(world, position.getX(), position.getY(), position.getZ(), player.getYRot(), player.getXRot());
         LanguageHandler.sendPlayerMessage(player, "com.minecolonies.command.teleport.success", colony.getName());
     }
 }

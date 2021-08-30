@@ -464,7 +464,7 @@ public class ColonyPermissionEventHandler
     {
         if (checkEventCancelation(Action.TOSS_ITEM, event.getPlayer(), event.getPlayer().getCommandSenderWorld(), event, new BlockPos(event.getPlayer().position())))
         {
-            event.getPlayer().inventory.add(event.getEntityItem().getItem());
+            event.getPlayer().getInventory().add(event.getEntityItem().getItem());
         }
     }
 

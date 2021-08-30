@@ -2,6 +2,7 @@ package com.minecolonies.coremod.client.render.mobs.norsemen;
 
 import com.minecolonies.api.entity.mobs.vikings.AbstractEntityNorsemen;
 import com.minecolonies.coremod.client.model.raiders.ModelShieldmaiden;
+import com.minecolonies.coremod.event.ClientRegistryHandler;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
@@ -24,7 +25,7 @@ public class RendererShieldmaidenNorsemen extends AbstractRendererNorsemen<Abstr
      */
     public RendererShieldmaidenNorsemen(final EntityRendererProvider.Context context)
     {
-        super(context, new ModelShieldmaiden(), 0.5F);
+        super(context, new ModelShieldmaiden(context.bakeLayer(ClientRegistryHandler.SHIELD_MAIDEN)), 0.5F);
     }
 
     @NotNull

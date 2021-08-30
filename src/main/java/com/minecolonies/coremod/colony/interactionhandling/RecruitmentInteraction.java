@@ -170,7 +170,7 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
 
                     // Exchange entities
                     newCitizen.updateEntityIfNecessary();
-                    data.getEntity().ifPresent(Entity::remove);
+                    data.getEntity().ifPresent(e -> e.remove(Entity.RemovalReason.DISCARDED));
 
                     if (data.hasCustomTexture())
                     {

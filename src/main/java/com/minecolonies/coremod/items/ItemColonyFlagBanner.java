@@ -59,7 +59,7 @@ public class ItemColonyFlagBanner extends BannerItem
             CompoundTag source;
             if (te instanceof BannerBlockEntity)
             {
-                source = ((BannerBlockEntity) te).getItem(state)
+                source = ((BannerBlockEntity) te).getItem()
                            .getTag().getCompound("BlockEntityTag");
             }
             else

@@ -17,7 +17,6 @@ import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructureWithWorkOrder;
 import com.minecolonies.coremod.util.AdvancementUtils;
 import com.minecolonies.coremod.util.WorkerUtil;
-import net.minecraft.block.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.core.Direction;
@@ -310,7 +309,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
             {
                 return getState();
             }
-            if (!world.getBlockState(nextCobble).isAir(world, nextCobble) && !mineBlock(nextCobble, safeStand))
+            if (!world.getBlockState(nextCobble).isAir() && !mineBlock(nextCobble, safeStand))
             {
                 return getState();
             }
@@ -324,7 +323,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
             {
                 return getState();
             }
-            if (!world.getBlockState(nextLadder).isAir(world, nextLadder) && !mineBlock(nextLadder, safeStand))
+            if (!world.getBlockState(nextLadder).isAir() && !mineBlock(nextLadder, safeStand))
             {
                 return getState();
             }
@@ -614,7 +613,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     private IAIState executeNodeMining()
     {
         final MinerLevelManagementModule module = getOwnBuilding().getFirstModuleOccurance(MinerLevelManagementModule.class);;
-        @Nullable final Level currentLevel = module.getCurrentLevel();
+        @Nullable final MinerLevel currentLevel = module.getCurrentLevel();
         if (currentLevel == null)
         {
             Log.getLogger().warn("Current Level not set, resetting...");
@@ -624,7 +623,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         return searchANodeToMine(currentLevel);
     }
 
-    private IAIState searchANodeToMine(@NotNull final Level currentLevel)
+    private IAIState searchANodeToMine(@NotNull final MinerLevel currentLevel)
     {
         final BuildingMiner buildingMiner = getOwnBuilding();
         if (buildingMiner == null)
@@ -827,7 +826,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
             {
                 final int depth = job.getWorkOrder().getSchematicLocation().getY();
                 boolean exists = false;
-                for (final Level level : module.getLevels())
+                for (final MinerLevel level : module.getLevels())
                 {
                     if (level.getDepth() == depth)
                     {
@@ -837,7 +836,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
                 }
 
                 @Nullable final BlockPos levelSignPos = WorkerUtil.findFirstLevelSign(job.getBlueprint(), job.getWorkOrder().getSchematicLocation());
-                @NotNull final Level currentLevel = new Level(minerBuilding, job.getWorkOrder().getSchematicLocation().getY(), levelSignPos);
+                @NotNull final MinerLevel currentLevel = new MinerLevel(minerBuilding, job.getWorkOrder().getSchematicLocation().getY(), levelSignPos);
                 if (!exists)
                 {
                     module.addLevel(currentLevel);
@@ -847,7 +846,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
             }
             else
             {
-                final Level currentLevel = module.getCurrentLevel();
+                final MinerLevel currentLevel = module.getCurrentLevel();
 
                 currentLevel.closeNextNode(structurePlacer.getB().getSettings().rotation.ordinal(), module.getActiveNode(), world);
                 module.setActiveNode(null);

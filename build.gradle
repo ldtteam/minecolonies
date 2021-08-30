@@ -28,4 +28,6 @@ dependencies {
     apiImplementation fg.deobf("com.ldtteam:structurize:${project.minecraftVersion}-${project.structurize_version}")
     implementation fg.deobf("com.ldtteam:structurize:${project.minecraftVersion}-${project.structurize_version}")
     contained "com.ldtteam:structurize:${project.minecraftVersion}-${project.structurize_version}"
+
+    implementation "com.ldtteam:datagenerators:${project.dataGeneratorsVersion}"
 }

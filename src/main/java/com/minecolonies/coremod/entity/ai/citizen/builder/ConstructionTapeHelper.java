@@ -52,7 +52,7 @@ public final class ConstructionTapeHelper
     /**
      * Place construction tape.
      *
-     * @param corners the corner positions.
+     * @param orgCorners the corner positions.
      * @param world   the world.
      */
     public static void placeConstructionTape(final Tuple<BlockPos, BlockPos> orgCorners, @NotNull final Level world)
@@ -133,7 +133,7 @@ public final class ConstructionTapeHelper
             final BlockState state = world.getBlockState(tempTarget);
             final BlockState upState = world.getBlockState(tempTarget.above());
 
-            if (state.canOcclude() && !upState.canOcclude() && (upState.getMaterial().isReplaceable() || upState.isAir(world, tempTarget.above())))
+            if (state.canOcclude() && !upState.canOcclude() && (upState.getMaterial().isReplaceable() || upState.isAir()))
             {
                 return tempTarget.above();
             }
@@ -163,7 +163,7 @@ public final class ConstructionTapeHelper
     /**
      * Remove construction tape.
      *
-     * @param corners the corner positions.
+     * @param orgCorners the corner positions.
      * @param world   the world.
      */
     public static void removeConstructionTape(final Tuple<BlockPos, BlockPos> orgCorners, @NotNull final Level world)

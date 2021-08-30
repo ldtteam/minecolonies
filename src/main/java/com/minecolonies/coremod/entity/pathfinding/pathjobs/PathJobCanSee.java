@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.entity.pathfinding.pathjobs;
 
-import com.minecolonies.coremod.entity.pathfinding.Node;
+import com.minecolonies.coremod.entity.pathfinding.MNode;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.ClipContext;
@@ -43,7 +43,7 @@ public class PathJobCanSee extends AbstractPathJob
     }
 
     @Override
-    protected boolean isAtDestination(final Node n)
+    protected boolean isAtDestination(final MNode n)
     {
         if (start.getY() - n.pos.getY() > 2)
         {
@@ -60,7 +60,7 @@ public class PathJobCanSee extends AbstractPathJob
      * @return double of the distance.
      */
     @Override
-    protected double getNodeResultScore(@NotNull final Node n)
+    protected double getNodeResultScore(@NotNull final MNode n)
     {
         //  For Result Score lower is better
         return start.distManhattan(n.pos);

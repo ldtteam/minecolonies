@@ -29,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Hut for the Stash. No different from {@link AbstractBlockHut}
  */
-public class BlockStash extends AbstractBlockHut<BlockStash> implements IRSComponentBlock
+public class BlockStash extends AbstractBlockHut<BlockStash> implements IRSComponentBlock, BlockEntity
 {
 
     private static final VoxelShape SHAPE_NORTH = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 16.0D, 8.0D);
@@ -46,7 +46,7 @@ public class BlockStash extends AbstractBlockHut<BlockStash> implements IRSCompo
 
     @Nullable
     @Override
-    public BlockEntity createTileEntity(BlockState state, BlockGetter world)
+    public BlockEntity createTileEntity(BlockGetter world)
     {
         final TileEntityColonyBuilding building = (TileEntityColonyBuilding) MinecoloniesTileEntities.STASH.create();
         building.registryName = this.getBuildingEntry().getRegistryName();

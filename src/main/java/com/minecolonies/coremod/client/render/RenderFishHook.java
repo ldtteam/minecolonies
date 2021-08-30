@@ -74,7 +74,7 @@ public class RenderFishHook extends EntityRenderer<Entity>
                 i = -i;
             }
 
-            final float f2 = Mth.lerp(partialTicks, citizen.yBodyRotO, citizen.yBodyRot) * ((float) Math.PI / 180F);
+            final float f2 = Mth.lerp(partialTicks, citizen.yBodyRotO, citizen.yBodyRotO) * ((float) Math.PI / 180F);
             final double d0 = Mth.sin(f2);
             final double d1 = Mth.cos(f2);
             final double d2 = (double) i * 0.35D;

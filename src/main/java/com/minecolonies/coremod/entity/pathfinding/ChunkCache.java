@@ -156,7 +156,7 @@ public class ChunkCache implements LevelReader
     public boolean isEmptyBlock(BlockPos pos)
     {
         BlockState state = this.getBlockState(pos);
-        return state.getBlock().isAir(state, this, pos);
+        return state.isAir();
     }
 
     @Nullable

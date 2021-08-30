@@ -64,7 +64,7 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
             final BlockPos lastPos = BlockPosUtil.read(compound, TAG_LAST_POS);
             if (lastPos.equals(ctx.getClickedPos()))
             {
-                ctx.getPlayer().inventory.removeItemNoUpdate(ctx.getPlayer().inventory.selected);
+                ctx.getPlayer().getInventory().removeItemNoUpdate(ctx.getPlayer().getInventory().selected);
                 LanguageHandler.sendPlayerMessage(ctx.getPlayer(), "com.minecolonies.coremod.job.guard.toolDoubleClick");
                 return InteractionResult.FAIL;
             }
@@ -120,7 +120,7 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
         {
             LanguageHandler.sendPlayerMessage(playerIn, "com.minecolonies.coremod.job.guard.toolClickGuard", pos, name);
             tower.setGuardPos(pos);
-            playerIn.inventory.removeItemNoUpdate(playerIn.inventory.selected);
+            playerIn.getInventory().removeItemNoUpdate(playerIn.getInventory().selected);
         }
         else
         {

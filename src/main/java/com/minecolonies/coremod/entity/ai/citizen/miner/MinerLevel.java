@@ -22,7 +22,7 @@ import static com.minecolonies.coremod.entity.ai.citizen.miner.Node.NodeType.*;
  * <p>
  * A Level contains all the nodes for one level of the mine.
  */
-public class Level
+public class MinerLevel
 {
     /**
      * Tags used to store and retrieve level data from NBT.
@@ -92,7 +92,7 @@ public class Level
      * @param depth         the depth of this level.
      * @param levelSign     the position of the level sign.
      */
-    public Level(@NotNull final BuildingMiner buildingMiner, final int depth, final BlockPos levelSign)
+    public MinerLevel(@NotNull final BuildingMiner buildingMiner, final int depth, final BlockPos levelSign)
     {
         this.depth = depth;
         this.levelSign = levelSign;
@@ -142,7 +142,7 @@ public class Level
      *
      * @param compound compound to use.
      */
-    public Level(@NotNull final CompoundTag compound)
+    public MinerLevel(@NotNull final CompoundTag compound)
     {
 
         this.depth = compound.getInt(TAG_DEPTH);

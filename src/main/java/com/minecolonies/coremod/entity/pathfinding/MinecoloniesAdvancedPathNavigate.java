@@ -824,7 +824,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                 {
                     final Node point = path.getNode(i);
                     final BlockPos pos = new BlockPos(point.x, point.y, point.z);
-                    for (final Node node : AbstractPathJob.lastDebugNodesPath)
+                    for (final MNode node : AbstractPathJob.lastDebugNodesPath)
                     {
                         if (!node.isReachedByWorker() && node.pos.equals(pos))
                         {
@@ -868,11 +868,12 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                 }
                 else
                 {
+
                     // Mark nodes as unreached for debug path drawing
                     if (AbstractPathJob.lastDebugNodesPath != null)
                     {
                         final BlockPos pos = new BlockPos(tempoPos.x, tempoPos.y, tempoPos.z);
-                        for (final Node node : AbstractPathJob.lastDebugNodesPath)
+                        for (final MNode node : AbstractPathJob.lastDebugNodesPath)
                         {
                             if (node.isReachedByWorker() && node.pos.equals(pos))
                             {

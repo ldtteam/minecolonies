@@ -200,8 +200,8 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
                 {
                     livingentity.knockback(
                       2F,
-                      Mth.sin(livingentity.yRot * ((float) Math.PI)),
-                      (-Mth.cos(livingentity.yRot * ((float) Math.PI))));
+                      Mth.sin(livingentity.getYRot() * ((float) Math.PI)),
+                      (-Mth.cos(livingentity.getYRot() * ((float) Math.PI))));
                     livingentity.hurt(source, (float) (damageToBeDealt / entities.size()));
                 }
             }
@@ -215,8 +215,8 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
               1.0F,
               1.0F);
 
-            double d0 = (double) (-Mth.sin(user.yRot * ((float) Math.PI / 180)));
-            double d1 = (double) Mth.cos(user.yRot * ((float) Math.PI / 180));
+            double d0 = (double) (-Mth.sin(user.getYRot() * ((float) Math.PI / 180)));
+            double d1 = (double) Mth.cos(user.getYRot() * ((float) Math.PI / 180));
             if (user.level instanceof ServerLevel)
             {
                 ((ServerLevel) user.level).sendParticles(ParticleTypes.SWEEP_ATTACK,
@@ -321,7 +321,7 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
         {
             final EntityCitizen citizen = (EntityCitizen) entity;
             if (citizen.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard && ((AbstractJobGuard<?>) citizen.getCitizenJobHandler().getColonyJob()).isAsleep()
-                  && user.getSensing().canSee(citizen))
+                  && user.getSensing().hasLineOfSight(citizen))
             {
                 parentAI.setWakeCitizen(citizen);
                 return true;

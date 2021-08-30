@@ -100,7 +100,7 @@ public class CustomArrowEntity extends Arrow
 
         if (this.inGroundTime > MAX_TIME_IN_GROUND)
         {
-            remove();
+            remove(RemovalReason.DISCARDED);
         }
     }
 }

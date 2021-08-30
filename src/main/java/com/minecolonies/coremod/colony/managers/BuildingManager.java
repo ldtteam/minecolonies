@@ -43,6 +43,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -617,7 +618,7 @@ public class BuildingManager implements IBuildingManager
         {
             if (colonyBuilding instanceof IGuardBuilding)
             {
-                final MutableBoundingBox guardedRegion = BlockPosUtil.getChunkAlignedBB(colonyBuilding.getPosition(), colonyBuilding.getClaimRadius(colonyBuilding.getBuildingLevel()));
+                final BoundingBox guardedRegion = BlockPosUtil.getChunkAlignedBB(colonyBuilding.getPosition(), colonyBuilding.getClaimRadius(colonyBuilding.getBuildingLevel()));
                 if (guardedRegion.isInside(building.getPosition()))
                 {
                     return true;
@@ -632,7 +633,7 @@ public class BuildingManager implements IBuildingManager
     public void guardBuildingChangedAt(final IBuilding guardBuilding, final int newLevel)
     {
         final int claimRadius = guardBuilding.getClaimRadius(Math.max(guardBuilding.getBuildingLevel(), newLevel));
-        final MutableBoundingBox guardedRegion = BlockPosUtil.getChunkAlignedBB(guardBuilding.getPosition(), claimRadius);
+        final BoundingBox guardedRegion = BlockPosUtil.getChunkAlignedBB(guardBuilding.getPosition(), claimRadius);
         for (final IBuilding building : getBuildings().values())
         {
             if (guardedRegion.isInside(building.getPosition()))

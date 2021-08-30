@@ -9,13 +9,13 @@ import com.minecolonies.coremod.generation.CustomRecipeProvider;
 import com.minecolonies.coremod.generation.LootTableBuilder;
 import com.minecolonies.coremod.generation.LootTableJsonProvider;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.DirectoryCache;
 import net.minecraft.data.DataProvider;
-import net.minecraft.data.IFinishedRecipe;
+import net.minecraft.data.HashCache;
+import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,8 +28,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
-
-import com.minecolonies.coremod.generation.CustomRecipeProvider.CustomRecipeBuilder;
 
 public class DefaultSifterCraftingProvider implements DataProvider
 {
@@ -223,7 +221,7 @@ public class DefaultSifterCraftingProvider implements DataProvider
     }
 
     @Override
-    public void run(@NotNull final DirectoryCache cache) throws IOException
+    public void run(@NotNull final HashCache cache) throws IOException
     {
         recipeProvider.run(cache);
         lootTableProvider.run(cache);
@@ -264,7 +262,7 @@ public class DefaultSifterCraftingProvider implements DataProvider
         }
 
         @Override
-        protected void registerRecipes(@NotNull final Consumer<IFinishedRecipe> consumer)
+        protected void registerRecipes(@NotNull final Consumer<FinishedRecipe> consumer)
         {
             for (final Map.Entry<Item, List<SifterMeshDetails>> inputEntry : inputs.entrySet())
             {

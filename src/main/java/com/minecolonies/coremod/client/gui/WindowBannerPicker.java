@@ -334,7 +334,7 @@ public class WindowBannerPicker extends Screen
      */
     public void renderBanner(PoseStack transform, List<Pair<BannerPattern, DyeColor>> layers)
     {
-        this.modelRender.xRot = 0.0F;
+        this.modelRender.xRot= 0.0F;
         this.modelRender.y = -32.0F;
 
         MultiBufferSource.BufferSource source = this.minecraft.renderBuffers().bufferSource();

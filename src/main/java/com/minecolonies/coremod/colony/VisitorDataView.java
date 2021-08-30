@@ -7,7 +7,6 @@ import com.minecolonies.api.colony.IVisitorViewData;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.tileentity.SkullTileEntityRenderer;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.FriendlyByteBuf;
@@ -91,13 +90,15 @@ public class VisitorDataView extends CitizenDataView implements IVisitorViewData
         if (cachedTexture == null)
         {
             Minecraft minecraft = Minecraft.getInstance();
-            GameProfile profile = new GameProfile(textureUUID, getNameFromUUID(textureUUID));
-            profile = SkullBlockEntity.updateGameprofile(profile);
-            Map<MinecraftProfileTexture.Type, MinecraftProfileTexture> map = minecraft.getSkinManager().getInsecureSkinInformation(profile);
-            if (!map.isEmpty())
-            {
-                cachedTexture = minecraft.getSkinManager().registerTexture(map.get(MinecraftProfileTexture.Type.SKIN), MinecraftProfileTexture.Type.SKIN);
-            }
+            final GameProfile profile = new GameProfile(textureUUID, getNameFromUUID(textureUUID));
+            SkullBlockEntity.updateGameprofile(profile, (gameProfile -> {
+                Map<MinecraftProfileTexture.Type, MinecraftProfileTexture> map = minecraft.getSkinManager().getInsecureSkinInformation(profile);
+                if (!map.isEmpty())
+                {
+                    cachedTexture = minecraft.getSkinManager().registerTexture(map.get(MinecraftProfileTexture.Type.SKIN), MinecraftProfileTexture.Type.SKIN);
+                }
+            }));
+
         }
         return cachedTexture == null ? DefaultPlayerSkin.getDefaultSkin(textureUUID) : cachedTexture;
     }

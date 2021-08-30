@@ -23,7 +23,7 @@ import java.util.List;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
-import static net.minecraft.entity.passive.SheepEntity.ITEM_BY_DYE;
+import static net.minecraft.world.entity.animal.Sheep.ITEM_BY_DYE;
 
 /**
  * The AI behind the {@link JobShepherd} for Breeding, Killing and Shearing sheep.
@@ -124,7 +124,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
     {
         worker.getCitizenStatusHandler().setLatestStatus(new TranslatableComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_SHEPHERD_SHEARING));
 
-        final List<Sheep> sheeps = searchForAnimals();
+        final List<? extends Sheep> sheeps = searchForAnimals();
 
         if (sheeps.isEmpty())
         {
@@ -182,7 +182,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
     /**
      * Possibly dyes a sheep based on their Worker Hut Level
      *
-     * @param sheep the {@link SheepEntity} to possibly dye.
+     * @param sheep the {@link Sheep} to possibly dye.
      */
     private void dyeSheepChance(final Sheep sheep)
     {

@@ -11,7 +11,6 @@ import net.minecraft.client.gui.Font;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import net.minecraft.client.renderer.MultiBufferSource;
 import com.mojang.blaze3d.vertex.Tesselator;
-import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import net.minecraft.world.entity.Entity;
 import com.mojang.math.Matrix4f;
@@ -123,9 +122,9 @@ public final class Pathfinding
         RenderSystem.disableBlend();
         RenderSystem.disableLighting();
 
-        final Set<Node> debugNodesNotVisited;
-        final Set<Node> debugNodesVisited;
-        final Set<Node> debugNodesPath;
+        final Set<MNode> debugNodesNotVisited;
+        final Set<MNode> debugNodesVisited;
+        final Set<MNode> debugNodesPath;
 
         synchronized (debugNodeMonitor)
         {
@@ -136,17 +135,17 @@ public final class Pathfinding
 
         try
         {
-            for (@NotNull final Node n : debugNodesNotVisited)
+            for (@NotNull final MNode n : debugNodesNotVisited)
             {
                 debugDrawNode(n, 1.0F, 0F, 0F, matrixStack);
             }
 
-            for (@NotNull final Node n : debugNodesVisited)
+            for (@NotNull final MNode n : debugNodesVisited)
             {
                 debugDrawNode(n, 0F, 0F, 1.0F, matrixStack);
             }
 
-            for (@NotNull final Node n : debugNodesPath)
+            for (@NotNull final MNode n : debugNodesPath)
             {
                 if (n.isReachedByWorker())
                 {
@@ -171,7 +170,7 @@ public final class Pathfinding
     }
 
     @OnlyIn(Dist.CLIENT)
-    private static void debugDrawNode(@NotNull final Node n, final float r, final float g, final float b, final PoseStack matrixStack)
+    private static void debugDrawNode(@NotNull final MNode n, final float r, final float g, final float b, final PoseStack matrixStack)
     {
         matrixStack.pushPose();
         matrixStack.translate((double) n.pos.getX() + 0.375, (double) n.pos.getY() + 0.375, (double) n.pos.getZ() + 0.375);
@@ -247,7 +246,7 @@ public final class Pathfinding
     }
 
     @OnlyIn(Dist.CLIENT)
-    private static void renderDebugText(@NotNull final Node n, final PoseStack matrixStack)
+    private static void renderDebugText(@NotNull final MNode n, final PoseStack matrixStack)
     {
         final String s1 = String.format("F: %.3f [%d]", n.getCost(), n.getCounterAdded());
         final String s2 = String.format("G: %.3f [%d]", n.getScore(), n.getCounterVisited());

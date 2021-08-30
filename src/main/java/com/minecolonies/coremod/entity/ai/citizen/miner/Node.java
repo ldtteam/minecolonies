@@ -306,7 +306,7 @@ public class Node
      * @return the next node to go to.
      */
     @Nullable
-    public Node getRandomNextNode(final Level level, final int step)
+    public Node getRandomNextNode(final MinerLevel level, final int step)
     {
         if (step > 3)
         {

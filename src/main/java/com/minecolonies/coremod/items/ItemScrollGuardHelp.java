@@ -134,7 +134,7 @@ public class ItemScrollGuardHelp extends AbstractItemScroll
                         if (world.getGameTime() - spawnTime > 0)
                         {
                             ((AbstractBuildingGuards) building).getSetting(AbstractBuildingGuards.GUARD_TASK).set(GuardTaskSetting.PATROL);
-                            citizenData.getEntity().ifPresent(Entity::remove);
+                            citizenData.getEntity().ifPresent(e -> e.remove(Entity.RemovalReason.DISCARDED));
                             colony.getPackageManager().removeCloseSubscriber(player);
                             return true;
                         }

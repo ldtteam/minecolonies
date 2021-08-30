@@ -15,7 +15,7 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenGrownUpEvent;
 import com.minecolonies.coremod.colony.jobs.JobPupil;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
-import net.minecraft.world.entity.AgableMob;
+import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.player.Player;
@@ -194,7 +194,7 @@ public class EntityAICitizenChild extends Goal
               1.0D,
               (double) START_FOLLOW_DISTANCE),
             // Limit entity classes
-            target -> target.isAlive() && (target instanceof AgableMob || target instanceof Player))
+            target -> target.isAlive() && (target instanceof AgeableMob || target instanceof Player))
           // Take the first entity
           .stream()
           .findFirst()

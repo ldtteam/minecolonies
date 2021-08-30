@@ -4,7 +4,7 @@ import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.entity.pathfinding.Node;
+import com.minecolonies.coremod.entity.pathfinding.MNode;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.core.Direction;
@@ -112,7 +112,7 @@ public class PathJobRandomPos extends AbstractPathJob
     }
 
     @Override
-    protected boolean isAtDestination(@NotNull final Node n)
+    protected boolean isAtDestination(@NotNull final MNode n)
     {
         if (random.nextInt(10) == 0 && (start.distSqr(n.pos) > minDistFromStart * minDistFromStart)
               && isWalkableSurface(world.getBlockState(n.pos.below()), n.pos.below()) == SurfaceType.WALKABLE
@@ -124,7 +124,7 @@ public class PathJobRandomPos extends AbstractPathJob
     }
 
     @Override
-    protected double getNodeResultScore(@NotNull final Node n)
+    protected double getNodeResultScore(@NotNull final MNode n)
     {
         //  For Result Score lower is better
         return destination.distSqr(n.pos);
