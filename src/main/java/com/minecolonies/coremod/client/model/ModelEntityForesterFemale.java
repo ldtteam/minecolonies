@@ -3,6 +3,8 @@
 // Paste this class into your mod and generate all required imports
 package com.minecolonies.coremod.client.model;
 
+import com.minecolonies.api.IMinecoloniesAPI;
+import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.client.render.modeltype.CitizenModel;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.client.model.geom.ModelPart;
@@ -10,13 +12,15 @@ import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.client.model.HumanoidModel;
 
-public class ModelEntityLumberjackFemale extends CitizenModel<AbstractEntityCitizen>
+public class ModelEntityForesterFemale extends CitizenModel<AbstractEntityCitizen>
 {
 
-    public ModelEntityLumberjackFemale(final ModelPart part)
+    public ModelEntityForesterFemale(final ModelPart part)
     {
         super(part);
         hat.visible = false;
+
+        IMinecoloniesAPI.getInstance().getModelTypeRegistry().register(BipedModelType.FORESTER, true, this);
     }
 
     public static LayerDefinition createMesh()

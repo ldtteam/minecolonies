@@ -17,6 +17,8 @@ public interface IModelTypeRegistry
 
     IModelTypeRegistry register(IModelType type, CitizenModel<AbstractEntityCitizen> maleModel, CitizenModel<AbstractEntityCitizen> femaleModel);
 
+    IModelTypeRegistry register(final IModelType type, final boolean female, final CitizenModel<AbstractEntityCitizen> model);
+
     Map<IModelType, CitizenModel<AbstractEntityCitizen>> getMaleMap();
 
     Map<IModelType, CitizenModel<AbstractEntityCitizen>> getFemaleMap();

@@ -1,12 +1,14 @@
 package com.minecolonies.coremod.client.render;
 
+import com.minecolonies.api.IMinecoloniesAPI;
+import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.client.render.modeltype.CitizenModel;
 import com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.coremod.client.model.ModelEntityFemaleCitizen;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
@@ -37,9 +39,11 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
      */
     public RenderBipedCitizen(final EntityRendererProvider.Context context)
     {
-        super(context, new CitizenModel<>(0.0F), (float) SHADOW_SIZE);
-        super.addLayer(new HumanoidArmorLayer<>(this, new CitizenModel<>(0.5F), new CitizenModel<>(1.0F)));
+        super(context, new CitizenModel<>(context.bakeLayer(ModelLayers.PLAYER)), (float) SHADOW_SIZE);
+        this.addLayer(new HumanoidArmorLayer<>(this, new HumanoidModel<>(context.bakeLayer(ModelLayers.PLAYER_INNER_ARMOR)), new HumanoidModel<>(context.bakeLayer(ModelLayers.PLAYER_OUTER_ARMOR))));
         super.addLayer(new ItemInHandLayer<>(this));
+
+        IMinecoloniesAPI.getInstance().getModelTypeRegistry().register(BipedModelType.BASE, false, new CitizenModel<>(context.bakeLayer(ModelLayers.PLAYER)));
     }
 
     @Override
@@ -87,12 +91,15 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
                          : IModelTypeRegistry.getInstance().getMaleMap().get(citizen.getModelType()));
         if (model == null)
         {
-            model = (citizen.isFemale() ? new ModelEntityFemaleCitizen() : new CitizenModel<>(0.0F));
+            //no if base, or the next condition, get player model!
+            model = (citizen.isFemale()
+                       ? IModelTypeRegistry.getInstance().getFemaleMap().get(BipedModelType.BASE)
+                       : IModelTypeRegistry.getInstance().getMaleMap().get(BipedModelType.BASE));
         }
 
         if (citizen.getCitizenDataView() != null && citizen.getCitizenDataView().getCustomTexture() != null)
         {
-            model = new CitizenModel<>(false);
+            model = IModelTypeRegistry.getInstance().getMaleMap().get(BipedModelType.BASE);
         }
 
         model.young = citizen.isBaby();

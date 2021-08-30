@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.client.model;
 
+import com.minecolonies.api.IMinecoloniesAPI;
+import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.client.render.modeltype.CitizenModel;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.client.model.geom.ModelPart;
@@ -8,13 +10,14 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.client.model.HumanoidModel;
 import org.jetbrains.annotations.NotNull;
 
-public class ModelEntityLumberjackMale extends CitizenModel<AbstractEntityCitizen>
+public class ModelEntityForesterMale extends CitizenModel<AbstractEntityCitizen>
 {
 
-    public ModelEntityLumberjackMale(final ModelPart part)
+    public ModelEntityForesterMale(final ModelPart part)
     {
         super(part);
         hat.visible = false;
+        IMinecoloniesAPI.getInstance().getModelTypeRegistry().register(BipedModelType.FORESTER, false, this);
     }
 
     public static LayerDefinition createMesh()

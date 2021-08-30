@@ -3,6 +3,8 @@ package com.minecolonies.coremod.client.model;
 // Exported for Minecraft version 1.15
 // Paste this class into your mod and generate all required imports
 
+import com.minecolonies.api.IMinecoloniesAPI;
+import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.client.render.modeltype.CitizenModel;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.client.model.geom.ModelPart;
@@ -17,6 +19,8 @@ public class ModelEntityRabbitHerderMale extends CitizenModel<AbstractEntityCiti
     {
         super(part);
         hat.visible = false;
+
+        IMinecoloniesAPI.getInstance().getModelTypeRegistry().register(BipedModelType.RABBIT_HERDER, false, this);
     }
 
     public static LayerDefinition createMesh()

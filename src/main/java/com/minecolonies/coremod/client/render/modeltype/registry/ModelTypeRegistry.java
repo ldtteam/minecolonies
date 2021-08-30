@@ -18,39 +18,7 @@ public class ModelTypeRegistry implements IModelTypeRegistry
 
     public ModelTypeRegistry()
     {
-        register(BipedModelType.NOBLE, new CitizenModel<>(), new ModelEntityCitizenFemaleNoble());
-        register(BipedModelType.ARISTOCRAT, new CitizenModel<>(), new ModelEntityFemaleAristocrat());
-        register(BipedModelType.BUILDER, new CitizenModel<>(), new ModelEntityBuilderFemale());
-        register(BipedModelType.DELIVERYMAN, new ModelEntityDeliverymanMale(), new ModelEntityDeliverymanFemale());
-        register(BipedModelType.MINER, new ModelEntityMinerMale(), new ModelEntityMinerFemale());
-        register(BipedModelType.LUMBERJACK, new ModelEntityLumberjackMale(), new ModelEntityLumberjackFemale());
-        register(BipedModelType.FARMER, new ModelEntityFarmerMale(), new ModelEntityFarmerFemale());
-        register(BipedModelType.UNDERTAKER, new ModelEntityUndertakerMale(), new ModelEntityUndertakerFemale());
-        register(BipedModelType.FISHERMAN, new ModelEntityFishermanMale(), new ModelEntityFishermanFemale());
-        register(BipedModelType.BAKER, new ModelEntityBakerMale(), new ModelEntityBakerFemale());
-        register(BipedModelType.COMPOSTER, new ModelEntityComposterMale(), new ModelEntityComposterFemale());
-        register(BipedModelType.COOK, new ModelEntityCookMale(), new ModelEntityCookFemale());
-        register(BipedModelType.CHICKEN_FARMER, new ModelEntityChickenFarmerMale(), new ModelEntityChickenFarmerFemale());
-        register(BipedModelType.SHEEP_FARMER, new ModelEntitySheepFarmerMale(), new ModelEntitySheepFarmerFemale());
-        register(BipedModelType.PIG_FARMER, new ModelEntityPigFarmerMale(), new ModelEntityPigFarmerFemale());
-        register(BipedModelType.COW_FARMER, new ModelEntityCowFarmerMale(), new ModelEntityCowFarmerFemale());
-        register(BipedModelType.SMELTER, new ModelEntitySmelterMale(), new ModelEntitySmelterFemale());
-        register(BipedModelType.STUDENT, new ModelEntityStudentMale(), new ModelEntityStudentFemale());
-        register(BipedModelType.CRAFTER, new ModelEntityCrafterMale(), new ModelEntityCrafterFemale());
-        register(BipedModelType.BLACKSMITH, new ModelEntityBlacksmithMale(), new ModelEntityBlacksmithFemale());
-        register(BipedModelType.ARCHER_GUARD, new CitizenModel<>(), new CitizenModel<>());
-        register(BipedModelType.KNIGHT_GUARD, new CitizenModel<>(), new CitizenModel<>());
-        register(BipedModelType.CHILD, new ModelEntityChildMale(), new ModelEntityChildFemale());
-        register(BipedModelType.HEALER, new ModelEntityHealerMale(), new ModelEntityHealerFemale());
-        register(BipedModelType.TEACHER, new ModelEntityTeacherMale(), new ModelEntityTeacherFemale());
-        register(BipedModelType.GLASSBLOWER, new ModelEntityGlassblowerMale(), new ModelEntityGlassblowerFemale());
-        register(BipedModelType.DYER, new ModelEntityDyerMale(), new ModelEntityDyerFemale());
-        register(BipedModelType.PLANTER, new ModelEntityPlanterMale(), new ModelEntityPlanterFemale());
-        register(BipedModelType.FLETCHER, new ModelEntityFletcherMale(), new ModelEntityFletcherFemale());
-        register(BipedModelType.MECHANIST, new ModelEntityMechanistMale(), new ModelEntityMechanistFemale());
-        register(BipedModelType.RABBIT_HERDER, new ModelEntityRabbitHerderMale(), new ModelEntityRabbitHerderFemale());
-        register(BipedModelType.CONCRETE_MIXER, new ModelEntityConcreteMixerMale(), new ModelEntityConcreteMixerFemale());
-        register(BipedModelType.BEEKEEPER, new ModelEntityBeekeeperMale(), new ModelEntityBeekeeperFemale());
+
     }
 
     @Override
@@ -58,6 +26,21 @@ public class ModelTypeRegistry implements IModelTypeRegistry
     {
         this.maleMap.put(type, maleModel);
         this.femaleMap.put(type, femaleModel);
+
+        return this;
+    }
+
+    @Override
+    public IModelTypeRegistry register(final IModelType type, final boolean female, final CitizenModel<AbstractEntityCitizen> model)
+    {
+        if (female)
+        {
+            this.femaleMap.put(type, model);
+        }
+        else
+        {
+            this.maleMap.put(type, model);
+        }
 
         return this;
     }

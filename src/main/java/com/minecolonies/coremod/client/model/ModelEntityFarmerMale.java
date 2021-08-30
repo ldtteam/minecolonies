@@ -3,6 +3,8 @@
 // Paste this class into your mod and generate all required imports
 package com.minecolonies.coremod.client.model;
 
+import com.minecolonies.api.IMinecoloniesAPI;
+import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.client.render.modeltype.CitizenModel;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.client.model.geom.ModelPart;
@@ -17,6 +19,8 @@ public class ModelEntityFarmerMale extends CitizenModel<AbstractEntityCitizen>
     {
         super(part);
         hat.visible = false;
+
+        IMinecoloniesAPI.getInstance().getModelTypeRegistry().register(BipedModelType.FARMER, false, this);
     }
 
     public static LayerDefinition createMesh()

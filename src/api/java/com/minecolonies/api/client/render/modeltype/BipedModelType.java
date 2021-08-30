@@ -10,12 +10,12 @@ public enum BipedModelType implements ISimpleModelType
     NOBLE("noble", 3),
     ARISTOCRAT("aristocrat", 3),
     BUILDER("builder", 1),
-    DELIVERYMAN("deliveryman", 1),
+    COURIER("deliveryman", 1),
     MINER("miner", 1),
     // Lumberjack: 4 male, 1 female
-    LUMBERJACK("lumberjack", 1),
+    FORESTER("lumberjack", 1),
     FARMER("farmer", 1),
-    FISHERMAN("fisherman", 1),
+    FISHER("fisherman", 1),
     UNDERTAKER("undertaker", 1),
     ARCHER_GUARD("archer", 1),
     KNIGHT_GUARD("knight", 1),
@@ -40,7 +40,9 @@ public enum BipedModelType implements ISimpleModelType
     CONCRETE_MIXER("concretemixer", 1),
     RABBIT_HERDER("rabbitherder", 1),
     PLANTER("planter", 1),
-    BEEKEEPER("beekeeper", 1);
+    BEEKEEPER("beekeeper", 1),
+    BASE("base", 1);
+
 
     /**
      * String describing the citizen. Used by the renderer. Starts with a capital, and does not contain spaces or other special characters.
