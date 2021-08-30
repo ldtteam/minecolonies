@@ -644,6 +644,15 @@ public final class ColonyManager implements IColonyManager
     }
 
     @Override
+    public void onWorldTick(final TickEvent.@NotNull WorldTickEvent event)
+    {
+        if (event.phase == TickEvent.Phase.END)
+        {
+            getColonies(event.world).forEach(c -> c.onWorldTick(event));
+        }
+    }
+
+    @Override
     public void onWorldLoad(@NotNull final Level world)
     {
         if (!world.isClientSide)
