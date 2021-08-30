@@ -339,7 +339,7 @@ public class EventHandler
         {
             return;
         }
-        Network.getNetwork().sendToPlayer(new UpdateChunkCapabilityMessage(newCloseColonies, chunk.getPos().x, chunk.getPos().z), event.player);
+        Network.getNetwork().sendToPlayer(new UpdateChunkCapabilityMessage(newCloseColonies, chunk.getPos().x, chunk.getPos().z), (ServerPlayer) event.player);
 
         // Check if we get into a differently claimed chunk
         if (newCloseColonies.getOwningColony() != -1)
@@ -349,7 +349,7 @@ public class EventHandler
             if (colony != null)
             {
                 colony.addVisitingPlayer(event.player);
-                colony.getPackageManager().addCloseSubscriber(event.player);
+                colony.getPackageManager().addCloseSubscriber((ServerPlayer) event.player);
             }
         }
 

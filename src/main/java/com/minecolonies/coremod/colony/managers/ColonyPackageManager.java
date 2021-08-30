@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.managers;
 
-import com.ldtteam.structurize.Network;
 import com.ldtteam.structurize.management.Structures;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.managers.interfaces.IColonyPackageManager;
@@ -13,10 +12,8 @@ import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
 import com.minecolonies.coremod.network.messages.PermissionsMessage;
 import com.minecolonies.coremod.network.messages.client.ColonyStylesMessage;
-import com.minecolonies.coremod.network.messages.client.UpdateChunkRangeCapabilityMessage;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewMessage;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewWorkOrderMessage;
-import com.minecolonies.coremod.util.ChunkDataHelper;
 import io.netty.buffer.Unpooled;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.network.FriendlyByteBuf;
