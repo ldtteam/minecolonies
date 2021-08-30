@@ -72,10 +72,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.event.LootTableLoadEvent;
-import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.event.*;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
@@ -311,56 +308,48 @@ public class EventHandler
      * Event called when the player enters a new chunk.
      *
      */
-    public static void onEnteringChunk(@NotNull final ServerPlayer player, final ChunkPos oldChunkPos, final ChunkPos newChunkPos)
+    @SubscribeEvent
+    public static void onEnteringChunk(final TickEvent.PlayerTickEvent event)
     {
-        if (oldChunkPos == null)
+        if (event.player.level.isClientSide() || event.player.level.getGameTime() % 100 != 0)
         {
             return;
         }
 
-        final Level world = player.getCommandSenderWorld();
+        final Level world = event.player.level;
+        final ChunkPos chunkPos = event.player.chunkPosition();
 
-        final LevelChunk newChunk = world.getChunk(newChunkPos.x, newChunkPos.z);
-        ChunkDataHelper.loadChunk(newChunk, player.level);
+        final LevelChunk chunk = world.getChunk(chunkPos.x, chunkPos.z);
+
+        if (chunk.isEmpty())
+        {
+            return;
+        }
+
+        ChunkDataHelper.loadChunk(chunk, world);
 
         Network.getNetwork()
           .sendToPlayer(new UpdateChunkRangeCapabilityMessage(world,
-            newChunkPos.x,
-            newChunkPos.z,
-            8, true),  player);
+            chunkPos.x,
+            chunkPos.z,
+            8, true), (ServerPlayer) event.player);
 
-        final IColonyTagCapability newCloseColonies = newChunk.getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
+        final IColonyTagCapability newCloseColonies = chunk.getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
         if (newCloseColonies == null)
         {
             return;
         }
-        Network.getNetwork().sendToPlayer(new UpdateChunkCapabilityMessage(newCloseColonies, newChunk.getPos().x, newChunk.getPos().z), player);
-        final LevelChunk oldChunk = world.getChunk(oldChunkPos.x, oldChunkPos.z);
-        final IColonyTagCapability oldCloseColonies = oldChunk.getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
-        if (oldCloseColonies == null)
-        {
-            return;
-        }
+        Network.getNetwork().sendToPlayer(new UpdateChunkCapabilityMessage(newCloseColonies, chunk.getPos().x, chunk.getPos().z), event.player);
+
         // Check if we get into a differently claimed chunk
-        if (newCloseColonies.getOwningColony() != oldCloseColonies.getOwningColony())
+        if (newCloseColonies.getOwningColony() != -1)
         {
             // Remove visiting/subscriber from old colony
-            final IColony oldColony = IColonyManager.getInstance().getColonyByWorld(oldCloseColonies.getOwningColony(), world);
-            if (oldColony != null)
+            final IColony colony = IColonyManager.getInstance().getColonyByWorld(newCloseColonies.getOwningColony(), world);
+            if (colony != null)
             {
-                oldColony.removeVisitingPlayer(player);
-                oldColony.getPackageManager().removeCloseSubscriber(player);
-            }
-        }
-
-        // Add visiting/subscriber to new colony
-        if (newCloseColonies.getOwningColony() != 0)
-        {
-            final IColony newColony = IColonyManager.getInstance().getColonyByWorld(newCloseColonies.getOwningColony(), world);
-            if (newColony != null && !newColony.getPackageManager().getCloseSubscribers().contains(player))
-            {
-                newColony.addVisitingPlayer(player);
-                newColony.getPackageManager().addCloseSubscriber(player);
+                colony.addVisitingPlayer(event.player);
+                colony.getPackageManager().addCloseSubscriber(event.player);
             }
         }
 
@@ -377,7 +366,7 @@ public class EventHandler
                         IBuilding building = newColony.getBuildingManager().getBuilding(buildingPos);
                         if (building != null)
                         {
-                            building.onPlayerEnterNearby(player);
+                            building.onPlayerEnterNearby(event.player);
                         }
                     }
                 }

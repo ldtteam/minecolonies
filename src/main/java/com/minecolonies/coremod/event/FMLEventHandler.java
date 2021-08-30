@@ -35,12 +35,6 @@ public class FMLEventHandler
     }
 
     @SubscribeEvent
-    public static void onWorldTick(final TickEvent.WorldTickEvent event)
-    {
-        IColonyManager.getInstance().onWorldTick(event);
-    }
-
-    @SubscribeEvent
     public static void onPlayerLogin(@NotNull final PlayerEvent.PlayerLoggedInEvent event)
     {
         if (event.getPlayer() instanceof ServerPlayer)

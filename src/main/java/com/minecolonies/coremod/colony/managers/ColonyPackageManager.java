@@ -1,6 +1,8 @@
 package com.minecolonies.coremod.colony.managers;
 
+import com.ldtteam.structurize.Network;
 import com.ldtteam.structurize.management.Structures;
+import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.managers.interfaces.IColonyPackageManager;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
@@ -11,21 +13,22 @@ import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
 import com.minecolonies.coremod.network.messages.PermissionsMessage;
 import com.minecolonies.coremod.network.messages.client.ColonyStylesMessage;
+import com.minecolonies.coremod.network.messages.client.UpdateChunkRangeCapabilityMessage;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewMessage;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewWorkOrderMessage;
+import com.minecolonies.coremod.util.ChunkDataHelper;
 import io.netty.buffer.Unpooled;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.chunk.LevelChunk;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static com.minecolonies.api.util.constant.ColonyConstants.UPDATE_STATE_INTERVAL;
 import static com.minecolonies.api.util.constant.Constants.TICKS_HOUR;
+import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 
 public class ColonyPackageManager implements IColonyPackageManager
 {
@@ -103,7 +106,44 @@ public class ColonyPackageManager implements IColonyPackageManager
             return;
         }
 
+        updateClosePlayers();
         updateColonyViews();
+    }
+
+    /**
+     * Updates currently close players to the colony
+     */
+    private void updateClosePlayers()
+    {
+        for (Iterator<ServerPlayer> iterator = closeSubscribers.iterator(); iterator.hasNext(); )
+        {
+            final ServerPlayer player = iterator.next();
+
+            if (colony.getWorld() != player.level)
+            {
+                iterator.remove();
+                continue;
+            }
+
+            final LevelChunk chunk = colony.getWorld().getChunk(player.chunkPosition().x, player.chunkPosition().z);
+            if (chunk.isEmpty())
+            {
+                iterator.remove();
+                continue;
+            }
+
+            final IColonyTagCapability colonyCap = chunk.getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
+            if (colonyCap == null)
+            {
+                iterator.remove();
+                continue;
+            }
+
+            if (colonyCap.getOwningColony() != colony.getID())
+            {
+                iterator.remove();
+            }
+        }
     }
 
     /**

@@ -77,11 +77,6 @@ public final class ColonyManager implements IColonyManager
     private boolean schematicDownloaded = false;
 
     /**
-     * Map of tracked players by uuid and position.
-     */
-    private final Map<UUID, Tuple<ChunkPos, ResourceKey<Level>>> trackedPlayers = new HashMap<>();
-
-    /**
      * If the manager finished loading already.
      */
     private boolean capLoaded = false;
@@ -645,29 +640,6 @@ public final class ColonyManager implements IColonyManager
         {
             //  Player has left the game, clear the Colony View cache
             colonyViews.clear();
-        }
-    }
-
-    @Override
-    public void onWorldTick(@NotNull final TickEvent.WorldTickEvent event)
-    {
-        if (event.phase == TickEvent.Phase.END)
-        {
-            getColonies(event.world).forEach(c -> c.onWorldTick(event));
-
-            if (!event.world.isClientSide && event.world.getGameTime() % 20 == 0)
-            {
-                for (final Player player : event.world.players())
-                {
-                    final Tuple<ChunkPos, ResourceKey<Level>> current = new Tuple<>(player.chunkPosition(), event.world.dimension());
-                    final Tuple<ChunkPos, ResourceKey<Level>> previous = trackedPlayers.getOrDefault(player.getUUID(), new Tuple<>(null, null));
-                    if (!current.equals(previous))
-                    {
-                        trackedPlayers.put(player.getUUID(), current);
-                        EventHandler.onEnteringChunk((ServerPlayer) player, previous.getA(), current.getA());
-                    }
-                }
-            }
         }
     }
 
